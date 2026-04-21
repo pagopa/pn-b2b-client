@@ -240,6 +240,8 @@ public class SharedSteps {
     @Getter
     private final AwsUtils awsUtils;
 
+    private boolean checkAuditLogDisabled;
+
     /**
      * Rappresenta la versione con cui è stata generata una notifica. Viene impostata al momento di preparazione della request.
      * Va da sè che gli step successivi (aggiunta di destinatari, invio, etc) dovranno anch'essi utilizzare tale versione, salvo diversamente specificato.
@@ -1429,8 +1431,8 @@ public class SharedSteps {
      */
     @And("{string} recupera lato web PA una notifica inviata tra {int} e {int} giorni fa con destinatario {destinatario}")
     public void retrieveNotification120DaysOldByIunWebPaSide(String paName, int limitA, int limitB, Destinatario recipient) {
-        long upperLimit = limitA > limitB ? limitA : limitB;
-        long lowerLimit = limitB < limitA ? limitB : limitA;
+        long upperLimit = Math.max(limitA, limitB);
+        long lowerLimit = Math.min(limitB, limitA);
         setPA(paName);
         String recipientTaxId = recipient.getTaxId();
         OffsetDateTime todayDate = now().atZoneSameInstant(ZoneId.of("UTC")).toOffsetDateTime();
@@ -1482,25 +1484,57 @@ public class SharedSteps {
         }
     }
 
+    /**
+     * Dalla mappa di parametri passata in input si va a comporre la stringa con i filtri di ricerca per i log.
+     * Il nome delle chiavi impostato nel file feature è del tutto irrilevante, serve unicamente a migliorare la leggibilità.
+     * La sola eccezione è il campo iun (ignoreCase): se è impostato su auto, viene recuperato dal valore di notificationIun;
+     * in tutti gli altri casi, viene impostato col valore passato.
+     * La scrittura dei log su CloudWatch è repentina, ma possono tuttavia capitare casi in cui il log viene scritto pochi secondi dopo
+     * rispetto a quando viene eseguita la ricerca. Per evitare fail dei test dovuti a questa motivazione, il metodo riesegue la ricerca
+     * un massimo di 5 volte (eventualmente si può configurare) prima di dichiarare fallito il test.
+     */
     @And("verifico la presenza di un audit log su {string} negli ultimi {int} minuti riportante i seguenti dati nel messaggio")
-    public void checkAuditLogFromAws(String microservice, int minutes, Map<String, String> queryFiltersMap) {
-        StringBuilder sb = new StringBuilder();
-        queryFiltersMap.entrySet().forEach(entry -> {
-            if (entry.getKey().equalsIgnoreCase("IUN")) {
-                sb.append("\"").append(entry.getValue().equals("auto") ? notificationIun : entry.getValue()).append("\" ");
-            } else {
-                sb.append("\"").append(entry.getValue()).append("\" ");
+    public void checkAuditLogFromAws(String microservice, int minutes, Map<String, String> queryFiltersMap) throws InterruptedException {
+        if (!checkAuditLogDisabled) {
+            StringBuilder sb = new StringBuilder();
+            queryFiltersMap.forEach((key, value) -> {
+                if (key.equalsIgnoreCase("IUN")) {
+                    sb.append("\"").append(value.equals("auto") ? notificationIun : value).append("\" ");
+                } else {
+                    sb.append("\"").append(value).append("\" ");
+                }
+            });
+            String search = sb.toString().trim();
+            CloudWatchLogsClient cloudWatchLogsClient = awsUtils.getCloudWatchLogsClient();
+            FilterLogEventsRequest logRequest;
+            FilterLogEventsResponse logResponse = null;
+            int attempts = 0;
+            int maxAttempts = 5;
+            while (attempts < maxAttempts) {
+                logRequest = AwsUtils.buildCloudWatchLogRequest(microservice, search, minutes);
+                logResponse = cloudWatchLogsClient.filterLogEvents(logRequest);
+                if (logResponse.events().size() > 0) {
+                    log.info("Total number of logs found with search {}: {}", search, logResponse.events().size());
+                    logResponse.events().forEach(event ->
+                            log.info("Log found at {}: {}", Instant.ofEpochMilli(event.timestamp()), event.message())
+                    );
+                    break;
+                } else {
+                    attempts++;
+                    log.info("Attempt {} of finding log did not produce any result. {}", attempts, attempts < maxAttempts ? "Retrying." : "This was the last attempt.");
+                    Thread.sleep(10000);
+                }
             }
-        });
+            assertThat(logResponse.events().size()).as("Non è stato trovato nessun log che soddisfi la search %s", search).isGreaterThan(0);
+        }
+    }
 
-        CloudWatchLogsClient cloudWatchLogsClient = awsUtils.getCloudWatchLogsClient();
-        FilterLogEventsRequest logRequest = AwsUtils.buildCloudWatchLogRequest(microservice, sb.toString().trim(), minutes);
-        FilterLogEventsResponse logResponse = cloudWatchLogsClient.filterLogEvents(logRequest);
-
-        logResponse.events().forEach(event -> {
-            log.info("Log trovato alle {}: {}",
-                    Instant.ofEpochMilli(event.timestamp()),
-                    event.message());
-        });
+    /**
+     * Metodo a soli scopi di debugging per evitare che vengano eseguiti i controlli sugli audit con tempistiche obsolete
+     * (da usare solitamente in combo con il metodo che imposta lo iun e la PA di SharedSteps)
+     */
+    @Given("vengono disabilitati i check sugli audit log")
+    public void disableAuditLogCheck() {
+        checkAuditLogDisabled = true;
     }
 }

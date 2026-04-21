@@ -10,8 +10,9 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api.*;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.api_v24.NotificationProcessCostApi;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v24.NotificationProcessCostResponse;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.api_v26.NotificationProcessCostApi;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v26.NotificationProcessCostResponse;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v26.NotificationFeePolicy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -40,6 +41,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     private final NotificationCancellationApi notificationCancellationApi;
     private final PaymentEventsApi paymentEventsApi;
     private final String basePath;
+    private final String deliveryBasePath;
     private final String apiKeyMvp1;
     private final String apiKeyMvp2;
     private final String apiKeyGa;
@@ -56,6 +58,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     public PnPaB2bExternalClientImpl(RestTemplate restTemplate,
                                      InteropTokenSingleton interopTokenSingleton,
                                      @Value("${pn.external.base-url}") String basePath,
+                                     @Value("${pn.delivery.base-url}") String deliveryBasePath,
                                      @Value("${pn.external.api-key}") String apiKeyMvp1,
                                      @Value("${pn.external.api-key-2}") String apiKeyMvp2,
                                      @Value("${pn.external.api-key-GA}") String apiKeyGa,
@@ -65,6 +68,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     ) {
         this.restTemplate = restTemplate;
         this.basePath = basePath;
+        this.deliveryBasePath = deliveryBasePath;
         this.apiKeyMvp1 = apiKeyMvp1;
         this.apiKeyMvp2 = apiKeyMvp2;
         this.apiKeyGa = apiKeyGa;
@@ -79,7 +83,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         this.legalFactsApi = new LegalFactsApi(newApiClient(restTemplate, basePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
         this.notificationPriceApiV21 = new NotificationPriceApi(newApiClient(restTemplate, basePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
         this.notificationPriceV23Api = new NotificationPriceV23Api(newApiClient(restTemplate, basePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
-        this.notificationProcessCostApi = new NotificationProcessCostApi(newApiClientPriv(restTemplate, basePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
+        this.notificationProcessCostApi = new NotificationProcessCostApi(newApiClientPriv(restTemplate, deliveryBasePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
         this.paymentEventsApi = new PaymentEventsApi(newApiClient(restTemplate, basePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
         this.notificationCancellationApi = new NotificationCancellationApi(newApiClient(restTemplate, basePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
         this.interopTokenSingleton = interopTokenSingleton;
@@ -174,22 +178,12 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
 
     public void setApiKey(String apiKey) {
         this.newNotificationApi.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop, enableInterop));
-//        this.newNotificationApiV1.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop, enableInterop));
-//        this.newNotificationApiV2.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop, enableInterop));
-//        this.newNotificationApiV21.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop, enableInterop));
         this.senderReadB2BApi.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop, enableInterop));
-//        this.senderReadB2BApiV1.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop, enableInterop));
-//        this.senderReadB2BApiV2.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop, enableInterop));
-//        this.senderReadB2BApiV21.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop, enableInterop));
-//        this.senderReadB2BApiV25.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop, enableInterop));
         this.legalFactsApi.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop, enableInterop));
         this.notificationPriceApiV21.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop, enableInterop));
         this.notificationPriceV23Api.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop, enableInterop));
-        this.notificationProcessCostApi.setApiClient(newApiClientPriv(restTemplate, basePath, apiKey, bearerTokenInterop, enableInterop));
+        this.notificationProcessCostApi.setApiClient(newApiClientPriv(restTemplate, deliveryBasePath, apiKey, bearerTokenInterop, enableInterop));
         this.paymentEventsApi.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop, enableInterop));
-//        this.paymentEventsApiV1.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop, enableInterop));
-//        this.paymentEventsApiV2.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop, enableInterop));
-//        this.paymentEventsApiV21.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop, enableInterop));
         this.notificationCancellationApi.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop, enableInterop));
     }
 
@@ -224,9 +218,10 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         return this.notificationPriceV23Api.retrieveNotificationPriceV23(paTaxId, noticeCode);
     }
 
-    public NotificationProcessCostResponse getNotificationProcessCost(String iun, Integer recipientIndex, it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v24.NotificationFeePolicy notificationFeePolicy, Boolean applyCost, Integer paFee, Integer vat) throws RestClientException {
+    @Override
+    public NotificationProcessCostResponse getNotificationProcessCost(String iun, Integer recipientIndex, String notificationFeePolicy, Boolean applyCost, Integer paFee, Integer vat) throws RestClientException {
         refreshAndSetTokenInteropClient();
-        return this.notificationProcessCostApi.notificationProcessCost(iun, recipientIndex, notificationFeePolicy, applyCost, paFee, vat);
+        return this.notificationProcessCostApi.notificationProcessCost(iun, recipientIndex, NotificationFeePolicy.valueOf(notificationFeePolicy), applyCost, paFee, vat);
     }
 
     public List<PreLoadResponse> presignedUploadRequest(List<PreLoadRequest> preLoadRequest) {

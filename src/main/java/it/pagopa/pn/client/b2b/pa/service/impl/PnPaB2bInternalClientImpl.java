@@ -12,7 +12,7 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api.No
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api.SenderReadB2BApi;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.CxTypeAuthFleet;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v24.NotificationProcessCostResponse;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v26.NotificationProcessCostResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
@@ -277,7 +277,9 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
         throw new UnsupportedOperationException();
     }
 
-    public FullSentNotificationV27 getSentNotificationV27(String iun) { throw new UnsupportedOperationException();}
+    public FullSentNotificationV27 getSentNotificationV27(String iun) {
+        throw new UnsupportedOperationException();
+    }
 
     @Override
     public FullSentNotificationV28 getSentNotificationV28(String iun) {
@@ -326,6 +328,11 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
         return deepCopy(notificationPrice, NotificationPriceResponseV23.class);
     }
 
+    @Override
+    public NotificationProcessCostResponse getNotificationProcessCost(String iun, Integer recipientIndex, String notificationFeePolicy, Boolean applyCost, Integer paFee, Integer vat) throws RestClientException {
+        throw new UnsupportedOperationException();
+    }
+
 
     @Override
     public void paymentEventsRequestPagoPa(PaymentEventsRequestPagoPa paymentEventsRequestPagoPa) throws RestClientException, UnsupportedOperationException {
@@ -369,10 +376,6 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
 
         PreLoadResponse[] result = deepCopy(responses, PreLoadResponse[].class);
         return Arrays.asList(result);
-    }
-
-    public NotificationProcessCostResponse getNotificationProcessCost(String iun, Integer recipientIndex, it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v24.NotificationFeePolicy notificationFeePolicy, Boolean applyCost, Integer paFee, Integer vat) throws RestClientException {
-        throw new UnsupportedOperationException();
     }
 
     private <T> T deepCopy(Object obj, Class<T> toClass) {

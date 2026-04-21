@@ -7,6 +7,7 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PagoPaPayment;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.*;
 import it.pagopa.pn.client.b2b.pa.service.IPnNotificationCostClient;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v26.NotificationProcessCostResponse;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.AwsUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +19,7 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,6 +31,8 @@ public class CostiNotificaFase5Steps {
 
     private final SharedSteps sharedSteps;
     private final IPnNotificationCostClient notificationCostClient;
+    private NotificationCostPaymentResponse notificationCostPaymentResponse;
+    private NotificationCostRecipientResponse notificationCostRecipientResponse;
 
     @Autowired
     public CostiNotificaFase5Steps(SharedSteps sharedSteps, IPnNotificationCostClient notificationCostClient) {
@@ -47,25 +48,32 @@ public class CostiNotificaFase5Steps {
     @And("verifico che per il destinatario {int} il record su Pn-NotificationDeliveryCost sia stato (inserito)(modificato) e correttamente valorizzato")
     public void checkNotificationDeliveryCostRecord(int recIndex, Map<String, String> expectedData) {
         Map<String, AttributeValue> record = searchNotificationDeliveryCostRecord(recIndex);
-        sharedSteps.setNotificationIun("ZHEJ-XTNL-MUJX-202604-K-1");//TODO REMOVE, example
         FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
         //verifica che tutte le colonne siano valorizzate in modo coerente
         assertSoftly(softly -> {
-//            softly.assertThat(record.get("senderInternalId").s()).as("Il senderPaId del record non coincide con quello della fullSentNotification").isEqualTo(fsn.getSenderPaId());
-//            softly.assertThat(record.get("senderTaxId").s()).as("Il senderTaxId del record non coincide con quello della fullSentNotification").isEqualTo(fsn.getSenderTaxId());
+            softly.assertThat(record.get("senderTaxId").s()).as("Il senderTaxId del record non coincide con quello della fullSentNotification").isEqualTo(fsn.getSenderTaxId());
             softly.assertThat(record.get("notificationFeePolicy").s()).as("Il notificationFeePolicy del record non coincide con quello della fullSentNotification").isEqualTo(fsn.getNotificationFeePolicy().getValue());
             softly.assertThat(record.get("pagoPaIntMode").s()).as("Il pagoPaIntMode del record non coincide con quello della fullSentNotification").isEqualTo(fsn.getPagoPaIntMode().getValue());
-            softly.assertThat(record.get("vat").n()).as("Il campo vat del record non coincide con quello della fullSentNotification").isEqualTo(fsn.getVat());
+            softly.assertThat(record.get("vat").n()).as("Il campo vat del record non coincide con quello della fullSentNotification").isEqualTo(fsn.getVat().toString());
         });
         //se il record non è eliminato logicamente (isDeleted=true), recupera tramite API l'oggetto corrispondente al record per i check sui campi relativi ai costi;
         //in caso contrario, verifica che la get puntuale produca un errore 404
         try {
-            NotificationCostRecipientResponse notificationCostRecipientResponse = notificationCostClient.getNotificationCost(sharedSteps.getNotificationIun(), recIndex);
-            //TODO: aggiungere controllo sui costi della response
+            notificationCostRecipientResponse = notificationCostClient.getNotificationCost(sharedSteps.getNotificationIun(), recIndex);
+            log.info("NotificationCostRecipientResponse:\n {}", notificationCostRecipientResponse);
+            String productType = expectedData.get("productType");
+            //TODO?
+//            AnalogCostComponent componentWithProductType = notificationCostRecipientResponse.getTotalCost().getDetails().getAnalogCostDetail().getAnalogCostComponents()
+//                    .stream().filter(c -> c.getProductType().equals(productType)).findFirst().orElse(null);
+//            assertThat(componentWithProductType).as("Gli analog components devono contenere uno o più elementi con productType=%s", productType).isNotNull();
         } catch (HttpStatusCodeException httpStatusCodeException) {
             if (record.get("isDeleted").bool()) {
-                assertThat(expectedData.get("isDeleted")).as("").isEqualToIgnoringCase("true");
-                assertThat(httpStatusCodeException.getRawStatusCode()).as("In caso di record eliminato logicamente, la get deve produrre un 404").isEqualTo(404);
+                assertSoftly(softly -> {
+                    softly.assertThat(httpStatusCodeException.getRawStatusCode()).as("In caso di record eliminato logicamente, la get deve produrre un 404").isEqualTo(404);
+                    softly.assertThat(expectedData.get("isDeleted")).as("In caso di errore 404, il flag isDeleted del record dev'essere impostato a true").isEqualToIgnoringCase("true");
+                });
+            } else {
+                throw httpStatusCodeException;
             }
         }
     }
@@ -113,10 +121,11 @@ public class CostiNotificaFase5Steps {
                     Map<String, AttributeValue> record = searchPaymentInfoRecord(paymentInfoPK);
                     assertSoftly(softly -> {
                         softly.assertThat(record.get("iun").s()).as("Lo IUN del record su PaymentInfo non coincide con quanto atteso").isEqualTo(sharedSteps.getNotificationIun());
-                        softly.assertThat(record.get("recIndex").n()).as("Il recIndex del record su PaymentInfo non coincide con quanto atteso").isEqualTo(recIndex.intValue());
+                        softly.assertThat(record.get("recIndex").n()).as("Il recIndex su PaymentInfo non coincide con quanto atteso").isEqualTo(String.valueOf(recIndex.get()));
                         softly.assertThat(record.get("applyCost").bool()).as("L'applyCost del record su PaymentInfo non coincide con quanto atteso").isEqualTo(payment.getPagoPa().getApplyCost());
                     });
-                    NotificationCostPaymentResponse paymentResponse = notificationCostClient.getNotificationCostByPayment(creditorTaxId, noticeCode);
+                    notificationCostPaymentResponse = notificationCostClient.getNotificationCostByPayment(creditorTaxId, noticeCode);
+                    log.info("PaymentResponse:\n {}", notificationCostPaymentResponse);
                 }
             });
             recIndex.getAndIncrement();
@@ -175,36 +184,30 @@ public class CostiNotificaFase5Steps {
     }
 
     @Then("verifico il comportamento dell'API di inserimento costi passando in input {string}")
-    public void verificoIlComportamentoDellAPIDiInserimentoCostiPassandoInInput(String inputParamsType) {
+    public void checkRobustezzaApiInserimentoCosti(String inputParamsType) {
         FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
         String iun = fsn.getIun();
         NewNotificationCostRequest request = initiNewNotificationCostRequest(fsn);
 
         switch (inputParamsType) {
+            case "iun null" -> iun = null;
             case "body null" -> request = null;
             case "body vuoto" -> request = new NewNotificationCostRequest();
-            case "pagamenti vuoti" -> request.getCostRecipients().get(0).setPayments(new ArrayList<>());
             case "recIndex null" -> request.getCostRecipients().get(0).setRecIndex(null);
             case "iuv null" -> request.getCostRecipients().get(0).getPayments().get(0).setIuv(null);
             case "applyCost null" -> request.getCostRecipients().get(0).getPayments().get(0).setApplyCost(null);
-            case "iun invalido" -> iun = "INVALID IUN";
-            case "iun null" -> iun = null;
+            case "iun invalido" -> iun = "INVALID-IUN";
             case "iun inesistente" -> iun = "TEST-INEX-ISTE-123456-Z-1";
+            case "pagamenti vuoti" -> request.getCostRecipients().get(0).setPayments(new ArrayList<>());
         }
         try {
             notificationCostClient.initializeNotificationCost(iun, request);
-            assertThat(inputParamsType).as("").isEqualTo("iun inesistente");
         } catch (HttpStatusCodeException httpStatusCodeException) {
-            assertThat(httpStatusCodeException.getRawStatusCode()).as("").isEqualTo(400);
+            assertThat(httpStatusCodeException.getRawStatusCode()).as("La request con %s dovrebbe generare un errore 400", inputParamsType).isEqualTo(400);
+            assertThat(Arrays.asList("iun inesistente", "pagamenti vuoti"))
+                    .as("La casistica %s non dovrebbe produrre alcun errore", inputParamsType)
+                    .doesNotContain(inputParamsType);
         }
-    }
-
-    @And("TODO_REMOVE invoco l'api di inizializzazione dati")
-    public void todo_removeInvocoLApiDiInizializzazioneDati() {
-        FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
-        String iun = fsn.getIun();
-        NewNotificationCostRequest request = initiNewNotificationCostRequest(fsn);
-        String response = notificationCostClient.initializeNotificationCost(iun, request);
     }
 
     private NewNotificationCostRequest initiNewNotificationCostRequest(FullSentNotificationV28 fsn) {
@@ -219,6 +222,7 @@ public class CostiNotificaFase5Steps {
         for (int recIndex = 0; recIndex < fsn.getRecipients().size(); recIndex++) {
             RecipientCostData costData = new RecipientCostData();
             costData.setRecIndex(recIndex);
+            costData.setRecipientInternalId(fsn.getRecipients().get(recIndex).getTaxId());
             costData.setPayments(new ArrayList<>());
             for (int paymentIndex = 0; paymentIndex < fsn.getRecipients().get(recIndex).getPayments().size(); paymentIndex++) {
                 PagoPaPayment pagoPaPayment = fsn.getRecipients().get(recIndex).getPayments().get(paymentIndex).getPagoPa();
@@ -231,10 +235,42 @@ public class CostiNotificaFase5Steps {
                     paymentData.setIuv(iuv);
                     costData.getPayments().add(paymentData);
                 }
-
             }
-            request.getCostRecipients().add(costData);
+            if (!costData.getPayments().isEmpty()) {
+                request.getCostRecipients().add(costData);
+            }
         }
-        return request;
+        return request.getCostRecipients().isEmpty() ? null : request;
+    }
+
+    @And("verifico che i valori restituiti dalle nuove api di recupero costi per l'utente {int} coincidano con quelli restituiti da delivery-push")
+    public void recuperoIDatiDiCostoNotificaDaDeliveryPush(int recIndex, Map<String, String> expectedData) {
+        String feePolicy = expectedData.get("feePolicy");
+        boolean applyCost = Boolean.parseBoolean(expectedData.get("applyCost"));
+        int paFee = Integer.parseInt(expectedData.get("paFee"));
+        int vat = Integer.parseInt(expectedData.get("vat"));
+
+        NotificationProcessCostResponse notificationProcessCostResponse = sharedSteps.getB2bClient().getNotificationProcessCost(
+                sharedSteps.getNotificationIun(),
+                recIndex,
+                feePolicy,
+                applyCost,
+                paFee,
+                vat
+        );
+        log.info("NotificationProcessCost response:\n {}", notificationProcessCostResponse);
+
+        assertSoftly(softly -> {
+            if (feePolicy.equals("DELIVERY_MODE")) {
+
+            } else if (feePolicy.equals("FLAT_RATE")) {
+                
+            }
+            if (notificationCostPaymentResponse != null) {
+                softly.assertThat(notificationCostPaymentResponse.getTotalCost().getDetails()).as("I costi totali restituiti dalle api di recupero costi non coincidono").isEqualTo(notificationCostRecipientResponse.getTotalCost().getDetails());
+                softly.assertThat(notificationProcessCostResponse.getPartialCost()).as("Il partial cost della response non coincide col costo parziale").isEqualTo(notificationCostPaymentResponse.getPartialCost().getCost());
+            }
+            softly.assertThat(notificationProcessCostResponse.getTotalCost()).as("Il total cost della response di delivery-push non coincide col costo totale comprensivo di iva").isEqualTo(notificationCostRecipientResponse.getTotalCost().getCostWithVat());
+        });
     }
 }

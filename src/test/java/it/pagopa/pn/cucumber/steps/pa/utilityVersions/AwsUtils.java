@@ -11,7 +11,6 @@ import software.amazon.awssdk.services.cloudwatchlogs.model.FilterLogEventsReque
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
-import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 import java.util.Map;
 
@@ -77,8 +76,8 @@ public class AwsUtils {
                 .build();
     }
 
-    public static FilterLogEventsRequest buildCloudWatchLogRequest(String microservice, String search, int minutes) {
-        long startTime = System.currentTimeMillis() - (minutes * 60 * 1000);
+    public static FilterLogEventsRequest buildCloudWatchLogRequest(String microservice, String search, long minutes) {
+        long startTime = System.currentTimeMillis() - (minutes * 60L * 1000L);
         return FilterLogEventsRequest.builder()
                 .logGroupName(microservice)
                 .filterPattern(search)
