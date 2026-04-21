@@ -131,42 +131,48 @@ public class TracingSteps {
         return submissionDate;
     }
 
-    @When("viene preparato un file CSV valido e minimale per una data disponibile")
+    @Given("viene preparato un file CSV valido e minimale per una data disponibile")
     public void generateValidAndMinimalCsv() {
         tracingFileUtils.generateValidAndMinimalTemporaryCsv(getFirstAvailableDate());
     }
 
-    @When("viene preparato un file CSV valido e minimale per una data già presente")
+    @Given("viene preparato un file CSV valido e minimale per una data già presente")
     public void generateValidAndMinimalCsvForDateWithExistingCsv() {
         tracingFileUtils.generateValidAndMinimalTemporaryCsv(getFirstDateWithExistingCsv());
     }
 
-    @When("viene preparato un file CSV valido da {int} MB per una data disponibile")
+    @Given("viene preparato un file CSV valido da {int} MB per una data disponibile")
     public void generateValidCsvOfSize(int megabyte) {
         tracingFileUtils.generateValidTemporaryCsvOfSize(getFirstAvailableDate(), megabyte);
     }
 
-    @When("viene preparato un file CSV con un purpose ID vuoto per una data disponibile")
+    @Given("viene preparato un file CSV con un purpose ID vuoto per una data disponibile")
     public void generateCsvWithEmptyPurposeId() {
         tracingFileUtils.generateTemporaryCsvWithEmptyPurposeId(getFirstAvailableDate());
     }
 
-    @When("viene corretto il file CSV preparato con un purpose ID valido")
-    public void fixGeneratedCsvWithValidPurposeId() {
-        tracingFileUtils.fixTemporaryCsvWithValidPurposeId();
+    @Given("viene preparato un file CSV con tutti i campi errati per una data disponibile")
+    public void generateCsvWithAllWrongFields() {
+        getFirstAvailableDate();
+        tracingFileUtils.generateTemporaryCsvWithAllWrongFields();
     }
 
-    @When("viene preparato un file CSV valido con un purpose ID non conforme per una data disponibile")
+    @Given("vengono corretti tutti i campi del file CSV preparato")
+    public void fixAllTheFieldsOfGeneratedCsv() {
+        tracingFileUtils.fixAllTheFieldsOfTemporaryCsv(currentTracing.getReferenceDate());
+    }
+
+    @Given("viene preparato un file CSV valido con un purpose ID non conforme per una data disponibile")
     public void generateValidCsvWithNotCompliantPurposeId() {
         tracingFileUtils.generateValidTemporaryCsvWithNotCompliantPurposeId(getFirstAvailableDate());
     }
 
-    @When("viene preparato un file CSV valido con qualche record errato per una data disponibile")
+    @Given("viene preparato un file CSV valido con qualche record errato per una data disponibile")
     public void generateValidCsvWithSomeWrongRecords() {
         tracingFileUtils.generateValidTemporaryCsvWithSomeWrongRecords(getFirstAvailableDate());
     }
 
-    @When("viene preparato un file CSV valido e minimale per un giorno in stato {string}")
+    @Given("viene preparato un file CSV valido e minimale per un giorno in stato {string}")
     public void generateValidAndMinimalCsvForADayWithMissingState(String status) {
         retrieveTracing(List.of(TracingState.fromValue(status)));
         Assertions.assertNotNull(httpCallExecutor.getResponse(), "There was an error while retrieving the tracing with MISSING status!");
@@ -176,7 +182,7 @@ public class TracingSteps {
         currentTracing.setReferenceDate(tracingsResponseResults.getDate());
     }
 
-    @When("viene svuotato il purpose ID del primo record del file CSV preparato")
+    @Given("viene svuotato il purpose ID del primo record del file CSV preparato")
     public void emptyFirstPurposeIdFieldOfThePreparedCsv() {
         tracingFileUtils.emptyFirstPurposeIdFieldOfTheTemporaryCsv();
     }
@@ -191,7 +197,7 @@ public class TracingSteps {
             log.info(String.format("Tracing ID in response: %s", currentTracing.getTracingId()));
 
         } catch (ClassCastException e) {
-            log.info(String.format("Submit refused. No tracing ID in response.", currentTracing.getTracingId()));
+            log.info("Submit refused. No tracing ID in response.");
         }
     }
 
@@ -213,10 +219,9 @@ public class TracingSteps {
         httpCallExecutor.performCall(() -> interopTracingClient.getTracings(OFFSET_VALUE, LIMIT_VALUE, statusList));
     }
 
-    @Then("viene chiamato tracing con {method} e {subpath} contenente un carattere percent-encoded non valido")
+    @When("viene chiamato tracing con {method} e {subpath} contenente un carattere percent-encoded non valido")
     public void callTracingPathWithNotValidPercentEncodedChar(String method, String subpath) {
         httpCallExecutor.performCall(() -> interopTracingClient.callTracingWithIllegalPercentEncodedCharInPath(method, subpath));
-        Assertions.assertEquals(400, httpCallExecutor.getResponseStatus().value());
     }
 
     @Then("la risposta contiene soltanto i tracing con stato {string}")
@@ -242,6 +247,12 @@ public class TracingSteps {
         Assertions.assertEquals(404, httpCallExecutor.getResponseStatus().value());
     }
 
+    @Then("la chiamata fallisce con {esito}")
+    public void verifyRejectionDueToFailedRequest(String outcome) {
+        int expectedCode = ("not found".equals(outcome)) ? 404 : 400;
+        Assertions.assertEquals(expectedCode, httpCallExecutor.getResponseStatus().value());
+    }
+
     @When("viene recuperato il dettaglio del tracing con errori")
     public void retrieveTracingError() {
         getTracingErrors(currentTracing.getTracingUUID());
@@ -261,11 +272,13 @@ public class TracingSteps {
         Assertions.assertNotNull(httpCallExecutor.getResponse(), "There was an error while retrieving the tracing error!");
         Assertions.assertNotNull(((GetTracingErrorsResponse)httpCallExecutor.getResponse()).getResults());
         List<GetTracingErrorsResponseResultsInner> expectedResult = List.of(
-                //createExpectedResponse("INVALID_STATUS_CODE", "status: Invalid HTTP status code", "0e1e4c98-6f2e-4f55-90e3-45f7d3f1dbf8", 1),
-                //createExpectedResponse("INVALID_DATE", String.format("date: Date field (2024-08-25) in csv is different from tracing date (%s).", currentTracing.getFormattedDate()), "0e1e4c98-6f2e-4f55-90e3-45f7d3f1dbf8", 1),
-                //createExpectedResponse("PURPOSE_NOT_FOUND", "purpose_id: Invalid purpose id 0e1e4c98-6f2e-4f55-90e3-45f7d3f1dbf8.", "0e1e4c98-6f2e-4f55-90e3-45f7d3f1dbf8", 1),
-                createExpectedResponse("INVALID_PURPOSE", "purpose_id: Invalid uuid", "", 1)
-                //createExpectedResponse("INVALID_DATE", String.format("date: Date field (2024-08-25) in csv is different from tracing date (%s).", currentTracing.getFormattedDate()), "", 2)
+                createExpectedResponse("INVALID_DATE", "INVALID", String.format("date: Date field (2020-01-01) in csv is different from tracing date (%s).", currentTracing.getFormattedDate()), "", 1),
+                //createExpectedResponse("INVALID_DATE", "INVALID", String.format("date: Date field (2024-08-25) in csv is different from tracing date (%s).", currentTracing.getFormattedDate()), "", 2),
+                createExpectedResponse("INVALID_PURPOSE", "INVALID", "purpose_id: Invalid uuid", "", 1),
+                //createExpectedResponse("PURPOSE_NOT_FOUND", "INVALID", "purpose_id: Invalid purpose id 0e1e4c98-6f2e-4f55-90e3-45f7d3f1dbf8.", "0e1e4c98-6f2e-4f55-90e3-45f7d3f1dbf8", 1),
+                createExpectedResponse("INVALID_TOKEN", "INVALID", "token_id: Invalid uuid", "", 1),
+                createExpectedResponse("INVALID_STATUS_CODE", "INVALID", "status: Invalid HTTP status code", "", 1),
+                createExpectedResponse("INVALID_REQUEST_COUNT", "INVALID", "requests_count: Invalid input", "", 1)
         );
         org.assertj.core.api.Assertions.assertThat(((GetTracingErrorsResponse)httpCallExecutor.getResponse()).getResults()).containsAll(expectedResult);
     }
@@ -282,7 +295,13 @@ public class TracingSteps {
 
     private void recoverError(String tracingId, Resource resource) {
         httpCallExecutor.performCall(() -> interopTracingClient.recoverTracingWithHttpInfo(UUID.fromString(tracingId), resource));
-        currentTracing.setCorrelationId(((ResponseEntity)httpCallExecutor.getResponse()).getHeaders().getFirst("x-correlation-id"));
+        try {
+            ResponseEntity responseEntity = (ResponseEntity)httpCallExecutor.getResponse();
+            currentTracing.setCorrelationId(responseEntity.getHeaders().getFirst("x-correlation-id"));
+
+        } catch (ClassCastException e) {
+            log.info(String.format("Recover refused. No tracing ID %s found.", tracingId));
+        }
     }
 
     @And("si verifica che il tracing sia presente tra quelli ritornati")
@@ -310,8 +329,14 @@ public class TracingSteps {
 
     private void replaceTracing(UUID tracingId, Resource resource) {
         httpCallExecutor.performCall(() -> interopTracingClient.replaceTracingWithHttpInfo(tracingId, resource));
-        currentTracing.setCorrelationId(((ResponseEntity)httpCallExecutor.getResponse()).getHeaders().getFirst("x-correlation-id"));
-        currentTracing.incrementVersion();
+        try {
+            ResponseEntity responseEntity = (ResponseEntity)httpCallExecutor.getResponse();
+            currentTracing.setCorrelationId(responseEntity.getHeaders().getFirst("x-correlation-id"));
+            currentTracing.incrementVersion();
+
+        } catch (ClassCastException e) {
+            log.info(String.format("Replace refused. No tracing ID %s found.", tracingId));
+        }
     }
 
     @When("viene sovrascritto il tracing con id: {string}")
@@ -319,7 +344,7 @@ public class TracingSteps {
         replaceTracing(UUID.fromString(tracingId), tracingFileUtils.getCsvFile("preparato"));
     }
 
-    @When("viene invocato l'endpoint di health con successo")
+    @When("viene invocato endpoint per lo stato health con successo")
     public void getHealthStatus() {
         Assertions.assertDoesNotThrow(interopTracingClient::getHealthStatus);
     }
@@ -370,9 +395,10 @@ public class TracingSteps {
         }
     }
 
-    private GetTracingErrorsResponseResultsInner createExpectedResponse(String errorCode, String message, String purposeId, Integer rowNumber) {
+    private GetTracingErrorsResponseResultsInner createExpectedResponse(String errorCode, String severity, String message, String purposeId, Integer rowNumber) {
         GetTracingErrorsResponseResultsInner tracingErrorsResponse = new GetTracingErrorsResponseResultsInner();
         tracingErrorsResponse.setErrorCode(errorCode);
+        tracingErrorsResponse.setSeverity(GetTracingErrorsResponseResultsInner.SeverityEnum.valueOf(severity));
         tracingErrorsResponse.setMessage(message);
         tracingErrorsResponse.setPurposeId(purposeId);
         tracingErrorsResponse.setRowNumber(rowNumber);
