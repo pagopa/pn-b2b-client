@@ -3,6 +3,7 @@ package it.pagopa.pn.cucumber.steps.pa;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalNotificationRequestV1;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.MessageResponse;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewInformalNotificationResponse;
@@ -14,6 +15,7 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bInternalInformalClientImpl;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.steps.dataTable.InformalNotificationRequestMapper;
 import it.pagopa.pn.cucumber.steps.pa.b2bVersions.B2bStepsInterface;
 import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion;
 import lombok.Getter;
@@ -71,7 +73,7 @@ public class PresaInCaricoNoticaBonariaSteps {
         this.pnPollingFactory = sharedSteps.getPollingFactory();
     }
 
-    @Given("si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie")
+    @When("si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie")
     public void createNewInformalMessage(NewMessageRequest newMessageRequest) {
         try {
             this.messageResponse = pnPaB2bInternalInformalClientImpl.createMessage(newMessageRequest);
@@ -123,10 +125,16 @@ public class PresaInCaricoNoticaBonariaSteps {
         }
     }
 
-    @Given("viene creata una nuova notifica bonaria")
+    @Given("viene creata una nuova notifica bonaria con i seguenti parametri")
     public void createInformal(InformalNotificationRequestV1 request) {
         log.info("Invio notifica bonaria - request: {}", request);
         informalNotificationRequestV1 = request;
+    }
+
+    @Given("viene creata una nuova notifica bonaria con valori di default")
+    public void createInformal() {
+        InformalNotificationRequestMapper mapper = new InformalNotificationRequestMapper();
+        informalNotificationRequestV1 = mapper.buildInformalNotificationRequest(Map.of());
     }
 
     @And("si riceve errore {int}")

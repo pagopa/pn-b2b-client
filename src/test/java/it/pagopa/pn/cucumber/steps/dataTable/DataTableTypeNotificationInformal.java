@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class DataTableTypeNotificationInformal {
 
-    //todo t bonarie si riceve errore compilazione con Autowired
+    //todo t bonarie
     private InformalNotificationRequestMapper mapper = new InformalNotificationRequestMapper();
 
     //MessagesApi

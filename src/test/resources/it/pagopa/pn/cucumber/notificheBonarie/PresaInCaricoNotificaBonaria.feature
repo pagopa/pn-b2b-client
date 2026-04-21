@@ -2,37 +2,26 @@ Feature: Sottomissione di una notifica bonaria.
 
 
   Scenario: [NOTIFICHE_BONARIE_TEST_01] Creazione di un messaggio tutti i campi compilati
-
     Given si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
       | primary_subject             | primary_long_body                       | primary_short_body                      | primary_language | additional_subject | additional_long_body                    |
       | Sollecito di pagamento 2023 | Gentile cittadino, la informiamo che... | Sollecito: hai una nuova comunicazione. | it               | Sollecito.         | Gentile cittadino, la informiamo che... |
 
 
   Scenario: [NOTIFICHE_BONARIE_TEST_02] Invio di una notifica bonaria tutti i campi compilati
-    Given viene creata una nuova notifica bonaria
+    Given viene creata una nuova notifica bonaria con i seguenti parametri
       | senderDenomination | senderTaxId | paProtocolNumber | idempotenceToken | campaignId | messageId                            | subject        | additional_language | recipient_type | recipient_tax_id | recipient_denomination | pec_address       | pagopa_notice_code | pagopa_creditor_tax_id | document_title      | document_docidx | group      |
       | Comune di Milano   | 77777777777 | PROT-123         | TOKEN-ABC        | CAMP-001   | 3fa85f64-5717-4562-b3fc-2c963f66afa6 | Sollecito Tari | fr                  | PF             | 57143494439      | Mario Rossi            | account@domain.it | 302000100000019421 | 77777777777            | Avviso di pagamento | 1               | TEST-GROUP |
     Then viene inviata una nuova notifica bonaria
 
-  Scenario: [RETURNED-TO-SENDER_9] Invio notifica 890 multi-destinatario aventi stati Inviata e Deceduto e macro stato mostrato DELIVERED
-    Given viene generata una nuova notifica
-      | subject               | invio notifica con cucumber |
-      | senderDenomination    | Comune di Palermo           |
-      | physicalCommunication | REGISTERED_LETTER_890       |
-    And destinatario Mario Cucumber
-      | physicalAddress_address | @FAIL_DECEDUTO_890 |
-      | digitalDomicile         | NULL               |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
 
-
-# test progettati..
 
 
 #  SCENARIO 2 - Inserimento di un Messaggio.
 #  CASO DI TEST 2.1  Creazione di nuovo un messaggio.
 
-  Scenario: [NOTIFICHE_BONARIE_MESSAGGI_06_1] Creazione di un nuovo messaggio con valori di default.
-    Given si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
+  Scenario: [NOTIFICHE_BONARIE_MESSAGGI_06_1] Come ente mittente creo un nuovo messaggio con valori di default.
+  Il messaggio creato è utilizzabile in una campagna per le notifiche bonarie.
+    When si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
       | primary_subject                       |
       | Nuovo messaggio per notifiche bonarie |
     And l'operazione non ha generato errori
@@ -40,7 +29,7 @@ Feature: Sottomissione di una notifica bonaria.
     And l'operazione non ha generato errori
 
 
-  Scenario: [NOTIFICHE_BONARIE_MESSAGGI_06_2] Creazione di un nuovo messaggio con valori di default con seconda lingua non specificata
+  Scenario: [NOTIFICHE_BONARIE_MESSAGGI_06_2] Come ente mittente creo un nuovo messaggio con valori di default con seconda lingua non specificata
     Given si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
       | primary_subject   | additional_language |
       | Messaggio bonario | NULL                |
@@ -48,11 +37,11 @@ Feature: Sottomissione di una notifica bonaria.
 
 
 #  CASO DI TEST 2.2  Errore sulla Creazione di un messaggio.
-  Scenario: [NOTIFICHE_BONARIE_MESSAGGI_07_1] Errore sulla creazione di un nuovo messaggio per ente non abilitato
+  Scenario: [NOTIFICHE_BONARIE_MESSAGGI_07_1] Come ente mittente non abilitato alla creazione di un messaggio ricevo un errore sulla creazione di un nuovo messaggio.
     #todo t bonarie
 
 
-  Scenario Outline: [NOTIFICHE_BONARIE_MESSAGGI_07_2] Errore sulla creazione di un nuovo messaggio per campi obbligatori non valorizzati
+  Scenario Outline: [NOTIFICHE_BONARIE_MESSAGGI_07_2] Come ente mittente ricevo un errore sulla creazione di un nuovo messaggio non valorizzando campi obbligatori.
     Given si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
       | primary_subject   | primary_long_body   | primary_short_body   |
       | <primary_subject> | <primary_long_body> | <primary_short_body> |
@@ -64,7 +53,7 @@ Feature: Sottomissione di una notifica bonaria.
       |                 |                   | NULL               |
 
 
-  Scenario Outline: [NOTIFICHE_BONARIE_MESSAGGI_07_3] Errore sulla creazione di un nuovo messaggio per campi relativi al messaggio principale non conformi
+  Scenario Outline: [NOTIFICHE_BONARIE_MESSAGGI_07_3] Come ente mittente ricevo un Errore sulla creazione di un nuovo messaggio compilando i campi in maniera non conforme.
     Given si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
       | primary_subject   | primary_long_body   | primary_short_body   |
       | <primary_subject> | <primary_long_body> | <primary_short_body> |
@@ -76,7 +65,7 @@ Feature: Sottomissione di una notifica bonaria.
       |                 |                   | 161_CHAR           |
 
 
-  Scenario Outline: [NOTIFICHE_BONARIE_MESSAGGI_07_4] Errore sulla creazione di un nuovo messaggio per campi relativi al messaggio secondario non conformi
+  Scenario Outline: [NOTIFICHE_BONARIE_MESSAGGI_07_4] Come ente mittente ricevo un Errore sulla creazione di un nuovo messaggio compilando i campi addizionali in maniera non conforme.
     Given si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
       | additional_subject   | additional_long_body   | additional_short_body   |
       | <additional_subject> | <additional_long_body> | <additional_short_body> |
@@ -87,7 +76,7 @@ Feature: Sottomissione di una notifica bonaria.
       |                    | 10001_CHAR           |                       |
       |                    |                      | 161_CHAR              |
 
-  Scenario Outline: [NOTIFICHE_BONARIE_MESSAGGI_07_4] Errore sulla creazione di un nuovo messaggio per campi relativi alla lingua non conformi
+  Scenario Outline: [NOTIFICHE_BONARIE_MESSAGGI_07_4] Come ente mittente ricevo un Errore sulla creazione di un nuovo messaggio compilando i campi relativi alla lingua in maniera non conforme.
     Given si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
       | primary_language   | additional_language   |
       | <primary_language> | <additional_language> |
@@ -107,7 +96,7 @@ Feature: Sottomissione di una notifica bonaria.
 
 
 #  CASO DI TEST 3.2 Errore nel recupero di un messaggio.
-  Scenario Outline: [NOTIFICHE_BONARIE_MESSAGGI_09] Errore nel recuperare un messaggio per id non valido.
+  Scenario Outline: [NOTIFICHE_BONARIE_MESSAGGI_09] Come ente mittente ricevo un Errore nel recuperare un messaggio con un id non valido.
     Given tento il recupero del messaggio per le comunicazioni bonarie con message id "<messageId>"
     Then si riceve errore 400
     Examples:
@@ -117,12 +106,15 @@ Feature: Sottomissione di una notifica bonaria.
 
 #  SCENARIO  - Sottomissione di una notifica bonaria.
 #  CASO DI TEST .1 Validazione della richiesta di invio notifica bonaria.
-  Scenario: [NOTIFICHE_BONARIE_SOTTOMISSIONE_14] Invio di una notifica bonaria con campi di default
-    Given viene creata una nuova notifica bonaria
-      | senderDenomination |
-      | Comune di Milano   |
+  Scenario: [NOTIFICHE_BONARIE_SOTTOMISSIONE_14] Come ente mittente ricevo creo una nuova notifica bonaria utilizzando valori di default.
+    When viene creata una nuova notifica bonaria con i seguenti parametri
+    |senderDenomination|
+    Then la notifica bonaria viene inviata tramite api b2b dal "Comune_1"
     Then viene inviata una nuova notifica bonaria
 
+
+  Scenario: [NOTIFICHE_BONARIE_SOTTOMISSIONE_14] Invio di una notifica bonaria con campi di default
+    When viene creata una nuova notifica bonaria con valori di default
 
 
 

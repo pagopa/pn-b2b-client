@@ -40,14 +40,11 @@ public class PnPaB2bInternalInformalClientImpl {
 
     }
 
-    //todo t bonaria
     private static it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.ApiClient newInformalApiClient(RestTemplate restTemplate, String basePath) {
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.ApiClient newApiClient = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
         return newApiClient;
     }
-
-    //todo t bonaria
 
     public MessageResponse createMessage(NewMessageRequest request) {
         return messagesApi.newMessage(operatorId, CxTypeAuthFleet.PA, paId, request, groups);

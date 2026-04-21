@@ -21,7 +21,6 @@ public enum NotificationInformalValue {
     ADDITIONAL_LANGUAGE("additional_language", "fr",false),
 
     // Informal Request
-
     SENDER_DENOMINATION("senderDenomination", "Comune di Palermo", false),
     SENDER_TAX_ID("senderTaxId", "80016350821", false),
     PA_PROTOCOL_NUMBER("paProtocolNumber", " ", false),
@@ -31,11 +30,9 @@ public enum NotificationInformalValue {
     SUBJECT("subject", "Test notifica..", false),
     GROUP("group", null, false),
 
-
     RECIPIENT_TYPE("recipient_type", "PF", false),
     RECIPIENT_TAX_ID("recipient_tax_id", "FRMTTR76M06B715E", false),
     RECIPIENT_DENOMINATION("recipient_denomination", "Ettore Fieramosca", false),
-
 
     PEC_ADDRESS("pec_address", null, false),
 
@@ -44,7 +41,6 @@ public enum NotificationInformalValue {
 
     DOCUMENT_TITLE("document_title", null, false),
     DOCUMENT_DOCIDX("document_docidx", null, false);
-
 
     private static final String NULL_VALUE = "NULL";
     private static final Integer NOTICE_CODE_LENGTH = 18;
