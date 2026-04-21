@@ -51,7 +51,7 @@ Feature: Creazione e-service
 
   @sad-path
   @eservice_description_max_length
-  Scenario: [ESERVICE_CREATION_DESCRIPTION_MAX_LENGTH_2] Un utente crea un e-service utilizzando la descrizione della lunghezza massima possibile
+  Scenario: [ESERVICE_CREATION_DESCRIPTION_MAX_LENGTH_2] La creazione dell'e-service non va a buon fine se viene superata la dimensione massima consentita per la descrizione
     Given l'utente è un "admin" di "PA1"
     When l'utente crea un e-service con una descrizione di 401 caratteri
     Then si ottiene status code 400

@@ -49,7 +49,7 @@ Feature: Aggiornamento della descrizione di un e-service
     Then si ottiene status code 409
 
   @eservice_description_max_length
-  Scenario: [ESERVICE_DESCRIPTION_UPDATE_MAXLENGTH_1]  Un utente aggiorna un e-service utilizzando la descrizione della lunghezza massima possibile
+  Scenario: [ESERVICE_DESCRIPTION_UPDATE_MAXLENGTH_1] Un utente aggiorna un e-service utilizzando la descrizione della lunghezza massima possibile
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     When l'utente aggiorna la descrizione di quell'e-service in stato "PUBLISHED" con un valore di 400 caratteri
