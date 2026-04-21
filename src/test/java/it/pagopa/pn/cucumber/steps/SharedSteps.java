@@ -1496,36 +1496,40 @@ public class SharedSteps {
     @And("verifico la presenza di un audit log su {string} negli ultimi {int} minuti riportante i seguenti dati nel messaggio")
     public void checkAuditLogFromAws(String microservice, int minutes, Map<String, String> queryFiltersMap) throws InterruptedException {
         if (!checkAuditLogDisabled) {
-            StringBuilder sb = new StringBuilder();
-            queryFiltersMap.forEach((key, value) -> {
-                if (key.equalsIgnoreCase("IUN")) {
-                    sb.append("\"").append(value.equals("auto") ? notificationIun : value).append("\" ");
-                } else {
-                    sb.append("\"").append(value).append("\" ");
+            try {
+                StringBuilder sb = new StringBuilder();
+                queryFiltersMap.forEach((key, value) -> {
+                    if (key.equalsIgnoreCase("IUN")) {
+                        sb.append("\"").append(value.equals("auto") ? notificationIun : value).append("\" ");
+                    } else {
+                        sb.append("\"").append(value).append("\" ");
+                    }
+                });
+                String search = sb.toString().trim();
+                CloudWatchLogsClient cloudWatchLogsClient = awsUtils.getCloudWatchLogsClient();
+                FilterLogEventsRequest logRequest;
+                FilterLogEventsResponse logResponse = null;
+                int attempts = 0;
+                int maxAttempts = 5;
+                while (attempts < maxAttempts) {
+                    logRequest = AwsUtils.buildCloudWatchLogRequest(microservice, search, minutes);
+                    logResponse = cloudWatchLogsClient.filterLogEvents(logRequest);
+                    if (logResponse.events().size() > 0) {
+                        log.info("Total number of logs found with search {}: {}", search, logResponse.events().size());
+                        logResponse.events().forEach(event ->
+                                log.info("Log found at {}: {}", Instant.ofEpochMilli(event.timestamp()), event.message())
+                        );
+                        break;
+                    } else {
+                        attempts++;
+                        log.info("Attempt {} of finding log did not produce any result. {}", attempts, attempts < maxAttempts ? "Retrying." : "This was the last attempt.");
+                        Thread.sleep(10000);
+                    }
                 }
-            });
-            String search = sb.toString().trim();
-            CloudWatchLogsClient cloudWatchLogsClient = awsUtils.getCloudWatchLogsClient();
-            FilterLogEventsRequest logRequest;
-            FilterLogEventsResponse logResponse = null;
-            int attempts = 0;
-            int maxAttempts = 5;
-            while (attempts < maxAttempts) {
-                logRequest = AwsUtils.buildCloudWatchLogRequest(microservice, search, minutes);
-                logResponse = cloudWatchLogsClient.filterLogEvents(logRequest);
-                if (logResponse.events().size() > 0) {
-                    log.info("Total number of logs found with search {}: {}", search, logResponse.events().size());
-                    logResponse.events().forEach(event ->
-                            log.info("Log found at {}: {}", Instant.ofEpochMilli(event.timestamp()), event.message())
-                    );
-                    break;
-                } else {
-                    attempts++;
-                    log.info("Attempt {} of finding log did not produce any result. {}", attempts, attempts < maxAttempts ? "Retrying." : "This was the last attempt.");
-                    Thread.sleep(10000);
-                }
+                assertThat(logResponse.events().size()).as("Non è stato trovato nessun log che soddisfi la search %s", search).isGreaterThan(0);
+            } catch (AssertionError assertionError) {
+                throwAssertionErrorWithIUN(assertionError);
             }
-            assertThat(logResponse.events().size()).as("Non è stato trovato nessun log che soddisfi la search %s", search).isGreaterThan(0);
         }
     }
 

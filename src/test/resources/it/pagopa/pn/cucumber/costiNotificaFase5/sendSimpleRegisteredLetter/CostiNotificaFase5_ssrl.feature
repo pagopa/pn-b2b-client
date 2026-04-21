@@ -1,6 +1,7 @@
 Feature: Costi Notifica Fase 5
 #SRS: https://pagopa.atlassian.net/wiki/spaces/PN/pages/2686713956/SRS+Costi+di+notifica+-+fase+5+BE#WI-CN-F5-3.3---Creazione-consumer-eventi-di-aggiornamento-costo-su-pn-notification-cost-service
 #PST: https://pagopa.atlassian.net/wiki/spaces/PN/pages/2849800311/DRAFT+PST+PN-18622+Costi+Notifica+BE+-+fase+5
+#pre-revert
 
   @costiNotificaFase5 @CNF5_FF_ENABLED @ssrl
   Scenario Outline: [CNF5_MONO_DESTINATARIO_SEND_SIMPLE_REGISTERED_LETTER_PAGOPA_SYNC] Invio di una notifica mono-destinatario e mono-pagamento PagoPA(sync) che preveda un elemento SEND_SIMPLE_REGISTERED_LETTER
@@ -18,7 +19,7 @@ Feature: Costi Notifica Fase 5
       | payment_pagoPaForm      | SI                    |
       | payment_f24             | NULL                  |
       | title_payment           | PagoPa_mono_sync_ssrl |
-      | apply_cost_pagopa       | SI                    |
+      | apply_cost_pagopa       | <applyCost>           |
       | payment_multy_number    | 1                     |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then verifico su DynamoDB la presenza in timeline dell'elemento "NOTIFICATION_COST_VALIDATION_REQUEST"
@@ -42,7 +43,7 @@ Feature: Costi Notifica Fase 5
       | phase    | phase=SEND_SIMPLE_REGISTERED_LETTER |
     And verifico che i valori restituiti dalle nuove api di recupero costi per l'utente 0 coincidano con quelli restituiti da delivery-push
       | paFee     | 17          |
-      | applyCost | true        |
+      | applyCost | <applyCost> |
       | vat       | 10          |
       | feePolicy | <feePolicy> |
 #    When la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
@@ -55,9 +56,9 @@ Feature: Costi Notifica Fase 5
 #      | recIndex | recIndex=0                   |
 #      | phase    | phase=NOTIFICATION_CANCELLED |
     Examples:
-      | feePolicy     |
-      | DELIVERY_MODE |
-      | FLAT_RATE     |
+      | feePolicy     | applyCost |
+      | DELIVERY_MODE | SI        |
+      | FLAT_RATE     | NO        |
 
   @costiNotificaFase5 @CNF5_FF_ENABLED @ssrl
   Scenario Outline: [CNF5_MONO_DESTINATARIO_SEND_SIMPLE_REGISTERED_LETTER_PAGOPA_ASYNC] Invio di una notifica mono-destinatario e mono-pagamento PagoPA(async) che preveda un elemento SEND_SIMPLE_REGISTERED_LETTER
@@ -76,7 +77,7 @@ Feature: Costi Notifica Fase 5
       | payment_pagoPaForm      | SI                     |
       | payment_f24             | NULL                   |
       | title_payment           | PagoPa_mono_async_ssrl |
-      | apply_cost_pagopa       | SI                     |
+      | apply_cost_pagopa       | <applyCost>            |
       | payment_multy_number    | 1                      |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -101,7 +102,7 @@ Feature: Costi Notifica Fase 5
       | phase    | phase=SEND_SIMPLE_REGISTERED_LETTER |
     And verifico che i valori restituiti dalle nuove api di recupero costi per l'utente 0 coincidano con quelli restituiti da delivery-push
       | paFee     | 17          |
-      | applyCost | true        |
+      | applyCost | <applyCost> |
       | vat       | 10          |
       | feePolicy | <feePolicy> |
 #    When la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
@@ -114,9 +115,9 @@ Feature: Costi Notifica Fase 5
 #      | recIndex | recIndex=0                   |
 #      | phase    | phase=NOTIFICATION_CANCELLED |
     Examples:
-      | feePolicy     |
-      | DELIVERY_MODE |
-      | FLAT_RATE     |
+      | feePolicy     | applyCost |
+      | DELIVERY_MODE | SI        |
+      | FLAT_RATE     | NO        |
 
   @costiNotificaFase5 @CNF5_FF_ENABLED @ssrl
   Scenario Outline: [CNF5_MONO_DESTINATARIO_SEND_SIMPLE_REGISTERED_LETTER_F24] Invio di una notifica mono-destinatario e mono-pagamento F24 che preveda un elemento SEND_SIMPLE_REGISTERED_LETTER
@@ -133,7 +134,7 @@ Feature: Costi Notifica Fase 5
       | payment_creditorTaxId   | 77777777777          |
       | payment_f24             | PAYMENT_F24_STANDARD |
       | title_payment           | f24_mono_none_ssrl   |
-      | apply_cost_f24          | SI                   |
+      | apply_cost_f24          | <applyCost>          |
       | payment_multy_number    | 1                    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then verifico su DynamoDB la presenza in timeline dell'elemento "NOTIFICATION_COST_VALIDATION_REQUEST"
@@ -156,7 +157,7 @@ Feature: Costi Notifica Fase 5
       | phase    | phase=SEND_SIMPLE_REGISTERED_LETTER |
     And verifico che i valori restituiti dalle nuove api di recupero costi per l'utente 0 coincidano con quelli restituiti da delivery-push
       | paFee     | 17          |
-      | applyCost | true        |
+      | applyCost | <applyCost> |
       | vat       | 10          |
       | feePolicy | <feePolicy> |
 #    When la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
@@ -169,6 +170,6 @@ Feature: Costi Notifica Fase 5
 #      | recIndex | recIndex=0                   |
 #      | phase    | phase=NOTIFICATION_CANCELLED |
     Examples:
-      | feePolicy     |
-      | DELIVERY_MODE |
-      | FLAT_RATE     |
+      | feePolicy     | applyCost |
+      | DELIVERY_MODE | SI        |
+      | FLAT_RATE     | NO        |
