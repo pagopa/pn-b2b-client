@@ -812,3 +812,21 @@ Feature: Test API M2M of e-service template
     When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "true" e quella tecnica a "true"
     Then si ottiene lo status code 409
     And l'e-service non ha subito modifiche
+
+  @eservice_description_max_length
+  @happy-path
+  Scenario: [ESERVICE_TEMPLATE_CREATE_DESCRIPTION_MAX_LENGTH_5] La creazione di un e-service template va a buon fine utilizzando la dimensione massima consentita per la descrizione
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta la creazione del template e-service con la seguente configurazione:
+      | description-length | 400 |
+    And si ottiene status code 200
+    Then l'utente è un "admin" di "PA1"
+    And l'e-service template creato ha una descrizione di 400 caratteri
+
+  @eservice_description_max_length
+  @sad-path
+  Scenario: [ESERVICE_TEMPLATE_CREATE_DESCRIPTION_MAX_LENGTH_6] La creazione di un e-service template non va a buon fine se viene superata la dimensione massima consentita per la descrizione
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta la creazione del template e-service con la seguente configurazione:
+      | description-length | 401 |
+    And si ottiene status code 400
