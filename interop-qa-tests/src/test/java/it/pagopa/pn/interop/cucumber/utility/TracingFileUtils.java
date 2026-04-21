@@ -32,6 +32,9 @@ public class TracingFileUtils {
         TracingFileUtils.temporaryPath = tracingTemporaryCsvPath;
     }
 
+    @Value("${spring.profiles.active}")
+    private String envProfile;
+
     private final ResourceLoader resourceLoader;
     private final int randomRequestCountFrom = 1;
     private final int randomRequestCountTo = 50;
@@ -133,7 +136,39 @@ public class TracingFileUtils {
         }
     }
 
-    public void fixTemporaryCsvWithValidPurposeId() {
+    public void generateTemporaryCsvWithAllWrongFields() {
+        try {
+            List<String[]> csvRows = readCsvRows(tracingExampleCsvFilePath);
+            createTemporaryTracingFolder();
+            FileWriter fileWriter = new FileWriter(getTemporaryTracingFilePath());
+            CSVWriter csvWriter = new CSVWriter(fileWriter);
+
+            // Write the header back to the CSV file
+            csvWriter.writeNext(csvRows.get(0));
+
+            // Write just one valid record using the provided date
+            String[] firstRecord = csvRows.get(1);
+            // date: an old date different from the current available date
+            firstRecord[0] = "2020-01-01";
+            // purpose_id: empty in this error case
+            firstRecord[1] = "";
+            // token_id with wrong format
+            firstRecord[2] = "1";
+            // status: an invalid HTTP response code
+            firstRecord[3] = "600";
+            // requests_count wrong format
+            firstRecord[4] = "x";
+            csvWriter.writeNext(firstRecord);
+            csvWriter.close();
+
+        } catch (IOException ex) {
+            throw new RuntimeException("There was an error while generating the csv file: " + ex);
+        }
+    }
+
+
+
+    public void fixAllTheFieldsOfTemporaryCsv(LocalDate date) {
         try {
             List<String[]> csvRows = readCsvRows(tracingExampleCsvFilePath);
             List<String[]> preparedRows = readCsvRows(getTemporaryTracingFilePath());
@@ -146,9 +181,16 @@ public class TracingFileUtils {
 
             // Write just one valid record using the provided date
             String[] firstRecord = preparedRows.get(1);
+            // date: the current reference date
+            firstRecord[0] = date.toString();
             // purpose_id: fix with a valid purpose ID
             firstRecord[1] = csvRows.get(0)[1];
-            // All the other fields are unchanged
+            // token_id with valid format
+            firstRecord[2] = UUID.randomUUID().toString();
+            // status: a valid HTTP response code
+            firstRecord[3] = "200";
+            // requests_count with valid format
+            firstRecord[4] = "10";
             csvWriter.writeNext(firstRecord);
             csvWriter.close();
 
@@ -171,9 +213,16 @@ public class TracingFileUtils {
             for (String[] nextLine : csvRows) {
                 // date: an available date to upload the CSV file
                 nextLine[0] = date.toString();
-                // purpose_id has to be taken from the valid example provided
+                // purpose_id has to be not compliant, so existing but not related to the user who sent the csv
                 if (!notCompliantPurposeIdPresent) {
-                    nextLine[1] = UUID.randomUUID().toString();
+                    if ("dev".equals(envProfile)) {
+                        nextLine[1] = "90023b80-7bc3-4de6-aaed-5ccf3f5d8031";
+
+                    } else if ("qa".equals(envProfile)) {
+                        nextLine[1] = "59b568cc-a097-4217-9c58-66fa76389fe0";
+                    } else {
+                        nextLine[1] = "";
+                    }
                     notCompliantPurposeIdPresent = true;
                 }
                 // token_id: a random UUID is accepted
