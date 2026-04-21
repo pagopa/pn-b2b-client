@@ -33,7 +33,7 @@ Feature: Censimento stime mittenti
     Then si verifica che la stima recupera corrisponda alla stima attesa
 
   Scenario: [SM_] Verifica il calcolo delle stime settimanali provinciali a partire dai dati delle stime mensili regionali
-#    Given vengono caricate le stime di tutto l'anno dei mittenti che hanno spedito alla regione "LAZIO"
+    Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_primo_trimestre_26.zip"
     And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
       | classpath:/t0_tc_modulo_commessa_gennaio_26.json |
       | classpath:/t0_tc_modulo_commessa_febbraio_26.json |
@@ -43,11 +43,9 @@ Feature: Censimento stime mittenti
 
 
   Scenario: [SM_04] Verifica del calcolo della percentuale garantita al mittente
-#    Given viene avviata la step function BatchWorkflowStateMachine con deliveryDate: "2026-01-05"
+# Given viene avviata la step function BatchWorkflowStateMachine con deliveryDate: "2026-01-05"
+  And viene verificato il limite garantito per la pa: "enteTcCensimentoMittenti" relativo a provincia: "P1", prodotto: "890" e deliveryDate: "2026-01-26"
 
- #   And viene verificato il limite garantito per la pa: "enteTcCensimentoMittenti" relativo a provincia: "P1" e deliveryDate: "2026-01-05"
-  And viene verificato il limite garantito per la pa: "enteTcCensimentoMittenti" relativo a provincia: "CAP1_P2" e deliveryDate: "2026-01-26"
-    #TODO  capacità del recapitista (GET_DECLARED_CAPACITY)
 
 
 

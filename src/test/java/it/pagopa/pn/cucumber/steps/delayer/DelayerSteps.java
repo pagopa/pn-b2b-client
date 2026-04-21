@@ -27,12 +27,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -480,32 +475,40 @@ public class DelayerSteps {
         context.expectedDeliveryDate = getNextMonday(nWeeks);
     }
 
-    @Then("viene verificato il limite garantito per la pa: {string} relativo a provincia: {string} e deliveryDate: {string}")
-    public void checkSenderLimitForPA(String paId,String province,String deliveryDate){
+    @Then("viene verificato il limite garantito per la pa: {string} relativo a provincia: {string}, prodotto: {string} e deliveryDate: {string}")
+    public void checkSenderLimitForPA(String paId,String province, String product,String deliveryDate){
 
         String pk = new StringBuilder(paId).append("~")
-                .append("890").append("~")
-                .append("P1").toString();
+                .append(product).append("~")
+                .append(province).toString();
 
-  //      int sumEstimate = fetchSumEstimate(deliveryDate, province);
-    //    int weeklyEstimate = fetchWeeklyEstimateForPA(pk, deliveryDate);
-      //  int sumDeclaredCapacity = fetchDeclaredCapacity(deliveryDate, province);
+        int sumEstimate = fetchSumEstimate(deliveryDate, province, product);
+        int weeklyEstimate = fetchWeeklyEstimateForPA(pk, deliveryDate);
+        Set<String> productsWithCapacity = new HashSet<>();
+        int sumDeclaredCapacity = fetchDeclaredCapacity(deliveryDate, province, product, productsWithCapacity);
 
- //       long senderLimitPercentage = Math.round(((double)weeklyEstimate/sumEstimate)*100);
+        int toBeExcluded = 0;
+        for(String productWithCapacity : productsWithCapacity){
+            toBeExcluded += fetchToBeExcluded(deliveryDate, province, productWithCapacity);
+        }
 
-   //     long expectedSenderLimit = Math.round(sumDeclaredCapacity*((double)senderLimitPercentage/100));
+        double senderLimitPercentage = Math.ceil(((double)weeklyEstimate/(sumEstimate - toBeExcluded))*1000)/10;
+
+        double expectedSenderLimit = Math.ceil(sumDeclaredCapacity*(senderLimitPercentage/100.0));
 
         int actualSenderLimit = fetchSenderLimit(pk, deliveryDate);
 
+        Assertions.assertThat(expectedSenderLimit).as("Confronto di actual ed expected del limite del mittente").isEqualTo(actualSenderLimit);
+
     }
 
-    private int fetchSumEstimate(String deliveryDate, String province) {
+    private int fetchSumEstimate(String deliveryDate, String province, String product) {
         Map<String, String> params = new HashMap<>();
         params.put("table", "pn-PaperDeliveryCounters");
         params.put("counterType", "SUM_ESTIMATES");
         params.put("deliveryDate", deliveryDate);
         params.put("province", province);
-        params.put("productType", "890");
+        params.put("productType", product);
         try {
             String countersResponse = lambdaClient.invoke("GET_COUNTERS", params);
             return extractLatestNumberOfShipments(countersResponse);
@@ -514,12 +517,27 @@ public class DelayerSteps {
         }
     }
 
-    private int fetchDeclaredCapacity(String deliveryDate, String province){
+    private int fetchToBeExcluded(String deliveryDate, String province, String product) {
+        Map<String, String> params = new HashMap<>();
+        params.put("table", "pn-PaperDeliveryCounters");
+        params.put("counterType", "EXCLUDE");
+        params.put("deliveryDate", deliveryDate);
+        params.put("province", province);
+        params.put("productType", product);
+        try {
+            String countersResponse = lambdaClient.invoke("GET_COUNTERS", params);
+            return extractLatestNumberOfShipments(countersResponse);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private int fetchDeclaredCapacity(String deliveryDate, String province, String product, Set<String> foundProducts){
         try {
             String declaredCapacityResponse = lambdaClient.invoke("GET_DECLARED_CAPACITY",
                     "pn-PaperDeliveryDriverCapacities",province, deliveryDate);
-         //   return extractSumDeclaredCapacity(declaredCapacityResponse);
-            return 0;
+
+            return extractTotalCapacityForProduct(declaredCapacityResponse, product, foundProducts);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -532,9 +550,9 @@ public class DelayerSteps {
         params.put("pk", pk);
         params.put("table", "pn-PaperDeliveryUsedSenderLimit");
         try {
-            String countersResponse = lambdaClient.invoke("GET_USED_SENDER_LIMIT", params);
-      //      return extractSenderLimit();
-            return 0;
+            String usedSenderLimitResponse = lambdaClient.invoke("GET_USED_SENDER_LIMIT", params);
+            return extractSenderLimit(usedSenderLimitResponse);
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -610,6 +628,72 @@ public class DelayerSteps {
             JsonNode item = bodyNode.path("items").get(0);
 
             return item.path("weeklyEstimate").asInt();
+
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid JSON input", e);
+        }
+    }
+
+
+    private int extractTotalCapacityForProduct(String json, String product, Set<String> foundProducts) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+
+            // Parse outer JSON
+            JsonNode root = mapper.readTree(json);
+
+            // "body" is a JSON string → parse again
+            String body = root.path("body").asText();
+            JsonNode bodyNode = mapper.readTree(body);
+
+            JsonNode items = bodyNode.path("items");
+
+            int totalCapacity = 0;
+
+            for (JsonNode item : items) {
+                JsonNode productsNode = item.path("products");
+
+                // Check if products list contains the given product
+                boolean hasProduct = false;
+                for (JsonNode p : productsNode) {
+                    String foundProduct = p.asText();
+                    foundProducts.add(foundProduct);
+
+                    if (product.equals(foundProduct)) {
+                        hasProduct = true;
+                        break;
+                    }
+                }
+
+                if (hasProduct) {
+                    totalCapacity += item.path("capacity").asInt(0);
+                }
+            }
+
+            return totalCapacity;
+
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid JSON input", e);
+        }
+    }
+
+
+
+    private int extractSenderLimit(String json) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+
+            // Parse outer JSON
+            JsonNode root = mapper.readTree(json);
+
+            // "body" is a JSON string → parse again
+            String body = root.path("body").asText();
+            JsonNode bodyNode = mapper.readTree(body);
+
+            // Items list always has exactly one element
+            JsonNode item = bodyNode.path("items").get(0);
+
+            return item.path("senderLimit").asInt();
 
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid JSON input", e);

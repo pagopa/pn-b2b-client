@@ -116,9 +116,9 @@ public class CensimentoStimeMittentiSteps {
     Then si verifica che i risultati siano coerenti con quelli attesi
      */
 
-    @Given("vengono caricate le stime di tutto l'anno dei mittenti che hanno spedito alla regione {string}")
-    public void uploadZipFile(String region) {
-        String fileName = "portfatt_modulo_commessa_primo_trimestre_26.zip";
+    @Given("vengono caricati i moduli commessa come file zip su portfat: {string}")
+    public void uploadZipFile(String fileName) {
+
         try {
             String sha256 = B2bUtils.computeSha256(applicationContext, String.format("classpath:/%s", fileName));
             Map<String,String> uploadParams = prepareParametersForGetPresignedUrl(fileName, sha256, "UPLOAD");
@@ -137,9 +137,7 @@ public class CensimentoStimeMittentiSteps {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        //TODO put per caricamento file
-        //TODO getpresignedurl in download
-        //TODO lambda file-ready event
+
 
     }
 
