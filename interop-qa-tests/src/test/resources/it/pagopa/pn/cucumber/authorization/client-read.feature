@@ -76,8 +76,8 @@ Feature: Lettura client singolo
   @nrtC-waitForFix
   @happy-path
   @nrt-minimal
-  Scenario: [CLIENT_READ_7] A fronte di una richiesta di lettura da parte di un ente, di un client creato da un altro ente, la richiesta va a buon fine
+  Scenario: [CLIENT_READ_7] A fronte di una richiesta di lettura da parte di un ente, di un client creato da un altro ente, la richiesta NON va a buon fine
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato 1 client "CONSUMER"
     When l'utente richiede una operazione di lettura di quel client
-    Then si ottiene status code 200
+    Then si ottiene status code 404
