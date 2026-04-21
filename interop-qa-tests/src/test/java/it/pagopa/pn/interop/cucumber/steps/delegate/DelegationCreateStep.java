@@ -213,12 +213,6 @@ public class DelegationCreateStep {
         tenantGrantsConsumerDelegationAvailability(tenantType);
     }
 
-    @Given("l'ente {string} rimuove la disponibilità a ricevere deleghe")
-    public void tenantRemoveConsumerDelegationAvailability(String tenantType) {
-        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-        setDelegationAvailability(tenantType, consumerStrategyUsing(tenantsApi), false, false);
-    }
-
     @Given("l'ente {string} tenta di rimuovere la disponibilità a ricevere deleghe")
     public void tenantTryRemoveConsumerDelegationAvailability(String tenantType) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
