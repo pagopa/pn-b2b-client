@@ -13,4 +13,9 @@ public class TracingParameterTypes {
     public String subpath(String value) {
         return value;
     }
+
+    @ParameterType("not found|bad request")
+    public String esito(String value) {
+        return value;
+    }
 }
