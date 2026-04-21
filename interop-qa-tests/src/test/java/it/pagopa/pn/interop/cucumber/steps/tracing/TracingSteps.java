@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -56,6 +57,7 @@ public class TracingSteps {
         UUID getTracingUUID() {
             return UUID.fromString(tracingId);
         }
+        void incrementVersion() { version++; }
     }
 
     private static final int OFFSET_VALUE = 0;
@@ -90,8 +92,10 @@ public class TracingSteps {
         currentTenant = operator.trim().toLowerCase();
         currentTracing.setTenantId(currentTenant);
         switch (currentTenant) {
-            case "tenant1" -> interopTracingClient.setBearerToken(SettableBearerToken.BearerTokenType.TENANT_1.toString());
-            case "tenant2" -> interopTracingClient.setBearerToken(SettableBearerToken.BearerTokenType.TENANT_2.toString());
+            case "tenant1" ->
+                    interopTracingClient.setBearerToken(SettableBearerToken.BearerTokenType.TENANT_1.toString());
+            case "tenant2" ->
+                    interopTracingClient.setBearerToken(SettableBearerToken.BearerTokenType.TENANT_2.toString());
             default -> throw new IllegalStateException("Unexpected value: " + operator.trim().toLowerCase());
         }
     }
@@ -179,10 +183,11 @@ public class TracingSteps {
 
     @When("viene inviato il file CSV {string}")
     public void uploadCsv(String fileType) {
-        httpCallExecutor.performCall(() -> interopTracingClient.submitTracing(tracingFileUtils.getCsvFile(fileType), currentTracing.getFormattedDate()));
+        httpCallExecutor.performCall(() -> interopTracingClient.submitTracingWithHttpInfo(tracingFileUtils.getCsvFile(fileType), currentTracing.getFormattedDate()));
         try {
-            SubmitTracingResponse response = (SubmitTracingResponse)httpCallExecutor.getResponse();
-            currentTracing.setTracingId(response.getTracingId().toString());
+            ResponseEntity responseEntity = (ResponseEntity)httpCallExecutor.getResponse();
+            currentTracing.setCorrelationId(responseEntity.getHeaders().getFirst("x-correlation-id"));
+            currentTracing.setTracingId(((SubmitTracingResponse)responseEntity.getBody()).getTracingId().toString());
             log.info(String.format("Tracing ID in response: %s", currentTracing.getTracingId()));
 
         } catch (ClassCastException e) {
@@ -276,7 +281,8 @@ public class TracingSteps {
     }
 
     private void recoverError(String tracingId, Resource resource) {
-        httpCallExecutor.performCall(() -> interopTracingClient.recoverTracing(UUID.fromString(tracingId), resource));
+        httpCallExecutor.performCall(() -> interopTracingClient.recoverTracingWithHttpInfo(UUID.fromString(tracingId), resource));
+        currentTracing.setCorrelationId(((ResponseEntity)httpCallExecutor.getResponse()).getHeaders().getFirst("x-correlation-id"));
     }
 
     @And("si verifica che il tracing sia presente tra quelli ritornati")
@@ -303,7 +309,9 @@ public class TracingSteps {
     }
 
     private void replaceTracing(UUID tracingId, Resource resource) {
-        httpCallExecutor.performCall(() -> interopTracingClient.replaceTracing(tracingId, resource));
+        httpCallExecutor.performCall(() -> interopTracingClient.replaceTracingWithHttpInfo(tracingId, resource));
+        currentTracing.setCorrelationId(((ResponseEntity)httpCallExecutor.getResponse()).getHeaders().getFirst("x-correlation-id"));
+        currentTracing.incrementVersion();
     }
 
     @When("viene sovrascritto il tracing con id: {string}")
@@ -374,9 +382,9 @@ public class TracingSteps {
     private TracingS3Client.PollingSpecification getS3PollingSpecification() {
         return TracingS3Client.PollingSpecification.builder()
                 .centerTimestamp(Instant.now().toString())
-                .timeoutMs(600_000)
-                .pollIntervalMs(30_000)
-                .deltaSeconds(300)
+                .timeoutMs(30_000)
+                .pollIntervalMs(3_000)
+                .deltaSeconds(15)
                 .build();
     }
 
@@ -386,12 +394,10 @@ public class TracingSteps {
 
     private String composeS3KeyWithPrefixAndTracing(String prefix, Tracing tracing) {
         prefix += "-" + envProfile;
-        // TODO recuperare correlationId da header
-        log.info("Tenant ID: " + interopTracingClient.getIdentityService().getOrganizationId("PA1") + " (check: e79a24cd-8edc-441e-ae8d-e87c3aea0059)");
         String key = String.format(
                 "%s/tenantId=%s/date=%s/tracingId=%s/version=%s/correlationId=%s/%s.csv",
                 prefix,
-                "e79a24cd-8edc-441e-ae8d-e87c3aea0059",
+                interopTracingClient.getIdentityService().getOrganizationId("PA1"),
                 tracing.getFormattedDate(),
                 tracing.getTracingId(),
                 tracing.getVersion(),
@@ -403,11 +409,11 @@ public class TracingSteps {
     }
 
     private String getCurrentUploadedTracingS3Key(Tracing tracing) {
-        return composeS3KeyWithPrefixAndTracing("tracing-files" + envProfile, tracing);
+        return composeS3KeyWithPrefixAndTracing("tracing-files", tracing);
     }
 
     private String getCurrentTracingErrorS3Key(Tracing tracing) {
-        return composeS3KeyWithPrefixAndTracing("tracing-errors-files", tracing);
+        return composeS3KeyWithPrefixAndTracing("tracing-errors", tracing);
     }
 
     private String getCurrentEnrichedTracingS3Key(Tracing tracing) {
@@ -417,13 +423,20 @@ public class TracingSteps {
     @Then("nessun file csv di tracing viene memorizzato, arricchito o raccolti i record errati")
     public void verifyNoNewCsvTracingGeneratedAtAll() {
         Assertions.assertFalse(isCsvTracingFilePresent(
-                getS3PollingSpecification(), "tracing-store", getCurrentUploadedTracingS3Key(currentTracing)
+                getS3PollingSpecification(), "tracing-files", getCurrentUploadedTracingS3Key(currentTracing)
         ));
         Assertions.assertFalse(isCsvTracingFilePresent(
                 getS3PollingSpecification(), "tracing-errors", getCurrentTracingErrorS3Key(currentTracing)
         ));
         Assertions.assertFalse(isCsvTracingFilePresent(
                 getS3PollingSpecification(), "tracing-enriched-files", getCurrentEnrichedTracingS3Key(currentTracing)
+        ));
+    }
+
+    @Then("si attende che il file di tracing venga ricevuto")
+    public void verifyCsvTracingFileIsReceived() {
+        Assertions.assertTrue(isCsvTracingFilePresent(
+                getS3PollingSpecification(), "tracing-files", getCurrentUploadedTracingS3Key(currentTracing)
         ));
     }
 
