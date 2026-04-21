@@ -1,0 +1,26 @@
+package it.pagopa.pn.cucumber.steps.dataTable;
+
+import io.cucumber.java.DataTableType;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalNotificationRequestV1;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewMessageRequest;
+
+import java.util.Map;
+
+public class DataTableTypeNotificationInformal {
+
+    //todo t bonarie si riceve errore compilazione con Autowired
+    private InformalNotificationRequestMapper mapper = new InformalNotificationRequestMapper();
+
+    //MessagesApi
+    @DataTableType
+    public NewMessageRequest newMessageRequest(Map<String, String> data) {
+        return mapper.buildNewMessageRequest(data);
+    }
+    //NewInformalNotificationApi
+    @DataTableType
+    public InformalNotificationRequestV1 informalNotificationRequest(Map<String, String> data) {
+        return mapper.buildInformalNotificationRequest(data);
+    }
+
+
+}
