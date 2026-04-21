@@ -24,9 +24,6 @@ public class TracingS3Client {
     @Builder
     public static class PollingSpecification {
 
-        //@NonNull
-        //private FileInfo fileInfo;
-
         @Builder.Default
         private BucketRole bucketRole = BucketRole.STANDARD;
 
@@ -66,7 +63,7 @@ public class TracingS3Client {
 
             } catch (NoSuchKeyException e) {
                 foundFileInBucket.set(false);
-                return true;
+                return false;
 
             } catch (S3Exception e) {
                 // Not possible to check if the file exists in the bucket
