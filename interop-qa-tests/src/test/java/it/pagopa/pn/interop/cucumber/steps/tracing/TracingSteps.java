@@ -359,13 +359,14 @@ public class TracingSteps {
 
     @And("si attende che il file di tracing caricato passi in stato {string}")
     public void waitForStatus(String state) {
-        pollingService.makePolling(
+        PollingService.makePolling(
                 () -> (httpCallExecutor.performCall(() -> interopTracingClient.getTracings(OFFSET_VALUE, LIMIT_VALUE, List.of(TracingState.fromValue(state))))),
                 res -> ((GetTracingsResponse)httpCallExecutor.getResponse()).getResults().stream()
                         .filter(x -> x.getTracingId().equals(currentTracing.getTracingId()))
                         .map(GetTracingsResponseResultsInner::getState)
                         .anyMatch(tracingState -> tracingState.equals(state)),
-                String.format("The TracingId: %s did not reach the desired status: %s", currentTracing.getTracingId(), state)
+                String.format("The TracingId: %s did not reach the desired status: %s", currentTracing.getTracingId(), state),
+                15, 10000
         );
         log.info(String.format("Tracing ID in use: %s", currentTracing.getTracingId()));
     }
@@ -426,11 +427,9 @@ public class TracingSteps {
         return s3Client.isFileExistingInS3Bucket(pollingSpec, bucketName, s3PathKey);
     }
 
-    private String composeS3KeyWithPrefixAndTracing(String prefix, Tracing tracing) {
-        prefix += "-" + envProfile;
+    private String composeS3KeyWithTracing(Tracing tracing) {
         String key = String.format(
-                "%s/tenantId=%s/date=%s/tracingId=%s/version=%s/correlationId=%s/%s.csv",
-                prefix,
+                "tenantId=%s/date=%s/tracingId=%s/version=%s/correlationId=%s/%s.csv",
                 interopTracingClient.getIdentityService().getOrganizationId("PA1"),
                 tracing.getFormattedDate(),
                 tracing.getTracingId(),
@@ -442,49 +441,37 @@ public class TracingSteps {
         return key;
     }
 
-    private String getCurrentUploadedTracingS3Key(Tracing tracing) {
-        return composeS3KeyWithPrefixAndTracing("tracing-files", tracing);
-    }
-
-    private String getCurrentTracingErrorS3Key(Tracing tracing) {
-        return composeS3KeyWithPrefixAndTracing("tracing-errors", tracing);
-    }
-
-    private String getCurrentEnrichedTracingS3Key(Tracing tracing) {
-        return composeS3KeyWithPrefixAndTracing("tracing-enriched-files", tracing);
-    }
-
     @Then("nessun file csv di tracing viene memorizzato, arricchito o segnato l'errore")
     public void verifyNoNewCsvTracingGeneratedAtAll() {
         Assertions.assertFalse(isCsvTracingFilePresent(
-                getS3PollingSpecification(), "tracing-files", getCurrentUploadedTracingS3Key(currentTracing)
+                getS3PollingSpecification(), "tracing-files", composeS3KeyWithTracing(currentTracing)
         ));
         Assertions.assertFalse(isCsvTracingFilePresent(
-                getS3PollingSpecification(), "tracing-errors", getCurrentTracingErrorS3Key(currentTracing)
+                getS3PollingSpecification(), "tracing-errors", composeS3KeyWithTracing(currentTracing)
         ));
         Assertions.assertFalse(isCsvTracingFilePresent(
-                getS3PollingSpecification(), "tracing-enriched-files", getCurrentEnrichedTracingS3Key(currentTracing)
+                getS3PollingSpecification(), "tracing-enriched-files", composeS3KeyWithTracing(currentTracing)
         ));
     }
 
     @Then("si attende che il file di tracing venga ricevuto")
     public void verifyCsvTracingFileIsReceived() {
         Assertions.assertTrue(isCsvTracingFilePresent(
-                getS3PollingSpecification(), "tracing-files", getCurrentUploadedTracingS3Key(currentTracing)
+                getS3PollingSpecification(), "tracing-files", composeS3KeyWithTracing(currentTracing)
         ));
     }
 
     @Then("si attende che il file di tracing arricchito venga generato")
     public void verifyEnrichedCsvTracingFileIsGenerated() {
         Assertions.assertTrue(isCsvTracingFilePresent(
-                getS3PollingSpecification(), "tracing-enriched-files", getCurrentEnrichedTracingS3Key(currentTracing)
+                getS3PollingSpecification(), "tracing-enriched-files", composeS3KeyWithTracing(currentTracing)
         ));
     }
 
     @Then("si attende che il file di tracing venga arricchito con altri dati")
     public void verifyCsvUploadedFileIsEnriched() {
-        String bucketName = "tracing-enriched-files";
-        String s3Key = getCurrentEnrichedTracingS3Key(currentTracing);
+        String bucketName = "tracing-enriched-files-" + envProfile;
+        String s3Key = composeS3KeyWithTracing(currentTracing);
         TracingS3Client.PollingSpecification pollingSpec = getS3PollingSpecification();
 
         Assertions.assertTrue(isCsvTracingFilePresent(pollingSpec, bucketName, s3Key));
@@ -507,14 +494,14 @@ public class TracingSteps {
 
     @Then("si attende che i record errati vengano tracciati negli errori")
     public void verifyWrongCsvRecordsAreTrackedInTracingErrors() {
-        String bucketName = "tracing-errors";
+        String bucketName = "tracing-errors-" + envProfile;
         TracingS3Client.PollingSpecification pollingSpec = getS3PollingSpecification();
 
         Assertions.assertTrue(isCsvTracingFilePresent(
-                pollingSpec, bucketName, getCurrentEnrichedTracingS3Key(currentTracing)
+                pollingSpec, bucketName, composeS3KeyWithTracing(currentTracing)
         ));
         String csvContent = s3Client.getTextualFileContentFromS3Bucket(
-                pollingSpec, bucketName, getCurrentTracingErrorS3Key(currentTracing)
+                pollingSpec, bucketName, composeS3KeyWithTracing(currentTracing)
         );
 
         List<String[]> rows = csvContent.lines()
@@ -526,14 +513,14 @@ public class TracingSteps {
 
     @Then("si attende che i record con purpose non conformi vengano tracciati con warning")
     public void verifyWarningCsvRecordsAreTrackedInTracingErrors() {
-        String bucketName = "tracing-errors";
+        String bucketName = "tracing-errors-" + envProfile;
         TracingS3Client.PollingSpecification pollingSpec = getS3PollingSpecification();
 
         Assertions.assertTrue(isCsvTracingFilePresent(
-                pollingSpec, bucketName, getCurrentEnrichedTracingS3Key(currentTracing)
+                pollingSpec, bucketName, composeS3KeyWithTracing(currentTracing)
         ));
         String csvContent = s3Client.getTextualFileContentFromS3Bucket(
-                pollingSpec, bucketName, getCurrentTracingErrorS3Key(currentTracing)
+                pollingSpec, bucketName, composeS3KeyWithTracing(currentTracing)
         );
 
         List<String[]> rows = csvContent.lines()
