@@ -759,7 +759,8 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | 56 | website             | <script>alert(1)</script>                    | 403              |
       | 57 | website             | javascript:alert(1)                          | 403              |
       | 58 | website             | <img src=x onerror=alert(1)>                 | 403              |
-      | 59 | phoneNumbers        | +3933312345678,+393339999999,330370611       | 200              |
+      | 59 | phoneNumbers        | +3933312345678,+393339999999,330370611       | 400              |
+      | 60 | phoneNumbers        | +3933312345678,330370611                     | 200              |
 
   @raddAnagraficaV2 @putSelectiveRadd @deleteNewSite @cognito3
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_25] - PUT Selective – Chiamata API effettuata da utente con permessi di sola lettura
