@@ -13,6 +13,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemp
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersionSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersions;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.EserviceTemplatesApi;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTemplateDescriptionUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTemplateDraftUpdateSeed;
 import it.pagopa.interop.utils.ApiClientUtils;
 import java.util.Collections;
@@ -135,6 +136,15 @@ public class M2MV3EServiceTemplateClientImpl extends AbstractDPoPClient implemen
                 .mode(vMapper.mapToV3(patchRequest.getMode()))
                 .intendedTarget(patchRequest.getIntendedTarget())
                 .isSignalHubEnabled(patchRequest.getIsSignalHubEnabled())
+        ));
+    }
+
+    @Override
+    public EServiceTemplate patchEServiceTemplateDescription(UUID templateId,
+        EServiceTemplateDescriptionPatchRequest patchRequest) {
+        return vMapper.mapToV2(eserviceTemplatesApi.updatePublishedEServiceTemplateDescription(templateId,
+                new EServiceTemplateDescriptionUpdateSeed()
+                        .description(patchRequest.getDescription())
         ));
     }
 

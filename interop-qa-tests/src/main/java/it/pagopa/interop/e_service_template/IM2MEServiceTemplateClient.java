@@ -45,6 +45,12 @@ public interface IM2MEServiceTemplateClient extends SettableBearerToken {
 
     @Data
     @Builder
+    class EServiceTemplateDescriptionPatchRequest {
+        private String description;
+    }
+
+    @Data
+    @Builder
     class EServiceTemplateVersionPatchRequest {
         private String description;
         private Integer voucherLifespan;
@@ -80,6 +86,8 @@ public interface IM2MEServiceTemplateClient extends SettableBearerToken {
     void unsuspend(UUID templateId, UUID versionId);
 
     EServiceTemplate patchEServiceTemplate(UUID templateId, EServiceTemplatePatchRequest patchRequest);
+
+    EServiceTemplate patchEServiceTemplateDescription(UUID templateId, EServiceTemplateDescriptionPatchRequest patchRequest);
 
     EServiceTemplateVersion patchEServiceTemplateVersion(UUID templateId, UUID versionId, EServiceTemplateVersionPatchRequest patchRequest);
 

@@ -130,6 +130,14 @@ public class M2MEServiceTemplateClientImpl implements IM2MEServiceTemplateClient
     }
 
     @Override
+    public EServiceTemplate patchEServiceTemplateDescription(UUID templateId,
+        EServiceTemplateDescriptionPatchRequest patchRequest) {
+        return eserviceTemplatesApi.updatePublishedEServiceTemplateDescription(templateId, new EServiceTemplateDescriptionUpdateSeed()
+            .description(patchRequest.getDescription())
+        );
+    }
+
+    @Override
     public EServiceTemplateVersion patchEServiceTemplateVersion(UUID templateId, UUID versionId,
         EServiceTemplateVersionPatchRequest patchRequest) {
         return eserviceTemplatesApi.updateDraftEServiceTemplateVersion(
