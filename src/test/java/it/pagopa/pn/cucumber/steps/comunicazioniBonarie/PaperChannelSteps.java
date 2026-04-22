@@ -41,7 +41,7 @@ public class PaperChannelSteps {
     private String xClientId;
 
     private static final String IUN = "ABCD-HILM-YKWX-202202-1";
-    private static final String REQUEST_ID = "ABCD-HILM-YKWX-202202-1_rec0_try100";
+    private static final String REQUEST_ID = "ABCD-HILM-YKWX-202202-1_rec0_try";
     private static final String RECEIVER_TYPE = "PF";
     private static final String PRINT_TYPE = "BN_FRONTE_RETRO";
     private static final String NOTIFICATION_SENT_ID = "2022-07-27T12:22:33.444Z";
@@ -80,7 +80,7 @@ public class PaperChannelSteps {
 
         informalPrepareRequest = new InformalPrepareRequest()
                 .iun(getFieldValue(data,"iun", IUN))
-                .requestId(getFieldValue(data,"requestId", REQUEST_ID))
+                .requestId(getFieldValue(data,"requestId", REQUEST_ID + getRandomId()))
                 .receiverType(getFieldValue(data,"receiverType", RECEIVER_TYPE))
                 .printType(getFieldValue(data,"printType", PRINT_TYPE))
                 .notificationSentAt(getFieldValue(data,"notificationSentAt", NOTIFICATION_SENT_ID))
@@ -157,8 +157,15 @@ public class PaperChannelSteps {
             }
             case "[EMPTY]" -> "";
             case "[SOLO_SPAZI]" -> "   ";
-            default -> rawValue; // Ritorna il testo originale (Rossi, Bianchi, ecc.)
+            default -> rawValue; // Ritorna il testo originale
         };
+    }
+
+    private int getRandomId() {
+        Random random = new Random();
+
+        int limiteMassimo = 10000; // L'indice sarà compreso tra 0 e 10k
+        return random.nextInt(limiteMassimo);
     }
 
 
