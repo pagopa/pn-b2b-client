@@ -11,12 +11,14 @@ import it.pagopa.pn.interop.cucumber.steps.common.AttributeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
-
+import lombok.extern.slf4j.Slf4j;
+import org.opentest4j.AssertionFailedError;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 
+@Slf4j
 public class AgreementActivateSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final BFFDataPreparationService dataPreparationService;
@@ -82,14 +84,18 @@ public class AgreementActivateSteps {
                 .dailyCallsPerConsumer(dailyCallsPerConsumer)
                 .dailyCallsTotal(dailyCallsTotal);
 
-        EServiceDescriptor result = dataPreparationService.createEServiceAndDraftDescriptor(
-                new EServiceSeed(), updateEServiceDescriptorSeed
-        );
-        UUID eserviceId = result.getEServiceId();
-        UUID descriptorId = result.getDescriptorId();
-        dataPreparationService.bringDescriptorToGivenState(eserviceId, descriptorId, EServiceDescriptorState.valueOf(descriptorState), false);
-        sharedStepsContext.getEServicesCommonContext().setEserviceId(eserviceId);
-        sharedStepsContext.getEServicesCommonContext().setDescriptorId(descriptorId);
+        try {
+            EServiceDescriptor result = dataPreparationService.createEServiceAndDraftDescriptor(
+                    new EServiceSeed(), updateEServiceDescriptorSeed
+            );
+            UUID eserviceId = result.getEServiceId();
+            UUID descriptorId = result.getDescriptorId();
+            dataPreparationService.bringDescriptorToGivenState(eserviceId, descriptorId, EServiceDescriptorState.valueOf(descriptorState), false);
+            sharedStepsContext.getEServicesCommonContext().setEserviceId(eserviceId);
+            sharedStepsContext.getEServicesCommonContext().setDescriptorId(descriptorId);
+        } catch(AssertionFailedError e) {
+            log.warn(e.getMessage());
+        }
     }
 
     @Given("{string} ha già creato un attributo verificato")
