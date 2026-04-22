@@ -9,6 +9,7 @@ import it.pagopa.interop.authorization.enums.M2MRole;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient;
+import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient.EServiceTemplateDescriptionPatchRequest;
 import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient.EServiceTemplatePatchRequest;
 import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient.EServiceTemplateVersionCreationRequest;
 import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient.EServiceTemplateVersionPatchRequest;
@@ -84,7 +85,32 @@ public class EserviceTemplateSteps {
         this.eServiceTemplateSeedFactory = eServiceTemplateSeedFactory;
     }
 
-    @And("l'utente tenta la creazione del template e-service con la seguente configurazione:")
+    private void setCreatedEServiceTemplateInCommonContext(EServiceTemplate eServiceTemplate) {
+        EServiceTemplateInfo eServiceTemplateInfo = new EServiceTemplateInfo(
+                eServiceTemplate.getName(),
+                eServiceTemplate.getIntendedTarget(),
+                eServiceTemplate.getDescription(),
+                null,
+                null,
+                eServiceTemplate.getId(),
+                null,
+                null
+        );
+        sharedStepsContext.getEServiceTemplateStepContext().getTemplatesManaged().add(eServiceTemplateInfo);
+    }
+
+    @When("l'utente tenta la creazione dell'e-service template con la configurazione predefinita")
+    public void createEServiceTemplateWithDefaultConfiguration() {
+        EServiceTemplateSeed eServiceTemplateSeed = eServiceTemplateSeedFactory.defaultEServiceTemplateSeed();
+        httpCallExecutor.performCall(() -> dataPreparationService.createEServiceTemplate(eServiceTemplateSeed));
+
+        if (httpCallExecutor.getResponseStatus() == HttpStatus.CREATED || httpCallExecutor.getResponseStatus() == HttpStatus.OK) {
+            EServiceTemplate eServiceTemplate = (EServiceTemplate) httpCallExecutor.getResponse();
+            this.setCreatedEServiceTemplateInCommonContext(eServiceTemplate);
+        }
+    }
+
+    @When("l'utente tenta la creazione del template e-service con la seguente configurazione:")
     public void createEServiceTemplate(DataTable dataTable) {
 
         EServiceTemplateSeed eServiceTemplateSeed = eServiceTemplateSeedFactory.defaultEServiceTemplateSeed();
@@ -99,19 +125,31 @@ public class EserviceTemplateSteps {
 
         if (httpCallExecutor.getResponseStatus() == HttpStatus.CREATED || httpCallExecutor.getResponseStatus() == HttpStatus.OK) {
             EServiceTemplate eServiceTemplate = (EServiceTemplate) httpCallExecutor.getResponse();
+            this.setCreatedEServiceTemplateInCommonContext(eServiceTemplate);
+        }
+    }
 
-            // TODO The EServiceTemplateInfo class only handles the BFF version of e-service template, a refactoring is needed
-            EServiceTemplateInfo eServiceTemplateInfo = new EServiceTemplateInfo(
-                    eServiceTemplate.getName(),
-                    eServiceTemplate.getIntendedTarget(),
-                    eServiceTemplate.getDescription(),
-                    null,
-                    null,
-                    eServiceTemplate.getId(),
-                    null, null
-            );
+    @When("l'utente tenta la modifica della descrizione dell'e-service template in stato {eServiceTemplateVersionStateM2M} con una descrizione di {int} caratteri")
+    public void updateEServiceTemplateDescription(EServiceTemplateVersionState eServiceTemplateVersionState, int descriptionLength) {
 
-            sharedStepsContext.getEServiceTemplateStepContext().getTemplatesManaged().add(eServiceTemplateInfo);
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext()
+                .getLastTemplateManaged()
+                .getId();
+        String description = (new StringRandomizer(descriptionLength, descriptionLength, System.currentTimeMillis())).getRandomValue();
+
+        switch (eServiceTemplateVersionState) {
+            case DRAFT -> {
+                EServiceTemplatePatchRequest request = this.patchAssistant.buildDefaultPatchRequest();
+                request.setDescription(description);
+                httpCallExecutor.performCall(() -> m2mEServiceTemplateClient.patchEServiceTemplate(eServiceTemplateId, request));
+            }
+            case PUBLISHED -> {
+                EServiceTemplateDescriptionPatchRequest request = EServiceTemplateDescriptionPatchRequest.builder()
+                        .description(description)
+                        .build();
+                httpCallExecutor.performCall(() -> m2mEServiceTemplateClient.patchEServiceTemplateDescription(eServiceTemplateId, request));
+            }
+            default -> throw new IllegalArgumentException("L'e-service template deve essere in uno stato valido: DRAFT o PUBLISHED");
         }
     }
 
