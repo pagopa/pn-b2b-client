@@ -149,7 +149,7 @@ Feature: Costi Notifica Fase 5
       | FLAT_RATE     |
 
   Scenario: MOCK_CONFRONTO_COSTI
-    Given imposto lo iun di SharedSteps a "PZDQ-UQYU-WTMG-202604-H-1" e la pa a "Comune_Multi"
+    Given imposto lo iun di SharedSteps a "MQTJ-JZKA-KQTV-202604-Y-1" e la pa a "Comune_Multi"
     And verifico che il popolamento dei dati su Pn-PaymentInfo sia avvenuto correttamente
     And verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato inserito e correttamente valorizzato
       | isDeleted | false |
