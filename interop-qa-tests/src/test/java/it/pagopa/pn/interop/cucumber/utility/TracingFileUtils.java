@@ -3,6 +3,7 @@ package it.pagopa.pn.interop.cucumber.utility;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 import com.opencsv.exceptions.CsvException;
+import it.pagopa.pn.interop.cucumber.steps.tracing.TracingSteps;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -47,8 +48,8 @@ public class TracingFileUtils {
         new java.io.File(tracingTemporaryCsvPath).mkdir();
     }
 
-    public static void removeTemporaryFolder() {
-        java.io.File file = new java.io.File(TracingFileUtils.temporaryPath, "tracing.csv");
+    public static void removeTemporaryFileAndFolder(String fileName) {
+        java.io.File file = new java.io.File(TracingFileUtils.temporaryPath, fileName);
         java.io.File metafile = new java.io.File(TracingFileUtils.temporaryPath, ".DS_Store");
         java.io.File folder = new java.io.File(TracingFileUtils.temporaryPath, "/");
         if (file.exists()) file.delete();
@@ -57,7 +58,7 @@ public class TracingFileUtils {
     }
 
     private String getTemporaryTracingFilePath() {
-        return tracingTemporaryCsvPath + "/tracing.csv";
+        return tracingTemporaryCsvPath + TracingSteps.getTemporaryTracingFileName();
     }
 
     private List<String[]> readCsvRows(String filepath) {
@@ -354,7 +355,7 @@ public class TracingFileUtils {
             case "errato_header_campo_mancante" -> resourceLoader.getResource("file:" + tracingErrorCsvPath + "/tracing-error-header-missing-field.csv");
             case "errato_header_nome_campo" -> resourceLoader.getResource("file:" + tracingErrorCsvPath + "/tracing-error-header-wrong-field.csv");
             case "errato_header_doppia_virgola" -> resourceLoader.getResource("file:" + tracingErrorCsvPath + "/tracing-error-header-consecutive-commas.csv");
-            case "preparato" -> resourceLoader.getResource("file:" + tracingTemporaryCsvPath + "/tracing.csv");
+            case "preparato" -> resourceLoader.getResource("file:" + tracingTemporaryCsvPath + TracingSteps.getTemporaryTracingFileName());
             default -> throw new IllegalStateException("Unexpected value: " + file.trim().toLowerCase());
         };
     }

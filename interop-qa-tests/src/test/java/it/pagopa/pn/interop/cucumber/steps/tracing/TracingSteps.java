@@ -1,6 +1,8 @@
 package it.pagopa.pn.interop.cucumber.steps.tracing;
 
 import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -53,6 +55,13 @@ public class TracingSteps {
             return UUID.fromString(tracingId);
         }
         void incrementVersion() { version++; }
+    }
+
+    private static Scenario currentScenario;
+
+    public static String getTemporaryTracingFileName() {
+        String pstTestId = currentScenario.getName().split("\\]", 2)[0].substring(1);
+        return "/tracing_" + pstTestId + ".csv";
     }
 
     private static final int OFFSET_VALUE = 0;
@@ -534,8 +543,13 @@ public class TracingSteps {
         // TODO non conosco ancora come viene esattamente segnato il WARNING nel file di errore
     }
 
+    @Before("@interopTracingCsv")
+    public static void getScenario(Scenario scenario) {
+        currentScenario = scenario;
+    }
+
     @After("@interopTracingCsv")
     public static void removeTracingTemporaryCsvFolder() {
-        TracingFileUtils.removeTemporaryFolder();
+        TracingFileUtils.removeTemporaryFileAndFolder(getTemporaryTracingFileName());
     }
 }
