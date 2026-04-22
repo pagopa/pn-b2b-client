@@ -7,12 +7,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
-import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.GetTracingErrorsResponse;
-import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.GetTracingErrorsResponseResultsInner;
-import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.GetTracingsResponse;
-import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.GetTracingsResponseResultsInner;
-import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.SubmitTracingResponse;
-import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.TracingState;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model.*;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.tracing.client.TracingS3Client;
 import it.pagopa.interop.tracing.service.IInteropTracingClient;
@@ -197,6 +192,7 @@ public class TracingSteps {
             log.info(String.format("Tracing ID in response: %s", currentTracing.getTracingId()));
 
         } catch (ClassCastException e) {
+            currentTracing.setTracingId(null);
             log.info("Submit refused. No tracing ID in response.");
         }
     }
@@ -242,12 +238,12 @@ public class TracingSteps {
         Assertions.assertTrue(httpCallExecutor.getErrorMessage().contains("TRACING_ALREADY_EXISTS"));
     }
 
-    @Then("la chiamata fallisce perché la risorsa non viene trovata")
+    @Then("la richiesta fallisce perché la risorsa non viene trovata")
     public void verifyRejectionDueToNotAvailableResource() {
         Assertions.assertEquals(404, httpCallExecutor.getResponseStatus().value());
     }
 
-    @Then("la chiamata fallisce con {esito}")
+    @Then("la richiesta fallisce con {esito}")
     public void verifyRejectionDueToFailedRequest(String outcome) {
         int expectedCode = ("not found".equals(outcome)) ? 404 : 400;
         Assertions.assertEquals(expectedCode, httpCallExecutor.getResponseStatus().value());
@@ -298,6 +294,9 @@ public class TracingSteps {
         try {
             ResponseEntity responseEntity = (ResponseEntity)httpCallExecutor.getResponse();
             currentTracing.setCorrelationId(responseEntity.getHeaders().getFirst("x-correlation-id"));
+            RecoverTracingResponse response = (RecoverTracingResponse)responseEntity.getBody();
+            currentTracing.setTracingId(response.getTracingId().toString());
+            currentTracing.incrementVersion();
 
         } catch (ClassCastException e) {
             log.info(String.format("Recover refused. No tracing ID %s found.", tracingId));
@@ -322,7 +321,7 @@ public class TracingSteps {
         );
     }
 
-    @Given("viene sovrascritto il tracing aggiunto in precedenza con il csv: {string}")
+    @Given("viene sovrascritto il tracing aggiunto in precedenza con il csv {string}")
     public void replaceTracing(String file) {
         replaceTracing(currentTracing.getTracingUUID(), tracingFileUtils.getCsvFile(file));
     }
@@ -408,9 +407,9 @@ public class TracingSteps {
     private TracingS3Client.PollingSpecification getS3PollingSpecification() {
         return TracingS3Client.PollingSpecification.builder()
                 .centerTimestamp(Instant.now().toString())
-                .timeoutMs(30_000)
-                .pollIntervalMs(3_000)
-                .deltaSeconds(15)
+                .timeoutMs(20_000)
+                .pollIntervalMs(5_000)
+                .deltaSeconds(10)
                 .build();
     }
 
@@ -446,7 +445,7 @@ public class TracingSteps {
         return composeS3KeyWithPrefixAndTracing("tracing-enriched-files", tracing);
     }
 
-    @Then("nessun file csv di tracing viene memorizzato, arricchito o raccolti i record errati")
+    @Then("nessun file csv di tracing viene memorizzato, arricchito o segnato l'errore")
     public void verifyNoNewCsvTracingGeneratedAtAll() {
         Assertions.assertFalse(isCsvTracingFilePresent(
                 getS3PollingSpecification(), "tracing-files", getCurrentUploadedTracingS3Key(currentTracing)
