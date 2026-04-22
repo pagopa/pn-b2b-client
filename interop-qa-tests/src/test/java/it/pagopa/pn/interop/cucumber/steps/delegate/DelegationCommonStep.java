@@ -6,6 +6,7 @@ import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.TenantFeature;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -14,10 +15,13 @@ import it.pagopa.pn.interop.cucumber.steps.catalog.DescriptorPublicationSteps;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
+import org.springframework.web.client.HttpClientErrorException;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.DelegationAvailabilityStrategy.producerStrategyUsing;
+import static org.apache.commons.lang3.ObjectUtils.allNull;
 
 @Slf4j
 public class DelegationCommonStep {
@@ -40,6 +44,44 @@ public class DelegationCommonStep {
         this.tenantsApi = clientTokenConfigurator.getTenantsApi();
         this.pollingService = pollingService;
         this.dataPreparationService = dataPreparationService;
+    }
+
+    @Given("l'ente {string} rimuove la disponibilità a ricevere deleghe")
+    public void tenantRemoveDelegationAvailability(String tenantType) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        try {
+            tenantsApi.updateTenantDelegatedFeatures(false, false);
+            pollingService.makePolling(
+                    () -> tenantsApi.getTenant(identityService.getOrganizationId(tenantType)),
+                    res -> res.getFeatures()
+                            .stream()
+                            .allMatch(feature -> allNull(feature.getDelegatedConsumer(), feature.getDelegatedProducer())),
+                    "L'ente non dovrebbe risultare disponibile a ricevere deleghe, ma risulta altrimenti. Visionare logs per maggiori dettagli.");
+        } catch (HttpClientErrorException.Conflict e) {
+            log.info("No delegation availability defined for the given tenant!");
+        } catch (Exception e) {
+            log.error("Error while removing delegation availability", e);
+        }
+    }
+
+    @Given("l'ente {string} rimuove la disponibilità a ricevere deleghe in fruizione")
+    public void tenantRemoveConsumerDelegationAvailability(String tenantType) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        UUID tenantId = this.identityService.getOrganizationId(tenantType);
+        try {
+            tenantsApi.updateTenantDelegatedFeatures(false, false);
+            pollingService.makePolling(
+                    () -> tenantsApi.getTenant(tenantId),
+                    result -> result.getFeatures().stream()
+                            .map(TenantFeature::getDelegatedConsumer)
+                            .allMatch(Objects::isNull),
+                    "An error occured when trying to remove consumer delegation for tenant %s".formatted(tenantType)
+            );
+        } catch (HttpClientErrorException.Conflict e) {
+            log.info("No delegation availability defined for the given tenant!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /* Questo step è un condensato di molti degli step del test [TC_CAPOFILA_PUB_1] */
