@@ -5,6 +5,7 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainforma
 import it.pagopa.pn.cucumber.utils.NotificationInformalValue;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -50,9 +51,9 @@ public class InformalNotificationRequestMapper {
         if (messageId != null) {
             request.setMessageId(UUID.fromString(messageId));
         }
-        String lang = getValue(data, ADDITIONAL_LANGUAGE.key);
-        if (lang != null) {
-            request.setAdditionalLanguages(List.of(lang));
+        String notifLang = getValue(data, NOTIFICATION_ADDITIONAL_LANGUAGE.key);
+        if (notifLang != null) {
+            request.setAdditionalLanguages(List.of(notifLang));
         }
         request.setRecipients(List.of(buildRecipient(data)));
         request.setDocuments(List.of(buildDocument(data)));
@@ -95,27 +96,123 @@ public class InformalNotificationRequestMapper {
             );
         }
         // Payments
-        informalNotificationRecipient.setPayments(List.of(buildPaymentItem(data)));
+        //informalNotificationRecipient.setPayments(List.of(buildPaymentItem(data)));
+
+        int paymentCount = Integer.parseInt(
+                getValue(data, PAYMENT_COUNT.key)
+        );
+
+        List<InformalNotificationPaymentItem> payments =
+                new ArrayList<>();
+
+        for (int i = 0; i < paymentCount; i++) {
+            payments.add(buildPaymentItem(data));
+        }
+
+
+
+
         return informalNotificationRecipient;
     }
 
-    private InformalNotificationPaymentItem buildPaymentItem(Map<String, String> data) {
-        PagoPaPayment pagoPa = new PagoPaPayment()
-                .noticeCode(getValue(data, PAGOPA_NOTICE_CODE.key))
-                .creditorTaxId(getValue(data, PAGOPA_CREDITOR_TAX_ID.key))
-                .applyCost(true);
+//    private InformalNotificationPaymentItem buildPaymentItem(Map<String, String> data) {
+//        PagoPaPayment pagoPa = new PagoPaPayment()
+//                .noticeCode(getValue(data, PAGOPA_NOTICE_CODE.key))
+//                .creditorTaxId(getValue(data, PAGOPA_CREDITOR_TAX_ID.key))
+//                .applyCost(true);
+//
+//        InformalNotificationPaymentItem item = new InformalNotificationPaymentItem();
+//        item.setPagoPa(pagoPa);
+//        return item;
+//    }
 
-        InformalNotificationPaymentItem item = new InformalNotificationPaymentItem();
+//    private NotificationDocument buildDocument(Map<String, String> data) {
+//        NotificationDocument d = new NotificationDocument();
+//        d.setTitle(getValue(data, DOCUMENT_TITLE.key));
+//        d.setDocIdx(getValue(data, DOCUMENT_DOCIDX.key));
+//        d.setContentType("application/pdf");
+//        return d;
+//    }
+
+    private NotificationPaymentAttachment buildPaymentAttachment(
+            Map<String, String> data) {
+
+        // Digests
+        NotificationAttachmentDigests digests =
+                new NotificationAttachmentDigests();
+        digests.setSha256(
+                getValue(data, "attachment_sha256")
+        );
+
+        // Ref
+        NotificationAttachmentBodyRef ref =
+                new NotificationAttachmentBodyRef();
+        ref.setKey(
+                getValue(data, "attachment_key")
+        );
+        ref.setVersionToken(
+                getValue(data, "attachment_version_token")
+        );
+
+        // Attachment
+        NotificationPaymentAttachment attachment =
+                new NotificationPaymentAttachment();
+        attachment.setDigests(digests);
+        attachment.setContentType("application/pdf");
+        attachment.setRef(ref);
+
+        return attachment;
+    }
+
+    private InformalNotificationPaymentItem buildPaymentItem(
+            Map<String, String> data) {
+
+        PagoPaPayment pagoPa = new PagoPaPayment()
+                .noticeCode(
+                        getValue(data, PAGOPA_NOTICE_CODE.key)
+                )
+                .creditorTaxId(
+                        getValue(data, PAGOPA_CREDITOR_TAX_ID.key)
+                )
+                .applyCost(false)
+                .attachment(
+                        buildPaymentAttachment(data)
+                );
+
+        InformalNotificationPaymentItem item =
+                new InformalNotificationPaymentItem();
         item.setPagoPa(pagoPa);
+
         return item;
     }
 
     private NotificationDocument buildDocument(Map<String, String> data) {
-        NotificationDocument d = new NotificationDocument();
-        d.setTitle(getValue(data, DOCUMENT_TITLE.key));
-        d.setDocIdx(getValue(data, DOCUMENT_DOCIDX.key));
-        d.setContentType("application/pdf");
-        return d;
+
+        NotificationAttachmentDigests digests =
+                new NotificationAttachmentDigests();
+        digests.setSha256(
+                getValue(data, "document_sha256")
+        );
+
+        NotificationAttachmentBodyRef ref =
+                new NotificationAttachmentBodyRef();
+        ref.setKey(
+                getValue(data, "document_key")
+        );
+        ref.setVersionToken(
+                getValue(data, "document_version_token")
+        );
+
+        NotificationDocument document =
+                new NotificationDocument();
+        document.setDigests(digests);
+        document.setContentType("application/pdf");
+        document.setRef(ref);
+
+        document.setTitle(getValue(data, DOCUMENT_TITLE.key));
+        document.setDocIdx(getValue(data, DOCUMENT_DOCIDX.key));
+
+        return document;
     }
 }
 

@@ -106,7 +106,7 @@ Feature: Sottomissione di una notifica bonaria.
 
 #  SCENARIO  - Sottomissione di una notifica bonaria.
 #  CASO DI TEST .1 Validazione della richiesta di invio notifica bonaria.
-  Scenario: [NOTIFICHE_BONARIE_SOTTOMISSIONE_14] Come ente mittente ricevo creo una nuova notifica bonaria utilizzando valori di default.
+  Scenario: [NOTIFICHE_BONARIE_SOTTOMISSIONE_14A] Come ente mittente ricevo creo una nuova notifica bonaria utilizzando valori di default.
     When viene creata una nuova notifica bonaria con i seguenti parametri
     |senderDenomination|
     Then la notifica bonaria viene inviata tramite api b2b dal "Comune_1"

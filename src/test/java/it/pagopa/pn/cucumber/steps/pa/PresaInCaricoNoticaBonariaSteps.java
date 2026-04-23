@@ -133,8 +133,8 @@ public class PresaInCaricoNoticaBonariaSteps {
 
     @Given("viene creata una nuova notifica bonaria con valori di default")
     public void createInformal() {
-        InformalNotificationRequestMapper mapper = new InformalNotificationRequestMapper();
-        informalNotificationRequestV1 = mapper.buildInformalNotificationRequest(Map.of());
+        informalNotificationRequestV1 = new InformalNotificationRequestMapper().buildInformalNotificationRequest(Map.of());
+        log.info("Invio notifica bonaria - request: {}", informalNotificationRequestV1);
     }
 
     @And("si riceve errore {int}")

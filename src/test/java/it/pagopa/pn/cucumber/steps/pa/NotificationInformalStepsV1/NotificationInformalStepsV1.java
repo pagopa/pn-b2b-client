@@ -15,7 +15,7 @@ import java.util.Map;
 @Slf4j
 public class NotificationInformalStepsV1 implements NotificationInformalStepsInterface {
 
-    //todo t bonarie
+
 
     private InformalNotificationRequestV1 notificationRequest;
     private NewNotificationResponse notificationResponse;
