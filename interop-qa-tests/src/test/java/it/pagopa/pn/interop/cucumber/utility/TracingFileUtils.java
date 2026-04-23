@@ -220,7 +220,7 @@ public class TracingFileUtils {
                         nextLine[1] = "90023b80-7bc3-4de6-aaed-5ccf3f5d8031";
 
                     } else if ("qa".equals(envProfile)) {
-                        nextLine[1] = "59b568cc-a097-4217-9c58-66fa76389fe0";
+                        nextLine[1] = "f47ac10b-58cc-4372-a567-0e02b2c3d479";
                     } else {
                         nextLine[1] = "";
                     }
@@ -242,7 +242,7 @@ public class TracingFileUtils {
         }
     }
 
-    public void generateValidTemporaryCsvWithSomeWrongRecords(LocalDate date) {
+    public void generateTemporaryCsvWithSomeRecordsAndErrorOnHttpCode(LocalDate date) {
         try {
             List<String[]> csvRows = readCsvRows(tracingExampleCsvFilePath);
             createTemporaryTracingFolder();
@@ -255,12 +255,7 @@ public class TracingFileUtils {
             for (int i = 0; i < csvRows.size(); i++) {
                 String[] nextLine = csvRows.get(i);
                 // date: an available date to upload the CSV file
-                if (i == 3) {
-                    // A record with an invalid date
-                    nextLine[0] = "3000-99-99";
-                } else {
-                    nextLine[0] = date.toString();
-                }
+                nextLine[0] = date.toString();
                 // purpose_id has to be taken from the valid example provided
                 // token_id: a random UUID is accepted
                 nextLine[2] = UUID.randomUUID().toString();
@@ -270,14 +265,9 @@ public class TracingFileUtils {
                     nextLine[3] = "600";
                 }
                 // requests_count: how many requests have been tracked
-                if (i == 4) {
-                    // A record with 0 requests count, but if it is tracked, it is not consistent
-                    nextLine[4] = "0";
-                } else {
-                    nextLine[4] = String.valueOf(RandomGenerator.getDefault().nextInt(
-                            randomRequestCountFrom, randomRequestCountTo + 1)
-                    );
-                }
+                nextLine[4] = String.valueOf(RandomGenerator.getDefault().nextInt(
+                        randomRequestCountFrom, randomRequestCountTo + 1)
+                );
                 csvWriter.writeNext(nextLine);
             }
             csvWriter.close();
