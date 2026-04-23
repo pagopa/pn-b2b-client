@@ -8,10 +8,7 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.AnalogAddress;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.InformalPrepareRequest;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.InformalPrepareResponse;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.InformalProposalProductTypeEnum;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.*;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaperChannelClientImpl;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpStatus;
@@ -69,6 +66,7 @@ public class PaperChannelSteps {
 
         // Recupera il valore dalla mappa usando la CHIAVE (stringa o costante)
         String ppt = getFieldValue(data,"proposalProductType", PROPOSAL_PRODUCT_TYPE);
+        String pt = getFieldValue(data,"printType", PRINT_TYPE);
         String urlsStr = getFieldValue(data,"attachmentUrls", ATTACHMENT_URLS);
 
         this.xClientId = getFieldValue(data,"xClientId", X_CLIENT_ID);
@@ -82,12 +80,12 @@ public class PaperChannelSteps {
                 .iun(getFieldValue(data,"iun", IUN))
                 .requestId(getFieldValue(data,"requestId", REQUEST_ID + getRandomId()))
                 .receiverType(getFieldValue(data,"receiverType", RECEIVER_TYPE))
-                .printType(getFieldValue(data,"printType", PRINT_TYPE))
+                .printType(fromPreparePTString(pt))
                 .notificationSentAt(getFieldValue(data,"notificationSentAt", NOTIFICATION_SENT_ID))
 
                 .attachmentUrls(new ArrayList<>(Arrays.asList(urlsStr.split(","))))
                 .receiverAddress(analogAddress)
-                .proposalProductType(InformalProposalProductTypeEnum.valueOf(ppt));
+                .proposalProductType(fromPPTString(ppt));
 
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         String json = ow.writeValueAsString(informalPrepareRequest);
@@ -98,11 +96,13 @@ public class PaperChannelSteps {
     @Given("inizializzata una comunicazione bonaria con parametro required mancante:")
     public void newPaperChannelInformalRequestRequiredMissing(DataTable dataTable) {
         Map<String, String> data = dataTable.asMaps().get(0);
+        String pt = getFieldValue(data,"printType", PRINT_TYPE);
+
         informalPrepareRequest = new InformalPrepareRequest()
                 .iun(data.get("iun"))
                 .requestId(data.get("requestId"))
                 .receiverType(data.get("receiverType"))
-                .printType(data.get("printType"))
+                .printType(fromPreparePTString(pt))
                 //.attachmentUrls(null)
                 .proposalProductType(InformalProposalProductTypeEnum.RS);
     }
@@ -168,6 +168,21 @@ public class PaperChannelSteps {
         return random.nextInt(limiteMassimo);
     }
 
+    private static InformalProposalProductTypeEnum fromPPTString(String value) {
+        for (InformalProposalProductTypeEnum type : InformalProposalProductTypeEnum.values()) {
+            if (type.name().equalsIgnoreCase(value)) {
+                return type;
+            }
+        }
+        return null; // Oppure un valore di default come UNKNOWN
+    }
 
-
+    private static InformalPrepareRequest.PrintTypeEnum fromPreparePTString(String value) {
+        for (InformalPrepareRequest.PrintTypeEnum type : InformalPrepareRequest.PrintTypeEnum.values()) {
+            if (type.name().equalsIgnoreCase(value)) {
+                return type;
+            }
+        }
+        return null; // Oppure un valore di default come UNKNOWN
+    }
 }
