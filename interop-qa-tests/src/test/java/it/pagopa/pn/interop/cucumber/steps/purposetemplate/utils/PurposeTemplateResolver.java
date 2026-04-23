@@ -4,7 +4,7 @@ import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplateState;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.TargetTenantKind;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.BaseResolver;
+import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.AbstractResolver;
 import it.pagopa.pn.interop.cucumber.steps.purposetemplate.model.PurposeTemplateContext;
 
 import java.util.Collections;
@@ -13,7 +13,7 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 
-public class PurposeTemplateResolver extends BaseResolver {
+public class PurposeTemplateResolver extends AbstractResolver {
 
     private final SharedStepsContext sharedStepsContext;
     private final PurposeTemplateContext purposeTemplateContext;

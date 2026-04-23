@@ -2,7 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.probing.utils;
 
 import it.pagopa.interop.generated.openapi.clients.probing.model.EserviceStateBE;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.BaseResolver;
+import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.AbstractResolver;
 import it.pagopa.pn.interop.cucumber.steps.probing.model.ProbingContext;
 import it.pagopa.pn.interop.cucumber.utility.StepParser;
 
@@ -12,7 +12,7 @@ import java.util.UUID;
 
 import static it.pagopa.pn.interop.cucumber.steps.probing.utils.ProbingUtils.italyToday;
 
-public class ProbingResolver extends BaseResolver {
+public class ProbingResolver extends AbstractResolver {
 
     private final ProbingContext probingContext;
 

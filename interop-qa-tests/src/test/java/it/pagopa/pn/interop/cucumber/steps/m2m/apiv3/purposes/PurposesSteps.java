@@ -6,7 +6,8 @@ import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.RemainingD
 import it.pagopa.interop.purpose.service.IM2MV3PurposeClient;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.BaseResolver;
+import it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.purposes.resolver.PurposeResolver;
+import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.AbstractResolver;
 import it.pagopa.pn.interop.cucumber.utility.enums.ResolvableToken;
 import org.junit.jupiter.api.Assertions;
 
@@ -16,12 +17,12 @@ import java.util.UUID;
 public class PurposesSteps {
     private final IM2MV3PurposeClient purposeClient;
     private final SharedStepsContext sharedStepsContext;
-    private final BaseResolver purposesResolver;
+    private final PurposeResolver purposesResolver;
 
     public PurposesSteps(ClientTokenConfigurator clientTokenConfigurator, SharedStepsContext sharedStepsContext) {
         this.purposeClient = clientTokenConfigurator.getM2mV3PurposeClient();
         this.sharedStepsContext = sharedStepsContext;
-        this.purposesResolver = new BaseResolver(sharedStepsContext);
+        this.purposesResolver = new PurposeResolver(sharedStepsContext);
     }
 
     @Given("i residui relativi alle dailyCalls associati alla finalità sono pari a per m2m:")

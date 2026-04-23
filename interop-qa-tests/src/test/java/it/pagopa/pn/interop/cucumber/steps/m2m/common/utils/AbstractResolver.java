@@ -9,11 +9,11 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class BaseResolver {
+public abstract class AbstractResolver {
 
     public final SharedStepsContext sharedStepsContext;
 
-    public BaseResolver(SharedStepsContext sharedStepsContext) {
+    public AbstractResolver(SharedStepsContext sharedStepsContext) {
         this.sharedStepsContext = sharedStepsContext;
     }
 

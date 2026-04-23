@@ -13,7 +13,8 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.AttributeCommonContext;
-import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.BaseResolver;
+import it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.purposes.resolver.PurposeResolver;
+import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.AbstractResolver;
 import it.pagopa.pn.interop.cucumber.utility.EServiceDescriptorUtils;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,7 @@ public class AttributeCommonSteps {
     private final IHttpExecutor httpCallExecutor;
     private final IdentityService identityService;
     private final EServiceDescriptorUtils eServiceDescriptorUtils;
-    private final BaseResolver purposesResolver;
+    private final PurposeResolver purposesResolver;
     private final DelayService delayService;
 
     public AttributeCommonSteps(ClientTokenConfigurator clientTokenConfigurator,
@@ -49,7 +50,7 @@ public class AttributeCommonSteps {
             this.clientTokenConfigurator,
             this.sharedStepsContext
         );
-        this.purposesResolver = new BaseResolver(sharedStepsContext);
+        this.purposesResolver = new PurposeResolver(sharedStepsContext);
         this.delayService = delayService;
     }
 
