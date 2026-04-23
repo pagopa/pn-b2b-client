@@ -51,6 +51,8 @@ public interface IEServiceClient extends SettableBearerToken {
 
     CreatedResource updateEServiceById(UUID eServiceId, UpdateEServiceSeed updateEServiceSeed);
 
+    CreatedResource updateEServiceDelegationFlags(UUID eServiceId, EServiceDelegationFlagsUpdateSeed eserviceDelegationFlagsUpdateSeed);
+
     CreatedResource updateEServiceDescription(UUID eServiceId, EServiceDescriptionUpdateSeed eserviceDescriptionUpdateSeed);
 
     CreatedEServiceDescriptor cloneEServiceByDescriptor(UUID eServiceId, UUID descriptorId);
