@@ -11,10 +11,20 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.ssl.SSLContextBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.LinkedMultiValueMap;
@@ -26,19 +36,19 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.X509Certificate;
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import static it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton.INTEROP_ENABLED;
 
@@ -47,6 +57,7 @@ import static it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton.INT
 public class PnExternalServiceClientImpl {
 
     private final RestTemplate restTemplate;
+    private final RestTemplate restTemplateWithoutSsl;
 
     private final String apiKeyMvp1;
     private final String apiKeyMvp2;
@@ -60,7 +71,6 @@ public class PnExternalServiceClientImpl {
 
     private final String deliveryBasePath;
     private final String dataVaultBasePath;
-
 
     private final String enableInterop;
     private final String gherkinSrlBearerToken;
@@ -99,6 +109,7 @@ public class PnExternalServiceClientImpl {
             @Value("${pn.consolidatore.api.key}") String consolidatoreApiKey
     ) {
         this.restTemplate = restTemplate;
+        this.restTemplateWithoutSsl = createRestTemplateWithoutSSLVerification();
         this.safeStorageBasePath = safeStorageBasePath;
         this.extChannelsBasePath = extChannelsBasePath;
         this.deliveryBasePath = deliveryBasePath;
@@ -134,29 +145,20 @@ public class PnExternalServiceClientImpl {
         return safeStoragePnServiceDeskInfoWithHttpInfo(fileKey).getBody();
     }
 
-
-    private void restTemplateAvoidSSlCertificate() throws NoSuchAlgorithmException, KeyManagementException {
-        TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
-            public X509Certificate[] getAcceptedIssuers() {
-                return null;
-            }
-
-            public void checkClientTrusted(X509Certificate[] certs, String authType) {
-            }
-
-            public void checkServerTrusted(X509Certificate[] certs, String authType) {
-            }
-        }};
-
-        SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
-
-        HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
-        HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
-
-        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-
-        this.restTemplate.setRequestFactory(requestFactory);
+    private RestTemplate createRestTemplateWithoutSSLVerification() {
+        try {
+            SSLContext sslContext = SSLContextBuilder.create()
+                    .loadTrustMaterial((chain, authType) -> true)
+                    .build();
+            SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
+            CloseableHttpClient httpClient = HttpClients.custom()
+                    .setSSLSocketFactory(csf)
+                    .build();
+            HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
+            return new RestTemplate(requestFactory);
+        } catch (Exception e) {
+            throw new RuntimeException("Errore nella creazione del RestTemplate insecure", e);
+        }
     }
 
     public OpenSearchResponse openSearchGetAudit(String audRetentionType, String auditLogType, int numberOfResult) {
@@ -164,12 +166,6 @@ public class PnExternalServiceClientImpl {
     }
 
     private ResponseEntity<OpenSearchResponse> openSearchGetAuditWithHttpInfo(String audRetentionType, String auditLogType, int numberOfResult) throws RestClientException {
-
-        try {
-            restTemplateAvoidSSlCertificate();
-        } catch (NoSuchAlgorithmException | KeyManagementException e) {
-            throw new RuntimeException(e);
-        }
 
         String postBody = "{\"query\":{\"bool\":{\"must\":{\"match\":{\"aud_type\":\"" + auditLogType + "\"}}}},\"size\":" + numberOfResult + ",\"sort\":[{\"@timestamp\": \"desc\"}]}";
 
@@ -190,7 +186,7 @@ public class PnExternalServiceClientImpl {
 
         ParameterizedTypeReference<OpenSearchResponse> returnType = new ParameterizedTypeReference<>() {
         };
-        return invokeAPI(openSearchBaseUrl, "/pn-logs" + audRetentionType + "/_search", HttpMethod.POST, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
+        return invokeAPI(restTemplateWithoutSsl, openSearchBaseUrl, "/pn-logs" + audRetentionType + "/_search", HttpMethod.POST, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
     }
 
 
@@ -217,7 +213,7 @@ public class PnExternalServiceClientImpl {
 
         ParameterizedTypeReference<HashMap<String, String>> returnType = new ParameterizedTypeReference<>() {
         };
-        return invokeAPI(deliveryBasePath, "/delivery-private/notifications/{iun}/quick-access-link-tokens", HttpMethod.GET, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
+        return invokeAPI(restTemplate, deliveryBasePath, "/delivery-private/notifications/{iun}/quick-access-link-tokens", HttpMethod.GET, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
     }
 
     public List<HashMap<String, String>> paGroupInfo(SettableApiKey.ApiKeyType apiKeyType) throws RestClientException {
@@ -277,7 +273,7 @@ public class PnExternalServiceClientImpl {
 
         ParameterizedTypeReference<List<HashMap<String, String>>> returnType = new ParameterizedTypeReference<>() {
         };
-        return invokeAPI(basePathWebApi, "/ext-registry/pg/v1/groups", HttpMethod.GET, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
+        return invokeAPI(restTemplate, basePathWebApi, "/ext-registry/pg/v1/groups", HttpMethod.GET, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
     }
     ///ext-registry-private/pg/v1/groups-all
 
@@ -306,7 +302,7 @@ public class PnExternalServiceClientImpl {
 
         ParameterizedTypeReference<List<HashMap<String, String>>> returnType = new ParameterizedTypeReference<>() {
         };
-        return invokeAPI(gruopInfoBasePath, "/ext-registry-b2b/pa/v1/groups", HttpMethod.GET, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
+        return invokeAPI(restTemplate, gruopInfoBasePath, "/ext-registry-b2b/pa/v1/groups", HttpMethod.GET, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
     }
 
     private ResponseEntity<String> getVerificationCodeWithHttpInfo(String digitalAddress) {
@@ -328,7 +324,7 @@ public class PnExternalServiceClientImpl {
 
         ParameterizedTypeReference<String> returnType = new ParameterizedTypeReference<>() {
         };
-        return invokeAPI(extChannelsBasePath, "/external-channels/verification-code/{digitalAddress}", HttpMethod.GET, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
+        return invokeAPI(restTemplate, extChannelsBasePath, "/external-channels/verification-code/{digitalAddress}", HttpMethod.GET, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
     }
 
     private ResponseEntity<String> getInternalIdFromTaxIdWithHttpInfo(String recipientType, String taxId) {
@@ -351,7 +347,7 @@ public class PnExternalServiceClientImpl {
         ParameterizedTypeReference<String> returnType = new ParameterizedTypeReference<>() {
         };
 
-        return invokeAPI(dataVaultBasePath, "/datavault-private/v1/recipients/external/{recipientType}", HttpMethod.POST, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
+        return invokeAPI(restTemplate, dataVaultBasePath, "/datavault-private/v1/recipients/external/{recipientType}", HttpMethod.POST, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
     }
 
     public static class SafeStorageResponse {
@@ -516,7 +512,7 @@ public class PnExternalServiceClientImpl {
 
         ParameterizedTypeReference<SafeStorageResponse> returnType = new ParameterizedTypeReference<>() {
         };
-        return invokeAPI(safeStorageBasePath, "/safe-storage/v1/files/{fileKey}", HttpMethod.GET, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
+        return invokeAPI(restTemplate, safeStorageBasePath, "/safe-storage/v1/files/{fileKey}", HttpMethod.GET, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
     }
 
     private ResponseEntity<SafeStorageResponse> safeStoragePnServiceDeskInfoWithHttpInfo(String fileKey) throws RestClientException {
@@ -545,10 +541,10 @@ public class PnExternalServiceClientImpl {
 
         ParameterizedTypeReference<SafeStorageResponse> returnType = new ParameterizedTypeReference<>() {
         };
-        return invokeAPI(safeStorageBasePath, "/safe-storage/v1/files/{fileKey}", HttpMethod.GET, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
+        return invokeAPI(restTemplate, safeStorageBasePath, "/safe-storage/v1/files/{fileKey}", HttpMethod.GET, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
     }
 
-    private <T> ResponseEntity<T> invokeAPI(String basePath, String path, HttpMethod method, Map<String, Object> pathParams, MultiValueMap<String, String> queryParams, Object body, HttpHeaders headerParams, List<MediaType> accept, MediaType contentType, ParameterizedTypeReference<T> returnType) throws RestClientException {
+    private <T> ResponseEntity<T> invokeAPI(RestTemplate restTemplate, String basePath, String path, HttpMethod method, Map<String, Object> pathParams, MultiValueMap<String, String> queryParams, Object body, HttpHeaders headerParams, List<MediaType> accept, MediaType contentType, ParameterizedTypeReference<T> returnType) throws RestClientException {
 
         Map<String, Object> uriParams = new HashMap<>();
         uriParams.putAll(pathParams);
@@ -660,7 +656,7 @@ public class PnExternalServiceClientImpl {
 
         ParameterizedTypeReference<String> returnType = new ParameterizedTypeReference<>() {};
 
-        return invokeAPI(dataVaultBasePath,
+        return invokeAPI(restTemplate, dataVaultBasePath,
                 "/consolidatore-ingress/v1/push-progress-events",
                 HttpMethod.PUT, uriVariables, null, postBody,
                 headerParams, localVarAccept, localVarContentType, returnType);

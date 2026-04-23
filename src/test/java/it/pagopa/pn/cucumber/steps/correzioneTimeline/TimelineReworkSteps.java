@@ -396,7 +396,8 @@ public class TimelineReworkSteps {
     private Map<String, Object> populateConsolidatoreMapCustom(Map<String, String> inputData) {
 
         String iun = sharedSteps.getNotificationIun();
-        String timestampStringMethod = getOrInitNow();
+        String timestampStringMethod = inputData.getOrDefault("timestamp", getOrInitNow());
+        String validateTimestamp = timestampStringMethod.equals("<null>") ? null : timestampStringMethod;
         Map<String, Object> mapInfo = new HashMap<>();
         mapInfo.put("requestId", buildRequestId(
                 iun,
@@ -410,19 +411,20 @@ public class TimelineReworkSteps {
             attachment.put("documentType", inputData.get("attachment_1"));
             attachment.put("uri", this.getAttachmentEnvironmentBased());
             attachment.put("sha256", "UaMdYj7cAVO6EZTC9ddUBD7pbkG6zdEZ0LaL/3cmphU=");
-            attachment.put("date", timestampStringMethod);
+            attachment.put("date", validateTimestamp);
             mapInfo.put("attachments", Collections.singletonList(attachment));
         } else {
             mapInfo.put("attachments", null);
         }
-        mapInfo.put("clientRequestTimeStamp", timestampStringMethod);
+        mapInfo.put("clientRequestTimeStamp", validateTimestamp);
         mapInfo.put("deliveryFailureCause", inputData.getOrDefault("deliveryFailureCause", null));
         mapInfo.put("discoveredAddress", null);
         mapInfo.put("iun", iun);
         mapInfo.put("productType", inputData.getOrDefault("productType", null));
-        mapInfo.put("registeredLetterCode", "QATEST");
+        String registeredLetterCode = inputData.getOrDefault("registeredLetterCode", "QATEST");
+        mapInfo.put("registeredLetterCode", registeredLetterCode.equals("<null>") ? null : registeredLetterCode);
         mapInfo.put("statusCode", inputData.getOrDefault("statusCode", null));
-        mapInfo.put("statusDateTime", timestampStringMethod);
+        mapInfo.put("statusDateTime", validateTimestamp);
         mapInfo.put("statusDescription", "Quality assurance");
         return mapInfo;
     }

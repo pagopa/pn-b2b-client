@@ -586,6 +586,22 @@ public abstract class B2bUtils {
         };
     }
 
+    /**
+     * Metodo statico di utility per formattare un json
+     */
+    public static String logPrettyResponse(String rawJson) {
+        try {
+            ObjectMapper objMapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
+            Object jsonObject = objMapper.readValue(rawJson, Object.class);
+            String prettyJson = objMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject);
+            log.info("JSON formattato:\n{}", prettyJson);
+            return prettyJson;
+        } catch (Exception e) {
+            log.warn("Impossibile formattare il JSON, stampo l'originale: {}", rawJson);
+        }
+        return rawJson;
+    }
+
     public static String getEnvironment(ApplicationContext context) {
         String env = context.getEnvironment().getActiveProfiles()[0];
         log.info("Environment in use is: {}", env);
