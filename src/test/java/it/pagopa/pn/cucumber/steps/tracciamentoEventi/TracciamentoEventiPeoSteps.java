@@ -37,7 +37,7 @@ public class TracciamentoEventiPeoSteps {
     private final SharedSteps sharedSteps;
     private final PnSafeStoragePrivateClientImpl safeStorageClient;
     private final String externalChannelsBaseUrl;
-    private final String baseUrl;
+    private final String safeStorageBaseUrl;
     private String clientInUse;
     private String requestId;
     private static final String EICAR = "X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*";
@@ -46,11 +46,11 @@ public class TracciamentoEventiPeoSteps {
     public TracciamentoEventiPeoSteps(SharedSteps sharedSteps,
                                       PnSafeStoragePrivateClientImpl safeStorageClient,
                                       @Value("${pn.externalChannels.base-url}") String externalChannelsBaseUrl,
-                                      @Value("${pn.external.base-url}") String baseUrl) {
+                                      @Value("${pn.safeStorage.base-url}") String safeStorageBaseUrl) {
         this.sharedSteps = sharedSteps;
         this.safeStorageClient = safeStorageClient;
         this.externalChannelsBaseUrl = externalChannelsBaseUrl;
-        this.baseUrl = baseUrl;
+        this.safeStorageBaseUrl = safeStorageBaseUrl;
     }
 
     @Given("il client in uso è {string}")
@@ -144,11 +144,11 @@ public class TracciamentoEventiPeoSteps {
     }
 
     @Then("recuperando la request da gestore-repository, verifico che il record abbia un'eventsList coi seguenti eventi {string}")
-    public void recuperandoLaRequestDaGestoreRepositoryVerificoCheIlRecordContengaUnEventoConEventsList(String events) throws IOException, InterruptedException {
+    public void retrieveRequestFromGestoreRepository(String events) throws IOException, InterruptedException {
         sleep();
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(baseUrl + "/external-channel/gestoreRepository/requests/" + requestId))
+                .uri(URI.create(safeStorageBaseUrl + "/external-channel/gestoreRepository/requests/" + requestId))
                 .header("x-pagopa-extch-cx-id", clientInUse)
                 .header("Accept", "application/json")
                 .GET()
