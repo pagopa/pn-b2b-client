@@ -1240,7 +1240,7 @@ Feature: verifica validazione sincrona
       | senderTaxId        | 15376371009                 |
     And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_Multi"
-    Then l'operazione ha prodotto un errore con status code "403" con messaggio di errore "PN_DELIVERY_INVALID_TAX_ID"
+    Then l'operazione ha prodotto un errore con status code "403" con messaggio di errore "PN_DELIVERY_INVALID_SENDER_TAX_ID"
 
   @syncValidation @validationSenderFlagOFF
   Scenario: [B2B-PA-SYNC_VALIDATION_81] validazione sincrona con incongruenza tra senderTaxId e taxCode con flag OFF
