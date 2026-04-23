@@ -36,6 +36,7 @@ public class TracciamentoEventiPeoSteps {
 
     private final SharedSteps sharedSteps;
     private final PnSafeStoragePrivateClientImpl safeStorageClient;
+    private final String externalChannelsBaseUrl;
     private final String baseUrl;
     private String clientInUse;
     private String requestId;
@@ -44,9 +45,11 @@ public class TracciamentoEventiPeoSteps {
     @Autowired
     public TracciamentoEventiPeoSteps(SharedSteps sharedSteps,
                                       PnSafeStoragePrivateClientImpl safeStorageClient,
-                                      @Value("${pn.externalChannels.base-url}") String baseUrl) {
+                                      @Value("${pn.externalChannels.base-url}") String externalChannelsBaseUrl,
+                                      @Value("${pn.external.base-url.pagopa}") String baseUrl) {
         this.sharedSteps = sharedSteps;
         this.safeStorageClient = safeStorageClient;
+        this.externalChannelsBaseUrl = externalChannelsBaseUrl;
         this.baseUrl = baseUrl;
     }
 
@@ -77,7 +80,7 @@ public class TracciamentoEventiPeoSteps {
                 """.formatted(requestId, timestamp, emailAddress, getAttachmentUrls(attachmentType));
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(baseUrl + "/external-channels/v1/digital-deliveries/courtesy-full-message-requests/" + requestId))
+                .uri(URI.create(externalChannelsBaseUrl + "/external-channels/v1/digital-deliveries/courtesy-full-message-requests/" + requestId))
                 .header("x-pagopa-extch-cx-id", clientInUse)
                 .header("Content-Type", "application/json")
                 .header("Accept", "application/json")
