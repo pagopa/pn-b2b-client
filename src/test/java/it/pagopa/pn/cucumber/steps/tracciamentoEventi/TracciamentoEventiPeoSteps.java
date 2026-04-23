@@ -44,7 +44,7 @@ public class TracciamentoEventiPeoSteps {
     @Autowired
     public TracciamentoEventiPeoSteps(SharedSteps sharedSteps,
                                       PnSafeStoragePrivateClientImpl safeStorageClient,
-                                      @Value("${pn.safeStorage.base-url}") String baseUrl) {
+                                      @Value("${pn.externalChannels.base-url}") String baseUrl) {
         this.sharedSteps = sharedSteps;
         this.safeStorageClient = safeStorageClient;
         this.baseUrl = baseUrl;
