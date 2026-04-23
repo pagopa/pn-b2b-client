@@ -194,6 +194,8 @@ Feature: Costi Notifica Fase 5
       | digitalDomicile_address | test@fail.it       |
       | physicalAddress_address | Via@ok_RS          |
       | payment_creditorTaxId   | 77777777777        |
+      | payment_pagoPaForm      | NULL               |
+      | apply_cost_pagopa       | NO                 |
       | payment_f24             | <paymentF24>       |
       | title_payment           | f24_mono_none_ssrl |
       | apply_cost_f24          | <applyCost>        |

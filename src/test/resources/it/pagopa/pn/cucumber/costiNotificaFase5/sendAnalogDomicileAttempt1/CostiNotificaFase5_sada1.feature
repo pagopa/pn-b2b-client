@@ -129,7 +129,7 @@ Feature: Costi Notifica Fase 5
       | FLAT_RATE     | NO        |
 
   @costiNotificaFase5 @CNF5_FF_ENABLED @sada1
-  Scenario Outline: [CNF5_MONO_DESTINATARIO_SEND_ANALOG_DOMICILE_ATTEMPT_1_PAGOPA_ASYNC_MONO_PAY] Invio di una notifica mono-destinatario con 2 pagamenti PagoPA(async) che preveda un elemento SEND_ANALOG_DOMICILE_ATTEMPT_1
+  Scenario Outline: [CNF5_MONO_DESTINATARIO_SEND_ANALOG_DOMICILE_ATTEMPT_1_PAGOPA_ASYNC_MULTI_PAY] Invio di una notifica mono-destinatario con 2 pagamenti PagoPA(async) che preveda un elemento SEND_ANALOG_DOMICILE_ATTEMPT_1
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
@@ -198,7 +198,7 @@ Feature: Costi Notifica Fase 5
     Given viene generata una nuova notifica
       | subject            | test costi notifica fase 5 |
       | senderDenomination | Comune di palermo          |
-      | pagoPaIntMode      | SYNC                       |
+      | pagoPaIntMode      | NONE                       |
       | feePolicy          | <feePolicy>                |
       | paFee              | 17                         |
       | vat                | 10                         |
@@ -209,6 +209,8 @@ Feature: Costi Notifica Fase 5
       | physicalAddress_province     | NA                    |
       | physicalAddress_zip          | 80124                 |
       | payment_creditorTaxId        | 77777777777           |
+      | payment_pagoPaForm           | NULL                  |
+      | apply_cost_pagopa            | NO                    |
       | payment_f24                  | <paymentF24>          |
       | title_payment                | f24_mono_sync_sada1   |
       | apply_cost_f24               | <applyCost>           |
