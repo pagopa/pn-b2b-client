@@ -1409,7 +1409,23 @@ Feature: Radd Alternative
       | CITIZEN        | CF               |
       | Mario Cucumber | FRMTTR76M06B715E |
 
+  @raddAlt
+  Scenario: [RADD-ALT_ACT-20] PF - Scansione QR code esistente associato al CF corretto, ma relativo a una notifica con perfezionamento > 120 giorni
+   # Given imposto lo iun di SharedSteps a "TNVW-GKGN-ZJWX-202508-A-1" e la pa a "Comune_1"
+    When Il cittadino Mario Gherkin come destinatario 0 mostra il QRCode "dopo 120gg"
+    Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
+    And la scansione si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+    And l'operazione di download non restituisce atti, generando un errore "documenti non disponibili" con codice 4 su radd alternative
 
-
-
-
+  @raddAlt
+  Scenario: [RADD-ALT_ACT-21] PF - Scansione QR code esistente associato al CF corretto, ma relativo a una notifica con perfezionamento > 120 giorni
+   # Given imposto lo iun di SharedSteps a "TNVW-GKGN-ZJWX-202508-A-1" e la pa a "Comune_1"
+    When Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "dopo 120gg"
+    Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
+    And la scansione si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+    And l'operazione di download degli atti restituisce 3 documenti e si conclude con errore "documenti non disponibili" e codice 4 su radd alternative
+    
