@@ -134,18 +134,10 @@ public class TracciamentoEventiPeoSteps {
         return "safestorage://" + fileKey;
     }
 
-    private void sleep() {
-        log.info("Waiting 1 minute for the email to be delivered");
-        try {
-            Thread.sleep(60000L);
-        } catch (InterruptedException e) {
-            throw new RuntimeException("Error while pausing the Thread");
-        }
-    }
-
     @Then("recuperando la request da gestore-repository, verifico che il record abbia un'eventsList coi seguenti eventi {string}")
     public void retrieveRequestFromGestoreRepository(String events) throws IOException, InterruptedException {
-        sleep();
+        log.info("Waiting 1 minute for the email to be delivered");
+        Thread.sleep(60000L);
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(safeStorageBaseUrl + "/external-channel/gestoreRepository/requests/" + requestId))
