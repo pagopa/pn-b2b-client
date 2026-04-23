@@ -51,7 +51,7 @@ public abstract class AbstractInteropTracingClient implements IInteropTracingCli
 
     @Override
     public GetTracingsResponse getTracings(Integer offset, Integer limit, List<TracingState> states) throws RestClientException {
-        return tracingsApi.getTracings(offset, limit, states, "INVALID");
+        return tracingsApi.getTracings(offset, limit, states, null);
     }
 
     @Override
