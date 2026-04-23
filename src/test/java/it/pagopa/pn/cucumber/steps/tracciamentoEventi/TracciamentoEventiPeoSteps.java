@@ -4,7 +4,6 @@ import com.jayway.jsonpath.JsonPath;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.client.b2b.pa.service.IPnSafeStoragePrivateClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnSafeStoragePrivateClientImpl;
 import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.FileCreationRequest;
 import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.FileCreationResponse;
@@ -37,7 +36,7 @@ public class TracciamentoEventiPeoSteps {
 
     private final SharedSteps sharedSteps;
     private final PnSafeStoragePrivateClientImpl safeStorageClient;
-    private final String safeStorageBaseUrl;
+    private final String externalChannelBaseUrl;
     private String clientInUse;
     private String requestId;
     private static final String EICAR = "X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*";
@@ -45,10 +44,10 @@ public class TracciamentoEventiPeoSteps {
     @Autowired
     public TracciamentoEventiPeoSteps(SharedSteps sharedSteps,
                                       PnSafeStoragePrivateClientImpl safeStorageClient,
-                                      @Value("${pn.safeStorage.base-url}") String safeStorageBaseUrl) {
+                                      @Value("${pn.externalChannels.base-url}") String externalChannelsBaseUrl) {
         this.sharedSteps = sharedSteps;
         this.safeStorageClient = safeStorageClient;
-        this.safeStorageBaseUrl = safeStorageBaseUrl;
+        this.externalChannelBaseUrl = externalChannelsBaseUrl;
     }
 
     @Given("il client in uso è {string}")
@@ -78,7 +77,7 @@ public class TracciamentoEventiPeoSteps {
                 """.formatted(requestId, timestamp, emailAddress, getAttachmentUrls(attachmentType));
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(safeStorageBaseUrl + "/external-channels/v1/digital-deliveries/courtesy-full-message-requests/" + requestId))
+                .uri(URI.create(externalChannelBaseUrl + "/external-channels/v1/digital-deliveries/courtesy-full-message-requests/" + requestId))
                 .header("x-pagopa-extch-cx-id", clientInUse)
                 .header("Content-Type", "application/json")
                 .header("Accept", "application/json")
@@ -146,7 +145,7 @@ public class TracciamentoEventiPeoSteps {
         sleep();
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(safeStorageBaseUrl + "/external-channel/gestoreRepository/requests/" + requestId))
+                .uri(URI.create(externalChannelBaseUrl + "/external-channel/gestoreRepository/requests/" + requestId))
                 .header("x-pagopa-extch-cx-id", clientInUse)
                 .header("Accept", "application/json")
                 .GET()
