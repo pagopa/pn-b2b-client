@@ -87,10 +87,11 @@ public class TracciamentoEventiPeoSteps {
                 .PUT(HttpRequest.BodyPublishers.ofString(jsonBody))
                 .build();
 
-        log.info("Request per invio mail:\n{}", request);
-        log.info("Body per invio mail:\n{}", jsonBody);
+        log.info("Request per invio mail: {}", request);
+        log.info("Body per invio mail: {}", jsonBody);
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        log.info("Response status invio mail: {}", response.statusCode());
         if (response.statusCode() >= 300) {
             throw new RuntimeException("Errore nella chiamata PUT: " + response.statusCode() + " - " + response.body());
         }
@@ -146,6 +147,7 @@ public class TracciamentoEventiPeoSteps {
                 .GET()
                 .build();
 
+        log.info("Request per recupero da gestore-repository: {}", request);
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() != 200) {
             throw new RuntimeException("Errore nella chiamata GET: " + response.statusCode() + " - " + response.body());
