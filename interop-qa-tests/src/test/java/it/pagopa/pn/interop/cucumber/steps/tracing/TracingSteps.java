@@ -171,9 +171,9 @@ public class TracingSteps {
         tracingFileUtils.generateValidTemporaryCsvWithNotCompliantPurposeId(getFirstAvailableDate());
     }
 
-    @Given("viene preparato un file CSV valido con qualche record errato per una data disponibile")
-    public void generateValidCsvWithSomeWrongRecords() {
-        tracingFileUtils.generateValidTemporaryCsvWithSomeWrongRecords(getFirstAvailableDate());
+    @Given("viene preparato un file CSV con un codice HTTP non valido per una data disponibile")
+    public void generateCsvWithSomeWrongRecordsAndErrorOnHttpCode() {
+        tracingFileUtils.generateTemporaryCsvWithSomeRecordsAndErrorOnHttpCode(getFirstAvailableDate());
     }
 
     @Given("viene preparato un file CSV valido e minimale per un giorno in stato {string}")
@@ -359,49 +359,37 @@ public class TracingSteps {
 
     @And("si attende che il file di tracing caricato passi in stato {string}")
     public void waitForStatus(String state) {
+        int offset = getOffsetToFindTracingId(currentTracing.getTracingId());
         PollingService.makePolling(
-                () -> (httpCallExecutor.performCall(() -> interopTracingClient.getTracings(OFFSET_VALUE, LIMIT_VALUE, List.of(TracingState.fromValue(state))))),
+                () -> (httpCallExecutor.performCall(() -> interopTracingClient.getTracings(offset, LIMIT_VALUE, List.of()))),
                 res -> ((GetTracingsResponse)httpCallExecutor.getResponse()).getResults().stream()
                         .filter(x -> x.getTracingId().equals(currentTracing.getTracingId()))
                         .map(GetTracingsResponseResultsInner::getState)
-                        .anyMatch(tracingState -> tracingState.equals(state)),
+                        .anyMatch(tracingState -> "PENDING".equals(state) || "MISSING".equals(state) ? tracingState.equals(state) : !tracingState.equals("PENDING") && !tracingState.equals("MISSING")),
                 String.format("The TracingId: %s did not reach the desired status: %s", currentTracing.getTracingId(), state),
                 15, 10000
         );
         log.info(String.format("Tracing ID in use: %s", currentTracing.getTracingId()));
     }
 
-    @Then("viene recuperato il file di tracing appena caricato e si verifica che lo stato sia {string}")
-    public void retrieveTracingAndVerifyStatus(String state) {
+    public int getOffsetToFindTracingId(String tracingId) {
         GetTracingsResponseResultsInner result;
-        int attempt = 0;
-        int totalPages;
-        try  {
-            do {
-                GetTracingsResponse tracingsResponse = interopTracingClient.getTracings(attempt, LIMIT_VALUE, List.of());
-                totalPages = tracingsResponse.getTotalCount().intValue();
-                result = tracingsResponse.getResults().stream()
-                        .filter(x -> x.getTracingId().equals(((SubmitTracingResponse)httpCallExecutor.getResponse()).getTracingId().toString()))
-                        .findFirst()
-                        .orElse(null);
-
-                if (result != null) {
-                    int finalAttempt = attempt;
-                    pollingService.makePolling(
-                            () -> interopTracingClient.getTracings(finalAttempt, LIMIT_VALUE, List.of()),
-                            res -> res.getResults().stream().anyMatch(x -> x.getTracingId().equals(((SubmitTracingResponse)httpCallExecutor.getResponse()).getTracingId().toString()) && x.getState().equals(state)),
-                            String.format("The TracingId: %s did not reach the desired status: %s", ((SubmitTracingResponse)httpCallExecutor.getResponse()).getTracingId().toString(), state)
-                    );
-                    break;
-                } else attempt++;
-
-            } while (attempt < totalPages / LIMIT_VALUE + 1);
-            if (result == null) {
-                throw new RuntimeException("Tracing ID not found after " + attempt + " attempts!");
+        int offset = 0;
+        int totalCount;
+        do {
+            GetTracingsResponse tracingsResponse = interopTracingClient.getTracings(offset, LIMIT_VALUE, List.of());
+            totalCount = tracingsResponse.getTotalCount().intValue();
+            result = tracingsResponse.getResults().stream()
+                    .filter(x -> x.getTracingId().equals(tracingId))
+                    .findFirst()
+                    .orElse(null);
+            if (result != null) {
+                return offset;
             }
-        } catch (Exception e) {
-            throw new RuntimeException("There was an error while retrieving the tracing file!");
-        }
+            offset += LIMIT_VALUE;
+        } while (offset < totalCount);
+
+        return 0;
     }
 
     private GetTracingErrorsResponseResultsInner createExpectedResponse(String errorCode, String severity, String message, String purposeId, Integer rowNumber) {
@@ -415,11 +403,15 @@ public class TracingSteps {
     }
 
     private TracingS3Client.PollingSpecification getS3PollingSpecification() {
+        return getS3PollingSpecification(20_000, 5_000, 10);
+    }
+
+    private TracingS3Client.PollingSpecification getS3PollingSpecification(long timeoutMs, long pollIntervalMs, int deltaSeconds) {
         return TracingS3Client.PollingSpecification.builder()
                 .centerTimestamp(Instant.now().toString())
-                .timeoutMs(20_000)
-                .pollIntervalMs(5_000)
-                .deltaSeconds(10)
+                .timeoutMs(timeoutMs)
+                .pollIntervalMs(pollIntervalMs)
+                .deltaSeconds(deltaSeconds)
                 .build();
     }
 
@@ -428,9 +420,10 @@ public class TracingSteps {
     }
 
     private String composeS3KeyWithTracing(Tracing tracing) {
+        String tenantType = ("TENANT2".equals(currentTenant)) ? "PA2" : "PA1";
         String key = String.format(
                 "tenantId=%s/date=%s/tracingId=%s/version=%s/correlationId=%s/%s.csv",
-                interopTracingClient.getIdentityService().getOrganizationId("PA1"),
+                interopTracingClient.getIdentityService().getOrganizationId(tenantType),
                 tracing.getFormattedDate(),
                 tracing.getTracingId(),
                 tracing.getVersion(),
@@ -441,30 +434,66 @@ public class TracingSteps {
         return key;
     }
 
-    @Then("nessun file csv di tracing viene memorizzato, arricchito o segnato l'errore")
-    public void verifyNoNewCsvTracingGeneratedAtAll() {
-        Assertions.assertFalse(isCsvTracingFilePresent(
-                getS3PollingSpecification(), "tracing-files", composeS3KeyWithTracing(currentTracing)
+    @Then("si attende che l'invio in ERROR sia registrato come header CSV non valido")
+    public void verifyWrongCsvHeaderIsTrackedInTracingErrors() {
+        String bucketName = "tracing-errors-files-" + envProfile;
+        TracingS3Client.PollingSpecification pollingSpec = getS3PollingSpecification();
+
+        Assertions.assertTrue(isCsvTracingFilePresent(
+                pollingSpec, bucketName, composeS3KeyWithTracing(currentTracing)
         ));
+        String csvContent = s3Client.getTextualFileContentFromS3Bucket(
+                pollingSpec, bucketName, composeS3KeyWithTracing(currentTracing)
+        );
+
+        List<String[]> rows = csvContent.lines()
+                .map(line -> line.split(","))
+                .collect(Collectors.toList());
+        List<String> actualFields = Arrays.asList(rows.get(0));
+
+        final List<String> expectedFields = List.of(
+                "id", "tracing_id", "version", "purpose_id", "severity",
+                "error_code", "message", "row_number"
+        );
+        Assertions.assertTrue(actualFields.containsAll(expectedFields));
+
+        int severityIndex = expectedFields.indexOf("severity");
+        int errorCodeIndex = expectedFields.indexOf("error_code");
+
+        Assertions.assertEquals("INVALID", Arrays.asList(rows.get(1)).get(severityIndex));
+        Assertions.assertEquals("INVALID_CSV_HEADERS", Arrays.asList(rows.get(1)).get(errorCodeIndex));
+    }
+
+    @Then("nessun file CSV di tracing viene arricchito")
+    public void verifyNoNewEnrichedCsvTracingGenerated() {
         Assertions.assertFalse(isCsvTracingFilePresent(
-                getS3PollingSpecification(), "tracing-errors", composeS3KeyWithTracing(currentTracing)
-        ));
-        Assertions.assertFalse(isCsvTracingFilePresent(
-                getS3PollingSpecification(), "tracing-enriched-files", composeS3KeyWithTracing(currentTracing)
+                getS3PollingSpecification(4_000, 1_000, 2),
+                "tracing-enriched-files-" + envProfile, composeS3KeyWithTracing(currentTracing)
         ));
     }
 
     @Then("si attende che il file di tracing venga ricevuto")
     public void verifyCsvTracingFileIsReceived() {
         Assertions.assertTrue(isCsvTracingFilePresent(
-                getS3PollingSpecification(), "tracing-files", composeS3KeyWithTracing(currentTracing)
+                getS3PollingSpecification(), "tracing-files-" + envProfile, composeS3KeyWithTracing(currentTracing)
         ));
     }
 
     @Then("si attende che il file di tracing arricchito venga generato")
     public void verifyEnrichedCsvTracingFileIsGenerated() {
         Assertions.assertTrue(isCsvTracingFilePresent(
-                getS3PollingSpecification(), "tracing-enriched-files", composeS3KeyWithTracing(currentTracing)
+                getS3PollingSpecification(), "tracing-enriched-files-" + envProfile, composeS3KeyWithTracing(currentTracing)
+        ));
+    }
+
+    @Then("si attende fino a {int} minuti che il file di tracing arricchito venga generato")
+    public void verifyEnrichedCsvTracingFileIsGeneratedWithLongWait(int waitInMinutes) {
+        long timeoutMs = waitInMinutes * 60 * 1000L;
+        long pollIntervalMs = 30_000;
+        int deltaSeconds = 60;
+        Assertions.assertTrue(isCsvTracingFilePresent(
+                getS3PollingSpecification(timeoutMs, pollIntervalMs, deltaSeconds),
+                "tracing-enriched-files-" + envProfile, composeS3KeyWithTracing(currentTracing)
         ));
     }
 
@@ -492,9 +521,9 @@ public class TracingSteps {
         Assertions.assertTrue(actualFields.containsAll(expectedFields));
     }
 
-    @Then("si attende che i record errati vengano tracciati negli errori")
+    @Then("si attende che il record con codice HTTP non valido sia tracciato negli errori")
     public void verifyWrongCsvRecordsAreTrackedInTracingErrors() {
-        String bucketName = "tracing-errors-" + envProfile;
+        String bucketName = "tracing-errors-files-" + envProfile;
         TracingS3Client.PollingSpecification pollingSpec = getS3PollingSpecification();
 
         Assertions.assertTrue(isCsvTracingFilePresent(
@@ -507,13 +536,24 @@ public class TracingSteps {
         List<String[]> rows = csvContent.lines()
                 .map(line -> line.split(","))
                 .collect(Collectors.toList());
+        List<String> actualFields = Arrays.asList(rows.get(0));
 
-        // TODO non conosco ancora come viene esattamente scritto il file di errore
+        final List<String> expectedFields = List.of(
+                "id", "tracing_id", "version", "purpose_id", "severity",
+                "error_code", "message", "row_number"
+        );
+        Assertions.assertTrue(actualFields.containsAll(expectedFields));
+
+        int severityIndex = expectedFields.indexOf("severity");
+        int errorCodeIndex = expectedFields.indexOf("error_code");
+
+        Assertions.assertEquals("INVALID", Arrays.asList(rows.get(1)).get(severityIndex));
+        Assertions.assertEquals("INVALID_STATUS_CODE", Arrays.asList(rows.get(1)).get(errorCodeIndex));
     }
 
-    @Then("si attende che i record con purpose non conformi vengano tracciati con warning")
+    @Then("si attende che l'invio in WARNING sia registrato come purpose ID non conforme all'utenza")
     public void verifyWarningCsvRecordsAreTrackedInTracingErrors() {
-        String bucketName = "tracing-errors-" + envProfile;
+        String bucketName = "tracing-errors-files-" + envProfile;
         TracingS3Client.PollingSpecification pollingSpec = getS3PollingSpecification();
 
         Assertions.assertTrue(isCsvTracingFilePresent(
@@ -526,8 +566,19 @@ public class TracingSteps {
         List<String[]> rows = csvContent.lines()
                 .map(line -> line.split(","))
                 .collect(Collectors.toList());
+        List<String> actualFields = Arrays.asList(rows.get(0));
 
-        // TODO non conosco ancora come viene esattamente segnato il WARNING nel file di errore
+        final List<String> expectedFields = List.of(
+                "id", "tracing_id", "version", "purpose_id", "severity",
+                "error_code", "message", "row_number"
+        );
+        Assertions.assertTrue(actualFields.containsAll(expectedFields));
+
+        int severityIndex = expectedFields.indexOf("severity");
+        int errorCodeIndex = expectedFields.indexOf("error_code");
+
+        Assertions.assertEquals("WARNING", Arrays.asList(rows.get(1)).get(severityIndex));
+        Assertions.assertEquals("TENANT_IS_NOT_PRODUCER_OR_CONSUMER", Arrays.asList(rows.get(1)).get(errorCodeIndex));
     }
 
     @Before("@interopTracingCsv")
