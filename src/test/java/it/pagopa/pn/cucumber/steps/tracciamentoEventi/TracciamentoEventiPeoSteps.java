@@ -4,6 +4,9 @@ import com.jayway.jsonpath.JsonPath;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.internal.externalchannels.v1.model.CourtesyMessageProgressEvent;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.internal.externalchannels.v1.model.DigitalCourtesyMailRequest;
+import it.pagopa.pn.client.b2b.pa.service.IPnExternalChannelsInternalClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnSafeStoragePrivateClientImpl;
 import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.FileCreationRequest;
 import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.FileCreationResponse;
@@ -25,7 +28,9 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -36,8 +41,8 @@ public class TracciamentoEventiPeoSteps {
 
     private final SharedSteps sharedSteps;
     private final PnSafeStoragePrivateClientImpl safeStorageClient;
-    private final String externalChannelsBaseUrl;
-    private final String safeStorageBaseUrl;
+    private final IPnExternalChannelsInternalClient externalChannelsInternalClient;
+    private final String deliveryBaseUrl;
     private String clientInUse;
     private String requestId;
     private static final String EICAR = "X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*";
@@ -45,72 +50,94 @@ public class TracciamentoEventiPeoSteps {
     @Autowired
     public TracciamentoEventiPeoSteps(SharedSteps sharedSteps,
                                       PnSafeStoragePrivateClientImpl safeStorageClient,
-                                      @Value("${pn.externalChannels.base-url}") String externalChannelsBaseUrl,
-                                      @Value("${pn.safeStorage.base-url}") String safeStorageBaseUrl) {
+                                      IPnExternalChannelsInternalClient externalChannelsInternalClient,
+                                      @Value("${pn.internal.delivery-base-url}") String deliveryBaseUrl) {
         this.sharedSteps = sharedSteps;
         this.safeStorageClient = safeStorageClient;
-        this.externalChannelsBaseUrl = externalChannelsBaseUrl;
-        this.safeStorageBaseUrl = safeStorageBaseUrl;
+        this.externalChannelsInternalClient = externalChannelsInternalClient;
+        this.deliveryBaseUrl = deliveryBaseUrl;
     }
 
     @Given("il client in uso è {string}")
-    public void ilClientInUsoÈ(String clientId) {
+    public void setClientInUse(String clientId) {
         this.clientInUse = clientId;
         safeStorageClient.customApiClient(clientId);
     }
 
     @When("viene inviata una mail tramite PEO all'indirizzo {string} con allegato {string}")
-    public void sendEmailWithAttachment(String emailAddress, String attachmentType) throws IOException, InterruptedException {
-        HttpClient client = HttpClient.newHttpClient();
+    public void sendEmailWithAttachment(String emailAddress, String attachmentType) {
+
         String timestamp = Instant.now().toString();
         requestId = "TEST_QA_" + timestamp;
-        String jsonBody = """
-                {
-                  "requestId": "%s",
-                  "eventType": "COURTESY_MESSAGE",
-                  "clientRequestTimeStamp": "%s",
-                  "qos": "INTERACTIVE",
-                  "receiverDigitalAddress": "%s",
-                  "messageText": "Questo è un messaggio di cortesia da parte di QA",
-                  "channel": "EMAIL",
-                  "subjectText": "Test QA invio email",
-                  "messageContentType": "text/plain",
-                  "attachmentUrls": %s
-                }
-                """.formatted(requestId, timestamp, emailAddress, getAttachmentUrls(attachmentType));
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(externalChannelsBaseUrl + "/external-channels/v1/digital-deliveries/courtesy-full-message-requests/" + requestId))
-                .header("x-pagopa-extch-cx-id", clientInUse)
-                .header("Content-Type", "application/json")
-                .header("Accept", "application/json")
-                .PUT(HttpRequest.BodyPublishers.ofString(jsonBody))
-                .build();
+        DigitalCourtesyMailRequest emailRequest = new DigitalCourtesyMailRequest();
+        emailRequest.setRequestId(requestId);
+        emailRequest.setEventType("COURTESY_MESSAGE");
+        emailRequest.setClientRequestTimeStamp(timestamp);
+        emailRequest.setQos(DigitalCourtesyMailRequest.QosEnum.INTERACTIVE);
+        emailRequest.setReceiverDigitalAddress(emailAddress);
+        emailRequest.setMessageText("Questo è un messaggio di cortesia da parte di QA");
+        emailRequest.setChannel(DigitalCourtesyMailRequest.ChannelEnum.EMAIL);
+        emailRequest.setSubjectText("Test QA invio email");
+        emailRequest.setMessageContentType(DigitalCourtesyMailRequest.MessageContentTypeEnum.PLAIN);
+        emailRequest.setAttachmentUrls(
+                attachmentType.equalsIgnoreCase("virus") ? List.of(uploadEicarVirusFile()) : new ArrayList<>());
 
-        log.info("Request per invio mail: {}", request);
-        log.info("Body per invio mail: {}", jsonBody);
-
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        log.info("Response status invio mail: {}", response.statusCode());
-        if (response.statusCode() >= 300) {
-            throw new RuntimeException("Errore nella chiamata PUT: " + response.statusCode() + " - " + response.body());
+        try {
+            externalChannelsInternalClient.sendDigitalCourtesyMessage(requestId, clientInUse, emailRequest);
+            log.info("Email inviata con successo");
+            log.info("Request id: {}", requestId);
+        } catch (Exception e) {
+            log.info("Errore in fase di invio email. {}", e.getMessage());
         }
-        log.info("Email inviata con successo");
+
+//        HttpClient client = HttpClient.newHttpClient();
+//
+//        String jsonBody = """
+//                {
+//                  "requestId": "%s",
+//                  "eventType": "COURTESY_MESSAGE",
+//                  "clientRequestTimeStamp": "%s",
+//                  "qos": "INTERACTIVE",
+//                  "receiverDigitalAddress": "%s",
+//                  "messageText": "Questo è un messaggio di cortesia da parte di QA",
+//                  "channel": "EMAIL",
+//                  "subjectText": "Test QA invio email",
+//                  "messageContentType": "text/plain",
+//                  "attachmentUrls": %s
+//                }
+//                """.formatted(requestId, timestamp, emailAddress, getAttachmentUrls(attachmentType));
+//
+//        HttpRequest request = HttpRequest.newBuilder()
+//                .uri(URI.create(externalChannelsBaseUrl + "/external-channels/v1/digital-deliveries/courtesy-full-message-requests/" + requestId))
+//                .header("x-pagopa-extch-cx-id", clientInUse)
+//                .header("Content-Type", "application/json")
+//                .header("Accept", "application/json")
+//                .PUT(HttpRequest.BodyPublishers.ofString(jsonBody))
+//                .build();
+
+//        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+//        log.info("Response status invio mail: {}", response.statusCode());
+//        if (response.statusCode() >= 300) {
+//            throw new RuntimeException("Errore nella chiamata PUT: " + response.statusCode() + " - " + response.body());
+//        }
+//        log.info("Email inviata con successo");
+//        log.info("Request per invio mail: {}", emailRequest);
     }
 
-    private String getAttachmentUrls(String attachmentType) {
-        switch (attachmentType.toLowerCase()) {
-            case "null" -> {
-                log.info("Nessun allegato richiesto per questo test.");
-                return "[]";
-            }
-            case "virus" -> {
-                log.info("Allegato malevolo (EICAR) richiesto.");
-                return String.format("[\"%s\"]", uploadEicarVirusFile());
-            }
-            default -> throw new IllegalArgumentException("Invalid attachment: " + attachmentType);
-        }
-    }
+//    private String getAttachmentUrls(String attachmentType) {
+//        switch (attachmentType.toLowerCase()) {
+//            case "null" -> {
+//                log.info("Nessun allegato richiesto per questo test.");
+//                return "[]";
+//            }
+//            case "virus" -> {
+//                log.info("Allegato malevolo (EICAR) richiesto.");
+//                return String.format("[\"%s\"]", uploadEicarVirusFile());
+//            }
+//            default -> throw new IllegalArgumentException("Invalid attachment: " + attachmentType);
+//        }
+//    }
 
     private String uploadEicarVirusFile() {
         byte[] byteArray = EICAR.getBytes(StandardCharsets.US_ASCII);
@@ -139,9 +166,13 @@ public class TracciamentoEventiPeoSteps {
     public void retrieveRequestFromGestoreRepository(String events) throws IOException, InterruptedException {
         log.info("Waiting 1 minute for the email to be delivered");
         Thread.sleep(60000L);
+
+//        List<CourtesyMessageProgressEvent> eventsList = externalChannelsInternalClient.getDigitalCourtesyMessageStatus(requestId, clientInUse);
+//        checkEventsListNew(eventsList, events);
+
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(safeStorageBaseUrl + "/external-channel/gestoreRepository/requests/" + requestId))
+                .uri(URI.create(deliveryBaseUrl + "/external-channel/gestoreRepository/requests/" + requestId))
                 .header("x-pagopa-extch-cx-id", clientInUse)
                 .header("Accept", "application/json")
                 .GET()
@@ -163,14 +194,11 @@ public class TracciamentoEventiPeoSteps {
 
         String[] eventsExpected = events.split(";");
         Map<String, String> mapCodeStatus = new HashMap<>();
-        for (int i = 0; i < eventsExpected.length; i++) {
-            String event = eventsExpected[i];
+        for (String event : eventsExpected) {
             String[] codeStatus = event.split("-");
             mapCodeStatus.put(codeStatus[0], codeStatus[1]);
         }
-        mapCodeStatus.entrySet().forEach(entry -> {
-            String statusCode = entry.getKey();
-            String status = entry.getValue();
+        mapCodeStatus.forEach((statusCode, status) -> {
             String filter = String.format(
                     "$.requestMetadata.eventsList[?(@.digProgrStatus.statusCode == '%s' && @.digProgrStatus.status == '%s')]",
                     statusCode, status
@@ -179,6 +207,27 @@ public class TracciamentoEventiPeoSteps {
             assertThat(filteredEvents)
                     .as("L'eventsList dovrebbe contenere un evento con statusCode '%s' e status '%s'", statusCode, status)
                     .asList().isNotEmpty();
+        });
+    }
+
+    private void checkEventsListNew(List<CourtesyMessageProgressEvent> eventsList, String expectedOutput) {
+        assertThat(eventsList).as("L'eventsList restituita non dev'essere null").isNotNull();
+
+        String[] eventsExpected = expectedOutput.split(";");
+        Map<String, String> mapCodeStatus = new HashMap<>();
+        for (String event : eventsExpected) {
+            String[] codeStatus = event.split("-");
+            mapCodeStatus.put(codeStatus[0], codeStatus[1]);
+        }
+        mapCodeStatus.forEach((statusCode, status) -> {
+
+            CourtesyMessageProgressEvent expectedEvent = eventsList.stream().filter(e ->
+                            e.getEventCode().toString().equals(statusCode)
+                                    && e.getStatus().toString().equalsIgnoreCase(status))
+                    .findFirst().orElse(null);
+            assertThat(expectedEvent)
+                    .as("L'eventsList dovrebbe contenere un evento con statusCode '%s' e status '%s'", statusCode, status)
+                    .isNotNull();
         });
     }
 }
