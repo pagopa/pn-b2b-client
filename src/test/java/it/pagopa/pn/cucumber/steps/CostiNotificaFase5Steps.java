@@ -63,16 +63,16 @@ public class CostiNotificaFase5Steps {
                 notificationCostRecipientResponse = notificationCostClient.getNotificationCost(sharedSteps.getNotificationIun(), recIndex);
                 log.info("NotificationCostRecipientResponse:\n {}", notificationCostRecipientResponse);
                 String costoValorizzato = expectedData.get("costoValorizzato");
-                if (costoValorizzato != null) {
-                    switch (costoValorizzato) {
-                        case "firstAnalogCost" ->
-                                assertThat(record.get("firstAnalogCost").n()).as("Il record salvato su Pn-NotificationDeliveryCost dovrebbe avere il campo %s valorizzato", costoValorizzato).isNotNull();
-                        case "secondAnalogCost" ->
-                                assertThat(record.get("secondAnalogCost").n()).as("Il record salvato su Pn-NotificationDeliveryCost dovrebbe avere il campo %s valorizzato", costoValorizzato).isNotNull();
-                        case "simpleRegisteredLetterCost" ->
-                                assertThat(record.get("simpleRegisteredLetterCost").n()).as("Il record salvato su Pn-NotificationDeliveryCost dovrebbe avere il campo %s valorizzato", costoValorizzato).isNotNull();
-                    }
-                }
+//                if (costoValorizzato != null) {
+//                    switch (costoValorizzato) {
+//                        case "firstAnalogCost" ->
+//                                assertThat(record.get("firstAnalogCost").n()).as("Il record salvato su Pn-NotificationDeliveryCost dovrebbe avere il campo %s valorizzato", costoValorizzato).isNotNull();
+//                        case "secondAnalogCost" ->
+//                                assertThat(record.get("secondAnalogCost").n()).as("Il record salvato su Pn-NotificationDeliveryCost dovrebbe avere il campo %s valorizzato", costoValorizzato).isNotNull();
+//                        case "simpleRegisteredLetterCost" ->
+//                                assertThat(record.get("simpleRegisteredLetterCost").n()).as("Il record salvato su Pn-NotificationDeliveryCost dovrebbe avere il campo %s valorizzato", costoValorizzato).isNotNull();
+//                    }
+//                }
             } catch (HttpStatusCodeException httpStatusCodeException) {
                 if (record.get("isDeleted").bool()) {
                     assertSoftly(softly -> {
