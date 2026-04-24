@@ -52,7 +52,7 @@ public class PnBffPaClientImpl implements IPnWebPaClient {
                              @Value("${pn.external.bearer-token-pa-GA}") String bearerTokenGA,
                              @Value("${pn.external.bearer-token-pa-support-1}") String bearerTokenSupport1,
                              @Value("${pn.webapi.external.user-agent}") String userAgent,
-                             @Value("${pn.external.api-key-support}") String apiKeySupport) {
+                             @Value("${pn.external.senderId-GA}") String apiKeySupport) {
         this.bearerTokenCom1 = bearerTokenCom1;
         this.bearerTokenCom2 = bearerTokenCom2;
         this.bearerTokenSON = bearerTokenSON;

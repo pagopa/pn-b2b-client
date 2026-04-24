@@ -24,7 +24,6 @@ import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.BiConsumer;
 
 import static java.time.OffsetDateTime.now;
 
@@ -32,7 +31,7 @@ import static java.time.OffsetDateTime.now;
 public class SupportTeamApiSteps {
     private final PnApiKeyManagerExternalClientImpl bffApiKeyClient;
     private final PnBffPaClientImpl bffPaClient;
-    private final Map<String, BiConsumer<PnApiKeyManagerExternalClientImpl, PnBffPaClientImpl>> strategies = new HashMap<>();
+    private final Map<String, Runnable> strategies = new HashMap<>();
     private Exception exception;
 
     public SupportTeamApiSteps(PnApiKeyManagerExternalClientImpl bffApiKeyClient, PnBffPaClientImpl bffPaClient) {
@@ -42,27 +41,28 @@ public class SupportTeamApiSteps {
     }
 
     private void populateMapStrategy() {
-        strategies.put("INVIO_NUOVA_NOTIFICA", (apiKeyClient, paClient) -> paClient.newSentNotificationV1(new BffNewNotificationRequest()));
-        strategies.put("CAMBIO_LINGUA", (apiKeyClient, paClient) -> paClient.changeAdditionalLang(new BffAdditionalLanguages().addAdditionalLanguagesItem("italiano")));
-        strategies.put("CANCELLAZIONE_NOTIFICA", (apiKeyClient, paClient) -> paClient.notificationCancellationV1("iun"));
-        strategies.put("RECUPERA_API_KEYS", (apiKeyClient, paClient) -> apiKeyClient.getApiKeys(0, null, null, true));
-        strategies.put("CREA_API_KEY", (apiKeyClient, paClient) -> apiKeyClient.newApiKey(new BffRequestNewApiKey()));
-        strategies.put("CAMBIA_STATO_API_KEY", (apiKeyClient, paClient) -> apiKeyClient.changeStatusApiKey("id", new BffRequestApiKeyStatus()));
-        strategies.put("CANCELLA_API_KEY", (apiKeyClient, paClient) -> apiKeyClient.deleteApiKeys("id"));
-        strategies.put("RICERCA_TUTTE_LE_NOTIFICHE", (apiKeyClient, paClient) -> searchSentNotification());
-        strategies.put("DETTAGLIO_NOTIFICA", (apiKeyClient, paClient) -> getSentNotification());
-        strategies.put("RECUPERO_DOCUMENTI_NOTIFICA", (apiKeyClient, paClient) -> getSentNotificationDocument());
-        strategies.put("RECUPERO_ALLEGATI_PAGAMENTO", (apiKeyClient, paClient) -> getSentNotificationPayment());
-        strategies.put("VISUALIZZA_DASHBOARD", (apiKeyClient, paClient) -> getDashboardDataV1());
+        strategies.put("INVIO_NUOVA_NOTIFICA", () -> bffPaClient.newSentNotificationV1(new BffNewNotificationRequest()));
+        strategies.put("CAMBIO_LINGUA", () -> bffPaClient.changeAdditionalLang(
+                new BffAdditionalLanguages().addAdditionalLanguagesItem("italiano")));
+        strategies.put("CANCELLAZIONE_NOTIFICA", () -> bffPaClient.notificationCancellationV1("iun"));
+        strategies.put("RECUPERA_API_KEYS", () -> bffApiKeyClient.getApiKeys(0, null, null, true));
+        strategies.put("CREA_API_KEY", () -> bffApiKeyClient.newApiKey(new BffRequestNewApiKey()));
+        strategies.put("CAMBIA_STATO_API_KEY", () -> bffApiKeyClient.changeStatusApiKey("id", new BffRequestApiKeyStatus()));
+        strategies.put("CANCELLA_API_KEY", () -> bffApiKeyClient.deleteApiKeys("id"));
+        strategies.put("RICERCA_TUTTE_LE_NOTIFICHE", this::searchSentNotification);
+        strategies.put("DETTAGLIO_NOTIFICA", this::getSentNotification);
+        strategies.put("RECUPERO_DOCUMENTI_NOTIFICA", this::getSentNotificationDocument);
+        strategies.put("RECUPERO_ALLEGATI_PAGAMENTO", this::getSentNotificationPayment);
+        strategies.put("VISUALIZZA_DASHBOARD", this::getDashboardDataV1);
     }
 
     @When("Il team di supporto effettua l'operazione di: {string}")
     public void invokeApiAsSupportTeam(String api) {
         setUserRole();
-        BiConsumer<PnApiKeyManagerExternalClientImpl, PnBffPaClientImpl> strategy = strategies.get(api);
+        Runnable strategy = strategies.get(api);
         if (strategy != null) {
             try {
-                strategy.accept(bffApiKeyClient, bffPaClient);
+                strategy.run();
             } catch (Exception e) {
                 this.exception = e;
             }
