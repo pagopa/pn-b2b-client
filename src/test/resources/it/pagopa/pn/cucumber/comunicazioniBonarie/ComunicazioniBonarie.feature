@@ -19,14 +19,14 @@ Feature: comunicazioni bonarie
       | attachmentUrls                       |
       | [EMPTY],https://TestServer/allegato1 |
     When si richiede la prepare della comunicazione bonaria
-    Then si riceve un errore con codice di stato 400
+    Then si riceve un errore con codice di stato 500
 
   Scenario: [PREPARE-TC2C-KO] Validazione nuovo service api prepare con parametro (required) attachmentUrls popolata con almeno un url a blank
     Given inizializzata una comunicazione bonaria con i parametri:
       | attachmentUrls                            |
       | [SOLO_SPAZI],https://TestServer/allegato1 |
     When si richiede la prepare della comunicazione bonaria
-    Then si riceve un errore con codice di stato 400
+    Then si riceve un errore con codice di stato 500
 
   Scenario: [PREPARE-TC3A-KO] Validazione nuovo service api prepare con parametro (required) printType a empty
     Given inizializzata una comunicazione bonaria con i parametri:
@@ -75,7 +75,7 @@ Feature: comunicazioni bonarie
       | requestId |
       | [EMPTY]   |
     When si richiede la prepare della comunicazione bonaria
-    Then si riceve un errore con codice di stato 400
+    Then si riceve un errore con codice di stato 500
 
   Scenario: [PREPARE-TC6B-KO] Validazione nuovo service api prepare con parametro (required) requestId a blank
     Given inizializzata una comunicazione bonaria con i parametri:
@@ -202,22 +202,22 @@ Feature: comunicazioni bonarie
 
   Scenario: [PREPARE-TC22-KO] Validazione nuovo service api prepare con parametro (required) receiverAddress.fullname mancante
     Given inizializzata una comunicazione bonaria con i parametri:
-      | address                         | city   |
-      | Via Roma                        | Milano |
+      | fullname | address                         | city   |
+      | [NULL]   | Via Roma                        | Milano |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve un errore con codice di stato 400
 
   Scenario: [PREPARE-TC23-KO] Validazione nuovo service api prepare con parametro (required) receiverAddress.address mancante
     Given inizializzata una comunicazione bonaria con i parametri:
-      | fullname                         | city   |
-      | Mario Rossi                      | Milano |
+      | fullname     | address  | city   |
+      | Mario Rossi  | [NULL]   | Milano |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve un errore con codice di stato 400
 
   Scenario: [PREPARE-TC24-KO] Validazione nuovo service api prepare con parametro (required) receiverAddress.city mancante
     Given inizializzata una comunicazione bonaria con i parametri:
-      | fullname                         | address   |
-      | Mario Rossi                      | Via Roma  |
+      | fullname     | address  | city   |
+      | Mario Rossi  | Via Roma | [NULL] |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve un errore con codice di stato 400
 

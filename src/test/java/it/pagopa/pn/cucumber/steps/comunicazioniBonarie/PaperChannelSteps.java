@@ -83,7 +83,7 @@ public class PaperChannelSteps {
                 .printType(fromPreparePTString(pt))
                 .notificationSentAt(getFieldValue(data,"notificationSentAt", NOTIFICATION_SENT_ID))
 
-                .attachmentUrls(new ArrayList<>(Arrays.asList(urlsStr.split(","))))
+                .attachmentUrls(urlsStr != null ? new ArrayList<>(Arrays.asList(urlsStr.split(","))) : null)
                 .receiverAddress(analogAddress)
                 .proposalProductType(fromPPTString(ppt));
 
@@ -146,6 +146,11 @@ public class PaperChannelSteps {
         // 2. Gestisci il caso in cui il valore sia fisicamente null (es. colonna mancante)
         if (rawValue == null) {
             return null;
+        }
+
+        if("attachmentUrls".equals(field)) {
+            rawValue.replaceAll("[EMPTY]", "");
+            rawValue.replaceAll("[SOLO_SPAZI]", "   ");
         }
 
         // 3. Risolvi i placeholder tramite lo switch
