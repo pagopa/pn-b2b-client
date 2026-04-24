@@ -286,10 +286,10 @@ Feature: comunicazioni bonarie
 
   Scenario: [PREPARE-TC27-OK] Validazione nuovo service api prepare cambiando valore header X-Client-Id e stesso corpo della richiesta
     Given inizializzata una comunicazione bonaria con i parametri:
-      | xClientId               |
-      | questoclientidècambiato |
+      | xClientId               | requestId                            |
+      | questoclientidècambiato | ABCD-HILM-YKWX-202202-1_rec0_try1001 |
     When si richiede la prepare della comunicazione bonaria
-    Then si riceve una response con codice di stato 201
+    Then si riceve una response con codice di stato 200
 
   Scenario: [PREPARE-TC28-OK] Validazione nuovo service api prepare con length header X-Client-Id uguale a 1
     Given inizializzata una comunicazione bonaria con i parametri:
