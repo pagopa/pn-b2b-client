@@ -43,8 +43,9 @@ Feature: Censimento stime mittenti
 
 
   Scenario: [SM_04] Verifica del calcolo della percentuale garantita al mittente
-# Given viene avviata la step function BatchWorkflowStateMachine con deliveryDate: "2026-01-05"
-  And viene verificato il limite garantito per la pa: "enteTcCensimentoMittenti" relativo a provincia: "P1", prodotto: "890" e deliveryDate: "2026-01-26"
+  #  Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_primo_trimestre_26.zip"
+  #  And viene avviata la step function BatchWorkflowStateMachine con deliveryDate: "2026-01-05"
+    And viene verificato il limite garantito per la pa: "enteTcCensimentoMittenti" relativo a provincia: "P1", prodotto: "890" e deliveryDate: "2026-01-05"
 
 
 
