@@ -6,7 +6,7 @@ Feature: Costi Notifica Fase 5
   Scenario: [CNF5_MONO_DESTINATARIO_REFUSED] Invio di una notifica mono-destinatario e mono-pagamento che va in REFUSED a seguito dell'invio
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
+      | senderDenomination | Comune di palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
@@ -47,6 +47,7 @@ Feature: Costi Notifica Fase 5
       | tag      | AUD_NT_UPDATE_COST |
       | recIndex | recIndex=0         |
       | phase    | phase=VALIDATION   |
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
       | iun      | auto                         |
       | tag      | AUD_NT_UPDATE_COST           |
@@ -84,8 +85,9 @@ Feature: Costi Notifica Fase 5
       | phase    | phase=VALIDATION   |
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     Then verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
-      | isDeleted   | false |
-      | productType | RS    |
+      | isDeleted        | false                      |
+      | costoValorizzato | simpleRegisteredLetterCost |
+      | productType      | RS                         |
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
       | iun      | auto                                |
       | tag      | AUD_NT_UPDATE_COST                  |
@@ -109,3 +111,25 @@ Feature: Costi Notifica Fase 5
       | feePolicy     | applyCost |
       | DELIVERY_MODE | SI        |
       | FLAT_RATE     | NO        |
+
+  Scenario Outline: MOCK_CONFRONTO_COSTI
+    Given imposto lo iun di SharedSteps a "<iun>" e la pa a "Comune_Multi"
+    And verifico che i valori restituiti dalle nuove api di recupero costi per l'utente 0 coincidano con quelli restituiti da delivery-push
+      | paFee     | 17          |
+      | applyCost | <applyCost> |
+      | vat       | 10          |
+      | feePolicy | <feePolicy> |
+    Examples:
+      | iun                       | feePolicy     | applyCost |
+      | UJGT-PDVN-NLWL-202604-V-1 | DELIVERY_MODE | SI        |
+      | LKRD-VNAJ-ZNZD-202604-N-1 | FLAT_RATE     | NO        |
+      | ZKMJ-KXKH-ZPQK-202604-G-1 | DELIVERY_MODE | SI        |
+      | EDQN-LZPZ-VDLD-202604-M-1 | FLAT_RATE     | NO        |
+      | VRAE-TKJG-VDTA-202604-Q-1 | DELIVERY_MODE | SI        |
+      | EHTQ-DVMY-LXPA-202604-R-1 | FLAT_RATE     | NO        |
+      | DRDR-AWME-LPMX-202604-A-1 | DELIVERY_MODE | SI        |
+      | PVRD-TZGK-NQAM-202604-T-1 | FLAT_RATE     | NO        |
+      | KYAD-DKEA-NYHR-202604-G-1 | DELIVERY_MODE | SI        |
+      | EAPQ-VEUE-UZYX-202604-P-1 | FLAT_RATE     | NO        |
+      | MGNE-GHDV-NTNX-202604-Z-1 | DELIVERY_MODE | SI        |
+      | DXHV-XQPW-KJYK-202604-R-1 | FLAT_RATE     | NO        |

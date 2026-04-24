@@ -62,14 +62,25 @@ public class CostiNotificaFase5Steps {
             try {
                 notificationCostRecipientResponse = notificationCostClient.getNotificationCost(sharedSteps.getNotificationIun(), recIndex);
                 log.info("NotificationCostRecipientResponse:\n {}", notificationCostRecipientResponse);
+                String costoValorizzato = expectedData.get("costoValorizzato");
+                if (costoValorizzato != null) {
+                    switch (costoValorizzato) {
+                        case "firstAnalogCost" ->
+                                assertThat(record.get("firstAnalogCost").n()).as("Il record salvato su Pn-NotificationDeliveryCost dovrebbe avere il campo %s valorizzato", costoValorizzato).isNotNull();
+                        case "secondAnalogCost" ->
+                                assertThat(record.get("secondAnalogCost").n()).as("Il record salvato su Pn-NotificationDeliveryCost dovrebbe avere il campo %s valorizzato", costoValorizzato).isNotNull();
+                        case "simpleRegisteredLetterCost" ->
+                                assertThat(record.get("simpleRegisteredLetterCost").n()).as("Il record salvato su Pn-NotificationDeliveryCost dovrebbe avere il campo %s valorizzato", costoValorizzato).isNotNull();
+                    }
+                }
             } catch (HttpStatusCodeException httpStatusCodeException) {
                 if (record.get("isDeleted").bool()) {
                     assertSoftly(softly -> {
                         softly.assertThat(httpStatusCodeException.getRawStatusCode()).as("In caso di record eliminato logicamente, la get deve produrre un 404").isEqualTo(404);
                         softly.assertThat(expectedData.get("isDeleted")).as("In caso di errore 404, il flag isDeleted del record dev'essere impostato a true").isEqualToIgnoringCase("true");
-                        softly.assertThat(record.get("firstAnalogCost").n()).as("Sulla tabella Pn-NotificationDeliveryCost il campo firstAnalogCost dovrebbe essere stato riportato a 0").isEqualTo("0");
-                        softly.assertThat(record.get("secondAnalogCost").n()).as("Sulla tabella Pn-NotificationDeliveryCost il campo secondAnalogCost dovrebbe essere stato riportato a 0").isEqualTo("0");
-                        softly.assertThat(record.get("simpleRegisteredLetterCost").n()).as("Sulla tabella Pn-NotificationDeliveryCost il campo simpleRegisteredLetterCost dovrebbe essere stato riportato a 0").isEqualTo("0");
+                        softly.assertThat(record.get("firstAnalogCost").n()).as("Sulla tabella Pn-NotificationDeliveryCost, post annullamento notifica, il campo firstAnalogCost dovrebbe essere stato riportato a null").isNull();
+                        softly.assertThat(record.get("secondAnalogCost").n()).as("Sulla tabella Pn-NotificationDeliveryCost, post annullamento notifica, il campo secondAnalogCost dovrebbe essere stato riportato a null").isNull();
+                        softly.assertThat(record.get("simpleRegisteredLetterCost").n()).as("Sulla tabella Pn-NotificationDeliveryCost, post annullamento notifica, il campo simpleRegisteredLetterCost dovrebbe essere stato riportato a null").isNull();
                     });
                 } else {
                     throw httpStatusCodeException;
@@ -89,9 +100,13 @@ public class CostiNotificaFase5Steps {
         QueryRequest queryRequest = AwsUtils.buildPnNotificationDeliveryCostRequest(expressionAttributeValues);
         QueryResponse queryResponse = dbClient.query(queryRequest);
 
-        assertThat(queryResponse.items().size())
-                .as("Pn-NotificationDeliveryCost deve contenere esattamente un record per iun %s e recIndex %s", sharedSteps.getNotificationIun(), recIndex)
-                .isEqualTo(1);
+        try {
+            assertThat(queryResponse.items().size())
+                    .as("Pn-NotificationDeliveryCost deve contenere esattamente un record per iun %s e recIndex %s", sharedSteps.getNotificationIun(), recIndex)
+                    .isEqualTo(1);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
         Map<String, AttributeValue> record = queryResponse.items().get(0);
 
         for (int i = 0; i < queryResponse.items().size(); i++) {
@@ -111,7 +126,6 @@ public class CostiNotificaFase5Steps {
     public void checkPaymentInfoRecord() {
         try {
             FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
-            Map<Integer, PagoPaPayment> paymentInfoMap = new HashMap<>();
             AtomicInteger recIndex = new AtomicInteger();
             fsn.getRecipients().forEach(rec -> {
                 rec.getPayments().forEach(payment -> {
@@ -119,8 +133,6 @@ public class CostiNotificaFase5Steps {
                         String creditorTaxId = payment.getPagoPa().getCreditorTaxId();
                         String noticeCode = payment.getPagoPa().getNoticeCode();
                         String paymentInfoPK = creditorTaxId + "##" + noticeCode;
-
-                        paymentInfoMap.put(recIndex.intValue(), payment.getPagoPa());
                         Map<String, AttributeValue> record = searchPaymentInfoRecord(paymentInfoPK);
                         assertSoftly(softly -> {
                             softly.assertThat(record.get("iun").s()).as("Lo IUN del record su PaymentInfo non coincide con quanto atteso").isEqualTo(sharedSteps.getNotificationIun());
@@ -146,9 +158,13 @@ public class CostiNotificaFase5Steps {
         QueryRequest queryRequest = AwsUtils.buildPnPaymentInfoRequest(expressionAttributeValues);
         QueryResponse queryResponse = dbClient.query(queryRequest);
 
-        assertThat(queryResponse.items().size())
-                .as("Pn-PaymentInfo deve contenere esattamente un record per iun %s", sharedSteps.getNotificationIun())
-                .isEqualTo(1);
+        try {
+            assertThat(queryResponse.items().size())
+                    .as("Pn-PaymentInfo deve contenere esattamente un record per iun %s", sharedSteps.getNotificationIun())
+                    .isEqualTo(1);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
         Map<String, AttributeValue> record = queryResponse.items().get(0);
 
         for (int i = 0; i < queryResponse.items().size(); i++) {
@@ -166,27 +182,40 @@ public class CostiNotificaFase5Steps {
 
     @Then("verifico che l'API di recupero costi da Pn-PaymentInfo produca un errore quando viene richiamata passando {string}")
     public void checkRobustezzaApiRecuperoCosti(String inputParameterType) {
-        FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
-        fsn.getRecipients().forEach(rec -> rec.getPayments().forEach(payment -> {
-            if (payment.getPagoPa() != null) {
-                String creditorTaxId = payment.getPagoPa().getCreditorTaxId();
-                String noticeCode = payment.getPagoPa().getNoticeCode();
-                try {
-                    switch (inputParameterType) {
-                        case "creditorTaxId errato" -> creditorTaxId = "invalid";
-                        case "noticeCode errato" -> noticeCode = "invalid";
-                        case "creditorTaxId inesistente" -> creditorTaxId = creditorTaxId.replaceFirst("7", "0");
-                        case "noticeCode inesistente" ->
-                                noticeCode = noticeCode.startsWith("0") ? "1" + noticeCode.substring(1) : "0" + noticeCode.substring(1);
+        try {
+            FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
+            fsn.getRecipients().forEach(rec -> rec.getPayments().forEach(payment -> {
+                if (payment.getPagoPa() != null) {
+                    String creditorTaxId = payment.getPagoPa().getCreditorTaxId();
+                    String noticeCode = payment.getPagoPa().getNoticeCode();
+                    int expectedError = 404;
+                    try {
+                        switch (inputParameterType) {
+                            case "creditorTaxId errato" -> {
+                                creditorTaxId = "invalid";
+                                expectedError = 400;
+                            }
+                            case "noticeCode errato" -> {
+                                noticeCode = "invalid";
+                                expectedError = 400;
+                            }
+                            case "creditorTaxId inesistente" -> creditorTaxId = creditorTaxId.replaceFirst("7", "0");
+                            case "noticeCode inesistente" ->
+                                    noticeCode = noticeCode.startsWith("0") ? "1" + noticeCode.substring(1) : "0" + noticeCode.substring(1);
+                        }
+                        log.info("Start invocazione API recupero costi con creditorTaxId={} noticeCode={}", creditorTaxId, noticeCode);
+                        notificationCostPaymentResponse = notificationCostClient.getNotificationCostByPayment(creditorTaxId, noticeCode);
+                    } catch (HttpStatusCodeException httpStatusCodeException) {
+                        log.info(httpStatusCodeException.getMessage());
+                        assertThat(httpStatusCodeException.getRawStatusCode())
+                                .as("L'invocazione dell'api di recupero costi con %s dovrebbe produrre un %s", inputParameterType, expectedError)
+                                .isEqualTo(expectedError);
                     }
-                    log.info("Start invocazione API recupero costi con creditorTaxId=%s noticeCode=%s", creditorTaxId, noticeCode);
-                    NotificationCostPaymentResponse paymentResponse = notificationCostClient.getNotificationCostByPayment(creditorTaxId, noticeCode);
-                } catch (HttpStatusCodeException httpStatusCodeException) {
-                    log.info(httpStatusCodeException.getMessage());
-                    assertThat(httpStatusCodeException.getRawStatusCode()).as("L'invocazione dell'api di recupero costi con %s dovrebbe produrre un 404").isEqualTo(404);
                 }
-            }
-        }));
+            }));
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
     }
 
     @Then("verifico il comportamento dell'API di inserimento costi passando in input {string}")

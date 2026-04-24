@@ -3,7 +3,7 @@ Feature: Costi Notifica Fase 5
 #PST: https://pagopa.atlassian.net/wiki/spaces/PN/pages/2849800311/DRAFT+PST+PN-18622+Costi+Notifica+BE+-+fase+5
 
   @costiNotificaFase5 @CNF5_FF_ENABLED @ssrl
-  Scenario Outline: [CNF5_MONO_DESTINATARIO_SEND_SIMPLE_REGISTERED_LETTER_PAGOPA_SYNC] Invio di una notifica mono-destinatario con pagamento/i PagoPA(sync) che preveda un elemento SEND_SIMPLE_REGISTERED_LETTER
+  Scenario Outline: [CNF5_MULTI_DESTINATARIO_SEND_SIMPLE_REGISTERED_LETTER_PAGOPA_SYNC] Invio di una notifica multi-destinatario con pagamento/i PagoPA(sync) che preveda un elemento SEND_SIMPLE_REGISTERED_LETTER
     Given viene generata una nuova notifica
       | subject            | test costi notifica fase 5 |
       | senderDenomination | Comune di palermo          |
@@ -20,10 +20,21 @@ Feature: Costi Notifica Fase 5
       | title_payment           | PagoPa_mono_sync_ssrl |
       | apply_cost_pagopa       | <applyCost>           |
       | payment_multy_number    | <paymentNumber>       |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile_address | test@fail.it          |
+      | physicalAddress_address | Via@ok_RS             |
+      | payment_creditorTaxId   | 77777777777           |
+      | payment_pagoPaForm      | SI                    |
+      | payment_f24             | NULL                  |
+      | title_payment           | PagoPa_mono_sync_ssrl |
+      | apply_cost_pagopa       | <applyCost>           |
+      | payment_multy_number    | <paymentNumber>       |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then verifico su DynamoDB la presenza in timeline dell'elemento "NOTIFICATION_COST_VALIDATION_REQUEST"
     And verifico che il popolamento dei dati su Pn-PaymentInfo sia avvenuto correttamente
     And verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato inserito e correttamente valorizzato
+      | isDeleted | false |
+    And verifico che per il destinatario 1 il record su Pn-NotificationDeliveryCost sia stato inserito e correttamente valorizzato
       | isDeleted | false |
     And verifico su DynamoDB la presenza in timeline dell'elemento "NOTIFICATION_COST_VALIDATION_RESPONSE"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
@@ -31,8 +42,18 @@ Feature: Costi Notifica Fase 5
       | tag      | AUD_NT_UPDATE_COST |
       | recIndex | recIndex=0         |
       | phase    | phase=VALIDATION   |
-    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
+      | iun      | auto               |
+      | tag      | AUD_NT_UPDATE_COST |
+      | recIndex | recIndex=1         |
+      | phase    | phase=VALIDATION   |
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 1
     Then verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
+      | isDeleted        | false                      |
+      | costoValorizzato | simpleRegisteredLetterCost |
+      | productType      | RS                         |
+    Then verifico che per il destinatario 1 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
       | isDeleted        | false                      |
       | costoValorizzato | simpleRegisteredLetterCost |
       | productType      | RS                         |
@@ -41,7 +62,17 @@ Feature: Costi Notifica Fase 5
       | tag      | AUD_NT_UPDATE_COST                  |
       | recIndex | recIndex=0                          |
       | phase    | phase=SEND_SIMPLE_REGISTERED_LETTER |
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
+      | iun      | auto                                |
+      | tag      | AUD_NT_UPDATE_COST                  |
+      | recIndex | recIndex=1                          |
+      | phase    | phase=SEND_SIMPLE_REGISTERED_LETTER |
     And verifico che i valori restituiti dalle nuove api di recupero costi per l'utente 0 coincidano con quelli restituiti da delivery-push
+      | paFee     | 17          |
+      | applyCost | <applyCost> |
+      | vat       | 10          |
+      | feePolicy | <feePolicy> |
+    And verifico che i valori restituiti dalle nuove api di recupero costi per l'utente 1 coincidano con quelli restituiti da delivery-push
       | paFee     | 17          |
       | applyCost | <applyCost> |
       | vat       | 10          |
@@ -54,8 +85,9 @@ Feature: Costi Notifica Fase 5
       | FLAT_RATE     | NO        | 2             |
 
   @costiNotificaFase5 @CNF5_FF_ENABLED @ssrl
-  Scenario Outline: [CNF5_MONO_DESTINATARIO_SEND_SIMPLE_REGISTERED_LETTER_PAGOPA_ASYNC_MONO_PAY] Invio di una notifica mono-destinatario con pagamento singolo PagoPA(async) che preveda un elemento SEND_SIMPLE_REGISTERED_LETTER
+  Scenario Outline: [CNF5_MULTI_DESTINATARIO_SEND_SIMPLE_REGISTERED_LETTER_PAGOPA_ASYNC_MONO_PAY] Invio di una notifica multi-destinatario con pagamento singolo PagoPA(async) che preveda un elemento SEND_SIMPLE_REGISTERED_LETTER
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
+    And viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Cucumber" con CF "FRMTTR76M06B715E"
     And viene generata una nuova notifica
       | subject            | test costi notifica fase 5 |
       | senderDenomination | Comune di palermo          |
@@ -72,11 +104,23 @@ Feature: Costi Notifica Fase 5
       | title_payment           | PagoPa_mono_async_ssrl |
       | apply_cost_pagopa       | <applyCost>            |
       | payment_multy_number    | 1                      |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile_address | test@fail.it           |
+      | physicalAddress_address | Via@ok_RS              |
+      | payment_creditorTaxId   | 77777777777            |
+      | payment_pagoPaForm      | SI                     |
+      | payment_f24             | NULL                   |
+      | title_payment           | PagoPa_mono_async_ssrl |
+      | apply_cost_pagopa       | <applyCost>            |
+      | payment_multy_number    | 1                      |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
+    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Cucumber" alla posizione 0
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then verifico su DynamoDB la presenza in timeline dell'elemento "NOTIFICATION_COST_VALIDATION_REQUEST"
     And verifico che il popolamento dei dati su Pn-PaymentInfo sia avvenuto correttamente
     And verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato inserito e correttamente valorizzato
+      | isDeleted | false |
+    And verifico che per il destinatario 1 il record su Pn-NotificationDeliveryCost sia stato inserito e correttamente valorizzato
       | isDeleted | false |
     And verifico su DynamoDB la presenza in timeline dell'elemento "NOTIFICATION_COST_VALIDATION_RESPONSE"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
@@ -84,7 +128,13 @@ Feature: Costi Notifica Fase 5
       | tag      | AUD_NT_UPDATE_COST |
       | recIndex | recIndex=0         |
       | phase    | phase=VALIDATION   |
-    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
+      | iun      | auto               |
+      | tag      | AUD_NT_UPDATE_COST |
+      | recIndex | recIndex=1         |
+      | phase    | phase=VALIDATION   |
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 1
     Then verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
       | isDeleted        | false                      |
       | costoValorizzato | simpleRegisteredLetterCost |
@@ -94,7 +144,17 @@ Feature: Costi Notifica Fase 5
       | tag      | AUD_NT_UPDATE_COST                  |
       | recIndex | recIndex=0                          |
       | phase    | phase=SEND_SIMPLE_REGISTERED_LETTER |
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
+      | iun      | auto                                |
+      | tag      | AUD_NT_UPDATE_COST                  |
+      | recIndex | recIndex=1                          |
+      | phase    | phase=SEND_SIMPLE_REGISTERED_LETTER |
     And verifico che i valori restituiti dalle nuove api di recupero costi per l'utente 0 coincidano con quelli restituiti da delivery-push
+      | paFee     | 17          |
+      | applyCost | <applyCost> |
+      | vat       | 10          |
+      | feePolicy | <feePolicy> |
+    And verifico che i valori restituiti dalle nuove api di recupero costi per l'utente 1 coincidano con quelli restituiti da delivery-push
       | paFee     | 17          |
       | applyCost | <applyCost> |
       | vat       | 10          |
@@ -105,9 +165,11 @@ Feature: Costi Notifica Fase 5
       | FLAT_RATE     | NO        |
 
   @costiNotificaFase5 @CNF5_FF_ENABLED @ssrl
-  Scenario Outline: [CNF5_MONO_DESTINATARIO_SEND_SIMPLE_REGISTERED_LETTER_PAGOPA_ASYNC_MULTI_PAY] Invio di una notifica mono-destinatario con 2 pagamenti PagoPA(async) che preveda un elemento SEND_SIMPLE_REGISTERED_LETTER
+  Scenario Outline: [CNF5_MULTI_DESTINATARIO_SEND_SIMPLE_REGISTERED_LETTER_PAGOPA_ASYNC_MULTI_PAY] Invio di una notifica multi-destinatario con 2 pagamenti PagoPA(async) che preveda un elemento SEND_SIMPLE_REGISTERED_LETTER
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
+    And viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Cucumber" con CF "FRMTTR76M06B715E"
+    And viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Cucumber" con CF "FRMTTR76M06B715E"
     And viene generata una nuova notifica
       | subject            | test costi notifica fase 5 |
       | senderDenomination | Comune di palermo          |
@@ -124,12 +186,25 @@ Feature: Costi Notifica Fase 5
       | title_payment           | PagoPa_mono_async_ssrl |
       | apply_cost_pagopa       | <applyCost>            |
       | payment_multy_number    | 2                      |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile_address | test@fail.it           |
+      | physicalAddress_address | Via@ok_RS              |
+      | payment_creditorTaxId   | 77777777777            |
+      | payment_pagoPaForm      | SI                     |
+      | payment_f24             | NULL                   |
+      | title_payment           | PagoPa_mono_async_ssrl |
+      | apply_cost_pagopa       | <applyCost>            |
+      | payment_multy_number    | 2                      |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 1
+    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Cucumber" alla posizione 0
+    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Cucumber" alla posizione 1
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then verifico su DynamoDB la presenza in timeline dell'elemento "NOTIFICATION_COST_VALIDATION_REQUEST"
     And verifico che il popolamento dei dati su Pn-PaymentInfo sia avvenuto correttamente
     And verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato inserito e correttamente valorizzato
+      | isDeleted | false |
+    And verifico che per il destinatario 1 il record su Pn-NotificationDeliveryCost sia stato inserito e correttamente valorizzato
       | isDeleted | false |
     And verifico su DynamoDB la presenza in timeline dell'elemento "NOTIFICATION_COST_VALIDATION_RESPONSE"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
@@ -137,8 +212,18 @@ Feature: Costi Notifica Fase 5
       | tag      | AUD_NT_UPDATE_COST |
       | recIndex | recIndex=0         |
       | phase    | phase=VALIDATION   |
-    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
+      | iun      | auto               |
+      | tag      | AUD_NT_UPDATE_COST |
+      | recIndex | recIndex=1         |
+      | phase    | phase=VALIDATION   |
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 1
     Then verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
+      | isDeleted        | false                      |
+      | costoValorizzato | simpleRegisteredLetterCost |
+      | productType      | RS                         |
+    Then verifico che per il destinatario 1 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
       | isDeleted        | false                      |
       | costoValorizzato | simpleRegisteredLetterCost |
       | productType      | RS                         |
@@ -147,7 +232,17 @@ Feature: Costi Notifica Fase 5
       | tag      | AUD_NT_UPDATE_COST                  |
       | recIndex | recIndex=0                          |
       | phase    | phase=SEND_SIMPLE_REGISTERED_LETTER |
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
+      | iun      | auto                                |
+      | tag      | AUD_NT_UPDATE_COST                  |
+      | recIndex | recIndex=1                          |
+      | phase    | phase=SEND_SIMPLE_REGISTERED_LETTER |
     And verifico che i valori restituiti dalle nuove api di recupero costi per l'utente 0 coincidano con quelli restituiti da delivery-push
+      | paFee     | 17          |
+      | applyCost | <applyCost> |
+      | vat       | 10          |
+      | feePolicy | <feePolicy> |
+    And verifico che i valori restituiti dalle nuove api di recupero costi per l'utente 1 coincidano con quelli restituiti da delivery-push
       | paFee     | 17          |
       | applyCost | <applyCost> |
       | vat       | 10          |
@@ -158,7 +253,7 @@ Feature: Costi Notifica Fase 5
       | FLAT_RATE     | NO        |
 
   @costiNotificaFase5 @CNF5_FF_ENABLED @ssrl
-  Scenario Outline: [CNF5_MONO_DESTINATARIO_SEND_SIMPLE_REGISTERED_LETTER_F24] Invio di una notifica mono-destinatario con pagamento/i F24 che preveda un elemento SEND_SIMPLE_REGISTERED_LETTER
+  Scenario Outline: [CNF5_MULTI_DESTINATARIO_SEND_SIMPLE_REGISTERED_LETTER_F24] Invio di una notifica multi-destinatario con pagamento/i F24 che preveda un elemento SEND_SIMPLE_REGISTERED_LETTER
     Given viene generata una nuova notifica
       | subject            | test costi notifica fase 5 |
       | senderDenomination | Comune di palermo          |
@@ -167,6 +262,16 @@ Feature: Costi Notifica Fase 5
       | paFee              | 17                         |
       | vat                | 10                         |
     And destinatario Mario Gherkin e:
+      | digitalDomicile_address | test@fail.it       |
+      | physicalAddress_address | Via@ok_RS          |
+      | payment_creditorTaxId   | 77777777777        |
+      | payment_pagoPaForm      | NULL               |
+      | apply_cost_pagopa       | NO                 |
+      | payment_f24             | <paymentF24>       |
+      | title_payment           | f24_mono_none_ssrl |
+      | apply_cost_f24          | <applyCost>        |
+      | payment_multy_number    | <paymentNumber>    |
+    And destinatario Mario Cucumber e:
       | digitalDomicile_address | test@fail.it       |
       | physicalAddress_address | Via@ok_RS          |
       | payment_creditorTaxId   | 77777777777        |
@@ -186,8 +291,18 @@ Feature: Costi Notifica Fase 5
       | tag      | AUD_NT_UPDATE_COST |
       | recIndex | recIndex=0         |
       | phase    | phase=VALIDATION   |
-    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
+      | iun      | auto               |
+      | tag      | AUD_NT_UPDATE_COST |
+      | recIndex | recIndex=1         |
+      | phase    | phase=VALIDATION   |
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 1
     Then verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
+      | isDeleted        | false                      |
+      | costoValorizzato | simpleRegisteredLetterCost |
+      | productType      | RS                         |
+    Then verifico che per il destinatario 1 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
       | isDeleted        | false                      |
       | costoValorizzato | simpleRegisteredLetterCost |
       | productType      | RS                         |
@@ -196,7 +311,17 @@ Feature: Costi Notifica Fase 5
       | tag      | AUD_NT_UPDATE_COST                  |
       | recIndex | recIndex=0                          |
       | phase    | phase=SEND_SIMPLE_REGISTERED_LETTER |
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
+      | iun      | auto                                |
+      | tag      | AUD_NT_UPDATE_COST                  |
+      | recIndex | recIndex=1                          |
+      | phase    | phase=SEND_SIMPLE_REGISTERED_LETTER |
     And verifico che i valori restituiti dalle nuove api di recupero costi per l'utente 0 coincidano con quelli restituiti da delivery-push
+      | paFee     | 17          |
+      | applyCost | <applyCost> |
+      | vat       | 10          |
+      | feePolicy | <feePolicy> |
+    And verifico che i valori restituiti dalle nuove api di recupero costi per l'utente 1 coincidano con quelli restituiti da delivery-push
       | paFee     | 17          |
       | applyCost | <applyCost> |
       | vat       | 10          |
