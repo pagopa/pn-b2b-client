@@ -62,16 +62,14 @@ public class CostiNotificaFase5Steps {
             try {
                 notificationCostRecipientResponse = notificationCostClient.getNotificationCost(sharedSteps.getNotificationIun(), recIndex);
                 log.info("NotificationCostRecipientResponse:\n {}", notificationCostRecipientResponse);
-                //TODO checkProductType?
-//                String productType = expectedData.get("productType");
-//            AnalogCostComponent componentWithProductType = notificationCostRecipientResponse.getTotalCost().getDetails().getAnalogCostDetail().getAnalogCostComponents()
-//                    .stream().filter(c -> c.getProductType().equals(productType)).findFirst().orElse(null);
-//            assertThat(componentWithProductType).as("Gli analog components devono contenere uno o più elementi con productType=%s", productType).isNotNull();
             } catch (HttpStatusCodeException httpStatusCodeException) {
                 if (record.get("isDeleted").bool()) {
                     assertSoftly(softly -> {
                         softly.assertThat(httpStatusCodeException.getRawStatusCode()).as("In caso di record eliminato logicamente, la get deve produrre un 404").isEqualTo(404);
                         softly.assertThat(expectedData.get("isDeleted")).as("In caso di errore 404, il flag isDeleted del record dev'essere impostato a true").isEqualToIgnoringCase("true");
+                        softly.assertThat(record.get("firstAnalogCost").n()).as("Sulla tabella Pn-NotificationDeliveryCost il campo firstAnalogCost dovrebbe essere stato riportato a 0").isEqualTo("0");
+                        softly.assertThat(record.get("secondAnalogCost").n()).as("Sulla tabella Pn-NotificationDeliveryCost il campo secondAnalogCost dovrebbe essere stato riportato a 0").isEqualTo("0");
+                        softly.assertThat(record.get("simpleRegisteredLetterCost").n()).as("Sulla tabella Pn-NotificationDeliveryCost il campo simpleRegisteredLetterCost dovrebbe essere stato riportato a 0").isEqualTo("0");
                     });
                 } else {
                     throw httpStatusCodeException;
@@ -254,6 +252,11 @@ public class CostiNotificaFase5Steps {
     @And("verifico che i valori restituiti dalle nuove api di recupero costi per l'utente {int} coincidano con quelli restituiti da delivery-push")
     public void recuperoIDatiDiCostoNotificaDaDeliveryPush(int recIndex, Map<String, String> expectedData) {
         try {
+            checkPaymentInfoRecord();
+
+            notificationCostRecipientResponse = notificationCostClient.getNotificationCost(sharedSteps.getNotificationIun(), recIndex);
+            log.info("NotificationCostRecipientResponse:\n {}", notificationCostRecipientResponse);
+
             String feePolicy = expectedData.get("feePolicy");
             boolean applyCost = expectedData.get("applyCost").equalsIgnoreCase("SI");
             int paFee = Integer.parseInt(expectedData.get("paFee"));
@@ -269,17 +272,23 @@ public class CostiNotificaFase5Steps {
             );
             log.info("NotificationProcessCost response:\n {}", notificationProcessCostResponse);
 
+            int partialCost = notificationProcessCostResponse.getPartialCost();
+            int analogCost = notificationProcessCostResponse.getAnalogCost();
+            int totalCost = notificationProcessCostResponse.getTotalCost();
+            int sendFee = notificationProcessCostResponse.getSendFee();
+
             assertSoftly(softly -> {
-                if (feePolicy.equals("DELIVERY_MODE")) {
-
-                } else if (feePolicy.equals("FLAT_RATE")) {
-
-                }
+                softly.assertThat(totalCost).as("Il costo totale della response di delivery-push non coincide col costo totale comprensivo di iva").isEqualTo(notificationCostRecipientResponse.getTotalCost().getCostWithVat());
                 if (notificationCostPaymentResponse != null) {
                     softly.assertThat(notificationCostPaymentResponse.getTotalCost().getDetails()).as("I costi totali restituiti dalle api di recupero costi non coincidono").isEqualTo(notificationCostRecipientResponse.getTotalCost().getDetails());
-                    softly.assertThat(notificationProcessCostResponse.getPartialCost()).as("Il partial cost della response non coincide col costo parziale").isEqualTo(notificationCostPaymentResponse.getPartialCost().getCost());
+                    softly.assertThat(partialCost).as("Il partial cost della response non coincide col costo parziale").isEqualTo(notificationCostPaymentResponse.getPartialCost().getCost());
                 }
-                softly.assertThat(notificationProcessCostResponse.getTotalCost()).as("Il total cost della response di delivery-push non coincide col costo totale comprensivo di iva").isEqualTo(notificationCostRecipientResponse.getTotalCost().getCostWithVat());
+                if (feePolicy.equals("DELIVERY_MODE")) {
+                    softly.assertThat(partialCost).as("In caso di feePolicy=DELIVERY_RATE, il costo parziale della notifica restituito da delivery-push dev'essere pari alla somma di analogCost e sendFee").isEqualTo(analogCost + sendFee);
+                } else if (feePolicy.equals("FLAT_RATE")) {
+                    softly.assertThat(totalCost).as("In caso di feePolicy=FLAT_RATE, il costo totale della notifica restituito da delivery-push dev'essere pari a 0").isEqualTo(0);
+                    softly.assertThat(partialCost).as("In caso di feePolicy=FLAT_RATE, il costo parziale della notifica restituito da delivery-push dev'essere pari a 0").isEqualTo(0);
+                }
             });
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);

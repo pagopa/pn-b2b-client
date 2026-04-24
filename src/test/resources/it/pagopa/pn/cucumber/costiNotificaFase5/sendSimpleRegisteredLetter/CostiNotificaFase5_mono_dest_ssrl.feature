@@ -45,15 +45,6 @@ Feature: Costi Notifica Fase 5
       | applyCost | <applyCost> |
       | vat       | 10          |
       | feePolicy | <feePolicy> |
-#    When la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
-#    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
-#    Then verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
-#      | isDeleted | true |
-#    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
-#      | iun      | auto                         |
-#      | tag      | AUD_NT_UPDATE_COST           |
-#      | recIndex | recIndex=0                   |
-#      | phase    | phase=NOTIFICATION_CANCELLED |
     Examples:
       | feePolicy     | applyCost | paymentNumber |
       | DELIVERY_MODE | SI        | 1             |
@@ -106,15 +97,6 @@ Feature: Costi Notifica Fase 5
       | applyCost | <applyCost> |
       | vat       | 10          |
       | feePolicy | <feePolicy> |
-#    When la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
-#    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
-#    Then verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
-#      | isDeleted | true |
-#    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
-#      | iun      | auto                         |
-#      | tag      | AUD_NT_UPDATE_COST           |
-#      | recIndex | recIndex=0                   |
-#      | phase    | phase=NOTIFICATION_CANCELLED |
     Examples:
       | feePolicy     | applyCost |
       | DELIVERY_MODE | SI        |
@@ -167,15 +149,6 @@ Feature: Costi Notifica Fase 5
       | applyCost | <applyCost> |
       | vat       | 10          |
       | feePolicy | <feePolicy> |
-#    When la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
-#    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
-#    Then verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
-#      | isDeleted | true |
-#    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
-#      | iun      | auto                         |
-#      | tag      | AUD_NT_UPDATE_COST           |
-#      | recIndex | recIndex=0                   |
-#      | phase    | phase=NOTIFICATION_CANCELLED |
     Examples:
       | feePolicy     | applyCost |
       | DELIVERY_MODE | SI        |
@@ -224,15 +197,6 @@ Feature: Costi Notifica Fase 5
       | applyCost | <applyCost> |
       | vat       | 10          |
       | feePolicy | <feePolicy> |
-#    When la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
-#    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
-#    Then verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
-#      | isDeleted | true |
-#    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
-#      | iun      | auto                         |
-#      | tag      | AUD_NT_UPDATE_COST           |
-#      | recIndex | recIndex=0                   |
-#      | phase    | phase=NOTIFICATION_CANCELLED |
     Examples:
       | feePolicy     | applyCost | paymentNumber | paymentF24           |
       | DELIVERY_MODE | SI        | 1             | PAYMENT_F24_STANDARD |
