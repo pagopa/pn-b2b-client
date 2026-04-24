@@ -9,14 +9,21 @@ Feature: Eventi M2M
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When "PA1" ha già creato un e-service in stato "DRAFT" con approvazione "AUTOMATIC"
     Then "PA1" visualizza l'evento EServiceAdded con:
-      | field                | value           |
+      | field                | value       |
       #| id                   | %exists         |
       #| eventTimestamp       | %exists         |
-      | eserviceId           | :eserviceId     |
+      | eserviceId           | :eserviceId |
       #| descriptorId         | %exists         |
-      | producerDelegationId | %null           |
+      | producerDelegationId | %null       |
 
-
+  @m2m-events-e-service
+  Scenario: [M2M_E-SERVICE_EVENTS_02] Verifica che un client diverso dal producer di un e-service in stato DRAFT non può visualizzare l'evento dell'e-service
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When "PA1" ha già creato un e-service in stato "DRAFT" con approvazione "AUTOMATIC"
+    And "PA1" visualizza l'evento EServiceAdded con:
+      | field      | value       |
+      | eserviceId | :eserviceId |
+    Then "PA2" non visualizza l'evento EServiceAdded appena trovato
 
   @m2m-events-e-service
   Scenario: [M2M_E-SERVICE_EVENTS_nn] A seguito di pubblicazione di un e-service vengono correttamente visualizzati gli
