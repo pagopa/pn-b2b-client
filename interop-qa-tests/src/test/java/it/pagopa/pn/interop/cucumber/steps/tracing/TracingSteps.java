@@ -277,13 +277,13 @@ public class TracingSteps {
         Assertions.assertNotNull(httpCallExecutor.getResponse(), "There was an error while retrieving the tracing error!");
         Assertions.assertNotNull(((GetTracingErrorsResponse)httpCallExecutor.getResponse()).getResults());
         List<GetTracingErrorsResponseResultsInner> expectedResult = List.of(
-                createExpectedResponse("INVALID_DATE", "INVALID", String.format("date: Date field (2020-01-01) in csv is different from tracing date (%s).", currentTracing.getFormattedDate()), "", 1),
-                //createExpectedResponse("INVALID_DATE", "INVALID", String.format("date: Date field (2024-08-25) in csv is different from tracing date (%s).", currentTracing.getFormattedDate()), "", 2),
-                createExpectedResponse("INVALID_PURPOSE", "INVALID", "purpose_id: Invalid uuid", "", 1),
-                //createExpectedResponse("PURPOSE_NOT_FOUND", "INVALID", "purpose_id: Invalid purpose id 0e1e4c98-6f2e-4f55-90e3-45f7d3f1dbf8.", "0e1e4c98-6f2e-4f55-90e3-45f7d3f1dbf8", 1),
-                createExpectedResponse("INVALID_TOKEN", "INVALID", "token_id: Invalid uuid", "", 1),
-                createExpectedResponse("INVALID_STATUS_CODE", "INVALID", "status: Invalid HTTP status code", "", 1),
-                createExpectedResponse("INVALID_REQUEST_COUNT", "INVALID", "requests_count: Invalid input", "", 1)
+                createExpectedResponse("INVALID_DATE", String.format("date: Date field (2020-01-01) in csv is different from tracing date (%s).", currentTracing.getFormattedDate()), "", 1),
+                //createExpectedResponse("INVALID_DATE", String.format("date: Date field (2024-08-25) in csv is different from tracing date (%s).", currentTracing.getFormattedDate()), "", 2),
+                createExpectedResponse("INVALID_PURPOSE", "purpose_id: Invalid uuid", "", 1),
+                //createExpectedResponse("PURPOSE_NOT_FOUND", "purpose_id: Invalid purpose id 0e1e4c98-6f2e-4f55-90e3-45f7d3f1dbf8.", "0e1e4c98-6f2e-4f55-90e3-45f7d3f1dbf8", 1),
+                createExpectedResponse("INVALID_TOKEN", "token_id: Invalid uuid", "", 1),
+                createExpectedResponse("INVALID_STATUS_CODE", "status: Invalid HTTP status code", "", 1),
+                createExpectedResponse("INVALID_REQUEST_COUNT", "requests_count: Invalid input", "", 1)
         );
         org.assertj.core.api.Assertions.assertThat(((GetTracingErrorsResponse)httpCallExecutor.getResponse()).getResults()).containsAll(expectedResult);
     }
@@ -392,10 +392,9 @@ public class TracingSteps {
         return 0;
     }
 
-    private GetTracingErrorsResponseResultsInner createExpectedResponse(String errorCode, String severity, String message, String purposeId, Integer rowNumber) {
+    private GetTracingErrorsResponseResultsInner createExpectedResponse(String errorCode, String message, String purposeId, Integer rowNumber) {
         GetTracingErrorsResponseResultsInner tracingErrorsResponse = new GetTracingErrorsResponseResultsInner();
         tracingErrorsResponse.setErrorCode(errorCode);
-        tracingErrorsResponse.setSeverity(GetTracingErrorsResponseResultsInner.SeverityEnum.valueOf(severity));
         tracingErrorsResponse.setMessage(message);
         tracingErrorsResponse.setPurposeId(purposeId);
         tracingErrorsResponse.setRowNumber(rowNumber);
