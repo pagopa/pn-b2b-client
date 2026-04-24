@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.polling;
 
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 
@@ -11,5 +12,12 @@ public class S3Polling extends AbstractPolling<S3Client> {
     public S3Polling(Region region, Predicate<S3Client> condition) {
         // usa il default credentials provider chain
         super(S3Client.builder().region(region).build(), condition);
+    }
+
+    public S3Polling(Region region, Predicate<S3Client> condition, AwsCredentialsProvider credentialsProvider) {
+        super(S3Client.builder()
+                .region(region)
+                .credentialsProvider(credentialsProvider)
+                .build(), condition);
     }
 }
