@@ -9,6 +9,7 @@ import it.pagopa.pn.client.b2b.pa.service.IPnExternalChannelsInternalClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -48,12 +49,12 @@ public class PnExternalChannelsInternalClientImpl implements IPnExternalChannels
     }
 
     @Override
-    public void sendCourtesyShortMessage(String requestIdx, String xPagopaExtchCxId, DigitalCourtesySmsRequest digitalCourtesySmsRequest) throws RestClientException {
-        digitalCourtesyMessagesApi.sendCourtesyShortMessage(requestIdx, xPagopaExtchCxId, digitalCourtesySmsRequest);
+    public ResponseEntity<Void> sendCourtesyShortMessage(String requestIdx, String xPagopaExtchCxId, DigitalCourtesySmsRequest digitalCourtesySmsRequest) throws RestClientException {
+        return digitalCourtesyMessagesApi.sendCourtesyShortMessageWithHttpInfo(requestIdx, xPagopaExtchCxId, digitalCourtesySmsRequest);
     }
 
     @Override
-    public void sendDigitalCourtesyMessage(String requestIdx, String xPagopaExtchCxId, DigitalCourtesyMailRequest digitalCourtesyMailRequest) throws RestClientException {
-        digitalCourtesyMessagesApi.sendDigitalCourtesyMessage(requestIdx, xPagopaExtchCxId, digitalCourtesyMailRequest);
+    public ResponseEntity<Void> sendDigitalCourtesyMessage(String requestIdx, String xPagopaExtchCxId, DigitalCourtesyMailRequest digitalCourtesyMailRequest) throws RestClientException {
+        return digitalCourtesyMessagesApi.sendDigitalCourtesyMessageWithHttpInfo(requestIdx, xPagopaExtchCxId, digitalCourtesyMailRequest);
     }
 }

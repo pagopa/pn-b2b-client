@@ -83,13 +83,10 @@ public class TracciamentoEventiPeoSteps {
         emailRequest.setAttachmentUrls(
                 attachmentType.equalsIgnoreCase("virus") ? List.of(uploadEicarVirusFile()) : new ArrayList<>());
 
-        try {
-            externalChannelsInternalClient.sendDigitalCourtesyMessage(requestId, clientInUse, emailRequest);
-            log.info("Email inviata con successo");
-            log.info("Request id: {}", requestId);
-        } catch (Exception e) {
-            log.info("Errore in fase di invio email. {}", e.getMessage());
-        }
+        ResponseEntity response = externalChannelsInternalClient.sendDigitalCourtesyMessage(requestId, clientInUse, emailRequest);
+        assertThat(response.getStatusCode().is2xxSuccessful()).as("La chiamata di invio mail ha prodotto un errore col seguente status code: {}", response.getStatusCodeValue()).isTrue();
+        log.info("Email inviata con successo");
+        log.info("Request id: {}", requestId);
 
 //        HttpClient client = HttpClient.newHttpClient();
 //
@@ -167,9 +164,6 @@ public class TracciamentoEventiPeoSteps {
         log.info("Waiting 1 minute for the email to be delivered");
         Thread.sleep(60000L);
 
-//        List<CourtesyMessageProgressEvent> eventsList = externalChannelsInternalClient.getDigitalCourtesyMessageStatus(requestId, clientInUse);
-//        checkEventsListNew(eventsList, events);
-
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(deliveryBaseUrl + "/external-channel/gestoreRepository/requests/" + requestId))
@@ -185,6 +179,9 @@ public class TracciamentoEventiPeoSteps {
         }
         String prettyJson = B2bUtils.logPrettyResponse(response.body());
         checkEventsList(prettyJson, events);
+
+//        List<CourtesyMessageProgressEvent> eventsList = externalChannelsInternalClient.getDigitalCourtesyMessageStatus(requestId, clientInUse);
+//        checkEventsListNew(eventsList, events);
     }
 
     private void checkEventsList(String json, String events) {
