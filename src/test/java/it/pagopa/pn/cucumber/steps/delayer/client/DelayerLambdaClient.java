@@ -53,7 +53,7 @@ public class DelayerLambdaClient {
         return rawResult;
     }
 
-    public String invokePortfatLambda(String operationType, String downloadUrl) throws Exception {
+    public String invokePortfatLambda(String operationType, String portfatLambdaName, String downloadUrl) throws Exception {
         String payload = buildFileReadyEventJson(downloadUrl);
         String rawResult = lambdaInvoker.invokeMyLambda(portfatLambdaName, payload);
         checkLambdaResponse(rawResult, operationType);

@@ -42,6 +42,9 @@ import java.util.stream.Stream;
 public class CensimentoStimeMittentiSteps {
     public static final int MAX_ATTEMPTS = 600;
     public static final int SLEEP_MILLIS = 500;
+    @Value("${pn.delayer.portfat.lambda.name}")
+    private String portfatLambdaName;
+
 
     private final DelayerLambdaClient lambdaClient;
     private final StimeMittentiContext context;
@@ -118,7 +121,6 @@ public class CensimentoStimeMittentiSteps {
 
     @Given("vengono caricati i moduli commessa come file zip su portfat: {string}")
     public void uploadZipFile(String fileName) {
-
         try {
             String sha256 = B2bUtils.computeSha256(applicationContext, String.format("classpath:/%s", fileName));
             Map<String,String> uploadParams = prepareParametersForGetPresignedUrl(fileName, sha256, "UPLOAD");
@@ -132,10 +134,10 @@ public class CensimentoStimeMittentiSteps {
             String preloadUrlDownload = extractUrlFromPresignedUrlResponse(downloadResponse, "downloadUrl");
 
             // viene invocata la lambda portfat che elabora il file e genera le stime mittenti
-            lambdaClient.invokePortfatLambda("pn-portfat-eventFileReady-lambda", preloadUrlDownload);
+            lambdaClient.invokePortfatLambda("pn-portfat-eventFileReady-lambda", portfatLambdaName, preloadUrlDownload);
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            log.info("Errore non bloccante durante il caricamento del file zip e l'invocazione della lambda Portfat", e);
         }
 
 
