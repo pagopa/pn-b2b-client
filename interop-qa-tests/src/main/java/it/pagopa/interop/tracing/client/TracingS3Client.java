@@ -9,11 +9,7 @@ import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.model.*;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -36,21 +32,6 @@ public class TracingS3Client {
 
         @Builder.Default
         private long pollIntervalMs = 1_000;
-    }
-
-    private String getCredentialsFileName() {
-        Properties prop = new Properties();
-        try {
-            InputStream input = Files.newInputStream(Paths.get("config/application.properties"));
-            prop.load(input);
-            String env = prop.getProperty("spring.profiles.active");
-            input = Files.newInputStream(Paths.get("config/application-" + env + ".properties"));
-            prop.load(input);
-
-        } catch (IOException e) {
-            return "credentials";
-        }
-        return prop.getProperty("s3.credentials.alternative-name");
     }
 
     public boolean isFileExistingInS3Bucket(PollingSpecification spec, String bucketName, String filePathKey) {
@@ -77,7 +58,7 @@ public class TracingS3Client {
                 // Not possible to check if the file exists in the bucket
                 throw e;
             }
-        }, getCredentialsFileName());
+        });
 
         polling.executePolling(
                 maxAttempts(spec),
@@ -107,7 +88,7 @@ public class TracingS3Client {
                 // Not possible to check if the file exists in the bucket
                 throw e;
             }
-        }, getCredentialsFileName());
+        });
 
         polling.executePolling(
                 maxAttempts(spec),
