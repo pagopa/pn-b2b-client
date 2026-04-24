@@ -1,7 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.agreement;
 
-import static java.time.OffsetDateTime.now;
-
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -12,27 +10,20 @@ import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.Attribute;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 import lombok.Builder;
 import lombok.Data;
+
+import java.time.OffsetDateTime;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
+
+import static java.time.OffsetDateTime.now;
 
 @Data
 public class AgreementCommonSteps {
@@ -159,6 +150,19 @@ public class AgreementCommonSteps {
                 .clientAccessDelegable(true)
                 .build();
         tenantHasAlreadyCreatedAndPublishedEService(tenantType, totalEservices, Optional.of(build));
+    }
+
+    @Given("l'utente tenta di creare un e-service delegabile in fruizione con client del delegato utilizzabile")
+    public void tryCreateDelegableEService() {
+        EServiceSeed eServiceSeed = new EServiceSeed()
+                .name(String.format("e-service %d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)))
+                .description("Descrizione e-service")
+                .technology(EServiceTechnology.REST)
+                .mode(EServiceMode.DELIVER)
+                .isConsumerDelegable(true)
+                .isClientAccessDelegable(true)
+                .personalData(false);
+        httpCallExecutor.performCall(() -> eserviceClient.createEService(eServiceSeed));
     }
 
     public void tenantHasAlreadyCreatedAndPublishedEService(String tenantType, int totalEservices, Optional<EServiceConfig> eServiceConfig) {
