@@ -153,6 +153,10 @@ public class EServiceApiClientImpl implements IEServiceClient {
         return eservicesApi.updateEServiceById(eServiceId, updateEServiceSeed);
     }
 
+    public CreatedResource updateEServiceDelegationFlags(UUID eServiceId, EServiceDelegationFlagsUpdateSeed eserviceDelegationFlagsUpdateSeed) {
+         return eservicesApi.updateEServiceDelegationFlags(eServiceId, eserviceDelegationFlagsUpdateSeed);
+    }
+
     public CreatedResource updateEServiceDescription(UUID eServiceId, EServiceDescriptionUpdateSeed eserviceDescriptionUpdateSeed) {
         return eservicesApi.updateEServiceDescription(eServiceId, eserviceDescriptionUpdateSeed);
     }

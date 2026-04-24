@@ -18,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.UUID;
 
+import static it.pagopa.pn.interop.cucumber.utility.StepParser.nullableBoolean;
+
 public class CatalogCommonSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
@@ -54,6 +56,11 @@ public class CatalogCommonSteps {
         createEServiceWithDescriptorInState(tenantType, descriptorState);
     }
 
+    @Given("{string} ha già creato un e-service con un descrittore in stato {string} e impostando delega amministrativa a {string} e delega tecnica a {string}")
+    public void createEserviceWithDescriptorAndSpecifyingConsumerDelegationFlags(String tenantType, String descriptorState, String isConsumerDelegable, String isClientAccessDelegable) {
+        createEServiceWithDescriptorInStateSpecifyingConsumerDelegationFlags(tenantType, descriptorState, nullableBoolean(isConsumerDelegable), nullableBoolean(isClientAccessDelegable));
+    }
+
     @Given("{string} ha già creato un e-service in stato {eServiceState}")
     public void createEservice(String tenantType, EServiceState eServiceState) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
@@ -66,6 +73,12 @@ public class CatalogCommonSteps {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         createEServiceWithDescriptor(descriptorState, dataPreparationService,
                 sharedStepsContext.getEServicesCommonContext());
+    }
+
+    private void createEServiceWithDescriptorInStateSpecifyingConsumerDelegationFlags(String tenantType, String descriptorState, Boolean isConsumerDelegable, Boolean isClientAccessDelegable) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        createEServiceWithDescriptorSpecifyingConsumerDelegationFlags(descriptorState, dataPreparationService,
+                sharedStepsContext.getEServicesCommonContext(), isConsumerDelegable, isClientAccessDelegable);
     }
 
     @Given("{string} porta il descrittore dell'e-service in stato {string}")
@@ -87,6 +100,21 @@ public class CatalogCommonSteps {
             EServicesCommonContext eServiceContext
     ) {
         EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(new EServiceSeed(), new UpdateEServiceDescriptorSeed());
+        dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(),
+                eServiceDescriptor.getDescriptorId(), EServiceDescriptorState.valueOf(
+                        descriptorState), false);
+        eServiceContext.setEserviceId(eServiceDescriptor.getEServiceId());
+        eServiceContext.setDescriptorId(eServiceDescriptor.getDescriptorId());
+    }
+
+    public static void createEServiceWithDescriptorSpecifyingConsumerDelegationFlags(
+            String descriptorState,
+            BFFDataPreparationService dataPreparationService,
+            EServicesCommonContext eServiceContext,
+            Boolean isConsumerDelegable,
+            Boolean isClientAccessDelegable
+    ) {
+        EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptorSpecifyingConsumerDelegationFlags(new EServiceSeed(), new UpdateEServiceDescriptorSeed(), isConsumerDelegable, isClientAccessDelegable);
         dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(),
                 eServiceDescriptor.getDescriptorId(), EServiceDescriptorState.valueOf(
                         descriptorState), false);

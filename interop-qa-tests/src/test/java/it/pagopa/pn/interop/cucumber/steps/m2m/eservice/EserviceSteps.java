@@ -37,6 +37,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static it.pagopa.pn.interop.cucumber.utility.StepParser.nullableBoolean;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -57,22 +58,22 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     private final DocumentMapper documentMapper;
 
     public EserviceSteps(
-        SharedStepsContext sharedStepsContext,
-        ClientTokenConfigurator clientTokenConfigurator,
-        BlobFileCreator blobFileCreator,
-        EServicePatchOperationsAssistant eServicePatchAssistant,
-        EServiceDelegationPatchOperationsAssistant eServiceDelegationPatchAssistant,
-        EServiceNamePatchOperationsAssistant eServiceNamePatchAssistant,
-        EServiceDescriptionPatchOperationsAssistant eServiceDescriptionPatchAssistant,
-        DocumentMapper documentMapper,
-        DelayService delayService
+            SharedStepsContext sharedStepsContext,
+            ClientTokenConfigurator clientTokenConfigurator,
+            BlobFileCreator blobFileCreator,
+            EServicePatchOperationsAssistant eServicePatchAssistant,
+            EServiceDelegationPatchOperationsAssistant eServiceDelegationPatchAssistant,
+            EServiceNamePatchOperationsAssistant eServiceNamePatchAssistant,
+            EServiceDescriptionPatchOperationsAssistant eServiceDescriptionPatchAssistant,
+            DocumentMapper documentMapper,
+            DelayService delayService
     ) {
         super("eService", clientTokenConfigurator.getM2meServiceClient(), sharedStepsContext);
         this.sharedStepsContext = sharedStepsContext;
         this.httpExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
-        this.client  = clientTokenConfigurator.getM2meServiceClient();
-        this.descriptorClient  = clientTokenConfigurator.getM2mEServiceDescriptorClient();
+        this.client = clientTokenConfigurator.getM2meServiceClient();
+        this.descriptorClient = clientTokenConfigurator.getM2mEServiceDescriptorClient();
         this.blobFileCreator = blobFileCreator;
         client.setHttpCallExecutor(sharedStepsContext.getHttpCallExecutor());
         this.eServicePatchAssistant = eServicePatchAssistant;
@@ -88,9 +89,9 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         deleteEService();
         UUID eserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         pollingService.makePolling(
-            () -> httpExecutor.performCallSavingBodyResponse(() -> client.getWithHttpInfo(eserviceId)),
+                () -> httpExecutor.performCallSavingBodyResponse(() -> client.getWithHttpInfo(eserviceId)),
                 Objects::isNull,
-            "Non è stato possibile eliminare l'e-service. Consultare i log per maggiori dettagli.");
+                "Non è stato possibile eliminare l'e-service. Consultare i log per maggiori dettagli.");
 
         Assertions.assertThat(this.httpExecutor.getResponseStatus()).isEqualTo(NOT_FOUND);
     }
@@ -126,9 +127,9 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         UUID eserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
         pollingService.makePolling(() -> httpExecutor.performCall(
-            () -> descriptorClient.getDescriptor(eserviceId, descriptorId)),
-            status -> status.is2xxSuccessful() && ((it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor) httpExecutor.getResponse()).getState().equals(EServiceDescriptorState.PUBLISHED),
-            "Il servizio non è stato riattivato come previsto.");
+                        () -> descriptorClient.getDescriptor(eserviceId, descriptorId)),
+                status -> status.is2xxSuccessful() && ((it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor) httpExecutor.getResponse()).getState().equals(EServiceDescriptorState.PUBLISHED),
+                "Il servizio non è stato riattivato come previsto.");
     }
 
     @Given("l'utente effettua il caricamento dell'interfaccia dell'e-service con successo")
@@ -153,8 +154,8 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
 
     private static String buildInterfaceName(UUID eServiceId, UUID descriptorId) {
         return "e-service-%s-descriptor-%s-interface-%d".formatted(eServiceId,
-            descriptorId,
-            RandomUtils.secure().randomInt(0, 99));
+                descriptorId,
+                RandomUtils.secure().randomInt(0, 99));
     }
 
     @When("l'utente tenta di effettuare la cancellazione dell'interfaccia dell'e-service")
@@ -197,22 +198,22 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         List<Document> actualDocuments = ((Documents) httpExecutor.getResponse()).getResults();
         List<DocumentMetadata> actualDocumentsMetadata = documentMapper.map(actualDocuments);
         List<DocumentMetadata> expectedDocumentsMetadata = sharedStepsContext.getEServicesCommonContext()
-            .getDocumentsMetadata();
+                .getDocumentsMetadata();
 
         assertSoftly(softly -> softly.assertThat(actualDocumentsMetadata)
-            .as("Verifica che i metadati dei documenti caricati siano coerenti")
-            .usingFieldByFieldElementComparator()
-            .usingComparatorForElementFieldsWithType(
-                (timestamp1, timestamp2) -> {
-                    Duration actualAndExpectedDifference = Duration.between(timestamp1, timestamp2).abs();
-                    Duration acceptedDelay = Duration.ofSeconds(10);
+                .as("Verifica che i metadati dei documenti caricati siano coerenti")
+                .usingFieldByFieldElementComparator()
+                .usingComparatorForElementFieldsWithType(
+                        (timestamp1, timestamp2) -> {
+                            Duration actualAndExpectedDifference = Duration.between(timestamp1, timestamp2).abs();
+                            Duration acceptedDelay = Duration.ofSeconds(10);
 
-                    // Se i timestamp di creazione sono divisi da un delay ragionevole, allora
-                    // si considerano "uguali", per la riuscita del test
-                    return actualAndExpectedDifference.compareTo(acceptedDelay) < 0 ? 0 : 1;
-                },
-                OffsetDateTime.class)
-            .containsExactlyInAnyOrderElementsOf(expectedDocumentsMetadata));
+                            // Se i timestamp di creazione sono divisi da un delay ragionevole, allora
+                            // si considerano "uguali", per la riuscita del test
+                            return actualAndExpectedDifference.compareTo(acceptedDelay) < 0 ? 0 : 1;
+                        },
+                        OffsetDateTime.class)
+                .containsExactlyInAnyOrderElementsOf(expectedDocumentsMetadata));
     }
 
     @Then("è presente un'interfaccia per l'e-service")
@@ -231,13 +232,13 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
         pollingService.makePolling(
-            () -> httpExecutor.performCall(() -> descriptorClient.downloadEServiceDescriptorInterface(eServiceId, descriptorId)),
-            interfaceUploaded,
-            "L'interfaccia dell'e-service non sottostà alle condizioni attese. Visionare logs per maggiori dettagli");
+                () -> httpExecutor.performCall(() -> descriptorClient.downloadEServiceDescriptorInterface(eServiceId, descriptorId)),
+                interfaceUploaded,
+                "L'interfaccia dell'e-service non sottostà alle condizioni attese. Visionare logs per maggiori dettagli");
     }
 
     @When("l'utente tenta di effettuare il caricamento di un'interfaccia di un e-service inesistente")
-    public void uploadNonExistentEServiceInterface(){
+    public void uploadNonExistentEServiceInterface() {
         UUID eServiceId = UUID.randomUUID();
         UUID descriptorId = UUID.randomUUID();
         String interfaceName = buildInterfaceName(eServiceId, descriptorId);
@@ -245,7 +246,7 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     }
 
     @When("l'utente tenta di effettuare la cancellazione di un'interfaccia di un e-service inesistente")
-    public void deleteNonExistentEServiceInterface(){
+    public void deleteNonExistentEServiceInterface() {
         UUID eServiceId = UUID.randomUUID();
         UUID descriptorId = UUID.randomUUID();
         deleteInterface(eServiceId, descriptorId);
@@ -258,10 +259,10 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         Resource resource = blobFileCreator.createBlobFile(filePath, fileName);
         sharedStepsContext.getEServicesCommonContext().setInterfaceName(interfaceName);
         EServiceInterfaceUploadRequest request = new EServiceInterfaceUploadRequest()
-            .prettyName(interfaceName)
-            .resource(resource)
-            .eServiceId(eServiceId)
-            .descriptorId(descriptorId);
+                .prettyName(interfaceName)
+                .resource(resource)
+                .eServiceId(eServiceId)
+                .descriptorId(descriptorId);
         httpExecutor.performCall(() -> client.uploadInterface(request));
     }
 
@@ -280,17 +281,17 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     @When("l'utente tenta di effettuare la modifica parziale dell'e-service con token non valido")
     public void patchEServiceWithNotValidToken() {
         eServicePatchAssistant.patchResourceWithInvalidToken(
-            this.eServicePatchAssistant.buildDefaultPatchRequest());
+                this.eServicePatchAssistant.buildDefaultPatchRequest());
     }
 
     @When("l'utente tenta di effettuare la modifica parziale dell'e-service specificando un sottoinsieme di informazioni")
     public void patchEServiceSubset() {
         String id = RandomStringUtils.insecure().nextAlphanumeric(5);
         EServicePatchRequest request = EServicePatchRequest.builder()
-            .name("some patched name - " + id)
-            .description("some patched description - " + id)
-            .technology(EServiceTechnology.REST)
-            .build();
+                .name("some patched name - " + id)
+                .description("some patched description - " + id)
+                .technology(EServiceTechnology.REST)
+                .build();
         eServicePatchAssistant.patchResource(request);
     }
 
@@ -315,11 +316,19 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         eServicePatchAssistant.checkUnpatchedResource();
     }
 
-    @When("l'utente tenta di effettuare la modifica parziale della delega dell'e-service")
-    public void patchEServiceDelegation() {
+    @When("l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a {string} e quella tecnica a {string}")
+    public void patchEServiceDelegation(String isConsumerDelegable, String isClientAccessDelegable) {
+        //aggiunto per supportare i casi in cui l'e-service è stato generato da e-service template
+        if (sharedStepsContext.getEServicesCommonContext().getEserviceId() == null) {
+            UUID templateInstanceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
+            if (templateInstanceId != null) {
+                sharedStepsContext.getEServicesCommonContext().setEserviceId(templateInstanceId);
+            }
+        }
+
         EServiceDelegationPatchRequest request = EServiceDelegationPatchRequest.builder()
-                .isConsumerDelegable(true)
-                .isClientAccessDelegable(true)
+                .isConsumerDelegable(nullableBoolean(isConsumerDelegable))
+                .isClientAccessDelegable(nullableBoolean(isClientAccessDelegable))
                 .build();
         eServiceDelegationPatchAssistant.patchResource(request);
     }
@@ -329,16 +338,21 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         eServiceDelegationPatchAssistant.patchNonExistentResource();
     }
 
-    @When("l'utente tenta di effettuare la modifica parziale della delega dell'e-service specificando un sottoinsieme di informazioni")
-    public void patchEServiceDelegationSubset() {
-        EServiceDelegationPatchRequest request = EServiceDelegationPatchRequest.builder()
-                .isClientAccessDelegable(false)
-                .build();
-        eServiceDelegationPatchAssistant.patchResource(request);
+    @When("l'utente tenta di effettuare la modifica parziale non specificando l'id dell'e-service")
+    public void patchNonSpecifiedEServiceDelegation() {
+        eServiceDelegationPatchAssistant.patchNonSpecifiedResource();
     }
 
     @When("l'utente tenta di effettuare la modifica parziale della delega dell'e-service con token non valido")
     public void patchEServiceDelegationWithNotValidToken() {
+        //aggiunto per supportare i casi in cui l'e-service è stato generato da e-service template
+        if (sharedStepsContext.getEServicesCommonContext().getEserviceId() == null) {
+            UUID templateInstanceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
+            if (templateInstanceId != null) {
+                sharedStepsContext.getEServicesCommonContext().setEserviceId(templateInstanceId);
+            }
+        }
+
         EServiceDelegationPatchRequest request = EServiceDelegationPatchRequest.builder()
                 .isConsumerDelegable(false)
                 .isClientAccessDelegable(false)

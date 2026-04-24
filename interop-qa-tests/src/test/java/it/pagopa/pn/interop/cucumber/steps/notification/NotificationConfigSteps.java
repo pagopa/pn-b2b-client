@@ -3,10 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps.notification;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.enums.EntityIdType;
-import it.pagopa.interop.generated.openapi.clients.bff.model.TenantNotificationConfig;
-import it.pagopa.interop.generated.openapi.clients.bff.model.TenantNotificationConfigUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UserNotificationConfig;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UserNotificationConfigUpdateSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.notification.NotificationConfigClient;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -92,6 +89,71 @@ public class NotificationConfigSteps {
         Assertions.assertThat(actual)
                 .as("Actual ed expected devono coincidere")
                 .isEqualTo(expectedFinal);
+    }
+
+    @When("si attivano tutte le notifiche InApp per l'utente corrente")
+    public void enableAllInAppNotificationsForCurrentUser() {
+        triggerAllInAppNotificationsForCurrentUser(true);
+    }
+
+    @When("si disabilitano tutte le notifiche InApp per l'utente corrente")
+    public void disableAllInAppNotificationsForCurrentUser() {
+        triggerAllInAppNotificationsForCurrentUser(false);
+    }
+
+    private void triggerAllInAppNotificationsForCurrentUser(boolean isActive) {
+        UserNotificationConfig currentConfig = null;
+
+        try {
+            currentConfig = configClient.getUserConfig();
+        } catch (IllegalStateException e) {
+            log.warn(e.getMessage());
+        }
+
+        Assertions.assertThat(currentConfig)
+                .as("La configurazione utente deve essere presente")
+                .isNotNull();
+
+        NotificationConfig inAppConfig = new NotificationConfig()
+                .agreementSuspendedUnsuspendedToProducer(isActive)
+                .agreementManagementToProducer(isActive)
+                .clientAddedRemovedToProducer(isActive)
+                .purposeStatusChangedToProducer(isActive)
+                .templateStatusChangedToProducer(isActive)
+                .agreementSuspendedUnsuspendedToConsumer(isActive)
+                .eserviceStateChangedToConsumer(isActive)
+                .agreementActivatedRejectedToConsumer(isActive)
+                .purposeActivatedRejectedToConsumer(isActive)
+                .purposeSuspendedUnsuspendedToConsumer(isActive)
+                .newEserviceTemplateVersionToInstantiator(isActive)
+                .eserviceTemplateNameChangedToInstantiator(isActive)
+                .eserviceTemplateStatusChangedToInstantiator(isActive)
+                .delegationApprovedRejectedToDelegator(isActive)
+                .eserviceNewVersionSubmittedToDelegator(isActive)
+                .eserviceNewVersionApprovedRejectedToDelegate(isActive)
+                .delegationSubmittedRevokedToDelegate(isActive)
+                .certifiedVerifiedAttributeAssignedRevokedToAssignee(isActive)
+                .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(isActive)
+                .purposeQuotaAdjustmentRequestToProducer(isActive)
+                .purposeOverQuotaStateToConsumer(isActive);
+
+        UserNotificationConfigUpdateSeed seed = new UserNotificationConfigUpdateSeed();
+        seed.setInAppNotificationPreference(true);
+        seed.setInAppConfig(inAppConfig);
+        seed.setEmailNotificationPreference(currentConfig.getEmailNotificationPreference());
+        seed.setEmailDigestPreference(currentConfig.getEmailDigestPreference());
+        seed.setEmailConfig(currentConfig.getEmailConfig());
+
+        expectedUserNotificationConfig = new UserNotificationConfig();
+        expectedUserNotificationConfig.setInAppNotificationPreference(true);
+        expectedUserNotificationConfig.setInAppConfig(inAppConfig);
+        expectedUserNotificationConfig.setEmailNotificationPreference(currentConfig.getEmailNotificationPreference());
+        expectedUserNotificationConfig.setEmailDigestPreference(currentConfig.getEmailDigestPreference());
+        expectedUserNotificationConfig.setEmailConfig(currentConfig.getEmailConfig());
+
+        actualUserNotificationConfig = currentConfig;
+
+        configClient.updateUserNotificationConfig(seed);
     }
 
     private void handleConfigOperation(String rawOp, EntityIdType entityIdType, ConfigTarget target) {
