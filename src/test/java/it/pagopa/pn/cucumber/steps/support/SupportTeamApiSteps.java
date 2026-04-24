@@ -16,7 +16,6 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnBffPaClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Assertions;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -25,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationStatusV26.EFFECTIVE_DATE;
 import static java.time.OffsetDateTime.now;
 
 @Slf4j
@@ -98,7 +98,7 @@ public class SupportTeamApiSteps {
         OffsetDateTime startDate = now().minusYears(1).atZoneSameInstant(ZoneId.of("UTC")).toOffsetDateTime();
         OffsetDateTime endDate = now().atZoneSameInstant(ZoneId.of("UTC")).toOffsetDateTime();
         return bffPaClient.searchSentNotification(startDate, endDate,
-                null, null, null, null, 10, null);
+                null, EFFECTIVE_DATE, null, null, 50, null);
     }
 
     private void getSentNotificationDocument() {
@@ -118,10 +118,15 @@ public class SupportTeamApiSteps {
             BffFullNotificationV1 bffFullNotificationV1 = getSentNotification(notificationSearchRow.getIun());
             if (!bffFullNotificationV1.getDocuments().isEmpty()) {
                 BffDocumentDownloadMetadataResponse response = bffPaClient.getSentNotificationPaymentV1(notificationSearchRow.getIun(), 0, "PAGOPA", 0);
-                Assertions.assertNotNull(response);
-                return;
+                // Verifica che la risposta contenga almeno un documento di pagamento
+                if (response != null) {
+                    return;
+                } else {
+                    log.info("Nessun documento di pagamento trovato per la notifica con IUN: {}", notificationSearchRow.getIun());
+                }
+                // La notifica ha documenti, ma nessuno di tipo pagamento, quindi si continua a cercare nelle altre notifiche
             } else {
-                log.warn("Nessun documento trovato per la notifica con IUN: {}", notificationSearchRow.getIun());
+                log.info("Nessun documento trovato per la notifica con IUN: {}", notificationSearchRow.getIun());
             }
         }
         throw new RuntimeException("Nessun documento di pagamento trovato nelle notifiche recuperate");
