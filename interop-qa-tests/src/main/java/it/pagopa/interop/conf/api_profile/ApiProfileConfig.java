@@ -21,7 +21,7 @@ public final class ApiProfileConfig {
     }
 
     public static ApiProfileConfig defaultConfig() {
-        return new ApiProfileConfig("RIGHT_FIT", "V3", "V1", "M2M");
+        return new ApiProfileConfig("RIGHT_FIT", "V2", "V1", "M2M");
     }
 
 }
