@@ -2,8 +2,8 @@ Feature: comunicazioni bonarie
 
   Scenario: [PREPARE-TC1-OK] Validazione nuovo service api prepare con tutti i parametri mandatori
     Given inizializzata una comunicazione bonaria con i parametri:
-      | iun                     | requestId                            | receiverType | printType       | attachmentUrls               | proposalProductType
-      | ABCD-HILM-YKWX-202202-1 | ABCD-HILM-YKWX-202202-1_rec0_try1001 | PF           | BN_FRONTE_RETRO | https://TestServer/allegato1 | RS
+      | requestId                            |
+      | ABCD-HILM-YKWX-202202-1_rec0_try1001 |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve una response con codice di stato 201
 
@@ -19,7 +19,7 @@ Feature: comunicazioni bonarie
       | attachmentUrls                       |
       | [EMPTY],https://TestServer/allegato1 |
     When si richiede la prepare della comunicazione bonaria
-    Then si riceve un errore con codice di stato 500
+    Then si riceve un errore con codice di stato 400
 
   Scenario: [PREPARE-TC2C-KO] Validazione nuovo service api prepare con parametro (required) attachmentUrls popolata con almeno un url a blank
     Given inizializzata una comunicazione bonaria con i parametri:
@@ -75,7 +75,7 @@ Feature: comunicazioni bonarie
       | requestId |
       | [EMPTY]   |
     When si richiede la prepare della comunicazione bonaria
-    Then si riceve un errore con codice di stato 500
+    Then si riceve un errore con codice di stato 400
 
   Scenario: [PREPARE-TC6B-KO] Validazione nuovo service api prepare con parametro (required) requestId a blank
     Given inizializzata una comunicazione bonaria con i parametri:
@@ -89,64 +89,63 @@ Feature: comunicazioni bonarie
       | proposalProductType |
       | [EMPTY]             |
     When si richiede la prepare della comunicazione bonaria
-    Then si riceve un errore con codice di stato 500
+    Then si riceve un errore con codice di stato 400
 
   Scenario: [PREPARE-TC7B-KO] Validazione nuovo service api prepare con parametro (required) proposalProductType a blank
     Given inizializzata una comunicazione bonaria con i parametri:
       | proposalProductType |
       | [SOLO_SPAZI]        |
     When si richiede la prepare della comunicazione bonaria
-    Then si riceve un errore con codice di stato 500
-
-  Scenario: [PREPARE-TC7-KO] Validazione nuovo service api prepare con parametro (required) attachmentUrls null
-    Given inizializzata una comunicazione bonaria con i parametri:
-      | attachmentUrls |
-      | [null]         |
-    When si richiede la prepare della comunicazione bonaria
-    Then si riceve un errore con codice di stato 500
+    Then si riceve un errore con codice di stato 400
 
   Scenario: [PREPARE-TC8-KO] Validazione nuovo service api prepare con parametro (required) printType null
     Given inizializzata una comunicazione bonaria con i parametri:
       | printType |
-      | [null]    |
+      | [NULL]    |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve un errore con codice di stato 400
 
   Scenario: [PREPARE-TC9-KO] Validazione nuovo service api prepare con parametro (required) receiverType null
     Given inizializzata una comunicazione bonaria con i parametri:
       | receiverType |
-      | [null]       |
+      | [NULL]       |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve un errore con codice di stato 400
 
   Scenario: [PREPARE-TC10-KO] Validazione nuovo service api prepare con parametro (required) iun null
     Given inizializzata una comunicazione bonaria con i parametri:
       | iun |
-      | [null]       |
+      | [NULL]       |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve un errore con codice di stato 400
 
   Scenario: [PREPARE-TC11-KO] Validazione nuovo service api prepare con parametro (required) requestId null
     Given inizializzata una comunicazione bonaria con i parametri:
       | requestId |
-      | [null]    |
+      | [NULL]    |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve un errore con codice di stato 400
 
   Scenario: [PREPARE-TC11B-KO] Validazione nuovo service api prepare con parametro (required) proposalProductType null
     Given inizializzata una comunicazione bonaria con i parametri:
       | proposalProductType |
-      | [null]              |
+      | [NULL]              |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve un errore con codice di stato 400
 
+  Scenario: [PREPARE-TC11C-KO] Validazione nuovo service api prepare con parametro (required) attachmentUrls null
+    Given inizializzata una comunicazione bonaria con i parametri:
+      | attachmentUrls |
+      | [NULL]         |
+    When si richiede la prepare della comunicazione bonaria
+    Then si riceve un errore con codice di stato 400
 
 
   Scenario: [PREPARE-TC12-KO] Validazione nuovo service api prepare con requestId esistente (già preso in carico)
   ma il corpo della richiesta presenta dati diversi
     Given inizializzata una comunicazione bonaria con i parametri:
       | requestId                             | printType |
-      | ABCD-HILM-YKWX-202202-1_rec0_try1001  | BN_FRONTE |
+      | ABCD-HILM-YKWX-202202-1_rec0_try1001  | FRONTE    |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve un errore con codice di stato 409
 
@@ -163,7 +162,7 @@ Feature: comunicazioni bonarie
       | proposalProductType |
       | AR                  |
     When si richiede la prepare della comunicazione bonaria
-    Then si riceve un errore con codice di stato 500
+    Then si riceve un errore con codice di stato 400
 
 
   Scenario: [PREPARE-TC16-KO] Validazione nuovo service api prepare con formato data invalido nel parametro notificationSentAt
@@ -185,7 +184,7 @@ Feature: comunicazioni bonarie
       | printType |
       | AR        |
     When si richiede la prepare della comunicazione bonaria
-    Then si riceve una response con codice di stato 400
+    Then si riceve un errore con codice di stato 400
 
   Scenario: [PREPARE-TC20-OK] Validazione nuovo service api prepare con valore non censito nel parametro receiverType
     Given inizializzata una comunicazione bonaria con i parametri:
@@ -302,9 +301,9 @@ Feature: comunicazioni bonarie
   Scenario: [PREPARE-TC29-KO] Validazione nuovo service api prepare con header X-Client-Id mancante (null)
     Given inizializzata una comunicazione bonaria con i parametri:
       | xClientId |
-      | [null]    |
+      | [NULL]    |
     When si richiede la prepare della comunicazione bonaria
-    Then si riceve una response con codice di stato 400
+    Then si riceve un errore con codice di stato 400
 
 
 

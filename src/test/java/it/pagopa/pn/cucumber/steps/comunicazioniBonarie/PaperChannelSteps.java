@@ -40,7 +40,7 @@ public class PaperChannelSteps {
     private static final String IUN = "ABCD-HILM-YKWX-202202-1";
     private static final String REQUEST_ID = "ABCD-HILM-YKWX-202202-1_rec0_try";
     private static final String RECEIVER_TYPE = "PF";
-    private static final String PRINT_TYPE = "BN_FRONTE_RETRO";
+    private static final String PRINT_TYPE = "FRONTE_RETRO";
     private static final String NOTIFICATION_SENT_ID = "2022-07-27T12:22:33.444Z";
     private static final String PROPOSAL_PRODUCT_TYPE = InformalProposalProductTypeEnum.RS.getValue();
 
@@ -135,8 +135,7 @@ public class PaperChannelSteps {
         assertNotNull("Il requestId è nullo", this.informalPrepareResponse.getBody().getRequestId());
 
         // Verifica che lo stato sia 200 o 201
-        assertEquals(this.informalPrepareResponse.getStatusCode().value(),
-                expectedCode);
+        assertEquals(expectedCode, this.informalPrepareResponse.getStatusCode().value());
     }
 
 
