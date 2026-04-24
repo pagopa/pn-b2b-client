@@ -24,7 +24,7 @@ public class M2MEventsSteps {
     private static final long MIN_INVISIBILITY_MILLIS = 5_000L;
     private static final int POLLING_ATTEMPTS = 10;
     private static final int POLLING_INTERVAL_SECONDS = 2_500;
-    
+
     private final M2MAuthSteps m2mAuthSteps;
     private final EventContext eventContext;
     private final IM2MEventClient m2mEventClient;
@@ -48,12 +48,18 @@ public class M2MEventsSteps {
                 .build();
 
         long startTime = System.currentTimeMillis();
-        
+
         PollingService.makePolling(
                 () -> {
                     Optional<M2MEvent> foundEvent = m2mEventClient.findEvent(eventRequest, eventPredicate);
                     foundEvent.ifPresent(e -> {
                         log.info("Evento {} trovato: {}", event, e);
+                        if (e.getId() == null) {
+                            throw new AssertionError("Evento " + event + " trovato ma senza campo 'id' valorizzato");
+                        }
+                        if (e.getEventTimestamp() == null) {
+                            throw new AssertionError("Evento " + event + " trovato ma senza campo 'eventTimestamp' valorizzato");
+                        }
                         eventContext.setLastEventMatched(event, e);
                     });
                     return foundEvent;
