@@ -149,8 +149,8 @@ public class PaperChannelSteps {
         }
 
         if("attachmentUrls".equals(field)) {
-            rawValue.replaceAll("[EMPTY]", "");
-            rawValue.replaceAll("[SOLO_SPAZI]", "   ");
+            rawValue = rawValue.replaceAll("\\[EMPTY\\]", "");
+            rawValue = rawValue.replaceAll("\\[SOLO_SPAZI\\]", "   ");
         }
 
         // 3. Risolvi i placeholder tramite lo switch
