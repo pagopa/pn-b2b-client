@@ -115,7 +115,7 @@ Feature: Aggiornamento di un descrittore già pubblicato
     And si ottiene status code 200
     And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC"
     When l'utente tenta di aggiungere una soglia differenziata di 11 per l'attributo DECLARED 0-esimo creato
-    Then si ottiene status code 409
+    Then si ottiene status code 400
 
   @dailyCallsThreshold
   Scenario: [DESCRIPTOR_PUBLISHED_UPDATE_THRESHOLD_6] Per un e-service in stato PUBLISHED è possibile indicare N soglie la cui somma dei limiti è superiore al limite di chiamate totali giornaliero
