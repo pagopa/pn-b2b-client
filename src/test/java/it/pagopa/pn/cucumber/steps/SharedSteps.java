@@ -784,6 +784,11 @@ public class SharedSteps {
         getNotificationStepInterface().addIuvGpdToDestinatario(denominazione, getIuvGPD(posizioneDebitoria), posizioneDebitoria);
     }
 
+    @And("al destinatario {int} viene associato lo iuv creato mediante partita debitoria alla posizione {int} per il suo pagamento alla posizione {int}")
+    public void destinatarioAddIuvGPD(Integer recIndex, Integer posizioneDebitoria, Integer recipientPaymentIndex) {
+        getNotificationStepInterface().addIuvGpdToDestinatario(recIndex, getIuvGPD(posizioneDebitoria), recipientPaymentIndex);
+    }
+
     @And("al destinatario viene associato lo iuv creato mediante partita debitoria per {string} per la posizione debitoria {int} del pagamento {int}")
     public void destinatarioAddIuvGpdPerUtente(String denominazione, Integer posizioneDebitoria, Integer paymentIndex) {
         getNotificationStepInterface().addIuvGpdToDestinatario(denominazione, getIuvGPD(posizioneDebitoria), paymentIndex);

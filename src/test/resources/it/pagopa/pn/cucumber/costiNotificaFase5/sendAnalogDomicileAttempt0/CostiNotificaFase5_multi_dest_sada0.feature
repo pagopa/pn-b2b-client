@@ -124,8 +124,8 @@ Feature: Costi Notifica Fase 5
       | title_payment                | PagoPa_mono_async_sada0 |
       | apply_cost_pagopa            | <applyCost>             |
       | payment_multy_number         | 1                       |
-    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
-    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Cucumber" alla posizione 0
+    And al destinatario 0 viene associato lo iuv creato mediante partita debitoria alla posizione 0 per il suo pagamento alla posizione 0
+    And al destinatario 1 viene associato lo iuv creato mediante partita debitoria alla posizione 1 per il suo pagamento alla posizione 0
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then verifico su DynamoDB la presenza in timeline dell'elemento "NOTIFICATION_COST_VALIDATION_REQUEST"
     And verifico che il popolamento dei dati su Pn-PaymentInfo sia avvenuto correttamente
@@ -215,10 +215,10 @@ Feature: Costi Notifica Fase 5
       | title_payment                | PagoPa_mono_async_sada0 |
       | apply_cost_pagopa            | <applyCost>             |
       | payment_multy_number         | 2                       |
-    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
-    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 1
-    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Cucumber" alla posizione 0
-    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Cucumber" alla posizione 1
+    And al destinatario 0 viene associato lo iuv creato mediante partita debitoria alla posizione 0 per il suo pagamento alla posizione 0
+    And al destinatario 0 viene associato lo iuv creato mediante partita debitoria alla posizione 1 per il suo pagamento alla posizione 1
+    And al destinatario 1 viene associato lo iuv creato mediante partita debitoria alla posizione 2 per il suo pagamento alla posizione 0
+    And al destinatario 1 viene associato lo iuv creato mediante partita debitoria alla posizione 3 per il suo pagamento alla posizione 1
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then verifico su DynamoDB la presenza in timeline dell'elemento "NOTIFICATION_COST_VALIDATION_REQUEST"
     And verifico che il popolamento dei dati su Pn-PaymentInfo sia avvenuto correttamente
