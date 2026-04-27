@@ -2,8 +2,9 @@
 Feature: Eventi M2M di Purpose Template
 
   Scenario: [M2M_PURPOSE_TEMPLATE_EVENTS_01] L'evento di creazione in DRAFT di purpose template deve essere visibile solo all'owner della risorsa
-    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    Given l'utente è un "admin" di "PA1"
     When viene creato un nuovo purpose template
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" visualizza l'evento PurposeTemplateAdded con:
       | field             | value              |
       | purposeTemplateId | :purposeTemplateId |
