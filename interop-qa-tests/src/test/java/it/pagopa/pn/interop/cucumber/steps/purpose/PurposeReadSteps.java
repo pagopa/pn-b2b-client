@@ -27,15 +27,10 @@ public class PurposeReadSteps {
     @When("l'utente richiede la lettura della finalità")
     public void userReadPurpose() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-
-        sharedStepsContext.getPollingService().makePolling(
-                () -> httpCallExecutor.performCall(
-                        () -> clientTokenConfigurator.getPurposeApiClient().getPurpose(
-                                UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())
-                        )
-                ),
-                HttpStatus::is2xxSuccessful,
-                "Purpose not found"
+        httpCallExecutor.performCall(
+                () -> clientTokenConfigurator.getPurposeApiClient().getPurpose(
+                        UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())
+                )
         );
     }
 
