@@ -523,8 +523,8 @@ public class BFFDataPreparationService {
         descriptorAttributesSeed.setCertified(
                 sharedStepsContext.getAttributeCommonContext().mapAttributes(descriptor.getAttributes().getCertified())
         );
-        descriptorAttributesSeed.setCertified(
-                sharedStepsContext.getAttributeCommonContext().mapAttributes(descriptor.getAttributes().getCertified())
+        descriptorAttributesSeed.setDeclared(
+                sharedStepsContext.getAttributeCommonContext().mapAttributes(descriptor.getAttributes().getDeclared())
         );
         descriptorAttributesSeed.setVerified(
                 sharedStepsContext.getAttributeCommonContext().mapAttributes(descriptor.getAttributes().getVerified())
