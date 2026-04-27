@@ -385,6 +385,7 @@
 
     @delayer2
     Scenario Outline: [DELAYER-TC2] Verifica la gestione di un mittente non censito
+      # da saltare
       Given vengono puliti i dati dalle tabelle target
       Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
         | seed            | quantita |
@@ -403,8 +404,10 @@
         | infinityDriverP8~P8      | esattamente | 35000 |
         | infinityDriverP8~CAP1_P8 | esattamente | 35000 |
       And viene impostato il limite massimo di 0 spedizioni in SENT_TO_PREPARE_PHASE_2 per ogni esecuzione di DelayerToPaperChannelStateMachine
+      # da saltare
       And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
       And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
+      # da saltare
       When viene avviata la step function BatchWorkflowStateMachine
       And vengono recuperate le notifiche al workflow step "EVALUATE_SENDER_LIMIT"
       And verifica che il processo fino al workflow step "EVALUATE_SENDER_LIMIT" abbia rispettato i criteri di ranking per almeno un test case:
@@ -431,10 +434,12 @@
         | SECONDO_TENTATIVO | prepareRequestDate |
         | ALTRO             | notificationSentAt |
       Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
+      And verifica la corretta pianificazione di ogni test case
       And vengono simulate internamente le operazioni di DelayerToPaperChannelStateMachine
+      # da saltare
       And vengono avviate le 2 esecuzioni della step function DelayerToPaperChannelStateMachine
       And verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
-#    TODO  And verifica che GET_RESIDUAL_PAPERS abbia 10 capacità
+      And verifica che le spedizioni spostate alla settimana successiva siano lo stesso valore
       And verifica la corretta pianificazione di ogni test case
 
       Examples:
@@ -950,7 +955,7 @@
       Then non devono esistere record in pn-DelayerPaperDelivery per la deliveryDate "2025-12-29"
       And non deve esistere capacità usata alla deliveryDate "2025-12-29"
       And non devono esistere contatori per la deliveryDate "2025-12-29"
-      And non devono esistere limiti mittente per la deliveryDate "2025-12-29"
+      And non devono esistere limiti mittente per la deliveryDate "2025-12-29" e pk "unknow~RS~P10"
       Examples:
         | csv                | TOT |
         | "tcZeroDriver.csv" | 15  |

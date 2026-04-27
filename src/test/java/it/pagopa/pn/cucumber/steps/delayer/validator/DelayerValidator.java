@@ -6,18 +6,19 @@ import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDelivery;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.extractSeed;
-import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.extractWorkflowStep;
-
 @Slf4j
+@Service
+@RequiredArgsConstructor
 public class DelayerValidator {
 
     public static final int FROZEN_POLLING_MAX_MINUTES = 45;
@@ -25,11 +26,11 @@ public class DelayerValidator {
     private final DelayerLambdaClient lambdaClient;
     private final DelayerPaperDeliveryUtils utils;
 
-    public DelayerValidator(DelayerContext context, DelayerLambdaClient lambdaClient, DelayerPaperDeliveryUtils utils) {
-        this.context = context;
-        this.lambdaClient = lambdaClient;
-        this.utils = utils;
-    }
+//    public DelayerValidator(DelayerContext context, DelayerLambdaClient lambdaClient, DelayerPaperDeliveryUtils utils) {
+//        this.context = context;
+//        this.lambdaClient = lambdaClient;
+//        this.utils = utils;
+//    }
 
     public void assertPianifications() {
         if (context.failPianification.isEmpty()) return;

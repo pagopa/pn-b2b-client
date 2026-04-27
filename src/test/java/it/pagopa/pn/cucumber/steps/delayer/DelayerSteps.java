@@ -1,31 +1,34 @@
 package it.pagopa.pn.cucumber.steps.delayer;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
+import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClientV2;
 import it.pagopa.pn.cucumber.steps.delayer.loader.DelayerCsvLoader;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDelivery;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPrintCapacityCounter;
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerCountersPrintItem;
 import it.pagopa.pn.cucumber.steps.delayer.model.ExecutionStatusResponse;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
 import it.pagopa.pn.cucumber.steps.delayer.planner.DelayerPlanner;
+import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSevice;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
 import it.pagopa.pn.cucumber.steps.delayer.validator.DelayerValidator;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
+import org.assertj.core.api.SoftAssertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
@@ -38,32 +41,35 @@ import static java.lang.Thread.sleep;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
+@Component
 @RequiredArgsConstructor
 public class DelayerSteps {
 
     public static final String[] CSV_FILES = new String[]{"tcRankingMerged.csv", "tcSenderUnknow.csv", "tcSplitSender.csv", "tcZeroDriver.csv", "tcProvCapNonCensite.csv",
-            "spedizioni_3000.csv", "tcWeeklyPrintCapacity.csv", "tcSenderUnknow_5010.csv",  "notificationCancelled.csv"};
+            "spedizioni_3000.csv", "tcWeeklyPrintCapacity.csv", "tcSenderUnknow_5010.csv", "notificationCancelled.csv"};
     public static final int POLLING_MAX_MINUTES = 90;
 
-    private final DelayerContext context;
-    private final DelayerCsvLoader csvLoader;
-    private final DelayerPlanner planner;
+    private final DelayerContext context = new DelayerContext();;
+    private final DelayerCsvLoader csvLoader= new DelayerCsvLoader(context);
+    private final DelayerPlanner planner= new DelayerPlanner(context);
     private final DelayerLambdaClient lambdaClient;
+    private final DelayerSevice service;
     private final DelayerValidator validator;
-    private final DelayerPaperDeliveryUtils utils;
-    private Map<String, Integer> availableCapacityByDriver = new HashMap<>();
+    private final DelayerPaperDeliveryUtils utils = new DelayerPaperDeliveryUtils(context);
+    private final Map<String, Integer> availableCapacityByDriver = new HashMap<>();
 
-    @Autowired
-    public DelayerSteps(LambdaInvoker lambdaInvoker, @Value("${pn.delayer.lambda.arn}") String lambdaName) {
+//    @Autowired
+//    public DelayerSteps(LambdaInvoker lambdaInvoker, @Value("${pn.delayer.lambda.arn}") String lambdaName) {
 
-        this.context = new DelayerContext();
-        this.csvLoader = new DelayerCsvLoader(context);
-        this.planner = new DelayerPlanner(context);
+//        this.context = new DelayerContext();
+//        this.csvLoader = new DelayerCsvLoader(context);
+//        this.planner = new DelayerPlanner(context);
 
-        this.lambdaClient = new DelayerLambdaClient(lambdaInvoker, lambdaName);
-        this.utils = new DelayerPaperDeliveryUtils(context);
-        this.validator = new DelayerValidator(context, lambdaClient, utils);
-    }
+
+//        this.utils = new DelayerPaperDeliveryUtils(context);
+//        this.validator = new DelayerValidator(context, lambdaClient, utils);
+
+//    }
 
     @Given("il CSV {string} contiene {int} notifiche distribuite tra i seguenti test case:")
     public void initParams(String csv, Integer expectedNotificationCount, DataTable dataTable) {
@@ -85,8 +91,8 @@ public class DelayerSteps {
                 lambdaClient.invoke("DELETE_DATA", "pn-DelayerPaperDelivery", "pn-PaperDeliveryDriverUsedCapacities",
                         "pn-PaperDeliveryUsedSenderLimit", "pn-PaperDeliveryCounters", csv);
             } catch (Exception e) {
-                if(e.getMessage().contains("The specified key does not exist")){
-                    log.warn("Key non trovata: {}", csv);
+                if (e.getMessage().contains("The specified key does not exist")) {
+                    log.warn("[DELETE_DATA] Key non trovata: {}", csv);
                     return;
                 }
                 throw new RuntimeException(e);
@@ -306,8 +312,8 @@ public class DelayerSteps {
     }
 
     @And("verifica che i parametri in PrintCapacityCounter siano conformi a quelli calcolati internamente")
-    public void checkPrintCapacityCounter(){
-        DelayerPrintCapacityCounter tupla = lambdaClient.getPrintCapacityCounter(context.expectedDeliveryDate);
+    public void checkPrintCapacityCounter() {
+        DelayerCountersPrintItem tupla = service.getPrintCapacityCounter(context.expectedDeliveryDate);
         Assertions.assertThat(tupla).isNotNull();
         boolean hasDeliveryInEvaluatePrint = !context.getExpectedByWorkflowStep(EVALUATE_PRINT_CAPACITY).isEmpty();
 
@@ -379,10 +385,10 @@ public class DelayerSteps {
     @Then("verifica che le opportune notifiche siano state congelate e ricaricate con workflow step {string} e deliveryDate alla settimana seguente per almeno un test case")
     public void checkFrozen(String ws) throws Exception {
         WorkflowSteps step = valueOf(ws);
-        List<DelayerPaperDelivery> frozenExpected = context.expectedPianification.values().stream()
+        context.frozenExpected = context.expectedPianification.values().stream()
                 .flatMap(m -> m.getOrDefault("FROZEN", List.of()).stream())
                 .toList();
-        validator.checkFrozen(step, frozenExpected);
+        validator.checkFrozen(step, context.frozenExpected);
     }
 
     @Then("verifica la corretta pianificazione di ogni test case")
@@ -468,10 +474,18 @@ public class DelayerSteps {
 
     @Then("non devono esistere record in pn-DelayerPaperDelivery per la deliveryDate {string}")
     public void verifyNoPaperDeliveryForDate(String deliveryDate) throws Exception {
+        SoftAssertions softly = new SoftAssertions();
+
         DelayerLambdaClient.PAPER_DELIVERY_WORKFLOWSTEPS.forEach(ws -> {
             var paperDelivery = lambdaClient.getPaperDelivery(deliveryDate, ws, null);
-            Assertions.assertThat(true).isTrue();
+            var items = paperDelivery.path("items").size();
+
+            softly.assertThat(items)
+                    .as("workflowStep '%s' → trovati %d record per deliveryDate '%s'", ws, items, deliveryDate)
+                    .isEqualTo(0);
         });
+
+        softly.assertAll();
     }
 
     @And("non deve esistere capacità usata alla deliveryDate {string}")
@@ -482,14 +496,20 @@ public class DelayerSteps {
 
     @And("non devono esistere contatori per la deliveryDate {string}")
     public void verifyNoCounters(String deliveryDate) {
-        var counters = lambdaClient.getCounters("PRINT", deliveryDate,null, null,null);
+        var counters = lambdaClient.getCounters("PRINT", deliveryDate, null, null, null);
         Assertions.assertThat(counters.path("items").size()).isEqualTo(0);
     }
 
-    @And("non devono esistere limiti mittente per la deliveryDate {string}")
-    public void verifyNoSenderLimits(String deliveryDate) {
-        var senderLimit = lambdaClient.getSenderLimit(deliveryDate, null, null);
+    @And("non devono esistere limiti mittente per la deliveryDate {string} e pk {string}")
+    public void verifyNoSenderLimits(String deliveryDate, String pk) {
+        var usedSenderLimit = lambdaClient.getUsedSenderLimit(deliveryDate, null, pk, null);
+        Assertions.assertThat(usedSenderLimit.path("items").size()).isEqualTo(0);
+    }
 
+    @And("verifica che le spedizioni spostate alla settimana successiva siano lo stesso valore")
+    public void verifyResidualPapers() {
+        var residualPapers = lambdaClient.getResidualPapers(context.expectedDeliveryDate, null);
         Assertions.assertThat(true).isTrue();
     }
+
 }

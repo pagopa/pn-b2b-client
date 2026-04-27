@@ -2,9 +2,11 @@ package it.pagopa.pn.cucumber.steps.delayer.model;
 
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+@Component
 public class DelayerContext {
 
     public static final int STANDARD_PRINT_CAPACITY = 180_000;
@@ -33,6 +35,8 @@ public class DelayerContext {
     public Map<String, Map<String, List<DelayerPaperDelivery>>> expectedPianification = new HashMap<>();
     public Map<String, Map<String, List<DelayerPaperDelivery>>> actualPianification = new HashMap<>();
     public Map<String, String> failPianification = new HashMap<>();
+
+    public List<DelayerPaperDelivery> frozenExpected = new ArrayList<>();
 
     public Map<String, List<String>> priorityConfigMap = Map.of(
             "1", List.of("PRODUCT_RS.ATTEMPT_0"),

@@ -7,15 +7,21 @@ import it.pagopa.pn.cucumber.steps.delayer.model.*;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimit;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Slf4j
+@Service
+@RequiredArgsConstructor
 public class DelayerLambdaClient {
+    @Value("${pn.delayer.lambda.arn}") String lambdaName;
 
     public static final List<String> PAPER_DELIVERY_WORKFLOWSTEPS = List.of(
-            "EVALUATE_SENDER_LIMIT",
+    //        "EVALUATE_SENDER_LIMIT",
             "EVALUATE_DRIVER_CAPACITY",
             "EVALUATE_RESIDUAL_CAPACITY",
             "EVALUATE_PRINT_CAPACITY",
@@ -23,8 +29,8 @@ public class DelayerLambdaClient {
     public static final List<String> COUNTER_TYPES = List.of("PRINT", "SUM_ESTIMATES", "EXCLUDE");
 
     private final LambdaInvoker lambdaInvoker;
-    private final ObjectMapper objectMapper = new ObjectMapper();
-    private final String lambdaName;
+    private final ObjectMapper objectMapper;
+
 
     @Data
     public static class SenderLimitResult {
@@ -32,10 +38,10 @@ public class DelayerLambdaClient {
         private final String lastEvaluatedKey;
     }
 
-    public DelayerLambdaClient(LambdaInvoker lambdaInvoker, String lambdaName) {
-        this.lambdaInvoker = lambdaInvoker;
-        this.lambdaName = lambdaName;
-    }
+//    public DelayerLambdaClient(LambdaInvoker lambdaInvoker, String lambdaName) {
+//        this.lambdaInvoker = lambdaInvoker;
+//        this.lambdaName = lambdaName;
+//    }
 
     public String invoke(String operationType, Map<String, String> parameters) throws Exception {
         String payload = buildPayload(operationType, parameters);
@@ -51,6 +57,8 @@ public class DelayerLambdaClient {
         return rawResult;
     }
 
+
+
     private JsonNode getDriverCapacityNode(String driver, String provincia, String deliveryDate) {
         try {
             String response = invoke("GET_USED_CAPACITY", "pn-PaperDeliveryDriverUsedCapacities", driver, provincia, deliveryDate);
@@ -60,30 +68,35 @@ public class DelayerLambdaClient {
         }
     }
 
+    private Map<String, String> getCounterParamMap(String counterType, String deliveryDate, String province, String productType, String lastEvaluatedKey){
+        if(Objects.isNull(counterType)) {
+            log.warn("counterType è mandatorio, stai testando un egde case?");
+        }
+        if(!Objects.isNull(counterType) && !COUNTER_TYPES.contains(counterType)) {
+            log.warn("counterType [{}] non valido, stai testando un egde case?", counterType);
+        }
+        if(Objects.isNull(deliveryDate)) {
+            log.warn("deliveryDate è mandatorio, stai testando un egde case?");
+        }
+        var paramMap = new HashMap<String, String>();
+        paramMap.put("table", "pn-PaperDeliveryCounters");
+        paramMap.put("counterType", counterType);
+        paramMap.put("deliveryDate", deliveryDate);
+        if(Objects.nonNull(province) && !province.isBlank()) {
+            paramMap.put("province", province);
+        }
+        if(Objects.nonNull(productType) && !productType.isBlank()) {
+            paramMap.put("productType", productType);
+        }
+        if(Objects.nonNull(lastEvaluatedKey) && !lastEvaluatedKey.isBlank()) {
+            paramMap.put("lastEvaluatedKey", lastEvaluatedKey);
+        }
+        return paramMap;
+    }
+
     public JsonNode getCounters(String counterType, String deliveryDate, String province, String productType, String lastEvaluatedKey) {
         try {
-            if(Objects.isNull(counterType)) {
-                log.warn("counterType è mandatorio, stai testando un egde case?");
-            }
-            if(!Objects.isNull(counterType) && !COUNTER_TYPES.contains(counterType)) {
-                log.warn("counterType [{}] non valido, stai testando un egde case?", counterType);
-            }
-            if(Objects.isNull(deliveryDate)) {
-                log.warn("deliveryDate è mandatorio, stai testando un egde case?");
-            }
-            var paramMap = new HashMap<String, String>();
-            paramMap.put("table", "pn-PaperDeliveryCounters");
-            paramMap.put("counterType", counterType);
-            paramMap.put("deliveryDate", deliveryDate);
-            if(Objects.nonNull(province) && !province.isBlank()) {
-                paramMap.put("province", province);
-            }
-            if(Objects.nonNull(productType) && !productType.isBlank()) {
-                paramMap.put("productType", productType);
-            }
-            if(Objects.nonNull(lastEvaluatedKey) && !lastEvaluatedKey.isBlank()) {
-                paramMap.put("lastEvaluatedKey", lastEvaluatedKey);
-            }
+             var paramMap = getCounterParamMap(counterType, deliveryDate, province, productType, lastEvaluatedKey);
 
             String response = invoke("GET_COUNTERS", paramMap);
             return extractBody(response);
@@ -103,7 +116,7 @@ public class DelayerLambdaClient {
             if(!Objects.isNull(workFlowStep) && !PAPER_DELIVERY_WORKFLOWSTEPS.contains(workFlowStep)) {
                 log.warn("workFlowStep [{}] non valido, stai testando un egde case?", workFlowStep);
             }
-            var paramArray = new String[]{"delayerPaperDeliveryTableName",deliveryDate,workFlowStep};
+            var paramArray = new String[]{"pn-DelayerPaperDelivery",deliveryDate,workFlowStep};
             if(Objects.nonNull(lastEvaluatedKey) && !lastEvaluatedKey.isBlank()) {
                 paramArray = Arrays.copyOf(paramArray, paramArray.length + 1);
                 paramArray[paramArray.length - 1] = lastEvaluatedKey;
@@ -116,6 +129,52 @@ public class DelayerLambdaClient {
         }
     }
 
+    public JsonNode getUsedSenderLimit(String deliveryDate, String province, String pk,String lastEvaluatedKey) {
+        try {
+            if(Objects.isNull(deliveryDate)) {
+                log.warn("deliveryDate è mandatorio, stai testando un egde case?");
+            }
+            var paramMap = new HashMap<String, String>();
+            paramMap.put("table", "pn-PaperDeliveryUsedSenderLimit");
+            paramMap.put("deliveryDate", deliveryDate);
+            if(Objects.nonNull(province) && !province.isBlank() && Objects.nonNull(pk) && !pk.isBlank()) {
+                log.warn("province e pk sono mutualmente esclusivi, stai testando un egde case?");
+            }
+            if(Objects.nonNull(province) && !province.isBlank()) {
+                paramMap.put("province", province);
+            }
+            if(Objects.nonNull(lastEvaluatedKey) && !lastEvaluatedKey.isBlank()) {
+                paramMap.put("lastEvaluatedKey", lastEvaluatedKey);
+            }
+            if(Objects.nonNull(pk) && !pk.isBlank()) {
+                paramMap.put("pk", pk);
+            }
+
+            String response = invoke("GET_USED_SENDER_LIMIT", paramMap);
+            return extractBody(response);
+        } catch (Exception e) {
+            throw new RuntimeException("Errore durante GET_USED_SENDER_LIMIT", e);
+        }
+    }
+
+    public JsonNode getResidualPapers(String deliveryDate, String executionDate) {
+        try {
+            if(Objects.isNull(deliveryDate)) {
+                log.warn("deliveryDate è mandatorio, stai testando un egde case?");
+            }
+
+            var paramArray = new String[]{"pn_delayer_paper_delivery_json_view",deliveryDate};
+            if(Objects.nonNull(executionDate) && !executionDate.isBlank()) {
+                paramArray = Arrays.copyOf(paramArray, paramArray.length + 1);
+                paramArray[paramArray.length - 1] = executionDate;
+            }
+
+            String response = invoke("GET_RESIDUAL_PAPERS", paramArray);
+            return extractBody(response);
+        } catch (Exception e) {
+            throw new RuntimeException("Errore durante GET_RESIDUAL_PAPERS", e);
+        }
+    }
 
 
     public int getUsedCapacity(String driver, String provincia, String deliveryDate) {
@@ -189,26 +248,7 @@ public class DelayerLambdaClient {
         }
     }
 
-    public DelayerPrintCapacityCounter getPrintCapacityCounter(String deliveryDate) {
-        try {
-            String response = invoke("GET_PRINT_CAPACITY_COUNTER", "pn-PaperDeliveryCounters", deliveryDate);
-            JsonNode body = extractBody(response);
 
-            if (body.isMissingNode() || body.isNull()) {
-                log.warn("Nessun contatore trovato per deliveryDate {}", deliveryDate);
-                return null;
-            }
-
-            return objectMapper.treeToValue(body, DelayerPrintCapacityCounter.class);
-
-        } catch (Exception e) {
-            throw new RuntimeException(
-                    "Errore durante GET_PRINT_CAPACITY_COUNTER per deliveryDate %s"
-                            .formatted(deliveryDate),
-                    e
-            );
-        }
-    }
 
     public List<DelayerPaperDelivery> pollByRequestId(String requestId, int maxAttempts, int sleepMillis) throws Exception {
         for (int attempt = 1; attempt <= maxAttempts; attempt++) {

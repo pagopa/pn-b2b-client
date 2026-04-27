@@ -1,0 +1,19 @@
+package it.pagopa.pn.cucumber.steps.delayer.model.enums;
+
+public enum DelayerOperation {
+    IMPORT_DATA,
+    DELETE_DATA,
+    GET_USED_CAPACITY,
+    GET_BY_REQUEST_ID,
+    RUN_ALGORITHM,
+    DELAYER_TO_PAPER_CHANNEL,
+    GET_STATUS_EXECUTION,
+    GET_PAPER_DELIVERY,
+    GET_SENDER_LIMIT,
+    GET_USED_SENDER_LIMIT,
+    GET_PRESIGNED_URL,
+    GET_DECLARED_CAPACITY,
+    INSERT_MOCK_CAPACITIES,
+    GET_COUNTERS,
+    GET_RESIDUAL_PAPERS;
+}
