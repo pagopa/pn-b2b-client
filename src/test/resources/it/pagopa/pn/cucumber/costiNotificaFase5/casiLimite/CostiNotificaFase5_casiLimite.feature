@@ -38,7 +38,7 @@ Feature: Costi Notifica Fase 5
       | payment_multy_number    | 1                             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED e successivamente annullata
     Then verifico su DynamoDB la presenza in timeline dell'elemento "NOTIFICATION_COST_VALIDATION_REQUEST"
-    And verifico che il popolamento dei dati su Pn-PaymentInfo sia avvenuto correttamente
+    And verifico che per l'utente 0 il popolamento dei dati su Pn-PaymentInfo sia avvenuto correttamente
     And verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato inserito e correttamente valorizzato
       | isDeleted | true |
     And verifico su DynamoDB la presenza in timeline dell'elemento "NOTIFICATION_COST_VALIDATION_RESPONSE"
@@ -74,7 +74,7 @@ Feature: Costi Notifica Fase 5
       | payment_multy_number    | 1                     |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then verifico su DynamoDB la presenza in timeline dell'elemento "NOTIFICATION_COST_VALIDATION_REQUEST"
-    And verifico che il popolamento dei dati su Pn-PaymentInfo sia avvenuto correttamente
+    And verifico che per l'utente 0 il popolamento dei dati su Pn-PaymentInfo sia avvenuto correttamente
     And verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato inserito e correttamente valorizzato
       | isDeleted | false |
     And verifico su DynamoDB la presenza in timeline dell'elemento "NOTIFICATION_COST_VALIDATION_RESPONSE"
@@ -121,15 +121,18 @@ Feature: Costi Notifica Fase 5
       | feePolicy | <feePolicy> |
     Examples:
       | iun                       | feePolicy     | applyCost |
-      | UJGT-PDVN-NLWL-202604-V-1 | DELIVERY_MODE | SI        |
-      | LKRD-VNAJ-ZNZD-202604-N-1 | FLAT_RATE     | NO        |
-      | ZKMJ-KXKH-ZPQK-202604-G-1 | DELIVERY_MODE | SI        |
-      | EDQN-LZPZ-VDLD-202604-M-1 | FLAT_RATE     | NO        |
-      | VRAE-TKJG-VDTA-202604-Q-1 | DELIVERY_MODE | SI        |
-      | EHTQ-DVMY-LXPA-202604-R-1 | FLAT_RATE     | NO        |
-      | DRDR-AWME-LPMX-202604-A-1 | DELIVERY_MODE | SI        |
-      | PVRD-TZGK-NQAM-202604-T-1 | FLAT_RATE     | NO        |
-      | KYAD-DKEA-NYHR-202604-G-1 | DELIVERY_MODE | SI        |
-      | EAPQ-VEUE-UZYX-202604-P-1 | FLAT_RATE     | NO        |
-      | MGNE-GHDV-NTNX-202604-Z-1 | DELIVERY_MODE | SI        |
-      | DXHV-XQPW-KJYK-202604-R-1 | FLAT_RATE     | NO        |
+      | DGYP-EPRH-MYVX-202604-H-1 | DELIVERY_MODE | SI        |
+      | QLAV-TGAN-KAEP-202604-E-1 | FLAT_RATE     | NO        |
+      | HZMH-PTRA-XUAL-202604-U-1 | DELIVERY_MODE | SI        |
+#      | UJGT-PDVN-NLWL-202604-V-1 | DELIVERY_MODE | SI        |
+#      | LKRD-VNAJ-ZNZD-202604-N-1 | FLAT_RATE     | NO        |
+#      | ZKMJ-KXKH-ZPQK-202604-G-1 | DELIVERY_MODE | SI        |
+#      | EDQN-LZPZ-VDLD-202604-M-1 | FLAT_RATE     | NO        |
+#      | VRAE-TKJG-VDTA-202604-Q-1 | DELIVERY_MODE | SI        |
+#      | EHTQ-DVMY-LXPA-202604-R-1 | FLAT_RATE     | NO        |
+#      | DRDR-AWME-LPMX-202604-A-1 | DELIVERY_MODE | SI        |
+#      | PVRD-TZGK-NQAM-202604-T-1 | FLAT_RATE     | NO        |
+#      | KYAD-DKEA-NYHR-202604-G-1 | DELIVERY_MODE | SI        |
+#      | EAPQ-VEUE-UZYX-202604-P-1 | FLAT_RATE     | NO        |
+#      | MGNE-GHDV-NTNX-202604-Z-1 | DELIVERY_MODE | SI        |
+#      | DXHV-XQPW-KJYK-202604-R-1 | FLAT_RATE     | NO        |

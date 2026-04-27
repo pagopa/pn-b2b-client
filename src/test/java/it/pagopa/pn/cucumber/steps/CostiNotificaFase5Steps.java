@@ -20,7 +20,6 @@ import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -62,7 +61,7 @@ public class CostiNotificaFase5Steps {
             try {
                 notificationCostRecipientResponse = notificationCostClient.getNotificationCost(sharedSteps.getNotificationIun(), recIndex);
                 log.info("NotificationCostRecipientResponse:\n {}", notificationCostRecipientResponse);
-                String costoValorizzato = expectedData.get("costoValorizzato");
+//                String costoValorizzato = expectedData.get("costoValorizzato");
 //                if (costoValorizzato != null) {
 //                    switch (costoValorizzato) {
 //                        case "firstAnalogCost" ->
@@ -122,28 +121,24 @@ public class CostiNotificaFase5Steps {
         return record;
     }
 
-    @And("verifico che il popolamento dei dati su Pn-PaymentInfo sia avvenuto correttamente")
-    public void checkPaymentInfoRecord() {
+    @And("verifico che per l'utente {int} il popolamento dei dati su Pn-PaymentInfo sia avvenuto correttamente")
+    public void checkPaymentInfoRecord(Integer recIndex) {
         try {
             FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
-            AtomicInteger recIndex = new AtomicInteger();
-            fsn.getRecipients().forEach(rec -> {
-                rec.getPayments().forEach(payment -> {
-                    if (payment.getPagoPa() != null) {
-                        String creditorTaxId = payment.getPagoPa().getCreditorTaxId();
-                        String noticeCode = payment.getPagoPa().getNoticeCode();
-                        String paymentInfoPK = creditorTaxId + "##" + noticeCode;
-                        Map<String, AttributeValue> record = searchPaymentInfoRecord(paymentInfoPK);
-                        assertSoftly(softly -> {
-                            softly.assertThat(record.get("iun").s()).as("Lo IUN del record su PaymentInfo non coincide con quanto atteso").isEqualTo(sharedSteps.getNotificationIun());
-                            softly.assertThat(record.get("recIndex").n()).as("Il recIndex su PaymentInfo non coincide con quanto atteso").isEqualTo(String.valueOf(recIndex.get()));
-                            softly.assertThat(record.get("applyCost").bool()).as("L'applyCost del record su PaymentInfo non coincide con quanto atteso").isEqualTo(payment.getPagoPa().getApplyCost());
-                        });
-                        notificationCostPaymentResponse = notificationCostClient.getNotificationCostByPayment(creditorTaxId, noticeCode);
-                        log.info("PaymentResponse:\n {}", notificationCostPaymentResponse);
-                    }
-                });
-                recIndex.getAndIncrement();
+            fsn.getRecipients().get(recIndex).getPayments().forEach(payment -> {
+                if (payment.getPagoPa() != null) {
+                    String creditorTaxId = payment.getPagoPa().getCreditorTaxId();
+                    String noticeCode = payment.getPagoPa().getNoticeCode();
+                    String paymentInfoPK = creditorTaxId + "##" + noticeCode;
+                    Map<String, AttributeValue> record = searchPaymentInfoRecord(paymentInfoPK);
+                    assertSoftly(softly -> {
+                        softly.assertThat(record.get("iun").s()).as("Lo IUN del record su PaymentInfo non coincide con quanto atteso").isEqualTo(sharedSteps.getNotificationIun());
+                        softly.assertThat(record.get("recIndex").n()).as("Il recIndex su PaymentInfo non coincide con quanto atteso").isEqualTo(String.valueOf(recIndex));
+                        softly.assertThat(record.get("applyCost").bool()).as("L'applyCost del record su PaymentInfo non coincide con quanto atteso").isEqualTo(payment.getPagoPa().getApplyCost());
+                    });
+                    notificationCostPaymentResponse = notificationCostClient.getNotificationCostByPayment(creditorTaxId, noticeCode);
+                    log.info("PaymentResponse:\n {}", notificationCostPaymentResponse);
+                }
             });
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
@@ -281,7 +276,7 @@ public class CostiNotificaFase5Steps {
     @And("verifico che i valori restituiti dalle nuove api di recupero costi per l'utente {int} coincidano con quelli restituiti da delivery-push")
     public void recuperoIDatiDiCostoNotificaDaDeliveryPush(int recIndex, Map<String, String> expectedData) {
         try {
-            checkPaymentInfoRecord();
+            checkPaymentInfoRecord(recIndex);
 
             notificationCostRecipientResponse = notificationCostClient.getNotificationCost(sharedSteps.getNotificationIun(), recIndex);
             log.info("NotificationCostRecipientResponse:\n {}", notificationCostRecipientResponse);
