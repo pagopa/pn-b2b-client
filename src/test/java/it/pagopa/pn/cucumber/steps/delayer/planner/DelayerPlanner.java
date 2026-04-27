@@ -296,12 +296,12 @@ public class DelayerPlanner {
     }
 
     private DelayerPaperDelivery freezeNotification(DelayerPaperDelivery notification) {
-        String deliveryDate = getNextMonday(1);
+        String deliveryDate = getNextMondayFromDate(context.expectedDeliveryDate, 1);
         return utils.deepCopyAndUpdateKeys(List.of(notification), WorkflowSteps.EVALUATE_SENDER_LIMIT, deliveryDate).get(0);
     }
 
     private List<DelayerPaperDelivery> collectAllFrozen(Map<String, List<DelayerPaperDelivery>> frozenByStep) {
-        String deliveryDate = getNextMonday(1);
+        String deliveryDate = getNextMondayFromDate(context.expectedDeliveryDate, 1);
 
         List<DelayerPaperDelivery> toFreeze = frozenByStep.values().stream()
                 .flatMap(List::stream)

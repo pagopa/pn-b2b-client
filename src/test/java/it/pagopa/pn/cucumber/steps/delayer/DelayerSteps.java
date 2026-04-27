@@ -27,7 +27,13 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -40,6 +46,7 @@ import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtil
 import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.extractSeed;
 import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.getCurrentMonday;
 import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.getNextMonday;
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.getPreviousMondayFromDate;
 import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.hasSeedInRequestId;
 import static java.lang.Thread.sleep;
 
@@ -492,9 +499,9 @@ public class DelayerSteps {
             toBeExcluded += fetchToBeExcluded(deliveryDate, province, productWithCapacity);
         }
 
-        double senderLimitPercentage = Math.ceil(((double)weeklyEstimate/(sumEstimate - toBeExcluded))*1000)/10;
+        double senderLimitPercentage = Math.ceil(((double)weeklyEstimate/(sumEstimate))*1000)/10;
 
-        double expectedSenderLimit = Math.ceil(sumDeclaredCapacity*(senderLimitPercentage/100.0));
+        double expectedSenderLimit = Math.ceil((sumDeclaredCapacity - toBeExcluded) *(senderLimitPercentage/100.0));
 
         int actualSenderLimit = fetchSenderLimit(pk, deliveryDate);
 
@@ -546,7 +553,7 @@ public class DelayerSteps {
     private int fetchSenderLimit(String pk, String deliveryDate) {
 
         Map<String, String> params = new HashMap<>();
-        params.put("deliveryDate", deliveryDate);
+        params.put("deliveryDate", getPreviousMondayFromDate(deliveryDate, 1));
         params.put("pk", pk);
         params.put("table", "pn-PaperDeliveryUsedSenderLimit");
         try {
@@ -575,42 +582,107 @@ public class DelayerSteps {
         try {
             ObjectMapper mapper = new ObjectMapper();
 
-            // Parse outer JSON
             JsonNode root = mapper.readTree(json);
-
-            // "body" is a JSON string → parse again
-            String body = root.path("body").asText();
-            JsonNode bodyNode = mapper.readTree(body);
-
+            JsonNode bodyNode = mapper.readTree(root.path("body").asText());
             JsonNode items = bodyNode.path("items");
 
             Instant latestInstant = null;
-            int latestNumberOfShipments = 0;
+            Integer latestShipments = null;
 
             for (JsonNode item : items) {
-                String sk = item.path("sk").asText();
-                int numberOfShipments = item.path("numberOfShipments").asInt();
+                String sk = item.path("sk").asText(null);
+                Instant itemTimestamp = extractRightmostTimestamp(sk);
 
-                // Extract timestamps from sk
-                for (String part : sk.split("~")) {
-                    try {
-                        Instant instant = Instant.parse(part);
-                        if (latestInstant == null || instant.isAfter(latestInstant)) {
-                            latestInstant = instant;
-                            latestNumberOfShipments = numberOfShipments;
-                        }
-                    } catch (Exception ignored) {
-                        // Not a timestamp → ignore
-                    }
+                if (itemTimestamp == null) {
+                    continue; // item senza timestamp valido nello sk
+                }
+
+                if (latestInstant == null || itemTimestamp.isAfter(latestInstant)) {
+                    latestInstant = itemTimestamp;
+                    latestShipments = item.path("numberOfShipments").asInt(0);
                 }
             }
 
-            return latestNumberOfShipments;
+            if (latestShipments == null && items.size() > 0) {
+                latestShipments = items.get(0).path("numberOfShipments").asInt(0); // fallback: prendo il primo item se nessuno ha timestamp valido
+            }
 
+            return (latestShipments == null) ? 0 : latestShipments;
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid JSON input", e);
         }
     }
+
+    private Instant extractRightmostTimestamp(String sk) {
+        if (sk == null || sk.isBlank()) {
+            return null;
+        }
+
+        String[] parts = sk.split("~");
+        for (int i = parts.length - 1; i >= 0; i--) {
+            try {
+                return Instant.parse(parts[i]);
+            } catch (Exception ignored) {
+                // non è un timestamp, continuo a sinistra
+            }
+        }
+
+        return null;
+    }
+
+
+
+
+//    private int extractLatestNumberOfShipments(String json) {
+//        try {
+//            ObjectMapper mapper = new ObjectMapper();
+//
+//            // Parse outer JSON
+//            JsonNode root = mapper.readTree(json);
+//
+//            // "body" is a JSON string → parse again
+//            String body = root.path("body").asText();
+//            JsonNode bodyNode = mapper.readTree(body);
+//
+//            JsonNode items = bodyNode.path("items");
+//
+//            Instant latestInstant = null;
+//            int latestNumberOfShipments = 0;
+//
+//
+//
+//            for (JsonNode item : items) {
+//                String sk = item.path("sk").asText();
+//                latestNumberOfShipments = item.path("numberOfShipments").asInt();
+//
+//                String[] splittedSk = sk.split("~");
+//                String timestamp = splittedSk[splittedSk.length - 1];
+//                try {
+//                    Instant instant = Instant.parse(timestamp);
+//                    if (latestInstant == null || instant.isAfter(latestInstant)) {
+//                        latestInstant = instant;
+//                }
+//
+//                // Extract timestamps from sk
+//                for (String part : sk.split("~")) {
+////                    try {
+////                        Instant instant = Instant.parse(part);
+////                        if (latestInstant == null || instant.isAfter(latestInstant)) {
+////                            latestInstant = instant;
+////                            latestNumberOfShipments = numberOfShipments;
+////                        }
+////                    } catch (Exception ignored) {
+////                        // Not a timestamp → ignore
+////                    }
+////                }
+//            }
+//
+//            return latestNumberOfShipments;
+//
+//        } catch (Exception e) {
+//            throw new IllegalArgumentException("Invalid JSON input", e);
+//        }
+//    }
 
 
     private int extractWeeklyEstimate(String json) {
@@ -654,20 +726,20 @@ public class DelayerSteps {
                 JsonNode productsNode = item.path("products");
 
                 // Check if products list contains the given product
-                boolean hasProduct = false;
+//                boolean hasProduct = false;
                 for (JsonNode p : productsNode) {
                     String foundProduct = p.asText();
                     foundProducts.add(foundProduct);
 
-                    if (product.equals(foundProduct)) {
-                        hasProduct = true;
-                        break;
+                    if (foundProduct.equals(product)) {
+//                        hasProduct = true;
+                        totalCapacity += item.path("capacity").asInt(0);
                     }
                 }
 
-                if (hasProduct) {
-                    totalCapacity += item.path("capacity").asInt(0);
-                }
+//                if (hasProduct) {
+//                    totalCapacity += item.path("capacity").asInt(0);
+//                }
             }
 
             return totalCapacity;

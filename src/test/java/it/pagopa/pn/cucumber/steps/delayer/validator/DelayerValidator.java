@@ -11,11 +11,15 @@ import org.junit.jupiter.api.Assertions;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.extractSeed;
-import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.extractWorkflowStep;
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.getNextMondayFromDate;
 
 @Slf4j
 public class DelayerValidator {
@@ -141,7 +145,7 @@ public class DelayerValidator {
         List<DelayerPaperDelivery> actualFrozen = lambdaClient.findByWorkflowStep(
                 frozenExpected.stream().map(DelayerPaperDelivery::getRequestId).collect(Collectors.toSet()),
                 step.name(),
-                getNextMonday(),
+                getNextMondayFromDate(context.expectedDeliveryDate, 1),
                 FROZEN_POLLING_MAX_MINUTES
         );
 
