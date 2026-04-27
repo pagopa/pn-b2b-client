@@ -29,6 +29,8 @@ import java.util.stream.Collectors;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Primary
 public class M2MEventClientImpl extends AbstractClient implements IM2MEventClient{
+    private static final long EVENT_START_TOLERANCE_MINUTES = 5L;
+
     private final Map<String, Map<InteropEvent, M2MEvents>> tenantEventCache = new HashMap<>();
 
     private final EventsApi eventsApi;
@@ -318,7 +320,7 @@ public class M2MEventClientImpl extends AbstractClient implements IM2MEventClien
 
         UUID lastEventId = request.getLastEventId() != null
                 ? request.getLastEventId()
-                : ((cachedEvents.getLastEvent() != null && cachedEvents.getLastEvent().getId() != null) ? cachedEvents.getLastEvent().getId() : getFirstEventIdAfterStart(request, fetchPage));
+                : ((cachedEvents.getLastEvent() != null && cachedEvents.getLastEvent().getId() != null) ? cachedEvents.getLastEvent().getId() : getFirstEventIdAfterStart(request, fetchPage, cachedEvents));
 
         request.setLastEventId(lastEventId);
 
@@ -344,18 +346,21 @@ public class M2MEventClientImpl extends AbstractClient implements IM2MEventClien
         }
     }
 
-    private <Request extends M2MEventRequest> UUID getFirstEventIdAfterStart(Request request, Function<Request, M2MEvents> fetchPage) {
+    private <Request extends M2MEventRequest> UUID getFirstEventIdAfterStart(Request request, Function<Request, M2MEvents> fetchPage, M2MEvents cachedEvents) {
         M2MEvents page;
         UUID lastEventId;
+        Instant threshold = eventStartTime.minusSeconds(EVENT_START_TOLERANCE_MINUTES * 60);
 
         do{
             page = fetchPage.apply(request);
             page.setEvents(
                     page.getEvents()
                             .stream()
-                            .filter(e -> e.getEventTimestamp().isAfter(eventStartTime))
+                            .filter(e -> !e.getEventTimestamp().isBefore(threshold))
                             .collect(Collectors.toList())
             );
+
+            cachedEvents.addEvents(page);
 
             lastEventId = page.getLastEvent() != null
                     ? page.getLastEvent().getId()
