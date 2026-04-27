@@ -26,6 +26,36 @@ Feature: Eventi M2M
     Then "PA2" non visualizza l'evento EServiceAdded appena trovato
 
   @m2m-events-e-service
+  Scenario: [M2M_E-SERVICE_EVENTS_03] Verifica che il producer di un e-service in stato PUBLISHED può visualizzare gli eventi relativi alla creazione e pubblicazione dell'e-service
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When "PA1" ha già creato e pubblicato 1 e-services
+    Then "PA1" visualizza l'evento EServiceAdded con:
+      | field                | value       |
+      | eserviceId           | :eserviceId |
+      | producerDelegationId | %null       |
+    And "PA1" visualizza l'evento EServiceDescriptorPublished con:
+      | field                | value         |
+      | eserviceId           | :eserviceId   |
+      | descriptorId         | :descriptorId |
+      | producerDelegationId | %null         |
+
+  @m2m-events-e-service
+  Scenario: [M2M_E-SERVICE_EVENTS_04] Verifica che il producer di un e-service in stato PUBLISHED, con delega in erogazione in attesa di approvazione, visualizza gli eventi di creazione e pubblicazione senza producerDelegationId
+    Given l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When "PA1" ha già creato e pubblicato 1 e-services
+    And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
+    Then "PA1" visualizza l'evento EServiceAdded con:
+      | field                | value       |
+      | eserviceId           | :eserviceId |
+      | producerDelegationId | %null       |
+    And "PA1" visualizza l'evento EServiceDescriptorPublished con:
+      | field                | value         |
+      | eserviceId           | :eserviceId   |
+      | descriptorId         | :descriptorId |
+      | producerDelegationId | %null         |
+
+  @m2m-events-e-service
   Scenario: [M2M_E-SERVICE_EVENTS_nn] A seguito di pubblicazione di un e-service vengono correttamente visualizzati gli
   eventi correlati in relazione alle regole di visibilità previste per l'attore che ne fa richiesta.
   In caso di attivazione a posteriori di una delega in erogazione, la visibilità e la struttura
