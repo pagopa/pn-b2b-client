@@ -111,28 +111,3 @@ Feature: Costi Notifica Fase 5
       | feePolicy     | applyCost |
       | DELIVERY_MODE | SI        |
       | FLAT_RATE     | NO        |
-
-  Scenario Outline: MOCK_CONFRONTO_COSTI
-    Given imposto lo iun di SharedSteps a "<iun>" e la pa a "Comune_Multi"
-    And verifico che i valori restituiti dalle nuove api di recupero costi per l'utente 0 coincidano con quelli restituiti da delivery-push
-      | paFee     | 17          |
-      | applyCost | <applyCost> |
-      | vat       | 10          |
-      | feePolicy | <feePolicy> |
-    Examples:
-      | iun                       | feePolicy     | applyCost |
-      | DGYP-EPRH-MYVX-202604-H-1 | DELIVERY_MODE | SI        |
-      | QLAV-TGAN-KAEP-202604-E-1 | FLAT_RATE     | NO        |
-      | HZMH-PTRA-XUAL-202604-U-1 | DELIVERY_MODE | SI        |
-#      | UJGT-PDVN-NLWL-202604-V-1 | DELIVERY_MODE | SI        |
-#      | LKRD-VNAJ-ZNZD-202604-N-1 | FLAT_RATE     | NO        |
-#      | ZKMJ-KXKH-ZPQK-202604-G-1 | DELIVERY_MODE | SI        |
-#      | EDQN-LZPZ-VDLD-202604-M-1 | FLAT_RATE     | NO        |
-#      | VRAE-TKJG-VDTA-202604-Q-1 | DELIVERY_MODE | SI        |
-#      | EHTQ-DVMY-LXPA-202604-R-1 | FLAT_RATE     | NO        |
-#      | DRDR-AWME-LPMX-202604-A-1 | DELIVERY_MODE | SI        |
-#      | PVRD-TZGK-NQAM-202604-T-1 | FLAT_RATE     | NO        |
-#      | KYAD-DKEA-NYHR-202604-G-1 | DELIVERY_MODE | SI        |
-#      | EAPQ-VEUE-UZYX-202604-P-1 | FLAT_RATE     | NO        |
-#      | MGNE-GHDV-NTNX-202604-Z-1 | DELIVERY_MODE | SI        |
-#      | DXHV-XQPW-KJYK-202604-R-1 | FLAT_RATE     | NO        |
