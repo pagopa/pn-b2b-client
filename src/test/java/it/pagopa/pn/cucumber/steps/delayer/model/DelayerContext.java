@@ -38,7 +38,8 @@ public class DelayerContext {
             "1", List.of("PRODUCT_RS.ATTEMPT_0.LEGAL"),
             "2", List.of("PRODUCT_AR.ATTEMPT_1.LEGAL", "PRODUCT_890.ATTEMPT_1.LEGAL"),
             "3", List.of("PRODUCT_AR.ATTEMPT_0.LEGAL", "PRODUCT_890.ATTEMPT_0.LEGAL"),
-            "4", List.of("PRODUCT_RS.ATTEMPT_0.INFORMAL")
+            "4", List.of("PRODUCT_RS.ATTEMPT_1.INFORMAL"),
+            "5", List.of("PRODUCT_RS.ATTEMPT_0.INFORMAL")
     );
 
     public List<DelayerPaperDelivery> getExpectedByWorkflowStep(WorkflowSteps  step) {

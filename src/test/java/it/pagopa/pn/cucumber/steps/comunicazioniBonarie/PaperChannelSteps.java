@@ -2,25 +2,19 @@ package it.pagopa.pn.cucumber.steps.comunicazioniBonarie;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.*;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaperChannelClientImpl;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.RestClientException;
 
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.util.AssertionErrors.assertNotNull;
 
 public class PaperChannelSteps {
@@ -86,11 +80,6 @@ public class PaperChannelSteps {
                 .attachmentUrls(urlsStr != null ? new ArrayList<>(Arrays.asList(urlsStr.split(","))) : null)
                 .receiverAddress(analogAddress)
                 .proposalProductType(fromPPTString(ppt));
-
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        String json = ow.writeValueAsString(informalPrepareRequest);
-        System.out.println(json);
-
     }
 
     @Given("inizializzata una comunicazione bonaria con parametro required mancante:")

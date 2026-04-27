@@ -49,7 +49,11 @@ public class DelayerPaperDelivery {
         this.attempt = requireField(rowMap, "attempt");
         this.iun = requireField(rowMap, "iun");
         this.unifiedDeliveryDriver = requireField(rowMap, "unifiedDeliveryDriver");
-        this.isInformalCommunication = requireField(rowMap, "communicationType").equalsIgnoreCase("INFORMAL");
+        String communicationType = rowMap.get("communicationType");
+        if (communicationType == null || communicationType.isBlank()) {
+            communicationType = "LEGAL";
+        }
+        this.isInformalCommunication = communicationType.equalsIgnoreCase("INFORMAL");
     }
 
     public DelayerPaperDelivery(JsonNode tableRecord) {

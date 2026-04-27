@@ -366,10 +366,10 @@ public class DelayerPaperDeliveryUtils {
             int att = Integer.parseInt(n.getAttempt());
             if ("RS".equalsIgnoreCase(tipo) && !n.isInformalCommunication()) {
                 rs.add(n);
-            } else if (att == 1) {
-                secondi.add(n);
             } else if (n.isInformalCommunication()) {
                 comunicazioniBonarie.add(n);
+            } else if (att == 1) {
+                secondi.add(n);
             } else {
                 altri.add(n);
             }
