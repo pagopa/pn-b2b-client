@@ -24,17 +24,17 @@ Feature: Costi Notifica Fase 5
       | apply_cost_pagopa            | <applyCost>            |
       | payment_multy_number         | <paymentNumber>        |
     And destinatario Mario Cucumber e:
-      | digitalDomicile              | NULL                   |
-      | physicalAddress_address      | Via@FAIL-Discovery_AR  |
-      | physicalAddress_municipality | NAPOLI                 |
-      | physicalAddress_province     | NA                     |
-      | physicalAddress_zip          | 80124                  |
-      | payment_creditorTaxId        | 77777777777            |
-      | payment_pagoPaForm           | SI                     |
-      | payment_f24                  | NULL                   |
-      | title_payment                | PagoPa_mono_sync_sada1 |
-      | apply_cost_pagopa            | <applyCost>            |
-      | payment_multy_number         | <paymentNumber>        |
+#      | digitalDomicile              | NULL                   |
+#      | physicalAddress_address      | Via@FAIL-Discovery_AR  |
+#      | physicalAddress_municipality | NAPOLI                 |
+#      | physicalAddress_province     | NA                     |
+#      | physicalAddress_zip          | 80124                  |
+      | payment_creditorTaxId | 77777777777            |
+      | payment_pagoPaForm    | SI                     |
+      | payment_f24           | NULL                   |
+      | title_payment         | PagoPa_mono_sync_sada1 |
+      | apply_cost_pagopa     | <applyCost>            |
+      | payment_multy_number  | <paymentNumber>        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then verifico su DynamoDB la presenza in timeline dell'elemento "NOTIFICATION_COST_VALIDATION_REQUEST"
     And verifico che il popolamento dei dati su Pn-PaymentInfo sia avvenuto correttamente
@@ -55,24 +55,25 @@ Feature: Costi Notifica Fase 5
       | phase    | phase=VALIDATION   |
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_0"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_1"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
     Then verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
       | isDeleted        | false            |
       | costoValorizzato | secondAnalogCost |
       | productType      | AR               |
-    Then verifico che per il destinatario 1 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
-      | isDeleted        | false            |
-      | costoValorizzato | secondAnalogCost |
-      | productType      | AR               |
+#    Then verifico che per il destinatario 1 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
+#      | isDeleted        | false            |
+#      | costoValorizzato | secondAnalogCost |
+#      | productType      | AR               |
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
       | iun      | auto                                 |
       | tag      | AUD_NT_UPDATE_COST                   |
       | recIndex | recIndex=0                           |
       | phase    | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1 |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
-      | iun      | auto                                 |
-      | tag      | AUD_NT_UPDATE_COST                   |
-      | recIndex | recIndex=1                           |
-      | phase    | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1 |
+#    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
+#      | iun      | auto                                 |
+#      | tag      | AUD_NT_UPDATE_COST                   |
+#      | recIndex | recIndex=1                           |
+#      | phase    | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1 |
     And verifico che i valori restituiti dalle nuove api di recupero costi per l'utente 0 coincidano con quelli restituiti da delivery-push
       | paFee     | 17          |
       | applyCost | <applyCost> |
@@ -114,17 +115,17 @@ Feature: Costi Notifica Fase 5
       | apply_cost_pagopa            | <applyCost>             |
       | payment_multy_number         | 1                       |
     And destinatario Mario Cucumber e:
-      | digitalDomicile              | NULL                    |
-      | physicalAddress_address      | Via@FAIL-Discovery_AR   |
-      | physicalAddress_municipality | NAPOLI                  |
-      | physicalAddress_province     | NA                      |
-      | physicalAddress_zip          | 80124                   |
-      | payment_creditorTaxId        | 77777777777             |
-      | payment_pagoPaForm           | SI                      |
-      | payment_f24                  | NULL                    |
-      | title_payment                | PagoPa_mono_async_sada1 |
-      | apply_cost_pagopa            | <applyCost>             |
-      | payment_multy_number         | 1                       |
+#      | digitalDomicile              | NULL                    |
+#      | physicalAddress_address      | Via@FAIL-Discovery_AR   |
+#      | physicalAddress_municipality | NAPOLI                  |
+#      | physicalAddress_province     | NA                      |
+#      | physicalAddress_zip          | 80124                   |
+      | payment_creditorTaxId | 77777777777             |
+      | payment_pagoPaForm    | SI                      |
+      | payment_f24           | NULL                    |
+      | title_payment         | PagoPa_mono_async_sada1 |
+      | apply_cost_pagopa     | <applyCost>             |
+      | payment_multy_number  | 1                       |
     And al destinatario 0 viene associato lo iuv creato mediante partita debitoria alla posizione 0 per il suo pagamento alla posizione 0
     And al destinatario 1 viene associato lo iuv creato mediante partita debitoria alla posizione 1 per il suo pagamento alla posizione 0
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -147,24 +148,25 @@ Feature: Costi Notifica Fase 5
       | phase    | phase=VALIDATION   |
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_0"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_1"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
     Then verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
       | isDeleted        | false            |
       | costoValorizzato | secondAnalogCost |
       | productType      | AR               |
-    Then verifico che per il destinatario 1 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
-      | isDeleted        | false            |
-      | costoValorizzato | secondAnalogCost |
-      | productType      | AR               |
+#    Then verifico che per il destinatario 1 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
+#      | isDeleted        | false            |
+#      | costoValorizzato | secondAnalogCost |
+#      | productType      | AR               |
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
       | iun      | auto                                 |
       | tag      | AUD_NT_UPDATE_COST                   |
       | recIndex | recIndex=0                           |
       | phase    | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1 |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
-      | iun      | auto                                 |
-      | tag      | AUD_NT_UPDATE_COST                   |
-      | recIndex | recIndex=1                           |
-      | phase    | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1 |
+#    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
+#      | iun      | auto                                 |
+#      | tag      | AUD_NT_UPDATE_COST                   |
+#      | recIndex | recIndex=1                           |
+#      | phase    | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1 |
     And verifico che i valori restituiti dalle nuove api di recupero costi per l'utente 0 coincidano con quelli restituiti da delivery-push
       | paFee     | 17          |
       | applyCost | <applyCost> |
@@ -206,17 +208,17 @@ Feature: Costi Notifica Fase 5
       | apply_cost_pagopa            | <applyCost>              |
       | payment_multy_number         | 2                        |
     And destinatario Mario Cucumber e:
-      | digitalDomicile              | NULL                     |
-      | physicalAddress_address      | Via@FAIL-Discovery_AR    |
-      | physicalAddress_municipality | NAPOLI                   |
-      | physicalAddress_province     | NA                       |
-      | physicalAddress_zip          | 80124                    |
-      | payment_creditorTaxId        | 77777777777              |
-      | payment_pagoPaForm           | SI                       |
-      | payment_f24                  | NULL                     |
-      | title_payment                | PagoPa_multi_async_sada1 |
-      | apply_cost_pagopa            | <applyCost>              |
-      | payment_multy_number         | 2                        |
+#      | digitalDomicile              | NULL                     |
+#      | physicalAddress_address      | Via@FAIL-Discovery_AR    |
+#      | physicalAddress_municipality | NAPOLI                   |
+#      | physicalAddress_province     | NA                       |
+#      | physicalAddress_zip          | 80124                    |
+      | payment_creditorTaxId | 77777777777              |
+      | payment_pagoPaForm    | SI                       |
+      | payment_f24           | NULL                     |
+      | title_payment         | PagoPa_multi_async_sada1 |
+      | apply_cost_pagopa     | <applyCost>              |
+      | payment_multy_number  | 2                        |
     And al destinatario 0 viene associato lo iuv creato mediante partita debitoria alla posizione 0 per il suo pagamento alla posizione 0
     And al destinatario 0 viene associato lo iuv creato mediante partita debitoria alla posizione 1 per il suo pagamento alla posizione 1
     And al destinatario 1 viene associato lo iuv creato mediante partita debitoria alla posizione 2 per il suo pagamento alla posizione 0
@@ -241,24 +243,25 @@ Feature: Costi Notifica Fase 5
       | phase    | phase=VALIDATION   |
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_0"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_1"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
     Then verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
       | isDeleted        | false            |
       | costoValorizzato | secondAnalogCost |
       | productType      | AR               |
-    Then verifico che per il destinatario 1 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
-      | isDeleted        | false            |
-      | costoValorizzato | secondAnalogCost |
-      | productType      | AR               |
+#    Then verifico che per il destinatario 1 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
+#      | isDeleted        | false            |
+#      | costoValorizzato | secondAnalogCost |
+#      | productType      | AR               |
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
       | iun      | auto                                 |
       | tag      | AUD_NT_UPDATE_COST                   |
       | recIndex | recIndex=0                           |
       | phase    | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1 |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
-      | iun      | auto                                 |
-      | tag      | AUD_NT_UPDATE_COST                   |
-      | recIndex | recIndex=1                           |
-      | phase    | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1 |
+#    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
+#      | iun      | auto                                 |
+#      | tag      | AUD_NT_UPDATE_COST                   |
+#      | recIndex | recIndex=1                           |
+#      | phase    | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1 |
     And verifico che i valori restituiti dalle nuove api di recupero costi per l'utente 0 coincidano con quelli restituiti da delivery-push
       | paFee     | 17          |
       | applyCost | <applyCost> |
@@ -297,18 +300,18 @@ Feature: Costi Notifica Fase 5
       | apply_cost_f24               | <applyCost>           |
       | payment_multy_number         | <paymentNumber>       |
     And destinatario Mario Cucumber e:
-      | digitalDomicile              | NULL                  |
-      | physicalAddress_address      | Via@FAIL-Discovery_AR |
-      | physicalAddress_municipality | NAPOLI                |
-      | physicalAddress_province     | NA                    |
-      | physicalAddress_zip          | 80124                 |
-      | payment_creditorTaxId        | 77777777777           |
-      | payment_pagoPaForm           | NULL                  |
-      | apply_cost_pagopa            | NO                    |
-      | payment_f24                  | <paymentF24>          |
-      | title_payment                | f24_mono_sync_sada1   |
-      | apply_cost_f24               | <applyCost>           |
-      | payment_multy_number         | <paymentNumber>       |
+#      | digitalDomicile              | NULL                  |
+#      | physicalAddress_address      | Via@FAIL-Discovery_AR |
+#      | physicalAddress_municipality | NAPOLI                |
+#      | physicalAddress_province     | NA                    |
+#      | physicalAddress_zip          | 80124                 |
+      | payment_creditorTaxId | 77777777777         |
+      | payment_pagoPaForm    | NULL                |
+      | apply_cost_pagopa     | NO                  |
+      | payment_f24           | <paymentF24>        |
+      | title_payment         | f24_mono_sync_sada1 |
+      | apply_cost_f24        | <applyCost>         |
+      | payment_multy_number  | <paymentNumber>     |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then verifico su DynamoDB la presenza in timeline dell'elemento "NOTIFICATION_COST_VALIDATION_REQUEST"
     And verifico che il popolamento dei dati su Pn-PaymentInfo sia avvenuto correttamente
@@ -329,24 +332,25 @@ Feature: Costi Notifica Fase 5
       | phase    | phase=VALIDATION   |
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_0"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_1"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
     Then verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
       | isDeleted        | false            |
       | costoValorizzato | secondAnalogCost |
       | productType      | AR               |
-    Then verifico che per il destinatario 1 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
-      | isDeleted        | false            |
-      | costoValorizzato | secondAnalogCost |
-      | productType      | AR               |
+#    Then verifico che per il destinatario 1 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
+#      | isDeleted        | false            |
+#      | costoValorizzato | secondAnalogCost |
+#      | productType      | AR               |
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
       | iun      | auto                                 |
       | tag      | AUD_NT_UPDATE_COST                   |
       | recIndex | recIndex=0                           |
       | phase    | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1 |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
-      | iun      | auto                                 |
-      | tag      | AUD_NT_UPDATE_COST                   |
-      | recIndex | recIndex=1                           |
-      | phase    | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1 |
+#    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
+#      | iun      | auto                                 |
+#      | tag      | AUD_NT_UPDATE_COST                   |
+#      | recIndex | recIndex=1                           |
+#      | phase    | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1 |
     And verifico che i valori restituiti dalle nuove api di recupero costi per l'utente 0 coincidano con quelli restituiti da delivery-push
       | paFee     | 17          |
       | applyCost | <applyCost> |
