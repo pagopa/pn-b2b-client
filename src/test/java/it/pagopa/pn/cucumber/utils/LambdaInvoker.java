@@ -2,7 +2,7 @@ package it.pagopa.pn.cucumber.utils;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.regions.Region;
@@ -46,8 +46,8 @@ public class LambdaInvoker {
                     .overrideConfiguration(c -> c
                             .apiCallAttemptTimeout(Duration.ofSeconds(180))
                             .apiCallTimeout(Duration.ofMinutes(6)))
-                    .credentialsProvider(ProfileCredentialsProvider.create(getUserRole())) // locale
-//                    .credentialsProvider(DefaultCredentialsProvider.create()) // codebuild
+//                    .credentialsProvider(ProfileCredentialsProvider.create(getUserRole())) // locale
+                    .credentialsProvider(DefaultCredentialsProvider.create()) // codebuild
                     .region(Region.EU_SOUTH_1)
                     .build();
         }
