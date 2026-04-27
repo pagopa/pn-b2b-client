@@ -328,7 +328,7 @@ public class M2MEventClientImpl extends AbstractClient implements IM2MEventClien
 
         while (true) {
             M2MEvents page = fetchPage.apply(request);
-            if (!hasEvents(page)) {
+            if (!hasEvents(page, request.getLimit())) {
                 return cachedEvents;
             }
 
@@ -365,7 +365,7 @@ public class M2MEventClientImpl extends AbstractClient implements IM2MEventClien
             lastEventId = page.getLastEvent() != null
                     ? page.getLastEvent().getId()
                     : null;
-        } while (hasEvents(page));
+        } while (hasEvents(page, request.getLimit()));
 
         return lastEventId;
     }
@@ -388,8 +388,18 @@ public class M2MEventClientImpl extends AbstractClient implements IM2MEventClien
         };
     }
 
-    private boolean hasEvents(M2MEvents events) {
-        return events != null && events.getEvents() != null && !events.getEvents().isEmpty();
+    private boolean hasEvents(M2MEvents events, Integer pageSize) {
+        if (events == null || events.getEvents() == null || events.getEvents().isEmpty()) {
+            return false;
+        }
+
+        // Se pageSize non è valido, fallback: basta avere eventi.
+        if (pageSize == null || pageSize <= 0) {
+            return true;
+        }
+
+        // true solo se la pagina è piena: potrebbe esistere una pagina successiva.
+        return events.getEvents().size() >= pageSize;
     }
 
     @Override
