@@ -33,7 +33,24 @@ public class PurposeCreationModeDeliverSteps {
 
     @When("l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati")
     public void createPurposeWithAllRequiredFields() {
-        createPurposeWithAllRequiredFields(49);
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        String tenantType = sharedStepsContext.getTenantType();
+        UUID consumerId = identityService.getOrganizationId(tenantType);
+        RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(tenantType, true);
+
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getPurposeApiClient().createPurpose(
+                        new PurposeSeed()
+                                .eserviceId(sharedStepsContext.getEServicesCommonContext().getEserviceId())
+                                .consumerId(consumerId)
+                                .title(String.format("purpose title - QA - %d -%d", sharedStepsContext.getTestSeed(), new Random().nextInt()))
+                                .description("description of the purpose - QA")
+                                .isFreeOfCharge(true)
+                                .freeOfChargeReason("free of charge - QA")
+                                .dailyCalls(49)
+                                .riskAnalysisForm(riskAnalysis.getRiskAnalysisForm())
+                )
+        );
     }
 
     @When("l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a {int}")
