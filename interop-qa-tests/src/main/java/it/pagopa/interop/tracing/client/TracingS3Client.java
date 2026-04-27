@@ -22,12 +22,6 @@ public class TracingS3Client {
     public static class PollingSpecification {
 
         @Builder.Default
-        private String centerTimestamp = null;
-
-        @Builder.Default
-        private int deltaSeconds = 30;
-
-        @Builder.Default
         private long timeoutMs = 10_000;
 
         @Builder.Default
