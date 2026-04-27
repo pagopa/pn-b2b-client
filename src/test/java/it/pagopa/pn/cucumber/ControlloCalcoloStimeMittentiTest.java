@@ -29,6 +29,6 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
         value = "same_thread"
 )
 @ExcludeTags({"ignore"})
-@IncludeTags({"censimentoStimeMittenti1"})
+@IncludeTags({"controlloCalcoloStimeMittenti"})
 public class ControlloCalcoloStimeMittentiTest {
 }
