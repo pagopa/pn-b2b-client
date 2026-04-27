@@ -342,11 +342,6 @@ Feature: Costi Notifica Fase 5
       | tag      | AUD_NT_UPDATE_COST                   |
       | recIndex | recIndex=0                           |
       | phase    | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0 |
-#    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
-#      | iun      | auto                                 |
-#      | tag      | AUD_NT_UPDATE_COST                   |
-#      | recIndex | recIndex=1                           |
-#      | phase    | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0 |
     And verifico che i valori restituiti dalle nuove api di recupero costi per l'utente 0 coincidano con quelli restituiti da delivery-push
       | paFee     | 17          |
       | applyCost | <applyCost> |

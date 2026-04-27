@@ -24,11 +24,6 @@ Feature: Costi Notifica Fase 5
       | apply_cost_pagopa            | <applyCost>            |
       | payment_multy_number         | <paymentNumber>        |
     And destinatario Mario Cucumber e:
-#      | digitalDomicile              | NULL                   |
-#      | physicalAddress_address      | Via@FAIL-Discovery_AR  |
-#      | physicalAddress_municipality | NAPOLI                 |
-#      | physicalAddress_province     | NA                     |
-#      | physicalAddress_zip          | 80124                  |
       | payment_creditorTaxId | 77777777777            |
       | payment_pagoPaForm    | SI                     |
       | payment_f24           | NULL                   |
@@ -61,20 +56,11 @@ Feature: Costi Notifica Fase 5
       | isDeleted        | false            |
       | costoValorizzato | secondAnalogCost |
       | productType      | AR               |
-#    Then verifico che per il destinatario 1 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
-#      | isDeleted        | false            |
-#      | costoValorizzato | secondAnalogCost |
-#      | productType      | AR               |
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
       | iun      | auto                                 |
       | tag      | AUD_NT_UPDATE_COST                   |
       | recIndex | recIndex=0                           |
       | phase    | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1 |
-#    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
-#      | iun      | auto                                 |
-#      | tag      | AUD_NT_UPDATE_COST                   |
-#      | recIndex | recIndex=1                           |
-#      | phase    | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1 |
     And verifico che i valori restituiti dalle nuove api di recupero costi per l'utente 0 coincidano con quelli restituiti da delivery-push
       | paFee     | 17          |
       | applyCost | <applyCost> |
@@ -116,11 +102,6 @@ Feature: Costi Notifica Fase 5
       | apply_cost_pagopa            | <applyCost>             |
       | payment_multy_number         | 1                       |
     And destinatario Mario Cucumber e:
-#      | digitalDomicile              | NULL                    |
-#      | physicalAddress_address      | Via@FAIL-Discovery_AR   |
-#      | physicalAddress_municipality | NAPOLI                  |
-#      | physicalAddress_province     | NA                      |
-#      | physicalAddress_zip          | 80124                   |
       | payment_creditorTaxId | 77777777777             |
       | payment_pagoPaForm    | SI                      |
       | payment_f24           | NULL                    |
@@ -155,20 +136,11 @@ Feature: Costi Notifica Fase 5
       | isDeleted        | false            |
       | costoValorizzato | secondAnalogCost |
       | productType      | AR               |
-#    Then verifico che per il destinatario 1 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
-#      | isDeleted        | false            |
-#      | costoValorizzato | secondAnalogCost |
-#      | productType      | AR               |
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
       | iun      | auto                                 |
       | tag      | AUD_NT_UPDATE_COST                   |
       | recIndex | recIndex=0                           |
       | phase    | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1 |
-#    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
-#      | iun      | auto                                 |
-#      | tag      | AUD_NT_UPDATE_COST                   |
-#      | recIndex | recIndex=1                           |
-#      | phase    | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1 |
     And verifico che i valori restituiti dalle nuove api di recupero costi per l'utente 0 coincidano con quelli restituiti da delivery-push
       | paFee     | 17          |
       | applyCost | <applyCost> |
@@ -210,11 +182,6 @@ Feature: Costi Notifica Fase 5
       | apply_cost_pagopa            | <applyCost>              |
       | payment_multy_number         | 2                        |
     And destinatario Mario Cucumber e:
-#      | digitalDomicile              | NULL                     |
-#      | physicalAddress_address      | Via@FAIL-Discovery_AR    |
-#      | physicalAddress_municipality | NAPOLI                   |
-#      | physicalAddress_province     | NA                       |
-#      | physicalAddress_zip          | 80124                    |
       | payment_creditorTaxId | 77777777777              |
       | payment_pagoPaForm    | SI                       |
       | payment_f24           | NULL                     |
@@ -251,20 +218,11 @@ Feature: Costi Notifica Fase 5
       | isDeleted        | false            |
       | costoValorizzato | secondAnalogCost |
       | productType      | AR               |
-#    Then verifico che per il destinatario 1 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
-#      | isDeleted        | false            |
-#      | costoValorizzato | secondAnalogCost |
-#      | productType      | AR               |
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
       | iun      | auto                                 |
       | tag      | AUD_NT_UPDATE_COST                   |
       | recIndex | recIndex=0                           |
       | phase    | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1 |
-#    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
-#      | iun      | auto                                 |
-#      | tag      | AUD_NT_UPDATE_COST                   |
-#      | recIndex | recIndex=1                           |
-#      | phase    | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1 |
     And verifico che i valori restituiti dalle nuove api di recupero costi per l'utente 0 coincidano con quelli restituiti da delivery-push
       | paFee     | 17          |
       | applyCost | <applyCost> |
@@ -303,11 +261,6 @@ Feature: Costi Notifica Fase 5
       | apply_cost_f24               | <applyCost>           |
       | payment_multy_number         | <paymentNumber>       |
     And destinatario Mario Cucumber e:
-#      | digitalDomicile              | NULL                  |
-#      | physicalAddress_address      | Via@FAIL-Discovery_AR |
-#      | physicalAddress_municipality | NAPOLI                |
-#      | physicalAddress_province     | NA                    |
-#      | physicalAddress_zip          | 80124                 |
       | payment_creditorTaxId | 77777777777         |
       | payment_pagoPaForm    | NULL                |
       | apply_cost_pagopa     | NO                  |
@@ -341,20 +294,11 @@ Feature: Costi Notifica Fase 5
       | isDeleted        | false            |
       | costoValorizzato | secondAnalogCost |
       | productType      | AR               |
-#    Then verifico che per il destinatario 1 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
-#      | isDeleted        | false            |
-#      | costoValorizzato | secondAnalogCost |
-#      | productType      | AR               |
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
       | iun      | auto                                 |
       | tag      | AUD_NT_UPDATE_COST                   |
       | recIndex | recIndex=0                           |
       | phase    | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1 |
-#    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
-#      | iun      | auto                                 |
-#      | tag      | AUD_NT_UPDATE_COST                   |
-#      | recIndex | recIndex=1                           |
-#      | phase    | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1 |
     And verifico che i valori restituiti dalle nuove api di recupero costi per l'utente 0 coincidano con quelli restituiti da delivery-push
       | paFee     | 17          |
       | applyCost | <applyCost> |
