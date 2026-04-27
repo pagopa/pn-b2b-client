@@ -20,6 +20,25 @@ Feature: Eventi M2M
       | eserviceId | :eserviceId |
     Then "PA2" non visualizza l'evento EServiceAdded appena trovato
 
+  Scenario: [M2M_E-SERVICE_EVENTS_03] Verifica che il producer di un e-service in stato PUBLISHED può visualizzare gli eventi relativi alla creazione e pubblicazione dell'e-service
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When "PA1" ha già creato e pubblicato 1 e-services
+    Then "PA1" visualizza l'evento EServiceAdded con:
+      | field                | value       |
+      | eserviceId           | :eserviceId |
+      | producerDelegationId | %null       |
+
+  @m2m-events-e-service
+  Scenario: [M2M_E-SERVICE_EVENTS_04] Verifica che il producer di un e-service in stato PUBLISHED, con delega in erogazione in attesa di approvazione, visualizza gli eventi di creazione e pubblicazione senza producerDelegationId
+    Given l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When "PA1" ha già creato e pubblicato 1 e-services
+    And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
+    Then "PA1" visualizza l'evento EServiceAdded con:
+      | field                | value       |
+      | eserviceId           | :eserviceId |
+      | producerDelegationId | %null       |
+
   @m2m-events-e-service
   Scenario: [M2M_E-SERVICE_EVENTS_10] Verifica che il client con delega non ancora accettata visualizzi solo l'evento di pubblicazione di un e-service di un producer
     Il producer di un e-service pubblica l'e-service, se un client ha ricevuto una delega in erogazione dal
