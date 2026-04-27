@@ -192,29 +192,29 @@ Feature: Costi Notifica Fase 5
       | paFee              | 17                         |
       | vat                | 10                         |
     And destinatario Mario Gherkin e:
-      | digitalDomicile              | NULL                    |
-      | physicalAddress_address      | Via@ok_890              |
-      | physicalAddress_municipality | LAGO PATRIA             |
-      | physicalAddress_zip          | 80014                   |
-      | physicalAddress_province     | NA                      |
-      | payment_creditorTaxId        | 77777777777             |
-      | payment_pagoPaForm           | SI                      |
-      | payment_f24                  | NULL                    |
-      | title_payment                | PagoPa_mono_async_sada0 |
-      | apply_cost_pagopa            | <applyCost>             |
-      | payment_multy_number         | 2                       |
+      | digitalDomicile              | NULL                     |
+      | physicalAddress_address      | Via@ok_890               |
+      | physicalAddress_municipality | LAGO PATRIA              |
+      | physicalAddress_zip          | 80014                    |
+      | physicalAddress_province     | NA                       |
+      | payment_creditorTaxId        | 77777777777              |
+      | payment_pagoPaForm           | SI                       |
+      | payment_f24                  | NULL                     |
+      | title_payment                | PagoPa_multi_async_sada0 |
+      | apply_cost_pagopa            | <applyCost>              |
+      | payment_multy_number         | 2                        |
     And destinatario Mario Cucumber e:
-      | digitalDomicile              | NULL                    |
-      | physicalAddress_address      | Via@ok_890              |
-      | physicalAddress_municipality | LAGO PATRIA             |
-      | physicalAddress_zip          | 80014                   |
-      | physicalAddress_province     | NA                      |
-      | payment_creditorTaxId        | 77777777777             |
-      | payment_pagoPaForm           | SI                      |
-      | payment_f24                  | NULL                    |
-      | title_payment                | PagoPa_mono_async_sada0 |
-      | apply_cost_pagopa            | <applyCost>             |
-      | payment_multy_number         | 2                       |
+      | digitalDomicile              | NULL                     |
+      | physicalAddress_address      | Via@ok_890               |
+      | physicalAddress_municipality | LAGO PATRIA              |
+      | physicalAddress_zip          | 80014                    |
+      | physicalAddress_province     | NA                       |
+      | payment_creditorTaxId        | 77777777777              |
+      | payment_pagoPaForm           | SI                       |
+      | payment_f24                  | NULL                     |
+      | title_payment                | PagoPa_multi_async_sada0 |
+      | apply_cost_pagopa            | <applyCost>              |
+      | payment_multy_number         | 2                        |
     And al destinatario 0 viene associato lo iuv creato mediante partita debitoria alla posizione 0 per il suo pagamento alla posizione 0
     And al destinatario 0 viene associato lo iuv creato mediante partita debitoria alla posizione 1 per il suo pagamento alla posizione 1
     And al destinatario 1 viene associato lo iuv creato mediante partita debitoria alla posizione 2 per il suo pagamento alla posizione 0

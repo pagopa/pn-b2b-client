@@ -124,17 +124,17 @@ Feature: Costi Notifica Fase 5
       | paFee              | 17                         |
       | vat                | 10                         |
     And destinatario Mario Gherkin e:
-      | digitalDomicile              | NULL                    |
-      | physicalAddress_address      | Via@FAIL-Discovery_AR   |
-      | physicalAddress_municipality | NAPOLI                  |
-      | physicalAddress_province     | NA                      |
-      | physicalAddress_zip          | 80124                   |
-      | payment_creditorTaxId        | 77777777777             |
-      | payment_pagoPaForm           | SI                      |
-      | payment_f24                  | NULL                    |
-      | title_payment                | PagoPa_mono_async_sada1 |
-      | apply_cost_pagopa            | <applyCost>             |
-      | payment_multy_number         | 2                       |
+      | digitalDomicile              | NULL                     |
+      | physicalAddress_address      | Via@FAIL-Discovery_AR    |
+      | physicalAddress_municipality | NAPOLI                   |
+      | physicalAddress_province     | NA                       |
+      | physicalAddress_zip          | 80124                    |
+      | payment_creditorTaxId        | 77777777777              |
+      | payment_pagoPaForm           | SI                       |
+      | payment_f24                  | NULL                     |
+      | title_payment                | PagoPa_multi_async_sada1 |
+      | apply_cost_pagopa            | <applyCost>              |
+      | payment_multy_number         | 2                        |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 1
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"

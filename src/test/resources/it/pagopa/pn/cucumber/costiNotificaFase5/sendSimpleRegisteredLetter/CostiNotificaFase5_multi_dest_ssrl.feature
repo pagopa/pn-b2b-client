@@ -178,23 +178,23 @@ Feature: Costi Notifica Fase 5
       | paFee              | 17                         |
       | vat                | 10                         |
     And destinatario Mario Gherkin e:
-      | digitalDomicile_address | test@fail.it           |
-      | physicalAddress_address | Via@ok_RS              |
-      | payment_creditorTaxId   | 77777777777            |
-      | payment_pagoPaForm      | SI                     |
-      | payment_f24             | NULL                   |
-      | title_payment           | PagoPa_mono_async_ssrl |
-      | apply_cost_pagopa       | <applyCost>            |
-      | payment_multy_number    | 2                      |
+      | digitalDomicile_address | test@fail.it            |
+      | physicalAddress_address | Via@ok_RS               |
+      | payment_creditorTaxId   | 77777777777             |
+      | payment_pagoPaForm      | SI                      |
+      | payment_f24             | NULL                    |
+      | title_payment           | PagoPa_multi_async_ssrl |
+      | apply_cost_pagopa       | <applyCost>             |
+      | payment_multy_number    | 2                       |
     And destinatario Mario Cucumber e:
-      | digitalDomicile_address | test@fail.it           |
-      | physicalAddress_address | Via@ok_RS              |
-      | payment_creditorTaxId   | 77777777777            |
-      | payment_pagoPaForm      | SI                     |
-      | payment_f24             | NULL                   |
-      | title_payment           | PagoPa_mono_async_ssrl |
-      | apply_cost_pagopa       | <applyCost>            |
-      | payment_multy_number    | 2                      |
+      | digitalDomicile_address | test@fail.it            |
+      | physicalAddress_address | Via@ok_RS               |
+      | payment_creditorTaxId   | 77777777777             |
+      | payment_pagoPaForm      | SI                      |
+      | payment_f24             | NULL                    |
+      | title_payment           | PagoPa_multi_async_ssrl |
+      | apply_cost_pagopa       | <applyCost>             |
+      | payment_multy_number    | 2                       |
     And al destinatario 0 viene associato lo iuv creato mediante partita debitoria alla posizione 0 per il suo pagamento alla posizione 0
     And al destinatario 0 viene associato lo iuv creato mediante partita debitoria alla posizione 1 per il suo pagamento alla posizione 1
     And al destinatario 1 viene associato lo iuv creato mediante partita debitoria alla posizione 2 per il suo pagamento alla posizione 0
