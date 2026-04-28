@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 public class M2MEventClientImpl extends AbstractClient implements IM2MEventClient{
     private static final long EVENT_START_TOLERANCE_MINUTES = 5L;
 
-    private final Map<String, Map<InteropEvent, M2MEvents>> tenantEventCache = new HashMap<>();
+    private final Map<String, Map<InteropEvent, UUID>> tenantEventCache = new HashMap<>();
 
     private final EventsApi eventsApi;
     private final RestTemplate restTemplate;
@@ -312,60 +312,60 @@ public class M2MEventClientImpl extends AbstractClient implements IM2MEventClien
         Integer limit = request.getLimit() != null ?  request.getLimit() : M2MEventRequest.EVENTS_MAX_LIMIT;
         request.setLimit(limit);
 
-        Map<InteropEvent, M2MEvents> tenantCache =
+        Map<InteropEvent, UUID> tenantCache =
                 tenantEventCache.computeIfAbsent(request.getTenantType(), t -> new HashMap<>());
 
-        M2MEvents cachedEvents =
-                tenantCache.computeIfAbsent(request.getEvent(), this::createEmptyEvents);
+        UUID firstUtilEvent =
+                tenantCache.computeIfAbsent(request.getEvent(), (e) -> getFirstEventIdAfterStart(request, fetchPage));
 
-        UUID lastEventId = request.getLastEventId() != null
-                ? request.getLastEventId()
-                : ((cachedEvents.getLastEvent() != null && cachedEvents.getLastEvent().getId() != null) ? cachedEvents.getLastEvent().getId() : getFirstEventIdAfterStart(request, fetchPage, cachedEvents));
+        request.setLastEventId(firstUtilEvent);
 
-        request.setLastEventId(lastEventId);
-
-
+        M2MEvents page = createEmptyEvents(request.getEvent());
 
         while (true) {
-            M2MEvents page = fetchPage.apply(request);
-            if (!hasEvents(page, request.getLimit())) {
-                return cachedEvents;
+            M2MEvents currentPage = fetchPage.apply(request);
+            page.addEvents(currentPage);
+
+            if (!hasEvents(currentPage, request.getLimit())) {
+                return page;
             }
 
-            cachedEvents.addEvents(page);
-
-            UUID nextLastEventId = page.getLastEvent() != null
-                    ? page.getLastEvent().getId()
+            UUID nextLastEventId = currentPage.getLastEvent() != null
+                    ? currentPage.getLastEvent().getId()
                     : null;
 
             if (nextLastEventId == null) {
-                return cachedEvents;
+                return page;
             }
 
             request.setLastEventId(nextLastEventId);
         }
     }
 
-    private <Request extends M2MEventRequest> UUID getFirstEventIdAfterStart(Request request, Function<Request, M2MEvents> fetchPage, M2MEvents cachedEvents) {
+    private <Request extends M2MEventRequest> UUID getFirstEventIdAfterStart(Request request, Function<Request, M2MEvents> fetchPage) {
         M2MEvents page;
+        boolean hasNext;
         UUID lastEventId;
         Instant threshold = eventStartTime.minusSeconds(EVENT_START_TOLERANCE_MINUTES * 60);
 
         do{
             page = fetchPage.apply(request);
-            page.setEvents(
-                    page.getEvents()
-                            .stream()
-                            .filter(e -> !e.getEventTimestamp().isBefore(threshold))
-                            .collect(Collectors.toList())
-            );
+            hasNext = hasEvents(page, request.getLimit());
 
-            cachedEvents.addEvents(page);
+            List<? extends M2MEvent> filteredEvents = page.getEvents()
+                    .stream()
+                    .filter(e -> !e.getEventTimestamp().isBefore(threshold))
+                    .toList();
+
+            if(!filteredEvents.isEmpty())
+                return filteredEvents.get(0).getId();
 
             lastEventId = page.getLastEvent() != null
                     ? page.getLastEvent().getId()
                     : null;
-        } while (hasEvents(page, request.getLimit()));
+
+            request.setLastEventId(lastEventId);
+        } while (hasNext);
 
         return lastEventId;
     }
