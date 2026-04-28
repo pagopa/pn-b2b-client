@@ -151,7 +151,7 @@ public class PaperChannelSteps {
             rawValue = rawValue.replaceAll("\\[SOLO_SPAZI\\]", "   ");
         }
 
-        if("requestId".equals(field) && rawValue.contains("\\[REQUEST_ID\\]")) {
+        if("requestId".equals(field) && rawValue.contains("[REQUEST_ID]")) {
             if(REQUIRED_ID_200_201 == null) {
                 REQUIRED_ID_200_201 = REQUEST_ID + getRandomId();
             }
