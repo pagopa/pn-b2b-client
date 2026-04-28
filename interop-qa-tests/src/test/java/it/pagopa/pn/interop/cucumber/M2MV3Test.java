@@ -33,7 +33,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         "m2m-agreements", "m2m-purposes", "m2m-attributes", "m2m-eservices", "m2m-agreements-parte2-luglio",
         "m2m-parte2-agosto-rilascio1", "m2m-parte2-agosto-rilascio2", "m2m-parte2-settembre",
         "m2m-parte2-ottobre", "m2mEservices", "m2m-apiv3-users", "m2m-apiv3-producer-keychains",
-        "m2m-apiv3-client-keychains", "m2m-apiv3-client-consumer", "m2m-client"
+        "m2m-apiv3-client-keychains", "m2m-apiv3-client-consumer", "m2m-apiv3-purposes-threshold", "m2m-client"
 })
 public class M2MV3Test {
 
