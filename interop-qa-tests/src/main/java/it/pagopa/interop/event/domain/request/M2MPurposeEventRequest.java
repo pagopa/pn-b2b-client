@@ -21,6 +21,8 @@ public class M2MPurposeEventRequest extends M2MEventRequest{
         newRequest.setTenantType(request.getTenantType());
         newRequest.setLimit(request.getLimit());
         newRequest.setEvent(request.getEvent());
+        newRequest.setFilter(request.getFilter());
+        newRequest.setLastEventId(request.getLastEventId());
         return newRequest;
     }
 }

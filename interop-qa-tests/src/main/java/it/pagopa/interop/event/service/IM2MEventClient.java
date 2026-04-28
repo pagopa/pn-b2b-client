@@ -53,7 +53,7 @@ public interface IM2MEventClient extends SettableBearerToken, SettableHttpCallEx
     M2MPurposeTemplateEvents getPurposeTemplateEvents(M2MEventRequest request);
     M2MPurposeTemplateEvents getAllPurposeTemplateEvents(M2MEventRequest request);
 
-    Optional<M2MEvent> findEvent(M2MEventRequest request, EventPredicate filter);
+    Optional<M2MEvent> findEvent(M2MEventRequest request);
     M2MEvents findEvents(M2MEventRequest request, EventPredicate filter);
 
     M2MEvents getEvents(M2MEventRequest request);
