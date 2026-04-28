@@ -52,6 +52,8 @@ public class PaperChannelSteps {
 
     private static final String NULL_VALUE = "[NULL_VALUE]";
 
+    private static String REQUIRED_ID_200_201;
+
     public PaperChannelSteps(IPnPaperChannelClientImpl paperChannelClient) {
         this.paperChannelClient = paperChannelClient;
     }
@@ -83,9 +85,9 @@ public class PaperChannelSteps {
                 .receiverAddress(analogAddress)
                 .proposalProductType(fromPPTString(ppt));
 
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        String json = ow.writeValueAsString(informalPrepareRequest);
-        System.out.println(json);
+        //ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        //String json = ow.writeValueAsString(informalPrepareRequest);
+        //System.out.println(json);
 
     }
 
@@ -147,6 +149,13 @@ public class PaperChannelSteps {
         if("attachmentUrls".equals(field)) {
             rawValue = rawValue.replaceAll("\\[EMPTY\\]", "");
             rawValue = rawValue.replaceAll("\\[SOLO_SPAZI\\]", "   ");
+        }
+
+        if("requestId".equals(field) && rawValue.contains("\\[REQUEST_ID\\]")) {
+            if(REQUIRED_ID_200_201 == null) {
+                REQUIRED_ID_200_201 = REQUEST_ID + getRandomId();
+            }
+            rawValue = REQUIRED_ID_200_201;
         }
 
         // 3. Risolvi i placeholder tramite lo switch

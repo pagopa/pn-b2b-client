@@ -3,7 +3,7 @@ Feature: comunicazioni bonarie
   Scenario: [PREPARE-TC1-OK] Validazione nuovo service api prepare con tutti i parametri mandatori
     Given inizializzata una comunicazione bonaria con i parametri:
       | requestId                             |
-      | ABCD-HILM-YKWX-202202-1_rec0_try1001X |
+      | [REQUEST_ID] |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve una response con codice di stato 201
 
@@ -144,15 +144,15 @@ Feature: comunicazioni bonarie
   Scenario: [PREPARE-TC12-KO] Validazione nuovo service api prepare con requestId esistente (già preso in carico)
   ma il corpo della richiesta presenta dati diversi
     Given inizializzata una comunicazione bonaria con i parametri:
-      | requestId                              | printType |
-      | ABCD-HILM-YKWX-202202-1_rec0_try1001X  | FRONTE    |
+      | requestId     | printType |
+      | [REQUEST_ID]  | FRONTE    |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve un errore con codice di stato 409
 
   Scenario: [PREPARE-TC13-OK] Validazione nuovo service api prepare per richiesta già elaborata in precedenza (caso idempotenza)
     Given inizializzata una comunicazione bonaria con i parametri:
-      | requestId                             |
-      | ABCD-HILM-YKWX-202202-1_rec0_try1001X |
+      | requestId    |
+      | [REQUEST_ID] |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve una response con codice di stato 200
 
@@ -286,8 +286,8 @@ Feature: comunicazioni bonarie
 
   Scenario: [PREPARE-TC27-OK] Validazione nuovo service api prepare cambiando valore header X-Client-Id e stesso corpo della richiesta
     Given inizializzata una comunicazione bonaria con i parametri:
-      | xClientId               | requestId                             |
-      | questoclientidècambiato | ABCD-HILM-YKWX-202202-1_rec0_try1001X |
+      | xClientId               | requestId    |
+      | questoclientidècambiato | [REQUEST_ID] |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve una response con codice di stato 200
 
