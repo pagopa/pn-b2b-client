@@ -27,7 +27,7 @@ public class PnPaB2bInternalInformalClientImpl {
 
     public PnPaB2bInternalInformalClientImpl(
             RestTemplate restTemplate,
-            @Value("${pn.internal.delivery-base-url}") String deliveryBasePath,
+            @Value("${pn.internal.delivery-push-base-url}") String deliveryBasePath,
             @Value("${pn.internal.pa-id}") String paId) {
 
         this.paId = paId;
