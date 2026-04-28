@@ -1,3 +1,4 @@
+@validazioneComunicazioniBonarie
 Feature: comunicazioni bonarie
 
   Scenario: [PREPARE-TC1-OK] Validazione nuovo service api prepare con tutti i parametri mandatori
