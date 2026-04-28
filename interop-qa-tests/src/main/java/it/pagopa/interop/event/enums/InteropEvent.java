@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum InteropEvent {
     ESERVICE_ADDED("EServiceAdded", Family.ESERVICE),
     ESERVICE_DESCRIPTOR_PUBLISHED("EServiceDescriptorPublished", Family.ESERVICE),
+    ESERVICE_DESCRIPTOR_APPROVED_BY_DELEGATOR("EServiceDescriptorApprovedByDelegator", Family.ESERVICE),
     DRAFT_ESERVICE_UPDATED("DraftEServiceUpdated", Family.ESERVICE),
     AGREEMENT_ADDED("AgreementAdded", Family.AGREEMENT),
     AGREEMENT_SUBMITTED("AgreementSubmitted", Family.AGREEMENT),
