@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
@@ -20,6 +21,7 @@ import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -65,11 +67,11 @@ public class CostiNotificaFase5Steps {
                 if (costoValorizzato != null) {
                     switch (costoValorizzato) {
                         case "firstAnalogCost" ->
-                                assertThat(record.get("firstAnalogCost").n()).as("Il record salvato su Pn-NotificationDeliveryCost dovrebbe avere il campo %s valorizzato", costoValorizzato).isNotNull();
+                                assertThat(record.get("firstAnalogCost")).as("Il record salvato su Pn-NotificationDeliveryCost dovrebbe avere il campo %s valorizzato", costoValorizzato).isNotNull();
                         case "secondAnalogCost" ->
-                                assertThat(record.get("secondAnalogCost").n()).as("Il record salvato su Pn-NotificationDeliveryCost dovrebbe avere il campo %s valorizzato", costoValorizzato).isNotNull();
+                                assertThat(record.get("secondAnalogCost")).as("Il record salvato su Pn-NotificationDeliveryCost dovrebbe avere il campo %s valorizzato", costoValorizzato).isNotNull();
                         case "simpleRegisteredLetterCost" ->
-                                assertThat(record.get("simpleRegisteredLetterCost").n()).as("Il record salvato su Pn-NotificationDeliveryCost dovrebbe avere il campo %s valorizzato", costoValorizzato).isNotNull();
+                                assertThat(record.get("simpleRegisteredLetterCost")).as("Il record salvato su Pn-NotificationDeliveryCost dovrebbe avere il campo %s valorizzato", costoValorizzato).isNotNull();
                     }
                 }
             } catch (HttpStatusCodeException httpStatusCodeException) {
@@ -77,9 +79,9 @@ public class CostiNotificaFase5Steps {
                     assertSoftly(softly -> {
                         softly.assertThat(httpStatusCodeException.getRawStatusCode()).as("In caso di record eliminato logicamente, la get deve produrre un 404").isEqualTo(404);
                         softly.assertThat(expectedData.get("isDeleted")).as("In caso di errore 404, il flag isDeleted del record dev'essere impostato a true").isEqualToIgnoringCase("true");
-                        softly.assertThat(record.get("firstAnalogCost").n()).as("Sulla tabella Pn-NotificationDeliveryCost, post annullamento notifica, il campo firstAnalogCost dovrebbe essere stato riportato a null").isNull();
-                        softly.assertThat(record.get("secondAnalogCost").n()).as("Sulla tabella Pn-NotificationDeliveryCost, post annullamento notifica, il campo secondAnalogCost dovrebbe essere stato riportato a null").isNull();
-                        softly.assertThat(record.get("simpleRegisteredLetterCost").n()).as("Sulla tabella Pn-NotificationDeliveryCost, post annullamento notifica, il campo simpleRegisteredLetterCost dovrebbe essere stato riportato a null").isNull();
+                        softly.assertThat(record.get("firstAnalogCost")).as("Sulla tabella Pn-NotificationDeliveryCost, post annullamento notifica, il campo firstAnalogCost dovrebbe essere stato riportato a null").isNull();
+                        softly.assertThat(record.get("secondAnalogCost")).as("Sulla tabella Pn-NotificationDeliveryCost, post annullamento notifica, il campo secondAnalogCost dovrebbe essere stato riportato a null").isNull();
+                        softly.assertThat(record.get("simpleRegisteredLetterCost")).as("Sulla tabella Pn-NotificationDeliveryCost, post annullamento notifica, il campo simpleRegisteredLetterCost dovrebbe essere stato riportato a null").isNull();
                     });
                 } else {
                     throw httpStatusCodeException;
@@ -177,6 +179,7 @@ public class CostiNotificaFase5Steps {
 
     @Then("verifico che l'API di recupero costi da Pn-PaymentInfo produca un errore quando viene richiamata passando {string}")
     public void checkRobustezzaApiRecuperoCosti(String inputParameterType) {
+        AtomicBoolean apiInvocationHasFailed = new AtomicBoolean(false);
         try {
             FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
             fsn.getRecipients().forEach(rec -> rec.getPayments().forEach(payment -> {
@@ -199,15 +202,17 @@ public class CostiNotificaFase5Steps {
                                     noticeCode = noticeCode.startsWith("0") ? "1" + noticeCode.substring(1) : "0" + noticeCode.substring(1);
                         }
                         log.info("Start invocazione API recupero costi con creditorTaxId={} noticeCode={}", creditorTaxId, noticeCode);
-                        notificationCostPaymentResponse = notificationCostClient.getNotificationCostByPayment(creditorTaxId, noticeCode);
-                    } catch (HttpStatusCodeException httpStatusCodeException) {
-                        log.info(httpStatusCodeException.getMessage());
-                        assertThat(httpStatusCodeException.getRawStatusCode())
+                        notificationCostClient.getNotificationCostByPayment(creditorTaxId, noticeCode);
+                    } catch (HttpStatusCodeException expectedException) {
+                        apiInvocationHasFailed.set(true);
+                        log.info(expectedException.getMessage());
+                        assertThat(expectedException.getRawStatusCode())
                                 .as("L'invocazione dell'api di recupero costi con %s dovrebbe produrre un %s", inputParameterType, expectedError)
                                 .isEqualTo(expectedError);
                     }
                 }
             }));
+            assertThat(apiInvocationHasFailed).as("L'api di recupero costi deve aver prodotto un errore").isTrue();
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
@@ -232,6 +237,9 @@ public class CostiNotificaFase5Steps {
         }
         try {
             notificationCostClient.initializeNotificationCost(iun, request);
+            assertThat(Arrays.asList("iun inesistente", "pagamenti vuoti"))
+                    .as("La casistica %s dovrebbe produrre un errore", inputParamsType)
+                    .contains(inputParamsType);
         } catch (HttpStatusCodeException httpStatusCodeException) {
             assertThat(httpStatusCodeException.getRawStatusCode()).as("La request con %s dovrebbe generare un errore 400", inputParamsType).isEqualTo(400);
             assertThat(Arrays.asList("iun inesistente", "pagamenti vuoti"))
