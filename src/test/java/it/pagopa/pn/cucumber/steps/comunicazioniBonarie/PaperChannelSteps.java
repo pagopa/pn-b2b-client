@@ -2,6 +2,8 @@ package it.pagopa.pn.cucumber.steps.comunicazioniBonarie;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -38,7 +40,7 @@ public class PaperChannelSteps {
     private static final String NOTIFICATION_SENT_ID = "2022-07-27T12:22:33.444Z";
     private static final String PROPOSAL_PRODUCT_TYPE = InformalProposalProductTypeEnum.RS.getValue();
 
-    private static final String ATTACHMENT_URLS = "https://TestServer/allegato1,https://TestServer/allegato2";
+    private static final String ATTACHMENT_URLS = "safestorage://PN_AAR-4219a7d53a0941d0aac2af3be9e7be53.pdf?docTag=AAR,safestorage://PN_AAR-4219a7d53a0941d0aac2af3be9e7be53.pdf?docTag=AAR";
 
     private static final String FULL_NAME = "Mario Rossi";
 
@@ -80,6 +82,11 @@ public class PaperChannelSteps {
                 .attachmentUrls(urlsStr != null ? new ArrayList<>(Arrays.asList(urlsStr.split(","))) : null)
                 .receiverAddress(analogAddress)
                 .proposalProductType(fromPPTString(ppt));
+
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String json = ow.writeValueAsString(informalPrepareRequest);
+        System.out.println(json);
+
     }
 
     @Given("inizializzata una comunicazione bonaria con parametro required mancante:")
@@ -157,7 +164,7 @@ public class PaperChannelSteps {
     private int getRandomId() {
         Random random = new Random();
 
-        int limiteMassimo = 10000; // L'indice sarà compreso tra 0 e 10k
+        int limiteMassimo = 10000000; // L'indice sarà compreso tra 0 e 10m
         return random.nextInt(limiteMassimo);
     }
 
