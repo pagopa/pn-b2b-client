@@ -16,8 +16,10 @@ Feature: Eventi M2M
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When "PA1" ha già creato un e-service in stato "DRAFT" con approvazione "AUTOMATIC"
     And "PA1" visualizza l'evento EServiceAdded con:
-      | field      | value       |
-      | eserviceId | :eserviceId |
+      | field                | value       |
+      | eserviceId           | :eserviceId |
+      | descriptorId         | %null       |
+      | producerDelegationId | %null       |
     Then "PA2" non visualizza l'evento EServiceAdded appena trovato
 
   @m2m-events-e-service
@@ -27,6 +29,7 @@ Feature: Eventi M2M
     Then "PA1" visualizza l'evento EServiceAdded con:
       | field                | value       |
       | eserviceId           | :eserviceId |
+      | descriptorId         | %null       |
       | producerDelegationId | %null       |
     And "PA1" visualizza l'evento EServiceDescriptorPublished con:
       | field                | value         |
@@ -43,6 +46,7 @@ Feature: Eventi M2M
     Then "PA1" visualizza l'evento EServiceAdded con:
       | field                | value       |
       | eserviceId           | :eserviceId |
+      | descriptorId         | %null       |
       | producerDelegationId | %null       |
     And "PA1" visualizza l'evento EServiceDescriptorPublished con:
       | field                | value         |
@@ -60,6 +64,7 @@ Feature: Eventi M2M
     Then "PA1" visualizza l'evento EServiceAdded con:
       | field                | value       |
       | eserviceId           | :eserviceId |
+      | descriptorId         | %null       |
       | producerDelegationId | %null       |
     And "PA1" visualizza l'evento EServiceDescriptorPublished con:
       | field                | value         |
@@ -68,18 +73,26 @@ Feature: Eventi M2M
       | producerDelegationId | %null         |
 
   @m2m-events-e-service
-  Scenario: [M2M_E-SERVICE_EVENTS_06] Verifica che il producer di un e-service in stato PUBLISHED, con delega in erogazione accettata
-  da un altro ente, visualizza gli eventi di creazione e pubblicazione relativi all'e-service con producerDelegationId valorizzato solo sull'evento di pubblicazione
+  Scenario: [M2M_E-SERVICE_EVENTS_06] Verifica che il producer di un e-service creato in stato DRAFT, con delega in erogazione accettata da un altro ente
+  e successivamente pubblicato dal delegato, visualizza gli eventi di creazione e pubblicazione relativi all'e-service con producerDelegationId valorizzato solo sull'evento di pubblicazione
     Given l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    When "PA1" ha già creato e pubblicato 1 e-services
+    And "PA1" ha già creato un e-service in stato DRAFT
+    And "PA1" ha già caricato un'interfaccia per quel descrittore
     And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    And l'utente pubblica l'e-service
+    And l'e-service è in stato "WAITING_FOR_APPROVAL"
+    And l'utente è un "admin" di "PA1"
+    And l'utente approva la pubblicazione dell'e-service
+    And l'e-service è in stato "PUBLISHED"
     Then "PA1" visualizza l'evento EServiceAdded con:
       | field                | value       |
       | eserviceId           | :eserviceId |
+      | descriptorId         | %null       |
       | producerDelegationId | %null       |
-    And "PA1" visualizza l'evento EServiceDescriptorPublished con:
+    And "PA1" visualizza l'evento EServiceDescriptorApprovedByDelegator con:
       | field                | value                 |
       | eserviceId           | :eserviceId           |
       | descriptorId         | :descriptorId         |
