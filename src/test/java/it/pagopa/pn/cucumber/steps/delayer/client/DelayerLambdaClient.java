@@ -2,14 +2,28 @@ package it.pagopa.pn.cucumber.steps.delayer.client;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.interfaces.SenderLimitCondition;
-import it.pagopa.pn.cucumber.steps.delayer.model.*;
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDelivery;
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPrintCapacityCounter;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimit;
+import it.pagopa.pn.cucumber.steps.delayer.model.ExecutionStatusResponse;
+import it.pagopa.pn.cucumber.steps.delayer.model.FirstStepFunctionResponseWrapper;
+import it.pagopa.pn.cucumber.steps.delayer.model.SecondStepFunctionResponseWrapper;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 public class DelayerLambdaClient {
@@ -30,6 +44,13 @@ public class DelayerLambdaClient {
     }
 
     public String invoke(String operationType, String... parameters) throws Exception {
+        String payload = buildPayload(operationType, parameters);
+        String rawResult = lambdaInvoker.invokeMyLambda(lambdaName, payload);
+        checkLambdaResponse(rawResult, operationType);
+        return rawResult;
+    }
+
+    public String invoke(String operationType, Map<String, String> parameters) throws Exception {
         String payload = buildPayload(operationType, parameters);
         String rawResult = lambdaInvoker.invokeMyLambda(lambdaName, payload);
         checkLambdaResponse(rawResult, operationType);
@@ -118,7 +139,12 @@ public class DelayerLambdaClient {
 
     public DelayerPrintCapacityCounter getPrintCapacityCounter(String deliveryDate) {
         try {
-            String response = invoke("GET_PRINT_CAPACITY_COUNTER", "pn-PaperDeliveryCounters", deliveryDate);
+            Map<String, String> paramsMap = Map.of(
+                    "counterType", "PRINT",
+                    "table", "pn-PaperDeliveryCounters",
+                    "deliveryDate", deliveryDate
+            );
+            String response = invoke("GET_COUNTERS", paramsMap);
             JsonNode body = extractBody(response);
 
             if (body.isMissingNode() || body.isNull()) {
@@ -126,7 +152,7 @@ public class DelayerLambdaClient {
                 return null;
             }
 
-            return objectMapper.treeToValue(body, DelayerPrintCapacityCounter.class);
+            return objectMapper.treeToValue(body.get("items").get(0), DelayerPrintCapacityCounter.class);
 
         } catch (Exception e) {
             throw new RuntimeException(
@@ -306,6 +332,22 @@ public class DelayerLambdaClient {
 
         sb.append("] }");
         return sb.toString();
+    }
+
+    private String buildPayload(String operationType, Map<String, String> parameters) {
+        try {
+            ObjectNode root = objectMapper.createObjectNode();
+            root.put("operationType", operationType);
+
+            ObjectNode paramsNode = objectMapper.createObjectNode();
+            parameters.forEach(paramsNode::put);
+
+            root.set("parameters", paramsNode);
+
+            return objectMapper.writeValueAsString(root);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to build JSON payload", e);
+        }
     }
 
     private void checkLambdaResponse(String rawJson, String operationType) throws Exception {
