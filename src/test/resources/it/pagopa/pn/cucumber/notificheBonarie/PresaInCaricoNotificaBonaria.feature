@@ -106,16 +106,21 @@ Feature: Sottomissione di una notifica bonaria.
 
 #  SCENARIO  - Sottomissione di una notifica bonaria.
 #  CASO DI TEST .1 Validazione della richiesta di invio notifica bonaria.
-  Scenario: [NOTIFICHE_BONARIE_SOTTOMISSIONE_14A] Come ente mittente ricevo creo una nuova notifica bonaria utilizzando valori di default.
+  @informalNotifications
+  Scenario: [NOTIFICHE_BONARIE_SOTTOMISSIONE_14A] Come ente mittente creo una nuova notifica bonaria utilizzando valori di default.
+    Con whitelist vuota ricevo un errore 403 Forbidden.
     When viene creata una nuova notifica bonaria con i seguenti parametri
-    |senderDenomination|
+      | additionalLanguages |
+      | NULL                |
     Then la notifica bonaria viene inviata tramite api b2b dal "Comune_1"
     Then viene inviata una nuova notifica bonaria
+    Then si riceve errore 403
 
 
   Scenario: [NOTIFICHE_BONARIE_SOTTOMISSIONE_14] Invio di una notifica bonaria con campi di default
     When viene creata una nuova notifica bonaria con valori di default
-
+    #Then la notifica bonaria viene inviata tramite api b2b dal "Comune_1"
+    Then viene inviata una nuova notifica bonaria
 
 
 

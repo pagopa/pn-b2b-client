@@ -55,7 +55,7 @@ public class PnPaB2bInternalInformalClientImpl {
     }
 
     public NewInformalNotificationResponse sendNewInformalNotificationV1(InformalNotificationRequestV1 informalNotificationRequestV1) throws RestClientException {
-        return newInformalNotificationApi.sendNewInformalNotificationV1(operatorId, CxTypeAuthFleet.PA, paId, "B2B", informalNotificationRequestV1, groups, null, null);
+        return newInformalNotificationApi.sendNewInformalNotificationV1(operatorId, CxTypeAuthFleet.PA, "5b994d4a-0fa8-47ac-9c7b-354f1d44a1ce", "B2B", informalNotificationRequestV1, groups, null, null);
     }
 
     public NewInformalNotificationRequestStatusResponseV1 getInformalNotificationRequestStatusV1(String notificationRequestId) throws RestClientException {

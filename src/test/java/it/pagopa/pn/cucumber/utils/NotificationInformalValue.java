@@ -19,7 +19,7 @@ public enum NotificationInformalValue {
     ADDITIONAL_SUBJECT("additional_subject", "Sollecito per..",false),
     ADDITIONAL_LONG_BODY("additional_long_body", "Gentile cittadino, la informiamo che... ", false),
     ADDITIONAL_SHORT_BODY("additional_short_body", "Le comunichiamo che..", false),
-    ADDITIONAL_LANGUAGE("additional_language", "fr",false),
+    ADDITIONAL_LANGUAGE("additional_language", "FR",false),
 
     // Informal Request
     SENDER_DENOMINATION("senderDenomination", "Comune di Palermo", false),
@@ -157,14 +157,16 @@ public enum NotificationInformalValue {
     private InformalNotificationPaymentItem buildPaymentItem(
             Map<String, String> data) {
 
-        PagoPaPayment pagoPa = new PagoPaPayment()
+
+        PagoPaPaymentBase pagoPa = new
+                PagoPaPaymentBase()
                 .noticeCode(
                         getValue(data, PAGOPA_NOTICE_CODE.key)
                 )
                 .creditorTaxId(
                         getValue(data, PAGOPA_CREDITOR_TAX_ID.key)
                 )
-                .applyCost(false)
+                //.applyCost(false)
                 .attachment(
                         buildPaymentAttachment(data)
                 );
