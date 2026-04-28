@@ -1,12 +1,12 @@
 package it.pagopa.pn.cucumber.utils;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
-import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.regions.Region;
@@ -99,6 +99,39 @@ public class LambdaInvoker {
             throw new RuntimeException(
                     "Errore durante invocazione Lambda [%s] e conversione body in [%s]"
                             .formatted(functionName, bodyClass.getSimpleName()),
+                    e
+            );
+        }
+    }
+
+    public <T> T invokeMyLambda(String functionName, Object payload, TypeReference<T> bodyType) {
+        try {
+            String payloadJson = payload instanceof String s
+                    ? s
+                    : objectMapper.writeValueAsString(payload);
+
+            String rawResponse = invokeMyLambda(functionName, payloadJson);
+
+            JsonNode root = objectMapper.readTree(rawResponse);
+            int statusCode = root.path("statusCode").asInt(-1);
+
+            JsonNode body = root.path("body");
+
+            if (statusCode != 200) {
+                String bodyText = body.isTextual() ? body.asText() : body.toString();
+                throw new RuntimeException("Lambda failed: " + bodyText);
+            }
+
+            if (body.isTextual()) {
+                return objectMapper.readValue(body.asText(), bodyType);
+            }
+
+            return objectMapper.convertValue(body, bodyType);
+
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "Errore durante invocazione Lambda [%s] e conversione body"
+                            .formatted(functionName),
                     e
             );
         }

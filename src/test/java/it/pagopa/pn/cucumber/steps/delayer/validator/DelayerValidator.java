@@ -26,12 +26,6 @@ public class DelayerValidator {
     private final DelayerLambdaClient lambdaClient;
     private final DelayerPaperDeliveryUtils utils;
 
-//    public DelayerValidator(DelayerContext context, DelayerLambdaClient lambdaClient, DelayerPaperDeliveryUtils utils) {
-//        this.context = context;
-//        this.lambdaClient = lambdaClient;
-//        this.utils = utils;
-//    }
-
     public void assertPianifications() {
         if (context.failPianification.isEmpty()) return;
 

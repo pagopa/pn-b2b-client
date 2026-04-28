@@ -22,10 +22,6 @@ public class DelayerPaperDeliveryUtils {
     private static final String UNIFIED_DRIVER_SCONOSCIUTO = "driverSconosciuto";
     private final DelayerContext context;
 
-//    public DelayerPaperDeliveryUtils(DelayerContext context) {
-//        this.context = context;
-//    }
-
     public static String getUnifiedDeliveryDriverKey(DelayerPaperDelivery n) {
         String driver = n.getUnifiedDeliveryDriver();
         String province = n.getProvince();

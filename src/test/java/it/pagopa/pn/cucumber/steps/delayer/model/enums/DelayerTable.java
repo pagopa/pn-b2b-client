@@ -9,7 +9,7 @@ public enum DelayerTable {
     PaperDeliverySenderLimit("pn-PaperDeliverySenderLimit"),
     PaperDeliveryUsedSenderLimit("pn-PaperDeliveryUsedSenderLimit"),
     PaperDeliveryDriverCapacitiesMock("pn-PaperDeliveryDriverCapacitiesMock"),
-    DelayerPaperDeliveryJsonView("pn-delayer_paper_delivery_json_view");
+    DelayerPaperDeliveryJsonView("pn_delayer_paper_delivery_json_view");
     public final String tableName;
 
     DelayerTable(String tableName) {

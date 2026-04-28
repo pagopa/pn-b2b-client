@@ -3,6 +3,7 @@ package it.pagopa.pn.cucumber.steps.delayer.model;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.HashMap;
@@ -12,21 +13,26 @@ import java.util.Map;
 @Getter
 @Setter
 @EqualsAndHashCode(of = {"pk", "requestId"})
+@NoArgsConstructor
 public class DelayerPaperDelivery {
 
     private String pk;
     private String sk;
-    private String requestId;
+    private String attempt;
+    private String cap;
+    private String createdAt;
+    private String deliveryDate;
+    private String iun;
     private String notificationSentAt;
     private String prepareRequestDate;
-    private String productType;
-    private String senderPaId;
-    private String province;
-    private String cap;
-    private String attempt;
-    private String iun;
-    private String unifiedDeliveryDriver;
     private String priority;
+    private String productType;
+    private String province;
+    private String recipientId;
+    private String requestId;
+    private String senderPaId;
+    private String tenderId;
+    private String unifiedDeliveryDriver;
 
     public DelayerPaperDelivery(List<String> header, List<String> csvLine) {
         if (header == null || csvLine == null || header.size() != csvLine.size()) {
@@ -47,7 +53,7 @@ public class DelayerPaperDelivery {
         this.cap = requireField(rowMap, "cap");
         this.attempt = requireField(rowMap, "attempt");
         this.iun = requireField(rowMap, "iun");
-        this.unifiedDeliveryDriver = requireField(rowMap, "unifiedDeliveryDriver");
+        this.unifiedDeliveryDriver = getField(rowMap, "unifiedDeliveryDriver");
     }
 
     public DelayerPaperDelivery(JsonNode tableRecord) {
@@ -102,6 +108,14 @@ public class DelayerPaperDelivery {
     private String getField(JsonNode node, String fieldName) {
         JsonNode field = node.get(fieldName);
         return (field != null && !field.isNull()) ? field.asText() : null;
+    }
+
+    private String getField(Map<String, String> rowMap, String fieldName) {
+        String value = rowMap.get(fieldName);
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        return value;
     }
 
     public boolean isRS() {

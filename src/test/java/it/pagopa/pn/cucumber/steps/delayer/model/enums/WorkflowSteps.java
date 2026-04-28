@@ -30,9 +30,4 @@ public enum WorkflowSteps {
                 .filter(ws -> ws.name().equalsIgnoreCase(name))
                 .findFirst();
     }
-
-    @Override
-    public String toString() {
-        return name() + "(" + index + ")";
-    }
 }

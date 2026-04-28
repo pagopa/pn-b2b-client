@@ -8,13 +8,7 @@ import java.util.Map;
 public class SecondStepFunctionResponseWrapper {
 
     private int statusCode;
-    private String body;
+    private DelayerPayload body;
 
-    @Data
-    public static class Payload {
-        private String message;
-        private String executionArn;
-        private String startDate;
-    }
 }
 

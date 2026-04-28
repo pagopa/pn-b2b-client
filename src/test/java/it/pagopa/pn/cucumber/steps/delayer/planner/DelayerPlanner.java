@@ -4,7 +4,9 @@ import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDelivery;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -12,15 +14,12 @@ import java.util.stream.Stream;
 
 import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.*;
 
+@Component
+@RequiredArgsConstructor
 public class DelayerPlanner {
 
     private final DelayerContext context;
     private final DelayerPaperDeliveryUtils utils;
-
-    public DelayerPlanner(DelayerContext context) {
-        this.context = context;
-        this.utils = new DelayerPaperDeliveryUtils(context);
-    }
 
     public Map<String, List<DelayerPaperDelivery>> simulateAlgorithm(WorkflowSteps endAt, String seed) {
         Map<String, List<DelayerPaperDelivery>> groupedByStep = initWorkflowMap();
