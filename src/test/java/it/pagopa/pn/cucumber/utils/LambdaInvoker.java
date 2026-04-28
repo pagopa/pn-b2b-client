@@ -56,14 +56,7 @@ public class LambdaInvoker {
 
 
     public String invokeMyLambda(String functionName, String payload) {
-//        payload = "{\n" +
-//                "  \"operationType\": \"GET_PRESIGNED_URL\",\n" +
-//                "  \"parameters\": {\n" +
-//                "    \"fileName\": \"example.csv\",\n" +
-//                "    \"checksumSha256B64\": \"abcd1234efgh5678ijkl9012mnop3456\",\n" +
-//                "    \"presignedUrlType\": \"UPLOAD\"\n" +
-//                "  }\n" +
-//                "}";
+
         InvokeRequest request = InvokeRequest.builder()
                 .functionName(functionName)
                 .payload(SdkBytes.fromString(payload, StandardCharsets.UTF_8))

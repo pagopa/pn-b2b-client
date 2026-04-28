@@ -440,12 +440,6 @@ public class DelayerPaperDeliveryUtils {
                 return String.join("~", driver, province, priority, refIso, requestId);
             }
 
-//            case EVALUATE_RESIDUAL_CAPACITY -> {
-//                String driver = n.getUnifiedDeliveryDriver();
-//                String province = n.getProvince();
-//                String refIso = resolveReferenceDate(n);
-//                return String.join("~", driver, province, refIso, requestId);
-//            }
 
             case EVALUATE_PRINT_CAPACITY -> {
                 String priority = calculatePriority(n);

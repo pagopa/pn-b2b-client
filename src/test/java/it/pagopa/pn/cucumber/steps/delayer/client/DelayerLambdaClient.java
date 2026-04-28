@@ -32,8 +32,7 @@ public class DelayerLambdaClient {
     private final LambdaInvoker lambdaInvoker;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final String lambdaName;
-    @Value("${pn.delayer.portfat.lambda.name}")
-    private String portfatLambdaName;
+
 
     @Data
     public static class SenderLimitResult {

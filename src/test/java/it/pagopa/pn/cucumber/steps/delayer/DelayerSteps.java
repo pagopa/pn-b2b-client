@@ -499,6 +499,11 @@ public class DelayerSteps {
             toBeExcluded += fetchToBeExcluded(deliveryDate, province, productWithCapacity);
         }
 
+        Assertions.assertThat(sumEstimate)
+                .as("SUM_ESTIMATES deve essere > 0 per calcolare il limite mittente. paId=%s, province=%s, product=%s, deliveryDate=%s, sumEstimate=%s",
+                        paId, province, product, deliveryDate, sumEstimate)
+                .isGreaterThan(0);
+
         double senderLimitPercentage = Math.ceil(((double)weeklyEstimate/(sumEstimate))*1000)/10;
 
         double expectedSenderLimit = Math.ceil((sumDeclaredCapacity - toBeExcluded) *(senderLimitPercentage/100.0));
@@ -633,56 +638,7 @@ public class DelayerSteps {
 
 
 
-//    private int extractLatestNumberOfShipments(String json) {
-//        try {
-//            ObjectMapper mapper = new ObjectMapper();
-//
-//            // Parse outer JSON
-//            JsonNode root = mapper.readTree(json);
-//
-//            // "body" is a JSON string → parse again
-//            String body = root.path("body").asText();
-//            JsonNode bodyNode = mapper.readTree(body);
-//
-//            JsonNode items = bodyNode.path("items");
-//
-//            Instant latestInstant = null;
-//            int latestNumberOfShipments = 0;
-//
-//
-//
-//            for (JsonNode item : items) {
-//                String sk = item.path("sk").asText();
-//                latestNumberOfShipments = item.path("numberOfShipments").asInt();
-//
-//                String[] splittedSk = sk.split("~");
-//                String timestamp = splittedSk[splittedSk.length - 1];
-//                try {
-//                    Instant instant = Instant.parse(timestamp);
-//                    if (latestInstant == null || instant.isAfter(latestInstant)) {
-//                        latestInstant = instant;
-//                }
-//
-//                // Extract timestamps from sk
-//                for (String part : sk.split("~")) {
-////                    try {
-////                        Instant instant = Instant.parse(part);
-////                        if (latestInstant == null || instant.isAfter(latestInstant)) {
-////                            latestInstant = instant;
-////                            latestNumberOfShipments = numberOfShipments;
-////                        }
-////                    } catch (Exception ignored) {
-////                        // Not a timestamp → ignore
-////                    }
-////                }
-//            }
-//
-//            return latestNumberOfShipments;
-//
-//        } catch (Exception e) {
-//            throw new IllegalArgumentException("Invalid JSON input", e);
-//        }
-//    }
+
 
 
     private int extractWeeklyEstimate(String json) {
@@ -695,6 +651,10 @@ public class DelayerSteps {
             // "body" is a JSON string → parse again
             String body = root.path("body").asText();
             JsonNode bodyNode = mapper.readTree(body);
+
+            Assertions.assertThat(bodyNode.path("items").size())
+                    .as("L'operation deve restituire una lista di items non vuota altrimenti le stime non sono state elaborate")
+                    .isGreaterThan(0);
 
             // Since items always contains exactly one element
             JsonNode item = bodyNode.path("items").get(0);
@@ -761,6 +721,10 @@ public class DelayerSteps {
             // "body" is a JSON string → parse again
             String body = root.path("body").asText();
             JsonNode bodyNode = mapper.readTree(body);
+
+            Assertions.assertThat(bodyNode.path("items").size())
+                    .as("L'operation deve restituire una lista di items non vuota altrimenti le stime non sono state elaborate")
+                    .isGreaterThan(0);
 
             // Items list always has exactly one element
             JsonNode item = bodyNode.path("items").get(0);

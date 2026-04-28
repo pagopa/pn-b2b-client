@@ -149,15 +149,9 @@ public class CensimentoStimeMittentiSteps {
         return body.get(fieldName).asText();
     }
 
-    @When("viene recuperata la stima della settimana intera del primo mese che inizia di lunedì")
-    public void getStimeMittentiCalcolateSettimanaIntera() {
 
-    }
 
-    @When("viene recuperata la stima della settimana a cavallo del primo mese che non inizia di lunedì")
-    public void getStimeMittentiCalcolateSettimanaCavallo() {
 
-    }
 
     @Then("si verifica che la stima recupera corrisponda alla stima attesa")
     public void verifyResultsAreConsistentWithExpected() {
