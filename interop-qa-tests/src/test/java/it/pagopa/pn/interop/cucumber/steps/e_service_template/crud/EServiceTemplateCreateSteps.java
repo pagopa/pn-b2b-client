@@ -156,7 +156,7 @@ public class EServiceTemplateCreateSteps {
         String description = ((EServiceTemplateDetails) httpCallExecutor.getResponse()).getDescription();
 
         Assertions.assertNotNull(description);
-        Assertions.assertEquals(description.length(), descriptionLength);
+        Assertions.assertEquals(descriptionLength, description.length());
     }
 
     @When("{string} porta la versione dell'e-service template in stato {eServiceTemplateVersionState}")

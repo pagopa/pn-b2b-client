@@ -75,7 +75,6 @@ public interface IM2MEserviceClient extends IClient<EService, UUID> {
                 .descriptor(seed.getDescriptor())
                 .technology(seed.getTechnology())
                 .mode(seed.getMode())
-                .descriptor(seed.getDescriptor())
                 .isSignalHubEnabled(seed.getIsSignalHubEnabled())
                 .isConsumerDelegable(seed.getIsConsumerDelegable())
                 .isClientAccessDelegable(seed.getIsClientAccessDelegable())

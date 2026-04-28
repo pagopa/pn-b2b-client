@@ -97,6 +97,6 @@ public class EServiceCreationSteps {
         ProducerEServiceDetails eServiceDetails = ((ResponseEntity<ProducerEServiceDetails>) sharedStepsContext.getHttpCallExecutor().getResponse()).getBody();
 
         Assertions.assertNotNull(eServiceDetails.getDescription());
-        Assertions.assertEquals(eServiceDetails.getDescription().length(), descriptionLength);
+        Assertions.assertEquals(descriptionLength, eServiceDetails.getDescription().length());
     }
 }

@@ -34,7 +34,7 @@ public class EServiceDescriptionUpdateSteps {
 
         String eServiceDescription = descriptionLength == null ?
                 String.format("Nuova descrizione - %d", sharedStepsContext.getTestSeed()) :
-                (new StringRandomizer(descriptionLength, descriptionLength, System.currentTimeMillis())).getRandomValue();;
+                (new StringRandomizer(descriptionLength, descriptionLength, System.currentTimeMillis())).getRandomValue();
 
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
