@@ -2,16 +2,14 @@
 Feature: comunicazioni bonarie
 
   Scenario: [PREPARE-TC1-OK] Validazione nuovo service api prepare con tutti i parametri mandatori
-    Given inizializzata una comunicazione bonaria con i parametri:
-      | requestId                             |
-      | [REQUEST_ID] |
+    Given inizializzata una comunicazione bonaria con valori di default
     When si richiede la prepare della comunicazione bonaria
     Then si riceve una response con codice di stato 201
 
   Scenario: [PREPARE-TC2A-KO] Validazione nuovo service api prepare con parametro (required) attachmentUrls lista empty
     Given inizializzata una comunicazione bonaria con i parametri:
-      | attachmentUrls          |
-      | [EMPTY]                 |
+      | attachmentUrls |
+      | [EMPTY]        |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve un errore con codice di stato 400
 
@@ -66,7 +64,7 @@ Feature: comunicazioni bonarie
 
   Scenario: [PREPARE-TC5B-KO] Validazione nuovo service api prepare con parametro (required) iun a blank
     Given inizializzata una comunicazione bonaria con i parametri:
-      | iun |
+      | iun          |
       | [SOLO_SPAZI] |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve un errore con codice di stato 400
@@ -115,8 +113,8 @@ Feature: comunicazioni bonarie
 
   Scenario: [PREPARE-TC10-KO] Validazione nuovo service api prepare con parametro (required) iun null
     Given inizializzata una comunicazione bonaria con i parametri:
-      | iun |
-      | [NULL]       |
+      | iun    |
+      | [NULL] |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve un errore con codice di stato 400
 
@@ -145,15 +143,23 @@ Feature: comunicazioni bonarie
   Scenario: [PREPARE-TC12-KO] Validazione nuovo service api prepare con requestId esistente (già preso in carico)
   ma il corpo della richiesta presenta dati diversi
     Given inizializzata una comunicazione bonaria con i parametri:
-      | requestId     | printType |
-      | [REQUEST_ID]  | FRONTE    |
+      | requestId                         | printType |
+      | AAAA-BBBB-CCCC-202202-1_requestId | FRONTE    |
+    When si richiede la prepare della comunicazione bonaria
+    Given inizializzata una comunicazione bonaria con i parametri:
+      | requestId                         | printType    |
+      | AAAA-BBBB-CCCC-202202-1_requestId | FRONTE_RETRO |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve un errore con codice di stato 409
 
   Scenario: [PREPARE-TC13-OK] Validazione nuovo service api prepare per richiesta già elaborata in precedenza (caso idempotenza)
     Given inizializzata una comunicazione bonaria con i parametri:
-      | requestId    |
-      | [REQUEST_ID] |
+      | requestId                         |
+      | AAAA-BBBB-CCCC-202202-2_requestId |
+    When si richiede la prepare della comunicazione bonaria
+    Given inizializzata una comunicazione bonaria con i parametri:
+      | requestId                         |
+      | AAAA-BBBB-CCCC-202202-2_requestId |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve una response con codice di stato 200
 
@@ -175,8 +181,8 @@ Feature: comunicazioni bonarie
 
   Scenario: [PREPARE-TC18-OK] Validazione nuovo service api prepare con molteplici url nel parametro attachmentUrls
     Given inizializzata una comunicazione bonaria con i parametri:
-      | attachmentUrls                                             |
-      | https://TestServer/allegato1,https://TestServer/allegato2  |
+      | attachmentUrls                                            |
+      | https://TestServer/allegato1,https://TestServer/allegato2 |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve una response con codice di stato 201
 
@@ -196,71 +202,71 @@ Feature: comunicazioni bonarie
 
   Scenario: [PREPARE-TC21-OK] Validazione nuovo service api prepare con requestId che non contiene il prefisso dello iun fornito
     Given inizializzata una comunicazione bonaria con i parametri:
-      | iun                 |
-      | QUESTO-E-INVENTATO  |
+      | iun                |
+      | QUESTO-E-INVENTATO |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve una response con codice di stato 201
 
   Scenario: [PREPARE-TC22-KO] Validazione nuovo service api prepare con parametro (required) receiverAddress.fullname mancante
     Given inizializzata una comunicazione bonaria con i parametri:
-      | fullname | address                         | city   |
-      | [NULL]   | Via Roma                        | Milano |
+      | fullname | address  | city   |
+      | [NULL]   | Via Roma | Milano |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve un errore con codice di stato 400
 
   Scenario: [PREPARE-TC23-KO] Validazione nuovo service api prepare con parametro (required) receiverAddress.address mancante
     Given inizializzata una comunicazione bonaria con i parametri:
-      | fullname     | address  | city   |
-      | Mario Rossi  | [NULL]   | Milano |
+      | fullname    | address | city   |
+      | Mario Rossi | [NULL]  | Milano |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve un errore con codice di stato 400
 
   Scenario: [PREPARE-TC24-KO] Validazione nuovo service api prepare con parametro (required) receiverAddress.city mancante
     Given inizializzata una comunicazione bonaria con i parametri:
-      | fullname     | address  | city   |
-      | Mario Rossi  | Via Roma | [NULL] |
+      | fullname    | address  | city   |
+      | Mario Rossi | Via Roma | [NULL] |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve un errore con codice di stato 400
 
   Scenario: [PREPARE-TC22B-KO] Validazione nuovo service api prepare con parametro (required) receiverAddress.fullname empty
     Given inizializzata una comunicazione bonaria con i parametri:
-      | address                         | city   | fullname |
-      | Via Roma                        | Milano | [EMPTY]  |
+      | address  | city   | fullname |
+      | Via Roma | Milano | [EMPTY]  |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve una response con codice di stato 201
 
   Scenario: [PREPARE-TC23B-KO] Validazione nuovo service api prepare con parametro (required) receiverAddress.address empty
     Given inizializzata una comunicazione bonaria con i parametri:
-      | fullname                         | city   | address |
-      | Mario Rossi                      | Milano | [EMPTY] |
+      | fullname    | city   | address |
+      | Mario Rossi | Milano | [EMPTY] |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve una response con codice di stato 201
 
   Scenario: [PREPARE-TC24B-KO] Validazione nuovo service api prepare con parametro (required) receiverAddress.city empty
     Given inizializzata una comunicazione bonaria con i parametri:
-      | fullname                         | address   | city    |
-      | Mario Rossi                      | Via Roma  | [EMPTY] |
+      | fullname    | address  | city    |
+      | Mario Rossi | Via Roma | [EMPTY] |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve una response con codice di stato 201
 
   Scenario: [PREPARE-TC22C-KO] Validazione nuovo service api prepare con parametro (required) receiverAddress.fullname blank
     Given inizializzata una comunicazione bonaria con i parametri:
-      | address                         | city   | fullname |
-      | Via Roma                        | Milano | [SOLO_SPAZI]  |
+      | address  | city   | fullname     |
+      | Via Roma | Milano | [SOLO_SPAZI] |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve una response con codice di stato 201
 
   Scenario: [PREPARE-TC23C-KO] Validazione nuovo service api prepare con parametro (required) receiverAddress.address blank
     Given inizializzata una comunicazione bonaria con i parametri:
-      | fullname                         | city   | address  |
-      | Mario Rossi                      | Milano | [SOLO_SPAZI]  |
+      | fullname    | city   | address      |
+      | Mario Rossi | Milano | [SOLO_SPAZI] |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve una response con codice di stato 201
 
   Scenario: [PREPARE-TC24C-KO] Validazione nuovo service api prepare con parametro (required) receiverAddress.city blank
     Given inizializzata una comunicazione bonaria con i parametri:
-      | fullname                         | address   | city    |
-      | Mario Rossi                      | Via Roma  | [SOLO_SPAZI] |
+      | fullname    | address  | city         |
+      | Mario Rossi | Via Roma | [SOLO_SPAZI] |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve una response con codice di stato 201
 
@@ -287,8 +293,11 @@ Feature: comunicazioni bonarie
 
   Scenario: [PREPARE-TC27-OK] Validazione nuovo service api prepare cambiando valore header X-Client-Id e stesso corpo della richiesta
     Given inizializzata una comunicazione bonaria con i parametri:
-      | xClientId               | requestId    |
-      | questoclientidècambiato | [REQUEST_ID] |
+      | xClientId     | requestId                         |
+      | primoClientId | AAAA-BBBB-CCCC-202202-3_requestId |
+    Given inizializzata una comunicazione bonaria con i parametri:
+      | xClientId               | requestId                         |
+      | questoclientidècambiato | AAAA-BBBB-CCCC-202202-3_requestId |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve una response con codice di stato 200
 

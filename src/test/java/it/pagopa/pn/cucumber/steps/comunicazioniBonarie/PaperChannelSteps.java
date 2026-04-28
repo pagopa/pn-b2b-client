@@ -1,20 +1,23 @@
 package it.pagopa.pn.cucumber.steps.comunicazioniBonarie;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.*;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.AnalogAddress;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.InformalPrepareRequest;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.InformalPrepareResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.InformalProposalProductTypeEnum;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaperChannelClientImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpStatusCodeException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.util.AssertionErrors.assertNotNull;
@@ -58,9 +61,16 @@ public class PaperChannelSteps {
         this.paperChannelClient = paperChannelClient;
     }
 
+    @Given("inizializzata una comunicazione bonaria con valori di default")
+    public void newPaperChannelInformalRequestDefault() {
+        newPaperChannelInformalRequest(DataTable.emptyDataTable());
+    }
+
     @Given("inizializzata una comunicazione bonaria con i parametri:")
-    public void newPaperChannelInformalRequest(DataTable dataTable) throws JsonProcessingException {
-        Map<String, String> data = dataTable.asMaps().get(0);
+    public void newPaperChannelInformalRequest(DataTable dataTable) {
+        Map<String, String> data;
+        if (dataTable.isEmpty()) data = Map.of();
+        else data = dataTable.asMaps().get(0);
 
         // Recupera il valore dalla mappa usando la CHIAVE (stringa o costante)
         String ppt = getFieldValue(data,"proposalProductType", PROPOSAL_PRODUCT_TYPE);
