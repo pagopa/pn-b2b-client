@@ -45,13 +45,14 @@ public class M2MEventsSteps {
         M2MEventRequest eventRequest = M2MEventRequest.builder()
                 .tenantType(tenantType)
                 .event(event)
+                .filter(eventPredicate)
                 .build();
 
         long startTime = System.currentTimeMillis();
         
         PollingService.makePolling(
                 () -> {
-                    Optional<M2MEvent> foundEvent = m2mEventClient.findEvent(eventRequest, eventPredicate);
+                    Optional<M2MEvent> foundEvent = m2mEventClient.findEvent(eventRequest);
                     foundEvent.ifPresent(e -> {
                         log.info("Evento {} trovato: {}", event, e);
                         eventContext.setLastEventMatched(event, e);

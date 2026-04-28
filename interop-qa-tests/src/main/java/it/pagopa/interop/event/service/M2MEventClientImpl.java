@@ -261,9 +261,9 @@ public class M2MEventClientImpl extends AbstractClient implements IM2MEventClien
     }
 
     @Override
-    public Optional<M2MEvent> findEvent(M2MEventRequest request, EventPredicate filter) {
+    public Optional<M2MEvent> findEvent(M2MEventRequest request) {
         M2MEvents events = getEvents(request);
-        return Optional.ofNullable(events.filter(filter));
+        return Optional.ofNullable(events.getLastEvent());
     }
 
     @Override
@@ -324,11 +324,14 @@ public class M2MEventClientImpl extends AbstractClient implements IM2MEventClien
 
         while (true) {
             M2MEvents currentPage = fetchPage.apply(request);
-            page.addEvents(currentPage);
+            page.addEvents(currentPage.getEvents()
+                    .stream()
+                    .filter(request.getFilter() != null ? request.getFilter() : e -> true)
+                    .toList()
+            );
 
-            if (!hasEvents(currentPage, request.getLimit())) {
+            if(!page.getEvents().isEmpty() || !hasEvents(currentPage, request.getLimit()))
                 return page;
-            }
 
             UUID nextLastEventId = currentPage.getLastEvent() != null
                     ? currentPage.getLastEvent().getId()
