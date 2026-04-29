@@ -2,6 +2,7 @@ package it.pagopa.pn.cucumber.steps.pa;
 
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.model.LegalFactDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffLegalFactId;
@@ -43,6 +44,7 @@ import java.util.regex.Pattern;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.AAR_GENERATION;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assumptions.assumeThat;
 
 
 @Slf4j
@@ -728,5 +730,48 @@ public class LegalFactContentVerifySteps {
             return key.substring(key.indexOf("PN_F24"));
         }
         return null;
+    }
+
+    /**
+     * Verifica che per un legalFact rimosso da SS dopo 10 anni, provando a recuperarlo tramite api-pubblica venga lanciato un 500, tramite api privata un 410.
+     * Il test utilizza notifiche fisse a cui sono stati impostati i seguenti valori per simulare la rimozione da ss:
+     * "documentLogicalState": "DELETED"
+     * "documentState": "deleted"
+     * Tali notifiche sono tutte state inviate da Comune_Multi a Mario Gherkin, ragion per cui i valori di pa e recipientInternalId sono impostati fissi.
+     */
+    @Given("verifico che recuperando un legalFact rimosso da safeStorage, le api restituiscano l'errore corretto")
+    public void checkLegalFactRemovedFromSafeStorage() {
+        sharedSteps.setPA("Comune_Multi");
+        String recipientInternalId = "PF-a6c1350d-1d69-4209-8bf8-31de58c79d6e";
+        String environment = B2bUtils.getEnvironment(sharedSteps.getContext());
+        String iun = null;
+        String legalFactId = null;
+        switch (environment) {
+            case "dev" -> {
+                iun = "GNXH-NYXT-XZPE-202604-H-1";
+                legalFactId = "PN_LEGAL_FACTS-ac3681822ffc45c88ba8f54a076d557f.pdf";
+            }
+            case "test" -> {
+                iun = "NZXG-YGYA-LKTD-202604-A-1";
+                legalFactId = "PN_LEGAL_FACTS-fb0c349d4f0c4941b40961917c103d3b.pdf";
+            }
+            case "uat" -> {
+                iun = "YZDW-WVEP-ZGXK-202604-M-1";
+                legalFactId = "PN_LEGAL_FACTS-7a2393ed6c7f4202aa609b6420cf75cf.pdf";
+            }
+            default -> assumeThat(true).as("Test skipped: non valido per ambiente %s", environment).isFalse();
+        }
+        try {
+            sharedSteps.getB2bClient().getLegalFact(iun, LegalFactCategory.DIGITAL_DELIVERY, legalFactId);
+        } catch (HttpStatusCodeException excApiPubblica) {
+            log.info(excApiPubblica.getMessage());
+            assertThat(excApiPubblica.getRawStatusCode()).as("La chiamata ad api pubblica deve restituire un 500").isEqualTo(500);
+        }
+        try {
+            sharedSteps.getB2bClient().getLegalFactByIdPrivate(recipientInternalId, iun, legalFactId, null, null, null);
+        } catch (HttpStatusCodeException excApiPrivata) {
+            log.info(excApiPrivata.getMessage());
+            assertThat(excApiPrivata.getRawStatusCode()).as("La chiamata ad api privata deve restituire un 410").isEqualTo(410);
+        }
     }
 }

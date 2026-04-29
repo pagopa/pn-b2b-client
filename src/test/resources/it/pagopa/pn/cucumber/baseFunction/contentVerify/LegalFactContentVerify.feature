@@ -153,6 +153,12 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
       | DESTINATARIO_DOMICILIO_DIGITALE           | test@fail.it                                                                                               |
       | DESTINATARIO_TIPO_DOMICILIO_DIGITALE      | Domicilio eletto presso la Pubblica Amministrazione mittente ex art.26, comma 5 lettera b del D.L. 76/2020 |
 
+
+  #Bug 19624
+  @legalFact
+  Scenario: [B2B_LEGAL_FACT_RIMOSSO_DA_SS]
+    Given verifico che recuperando un legalFact rimosso da safeStorage, le api restituiscano l'errore corretto
+
   @legalFact
   Scenario: [B2B-LEGALFACT_CONTENT_VERIFY_8] In seguito ad un disservizio verificatosi in piattaforma durante la creazione di una notifica, si verifica l'esistenza del legalFact generato se sia di tipo DOWNTIME
     Given vengono letti gli eventi di disservizio degli ultimi 60 giorni relativi alla "creazione notifiche"
