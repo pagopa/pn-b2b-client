@@ -49,8 +49,12 @@ Feature: Eventi M2M
     Then "PA1" visualizza l'evento EServiceAdded con:
       | field                | value       |
       | eserviceId           | :eserviceId |
-      | descriptorId         | %null       |
       | producerDelegationId | %null       |
+    And "PA1" visualizza l'evento EServiceDescriptorAdded con:
+      | field                | value         |
+      | eserviceId           | :eserviceId   |
+      | descriptorId         | :descriptorId |
+      | producerDelegationId | %null         |
     And "PA1" visualizza l'evento EServiceDescriptorPublished con:
       | field                | value         |
       | eserviceId           | :eserviceId   |
@@ -100,7 +104,7 @@ Feature: Eventi M2M
       | eserviceId           | :eserviceId           |
       | descriptorId         | :descriptorId         |
       | producerDelegationId | :producerDelegationId |
-    
+
   @m2m-events-e-service
   Scenario: [M2M_E-SERVICE_EVENTS_10] Verifica che il client con delega non ancora accettata visualizzi solo l'evento di pubblicazione di un e-service di un producer
   Il producer di un e-service pubblica l'e-service, se un client ha ricevuto una delega in erogazione dal
