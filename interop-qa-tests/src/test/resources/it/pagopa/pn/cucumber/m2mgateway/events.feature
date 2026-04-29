@@ -146,6 +146,27 @@ Feature: Eventi M2M
       | producerDelegationId | :producerDelegationId |
 
   @m2m-events-e-service
+  Scenario: [M2M_E-SERVICE_EVENTS_09] Verifica che un ente diverso dall'ente creatore di un e-service in stato PUBLISHED visualizza solo l'evento di pubblicazione e non quello di creazione, con producerDelegationId assente
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When "PA1" ha già creato e pubblicato 1 e-services
+    And "PA1" visualizza l'evento EServiceAdded con:
+      | field                | value       |
+      | eserviceId           | :eserviceId |
+      | producerDelegationId | %null       |
+    And "PA1" visualizza l'evento EServiceDescriptorAdded con:
+      | field                | value         |
+      | eserviceId           | :eserviceId   |
+      | descriptorId         | :descriptorId |
+      | producerDelegationId | %null         |
+    Then "PA2" non visualizza l'evento EServiceAdded appena trovato
+    And "PA2" non visualizza l'evento EServiceDescriptorAdded appena trovato
+    And "PA2" visualizza l'evento EServiceDescriptorPublished con:
+      | field                | value                 |
+      | eserviceId           | :eserviceId           |
+      | descriptorId         | :descriptorId         |
+      | producerDelegationId | :producerDelegationId |
+
+  @m2m-events-e-service
   Scenario: [M2M_E-SERVICE_EVENTS_10] Verifica che il client con delega non ancora accettata visualizzi solo l'evento di pubblicazione di un e-service di un producer
   Il producer di un e-service pubblica l'e-service, se un client ha ricevuto una delega in erogazione dal
   producer non ancora accettata, il client può visualizzare solo l'evento di pubblicazione e non quello di creazione.
