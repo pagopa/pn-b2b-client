@@ -4,12 +4,16 @@ Feature: Eventi M2M
   @m2m-events-e-service
   Scenario: [M2M_E-SERVICE_EVENTS_01] Verifica che il producer di un e-service in stato DRAFT può visualizzare l'evento dell'e-service
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    When "PA1" ha già creato un e-service in stato "DRAFT" con approvazione "AUTOMATIC"
+    When "PA1" ha già creato un e-service in stato DRAFT
     Then "PA1" visualizza l'evento EServiceAdded con:
       | field                | value       |
       | eserviceId           | :eserviceId |
       | producerDelegationId | %null       |
-      # TODO Verificare l'esistenza dei campi: id, eventTimestamp, descriptorId
+    And "PA1" visualizza l'evento EServiceDescriptorAdded con:
+      | field                | value         |
+      | eserviceId           | :eserviceId   |
+      | descriptorId         | :descriptorId |
+      | producerDelegationId | %null         |
 
   @m2m-events-e-service
   Scenario: [M2M_E-SERVICE_EVENTS_02] Verifica che un ente diverso dal creatore di un e-service in stato DRAFT non può visualizzare l'evento dell'e-service
@@ -115,7 +119,7 @@ Feature: Eventi M2M
       | eserviceId           | :eserviceId           |
       | descriptorId         | :descriptorId         |
       | producerDelegationId | :producerDelegationId |
-
+    
   @m2m-events-e-service
   Scenario: [M2M_E-SERVICE_EVENTS_10] Verifica che il client con delega non ancora accettata visualizzi solo l'evento di pubblicazione di un e-service di un producer
   Il producer di un e-service pubblica l'e-service, se un client ha ricevuto una delega in erogazione dal
