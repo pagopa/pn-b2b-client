@@ -14,11 +14,10 @@ Feature: Eventi M2M
   @m2m-events-e-service
   Scenario: [M2M_E-SERVICE_EVENTS_02] Verifica che un client diverso dal producer di un e-service in stato DRAFT non può visualizzare l'evento dell'e-service
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    When "PA1" ha già creato un e-service in stato "DRAFT" con approvazione "AUTOMATIC"
+    When "PA1" ha già creato un e-service in stato DRAFT
     And "PA1" visualizza l'evento EServiceAdded con:
       | field                | value       |
       | eserviceId           | :eserviceId |
-      | descriptorId         | %null       |
       | producerDelegationId | %null       |
     Then "PA2" non visualizza l'evento EServiceAdded appena trovato
 
@@ -29,8 +28,12 @@ Feature: Eventi M2M
     Then "PA1" visualizza l'evento EServiceAdded con:
       | field                | value       |
       | eserviceId           | :eserviceId |
-      | descriptorId         | %null       |
       | producerDelegationId | %null       |
+    And "PA1" visualizza l'evento EServiceDescriptorAdded con:
+      | field                | value         |
+      | eserviceId           | :eserviceId   |
+      | descriptorId         | :descriptorId |
+      | producerDelegationId | %null         |
     And "PA1" visualizza l'evento EServiceDescriptorPublished con:
       | field                | value         |
       | eserviceId           | :eserviceId   |
@@ -97,7 +100,7 @@ Feature: Eventi M2M
       | eserviceId           | :eserviceId           |
       | descriptorId         | :descriptorId         |
       | producerDelegationId | :producerDelegationId |
-
+    
   @m2m-events-e-service
   Scenario: [M2M_E-SERVICE_EVENTS_10] Verifica che il client con delega non ancora accettata visualizzi solo l'evento di pubblicazione di un e-service di un producer
   Il producer di un e-service pubblica l'e-service, se un client ha ricevuto una delega in erogazione dal
@@ -108,13 +111,13 @@ Feature: Eventi M2M
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA1" visualizza l'evento EServiceAdded con:
-      | field                | value       |
-      | eserviceId           | :eserviceId |
+      | field      | value       |
+      | eserviceId | :eserviceId |
       # TODO Verificare l'assenza del campo producerDelegationId
     And "PA1" visualizza l'evento EServiceDescriptorPublished con:
-      | field                | value         |
-      | eserviceId           | :eserviceId   |
-      | descriptorId         | :descriptorId |
+      | field        | value         |
+      | eserviceId   | :eserviceId   |
+      | descriptorId | :descriptorId |
       # TODO Verificare l'assenza del campo producerDelegationId
       # TODO Verificare l'esistenza dei campi: id, eventTimestamp
     When l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
@@ -131,13 +134,13 @@ Feature: Eventi M2M
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA1" visualizza l'evento EServiceAdded con:
-      | field                | value       |
-      | eserviceId           | :eserviceId |
+      | field      | value       |
+      | eserviceId | :eserviceId |
       # TODO Verificare l'assenza del campo producerDelegationId
     And "PA1" visualizza l'evento EServiceDescriptorPublished con:
-      | field                | value         |
-      | eserviceId           | :eserviceId   |
-      | descriptorId         | :descriptorId |
+      | field        | value         |
+      | eserviceId   | :eserviceId   |
+      | descriptorId | :descriptorId |
       # TODO Verificare l'assenza del campo producerDelegationId
       # TODO Verificare l'esistenza dei campi: id, eventTimestamp
     When l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
@@ -155,13 +158,13 @@ Feature: Eventi M2M
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA1" visualizza l'evento EServiceAdded con:
-      | field                | value                 |
-      | eserviceId           | :eserviceId           |
+      | field      | value       |
+      | eserviceId | :eserviceId |
       # TODO Verificare l'assenza del campo producerDelegationId
     And "PA1" visualizza l'evento EServiceDescriptorPublished con:
-      | field                | value                 |
-      | eserviceId           | :eserviceId           |
-      | descriptorId         | :descriptorId         |
+      | field        | value         |
+      | eserviceId   | :eserviceId   |
+      | descriptorId | :descriptorId |
       # TODO Verificare l'assenza del campo producerDelegationId
       # TODO Verificare l'esistenza dei campi: id, eventTimestamp
     When l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
@@ -180,13 +183,13 @@ Feature: Eventi M2M
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato e pubblicato 1 e-services
     And "PA1" visualizza l'evento EServiceAdded con:
-      | field                | value       |
-      | eserviceId           | :eserviceId |
+      | field      | value       |
+      | eserviceId | :eserviceId |
       # TODO Verificare l'assenza del campo producerDelegationId
     And "PA1" visualizza l'evento EServiceDescriptorPublished con:
-      | field                | value         |
-      | eserviceId           | :eserviceId   |
-      | descriptorId         | :descriptorId |
+      | field        | value         |
+      | eserviceId   | :eserviceId   |
+      | descriptorId | :descriptorId |
       # TODO Verificare l'assenza del campo producerDelegationId
       # TODO Verificare l'esistenza dei campi: id, eventTimestamp
     When l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
