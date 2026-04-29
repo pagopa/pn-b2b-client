@@ -29,7 +29,7 @@ import static it.pagopa.interop.utils.ApiClientUtils.V3_UNSUPPORTED_BEARER_MSG;
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class M2MV3EventClientImpl extends AbstractDPoPClient implements IM2MV3EventClient {
-    private static final long EVENT_START_TOLERANCE_MINUTES = 5L;
+    private static final long EVENT_START_TOLERANCE_MINUTES = 10L;
 
     private final Map<String, Map<InteropEvent, UUID>> tenantEventCache = new HashMap<>();
 
