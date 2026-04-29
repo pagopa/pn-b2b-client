@@ -104,8 +104,12 @@ Feature: Eventi M2M
     Then "PA1" visualizza l'evento EServiceAdded con:
       | field                | value       |
       | eserviceId           | :eserviceId |
-      | descriptorId         | %null       |
       | producerDelegationId | %null       |
+    And "PA1" visualizza l'evento EServiceDescriptorAdded con:
+      | field                | value         |
+      | eserviceId           | :eserviceId   |
+      | descriptorId         | :descriptorId |
+      | producerDelegationId | %null         |
     And "PA1" visualizza l'evento EServiceDescriptorApprovedByDelegator con:
       | field                | value                 |
       | eserviceId           | :eserviceId           |
