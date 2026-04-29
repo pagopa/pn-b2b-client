@@ -18,8 +18,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
 
 import java.util.*;
 import java.util.function.BiFunction;
@@ -29,7 +27,6 @@ import java.util.stream.Collectors;
 import static it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps.*;
 import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.*;
 
-@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
 @RequiredArgsConstructor
 public class DelayerSteps {
@@ -53,7 +50,7 @@ public class DelayerSteps {
     }
 
     @Given("il CSV {string} è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test")
-    public void populateTargetTable(String csvName) throws Exception {
+    public void populateTargetTable(String csvName) {
         service.importData(csvName, context.expectedDeliveryDate);
     }
 
@@ -364,7 +361,7 @@ public class DelayerSteps {
     }
 
     @Then("non devono esistere record in pn-DelayerPaperDelivery per la deliveryDate {string}")
-    public void verifyNoPaperDeliveryForDate(String deliveryDate) throws Exception {
+    public void verifyNoPaperDeliveryForDate(String deliveryDate) {
         SoftAssertions softly = new SoftAssertions();
         var steps = List.of(WorkflowSteps.EVALUATE_DRIVER_CAPACITY,
                 WorkflowSteps.EVALUATE_PRINT_CAPACITY,
@@ -406,13 +403,13 @@ public class DelayerSteps {
     public void verifyResidualPapers() {
         SoftAssertions softly = new SoftAssertions();
 
-        var residualPapers = service.getResidualPapers(context.expectedDeliveryDate).stream().map(DelayerPaperDelivery::getRequestId).toList();
+        var residualPapers = service.getResidualPapers(context.expectedDeliveryDate).map(DelayerPaperDelivery::getRequestId).toList();
 
-        context.frozenExpected.forEach(expected -> {
-            softly.assertThat(residualPapers)
-                    .as("La spedizione con requestId '%s' non è presente nei residual papers", expected.getRequestId())
-                    .contains(expected.getRequestId());
-        });
+        context.frozenExpected.forEach(expected ->
+                softly.assertThat(residualPapers)
+                        .as("La spedizione con requestId '%s' non è presente nei residual papers", expected.getRequestId())
+                        .contains(expected.getRequestId())
+        );
 
         softly.assertAll();
     }

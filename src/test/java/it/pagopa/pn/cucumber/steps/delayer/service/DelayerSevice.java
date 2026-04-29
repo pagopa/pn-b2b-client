@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import static java.lang.Thread.sleep;
 
@@ -56,11 +57,11 @@ public class DelayerSevice {
         return lambdaClient.getUsedSenderLimitByPk(deliveryDate, pk).getItems().size();
     }
 
-    public List <DelayerPaperDelivery> getResidualPapers() {
+    public Stream<DelayerPaperDelivery> getResidualPapers() {
         return getResidualPapers(null);
     }
 
-    public List <DelayerPaperDelivery> getResidualPapers(String deliveryDate) {
+    public Stream<DelayerPaperDelivery> getResidualPapers(String deliveryDate) {
         var residualPapersRes = lambdaClient.getResidualPapers(deliveryDate);
         return  csvLoader.downloadResidualPapers(residualPapersRes.getDownloadUrl());
     }
