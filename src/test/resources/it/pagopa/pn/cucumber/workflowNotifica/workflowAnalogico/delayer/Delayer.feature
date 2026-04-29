@@ -435,7 +435,7 @@
       And vengono simulate internamente le operazioni di DelayerToPaperChannelStateMachine
       And vengono avviate le 2 esecuzioni della step function DelayerToPaperChannelStateMachine
       And verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
-      #And verifica che le spedizioni spostate alla settimana successiva siano lo stesso valore
+      And verifica che le spedizioni spostate alla settimana successiva siano lo stesso valore
       And verifica la corretta pianificazione di ogni test case
 
       Examples:

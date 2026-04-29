@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
@@ -57,12 +58,8 @@ public class DelayerSevice {
         return lambdaClient.getUsedSenderLimitByPk(deliveryDate, pk).getItems().size();
     }
 
-    public Stream<DelayerPaperDelivery> getResidualPapers() {
-        return getResidualPapers(null);
-    }
-
     public Stream<DelayerPaperDelivery> getResidualPapers(String deliveryDate) {
-        var residualPapersRes = lambdaClient.getResidualPapers(deliveryDate);
+        var residualPapersRes = lambdaClient.getResidualPapers(deliveryDate, LocalDate.now().toString());
         return  csvLoader.downloadResidualPapers(residualPapersRes.getDownloadUrl());
     }
 
