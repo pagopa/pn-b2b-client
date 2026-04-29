@@ -22,7 +22,7 @@ import java.util.*;
 @Slf4j
 public class M2MEventsSteps {
     private static final long MIN_INVISIBILITY_MILLIS = 5_000L;
-    private static final int POLLING_ATTEMPTS = 10;
+    private static final int POLLING_ATTEMPTS = 24;
     private static final int POLLING_INTERVAL_SECONDS = 2_500;
     
     private final M2MAuthSteps m2mAuthSteps;
