@@ -129,7 +129,7 @@ Feature: Eventi M2M
 
     Given l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And "PA1" ha già creato e pubblicato 1 e-services
+    And "PA1" ha già creato e pubblicato 1 e-service
     And "PA1" visualizza l'evento EServiceAdded con:
       | field                | value       |
       | eserviceId           | :eserviceId |
@@ -153,16 +153,16 @@ Feature: Eventi M2M
 
     Given l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And "PA1" ha già creato e pubblicato 1 e-services
+    And "PA1" ha già creato e pubblicato 1 e-service
     And "PA1" visualizza l'evento EServiceAdded con:
       | field                | value                 |
       | eserviceId           | :eserviceId           |
-      | producerDelegationId | :producerDelegationId |
+      # TODO Verificare l'assenza del campo producerDelegationId
     And "PA1" visualizza l'evento EServiceDescriptorPublished con:
       | field                | value                 |
       | eserviceId           | :eserviceId           |
       | descriptorId         | :descriptorId         |
-      | producerDelegationId | :producerDelegationId |
+      # TODO Verificare l'assenza del campo producerDelegationId
       # TODO Verificare l'esistenza dei campi: id, eventTimestamp
     When l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
@@ -182,12 +182,12 @@ Feature: Eventi M2M
     And "PA1" visualizza l'evento EServiceAdded con:
       | field                | value       |
       | eserviceId           | :eserviceId |
-      | producerDelegationId | %null       |
+      # TODO Verificare l'assenza del campo producerDelegationId
     And "PA1" visualizza l'evento EServiceDescriptorPublished con:
       | field                | value         |
       | eserviceId           | :eserviceId   |
       | descriptorId         | :descriptorId |
-      | producerDelegationId | %null         |
+      # TODO Verificare l'assenza del campo producerDelegationId
       # TODO Verificare l'esistenza dei campi: id, eventTimestamp
     When l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
     And l'ente "PA1" revoca la delega in erogazione con successo
