@@ -5,7 +5,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.mod
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
 
-public interface IPnPaperChannelClientImpl {
+public interface IPnPaperChannelClient {
 
     ResponseEntity<InformalPrepareResponse> sendInformalPrepareRequest(InformalPrepareRequest informalPrepareRequest, String xClientId) throws RestClientException;
 }

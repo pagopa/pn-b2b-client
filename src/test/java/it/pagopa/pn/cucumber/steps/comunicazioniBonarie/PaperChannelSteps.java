@@ -9,7 +9,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.mod
 import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.InformalPrepareRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.InformalPrepareResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.InformalProposalProductTypeEnum;
-import it.pagopa.pn.client.b2b.pa.service.IPnPaperChannelClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.IPnPaperChannelClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -25,7 +25,7 @@ import static org.springframework.test.util.AssertionErrors.assertNotNull;
 public class PaperChannelSteps {
 
 
-    private final IPnPaperChannelClientImpl paperChannelClient;
+    private final IPnPaperChannelClient paperChannelClient;
 
     private InformalPrepareRequest informalPrepareRequest;
 
@@ -57,7 +57,7 @@ public class PaperChannelSteps {
 
     private static String REQUIRED_ID_200_201;
 
-    public PaperChannelSteps(IPnPaperChannelClientImpl paperChannelClient) {
+    public PaperChannelSteps(IPnPaperChannelClient paperChannelClient) {
         this.paperChannelClient = paperChannelClient;
     }
 
@@ -91,7 +91,8 @@ public class PaperChannelSteps {
                 .printType(fromPreparePTString(pt))
                 .notificationSentAt(getFieldValue(data,"notificationSentAt", NOTIFICATION_SENT_ID))
 
-                .attachmentUrls(urlsStr != null ? new ArrayList<>(Arrays.asList(urlsStr.split(","))) : null)
+                .attachmentUrls(
+                        ("".equals(urlsStr) ?  new ArrayList<>() : (urlsStr != null ? new ArrayList<>(Arrays.asList(urlsStr.split(","))) : null)))
                 .receiverAddress(analogAddress)
                 .proposalProductType(fromPPTString(ppt));
 
