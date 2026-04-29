@@ -12,7 +12,7 @@ Feature: Eventi M2M
       # TODO Verificare l'esistenza dei campi: id, eventTimestamp, descriptorId
 
   @m2m-events-e-service
-  Scenario: [M2M_E-SERVICE_EVENTS_02] Verifica che un client diverso dal producer di un e-service in stato DRAFT non può visualizzare l'evento dell'e-service
+  Scenario: [M2M_E-SERVICE_EVENTS_02] Verifica che un ente diverso dal creatore di un e-service in stato DRAFT non può visualizzare l'evento dell'e-service
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When "PA1" ha già creato un e-service in stato DRAFT
     And "PA1" visualizza l'evento EServiceAdded con:
@@ -22,7 +22,7 @@ Feature: Eventi M2M
     Then "PA2" non visualizza l'evento EServiceAdded appena trovato
 
   @m2m-events-e-service
-  Scenario: [M2M_E-SERVICE_EVENTS_03] Verifica che il producer di un e-service in stato PUBLISHED può visualizzare gli eventi relativi alla creazione e pubblicazione dell'e-service
+  Scenario: [M2M_E-SERVICE_EVENTS_03] Verifica che il creatore di un e-service in stato PUBLISHED può visualizzare gli eventi relativi alla creazione e pubblicazione dell'e-service
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When "PA1" ha già creato e pubblicato 1 e-services
     Then "PA1" visualizza l'evento EServiceAdded con:
@@ -41,7 +41,8 @@ Feature: Eventi M2M
       | producerDelegationId | %null         |
 
   @m2m-events-e-service
-  Scenario: [M2M_E-SERVICE_EVENTS_04] Verifica che il producer di un e-service in stato PUBLISHED, con delega in erogazione in attesa di approvazione, visualizza gli eventi di creazione e pubblicazione senza producerDelegationId
+  Scenario: [M2M_E-SERVICE_EVENTS_04] Verifica che il producer di un e-service in stato PUBLISHED, con delega in erogazione in attesa di approvazione verso un altro ente,
+  visualizza gli eventi di creazione e pubblicazione senza producerDelegationId
     Given l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When "PA1" ha già creato e pubblicato 1 e-services
