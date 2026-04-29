@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Primary
 public class M2MEventClientImpl extends AbstractClient implements IM2MEventClient{
-    private static final long EVENT_START_TOLERANCE_MINUTES = 10L;
+    private static final long EVENT_START_TOLERANCE_MINUTES = 20L;
 
     private final Map<String, Map<InteropEvent, UUID>> tenantEventCache = new HashMap<>();
 
