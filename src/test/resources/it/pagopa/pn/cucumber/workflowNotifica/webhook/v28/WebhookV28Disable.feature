@@ -2,7 +2,7 @@ Feature: disabilitazione stream
 
   #--------------DISABILITAZIONE DI UNO STREAM------------
 
-  @webhookV28 @precondition @cleanWebhook @webhook2
+  @webhookV28 @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_58] Disabilitazione di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey con gruppo diverso.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V28"
     And Viene creata una nuova apiKey per il comune "Comune_2" con il primo gruppo disponibile
