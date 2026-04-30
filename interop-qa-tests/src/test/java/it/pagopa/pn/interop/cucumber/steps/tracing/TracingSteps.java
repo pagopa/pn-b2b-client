@@ -407,10 +407,8 @@ public class TracingSteps {
 
     private TracingS3Client.PollingSpecification getS3PollingSpecification(long timeoutMs, long pollIntervalMs, int deltaSeconds) {
         return TracingS3Client.PollingSpecification.builder()
-                .centerTimestamp(Instant.now().toString())
                 .timeoutMs(timeoutMs)
                 .pollIntervalMs(pollIntervalMs)
-                .deltaSeconds(deltaSeconds)
                 .build();
     }
 
