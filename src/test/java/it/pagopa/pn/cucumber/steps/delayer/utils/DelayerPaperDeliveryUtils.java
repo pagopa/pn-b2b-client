@@ -427,7 +427,7 @@ public class DelayerPaperDeliveryUtils {
                 return String.join("~", province, date, requestId);
             }
 
-            case EVALUATE_DRIVER_CAPACITY -> {
+            case EVALUATE_DRIVER_CAPACITY, EVALUATE_RESIDUAL_CAPACITY -> {
                 String driver = n.getUnifiedDeliveryDriver();
                 String province = n.getProvince();
                 String priority = calculatePriority(n);
@@ -435,20 +435,7 @@ public class DelayerPaperDeliveryUtils {
                 return String.join("~", driver, province, priority, refIso, requestId);
             }
 
-            case EVALUATE_RESIDUAL_CAPACITY -> {
-                String driver = n.getUnifiedDeliveryDriver();
-                String province = n.getProvince();
-                String refIso = resolveReferenceDate(n);
-                return String.join("~", driver, province, refIso, requestId);
-            }
-
-            case EVALUATE_PRINT_CAPACITY -> {
-                String priority = calculatePriority(n);
-                String date = n.getPrepareRequestDate();
-                return String.join("~", priority, date, requestId);
-            }
-
-            case SENT_TO_PREPARE_PHASE_2 -> {
+            case EVALUATE_PRINT_CAPACITY, SENT_TO_PREPARE_PHASE_2 -> {
                 String priority = calculatePriority(n);
                 String date = n.getPrepareRequestDate();
                 return String.join("~", priority, date, requestId);
