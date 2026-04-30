@@ -11,9 +11,12 @@ import it.pagopa.interop.event.domain.request.M2MPurposeEventRequest;
 import it.pagopa.interop.event.filter.EventFilter;
 import it.pagopa.interop.event.filter.EventPredicate;
 
+import java.time.Instant;
 import java.util.Optional;
 
 public interface IM2MEventClient extends SettableBearerToken, SettableHttpCallExecutor {
+    void setReferenceTime(Instant reference);
+
     M2MEServiceEvents getEServicesEvents(M2MEserviceEventRequest request);
     M2MEServiceEvents getAllEServicesEvents(M2MEserviceEventRequest request);
 
