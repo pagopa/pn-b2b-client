@@ -302,30 +302,27 @@ Feature: Eventi M2M
   @m2m-events-e-service
   Scenario: [M2M_E-SERVICE_EVENTS_16] Verifica, in presenza di una delega di fruizione rifiutata e creata una richiesta di fruizione, che l'evento di agreement di un e-service abbia la corretta visibilità per delegante, delegato in erogazione, erogatore e client generico
   Un erogatore crea un e-service, un delegante delega in erogazione un delegato, il delegato rifiuta la delega
-  di fruizione, il delegato fa richiesta di fruizione all'erogatore. Gli eventi AGREEMENT_ADDED e AGREEMENT_SUBMITTED
-  per la richiesta di fruizione sono visibili al delegante e al delegato, l'erogatore vede solo AGREEMENT_SUBMITTED.
-  Un generico client non vede alcun evento.
+  di erogazione, il delegato fa richiesta di fruizione all'erogatore. Gli eventi AGREEMENT_ADDED e AGREEMENT_SUBMITTED
+  per la richiesta di fruizione sono visibili al richiedente, l'erogatore vede solo AGREEMENT_SUBMITTED.
+  L'ente che ha rifiutato la delega e un generico ente non vedono nessuno degli eventi citati.
 
-    Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
-    And l'ente "PA3" concede la disponibilità a ricevere deleghe in fruizione
-    And l'ente "PA2" ha inoltrato una richiesta di delega in fruizione all'ente "PA3"
-    And l'ente "PA3" accetta la delega in fruizione con successo
-    And "PA3" ha una richiesta di fruizione in stato "PENDING" per quell'e-service in qualità di delegato
-    When l'ente "PA2" con ruolo "admin" revoca la delega in fruizione
-    Then "PA2" visualizza l'evento AgreementAdded con:
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
+    And l'ente "PA2" rifiuta la delega in erogazione con successo
+    When "PA3" ha già creato e inviato una richiesta di fruizione per quell'e-service ed è in attesa di approvazione
+    Then "PA3" visualizza l'evento AgreementAdded con:
       | field                | value        |
       | agreementId          | :agreementId |
       | producerDelegationId | %null        |
-      | consumerDelegationId | %null        |
-    And "PA2" visualizza l'evento AgreementSubmitted con:
+    And "PA3" visualizza l'evento AgreementSubmitted con:
       | field                | value        |
       | agreementId          | :agreementId |
       | producerDelegationId | %null        |
-      | consumerDelegationId | %null        |
-    And "PA3" non visualizza l'evento AgreementAdded precedente
-    And "PA3" non visualizza l'evento AgreementSubmitted precedente
     And "PA1" non visualizza l'evento AgreementAdded precedente
     And "PA1" visualizza l'evento AgreementSubmitted precedente
+    And "PA2" non visualizza l'evento AgreementAdded precedente
+    And "PA2" non visualizza l'evento AgreementSubmitted precedente
     And "PA4" non visualizza l'evento AgreementAdded precedente
     And "PA4" non visualizza l'evento AgreementSubmitted precedente
 
