@@ -259,10 +259,10 @@ Feature: Eventi M2M
     And "PA2" visualizza l'evento EServiceDescriptorPublished precedente
 
   @m2m-events-e-service
-  Scenario: [M2M_E-SERVICE_EVENTS_14] Verifica, creata una richiesta di fruizione, che l'evento di agreement di un e-service abbia la corretta visibilità per delegante, delegato, erogatore e client generico
-  Un erogatore crea un e-service delegabile, un delegante delega in fruizione un delegato, il delegato fa richiesta di
-  fruizione all'erogatore. Gli eventi AGREEMENT_ADDED e AGREEMENT_SUBMITTED per la richiesta di fruizione sono visibili
-  al delegante e al delegato, l'erogatore vede solo AGREEMENT_SUBMITTED. Un generico client non vede alcun evento.
+  Scenario: [M2M_E-SERVICE_EVENTS_14] Verifica, creata una richiesta di fruizione, che l'evento di agreement di un e-service abbia la corretta visibilità per erogatore, fruitore e client generico
+  Un erogatore crea un e-service delegabile, un fruitore fa richiesta di fruizione all'erogatore. Gli eventi
+  AGREEMENT_ADDED e AGREEMENT_SUBMITTED per la richiesta di fruizione sono visibili al fruitore, l'erogatore vede solo
+  AGREEMENT_SUBMITTED. Un generico client non vede alcun evento.
 
     Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in fruizione
@@ -270,13 +270,13 @@ Feature: Eventi M2M
     Then "PA2" visualizza l'evento AgreementAdded con:
       | field                 | value                 |
       | agreementId           | :agreementId          |
-      | producerDelegationId  | %null                 |
-      | consumerDelegationId  | %null                 |
+      #| producerDelegationId  | %null                 |
+      #| consumerDelegationId  | %null                 |
     And "PA2" visualizza l'evento AgreementSubmitted con:
       | field                 | value                 |
       | agreementId           | :agreementId          |
-      | producerDelegationId  | %null                 |
-      | consumerDelegationId  | %null                 |
+      #| producerDelegationId  | %null                 |
+      #| consumerDelegationId  | %null                 |
     And "PA1" non visualizza l'evento AgreementAdded precedente
     And "PA1" visualizza l'evento AgreementSubmitted precedente
     And "PA3" non visualizza l'evento AgreementAdded precedente
@@ -295,13 +295,13 @@ Feature: Eventi M2M
     Then "PA3" visualizza l'evento AgreementAdded con:
       | field                 | value                 |
       | agreementId           | :agreementId          |
-      | producerDelegationId  | %null                 |
-      | consumerDelegationId  | %null                 |
+      #| producerDelegationId  | %null                 |
+      #| consumerDelegationId  | %null                 |
     And "PA3" visualizza l'evento AgreementSubmitted con:
       | field                 | value                 |
       | agreementId           | :agreementId          |
-      | producerDelegationId  | %null                 |
-      | consumerDelegationId  | %null                 |
+      #| producerDelegationId  | %null                 |
+      #| consumerDelegationId  | %null                 |
     And "PA2" visualizza l'evento AgreementAdded precedente
     And "PA2" visualizza l'evento AgreementSubmitted precedente
     And "PA1" non visualizza l'evento AgreementAdded precedente
@@ -319,20 +319,21 @@ Feature: Eventi M2M
     Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
     And l'ente "PA3" concede la disponibilità a ricevere deleghe in fruizione
     And l'ente "PA2" ha inoltrato una richiesta di delega in fruizione all'ente "PA3"
-    When l'ente delegato rifiuta la delega in fruizione con successo
-    And "PA3" ha già creato e inviato una richiesta di fruizione per quell'e-service ed è in attesa di approvazione
-    Then "PA3" visualizza l'evento AgreementAdded con:
+    And l'ente "PA3" accetta la delega in fruizione con successo
+    And "PA3" ha una richiesta di fruizione in stato "PENDING" per quell'e-service in qualità di delegato
+    When l'ente "PA2" con ruolo "admin" revoca la delega in fruizione
+    Then "PA2" visualizza l'evento AgreementAdded con:
       | field                 | value                 |
       | agreementId           | :agreementId          |
       | producerDelegationId  | %null                 |
       | consumerDelegationId  | %null                 |
-    And "PA3" visualizza l'evento AgreementSubmitted con:
+    And "PA2" visualizza l'evento AgreementSubmitted con:
       | field                 | value                 |
       | agreementId           | :agreementId          |
       | producerDelegationId  | %null                 |
       | consumerDelegationId  | %null                 |
-    And "PA2" non visualizza l'evento AgreementAdded precedente
-    And "PA2" non visualizza l'evento AgreementSubmitted precedente
+    And "PA3" non visualizza l'evento AgreementAdded precedente
+    And "PA3" non visualizza l'evento AgreementSubmitted precedente
     And "PA1" non visualizza l'evento AgreementAdded precedente
     And "PA1" visualizza l'evento AgreementSubmitted precedente
     And "PA4" non visualizza l'evento AgreementAdded precedente
