@@ -79,7 +79,6 @@ public class ClientTokenConfigurator {
     private final IPurposeTemplateClient purposeTemplateClient;
     private final INotificationClient notificationClient;
     private final INotificationConfigClient notificationConfigClient;
-    private final IInteropTracingClient tracingClient;
     private final ProducerKeychainClient producerKeychainClient;
 
     // Clients M2M API v3
@@ -220,7 +219,6 @@ public class ClientTokenConfigurator {
         m2mPurposeTemplateClient.setBearerToken(token);
         notificationClient.setBearerToken(token);
         notificationConfigClient.setBearerToken(token);
-        tracingClient.setBearerToken(token);
         producerKeychainClient.setBearerToken(token);
     }
 
