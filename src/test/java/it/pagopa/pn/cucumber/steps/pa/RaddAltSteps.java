@@ -59,7 +59,7 @@ public class RaddAltSteps {
     @Value("${pn.iun.120gg.lucio}")
     private String iunLucio120gg;
 
-    @Value("${pn.iun.120gg.gherkin.pagopa}")
+    @Value("${pn.iun.120gg.gherkin}")
     private String iunGherkin120gg;
 
     @Value("${pn.radd.alt.external.max-print-request}")
