@@ -294,10 +294,11 @@ Feature: comunicazioni bonarie
   Scenario: [PREPARE-TC27-OK] Validazione nuovo service api prepare cambiando valore header X-Client-Id e stesso corpo della richiesta
     Given inizializzata una comunicazione bonaria con i parametri:
       | xClientId     | requestId                         |
-      | primoClientId | AAAA-BBBB-CCCC-202202-3_requestId |
+      | primoClientId | AAAA-BBBB-CCCC-202202-3_requestI3 |
+    When si richiede la prepare della comunicazione bonaria
     Given inizializzata una comunicazione bonaria con i parametri:
       | xClientId               | requestId                         |
-      | questoclientidècambiato | AAAA-BBBB-CCCC-202202-3_requestId |
+      | questoclientidècambiato | AAAA-BBBB-CCCC-202202-3_requestI3 |
     When si richiede la prepare della comunicazione bonaria
     Then si riceve una response con codice di stato 200
 
