@@ -148,7 +148,14 @@ Feature: Aggiornamento di un descrittore già pubblicato
     And la soglia differenziata per l'attributo CERTIFIED 2-esimo creato nel gruppo 0-esimo è uguale a "11"
 
   @dailyCallsThreshold
-  Scenario: [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_15] Per un e-service in stato DRAFT è possibile impostare dailyCallsPerConsumer uguale a dailyCallsTotal
+  Scenario: [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_15] Per un e-service in stato PUBLISHED non è possibile avere dailyCallPerConsumer superiore a dailyCallTotals
+    Given l'utente è un "admin" di "PA1"
+    And due gruppi di due attributi certificati da "PA1", dei quali "PA2" ne possiede uno per gruppo
+    When "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 11 e dailyCallsTotal uguale a 10
+    Then si ottiene status code 400
+
+  @dailyCallsThreshold
+  Scenario: [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_16] Per un e-service in stato PUBLISHED è possibile impostare dailyCallsPerConsumer uguale a dailyCallsTotal
     Given l'utente è un "admin" di "PA1"
     And PA1 ha già creato 1 attributo CERTIFIED
     When "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 10

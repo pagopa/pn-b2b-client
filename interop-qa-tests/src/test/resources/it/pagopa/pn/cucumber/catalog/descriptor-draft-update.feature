@@ -231,10 +231,10 @@ Feature: Aggiornamento di un descrittore in bozza
     And si ottiene status code 200
 
   @dailyCallsThreshold
-  Scenario: [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_14] Per un e-service in stato DRAFT non è possibile avere dailyCallPerConsumer e dailyCallTotals uguali
+  Scenario: [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_14] Per un e-service in stato DRAFT non è possibile avere dailyCallPerConsumer superiore a dailyCallTotals
     Given l'utente è un "admin" di "PA1"
     And due gruppi di due attributi certificati da "PA1", dei quali "PA2" ne possiede uno per gruppo
-    When "PA1" ha già creato un e-service in stato "DRAFT" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 10
+    When "PA1" ha già creato un e-service in stato "DRAFT" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 11 e dailyCallsTotal uguale a 10
     Then si ottiene status code 400
 
   @dailyCallsThreshold
