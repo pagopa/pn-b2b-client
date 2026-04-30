@@ -215,23 +215,18 @@ Feature: Eventi M2M
   Scenario: [M2M_E-SERVICE_EVENTS_12] Verifica che il client con delega accettata visualizzi l'evento di creazione e pubblicazione di un e-service di un producer
   Il producer di un e-service pubblica l'e-service, se un client ha ricevuto una delega in erogazione dal
   producer e l'ha accettata, il client può visualizzare tutti gli eventi, in particolare creazione e pubblicazione.
-  # TODO il test andrebbe eseguito con delega in erogazione e delega in fruizione
-
     Given l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA1" visualizza l'evento EServiceAdded con:
       | field      | value       |
       | eserviceId | :eserviceId |
-      # TODO Verificare l'assenza del campo producerDelegationId
     And "PA1" visualizza l'evento EServiceDescriptorPublished con:
       | field        | value         |
       | eserviceId   | :eserviceId   |
       | descriptorId | :descriptorId |
-      # TODO Verificare l'assenza del campo producerDelegationId
     When l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
-    # Fallisce la seguente istruzione: perché?
     Then "PA2" visualizza l'evento EServiceAdded precedente
     And "PA2" visualizza l'evento EServiceDescriptorPublished precedente
 
@@ -265,18 +260,17 @@ Feature: Eventi M2M
   AGREEMENT_SUBMITTED. Un generico client non vede alcun evento.
 
     Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
-    And l'ente "PA2" concede la disponibilità a ricevere deleghe in fruizione
     When "PA2" ha già creato e inviato una richiesta di fruizione per quell'e-service ed è in attesa di approvazione
     Then "PA2" visualizza l'evento AgreementAdded con:
-      | field       | value        |
-      | agreementId | :agreementId |
-      #| producerDelegationId  | %null                 |
-      #| consumerDelegationId  | %null                 |
+      | field                | value        |
+      | agreementId          | :agreementId |
+      | producerDelegationId | %null        |
+      | consumerDelegationId | %null        |
     And "PA2" visualizza l'evento AgreementSubmitted con:
-      | field       | value        |
-      | agreementId | :agreementId |
-      #| producerDelegationId  | %null                 |
-      #| consumerDelegationId  | %null                 |
+      | field                | value        |
+      | agreementId          | :agreementId |
+      | producerDelegationId | %null        |
+      | consumerDelegationId | %null        |
     And "PA1" non visualizza l'evento AgreementAdded precedente
     And "PA1" visualizza l'evento AgreementSubmitted precedente
     And "PA3" non visualizza l'evento AgreementAdded precedente
