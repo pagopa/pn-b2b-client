@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.event;
 
+import io.cucumber.java.Before;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.enums.M2MRole;
 import it.pagopa.interop.authorization.service.utils.PollingService;
@@ -17,6 +18,7 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.event.model.EventContext;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nonnull;
+import java.time.Instant;
 import java.util.*;
 
 @Slf4j
@@ -35,6 +37,11 @@ public class M2MEventsSteps {
         this.m2mEventClient = clientTokenConfigurator.getM2mEventClient();
         IHttpExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         m2mEventClient.setHttpCallExecutor(httpCallExecutor);
+    }
+
+    @Before("@m2m-events")
+    public void initEventClient() {
+        m2mEventClient.setReferenceTime(Instant.now());
     }
 
     @When("{string} {visibilitaEvento} l'evento {interopEvent} con:")

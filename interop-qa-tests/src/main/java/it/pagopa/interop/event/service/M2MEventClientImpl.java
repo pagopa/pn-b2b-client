@@ -29,22 +29,19 @@ import java.util.stream.Collectors;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Primary
 public class M2MEventClientImpl extends AbstractClient implements IM2MEventClient{
-    private static final long EVENT_START_TOLERANCE_MINUTES = 20L;
-
-    private final Map<String, Map<InteropEvent, UUID>> tenantEventCache = new HashMap<>();
+    private final Map<String, Map<InteropEvent.Family, UUID>> tenantEventCache = new HashMap<>();
 
     private final EventsApi eventsApi;
     private final RestTemplate restTemplate;
     private final String basePath;
     private final M2MEventMapper mapper;
-    private final Instant eventStartTime;
+    private Instant eventStartTime;
 
     public M2MEventClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs, M2MEventMapper mapper) {
         this.restTemplate = restTemplate;
         this.basePath = interopClientConfigs.getM2mBaseUrl();
         this.eventsApi = new EventsApi(createApiClient("dummyBearer"));
         this.mapper = mapper;
-        this.eventStartTime = Instant.now();
     }
 
     private ApiClient createApiClient(String bearerToken) {
@@ -52,6 +49,11 @@ public class M2MEventClientImpl extends AbstractClient implements IM2MEventClien
         apiClient.setBasePath(basePath);
         apiClient.setBearerToken(bearerToken);
         return apiClient;
+    }
+
+    @Override
+    public void setReferenceTime(Instant reference) {
+        eventStartTime = reference;
     }
 
     @Override
@@ -312,11 +314,11 @@ public class M2MEventClientImpl extends AbstractClient implements IM2MEventClien
         Integer limit = request.getLimit() != null ?  request.getLimit() : M2MEventRequest.EVENTS_MAX_LIMIT;
         request.setLimit(limit);
 
-        Map<InteropEvent, UUID> tenantCache =
+        Map<InteropEvent.Family, UUID> tenantCache =
                 tenantEventCache.computeIfAbsent(request.getTenantType(), t -> new HashMap<>());
 
         UUID firstUtilEvent =
-                tenantCache.computeIfAbsent(request.getEvent(), (e) -> getFirstEventIdAfterStart(request, fetchPage));
+                tenantCache.computeIfAbsent(request.getEvent().getFamily(), (e) -> getEventIdImmediatelyBeforeStart(request, fetchPage));
 
         request.setLastEventId(firstUtilEvent);
 
@@ -345,32 +347,39 @@ public class M2MEventClientImpl extends AbstractClient implements IM2MEventClien
         }
     }
 
-    private <Request extends M2MEventRequest> UUID getFirstEventIdAfterStart(Request request, Function<Request, M2MEvents> fetchPage) {
+    private <Request extends M2MEventRequest> UUID getEventIdImmediatelyBeforeStart(Request request, Function<Request, M2MEvents> fetchPage) {
         M2MEvents page;
         boolean hasNext;
-        UUID lastEventId;
-        Instant threshold = eventStartTime.minusSeconds(EVENT_START_TOLERANCE_MINUTES * 60);
 
-        do{
+        M2MEvent lastSeenEvent = null;
+
+        do {
             page = fetchPage.apply(request);
+            List<? extends M2MEvent> events = page.getEvents();
+
+            for (M2MEvent currentEvent : events) {
+                // Verifico se l'evento corrente supera la soglia temporale
+                boolean isAfterOrAtStart = eventStartTime == null || !currentEvent.getEventTimestamp().isBefore(eventStartTime);
+
+                if (isAfterOrAtStart) {
+                    // Se il corrente è quello "utile", restituiamo il precedente (nullable)
+                    return (lastSeenEvent != null) ? lastSeenEvent.getId() : null;
+                }
+
+                lastSeenEvent = currentEvent;
+            }
+
             hasNext = hasEvents(page, request.getLimit());
 
-            List<? extends M2MEvent> filteredEvents = page.getEvents()
-                    .stream()
-                    .filter(e -> !e.getEventTimestamp().isBefore(threshold))
-                    .toList();
+            // Preparo la richiesta per la pagina successiva
+            UUID lastIdInPage = (page.getLastEvent() != null) ? page.getLastEvent().getId() : null;
+            request.setLastEventId(lastIdInPage);
 
-            if(!filteredEvents.isEmpty())
-                return filteredEvents.get(0).getId();
-
-            lastEventId = page.getLastEvent() != null
-                    ? page.getLastEvent().getId()
-                    : null;
-
-            request.setLastEventId(lastEventId);
         } while (hasNext);
 
-        return lastEventId;
+        // Se arriviamo qui, nessun evento ha mai superato la soglia temporale.
+        // Restituisco l'ultimo evento trovato in assoluto
+        return (lastSeenEvent != null) ? lastSeenEvent.getId() : null;
     }
 
     private M2MEvents createEmptyEvents(InteropEvent event) {
@@ -392,17 +401,15 @@ public class M2MEventClientImpl extends AbstractClient implements IM2MEventClien
     }
 
     private boolean hasEvents(M2MEvents events, Integer pageSize) {
-        if (events == null || events.getEvents() == null || events.getEvents().isEmpty()) {
+        if (events == null || events.getEvents() == null || pageSize == null || pageSize <= 0) {
             return false;
         }
 
-        // Se pageSize non è valido, fallback: basta avere eventi.
-        if (pageSize == null || pageSize <= 0) {
-            return true;
-        }
+        int currentSize = events.getEvents().size();
 
-        // true solo se la pagina è piena: potrebbe esistere una pagina successiva.
-        return events.getEvents().size() >= pageSize;
+        // Se abbiamo meno elementi del richiesto, siamo sicuramente all'ultima pagina.
+        // Se ne abbiamo >= pageSize, PROBABILMENTE c'è un'altra pagina (o siamo al limite esatto).
+        return currentSize >= pageSize;
     }
 
     @Override
