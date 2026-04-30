@@ -140,10 +140,10 @@ Feature: Eventi M2M
       | eserviceId           | :eserviceId |
       | producerDelegationId | %null       |
     And "PA1" visualizza l'evento EServiceDescriptorApprovedByDelegator con:
-      | field                | value                 |
-      | eserviceId           | :eserviceId           |
-      | descriptorId         | :descriptorId         |
-      | producerDelegationId | :producerDelegationId |
+      | field                | value         |
+      | eserviceId           | :eserviceId   |
+      | descriptorId         | :descriptorId |
+      | producerDelegationId | %null         |
 
   @m2m-events-e-service
   Scenario: [M2M_E-SERVICE_EVENTS_09] Verifica che un ente diverso dall'ente creatore di un e-service in stato PUBLISHED visualizza solo l'evento di pubblicazione e non quello di creazione, con producerDelegationId assente
@@ -176,13 +176,13 @@ Feature: Eventi M2M
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA1" visualizza l'evento EServiceAdded con:
-      | field                | value       |
-      | eserviceId           | :eserviceId |
+      | field      | value       |
+      | eserviceId | :eserviceId |
       # TODO Verificare l'assenza del campo producerDelegationId
     And "PA1" visualizza l'evento EServiceDescriptorPublished con:
-      | field                | value         |
-      | eserviceId           | :eserviceId   |
-      | descriptorId         | :descriptorId |
+      | field        | value         |
+      | eserviceId   | :eserviceId   |
+      | descriptorId | :descriptorId |
       # TODO Verificare l'assenza del campo producerDelegationId
     When l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
     Then "PA2" non visualizza l'evento EServiceAdded precedente
@@ -198,13 +198,13 @@ Feature: Eventi M2M
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA1" visualizza l'evento EServiceAdded con:
-      | field                | value       |
-      | eserviceId           | :eserviceId |
+      | field      | value       |
+      | eserviceId | :eserviceId |
       # TODO Verificare l'assenza del campo producerDelegationId
     And "PA1" visualizza l'evento EServiceDescriptorPublished con:
-      | field                | value         |
-      | eserviceId           | :eserviceId   |
-      | descriptorId         | :descriptorId |
+      | field        | value         |
+      | eserviceId   | :eserviceId   |
+      | descriptorId | :descriptorId |
       # TODO Verificare l'assenza del campo producerDelegationId
     When l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
     And l'ente "PA2" rifiuta la delega in erogazione con successo
@@ -221,13 +221,13 @@ Feature: Eventi M2M
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA1" visualizza l'evento EServiceAdded con:
-      | field                | value                 |
-      | eserviceId           | :eserviceId           |
+      | field      | value       |
+      | eserviceId | :eserviceId |
       # TODO Verificare l'assenza del campo producerDelegationId
     And "PA1" visualizza l'evento EServiceDescriptorPublished con:
-      | field                | value                 |
-      | eserviceId           | :eserviceId           |
-      | descriptorId         | :descriptorId         |
+      | field        | value         |
+      | eserviceId   | :eserviceId   |
+      | descriptorId | :descriptorId |
       # TODO Verificare l'assenza del campo producerDelegationId
     When l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
@@ -245,13 +245,13 @@ Feature: Eventi M2M
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA1" visualizza l'evento EServiceAdded con:
-      | field                | value       |
-      | eserviceId           | :eserviceId |
+      | field      | value       |
+      | eserviceId | :eserviceId |
       # TODO Verificare l'assenza del campo producerDelegationId
     And "PA1" visualizza l'evento EServiceDescriptorPublished con:
-      | field                | value         |
-      | eserviceId           | :eserviceId   |
-      | descriptorId         | :descriptorId |
+      | field        | value         |
+      | eserviceId   | :eserviceId   |
+      | descriptorId | :descriptorId |
       # TODO Verificare l'assenza del campo producerDelegationId
     When l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
     And l'ente "PA1" revoca la delega in erogazione con successo
@@ -268,13 +268,13 @@ Feature: Eventi M2M
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in fruizione
     When "PA2" ha già creato e inviato una richiesta di fruizione per quell'e-service ed è in attesa di approvazione
     Then "PA2" visualizza l'evento AgreementAdded con:
-      | field                 | value                 |
-      | agreementId           | :agreementId          |
+      | field       | value        |
+      | agreementId | :agreementId |
       #| producerDelegationId  | %null                 |
       #| consumerDelegationId  | %null                 |
     And "PA2" visualizza l'evento AgreementSubmitted con:
-      | field                 | value                 |
-      | agreementId           | :agreementId          |
+      | field       | value        |
+      | agreementId | :agreementId |
       #| producerDelegationId  | %null                 |
       #| consumerDelegationId  | %null                 |
     And "PA1" non visualizza l'evento AgreementAdded precedente
@@ -293,13 +293,13 @@ Feature: Eventi M2M
     And l'ente "PA2" ha inoltrato una richiesta di delega in fruizione all'ente "PA3"
     When "PA3" ha già creato e inviato una richiesta di fruizione per quell'e-service ed è in attesa di approvazione
     Then "PA3" visualizza l'evento AgreementAdded con:
-      | field                 | value                 |
-      | agreementId           | :agreementId          |
+      | field       | value        |
+      | agreementId | :agreementId |
       #| producerDelegationId  | %null                 |
       #| consumerDelegationId  | %null                 |
     And "PA3" visualizza l'evento AgreementSubmitted con:
-      | field                 | value                 |
-      | agreementId           | :agreementId          |
+      | field       | value        |
+      | agreementId | :agreementId |
       #| producerDelegationId  | %null                 |
       #| consumerDelegationId  | %null                 |
     And "PA2" visualizza l'evento AgreementAdded precedente
@@ -323,15 +323,15 @@ Feature: Eventi M2M
     And "PA3" ha una richiesta di fruizione in stato "PENDING" per quell'e-service in qualità di delegato
     When l'ente "PA2" con ruolo "admin" revoca la delega in fruizione
     Then "PA2" visualizza l'evento AgreementAdded con:
-      | field                 | value                 |
-      | agreementId           | :agreementId          |
-      | producerDelegationId  | %null                 |
-      | consumerDelegationId  | %null                 |
+      | field                | value        |
+      | agreementId          | :agreementId |
+      | producerDelegationId | %null        |
+      | consumerDelegationId | %null        |
     And "PA2" visualizza l'evento AgreementSubmitted con:
-      | field                 | value                 |
-      | agreementId           | :agreementId          |
-      | producerDelegationId  | %null                 |
-      | consumerDelegationId  | %null                 |
+      | field                | value        |
+      | agreementId          | :agreementId |
+      | producerDelegationId | %null        |
+      | consumerDelegationId | %null        |
     And "PA3" non visualizza l'evento AgreementAdded precedente
     And "PA3" non visualizza l'evento AgreementSubmitted precedente
     And "PA1" non visualizza l'evento AgreementAdded precedente
@@ -352,15 +352,15 @@ Feature: Eventi M2M
     When l'ente "PA3" accetta la delega in fruizione con successo
     And "PA3" ha una richiesta di fruizione in stato "PENDING" per quell'e-service in qualità di delegato
     Then "PA3" visualizza l'evento AgreementAdded con:
-      | field                 | value                 |
-      | agreementId           | :agreementId          |
-      | producerDelegationId  | %null                 |
-      | consumerDelegationId  | :consumerDelegationId |
+      | field                | value                 |
+      | agreementId          | :agreementId          |
+      | producerDelegationId | %null                 |
+      | consumerDelegationId | :consumerDelegationId |
     And "PA3" visualizza l'evento AgreementSubmitted con:
-      | field                 | value                 |
-      | agreementId           | :agreementId          |
-      | producerDelegationId  | %null                 |
-      | consumerDelegationId  | :consumerDelegationId |
+      | field                | value                 |
+      | agreementId          | :agreementId          |
+      | producerDelegationId | %null                 |
+      | consumerDelegationId | :consumerDelegationId |
     And "PA2" visualizza l'evento AgreementAdded precedente
     And "PA2" visualizza l'evento AgreementSubmitted precedente
     And "PA1" non visualizza l'evento AgreementAdded precedente
