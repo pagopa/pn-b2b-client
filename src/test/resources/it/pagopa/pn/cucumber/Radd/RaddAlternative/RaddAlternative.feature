@@ -249,7 +249,7 @@ Feature: Radd Alternative
     And la scansione si conclude correttamente su radd alternative
     And si inizia il processo di caricamento dei documento di identità del cittadino ma non si porta a conclusione su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
-    And l'operazione di download degli atti restituisce 3 documenti e si conclude con errore "documenti non disponibili" e codice 4 su radd alternativeAnd l'operazione di download degli atti restituisce 3 documenti e si conclude con errore "documenti non disponibili" e codice 4 su radd alternative
+    And l'operazione di download degli atti restituisce 3 documenti e si conclude con errore "documenti non disponibili" e codice 4 su radd alternative
 
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-88] PF - Interruzione processo recupero atti e avvio nuovo processo su stessa notifica
