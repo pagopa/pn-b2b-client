@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.agreement;
 
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.domain.ClientType;
@@ -12,9 +13,11 @@ import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPrepara
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 
@@ -95,6 +98,26 @@ public class AgreementActivateSteps {
             sharedStepsContext.getEServicesCommonContext().setDescriptorId(descriptorId);
         } catch(AssertionFailedError e) {
             log.warn(e.getMessage());
+        }
+    }
+
+
+    @Given("l'-eservice ha questa configurazione:")
+    public void eServiceHasThisConfiguration(DataTable dataTable) {
+
+        ProducerEServiceDescriptor eServiceDescriptor = this.clientTokenConfigurator.getEServiceClient().getEServiceDescriptor(
+                sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                sharedStepsContext.getEServicesCommonContext().getDescriptorId()
+        );
+
+        Map<String, String> attributes = dataTable.asMap();
+
+        if (attributes.containsKey("dailyCallsPerConsumer")) {
+            Assertions.assertEquals(Integer.parseInt(attributes.get("dailyCallsPerConsumer")), eServiceDescriptor.getDailyCallsPerConsumer());
+        }
+
+        if (attributes.containsKey("dailyCallsTotal")) {
+            Assertions.assertEquals(Integer.parseInt(attributes.get("dailyCallsTotal")), eServiceDescriptor.getDailyCallsTotal());
         }
     }
 

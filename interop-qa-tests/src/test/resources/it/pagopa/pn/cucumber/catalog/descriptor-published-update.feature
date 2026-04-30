@@ -59,13 +59,13 @@ Feature: Aggiornamento di un descrittore già pubblicato
     Examples:
       | dailyCallsPerConsumer | statusCode | expectedDailyCallsPerConsumer |
       | 100                   | 200        | 100                           |
-      | 999999999             | 200        | 999999999                     |
+      | 1000000000            | 200        | 1000000000                    |
 
     @sad-path
     Examples:
       | dailyCallsPerConsumer | statusCode | expectedDailyCallsPerConsumer |
       | 0                     | 400        | %null                         |
-      | 1000000000            | 400        | %null                         |
+      | 1000000001            | 400        | %null                         |
 
   @dailyCallsThreshold
   Scenario: [DESCRIPTOR_PUBLISHED_UPDATE_THRESHOLD_2] Per un e-service in stato PUBLISHED non è possibile indicare soglie differenti per il medesimo attributo certificato
@@ -146,3 +146,15 @@ Feature: Aggiornamento di un descrittore già pubblicato
     Then l'utente tenta di aggiungere una soglia differenziata di 11 per l'attributo CERTIFIED 2-esimo creato
     And si ottiene status code 200
     And la soglia differenziata per l'attributo CERTIFIED 2-esimo creato nel gruppo 0-esimo è uguale a "11"
+
+  @dailyCallsThreshold
+  Scenario: [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_15] Per un e-service in stato DRAFT è possibile impostare dailyCallsPerConsumer uguale a dailyCallsTotal
+    Given l'utente è un "admin" di "PA1"
+    And PA1 ha già creato 1 attributo CERTIFIED
+    When "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 10
+    And si ottiene status code 200
+    And l'utente tenta di aggiungere una soglia differenziata di 10 per l'attributo CERTIFIED 0-esimo creato
+    Then l'-eservice ha questa configurazione:
+      | dailyCallsPerConsumer | 10 |
+      | dailyCallsTotal       | 10 |
+    And la soglia differenziata per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo è uguale a "10"
