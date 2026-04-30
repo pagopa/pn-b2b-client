@@ -14,11 +14,9 @@ public class S3Polling extends AbstractPolling<S3Client> {
                 .region(region)
                 // Per lanciare i test Tracing in locale serve aggiungere i token di accesso per Extra QA
                 // nel file .aws/credentials sotto il profilo [extra-qa] e non sotto [default] che è dedicato a QA.
-                // Decommentare in locale il metodo per leggere il profilo extra-qa.
-                .credentialsProvider(DefaultCredentialsProvider
-                        .builder()
-                        //.profileName("extra-qa")
-                        .build())
+                // De-commentare la riga per leggere il profilo extra-qa.
+                //.credentialsProvider(DefaultCredentialsProvider.builder().profileName("extra-qa").build())
+                .credentialsProvider(DefaultCredentialsProvider.create())
                 .build(),
                 condition
         );
