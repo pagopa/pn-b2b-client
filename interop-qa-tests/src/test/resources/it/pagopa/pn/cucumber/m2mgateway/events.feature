@@ -259,24 +259,26 @@ Feature: Eventi M2M
     And "PA2" visualizza l'evento EServiceDescriptorPublished precedente
 
   @m2m-events-e-service
-  Scenario: [M2M_E-SERVICE_EVENTS_14] Verifica, creata una richiesta di fruizione, che l'evento di agreement di un e-service abbia la corretta visibilità per consumer, erogatore e client generico
-  A seguito della creazione di una richiesta di fruizione di un e-service, il consumer può visualizzare sia l'evento
-  AGREEMENT_ADDED che AGREEMENT_SUBMITTED, mentre il producer che ha ricevuto la richiesta di fruizione vede solo
-  l'evento AGREEMENT_SUBMITTED. Un generico client non vede nessuno dei due eventi.
+  Scenario: [M2M_E-SERVICE_EVENTS_14] Verifica, creata una richiesta di fruizione, che l'evento di agreement di un e-service abbia la corretta visibilità per delegante, delegato, erogatore e client generico
+  Un erogatore crea un e-service delegabile, un delegante delega in fruizione un delegato, il delegato fa richiesta di
+  fruizione all'erogatore. Gli eventi AGREEMENT_ADDED e AGREEMENT_SUBMITTED per la richiesta di fruizione sono visibili
+  al delegante e al delegato, l'erogatore vede solo AGREEMENT_SUBMITTED. Un generico client non vede alcun evento.
 
-    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
-    And "PA2" ha già creato e inviato una richiesta di fruizione per quell'e-service ed è in attesa di approvazione
+    Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in fruizione
+    When "PA2" ha già creato e inviato una richiesta di fruizione per quell'e-service ed è in attesa di approvazione
     Then "PA2" visualizza l'evento AgreementAdded con:
       | field                 | value                 |
       | agreementId           | :agreementId          |
-      | consumerDelegationId  | :consumerDelegationId |
+      | producerDelegationId  | %null                 |
+      | consumerDelegationId  | %null                 |
     And "PA2" visualizza l'evento AgreementSubmitted con:
       | field                 | value                 |
       | agreementId           | :agreementId          |
-      | consumerDelegationId  | :consumerDelegationId |
+      | producerDelegationId  | %null                 |
+      | consumerDelegationId  | %null                 |
     And "PA1" non visualizza l'evento AgreementAdded precedente
     And "PA1" visualizza l'evento AgreementSubmitted precedente
-    And l'utente è un "admin" di "PA3" con ruolo M2M m2m-admin
     And "PA3" non visualizza l'evento AgreementAdded precedente
     And "PA3" non visualizza l'evento AgreementSubmitted precedente
 
@@ -287,20 +289,19 @@ Feature: Eventi M2M
   al delegante e al delegato, l'erogatore vede solo AGREEMENT_SUBMITTED. Un generico client non vede alcun evento.
 
     Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
-    And l'utente è un "admin" di "PA3"
     And l'ente "PA3" concede la disponibilità a ricevere deleghe in fruizione
     And l'ente "PA2" ha inoltrato una richiesta di delega in fruizione all'ente "PA3"
-    And "PA3" ha già creato e inviato una richiesta di fruizione per quell'e-service ed è in attesa di approvazione
+    When "PA3" ha già creato e inviato una richiesta di fruizione per quell'e-service ed è in attesa di approvazione
     Then "PA3" visualizza l'evento AgreementAdded con:
       | field                 | value                 |
       | agreementId           | :agreementId          |
-      #| producerDelegationId  | %null                 |
-      #| consumerDelegationId  | :consumerDelegationId |
+      | producerDelegationId  | %null                 |
+      | consumerDelegationId  | %null                 |
     And "PA3" visualizza l'evento AgreementSubmitted con:
       | field                 | value                 |
       | agreementId           | :agreementId          |
-      #| producerDelegationId  | %null                 |
-      #| consumerDelegationId  | :consumerDelegationId |
+      | producerDelegationId  | %null                 |
+      | consumerDelegationId  | %null                 |
     And "PA2" visualizza l'evento AgreementAdded precedente
     And "PA2" visualizza l'evento AgreementSubmitted precedente
     And "PA1" non visualizza l'evento AgreementAdded precedente
@@ -316,7 +317,6 @@ Feature: Eventi M2M
   Un generico client non vede alcun evento.
 
     Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
-    And l'utente è un "admin" di "PA3"
     And l'ente "PA3" concede la disponibilità a ricevere deleghe in fruizione
     And l'ente "PA2" ha inoltrato una richiesta di delega in fruizione all'ente "PA3"
     When l'ente delegato rifiuta la delega in fruizione con successo
@@ -346,7 +346,6 @@ Feature: Eventi M2M
   AGREEMENT_SUBMITTED. Un generico client non vede alcun evento.
 
     Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
-    And l'utente è un "admin" di "PA3"
     And l'ente "PA3" concede la disponibilità a ricevere deleghe in fruizione
     And l'ente "PA2" ha inoltrato una richiesta di delega in fruizione all'ente "PA3"
     When l'ente "PA3" accetta la delega in fruizione con successo
