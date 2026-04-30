@@ -277,35 +277,31 @@ Feature: Eventi M2M
     And "PA3" non visualizza l'evento AgreementSubmitted precedente
 
   @m2m-events-e-service
-  Scenario: [M2M_E-SERVICE_EVENTS_15] Verifica, in presenza di una delega di fruizione in stato di approvazione e creata una richiesta di fruizione, che l'evento di agreement di un e-service abbia la corretta visibilità per delegante, delegato, erogatore e client generico
-  Un erogatore crea un e-service delegabile, un delegante delega in fruizione un delegato, il delegato fa richiesta di
+  Scenario: [M2M_E-SERVICE_EVENTS_15] Verifica, in presenza di una delega di fruizione in stato di approvazione e creata una richiesta di fruizione, che l'evento di agreement di un e-service abbia la corretta visibilità per delegante, delegato in erogazione, erogatore e client generico
+  Un erogatore crea un e-service delegabile, un delegante delega in erogazione un delegato, il delegato fa richiesta di
   fruizione all'erogatore. Gli eventi AGREEMENT_ADDED e AGREEMENT_SUBMITTED per la richiesta di fruizione sono visibili
-  al delegante e al delegato, l'erogatore vede solo AGREEMENT_SUBMITTED. Un generico client non vede alcun evento.
+  al creatore della richiesta , l'erogatore e il delegato all'erogazione vedono solo AGREEMENT_SUBMITTED.
 
-    Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
-    And l'ente "PA3" concede la disponibilità a ricevere deleghe in fruizione
-    And l'ente "PA2" ha inoltrato una richiesta di delega in fruizione all'ente "PA3"
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
     When "PA3" ha già creato e inviato una richiesta di fruizione per quell'e-service ed è in attesa di approvazione
     Then "PA3" visualizza l'evento AgreementAdded con:
-      | field       | value        |
-      | agreementId | :agreementId |
-      #| producerDelegationId  | %null                 |
-      #| consumerDelegationId  | %null                 |
+      | field                | value        |
+      | agreementId          | :agreementId |
+      | producerDelegationId | %null        |
     And "PA3" visualizza l'evento AgreementSubmitted con:
-      | field       | value        |
-      | agreementId | :agreementId |
-      #| producerDelegationId  | %null                 |
-      #| consumerDelegationId  | %null                 |
-    And "PA2" visualizza l'evento AgreementAdded precedente
-    And "PA2" visualizza l'evento AgreementSubmitted precedente
+      | field                | value        |
+      | agreementId          | :agreementId |
+      | producerDelegationId | %null        |
     And "PA1" non visualizza l'evento AgreementAdded precedente
     And "PA1" visualizza l'evento AgreementSubmitted precedente
-    And "PA4" non visualizza l'evento AgreementAdded precedente
-    And "PA4" non visualizza l'evento AgreementSubmitted precedente
+    And "PA2" non visualizza l'evento AgreementAdded precedente
+    And "PA2" non visualizza l'evento AgreementSubmitted precedente
 
   @m2m-events-e-service
-  Scenario: [M2M_E-SERVICE_EVENTS_16] Verifica, in presenza di una delega di fruizione rifiutata e creata una richiesta di fruizione, che l'evento di agreement di un e-service abbia la corretta visibilità per delegante, delegato, erogatore e client generico
-  Un erogatore crea un e-service delegabile, un delegante delega in fruizione un delegato, il delegato rifiuta la delega
+  Scenario: [M2M_E-SERVICE_EVENTS_16] Verifica, in presenza di una delega di fruizione rifiutata e creata una richiesta di fruizione, che l'evento di agreement di un e-service abbia la corretta visibilità per delegante, delegato in erogazione, erogatore e client generico
+  Un erogatore crea un e-service, un delegante delega in erogazione un delegato, il delegato rifiuta la delega
   di fruizione, il delegato fa richiesta di fruizione all'erogatore. Gli eventi AGREEMENT_ADDED e AGREEMENT_SUBMITTED
   per la richiesta di fruizione sono visibili al delegante e al delegato, l'erogatore vede solo AGREEMENT_SUBMITTED.
   Un generico client non vede alcun evento.
