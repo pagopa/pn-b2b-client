@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class QAAbstractInteropTracingClient extends AbstractInteropTracingClient {
+    private BearerTokenType bearerTokenSetted;
     private IdentityService identityService;
 
     public QAAbstractInteropTracingClient(RestTemplate restTemplate, TracingClientConfigs tracingClientConfigs, @Qualifier("tracingIdentityService") IdentityService identityService) {
@@ -25,15 +26,20 @@ public class QAAbstractInteropTracingClient extends AbstractInteropTracingClient
     public void setBearerToken(String bearerToken) {
         switch (bearerToken) {
             case "TENANT_1" -> {
-                this.tracingsApi.setApiClient(createApiClient(getTracingClientConfigs().getBaseUrl(), identityService.getToken("PA1", null)));
+                this.tracingsApi.setApiClient(createApiClient(getTracingClientConfigs().getBaseUrl(), getTracingClientConfigs().getBearerToken1()));
                 this.bearerTokenSetted = BearerTokenType.TENANT_1;
             }
             case "TENANT_2" -> {
-                this.tracingsApi.setApiClient(createApiClient(getTracingClientConfigs().getBaseUrl(), identityService.getToken("PA2", null)));
+                this.tracingsApi.setApiClient(createApiClient(getTracingClientConfigs().getBaseUrl(), getTracingClientConfigs().getBearerToken2()));
                 this.bearerTokenSetted = BearerTokenType.TENANT_2;
             }
             default -> throw new IllegalStateException("Unexpected value: " + bearerToken);
         }
     }
 
+    public BearerTokenType getBearerTokenSetted() {
+        return this.bearerTokenSetted;
+    }
+
+    public IdentityService getIdentityService() { return this.identityService; }
 }
