@@ -135,7 +135,7 @@ Feature: Eventi M2M
 
   @m2m-events-e-service
   Scenario: [M2M_E-SERVICE_EVENTS_07] Verifica che il creatore di un e-service creato in bozza e pubblicato dal delegato possa visualizzare tutti gli eventi correlati anche dopo la revoca della delega
-    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato un e-service in stato DRAFT
     And "PA1" ha già caricato un'interfaccia per quel descrittore
     And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
@@ -188,9 +188,9 @@ Feature: Eventi M2M
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA1" visualizza l'evento EServiceAdded con:
-      | field                | value         |
-      | eserviceId           | :eserviceId   |
-      | producerDelegationId | %null         |
+      | field                | value       |
+      | eserviceId           | :eserviceId |
+      | producerDelegationId | %null       |
     And "PA1" visualizza l'evento EServiceDescriptorPublished con:
       | field                | value         |
       | eserviceId           | :eserviceId   |
@@ -210,9 +210,9 @@ Feature: Eventi M2M
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA1" visualizza l'evento EServiceAdded con:
-      | field                | value         |
-      | eserviceId           | :eserviceId   |
-      | producerDelegationId | %null         |
+      | field                | value       |
+      | eserviceId           | :eserviceId |
+      | producerDelegationId | %null       |
     And "PA1" visualizza l'evento EServiceDescriptorPublished con:
       | field                | value         |
       | eserviceId           | :eserviceId   |
@@ -236,9 +236,9 @@ Feature: Eventi M2M
     And l'ente "PA2" accetta la delega in erogazione con successo
     When l'ente "PA1" revoca la delega in erogazione con successo
     Then "PA1" visualizza l'evento EServiceAdded con:
-      | field                | value         |
-      | eserviceId           | :eserviceId   |
-      | producerDelegationId | %null         |
+      | field                | value       |
+      | eserviceId           | :eserviceId |
+      | producerDelegationId | %null       |
     And "PA1" visualizza l'evento EServiceDescriptorPublished con:
       | field                | value         |
       | eserviceId           | :eserviceId   |
