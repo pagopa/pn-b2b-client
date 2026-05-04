@@ -29,6 +29,7 @@ import org.springframework.http.HttpStatus;
 
 import javax.annotation.Nonnull;
 import java.io.File;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Stream;
@@ -550,7 +551,17 @@ public class PurposeTemplateSteps {
 
     private void suspendPurposeTemplate(boolean exists) {
         UUID ptId = exists ? createdPurposeTemplate.getId() : UUID.randomUUID();
-        httpCallExecutor.performCall(() -> purposeTemplateClient.suspendPurposeTemplate(ptId));
+
+        // Come segnalato in https://pagopa.atlassian.net/browse/PIN-9557 al momento c'è un bug nella gestione dell'eventual consistency da parte di prodotto
+        // questo impone un polling lato Suite sui cambiamenti di stato. Ci è stata data una finestra temporale (circa 5s) i cui errori 500 si riferisono
+        // alla mancata gestione dell'eventual consistency. Se sono presenti errori dopo i 5s allora potrebbero subentrare cause diverse
+        PollingService.makePolling(
+                () -> httpCallExecutor.performCall(() -> purposeTemplateClient.suspendPurposeTemplate(ptId)),
+                HttpStatus::is2xxSuccessful, // Esce solo se ha successo
+                "Errore durante la sospensione del purpose template",
+                5, 1500 // 5 tentativi ogni 1.5s coprono circa 6 secondi, superando i 5s di soglia
+        );
+
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             sharedStepsContext.getPollingService().makePolling(
                     () -> getPurposeTemplateById(ptId, exists),
@@ -562,7 +573,17 @@ public class PurposeTemplateSteps {
 
     private void archivePurposeTemplate(boolean exists) {
         UUID ptId = exists ? createdPurposeTemplate.getId() : UUID.randomUUID();
-        httpCallExecutor.performCall(() -> purposeTemplateClient.archivePurposeTemplate(ptId));
+
+        // Come segnalato in https://pagopa.atlassian.net/browse/PIN-9557 al momento c'è un bug nella gestione dell'eventual consistency da parte di prodotto
+        // questo impone un polling lato Suite sui cambiamenti di stato. Ci è stata data una finestra temporale (circa 5s) i cui errori 500 si riferisono
+        // alla mancata gestione dell'eventual consistency. Se sono presenti errori dopo i 5s allora potrebbero subentrare cause diverse
+        PollingService.makePolling(
+                () -> httpCallExecutor.performCall(() -> purposeTemplateClient.archivePurposeTemplate(ptId)),
+                HttpStatus::is2xxSuccessful, // Esce solo se ha successo
+                "Errore durante l'archiviazione del purpose template",
+                5, 1500 // 5 tentativi ogni 1.5s coprono circa 6 secondi, superando i 5s di soglia
+        );
+
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             sharedStepsContext.getPollingService().makePolling(
                     () -> getPurposeTemplateById(ptId, exists),
