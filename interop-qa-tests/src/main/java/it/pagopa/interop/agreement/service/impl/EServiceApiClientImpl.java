@@ -79,6 +79,11 @@ public class EServiceApiClientImpl implements IEServiceClient {
     }
 
     @Override
+    public void updateDescriptorAttributes(UUID eServiceId, UUID descriptorId, DescriptorAttributesSeed descriptorAttributesSeed) {
+        eservicesApi.updateDescriptorAttributes(eServiceId, descriptorId, descriptorAttributesSeed);
+    }
+
+    @Override
     public CreatedResource updateDescriptor(UUID eServiceId, UUID descriptorId, UpdateEServiceDescriptorQuotas updateEServiceDescriptorQuotas) {
         return eservicesApi.updateDescriptor(eServiceId, descriptorId, updateEServiceDescriptorQuotas);
     }

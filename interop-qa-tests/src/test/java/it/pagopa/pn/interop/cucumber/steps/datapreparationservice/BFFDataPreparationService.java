@@ -518,28 +518,22 @@ public class BFFDataPreparationService {
 
     public void updateDraftDescriptor(UUID eServiceId, UUID descriptorId, UpdateEServiceDescriptorSeed partialDescriptorSeed) {
         ProducerEServiceDescriptor descriptor = producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId);
+
+        DescriptorAttributesSeed descriptorAttributesSeed = new DescriptorAttributesSeed();
+        descriptorAttributesSeed.setCertified(
+                sharedStepsContext.getAttributeCommonContext().mapAttributes(descriptor.getAttributes().getCertified())
+        );
+        descriptorAttributesSeed.setDeclared(
+                sharedStepsContext.getAttributeCommonContext().mapAttributes(descriptor.getAttributes().getDeclared())
+        );
+        descriptorAttributesSeed.setVerified(
+                sharedStepsContext.getAttributeCommonContext().mapAttributes(descriptor.getAttributes().getVerified())
+        );
+
         UpdateEServiceDescriptorSeed currentDescriptorSeed = new UpdateEServiceDescriptorSeed()
                 .agreementApprovalPolicy(descriptor.getAgreementApprovalPolicy())
                 .attributes(
-                        new DescriptorAttributesSeed()
-                                .addCertifiedItem(descriptor.getAttributes().getCertified().stream()
-                                        .flatMap(List::stream).
-                                        map(attr -> new DescriptorAttributeSeed()
-                                                .id(attr.getId())
-                                                .explicitAttributeVerification(attr.getExplicitAttributeVerification()))
-                                        .toList())
-                                .addDeclaredItem(descriptor.getAttributes().getDeclared().stream()
-                                        .flatMap(List::stream).
-                                        map(attr -> new DescriptorAttributeSeed()
-                                                .id(attr.getId())
-                                                .explicitAttributeVerification(attr.getExplicitAttributeVerification()))
-                                        .toList())
-                                .addVerifiedItem(descriptor.getAttributes().getVerified().stream()
-                                        .flatMap(List::stream).
-                                        map(attr -> new DescriptorAttributeSeed()
-                                                .id(attr.getId())
-                                                .explicitAttributeVerification(attr.getExplicitAttributeVerification()))
-                                        .toList())
+                        descriptorAttributesSeed
                 )
                 .dailyCallsPerConsumer(descriptor.getDailyCallsPerConsumer())
                 .dailyCallsTotal(descriptor.getDailyCallsTotal())
@@ -547,7 +541,7 @@ public class BFFDataPreparationService {
                 .voucherLifespan(descriptor.getVoucherLifespan());
 
         UpdateEServiceDescriptorSeed descriptorSeed = mergeDescriptorSeed(currentDescriptorSeed, partialDescriptorSeed)
-                .dailyCallsPerConsumer(50).dailyCallsTotal(1000).audience(List.of("pagopa.it"));
+            .audience(List.of("pagopa.it"));
 
         httpCallExecutor.performCall(() -> eServiceClient.updateDraftDescriptor(eServiceId, descriptorId, descriptorSeed));
         assertValidResponse();
@@ -1239,6 +1233,8 @@ public class BFFDataPreparationService {
         descriptorSeed.setAudience(useOrDefault(partialDescriptorSeed.getAudience(), defaultDescriptorSeed.getAudience()));
         descriptorSeed.setVoucherLifespan(useOrDefault(partialDescriptorSeed.getVoucherLifespan(), defaultDescriptorSeed.getVoucherLifespan()));
         descriptorSeed.setAgreementApprovalPolicy(useOrDefault(partialDescriptorSeed.getAgreementApprovalPolicy(), defaultDescriptorSeed.getAgreementApprovalPolicy()));
+        descriptorSeed.setDailyCallsTotal(useOrDefault(partialDescriptorSeed.getDailyCallsTotal(), defaultDescriptorSeed.getDailyCallsTotal()));
+        descriptorSeed.setDailyCallsPerConsumer(useOrDefault(partialDescriptorSeed.getDailyCallsPerConsumer(), defaultDescriptorSeed.getDailyCallsPerConsumer()));
         return descriptorSeed;
     }
 
