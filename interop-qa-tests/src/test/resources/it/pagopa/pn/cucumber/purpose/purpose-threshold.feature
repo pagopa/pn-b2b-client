@@ -87,7 +87,7 @@ Feature: Verifica soglie differenziate
       | remainingDailyCallsTotal       | 0 |
 
   @dailyCallsThreshold
-  Scenario: [PURPOSE_THRESHOLD_4] Per la creazione di una finalità il sistema demanda allo stato WAITING_FOR_APROVAL se il limite di chiamate giornaliere per fruitore supera il limite fornito dall'erogatore
+  Scenario: [PURPOSE_THRESHOLD_4] Per la creazione di una finalità il sistema demanda allo stato WAITING_FOR_APPROVAL se il limite di chiamate giornaliere per fruitore supera il limite fornito dall'erogatore
     Given l'utente è un "admin" di "PA1"
     And PA1 ha già creato 1 attributo CERTIFIED
     And l'utente assegna a "PA2" gli attributi certificati precedentemente creati
