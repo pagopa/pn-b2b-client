@@ -51,8 +51,7 @@ Feature: Eventi M2M
       | producerDelegationId | %null         |
 
   @m2m-events-e-service
-  Scenario: [M2M_E-SERVICE_EVENTS_04] Verifica che il producer di un e-service in stato PUBLISHED, con delega in erogazione in attesa di approvazione verso un altro ente,
-  visualizza gli eventi di creazione e pubblicazione senza producerDelegationId
+  Scenario: [M2M_E-SERVICE_EVENTS_04] Verifica che il producer di un e-service in stato PUBLISHED, con delega in erogazione in attesa di approvazione verso un altro ente, visualizza gli eventi di creazione e pubblicazione senza producerDelegationId
     Given l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When "PA1" ha già creato e pubblicato 1 e-services
@@ -97,8 +96,7 @@ Feature: Eventi M2M
       | producerDelegationId | %null         |
 
   @m2m-events-e-service
-  Scenario: [M2M_E-SERVICE_EVENTS_06] Verifica che il producer di un e-service creato in stato DRAFT, con delega in erogazione accettata da un altro ente
-  e successivamente pubblicato dal delegato, visualizza gli eventi di creazione e pubblicazione relativi all'e-service con producerDelegationId valorizzato solo sull'evento di pubblicazione
+  Scenario: [M2M_E-SERVICE_EVENTS_06] Verifica che il producer di un e-service creato in stato DRAFT, con delega in erogazione accettata da un altro ente e successivamente pubblicato dal delegato, visualizza gli eventi di creazione e pubblicazione relativi all'e-service con producerDelegationId valorizzato solo sull'evento di pubblicazione
     Given l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato un e-service in stato DRAFT
@@ -180,9 +178,9 @@ Feature: Eventi M2M
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA1" visualizza l'evento EServiceAdded con:
-      | field                | value         |
-      | eserviceId           | :eserviceId   |
-      | producerDelegationId | %null         |
+      | field                | value       |
+      | eserviceId           | :eserviceId |
+      | producerDelegationId | %null       |
     And "PA1" visualizza l'evento EServiceDescriptorAdded con:
       | field                | value         |
       | eserviceId           | :eserviceId   |
