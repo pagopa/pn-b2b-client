@@ -23,7 +23,13 @@ Feature: Eventi M2M
       | field                | value       |
       | eserviceId           | :eserviceId |
       | producerDelegationId | %null       |
+    And "PA1" visualizza l'evento EServiceDescriptorAdded con:
+      | field                | value         |
+      | eserviceId           | :eserviceId   |
+      | descriptorId         | :descriptorId |
+      | producerDelegationId | %null         |
     Then "PA2" non visualizza l'evento EServiceAdded appena trovato
+    And "PA2" non visualizza l'evento EServiceDescriptorAdded appena trovato
 
   @m2m-events-e-service
   Scenario: [M2M_E-SERVICE_EVENTS_03] Verifica che il creatore di un e-service in stato PUBLISHED può visualizzare gli eventi relativi alla creazione e pubblicazione dell'e-service
@@ -120,19 +126,6 @@ Feature: Eventi M2M
       | descriptorId         | :descriptorId         |
       | producerDelegationId | :producerDelegationId |
 
-   # Scenario 12 [M2M_E-SERVICE_EVENTS_12] Verifica che il client con delega accettata visualizzi l'evento di creazione e pubblicazione di un e-service di un producer
-   # Il producer di un e-service pubblica l'e-service, se un client ha ricevuto una delega in erogazione dal
-   # producer e l'ha accettata, il client può visualizzare tutti gli eventi, in particolare creazione e pubblicazione.
-    Then "PA2" visualizza l'evento EServiceAdded con:
-      | field                | value       |
-      | eserviceId           | :eserviceId |
-      | producerDelegationId | %null       |
-    And "PA2" visualizza l'evento EServiceDescriptorAdded con:
-      | field                | value         |
-      | eserviceId           | :eserviceId   |
-      | descriptorId         | :descriptorId |
-      | producerDelegationId | %null         |
-
   @m2m-events-e-service
   Scenario: [M2M_E-SERVICE_EVENTS_07] Verifica che il creatore di un e-service creato in bozza e pubblicato dal delegato possa visualizzare tutti gli eventi correlati anche dopo la revoca della delega
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -182,15 +175,19 @@ Feature: Eventi M2M
   Scenario: [M2M_E-SERVICE_EVENTS_10] Verifica che il client con delega non ancora accettata visualizzi solo l'evento di pubblicazione di un e-service di un producer
   Il producer di un e-service pubblica l'e-service, se un client ha ricevuto una delega in erogazione dal
   producer non ancora accettata, il client può visualizzare solo l'evento di pubblicazione e non quello di creazione.
-  # TODO il test andrebbe eseguito con delega in erogazione e delega in fruizione
 
     Given l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato e pubblicato 1 e-service
     And "PA1" visualizza l'evento EServiceAdded con:
-      | field                | value       |
-      | eserviceId           | :eserviceId |
-      | producerDelegationId | %null       |
+      | field                | value         |
+      | eserviceId           | :eserviceId   |
+      | producerDelegationId | %null         |
+    And "PA1" visualizza l'evento EServiceDescriptorAdded con:
+      | field                | value         |
+      | eserviceId           | :eserviceId   |
+      | descriptorId         | :descriptorId |
+      | producerDelegationId | %null         |
     And "PA1" visualizza l'evento EServiceDescriptorPublished con:
       | field                | value         |
       | eserviceId           | :eserviceId   |
@@ -198,13 +195,13 @@ Feature: Eventi M2M
       | producerDelegationId | %null         |
     When l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
     Then "PA2" non visualizza l'evento EServiceAdded precedente
+    And "PA2" non visualizza l'evento EServiceDescriptorAdded precedente
     And "PA2" visualizza l'evento EServiceDescriptorPublished precedente
 
   @m2m-events-e-service
   Scenario: [M2M_E-SERVICE_EVENTS_11] Verifica che il client con delega rifiutata visualizzi solo l'evento di pubblicazione di un e-service di un producer
   Il producer di un e-service pubblica l'e-service, se un client ha ricevuto una delega in erogazione dal
   producer e l'ha rifiutata, il client può visualizzare solo l'evento di pubblicazione e non quello di creazione
-  # TODO il test andrebbe eseguito con delega in erogazione e delega in fruizione
 
     Given l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -213,6 +210,11 @@ Feature: Eventi M2M
       | field                | value       |
       | eserviceId           | :eserviceId |
       | producerDelegationId | %null       |
+    And "PA1" visualizza l'evento EServiceDescriptorAdded con:
+      | field                | value         |
+      | eserviceId           | :eserviceId   |
+      | descriptorId         | :descriptorId |
+      | producerDelegationId | %null         |
     And "PA1" visualizza l'evento EServiceDescriptorPublished con:
       | field                | value         |
       | eserviceId           | :eserviceId   |
@@ -221,13 +223,40 @@ Feature: Eventi M2M
     When l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
     And l'ente "PA2" rifiuta la delega in erogazione con successo
     Then "PA2" non visualizza l'evento EServiceAdded precedente
+    And "PA2" non visualizza l'evento EServiceDescriptorAdded precedente
+    And "PA2" visualizza l'evento EServiceDescriptorPublished precedente
+
+  @m2m-events-e-service
+  Scenario: [M2M_E-SERVICE_EVENTS_12] Verifica che il client con delega accettata visualizzi l'evento di creazione e pubblicazione di un e-service di un producer
+  Il producer di un e-service pubblica l'e-service, se un client ha ricevuto una delega in erogazione e l'ha accettata,
+  il client può visualizzare gli eventi di creazione e pubblicazione che vede il producer.
+
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    Then "PA1" visualizza l'evento EServiceAdded con:
+      | field                | value       |
+      | eserviceId           | :eserviceId |
+      | producerDelegationId | %null       |
+    And "PA1" visualizza l'evento EServiceDescriptorAdded con:
+      | field                | value         |
+      | eserviceId           | :eserviceId   |
+      | descriptorId         | :descriptorId |
+      | producerDelegationId | %null         |
+    And "PA1" visualizza l'evento EServiceDescriptorPublished con:
+      | field                | value         |
+      | eserviceId           | :eserviceId   |
+      | descriptorId         | :descriptorId |
+      | producerDelegationId | %null         |
+    And "PA2" non visualizza l'evento EServiceAdded precedente
+    And "PA2" non visualizza l'evento EServiceDescriptorAdded precedente
     And "PA2" visualizza l'evento EServiceDescriptorPublished precedente
 
   @m2m-events-e-service
   Scenario: [M2M_E-SERVICE_EVENTS_13] Verifica che il client con delega revocata visualizzi solo l'evento di pubblicazione di un e-service di un producer
   Il producer di un e-service pubblica l'e-service, se un client ha ricevuto una delega in erogazione dal
   producer ma poi è stata revocata, il client può visualizzare solo l'evento di pubblicazione e non quello di creazione.
-  # TODO il test andrebbe eseguito con delega in erogazione e delega in fruizione
 
     Given l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -239,12 +268,18 @@ Feature: Eventi M2M
       | field                | value       |
       | eserviceId           | :eserviceId |
       | producerDelegationId | %null       |
+    And "PA1" visualizza l'evento EServiceDescriptorAdded con:
+      | field                | value         |
+      | eserviceId           | :eserviceId   |
+      | descriptorId         | :descriptorId |
+      | producerDelegationId | %null         |
     And "PA1" visualizza l'evento EServiceDescriptorPublished con:
       | field                | value         |
       | eserviceId           | :eserviceId   |
       | descriptorId         | :descriptorId |
       | producerDelegationId | %null         |
     And "PA2" non visualizza l'evento EServiceAdded precedente
+    And "PA2" non visualizza l'evento EServiceDescriptorAdded precedente
     And "PA2" visualizza l'evento EServiceDescriptorPublished precedente
 
   @m2m-events-e-service
