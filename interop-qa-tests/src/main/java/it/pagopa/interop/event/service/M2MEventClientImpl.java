@@ -303,7 +303,7 @@ public class M2MEventClientImpl extends AbstractClient implements IM2MEventClien
             throw new IllegalArgumentException("request.tenantType cannot be null");
         }
         if (request.getEvent() == null) {
-            throw new IllegalArgumentException("request.eventFamily cannot be null");
+            throw new IllegalArgumentException("request.event cannot be null");
         }
 
         return getAllCached(request, fetchPage);
