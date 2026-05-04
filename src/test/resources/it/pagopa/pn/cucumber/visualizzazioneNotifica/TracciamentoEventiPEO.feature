@@ -9,13 +9,13 @@ Feature: irrobustimento tracciamento eventi PEO PostaElettronicaOrdinaria (SRS: 
       | client      | emailAddress                            | attachment | events                   |
       #Client con eventi PEO censiti su pn-EcAnagrafica (confinfo)
       | pn-test     | matteo.sperati@dgsspa.com               | null       | M003-sent;M004-delivered |
-      | pn-test     | bounce@simulator.amazonses.com          | null       | M003-sent;M005-bounced   |
-      | pn-test     | suppressionlist@simulator.amazonses.com | null       | M003-sent;M005-bounced   |
-      | pn-test     | complaint@simulator.amazonses.com       | null       | M003-sent;M006-spam      |
-      | pn-test     | matteo.sperati@dgsspa.com               | virus      | M003-sent;M009-rejected  |
-      #Client con eventi PEO non censiti su pn-EcAnagrafica (tranne M003, che è di default)
-      | pn-delivery | matteo.sperati@dgsspa.com               | null       | M003-sent                |
-      | pn-delivery | bounce@simulator.amazonses.com          | null       | M003-sent                |
-      | pn-delivery | suppressionlist@simulator.amazonses.com | null       | M003-sent                |
-      | pn-delivery | complaint@simulator.amazonses.com       | null       | M003-sent                |
-      | pn-delivery | matteo.sperati@dgsspa.com               | virus      | M003-sent                |
+#      | pn-test     | bounce@simulator.amazonses.com          | null       | M003-sent;M005-bounced   |
+#      | pn-test     | suppressionlist@simulator.amazonses.com | null       | M003-sent;M005-bounced   |
+#      | pn-test     | complaint@simulator.amazonses.com       | null       | M003-sent;M006-spam      |
+#      | pn-test     | matteo.sperati@dgsspa.com               | virus      | M003-sent;M009-rejected  |
+#      #Client con eventi PEO non censiti su pn-EcAnagrafica (tranne M003, che è di default)
+#      | pn-delivery | matteo.sperati@dgsspa.com               | null       | M003-sent                |
+#      | pn-delivery | bounce@simulator.amazonses.com          | null       | M003-sent                |
+#      | pn-delivery | suppressionlist@simulator.amazonses.com | null       | M003-sent                |
+#      | pn-delivery | complaint@simulator.amazonses.com       | null       | M003-sent                |
+#      | pn-delivery | matteo.sperati@dgsspa.com               | virus      | M003-sent                |

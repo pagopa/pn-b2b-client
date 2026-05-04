@@ -51,7 +51,7 @@ public class TracciamentoEventiPeoSteps {
     public TracciamentoEventiPeoSteps(SharedSteps sharedSteps,
                                       PnSafeStoragePrivateClientImpl safeStorageClient,
                                       IPnExternalChannelsInternalClient externalChannelsInternalClient,
-                                      @Value("${pn.internal.delivery-base-url}") String deliveryBaseUrl) {
+                                      @Value("${pn.internal.external-channel-base-url}") String deliveryBaseUrl) {
         this.sharedSteps = sharedSteps;
         this.safeStorageClient = safeStorageClient;
         this.externalChannelsInternalClient = externalChannelsInternalClient;
