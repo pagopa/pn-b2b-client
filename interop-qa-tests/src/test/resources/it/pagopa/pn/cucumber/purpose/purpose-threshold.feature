@@ -160,7 +160,7 @@ Feature: Verifica soglie differenziate
 
   @happy-path
   @dailyCallsThreshold
-  Scenario: [PURPOSE_THRESHOLD_6b] Dopo la revoca di un attributo certificato per cui il fruitore non può più usufruire dell'e-service per cui aveva una finalità attiva, non è possibile recuperare le soglie rimanenti
+  Scenario: [PURPOSE_THRESHOLD_6b] Dopo la revoca di un attributo certificato per cui il fruitore non può più usufruire dell'e-service per cui aveva una finalità attiva e le soglie rimanenti sono 0
     Given l'utente è un "admin" di "PA1"
     And due gruppi di due attributi certificati da "PA1", dei quali "PA2" li possiede tutti
     And si ottiene status code 200
