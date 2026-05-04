@@ -149,4 +149,56 @@ Feature: Sottomissione di una notifica bonaria.
 
 
 
+  Scenario: Invio bonaria con pagamento senza allegato
+    Given viene creata una nuova notifica bonaria con valori di default
+    And destinatario bonario
+      | recipientType         | PF                  |
+      | taxId                 | FRMTTR76M06B715E    |
+      | denomination          | Ettore Fieramosca   |
+      | payment_noticeCode    | 302000000000000001 |
+      | payment_multy_number  | 2                  |
+      | attachment_sha256     | NULL               |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 400
+
+
+
+  Scenario: Invio bonaria multidestinatario con più pagamenti
+    Given viene creata una nuova notifica bonaria con valori di default
+    And destinatario bonario
+      | recipientType         | PF                |
+      | taxId                 | ABCDEF12A01H501X  |
+      | denomination          | Mario Rossi       |
+      | payment_noticeCode    | 302000000000000010 |
+      | payment_multy_number  | 2                |
+    And destinatario bonario
+      | recipientType         | PG                |
+      | taxId                 | 20517490320       |
+      | denomination          | ACME SPA          |
+      | payment_noticeCode    | 302000000000000020 |
+      | payment_multy_number  | 1                |
+    When viene inviata una nuova notifica bonaria
+    Then l'operazione non ha generato errori
+
+
+  Scenario: Invio bonaria con più pagamenti PagoPA
+    Given viene creata una nuova notifica bonaria con valori di default
+    And destinatario bonario
+      | recipientType         | PF                  |
+      | taxId                 | FRMTTR76M06B715E    |
+      | denomination          | Ettore Fieramosca   |
+      | payment_noticeCode    | 302000000000000001 |
+      | payment_multy_number  | 3                  |
+      | payment_creditorTaxId | 77777777777        |
+      | attachment_sha256     | 1QKD/Ks6BohyQ+bgMxHf9NrpNhVmGUPxRYE1aerU4JQ= |
+      | attachment_key        | PAGOPA_MULTI.pdf   |
+      | attachment_version_token | V1              |
+    When viene inviata una nuova notifica bonaria
+    Then l'operazione non ha generato errori
+
+
+
+
+
+
 

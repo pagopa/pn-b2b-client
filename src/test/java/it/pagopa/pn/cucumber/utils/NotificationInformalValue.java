@@ -1,6 +1,5 @@
 package it.pagopa.pn.cucumber.utils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.*;
 
 import java.util.Arrays;
@@ -52,7 +51,13 @@ public enum NotificationInformalValue {
     ATTACHMENT_VERSION_TOKEN("attachment_version_token", "sNP2YBogBBD2CXXe2dxx0DbOJO0AzyH.", false),
     DOCUMENT_SHA256("document_sha256", "jezIVxlG1M1woCSUngM6KipUN3/p8cG5RMIPnuEanlE=", false),
     DOCUMENT_KEY("document_key", "PN_NOTIFICATION_ATTACHMENTS-c3bc9525a5ac4f45a4fb7e940b2b9815.pdf", false),
-    DOCUMENT_VERSION_TOKEN("document_version_token", "sNP2YBogBBD2CXXe2dxx0DbOJO0AzyH.", false);
+    DOCUMENT_VERSION_TOKEN("document_version_token", "sNP2YBogBBD2CXXe2dxx0DbOJO0AzyH.", false),
+
+    DIGITAL_DOMICILE("digitalDomicile", null, false),
+
+    PAYMENT_MULTY_NUMBER("payment_multy_number", "1", false),
+    PAYMENT_CREDITOR_TAX_ID("payment_creditorTaxId", "77777777777", false),
+    PAYMENT_NOTICE_CODE("payment_noticeCode", null, true);
 
 
     private static final String NULL_VALUE = "NULL";
@@ -61,8 +66,6 @@ public enum NotificationInformalValue {
     public final String key;
     private final String defaultValue;
     private final boolean addCurrentTime;
-    private static final ObjectMapper mapper = new ObjectMapper();
-
 
     NotificationInformalValue(String key, String defaultValue, boolean addCurrentTime) {
         this.key = key;

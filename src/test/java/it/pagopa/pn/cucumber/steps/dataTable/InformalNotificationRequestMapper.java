@@ -52,7 +52,15 @@ public class InformalNotificationRequestMapper {
         if (notifLang != null) {
             request.setAdditionalLanguages(List.of(notifLang));
         }
-        request.setRecipients(List.of(buildRecipient(data)));
+
+
+        //request.setRecipients(List.of(buildRecipient(data)));
+
+        //  NESSUN DESTINATARIO DI DEFAULT
+        request.setRecipients(new ArrayList<>());
+
+
+
         request.setDocuments(List.of(buildDocument(data)));
         return request;
     }
@@ -155,7 +163,7 @@ public class InformalNotificationRequestMapper {
 //        return d;
 //    }
 
-    private NotificationPaymentAttachment buildPaymentAttachment(
+    public NotificationPaymentAttachment buildPaymentAttachment(
             Map<String, String> data) {
 
         // Digests

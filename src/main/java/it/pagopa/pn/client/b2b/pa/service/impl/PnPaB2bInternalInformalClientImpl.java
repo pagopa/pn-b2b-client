@@ -25,6 +25,8 @@ public class PnPaB2bInternalInformalClientImpl {
 
     private final List<String> groups;
 
+    private String cxId;
+
     public PnPaB2bInternalInformalClientImpl(
             RestTemplate restTemplate,
             @Value("${pn.internal.delivery-push-base-url}") String deliveryBasePath,
@@ -55,7 +57,7 @@ public class PnPaB2bInternalInformalClientImpl {
     }
 
     public NewInformalNotificationResponse sendNewInformalNotificationV1(InformalNotificationRequestV1 informalNotificationRequestV1) throws RestClientException {
-        return newInformalNotificationApi.sendNewInformalNotificationV1(operatorId, CxTypeAuthFleet.PA, "5b994d4a-0fa8-47ac-9c7b-354f1d44a1ce", "B2B", informalNotificationRequestV1, groups, null, null);
+        return newInformalNotificationApi.sendNewInformalNotificationV1(operatorId, CxTypeAuthFleet.PA, cxId, "B2B", informalNotificationRequestV1, groups, null, null);
     }
 
     public NewInformalNotificationRequestStatusResponseV1 getInformalNotificationRequestStatusV1(String notificationRequestId) throws RestClientException {
@@ -69,4 +71,9 @@ public class PnPaB2bInternalInformalClientImpl {
     public NotificationAttachmentDownloadMetadataResponse getSentInformalNotificationDocument(String xPagopaPnUid, CxTypeAuthFleet xPagopaPnCxType, String xPagopaPnCxId, String iun, Integer docIdx, List<String> xPagopaPnCxGroups) throws RestClientException {
         return senderReadInformalNotificationB2BApi.getSentInformalNotificationDocument(operatorId, CxTypeAuthFleet.PA, paId, iun, docIdx, xPagopaPnCxGroups);
     }
+
+
+    public void setCxId(String cxId) {this.cxId = cxId;
+    }
+
 }
