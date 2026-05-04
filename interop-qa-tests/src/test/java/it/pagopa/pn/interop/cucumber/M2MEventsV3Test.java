@@ -35,5 +35,5 @@ import org.junit.platform.suite.api.Suite;
 })
 @ExcludeTags({"wait_for_fix"})
 @IncludeTags({"m2m-events"})
-public class M2MEventsTest {
+public class M2MEventsV3Test {
 }
