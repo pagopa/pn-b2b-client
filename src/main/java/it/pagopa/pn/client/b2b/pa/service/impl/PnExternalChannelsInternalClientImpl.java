@@ -19,17 +19,14 @@ import java.util.List;
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnExternalChannelsInternalClientImpl implements IPnExternalChannelsInternalClient {
-
-    private final RestTemplate restTemplate;
-    private final String externalChannelsBaseUrl;
     private final DigitalCourtesyMessagesApi digitalCourtesyMessagesApi;
 
     public PnExternalChannelsInternalClientImpl(
             RestTemplate restTemplate,
-            @Value("${pn.externalChannels.base-url}") String externalChannelsBaseUrl) {
-        this.restTemplate = restTemplate;
-        this.externalChannelsBaseUrl = externalChannelsBaseUrl;
-        this.digitalCourtesyMessagesApi = new DigitalCourtesyMessagesApi(newApiClient(restTemplate, externalChannelsBaseUrl));
+            @Value("${pn.externalChannels.base-url}") String externalChannelsBaseUrl,
+            @Value("${pn.internal.delivery-base-url}") String deliveryBaseUrl) {
+//        this.digitalCourtesyMessagesApi = new DigitalCourtesyMessagesApi(newApiClient(restTemplate, externalChannelsBaseUrl));
+        this.digitalCourtesyMessagesApi = new DigitalCourtesyMessagesApi(newApiClient(restTemplate, deliveryBaseUrl));
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String baseUrl) {

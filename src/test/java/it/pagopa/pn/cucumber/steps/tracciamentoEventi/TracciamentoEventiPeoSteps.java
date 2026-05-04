@@ -76,7 +76,7 @@ public class TracciamentoEventiPeoSteps {
         emailRequest.setClientRequestTimeStamp(timestamp);
         emailRequest.setQos(DigitalCourtesyMailRequest.QosEnum.INTERACTIVE);
         emailRequest.setReceiverDigitalAddress(emailAddress);
-        emailRequest.setMessageText("Questo è un messaggio di cortesia da parte di QA");
+        emailRequest.setMessageText("This is a courtesy message from QA");
         emailRequest.setChannel(DigitalCourtesyMailRequest.ChannelEnum.EMAIL);
         emailRequest.setSubjectText("Test QA invio email");
         emailRequest.setMessageContentType(DigitalCourtesyMailRequest.MessageContentTypeEnum.PLAIN);
