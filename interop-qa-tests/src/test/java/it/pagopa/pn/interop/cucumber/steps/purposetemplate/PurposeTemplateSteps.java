@@ -4,6 +4,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.enums.M2MRole;
+import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
@@ -555,12 +556,16 @@ public class PurposeTemplateSteps {
         // Come segnalato in https://pagopa.atlassian.net/browse/PIN-9557 al momento c'è un bug nella gestione dell'eventual consistency da parte di prodotto
         // questo impone un polling lato Suite sui cambiamenti di stato. Ci è stata data una finestra temporale (circa 5s) i cui errori 500 si riferisono
         // alla mancata gestione dell'eventual consistency. Se sono presenti errori dopo i 5s allora potrebbero subentrare cause diverse
-        PollingService.makePolling(
-                () -> httpCallExecutor.performCall(() -> purposeTemplateClient.suspendPurposeTemplate(ptId)),
-                HttpStatus::is2xxSuccessful, // Esce solo se ha successo
-                "Errore durante la sospensione del purpose template",
-                5, 1500 // 5 tentativi ogni 1.5s coprono circa 6 secondi, superando i 5s di soglia
-        );
+        try{
+            PollingService.makePolling(
+                    () -> httpCallExecutor.performCall(() -> purposeTemplateClient.suspendPurposeTemplate(ptId)),
+                    HttpStatus::is2xxSuccessful, // Esce solo se ha successo
+                    "Errore durante la sospensione del purpose template",
+                    5, 1500 // 5 tentativi ogni 1.5s coprono circa 6 secondi, superando i 5s di soglia
+            );
+        }catch (PollingPredicateException e){
+            log.warn("Errore durante la sospensione del purpose template: {}", httpCallExecutor.getErrorMessage());
+        }
 
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             sharedStepsContext.getPollingService().makePolling(
@@ -574,15 +579,19 @@ public class PurposeTemplateSteps {
     private void archivePurposeTemplate(boolean exists) {
         UUID ptId = exists ? createdPurposeTemplate.getId() : UUID.randomUUID();
 
-        // Come segnalato in https://pagopa.atlassian.net/browse/PIN-9557 al momento c'è un bug nella gestione dell'eventual consistency da parte di prodotto
-        // questo impone un polling lato Suite sui cambiamenti di stato. Ci è stata data una finestra temporale (circa 5s) i cui errori 500 si riferisono
-        // alla mancata gestione dell'eventual consistency. Se sono presenti errori dopo i 5s allora potrebbero subentrare cause diverse
-        PollingService.makePolling(
-                () -> httpCallExecutor.performCall(() -> purposeTemplateClient.archivePurposeTemplate(ptId)),
-                HttpStatus::is2xxSuccessful, // Esce solo se ha successo
-                "Errore durante l'archiviazione del purpose template",
-                5, 1500 // 5 tentativi ogni 1.5s coprono circa 6 secondi, superando i 5s di soglia
-        );
+        try {
+            // Come segnalato in https://pagopa.atlassian.net/browse/PIN-9557 al momento c'è un bug nella gestione dell'eventual consistency da parte di prodotto
+            // questo impone un polling lato Suite sui cambiamenti di stato. Ci è stata data una finestra temporale (circa 5s) i cui errori 500 si riferisono
+            // alla mancata gestione dell'eventual consistency. Se sono presenti errori dopo i 5s allora potrebbero subentrare cause diverse
+            PollingService.makePolling(
+                    () -> httpCallExecutor.performCall(() -> purposeTemplateClient.archivePurposeTemplate(ptId)),
+                    HttpStatus::is2xxSuccessful, // Esce solo se ha successo
+                    "Errore durante l'archiviazione del purpose template",
+                    5, 1500 // 5 tentativi ogni 1.5s coprono circa 6 secondi, superando i 5s di soglia
+            );
+        } catch (PollingPredicateException e) {
+            log.warn("Errore durante l'archiviazione del purpose template: {}", httpCallExecutor.getErrorMessage());
+        }
 
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             sharedStepsContext.getPollingService().makePolling(
