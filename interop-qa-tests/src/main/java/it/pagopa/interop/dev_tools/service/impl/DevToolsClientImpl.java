@@ -1,5 +1,6 @@
 package it.pagopa.interop.dev_tools.service.impl;
 
+import it.pagopa.interop.common.client.AbstractClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.dev_tools.service.IDevToolsClient;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
@@ -12,7 +13,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class DevToolsClientImpl implements IDevToolsClient {
+public class DevToolsClientImpl extends AbstractClient implements IDevToolsClient {
     private final ToolsApi toolsApi;
     private final RestTemplate restTemplate;
     private final String basePath;
@@ -32,7 +33,11 @@ public class DevToolsClientImpl implements IDevToolsClient {
 
     @Override
     public TokenGenerationValidationResult validateTokenGeneration(String clientAssertion, String clientAssertionType, String grantType, String clientId, String dpopProof) {
-        return toolsApi.validateTokenGeneration(clientAssertion, clientAssertionType, grantType, clientId, dpopProof);
+        return performOperation(
+                () -> toolsApi.validateTokenGenerationWithHttpInfo(clientAssertion, clientAssertionType, grantType, clientId, dpopProof)
+        ).orElseThrow(
+                () -> new IllegalStateException("Failed to validate token generation request after retries")
+        );
     }
 
     @Override
