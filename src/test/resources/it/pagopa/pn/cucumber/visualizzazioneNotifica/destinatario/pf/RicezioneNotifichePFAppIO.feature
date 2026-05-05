@@ -215,7 +215,7 @@ Feature: recupero notifiche tramite api AppIO b2b
 #    [TC_18]
     And a seguito della scansione del QR Code, la notifica non può essere recuperata da: Mario Cucumber tramite AppIO senza passare l'id della delega
 
-  @appIo
+  @appIo @deleghe1
   Scenario: [QR_CODE_9] Lettura tramite AppIO di una notifica da parte di un PF delegato da una PG
     Given "Mario Gherkin" rifiuta se presente la delega ricevuta "CucumberSpa"
     Given "Mario Gherkin" viene delegato da "CucumberSpa" per comune "Comune_Root"

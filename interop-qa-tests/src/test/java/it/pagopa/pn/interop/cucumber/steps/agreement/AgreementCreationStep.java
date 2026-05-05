@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.agreement;
 
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
@@ -18,10 +19,12 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -80,9 +83,9 @@ public class AgreementCreationStep {
     private void agreementCreationRequest(UUID delegationId) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         Optional<UUID> agreementId = dataPreparationService.createAgreement(
-            sharedStepsContext.getEServicesCommonContext().getEserviceId(),
-            sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
-            delegationId);
+                sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
+                delegationId);
         sharedStepsContext.setAgreementId(agreementId.orElse(null));
     }
 
@@ -109,17 +112,17 @@ public class AgreementCreationStep {
     public void wrongDelegationRequestForServiceAlreadySubmittedAndPendingApproval() {
         log.info("Actual delegation context: {}", sharedStepsContext.getDelegationCommonContext());
         UUID delegationId = Objects.requireNonNull(
-            sharedStepsContext.getDelegationCommonContext().getAuxDelegationId(),
-            "Auxiliary delegation not found");
+                sharedStepsContext.getDelegationCommonContext().getAuxDelegationId(),
+                "Auxiliary delegation not found");
         agreementCreationRequest(delegationId);
     }
 
     private void agreementProcessRequest(String token, UUID delegationId) {
         clientTokenConfigurator.setBearerToken(token);
         UUID agreementId = dataPreparationService.createAndCheckAgreement(
-            sharedStepsContext.getEServicesCommonContext().getEserviceId(),
-            sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
-            delegationId);
+                sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
+                delegationId);
         sharedStepsContext.setAgreementId(agreementId);
 
         dataPreparationService.submitAgreement(agreementId, AgreementState.PENDING);
@@ -153,6 +156,7 @@ public class AgreementCreationStep {
         dataPreparationService.revokeCertifiedAttributeToTenant(tenantId, sharedStepsContext.getAttributeCommonContext().getAttributeId());
     }
 
+    @And("la richiesta di fruizione è in stato {string}")
     @Given("la richiesta di fruizione è passata in stato {string}")
     public void verifyAgreementState(String agreementState) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());

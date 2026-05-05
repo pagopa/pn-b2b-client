@@ -5,22 +5,7 @@ import static it.pagopa.interop.utils.BlobFileCreationUtils.createTempFile;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.PurposesApi;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationRef;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PatchPurposeUpdateFromTemplateContent;
-import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeCloneSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeEServiceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeFromTemplateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeUpdateContent;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.Purposes;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RejectPurposeVersionPayload;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ReversePurposeUpdateContent;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormConfig;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import java.io.File;
 import java.io.IOException;
@@ -172,6 +157,11 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
     @Override
     public PurposeVersionResource patchUpdatePurposeFromTemplate(UUID purposeTemplateId, UUID purposeId, PatchPurposeUpdateFromTemplateContent patchPurposeUpdateFromTemplateContent) throws RestClientException {
         return purposesApi.patchUpdatePurposeFromTemplate(purposeTemplateId, purposeId, patchPurposeUpdateFromTemplateContent);
+    }
+
+    @Override
+    public RemainingDailyCallsResponse getRemainingDailyCalls(UUID purposeId) {
+        return  purposesApi.getRemainingDailyCalls(purposeId);
     }
 
     @Override
