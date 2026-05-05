@@ -296,7 +296,7 @@ public class RaddAltSteps {
         Assertions.assertEquals(error, this.startTransactionResponse.getStatus().getCode());
         Assertions.assertNotNull(this.startTransactionResponse.getStatus().getMessage());
         Assertions.assertEquals(errorDescription.trim().toLowerCase(), this.startTransactionResponse.getStatus().getMessage().toLowerCase());
-        Assertions.assertEquals(StartTransactionResponseStatus.CodeEnum.NUMBER_4, this.startTransactionResponse.getStatus().getCode());
+        Assertions.assertEquals(erroCode, this.startTransactionResponse.getStatus().getCode());
         Assertions.assertEquals(documenti, this.startTransactionResponse.getDownloadUrlList().size());
     }
 
@@ -309,7 +309,7 @@ public class RaddAltSteps {
         Assertions.assertEquals(error, this.startTransactionResponse.getStatus().getCode());
         Assertions.assertNotNull(this.startTransactionResponse.getStatus().getMessage());
         Assertions.assertEquals(errorDescription.trim().toLowerCase(), this.startTransactionResponse.getStatus().getMessage().toLowerCase());
-        Assertions.assertEquals(StartTransactionResponseStatus.CodeEnum.NUMBER_4, this.startTransactionResponse.getStatus().getCode());
+        Assertions.assertEquals(erroCode, this.startTransactionResponse.getStatus().getCode());
     }
 
     @Then("Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative per operatore {string}")

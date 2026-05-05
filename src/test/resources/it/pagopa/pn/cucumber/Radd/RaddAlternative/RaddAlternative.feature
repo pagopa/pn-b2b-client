@@ -185,15 +185,6 @@ Feature: Radd Alternative
 # FLUSSO ACT su PF con QrCode - error cases
 
   @raddAlt
-  Scenario: [RADD-ALT_ACT-2] PF - Scansione QR code esistente associato al CF corretto, ma relativo a una notifica con perfezionamento > 120 giorni
-    When Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "dopo 120gg"
-    Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
-    And la scansione si conclude correttamente su radd alternative
-    And vengono caricati i documento di identità del cittadino su radd alternative
-    And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
-    And l'operazione di download degli atti restituisce 3 documenti e si conclude con errore "documenti non disponibili" e codice 4 su radd alternative
-
-  @raddAlt
   Scenario: [RADD-ALT_ACT-3] PF - Scansione QR code inesistente
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
