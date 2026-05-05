@@ -2,7 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.regis
 
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementState;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionState;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.InteropEvent;
+import it.pagopa.interop.event.enums.InteropEvent;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.InteropFile;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.FilenameFormat;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.file_token.FileToken;

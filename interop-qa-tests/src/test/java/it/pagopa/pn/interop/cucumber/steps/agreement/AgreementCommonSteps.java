@@ -181,7 +181,9 @@ public class AgreementCommonSteps {
                     .isConsumerDelegable(eServiceConfig.map(EServiceConfig::getDelegable).orElse(null))
                     .isClientAccessDelegable(eServiceConfig.map(EServiceConfig::getClientAccessDelegable).orElse(null));
             EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
-                    eserviceSeed, new UpdateEServiceDescriptorSeed().agreementApprovalPolicy(eServiceConfig.map(EServiceConfig::getAgreementApprovalPolicy).orElse(null)));
+                    eserviceSeed, new UpdateEServiceDescriptorSeed()
+                            .dailyCallsPerConsumer(50).dailyCallsTotal(1000)
+                            .agreementApprovalPolicy(eServiceConfig.map(EServiceConfig::getAgreementApprovalPolicy).orElse(null)));
             sharedStepsContext.getEServicesCommonContext().setCreationTimestamp(OffsetDateTime.now());
             // Set the descriptor to "PUBLISHED" state
             dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(),
