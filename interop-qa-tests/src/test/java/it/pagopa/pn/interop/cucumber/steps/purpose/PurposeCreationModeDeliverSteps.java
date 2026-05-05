@@ -146,6 +146,26 @@ public class PurposeCreationModeDeliverSteps {
         );
     }
 
+    @When("l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti, in modalità NON gratuita e tuttavia specificando una ragione di gratuità")
+    public void userCreatePurposeInFreeModeWithReason() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        UUID consumerId = identityService.getOrganizationId(sharedStepsContext.getTenantType());
+        String title = String.format("purpose title - QA - %d - %d", sharedStepsContext.getTestSeed(), new Random().nextInt());
+
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getPurposeApiClient().createPurpose(
+                        new PurposeSeed()
+                                .eserviceId(sharedStepsContext.getEServicesCommonContext().getEserviceId())
+                                .consumerId(consumerId)
+                                .title(title)
+                                .description("description of the purpose - QA")
+                                .isFreeOfCharge(false)
+                                .freeOfChargeReason("Some reason")
+                                .dailyCalls(49)
+                )
+        );
+    }
+
     @When("l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati, con un'analisi del rischio parzialmente compilata ma formattata correttamente")
     public void userCreatePurposeWithPartialRiskAnalysis() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());

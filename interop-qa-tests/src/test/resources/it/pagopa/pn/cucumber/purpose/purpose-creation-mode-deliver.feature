@@ -119,6 +119,16 @@ Feature: Creazione finalità per e-service in erogazione diretta
     When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati, in modalità gratuita senza specificare una ragione
     Then si ottiene status code 400
 
+  @sad-path
+  @nrt-minimal
+  @purpose_creation_deliver6
+  Scenario: [CREAZIONE_FINALITA_DELIVER_8_B] Un utente con sufficienti permessi (admin); il cui ente ha già una richiesta di fruizione in stato ACTIVE per una versione di e-service, il quale ha mode = DELIVER, crea una nuova finalità con tutti i campi richiesti, il campo isFreeOfCharge valorizzato a false e il campo freeOfChargeReason compilato (combinazione illegale). Ottiene un errore.
+    Given l'utente è un "admin" di "PA1"
+    Given "PA2" ha già creato e pubblicato 1 e-service
+    Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti, in modalità NON gratuita e tuttavia specificando una ragione di gratuità
+    Then si ottiene status code 400
+
   @happy-path
   @nrt-minimal
   @purpose_creation_deliver7 @wait_for_fix @PIN-5236
