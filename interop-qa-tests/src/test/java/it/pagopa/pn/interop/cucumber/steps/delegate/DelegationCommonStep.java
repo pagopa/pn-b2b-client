@@ -52,11 +52,11 @@ public class DelegationCommonStep {
         try {
             tenantsApi.updateTenantDelegatedFeatures(false, false);
             pollingService.makePolling(
-                () -> tenantsApi.getTenant(identityService.getOrganizationId(tenantType)),
-                res -> res.getFeatures()
-                    .stream()
-                    .allMatch(feature -> allNull(feature.getDelegatedConsumer(), feature.getDelegatedProducer())),
-                "L'ente non dovrebbe risultare disponibile a ricevere deleghe, ma risulta altrimenti. Visionare logs per maggiori dettagli.");
+                    () -> tenantsApi.getTenant(identityService.getOrganizationId(tenantType)),
+                    res -> res.getFeatures()
+                            .stream()
+                            .allMatch(feature -> allNull(feature.getDelegatedConsumer(), feature.getDelegatedProducer())),
+                    "L'ente non dovrebbe risultare disponibile a ricevere deleghe, ma risulta altrimenti. Visionare logs per maggiori dettagli.");
         } catch (HttpClientErrorException.Conflict e) {
             log.info("No delegation availability defined for the given tenant!");
         } catch (Exception e) {
@@ -71,11 +71,11 @@ public class DelegationCommonStep {
         try {
             tenantsApi.updateTenantDelegatedFeatures(false, false);
             pollingService.makePolling(
-                () -> tenantsApi.getTenant(tenantId),
-        result -> result.getFeatures().stream()
-                    .map(TenantFeature::getDelegatedConsumer)
-                    .allMatch(Objects::isNull),
-                "An error occured when trying to remove consumer delegation for tenant %s".formatted(tenantType)
+                    () -> tenantsApi.getTenant(tenantId),
+                    result -> result.getFeatures().stream()
+                            .map(TenantFeature::getDelegatedConsumer)
+                            .allMatch(Objects::isNull),
+                    "An error occured when trying to remove consumer delegation for tenant %s".formatted(tenantType)
             );
         } catch (HttpClientErrorException.Conflict e) {
             log.info("No delegation availability defined for the given tenant!");
@@ -101,6 +101,7 @@ public class DelegationCommonStep {
         DelegationCreateStep.setDelegationAvailability(
             delegate,
             producerStrategyUsing(tenantsApi),
+            true,
             true,
             false,
             identityService,

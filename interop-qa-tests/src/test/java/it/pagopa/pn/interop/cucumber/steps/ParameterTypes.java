@@ -1,7 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps;
 
 import io.cucumber.java.ParameterType;
-import it.pagopa.interop.config.springconfig.springconfig.ApiProfile;
+import it.pagopa.interop.conf.api_profile.ApiProfile;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.EServiceState;
 
 import java.util.*;
@@ -11,6 +11,15 @@ import java.util.regex.Pattern;
 public class ParameterTypes {
     public enum ApiVersion { V1, V2, V3 }
     public record ApiSpec(ApiProfile.ApiSet set, ApiVersion version) {}
+
+    @ParameterType("positivo|negativo")
+    public static boolean booleanResponse(String response) {
+        return switch (response)  {
+            case "positivo" -> true;
+            case "negativo" -> false;
+            default -> throw new IllegalStateException("Unexpected value: " + response);
+        };
+    }
 
     /* Converte un indice espresso in forma (1,2,3...) in (0,1,2...) */
     @ParameterType("[0-9]+")

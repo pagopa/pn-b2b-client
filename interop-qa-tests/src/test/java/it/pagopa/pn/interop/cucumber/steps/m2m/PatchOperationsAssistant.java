@@ -3,7 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps.m2m;
 import it.pagopa.interop.authorization.domain.Auth;
 import it.pagopa.interop.authorization.enums.M2MRole;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.config.springconfig.springconfig.ApiProfile;
+import it.pagopa.interop.conf.api_profile.ApiProfile;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
@@ -54,7 +54,7 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
     }
 
     public void patchResource(PATCH_REQUEST patchRequest, String patchTenant, M2MRole role) {
-        Runnable authProcedure = () ->  {
+        Runnable authProcedure = () -> {
             if (patchTenant != null && role != null) m2mAuthSteps.authenticateM2MUser("admin", patchTenant, role);
         };
         this.patchResource(patchRequest, authProcedure);
@@ -94,6 +94,12 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
      * "l'utente tenta di effettuare la modifica parziale di un ... inesistente" */
     public void patchNonExistentResource() {
         RESOURCE_ID resourceId = this.randomResourceId();
+        PATCH_REQUEST patchRequest = buildDefaultPatchRequest();
+        httpExecutor.performCall(() -> this.patchResource(resourceId, patchRequest));
+    }
+
+    public void patchNonSpecifiedResource() {
+        RESOURCE_ID resourceId = this.emptyResourceId();
         PATCH_REQUEST patchRequest = buildDefaultPatchRequest();
         httpExecutor.performCall(() -> this.patchResource(resourceId, patchRequest));
     }
@@ -157,4 +163,8 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
     protected abstract RESOURCE patchResource(RESOURCE_ID resourceId, PATCH_REQUEST patchRequest);
 
     protected abstract RESOURCE_ID randomResourceId();
+
+    protected RESOURCE_ID emptyResourceId() {
+        return null;
+    }
 }
