@@ -30,7 +30,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     ##  NOTA: Il csv da passare in input deve essere rinominato in: TEST-cap-localita.csv
     ##  Viene generato un file di report in: src/main/resources/output/risultati_copertura.csv
   Scenario: [RADD_API_COPERTURA_CAP_VALIDATION] Creazione report di coperture cap radd da file csv
-    Given setto la data per la quale voglio verificare la copertura al "OGGI"
+    Given setto la data per la quale voglio verificare la copertura al "0D"
     Then leggo il file csv con cap e localita ed effettuo chiamate light e complete con report
 
 
@@ -162,12 +162,12 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     And invoco l'API di aggiornamento copertura cap Radd
     Examples:
       | cap   | locality | cadastralCode | province | startValidity | endValidity |
-      | 80100 | /        | H501          | RM       | 2025-10-01    | 2025-12-31  |
-      | 80100 | /        | H501          | MI       | 2025-11-01    | 2025-11-01  |
-      | 80100 | /        | null          | null     | 2025-10-01    | 2025-12-31  |
+      | 80100 | /        | H501          | RM       | -1D           | 1Y          |
+      | 80100 | /        | H501          | MI       | -1D           | 1Y          |
+      | 80100 | /        | null          | null     | -1D           | 1Y          |
       | 80100 | /        | null          | null     | null          | null        |
-      | 80100 | /        | H501          | RM       | null          | 2025-12-31  |
-      | 80100 | /        | H501          | RM       | 2025-10-01    | null        |
+      | 80100 | /        | H501          | RM       | null          | 1Y          |
+      | 80100 | /        | H501          | RM       | -1D           | null        |
 
 
   @capCoverageRadd @cognito2
@@ -180,12 +180,12 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     And l'operazione di copertura Radd ha prodotto un errore con status code "<statusCode>"
     Examples:
       | cap    | locality | cadastralCode | province | startValidity | endValidity | statusCode |
-      | 77777  | Roma     | H502          | RM       | 2025-10-01    | 2025-12-31  | 404        |
-      | 00100  | Q        | H502          | RM       | 2025-10-01    | 2025-12-31  | 404        |
-      | 001001 | Roma     | H502          | RM       | 2025-10-01    | 2025-12-31  | 400        |
-      | AAAAA  | Roma     | H502          | RM       | 2025-10-01    | 2025-12-31  | 400        |
-      | 0      | Q        | H502          | RM       | 2025-10-01    | 2025-12-31  | 400        |
-      | #      | Roma     | H502          | RM       | 2025-10-01    | 2025-12-31  | 400        |
+      | 77777  | Roma     | H502          | RM       | -1Y           | 1Y          | 404        |
+      | 00100  | Q        | H502          | RM       | -1Y           | 1Y          | 404        |
+      | 001001 | Roma     | H502          | RM       | -1Y           | -1M         | 400        |
+      | AAAAA  | Roma     | H502          | RM       | -1Y           | -1M         | 400        |
+      | 0      | Q        | H502          | RM       | -1Y           | -1M         | 400        |
+      | #      | Roma     | H502          | RM       | -1Y           | -1M         | 400        |
       | #      | Roma     | null          | null     | null          | null        | 400        |
 
 
@@ -205,16 +205,16 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | cap   | locality | cadastralCode | province | startValidity | endValidity |
 #      | 80100 | /        | WWWW          | RM       | 2025-10-01    | 2035-12-31  |
 #      | 80100 | /        | H501          | WW       | 2025-10-01    | 2035-12-31  |
-      | 80100 | /        | H501          | RM       | 2025-10-011   | 2035-12-31  |
-      | 80100 | /        | H501          | RM       | 01-10-2025    | 2035-12-31  |
-      | 80100 | /        | H501          | 1        | 2025-10-01    | 2035-12-31  |
-      | 80100 | /        | H5 01         | RM       | 2025-10-01    | 2035-12-31  |
-      | 80100 | /        | H501          | #        | 2025-10-01    | 2035-12-31  |
-      | 80100 | /        | H501          | RM       | 2025-10-01    | #           |
-      | 80100 | /        | H             | RM       | 2025-10-01    | 2035-12-31  |
-      | 80100 | null     | H501          | RM       | 2025-10-01    | 2035-12-31  |
-      | null  | /        | H501          | RM       | 2025-10-01    | 2035-12-31  |
-      | 80100 | /        | H501          | RM       | 2035-10-01    | 2025-12-31  |
+      | 80100 | /        | H501          | RM       | [2025-10-011] | 10Y         |
+      | 80100 | /        | H501          | RM       | [01-10-2025]  | 10Y         |
+      | 80100 | /        | H501          | 1        | -1Y           | 10Y         |
+      | 80100 | /        | H5 01         | RM       | -1Y           | 10Y         |
+      | 80100 | /        | H501          | #        | -1Y           | 10Y         |
+      | 80100 | /        | H501          | RM       | -1Y           | [#]         |
+      | 80100 | /        | H             | RM       | -1Y           | 10Y         |
+      | 80100 | null     | H501          | RM       | -1Y           | 10Y         |
+      | null  | /        | H501          | RM       | -1Y           | 10Y         |
+      | 80100 | /        | H501          | RM       | 10Y           | -1Y         |
   #campi opzionali inesistenti
   #cap e locality vuoti
   #startValidity maggiore di una endValidity
@@ -228,8 +228,8 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | 80100 | H501          | RM       |
     And creo una nuova copertura Radd
     And setto i dati per aggiornare una copertura Radd:
-      | cap   | locality | cadastralCode | province | startValidity | endValidity   |
-      | 80100 | /        | H501          | RM       | null          | 2025-05-05    |
+      | cap   | locality | cadastralCode | province | startValidity | endValidity |
+      | 80100 | /        | H501          | RM       | null          | -1Y         |
     And invoco l'API di aggiornamento copertura cap Radd con errore
     And l'operazione di copertura Radd ha prodotto un errore con status code "400"
 
@@ -238,7 +238,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "SOLO_LETTURA"
     And setto i dati per aggiornare una copertura Radd:
       | cap   | locality | cadastralCode | province | startValidity | endValidity |
-      | 00100 | Roma     | H502          | RM       | 2025-10-01    | 2025-12-31  |
+      | 00100 | Roma     | H502          | RM       | 0D            | 1Y          |
     And invoco l'API di aggiornamento copertura cap Radd con errore
     And l'operazione di copertura Radd ha prodotto un errore con status code "403"
 
@@ -257,7 +257,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     And la response deve contenere la località e il cap "00100" attesi
     And setto i dati per aggiornare una copertura Radd:
       | cap   | locality | cadastralCode | province | startValidity | endValidity |
-      | 00100 | /        | H502          | RM       | 2025-10-13    | 2035-10-13  |
+      | 00100 | /        | H502          | RM       | -1Y           | 10Y         |
     And invoco l'API di aggiornamento copertura cap Radd
     Then setto i dati per verificare la copertura Radd:
       | nameRow2 | addressRow | addressRow2 | cap   | city | city2 | pr | country |
@@ -275,7 +275,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     And la response deve contenere la località e il cap "00100" attesi
     And setto i dati per aggiornare una copertura Radd:
       | cap   | locality | cadastralCode | province | startValidity | endValidity |
-      | 00100 | /        | H502          | RM       | 2025-10-13    | 2035-10-13  |
+      | 00100 | /        | H502          | RM       | -1Y           | 10Y         |
     And invoco l'API di aggiornamento copertura cap Radd
     Then setto i dati per verificare la copertura Radd:
       | nameRow2 | addressRow | addressRow2 | cap   | city | city2 | pr | country |
@@ -293,7 +293,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     And la response deve contenere la località e il cap "00100" attesi
     And setto i dati per aggiornare una copertura Radd:
       | cap   | locality | cadastralCode | province | startValidity | endValidity |
-      | 00100 | /        | H502          | RM       | 2025-10-13    | 2035-10-13  |
+      | 00100 | /        | H502          | RM       | -1Y           | 10Y         |
     And invoco l'API di aggiornamento copertura cap Radd
     Then setto i dati per verificare la copertura Radd:
       | nameRow2 | addressRow | addressRow2 | cap   | city | city2 | pr   | country |
@@ -312,7 +312,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     And la response deve contenere la località e il cap "00100" attesi
     And setto i dati per aggiornare una copertura Radd:
       | cap   | locality | cadastralCode | province | startValidity | endValidity |
-      | 00100 | /        | H502          | RM       | 2025-10-13    | 2035-10-13  |
+      | 00100 | /        | H502          | RM       | -1Y           | 10Y         |
     And invoco l'API di aggiornamento copertura cap Radd
     Then setto i dati per verificare la copertura Radd:
       | nameRow2 | addressRow | addressRow2 | cap   | city | city2 | pr   | country |
@@ -358,7 +358,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     And la response deve contenere la località e il cap "00100" attesi
     And setto i dati per aggiornare una copertura Radd:
       | cap   | locality | cadastralCode | province | startValidity | endValidity |
-      | 00100 | /        | H502          | RM       | 2035-10-13    | 2036-10-13  |
+      | 00100 | /        | H502          | RM       | 10Y           | 11Y         |
     And invoco l'API di aggiornamento copertura cap Radd
     Then setto i dati per verificare la copertura Radd:
       | nameRow2 | addressRow | addressRow2 | cap   | city | city2 | pr   | country |
@@ -368,7 +368,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
 
     And setto i dati per aggiornare una copertura Radd:
       | cap   | locality | cadastralCode | province | startValidity | endValidity |
-      | 00100 | /        | H502          | RM       | 2035-10-13    | 2035-10-13  |
+      | 00100 | /        | H502          | RM       | 10Y           | 10Y         |
     And invoco l'API di aggiornamento copertura cap Radd
     Then setto i dati per verificare la copertura Radd:
       | nameRow2 | addressRow | addressRow2 | cap   | city | city2 | pr   | country |
@@ -378,7 +378,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
 
     And setto i dati per aggiornare una copertura Radd:
       | cap   | locality | cadastralCode | province | startValidity | endValidity |
-      | 00100 | /        | H502          | RM       | 2020-10-13    | 2035-10-13  |
+      | 00100 | /        | H502          | RM       | -5Y           | 10Y         |
     And invoco l'API di aggiornamento copertura cap Radd
     Then setto i dati per verificare la copertura Radd:
       | nameRow2 | addressRow | addressRow2 | cap   | city | city2 | pr   | country |
@@ -388,7 +388,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
 
     And setto i dati per aggiornare una copertura Radd:
       | cap   | locality | cadastralCode | province | startValidity | endValidity |
-      | 00100 | /        | H502          | RM       | 2020-10-13    | 2020-10-13  |
+      | 00100 | /        | H502          | RM       | 0D            | 0D          |
     And invoco l'API di aggiornamento copertura cap Radd
 
     Then Effettuo l'autenticazione copertura cap per l' utente con permessi: "SOLO_LETTURA"
@@ -412,7 +412,6 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
 
 ##  Test massivo con recupero dati da file csv contenuto nel path: src/main/resources/TEST-cop-cap-radd.csv
 ##  NOTA: Il csv da passare in input deve essere rinominato in: TEST-cop-cap-radd.csv
-  @capCoverageRadd
   Scenario: [RADD_API_COPERTURA_CAP_VERIFICA_csv] Confronto coperture da csv
     Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
     Then leggo il file csv e salvo cap, localita e stato copertura
@@ -460,7 +459,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     And creo una nuova copertura Radd
     And setto i dati per aggiornare una copertura Radd:
       | cap   | locality | cadastralCode | province | startValidity | endValidity |
-      | 80100 | /        | H501          | RM       | 2025-01-01    | 2035-01-01  |
+      | 80100 | /        | H501          | RM       | -1D           | 10Y         |
     And invoco l'API di aggiornamento copertura cap Radd
     Then setto la data per la quale voglio verificare la copertura al "<search-date>"
     Then setto i dati per verificare la copertura Radd:
@@ -503,9 +502,9 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     And per i dati forniti si verifica che lo stato di copertura sia "COPERTO"
     Examples:
       | cap   | locality | cadastralCode | province | startValidity | endValidity | search-date |
-      | 80100 | /        | H501          | MI       | 2020-01-01    | 2022-01-01  | 2021-01-01  |
-      | 80100 | /        | H501          | MI       | 2025-01-01    | 2027-01-01  | OGGI        |
-      | 80100 | /        | H501          | MI       | 2030-01-01    | 2030-01-12  | 2030-01-09  |
+      | 80100 | /        | H501          | MI       | -5Y           | 1Y          | -13M        |
+      | 80100 | /        | H501          | MI       | -1M           | 1Y          | 0D          |
+      | 80100 | /        | H501          | MI       | 10Y           | 12Y         | 11Y         |
 
 
   @capCoverageRadd @cognito2 #rif srs 3
@@ -527,17 +526,16 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     And per i dati forniti si verifica che lo stato di copertura sia "NON_COPERTO"
     Examples:
       | cap   | locality | cadastralCode | province | startValidity | endValidity | search-date |
-      | 80100 | /        | H501          | RM       | 2020-01-01    | 2022-01-01  | 2019-01-01  |
-      | 80100 | /        | H501          | MI       | 2030-01-01    | 2031-01-01  | OGGI        |
-      | 80100 | /        | H501          | RM       | 2020-01-01    | 2022-01-01  | OGGI        |
+      | 80100 | /        | H501          | RM       | -1Y           | 1Y          | -13M        |
+      | 80100 | /        | H501          | MI       | 10Y           | 15Y         | 0D          |
 
 
   @capCoverageRadd @cognito1 #rif srs 4
   Scenario Outline: [RADD_API_COPERTURA_CAP_VERIFICA_17L] Verifica copertura con search-date uguale a start-validity e end-validity light mode
     Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
     Then setto i dati per creare una nuova copertura Radd con locality random:
-      | cap   | cadastralCode | province |
-      | <cap> | <cadastralCode>          | <province>       |
+      | cap   | cadastralCode   | province   |
+      | <cap> | <cadastralCode> | <province> |
     And creo una nuova copertura Radd
     And setto i dati per aggiornare una copertura Radd:
       | cap   | locality   | cadastralCode   | province   | startValidity   | endValidity   |
@@ -551,17 +549,17 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     And per i dati forniti si verifica che lo stato di copertura sia "COPERTO"
     Examples:
       | cap   | locality | cadastralCode | province | startValidity | endValidity | search-date |
-      | 80100 | /        | H501          | RM       | 2020-01-01    | 2022-01-01  | 2020-01-01  |
-      | 80100 | /        | H501          | RM       | 2030-01-01    | 2031-01-01  | 2031-01-01  |
-      | 80100 | /        | H501          | RM       | 2025-01-01    | 2027-01-01  | 2025-01-01  |
+      | 80100 | /        | H501          | RM       | 0D            | 1Y          | 0D          |
+      | 80100 | /        | H501          | RM       | 1Y            | 2Y          | 2Y          |
+      | 80100 | /        | H501          | RM       | -1Y           | 1Y          | -1Y         |
 
 
   @capCoverageRadd @cognito2 #rif srs 5
   Scenario Outline: [RADD_API_COPERTURA_CAP_VERIFICA_18L] Verifica copertura con search-date nel range ma senza end-validity light mode
     Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
     Then setto i dati per creare una nuova copertura Radd con locality random:
-      | cap   | cadastralCode | province |
-      | <cap> | <cadastralCode>          | <province>       |
+      | cap   | cadastralCode   | province   |
+      | <cap> | <cadastralCode> | <province> |
     And creo una nuova copertura Radd
     And setto i dati per aggiornare una copertura Radd:
       | cap   | locality   | cadastralCode   | province   | startValidity   | endValidity   |
@@ -575,9 +573,9 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     And per i dati forniti si verifica che lo stato di copertura sia "COPERTO"
     Examples:
       | cap   | locality | cadastralCode | province | startValidity | endValidity | search-date |
-      | 80100 | /        | H501          | RM       | 2020-01-01    | null        | 2020-01-05  |
-      | 80100 | /        | H501          | MI       | 2030-01-01    | null        | 2031-01-01  |
-      | 80100 | /        | H501          | RM       | 2025-01-01    | null        | 2025-01-01  |
+      | 80100 | /        | H501          | RM       | -1Y           | null        | -11M        |
+      | 80100 | /        | H501          | MI       | 10Y           | null        | 11Y         |
+      | 80100 | /        | H501          | RM       | 0D            | null        | 0D          |
 
 
   @capCoverageRadd @cognito1 #rif srs 2
@@ -598,14 +596,14 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     And invoco l'API di verifica copertura cap Radd Complete mode
     And per i dati forniti si verifica che lo stato di copertura sia "COPERTO"
     And setto i dati per aggiornare una copertura Radd:
-      | cap   | locality | cadastralCode   | province   | startValidity | endValidity |
-      | <cap> | /        | <cadastralCode> | <province> | 1990-01-01    | 1990-01-01  |
+      | cap   | locality | cadastralCode   | province   | startValidity | endValidity  |
+      | <cap> | /        | <cadastralCode> | <province> | [1990-01-01]  | [1990-01-01] |
     And invoco l'API di aggiornamento copertura cap Radd
     Examples:
       | cap   | cadastralCode | province | startValidity | endValidity | search-date |
-      | 12121 | H501          | NA       | 2020-01-11    | 2022-01-01  | 2021-01-01  |
-      | 12121 | H501          | NA       | 2025-01-01    | 2027-01-01  | OGGI        |
-      | 12121 | H501          | NA       | 2030-01-01    | 2030-01-12  | 2030-01-09  |
+      | 12121 | H501          | NA       | -1Y           | 1Y          | 1M          |
+      | 12121 | H501          | NA       | -1Y           | 1Y          | 0D          |
+      | 12121 | H501          | NA       | 10Y           | 12Y         | 11Y         |
 
   @capCoverageRadd @cognito1 #rif srs 3
   Scenario Outline: [RADD_API_COPERTURA_CAP_VERIFICA_16C] Verifica copertura con search-date esterna al range  Complete mode
@@ -625,14 +623,13 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     And invoco l'API di verifica copertura cap Radd Complete mode
     And per i dati forniti si verifica che lo stato di copertura sia "NON_COPERTO"
     And setto i dati per aggiornare una copertura Radd:
-      | cap   | locality | cadastralCode   | province   | startValidity | endValidity |
-      | <cap> | /        | <cadastralCode> | <province> | 1990-01-01    | 1990-01-01  |
+      | cap   | locality | cadastralCode   | province   | startValidity | endValidity  |
+      | <cap> | /        | <cadastralCode> | <province> | [1990-01-01]  | [1990-01-01] |
     And invoco l'API di aggiornamento copertura cap Radd
     Examples:
       | cap   | locality | cadastralCode | province | startValidity | endValidity | search-date |
-      | 12120 | /        | H501          | RM       | 2020-01-01    | 2022-01-01  | 2019-01-01  |
-      | 12120 | /        | H501          | RM       | 2030-01-01    | 2031-01-01  | OGGI        |
-      | 12120 | /        | H501          | RM       | 2020-01-01    | 2022-01-01  | OGGI        |
+      | 12120 | /        | H501          | RM       | 0D            | 1Y          | -1Y         |
+      | 12120 | /        | H501          | RM       | 1Y            | 2Y          | 0D          |
 
 
   @capCoverageRadd @cognito1 #rif srs 4
@@ -654,9 +651,9 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     And per i dati forniti si verifica che lo stato di copertura sia "COPERTO"
     Examples:
       | cap   | locality | cadastralCode | province | startValidity | endValidity | search-date |
-      | 12123 | /        | H501          | RM       | 2020-01-01    | 2022-01-01  | 2020-01-01  |
-      | 12123 | /        | H501          | RM       | 2030-01-01    | 2031-01-01  | 2031-01-01  |
-      | 12123 | /        | H501          | RM       | 2025-01-01    | 2027-01-01  | 2025-01-01  |
+      | 12123 | /        | H501          | RM       | -1Y           | 1Y          | -1Y         |
+      | 12123 | /        | H501          | RM       | +10Y          | 11Y         | 11Y         |
+      | 12123 | /        | H501          | RM       | 0D            | 1Y          | 0D          |
 
   @capCoverageRadd @cognito1 #rif srs 5
   Scenario Outline: [RADD_API_COPERTURA_CAP_VERIFICA_18C] Verifica copertura con search-date nel range ma senza end-validity  complete mode
@@ -677,6 +674,6 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     And per i dati forniti si verifica che lo stato di copertura sia "COPERTO"
     Examples:
       | cap   | locality | cadastralCode | province | startValidity | endValidity | search-date |
-      | 12125 | /        | H501          | RM       | 2020-01-01    | null        | 2020-01-05  |
-      | 12125 | /        | H501          | RM       | 2030-01-01    | null        | 2031-01-01  |
-      | 12125 | /        | H501          | RM       | 2025-01-01    | null        | 2025-01-01  |
+      | 12125 | /        | H501          | RM       | -5Y           | null        | -4Y         |
+      | 12125 | /        | H501          | RM       | 10Y           | null        | 11Y         |
+      | 12125 | /        | H501          | RM       | 0D            | null        | 0D          |

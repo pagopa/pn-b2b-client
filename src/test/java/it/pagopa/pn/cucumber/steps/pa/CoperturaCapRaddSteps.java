@@ -25,6 +25,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,7 +47,7 @@ public class CoperturaCapRaddSteps {
     private static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static final int LENGTH = 6;
     private static final Random RANDOM = new Random();
-    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
 
     private CreateCoverageRequest request;
     private ResponseEntity<Coverage> response;
@@ -151,20 +152,15 @@ public class CoperturaCapRaddSteps {
         updateRequest = new UpdateCoverageRequest()
                 .cadastralCode(toNullable(data.get("cadastralCode")))
                 .province(toNullable(data.get("province")))
-                .startValidity(toNullable(data.get("startValidity")) != null
-                        ? toNullable(data.get("startValidity")).toString()
-                        : null)
-                .endValidity(toNullable(data.get("endValidity")) != null
-                        ? toNullable(data.get("endValidity")).toString()
-                        : null);
+                .startValidity(calculateDate(data.get("startValidity")))
+                .endValidity(calculateDate(data.get("endValidity")));
 
     }
 
     @And("setto la data per la quale voglio verificare la copertura al {string}")
     public void setSearchDate(String searchDateStr) {
 
-        if (!searchDateStr.equalsIgnoreCase("OGGI"))
-            searchDate = LocalDate.parse(searchDateStr);
+        searchDate = Optional.ofNullable(calculateDate(searchDateStr)).map(LocalDate::parse).orElse(null);
     }
 
 
@@ -573,5 +569,33 @@ public class CoperturaCapRaddSteps {
             System.out.println("File risultati generato in: " + outputFile);
         }
     }
+
+    // TODO spostare in una classe di utility
+   private String calculateDate(String duration) {
+        if (toNullable(duration) == null) {
+            return null;
+        }
+
+        // Caso forzato, se il valore viene passato tra quadre non viene parsato per estrarre la data
+       if (duration.startsWith("[") && duration.endsWith("]")) {
+           return duration.substring(1, duration.length() - 1);
+       }
+
+        LocalDate startDate = LocalDate.now();
+
+        int value = Integer.parseInt(duration.substring(0, duration.length() - 1));
+        char unit = duration.charAt(duration.length() - 1);
+
+        LocalDate endDate = switch (unit) {
+            case 'Y' -> startDate.plusYears(value);
+            case 'M' -> startDate.plusMonths(value);
+            case 'D' -> startDate.plusDays(value);
+            default -> throw new IllegalArgumentException("Formato durata non valido: " + duration);
+        };
+
+       return endDate.format(FORMATTER);
+    }
+
+
 
 }
