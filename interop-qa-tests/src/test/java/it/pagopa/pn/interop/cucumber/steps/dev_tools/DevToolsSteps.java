@@ -25,6 +25,7 @@ import it.pagopa.pn.interop.cucumber.steps.dev_tools.config.DevToolsRequestConfi
 import it.pagopa.pn.interop.cucumber.steps.dev_tools.config.DevToolsRequestConfig.JwtClaimOverride;
 import it.pagopa.pn.interop.cucumber.steps.dev_tools.model.DevToolsContext;
 import it.pagopa.pn.interop.cucumber.steps.purpose.PurposeCommonStep;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.time.Instant;
@@ -34,6 +35,7 @@ import java.util.function.Function;
 import static it.pagopa.interop.authorization.service.utils.JWTUtils.*;
 import static it.pagopa.interop.authorization.service.utils.voucher.VoucherService.calculateKidFromPublicKey;
 
+@Slf4j
 public class DevToolsSteps {
 
     private final static String CLIENT_ASSERTION_TYPE = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
@@ -64,6 +66,7 @@ public class DevToolsSteps {
         this.clientCommonSteps = clientCommonSteps;
         this.clientKeyReadSteps = clientKeyReadSteps;
         this.devToolsClient = clientTokenConfigurator.getDevToolsClient();
+        devToolsClient.setHttpCallExecutor(sharedStepsContext.getHttpCallExecutor());
         this.clientAssertionJwtAudience = clientAssertionJwtAudience;
         this.sharedStepsContext = sharedStepsContext;
         this.clientPurposeRemoveStep = clientPurposeRemoveStep;
@@ -191,6 +194,7 @@ public class DevToolsSteps {
         if (!overrides.isEmpty()) applyOverrides(validClientAssertion, overrides);
 
         String clientAssertion = validClientAssertion.signWith(preparedClient.keyPair().getPrivate()).compact();
+        log.info("Client assertion: '{}'", clientAssertion);
         devToolsContext.setActualClientAssertion(clientAssertion);
     }
 
