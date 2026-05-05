@@ -388,7 +388,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
 
     And setto i dati per aggiornare una copertura Radd:
       | cap   | locality | cadastralCode | province | startValidity | endValidity |
-      | 00100 | /        | H502          | RM       | 0D            | 0D          |
+      | 00100 | /        | H502          | RM       | 1D            | 1D          |
     And invoco l'API di aggiornamento copertura cap Radd
 
     Then Effettuo l'autenticazione copertura cap per l' utente con permessi: "SOLO_LETTURA"
