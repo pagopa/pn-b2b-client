@@ -18,6 +18,7 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.config.springconfig.InteropRestTemplateConfiguration;
 import it.pagopa.interop.config.springconfig.JwtTokenServiceConfiguration;
 import it.pagopa.interop.delegate.service.impl.*;
+import it.pagopa.interop.dev_tools.service.IDevToolsClient;
 import it.pagopa.interop.e_service_template.impl.*;
 import it.pagopa.interop.e_service_template.mapper.DescriptorAttributesMapperImpl;
 import it.pagopa.interop.e_service_template.mapper.RiskAnalysisMapperImpl;
@@ -208,6 +209,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         M2MV3UsersClient.class,
         IPurposeTemplateClient.class,
         ProbingClient.class,
+        IDevToolsClient.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
