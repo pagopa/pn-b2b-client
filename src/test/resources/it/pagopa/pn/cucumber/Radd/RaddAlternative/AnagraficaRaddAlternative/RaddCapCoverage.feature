@@ -221,6 +221,19 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
   #endValidity minore di una startValidity
 
   @capCoverageRadd @cognito2
+  Scenario: [RADD_API_COPERTURA_CAP_MODIFICA_23] Errore modifica copertura Radd con endValidity non futura
+    Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
+    Then setto i dati per creare una nuova copertura Radd con locality random:
+      | cap   | cadastralCode | province |
+      | 80100 | H501          | RM       |
+    And creo una nuova copertura Radd
+    And setto i dati per aggiornare una copertura Radd:
+      | cap   | locality | cadastralCode | province | startValidity | endValidity   |
+      | 80100 | /        | H501          | RM       | null          | 2025-05-05    |
+    And invoco l'API di aggiornamento copertura cap Radd con errore
+    And l'operazione di copertura Radd ha prodotto un errore con status code "400"
+
+  @capCoverageRadd @cognito2
   Scenario: [RADD_API_COPERTURA_CAP_MODIFICA_22] Errore Modifica copertura Radd utente solo lettura
     Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "SOLO_LETTURA"
     And setto i dati per aggiornare una copertura Radd:
