@@ -3,10 +3,8 @@ package it.pagopa.interop.authorization.service.utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.JwtBuilder;
 import it.pagopa.interop.common.JsonParseException;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.io.IOException;
 import java.util.Base64;
@@ -75,11 +73,21 @@ public final class JWTUtils {
     }
 
     public static void setClaim(JwtBuilder builder, String name, Object value) {
+        // 1. Gestione del "not found": se il valore è null o stringa vuota, non aggiungiamo il claim
         if (value == null || (value instanceof String s && s.isBlank())) {
-            // per simulare "not found", non impostare il claim
             return;
         }
-        builder.claim(name, value);
+
+        // 2. Trasformazione del valore: passiamo il valore attraverso parseMaybeUuid
+        // Questo permette di mappare la stringa "INVALID_UUID" (dalla tabella) a "not-a-uuid"
+        // o di lasciare "not-a-uuid" se passato direttamente.
+        Object finalValue = value;
+        if (value instanceof String s) {
+            finalValue = parseMaybeUuid(s);
+        }
+
+        // 3. Impostazione del claim sul builder
+        builder.claim(name, finalValue);
     }
 
     public static void setHeader(JwtBuilder builder, String name, String value) {
@@ -95,10 +103,42 @@ public final class JWTUtils {
     }
 
     public static Long parseEpoch(String raw) {
-        if (raw == null || raw.isBlank()) return null;
-        if ("now-3600".equals(raw)) return java.time.Instant.now().minusSeconds(3600).getEpochSecond();
-        if ("now+3600".equals(raw)) return java.time.Instant.now().plusSeconds(3600).getEpochSecond();
-        return Long.parseLong(raw);
+        if (raw == null || raw.isBlank()) {
+            return null;
+        }
+
+        String value = raw.trim();
+        java.time.Instant now = java.time.Instant.now();
+
+        if ("now".equals(value)) {
+            return now.getEpochSecond();
+        }
+
+        if (value.startsWith("now+") || value.startsWith("now-")) {
+            char operator = value.charAt(3);
+            String secondsPart = value.substring(4).trim();
+
+            if (secondsPart.isEmpty()) {
+                throw new IllegalArgumentException("Offset temporale mancante in: " + raw);
+            }
+
+            long seconds;
+            try {
+                seconds = Long.parseLong(secondsPart);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException(
+                        "Offset temporale non valido in '" + raw + "'. Atteso formato now+<secondi> o now-<secondi>", e
+                );
+            }
+
+            if (operator == '+') {
+                return now.plusSeconds(seconds).getEpochSecond();
+            } else {
+                return now.minusSeconds(seconds).getEpochSecond();
+            }
+        }
+
+        return Long.parseLong(value);
     }
 
     public static Object parseMaybeUuid(String raw) {
@@ -108,14 +148,17 @@ public final class JWTUtils {
     }
 
     public static void removeClaim(JwtBuilder builder, String claimName) {
-        // JJWT non ha remove diretto sui claim già settati in tutte le versioni:
-        // strategia pratica: non impostarli nel base builder oppure ricostruire claims map custom.
-        // Qui lascia no-op e gestiscilo evitando i claim nel builder base quando ti serve.
+        builder.claim(claimName, null);
     }
 
     public static void setRawPayload(JwtBuilder builder, String raw) {
-        // opzionale/avanzato: utile solo se devi rompere apposta il payload.
-        // In molte versioni JJWT non è banale combinare raw payload + signWith.
-        throw new UnsupportedOperationException("Raw payload non supportato in questa implementazione");
+        if (raw == null) return;
+
+        // Rimuove tutti i claims impostati finora per evitare l'IllegalStateException
+        // Nelle versioni recenti, passare una mappa nulla o vuota resetta i claims interni
+        builder.setClaims(new java.util.HashMap<>());
+
+        // Ora puoi impostare il contenuto grezzo senza conflitti
+        builder.content(raw.getBytes(java.nio.charset.StandardCharsets.UTF_8));
     }
 }
