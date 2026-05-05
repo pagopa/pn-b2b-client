@@ -22,6 +22,7 @@ import it.pagopa.interop.producerkeychain.ProducerKeychainClient;
 import it.pagopa.interop.purpose.service.*;
 import it.pagopa.interop.selfcare.service.ISelfcareClient;
 import it.pagopa.interop.tenant.service.ITenantsApi;
+import it.pagopa.interop.tracing.service.IInteropTracingClient;
 import it.pagopa.interop.users.IM2MV3UsersClient;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

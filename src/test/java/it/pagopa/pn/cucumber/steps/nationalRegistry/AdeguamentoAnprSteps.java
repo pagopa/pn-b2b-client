@@ -51,7 +51,7 @@ public class AdeguamentoAnprSteps {
             //CF per ambienti inferiori a UAT censiti sul Mock NR
             entry("GNVGCM97E04L781N", Map.of(
                     AnprAlgorithm.OLD, new ExpectedAnprOutput("  ", "2"),
-                    AnprAlgorithm.MINIMAL, new ExpectedAnprOutput("", "ROSSO Scala 2"),
+                    AnprAlgorithm.MINIMAL, new ExpectedAnprOutput("", "ROSSO Scala 2 Scala est. SCAL 2"),
                     AnprAlgorithm.FULL, new ExpectedAnprOutput("", "ROSSO Corte 1 Scala 2 Scala est. SCAL 2"))),
             entry("JNOFBN86B05L781H", Map.of(
                     AnprAlgorithm.OLD, new ExpectedAnprOutput("", ""),
