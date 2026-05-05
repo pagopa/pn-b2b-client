@@ -1,23 +1,17 @@
 package it.pagopa.interop.event.filter;
 
 import it.pagopa.interop.event.domain.dto.M2MEvent;
-import lombok.Value;
 
 import java.util.List;
 import java.util.function.Predicate;
 
-@Value
-public class EventPredicate implements Predicate<M2MEvent> {
-    Predicate<M2MEvent> predicate;
-
-    @Override
-    public boolean test(M2MEvent m2MEvent) {
-        return predicate.test(m2MEvent);
+@FunctionalInterface
+public interface EventPredicate extends Predicate<M2MEvent> {
+    static EventPredicate from(Predicate<M2MEvent> predicate) {
+        return predicate::test;
     }
 
-    public static EventPredicate andAll(List<EventPredicate> predicates) {
-        return new EventPredicate(event ->
-                predicates.stream().allMatch(p -> p.test(event))
-        );
+    static EventPredicate andAll(List<EventPredicate> predicates) {
+        return event -> predicates.stream().allMatch(p -> p.test(event));
     }
 }

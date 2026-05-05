@@ -43,7 +43,7 @@ public class EventRequestConfig {
 
         String resolvedValue = tokenResolver.resolve(rawValue);
 
-        return new EventPredicate(event -> matchesField(event, propertyName, resolvedValue));
+        return event -> matchesField(event, propertyName, resolvedValue);
     }
 
     private boolean matchesField(M2MEvent event, String propertyName, String expectedRawValue) {
