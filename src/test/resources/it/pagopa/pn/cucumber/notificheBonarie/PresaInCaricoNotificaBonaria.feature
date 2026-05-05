@@ -37,8 +37,8 @@ Feature: Sottomissione di una notifica bonaria.
 
 
 #  CASO DI TEST 2.2  Errore sulla Creazione di un messaggio.
-  Scenario: [NOTIFICHE_BONARIE_MESSAGGI_07_1] Come ente mittente non abilitato alla creazione di un messaggio ricevo un errore sulla creazione di un nuovo messaggio.
-    #todo t bonarie
+#  Scenario: [NOTIFICHE_BONARIE_MESSAGGI_07_1] Come ente mittente non abilitato alla creazione di un messaggio ricevo un errore sulla creazione di un nuovo messaggio.
+#    #todo t bonarie
 
 
   Scenario Outline: [NOTIFICHE_BONARIE_MESSAGGI_07_2] Come ente mittente ricevo un errore sulla creazione di un nuovo messaggio non valorizzando campi obbligatori.
@@ -101,6 +101,7 @@ Feature: Sottomissione di una notifica bonaria.
     Then si riceve errore 400
     Examples:
       | messageId |
+      | ***Todo   |
 
 
 
@@ -108,7 +109,7 @@ Feature: Sottomissione di una notifica bonaria.
 #  CASO DI TEST .1 Validazione della richiesta di invio notifica bonaria.
   @informalNotifications
   Scenario: [NOTIFICHE_BONARIE_SOTTOMISSIONE_14A] Come ente mittente creo una nuova notifica bonaria utilizzando valori di default.
-    Con whitelist vuota ricevo un errore 403 Forbidden.
+  Con whitelist vuota ricevo un errore 403 Forbidden.
     When viene creata una nuova notifica bonaria con i seguenti parametri
       | additionalLanguages |
       | NULL                |
@@ -126,73 +127,72 @@ Feature: Sottomissione di una notifica bonaria.
 
 
 
-#  SCENARIO 1 - Preload del documento.
-#  CASO DI TEST 1.1  Invio dei documenti allegati al destinatario.
-  Scenario: [NOTIFICHE_BONARIE_MESSAGGI_05] Creazione di un nuovo messaggio con valori di default.
-
-#  CASO DI TEST .1 Mancata validazione della richiesta di invio notifica bonaria.
-  Scenario: [NOTIFICHE_BONARIE_15] Invio di una notifica bonaria con messaggio predefinito di campagna
-
-#  SCENARIO 5 - Download dei documenti.
-#  CASO DI TEST 5.1 Corretto Download dei documenti notificati.
-  Scenario: [NOTIFICHE_BONARIE_10] Invio di una notifica bonaria con messaggio predefinito di campagna
-
-#  CASO DI TEST 5.2 Corretto Download degli allegati di pagamento di una notifica.
-  Scenario: [NOTIFICHE_BONARIE_11] Invio di una notifica bonaria con messaggio predefinito di campagna
-
-#  CASO DI TEST 5.3 Errore Download dei documenti.
-  Scenario: [NOTIFICHE_BONARIE_12] Invio di una notifica bonaria con messaggio predefinito di campagna
-
-#  CASO DI TEST 5.4 Errore Download degli allegati di pagamento.
-  Scenario: [NOTIFICHE_BONARIE_13] Invio di una notifica bonaria con messaggio predefinito di campagna
+##  SCENARIO 1 - Preload del documento.
+##  CASO DI TEST 1.1  Invio dei documenti allegati al destinatario.
+#  Scenario: [NOTIFICHE_BONARIE_MESSAGGI_05] Creazione di un nuovo messaggio con valori di default.
+#
+##  CASO DI TEST .1 Mancata validazione della richiesta di invio notifica bonaria.
+#  Scenario: [NOTIFICHE_BONARIE_15] Invio di una notifica bonaria con messaggio predefinito di campagna
+#
+##  SCENARIO 5 - Download dei documenti.
+##  CASO DI TEST 5.1 Corretto Download dei documenti notificati.
+#  Scenario: [NOTIFICHE_BONARIE_10] Invio di una notifica bonaria con messaggio predefinito di campagna
+#
+##  CASO DI TEST 5.2 Corretto Download degli allegati di pagamento di una notifica.
+#  Scenario: [NOTIFICHE_BONARIE_11] Invio di una notifica bonaria con messaggio predefinito di campagna
+#
+##  CASO DI TEST 5.3 Errore Download dei documenti.
+#  Scenario: [NOTIFICHE_BONARIE_12] Invio di una notifica bonaria con messaggio predefinito di campagna
+#
+##  CASO DI TEST 5.4 Errore Download degli allegati di pagamento.
+#  Scenario: [NOTIFICHE_BONARIE_13] Invio di una notifica bonaria con messaggio predefinito di campagna
 
 
 
 
   Scenario: Invio bonaria con pagamento senza allegato
     Given viene creata una nuova notifica bonaria con valori di default
-    And destinatario bonario
-      | recipientType         | PF                  |
-      | taxId                 | FRMTTR76M06B715E    |
-      | denomination          | Ettore Fieramosca   |
-      | payment_noticeCode    | 302000000000000001 |
-      | payment_multy_number  | 2                  |
-      | attachment_sha256     | NULL               |
+    And destinatario della notifica bonaria
+      | recipientType        | PF                 |
+      | taxId                | FRMTTR76M06B715E   |
+      | denomination         | Ettore Fieramosca  |
+      | payment_noticeCode   | 302000000000000001 |
+      | payment_multy_number | 2                  |
+      | attachment_sha256    | NULL               |
     When viene inviata una nuova notifica bonaria
     Then si riceve errore 400
 
 
-
   Scenario: Invio bonaria multidestinatario con più pagamenti
     Given viene creata una nuova notifica bonaria con valori di default
-    And destinatario bonario
-      | recipientType         | PF                |
-      | taxId                 | ABCDEF12A01H501X  |
-      | denomination          | Mario Rossi       |
-      | payment_noticeCode    | 302000000000000010 |
-      | payment_multy_number  | 2                |
-    And destinatario bonario
-      | recipientType         | PG                |
-      | taxId                 | 20517490320       |
-      | denomination          | ACME SPA          |
-      | payment_noticeCode    | 302000000000000020 |
-      | payment_multy_number  | 1                |
+    And destinatario della notifica bonaria
+      | recipientType        | PF                 |
+      | taxId                | ABCDEF12A01H501X   |
+      | denomination         | Mario Rossi        |
+      | payment_noticeCode   | 302000000000000010 |
+      | payment_multy_number | 2                  |
+    And destinatario della notifica bonaria
+      | recipientType        | PG                 |
+      | taxId                | 20517490320        |
+      | denomination         | ACME SPA           |
+      | payment_noticeCode   | 302000000000000020 |
+      | payment_multy_number | 1                  |
     When viene inviata una nuova notifica bonaria
     Then l'operazione non ha generato errori
 
 
   Scenario: Invio bonaria con più pagamenti PagoPA
     Given viene creata una nuova notifica bonaria con valori di default
-    And destinatario bonario
-      | recipientType         | PF                  |
-      | taxId                 | FRMTTR76M06B715E    |
-      | denomination          | Ettore Fieramosca   |
-      | payment_noticeCode    | 302000000000000001 |
-      | payment_multy_number  | 3                  |
-      | payment_creditorTaxId | 77777777777        |
-      | attachment_sha256     | 1QKD/Ks6BohyQ+bgMxHf9NrpNhVmGUPxRYE1aerU4JQ= |
-      | attachment_key        | PAGOPA_MULTI.pdf   |
-      | attachment_version_token | V1              |
+    And destinatario della notifica bonaria
+      | recipientType            | PF                                           |
+      | taxId                    | FRMTTR76M06B715E                             |
+      | denomination             | Ettore Fieramosca                            |
+      | payment_noticeCode       | 302000000000000001                           |
+      | payment_multy_number     | 3                                            |
+      | payment_creditorTaxId    | 77777777777                                  |
+      | attachment_sha256        | 1QKD/Ks6BohyQ+bgMxHf9NrpNhVmGUPxRYE1aerU4JQ= |
+      | attachment_key           | PAGOPA_MULTI.pdf                             |
+      | attachment_version_token | V1                                           |
     When viene inviata una nuova notifica bonaria
     Then l'operazione non ha generato errori
 

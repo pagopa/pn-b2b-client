@@ -15,7 +15,6 @@ import static it.pagopa.pn.cucumber.utils.NotificationInformalValue.*;
 @Component
 public class InformalNotificationRequestMapper {
 
-
     // New message
     public NewMessageRequest buildNewMessageRequest(Map<String, String> data) {
         NewMessageRequestPrimaryMessage primaryMessage = buildMessageContent(
@@ -34,7 +33,6 @@ public class InformalNotificationRequestMapper {
                 .primaryMessage(primaryMessage)
                 .additionalMessage(additionalMessage);
     }
-
     // New Informal Notification
     public InformalNotificationRequestV1 buildInformalNotificationRequest(Map<String, String> data) {
         InformalNotificationRequestV1 request = new InformalNotificationRequestV1();
@@ -47,26 +45,20 @@ public class InformalNotificationRequestMapper {
         request.setSubject(getValue(data, SUBJECT.key));
         request.setGroup(getValue(data, GROUP.key));
 
-
         String notifLang = getValue(data, NOTIFICATION_ADDITIONAL_LANGUAGE.key);
         if (notifLang != null) {
             request.setAdditionalLanguages(List.of(notifLang));
         }
-
 
         //request.setRecipients(List.of(buildRecipient(data)));
 
         //  NESSUN DESTINATARIO DI DEFAULT
         request.setRecipients(new ArrayList<>());
 
-
-
         request.setDocuments(List.of(buildDocument(data)));
         return request;
     }
-
     // builder
-
     private NewMessageRequestPrimaryMessage buildMessageContent(
             String subject,
             String longBody,
@@ -83,7 +75,6 @@ public class InformalNotificationRequestMapper {
         content.setLanguage(language);
         return content;
     }
-
     private NewMessageRequestAdditionalMessage buildAdditionalMessageContent(
             String subject,
             String longBody,
@@ -100,7 +91,6 @@ public class InformalNotificationRequestMapper {
         content.setLanguage(language);
         return content;
     }
-
     private InformalNotificationRecipientV1 buildRecipient(Map<String, String> data) {
         InformalNotificationRecipientV1 informalNotificationRecipient = new InformalNotificationRecipientV1();
 
@@ -111,13 +101,10 @@ public class InformalNotificationRequestMapper {
         informalNotificationRecipient.setTaxId(getValue(data, RECIPIENT_TAX_ID.key));
         informalNotificationRecipient.setDenomination(getValue(data, RECIPIENT_DENOMINATION.key));
 
-
         String messageId = getValue(data, MESSAGE_ID.key);
         if (messageId != null) {
             informalNotificationRecipient.setMessageId(UUID.fromString(messageId));
         }
-
-
         if (getValue(data, PEC_ADDRESS.key) != null) {
             informalNotificationRecipient.setDigitalDomicile(new NotificationDigitalAddress()
                     .type(NotificationDigitalAddress.TypeEnum.PEC)
@@ -130,17 +117,12 @@ public class InformalNotificationRequestMapper {
         int paymentCount = Integer.parseInt(
                 getValue(data, PAYMENT_COUNT.key)
         );
-
         List<InformalNotificationPaymentItem> payments =
                 new ArrayList<>();
 
         for (int i = 0; i < paymentCount; i++) {
             payments.add(buildPaymentItem(data));
         }
-
-
-
-
         return informalNotificationRecipient;
     }
 
