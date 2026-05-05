@@ -114,10 +114,10 @@ Feature: : Debugger Client Assertion Sync Bearer
     And "PA1" richiede la validazione della client assertion appena creata
     And si ottiene response status code 200
     Then i risultati di validazione sono:
-      | step                      | result | errors              |
-      | clientAssertionValidation | FAILED | [jsonWebTokenError] |
-      | publicKeyRetrieve                    | SKIPPED | []     |
-      | clientAssertionSignatureVerification | SKIPPED | []     |
+      | step                                 | result  | errors              |
+      | clientAssertionValidation            | FAILED  | [jsonWebTokenError] |
+      | publicKeyRetrieve                    | SKIPPED | []                  |
+      | clientAssertionSignatureVerification | SKIPPED | []                  |
 
   Scenario: [VALIDATION_INVALID_FORMAT_ERROR_CONSUMER_CLIENT] Dato un client CONSUMER valido, quando la client assertion è malformata allora la validazione formale fallisce con errore invalidClientAssertionFormat
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
@@ -143,22 +143,43 @@ Feature: : Debugger Client Assertion Sync Bearer
     And "PA1" richiede la validazione della client assertion appena creata
     And si ottiene response status code 200
     Then i risultati di validazione sono:
-      | step                                 | result  | errors |
+      | step                                 | result  | errors           |
       | clientAssertionValidation            | FAILED  | [notBeforeError] |
-      | publicKeyRetrieve                    | SKIPPED | []     |
-      | clientAssertionSignatureVerification | SKIPPED | []     |
+      | publicKeyRetrieve                    | SKIPPED | []               |
+      | clientAssertionSignatureVerification | SKIPPED | []               |
 
-    #Bug aperto: https://pagopa.atlassian.net/browse/PIN-9993
-  Scenario: [VALIDATION_INVALID_CLAIM_CONSUMER_CLIENT] Dato un client CONSUMER valido, quando il clientId (iss) non è in formato valido allora la validazione formale fallisce con errore invalidClientIdFormat
+  #Bug aperto: https://pagopa.atlassian.net/browse/PIN-9993
+  Scenario Outline: [VALIDATION_INVALID_CLAIM_CONSUMER_CLIENT] Dato un client CONSUMER valido, quando il claim <claim> non è in formato valido allora la validazione formale fallisce con errore <expectedError>
+    Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
+    And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
+    When "PA1" crea una client assertion per un client di tipo CONSUMER con:
+      | claim   | value   |
+      | <claim> | <value> |
+    And "PA1" richiede la validazione della client assertion appena creata
+    And si ottiene response status code 200
+    Then i risultati di validazione sono:
+      | step                                 | result  | errors            |
+      | clientAssertionValidation            | FAILED  | [<expectedError>] |
+      | publicKeyRetrieve                    | SKIPPED | []                |
+      | clientAssertionSignatureVerification | SKIPPED | []                |
+
+    Examples:
+      | claim | value      | expectedError         |
+      | iss   | not-a-uuid | invalidClientIdFormat |
+      | sub   | not-a-uuid | invalidSubjectFormat  |
+
+    #TODO: dipende da https://pagopa.atlassian.net/browse/PIN-9993
+  Scenario: [VALIDATION_INVALID_CLAIMS_CONSUMER_CLIENT] Dato un client CONSUMER valido, quando diversi claims sono in formato valido allora la validazione formale fallisce con errore clientAssertionInvalidClaims
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
     When "PA1" crea una client assertion per un client di tipo CONSUMER con:
       | claim | value      |
       | iss   | not-a-uuid |
+      | sub   | not-a-uuid |
     And "PA1" richiede la validazione della client assertion appena creata
     And si ottiene response status code 200
     Then i risultati di validazione sono:
-      | step                                 | result  | errors |
-      | clientAssertionValidation            | FAILED  | [invalidClientIdFormat] |
-      | publicKeyRetrieve                    | SKIPPED | []     |
-      | clientAssertionSignatureVerification | SKIPPED | []     |
+      | step                                 | result  | errors                         |
+      | clientAssertionValidation            | FAILED  | [clientAssertionInvalidClaims] |
+      | publicKeyRetrieve                    | SKIPPED | []                             |
+      | clientAssertionSignatureVerification | SKIPPED | []                             |
