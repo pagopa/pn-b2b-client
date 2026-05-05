@@ -14,6 +14,7 @@ Feature: : Debugger Client Assertion Sync Bearer
       | clientAssertionValidation            | PASSED | []     |
       | publicKeyRetrieve                    | PASSED | []     |
       | clientAssertionSignatureVerification | PASSED | []     |
+      | platformStatesVerification           | PASSED | []     |
 
   Scenario Outline: [VALIDATION_INVALID_TYPE_ERROR_CONSUMER_CLIENT] Dato un client CONSUMER valido, quando il grant_type è <grant_type> e la client_assertion_type è <client_assertion_type>  allora la validazione formale fallisce con errore <expectedError>
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
@@ -26,6 +27,7 @@ Feature: : Debugger Client Assertion Sync Bearer
       | clientAssertionValidation            | FAILED  | [<expectedError>] |
       | publicKeyRetrieve                    | SKIPPED | []                |
       | clientAssertionSignatureVerification | SKIPPED | []                |
+      | platformStatesVerification           | SKIPPED | []                |
 
     Examples:
       | client_assertion_type                                  | grant_type         | expectedError                          |
@@ -46,6 +48,7 @@ Feature: : Debugger Client Assertion Sync Bearer
       | clientAssertionValidation            | FAILED  | [invalidAudience] |
       | publicKeyRetrieve                    | SKIPPED | []                |
       | clientAssertionSignatureVerification | SKIPPED | []                |
+      | platformStatesVerification           | SKIPPED | []                |
 
   Scenario Outline: [VALIDATION_NOT_FOUND_ERROR_CONSUMER_CLIENT] Dato un client CONSUMER valido, quando il claim <claimToRemove> non è presente allora la validazione formale fallisce con errore <expectedError>"
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
@@ -60,6 +63,7 @@ Feature: : Debugger Client Assertion Sync Bearer
       | clientAssertionValidation            | FAILED  | [<expectedError>] |
       | publicKeyRetrieve                    | SKIPPED | []                |
       | clientAssertionSignatureVerification | SKIPPED | []                |
+      | platformStatesVerification           | SKIPPED | []                |
 
     Examples:
       | claimToRemove | expectedError    |
@@ -88,8 +92,9 @@ Feature: : Debugger Client Assertion Sync Bearer
       | clientAssertionValidation            | FAILED  | [jtiNotFound, issuedAtNotFound, audienceNotFound, expNotFound, issuerNotFound, subjectNotFound] |
       | publicKeyRetrieve                    | SKIPPED | []                                                                                              |
       | clientAssertionSignatureVerification | SKIPPED | []                                                                                              |
+      | platformStatesVerification           | SKIPPED | []                                                                                              |
 
-    #TODO: da passare ai test per la fase 3
+    #TODO: da passare ai test per la fase 3, rieseguire per verificare cosa fa platformStatesVerification
   Scenario: [VALIDATION_EXPIRED_ERROR_CONSUMER_CLIENT] Dato un client CONSUMER valido, quando il token è scaduto allora la validazione formale fallisce con errore 0017
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
@@ -99,10 +104,11 @@ Feature: : Debugger Client Assertion Sync Bearer
     And "PA1" richiede la validazione della client assertion appena creata
     And si ottiene response status code 200
     Then i risultati di validazione sono:
-      | step                                 | result | errors              |
-      | clientAssertionValidation            | PASSED | []                  |
-      | publicKeyRetrieve                    | PASSED | []                  |
-      | clientAssertionSignatureVerification | FAILED | [tokenExpiredError] |
+      | step                                 | result  | errors              |
+      | clientAssertionValidation            | PASSED  | []                  |
+      | publicKeyRetrieve                    | PASSED  | []                  |
+      | clientAssertionSignatureVerification | FAILED  | [tokenExpiredError] |
+      | platformStatesVerification           | SKIPPED | []                  |
 
     #TODO: l'errore restituito è invalidClientAssertionFormat, verificare se è possibile riprodurre jsonWebTokenError
   Scenario: [VALIDATION_JWT_ERROR_CONSUMER_CLIENT] Dato un client CONSUMER valido, quando il JWT non è interpretabile allora la validazione formale fallisce con errore jsonWebTokenError
@@ -118,6 +124,7 @@ Feature: : Debugger Client Assertion Sync Bearer
       | clientAssertionValidation            | FAILED  | [jsonWebTokenError] |
       | publicKeyRetrieve                    | SKIPPED | []                  |
       | clientAssertionSignatureVerification | SKIPPED | []                  |
+      | platformStatesVerification           | SKIPPED | []                  |
 
   Scenario: [VALIDATION_INVALID_FORMAT_ERROR_CONSUMER_CLIENT] Dato un client CONSUMER valido, quando la client assertion è malformata allora la validazione formale fallisce con errore invalidClientAssertionFormat
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
@@ -132,6 +139,7 @@ Feature: : Debugger Client Assertion Sync Bearer
       | clientAssertionValidation            | FAILED  | [invalidClientAssertionFormat] |
       | publicKeyRetrieve                    | SKIPPED | []                             |
       | clientAssertionSignatureVerification | SKIPPED | []                             |
+      | platformStatesVerification           | SKIPPED | []                             |
 
     #TODO: lo scenario fallisce per errore clientAssertionInvalidClaims, nbf è però un claim standarnd, verificare se è corretto
   Scenario: [VALIDATION_ERROR_CODE_0019_CONSUMER_CLIENT] Dato un client CONSUMER valido, quando il claim nbf è nel futuro allora la validazione formale fallisce con errore notBeforeError
@@ -147,6 +155,7 @@ Feature: : Debugger Client Assertion Sync Bearer
       | clientAssertionValidation            | FAILED  | [notBeforeError] |
       | publicKeyRetrieve                    | SKIPPED | []               |
       | clientAssertionSignatureVerification | SKIPPED | []               |
+      | platformStatesVerification           | SKIPPED | []               |
 
   #Bug aperto: https://pagopa.atlassian.net/browse/PIN-9993
   Scenario Outline: [VALIDATION_INVALID_CLAIM_CONSUMER_CLIENT] Dato un client CONSUMER valido, quando il claim <claim> non è in formato valido allora la validazione formale fallisce con errore <expectedError>
@@ -162,6 +171,7 @@ Feature: : Debugger Client Assertion Sync Bearer
       | clientAssertionValidation            | FAILED  | [<expectedError>] |
       | publicKeyRetrieve                    | SKIPPED | []                |
       | clientAssertionSignatureVerification | SKIPPED | []                |
+      | platformStatesVerification           | SKIPPED | []                |
 
     Examples:
       | claim | value      | expectedError         |
@@ -183,3 +193,4 @@ Feature: : Debugger Client Assertion Sync Bearer
       | clientAssertionValidation            | FAILED  | [clientAssertionInvalidClaims] |
       | publicKeyRetrieve                    | SKIPPED | []                             |
       | clientAssertionSignatureVerification | SKIPPED | []                             |
+      | platformStatesVerification           | SKIPPED | []                             |
