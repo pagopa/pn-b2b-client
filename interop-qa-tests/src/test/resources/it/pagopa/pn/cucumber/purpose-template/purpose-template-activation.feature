@@ -29,7 +29,7 @@ Feature: finalità agevolata, purpose template ACTIVATION
     And viene creato un nuovo purpose template
     And il purpose template creato viene correttamente spostato in stato <stato>
     And si ottiene lo status code 200
-    And il purpose template creato viene correttamente spostato in stato <stato>
+    And il purpose template creato viene spostato in stato <stato>
     Then si ottiene lo status code 409
     Examples:
       | stato     |
