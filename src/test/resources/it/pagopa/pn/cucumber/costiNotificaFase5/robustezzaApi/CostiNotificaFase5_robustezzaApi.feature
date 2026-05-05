@@ -3,7 +3,7 @@ Feature: Costi Notifica Fase 5
 #PST: https://pagopa.atlassian.net/wiki/spaces/PN/pages/2849800311/DRAFT+PST+PN-18622+Costi+Notifica+BE+-+fase+5
 
   @costiNotificaFase5 @CNF5_FF_ENABLED
-  Scenario: [CFN5_ROBUSTEZZA_API_INSERIMENTO_COSTI] Verifica la robustezza dell'API di inizializzazione dei costi passando una serie di parametri
+  Scenario: [CNF5_ROBUSTEZZA_API_INSERIMENTO_COSTI] Verifica la robustezza dell'API di inizializzazione dei costi passando una serie di parametri
     Given viene generata una nuova notifica
       | subject            | test costi notifica fase 5 |
       | senderDenomination | Comune di palermo          |

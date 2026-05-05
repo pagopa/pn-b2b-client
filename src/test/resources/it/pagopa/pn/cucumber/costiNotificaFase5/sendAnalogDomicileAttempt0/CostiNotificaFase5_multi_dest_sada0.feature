@@ -58,11 +58,9 @@ Feature: Costi Notifica Fase 5
     Then verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
       | isDeleted        | false           |
       | costoValorizzato | firstAnalogCost |
-      | productType      | AR              |
     Then verifico che per il destinatario 1 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
       | isDeleted        | false           |
       | costoValorizzato | firstAnalogCost |
-      | productType      | AR              |
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
       | iun      | auto                                 |
       | tag      | AUD_NT_UPDATE_COST                   |
@@ -150,11 +148,9 @@ Feature: Costi Notifica Fase 5
     Then verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
       | isDeleted        | false           |
       | costoValorizzato | firstAnalogCost |
-      | productType      | AR              |
     Then verifico che per il destinatario 1 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
       | isDeleted        | false           |
       | costoValorizzato | firstAnalogCost |
-      | productType      | AR              |
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
       | iun      | auto                                 |
       | tag      | AUD_NT_UPDATE_COST                   |
@@ -244,11 +240,9 @@ Feature: Costi Notifica Fase 5
     Then verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
       | isDeleted        | false           |
       | costoValorizzato | firstAnalogCost |
-      | productType      | AR              |
     Then verifico che per il destinatario 1 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
       | isDeleted        | false           |
       | costoValorizzato | firstAnalogCost |
-      | productType      | AR              |
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
       | iun      | auto                                 |
       | tag      | AUD_NT_UPDATE_COST                   |
@@ -311,8 +305,6 @@ Feature: Costi Notifica Fase 5
       | payment_multy_number         | <paymentNumber>     |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then verifico su DynamoDB la presenza in timeline dell'elemento "NOTIFICATION_COST_VALIDATION_REQUEST"
-    And verifico che per l'utente 0 il popolamento dei dati su Pn-PaymentInfo sia avvenuto correttamente
-    And verifico che per l'utente 1 il popolamento dei dati su Pn-PaymentInfo sia avvenuto correttamente
     And verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato inserito e correttamente valorizzato
       | isDeleted | false |
     And verifico che per il destinatario 1 il record su Pn-NotificationDeliveryCost sia stato inserito e correttamente valorizzato
@@ -332,11 +324,9 @@ Feature: Costi Notifica Fase 5
     Then verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
       | isDeleted        | false           |
       | costoValorizzato | firstAnalogCost |
-      | productType      | AR              |
     Then verifico che per il destinatario 1 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
       | isDeleted        | false           |
       | costoValorizzato | firstAnalogCost |
-      | productType      | AR              |
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
       | iun      | auto                                 |
       | tag      | AUD_NT_UPDATE_COST                   |

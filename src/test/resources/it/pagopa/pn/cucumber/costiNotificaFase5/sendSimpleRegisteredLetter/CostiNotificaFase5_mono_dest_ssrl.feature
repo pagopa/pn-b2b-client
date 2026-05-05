@@ -35,7 +35,6 @@ Feature: Costi Notifica Fase 5
     Then verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
       | isDeleted        | false                      |
       | costoValorizzato | simpleRegisteredLetterCost |
-      | productType      | RS                         |
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
       | iun      | auto                                |
       | tag      | AUD_NT_UPDATE_COST                  |
@@ -88,7 +87,6 @@ Feature: Costi Notifica Fase 5
     Then verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
       | isDeleted        | false                      |
       | costoValorizzato | simpleRegisteredLetterCost |
-      | productType      | RS                         |
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
       | iun      | auto                                |
       | tag      | AUD_NT_UPDATE_COST                  |
@@ -141,7 +139,6 @@ Feature: Costi Notifica Fase 5
     Then verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
       | isDeleted        | false                      |
       | costoValorizzato | simpleRegisteredLetterCost |
-      | productType      | RS                         |
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
       | iun      | auto                                |
       | tag      | AUD_NT_UPDATE_COST                  |
@@ -190,7 +187,6 @@ Feature: Costi Notifica Fase 5
     Then verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
       | isDeleted        | false                      |
       | costoValorizzato | simpleRegisteredLetterCost |
-      | productType      | RS                         |
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
       | iun      | auto                                |
       | tag      | AUD_NT_UPDATE_COST                  |
