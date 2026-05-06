@@ -57,10 +57,10 @@ public class LegalFactContentVerifySteps {
     @Setter
     private String legalFactType;
 
-    @Value("${pn.notification-older-10-years}")
+    @Value("${pn.notification-mario.gherkin.older-10-years}")
     private String notificationIun10years;
 
-    @Value("${pn.legalFact-older-10-years}")
+    @Value("${pn.legalFact-mario.gherkin.older-10-years}")
     private String legalFactId10years;
 
     @Autowired
