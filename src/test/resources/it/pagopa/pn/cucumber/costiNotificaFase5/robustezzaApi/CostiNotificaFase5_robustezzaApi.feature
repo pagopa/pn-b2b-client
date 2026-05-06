@@ -46,10 +46,10 @@ Feature: Costi Notifica Fase 5
       | payment_multy_number    | 1                         |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then verifico su DynamoDB la presenza in timeline dell'elemento "NOTIFICATION_COST_VALIDATION_REQUEST"
+    And verifico su DynamoDB la presenza in timeline dell'elemento "NOTIFICATION_COST_VALIDATION_RESPONSE"
     And verifico che per l'utente 0 il popolamento dei dati su Pn-PaymentInfo sia avvenuto correttamente
     And verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato inserito e correttamente valorizzato
       | isDeleted | false |
-    And verifico su DynamoDB la presenza in timeline dell'elemento "NOTIFICATION_COST_VALIDATION_RESPONSE"
     Then verifico che l'API di recupero costi da Pn-PaymentInfo produca un errore quando viene richiamata passando "creditorTaxId errato"
     And verifico che l'API di recupero costi da Pn-PaymentInfo produca un errore quando viene richiamata passando "noticeCode errato"
     And verifico che l'API di recupero costi da Pn-PaymentInfo produca un errore quando viene richiamata passando "creditorTaxId inesistente"
