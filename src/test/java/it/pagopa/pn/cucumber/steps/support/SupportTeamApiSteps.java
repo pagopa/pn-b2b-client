@@ -73,7 +73,7 @@ public class SupportTeamApiSteps {
                 this.exception = e;
             }
         } else {
-            log.warn("Nessuna strategy trovata per la API: {}", api);
+            throw new IllegalArgumentException("Nessuna strategy configurata per la API: " + api);
         }
     }
 
@@ -123,7 +123,7 @@ public class SupportTeamApiSteps {
 
     private void getSentNotificationPayment() {
         BffNotificationsResponse bffNotificationsResponse = searchSentNotification();
-        assert bffNotificationsResponse.getResultsPage() != null;
+        assertNotNull(bffNotificationsResponse.getResultsPage(), "La ricerca delle notifiche non ha restituito alcun risultato");
         for (NotificationSearchRow notificationSearchRow : bffNotificationsResponse.getResultsPage()) {
             BffFullNotificationV1 bffFullNotificationV1 = getSentNotification(notificationSearchRow.getIun());
             if (!bffFullNotificationV1.getDocuments().isEmpty()) {
