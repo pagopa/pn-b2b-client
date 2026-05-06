@@ -1402,7 +1402,6 @@ Feature: Radd Alternative
 
   @raddAlt
   Scenario: [RADD-ALT_ACT-20A] PF - Scansione QR code esistente associato al CF corretto, ma relativo a una notifica con perfezionamento > 120 giorni
-   # Given imposto lo iun di SharedSteps a "TNVW-GKGN-ZJWX-202508-A-1" e la pa a "Comune_1"
     When Il cittadino Mario Gherkin come destinatario 0 mostra il QRCode "dopo 120gg"
     Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
@@ -1412,7 +1411,6 @@ Feature: Radd Alternative
 
   @raddAlt
   Scenario: [RADD-ALT_ACT-20B] PF - Scansione QR code esistente associato al CF corretto, ma relativo a una notifica con perfezionamento > 120 giorni
-   # Given imposto lo iun di SharedSteps a "TNVW-GKGN-ZJWX-202508-A-1" e la pa a "Comune_1"
     When Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "dopo 120gg"
     Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
