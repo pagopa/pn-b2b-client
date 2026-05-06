@@ -32,14 +32,14 @@ Feature: Costi Notifica Fase 5
       | recIndex | recIndex=0         |
       | phase    | phase=VALIDATION   |
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
-    Then verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
-      | isDeleted        | false                      |
-      | costoValorizzato | simpleRegisteredLetterCost |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
+    Then verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
       | iun      | auto                                |
       | tag      | AUD_NT_UPDATE_COST                  |
       | recIndex | recIndex=0                          |
       | phase    | phase=SEND_SIMPLE_REGISTERED_LETTER |
+    And verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
+      | isDeleted        | false                      |
+      | costoValorizzato | simpleRegisteredLetterCost |
     And verifico che i valori restituiti dalle nuove api di recupero costi per l'utente 0 coincidano con quelli restituiti da delivery-push
       | paFee     | 17          |
       | applyCost | <applyCost> |
@@ -84,14 +84,14 @@ Feature: Costi Notifica Fase 5
       | recIndex | recIndex=0         |
       | phase    | phase=VALIDATION   |
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
-    Then verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
-      | isDeleted        | false                      |
-      | costoValorizzato | simpleRegisteredLetterCost |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
+    Then verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
       | iun      | auto                                |
       | tag      | AUD_NT_UPDATE_COST                  |
       | recIndex | recIndex=0                          |
       | phase    | phase=SEND_SIMPLE_REGISTERED_LETTER |
+    And verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
+      | isDeleted        | false                      |
+      | costoValorizzato | simpleRegisteredLetterCost |
     And verifico che i valori restituiti dalle nuove api di recupero costi per l'utente 0 coincidano con quelli restituiti da delivery-push
       | paFee     | 17          |
       | applyCost | <applyCost> |
@@ -136,14 +136,14 @@ Feature: Costi Notifica Fase 5
       | recIndex | recIndex=0         |
       | phase    | phase=VALIDATION   |
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
-    Then verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
-      | isDeleted        | false                      |
-      | costoValorizzato | simpleRegisteredLetterCost |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
+    Then verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
       | iun      | auto                                |
       | tag      | AUD_NT_UPDATE_COST                  |
       | recIndex | recIndex=0                          |
       | phase    | phase=SEND_SIMPLE_REGISTERED_LETTER |
+    And verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
+      | isDeleted        | false                      |
+      | costoValorizzato | simpleRegisteredLetterCost |
     And verifico che i valori restituiti dalle nuove api di recupero costi per l'utente 0 coincidano con quelli restituiti da delivery-push
       | paFee     | 17          |
       | applyCost | <applyCost> |
@@ -184,14 +184,14 @@ Feature: Costi Notifica Fase 5
       | recIndex | recIndex=0         |
       | phase    | phase=VALIDATION   |
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
-    Then verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
-      | isDeleted        | false                      |
-      | costoValorizzato | simpleRegisteredLetterCost |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
+    Then verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
       | iun      | auto                                |
       | tag      | AUD_NT_UPDATE_COST                  |
       | recIndex | recIndex=0                          |
       | phase    | phase=SEND_SIMPLE_REGISTERED_LETTER |
+    And verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
+      | isDeleted        | false                      |
+      | costoValorizzato | simpleRegisteredLetterCost |
     And verifico che i valori restituiti dalle nuove api di recupero costi per l'utente 0 coincidano con quelli restituiti da delivery-push
       | paFee     | 17          |
       | applyCost | <applyCost> |

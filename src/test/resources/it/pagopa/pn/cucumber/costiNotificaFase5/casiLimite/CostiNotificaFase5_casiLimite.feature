@@ -53,6 +53,8 @@ Feature: Costi Notifica Fase 5
       | tag      | AUD_NT_UPDATE_COST           |
       | recIndex | recIndex=0                   |
       | phase    | phase=NOTIFICATION_CANCELLED |
+    And verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
+      | isDeleted | true |
 
   @costiNotificaFase5 @CNF5_FF_ENABLED
   Scenario Outline: [CNF5_ANNULLAMENTO_POST_AGGIORNAMENTO_COSTI] Invio di una notifica mono-destinatario con pagamento/i PagoPA(sync) che preveda un elemento SEND_SIMPLE_REGISTERED_LETTER e successivo annullamento e azzeramento dei costi
@@ -100,13 +102,13 @@ Feature: Costi Notifica Fase 5
       | feePolicy | <feePolicy> |
     When la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
-    Then verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
-      | isDeleted | true |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
+    Then verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 10 minuti riportante i seguenti dati nel messaggio
       | iun      | auto                         |
       | tag      | AUD_NT_UPDATE_COST           |
       | recIndex | recIndex=0                   |
       | phase    | phase=NOTIFICATION_CANCELLED |
+    And verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
+      | isDeleted | true |
     Examples:
       | feePolicy     | applyCost |
       | DELIVERY_MODE | SI        |
