@@ -63,9 +63,15 @@ public class PresaInCaricoNoticaBonariaSteps {
     private MessageResponse messageResponse;
     private UUID messageId;
     private Exception lastException;
+    private String savedIun;
 
     private NewInformalNotificationResponse newInformalNotificationResponse;
     private InformalNotificationRequestMapper informalNotificationRequestMapper;
+    private NotificationAttachmentDownloadMetadataResponse attachmentResponse;
+
+    private NewInformalNotificationRequestStatusResponseV1 statusResponse;
+    private String savedNotificationRequestId;
+
 
     @Autowired
     public PresaInCaricoNoticaBonariaSteps(InformalNotificationRequestMapper informalNotificationRequestMapper, PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl, SharedSteps sharedSteps, TimingForPolling timingForPolling, IPnPrivateDeliveryPushExternalClient pnPrivateDeliveryPushExternalClient) {
@@ -124,47 +130,17 @@ public class PresaInCaricoNoticaBonariaSteps {
         recipient.setPayments(payments);
     }
 
-    @When("si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie")
-    public void createNewInformalMessage(NewMessageRequest newMessageRequest) {
-        try {
-            this.messageResponse = pnPaB2bInternalInformalClientImpl.createMessage(newMessageRequest);
-            assertNotNull(this.messageResponse.getMessageId(), "messageId non valorizzato: creazione messaggio fallita");
-            this.messageId = this.messageResponse.getMessageId();
-            this.lastException = null;
-        } catch (Exception e) {
-            this.lastException = e;
-            this.messageResponse = null;
-            this.messageId = null;
-        }
-    }
-
-    @Then("tento il recupero del messaggio precedentemente creato per le comunicazioni bonarie")
-    public void getInformalMessage() {
-        try {
-            messageResponse = pnPaB2bInternalInformalClientImpl.getMessage(messageId);
-            lastException = null;
-        } catch (Exception e) {
-            lastException = e;
-            messageResponse = null;
-        }
-    }
-
-    @Then("tento il recupero del messaggio per le comunicazioni bonarie con message id {string}")
-    public void getInformalMessageById(String messageIdString) {
-        UUID messageId = toUuid(messageIdString);
-        try {
-            messageResponse = pnPaB2bInternalInformalClientImpl.getMessage(messageId);
-            lastException = null;
-        } catch (Exception e) {
-            lastException = e;
-            messageResponse = null;
-        }
-    }
-
     @Then("viene inviata una nuova notifica bonaria")
     public void sendInformal() {
         try {
             newInformalNotificationResponse = pnPaB2bInternalInformalClientImpl.sendNewInformalNotificationV1(informalNotificationRequestV1);
+
+            //TODO t bonarie -> savedIun =
+
+            savedNotificationRequestId =
+                    newInformalNotificationResponse.getNotificationRequestId();
+
+
             lastException = null;
         } catch (Exception e) {
             lastException = e;
@@ -174,7 +150,7 @@ public class PresaInCaricoNoticaBonariaSteps {
         }
     }
 
-    @And("la notifica bonaria viene inviata dal {string} ")
+    @And("mittente della notifica bonaria: {string}")
     public void setSenderInformal(String paName) {
 
         switch (paName) {
@@ -216,6 +192,157 @@ public class PresaInCaricoNoticaBonariaSteps {
         assertNotNull(messageResponse, "La response non deve essere null");
 
     }
+
+    //*** STEP ALLEGATI PAGAMENTO
+
+    @When("si tenta il recupero allegato pagamento della notifica bonaria")
+    public void getAttachment() {
+        try {
+            attachmentResponse = pnPaB2bInternalInformalClientImpl.getSentInformalNotificationAttachment(savedIun, 0, 0);
+
+            lastException = null;
+
+        } catch (Exception e) {
+            lastException = e;
+            attachmentResponse = null;
+        }
+    }
+
+    @When("si tenta il recupero allegato pagamento con IUN {string}")
+    public void getAttachmentWithIun(String iun) {
+        try {
+            attachmentResponse = pnPaB2bInternalInformalClientImpl.getSentInformalNotificationAttachment(iun, 0, 0);
+
+            lastException = null;
+
+        } catch (Exception e) {
+            lastException = e;
+            attachmentResponse = null;
+        }
+    }
+
+    @When("si tenta il recupero allegato pagamento con recipient {int} e attachment {int}")
+    public void getAttachmentCustom(int recipientIdx, int attachmentIdx) {
+        try {
+            attachmentResponse = pnPaB2bInternalInformalClientImpl.getSentInformalNotificationAttachment(savedIun, recipientIdx, attachmentIdx);
+
+            lastException = null;
+
+        } catch (Exception e) {
+            lastException = e;
+            attachmentResponse = null;
+        }
+    }
+
+    //*** STEP MESSAGGI ***
+
+    @When("si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie")
+    public void createNewInformalMessage(NewMessageRequest newMessageRequest) {
+        try {
+            this.messageResponse = pnPaB2bInternalInformalClientImpl.createMessage(newMessageRequest);
+            assertNotNull(this.messageResponse.getMessageId(), "messageId non valorizzato: creazione messaggio fallita");
+            this.messageId = this.messageResponse.getMessageId();
+            this.lastException = null;
+        } catch (Exception e) {
+            this.lastException = e;
+            this.messageResponse = null;
+            this.messageId = null;
+        }
+    }
+
+    @Then("tento il recupero del messaggio precedentemente creato per le comunicazioni bonarie")
+    public void getInformalMessage() {
+        try {
+            messageResponse = pnPaB2bInternalInformalClientImpl.getMessage(messageId);
+            lastException = null;
+        } catch (Exception e) {
+            lastException = e;
+            messageResponse = null;
+        }
+    }
+
+    @Then("tento il recupero del messaggio per le comunicazioni bonarie con message id {string}")
+    public void getInformalMessageById(String messageIdString) {
+        UUID messageId = toUuid(messageIdString);
+        try {
+            messageResponse = pnPaB2bInternalInformalClientImpl.getMessage(messageId);
+            lastException = null;
+        } catch (Exception e) {
+            lastException = e;
+            messageResponse = null;
+        }
+    }
+
+    //*** RECUPERO DOCUMENTI ***
+
+
+    @When("si tenta il recupero documento della notifica bonaria")
+    public void getDocument() {
+        try {
+            attachmentResponse =
+                    pnPaB2bInternalInformalClientImpl.getSentInformalNotificationDocument(savedIun, 0);
+
+            lastException = null;
+
+        } catch (Exception e) {
+            lastException = e;
+            attachmentResponse = null;
+        }
+    }
+
+
+    @When("si tenta il recupero documento con indice {int}")
+    public void getDocumentWithIndex(int docIdx) {
+        try {
+            attachmentResponse =
+                    pnPaB2bInternalInformalClientImpl
+                            .getSentInformalNotificationDocument(savedIun, docIdx);
+
+            lastException = null;
+
+        } catch (Exception e) {
+            lastException = e;
+            attachmentResponse = null;
+        }
+    }
+
+
+    @When("si tenta il recupero documento con IUN {string}")
+    public void getDocumentWithIun(String iun) {
+        try {
+            attachmentResponse =
+                    pnPaB2bInternalInformalClientImpl
+                            .getSentInformalNotificationDocument(iun, 0);
+
+            lastException = null;
+
+        } catch (Exception e) {
+            lastException = e;
+            attachmentResponse = null;
+        }
+    }
+
+    //*** STATO DELLA NOTIFICA
+
+    @When("si verifica lo stato della richiesta di notifica bonaria")
+    public void getNotificationStatus() {
+        try {
+            statusResponse =
+                    pnPaB2bInternalInformalClientImpl
+                            .getNotificationStatusByRequestId(
+                                    savedNotificationRequestId
+                            );
+
+            lastException = null;
+
+        } catch (Exception e) {
+            lastException = e;
+            statusResponse = null;
+        }
+    }
+
+
+
 
     public UUID toUuid(String value) {
         if (value == null || value.isBlank()) {

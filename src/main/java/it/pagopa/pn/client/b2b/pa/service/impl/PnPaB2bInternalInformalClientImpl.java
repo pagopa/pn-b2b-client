@@ -1,5 +1,6 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.api.InformalNotificationTerminationApi;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.api.MessagesApi;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.api.NewInformalNotificationApi;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.api.SenderReadInformalNotificationB2BApi;
@@ -22,6 +23,7 @@ public class PnPaB2bInternalInformalClientImpl {
     private final MessagesApi messagesApi;
     private final SenderReadInformalNotificationB2BApi senderReadInformalNotificationB2BApi;
     private final NewInformalNotificationApi newInformalNotificationApi;
+    private final InformalNotificationTerminationApi informalNotificationTerminationApi;
 
     private final List<String> groups;
 
@@ -39,7 +41,7 @@ public class PnPaB2bInternalInformalClientImpl {
         this.messagesApi = new MessagesApi(newInformalApiClient(restTemplate, deliveryBasePath));
         this.senderReadInformalNotificationB2BApi = new SenderReadInformalNotificationB2BApi(newInformalApiClient(restTemplate, deliveryBasePath));
         this.newInformalNotificationApi = new NewInformalNotificationApi(newInformalApiClient(restTemplate, deliveryBasePath));
-
+        this.informalNotificationTerminationApi = new InformalNotificationTerminationApi();
     }
 
     private static it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.ApiClient newInformalApiClient(RestTemplate restTemplate, String basePath) {
@@ -60,20 +62,25 @@ public class PnPaB2bInternalInformalClientImpl {
         return newInformalNotificationApi.sendNewInformalNotificationV1(operatorId, CxTypeAuthFleet.PA, cxId, "B2B", informalNotificationRequestV1, groups, null, null);
     }
 
-    public NewInformalNotificationRequestStatusResponseV1 getInformalNotificationRequestStatusV1(String notificationRequestId) throws RestClientException {
-        return senderReadInformalNotificationB2BApi.getInformalNotificationRequestStatusV1(operatorId, CxTypeAuthFleet.PA, paId, groups, notificationRequestId, null, null);
-    }
-
-    public NotificationAttachmentDownloadMetadataResponse getSentInformalNotificationAttachment(String xPagopaPnUid, CxTypeAuthFleet xPagopaPnCxType, String xPagopaPnCxId, String iun, Integer recipientIdx, String attachmentName, List<String> xPagopaPnCxGroups, Integer attachmentIdx) throws RestClientException {
-        return senderReadInformalNotificationB2BApi.getSentInformalNotificationAttachment(operatorId, CxTypeAuthFleet.PA, paId, iun, recipientIdx, attachmentName, xPagopaPnCxGroups, attachmentIdx);
-    }
-
-    public NotificationAttachmentDownloadMetadataResponse getSentInformalNotificationDocument(String xPagopaPnUid, CxTypeAuthFleet xPagopaPnCxType, String xPagopaPnCxId, String iun, Integer docIdx, List<String> xPagopaPnCxGroups) throws RestClientException {
-        return senderReadInformalNotificationB2BApi.getSentInformalNotificationDocument(operatorId, CxTypeAuthFleet.PA, paId, iun, docIdx, xPagopaPnCxGroups);
+    public NewInformalNotificationRequestStatusResponseV1 getNotificationStatusByRequestId(String notificationRequestId) {
+        return senderReadInformalNotificationB2BApi.getInformalNotificationRequestStatusV1(operatorId, CxTypeAuthFleet.PA, cxId, groups, notificationRequestId, null, null);
     }
 
 
-    public void setCxId(String cxId) {this.cxId = cxId;
+    public NotificationAttachmentDownloadMetadataResponse getSentInformalNotificationDocument(String iun, int docIdx) {
+        return senderReadInformalNotificationB2BApi.getSentInformalNotificationDocument(operatorId, CxTypeAuthFleet.PA, cxId, iun, docIdx, groups);
+    }
+
+    public NotificationAttachmentDownloadMetadataResponse getSentInformalNotificationAttachment(String iun, int recipientIdx, int attachmentIdx) {
+        return senderReadInformalNotificationB2BApi.getSentInformalNotificationAttachment(operatorId, CxTypeAuthFleet.PA, cxId, iun, recipientIdx, "PAGOPA", groups, attachmentIdx);
+    }
+
+    public TerminationRequestStatus terminateInformalWorkflow(String xPagopaPnUid, CxTypeAuthFleet xPagopaPnCxType, String xPagopaPnCxId, String iun, List<String> xPagopaPnCxGroups) throws RestClientException {
+        return informalNotificationTerminationApi.terminateInformalWorkflow(xPagopaPnUid, xPagopaPnCxType, xPagopaPnCxId, iun, xPagopaPnCxGroups);
+    }
+
+    public void setCxId(String cxId) {
+        this.cxId = cxId;
     }
 
 }

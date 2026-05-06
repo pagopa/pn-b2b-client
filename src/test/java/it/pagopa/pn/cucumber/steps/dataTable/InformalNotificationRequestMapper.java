@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import static it.pagopa.pn.cucumber.utils.NotificationInformalValue.*;
 
@@ -91,59 +90,6 @@ public class InformalNotificationRequestMapper {
         content.setLanguage(language);
         return content;
     }
-    private InformalNotificationRecipientV1 buildRecipient(Map<String, String> data) {
-        InformalNotificationRecipientV1 informalNotificationRecipient = new InformalNotificationRecipientV1();
-
-        informalNotificationRecipient.setRecipientType(
-                InformalNotificationRecipientV1.RecipientTypeEnum
-                        .fromValue(getValue(data, RECIPIENT_TYPE.key))
-        );
-        informalNotificationRecipient.setTaxId(getValue(data, RECIPIENT_TAX_ID.key));
-        informalNotificationRecipient.setDenomination(getValue(data, RECIPIENT_DENOMINATION.key));
-
-        String messageId = getValue(data, MESSAGE_ID.key);
-        if (messageId != null) {
-            informalNotificationRecipient.setMessageId(UUID.fromString(messageId));
-        }
-        if (getValue(data, PEC_ADDRESS.key) != null) {
-            informalNotificationRecipient.setDigitalDomicile(new NotificationDigitalAddress()
-                    .type(NotificationDigitalAddress.TypeEnum.PEC)
-                    .address(getValue(data, PEC_ADDRESS.key))
-            );
-        }
-        // Payments
-        informalNotificationRecipient.setPayments(List.of(buildPaymentItem(data)));
-
-        int paymentCount = Integer.parseInt(
-                getValue(data, PAYMENT_COUNT.key)
-        );
-        List<InformalNotificationPaymentItem> payments =
-                new ArrayList<>();
-
-        for (int i = 0; i < paymentCount; i++) {
-            payments.add(buildPaymentItem(data));
-        }
-        return informalNotificationRecipient;
-    }
-
-//    private InformalNotificationPaymentItem buildPaymentItem(Map<String, String> data) {
-//        PagoPaPayment pagoPa = new PagoPaPayment()
-//                .noticeCode(getValue(data, PAGOPA_NOTICE_CODE.key))
-//                .creditorTaxId(getValue(data, PAGOPA_CREDITOR_TAX_ID.key))
-//                .applyCost(true);
-//
-//        InformalNotificationPaymentItem item = new InformalNotificationPaymentItem();
-//        item.setPagoPa(pagoPa);
-//        return item;
-//    }
-
-//    private NotificationDocument buildDocument(Map<String, String> data) {
-//        NotificationDocument d = new NotificationDocument();
-//        d.setTitle(getValue(data, DOCUMENT_TITLE.key));
-//        d.setDocIdx(getValue(data, DOCUMENT_DOCIDX.key));
-//        d.setContentType("application/pdf");
-//        return d;
-//    }
 
     public NotificationPaymentAttachment buildPaymentAttachment(
             Map<String, String> data) {
@@ -169,34 +115,17 @@ public class InformalNotificationRequestMapper {
         NotificationPaymentAttachment attachment =
                 new NotificationPaymentAttachment();
         attachment.setDigests(digests);
-        attachment.setContentType("application/pdf");
+
+        String contentType = getValue(data, "attachment_contentType");
+        attachment.setContentType(
+                contentType != null ? contentType : "application/pdf"
+        );
+
         attachment.setRef(ref);
 
         return attachment;
     }
-
-    private InformalNotificationPaymentItem buildPaymentItem(
-            Map<String, String> data) {
-
-        PagoPaPaymentBase pagoPaBase = new PagoPaPaymentBase()
-                .noticeCode(
-                        getValue(data, PAGOPA_NOTICE_CODE.key)
-                )
-                .creditorTaxId(
-                        getValue(data, PAGOPA_CREDITOR_TAX_ID.key)
-                )
-                //.applyCost(false)
-                .attachment(
-                        buildPaymentAttachment(data)
-                );
-
-        InformalNotificationPaymentItem item =
-                new InformalNotificationPaymentItem();
-        item.setPagoPa(pagoPaBase);
-
-        return item;
-    }
-
+//todo t bonarie usare i default
     private NotificationDocument buildDocument(Map<String, String> data) {
 
         NotificationAttachmentDigests digests =
@@ -225,6 +154,65 @@ public class InformalNotificationRequestMapper {
 
         return document;
     }
+
+    //TODO metodi commentati- offrivano dei valori di default, ora queste request sono popolate da step dedicati.
+
+//    private InformalNotificationRecipientV1 buildRecipient(Map<String, String> data) {
+//        InformalNotificationRecipientV1 informalNotificationRecipient = new InformalNotificationRecipientV1();
+//
+//        informalNotificationRecipient.setRecipientType(
+//                InformalNotificationRecipientV1.RecipientTypeEnum
+//                        .fromValue(getValue(data, RECIPIENT_TYPE.key))
+//        );
+//        informalNotificationRecipient.setTaxId(getValue(data, RECIPIENT_TAX_ID.key));
+//        informalNotificationRecipient.setDenomination(getValue(data, RECIPIENT_DENOMINATION.key));
+//
+//        String messageId = getValue(data, MESSAGE_ID.key);
+//        if (messageId != null) {
+//            informalNotificationRecipient.setMessageId(UUID.fromString(messageId));
+//        }
+//        if (getValue(data, PEC_ADDRESS.key) != null) {
+//            informalNotificationRecipient.setDigitalDomicile(new NotificationDigitalAddress()
+//                    .type(NotificationDigitalAddress.TypeEnum.PEC)
+//                    .address(getValue(data, PEC_ADDRESS.key))
+//            );
+//        }
+//        // Payments
+//        informalNotificationRecipient.setPayments(List.of(buildPaymentItem(data)));
+//
+//        int paymentCount = Integer.parseInt(
+//                getValue(data, PAYMENT_COUNT.key)
+//        );
+//        List<InformalNotificationPaymentItem> payments =
+//                new ArrayList<>();
+//
+//        for (int i = 0; i < paymentCount; i++) {
+//            payments.add(buildPaymentItem(data));
+//        }
+//        return informalNotificationRecipient;
+//    }
+
+//    private InformalNotificationPaymentItem buildPaymentItem(
+//            Map<String, String> data) {
+//
+//        PagoPaPaymentBase pagoPaBase = new PagoPaPaymentBase()
+//                .noticeCode(
+//                        getValue(data, PAGOPA_NOTICE_CODE.key)
+//                )
+//                .creditorTaxId(
+//                        getValue(data, PAGOPA_CREDITOR_TAX_ID.key)
+//                )
+//                //.applyCost(false)
+//                .attachment(
+//                        buildPaymentAttachment(data)
+//                );
+//
+//        InformalNotificationPaymentItem item =
+//                new InformalNotificationPaymentItem();
+//        item.setPagoPa(pagoPaBase);
+//
+//        return item;
+//    }
 }
 
 

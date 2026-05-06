@@ -1,7 +1,5 @@
 package it.pagopa.pn.cucumber.utils;
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.*;
-
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
@@ -127,96 +125,86 @@ public enum NotificationInformalValue {
         return finalNumber;
     }
 
-    private NotificationPaymentAttachment buildPaymentAttachment(
-            Map<String, String> data) {
+//    private NotificationPaymentAttachment buildPaymentAttachment(
+//            Map<String, String> data) {
+//
+//        // Digests
+//        NotificationAttachmentDigests digests =
+//                new NotificationAttachmentDigests();
+//        digests.setSha256(
+//                getValue(data, "attachment_sha256")
+//        );
+//
+//        // Ref
+//        NotificationAttachmentBodyRef ref =
+//                new NotificationAttachmentBodyRef();
+//        ref.setKey(
+//                getValue(data, "attachment_key")
+//        );
+//        ref.setVersionToken(
+//                getValue(data, "attachment_version_token")
+//        );
+//
+//        // Attachment
+//        NotificationPaymentAttachment attachment =
+//                new NotificationPaymentAttachment();
+//        attachment.setDigests(digests);
+//        attachment.setContentType("application/pdf");
+//        attachment.setRef(ref);
+//
+//        return attachment;
+//    }
 
-        // Digests
-        NotificationAttachmentDigests digests =
-                new NotificationAttachmentDigests();
-        digests.setSha256(
-                getValue(data, "attachment_sha256")
-        );
-
-        // Ref
-        NotificationAttachmentBodyRef ref =
-                new NotificationAttachmentBodyRef();
-        ref.setKey(
-                getValue(data, "attachment_key")
-        );
-        ref.setVersionToken(
-                getValue(data, "attachment_version_token")
-        );
-
-        // Attachment
-        NotificationPaymentAttachment attachment =
-                new NotificationPaymentAttachment();
-        attachment.setDigests(digests);
-        attachment.setContentType("application/pdf");
-        attachment.setRef(ref);
-
-        return attachment;
-    }
-
-    private InformalNotificationPaymentItem buildPaymentItem(
-            Map<String, String> data) {
-
-
-        PagoPaPaymentBase pagoPa = new
-                PagoPaPaymentBase()
-                .noticeCode(
-                        getValue(data, PAGOPA_NOTICE_CODE.key)
-                )
-                .creditorTaxId(
-                        getValue(data, PAGOPA_CREDITOR_TAX_ID.key)
-                )
-                //.applyCost(false)
-                .attachment(
-                        buildPaymentAttachment(data)
-                );
-
-        InformalNotificationPaymentItem item =
-                new InformalNotificationPaymentItem();
-        item.setPagoPa(pagoPa);
-
-        return item;
-    }
-
-    private NotificationDocument buildDocument(Map<String, String> data) {
-
-        NotificationAttachmentDigests digests =
-                new NotificationAttachmentDigests();
-        digests.setSha256(
-                getValue(data, "document_sha256")
-        );
-
-        NotificationAttachmentBodyRef ref =
-                new NotificationAttachmentBodyRef();
-        ref.setKey(
-                getValue(data, "document_key")
-        );
-        ref.setVersionToken(
-                getValue(data, "document_version_token")
-        );
-
-        NotificationDocument document =
-                new NotificationDocument();
-        document.setDigests(digests);
-        document.setContentType("application/pdf");
-        document.setRef(ref);
-
-        document.setTitle(getValue(data, DOCUMENT_TITLE.key));
-        document.setDocIdx(getValue(data, DOCUMENT_DOCIDX.key));
-
-        return document;
-    }
-
-
-
-    //    public static String getValue(Map<String, String> data, String key) {
-//        if (data.containsKey(key)) {
-//            return data.get(key).equals(NULL_VALUE) ? null : (data.get(key).contains("_CHAR") ? getCharSeq(data.get(key)) : data.get(key));
-//        } else {
-//            return getDefaultValue(key);
-//        }
+//    private InformalNotificationPaymentItem buildPaymentItem(
+//            Map<String, String> data) {
+//
+//
+//        PagoPaPaymentBase pagoPa = new
+//                PagoPaPaymentBase()
+//                .noticeCode(
+//                        getValue(data, PAGOPA_NOTICE_CODE.key)
+//                )
+//                .creditorTaxId(
+//                        getValue(data, PAGOPA_CREDITOR_TAX_ID.key)
+//                )
+//                //.applyCost(false)
+//                .attachment(
+//                        buildPaymentAttachment(data)
+//                );
+//
+//        InformalNotificationPaymentItem item =
+//                new InformalNotificationPaymentItem();
+//        item.setPagoPa(pagoPa);
+//
+//        return item;
+//    }
+//
+//    private NotificationDocument buildDocument(Map<String, String> data) {
+//
+//        NotificationAttachmentDigests digests =
+//                new NotificationAttachmentDigests();
+//        digests.setSha256(
+//                getValue(data, "document_sha256")
+//        );
+//
+//        NotificationAttachmentBodyRef ref =
+//                new NotificationAttachmentBodyRef();
+//        ref.setKey(
+//                getValue(data, "document_key")
+//        );
+//        ref.setVersionToken(
+//                getValue(data, "document_version_token")
+//        );
+//
+//        NotificationDocument document =
+//                new NotificationDocument();
+//        document.setDigests(digests);
+//        document.setContentType("application/pdf");
+//        document.setRef(ref);
+//
+//        document.setTitle(getValue(data, DOCUMENT_TITLE.key));
+//        document.setDocIdx(getValue(data, DOCUMENT_DOCIDX.key));
+//
+//        return document;
 //    }
 }

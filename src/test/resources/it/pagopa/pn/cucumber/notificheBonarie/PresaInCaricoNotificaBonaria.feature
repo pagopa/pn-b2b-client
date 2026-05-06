@@ -1,17 +1,25 @@
 Feature: Sottomissione di una notifica bonaria.
 
 
-  Scenario: [NOTIFICHE_BONARIE_TEST_01] Creazione di un messaggio tutti i campi compilati
+  Scenario: [NOTIFICHE_BONARIE_TEST_01] Solo per Testing -> Creazione di un messaggio tutti i campi compilati
     Given si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
       | primary_subject             | primary_long_body                       | primary_short_body                      | primary_language | additional_subject | additional_long_body                    |
       | Sollecito di pagamento 2023 | Gentile cittadino, la informiamo che... | Sollecito: hai una nuova comunicazione. | it               | Sollecito.         | Gentile cittadino, la informiamo che... |
 
 
-  Scenario: [NOTIFICHE_BONARIE_TEST_02] Invio di una notifica bonaria tutti i campi compilati
+  Scenario: [NOTIFICHE_BONARIE_TEST_02] Solo per Testing -> Invio di una notifica bonaria tutti i campi compilati
     Given viene creata una nuova notifica bonaria con i seguenti parametri
       | senderDenomination | senderTaxId | paProtocolNumber | idempotenceToken | campaignId | messageId                            | subject        | additional_language | recipient_type | recipient_tax_id | recipient_denomination | pec_address       | pagopa_notice_code | pagopa_creditor_tax_id | document_title      | document_docidx | group      |
       | Comune di Milano   | 77777777777 | PROT-123         | TOKEN-ABC        | CAMP-001   | 3fa85f64-5717-4562-b3fc-2c963f66afa6 | Sollecito Tari | fr                  | PF             | 57143494439      | Mario Rossi            | account@domain.it | 302000100000019421 | 77777777777            | Avviso di pagamento | 1               | TEST-GROUP |
     Then viene inviata una nuova notifica bonaria
+
+
+
+
+#  SCENARIO 1 - Preload del documento.
+#  CASO DI TEST 1.1  Invio dei documenti allegati al destinatario.
+#  Scenario: [NOTIFICHE_BONARIE_MESSAGGI_05] Creazione di un nuovo messaggio con valori di default.
+
 
 
 
@@ -37,8 +45,9 @@ Feature: Sottomissione di una notifica bonaria.
 
 
 #  CASO DI TEST 2.2  Errore sulla Creazione di un messaggio.
+
 #  Scenario: [NOTIFICHE_BONARIE_MESSAGGI_07_1] Come ente mittente non abilitato alla creazione di un messaggio ricevo un errore sulla creazione di un nuovo messaggio.
-#    #todo t bonarie
+#    #todo t bonarie ente non abilitato
 
 
   Scenario Outline: [NOTIFICHE_BONARIE_MESSAGGI_07_2] Come ente mittente ricevo un errore sulla creazione di un nuovo messaggio non valorizzando campi obbligatori.
@@ -76,7 +85,7 @@ Feature: Sottomissione di una notifica bonaria.
       |                    | 10001_CHAR           |                       |
       |                    |                      | 161_CHAR              |
 
-  Scenario Outline: [NOTIFICHE_BONARIE_MESSAGGI_07_4] Come ente mittente ricevo un Errore sulla creazione di un nuovo messaggio compilando i campi relativi alla lingua in maniera non conforme.
+  Scenario Outline: [NOTIFICHE_BONARIE_MESSAGGI_07_5] Come ente mittente ricevo un Errore sulla creazione di un nuovo messaggio compilando i campi relativi alla lingua in maniera non conforme.
     Given si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
       | primary_language   | additional_language   |
       | <primary_language> | <additional_language> |
@@ -106,65 +115,47 @@ Feature: Sottomissione di una notifica bonaria.
 
 
 #  SCENARIO  - Sottomissione di una notifica bonaria.
+
 #  CASO DI TEST .1 Validazione della richiesta di invio notifica bonaria.
   @informalNotifications
-  Scenario: [NOTIFICHE_BONARIE_SOTTOMISSIONE_14A] Come ente mittente creo una nuova notifica bonaria utilizzando valori di default.
-  Con whitelist vuota ricevo un errore 403 Forbidden.
-    When viene creata una nuova notifica bonaria con i seguenti parametri
-      | additionalLanguages |
-      | NULL                |
-    Then la notifica bonaria viene inviata tramite api b2b dal "Comune_1"
-    Then viene inviata una nuova notifica bonaria
-    Then si riceve errore 403
-
-
-  Scenario: [NOTIFICHE_BONARIE_SOTTOMISSIONE_14] Invio di una notifica bonaria con campi di default
-    When viene creata una nuova notifica bonaria con valori di default
-    #Then la notifica bonaria viene inviata tramite api b2b dal "Comune_1"
-    Then viene inviata una nuova notifica bonaria
-
-
-
-
-
-##  SCENARIO 1 - Preload del documento.
-##  CASO DI TEST 1.1  Invio dei documenti allegati al destinatario.
-#  Scenario: [NOTIFICHE_BONARIE_MESSAGGI_05] Creazione di un nuovo messaggio con valori di default.
-#
-##  CASO DI TEST .1 Mancata validazione della richiesta di invio notifica bonaria.
-#  Scenario: [NOTIFICHE_BONARIE_15] Invio di una notifica bonaria con messaggio predefinito di campagna
-#
-##  SCENARIO 5 - Download dei documenti.
-##  CASO DI TEST 5.1 Corretto Download dei documenti notificati.
-#  Scenario: [NOTIFICHE_BONARIE_10] Invio di una notifica bonaria con messaggio predefinito di campagna
-#
-##  CASO DI TEST 5.2 Corretto Download degli allegati di pagamento di una notifica.
-#  Scenario: [NOTIFICHE_BONARIE_11] Invio di una notifica bonaria con messaggio predefinito di campagna
-#
-##  CASO DI TEST 5.3 Errore Download dei documenti.
-#  Scenario: [NOTIFICHE_BONARIE_12] Invio di una notifica bonaria con messaggio predefinito di campagna
-#
-##  CASO DI TEST 5.4 Errore Download degli allegati di pagamento.
-#  Scenario: [NOTIFICHE_BONARIE_13] Invio di una notifica bonaria con messaggio predefinito di campagna
-
-
-
-
-  Scenario: Invio bonaria con pagamento senza allegato
-    Given viene creata una nuova notifica bonaria con valori di default
+  Scenario: Invio one-to-many con messaggio di campagna
+    Given mittente della notifica bonaria: "COMUNE_1"
+    And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria
       | recipientType        | PF                 |
       | taxId                | FRMTTR76M06B715E   |
       | denomination         | Ettore Fieramosca  |
-      | payment_noticeCode   | 302000000000000001 |
-      | payment_multy_number | 2                  |
-      | attachment_sha256    | NULL               |
     When viene inviata una nuova notifica bonaria
-    Then si riceve errore 400
+    Then l'operazione non ha generato errori
 
+
+  Scenario: Invio one-to-one con messageId
+    Given mittente della notifica bonaria: "COMUNE_1"
+    #And viene creato un nuovo messaggio
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | messageId | <ID_MSG> |
+    And destinatario della notifica bonaria
+      | recipient_type | PF |
+    When viene inviata una nuova notifica bonaria
+    Then l'operazione non ha generato errori
+
+
+  Scenario: One-to-one con lingua non coerente (non validato)
+    Given mittente della notifica bonaria: "COMUNE_1"
+    #And viene creato un nuovo messaggio
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | messageId           | <ID_MSG_MONOLINGUA> |
+      | additionalLanguages | FR                  |
+    And destinatario della notifica bonaria
+      | recipientType        | PF                 |
+      | taxId                | FRMTTR76M06B715E   |
+      | denomination         | Ettore Fieramosca  |
+    When viene inviata una nuova notifica bonaria
+    Then l'operazione non ha generato errori
 
   Scenario: Invio bonaria multidestinatario con più pagamenti
-    Given viene creata una nuova notifica bonaria con valori di default
+    Given mittente della notifica bonaria: "COMUNE_1"
+    And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria
       | recipientType        | PF                 |
       | taxId                | ABCDEF12A01H501X   |
@@ -182,7 +173,8 @@ Feature: Sottomissione di una notifica bonaria.
 
 
   Scenario: Invio bonaria con più pagamenti PagoPA
-    Given viene creata una nuova notifica bonaria con valori di default
+    Given mittente della notifica bonaria: "COMUNE_1"
+    And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria
       | recipientType            | PF                                           |
       | taxId                    | FRMTTR76M06B715E                             |
@@ -197,8 +189,326 @@ Feature: Sottomissione di una notifica bonaria.
     Then l'operazione non ha generato errori
 
 
+# ADD vas e lingue
 
 
 
+
+#  CASO DI TEST .1 Mancata validazione della richiesta di invio notifica bonaria.
+
+
+
+  Scenario: Ente mittente non censito in whitelist per MVP
+    Given mittente della notifica bonaria: "COMUNE_2"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipient_type         | PF                |
+      | recipient_tax_id       | FRMTTR76M06B715E  |
+      | recipient_denomination | Ettore Fieramosca |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 403
+
+
+  Scenario: Invio bonaria con tre allegati di pagamento
+    Given mittente della notifica bonaria: "COMUNE_1"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipient_type         | PF                |
+      | recipient_tax_id       | FRMTTR76M06B715E  |
+      | recipient_denomination | Ettore Fieramosca |
+      | payment_multy_number   | 3                 |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 400
+
+
+  Scenario: Invio bonaria con senderTaxId custom
+    Given mittente della notifica bonaria: "COMUNE_1"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | senderTaxId        | 20517490320    |
+      | senderDenomination | Comune di Test |
+    And destinatario della notifica bonaria
+      | recipientType        | PF                 |
+      | taxId                | FRMTTR76M06B715E   |
+      | denomination         | Ettore Fieramosca  |
+    Then si riceve errore 400
+
+
+  Scenario: Invio bonaria verso tre destinatari - errore 400
+    Given mittente della notifica bonaria: "COMUNE_1"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipientType        | PF                 |
+      | taxId                | FRMTTR76M06B715E   |
+      | denomination         | Ettore Fieramosca  |
+    And destinatario della notifica bonaria
+      | recipient_type         | PF               |
+      | recipient_tax_id       | *** |
+      | recipient_denomination | ***     |
+    And destinatario della notifica bonaria
+      | recipient_type         | PF |
+      | recipient_tax_id       |  ***  |
+      | recipient_denomination | ***   |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 400
+
+
+  Scenario: Invio bonaria con lingua secondaria non supportata 1
+    Given mittente della notifica bonaria: "COMUNE_1"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | additionalLanguages | XX |
+    And destinatario della notifica bonaria
+      | recipientType        | PF                 |
+      | taxId                | FRMTTR76M06B715E   |
+      | denomination         | Ettore Fieramosca  |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 400
+
+
+  Scenario: Invio bonaria con 2 lingue secondarie 2
+    Given mittente della notifica bonaria: "COMUNE_1"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | additionalLanguages | XX |
+    And destinatario della notifica bonaria
+      | recipient_type         | PF               |
+      | recipient_tax_id       | FRMTTR76M06B715E |
+      | recipient_denomination | Mario Cucumber   |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 400
+
+
+  Scenario: Lingua secondaria non presente nella campagna
+    Given mittente della notifica bonaria: "COMUNE_1"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId          | campaign-it-only |
+      | additionalLanguages | FR               |
+    And destinatario della notifica bonaria
+      | recipient_type | PF |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 400
+
+
+  Scenario: Verso PG con CF non conforme
+    Given mittente della notifica bonaria: "COMUNE_1"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipient_type   | PG          |
+      | recipient_tax_id | ABCDEF12345 |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 400
+
+
+  Scenario: Verso PF con CF non conforme
+    Given mittente della notifica bonaria: "COMUNE_1"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipient_type   | PF     |
+      | recipient_tax_id | ABC123 |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 400
+
+
+#  ADD :Invio con numero di pagamenti inclusi superiore al limite configurato.
+
+
+#  Invio di una tipologia di file dichiarata (Content-Type) NON coerente con l'estensione o il formato del file effettivamente caricato sul sistema di storage (FileKey).
+
+  Scenario: Invio con fileKey non coerente con contentType del pagamento
+    Given mittente della notifica bonaria: "COMUNE_1"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipient_type         | PF                |
+      | recipient_tax_id       | FRMTTR76M06B715E  |
+      | recipient_denomination | Ettore Fieramosca |
+      | attachment_key         | FILE_NON_PDF.txt  |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 400
+
+  Scenario: Invio con fileKey non coerente con contentType del pagamento
+    Given mittente della notifica bonaria: "COMUNE_1"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipient_type         | PF                |
+      | recipient_tax_id       | FRMTTR76M06B715E  |
+      | recipient_denomination | Ettore Fieramosca |
+
+      | attachment_contentType | application/xml   |
+      | attachment_key         | FILE.pdf          |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 400
+
+
+#  Invio con recapito fisico (indirizzo, civico, località, CAP, provincia, nazione) NON conforme agli standard di postalizzazione,
+
+
+#  Invio di un indirizzo nazionale con il campo provincia mancante o nullo.
+  Scenario: Invio con indirizzo nazionale senza provincia
+    Given mittente della notifica bonaria: "COMUNE_1"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipient_type            | PF                |
+      | recipient_tax_id          | FRMTTR76M06B715E  |
+      | recipient_denomination    | Ettore Fieramosca |
+      | physicalAddress           | SI                |
+      | physical_address_state    | ITALIA            |
+      | physical_address_province | NULL              |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 400
+
+
+#  Invio richiesta con campi Denominazione e Presso(AT) non conformi.
+
+#  Invio di risorsa (documento principale e avvisi di pagamento) duplicata.
+
+#  Campi obbligatori mancanti.
+
+
+
+
+  Scenario: Invio bonaria con pagamento senza allegato
+    Given mittente della notifica bonaria: "COMUNE_1"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipientType        | PF                 |
+      | taxId                | FRMTTR76M06B715E   |
+      | denomination         | Ettore Fieramosca  |
+      | payment_noticeCode   | 302000000000000001 |
+      | payment_multy_number | 2                  |
+      | attachment_sha256    | NULL               |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 400
+
+
+
+
+#  SCENARIO 5 - Download dei documenti.
+
+#  CASO DI TEST 5.1 Corretto Download dei documenti notificati.
+  Scenario: Recupero allegato pagamento - OK
+    Given mittente della notifica bonaria: "COMUNE_1"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipientType        | PF                 |
+      | taxId                | FRMTTR76M06B715E   |
+      | denomination         | Ettore Fieramosca  |
+    When viene inviata una nuova notifica bonaria
+    And si tenta il recupero allegato pagamento della notifica bonaria
+    Then l'operazione non ha generato errori
+
+
+#  CASO DI TEST 5.3 Errore Download dei documenti.
+
+  Scenario: Recupero allegato pagamento PA diversa
+    Given mittente della notifica bonaria: "COMUNE_1"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipientType        | PF                 |
+      | taxId                | FRMTTR76M06B715E   |
+      | denomination         | Ettore Fieramosca  |
+    When viene inviata una nuova notifica bonaria
+    Given mittente della notifica bonaria: "COMUNE_2"
+    When si tenta il recupero allegato pagamento della notifica bonaria
+    Then si riceve errore 403
+
+
+
+    When si tenta il recupero allegato pagamento con IUN "fake"
+    Then si riceve errore 404
+
+
+    When si tenta il recupero allegato pagamento con recipient 0 e attachment 5
+    Then si riceve errore 404
+
+
+    When si tenta il recupero allegato pagamento con recipient 5 e attachment 0
+    Then si riceve errore 404
+
+
+
+
+#  CASO DI TEST 5.2 Corretto Download degli allegati di pagamento di una notifica.
+
+
+  Scenario: Recupero documento bonaria - OK
+    Given mittente della notifica bonaria: "COMUNE_1"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipientType        | PF                 |
+      | taxId                | FRMTTR76M06B715E   |
+      | denomination         | Ettore Fieramosca  |
+    When viene inviata una nuova notifica bonaria
+    And si tenta il recupero documento della notifica bonaria
+    Then l'operazione non ha generato errori
+
+
+#  CASO DI TEST 5.4 Errore Download degli allegati di pagamento.
+
+
+
+  Scenario: Recupero documento con indice non valido
+    Given mittente della notifica bonaria: "COMUNE_1"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipientType        | PF                 |
+      | taxId                | FRMTTR76M06B715E   |
+      | denomination         | Ettore Fieramosca  |
+    When viene inviata una nuova notifica bonaria
+    When si tenta il recupero documento con indice 5
+    Then si riceve errore 404
+
+
+  Scenario: Recupero documento con IUN inesistente
+    Given mittente della notifica bonaria: "COMUNE_1"
+    When si tenta il recupero documento con IUN "fake"
+    Then si riceve errore 404
+
+
+  Scenario: Recupero documento con PA non autorizzata
+    Given mittente della notifica bonaria: "COMUNE_1"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipientType        | PF                 |
+      | taxId                | FRMTTR76M06B715E   |
+      | denomination         | Ettore Fieramosca  |
+    When viene inviata una nuova notifica bonaria
+
+    Given mittente della notifica bonaria: "COMUNE_2"
+    When si tenta il recupero documento della notifica bonaria
+    Then si riceve errore 403
+
+
+ #  SCENARIO 6 - Stato della notifica.
+
+
+  Scenario: Verifica stato richiesta bonaria - OK
+    Given mittente della notifica bonaria: "COMUNE_1"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipientType        | PF                 |
+      | taxId                | FRMTTR76M06B715E   |
+      | denomination         | Ettore Fieramosca  |
+    When viene inviata una nuova notifica bonaria
+    And si verifica lo stato della richiesta di notifica bonaria
+    Then l'operazione non ha generato errori
+
+
+  Scenario: Verifica stato con parametri incoerenti
+    Given la PA bonaria "COMUNE_1"
+    When si verifica lo stato con requestId e protocollo insieme
+    Then si riceve errore 400
+
+
+  Scenario: Verifica stato con PA non autorizzata
+    Given la PA bonaria "COMUNE_1"
+    And viene inviata una notifica bonaria valida
+
+    Given la PA bonaria "COMUNE_2"
+    When si verifica lo stato della richiesta di notifica bonaria
+    Then si riceve errore 403
+
+
+  Scenario: Verifica stato con requestId inesistente
+    Given la PA bonaria "COMUNE_1"
+    When si verifica lo stato della richiesta di notifica bonaria con id "fake"
+    Then si riceve errore 404
 
 
