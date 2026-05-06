@@ -1232,7 +1232,7 @@ Feature: verifica validazione sincrona
       | 120102P      |
       | 120103P      |
 
-  @syncValidation @validationSenderFlagOn
+  @syncValidation @validationSenderFlagON
   Scenario: [B2B-PA-SYNC_VALIDATION_80] validazione sincrona fallita per incongruenza tra senderTaxId e taxCode con flag ON
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -1242,7 +1242,7 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "403" con messaggio di errore "PN_DELIVERY_INVALID_SENDER_TAX_ID"
 
-  @syncValidation @validationSenderFlagOFF
+  @validationSenderFlagOFF
   Scenario: [B2B-PA-SYNC_VALIDATION_81] validazione sincrona con incongruenza tra senderTaxId e taxCode con flag OFF
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
