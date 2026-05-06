@@ -1229,6 +1229,18 @@ public class AvanzamentoNotificheB2bSteps {
         b2bStepsInterface.checkIfTimelineElementExists(timelineEventCategory, true, null, null);
     }
 
+    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} al tentativo {string} per l'utente {int}")
+    public void readingEventUpToTheTimelineElementOfNotificationAtAttempt(String timelineEventCategory, String attempt, Integer recIndex) {
+        WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder()
+                .deliveryDetailCode(null)
+                .recipientIndex(recIndex)
+                .attempt(attempt)
+                .build();
+        B2bStepsInterface b2bStepsInterface = getB2bStepsInterface();
+        b2bStepsInterface.waitForEventOrStatus(TIMELINE_SLOW, TIMELINE, timelineEventCategory, filters);
+        b2bStepsInterface.checkIfTimelineElementExists(timelineEventCategory, true, null, null);
+    }
+
     @Then("viene verificato che non esista l'elemento {string} al tentativo {string}")
     public void checkToTheTimelineForElementOfNotificationAtAttemptNotExist(String timelineEventCategory, String attempt) {
         Assertions.assertThrows(AssertionFailedError.class, () -> readingEventUpToTheTimelineElementOfNotificationAtAttempt(timelineEventCategory, attempt));

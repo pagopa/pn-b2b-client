@@ -157,6 +157,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.awaitility.Awaitility.await;
 
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -1512,26 +1513,12 @@ public class SharedSteps {
                 });
                 String search = sb.toString().trim();
                 CloudWatchLogsClient cloudWatchLogsClient = awsUtils.getCloudWatchLogsClient();
-                FilterLogEventsRequest logRequest;
-                FilterLogEventsResponse logResponse = null;
-                int attempts = 0;
-                int maxAttempts = 5;
-                while (attempts < maxAttempts) {
-                    logRequest = AwsUtils.buildCloudWatchLogRequest(microservice, search, minutes);
-                    logResponse = cloudWatchLogsClient.filterLogEvents(logRequest);
-                    if (logResponse.events().size() > 0) {
-                        log.info("Total number of logs found with search {}: {}", search, logResponse.events().size());
-                        logResponse.events().forEach(event ->
-                                log.info("Log found at {}: {}", Instant.ofEpochMilli(event.timestamp()), event.message())
-                        );
-                        break;
-                    } else {
-                        attempts++;
-                        log.info("Attempt {} of finding log did not produce any result. {}", attempts, attempts < maxAttempts ? "Retrying." : "This was the last attempt.");
-                        Thread.sleep(10000);
-                    }
-                }
-                assertThat(logResponse.events().size()).as("Non è stato trovato nessun log che soddisfi la search %s", search).isGreaterThan(0);
+
+                await().atMost(2, TimeUnit.MINUTES).pollInterval(10, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(() -> {
+                    FilterLogEventsRequest logRequest = AwsUtils.buildCloudWatchLogRequest(microservice, search, minutes);
+                    FilterLogEventsResponse logResponse = cloudWatchLogsClient.filterLogEvents(logRequest);
+                    assertThat(logResponse.events().size()).as("Non è stato trovato nessun log che soddisfi la search %s", search).isGreaterThan(0);
+                });
             } catch (AssertionError assertionError) {
                 throwAssertionErrorWithIUN(assertionError);
             }

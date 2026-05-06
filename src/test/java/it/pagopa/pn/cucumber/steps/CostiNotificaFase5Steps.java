@@ -78,9 +78,9 @@ public class CostiNotificaFase5Steps {
                     assertSoftly(softly -> {
                         softly.assertThat(httpStatusCodeException.getRawStatusCode()).as("In caso di record eliminato logicamente, la get deve produrre un 404").isEqualTo(404);
                         softly.assertThat(expectedData.get("isDeleted")).as("In caso di errore 404, il flag isDeleted del record dev'essere impostato a true").isEqualToIgnoringCase("true");
-                        softly.assertThat(record.get("firstAnalogCost")).as("Sulla tabella Pn-NotificationDeliveryCost, post annullamento notifica, il campo firstAnalogCost dovrebbe essere stato riportato a null").isNull();
-                        softly.assertThat(record.get("secondAnalogCost")).as("Sulla tabella Pn-NotificationDeliveryCost, post annullamento notifica, il campo secondAnalogCost dovrebbe essere stato riportato a null").isNull();
-                        softly.assertThat(record.get("simpleRegisteredLetterCost")).as("Sulla tabella Pn-NotificationDeliveryCost, post annullamento notifica, il campo simpleRegisteredLetterCost dovrebbe essere stato riportato a null").isNull();
+                        softly.assertThat(record.get("firstAnalogCost").n()).as("Sulla tabella Pn-NotificationDeliveryCost, post annullamento notifica, il campo firstAnalogCost dovrebbe essere stato riportato a null").isNull();
+                        softly.assertThat(record.get("secondAnalogCost").n()).as("Sulla tabella Pn-NotificationDeliveryCost, post annullamento notifica, il campo secondAnalogCost dovrebbe essere stato riportato a null").isNull();
+                        softly.assertThat(record.get("simpleRegisteredLetterCost").n()).as("Sulla tabella Pn-NotificationDeliveryCost, post annullamento notifica, il campo simpleRegisteredLetterCost dovrebbe essere stato riportato a null").isNull();
                     });
                 } else {
                     throw httpStatusCodeException;
