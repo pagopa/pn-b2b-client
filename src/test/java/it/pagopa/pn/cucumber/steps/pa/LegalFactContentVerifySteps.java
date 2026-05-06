@@ -2,6 +2,7 @@ package it.pagopa.pn.cucumber.steps.pa;
 
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.model.LegalFactDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffLegalFactId;
@@ -28,6 +29,7 @@ import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.HttpStatusCodeException;
 
@@ -54,6 +56,12 @@ public class LegalFactContentVerifySteps {
     private String legalFactUrl;
     @Setter
     private String legalFactType;
+
+    @Value("${pn.notification-mario.gherkin.older-10-years}")
+    private String notificationIun10years;
+
+    @Value("${pn.legalFact-mario.gherkin.older-10-years}")
+    private String legalFactId10years;
 
     @Autowired
     public LegalFactContentVerifySteps(PnParserService pnParserService, SharedSteps sharedSteps) {
@@ -728,5 +736,30 @@ public class LegalFactContentVerifySteps {
             return key.substring(key.indexOf("PN_F24"));
         }
         return null;
+    }
+
+    /**
+     * Verifica che per un legalFact rimosso da SS dopo 10 anni, provando a recuperarlo tramite api-pubblica venga lanciato un 500, tramite api privata un 410.
+     * Il test utilizza notifiche fisse a cui sono stati impostati i seguenti valori per simulare la rimozione da ss:
+     * "documentLogicalState": "DELETED"
+     * "documentState": "deleted"
+     * Tali notifiche sono tutte state inviate da Comune_Multi a Mario Gherkin, ragion per cui i valori di pa e recipientInternalId sono impostati fissi nelle properties.
+     */
+    @Given("verifico che recuperando un legalFact rimosso da safeStorage, le api restituiscano l'errore corretto")
+    public void checkLegalFactRemovedFromSafeStorage() {
+        sharedSteps.setPA("Comune_Multi");
+        String recipientInternalId = "PF-a6c1350d-1d69-4209-8bf8-31de58c79d6e";
+        try {
+            sharedSteps.getB2bClient().getLegalFact(notificationIun10years, LegalFactCategory.DIGITAL_DELIVERY, legalFactId10years);
+        } catch (HttpStatusCodeException excApiPubblica) {
+            log.info(excApiPubblica.getMessage());
+            assertThat(excApiPubblica.getRawStatusCode()).as("La chiamata ad api pubblica deve restituire un 500").isEqualTo(500);
+        }
+        try {
+            sharedSteps.getB2bClient().getLegalFactByIdPrivate(recipientInternalId, notificationIun10years, legalFactId10years, null, null, null);
+        } catch (HttpStatusCodeException excApiPrivata) {
+            log.info(excApiPrivata.getMessage());
+            assertThat(excApiPrivata.getRawStatusCode()).as("La chiamata ad api privata deve restituire un 410").isEqualTo(410);
+        }
     }
 }
