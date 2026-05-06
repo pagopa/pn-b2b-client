@@ -53,7 +53,7 @@ public class TracciamentoEventiPeoSteps {
         this.ecInternalClient = ecInternalClient;
     }
 
-    @Given("il client in uso è {string}")
+    @Given("viene impostato il client {string}")
     public void setClientInUse(String clientId) {
         this.clientInUse = clientId;
         safeStorageClient.customApiClient(clientId);
@@ -107,7 +107,7 @@ public class TracciamentoEventiPeoSteps {
         return "safestorage://" + fileKey;
     }
 
-    @Then("recuperando la request da gestore-repository, verifico che il record abbia un'eventsList coi seguenti eventi {string}")
+    @Then("la request recuperata da gestore-repository deve avere un'eventsList con i seguenti eventi {string}")
     public void retrieveRequestFromGestoreRepository(String expectedContent) throws IOException, InterruptedException {
         log.info("Waiting 1 minute for the email to be delivered");
         Thread.sleep(60000L);

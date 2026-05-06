@@ -19,9 +19,10 @@ public class PnEcInternalClientImpl implements IPnEcInternalClient {
 
     private final GestoreRequestApi gestoreRequestApi;
 
-    public PnEcInternalClientImpl(RestTemplate restTemplate,
-                                  @Value("${pn.internal.external-channel-base-url}") String deliveryBaseUrl) {
-        this.gestoreRequestApi = new GestoreRequestApi(newApiClient(restTemplate, deliveryBaseUrl));
+    public PnEcInternalClientImpl(
+            RestTemplate restTemplate,
+            @Value("${pn.safeStorage.base-url}") String safeStorageBaseUrl) {
+        this.gestoreRequestApi = new GestoreRequestApi(newApiClient(restTemplate, safeStorageBaseUrl));
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String baseUrl) {

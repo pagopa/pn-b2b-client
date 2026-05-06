@@ -23,8 +23,8 @@ public class PnExternalChannelsInternalClientImpl implements IPnExternalChannels
 
     public PnExternalChannelsInternalClientImpl(
             RestTemplate restTemplate,
-            @Value("${pn.internal.external-channel-base-url}") String deliveryBaseUrl) {
-        this.digitalCourtesyMessagesApi = new DigitalCourtesyMessagesApi(newApiClient(restTemplate, deliveryBaseUrl));
+            @Value("${pn.safeStorage.base-url}") String safeStorageBaseUrl) {
+        this.digitalCourtesyMessagesApi = new DigitalCourtesyMessagesApi(newApiClient(restTemplate, safeStorageBaseUrl));
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String baseUrl) {

@@ -2,9 +2,9 @@ Feature: irrobustimento tracciamento eventi PEO PostaElettronicaOrdinaria (SRS: 
 
   @TracciamentoEventiPEO
   Scenario Outline: [CHECK_EVENT_STATUS]
-    Given il client in uso è "<client>"
+    Given viene impostato il client "<client>"
     When viene inviata una mail tramite PEO all'indirizzo "<emailAddress>" con allegato "<attachment>"
-    Then recuperando la request da gestore-repository, verifico che il record abbia un'eventsList coi seguenti eventi "<events>"
+    Then la request recuperata da gestore-repository deve avere un'eventsList con i seguenti eventi "<events>"
     Examples:
       | client      | emailAddress                            | attachment | events                   |
       #Client con eventi PEO censiti su pn-EcAnagrafica (confinfo)
