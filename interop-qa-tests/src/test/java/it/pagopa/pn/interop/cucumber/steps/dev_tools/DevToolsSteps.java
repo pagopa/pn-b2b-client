@@ -187,6 +187,14 @@ public class DevToolsSteps {
         clientPurposeRemoveStep.addPurposeToClient(tenantFruitore);
     }
 
+    @And("l'admin dell'erogatore {string} ha creato un eservice e l'admin del fruitore {string} ha creato una richiesta di fruizione per quell'eservice e ha associato una finalità in stato {string} a quel client")
+    public void createEserviceAndPurpose(String tenantErogatore, String tenantFruitore, String statoPurpose) {
+        agreementCommonSteps.tenantHasAlreadyCreatedAndPublishedEService(tenantErogatore, 1);
+        agreementCommonSteps.tenantAlreadyHasFruitionRequestWithState(tenantFruitore, "ACTIVE");
+        purposeCommonStep.tenantHasAlreadyCreateFinalizationWithStatus(tenantFruitore, 1, statoPurpose);
+        clientPurposeRemoveStep.addPurposeToClient(tenantFruitore);
+    }
+
     private void createCustomClientAssertion(ClientAssertionOptions.ClientType clientType, List<JwtClaimOverride> overrides) {
         DPoPTokenService.PreparedClient preparedClient = sharedStepsContext.getClientCommonContext().getLastPreparedClient();
         JwtBuilder validClientAssertion = buildValidClientAssertion(clientType);
@@ -249,6 +257,7 @@ public class DevToolsSteps {
 
                 // Comandi speciali utili per test negativi
                 case "__remove" -> removeClaim(builder, raw); // raw = nome claim da rimuovere
+                case "__removeHeader" -> removeHeader(builder, raw); // raw = nome header da rimuovere
                 case "__rawPayload" -> setRawPayload(builder, raw);
 
                 default -> throw new IllegalArgumentException("Claim non supportato: " + claim);
