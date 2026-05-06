@@ -19,6 +19,8 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
 
+import static org.awaitility.Awaitility.await;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -27,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -103,22 +106,27 @@ public class TracciamentoEventiPeoSteps {
         String secret = fileCreationResponse.getSecret();
         String url = fileCreationResponse.getUploadUrl();
 
-        B2bUtils.loadToPresignedFromByteArray(sharedSteps.getContext(), url, secret, sha256, byteArray, "text/plain");
+        B2bUtils.loadToPresignedFromByteArray(url, secret, sha256, byteArray, "text/plain");
         return "safestorage://" + fileKey;
     }
 
+
     @Then("la request recuperata da gestore-repository deve avere un'eventsList con i seguenti eventi {string}")
     public void retrieveRequestFromGestoreRepository(String expectedContent) throws IOException, InterruptedException {
-        log.info("Waiting 1 minute for the email to be delivered");
-        Thread.sleep(60000L);
+        log.info("Waiting up to 2 minutes for the email to be delivered");
+        await()
+                .atMost(2, TimeUnit.MINUTES)
+                .pollInterval(10, TimeUnit.SECONDS)
+                .ignoreExceptions()
+                .untilAsserted(() -> {
+                    RequestDto requestRetrieved = ecInternalClient.getRequest(clientInUse, requestId);
+                    log.info("Request retrieved: {}", requestRetrieved);
 
-        RequestDto requestRetrieved = ecInternalClient.getRequest(clientInUse, requestId);
-        log.info("Request retrieved: {}", requestRetrieved);
-
-        assertThat(requestRetrieved).as("La request recuperata con id %s e client %s non dev'essere null", requestId, clientInUse).isNotNull();
-        assertThat(requestRetrieved.getRequestMetadata()).as("I metadati della request recuperata con id %s e client %s non devono essere null", requestId, clientInUse).isNotNull();
-        assertThat(requestRetrieved.getRequestMetadata().getEventsList()).as("La lista di eventi dei metadati della request recuperata con id %s e client %s non dev'essere null", requestId, clientInUse).isNotNull();
-        checkEventsList(requestRetrieved.getRequestMetadata().getEventsList(), expectedContent);
+                    assertThat(requestRetrieved).as("La request recuperata con id %s e client %s non dev'essere null", requestId, clientInUse).isNotNull();
+                    assertThat(requestRetrieved.getRequestMetadata()).as("I metadati della request recuperata con id %s e client %s non devono essere null", requestId, clientInUse).isNotNull();
+                    assertThat(requestRetrieved.getRequestMetadata().getEventsList()).as("La lista di eventi dei metadati della request recuperata con id %s e client %s non dev'essere null", requestId, clientInUse).isNotNull();
+                    checkEventsList(requestRetrieved.getRequestMetadata().getEventsList(), expectedContent);
+                });
     }
 
     private void checkEventsList(List<EventsDto> eventsList, String expectedContent) {
