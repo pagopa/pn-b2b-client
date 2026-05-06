@@ -29,6 +29,7 @@ import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.HttpStatusCodeException;
 
@@ -44,7 +45,6 @@ import java.util.regex.Pattern;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.AAR_GENERATION;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.Assumptions.assumeThat;
 
 
 @Slf4j
@@ -56,6 +56,12 @@ public class LegalFactContentVerifySteps {
     private String legalFactUrl;
     @Setter
     private String legalFactType;
+
+    @Value("${pn.notification-older-10-years}")
+    private String notificationIun10years;
+
+    @Value("${pn.legalFact-older-10-years}")
+    private String legalFactId10years;
 
     @Autowired
     public LegalFactContentVerifySteps(PnParserService pnParserService, SharedSteps sharedSteps) {
@@ -737,38 +743,20 @@ public class LegalFactContentVerifySteps {
      * Il test utilizza notifiche fisse a cui sono stati impostati i seguenti valori per simulare la rimozione da ss:
      * "documentLogicalState": "DELETED"
      * "documentState": "deleted"
-     * Tali notifiche sono tutte state inviate da Comune_Multi a Mario Gherkin, ragion per cui i valori di pa e recipientInternalId sono impostati fissi.
+     * Tali notifiche sono tutte state inviate da Comune_Multi a Mario Gherkin, ragion per cui i valori di pa e recipientInternalId sono impostati fissi nelle properties.
      */
     @Given("verifico che recuperando un legalFact rimosso da safeStorage, le api restituiscano l'errore corretto")
     public void checkLegalFactRemovedFromSafeStorage() {
         sharedSteps.setPA("Comune_Multi");
         String recipientInternalId = "PF-a6c1350d-1d69-4209-8bf8-31de58c79d6e";
-        String environment = B2bUtils.getEnvironment(sharedSteps.getContext());
-        String iun = null;
-        String legalFactId = null;
-        switch (environment) {
-            case "dev" -> {
-                iun = "GNXH-NYXT-XZPE-202604-H-1";
-                legalFactId = "PN_LEGAL_FACTS-ac3681822ffc45c88ba8f54a076d557f.pdf";
-            }
-            case "test" -> {
-                iun = "NZXG-YGYA-LKTD-202604-A-1";
-                legalFactId = "PN_LEGAL_FACTS-fb0c349d4f0c4941b40961917c103d3b.pdf";
-            }
-            case "uat" -> {
-                iun = "YZDW-WVEP-ZGXK-202604-M-1";
-                legalFactId = "PN_LEGAL_FACTS-7a2393ed6c7f4202aa609b6420cf75cf.pdf";
-            }
-            default -> assumeThat(true).as("Test skipped: non valido per ambiente %s", environment).isFalse();
-        }
         try {
-            sharedSteps.getB2bClient().getLegalFact(iun, LegalFactCategory.DIGITAL_DELIVERY, legalFactId);
+            sharedSteps.getB2bClient().getLegalFact(notificationIun10years, LegalFactCategory.DIGITAL_DELIVERY, legalFactId10years);
         } catch (HttpStatusCodeException excApiPubblica) {
             log.info(excApiPubblica.getMessage());
             assertThat(excApiPubblica.getRawStatusCode()).as("La chiamata ad api pubblica deve restituire un 500").isEqualTo(500);
         }
         try {
-            sharedSteps.getB2bClient().getLegalFactByIdPrivate(recipientInternalId, iun, legalFactId, null, null, null);
+            sharedSteps.getB2bClient().getLegalFactByIdPrivate(recipientInternalId, notificationIun10years, legalFactId10years, null, null, null);
         } catch (HttpStatusCodeException excApiPrivata) {
             log.info(excApiPrivata.getMessage());
             assertThat(excApiPrivata.getRawStatusCode()).as("La chiamata ad api privata deve restituire un 410").isEqualTo(410);
