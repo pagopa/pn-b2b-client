@@ -22,7 +22,6 @@ import org.springframework.http.ResponseEntity;
 import static org.awaitility.Awaitility.await;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -112,7 +111,7 @@ public class TracciamentoEventiPeoSteps {
 
 
     @Then("la request recuperata da gestore-repository deve avere un'eventsList con i seguenti eventi {string}")
-    public void retrieveRequestFromGestoreRepository(String expectedContent) throws IOException, InterruptedException {
+    public void retrieveRequestFromGestoreRepository(String expectedContent) {
         log.info("Waiting up to 2 minutes for the email to be delivered");
         await()
                 .atMost(2, TimeUnit.MINUTES)
