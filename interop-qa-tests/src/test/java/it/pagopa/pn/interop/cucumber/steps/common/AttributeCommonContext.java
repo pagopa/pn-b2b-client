@@ -1,6 +1,8 @@
 package it.pagopa.pn.interop.cucumber.steps.common;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.Attribute;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttribute;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DeclaredAttribute;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.VerifiedAttribute;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAttribute;
@@ -9,11 +11,13 @@ import java.util.List;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Getter
 @Setter
 @Component
@@ -59,5 +63,53 @@ public class AttributeCommonContext {
 
     private <T> T lastOf(List<T> list) {
         return IterableUtils.isEmpty(list) ? null : list.get(list.size() - 1);
+    }
+
+    //--Helpers--
+    public List<List<DescriptorAttributeSeed>> mapAttributes(List<List<DescriptorAttribute>> attributes) {
+        if (attributes == null) {
+            return new ArrayList<>();
+        }
+        List<List<DescriptorAttributeSeed>> seeds = new ArrayList<>();
+        for (List<DescriptorAttribute> group : attributes) {
+            List<DescriptorAttributeSeed> groupSeed = new ArrayList<>();
+            for (DescriptorAttribute attr : group) {
+                DescriptorAttributeSeed seed = new DescriptorAttributeSeed()
+                        .id(attr.getId())
+                        .explicitAttributeVerification(attr.getExplicitAttributeVerification())
+                        .dailyCallsPerConsumer(attr.getDailyCallsPerConsumer());
+                groupSeed.add(seed);
+            }
+            seeds.add(groupSeed);
+        }
+        return seeds;
+    }
+
+    public List<List<DescriptorAttributeSeed>> mapAttributesWithDefaultValues(List<List<UUID>> attributes) {
+        if (attributes == null) {
+            return new ArrayList<>();
+        }
+        List<List<DescriptorAttributeSeed>> seeds = new ArrayList<>();
+        for (List<UUID> group : attributes) {
+            List<DescriptorAttributeSeed> groupSeed = new ArrayList<>();
+            for (UUID attr : group) {
+                DescriptorAttributeSeed seed = new DescriptorAttributeSeed()
+                        .id(attr)
+                        .explicitAttributeVerification(true);
+                groupSeed.add(seed);
+            }
+            seeds.add(groupSeed);
+        }
+        return seeds;
+    }
+
+    public void setDailyPerConsumer(List<List<DescriptorAttributeSeed>> attributesSeed, UUID attributeId, Integer dailyCallsPerConsumer) {
+        for (List<DescriptorAttributeSeed> group : attributesSeed) {
+            for (DescriptorAttributeSeed attr : group) {
+                if (attr.getId().equals(attributeId)) {
+                    attr.setDailyCallsPerConsumer(dailyCallsPerConsumer);
+                }
+            }
+        }
     }
 }

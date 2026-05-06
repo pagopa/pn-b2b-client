@@ -39,6 +39,14 @@ public class EServiceCloneSteps {
         this.producerClient = clientTokenConfigurator.getProducerClient();
     }
 
+    @Given("{string} tenta la creazione di una versione in DRAFT per quell'e-service")
+    public void tenantTryToCreateVersionWithState(String tenantType) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+
+        UUID descriptorId = dataPreparationService.createNextDraftDescriptor(eServicesCommonContext.getEserviceId());
+        eServicesCommonContext.setDescriptorId(descriptorId);
+    }
+
     @Given("{string} ha già creato una versione in {string} per quell'e-service")
     public void tenantHasAlreadyCreatedVersionWithState(String tenantType, String descriptorState) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));

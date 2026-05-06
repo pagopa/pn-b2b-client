@@ -159,6 +159,8 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
         this.notificationRequest.setSenderTaxId(senderTaxId);
     }
 
+    @Override
+    public String getSenderTaxId() { return notificationRequest.getSenderTaxId(); }
 
     @Override
     public String getNotificationRequestGroup() {

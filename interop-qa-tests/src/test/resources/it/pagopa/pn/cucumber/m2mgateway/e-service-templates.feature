@@ -683,6 +683,7 @@ Feature: Test API M2M of e-service template
     Then si ottiene lo status code 401
 
   @eservice_published_delegation
+  @eservice_published_delegation_m2m_v3
   @happy-path
   Scenario Outline: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_1] Un utente con ruolo M2M-ADMIN può effettuare una modifica parziale della delega di un e-service template instance precedentemente creato in uno degli stati permessi
     Given l'utente è un "admin" di "PA1"
@@ -717,6 +718,7 @@ Feature: Test API M2M of e-service template
       | DEPRECATED              | %null               | false                   |
 
   @eservice_published_delegation
+  @eservice_published_delegation_m2m_v3
   @sad-path
   Scenario Outline: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_2] Un utente con ruolo M2M-ADMIN NON può modificare le flag di delega tecnica di un e-service template instance precedentemente creato ottenendo uno stato non permesso
     Given l'utente è un "admin" di "PA1"
@@ -737,6 +739,7 @@ Feature: Test API M2M of e-service template
       | DEPRECATED              | %null               | true                    |
 
   @eservice_published_delegation
+  @eservice_published_delegation_m2m_v3
   @sad-path
   Scenario Outline: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_3] Un utente con ruolo M2M-ADMIN NON può modificare le flag di delega amministrativa di un e-service template instance precedentemente creato ottenendo uno stato non permesso
     Given l'utente è un "admin" di "PA1"
@@ -754,6 +757,7 @@ Feature: Test API M2M of e-service template
       | DEPRECATED              |
 
   @eservice_published_delegation
+  @eservice_published_delegation_m2m_v3
   @sad-path
   Scenario Outline: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_4] Un utente con ruolo M2M-ADMIN NON può modificare le flag di delega di un e-service template instance precedentemente creato avendo un token non valido
     Given l'utente è un "admin" di "PA1"
@@ -771,6 +775,7 @@ Feature: Test API M2M of e-service template
       | DEPRECATED              |
 
   @eservice_published_delegation
+  @eservice_published_delegation_m2m_v3
   @sad-path
   Scenario Outline: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_5] Un utente con ruolo M2M NON può modificare le flag di delega di un e-service template instance precedentemente creato
     Given l'utente è un "admin" di "PA1"
@@ -787,6 +792,7 @@ Feature: Test API M2M of e-service template
       | DEPRECATED              |
 
   @eservice_published_delegation
+  @eservice_published_delegation_m2m_v3
   @sad-path
   Scenario Outline: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_6] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service template instance precedentemente creato se non gli appartiene e per cui non possiede la delega in erogazione
     Given l'utente è un "admin" di "PA1"
@@ -803,6 +809,7 @@ Feature: Test API M2M of e-service template
       | DEPRECATED              |
 
   @eservice_published_delegation
+  @eservice_published_delegation_m2m_v3
   @sad-path
   Scenario: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_7] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service template instance precedentemente creato che si trova in stato DRAFT
     Given l'utente è un "admin" di "PA1"
