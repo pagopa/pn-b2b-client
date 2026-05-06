@@ -151,6 +151,10 @@ public final class JWTUtils {
         builder.claim(claimName, null);
     }
 
+    public static void removeHeader(JwtBuilder builder, String headerName) {
+        builder.header().delete(headerName);
+    }
+
     public static void setRawPayload(JwtBuilder builder, String raw) {
         if (raw == null) return;
 
