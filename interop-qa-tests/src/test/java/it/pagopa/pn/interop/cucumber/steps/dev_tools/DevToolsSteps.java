@@ -5,13 +5,15 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import it.pagopa.interop.authorization.service.DPoPTokenService;
+import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
 import it.pagopa.interop.authorization.service.utils.voucher.domain.ClientAssertionOptions;
 import it.pagopa.interop.dev_tools.service.IDevToolsClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.TokenGenerationValidationEntry;
-import it.pagopa.interop.generated.openapi.clients.bff.model.TokenGenerationValidationResult;
 import it.pagopa.interop.generated.openapi.clients.bff.model.TokenGenerationValidationStepFailure;
 import it.pagopa.interop.generated.openapi.clients.bff.model.TokenGenerationValidationSteps;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -27,7 +29,7 @@ import it.pagopa.pn.interop.cucumber.steps.dev_tools.model.DevToolsContext;
 import it.pagopa.pn.interop.cucumber.steps.purpose.PurposeCommonStep;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-
+import java.security.KeyPair;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
@@ -51,6 +53,7 @@ public class DevToolsSteps {
     private final SharedStepsContext sharedStepsContext;
     private final String clientAssertionJwtAudience;
     private final DevToolsContext devToolsContext = new DevToolsContext();
+    private final DPoPTokenService dPoPTokenService;
 
     public DevToolsSteps(
             @Value("${client.assertion.jwt.audience}") String clientAssertionJwtAudience,
@@ -61,7 +64,8 @@ public class DevToolsSteps {
             AgreementCommonSteps agreementCommonSteps,
             PurposeCommonStep purposeCommonStep,
             ClientPurposeRemoveStep clientPurposeRemoveStep,
-            ClientCreateStep clientCreateStep
+            ClientCreateStep clientCreateStep,
+            DPoPTokenService dPoPTokenService
     ) {
         this.clientCommonSteps = clientCommonSteps;
         this.clientKeyReadSteps = clientKeyReadSteps;
@@ -73,6 +77,7 @@ public class DevToolsSteps {
         this.clientCreateStep = clientCreateStep;
         this.purposeCommonStep = purposeCommonStep;
         this.agreementCommonSteps = agreementCommonSteps;
+        this.dPoPTokenService = dPoPTokenService;
     }
 
     @ParameterType("API|api|CONSUMER|consumer")
@@ -98,6 +103,7 @@ public class DevToolsSteps {
     }
 
     @When("{string} richiede la validazione della client assertion appena creata")
+    @When("{string} richiede la validazione della client assertion e della DPoP Proof appena creata")
     public void verifyClientAssertion(String tenantType) {
         runClientAssertionValidation(tenantType, null, null);
     }
@@ -206,6 +212,31 @@ public class DevToolsSteps {
         devToolsContext.setActualClientAssertion(clientAssertion);
     }
 
+    private void createCustomDPoP(List<JwtClaimOverride> overrides) {
+        KeyPair keyPair = KeyPairGeneratorUtil.createKeyPair("RSA", 2048);
+        String dpopProof = this.dPoPTokenService.buildDpopProof(keyPair);
+
+        if (!overrides.isEmpty()) {
+            Jws<Claims> existingJws = Jwts.parser()
+                    .verifyWith(keyPair.getPublic())
+                    .build()
+                    .parseSignedClaims(dpopProof);
+
+            JwtBuilder jwtBuilder = Jwts.builder()
+                    .header()
+                    .add(existingJws.getHeader())
+                    .and()
+                    .claims(existingJws.getPayload())
+                    .signWith(keyPair.getPrivate());
+
+            applyOverrides(jwtBuilder, overrides);
+            dpopProof = jwtBuilder.compact();
+        }
+
+        log.info("DPoP: '{}'", dpopProof);
+        devToolsContext.setActualDpopProof(dpopProof);
+    }
+
     private JwtBuilder buildValidClientAssertion(ClientAssertionOptions.ClientType clientType) {
         DPoPTokenService.PreparedClient preparedClient = sharedStepsContext.getClientCommonContext().getLastPreparedClient();
         String rawClientId = preparedClient != null ? preparedClient.clientId().toString() : null;
@@ -247,6 +278,10 @@ public class DevToolsSteps {
                 case "iat" -> setClaim(builder, "iat", parseEpoch(raw));
                 case "exp" -> setClaim(builder, "exp", parseEpoch(raw));
                 case "nbf" -> setClaim(builder, "nbf", parseEpoch(raw));
+
+                // CLAIM DPOP
+                case "htm" -> setClaim(builder, "htm", raw);
+                case "htu" -> setClaim(builder, "htu", raw);
 
                 // CLAIM CUSTOM
                 case "purposeId" -> setClaim(builder, "purposeId", parseMaybeUuid(raw));
