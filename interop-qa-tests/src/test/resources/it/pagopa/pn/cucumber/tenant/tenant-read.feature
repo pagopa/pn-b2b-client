@@ -26,3 +26,27 @@ Feature: Lettura di un singolo aderente
       | Privato | security     |
       | Privato | support      |
       | Privato | api,security |
+
+  @hotfix_QA-13870
+  Scenario Outline: [TENANT_DELEGATIONS_ALLOWED] Un ente della piattaforma può ottenere informazioni sul proprio stato di essere considerato Pubblica Amministrazione
+    Given l'utente è un "<ruolo>" di "<ente>"
+    When l'utente visualizza se all'utente d'appartenenza è permesso partecipare a processi di delega
+    Then l'utente ottiene responso <responso> dal sistema sul poter partecipare a processi di delega
+
+    Examples:
+      | ente    | ruolo        | responso |
+      | GSP     | admin        | negativo |
+      | GSP     | api          | negativo |
+      | GSP     | security     | negativo |
+      | GSP     | api,security | negativo |
+      | GSP     | support      | negativo |
+      | PA1     | api          | positivo |
+      | PA1     | admin        | positivo |
+      | PA1     | security     | positivo |
+      | PA1     | support      | positivo |
+      | PA1     | api,security | positivo |
+      | Privato | admin        | negativo |
+      | Privato | api          | negativo |
+      | Privato | security     | negativo |
+      | Privato | support      | negativo |
+      | Privato | api,security | negativo |

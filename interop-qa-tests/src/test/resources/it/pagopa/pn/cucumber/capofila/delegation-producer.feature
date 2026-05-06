@@ -201,13 +201,13 @@ Feature: Creazione di una delega in erogazione
   @sad-path @deleghe2
   Scenario: [TC_CAPOFILA_35] Un delegante può delegare un solo ente per volta per un e-service
     Given l'utente è un "admin" di "PA1"
-    Given l'ente "GSP" rimuove la disponibilità a ricevere deleghe
+    Given l'ente "PA3" rimuove la disponibilità a ricevere deleghe
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe
     When l'utente richiede la creazione di una delega per l'ente "PA2"
     And l'ente "PA2" accetta la delega
-    And l'ente "GSP" concede la disponibilità a ricevere deleghe
-    When l'utente richiede la creazione di una delega per l'ente "GSP"
+    And l'ente "PA3" concede la disponibilità a ricevere deleghe
+    When l'utente richiede la creazione di una delega per l'ente "PA3"
     Then si ottiene lo status code 409
 
   @happy-path
@@ -305,3 +305,29 @@ Feature: Creazione di una delega in erogazione
     When l'utente sospende quel descrittore
     Then si ottiene lo status code 403
     And l'e-service è in stato "PUBLISHED"
+
+  @deleghe1
+  @hotfix_QA-13870
+  Scenario Outline: [TC_CAPOFILA_DELEGA_NON_PA_1] Verificare che la disponibilità alla delega in erogazione di un e-service NON possa essere data da un ente che non sia una pubblica amministrazione
+    Given l'utente è un "admin" di "<ente>"
+    When l'ente "<ente>" tenta di concedere la disponibilità a ricevere deleghe in erogazione
+    Then si ottiene status code 403
+
+    @happy-path
+    Examples:
+      | ente      |
+      | GSP       |
+      | Privato   |
+
+  @hotfix_QA-13870
+  Scenario Outline: [TC_CAPOFILA_DELEGA_NON_PA_2] Un ente che non sia una Pubblica Amministrazione non può fungere da delegante in erogazione per un proprio e-service
+    Given l'utente è un "admin" di "<delegante>"
+    And "<delegante>" ha già creato e pubblicato 1 e-service
+    And l'ente "PA1" concede la disponibilità a ricevere deleghe
+    When l'utente richiede la creazione di una delega in erogazione per l'ente "PA1"
+    Then si ottiene lo status code 403
+
+    Examples:
+      | delegante |
+      | Privato   |
+      | GSP       |
