@@ -13,11 +13,11 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         "html:target/cucumber-report.html")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.cucumber.steps")
 @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent")
-@ExcludeTags({"ignore","uat", "integration","realNR","mockNormalizzatore","giacenza890Complex","raddAlternativeCsv", "rasterScartoCON996"})
-@IncludeTags({"workflowDigitale", "workflowAnalogico", "pagamentiMultipli","giacenza890Simplified",
-            "Async", "f24", "version","AOO_UO", "Annullamento", "raddTechnicalAnnex", "raddAlt",
-            "validation", "RetentionAllegati", "apiKeyManager", "downtimeLogs", "recuperoDisservizi",
-            "legalFact", "letturaDestinatario", "raddAnagrafica", "raddAttoIntero", "restApiValidation",
-            "appIo", "delegheTemporanee"})
+@ExcludeTags({"ignore", "uat", "integration", "realNR", "mockNormalizzatore", "giacenza890Complex", "raddAlternativeCsv", "rasterScartoCON996"})
+@IncludeTags({"workflowDigitale", "workflowAnalogico", "pagamentiMultipli", "giacenza890Simplified",
+        "Async", "f24", "version", "AOO_UO", "Annullamento", "raddTechnicalAnnex", "raddAlt",
+        "validation", "RetentionAllegati", "apiKeyManager", "downtimeLogs", "recuperoDisservizi",
+        "legalFact", "letturaDestinatario", "raddAnagrafica", "raddAttoIntero", "restApiValidation",
+        "appIo", "delegheTemporanee", "TracciamentoEventiPEO"})
 public class NrtTest_test {
 }
