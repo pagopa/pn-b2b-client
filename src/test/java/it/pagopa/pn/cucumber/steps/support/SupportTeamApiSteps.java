@@ -16,16 +16,21 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnBffPaClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.web.client.HttpStatusCodeException;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import static it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationStatusV26.EFFECTIVE_DATE;
 import static java.time.OffsetDateTime.now;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Slf4j
 public class SupportTeamApiSteps {
@@ -45,7 +50,7 @@ public class SupportTeamApiSteps {
         strategies.put("CAMBIO_LINGUA", () -> bffPaClient.changeAdditionalLang(
                 new BffAdditionalLanguages().addAdditionalLanguagesItem("italiano")));
         strategies.put("CANCELLAZIONE_NOTIFICA", () -> bffPaClient.notificationCancellationV1("iun"));
-        strategies.put("RECUPERA_API_KEYS", () -> bffApiKeyClient.getApiKeys(0, null, null, true));
+        strategies.put("RECUPERA_API_KEYS", () -> bffApiKeyClient.getApiKeys(null, null, null, true));
         strategies.put("CREA_API_KEY", () -> bffApiKeyClient.newApiKey(new BffRequestNewApiKey()));
         strategies.put("CAMBIA_STATO_API_KEY", () -> bffApiKeyClient.changeStatusApiKey("id", new BffRequestApiKeyStatus()));
         strategies.put("CANCELLA_API_KEY", () -> bffApiKeyClient.deleteApiKeys("id"));
@@ -63,6 +68,7 @@ public class SupportTeamApiSteps {
         if (strategy != null) {
             try {
                 strategy.run();
+                exception = null;
             } catch (Exception e) {
                 this.exception = e;
             }
@@ -76,7 +82,7 @@ public class SupportTeamApiSteps {
         if (exception != null) {
             String message = exception.getMessage();
             log.info("Eccezione catturata: {}", message);
-            assert message.contains("403") || message.contains("Forbidden") || message.contains("Unauthorized");
+            assertEquals(403, ((HttpStatusCodeException) exception).getStatusCode().value(), "Ci si aspettava un errore 403 Forbidden");
         } else {
             throw new AssertionError("Nessuna eccezione catturata, ci si aspettava un errore di autorizzazione");
         }
@@ -102,13 +108,17 @@ public class SupportTeamApiSteps {
     }
 
     private void getSentNotificationDocument() {
-        BffFullNotificationV1 bffFullNotificationV1 = getSentNotification();
-        String documentId = Optional.ofNullable(bffFullNotificationV1.getOtherDocuments())
-                        .map(docs -> docs.get(0))
-                        .map(doc -> doc.getDocumentId())
-                        .orElseThrow(() -> new RuntimeException("Nessun documento trovato nella notifica"));
+        Pair<BffFullNotificationV1, String> bffFullNotificationWithIUN = getSentNotification();
+        String documentId = Optional.ofNullable(bffFullNotificationWithIUN.getKey())
+                .map(BffFullNotificationV1::getOtherDocuments)
+                .filter(docs -> !docs.isEmpty())
+                .map(docs -> docs.get(0))
+                .filter(Objects::nonNull)
+                .map(doc -> doc.getDocumentId())
+                .filter(id -> id != null && !id.isEmpty())
+                .orElseThrow(() -> new RuntimeException("Nessun documento trovato nella notifica"));
 
-        bffPaClient.getSentNotificationDocumentV1(retrieveFirstIunFromSearch(), BffDocumentType.AAR, null, documentId);
+        bffPaClient.getSentNotificationDocumentV1(bffFullNotificationWithIUN.getValue(), BffDocumentType.AAR, null, documentId);
     }
 
     private void getSentNotificationPayment() {
@@ -136,13 +146,14 @@ public class SupportTeamApiSteps {
         return bffPaClient.getSentNotificationV1(iun);
     }
 
-    private BffFullNotificationV1 getSentNotification() {
-        return bffPaClient.getSentNotificationV1(retrieveFirstIunFromSearch());
+    private Pair<BffFullNotificationV1, String> getSentNotification() {
+        String iun = retrieveFirstIunFromSearch();
+        return Pair.of(bffPaClient.getSentNotificationV1(iun), iun);
     }
 
     private String retrieveFirstIunFromSearch() {
         BffNotificationsResponse response = searchSentNotification();
-        assert response.getResultsPage() != null;
+        assertNotNull(response.getResultsPage(), "La ricerca delle notifiche non ha restituito alcun risultato");
         if (response.getResultsPage().isEmpty()) {
             throw new RuntimeException("Nessuna notifica trovata per eseguire il test");
         }

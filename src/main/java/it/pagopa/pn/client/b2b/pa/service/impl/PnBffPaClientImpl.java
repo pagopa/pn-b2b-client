@@ -52,7 +52,7 @@ public class PnBffPaClientImpl implements IPnWebPaClient {
                              @Value("${pn.external.bearer-token-pa-GA}") String bearerTokenGA,
                              @Value("${pn.external.bearer-token-pa-support-1}") String bearerTokenSupport1,
                              @Value("${pn.webapi.external.user-agent}") String userAgent,
-                             @Value("${pn.external.senderId-GA}") String apiKeySupport) {
+                             @Value("${pn.external.senderId-GA}") String senderIdSupport) {
         this.bearerTokenCom1 = bearerTokenCom1;
         this.bearerTokenCom2 = bearerTokenCom2;
         this.bearerTokenSON = bearerTokenSON;
@@ -62,7 +62,7 @@ public class PnBffPaClientImpl implements IPnWebPaClient {
         this.restTemplate = restTemplate;
         this.basePath = basePath;
         this.userAgent = userAgent;
-        this.apiKeySupport = apiKeySupport;
+        this.apiKeySupport = senderIdSupport;
         this.notificationSentApi = new NotificationSentApi(newBffApiClient(restTemplate, basePath, bearerTokenCom1, userAgent));
         this.infoPaApi = new InfoPaApi(newBffApiClient(restTemplate, basePath, bearerTokenCom1, userAgent));
         this.senderDashboardApi = new SenderDashboardApi(newApiClient(restTemplate, basePath, bearerTokenCom1, userAgent));
