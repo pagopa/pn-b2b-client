@@ -232,6 +232,7 @@ public class SharedSteps {
 
     private final PnB2bClientTimingConfigs timingConfigs;
 
+    @Getter
     private final ObjectMapper objMapper;
 
     /**
