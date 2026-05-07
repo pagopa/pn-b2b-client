@@ -205,7 +205,7 @@ Feature: : Debugger Client Assertion Sync Bearer
     And si ottiene response status code 200
     Then i risultati di validazione sono:
       | step                                 | result  | errors        |
-      | clientAssertionValidation            | PASSED  | [kidNotFound] |
+      | clientAssertionValidation            | FAILED  | [kidNotFound] |
       | publicKeyRetrieve                    | SKIPPED | []            |
       | clientAssertionSignatureVerification | SKIPPED | []            |
       | platformStatesVerification           | SKIPPED | []            |
@@ -320,7 +320,7 @@ Feature: : Debugger Client Assertion Sync Bearer
   Scenario: [KEY_RETREIVE_ALGORITHM_NOT_ALLOWED_CONSUMER_CLIENT] Dato un client CONSUMER valido, quando l'e-service è in stato non valido allora il recupero della chiave pubblica fallisce con errore algorithmNotAllowed
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
-    When "PA1" crea una client assertion per un client di tipo CONSUMER utilizzando una chiave "EC" di lunghezzaa 1024
+    When "PA1" crea una client assertion per un client di tipo CONSUMER utilizzando una chiave "EC" di lunghezza 1024
     And "PA1" richiede la validazione della client assertion appena creata
     And si ottiene response status code 200
     Then i risultati di validazione sono:
@@ -333,7 +333,7 @@ Feature: : Debugger Client Assertion Sync Bearer
   Scenario: [KEY_RETREIVE_INVALID_SIGNATURE_CONSUMER_CLIENT] Dato un client CONSUMER valido, quando l'e-service è in stato non valido allora il recupero della chiave pubblica fallisce con errore invalidSignature
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
-    When "PA1" crea una client assertion per un client di tipo CONSUMER utilizzando una chiave "RSA" di lunghezzaa 2048
+    When "PA1" crea una client assertion per un client di tipo CONSUMER utilizzando una chiave "RSA" di lunghezza 2048
     And "PA1" richiede la validazione della client assertion appena creata
     And si ottiene response status code 200
     Then i risultati di validazione sono:
