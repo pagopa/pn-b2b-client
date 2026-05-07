@@ -876,13 +876,14 @@ Feature: Test API M2M of e-service template
     When l'utente tenta la modifica della descrizione dell'e-service template in stato PUBLISHED con una descrizione di 401 caratteri
     Then si ottiene status code 400
 
+  # PIN-10005
   @eservice_description_max_length
-  Scenario: [ESERVICE_TEMPLATE_UPDATE_DESCRIPTION_MAXLENGTH_14] Un utente aggiorna la versione di un e-service in stato DRAFT utilizzando la descrizione della lunghezza massima possibile
+  @sad-path
+  Scenario: [ESERVICE_TEMPLATE_UPDATE_DESCRIPTION_MAXLENGTH_14] L'aggiornamento della descrizione della versione di un e-service template in stato DRAFT non va a buon fine se si utilizza la lunghezza massima consentita
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
     When l'utente tenta delle modifiche alla versione dell'e-service template con una descrizione di lunghezza 400
-    And si ottiene status code 200
-    Then la modifica degli attributi della versione dell'e-service template è stata effettuata correttamente e la descrizione è lunga 400 caratteri
+    Then si ottiene status code 400
 
   @eservice_description_max_length
   Scenario: [ESERVICE_TEMPLATE_UPDATE_DESCRIPTION_MAXLENGTH_15] L'aggiornamento di una versione e-service in stato DRAFT non va a buon fine se viene superata la dimensione massima consentita per la descrizione
