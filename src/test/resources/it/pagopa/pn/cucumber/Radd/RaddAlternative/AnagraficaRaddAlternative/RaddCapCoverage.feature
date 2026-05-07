@@ -72,7 +72,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     And la response deve contenere la località e il cap "<cap>" attesi
     Examples:
       | cap   | locality | cadastralCode | province |
-      | 00100 | Roma     | $$NULL        | $$NULL   |
+      | 00100 | Roma     | $NULL         | $NULL    |
 
 
   @capCoverageRadd @cognito1
@@ -89,7 +89,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | 80#00  | H501          | RM       |
       | 001001 | H501          | RM       |
       | 0 0100 | H5011         | RM       |
-      | $$NULL | H5011         | RM       |
+      | $NULL  | H5011         | RM       |
       | 00100  | H5011         | RM       |
       | 00100  | H50 1         | RM       |
       | 00100  | H5            | RM       |
@@ -108,7 +108,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     And l'operazione di copertura Radd ha prodotto un errore con status code "400"
     Examples:
       | cap   | locality | cadastralCode | province |
-      | 80100 | $$NULL   | H501          | RM       |
+      | 80100 | $NULL    | H501          | RM       |
 
 
   @capCoverageRadd @cognito1
@@ -139,7 +139,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
     Then setto i dati per creare una nuova copertura Radd con locality random:
       | cap   | cadastralCode | province |
-      | 80100 | $$NULL        | $$NULL   |
+      | 80100 | $NULL         | $NULL    |
     And creo una nuova copertura Radd
     And la response deve contenere la località e il cap "80100" attesi
     And creo una nuova copertura Radd con Errore
@@ -164,10 +164,10 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | cap   | locality | cadastralCode | province | startValidity  | endValidity   |
       | 80100 | /        | H501          | RM       | $DATE_ADD(-1D) | $DATE_ADD(1Y) |
       | 80100 | /        | H501          | MI       | $DATE_ADD(-1D) | $DATE_ADD(1Y) |
-      | 80100 | /        | $$NULL        | $$NULL   | $DATE_ADD(-1D) | $DATE_ADD(1Y) |
-      | 80100 | /        | $$NULL        | $$NULL   | $$NULL         | $$NULL        |
-      | 80100 | /        | H501          | RM       | $$NULL         | $DATE_ADD(1Y) |
-      | 80100 | /        | H501          | RM       | $DATE_ADD(-1D) | $$NULL        |
+      | 80100 | /        | $NULL         | $NULL    | $DATE_ADD(-1D) | $DATE_ADD(1Y) |
+      | 80100 | /        | $NULL         | $NULL    | $NULL          | $NULL         |
+      | 80100 | /        | H501          | RM       | $NULL          | $DATE_ADD(1Y) |
+      | 80100 | /        | H501          | RM       | $DATE_ADD(-1D) | $NULL         |
 
   @capCoverageRadd @cognito2
   Scenario Outline: [RADD_API_COPERTURA_CAP_MODIFICA_17] Errore Modifica copertura Radd  campi obbligatori inesistenti,
@@ -185,7 +185,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | AAAAA  | Roma     | H502          | RM       | $DATE_ADD(-1Y) | $DATE_ADD(-1M) | 400        |
       | 0      | Q        | H502          | RM       | $DATE_ADD(-1Y) | $DATE_ADD(-1M) | 400        |
       | #      | Roma     | H502          | RM       | $DATE_ADD(-1Y) | $DATE_ADD(-1M) | 400        |
-      | #      | Roma     | $$NULL        | $$NULL   | $$NULL         | $$NULL         | 400        |
+      | #      | Roma     | $NULL         | $NULL    | $NULL          | $NULL          | 400        |
 
 
   @capCoverageRadd @cognito2
@@ -201,19 +201,19 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     And invoco l'API di aggiornamento copertura cap Radd con errore
     And l'operazione di copertura Radd ha prodotto un errore con status code "400"
     Examples:
-      | cap    | locality | cadastralCode | province | startValidity  | endValidity       |
+      | cap   | locality | cadastralCode | province | startValidity  | endValidity       |
 #      | 80100 | /        | WWWW          | RM       | 2025-10-01    | 2035-12-31  |
 #      | 80100 | /        | H501          | WW       | 2025-10-01    | 2035-12-31  |
-      | 80100  | /        | H501          | RM       | 2025-10-011    | ${$DATE_ADD(10Y)} |
-      | 80100  | /        | H501          | RM       | 01-10-2025     | $DATE_ADD(10Y)    |
-      | 80100  | /        | H501          | 1        | $DATE_ADD(-1Y) | $DATE_ADD(10Y)    |
-      | 80100  | /        | H5 01         | RM       | $DATE_ADD(-1Y) | $DATE_ADD(10Y)    |
-      | 80100  | /        | H501          | #        | $DATE_ADD(-1Y) | $DATE_ADD(10Y)    |
-      | 80100  | /        | H501          | RM       | $DATE_ADD(-1Y) | #                 |
-      | 80100  | /        | H             | RM       | $DATE_ADD(-1Y) | $DATE_ADD(10Y)    |
-      | 80100  | $$NULL   | H501          | RM       | $DATE_ADD(-1Y) | $DATE_ADD(10Y)    |
-      | $$NULL | /        | H501          | RM       | $DATE_ADD(-1Y) | $DATE_ADD(10Y)    |
-      | 80100  | /        | H501          | RM       | $DATE_ADD(10Y) | $DATE_ADD(-1Y)    |
+      | 80100 | /        | H501          | RM       | 2025-10-011    | ${$DATE_ADD(10Y)} |
+      | 80100 | /        | H501          | RM       | 01-10-2025     | $DATE_ADD(10Y)    |
+      | 80100 | /        | H501          | 1        | $DATE_ADD(-1Y) | $DATE_ADD(10Y)    |
+      | 80100 | /        | H5 01         | RM       | $DATE_ADD(-1Y) | $DATE_ADD(10Y)    |
+      | 80100 | /        | H501          | #        | $DATE_ADD(-1Y) | $DATE_ADD(10Y)    |
+      | 80100 | /        | H501          | RM       | $DATE_ADD(-1Y) | #                 |
+      | 80100 | /        | H             | RM       | $DATE_ADD(-1Y) | $DATE_ADD(10Y)    |
+      | 80100 | $NULL    | H501          | RM       | $DATE_ADD(-1Y) | $DATE_ADD(10Y)    |
+      | $NULL | /        | H501          | RM       | $DATE_ADD(-1Y) | $DATE_ADD(10Y)    |
+      | 80100 | /        | H501          | RM       | $DATE_ADD(10Y) | $DATE_ADD(-1Y)    |
   #campi opzionali inesistenti
   #cap e locality vuoti
   #startValidity maggiore di una endValidity
@@ -228,7 +228,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     And creo una nuova copertura Radd
     And setto i dati per aggiornare una copertura Radd:
       | cap   | locality | cadastralCode | province | startValidity | endValidity    |
-      | 80100 | /        | H501          | RM       | $$NULL        | $DATE_ADD(-1Y) |
+      | 80100 | /        | H501          | RM       | $NULL         | $DATE_ADD(-1Y) |
     And invoco l'API di aggiornamento copertura cap Radd con errore
     And l'operazione di copertura Radd ha prodotto un errore con status code "400"
 
@@ -295,8 +295,8 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | 00100 | /        | H502          | RM       | $DATE_ADD(-1Y) | $DATE_ADD(10Y) |
     And invoco l'API di aggiornamento copertura cap Radd
     Then setto i dati per verificare la copertura Radd:
-      | nameRow2 | addressRow | addressRow2 | cap   | city | city2  | pr     | country |
-      | $$NULL   | $$NULL     | $$NULL      | 00100 | /    | $$NULL | $$NULL | $$NULL  |
+      | nameRow2 | addressRow | addressRow2 | cap   | city | city2 | pr    | country |
+      | $NULL    | $NULL      | $NULL       | 00100 | /    | $NULL | $NULL | $NULL   |
     And invoco l'API di verifica copertura cap Radd Light mode
     And per i dati forniti si verifica che lo stato di copertura sia "COPERTO"
 
