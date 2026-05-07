@@ -116,6 +116,7 @@ import it.pagopa.pn.cucumber.steps.templateEngine.TemplateConfiguration;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextFactory;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnPaperChannelClientImpl;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -276,6 +277,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         IPnLegalPersonVirtualKeyServiceClientImpl.class,
         IPnTosPrivacyClientImpl.class,
         TemplateEngineClientImpl.class,
+        PnPaperChannelClientImpl.class,
         TemplateConfiguration.class,
         TemplateEngineContextFactory.class,
         EmdIntegrationApiImpl.class,
