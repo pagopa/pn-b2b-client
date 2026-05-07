@@ -27,12 +27,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
-import static it.pagopa.common.util.StringUtils.toNullable;
+import static it.pagopa.common.util.StringUtils.resolveValue;
 import static it.pagopa.common.util.StringUtils.ALPHABET;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static it.pagopa.common.util.DateUtils.FORMATTER_ISO;
-import static it.pagopa.common.util.DateUtils.calculateDate;
+import static it.pagopa.common.util.DateUtils.resolveDate;
 
 
 
@@ -85,10 +85,10 @@ public class CoperturaCapRaddSteps {
         this.randomLocality = generateRandomWord();
         Map<String, String> data = dataTable.asMaps().get(0);
         request = new CreateCoverageRequest()
-                .cap(toNullable(data.get("cap")))
-                .locality(toNullable(randomLocality))
-                .cadastralCode(toNullable(data.get("cadastralCode")))
-                .province(toNullable(data.get("province")));
+                .cap(resolveValue(data.get("cap")))
+                .locality(resolveValue(randomLocality))
+                .cadastralCode(resolveValue(data.get("cadastralCode")))
+                .province(resolveValue(data.get("province")));
     }
 
     @Given("setto i dati per creare una nuova copertura Radd:")
@@ -96,10 +96,10 @@ public class CoperturaCapRaddSteps {
 
         Map<String, String> data = dataTable.asMaps().get(0);
         request = new CreateCoverageRequest()
-                .cap(toNullable(data.get("cap")))
-                .locality(toNullable(data.get("locality")))
-                .cadastralCode(toNullable(data.get("cadastralCode")))
-                .province(toNullable(data.get("province")));
+                .cap(resolveValue(data.get("cap")))
+                .locality(resolveValue(data.get("locality")))
+                .cadastralCode(resolveValue(data.get("cadastralCode")))
+                .province(resolveValue(data.get("province")));
     }
 
     public static String generateRandomWord() {
@@ -141,20 +141,20 @@ public class CoperturaCapRaddSteps {
         if (data.get("locality").equalsIgnoreCase("/"))
             this.locality = this.randomLocality;
         else
-            this.locality = toNullable(data.get("locality"));
+            this.locality = resolveValue(data.get("locality"));
 
         updateRequest = new UpdateCoverageRequest()
-                .cadastralCode(toNullable(data.get("cadastralCode")))
-                .province(toNullable(data.get("province")))
-                .startValidity(calculateDate(data.get("startValidity")))
-                .endValidity(calculateDate(data.get("endValidity")));
+                .cadastralCode(resolveValue(data.get("cadastralCode")))
+                .province(resolveValue(data.get("province")))
+                .startValidity(resolveDate(data.get("startValidity")))
+                .endValidity(resolveDate(data.get("endValidity")));
 
     }
 
     @And("setto la data per la quale voglio verificare la copertura al {string}")
     public void setSearchDate(String searchDateStr) {
 
-        searchDate = Optional.ofNullable(calculateDate(searchDateStr)).map(LocalDate::parse).orElse(null);
+        searchDate = Optional.ofNullable(resolveDate(searchDateStr)).map(LocalDate::parse).orElse(null);
     }
 
 
@@ -216,18 +216,18 @@ public class CoperturaCapRaddSteps {
         Map<String, String> data = dataTable.asMaps().get(0);
 
         String city;
-        String nameRow2 = toNullable(data.get("nameRow2"));
-        String addressRow = toNullable(data.get("addressRow"));
-        String addressRow2 = toNullable(data.get("addressRow2"));
-        String cap = toNullable(data.get("cap"));
-        String city2 = toNullable(data.get("city2"));
-        String pr = toNullable(data.get("pr"));
-        String country = toNullable(data.get("country"));
+        String nameRow2 = resolveValue(data.get("nameRow2"));
+        String addressRow = resolveValue(data.get("addressRow"));
+        String addressRow2 = resolveValue(data.get("addressRow2"));
+        String cap = resolveValue(data.get("cap"));
+        String city2 = resolveValue(data.get("city2"));
+        String pr = resolveValue(data.get("pr"));
+        String country = resolveValue(data.get("country"));
 
         if (data.get("city").equalsIgnoreCase("/"))
             city = this.locality;
         else
-            city = toNullable(data.get("city"));
+            city = resolveValue(data.get("city"));
 
         checkCoverageRequest = new CheckCoverageRequest()
                 .nameRow2(nameRow2)
@@ -439,10 +439,10 @@ public class CoperturaCapRaddSteps {
                 if (cap.isEmpty()) continue;
 
                 CreateCoverageRequest createRequest = new CreateCoverageRequest()
-                        .cap(toNullable(cap))
+                        .cap(resolveValue(cap))
                         .locality(locality.isEmpty() ? "ND" : locality)
-                        .cadastralCode(toNullable(cadastralCode))
-                        .province(toNullable(province));
+                        .cadastralCode(resolveValue(cadastralCode))
+                        .province(resolveValue(province));
 
                 try {
                     raddCapCoverageClient.addCoverageWithHttpInfo(createRequest);
@@ -460,8 +460,8 @@ public class CoperturaCapRaddSteps {
                     failed++;
                 }
                 UpdateCoverageRequest updateRequest = new UpdateCoverageRequest()
-                        .cadastralCode(toNullable(cadastralCode))
-                        .province(toNullable(province))
+                        .cadastralCode(resolveValue(cadastralCode))
+                        .province(resolveValue(province))
                         .startValidity(startValidityStr.isEmpty() ? null : startValidityStr)
                         .endValidity(endValidityStr.isEmpty() ? null : endValidityStr);
 
