@@ -850,7 +850,7 @@ Feature: Test API M2M of e-service template
 
   @eservice_description_max_length
   @sad-path
-  Scenario: [ESERVICE_TEMPLATE_UPDATE_DESCRIPTION_MAXLENGTH_11] L'aggiornamento dell'e-service in stato DRAFT non va a buon fine se viene superata la dimensione massima consentita per la descrizione
+  Scenario: [ESERVICE_TEMPLATE_UPDATE_DESCRIPTION_MAXLENGTH_11] L'aggiornamento dell'e-service template in stato DRAFT non va a buon fine se viene superata la dimensione massima consentita per la descrizione
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente tenta la creazione dell'e-service template con la configurazione predefinita
     When l'utente tenta la modifica della descrizione dell'e-service template in stato DRAFT con una descrizione di 401 caratteri
@@ -858,7 +858,7 @@ Feature: Test API M2M of e-service template
 
   @eservice_description_max_length
   @happy-path
-  Scenario: [ESERVICE_TEMPLATE_UPDATE_DESCRIPTION_MAXLENGTH_12] Un utente aggiorna un e-service in stato PUBLISHED utilizzando la descrizione della lunghezza massima possibile
+  Scenario: [ESERVICE_TEMPLATE_UPDATE_DESCRIPTION_MAXLENGTH_12] Un utente aggiorna un e-service template in stato PUBLISHED utilizzando la descrizione della lunghezza massima possibile
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
