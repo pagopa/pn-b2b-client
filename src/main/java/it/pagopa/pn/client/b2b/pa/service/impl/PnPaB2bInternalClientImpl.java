@@ -13,6 +13,7 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api.Se
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.CxTypeAuthFleet;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v24.NotificationProcessCostResponse;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v26.LegalFactDownloadMetadataWithContentTypeResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
@@ -95,22 +96,7 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
     public NewNotificationRequestStatusResponse getNotificationRequestStatusAllParamV1(String notificationRequestId, String paProtocolNumber, String idempotenceToken) {
         throw new UnsupportedOperationException();
     }
-
-//    @Override
-//    public NotificationAttachmentDownloadMetadataResponse getSentNotificationDocumentV1(String iun, Integer docIndex) {
-//        throw new UnsupportedOperationException();
-//    }
-//
-//    @Override
-//    public NotificationAttachmentDownloadMetadataResponse getSentNotificationAttachmentV1(String iun, Integer recipientIdx, String attachmentName) {
-//        throw new UnsupportedOperationException();
-//    }
-//
-//    @Override
-//    public void paymentEventsRequestPagoPaV1(PaymentEventsRequestPagoPa paymentEventsRequestPagoPa) throws RestClientException {
-//        throw new UnsupportedOperationException();
-//    }
-
+    
     /**
      * V2
      */
@@ -128,21 +114,6 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
     public NewNotificationRequestStatusResponse getNotificationRequestStatusAllParamV2(String notificationRequestId, String paProtocolNumber, String idempotenceToken) {
         throw new UnsupportedOperationException();
     }
-
-//    @Override
-//    public NotificationAttachmentDownloadMetadataResponse getSentNotificationDocumentV2(String iun, Integer docIndex) {
-//        throw new UnsupportedOperationException();
-//    }
-//
-//    @Override
-//    public NotificationAttachmentDownloadMetadataResponse getSentNotificationAttachmentV2(String iun, Integer recipientIdx, String attachmentName) {
-//        throw new UnsupportedOperationException();
-//    }
-//
-//    @Override
-//    public void paymentEventsRequestPagoPaV2(PaymentEventsRequestPagoPa paymentEventsRequestPagoPa) throws RestClientException {
-//        throw new UnsupportedOperationException();
-//    }
 
     /**
      * V21
@@ -277,7 +248,9 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
         throw new UnsupportedOperationException();
     }
 
-    public FullSentNotificationV27 getSentNotificationV27(String iun) { throw new UnsupportedOperationException();}
+    public FullSentNotificationV27 getSentNotificationV27(String iun) {
+        throw new UnsupportedOperationException();
+    }
 
     @Override
     public FullSentNotificationV28 getSentNotificationV28(String iun) {
@@ -372,6 +345,11 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
     }
 
     public NotificationProcessCostResponse getNotificationProcessCost(String iun, Integer recipientIndex, it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v24.NotificationFeePolicy notificationFeePolicy, Boolean applyCost, Integer paFee, Integer vat) throws RestClientException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public LegalFactDownloadMetadataWithContentTypeResponse getLegalFactByIdPrivate(String recipientInternalId, String iun, String legalFactId, String mandateId, it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v26.CxTypeAuthFleet xPagopaPnCxType, List<String> xPagopaPnCxGroups) throws RestClientException {
         throw new UnsupportedOperationException();
     }
 

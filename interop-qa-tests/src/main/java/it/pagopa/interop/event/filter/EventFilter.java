@@ -17,12 +17,10 @@ public final class EventFilter {
     }
 
     public EventPredicate build(){
-        Predicate<M2MEvent> predicate =
-                predicates.stream()
-                    .reduce(Predicate::and)
-                    .orElse(event -> true);
-
-        return new EventPredicate(predicate);
+        return predicates.stream()
+            .reduce(Predicate::and)
+            .map(EventPredicate::from)
+            .orElse(event -> true);
     }
 
     public EventFilter like(M2MEvent filter) {
