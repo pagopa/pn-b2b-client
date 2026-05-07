@@ -13,6 +13,7 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bInternalInformalClientImpl
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.dataTable.InformalNotificationRequestMapper;
+import it.pagopa.pn.cucumber.steps.pa.utilityInformalVersion.NotificationInformalUtilsV1;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,10 +72,11 @@ public class PresaInCaricoNoticaBonariaSteps {
 
     private NewInformalNotificationRequestStatusResponseV1 statusResponse;
     private String savedNotificationRequestId;
+    private NotificationInformalUtilsV1 notificationInformalUtilsV1;
 
 
     @Autowired
-    public PresaInCaricoNoticaBonariaSteps(InformalNotificationRequestMapper informalNotificationRequestMapper, PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl, SharedSteps sharedSteps, TimingForPolling timingForPolling, IPnPrivateDeliveryPushExternalClient pnPrivateDeliveryPushExternalClient) {
+    public PresaInCaricoNoticaBonariaSteps(InformalNotificationRequestMapper informalNotificationRequestMapper, PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl, SharedSteps sharedSteps, TimingForPolling timingForPolling, IPnPrivateDeliveryPushExternalClient pnPrivateDeliveryPushExternalClient, NotificationInformalUtilsV1 notificationInformalUtilsV1) {
         this.sharedSteps = sharedSteps;
         this.timingForPolling = timingForPolling;
         this.pnPrivateDeliveryPushExternalClient = pnPrivateDeliveryPushExternalClient;
@@ -83,6 +85,7 @@ public class PresaInCaricoNoticaBonariaSteps {
         this.b2bClient = sharedSteps.getB2bClient();
         this.pnPollingFactory = sharedSteps.getPollingFactory();
         this.informalNotificationRequestMapper = informalNotificationRequestMapper;
+        this.notificationInformalUtilsV1 = notificationInformalUtilsV1;
     }
 
 
@@ -132,14 +135,19 @@ public class PresaInCaricoNoticaBonariaSteps {
 
     @Then("viene inviata una nuova notifica bonaria")
     public void sendInformal() {
+
         try {
+
+            informalNotificationRequestV1 =
+                    notificationInformalUtilsV1.preloadAndPrepare(informalNotificationRequestV1);
+
+
             newInformalNotificationResponse = pnPaB2bInternalInformalClientImpl.sendNewInformalNotificationV1(informalNotificationRequestV1);
 
             //TODO t bonarie -> savedIun =
 
             savedNotificationRequestId =
                     newInformalNotificationResponse.getNotificationRequestId();
-
 
             lastException = null;
         } catch (Exception e) {
@@ -172,7 +180,10 @@ public class PresaInCaricoNoticaBonariaSteps {
 
     @Given("viene creata una nuova notifica bonaria con valori di default")
     public void createInformal() {
-        informalNotificationRequestV1 = new InformalNotificationRequestMapper().buildInformalNotificationRequest(Map.of());
+
+        informalNotificationRequestV1 =
+                informalNotificationRequestMapper.buildInformalNotificationRequest(Map.of());
+
         log.info("Invio notifica bonaria - request: {}", informalNotificationRequestV1);
     }
 
@@ -340,8 +351,6 @@ public class PresaInCaricoNoticaBonariaSteps {
             statusResponse = null;
         }
     }
-
-
 
 
     public UUID toUuid(String value) {

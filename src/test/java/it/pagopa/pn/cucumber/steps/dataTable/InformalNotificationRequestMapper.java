@@ -32,6 +32,7 @@ public class InformalNotificationRequestMapper {
                 .primaryMessage(primaryMessage)
                 .additionalMessage(additionalMessage);
     }
+
     // New Informal Notification
     public InformalNotificationRequestV1 buildInformalNotificationRequest(Map<String, String> data) {
         InformalNotificationRequestV1 request = new InformalNotificationRequestV1();
@@ -54,9 +55,11 @@ public class InformalNotificationRequestMapper {
         //  NESSUN DESTINATARIO DI DEFAULT
         request.setRecipients(new ArrayList<>());
 
-        request.setDocuments(List.of(buildDocument(data)));
+        // request.setDocuments(List.of(buildDocument(data)));
+        request.setDocuments(buildDocuments(data));
         return request;
     }
+
     // builder
     private NewMessageRequestPrimaryMessage buildMessageContent(
             String subject,
@@ -74,6 +77,7 @@ public class InformalNotificationRequestMapper {
         content.setLanguage(language);
         return content;
     }
+
     private NewMessageRequestAdditionalMessage buildAdditionalMessageContent(
             String subject,
             String longBody,
@@ -91,69 +95,109 @@ public class InformalNotificationRequestMapper {
         return content;
     }
 
+//    private NotificationDocument buildDocument(Map<String, String> data) {
+//
+//        NotificationAttachmentDigests digests =
+//                new NotificationAttachmentDigests();
+//        digests.setSha256(
+//                getValue(data, DOCUMENT_SHA256.key)
+//        );
+//
+//        NotificationAttachmentBodyRef ref =
+//                new NotificationAttachmentBodyRef();
+//        ref.setKey(
+//                getValue(data, DOCUMENT_KEY.key)
+//        );
+//        ref.setVersionToken(
+//                getValue(data, DOCUMENT_VERSION_TOKEN.key)
+//        );
+//
+//        NotificationDocument document =
+//                new NotificationDocument();
+//        document.setDigests(digests);
+//
+//        document.setContentType(
+//                getValue(data, ATTACHMENT_CONTENT_TYPE.key)
+//        );
+//
+//        document.setRef(ref);
+//
+//        document.setTitle(getValue(data, DOCUMENT_TITLE.key));
+//        document.setDocIdx(getValue(data, DOCUMENT_DOCIDX.key));
+//
+//        return document;
+//    }
+
+
+    private List<NotificationDocument> buildDocuments(Map<String, String> data) {
+
+        String documentsToAdd = getValue(data, DOCUMENT.key);
+
+        List<NotificationDocument> result = new ArrayList<>();
+
+        if (documentsToAdd == null) {
+            result.add(buildDefaultDocument(data));
+            return result;
+        }
+
+        for (String doc : documentsToAdd.split(";")) {
+
+            String path = getDocumentPath(doc);
+
+            NotificationDocument document = new NotificationDocument()
+                    .contentType("application/pdf")
+                    .ref(new NotificationAttachmentBodyRef().key(path));
+
+            result.add(document);
+        }
+
+        return result;
+    }
+
+    private String getDocumentPath(String documentElem) {
+
+        return switch (documentElem.toUpperCase().trim()) {
+            case "DOC_1_PG" -> "classpath:/sample_1pg.pdf";
+            case "DOC_2_PG" -> "classpath:/sample_2pg.pdf";
+            case "DOC_3_PG" -> "classpath:/sample_3pg.pdf";
+            case "DOC_4_PG" -> "classpath:/sample_4pg.pdf";
+
+            case "ALLEGATO_1_BN" -> "classpath:/Allegato1_BN.pdf";
+            case "ALLEGATO_2_BN" -> "classpath:/Allegato2_BN.pdf";
+
+            default -> throw new IllegalArgumentException("Documento non supportato: " + documentElem);
+        };
+    }
+
+    // fallback ?
+    private NotificationDocument buildDefaultDocument(Map<String, String> data) {
+        return new NotificationDocument()
+                .contentType("application/pdf")
+                .ref(new NotificationAttachmentBodyRef()
+                        .key("classpath:/sample_1pg.pdf"));
+    }
+
+    // =========================
+    // ATTACHMENT PAGAMENTO
+    // =========================
+
     public NotificationPaymentAttachment buildPaymentAttachment(
             Map<String, String> data) {
 
-        // Digests
-        NotificationAttachmentDigests digests =
-                new NotificationAttachmentDigests();
-        digests.setSha256(
-                getValue(data, "attachment_sha256")
-        );
+        NotificationAttachmentBodyRef ref = new NotificationAttachmentBodyRef();
+        ref.setKey(getValue(data, ATTACHMENT_KEY.key));
 
-        // Ref
-        NotificationAttachmentBodyRef ref =
-                new NotificationAttachmentBodyRef();
-        ref.setKey(
-                getValue(data, "attachment_key")
-        );
-        ref.setVersionToken(
-                getValue(data, "attachment_version_token")
-        );
+        NotificationPaymentAttachment attachment = new NotificationPaymentAttachment();
 
-        // Attachment
-        NotificationPaymentAttachment attachment =
-                new NotificationPaymentAttachment();
-        attachment.setDigests(digests);
-
-        String contentType = getValue(data, "attachment_contentType");
         attachment.setContentType(
-                contentType != null ? contentType : "application/pdf"
+                getValue(data, ATTACHMENT_CONTENT_TYPE.key)
         );
 
         attachment.setRef(ref);
 
         return attachment;
     }
-//todo t bonarie usare i default
-    private NotificationDocument buildDocument(Map<String, String> data) {
 
-        NotificationAttachmentDigests digests =
-                new NotificationAttachmentDigests();
-        digests.setSha256(
-                getValue(data, "document_sha256")
-        );
-
-        NotificationAttachmentBodyRef ref =
-                new NotificationAttachmentBodyRef();
-        ref.setKey(
-                getValue(data, "document_key")
-        );
-        ref.setVersionToken(
-                getValue(data, "document_version_token")
-        );
-
-        NotificationDocument document =
-                new NotificationDocument();
-        document.setDigests(digests);
-        document.setContentType("application/pdf");
-        document.setRef(ref);
-
-        document.setTitle(getValue(data, DOCUMENT_TITLE.key));
-        document.setDocIdx(getValue(data, DOCUMENT_DOCIDX.key));
-
-        return document;
-    }
 
     //TODO metodi commentati- offrivano dei valori di default, ora queste request sono popolate da step dedicati.
 
