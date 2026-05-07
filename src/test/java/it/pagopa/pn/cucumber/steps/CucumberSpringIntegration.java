@@ -105,46 +105,7 @@ import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceValidationSta
 import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceWebhookV29;
 import it.pagopa.pn.client.b2b.pa.service.IBffMandateServiceApi;
 import it.pagopa.pn.client.b2b.pa.service.IMandateReverseServiceClient;
-import it.pagopa.pn.client.b2b.pa.service.impl.B2BDeliveryPushServiceClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.B2bMandateServiceClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.BffMandateServiceClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.EmdIntegrationApiImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.IPnInteropProbingClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.IPnLegalPersonAuthClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.IPnLegalPersonVirtualKeyServiceClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.IPnTosPrivacyClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.MandateReverseServiceClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PaperCalculatorClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnApiKeyManagerExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnAppIOB2bExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnBFFRecipientNotificationClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnBffPaClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnCfgClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnDowntimeLogsExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalChannelsServiceClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalRegistryPrivateUserApiImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnGPDClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnIoUserAttributerExternaClient;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnMandateAppIoClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnPaperTrackerClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnPrivateDeliveryPushExternalClient;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddAlternativeClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddAlternativeV2ClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddCapCoverageClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddFsuClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnSafeStoragePrivateClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnServiceDeskClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnWebMandateExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnWebRecipientExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnWebhookB2bExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.ReworkTimelineClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.TemplateEngineClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRaddCognito;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
@@ -325,7 +286,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         LambdaInvoker.class,
         TemplateEngineConfigBean.class,
         SchemaValidator.class,
-        PaperTrackerSchemaValidatorProxy.class
+        PaperTrackerSchemaValidatorProxy.class,
+        PnExternalChannelsInternalClientImpl.class,
+        PnEcInternalClientImpl.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
