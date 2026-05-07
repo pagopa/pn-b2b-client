@@ -571,29 +571,27 @@ public class CoperturaCapRaddSteps {
     }
 
     // TODO spostare in una classe di utility
+
    private String calculateDate(String duration) {
         if (toNullable(duration) == null) {
             return null;
         }
 
-        // Caso forzato, se il valore viene passato tra quadre non viene parsato per estrarre la data
-       if (duration.startsWith("[") && duration.endsWith("]")) {
-           return duration.substring(1, duration.length() - 1);
-       }
+        if(duration.startsWith("OFFSET(") && duration.endsWith(")")) {
+            LocalDate startDate = LocalDate.now();
 
-        LocalDate startDate = LocalDate.now();
+            int value = Integer.parseInt(duration.substring(0, duration.length() - 1));
+            char unit = duration.charAt(duration.length() - 1);
 
-        int value = Integer.parseInt(duration.substring(0, duration.length() - 1));
-        char unit = duration.charAt(duration.length() - 1);
-
-        LocalDate endDate = switch (unit) {
-            case 'Y' -> startDate.plusYears(value);
-            case 'M' -> startDate.plusMonths(value);
-            case 'D' -> startDate.plusDays(value);
-            default -> throw new IllegalArgumentException("Formato durata non valido: " + duration);
-        };
-
-       return endDate.format(FORMATTER);
+            LocalDate endDate = switch (unit) {
+                case 'Y' -> startDate.plusYears(value);
+                case 'M' -> startDate.plusMonths(value);
+                case 'D' -> startDate.plusDays(value);
+                default -> throw new IllegalArgumentException("Formato durata non valido: " + duration);
+            };
+            return endDate.format(FORMATTER);
+        }
+       return duration;
     }
 
 
