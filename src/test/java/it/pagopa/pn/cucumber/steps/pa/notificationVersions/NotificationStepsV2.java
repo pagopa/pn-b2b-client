@@ -151,6 +151,9 @@ public class NotificationStepsV2 implements NotificationStepsInterface {
     }
 
     @Override
+    public String getSenderTaxId() { return notificationRequest.getSenderTaxId(); }
+
+    @Override
     public String getNotificationRequestGroup() {
         return notificationRequest.getGroup();
     }

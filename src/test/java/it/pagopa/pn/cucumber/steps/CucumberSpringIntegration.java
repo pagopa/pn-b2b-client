@@ -288,6 +288,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         TemplateEngineConfigBean.class,
         SchemaValidator.class,
         PaperTrackerSchemaValidatorProxy.class,
+        PnExternalChannelsInternalClientImpl.class,
+        PnEcInternalClientImpl.class,
+        PaperTrackerSchemaValidatorProxy.class,
         AwsUtils.class,
         PnNotificationCostClientImpl.class
 })
