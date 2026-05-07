@@ -213,7 +213,11 @@ public class DevToolsSteps {
         if (!overrides.isEmpty()) applyOverrides(validClientAssertion, overrides);
 
         String clientAssertion = validClientAssertion.signWith(preparedClient.keyPair().getPrivate()).compact();
+
+        log.info("Client assertion header: '{}'", new String(Base64.getUrlDecoder().decode(clientAssertion.split("\\.")[0])));
+        log.info("Client assertion payload: '{}'", new String(Base64.getUrlDecoder().decode(clientAssertion.split("\\.")[1])));
         log.info("Client assertion: '{}'", clientAssertion);
+
         devToolsContext.setActualClientAssertion(clientAssertion);
     }
 
@@ -315,6 +319,10 @@ public class DevToolsSteps {
                 default -> throw new IllegalArgumentException("Claim non supportato: " + claim);
             }
         }
+    }
+
+    private String getRawClientAssertion() {
+        return devToolsContext.getActualClientAssertion();
     }
 
     private void runClientAssertionValidation(String tenantType, String clientAssertionType, String grantType) {
