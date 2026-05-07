@@ -2533,7 +2533,6 @@
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                                 <typeMapping>file=org.springframework.core.io.Resource</typeMapping>
                             </typeMappings>
-                            <!--<inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/refs/tags/v2.21.0-RC.2/docs/openapi/api-rework-private.yaml</inputSpec>-->
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/refs/heads/develop/docs/openapi/api-rework-private.yaml</inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
@@ -2583,8 +2582,6 @@
                                     @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
                                 </additionalModelTypeAnnotations>
                             </configOptions>
-                            <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.api</apiPackage>
-                            <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model</modelPackage>
                         </configuration>
                     </execution>
 

@@ -27,7 +27,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @Slf4j
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class CostiNotificaFase5Steps {
+public class CostiNotificaSteps {
 
     private final SharedSteps sharedSteps;
     private final IPnNotificationCostClient notificationCostClient;
@@ -35,14 +35,9 @@ public class CostiNotificaFase5Steps {
     private NotificationCostRecipientResponse notificationCostRecipientResponse;
 
     @Autowired
-    public CostiNotificaFase5Steps(SharedSteps sharedSteps, IPnNotificationCostClient notificationCostClient) {
+    public CostiNotificaSteps(SharedSteps sharedSteps, IPnNotificationCostClient notificationCostClient) {
         this.sharedSteps = sharedSteps;
         this.notificationCostClient = notificationCostClient;
-    }
-
-    @ParameterType("la presenza|il mancato inserimento")
-    public boolean isInTimeline(String value) {
-        return value.equals("la presenza");
     }
 
     @And("verifico che per il destinatario {int} il record su Pn-NotificationDeliveryCost sia stato (inserito)(modificato) e correttamente valorizzato")

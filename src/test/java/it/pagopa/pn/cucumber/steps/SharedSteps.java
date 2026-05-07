@@ -1388,8 +1388,8 @@ public class SharedSteps {
         log.info("IUN OLDER {} GG: {}", lowerLimit, oldNotification.getIun());
     }
 
-    @Then("verifico su DynamoDB {isInTimeline} in timeline (dell'elemento)(di elementi) {string}")
-    public void checkTimelineFromDynamoDB(boolean isInTimeline, String timelineElement) {
+    @Then("verifico che su DynamoDB {is} presente in timeline l'elemento {string}")
+    public void checkTimelineFromDynamoDB(boolean isPresent, String timelineElement) {
 
         Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();
         expressionAttributeValues.put(":v_iun", AttributeValue.builder().s(notificationIun).build());
@@ -1400,7 +1400,7 @@ public class SharedSteps {
         QueryResponse queryResponse = dbClient.query(queryRequest);
 
         log.info("Elementi trovati con categoria {}: {}", timelineElement, queryResponse.count());
-        if (isInTimeline) {
+        if (isPresent) {
             assertThat(queryResponse.items().size()).as("La response non contiene nessun elemento con category " + timelineElement).isGreaterThan(0);
 
             for (int i = 0; i < queryResponse.items().size(); i++) {
@@ -1425,7 +1425,7 @@ public class SharedSteps {
      * in tutti gli altri casi, viene impostato col valore passato.
      * La scrittura dei log su CloudWatch è repentina, ma possono tuttavia capitare casi in cui il log viene scritto pochi secondi dopo
      * rispetto a quando viene eseguita la ricerca. Per evitare fail dei test dovuti a questa motivazione, il metodo riesegue la ricerca
-     * un massimo di 5 volte (eventualmente si può configurare) prima di dichiarare fallito il test.
+     * tramite polling prima di dichiarare fallito il test.
      */
     @And("verifico la presenza di un audit log su {string} negli ultimi {int} minuti riportante i seguenti dati nel messaggio")
     public void checkAuditLogFromAws(String microservice, int minutes, Map<String, String> queryFiltersMap) throws InterruptedException {

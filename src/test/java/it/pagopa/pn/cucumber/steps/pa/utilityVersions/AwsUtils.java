@@ -29,23 +29,9 @@ public class AwsUtils {
     public static final String PN_NOTIFICATION_DELIVERY_COST = "pn-NotificationDeliveryCost";
 
     @Autowired
-    public AwsUtils() {
-        this.dynamoDbClient = initDynamoDbClient();
-        this.cloudWatchLogsClient = initCloudWatchLogsClient();
-    }
-
-    private DynamoDbClient initDynamoDbClient() {
-        return DynamoDbClient.builder()
-                .region(Region.EU_SOUTH_1)
-                .credentialsProvider(DefaultCredentialsProvider.create())
-                .build();
-    }
-
-    private CloudWatchLogsClient initCloudWatchLogsClient() {
-        return CloudWatchLogsClient.builder()
-                .region(Region.EU_SOUTH_1)
-                .credentialsProvider(DefaultCredentialsProvider.create())
-                .build();
+    public AwsUtils(DynamoDbClient dynamoDbClient, CloudWatchLogsClient cloudWatchLogsClient) {
+        this.dynamoDbClient = dynamoDbClient;
+        this.cloudWatchLogsClient = cloudWatchLogsClient;
     }
 
     /**

@@ -15,8 +15,8 @@ Feature: Costi Notifica Fase 5
       | physicalAddress_address | Via@FAIL-Discovery_AR |
       | payment                 | NULL                  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
-    Then verifico su DynamoDB il mancato inserimento in timeline dell'elemento "NOTIFICATION_COST_VALIDATION_REQUEST"
-    Then verifico su DynamoDB il mancato inserimento in timeline dell'elemento "NOTIFICATION_COST_VALIDATION_RESPONSE"
+    Then verifico che su DynamoDB non è presente in timeline l'elemento "NOTIFICATION_COST_VALIDATION_REQUEST"
+    And verifico che su DynamoDB non è presente in timeline l'elemento "NOTIFICATION_COST_VALIDATION_RESPONSE"
 
   @costiNotificaFase5 @CNF5_FF_ENABLED
   Scenario: [CNF5_ANNULLAMENTO_IMMEDIATO] Invio di una notifica mono-destinatario e mono-pagamento e immediato annullamento di essa
@@ -37,8 +37,8 @@ Feature: Costi Notifica Fase 5
       | apply_cost_pagopa       | SI                            |
       | payment_multy_number    | 1                             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED e successivamente annullata
-    Then verifico su DynamoDB la presenza in timeline dell'elemento "NOTIFICATION_COST_VALIDATION_REQUEST"
-    And verifico su DynamoDB la presenza in timeline dell'elemento "NOTIFICATION_COST_VALIDATION_RESPONSE"
+    Then verifico che su DynamoDB è presente in timeline l'elemento "NOTIFICATION_COST_VALIDATION_REQUEST"
+    And verifico che su DynamoDB è presente in timeline l'elemento "NOTIFICATION_COST_VALIDATION_RESPONSE"
     And verifico che per l'utente 0 il popolamento dei dati su Pn-PaymentInfo sia avvenuto correttamente
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun      | auto               |
@@ -51,8 +51,6 @@ Feature: Costi Notifica Fase 5
       | tag      | AUD_NT_UPDATE_COST           |
       | recIndex | recIndex=0                   |
       | phase    | phase=NOTIFICATION_CANCELLED |
-    And verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato inserito e correttamente valorizzato
-      | isDeleted | true |
     And verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato modificato e correttamente valorizzato
       | isDeleted | true |
 
@@ -75,8 +73,8 @@ Feature: Costi Notifica Fase 5
       | apply_cost_pagopa       | <applyCost>           |
       | payment_multy_number    | 1                     |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    Then verifico su DynamoDB la presenza in timeline dell'elemento "NOTIFICATION_COST_VALIDATION_REQUEST"
-    And verifico su DynamoDB la presenza in timeline dell'elemento "NOTIFICATION_COST_VALIDATION_RESPONSE"
+    Then verifico che su DynamoDB è presente in timeline l'elemento "NOTIFICATION_COST_VALIDATION_REQUEST"
+    And verifico che su DynamoDB è presente in timeline l'elemento "NOTIFICATION_COST_VALIDATION_RESPONSE"
     And verifico che per l'utente 0 il popolamento dei dati su Pn-PaymentInfo sia avvenuto correttamente
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun      | auto               |

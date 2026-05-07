@@ -3,12 +3,7 @@ package it.pagopa.pn.cucumber.steps;
 import io.cucumber.spring.CucumberContextConfiguration;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.config.TemplateEngineConfigBean;
-import it.pagopa.pn.client.b2b.pa.config.springconfig.ApiKeysConfiguration;
-import it.pagopa.pn.client.b2b.pa.config.springconfig.BearerTokenConfiguration;
-import it.pagopa.pn.client.b2b.pa.config.springconfig.LegalFactTokenConfiguration;
-import it.pagopa.pn.client.b2b.pa.config.springconfig.MailSenderConfig;
-import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
-import it.pagopa.pn.client.b2b.pa.config.springconfig.TimingConfiguration;
+import it.pagopa.pn.client.b2b.pa.config.springconfig.*;
 import it.pagopa.pn.client.b2b.pa.parsing.config.PnLegalFactTokenProperty;
 import it.pagopa.pn.client.b2b.pa.parsing.config.PnLegalFactTokens;
 import it.pagopa.pn.client.b2b.pa.parsing.parser.impl.PnParser;
@@ -127,6 +122,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         BearerTokenConfiguration.class,
         TimingConfiguration.class,
         RestTemplateConfiguration.class,
+        AwsConfig.class,
         PnPaB2bExternalClientImpl.class,
         PnWebRecipientExternalClientImpl.class,
         PnWebhookB2bExternalClientImpl.class,
@@ -290,7 +286,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PaperTrackerSchemaValidatorProxy.class,
         PnExternalChannelsInternalClientImpl.class,
         PnEcInternalClientImpl.class,
-        PaperTrackerSchemaValidatorProxy.class,
         AwsUtils.class,
         PnNotificationCostClientImpl.class
 })

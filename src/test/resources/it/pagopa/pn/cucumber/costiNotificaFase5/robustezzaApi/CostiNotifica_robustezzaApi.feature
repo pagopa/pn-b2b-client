@@ -45,8 +45,8 @@ Feature: Costi Notifica Fase 5
       | apply_cost_pagopa       | SI                        |
       | payment_multy_number    | 1                         |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    Then verifico su DynamoDB la presenza in timeline dell'elemento "NOTIFICATION_COST_VALIDATION_REQUEST"
-    And verifico su DynamoDB la presenza in timeline dell'elemento "NOTIFICATION_COST_VALIDATION_RESPONSE"
+    Then verifico che su DynamoDB è presente in timeline l'elemento "NOTIFICATION_COST_VALIDATION_REQUEST"
+    And verifico che su DynamoDB è presente in timeline l'elemento "NOTIFICATION_COST_VALIDATION_RESPONSE"
     And verifico che per l'utente 0 il popolamento dei dati su Pn-PaymentInfo sia avvenuto correttamente
     And verifico che per il destinatario 0 il record su Pn-NotificationDeliveryCost sia stato inserito e correttamente valorizzato
       | isDeleted | false |
