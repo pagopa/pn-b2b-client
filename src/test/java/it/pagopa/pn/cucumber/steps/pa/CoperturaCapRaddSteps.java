@@ -22,14 +22,18 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.*;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
+import static it.pagopa.common.util.StringUtils.toNullable;
+import static it.pagopa.common.util.StringUtils.ALPHABET;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static it.pagopa.common.util.DateUtils.FORMATTER_ISO;
+import static it.pagopa.common.util.DateUtils.calculateDate;
+
 
 
 @Slf4j
@@ -44,10 +48,9 @@ public class CoperturaCapRaddSteps {
     private String randomLocality;
     private LocalDate searchDate = null;
 
-    private static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static final int LENGTH = 6;
     private static final Random RANDOM = new Random();
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
+
 
     private CreateCoverageRequest request;
     private ResponseEntity<Coverage> response;
@@ -115,15 +118,6 @@ public class CoperturaCapRaddSteps {
         assertNotNull(response.getBody());
         assertEquals(randomLocality, response.getBody().getLocality());
         assertEquals(expectedCap, response.getBody().getCap());
-    }
-
-    private String toNullable(String value) {
-        if (value == null) return null;
-        value = value.trim();
-        if (value.isEmpty() || value.equalsIgnoreCase("null")) {
-            return null;
-        }
-        return value;
     }
 
     @Then("l'operazione di copertura Radd ha prodotto un errore con status code {string}")
@@ -328,7 +322,7 @@ public class CoperturaCapRaddSteps {
             String line;
             boolean isHeader = true;
 
-            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
             LocalDate now = LocalDate.now();
 
             while ((line = br.readLine()) != null) {
@@ -348,10 +342,10 @@ public class CoperturaCapRaddSteps {
                 if (cap.isEmpty()) continue;
 
                 try {
-                    LocalDate start = LocalDate.parse(startValidityStr, dateFormatter);
+                    LocalDate start = LocalDate.parse(startValidityStr, FORMATTER_ISO);
                     LocalDate end = endValidityStr.isEmpty()
-                            ? LocalDate.parse("9999-12-31", dateFormatter)
-                            : LocalDate.parse(endValidityStr, dateFormatter);
+                            ? LocalDate.parse("9999-12-31", FORMATTER_ISO)
+                            : LocalDate.parse(endValidityStr, FORMATTER_ISO);
 
                     boolean isActive = (now.isEqual(start) || now.isAfter(start)) &&
                             (now.isEqual(end) || now.isBefore(end));
@@ -569,31 +563,5 @@ public class CoperturaCapRaddSteps {
             System.out.println("File risultati generato in: " + outputFile);
         }
     }
-
-    // TODO spostare in una classe di utility
-
-   private String calculateDate(String duration) {
-        if (toNullable(duration) == null) {
-            return null;
-        }
-
-        if(duration.startsWith("OFFSET(") && duration.endsWith(")")) {
-            LocalDate startDate = LocalDate.now();
-
-            int value = Integer.parseInt(duration.substring(0, duration.length() - 1));
-            char unit = duration.charAt(duration.length() - 1);
-
-            LocalDate endDate = switch (unit) {
-                case 'Y' -> startDate.plusYears(value);
-                case 'M' -> startDate.plusMonths(value);
-                case 'D' -> startDate.plusDays(value);
-                default -> throw new IllegalArgumentException("Formato durata non valido: " + duration);
-            };
-            return endDate.format(FORMATTER);
-        }
-       return duration;
-    }
-
-
 
 }

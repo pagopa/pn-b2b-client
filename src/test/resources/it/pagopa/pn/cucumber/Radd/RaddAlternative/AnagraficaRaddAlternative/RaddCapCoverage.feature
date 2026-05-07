@@ -595,10 +595,6 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | null     | null       | null        | <cap> | /    | null  | null | null    |
     And invoco l'API di verifica copertura cap Radd Complete mode
     And per i dati forniti si verifica che lo stato di copertura sia "COPERTO"
-    And setto i dati per aggiornare una copertura Radd:
-      | cap   | locality | cadastralCode   | province   | startValidity | endValidity  |
-      | <cap> | /        | <cadastralCode> | <province> | [1990-01-01]  | [1990-01-01] |
-    And invoco l'API di aggiornamento copertura cap Radd
     Examples:
       | cap   | cadastralCode | province | startValidity | endValidity | search-date |
       | 12121 | H501          | NA       | OFFSET(-1Y)   | OFFSET(1Y)  | OFFSET(1M)  |
@@ -622,10 +618,6 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | null     | null       | null        | <cap> | /    | null  | null | null    |
     And invoco l'API di verifica copertura cap Radd Complete mode
     And per i dati forniti si verifica che lo stato di copertura sia "NON_COPERTO"
-    And setto i dati per aggiornare una copertura Radd:
-      | cap   | locality | cadastralCode   | province   | startValidity | endValidity  |
-      | <cap> | /        | <cadastralCode> | <province> | [1990-01-01]  | [1990-01-01] |
-    And invoco l'API di aggiornamento copertura cap Radd
     Examples:
       | cap   | locality | cadastralCode | province | startValidity | endValidity | search-date |
       | 12120 | /        | H501          | RM       | OFFSET(0D)    | OFFSET(1Y)  | OFFSET(-1Y) |
