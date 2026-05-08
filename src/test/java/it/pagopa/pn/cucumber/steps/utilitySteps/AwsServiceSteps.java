@@ -3,11 +3,11 @@ package it.pagopa.pn.cucumber.steps.utilitySteps;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import it.pagopa.common.util.CloudWatchQueryRequest;
+import it.pagopa.pn.client.b2b.pa.utils.SendDynamoQueryRequest;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
-import it.pagopa.pn.cucumber.steps.pa.utilityVersions.AwsUtils;
-import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient;
@@ -27,23 +27,12 @@ import static org.awaitility.Awaitility.await;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
+@RequiredArgsConstructor
 public class AwsServiceSteps {
     private final SharedSteps sharedSteps;
-    @Getter
     private final DynamoDbClient dynamoDbClient;
-    @Getter
     private final CloudWatchLogsClient cloudWatchLogsClient;
     private boolean checkAuditLogDisabled;
-
-    @Autowired
-    public AwsServiceSteps(
-            SharedSteps sharedSteps,
-            DynamoDbClient dynamoDbClient,
-            CloudWatchLogsClient cloudWatchLogsClient) {
-        this.sharedSteps = sharedSteps;
-        this.dynamoDbClient = dynamoDbClient;
-        this.cloudWatchLogsClient = cloudWatchLogsClient;
-    }
 
     /**
      * Ricerca uno specifico elemento su pn-timelines e verifica la sua presenza (o meno)
@@ -54,7 +43,7 @@ public class AwsServiceSteps {
         expressionAttributeValues.put(":v_iun", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build());
         expressionAttributeValues.put(":v_category", AttributeValue.builder().s(timelineElement).build());
 
-        QueryRequest queryRequest = AwsUtils.buildPnTimelinesCategoryRequest(expressionAttributeValues);
+        QueryRequest queryRequest = SendDynamoQueryRequest.buildPnTimelinesCategoryRequest(expressionAttributeValues);
         QueryResponse queryResponse = dynamoDbClient.query(queryRequest);
 
         log.info("Elementi trovati con categoria {}: {}", timelineElement, queryResponse.count());
@@ -104,7 +93,7 @@ public class AwsServiceSteps {
                 String search = sb.toString().trim();
 
                 await().atMost(2, TimeUnit.MINUTES).pollInterval(10, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(() -> {
-                    FilterLogEventsRequest logRequest = AwsUtils.buildCloudWatchLogRequest(microservice, search, minutes);
+                    FilterLogEventsRequest logRequest = CloudWatchQueryRequest.search(microservice, search, minutes);
                     FilterLogEventsResponse logResponse = cloudWatchLogsClient.filterLogEvents(logRequest);
                     assertThat(logResponse.events().size()).as("Non è stato trovato nessun log che soddisfi la search %s", search).isGreaterThan(0);
                 });

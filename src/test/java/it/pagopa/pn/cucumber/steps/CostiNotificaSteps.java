@@ -4,13 +4,18 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PagoPaPayment;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.NewNotificationCostRequest;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.NotificationCostPaymentResponse;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.NotificationCostRecipientResponse;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.NotificationFeePolicy;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.PagoPaIntMode;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.PaymentData;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.RecipientCostData;
 import it.pagopa.pn.client.b2b.pa.service.IPnNotificationCostClient;
+import it.pagopa.pn.client.b2b.pa.utils.SendDynamoQueryRequest;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v26.NotificationProcessCostResponse;
-import it.pagopa.pn.cucumber.steps.pa.utilityVersions.AwsUtils;
-import it.pagopa.pn.cucumber.steps.utilitySteps.AwsServiceSteps;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -19,7 +24,10 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,20 +35,14 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @Slf4j
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@RequiredArgsConstructor
 public class CostiNotificaSteps {
-
     private final SharedSteps sharedSteps;
-    private final AwsServiceSteps awsServiceSteps;
+    private final DynamoDbClient dynamoDbClient;
     private final IPnNotificationCostClient notificationCostClient;
     private NotificationCostPaymentResponse notificationCostPaymentResponse;
     private NotificationCostRecipientResponse notificationCostRecipientResponse;
 
-    @Autowired
-    public CostiNotificaSteps(SharedSteps sharedSteps, AwsServiceSteps awsServiceSteps, IPnNotificationCostClient notificationCostClient) {
-        this.sharedSteps = sharedSteps;
-        this.awsServiceSteps = awsServiceSteps;
-        this.notificationCostClient = notificationCostClient;
-    }
 
     @And("verifico che per il destinatario {int} il record su Pn-NotificationDeliveryCost sia stato (inserito)(modificato) e correttamente valorizzato")
     public void checkNotificationDeliveryCostRecord(int recIndex, Map<String, String> expectedData) {
@@ -93,8 +95,8 @@ public class CostiNotificaSteps {
         expressionAttributeValues.put(":v_pk", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build());
         expressionAttributeValues.put(":v_sk", AttributeValue.builder().n(String.valueOf(recIndex)).build());
 
-        QueryRequest queryRequest = AwsUtils.buildPnNotificationDeliveryCostRequest(expressionAttributeValues);
-        QueryResponse queryResponse = awsServiceSteps.getDynamoDbClient().query(queryRequest);
+        QueryRequest queryRequest = SendDynamoQueryRequest.buildPnNotificationDeliveryCostRequest(expressionAttributeValues);
+        QueryResponse queryResponse = dynamoDbClient.query(queryRequest);
 
         try {
             assertThat(queryResponse.items().size())
@@ -146,9 +148,8 @@ public class CostiNotificaSteps {
         Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();
         expressionAttributeValues.put(":v_pk", AttributeValue.builder().s(pk).build());
 
-        DynamoDbClient dbClient = awsServiceSteps.getDynamoDbClient();
-        QueryRequest queryRequest = AwsUtils.buildPnPaymentInfoRequest(expressionAttributeValues);
-        QueryResponse queryResponse = dbClient.query(queryRequest);
+        QueryRequest queryRequest = SendDynamoQueryRequest.buildPnPaymentInfoRequest(expressionAttributeValues);
+        QueryResponse queryResponse = dynamoDbClient.query(queryRequest);
 
         try {
             assertThat(queryResponse.items().size())
