@@ -93,9 +93,8 @@ public class CostiNotificaSteps {
         expressionAttributeValues.put(":v_pk", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build());
         expressionAttributeValues.put(":v_sk", AttributeValue.builder().n(String.valueOf(recIndex)).build());
 
-        DynamoDbClient dbClient = awsServiceSteps.getAwsUtils().getDynamoDbClient();
         QueryRequest queryRequest = AwsUtils.buildPnNotificationDeliveryCostRequest(expressionAttributeValues);
-        QueryResponse queryResponse = dbClient.query(queryRequest);
+        QueryResponse queryResponse = awsServiceSteps.getDynamoDbClient().query(queryRequest);
 
         try {
             assertThat(queryResponse.items().size())
@@ -147,7 +146,7 @@ public class CostiNotificaSteps {
         Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();
         expressionAttributeValues.put(":v_pk", AttributeValue.builder().s(pk).build());
 
-        DynamoDbClient dbClient = awsServiceSteps.getAwsUtils().getDynamoDbClient();
+        DynamoDbClient dbClient = awsServiceSteps.getDynamoDbClient();
         QueryRequest queryRequest = AwsUtils.buildPnPaymentInfoRequest(expressionAttributeValues);
         QueryResponse queryResponse = dbClient.query(queryRequest);
 

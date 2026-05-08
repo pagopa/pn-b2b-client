@@ -28,16 +28,21 @@ import static org.awaitility.Awaitility.await;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
 public class AwsServiceSteps {
-
     private final SharedSteps sharedSteps;
     @Getter
-    private final AwsUtils awsUtils;
+    private final DynamoDbClient dynamoDbClient;
+    @Getter
+    private final CloudWatchLogsClient cloudWatchLogsClient;
     private boolean checkAuditLogDisabled;
 
     @Autowired
-    public AwsServiceSteps(SharedSteps sharedSteps, AwsUtils awsUtils) {
+    public AwsServiceSteps(
+            SharedSteps sharedSteps,
+            DynamoDbClient dynamoDbClient,
+            CloudWatchLogsClient cloudWatchLogsClient) {
         this.sharedSteps = sharedSteps;
-        this.awsUtils = awsUtils;
+        this.dynamoDbClient = dynamoDbClient;
+        this.cloudWatchLogsClient = cloudWatchLogsClient;
     }
 
     /**
@@ -49,9 +54,8 @@ public class AwsServiceSteps {
         expressionAttributeValues.put(":v_iun", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build());
         expressionAttributeValues.put(":v_category", AttributeValue.builder().s(timelineElement).build());
 
-        DynamoDbClient dbClient = awsUtils.getDynamoDbClient();
         QueryRequest queryRequest = AwsUtils.buildPnTimelinesCategoryRequest(expressionAttributeValues);
-        QueryResponse queryResponse = dbClient.query(queryRequest);
+        QueryResponse queryResponse = dynamoDbClient.query(queryRequest);
 
         log.info("Elementi trovati con categoria {}: {}", timelineElement, queryResponse.count());
         try {
@@ -98,7 +102,6 @@ public class AwsServiceSteps {
                     }
                 });
                 String search = sb.toString().trim();
-                CloudWatchLogsClient cloudWatchLogsClient = awsUtils.getCloudWatchLogsClient();
 
                 await().atMost(2, TimeUnit.MINUTES).pollInterval(10, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(() -> {
                     FilterLogEventsRequest logRequest = AwsUtils.buildCloudWatchLogRequest(microservice, search, minutes);
