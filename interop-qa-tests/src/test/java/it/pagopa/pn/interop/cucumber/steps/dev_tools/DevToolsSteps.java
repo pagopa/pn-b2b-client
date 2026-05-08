@@ -228,7 +228,11 @@ public class DevToolsSteps {
 
         KeyPair keyPair = KeyPairGeneratorUtil.createKeyPair(keyType, keySize);
         String clientAssertion = validClientAssertion.signWith(keyPair.getPrivate()).compact();
-        log.info("Client assertion with key: '{}'", clientAssertion);
+
+        log.info("Client assertion header: '{}'", new String(Base64.getUrlDecoder().decode(clientAssertion.split("\\.")[0])));
+        log.info("Client assertion payload: '{}'", new String(Base64.getUrlDecoder().decode(clientAssertion.split("\\.")[1])));
+        log.info("Client assertion: '{}'", clientAssertion);
+
         devToolsContext.setActualClientAssertion(clientAssertion);
     }
 
