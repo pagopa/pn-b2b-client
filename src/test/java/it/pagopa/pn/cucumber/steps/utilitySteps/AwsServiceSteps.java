@@ -5,6 +5,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.AwsUtils;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -29,6 +30,7 @@ import static org.awaitility.Awaitility.await;
 public class AwsServiceSteps {
 
     private final SharedSteps sharedSteps;
+    @Getter
     private final AwsUtils awsUtils;
     private boolean checkAuditLogDisabled;
 
