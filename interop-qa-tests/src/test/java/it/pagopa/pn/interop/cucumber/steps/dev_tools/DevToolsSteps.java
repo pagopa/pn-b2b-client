@@ -220,6 +220,13 @@ public class DevToolsSteps {
         if (!overrides.isEmpty()) applyOverrides(validClientAssertion, overrides);
 
         String clientAssertion = validClientAssertion.signWith(preparedClient.keyPair().getPrivate()).compact();
+        // JwtBuilder::compact aggiorna "alg" nell'header per cui eventuali modifiche devono essere riapplicate
+        try {
+            clientAssertion = applyOverridesToEncodedAlg(clientAssertion, overrides);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error processing JSON for client assertion header: " + e.getMessage(), e);
+        }
+
         logClientAssertion(clientAssertion);
         devToolsContext.setActualClientAssertion(clientAssertion);
     }

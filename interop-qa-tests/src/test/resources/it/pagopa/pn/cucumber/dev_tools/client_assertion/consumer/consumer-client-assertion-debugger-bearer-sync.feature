@@ -347,7 +347,7 @@ Feature: : Debugger Client Assertion Sync Bearer
   Scenario: [KEY_RETRIEVE_ALGORITHM_NOT_FOUND_CONSUMER_CLIENT] Dato un client CONSUMER valido, quando il claim alg non è valido allora il recupero della chiave pubblica fallisce con errore algorithmNotFound
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
-    When "PA1" crea una client assertion per un client di tipo CONSUMER utilizzando una chiave "RSA" di lunghezza 2048:
+    When "PA1" crea una client assertion per un client di tipo CONSUMER con:
       | claim    | value      |
       | __remove | header.alg |
     And "PA1" richiede la validazione della client assertion appena creata
