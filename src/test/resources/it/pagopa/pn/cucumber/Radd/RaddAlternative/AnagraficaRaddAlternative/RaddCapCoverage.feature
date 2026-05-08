@@ -525,8 +525,8 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     And per i dati forniti si verifica che lo stato di copertura sia "NON_COPERTO"
     Examples:
       | cap   | locality | cadastralCode | province | startValidity  | endValidity    | search-date     |
-      | 80100 | /        | H501          | RM       | $DATE_ADD(-1Y) | $DATE_ADD(1Y)  | $DATE_ADD(-13M) |
-      | 80101 | /        | H501          | MI       | $DATE_ADD(10Y) | $DATE_ADD(15Y) | $TODAY()        |
+      | 90101 | /        | H501          | RM       | $DATE_ADD(-1Y) | $DATE_ADD(1Y)  | $DATE_ADD(-13M) |
+      | 90102 | /        | H501          | MI       | $DATE_ADD(10Y) | $DATE_ADD(15Y) | $TODAY()        |
 
 
   @capCoverageRadd @cognito1 #rif srs 4
