@@ -593,6 +593,10 @@ public class NotificationStepsConfig {
     private void applyTaskForEveryUser(List<String> excludedRoles, ThrowingConsumer<String> taskPerRole) throws Exception {
         List<Tenant> tenantList = this.configFileReader.getTenantList();
         for (Tenant tenant : tenantList) {
+            // FIXME PA3 e PA4 potrebbero non avere qualche inizializzazione per cui non si riescono a configurare
+            // con successo le notifiche
+            if (tenant.getName().equals("PA3") || tenant.getName().equals("PA4")) continue;
+
             Map<String, List<String>> rolesCopy = new HashMap<>(tenant.getUserRoles());
             Set<Entry<String, List<String>>> roles = rolesCopy.entrySet();
             for (Entry<String, List<String>> roleEntry : roles) {
