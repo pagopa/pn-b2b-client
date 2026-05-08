@@ -1,6 +1,5 @@
 package it.pagopa.pn.cucumber.steps;
 
-import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
@@ -9,6 +8,7 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostserv
 import it.pagopa.pn.client.b2b.pa.service.IPnNotificationCostClient;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v26.NotificationProcessCostResponse;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.AwsUtils;
+import it.pagopa.pn.cucumber.steps.utilitySteps.AwsServiceSteps;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -30,13 +30,15 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 public class CostiNotificaSteps {
 
     private final SharedSteps sharedSteps;
+    private final AwsServiceSteps awsServiceSteps;
     private final IPnNotificationCostClient notificationCostClient;
     private NotificationCostPaymentResponse notificationCostPaymentResponse;
     private NotificationCostRecipientResponse notificationCostRecipientResponse;
 
     @Autowired
-    public CostiNotificaSteps(SharedSteps sharedSteps, IPnNotificationCostClient notificationCostClient) {
+    public CostiNotificaSteps(SharedSteps sharedSteps, AwsServiceSteps awsServiceSteps, IPnNotificationCostClient notificationCostClient) {
         this.sharedSteps = sharedSteps;
+        this.awsServiceSteps = awsServiceSteps;
         this.notificationCostClient = notificationCostClient;
     }
 
@@ -91,9 +93,8 @@ public class CostiNotificaSteps {
         expressionAttributeValues.put(":v_pk", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build());
         expressionAttributeValues.put(":v_sk", AttributeValue.builder().n(String.valueOf(recIndex)).build());
 
-        DynamoDbClient dbClient = sharedSteps.getAwsUtils().getDynamoDbClient();
         QueryRequest queryRequest = AwsUtils.buildPnNotificationDeliveryCostRequest(expressionAttributeValues);
-        QueryResponse queryResponse = dbClient.query(queryRequest);
+        QueryResponse queryResponse = awsServiceSteps.getDynamoDbClient().query(queryRequest);
 
         try {
             assertThat(queryResponse.items().size())
@@ -145,7 +146,7 @@ public class CostiNotificaSteps {
         Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();
         expressionAttributeValues.put(":v_pk", AttributeValue.builder().s(pk).build());
 
-        DynamoDbClient dbClient = sharedSteps.getAwsUtils().getDynamoDbClient();
+        DynamoDbClient dbClient = awsServiceSteps.getDynamoDbClient();
         QueryRequest queryRequest = AwsUtils.buildPnPaymentInfoRequest(expressionAttributeValues);
         QueryResponse queryResponse = dbClient.query(queryRequest);
 
