@@ -3,7 +3,7 @@ package it.pagopa.pn.cucumber.steps;
 import io.cucumber.spring.CucumberContextConfiguration;
 import it.pagopa.common.config.AwsConfig;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
-import it.pagopa.pn.client.b2b.pa.config.SenderInfoProvider;
+import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
 import it.pagopa.pn.client.b2b.pa.config.TemplateEngineConfigBean;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.ApiKeysConfiguration;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.BearerTokenConfiguration;

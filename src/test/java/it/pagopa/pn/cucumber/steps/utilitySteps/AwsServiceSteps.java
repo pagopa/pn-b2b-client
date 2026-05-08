@@ -3,7 +3,7 @@ package it.pagopa.pn.cucumber.steps.utilitySteps;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import it.pagopa.common.util.CloudWatchQueryRequest;
+import it.pagopa.common.util.CloudWatchQueryBuilder;
 import it.pagopa.pn.client.b2b.pa.utils.SendDynamoQueryRequest;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import lombok.RequiredArgsConstructor;
@@ -93,7 +93,7 @@ public class AwsServiceSteps {
                 String search = sb.toString().trim();
 
                 await().atMost(2, TimeUnit.MINUTES).pollInterval(10, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(() -> {
-                    FilterLogEventsRequest logRequest = CloudWatchQueryRequest.search(microservice, search, minutes);
+                    FilterLogEventsRequest logRequest = CloudWatchQueryBuilder.search(microservice, search, minutes);
                     FilterLogEventsResponse logResponse = cloudWatchLogsClient.filterLogEvents(logRequest);
                     assertThat(logResponse.events().size()).as("Non è stato trovato nessun log che soddisfi la search %s", search).isGreaterThan(0);
                 });

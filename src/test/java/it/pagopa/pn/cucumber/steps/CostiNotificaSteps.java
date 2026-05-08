@@ -11,22 +11,20 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostserv
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.PagoPaIntMode;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.PaymentData;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.RecipientCostData;
+import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.client.b2b.pa.service.IPnNotificationCostClient;
-import it.pagopa.pn.client.b2b.pa.utils.SendDynamoQueryRequest;
+import it.pagopa.pn.client.b2b.pa.utils.DynamoTableName;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v26.NotificationProcessCostResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.client.HttpStatusCodeException;
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -38,7 +36,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 @RequiredArgsConstructor
 public class CostiNotificaSteps {
     private final SharedSteps sharedSteps;
-    private final DynamoDbClient dynamoDbClient;
+    private final DynamoDbService dynamoDbService;
     private final IPnNotificationCostClient notificationCostClient;
     private NotificationCostPaymentResponse notificationCostPaymentResponse;
     private NotificationCostRecipientResponse notificationCostRecipientResponse;
@@ -91,12 +89,12 @@ public class CostiNotificaSteps {
     }
 
     private Map<String, AttributeValue> searchNotificationDeliveryCostRecord(int recIndex) {
-        Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();
-        expressionAttributeValues.put(":v_pk", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build());
-        expressionAttributeValues.put(":v_sk", AttributeValue.builder().n(String.valueOf(recIndex)).build());
+        QueryResponse queryResponse = dynamoDbService.call(DynamoTableName.NOTIFICATION_DELIVERY_COST,
+                Map.of(
+                        "v_pk", sharedSteps.getNotificationIun(),
+                        "v_sk", String.valueOf(recIndex))
+        );
 
-        QueryRequest queryRequest = SendDynamoQueryRequest.buildPnNotificationDeliveryCostRequest(expressionAttributeValues);
-        QueryResponse queryResponse = dynamoDbClient.query(queryRequest);
 
         try {
             assertThat(queryResponse.items().size())
@@ -145,11 +143,7 @@ public class CostiNotificaSteps {
     }
 
     private Map<String, AttributeValue> searchPaymentInfoRecord(String pk) {
-        Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();
-        expressionAttributeValues.put(":v_pk", AttributeValue.builder().s(pk).build());
-
-        QueryRequest queryRequest = SendDynamoQueryRequest.buildPnPaymentInfoRequest(expressionAttributeValues);
-        QueryResponse queryResponse = dynamoDbClient.query(queryRequest);
+        QueryResponse queryResponse = dynamoDbService.call(DynamoTableName.PAYMENT_INFO, Map.of("v_pk", pk));
 
         try {
             assertThat(queryResponse.items().size())
