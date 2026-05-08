@@ -594,6 +594,10 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | $NULL    | $NULL      | $NULL       | <cap> | /    | $NULL | $NULL | $NULL   |
     And invoco l'API di verifica copertura cap Radd Complete mode
     And per i dati forniti si verifica che lo stato di copertura sia "COPERTO"
+    And setto i dati per aggiornare una copertura Radd:
+      | cap   | locality | cadastralCode   | province   | startValidity   | endValidity     |
+      | <cap> | /        | <cadastralCode> | <province> | $DATE_ADD(100Y) | $DATE_ADD(100Y) |
+    And invoco l'API di aggiornamento copertura cap Radd
     Examples:
       | cap   | cadastralCode | province | startValidity  | endValidity    | search-date    |
       | 12121 | H501          | NA       | $DATE_ADD(-1Y) | $DATE_ADD(1Y)  | $DATE_ADD(1M)  |
@@ -617,6 +621,10 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | $NULL    | $NULL      | $NULL       | <cap> | /    | $NULL | $NULL | $NULL   |
     And invoco l'API di verifica copertura cap Radd Complete mode
     And per i dati forniti si verifica che lo stato di copertura sia "NON_COPERTO"
+    And setto i dati per aggiornare una copertura Radd:
+      | cap   | locality | cadastralCode   | province   | startValidity   | endValidity     |
+      | <cap> | /        | <cadastralCode> | <province> | $DATE_ADD(100Y) | $DATE_ADD(100Y) |
+    And invoco l'API di aggiornamento copertura cap Radd
     Examples:
       | cap   | locality | cadastralCode | province | startValidity | endValidity   | search-date    |
       | 12120 | /        | H501          | RM       | $TODAY()      | $DATE_ADD(1Y) | $DATE_ADD(-1Y) |
