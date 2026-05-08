@@ -1428,7 +1428,7 @@ public class SharedSteps {
      * tramite polling prima di dichiarare fallito il test.
      */
     @And("verifico la presenza di un audit log su {string} negli ultimi {int} minuti riportante i seguenti dati nel messaggio")
-    public void checkAuditLogFromAws(String microservice, int minutes, Map<String, String> queryFiltersMap) throws InterruptedException {
+    public void checkAuditLogFromAws(String microservice, int minutes, Map<String, String> queryFiltersMap) {
         if (!checkAuditLogDisabled) {
             try {
                 StringBuilder sb = new StringBuilder();
