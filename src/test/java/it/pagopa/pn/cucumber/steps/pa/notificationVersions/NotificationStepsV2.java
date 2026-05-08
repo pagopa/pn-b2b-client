@@ -272,6 +272,12 @@ public class NotificationStepsV2 implements NotificationStepsInterface {
     }
 
     @Override
+    public void addIuvGpdToDestinatario(Integer recIndex, String iuvGpd, Integer recipientPaymentIndex) {
+        NotificationRecipient recipient = notificationRequest.getRecipients().get(recIndex);
+        Objects.requireNonNull(recipient.getPayment()).setNoticeCode(iuvGpd);
+    }
+
+    @Override
     public List<String> getDatiPagamento(Integer destinatario, Integer pagamento) {
         FullSentNotificationV20 fullSentNotification = getFullSentNotificationVersioned();
         return Arrays.asList(

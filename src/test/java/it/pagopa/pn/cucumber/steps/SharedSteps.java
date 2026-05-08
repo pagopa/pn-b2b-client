@@ -59,10 +59,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.IOException;
 import java.security.SecureRandom;
-import java.time.Duration;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -153,6 +150,8 @@ public class SharedSteps {
 
     @Getter
     private final ObjectMapper objMapper;
+
+    private boolean checkAuditLogDisabled;
 
     /**
      * Rappresenta la versione con cui è stata generata una notifica. Viene impostata al momento di preparazione della request.
@@ -693,6 +692,11 @@ public class SharedSteps {
     @And("al destinatario viene associato lo iuv creato mediante partita debitoria per {string} alla posizione {int}")
     public void destinatarioAddIuvGPD(String denominazione, Integer posizioneDebitoria) {
         getNotificationStepInterface().addIuvGpdToDestinatario(denominazione, getIuvGPD(posizioneDebitoria), posizioneDebitoria);
+    }
+
+    @And("al destinatario {int} viene associato lo iuv creato mediante partita debitoria alla posizione {int} per il suo pagamento alla posizione {int}")
+    public void destinatarioAddIuvGPD(Integer recIndex, Integer posizioneDebitoria, Integer recipientPaymentIndex) {
+        getNotificationStepInterface().addIuvGpdToDestinatario(recIndex, getIuvGPD(posizioneDebitoria), recipientPaymentIndex);
     }
 
     @And("al destinatario viene associato lo iuv creato mediante partita debitoria per {string} per la posizione debitoria {int} del pagamento {int}")
@@ -1349,8 +1353,8 @@ public class SharedSteps {
      */
     @And("{string} recupera lato web PA una notifica inviata tra {int} e {int} giorni fa con destinatario {destinatario}")
     public void retrieveNotification120DaysOldByIunWebPaSide(String paName, int limitA, int limitB, Destinatario recipient) {
-        long upperLimit = limitA > limitB ? limitA : limitB;
-        long lowerLimit = limitB < limitA ? limitB : limitA;
+        long upperLimit = Math.max(limitA, limitB);
+        long lowerLimit = Math.min(limitB, limitA);
         setPA(paName);
         String recipientTaxId = recipient.getTaxId();
         OffsetDateTime todayDate = now().atZoneSameInstant(ZoneId.of("UTC")).toOffsetDateTime();
@@ -1371,4 +1375,6 @@ public class SharedSteps {
         log.info("RECIPIENTS OLDER {} GG: {}", lowerLimit, oldNotification.getRecipients().stream().map(r -> r.getTaxId()).toList());
         log.info("IUN OLDER {} GG: {}", lowerLimit, oldNotification.getIun());
     }
+
+
 }

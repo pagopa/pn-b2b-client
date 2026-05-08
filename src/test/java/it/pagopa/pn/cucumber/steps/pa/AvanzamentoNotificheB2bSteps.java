@@ -12,7 +12,7 @@ import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnPrivateDeliveryPushExternalClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v24.NotificationProcessCostResponse;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v26.NotificationProcessCostResponse;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v24.ResponsePaperNotificationFailedDto;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.b2bVersions.B2bStepsInterface;
@@ -38,8 +38,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v24.NotificationFeePolicy.DELIVERY_MODE;
-import static it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v24.NotificationFeePolicy.FLAT_RATE;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.PAYMENT;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.PollingType.TIMELINE;
@@ -720,14 +718,10 @@ public class AvanzamentoNotificheB2bSteps {
 
     private void priceVerificationProcessCost(String price, String date, Integer destinatario) {
         FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
-
-        it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v24.NotificationFeePolicy notificationFeePolicy =
-                fullSentNotification.getNotificationFeePolicy().equals(NotificationFeePolicy.DELIVERY_MODE) ? DELIVERY_MODE : FLAT_RATE;
-
         NotificationProcessCostResponse notificationProcessCost = this.b2bClient.getNotificationProcessCost(
                 sharedSteps.getNotificationIun(),
                 destinatario,
-                notificationFeePolicy,
+                fullSentNotification.getNotificationFeePolicy().getValue(),
                 fullSentNotification.getRecipients().get(destinatario).getPayments().get(0).getF24().getApplyCost(),
                 fullSentNotification.getPaFee(),
                 fullSentNotification.getVat());
@@ -1228,6 +1222,18 @@ public class AvanzamentoNotificheB2bSteps {
     public void readingEventUpToTheTimelineElementOfNotificationAtAttempt(String timelineEventCategory, String attempt) {
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder()
                 .deliveryDetailCode(null)
+                .attempt(attempt)
+                .build();
+        B2bStepsInterface b2bStepsInterface = getB2bStepsInterface();
+        b2bStepsInterface.waitForEventOrStatus(TIMELINE_SLOW, TIMELINE, timelineEventCategory, filters);
+        b2bStepsInterface.checkIfTimelineElementExists(timelineEventCategory, true, null, null);
+    }
+
+    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} al tentativo {string} per l'utente {int}")
+    public void readingEventUpToTheTimelineElementOfNotificationAtAttempt(String timelineEventCategory, String attempt, Integer recIndex) {
+        WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder()
+                .deliveryDetailCode(null)
+                .recipientIndex(recIndex)
                 .attempt(attempt)
                 .build();
         B2bStepsInterface b2bStepsInterface = getB2bStepsInterface();

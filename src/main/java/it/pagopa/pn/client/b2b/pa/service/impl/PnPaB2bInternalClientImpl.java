@@ -12,7 +12,7 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api.No
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api.SenderReadB2BApi;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.CxTypeAuthFleet;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v24.NotificationProcessCostResponse;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v26.NotificationProcessCostResponse;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v26.LegalFactDownloadMetadataWithContentTypeResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -96,7 +96,7 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
     public NewNotificationRequestStatusResponse getNotificationRequestStatusAllParamV1(String notificationRequestId, String paProtocolNumber, String idempotenceToken) {
         throw new UnsupportedOperationException();
     }
-    
+
     /**
      * V2
      */
@@ -297,6 +297,11 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NotificationPriceResponseV23
                 notificationPrice = this.notificationPriceV23Api.getNotificationPriceV23(paTaxId, noticeCode);
         return deepCopy(notificationPrice, NotificationPriceResponseV23.class);
+    }
+
+    @Override
+    public NotificationProcessCostResponse getNotificationProcessCost(String iun, Integer recipientIndex, String notificationFeePolicy, Boolean applyCost, Integer paFee, Integer vat) throws RestClientException {
+        throw new UnsupportedOperationException();
     }
 
 
