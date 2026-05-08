@@ -1,5 +1,9 @@
 package it.pagopa.pn.interop.cucumber.steps.dev_tools;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -29,6 +33,8 @@ import it.pagopa.pn.interop.cucumber.steps.dev_tools.model.DevToolsContext;
 import it.pagopa.pn.interop.cucumber.steps.purpose.PurposeCommonStep;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.time.Instant;
 import java.util.*;
@@ -98,8 +104,9 @@ public class DevToolsSteps {
     }
 
     @When("{string} crea una client assertion per un client di tipo {interopClientType} utilizzando una chiave {string} di lunghezza {int}")
-    public void createClientAssertion(String tenantType, ClientAssertionOptions.ClientType clientType, String keyType, int keySize) {
-        createCustomClientAssertionWithKey(clientType, Collections.emptyList(), keyType, keySize);
+    @When("{string} crea una client assertion per un client di tipo {interopClientType} utilizzando una chiave {string} di lunghezza {int}:")
+    public void createClientAssertion(String tenantType, ClientAssertionOptions.ClientType clientType, String keyType, int keySize, List<JwtClaimOverride> overrides) {
+        createCustomClientAssertionWithKey(clientType, overrides, keyType, keySize);
     }
 
     @When("{string} crea una client assertion per un client di tipo {interopClientType} con:")
@@ -213,27 +220,33 @@ public class DevToolsSteps {
         if (!overrides.isEmpty()) applyOverrides(validClientAssertion, overrides);
 
         String clientAssertion = validClientAssertion.signWith(preparedClient.keyPair().getPrivate()).compact();
-
-        log.info("Client assertion header: '{}'", new String(Base64.getUrlDecoder().decode(clientAssertion.split("\\.")[0])));
-        log.info("Client assertion payload: '{}'", new String(Base64.getUrlDecoder().decode(clientAssertion.split("\\.")[1])));
-        log.info("Client assertion: '{}'", clientAssertion);
-
+        logClientAssertion(clientAssertion);
         devToolsContext.setActualClientAssertion(clientAssertion);
     }
 
     private void createCustomClientAssertionWithKey(ClientAssertionOptions.ClientType clientType, List<JwtClaimOverride> overrides, String keyType, int keySize) {
-        JwtBuilder validClientAssertion = buildValidClientAssertion(ClientAssertionOptions.ClientType.CONSUMER);
+        KeyPair keyPair = KeyPairGeneratorUtil.createKeyPair(keyType, keySize);
+        JwtBuilder validClientAssertion = buildValidClientAssertion(clientType);
 
         if (!overrides.isEmpty()) applyOverrides(validClientAssertion, overrides);
 
-        KeyPair keyPair = KeyPairGeneratorUtil.createKeyPair(keyType, keySize);
         String clientAssertion = validClientAssertion.signWith(keyPair.getPrivate()).compact();
 
+        // JwtBuilder::compact aggiorna "alg" nell'header per cui eventuali modifiche devono essere riapplicate
+        try {
+            clientAssertion = applyOverridesToEncodedAlg(clientAssertion, overrides);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error processing JSON for client assertion header: " + e.getMessage(), e);
+        }
+
+        logClientAssertion(clientAssertion);
+        devToolsContext.setActualClientAssertion(clientAssertion);
+    }
+
+    private void logClientAssertion(String clientAssertion) {
         log.info("Client assertion header: '{}'", new String(Base64.getUrlDecoder().decode(clientAssertion.split("\\.")[0])));
         log.info("Client assertion payload: '{}'", new String(Base64.getUrlDecoder().decode(clientAssertion.split("\\.")[1])));
         log.info("Client assertion: '{}'", clientAssertion);
-
-        devToolsContext.setActualClientAssertion(clientAssertion);
     }
 
     private void createCustomDPoP(List<JwtClaimOverride> overrides) {
@@ -322,6 +335,39 @@ public class DevToolsSteps {
                 default -> throw new IllegalArgumentException("Claim non supportato: " + claim);
             }
         }
+    }
+
+    private String applyOverridesToEncodedAlg(String encodedClientAssertion, List<JwtClaimOverride> overrides) throws JsonProcessingException {
+        String[] jwtParts = encodedClientAssertion.split("\\.");
+        String headerBase64Url = jwtParts[0];
+        String payloadBase64Url = jwtParts[1];
+        String signatureBase64Url = jwtParts[2];
+
+        byte[] decodedHeaderBytes = Base64.getUrlDecoder().decode(headerBase64Url);
+        String headerJson = new String(decodedHeaderBytes, StandardCharsets.UTF_8);
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode headerNode = mapper.readTree(headerJson);
+
+        String overrideAlg = overrides.stream()
+            .filter(ov -> "header.alg".equals(ov.claim()))
+            .map(JwtClaimOverride::value)
+            .findFirst()
+            .orElse(null);
+        if (overrideAlg != null) {
+            ((ObjectNode) headerNode).put("alg", overrideAlg);
+        }
+
+        boolean removeAlg = overrides.stream()
+                .filter(ov -> "__remove".equals(ov.claim()) && "header.alg".equals(ov.value()))
+                .count() == 1;
+        if (removeAlg) {
+            ((ObjectNode) headerNode).remove("alg");
+        }
+
+        String modifiedHeaderJson = mapper.writeValueAsString(headerNode);
+        String newHeaderBase64Url = Base64.getUrlEncoder().withoutPadding().encodeToString(modifiedHeaderJson.getBytes(StandardCharsets.UTF_8));
+
+        return newHeaderBase64Url + "." + payloadBase64Url + "." + signatureBase64Url;
     }
 
     private String getRawClientAssertion() {
