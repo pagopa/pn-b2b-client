@@ -18,16 +18,32 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationSearchRow;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.digitaladdresses.BffUserAddress;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
+import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.DigitalAddress;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.DigitalAddressSource;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.RequestStatus;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV28;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
+import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
-import it.pagopa.pn.client.b2b.pa.service.impl.*;
+import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.IPnTosPrivacyClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnGPDClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnServiceDeskClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnWebRecipientExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
+import it.pagopa.pn.client.b2b.pa.utils.DynamoTableName;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
 import it.pagopa.pn.client.b2b.pa.wrapper.RecipientWrapper;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyDigitalAddress;
@@ -56,15 +72,82 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
+import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 import java.io.IOException;
 import java.security.SecureRandom;
-import java.time.*;
-import java.util.*;
+import java.time.Duration;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.ADDRESS;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.ALDA_MERINI;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.ALLEGATO;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_1;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_2;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_MULTI;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_ROOT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_SON;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.CRISTOFORO_COLOMBO;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.CUCUMBER_SPA;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DINO_SAURO;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_ANALOG_REFINEMENT_DEFAULT_FAILURE;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_ANALOG_REFINEMENT_DEFAULT_SUCCESS;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_DIGITAL_REFINEMENT_DEFAULT_FAILURE;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_DIGITAL_REFINEMENT_DEFAULT_SUCCESS;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_SECOND_NOTIFICATION_WORKFLOW_WAITING_TIME_DEFAULT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_TIME_TO_ADD_IN_NON_VISIBILITY_TIME_CASE_DEFAULT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_WAIT_READ_COURTESY_MESSAGE_DEFAULT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.ETTORE_FIERAMOSCA;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.EXTENSION;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.FILE_NOTFOUND;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.FILE_PDF_INVALID_ERROR;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.FILE_SHA_ERROR;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.GALILEO_GALILEI;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.GHERKIN_SRL;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.INVALID_PARAMETER_MAX_ATTACHMENT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.LEONARDO_DA_VINCI;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.LUCIO_ANNEO_SENECA;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MARIO_CREDENZIALI_SCADUTE;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MARIO_CUCUMBER;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MARIO_GHERKIN;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MOST_RECENT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOTIFICATION_INJECTION_ALLEGATO;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOTIFICATION_STATUS_ACCEPTED;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOTIFICATION_STATUS_CANCELLED;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_EQUAL_SHA;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_EQUAL_SHA_JSON;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_FOUND_ALLEGATO_JSON;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_FOUND_NO_PRELOAD;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_FOUND_ON_SAFE_STORAGE;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_VALID_ADDRESS;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.OVERSIZE_ALLEGATO;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.OVER_15_ALLEGATO;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SCHEDULING_DELTA_DEFAULT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SEND_ANALOG_PROGRESS;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SHA_256;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.TAXID_NOT_VALID;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.VALIDATION_STATUS;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.VALIDATION_STATUS_ACCEPTATION_SHORT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.VALIDATION_STATUS_NO_ACCEPTATION;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WAITING_GPD;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WAIT_DEFAULT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WAIT_EXTRA_RAPID;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WAIT_UPPER_BOUND;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WORKFLOW_WAIT_DEFAULT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WORKFLOW_WAIT_UPPER_BOUND;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WRONG_EXTENSION;
 import static java.time.OffsetDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -75,6 +158,8 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
 public class SharedSteps {
+
+    private final SenderInfoProvider senderInfoProvider;
 
     @Getter
     private final ApplicationContext context;
@@ -153,6 +238,8 @@ public class SharedSteps {
 
     private boolean checkAuditLogDisabled;
 
+    private final DynamoDbService dynamoDbService;
+
     /**
      * Rappresenta la versione con cui è stata generata una notifica. Viene impostata al momento di preparazione della request.
      * Va da sè che gli step successivi (aggiunta di destinatari, invio, etc) dovranno anch'essi utilizzare tale versione, salvo diversamente specificato.
@@ -206,7 +293,9 @@ public class SharedSteps {
                        PnGPDClientImpl pnGPDClientImpl,
                        PnPaymentInfoClientImpl pnPaymentInfoClientImpl,
                        IPnTosPrivacyClientImpl iPnTosPrivacyClientImpl,
-                       PnB2bClientTimingConfigs timingConfigs) {
+                       PnB2bClientTimingConfigs timingConfigs,
+                       DynamoDbService dynamoDbService,
+                       SenderInfoProvider senderInfoProvider) {
         this.context = context;
         this.b2bClient = b2bClient;
         this.pollingFactory = pollingFactory;
@@ -222,6 +311,8 @@ public class SharedSteps {
         this.iuvGPD = new ArrayList<>();
         this.objMapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
         this.secureRandom = new SecureRandom();
+        this.dynamoDbService = dynamoDbService;
+        this.senderInfoProvider = senderInfoProvider;
         versionUsed = getNotificationVersion(MOST_RECENT);
     }
 
@@ -957,34 +1048,38 @@ public class SharedSteps {
     private void setSenderTaxIdAndGroup(String pa) {
         NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface();
         String senderTaxId = notificationStepsInterface.getSenderTaxId();
-        switch (pa) {
-            case COMUNE_1 -> {
-                setIfNull(senderTaxId, () -> notificationStepsInterface.setSenderTaxId(COMUNE_1_TAX_ID));
-                setGroup(SettableApiKey.ApiKeyType.MVP_1);
-            }
-            case COMUNE_2 -> {
-                setIfNull(senderTaxId, () -> notificationStepsInterface.setSenderTaxId(COMUNE_2_TAX_ID));
-                setGroup(SettableApiKey.ApiKeyType.MVP_2);
-            }
-            case COMUNE_MULTI -> {
-                setIfNull(senderTaxId, () -> notificationStepsInterface.setSenderTaxId(COMUNE_MULTI_TAX_ID));
-                setGroup(SettableApiKey.ApiKeyType.GA);
-            }
-            case COMUNE_SON -> {
-                setIfNull(senderTaxId, () -> notificationStepsInterface.setSenderTaxId(COMUNE_SON_TAX_ID));
-                setGroup(SettableApiKey.ApiKeyType.SON);
-            }
-            case COMUNE_ROOT -> {
-                setIfNull(senderTaxId, () -> notificationStepsInterface.setSenderTaxId(COMUNE_ROOT_TAX_ID));
-                setGroup(SettableApiKey.ApiKeyType.ROOT);
-            }
+
+        // Recupera il senderTaxId da Dynamo solo se non passato da scenario
+        if (senderTaxId == null) {
+            senderTaxId = fetchSenderTaxIdFromDynamo(pa);
+            Assertions.assertNotNull(senderTaxId, "La sender tax id non è presente nel DB DynamoDb ONBOARD_INSTITUTIONS");
+            notificationStepsInterface.setSenderTaxId(senderTaxId);
         }
+        SettableApiKey.ApiKeyType apiKeyType = mapPaToApiKeyType(pa);
+        setGroup(apiKeyType);
     }
 
-    private void setIfNull(String current, Runnable setter) {
-        if (current == null) {
-            setter.run();
-        }
+    private String fetchSenderTaxIdFromDynamo(String pa) {
+        String senderId = senderInfoProvider.getSenderId(pa);
+        QueryResponse response = dynamoDbService.call(
+                DynamoTableName.ONBOARD_INSTITUTIONS,
+                Map.of(":v_id", senderId)
+        );
+        return response.items().stream()
+                .findFirst()
+                .map(item -> item.get("taxCode").s())
+                .orElse(null);
+    }
+
+    private SettableApiKey.ApiKeyType mapPaToApiKeyType(String pa) {
+        return switch (pa.toLowerCase()) {
+            case "comune_1" -> SettableApiKey.ApiKeyType.MVP_1;
+            case "comune_2" -> SettableApiKey.ApiKeyType.MVP_2;
+            case "comune_multi" -> SettableApiKey.ApiKeyType.GA;
+            case "comune_son" -> SettableApiKey.ApiKeyType.SON;
+            case "comune_root" -> SettableApiKey.ApiKeyType.ROOT;
+            default -> throw new IllegalArgumentException("Invalid paName: " + pa);
+        };
     }
 
     private void setGroup(SettableApiKey.ApiKeyType apiKeyType) {
