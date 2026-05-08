@@ -104,7 +104,11 @@ public class DevToolsSteps {
     }
 
     @When("{string} crea una client assertion per un client di tipo {interopClientType} utilizzando una chiave {string} di lunghezza {int}")
-    @When("{string} crea una client assertion per un client di tipo {interopClientType} utilizzando una chiave {string} di lunghezza {int}:")
+    public void createClientAssertion(String tenantType, ClientAssertionOptions.ClientType clientType, String keyType, int keySize) {
+        createCustomClientAssertionWithKey(clientType, Collections.emptyList(), keyType, keySize);
+    }
+
+    @When("{string} crea una client assertion per un client di tipo {interopClientType} utilizzando una chiave {string} di lunghezza {int} con:")
     public void createClientAssertion(String tenantType, ClientAssertionOptions.ClientType clientType, String keyType, int keySize, List<JwtClaimOverride> overrides) {
         createCustomClientAssertionWithKey(clientType, overrides, keyType, keySize);
     }
@@ -112,6 +116,11 @@ public class DevToolsSteps {
     @When("{string} crea una client assertion per un client di tipo {interopClientType} con:")
     public void createClientAssertion(String tenantType, ClientAssertionOptions.ClientType clientType, List<JwtClaimOverride> overrides) {
         createCustomClientAssertion(clientType, overrides);
+    }
+
+    @When("{string} crea una DPoP proof per la client assertion")
+    public void createDPoPProof(String tenantType) {
+        createCustomDPoP(Collections.emptyList());
     }
 
     @When("{string} richiede la validazione della client assertion appena creata")
