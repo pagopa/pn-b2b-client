@@ -364,7 +364,7 @@ Feature: avanzamento notifiche webhook b2b V29
     And l'apiKey viene cancellata
 
   @webhookV29 @webhookHeader @precondition @cleanWebhook @webhook2
-  Scenario Outline: [B2B-STREAM_RETRY_AFTER_V28] Creazione di stream con apiKey e controllo che il retry after dell'header venga modificato quando la consume restituisce elementi.
+  Scenario Outline: [B2B-STREAM_RETRY_AFTER_V29] Creazione di stream con apiKey e controllo che il retry after dell'header venga modificato quando la consume restituisce elementi.
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |

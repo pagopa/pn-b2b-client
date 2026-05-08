@@ -151,6 +151,9 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
     }
 
     @Override
+    public String getSenderTaxId() { return notificationRequest.getSenderTaxId(); }
+
+    @Override
     public String getNotificationRequestGroup() {
         return notificationRequest.getGroup();
     }
@@ -265,6 +268,12 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
                 Objects.requireNonNull(recipient.getPayment()).setNoticeCode(iuvGpd);
             }
         }
+    }
+
+    @Override
+    public void addIuvGpdToDestinatario(Integer recIndex, String iuvGpd, Integer recipientPaymentIndex) {
+        NotificationRecipient recipient = notificationRequest.getRecipients().get(recIndex);
+        Objects.requireNonNull(recipient.getPayment()).setNoticeCode(iuvGpd);
     }
 
     @Override
