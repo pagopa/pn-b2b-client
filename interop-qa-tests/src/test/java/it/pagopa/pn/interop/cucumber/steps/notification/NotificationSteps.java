@@ -382,22 +382,28 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
 
     /* 08 05 2026: terza versione */
     @Then("l'utente {string} di {string} ha ricevuto la notifica in-app contenente il link {deepLink}")
-    public void checkInAppNotificationBody(String role, String tenant, DeepLinkType deepLink, String message){
+    public void checkInAppNotificationBody(String role, String tenant, DeepLinkType deepLinkType, String message){
         // TODO usare polling
         try { Thread.sleep(4000); } catch (InterruptedException e) { throw new RuntimeException(e); }
 
         Set<Notification> notifications = notificationStore.get(NotificationUser.of(role, tenant));
+        message = message.replace("\n", " ");
 
         // FIXME per prove locali, rimuovere
         /*List<Notification> notificationStream = notifications.stream()
             .filter(a -> a.getBody().contains("stata rimossa dal client")).toList();
         notificationStream.forEach(notification -> System.out.println(notification.getBody()));*/
 
+        String deepLink = resolveLabelsWithSharedContext(deepLinkType.getValue());
+        String finalMessage = resolveLabelsWithSharedContext(message);
+
         assertThat(notifications)
                 .as("Verifica che almeno una notifica soddisfi i pattern di body e deepLink")
                 .anySatisfy(notif -> {
-                    assertThat(notif.getBody()).matches(bodyRegex);
-                    assertThat(notif.getDeepLink()).matches(deepLinkRegex);
+                    //assertThat(notif.getBody()).isEqualTo(finalMessage);
+                    //assertThat(notif.getDeepLink()).isEqualTo(deepLink);
+                    assertThat(notif.getBody()).matches(finalMessage);
+                    assertThat(notif.getDeepLink()).matches(deepLink);
                 });
     }
 
@@ -408,19 +414,26 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
         int labelStartIndex = textTemplate.indexOf(functionName, reachedIndex);
         int labelEndIndex;
         while (labelStartIndex > -1) {
-            text.append(textTemplate.substring(0, labelStartIndex));
+            text.append(textTemplate.substring(reachedIndex, labelStartIndex));
             labelStartIndex += functionName.length();
-            labelEndIndex = textTemplate.indexOf(')', reachedIndex);
+            labelEndIndex = textTemplate.indexOf(')', labelStartIndex);
             String label = textTemplate.substring(labelStartIndex, labelEndIndex);
             // Il valore deve essere risolto dalla funzione comune // sharedStepsContext
-            String value = "PROVA";
+            String value = ".+";
+            switch (label) {
+                case "agreementId":
+                    value = sharedStepsContext.getAgreementId().toString();
+                    break;
+            }
             text.append(value);
             // Controlla se c'è un prossimo placeholder
+            reachedIndex = labelEndIndex + 1;
             labelStartIndex = textTemplate.indexOf(functionName, reachedIndex);
             if (labelStartIndex == -1) {
-                text.append(textTemplate.substring(labelEndIndex));
+                text.append(textTemplate.substring(reachedIndex));
             }
         }
+        if (text.isEmpty()) text.append(textTemplate);
         return text.toString();
     }
 }
