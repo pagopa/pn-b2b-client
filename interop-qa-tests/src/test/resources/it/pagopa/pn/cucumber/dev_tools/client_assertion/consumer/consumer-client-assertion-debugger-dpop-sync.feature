@@ -16,6 +16,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | publicKeyRetrieve                    | PASSED | []     |
       | clientAssertionSignatureVerification | PASSED | []     |
       | platformStatesVerification           | PASSED | []     |
+      | dpopValidation                       | PASSED | []     |
 
   Scenario Outline: [VALIDATION_INVALID_TYPE_ERROR_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il grant_type è <grant_type> e la client_assertion_type è <client_assertion_type>  allora la validazione formale fallisce con errore <expectedError>
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
@@ -30,6 +31,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | publicKeyRetrieve                    | SKIPPED | []                |
       | clientAssertionSignatureVerification | SKIPPED | []                |
       | platformStatesVerification           | SKIPPED | []                |
+      | dpopValidation                       | PASSED  | []                |
 
     Examples:
       | client_assertion_type                                  | grant_type         | expectedError                          |
@@ -52,6 +54,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | publicKeyRetrieve                    | SKIPPED | []                |
       | clientAssertionSignatureVerification | SKIPPED | []                |
       | platformStatesVerification           | SKIPPED | []                |
+      | dpopValidation                       | PASSED  | []                |
 
   Scenario Outline: [VALIDATION_NOT_FOUND_ERROR_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il claim <claimToRemove> non è presente allora la validazione formale fallisce con errore <expectedError>"
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
@@ -68,6 +71,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | publicKeyRetrieve                    | SKIPPED | []                |
       | clientAssertionSignatureVerification | SKIPPED | []                |
       | platformStatesVerification           | SKIPPED | []                |
+      | dpopValidation                       | PASSED  | []                |
 
     Examples:
       | claimToRemove | expectedError    |
@@ -98,6 +102,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | publicKeyRetrieve                    | SKIPPED | []                                                                                              |
       | clientAssertionSignatureVerification | SKIPPED | []                                                                                              |
       | platformStatesVerification           | SKIPPED | []                                                                                              |
+      | dpopValidation                       | PASSED  | []                                                                                              |
 
   #TODO: da passare ai test per la fase 3, rieseguire per verificare cosa fa platformStatesVerification
   Scenario: [VALIDATION_EXPIRED_ERROR_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il token è scaduto allora la validazione formale fallisce con errore 0017
@@ -115,6 +120,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | publicKeyRetrieve                    | PASSED  | []                  |
       | clientAssertionSignatureVerification | FAILED  | [tokenExpiredError] |
       | platformStatesVerification           | SKIPPED | []                  |
+      | dpopValidation                       | PASSED  | []                  |
 
   #TODO: l'errore restituito è invalidClientAssertionFormat, verificare se è possibile riprodurre jsonWebTokenError
   Scenario: [VALIDATION_JWT_ERROR_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il JWT non è interpretabile allora la validazione formale fallisce con errore jsonWebTokenError
@@ -132,6 +138,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | publicKeyRetrieve                    | SKIPPED | []                  |
       | clientAssertionSignatureVerification | SKIPPED | []                  |
       | platformStatesVerification           | SKIPPED | []                  |
+      | dpopValidation                       | PASSED  | []                  |
 
   Scenario: [VALIDATION_INVALID_FORMAT_ERROR_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando la client assertion è malformata allora la validazione formale fallisce con errore invalidClientAssertionFormat
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
@@ -148,8 +155,10 @@ Feature: Debugger Client Assertion Sync DPoP
       | publicKeyRetrieve                    | SKIPPED | []                             |
       | clientAssertionSignatureVerification | SKIPPED | []                             |
       | platformStatesVerification           | SKIPPED | []                             |
+      | dpopValidation                       | PASSED  | []                             |
 
   #TODO: lo scenario fallisce per errore clientAssertionInvalidClaims, nbf è però un claim standarnd, verificare se è corretto
+  # Aperto bug https://pagopa.atlassian.net/browse/PIN-10055
   Scenario: [VALIDATION_ERROR_CODE_0019_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il claim nbf è nel futuro allora la validazione formale fallisce con errore notBeforeError
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
@@ -165,6 +174,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | publicKeyRetrieve                    | SKIPPED | []               |
       | clientAssertionSignatureVerification | SKIPPED | []               |
       | platformStatesVerification           | SKIPPED | []               |
+      | dpopValidation                       | PASSED  | []               |
 
   #Bug aperto: https://pagopa.atlassian.net/browse/PIN-9993
   # 2026-05-08 per il momento non verrà applicato nessun fix, vedi https://pagopa.atlassian.net/browse/PIN-9540
@@ -183,6 +193,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | publicKeyRetrieve                    | SKIPPED | []                |
       | clientAssertionSignatureVerification | SKIPPED | []                |
       | platformStatesVerification           | SKIPPED | []                |
+      | dpopValidation                       | PASSED  | []                |
 
     Examples:
       | claim | value      | expectedError         |
@@ -206,6 +217,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | publicKeyRetrieve                    | SKIPPED | []                             |
       | clientAssertionSignatureVerification | SKIPPED | []                             |
       | platformStatesVerification           | SKIPPED | []                             |
+      | dpopValidation                       | PASSED  | []                             |
 
   Scenario: [KEY_RETRIEVE_KID_NOT_FOUND_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il claim kid non è presente allora il recupero della chiave pubblica fallisce con errore kidNotFound
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
@@ -222,6 +234,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | publicKeyRetrieve                    | SKIPPED | []            |
       | clientAssertionSignatureVerification | SKIPPED | []            |
       | platformStatesVerification           | SKIPPED | []            |
+      | dpopValidation                       | PASSED  | []            |
 
   #Bug aperto: https://pagopa.atlassian.net/browse/PIN-9998
   Scenario: [KEY_RETRIEVE_INVALID_KID_FORMAT_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il claim kid non è in formato valido allora il recupero della chiave pubblica fallisce con errore invalidKidFormat
@@ -239,6 +252,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | publicKeyRetrieve                    | FAILED  | [invalidKidFormat] |
       | clientAssertionSignatureVerification | SKIPPED | []                 |
       | platformStatesVerification           | SKIPPED | []                 |
+      | dpopValidation                       | PASSED  | []                 |
 
   Scenario: [KEY_RETRIEVE_INVALID_SUBJECT_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il subject non corrisponde al client atteso allora il recupero della chiave pubblica fallisce con errore invalidSubject
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
@@ -255,6 +269,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | publicKeyRetrieve                    | SKIPPED | []               |
       | clientAssertionSignatureVerification | SKIPPED | []               |
       | platformStatesVerification           | SKIPPED | []               |
+      | dpopValidation                       | PASSED  | []               |
 
   # Bug aperto: https://pagopa.atlassian.net/browse/PIN-9999
   Scenario: [KEY_RETRIEVE_PURPOSE_ID_NOT_PROVIDED_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il claim purposeId non è presente allora il recupero della chiave pubblica fallisce con errore purposeIdNotProvided
@@ -272,6 +287,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | publicKeyRetrieve                    | FAILED  | [purposeIdNotProvided] |
       | clientAssertionSignatureVerification | SKIPPED | []                     |
       | platformStatesVerification           | SKIPPED | []                     |
+      | dpopValidation                       | PASSED  | []                     |
 
   Scenario: [KEY_RETRIEVE_INVALID_PURPOSE_ID_FORMAT_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il claim purposeId non è in formato UUID allora il recupero della chiave pubblica fallisce con errore invalidPurposeIdClaimFormat
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
@@ -288,6 +304,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | publicKeyRetrieve                    | SKIPPED | []                            |
       | clientAssertionSignatureVerification | SKIPPED | []                            |
       | platformStatesVerification           | SKIPPED | []                            |
+      | dpopValidation                       | PASSED  | []                            |
 
   Scenario: [KEY_RETRIEVE_INVALID_PURPOSE_STATE_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando la finalità è in stato non valido allora il recupero della chiave pubblica fallisce con errore invalidPurposeState
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
@@ -302,6 +319,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | publicKeyRetrieve                    | PASSED | []                    |
       | clientAssertionSignatureVerification | PASSED | []                    |
       | platformStatesVerification           | FAILED | [invalidPurposeState] |
+      | dpopValidation                       | PASSED | []                    |
 
   Scenario: [KEY_RETRIEVE_INVALID_AGREEMENT_STATE_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando l'agreement è in stato non valido allora il recupero della chiave pubblica fallisce con errore invalidAgreementState
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
@@ -318,6 +336,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | publicKeyRetrieve                    | PASSED | []                      |
       | clientAssertionSignatureVerification | PASSED | []                      |
       | platformStatesVerification           | FAILED | [invalidAgreementState] |
+      | dpopValidation                       | PASSED | []                      |
 
   Scenario: [KEY_RETRIEVE_INVALID_ESERVICE_STATE_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando l'e-service è in stato non valido allora il recupero della chiave pubblica fallisce con errore invalidEServiceState
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
@@ -334,6 +353,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | publicKeyRetrieve                    | PASSED | []                     |
       | clientAssertionSignatureVerification | PASSED | []                     |
       | platformStatesVerification           | FAILED | [invalidEServiceState] |
+      | dpopValidation                       | PASSED | []                     |
 
   Scenario: [KEY_RETREIVE_ALGORITHM_NOT_ALLOWED_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando l'e-service è in stato non valido allora il recupero della chiave pubblica fallisce con errore algorithmNotAllowed
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
@@ -348,6 +368,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | publicKeyRetrieve                    | SKIPPED | []                    |
       | clientAssertionSignatureVerification | SKIPPED | []                    |
       | platformStatesVerification           | SKIPPED | []                    |
+      | dpopValidation                       | PASSED  | []                    |
 
   Scenario: [KEY_RETREIVE_INVALID_SIGNATURE_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando l'e-service è in stato non valido allora il recupero della chiave pubblica fallisce con errore invalidSignature
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
@@ -362,6 +383,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | publicKeyRetrieve                    | PASSED  | []                 |
       | clientAssertionSignatureVerification | FAILED  | [invalidSignature] |
       | platformStatesVerification           | SKIPPED | []                 |
+      | dpopValidation                       | PASSED  | []                 |
 
   Scenario: [KEY_RETRIEVE_ALGORITHM_NOT_FOUND_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il claim alg non è valido allora il recupero della chiave pubblica fallisce con errore algorithmNotFound
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
@@ -378,3 +400,4 @@ Feature: Debugger Client Assertion Sync DPoP
       | publicKeyRetrieve                    | SKIPPED | []                  |
       | clientAssertionSignatureVerification | SKIPPED | []                  |
       | platformStatesVerification           | SKIPPED | []                  |
+      | dpopValidation                       | PASSED  | []                  |
