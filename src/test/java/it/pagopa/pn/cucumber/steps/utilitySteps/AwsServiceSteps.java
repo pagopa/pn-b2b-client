@@ -4,7 +4,8 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.common.util.CloudWatchQueryBuilder;
-import it.pagopa.pn.client.b2b.pa.utils.SendDynamoQueryRequest;
+import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
+import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,12 +14,9 @@ import org.springframework.context.annotation.Scope;
 import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient;
 import software.amazon.awssdk.services.cloudwatchlogs.model.FilterLogEventsRequest;
 import software.amazon.awssdk.services.cloudwatchlogs.model.FilterLogEventsResponse;
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -30,21 +28,17 @@ import static org.awaitility.Awaitility.await;
 @RequiredArgsConstructor
 public class AwsServiceSteps {
     private final SharedSteps sharedSteps;
-    private final DynamoDbClient dynamoDbClient;
     private final CloudWatchLogsClient cloudWatchLogsClient;
     private boolean checkAuditLogDisabled;
+    private final DynamoDbService dynamoDbService;
 
     /**
      * Ricerca uno specifico elemento su pn-timelines e verifica la sua presenza (o meno)
      */
     @Then("verifico che su DynamoDB {is} presente in timeline l'elemento {string}")
     public void checkTimelineFromDynamoDB(boolean isPresent, String timelineElement) {
-        Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();
-        expressionAttributeValues.put(":v_iun", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build());
-        expressionAttributeValues.put(":v_category", AttributeValue.builder().s(timelineElement).build());
-
-        QueryRequest queryRequest = SendDynamoQueryRequest.buildPnTimelinesCategoryRequest(expressionAttributeValues);
-        QueryResponse queryResponse = dynamoDbClient.query(queryRequest);
+        QueryResponse queryResponse = dynamoDbService.call(DynamoTableName.TIMELINE,
+                Map.of("iun", sharedSteps.getNotificationIun(), "category", timelineElement));
 
         log.info("Elementi trovati con categoria {}: {}", timelineElement, queryResponse.count());
         try {

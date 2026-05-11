@@ -13,7 +13,7 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostserv
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.RecipientCostData;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.client.b2b.pa.service.IPnNotificationCostClient;
-import it.pagopa.pn.client.b2b.pa.utils.DynamoTableName;
+import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v26.NotificationProcessCostResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

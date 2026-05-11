@@ -1,7 +1,7 @@
 package it.pagopa.pn.client.b2b.pa.service;
 
 import it.pagopa.common.util.DynamoQueryBuilder;
-import it.pagopa.pn.client.b2b.pa.utils.DynamoTableName;
+import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;

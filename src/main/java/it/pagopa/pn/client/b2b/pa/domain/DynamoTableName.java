@@ -1,5 +1,8 @@
-package it.pagopa.pn.client.b2b.pa.utils;
+package it.pagopa.pn.client.b2b.pa.domain;
 
+import lombok.Getter;
+
+@Getter
 public enum DynamoTableName {
     TIMELINE("pn-Timelines"),
     PAYMENT_INFO("pn-PaymentInfo"),
@@ -12,7 +15,4 @@ public enum DynamoTableName {
         this.value = value;
     }
 
-    public String getValue() {
-        return value;
-    }
 }
