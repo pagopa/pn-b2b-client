@@ -3082,3 +3082,63 @@ Feature: Test API of e-service template
     When l'utente è un "admin" di "PA2"
     And l'utente recupera le proprie istanze e-service template create dall'e-service template "%actual"
     Then si ottiene response status code 404
+
+  @eservice_description_max_length
+  Scenario: [ESERVICE_TEMPLATE_CREATE_DESCRIPTION_MAX_LENGTH_1] La creazione di un e-service template in DRAFT può essere fatta utilizzando la dimensione massima della descrizione
+    Given l'utente è un "admin" di "PA1"
+    When l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT con nome "max-descr" e descrizione di 400 caratteri
+    And si ottiene response status code 200
+    Then l'e-service template creato ha una descrizione di 400 caratteri
+
+  @eservice_description_max_length
+  Scenario: [ESERVICE_TEMPLATE_CREATE_DESCRIPTION_MAX_LENGTH_2] La creazione di un e-service template in DRAFT non va a buon fine se viene superata la dimensione massima consentita per la descrizione
+    Given l'utente è un "admin" di "PA1"
+    When l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT con nome "max-descr" e descrizione di 401 caratteri
+    Then si ottiene response status code 400
+
+  @eservice_description_max_length
+  Scenario: [ESERVICE_TEMPLATE_CREATE_DESCRIPTION_MAX_LENGTH_3] La creazione di un e-service template in stato PUBLISHED può essere fatta utilizzando la dimensione massima della descrizione
+    Given l'utente è un "admin" di "PA1"
+    When l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "max-descr" e descrizione di 400 caratteri
+    And si ottiene response status code 200
+    Then l'e-service template creato ha una descrizione di 400 caratteri
+
+  @eservice_description_max_length
+  Scenario: [ESERVICE_TEMPLATE_CREATE_DESCRIPTION_MAX_LENGTH_4] La creazione di un e-service template in stato PUBLISHED non va a buon fine se viene superata la dimensione massima consentita per la descrizione
+    Given l'utente è un "admin" di "PA1"
+    When l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "max-descr" e descrizione di 401 caratteri
+    Then si ottiene response status code 400
+
+  @eservice_description_max_length
+  Scenario: [ESERVICE_TEMPLATE_UPDATE_DESCRIPTION_MAX_LENGTH_5] L'aggiornamento della descrizione di un e-service template in DRAFT può essere fatta utilizzando la dimensione massima
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT con nome "max-descr" e descrizione di 20 caratteri
+    And si ottiene response status code 200
+    When l'utente aggiorna la descrizione dell'e-service template in stato DRAFT con una descrizione di 400 caratteri
+    And si ottiene response status code 204
+    Then l'e-service template creato ha una descrizione di 400 caratteri
+
+  @eservice_description_max_length
+  Scenario: [ESERVICE_TEMPLATE_UPDATE_DESCRIPTION_MAX_LENGTH_6] L'aggiornamento della descrizione di un e-service template in DRAFT genera un errore se viene superata la dimensione massima consentita
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT con nome "max-descr" e descrizione di 20 caratteri
+    And si ottiene response status code 200
+    When l'utente aggiorna la descrizione dell'e-service template in stato DRAFT con una descrizione di 401 caratteri
+    Then si ottiene response status code 400
+
+  @eservice_description_max_length
+  Scenario: [ESERVICE_TEMPLATE_UPDATE_DESCRIPTION_MAX_LENGTH_7] L'aggiornamento della descrizione di un e-service template in PUBLISHED può essere fatta utilizzando la dimensione massima
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "max-descr" e descrizione di 20 caratteri
+    And si ottiene response status code 200
+    When l'utente aggiorna la descrizione dell'e-service template in stato PUBLISHED con una descrizione di 400 caratteri
+    And si ottiene response status code 200
+    Then l'e-service template creato ha una descrizione di 400 caratteri
+
+  @eservice_description_max_length
+  Scenario: [ESERVICE_TEMPLATE_UPDATE_DESCRIPTION_MAX_LENGTH_8] L'aggiornamento della descrizione di un e-service template in PUBLISHED genera un errore se viene superata la dimensione massima consentita
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "max-descr" e descrizione di 20 caratteri
+    And si ottiene response status code 200
+    When l'utente aggiorna la descrizione dell'e-service template in stato PUBLISHED con una descrizione di 401 caratteri
+    Then si ottiene response status code 400

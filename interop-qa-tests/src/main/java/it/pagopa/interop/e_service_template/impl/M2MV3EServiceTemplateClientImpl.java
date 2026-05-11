@@ -5,15 +5,15 @@ import it.pagopa.interop.common.client.AbstractDPoPClient;
 import it.pagopa.interop.common.rest_template.DpopRestTemplate;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.e_service_template.IM2MV3EServiceTemplateClient;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Documents;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplate;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersionQuotasUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersionSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersions;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.EserviceTemplatesApi;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTemplateDescriptionUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTemplateDraftUpdateSeed;
 import it.pagopa.interop.utils.ApiClientUtils;
 import java.util.Collections;
@@ -97,8 +97,9 @@ public class M2MV3EServiceTemplateClientImpl extends AbstractDPoPClient implemen
     }
 
     @Override
-    public CreatedEServiceTemplateVersion createEserviceTemplate(EServiceTemplateSeed payload) {
-        return bffEserviceTemplatesApi.createEServiceTemplate(payload);
+    public EServiceTemplate createEServiceTemplate(EServiceTemplateSeed payload) {
+        return vMapper.mapToV2(eserviceTemplatesApi.createEServiceTemplate(
+                vMapper.mapToV3(payload)));
     }
 
     @Override
@@ -135,6 +136,15 @@ public class M2MV3EServiceTemplateClientImpl extends AbstractDPoPClient implemen
                 .mode(vMapper.mapToV3(patchRequest.getMode()))
                 .intendedTarget(patchRequest.getIntendedTarget())
                 .isSignalHubEnabled(patchRequest.getIsSignalHubEnabled())
+        ));
+    }
+
+    @Override
+    public EServiceTemplate patchEServiceTemplateDescription(UUID templateId,
+        EServiceTemplateDescriptionPatchRequest patchRequest) {
+        return vMapper.mapToV2(eserviceTemplatesApi.updatePublishedEServiceTemplateDescription(templateId,
+                new EServiceTemplateDescriptionUpdateSeed()
+                        .description(patchRequest.getDescription())
         ));
     }
 

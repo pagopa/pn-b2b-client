@@ -57,9 +57,11 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.assistant.ESe
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.assistant.EServiceDescriptorQuotasPatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.mapper.EServiceDescriptorMapperImpl;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.mapper.EServiceDescriptorQuotasMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.helpers.EServiceSeedFactory;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.*;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.assistant.EServiceTemplatePatchContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.assistant.EServiceTemplatePatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.helpers.EServiceTemplateSeedFactory;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.mapper.EServiceTemplateMapperImpl;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.version.assistant.EServiceTemplateVersionPatchContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.version.assistant.EServiceTemplateVersionPatchOperationsAssistant;
@@ -148,6 +150,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         EServiceDescriptorMapperImpl.class,
         EServiceTemplateMapperImpl.class,
         EServiceTemplateVersionQuotasMapperImpl.class,
+        EServiceSeedFactory.class,
         DocumentMapperImpl.class,
         PurposeMapperImpl.class,
         ReversePurposeMapperImpl.class,
@@ -167,6 +170,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         EServiceDescriptionPatchOperationsAssistant.class,
         EServiceDescriptorPatchOperationsAssistant.class,
         EServiceTemplateVersionPatchOperationsAssistant.class,
+        EServiceTemplateSeedFactory.class,
         PurposePatchOperationsAssistant.class,
         ReversePurposePatchOperationsAssistant.class,
         EServiceTemplatePatchOperationsAssistant.class,
