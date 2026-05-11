@@ -30,7 +30,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     ##  NOTA: Il csv da passare in input deve essere rinominato in: TEST-cap-localita.csv
     ##  Viene generato un file di report in: src/main/resources/output/risultati_copertura.csv
   Scenario: [RADD_API_COPERTURA_CAP_VALIDATION] Creazione report di coperture cap radd da file csv
-    Given setto la data per la quale voglio verificare la copertura al "0D"
+    Given setto la data per la quale voglio verificare la copertura al "$TODAY()"
     Then leggo il file csv con cap e localita ed effettuo chiamate light e complete con report
 
 
@@ -344,7 +344,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     Then setto i dati per verificare la copertura Radd:
       | nameRow2 | addressRow | addressRow2 | cap   | city | city2 | pr    | country |
       | $NULL    | $NULL      | $NULL       | 00100 | 123  | $NULL | $NULL | $NULL   |
-    And invoco l'API di verifica copertura cap Radd mode: $NULL con errore
+    And invoco l'API di verifica copertura cap Radd mode: NULL con errore
     And l'operazione di copertura Radd ha prodotto un errore con status code "400"
 
   @capCoverageRadd @cognito2
