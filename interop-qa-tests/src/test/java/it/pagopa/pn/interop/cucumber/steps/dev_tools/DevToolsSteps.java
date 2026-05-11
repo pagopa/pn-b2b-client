@@ -56,6 +56,7 @@ public class DevToolsSteps {
     private final PurposeCommonStep purposeCommonStep;
     private final ClientPurposeRemoveStep clientPurposeRemoveStep;
     private final ClientCreateStep clientCreateStep;
+    private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final String clientAssertionJwtAudience;
     private final DevToolsContext devToolsContext = new DevToolsContext();
@@ -75,6 +76,7 @@ public class DevToolsSteps {
     ) {
         this.clientCommonSteps = clientCommonSteps;
         this.clientKeyReadSteps = clientKeyReadSteps;
+        this.clientTokenConfigurator = clientTokenConfigurator;
         this.devToolsClient = clientTokenConfigurator.getDevToolsClient();
         devToolsClient.setHttpCallExecutor(sharedStepsContext.getHttpCallExecutor());
         this.clientAssertionJwtAudience = clientAssertionJwtAudience;
@@ -123,15 +125,29 @@ public class DevToolsSteps {
         createCustomDPoP(Collections.emptyList());
     }
 
+    @When("{string} crea una DPoP proof per la client assertion con:")
+    public void createDPoPProof(String tenantType, List<JwtClaimOverride> overrides) {
+        createCustomDPoP(overrides);
+    }
+
     @When("{string} richiede la validazione della client assertion appena creata")
     @When("{string} richiede la validazione della client assertion e della DPoP Proof appena creata")
     public void verifyClientAssertion(String tenantType) {
-        runClientAssertionValidation(tenantType, null, null);
+        clientCreateStep.setRole("admin", tenantType);
+        runClientAssertionValidation(null, null);
+    }
+
+    @When("{string} richiede la validazione della client assertion appena creata con un token di autorizzazione non valido")
+    public void verifyClientAssertionWithoutAuthorization(String tenantType) {
+        clientTokenConfigurator.setBearerToken("invalidBearerToken");
+        sharedStepsContext.setUserToken("invalidBearerToken");
+        runClientAssertionValidation(null, null);
     }
 
     @When("{string} richiede la validazione della client assertion appena creata specificando client_assertion_type={string} e grant_type={string}")
     public void verifyClientAssertion(String tenantType, String clientAssertionType, String grantType) {
-        runClientAssertionValidation(tenantType, clientAssertionType, grantType);
+        clientCreateStep.setRole("admin", tenantType);
+        runClientAssertionValidation(clientAssertionType, grantType);
     }
 
     @Then("i risultati di validazione sono:")
@@ -231,7 +247,7 @@ public class DevToolsSteps {
         String clientAssertion = validClientAssertion.signWith(preparedClient.keyPair().getPrivate()).compact();
         // JwtBuilder::compact aggiorna "alg" nell'header per cui eventuali modifiche devono essere riapplicate
         try {
-            clientAssertion = applyOverridesToEncodedAlg(clientAssertion, overrides);
+            clientAssertion = applyOverridesToEncodedHeader(clientAssertion, overrides);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Error processing JSON for client assertion header: " + e.getMessage(), e);
         }
@@ -250,7 +266,7 @@ public class DevToolsSteps {
 
         // JwtBuilder::compact aggiorna "alg" nell'header per cui eventuali modifiche devono essere riapplicate
         try {
-            clientAssertion = applyOverridesToEncodedAlg(clientAssertion, overrides);
+            clientAssertion = applyOverridesToEncodedHeader(clientAssertion, overrides);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Error processing JSON for client assertion header: " + e.getMessage(), e);
         }
@@ -263,6 +279,12 @@ public class DevToolsSteps {
         log.info("Client assertion header: '{}'", new String(Base64.getUrlDecoder().decode(clientAssertion.split("\\.")[0])));
         log.info("Client assertion payload: '{}'", new String(Base64.getUrlDecoder().decode(clientAssertion.split("\\.")[1])));
         log.info("Client assertion: '{}'", clientAssertion);
+    }
+
+    private void logDPopProof(String dpopProof) {
+        log.info("DPoPProof header: '{}'", new String(Base64.getUrlDecoder().decode(dpopProof.split("\\.")[0])));
+        log.info("DPoPProof payload: '{}'", new String(Base64.getUrlDecoder().decode(dpopProof.split("\\.")[1])));
+        log.info("DPoPProof: '{}'", dpopProof);
     }
 
     private void createCustomDPoP(List<JwtClaimOverride> overrides) {
@@ -286,7 +308,7 @@ public class DevToolsSteps {
             dpopProof = jwtBuilder.compact();
         }
 
-        log.info("DPoP: '{}'", dpopProof);
+        logDPopProof(dpopProof);
         devToolsContext.setActualDpopProof(dpopProof);
     }
 
@@ -346,6 +368,10 @@ public class DevToolsSteps {
                 // Comandi speciali utili per test negativi
                 case "__remove" -> removeClaim(builder, raw); // raw = nome claim da rimuovere
                 case "__removeHeader" -> removeHeader(builder, raw); // raw = nome header da rimuovere
+                case "__rawHeader" -> {
+                    // L'header può essere modificato solo tramite un raw di tipo map;
+                    // l'operazione viene quindi eseguita in applyOverridesToEncodedHeader.
+                }
                 case "__rawPayload" -> setRawPayload(builder, raw);
 
                 default -> throw new IllegalArgumentException("Claim non supportato: " + claim);
@@ -353,7 +379,7 @@ public class DevToolsSteps {
         }
     }
 
-    private String applyOverridesToEncodedAlg(String encodedClientAssertion, List<JwtClaimOverride> overrides) throws JsonProcessingException {
+    private String applyOverridesToEncodedHeader(String encodedClientAssertion, List<JwtClaimOverride> overrides) throws JsonProcessingException {
         String[] jwtParts = encodedClientAssertion.split("\\.");
         String headerBase64Url = jwtParts[0];
         String payloadBase64Url = jwtParts[1];
@@ -364,6 +390,9 @@ public class DevToolsSteps {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode headerNode = mapper.readTree(headerJson);
 
+        String modifiedHeaderJson = null;
+
+        // Override the "alg" header
         String overrideAlg = overrides.stream()
             .filter(ov -> "header.alg".equals(ov.claim()))
             .map(JwtClaimOverride::value)
@@ -371,16 +400,30 @@ public class DevToolsSteps {
             .orElse(null);
         if (overrideAlg != null) {
             ((ObjectNode) headerNode).put("alg", overrideAlg);
+            modifiedHeaderJson = mapper.writeValueAsString(headerNode);
         }
 
+        // Remove the "alg" header
         boolean removeAlg = overrides.stream()
                 .filter(ov -> "__remove".equals(ov.claim()) && "header.alg".equals(ov.value()))
                 .count() == 1;
         if (removeAlg) {
             ((ObjectNode) headerNode).remove("alg");
+            modifiedHeaderJson = mapper.writeValueAsString(headerNode);
         }
 
-        String modifiedHeaderJson = mapper.writeValueAsString(headerNode);
+        // Set the header to a raw value
+        Optional<JwtClaimOverride> rawHeaderOverride = overrides.stream()
+                .filter(ov -> "__rawHeader".equals(ov.claim()))
+                .findFirst();
+
+        if (rawHeaderOverride.isPresent()) {
+            modifiedHeaderJson = rawHeaderOverride.get().value();
+        }
+
+        if (modifiedHeaderJson == null) {
+            modifiedHeaderJson = mapper.writeValueAsString(headerNode);
+        }
         String newHeaderBase64Url = Base64.getUrlEncoder().withoutPadding().encodeToString(modifiedHeaderJson.getBytes(StandardCharsets.UTF_8));
 
         return newHeaderBase64Url + "." + payloadBase64Url + "." + signatureBase64Url;
@@ -390,8 +433,7 @@ public class DevToolsSteps {
         return devToolsContext.getActualClientAssertion();
     }
 
-    private void runClientAssertionValidation(String tenantType, String clientAssertionType, String grantType) {
-        clientCreateStep.setRole("admin", tenantType);
+    private void runClientAssertionValidation(String clientAssertionType, String grantType) {
 
         String clientAssertion = devToolsContext.getActualClientAssertion();
         UUID clientId = sharedStepsContext.getClientCommonContext().getLastClient();
@@ -400,8 +442,12 @@ public class DevToolsSteps {
         final String currentAssertionType = clientAssertionType == null ? CLIENT_ASSERTION_TYPE : clientAssertionType;
         final String currentGrantType = grantType == null ? GRANT_TYPE : grantType;
 
-        var result = devToolsClient.validateTokenGeneration(clientAssertion, currentAssertionType, currentGrantType, clientId.toString(), dpopProof);
-        devToolsContext.setLastValidationResult(result);
+        try {
+            var result = devToolsClient.validateTokenGeneration(clientAssertion, currentAssertionType, currentGrantType, clientId.toString(), dpopProof);
+            devToolsContext.setLastValidationResult(result);
+        } catch (Exception e) {
+            log.error("Errore durante la validazione della client assertion: {}", e.getMessage());
+            // throw new RuntimeException("Errore durante la validazione della client assertion", e);
+        }
     }
-
 }
