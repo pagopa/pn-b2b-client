@@ -63,6 +63,7 @@ public interface M2MVersionsMapper {
     it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTemplateVersionState mapToV3(EServiceTemplateVersionState bean);
     EServiceTemplateVersion mapToV2(it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTemplateVersion bean);
     EServiceTemplateVersions mapToV2(it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTemplateVersions bean);
+    it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTemplateSeed mapToV3(EServiceTemplateSeed bean);
     it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTemplateVersionSeed mapToV3(EServiceTemplateVersionSeed bean);
     it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTemplateVersionDraftUpdateSeed mapToV3(EServiceTemplateVersionDraftUpdateSeed bean);
     it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTemplateVersionQuotasUpdateSeed mapToV3(EServiceTemplateVersionQuotasUpdateSeed bean);
@@ -74,6 +75,7 @@ public interface M2MVersionsMapper {
     EServiceDescriptor mapToV2(it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptor bean);
     EServiceDescriptors mapToV2(it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptors bean);
     it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptorState mapToV3(EServiceDescriptorState bean);
+    it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.DescriptorSeedForEServiceCreation mapToV3(DescriptorSeedForEServiceCreation bean);
 
     EServiceDescriptorCertifiedAttribute mapToV2(it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptorCertifiedAttribute bean);
     EServiceDescriptorCertifiedAttributes mapToV2(it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptorCertifiedAttributes bean);

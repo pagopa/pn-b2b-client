@@ -2,16 +2,9 @@ package it.pagopa.interop.e_service_template.impl;
 
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.EserviceTemplatesApi;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Documents;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplate;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateDraftUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersion;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersionQuotasUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersions;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -100,8 +93,8 @@ public class M2MEServiceTemplateClientImpl implements IM2MEServiceTemplateClient
     }
 
     @Override
-    public CreatedEServiceTemplateVersion createEserviceTemplate(EServiceTemplateSeed payload) {
-        return bffEserviceTemplatesApi.createEServiceTemplate(payload);
+    public EServiceTemplate createEServiceTemplate(EServiceTemplateSeed payload) {
+        return eserviceTemplatesApi.createEServiceTemplate(payload);
     }
 
     @Override
@@ -133,6 +126,14 @@ public class M2MEServiceTemplateClientImpl implements IM2MEServiceTemplateClient
             .mode(patchRequest.getMode())
             .intendedTarget(patchRequest.getIntendedTarget())
             .isSignalHubEnabled(patchRequest.getIsSignalHubEnabled())
+        );
+    }
+
+    @Override
+    public EServiceTemplate patchEServiceTemplateDescription(UUID templateId,
+        EServiceTemplateDescriptionPatchRequest patchRequest) {
+        return eserviceTemplatesApi.updatePublishedEServiceTemplateDescription(templateId, new EServiceTemplateDescriptionUpdateSeed()
+            .description(patchRequest.getDescription())
         );
     }
 
