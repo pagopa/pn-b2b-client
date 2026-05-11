@@ -37,9 +37,10 @@ public class AwsServiceSteps {
      */
     @Then("verifico che su DynamoDB {is} presente in timeline l'elemento {string}")
     public void checkTimelineFromDynamoDB(boolean isPresent, String timelineElement) {
-        QueryResponse queryResponse = dynamoDbService.call(DynamoTableName.TIMELINE,
-                Map.of("iun", sharedSteps.getNotificationIun(), "category", timelineElement));
-
+        QueryResponse queryResponse = dynamoDbService.call(DynamoTableName.TIMELINE, Map.of(
+                ":v_iun", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build(),
+                ":v_category", AttributeValue.builder().s(timelineElement).build()
+        ));
         log.info("Elementi trovati con categoria {}: {}", timelineElement, queryResponse.count());
         try {
             if (isPresent) {

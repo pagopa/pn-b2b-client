@@ -89,13 +89,10 @@ public class CostiNotificaSteps {
     }
 
     private Map<String, AttributeValue> searchNotificationDeliveryCostRecord(int recIndex) {
-        QueryResponse queryResponse = dynamoDbService.call(DynamoTableName.NOTIFICATION_DELIVERY_COST,
-                Map.of(
-                        "v_pk", sharedSteps.getNotificationIun(),
-                        "v_sk", String.valueOf(recIndex))
-        );
-
-
+        QueryResponse queryResponse = dynamoDbService.call(DynamoTableName.NOTIFICATION_DELIVERY_COST, Map.of(
+                ":v_pk", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build(),
+                ":v_sk", AttributeValue.builder().n(String.valueOf(recIndex)).build()
+        ));
         try {
             assertThat(queryResponse.items().size())
                     .as("Pn-NotificationDeliveryCost deve contenere esattamente un record per iun %s e recIndex %s", sharedSteps.getNotificationIun(), recIndex)
@@ -143,8 +140,8 @@ public class CostiNotificaSteps {
     }
 
     private Map<String, AttributeValue> searchPaymentInfoRecord(String pk) {
-        QueryResponse queryResponse = dynamoDbService.call(DynamoTableName.PAYMENT_INFO, Map.of("v_pk", pk));
-
+        QueryResponse queryResponse = dynamoDbService.call(DynamoTableName.PAYMENT_INFO, Map.of(
+                ":v_pk", AttributeValue.builder().s(pk).build()));
         try {
             assertThat(queryResponse.items().size())
                     .as("Pn-PaymentInfo deve contenere esattamente un record per iun %s", sharedSteps.getNotificationIun())

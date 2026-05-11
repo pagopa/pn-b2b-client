@@ -10,57 +10,44 @@ import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
 public class DynamoDbService {
     private final DynamoDbClient dynamoDbClient;
 
-    public QueryResponse call(DynamoTableName tableName, Map<String, String> attributeValues) {
-        Map<String, AttributeValue> expressionAttributeValues = buildExpressionAttributeValues(attributeValues);
+    public QueryResponse call(DynamoTableName tableName, Map<String, AttributeValue> attributeValues) {
         QueryRequest queryRequest = switch (tableName) {
-            case TIMELINE -> buildPnTimelinesCategoryRequest(expressionAttributeValues);
-            case PAYMENT_INFO -> buildPnPaymentInfoRequest(expressionAttributeValues);
-            case NOTIFICATION_DELIVERY_COST -> buildPnNotificationDeliveryCostRequest(expressionAttributeValues);
-            case ONBOARD_INSTITUTIONS -> buildOnboardInstitutionsRequest(expressionAttributeValues);
+            case TIMELINE -> buildTimelinesCategoryRequest(attributeValues);
+            case PAYMENT_INFO -> buildPaymentInfoRequest(attributeValues);
+            case NOTIFICATION_DELIVERY_COST -> buildNotificationDeliveryCostRequest(attributeValues);
+            case ONBOARD_INSTITUTIONS -> buildOnboardInstitutionsRequest(attributeValues);
         };
         return dynamoDbClient.query(queryRequest);
     }
 
-    private QueryRequest buildPnTimelinesCategoryRequest(Map<String, AttributeValue> expressionAttributeValues) {
+    private static QueryRequest buildTimelinesCategoryRequest(Map<String, AttributeValue> attributeValues) {
         return DynamoQueryBuilder.withFilter(DynamoTableName.TIMELINE.getValue(),
                 "iun = :v_iun",
                 "category = :v_category",
-                expressionAttributeValues);
+                attributeValues);
     }
 
-    private QueryRequest buildPnPaymentInfoRequest(Map<String, AttributeValue> expressionAttributeValues) {
+    private static QueryRequest buildPaymentInfoRequest(Map<String, AttributeValue> attributeValues) {
         return DynamoQueryBuilder.withoutFilter(DynamoTableName.PAYMENT_INFO.getValue(),
                 "pk = :v_pk",
-                expressionAttributeValues);
+                attributeValues);
     }
 
-    private QueryRequest buildPnNotificationDeliveryCostRequest(Map<String, AttributeValue> expressionAttributeValues) {
+    private static QueryRequest buildNotificationDeliveryCostRequest(Map<String, AttributeValue> attributeValues) {
         return DynamoQueryBuilder.withoutFilter(DynamoTableName.NOTIFICATION_DELIVERY_COST.getValue(),
                 "pk = :v_pk AND sk = :v_sk",
-                expressionAttributeValues);
+                attributeValues);
     }
 
-    public static QueryRequest buildOnboardInstitutionsRequest(Map<String, AttributeValue> expressionAttributeValues) {
+    public static QueryRequest buildOnboardInstitutionsRequest(Map<String, AttributeValue> attributeValues) {
         return DynamoQueryBuilder.withoutFilter(DynamoTableName.ONBOARD_INSTITUTIONS.getValue(),
                 "id = :v_id",
-                expressionAttributeValues);
-    }
-
-    private AttributeValue getAttributeValue(String value) {
-        return AttributeValue.builder().s(value).build();
-    }
-
-    private Map<String, AttributeValue> buildExpressionAttributeValues(Map<String, String> values) {
-        return values.entrySet().stream()
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        entry -> getAttributeValue(entry.getValue())));
+                attributeValues);
     }
 }

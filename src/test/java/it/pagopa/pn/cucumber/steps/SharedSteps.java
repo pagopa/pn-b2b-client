@@ -72,6 +72,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 import java.io.IOException;
@@ -1061,10 +1062,9 @@ public class SharedSteps {
 
     private String fetchSenderTaxIdFromDynamo(String pa) {
         String senderId = senderInfoProvider.getSenderId(pa);
-        QueryResponse response = dynamoDbService.call(
-                DynamoTableName.ONBOARD_INSTITUTIONS,
-                Map.of(":v_id", senderId)
-        );
+        QueryResponse response = dynamoDbService.call(DynamoTableName.ONBOARD_INSTITUTIONS, Map.of(
+                ":v_id", AttributeValue.builder().s(senderId).build()
+        ));
         return response.items().stream()
                 .findFirst()
                 .map(item -> item.get("taxCode").s())
