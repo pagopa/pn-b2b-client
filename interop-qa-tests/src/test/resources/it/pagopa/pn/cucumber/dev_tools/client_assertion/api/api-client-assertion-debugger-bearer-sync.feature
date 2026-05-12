@@ -314,8 +314,8 @@ Feature: : Debugger Client Assertion Sync Bearer
   Scenario: [KEY_RETRIEVE_ALGORITHM_NOT_FOUND_API_CLIENT] Dato un client API valido, quando il claim alg non è valido allora il recupero della chiave pubblica fallisce con errore algorithmNotFound
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     And "PA1" crea una client assertion per un client di tipo API con:
-      | claim    | value      |
-      | __remove | header.alg |
+      | claim          | value |
+      | __removeHeader | alg   |
     When "PA1" richiede la validazione della client assertion appena creata
     And si ottiene response status code 200
     Then i risultati di validazione sono:
