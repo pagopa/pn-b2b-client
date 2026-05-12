@@ -130,6 +130,15 @@ public class DevToolsSteps {
         createCustomDPoP(overrides);
     }
 
+    @When("{string} crea una DPoP proof con firma non valida")
+    public void createDPoPProofWithInvalidSignature(String tenantType) {
+        KeyPair keyPair = KeyPairGeneratorUtil.createKeyPair("RSA", 2048);
+        String dpopProof = this.dPoPTokenService.buildDpopProof(keyPair);
+        String tamperedDpop = dpopProof.substring(0, dpopProof.lastIndexOf(".") + 1) + "bm90LWEtc2lnbmF0dXJl";
+        logDPopProof(tamperedDpop);
+        devToolsContext.setActualDpopProof(tamperedDpop);
+    }
+
     @When("{string} richiede la validazione della client assertion appena creata")
     @When("{string} richiede la validazione della client assertion e della DPoP Proof appena creata")
     public void verifyClientAssertion(String tenantType) {
