@@ -402,3 +402,18 @@ Feature: : Debugger Client Assertion Sync Bearer
       | publicKeyRetrieve                    | SKIPPED | []                  |
       | clientAssertionSignatureVerification | SKIPPED | []                  |
       | platformStatesVerification           | SKIPPED | []                  |
+
+  Scenario: [KEY_RETRIEVE_INVALID_HASH_ALGORITHM_CONSUMER_CLIENT] Dato un client CONSUMER valido, quando il claim DIGEST ha un algoritmo non valido allora il recupero della chiave pubblica fallisce con errore invalidHashAlgorithm
+    Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
+    And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
+    And "PA1" crea una client assertion per un client di tipo CONSUMER con:
+      | claim  | value                                                                                       |
+      | digest | {"alg":"SHA512","value":"5db26201b684761d2b970329ab8596773164ba1b43b1559980e20045941b8063"} |
+    When "PA1" richiede la validazione della client assertion appena creata
+    And si ottiene response status code 200
+    Then i risultati di validazione sono:
+      | step                                 | result  | errors                 |
+      | clientAssertionValidation            | FAILED  | [invalidHashAlgorithm] |
+      | publicKeyRetrieve                    | SKIPPED | []                     |
+      | clientAssertionSignatureVerification | SKIPPED | []                     |
+      | platformStatesVerification           | SKIPPED | []                     |
