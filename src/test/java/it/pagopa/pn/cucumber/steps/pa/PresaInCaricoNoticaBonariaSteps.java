@@ -14,6 +14,7 @@ import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.dataTable.InformalNotificationRequestMapper;
 import it.pagopa.pn.cucumber.steps.pa.utilityInformalVersion.NotificationInformalUtilsV1;
+import it.pagopa.pn.cucumber.utils.NotificationInformalValue;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +68,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     private String savedIun;
 
     private NewInformalNotificationResponse newInformalNotificationResponse;
-    private InformalNotificationRequestMapper informalNotificationRequestMapper;
+    private InformalNotificationRequestMapper informalNotificationRequestMapper = new InformalNotificationRequestMapper();
     private NotificationAttachmentDownloadMetadataResponse attachmentResponse;
 
     private NewInformalNotificationRequestStatusResponseV1 statusResponse;
@@ -76,7 +77,7 @@ public class PresaInCaricoNoticaBonariaSteps {
 
 
     @Autowired
-    public PresaInCaricoNoticaBonariaSteps(InformalNotificationRequestMapper informalNotificationRequestMapper, PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl, SharedSteps sharedSteps, TimingForPolling timingForPolling, IPnPrivateDeliveryPushExternalClient pnPrivateDeliveryPushExternalClient, NotificationInformalUtilsV1 notificationInformalUtilsV1) {
+    public PresaInCaricoNoticaBonariaSteps(PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl, SharedSteps sharedSteps, TimingForPolling timingForPolling, IPnPrivateDeliveryPushExternalClient pnPrivateDeliveryPushExternalClient) {
         this.sharedSteps = sharedSteps;
         this.timingForPolling = timingForPolling;
         this.pnPrivateDeliveryPushExternalClient = pnPrivateDeliveryPushExternalClient;
@@ -84,9 +85,11 @@ public class PresaInCaricoNoticaBonariaSteps {
         this.externalClient = sharedSteps.getPnExternalServiceClient();
         this.b2bClient = sharedSteps.getB2bClient();
         this.pnPollingFactory = sharedSteps.getPollingFactory();
-        this.informalNotificationRequestMapper = informalNotificationRequestMapper;
-        this.notificationInformalUtilsV1 = notificationInformalUtilsV1;
+        //this.informalNotificationRequestMapper = informalNotificationRequestMapper;
+        notificationInformalUtilsV1 = new NotificationInformalUtilsV1(sharedSteps.getContext(), b2bClient, sharedSteps.getPollingFactory());
+
     }
+
 
 
     @And("destinatario della notifica bonaria")
@@ -365,7 +368,40 @@ public class PresaInCaricoNoticaBonariaSteps {
     }
 
     private String generateNoticeCode(String base, int index) {
-        if (base == null) return null;
-        return base.substring(0, base.length() - 1) + index;
+
+            //  fallback totale
+            if (base == null) {
+                return NotificationInformalValue.generateRandomNumber();
+            }
+
+            //  pulizia input
+            String cleaned = base.trim();
+
+            // rimuovo tutto ciò che non è numero
+            cleaned = cleaned.replaceAll("\\D", "");
+
+            //  se NON valido → fallback
+            if (cleaned.isEmpty()) {
+                return NotificationInformalValue.generateRandomNumber();
+            }
+
+            //  costruisco codice variando le ultime cifre
+            if (cleaned.length() >= 18) {
+
+                // mantengo primi 16 numeri e vario ultimi 2
+                String prefix = cleaned.substring(0, 16);
+                String suffix = String.format("%02d", index % 100);
+
+                return prefix + suffix;
+            }
+
+            //  se troppo corto → padding
+            if (cleaned.length() < 18) {
+                return cleaned + "0".repeat(18 - cleaned.length());
+            }
+
+            // fallback sicurezza
+            return NotificationInformalValue.generateRandomNumber();
+        }
+
     }
-}

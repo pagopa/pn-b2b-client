@@ -13,7 +13,21 @@ Feature: Sottomissione di una notifica bonaria.
       | Comune di Milano   | 77777777777 | PROT-123         | TOKEN-ABC        | CAMP-001   | 3fa85f64-5717-4562-b3fc-2c963f66afa6 | Sollecito Tari | fr                  | PF             | 57143494439      | Mario Rossi            | account@domain.it | 302000100000019421 | 77777777777            | Avviso di pagamento | 1               | TEST-GROUP |
     Then viene inviata una nuova notifica bonaria
 
-
+#  SCENARIO  - Sottomissione di una notifica bonaria.
+#  CASO DI TEST .1 Validazione della richiesta di invio notifica bonaria.
+  @informalNotifications
+  Scenario: [NOTIFICHE_BONARIE_SOTTOMISSIONE_14A] Come ente mittente creo una nuova notifica bonaria utilizzando valori di default.
+  Con whitelist vuota ricevo un errore 403 Forbidden.
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    When viene creata una nuova notifica bonaria con i seguenti parametri
+      | additionalLanguages | campaignId     |
+      | NULL                | campaign-1-uat |
+    And destinatario della notifica bonaria
+      | recipientType | PF                |
+      | taxId         | FRMTTR76M06B715E  |
+      | denomination  | Ettore Fieramosca |
+    Then viene inviata una nuova notifica bonaria
+    Then si riceve errore 403
 
 
 #  ***   SCENARIO 1 - Preload del documento.
@@ -44,6 +58,7 @@ Feature: Sottomissione di una notifica bonaria.
 
   Scenario: [NOTIFICHE_BONARIE_MESSAGGI_06_1] Come ente mittente creo un nuovo messaggio con valori di default.
   Il messaggio creato è utilizzabile in una campagna per le notifiche bonarie.
+    Given mittente della notifica bonaria: "COMUNE_1"
     When si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
       | primary_subject                       |
       | Nuovo messaggio per notifiche bonarie |

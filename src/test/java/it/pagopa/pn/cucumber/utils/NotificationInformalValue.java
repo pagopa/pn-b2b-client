@@ -11,7 +11,7 @@ public enum NotificationInformalValue {
     PRIMARY_SUBJECT("primary_subject", "Sollecito di pagamento 2023", false),
     PRIMARY_LONG_BODY("primary_long_body", "Gentile cittadino, la informiamo che...", false),
     PRIMARY_SHORT_BODY("primary_short_body", "Sollecito: hai una nuova comunicazione.", false),
-    PRIMARY_LANGUAGE("primary_language", "it", false),
+    PRIMARY_LANGUAGE("primary_language", "IT", false),
 
     ADDITIONAL_SUBJECT("additional_subject", "Sollecito per..",false),
     ADDITIONAL_LONG_BODY("additional_long_body", "Gentile cittadino, la informiamo che... ", false),
@@ -52,7 +52,7 @@ public enum NotificationInformalValue {
     //DOCUMENT_VERSION_TOKEN("document_version_token", "sNP2YBogBBD2CXXe2dxx0DbOJO0AzyH.", false),
     ATTACHMENT_CONTENT_TYPE("attachment_contentType", "application/pdf", false),
 
-    ATTACHMENT_KEY("attachment_key", "classpath:/pagopa.pdf", false),
+    ATTACHMENT_KEY("attachment_key", "classpath:/AvvisoPagoPA.pdf", false),
     DOCUMENT_KEY("document_key", "classpath:/sample_1pg.pdf", false),
 
 

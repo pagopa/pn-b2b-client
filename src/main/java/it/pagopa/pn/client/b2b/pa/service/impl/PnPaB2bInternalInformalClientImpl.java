@@ -51,11 +51,11 @@ public class PnPaB2bInternalInformalClientImpl {
     }
 
     public MessageResponse createMessage(NewMessageRequest request) {
-        return messagesApi.newMessage(operatorId, CxTypeAuthFleet.PA, paId, request, groups);
+        return messagesApi.newMessage(operatorId, CxTypeAuthFleet.PA, cxId, request, groups);
     }
 
     public MessageResponse getMessage(UUID messageId) {
-        return messagesApi.getMessageById(messageId, operatorId, CxTypeAuthFleet.PA, paId, groups);
+        return messagesApi.getMessageById(messageId, operatorId, CxTypeAuthFleet.PA, cxId, groups);
     }
 
     public NewInformalNotificationResponse sendNewInformalNotificationV1(InformalNotificationRequestV1 informalNotificationRequestV1) throws RestClientException {
