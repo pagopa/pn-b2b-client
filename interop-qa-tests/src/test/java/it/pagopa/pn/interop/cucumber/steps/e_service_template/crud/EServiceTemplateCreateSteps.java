@@ -9,13 +9,7 @@ import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient.EServiceTemplateDocumentKind;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.VersionSeedForEServiceTemplateCreation;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.Document;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -29,6 +23,8 @@ import java.util.List;
 import java.util.UUID;
 
 import lombok.Data;
+import org.jeasy.random.randomizers.text.StringRandomizer;
+import org.junit.jupiter.api.Assertions;
 import org.springframework.http.HttpStatus;
 
 // TODO perché @Data? Considerarne rimozione da questa e dalle altre classi
@@ -100,8 +96,19 @@ public class EServiceTemplateCreateSteps {
 
     @Given("l'utente effettua la creazione di un e-service template in modalità {eServiceMode} in stato di {eServiceTemplateVersionState} con nome {string}")
     public void createEServiceTemplateWithName(EServiceMode eServiceMode, EServiceTemplateVersionState desiredState, String name) {
+        createEServiceTemplateWithName(eServiceMode, desiredState, name, null);
+    }
 
-        EServiceTemplateSeed templateSeed = getEServiceTemplateSeed(eServiceMode, true);
+    @Given("l'utente effettua la creazione di un e-service template in modalità {eServiceMode} in stato di {eServiceTemplateVersionState} con nome {string} e descrizione di {int} caratteri")
+    public void createEServiceTemplateWithName(EServiceMode eServiceMode, EServiceTemplateVersionState desiredState, String name, Integer descriptionLength) {
+
+        EServiceTemplateSeed templateSeed;
+        if (descriptionLength != null) {
+            String description = (new StringRandomizer(descriptionLength, descriptionLength, System.currentTimeMillis())).getRandomValue();
+            templateSeed = getEServiceTemplateSeed(eServiceMode, true, description);
+        } else {
+            templateSeed = getEServiceTemplateSeed(eServiceMode, true);
+        }
 
         EServiceTemplateStepContext ctx = sharedStepsContext.getEServiceTemplateStepContext();
         String seed = ctx.getLastUsedEServiceTemplateNameSeed();
@@ -117,7 +124,9 @@ public class EServiceTemplateCreateSteps {
         if (eServiceMode == EServiceMode.RECEIVE && nonNull(lastTemplateManaged)) {
             testAssistant.addRiskAnalysisToEServiceTemplateSuccessfully(); // perché ogni template in RECEIVE deve avere una risk analysis
         }
-        testAssistant.mutateLastVersionState(desiredState);
+        if (nonNull(lastTemplateManaged)) {
+            testAssistant.mutateLastVersionState(desiredState);
+        }
     }
 
     @When("l'utente effettua la creazione di un e-service template in modalità {eServiceMode} in stato di {eServiceTemplateVersionState} con flagPersonalData impostato a {string}")
@@ -129,6 +138,25 @@ public class EServiceTemplateCreateSteps {
             testAssistant.addRiskAnalysisToEServiceTemplateSuccessfully(); // perché ogni template in RECEIVE deve avere una risk analysis
         }
         testAssistant.mutateLastVersionState(desiredState);
+    }
+
+    @When("l'e-service template creato ha una descrizione di {int} caratteri")
+    public void checkLengthDescriptionOfEServiceTemplateCreated(Integer descriptionLength) {
+        EServiceTemplateInfo lastTemplateManaged = sharedStepsContext.getEServiceTemplateStepContext()
+                .getLastTemplateManaged();
+
+        pollingService.makePolling(
+                () -> httpCallExecutor.performCall(
+                        () -> eServiceTemplateClient.getEServiceTemplate(lastTemplateManaged.getId())
+                ),
+                res -> res != HttpStatus.NOT_FOUND,
+                "There was an error while retrieving the e-service template"
+        );
+
+        String description = ((EServiceTemplateDetails) httpCallExecutor.getResponse()).getDescription();
+
+        Assertions.assertNotNull(description);
+        Assertions.assertEquals(descriptionLength, description.length());
     }
 
     @When("{string} porta la versione dell'e-service template in stato {eServiceTemplateVersionState}")
@@ -203,6 +231,7 @@ public class EServiceTemplateCreateSteps {
                 templateSeed.getName(),
                 templateSeed.getIntendedTarget(),
                 templateSeed.getDescription(),
+                templateSeed.getTechnology(),
                 templateSeed.getMode(),
                 creationResponse.getId(),
                 creationResponse.getVersionId(),
@@ -217,17 +246,7 @@ public class EServiceTemplateCreateSteps {
      * @return a new {@link EServiceTemplateSeed} instance
      */
     private EServiceTemplateSeed getEServiceTemplateSeed(EServiceMode eServiceMode) {
-        String templateName = testAssistant.buildEServiceTemplateName();
-        VersionSeedForEServiceTemplateCreation version = new VersionSeedForEServiceTemplateCreation()
-                .voucherLifespan(86400);
-        return new EServiceTemplateSeed()
-                .intendedTarget("Audience description per il template " + templateName)
-                .name(templateName)
-                .description("Descrizione del servizio associato al template " + templateName)
-                .mode(eServiceMode)
-                .version(version)
-                .personalData(false)
-                .technology(EServiceTechnology.REST);
+        return getEServiceTemplateSeed(eServiceMode, false);
     }
 
     private EServiceTemplateSeed getEServiceTemplateSeed(EServiceMode eServiceMode, Boolean flagPersonalData) {
@@ -238,6 +257,20 @@ public class EServiceTemplateCreateSteps {
                 .intendedTarget("Audience description per il template " + templateName)
                 .name(templateName)
                 .description("Descrizione del servizio associato al template " + templateName)
+                .mode(eServiceMode)
+                .version(version)
+                .personalData(flagPersonalData)
+                .technology(EServiceTechnology.REST);
+    }
+
+    private EServiceTemplateSeed getEServiceTemplateSeed(EServiceMode eServiceMode, Boolean flagPersonalData, String description) {
+        String templateName = testAssistant.buildEServiceTemplateName();
+        VersionSeedForEServiceTemplateCreation version = new VersionSeedForEServiceTemplateCreation()
+                .voucherLifespan(86400);
+        return new EServiceTemplateSeed()
+                .intendedTarget("Audience description per il template " + templateName)
+                .name(templateName)
+                .description(description)
                 .mode(eServiceMode)
                 .version(version)
                 .personalData(flagPersonalData)

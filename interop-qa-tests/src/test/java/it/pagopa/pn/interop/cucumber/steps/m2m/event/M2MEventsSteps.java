@@ -96,7 +96,7 @@ public class M2MEventsSteps {
     private static EventPredicate getPredicate(InteropEvent event, List<EventPredicate> predicates) {
         List<EventPredicate> safePredicates = new ArrayList<>(predicates != null ? predicates : Collections.emptyList());
 
-        EventPredicate eventTypePredicate = new EventPredicate(e -> e.getEventType().equals(event.name()));
+        EventPredicate eventTypePredicate = e -> e.getEventType().equals(event.name());
         safePredicates.add(eventTypePredicate);
 
         return EventPredicate.andAll(safePredicates);

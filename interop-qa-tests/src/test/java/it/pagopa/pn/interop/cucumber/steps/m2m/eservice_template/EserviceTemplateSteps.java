@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template;
 
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
@@ -8,25 +9,28 @@ import it.pagopa.interop.authorization.enums.M2MRole;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient;
+import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient.EServiceTemplateDescriptionPatchRequest;
 import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient.EServiceTemplatePatchRequest;
 import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient.EServiceTemplateVersionCreationRequest;
 import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient.EServiceTemplateVersionPatchRequest;
 import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient.EServiceTemplateVersionQuotasPatchRequest;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.M2MDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.assistant.EServiceTemplatePatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.helpers.EServiceTemplateSeedFactory;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.mapper.EServiceTemplateMapper;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.version.assistant.EServiceTemplateVersionPatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.version.assistant.EServiceTemplateVersionQuotasPatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.jeasy.random.randomizers.text.StringRandomizer;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
@@ -51,6 +55,7 @@ public class EserviceTemplateSteps {
     private final EServiceTemplateVersionPatchOperationsAssistant versionPatchAssistant;
     private final EServiceTemplateVersionQuotasPatchOperationsAssistant versionQuotasPatchAssistant;
     private final EServiceTemplateMapper templateMapper;
+    private final EServiceTemplateSeedFactory eServiceTemplateSeedFactory;
 
     private EServiceTemplateVersions oldVersionsSnapshot;
     private EServiceTemplateVersions newVersionsSnapshot;
@@ -64,7 +69,8 @@ public class EserviceTemplateSteps {
         EServiceTemplatePatchOperationsAssistant patchAssistant,
         EServiceTemplateVersionPatchOperationsAssistant versionPatchAssistant,
         EServiceTemplateVersionQuotasPatchOperationsAssistant versionQuotasPatchAssistant,
-        EServiceTemplateMapper templateMapper
+        EServiceTemplateMapper templateMapper,
+        EServiceTemplateSeedFactory eServiceTemplateSeedFactory
     ) {
         this.sharedStepsContext = sharedStepsContext;
         this.dataPreparationService = dataPreparationService;
@@ -76,17 +82,75 @@ public class EserviceTemplateSteps {
         this.versionPatchAssistant = versionPatchAssistant;
         this.versionQuotasPatchAssistant = versionQuotasPatchAssistant;
         this.templateMapper = templateMapper;
+        this.eServiceTemplateSeedFactory = eServiceTemplateSeedFactory;
     }
 
-    @And("viene effettuata la creazione dei template e-service:")
-    public void createEserviceTemplate() {
-        //
-        EServiceTemplateSeed eServiceTemplateSeed = new EServiceTemplateSeed();
+    private void setCreatedEServiceTemplateInCommonContext(EServiceTemplate eServiceTemplate) {
+        EServiceTemplateInfo eServiceTemplateInfo = new EServiceTemplateInfo(
+                eServiceTemplate.getName(),
+                eServiceTemplate.getIntendedTarget(),
+                eServiceTemplate.getDescription(),
+                null,
+                null,
+                eServiceTemplate.getId(),
+                null,
+                null
+        );
+        sharedStepsContext.getEServiceTemplateStepContext().getTemplatesManaged().add(eServiceTemplateInfo);
+    }
 
-        // Esegue le creazione
-        CreatedEServiceTemplateVersion version = dataPreparationService.createEServiceTemplate(eServiceTemplateSeed);
+    @When("l'utente tenta la creazione dell'e-service template con la configurazione predefinita")
+    public void createEServiceTemplateWithDefaultConfiguration() {
+        EServiceTemplateSeed eServiceTemplateSeed = eServiceTemplateSeedFactory.defaultEServiceTemplateSeed();
+        httpCallExecutor.performCall(() -> dataPreparationService.createEServiceTemplate(eServiceTemplateSeed));
 
-        // Aggiorna il context
+        if (httpCallExecutor.getResponseStatus() == HttpStatus.CREATED || httpCallExecutor.getResponseStatus() == HttpStatus.OK) {
+            EServiceTemplate eServiceTemplate = (EServiceTemplate) httpCallExecutor.getResponse();
+            this.setCreatedEServiceTemplateInCommonContext(eServiceTemplate);
+        }
+    }
+
+    @When("l'utente tenta la creazione del template e-service con la seguente configurazione:")
+    public void createEServiceTemplate(DataTable dataTable) {
+
+        EServiceTemplateSeed eServiceTemplateSeed = eServiceTemplateSeedFactory.defaultEServiceTemplateSeed();
+
+        Map<String, String> data = dataTable.asMap(String.class, String.class);
+        if (data.containsKey("description-length")) {
+            int descriptionLength = Integer.parseInt(data.get("description-length"));
+            eServiceTemplateSeed.description((new StringRandomizer(descriptionLength, descriptionLength, System.currentTimeMillis())).getRandomValue());
+        }
+
+        httpCallExecutor.performCall(() -> dataPreparationService.createEServiceTemplate(eServiceTemplateSeed));
+
+        if (httpCallExecutor.getResponseStatus() == HttpStatus.CREATED || httpCallExecutor.getResponseStatus() == HttpStatus.OK) {
+            EServiceTemplate eServiceTemplate = (EServiceTemplate) httpCallExecutor.getResponse();
+            this.setCreatedEServiceTemplateInCommonContext(eServiceTemplate);
+        }
+    }
+
+    @When("l'utente tenta la modifica della descrizione dell'e-service template in stato {eServiceTemplateVersionStateM2M} con una descrizione di {int} caratteri")
+    public void updateEServiceTemplateDescription(EServiceTemplateVersionState eServiceTemplateVersionState, int descriptionLength) {
+
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext()
+                .getLastTemplateManaged()
+                .getId();
+        String description = (new StringRandomizer(descriptionLength, descriptionLength, System.currentTimeMillis())).getRandomValue();
+
+        switch (eServiceTemplateVersionState) {
+            case DRAFT -> {
+                EServiceTemplatePatchRequest request = this.patchAssistant.buildDefaultPatchRequest();
+                request.setDescription(description);
+                httpCallExecutor.performCall(() -> m2mEServiceTemplateClient.patchEServiceTemplate(eServiceTemplateId, request));
+            }
+            case PUBLISHED -> {
+                EServiceTemplateDescriptionPatchRequest request = EServiceTemplateDescriptionPatchRequest.builder()
+                        .description(description)
+                        .build();
+                httpCallExecutor.performCall(() -> m2mEServiceTemplateClient.patchEServiceTemplateDescription(eServiceTemplateId, request));
+            }
+            default -> throw new IllegalArgumentException("L'e-service template deve essere in uno stato valido: DRAFT o PUBLISHED");
+        }
     }
 
     @When("l'utente tenta di recuperare i metadati dei documenti associati all'e-service template")

@@ -1503,3 +1503,56 @@ Feature: Gestione degli eServices attraverso APIs M2M
       | PA1            |
       | GSP            |
       | Privato        |
+
+  @eservice_description_max_length
+  @happy-path
+  Scenario: [ESERVICE_CREATION_DESCRIPTION_MAX_LENGTH_3] Un utente crea un e-service utilizzando la descrizione della lunghezza massima possibile con M2M
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta la creazione dell'e-service con la seguente configurazione:
+      | description-length | 400 |
+    Then l'utente è un "admin" di "PA1"
+    And l'e-service creato ha una descrizione di 400 caratteri
+
+  @eservice_description_max_length
+  @sad-path
+  Scenario: [ESERVICE_CREATION_DESCRIPTION_MAX_LENGTH_4] La creazione dell'e-service non va a buon fine se viene superata la dimensione massima consentita per la descrizione
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta la creazione dell'e-service con la seguente configurazione:
+      | description-length | 401 |
+    Then si ottiene status code 400
+
+  @eservice_description_max_length
+  @happy-path
+  Scenario: [ESERVICE_DESCRIPTION_UPDATE_MAXLENGTH_6] Un utente aggiorna un e-service in stato DRAFT utilizzando la descrizione della lunghezza massima possibile
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente tenta la creazione dell'e-service con la configurazione predefinita
+    When l'utente tenta di effettuare la modifica parziale dell'e-service in stato DRAFT specificando una descrizione di lunghezza pari a 400 caratteri
+    And l'utente è un "admin" di "PA1"
+    Then l'e-service creato ha una descrizione di 400 caratteri
+
+  @eservice_description_max_length
+  @sad-path
+  Scenario: [ESERVICE_DESCRIPTION_UPDATE_MAXLENGTH_7] L'aggiornamento dell'e-service in stato DRAFT non va a buon fine se viene superata la dimensione massima consentita per la descrizione
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente tenta la creazione dell'e-service con la configurazione predefinita
+    When l'utente tenta di effettuare la modifica parziale dell'e-service in stato DRAFT specificando una descrizione di lunghezza pari a 401 caratteri
+    Then si ottiene status code 400
+
+  @eservice_description_max_length
+  @happy-path
+  Scenario: [ESERVICE_DESCRIPTION_UPDATE_MAXLENGTH_8] Un utente aggiorna un e-service in stato PUBLISHED utilizzando la descrizione della lunghezza massima possibile
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente tenta di effettuare la modifica della descrizione dell'e-service specificando una descrizione di lunghezza pari a 400 caratteri
+    Then l'utente è un "admin" di "PA1"
+    And l'e-service creato ha una descrizione di 400 caratteri
+
+  @eservice_description_max_length
+  @sad-path
+  Scenario: [ESERVICE_DESCRIPTION_UPDATE_MAXLENGTH_9] L'aggiornamento di un e-service in stato PUBLISHED non va a buon fine se viene superata la dimensione massima consentita per la descrizione
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente tenta di effettuare la modifica della descrizione dell'e-service specificando una descrizione di lunghezza pari a 401 caratteri
+    Then si ottiene status code 400

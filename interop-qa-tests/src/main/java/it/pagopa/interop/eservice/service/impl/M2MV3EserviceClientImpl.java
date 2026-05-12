@@ -12,10 +12,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EService;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServices;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.EservicesApi;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDelegationUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptionUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDraftUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceNameUpdateSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.*;
 import it.pagopa.interop.utils.ApiClientUtils;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -117,6 +114,20 @@ public class M2MV3EserviceClientImpl extends AbstractDPoPClient implements IM2MV
             body.getFile(),
             body.getPrettyName()
         ));
+    }
+
+    @Override
+    public EService createEService(EServiceCreateRequest body) {
+        return vMapper.mapToV2(eservicesApi.createEService(new EServiceSeed()
+                .name(body.getName())
+                .description(body.getDescription())
+                .descriptor(vMapper.mapToV3(body.getDescriptor()))
+                .technology(vMapper.mapToV3(body.getTechnology()))
+                .mode(vMapper.mapToV3(body.getMode()))
+                .isSignalHubEnabled(body.getIsSignalHubEnabled())
+                .isConsumerDelegable(body.getIsConsumerDelegable())
+                .isClientAccessDelegable(body.getIsClientAccessDelegable())
+                .personalData(body.getPersonalData())));
     }
 
     @Override
