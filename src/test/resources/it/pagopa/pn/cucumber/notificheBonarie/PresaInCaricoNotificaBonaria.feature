@@ -166,7 +166,7 @@ Feature: Sottomissione di una notifica bonaria.
 
 
 #  CASO DI TEST .1 Validazione della richiesta di invio notifica bonaria.
-  @informalNotifications
+
   Scenario: [NOTIFICHE_BONARIE_SM_01] Come ente mittente invio una notifica bonaria con modalità one-to-many quindi con id della campagna valorizzato
     Given mittente della notifica bonaria: "COMUNE_1"
     And viene creata una nuova notifica bonaria con i seguenti parametri
