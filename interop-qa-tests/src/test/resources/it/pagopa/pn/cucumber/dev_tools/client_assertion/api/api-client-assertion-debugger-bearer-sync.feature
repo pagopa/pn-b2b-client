@@ -134,8 +134,7 @@ Feature: : Debugger Client Assertion Sync Bearer
       | clientAssertionSignatureVerification | SKIPPED | []                             |
       | platformStatesVerification           | SKIPPED | []                             |
 
-  #TODO: lo scenario fallisce per errore clientAssertionInvalidClaims, nbf è però un claim standarnd, verificare se è corretto
-  Scenario: [VALIDATION_ERROR_CODE_0019_API_CLIENT] Dato un client API valido, quando il claim nbf è nel futuro allora la validazione formale fallisce con errore notBeforeError
+  Scenario: [VALIDATION_ERROR_CODE_0019_API_CLIENT] Dato un client API valido, quando il claim nbf è nel futuro allora la validazione formale fallisce con errore clientAssertionInvalidClaims
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     When "PA1" crea una client assertion per un client di tipo API con:
       | claim | value    |
@@ -144,7 +143,7 @@ Feature: : Debugger Client Assertion Sync Bearer
     And si ottiene response status code 200
     Then i risultati di validazione sono:
       | step                                 | result  | errors           |
-      | clientAssertionValidation            | FAILED  | [notBeforeError] |
+      | clientAssertionValidation            | FAILED  | [clientAssertionInvalidClaims] |
       | publicKeyRetrieve                    | SKIPPED | []               |
       | clientAssertionSignatureVerification | SKIPPED | []               |
       | platformStatesVerification           | SKIPPED | []               |
@@ -259,20 +258,6 @@ Feature: : Debugger Client Assertion Sync Bearer
       | platformStatesVerification           | SKIPPED | []                            |
 
   # TODO Questo scenario ha senso per API? La purpose ID viene passata soltanto se client type è consumer
-  # Scenario: [KEY_RETRIEVE_INVALID_PURPOSE_STATE_API_CLIENT] Dato un client API valido, quando la finalità è in stato non valido allora il recupero della chiave pubblica fallisce con errore invalidPurposeState
-  #   Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
-  #   And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
-  #   When "PA1" crea una client assertion valida per un client di tipo API
-  #   And "PA1" richiede la validazione della client assertion appena creata
-  #   And si ottiene response status code 200
-  #   Then i risultati di validazione sono:
-  #     | step                                 | result | errors                |
-  #     | clientAssertionValidation            | PASSED | []                    |
-  #     | publicKeyRetrieve                    | PASSED | []                    |
-  #     | clientAssertionSignatureVerification | PASSED | []                    |
-  #     | platformStatesVerification           | FAILED | [invalidPurposeState] |
-
-  # TODO Questo scenario ha senso per API? La purpose ID viene passata soltanto se client type è consumer
   # Scenario: [KEY_RETRIEVE_INVALID_AGREEMENT_STATE_API_CLIENT] Dato un client API valido, quando l'agreement è in stato non valido allora il recupero della chiave pubblica fallisce con errore invalidAgreementState
   #   Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
   #   And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
@@ -288,37 +273,34 @@ Feature: : Debugger Client Assertion Sync Bearer
   #     | clientAssertionSignatureVerification | PASSED | []                      |
   #     | platformStatesVerification           | FAILED | [invalidAgreementState] |
 
-  #  Scenario: [KEY_RETRIEVE_INVALID_ESERVICE_STATE_API_CLIENT] Dato un client API valido, quando l'e-service è in stato non valido allora il recupero della chiave pubblica fallisce con errore invalidEServiceState
-  #    Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
-  #    And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
-  #    And l'utente è un "admin" di "PA2"
-  #    When l'utente sospende quel descrittore
-  #    And "PA1" crea una client assertion valida per un client di tipo API
-  #    And "PA1" richiede la validazione della client assertion appena creata
-  #    And si ottiene response status code 200
-  #    Then i risultati di validazione sono:
-  #      | step                                 | result | errors                 |
-  #      | clientAssertionValidation            | PASSED | []                     |
-  #      | publicKeyRetrieve                    | PASSED | []                     |
-  #      | clientAssertionSignatureVerification | PASSED | []                     |
-  #      | platformStatesVerification           | FAILED | [invalidEServiceState] |
+  Scenario: [KEY_RETRIEVE_INVALID_ESERVICE_STATE_API_CLIENT] Dato un client API valido, quando l'e-service è in stato non valido allora il recupero della chiave pubblica fallisce con errore invalidEServiceState
+    Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
+    And l'utente è un "admin" di "PA2"
+    When l'utente sospende quel descrittore
+    And "PA1" crea una client assertion valida per un client di tipo API
+    And "PA1" richiede la validazione della client assertion appena creata
+    And si ottiene response status code 200
+    Then i risultati di validazione sono:
+      | step                                 | result | errors                 |
+      | clientAssertionValidation            | PASSED | []                     |
+      | publicKeyRetrieve                    | PASSED | []                     |
+      | clientAssertionSignatureVerification | PASSED | []                     |
+      | platformStatesVerification           | FAILED | [invalidEServiceState] |
 
-  #  Scenario: [KEY_RETREIVE_ALGORITHM_NOT_ALLOWED_API_CLIENT] Dato un client API valido, quando l'e-service è in stato non valido allora il recupero della chiave pubblica fallisce con errore algorithmNotAllowed
-  #    Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
-  #    And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
-  #    When "PA1" crea una client assertion per un client di tipo API utilizzando una chiave "EC" di lunghezza 1024
-  #    And "PA1" richiede la validazione della client assertion appena creata
-  #    And si ottiene response status code 200
-  #    Then i risultati di validazione sono:
-  #      | step                                 | result  | errors                |
-  #      | clientAssertionValidation            | FAILED  | [algorithmNotAllowed] |
-  #      | publicKeyRetrieve                    | SKIPPED | []                    |
-  #      | clientAssertionSignatureVerification | SKIPPED | []                    |
-  #      | platformStatesVerification           | SKIPPED | []                    |
+  Scenario: [KEY_RETREIVE_ALGORITHM_NOT_ALLOWED_API_CLIENT] Dato un client API valido, quando l'e-service è in stato non valido allora il recupero della chiave pubblica fallisce con errore algorithmNotAllowed
+    Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
+    When "PA1" crea una client assertion per un client di tipo API utilizzando una chiave "EC" di lunghezza 1024
+    And "PA1" richiede la validazione della client assertion appena creata
+    And si ottiene response status code 200
+    Then i risultati di validazione sono:
+      | step                                 | result  | errors                |
+      | clientAssertionValidation            | FAILED  | [algorithmNotAllowed] |
+      | publicKeyRetrieve                    | SKIPPED | []                    |
+      | clientAssertionSignatureVerification | SKIPPED | []                    |
+      | platformStatesVerification           | SKIPPED | []                    |
 
   Scenario: [KEY_RETREIVE_INVALID_SIGNATURE_API_CLIENT] Dato un client API valido, quando l'e-service è in stato non valido allora il recupero della chiave pubblica fallisce con errore invalidSignature
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
-    # And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
     When "PA1" crea una client assertion per un client di tipo API utilizzando una chiave "RSA" di lunghezza 2048
     And "PA1" richiede la validazione della client assertion appena creata
     And si ottiene response status code 200
@@ -328,3 +310,17 @@ Feature: : Debugger Client Assertion Sync Bearer
       | publicKeyRetrieve                    | PASSED  | []                 |
       | clientAssertionSignatureVerification | FAILED  | [invalidSignature] |
       | platformStatesVerification           | SKIPPED | []                 |
+
+  Scenario: [KEY_RETRIEVE_ALGORITHM_NOT_FOUND_API_CLIENT] Dato un client API valido, quando il claim alg non è valido allora il recupero della chiave pubblica fallisce con errore algorithmNotFound
+    Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
+    And "PA1" crea una client assertion per un client di tipo API con:
+      | claim    | value      |
+      | __remove | header.alg |
+    When "PA1" richiede la validazione della client assertion appena creata
+    And si ottiene response status code 200
+    Then i risultati di validazione sono:
+      | step                                 | result  | errors              |
+      | clientAssertionValidation            | FAILED  | [algorithmNotFound] |
+      | publicKeyRetrieve                    | SKIPPED | []                  |
+      | clientAssertionSignatureVerification | SKIPPED | []                  |
+      | platformStatesVerification           | SKIPPED | []                  |

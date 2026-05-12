@@ -156,9 +156,7 @@ Feature: : Debugger Client Assertion Sync Bearer
       | clientAssertionSignatureVerification | SKIPPED | []                             |
       | platformStatesVerification           | SKIPPED | []                             |
 
-  #TODO: lo scenario fallisce per errore clientAssertionInvalidClaims, nbf è però un claim standarnd, verificare se è corretto
-  # Aperto bug https://pagopa.atlassian.net/browse/PIN-10055
-  Scenario: [VALIDATION_ERROR_CODE_0019_CONSUMER_CLIENT] Dato un client CONSUMER valido, quando il claim nbf è nel futuro allora la validazione formale fallisce con errore notBeforeError
+  Scenario: [VALIDATION_ERROR_CODE_0019_CONSUMER_CLIENT] Dato un client CONSUMER valido, quando il claim nbf è nel futuro allora la validazione formale fallisce con errore clientAssertionInvalidClaims
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
     When "PA1" crea una client assertion per un client di tipo CONSUMER con:
@@ -168,7 +166,7 @@ Feature: : Debugger Client Assertion Sync Bearer
     And si ottiene response status code 200
     Then i risultati di validazione sono:
       | step                                 | result  | errors           |
-      | clientAssertionValidation            | FAILED  | [notBeforeError] |
+      | clientAssertionValidation            | FAILED  | [clientAssertionInvalidClaims] |
       | publicKeyRetrieve                    | SKIPPED | []               |
       | clientAssertionSignatureVerification | SKIPPED | []               |
       | platformStatesVerification           | SKIPPED | []               |

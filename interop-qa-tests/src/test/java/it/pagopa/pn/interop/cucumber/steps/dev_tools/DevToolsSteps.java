@@ -242,13 +242,11 @@ public class DevToolsSteps {
         DPoPTokenService.PreparedClient preparedClient = sharedStepsContext.getClientCommonContext().getLastPreparedClient();
         JwtBuilder validClientAssertion = buildValidClientAssertion(clientType);
 
-        if (!overrides.isEmpty()) applyOverrides(validClientAssertion, overrides);
-
         String clientAssertion = validClientAssertion.signWith(preparedClient.keyPair().getPrivate()).compact();
-        // JwtBuilder::compact aggiorna "alg" nell'header per cui eventuali modifiche devono essere riapplicate
+
         try {
-            clientAssertion = applyOverridesToEncodedHeader(clientAssertion, overrides);
-        } catch (JsonProcessingException e) {
+            clientAssertion = applyOverridesToEncodedJwt(clientAssertion, overrides);
+        } catch (Exception e) {
             throw new RuntimeException("Error processing JSON for client assertion header: " + e.getMessage(), e);
         }
 
@@ -260,14 +258,11 @@ public class DevToolsSteps {
         KeyPair keyPair = KeyPairGeneratorUtil.createKeyPair(keyType, keySize);
         JwtBuilder validClientAssertion = buildValidClientAssertion(clientType);
 
-        if (!overrides.isEmpty()) applyOverrides(validClientAssertion, overrides);
-
         String clientAssertion = validClientAssertion.signWith(keyPair.getPrivate()).compact();
 
-        // JwtBuilder::compact aggiorna "alg" nell'header per cui eventuali modifiche devono essere riapplicate
         try {
-            clientAssertion = applyOverridesToEncodedHeader(clientAssertion, overrides);
-        } catch (JsonProcessingException e) {
+            clientAssertion = applyOverridesToEncodedJwt(clientAssertion, overrides);
+        } catch (Exception e) {
             throw new RuntimeException("Error processing JSON for client assertion header: " + e.getMessage(), e);
         }
 
@@ -304,8 +299,13 @@ public class DevToolsSteps {
                     .claims(existingJws.getPayload())
                     .signWith(keyPair.getPrivate());
 
-            applyOverrides(jwtBuilder, overrides);
             dpopProof = jwtBuilder.compact();
+
+            try {
+                dpopProof = applyOverridesToEncodedJwt(dpopProof, overrides);
+            } catch (Exception e) {
+                throw new RuntimeException("Error processing JSON for client assertion header: " + e.getMessage(), e);
+            }
         }
 
         logDPopProof(dpopProof);
@@ -335,102 +335,97 @@ public class DevToolsSteps {
         return jwtBuilder;
     }
 
-    private void applyOverrides(JwtBuilder builder, List<JwtClaimOverride> overrides) {
+    private String applyOverridesToEncodedJwt(
+            String encodedJwt,
+            List<JwtClaimOverride> overrides
+    ) throws Exception {
+
+        String[] jwtParts = encodedJwt.split("\\.", -1);
+        if (jwtParts.length != 3) {
+            throw new IllegalArgumentException("JWT non valido: attese 3 parti");
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        ObjectNode header = (ObjectNode) mapper.readTree(decodeBase64Url(jwtParts[0]));
+        ObjectNode payload = (ObjectNode) mapper.readTree(decodeBase64Url(jwtParts[1]));
+
+        String rawHeaderOverride = null;
+        String rawPayloadOverride = null;
+
         for (JwtClaimOverride ov : overrides) {
             String claim = ov.claim();
             String raw = ov.value();
 
             switch (claim) {
-                // HEADER
-                case "header.alg" -> setHeader(builder, "alg", raw);
-                case "header.kid" -> setHeader(builder, "kid", raw);
+                case "__rawHeader" -> rawHeaderOverride = raw;
+                case "__rawPayload" -> rawPayloadOverride = raw;
 
-                // CLAIM STANDARD
-                case "iss" -> setClaim(builder, "iss", raw);
-                case "sub" -> setClaim(builder, "sub", raw);
-                case "aud" -> setClaim(builder, "aud", parseAud(raw));
-                case "jti" -> setClaim(builder, "jti", raw);
-                case "iat" -> setClaim(builder, "iat", parseEpoch(raw));
-                case "exp" -> setClaim(builder, "exp", parseEpoch(raw));
-                case "nbf" -> setClaim(builder, "nbf", parseEpoch(raw));
+                case "header.alg" -> header.put("alg", raw);
+                case "header.kid" -> header.put("kid", raw);
+                case "header.typ" -> header.put("typ", raw);
+                case "__removeHeader" -> header.remove(raw);
 
-                // CLAIM DPOP
-                case "htm" -> setClaim(builder, "htm", raw);
-                case "htu" -> setClaim(builder, "htu", raw);
+                case "iss" -> payload.put("iss", raw);
+                case "sub" -> payload.put("sub", raw);
+                case "aud" -> setJsonClaim(mapper, payload, "aud", parseAud(raw));
+                case "jti" -> payload.put("jti", raw);
+                case "iat" -> setJsonClaim(mapper, payload, "iat", parseEpoch(raw));
+                case "exp" -> setJsonClaim(mapper, payload, "exp", parseEpoch(raw));
+                case "nbf" -> setJsonClaim(mapper, payload, "nbf", parseEpoch(raw));
 
-                // CLAIM CUSTOM
-                case "purposeId" -> setClaim(builder, "purposeId", parseMaybeUuid(raw));
-                case "digest" -> setClaim(builder, "digest", raw);
-                case "algorithm" -> setClaim(builder, "algorithm", raw);
-                case "assertionType" -> setClaim(builder, "client_assertion_type", raw);
-                case "grantType" -> setClaim(builder, "grant_type", raw);
+                case "htm" -> payload.put("htm", raw);
+                case "htu" -> payload.put("htu", raw);
 
-                // Comandi speciali utili per test negativi
-                case "__remove" -> removeClaim(builder, raw); // raw = nome claim da rimuovere
-                case "__removeHeader" -> removeHeader(builder, raw); // raw = nome header da rimuovere
-                case "__rawHeader" -> {
-                    // L'header può essere modificato solo tramite un raw di tipo map;
-                    // l'operazione viene quindi eseguita in applyOverridesToEncodedHeader.
-                }
-                case "__rawPayload" -> setRawPayload(builder, raw);
+                case "purposeId" -> setJsonClaim(mapper, payload, "purposeId", parseMaybeUuid(raw));
+                case "digest" -> payload.put("digest", raw);
+                case "algorithm" -> payload.put("algorithm", raw);
+                case "assertionType" -> payload.put("client_assertion_type", raw);
+                case "grantType" -> payload.put("grant_type", raw);
+
+                case "invalidClaim" -> payload.put("invalid_claim", raw);
+
+                case "__remove" -> payload.remove(raw);
 
                 default -> throw new IllegalArgumentException("Claim non supportato: " + claim);
             }
         }
+
+        String newHeaderBase64Url = rawHeaderOverride != null
+                ? encodeBase64Url(rawHeaderOverride)
+                : encodeBase64Url(mapper.writeValueAsString(header));
+
+        String newPayloadBase64Url = rawPayloadOverride != null
+                ? encodeBase64Url(rawPayloadOverride)
+                : encodeBase64Url(mapper.writeValueAsString(payload));
+
+        return newHeaderBase64Url + "." + newPayloadBase64Url + "." + jwtParts[2];
     }
 
-    private String applyOverridesToEncodedHeader(String encodedClientAssertion, List<JwtClaimOverride> overrides) throws JsonProcessingException {
-        String[] jwtParts = encodedClientAssertion.split("\\.");
-        String headerBase64Url = jwtParts[0];
-        String payloadBase64Url = jwtParts[1];
-        String signatureBase64Url = jwtParts[2];
-
-        byte[] decodedHeaderBytes = Base64.getUrlDecoder().decode(headerBase64Url);
-        String headerJson = new String(decodedHeaderBytes, StandardCharsets.UTF_8);
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode headerNode = mapper.readTree(headerJson);
-
-        String modifiedHeaderJson = null;
-
-        // Override the "alg" header
-        String overrideAlg = overrides.stream()
-            .filter(ov -> "header.alg".equals(ov.claim()))
-            .map(JwtClaimOverride::value)
-            .findFirst()
-            .orElse(null);
-        if (overrideAlg != null) {
-            ((ObjectNode) headerNode).put("alg", overrideAlg);
-            modifiedHeaderJson = mapper.writeValueAsString(headerNode);
-        }
-
-        // Remove the "alg" header
-        boolean removeAlg = overrides.stream()
-                .filter(ov -> "__remove".equals(ov.claim()) && "header.alg".equals(ov.value()))
-                .count() == 1;
-        if (removeAlg) {
-            ((ObjectNode) headerNode).remove("alg");
-            modifiedHeaderJson = mapper.writeValueAsString(headerNode);
-        }
-
-        // Set the header to a raw value
-        Optional<JwtClaimOverride> rawHeaderOverride = overrides.stream()
-                .filter(ov -> "__rawHeader".equals(ov.claim()))
-                .findFirst();
-
-        if (rawHeaderOverride.isPresent()) {
-            modifiedHeaderJson = rawHeaderOverride.get().value();
-        }
-
-        if (modifiedHeaderJson == null) {
-            modifiedHeaderJson = mapper.writeValueAsString(headerNode);
-        }
-        String newHeaderBase64Url = Base64.getUrlEncoder().withoutPadding().encodeToString(modifiedHeaderJson.getBytes(StandardCharsets.UTF_8));
-
-        return newHeaderBase64Url + "." + payloadBase64Url + "." + signatureBase64Url;
+    private String decodeBase64Url(String value) {
+        return new String(
+                Base64.getUrlDecoder().decode(value),
+                StandardCharsets.UTF_8
+        );
     }
 
-    private String getRawClientAssertion() {
-        return devToolsContext.getActualClientAssertion();
+    private String encodeBase64Url(String value) {
+        return Base64.getUrlEncoder()
+                .withoutPadding()
+                .encodeToString(value.getBytes(StandardCharsets.UTF_8));
+    }
+
+    private void setJsonClaim(
+            ObjectMapper mapper,
+            ObjectNode node,
+            String claimName,
+            Object value
+    ) {
+        if (value == null) {
+            node.putNull(claimName);
+        } else {
+            node.set(claimName, mapper.valueToTree(value));
+        }
     }
 
     private void runClientAssertionValidation(String clientAssertionType, String grantType) {
@@ -447,7 +442,6 @@ public class DevToolsSteps {
             devToolsContext.setLastValidationResult(result);
         } catch (Exception e) {
             log.error("Errore durante la validazione della client assertion: {}", e.getMessage());
-            // throw new RuntimeException("Errore durante la validazione della client assertion", e);
         }
     }
 }
