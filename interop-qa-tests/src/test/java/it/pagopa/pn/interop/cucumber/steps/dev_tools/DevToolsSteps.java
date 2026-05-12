@@ -387,7 +387,7 @@ public class DevToolsSteps {
                 case "htu" -> payload.put("htu", raw);
 
                 case "purposeId" -> setJsonClaim(mapper, payload, "purposeId", parseMaybeUuid(raw));
-                case "digest" -> payload.put("digest", raw);
+                case "digest" -> setJsonClaim(mapper, payload, "digest", parseMaybeJson(raw, mapper));
                 case "algorithm" -> payload.put("algorithm", raw);
                 case "assertionType" -> payload.put("client_assertion_type", raw);
                 case "grantType" -> payload.put("grant_type", raw);
@@ -409,6 +409,14 @@ public class DevToolsSteps {
                 : encodeBase64Url(mapper.writeValueAsString(payload));
 
         return newHeaderBase64Url + "." + newPayloadBase64Url + "." + jwtParts[2];
+    }
+
+    private Object parseMaybeJson(String raw, ObjectMapper mapper) {
+        try {
+            return mapper.readTree(raw);
+        } catch (Exception e) {
+            return raw;
+        }
     }
 
     private String decodeBase64Url(String value) {
