@@ -1,0 +1,99 @@
+# Full list of notifications activatable by role. By default, a notification is turned off.
+# Notification configuration not authorized for the role 'support'.
+
+role: "admin"
+inAppNotifications:
+  # Fruizione dei dati
+  - eserviceStateChangedToConsumer
+  - agreementActivatedRejectedToConsumer
+  - agreementSuspendedUnsuspendedToConsumer
+
+  # Finalità (Fruizione)
+  - purposeActivatedRejectedToConsumer
+  - purposeSuspendedUnsuspendedToConsumer
+
+  # Soglie di carico (Fruizione)
+  - purposeOverQuotaStateToConsumer
+  - purposeQuotaAdjustmentRequestToProducer
+
+  # Richieste di fruizione (Erogazione)
+  - agreementManagementToProducer
+  - agreementSuspendedUnsuspendedToProducer
+
+  # Finalità (Erogazione)
+  - purposeStatusChangedToProducer
+
+  # Client (Erogazione)
+  - clientAddedRemovedToProducer
+
+  # Template di e-service
+  - eserviceTemplateStatusChangedToInstantiator
+  - newEserviceTemplateVersionToInstantiator
+  - eserviceTemplateNameChangedToInstantiator
+  - templateStatusChangedToProducer
+
+  # Conferimento di un e-service in delega
+  - delegationApprovedRejectedToDelegator
+  - eserviceNewVersionSubmittedToDelegator
+
+  # Ricezione di una delega per un e-service
+  - delegationSubmittedRevokedToDelegate
+  - eserviceNewVersionApprovedRejectedToDelegate
+
+  # Attributi certificati o verificati
+  - certifiedVerifiedAttributeAssignedRevokedToAssignee
+
+  # Chiavi (Attributi e chiavi)
+  - clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers
+---
+role: "api"
+inAppNotifications:
+  # Finalità (Erogazione)
+  - purposeStatusChangedToProducer
+
+  # Client (Erogazione)
+  - clientAddedRemovedToProducer
+
+  # Template di e-service
+  - templateStatusChangedToProducer
+---
+role: "security"
+inAppNotifications:
+  # Fruizione dei dati
+  - eserviceStateChangedToConsumer
+  - agreementSuspendedUnsuspendedToConsumer
+
+  # Finalità (Fruizione)
+  - purposeSuspendedUnsuspendedToConsumer
+
+  # Soglie di carico (Fruizione)
+  - purposeOverQuotaStateToConsumer
+  - purposeQuotaAdjustmentRequestToProducer
+
+  # Chiavi (Attributi e chiavi)
+  - clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers
+---
+role: "api,security"
+inAppNotifications:
+  # Fruizione dei dati
+  - eserviceStateChangedToConsumer
+  - agreementSuspendedUnsuspendedToConsumer
+
+  # Finalità (Fruizione)
+  - purposeSuspendedUnsuspendedToConsumer
+
+  # Soglie di carico (Fruizione)
+  - purposeOverQuotaStateToConsumer
+  - purposeQuotaAdjustmentRequestToProducer
+
+  # Finalità (Erogazione)
+  - purposeStatusChangedToProducer
+
+  # Client (Erogazione)
+  - clientAddedRemovedToProducer
+
+  # Template di e-service
+  - templateStatusChangedToProducer
+
+  # Chiavi (Attributi e chiavi)
+  - clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers
