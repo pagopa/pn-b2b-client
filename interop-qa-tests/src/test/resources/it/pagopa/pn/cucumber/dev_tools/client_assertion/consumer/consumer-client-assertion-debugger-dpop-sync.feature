@@ -416,3 +416,20 @@ Feature: Debugger Client Assertion Sync DPoP
       | clientAssertionSignatureVerification | SKIPPED | []                  |
       | platformStatesVerification           | SKIPPED | []                  |
       | dpopValidation                       | PASSED  | []                  |
+
+  Scenario: [KEY_RETRIEVE_INVALID_DIGEST_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il claim DIGEST non è valido allora il recupero della chiave pubblica fallisce con errore invalidDigestClaim
+    Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
+    And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
+    And "PA1" crea una client assertion per un client di tipo CONSUMER con:
+      | claim  | value                               |
+      | digest | {"alg":"SHA256","invalidProp":true} |
+    And "PA1" crea una DPoP proof per la client assertion
+    When "PA1" richiede la validazione della client assertion appena creata
+    And si ottiene response status code 200
+    Then i risultati di validazione sono:
+      | step                                 | result  | errors               |
+      | clientAssertionValidation            | FAILED  | [invalidDigestClaim] |
+      | publicKeyRetrieve                    | SKIPPED | []                   |
+      | clientAssertionSignatureVerification | SKIPPED | []                   |
+      | platformStatesVerification           | SKIPPED | []                   |
+      | dpopValidation                       | PASSED  | []                   |
