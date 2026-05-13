@@ -16,10 +16,15 @@ Feature: : Debugger Client Assertion Sync Bearer
 
     Examples:
       | ente | ruolo        | risultato |
-      | GSP  | admin        | 200       |
-      | GSP  | api          | 403       |
-      | GSP  | api,security | 403       |
       | PA1  | admin        | 200       |
-      | PA1  | api          | 403       |
-      | PA1  | api,security | 403       |
+      | PA1  | api          | 200       |
+      | PA1  | api,security | 200       |
+      | PA1  | security     | 200       |
+      | PA1  | support      | 200       |
+      | GSP  | admin        | 200       |
+      | GSP  | api          | 200       |
+      | GSP  | api,security | 200       |
+      | GSP  | security     | 200       |
+      | GSP  | support      | 200       |
+
 
