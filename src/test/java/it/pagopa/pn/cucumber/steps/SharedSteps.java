@@ -1464,6 +1464,4 @@ public class SharedSteps {
         log.info("RECIPIENTS OLDER {} GG: {}", lowerLimit, oldNotification.getRecipients().stream().map(r -> r.getTaxId()).toList());
         log.info("IUN OLDER {} GG: {}", lowerLimit, oldNotification.getIun());
     }
-
-
 }

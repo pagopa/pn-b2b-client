@@ -6,12 +6,8 @@ import it.pagopa.interop.agreement.service.IM2MAgreementClient;
 import it.pagopa.interop.attribute.service.IM2MCertifiedAttributeClient;
 import it.pagopa.interop.eservice.service.IM2MEserviceClient;
 import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreement;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementState;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementSubmission;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.CreateAgreementOperation;
@@ -94,7 +90,7 @@ public class M2MDataPreparationService {
     }
 
     // --ESERVICE TEMPLATE--
-    public CreatedEServiceTemplateVersion createEServiceTemplate(EServiceTemplateSeed payload){
-        return eserviceTemplateClient.createEserviceTemplate(payload);
+    public EServiceTemplate createEServiceTemplate(EServiceTemplateSeed payload){
+        return eserviceTemplateClient.createEServiceTemplate(payload);
     }
 }

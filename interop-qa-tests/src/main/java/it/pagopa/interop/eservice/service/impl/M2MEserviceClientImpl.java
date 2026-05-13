@@ -7,14 +7,7 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.eservice.service.IM2MEserviceClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.EservicesApi;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Document;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EService;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDelegationUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptionUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDraftUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceNameUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServices;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import java.util.List;
 import java.util.UUID;
 import lombok.EqualsAndHashCode;
@@ -119,6 +112,11 @@ public class M2MEserviceClientImpl extends AbstractClient implements IM2MEservic
             body.getFile(),
             body.getPrettyName()
         );
+    }
+
+    @Override
+    public EService createEService(EServiceCreateRequest body) {
+        return this.eservicesApi.createEService(body.toSeed());
     }
 
     @Override
