@@ -1067,19 +1067,13 @@ public class SharedSteps {
         ));
         return response.items().stream()
                 .findFirst()
-                .map(item -> item.get("taxCode").s())
+                .flatMap(item -> Optional.ofNullable(item.get("taxCode"))
+                        .map(AttributeValue::s))
                 .orElse(null);
     }
 
     private SettableApiKey.ApiKeyType mapPaToApiKeyType(String pa) {
-        return switch (pa.toLowerCase()) {
-            case "comune_1" -> SettableApiKey.ApiKeyType.MVP_1;
-            case "comune_2" -> SettableApiKey.ApiKeyType.MVP_2;
-            case "comune_multi" -> SettableApiKey.ApiKeyType.GA;
-            case "comune_son" -> SettableApiKey.ApiKeyType.SON;
-            case "comune_root" -> SettableApiKey.ApiKeyType.ROOT;
-            default -> throw new IllegalArgumentException("Invalid paName: " + pa);
-        };
+        return senderInfoProvider.getApiKeyType(pa);
     }
 
     private void setGroup(SettableApiKey.ApiKeyType apiKeyType) {
