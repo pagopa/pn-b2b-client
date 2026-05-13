@@ -389,11 +389,6 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
         Set<Notification> notifications = notificationStore.get(NotificationUser.of(role, tenant));
         message = message.replace("\n", " ");
 
-        // FIXME per prove locali, rimuovere
-        /*List<Notification> notificationStream = notifications.stream()
-            .filter(a -> a.getBody().contains("stata rimossa dal client")).toList();
-        notificationStream.forEach(notification -> System.out.println(notification.getBody()));*/
-
         String deepLink = resolveLabelsWithSharedContext(deepLinkType.getValue());
         String finalMessage = resolveLabelsWithSharedContext(message);
 
