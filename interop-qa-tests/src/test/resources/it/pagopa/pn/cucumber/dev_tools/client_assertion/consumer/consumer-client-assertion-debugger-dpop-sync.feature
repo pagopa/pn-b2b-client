@@ -122,7 +122,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                  |
       | dpopValidation                       | PASSED  | []                  |
 
-  #TODO: l'errore restituito è invalidClientAssertionFormat, verificare se è possibile riprodurre jsonWebTokenError
+  # Errore non riproducibile con la configurazione usata per l'ambiente
   Scenario: [VALIDATION_JWT_ERROR_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il JWT non è interpretabile allora la validazione formale fallisce con errore jsonWebTokenError
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client

@@ -104,7 +104,7 @@ Feature: : Debugger Client Assertion Sync Bearer
      | clientAssertionSignatureVerification | FAILED  | [tokenExpiredError] |
      | platformStatesVerification           | SKIPPED | []                  |
 
-  #TODO: l'errore restituito è invalidClientAssertionFormat, verificare se è possibile riprodurre jsonWebTokenError
+  # Errore non riproducibile con la configurazione usata per l'ambiente
   Scenario: [VALIDATION_JWT_ERROR_API_CLIENT] Dato un client API valido, quando il JWT non è interpretabile allora la validazione formale fallisce con errore jsonWebTokenError
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     When "PA1" crea una client assertion per un client di tipo API con:

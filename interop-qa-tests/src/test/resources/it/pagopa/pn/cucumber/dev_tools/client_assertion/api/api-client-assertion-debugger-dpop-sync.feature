@@ -115,6 +115,7 @@ Feature: Debugger Client Assertion Sync DPoP
     | platformStatesVerification           | SKIPPED | []                  |
     | dpopValidation                       | PASSED  | []                  |
 
+  # Errore non riproducibile con la configurazione usata per l'ambiente
   Scenario: [VALIDATION_JWT_ERROR_API_CLIENT_DPOP] Dato un client API valido, quando il JWT non è interpretabile allora la validazione formale fallisce con errore jsonWebTokenError
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     When "PA1" crea una client assertion per un client di tipo API con:
