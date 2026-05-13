@@ -173,6 +173,7 @@ Feature: : Debugger Client Assertion Sync Bearer
 
   #Bug aperto: https://pagopa.atlassian.net/browse/PIN-9993
   # 2026-05-08 per il momento non verrà applicato nessun fix, vedi https://pagopa.atlassian.net/browse/PIN-9540
+  @wait_for_fix
   Scenario Outline: [VALIDATION_INVALID_CLAIM_CONSUMER_CLIENT] Dato un client CONSUMER valido, quando il claim <claim> non è in formato valido allora la validazione formale fallisce con errore <expectedError>
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
@@ -193,7 +194,8 @@ Feature: : Debugger Client Assertion Sync Bearer
       | iss   | not-a-uuid | invalidClientIdFormat |
       | sub   | not-a-uuid | invalidSubjectFormat  |
 
-    #TODO: dipende da https://pagopa.atlassian.net/browse/PIN-9993
+  #TODO: dipende da https://pagopa.atlassian.net/browse/PIN-9993
+  @wait_for_fix
   Scenario: [VALIDATION_INVALID_CLAIMS_CONSUMER_CLIENT] Dato un client CONSUMER valido, quando diversi claims sono in formato valido allora la validazione formale fallisce con errore clientAssertionInvalidClaims
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
