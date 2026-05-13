@@ -26,6 +26,8 @@ import java.util.UUID;
 import java.util.function.Predicate;
 import lombok.Data;
 import org.jeasy.random.EasyRandom;
+import org.jeasy.random.randomizers.text.StringRandomizer;
+import org.junit.jupiter.api.Assertions;
 import org.springframework.http.ResponseEntity;
 
 /** Cucumber steps involving creation, editing, viewing or deletion
@@ -76,6 +78,24 @@ public class EServiceTemplateVersionUpdateSteps {
             .voucherLifespan(86400)
             .description("Nuova descrizione della versione");
         updateEServiceTemplateVersion(UUID.randomUUID(), UUID.randomUUID(), updateSeed);
+    }
+
+    @When("l'utente tenta delle modifiche alla versione dell'e-service template con una descrizione di lunghezza {int}")
+    public void updateEServiceTemplateVersion(int descriptionLength) {
+        String description = (new StringRandomizer(descriptionLength, descriptionLength, System.currentTimeMillis())).getRandomValue();
+        sharedStepsContext.getEServiceTemplateStepContext().setLastTemplateVersionUpdateSeed(new UpdateEServiceTemplateVersionSeed()
+                .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC)
+                .attributes(new EServiceTemplateAttributesSeed())
+                //.attributes(new EServiceTemplateAttributesSeed().declared(
+                //    List.of(List.of(new EServiceTemplateVersionAttributeSeed().setId(UUID.randomUUID()).explicitAttributeVerification(false)))))
+                .dailyCallsPerConsumer(100)
+                .dailyCallsTotal(1000)
+                .voucherLifespan(86400)
+                .description(description));
+        updateEServiceTemplateVersion(
+                this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(),
+                this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId(),
+                this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateVersionUpdateSeed());
     }
 
     @When("l'utente tenta delle modifiche alla versione dell'e-service template")
@@ -167,6 +187,38 @@ public class EServiceTemplateVersionUpdateSteps {
             return retrievedAttributesSeed.equals(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateVersionAttributesSeed());
         };
         testAssistant.checkEServiceTemplateVersion(attributesMatch, "Gli attributi della versione dell'e-service template non sono stati modificati correttamente");
+    }
+
+    @Then("la modifica degli attributi della versione dell'e-service template è stata effettuata correttamente e la descrizione è lunga {int} caratteri")
+    public void checkEServiceTemplateVersionAttributesEdited(int descriptionLength) {
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId();
+
+        if(!httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            fail("Le modifiche alla versione dell'e-service template non sono state "
+                    + "applicate correttamente. Ultimo errore noto: %s", httpCallExecutor.getErrorMessage());
+        }
+
+        try {
+            pollingService.makePolling(
+                    () -> httpCallExecutor.performCall(
+                            () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
+                                    eServiceTemplateId,
+                                    eServiceTemplateVersionId),
+                            ResponseEntity::getStatusCode),
+                    res -> nonNull(res.getBody()) && testAssistant.areConsistent(this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateVersionUpdateSeed(), res.getBody()),
+                    "La versione dell'e-service template non corrisponde alle modifiche apportate"
+            );
+
+            Assertions.assertEquals(
+                    descriptionLength,
+                    ((ResponseEntity<EServiceTemplateVersionDetails>) httpCallExecutor.getResponse()).getBody().getDescription().length()
+            );
+        } catch (PollingPredicateException e) {
+            fail("Le modifiche alla versione dell'e-service template non sono state "
+                            + "applicate correttamente: le modifiche apportate '%s' non sono compatibili con il risultato ricevuto '%s'",
+                    this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateVersionUpdateSeed(), httpCallExecutor.getResponse());
+        }
     }
 
     private void updateEServiceTemplateVersion(UUID eServiceTemplateId, UUID eServiceTemplateVersionId, UpdateEServiceTemplateVersionSeed sameNameUpdateSeed) {

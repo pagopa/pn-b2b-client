@@ -25,6 +25,8 @@ import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRaddCognito;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
+import it.pagopa.pn.cucumber.steps.pa.utilityVersions.AwsUtils;
+import it.pagopa.pn.cucumber.utils.validator.SchemaValidator;
 import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
 import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClientV2;
 import it.pagopa.pn.cucumber.steps.delayer.loader.DelayerCsvLoader;
@@ -39,7 +41,6 @@ import it.pagopa.pn.cucumber.steps.templateEngine.TemplateConfiguration;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextFactory;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
-import it.pagopa.pn.cucumber.utils.validator.SchemaValidator;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -52,6 +53,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         BearerTokenConfiguration.class,
         TimingConfiguration.class,
         RestTemplateConfiguration.class,
+        AwsConfig.class,
         PnPaB2bExternalClientImpl.class,
         PnWebRecipientExternalClientImpl.class,
         PnWebhookB2bExternalClientImpl.class,
@@ -220,7 +222,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         DelayerContext.class,
         DelayerPaperDeliveryUtils.class,
         DelayerCsvLoader.class,
-        DelayerPlanner.class
+        DelayerPlanner.class,
+        PaperTrackerSchemaValidatorProxy.class,
+        PnExternalChannelsInternalClientImpl.class,
+        PnEcInternalClientImpl.class,
+        AwsUtils.class,
+        PnNotificationCostClientImpl.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

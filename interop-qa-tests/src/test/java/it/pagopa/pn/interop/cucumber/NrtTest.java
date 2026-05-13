@@ -34,7 +34,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         "agreement", "attribute", "descriptor", "document", "eservice", "purpose", "daily_calls_update_request",
         "purpose_latest_risk_analysis", "purpose_risk_analysis", "incaricato", "capofila", "selfcare",
         "app-edit-ff-on", "llgg", "e-service-template", "e-service-template-receive-bff", "purposeTemplate",
-        "client_admin", "client", "catalog", "producer", "DPoPSuite", "tenant", "voucher",
+        "client_admin", "client", "catalog", "producer", "DPoPSuite", "tenant", "voucher", "dailyCallsThreshold",
 
         // M2M
         "m2m-agreements", "m2m-purposes", "m2m-attributes", "m2m-eservices", "m2m-agreements-parte2-luglio",

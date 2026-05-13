@@ -683,6 +683,7 @@ Feature: Test API M2M of e-service template
     Then si ottiene lo status code 401
 
   @eservice_published_delegation
+  @eservice_published_delegation_m2m_v3
   @happy-path
   Scenario Outline: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_1] Un utente con ruolo M2M-ADMIN può effettuare una modifica parziale della delega di un e-service template instance precedentemente creato in uno degli stati permessi
     Given l'utente è un "admin" di "PA1"
@@ -717,6 +718,7 @@ Feature: Test API M2M of e-service template
       | DEPRECATED              | %null               | false                   |
 
   @eservice_published_delegation
+  @eservice_published_delegation_m2m_v3
   @sad-path
   Scenario Outline: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_2] Un utente con ruolo M2M-ADMIN NON può modificare le flag di delega tecnica di un e-service template instance precedentemente creato ottenendo uno stato non permesso
     Given l'utente è un "admin" di "PA1"
@@ -737,6 +739,7 @@ Feature: Test API M2M of e-service template
       | DEPRECATED              | %null               | true                    |
 
   @eservice_published_delegation
+  @eservice_published_delegation_m2m_v3
   @sad-path
   Scenario Outline: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_3] Un utente con ruolo M2M-ADMIN NON può modificare le flag di delega amministrativa di un e-service template instance precedentemente creato ottenendo uno stato non permesso
     Given l'utente è un "admin" di "PA1"
@@ -754,6 +757,7 @@ Feature: Test API M2M of e-service template
       | DEPRECATED              |
 
   @eservice_published_delegation
+  @eservice_published_delegation_m2m_v3
   @sad-path
   Scenario Outline: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_4] Un utente con ruolo M2M-ADMIN NON può modificare le flag di delega di un e-service template instance precedentemente creato avendo un token non valido
     Given l'utente è un "admin" di "PA1"
@@ -771,6 +775,7 @@ Feature: Test API M2M of e-service template
       | DEPRECATED              |
 
   @eservice_published_delegation
+  @eservice_published_delegation_m2m_v3
   @sad-path
   Scenario Outline: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_5] Un utente con ruolo M2M NON può modificare le flag di delega di un e-service template instance precedentemente creato
     Given l'utente è un "admin" di "PA1"
@@ -787,6 +792,7 @@ Feature: Test API M2M of e-service template
       | DEPRECATED              |
 
   @eservice_published_delegation
+  @eservice_published_delegation_m2m_v3
   @sad-path
   Scenario Outline: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_6] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service template instance precedentemente creato se non gli appartiene e per cui non possiede la delega in erogazione
     Given l'utente è un "admin" di "PA1"
@@ -803,6 +809,7 @@ Feature: Test API M2M of e-service template
       | DEPRECATED              |
 
   @eservice_published_delegation
+  @eservice_published_delegation_m2m_v3
   @sad-path
   Scenario: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_7] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service template instance precedentemente creato che si trova in stato DRAFT
     Given l'utente è un "admin" di "PA1"
@@ -812,3 +819,75 @@ Feature: Test API M2M of e-service template
     When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "true" e quella tecnica a "true"
     Then si ottiene lo status code 409
     And l'e-service non ha subito modifiche
+
+  @eservice_description_max_length
+  @happy-path
+  Scenario: [ESERVICE_TEMPLATE_CREATE_DESCRIPTION_MAX_LENGTH_5] La creazione di un e-service template va a buon fine utilizzando la dimensione massima consentita per la descrizione
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta la creazione del template e-service con la seguente configurazione:
+      | description-length | 400 |
+    And si ottiene status code 200
+    Then l'utente è un "admin" di "PA1"
+    And l'e-service template creato ha una descrizione di 400 caratteri
+
+  @eservice_description_max_length
+  @sad-path
+  Scenario: [ESERVICE_TEMPLATE_CREATE_DESCRIPTION_MAX_LENGTH_6] La creazione di un e-service template non va a buon fine se viene superata la dimensione massima consentita per la descrizione
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta la creazione del template e-service con la seguente configurazione:
+      | description-length | 401 |
+    Then si ottiene status code 400
+
+  @eservice_description_max_length
+  @happy-path
+  Scenario: [ESERVICE_TEMPLATE_UPDATE_DESCRIPTION_MAXLENGTH_10] Un utente aggiorna un e-service template in stato DRAFT utilizzando la descrizione della lunghezza massima possibile
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente tenta la creazione dell'e-service template con la configurazione predefinita
+    When l'utente tenta la modifica della descrizione dell'e-service template in stato DRAFT con una descrizione di 400 caratteri
+    And si ottiene status code 200
+    Then l'utente è un "admin" di "PA1"
+    And l'e-service template creato ha una descrizione di 400 caratteri
+
+  @eservice_description_max_length
+  @sad-path
+  Scenario: [ESERVICE_TEMPLATE_UPDATE_DESCRIPTION_MAXLENGTH_11] L'aggiornamento dell'e-service template in stato DRAFT non va a buon fine se viene superata la dimensione massima consentita per la descrizione
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente tenta la creazione dell'e-service template con la configurazione predefinita
+    When l'utente tenta la modifica della descrizione dell'e-service template in stato DRAFT con una descrizione di 401 caratteri
+    Then si ottiene status code 400
+
+  @eservice_description_max_length
+  @happy-path
+  Scenario: [ESERVICE_TEMPLATE_UPDATE_DESCRIPTION_MAXLENGTH_12] Un utente aggiorna un e-service template in stato PUBLISHED utilizzando la descrizione della lunghezza massima possibile
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta la modifica della descrizione dell'e-service template in stato PUBLISHED con una descrizione di 400 caratteri
+    And si ottiene status code 200
+    Then l'utente è un "admin" di "PA1"
+    And l'e-service template creato ha una descrizione di 400 caratteri
+
+  @eservice_description_max_length
+  @sad-path
+  Scenario: [ESERVICE_TEMPLATE_UPDATE_DESCRIPTION_MAXLENGTH_13] L'aggiornamento di un e-service in stato PUBLISHED non va a buon fine se viene superata la dimensione massima consentita per la descrizione
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta la modifica della descrizione dell'e-service template in stato PUBLISHED con una descrizione di 401 caratteri
+    Then si ottiene status code 400
+
+  # PIN-10005
+  @eservice_description_max_length
+  @sad-path
+  Scenario: [ESERVICE_TEMPLATE_UPDATE_DESCRIPTION_MAXLENGTH_14] L'aggiornamento della descrizione della versione di un e-service template in stato DRAFT non va a buon fine se si utilizza la lunghezza massima consentita
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    When l'utente tenta delle modifiche alla versione dell'e-service template con una descrizione di lunghezza 400
+    Then si ottiene status code 400
+
+  @eservice_description_max_length
+  Scenario: [ESERVICE_TEMPLATE_UPDATE_DESCRIPTION_MAXLENGTH_15] L'aggiornamento di una versione e-service in stato DRAFT non va a buon fine se viene superata la dimensione massima consentita per la descrizione
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    When l'utente tenta delle modifiche alla versione dell'e-service template con una descrizione di lunghezza 401
+    Then si ottiene status code 400
