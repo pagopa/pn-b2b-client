@@ -149,7 +149,7 @@ Feature: Debugger Client Assertion Sync DPoP
     And "PA1" crea una client assertion valida per un client di tipo API
     And "PA1" crea una DPoP proof per la client assertion con:
       | claim | value    |
-      | iat   | 20300101 |
+      | iat   | now+3600 |
     When "PA1" richiede la validazione della client assertion e della DPoP Proof appena creata
     And si ottiene response status code 200
     Then i risultati di validazione sono:
