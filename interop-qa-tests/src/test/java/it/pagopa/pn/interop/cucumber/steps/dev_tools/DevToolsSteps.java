@@ -139,6 +139,12 @@ public class DevToolsSteps {
         devToolsContext.setActualDpopProof(tamperedDpop);
     }
 
+    @When("un {string} di {string} richiede la validazione della client assertion appena creata")
+    public void verifyClientAssertion(String role, String tenantType) {
+        clientCreateStep.setRole(role, tenantType);
+        runClientAssertionValidation(null, null);
+    }
+
     @When("{string} richiede la validazione della client assertion appena creata")
     @When("{string} richiede la validazione della client assertion e della DPoP Proof appena creata")
     public void verifyClientAssertion(String tenantType) {
