@@ -3,6 +3,7 @@ Feature: Debugger Client Assertion Sync DPoP
   Voglio validare la mia DPoP Proof legata a una Client Assertion
   Al fine di verificare il binding di sicurezza (HTM/HTU/JWK) e identificare errori specifici DPoP durante la quarta fase di validazione
 
+  @devToolsClientAssertion
   Scenario: [VALIDATION_SUCCESS_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando viene inviata una client assertion corretta allora tutte le fasi di validazione risultano PASSED
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
@@ -18,6 +19,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | PASSED | []     |
       | dpopValidation                       | PASSED | []     |
 
+  @devToolsClientAssertion
   Scenario Outline: [VALIDATION_INVALID_TYPE_ERROR_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il grant_type è <grant_type> e la client_assertion_type è <client_assertion_type>  allora la validazione formale fallisce con errore <expectedError>
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
@@ -39,6 +41,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | urn:ietf:params:oauth:client-assertion-type:jwt-bearer | authorization_code | invalidGrantType                       |
       | invalid_type                                           | authorization_code | invalidAssertionType, invalidGrantType |
 
+  @devToolsClientAssertion
   Scenario: [VALIDATION_INVALID_AUD_ERROR_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando l'audience è invalida allora la validazione formale fallisce con errore 0004
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
@@ -56,6 +59,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                |
       | dpopValidation                       | PASSED  | []                |
 
+  @devToolsClientAssertion
   Scenario Outline: [VALIDATION_NOT_FOUND_ERROR_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il claim <claimToRemove> non è presente allora la validazione formale fallisce con errore <expectedError>"
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
@@ -82,6 +86,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | iss           | issuerNotFound   |
       | sub           | subjectNotFound  |
 
+  @devToolsClientAssertion
   Scenario: [VALIDATION_ERROR_COMBINED_NOT_FOUND_ERROR_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando i claim jti, iat, aud non sono presenti allora la validazione formale fallisce con i rispettivi errori
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
@@ -105,6 +110,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | dpopValidation                       | PASSED  | []                                                                                              |
 
   #TODO: da passare ai test per la fase 3, rieseguire per verificare cosa fa platformStatesVerification
+  @devToolsClientAssertion
   Scenario: [VALIDATION_EXPIRED_ERROR_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il token è scaduto allora la validazione formale fallisce con errore 0017
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
@@ -123,6 +129,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | dpopValidation                       | PASSED  | []                  |
 
   # Errore non riproducibile con la configurazione usata per l'ambiente
+  @devToolsClientAssertion
   Scenario: [VALIDATION_JWT_ERROR_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il JWT non è interpretabile allora la validazione formale fallisce con errore jsonWebTokenError
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
@@ -140,6 +147,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                  |
       | dpopValidation                       | PASSED  | []                  |
 
+  @devToolsClientAssertion
   Scenario: [VALIDATION_UNEXPECTED_PAYLOAD_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il JWT ha un payload non atteso allora la validazione formale fallisce con errore unexpectedClientAssertionPayload
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
@@ -157,6 +165,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                                 |
       | dpopValidation                       | PASSED  | []                                 |
 
+  @devToolsClientAssertion
   Scenario: [VALIDATION_INVALID_FORMAT_ERROR_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando la client assertion è malformata allora la validazione formale fallisce con errore invalidClientAssertionFormat
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
@@ -174,6 +183,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                             |
       | dpopValidation                       | PASSED  | []                             |
 
+  @devToolsClientAssertion
   Scenario: [VALIDATION_ERROR_CODE_0019_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il claim nbf è nel futuro allora la validazione formale fallisce con errore clientAssertionInvalidClaims
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
@@ -194,6 +204,7 @@ Feature: Debugger Client Assertion Sync DPoP
   #Bug aperto: https://pagopa.atlassian.net/browse/PIN-9993
   # 2026-05-08 per il momento non verrà applicato nessun fix, vedi https://pagopa.atlassian.net/browse/PIN-9540
   @wait_for_fix
+  @devToolsClientAssertion
   Scenario Outline: [VALIDATION_INVALID_CLAIM_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il claim <claim> non è in formato valido allora la validazione formale fallisce con errore <expectedError>
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
@@ -218,6 +229,7 @@ Feature: Debugger Client Assertion Sync DPoP
 
   #TODO: dipende da https://pagopa.atlassian.net/browse/PIN-9993
   @wait_for_fix
+  @devToolsClientAssertion
   Scenario: [VALIDATION_INVALID_CLAIMS_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando diversi claims sono in formato valido allora la validazione formale fallisce con errore clientAssertionInvalidClaims
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
@@ -236,6 +248,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                             |
       | dpopValidation                       | PASSED  | []                             |
 
+  @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_KID_NOT_FOUND_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il claim kid non è presente allora il recupero della chiave pubblica fallisce con errore kidNotFound
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
@@ -254,6 +267,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | dpopValidation                       | PASSED  | []            |
 
   #Bug aperto: https://pagopa.atlassian.net/browse/PIN-9998
+  @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_INVALID_KID_FORMAT_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il claim kid non è in formato valido allora il recupero della chiave pubblica fallisce con errore invalidKidFormat
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
@@ -271,6 +285,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                 |
       | dpopValidation                       | PASSED  | []                 |
 
+  @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_INVALID_SUBJECT_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il subject non corrisponde al client atteso allora il recupero della chiave pubblica fallisce con errore invalidSubject
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
@@ -289,6 +304,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | dpopValidation                       | PASSED  | []               |
 
   # Bug aperto: https://pagopa.atlassian.net/browse/PIN-9999
+  @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_PURPOSE_ID_NOT_PROVIDED_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il claim purposeId non è presente allora il recupero della chiave pubblica fallisce con errore purposeIdNotProvided
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
@@ -306,6 +322,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                     |
       | dpopValidation                       | PASSED  | []                     |
 
+  @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_INVALID_PURPOSE_ID_FORMAT_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il claim purposeId non è in formato UUID allora il recupero della chiave pubblica fallisce con errore invalidPurposeIdClaimFormat
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
@@ -323,6 +340,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                            |
       | dpopValidation                       | PASSED  | []                            |
 
+  @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_INVALID_PURPOSE_STATE_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando la finalità è in stato non valido allora il recupero della chiave pubblica fallisce con errore invalidPurposeState
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato una finalità in stato "SUSPENDED" a quel client
@@ -338,6 +356,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | FAILED | [invalidPurposeState] |
       | dpopValidation                       | PASSED | []                    |
 
+  @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_INVALID_AGREEMENT_STATE_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando l'agreement è in stato non valido allora il recupero della chiave pubblica fallisce con errore invalidAgreementState
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
@@ -355,6 +374,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | FAILED | [invalidAgreementState] |
       | dpopValidation                       | PASSED | []                      |
 
+  @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_INVALID_ESERVICE_STATE_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando l'e-service è in stato non valido allora il recupero della chiave pubblica fallisce con errore invalidEServiceState
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
@@ -372,6 +392,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | FAILED | [invalidEServiceState] |
       | dpopValidation                       | PASSED | []                     |
 
+  @devToolsClientAssertion
   Scenario: [KEY_RETREIVE_ALGORITHM_NOT_ALLOWED_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando l'e-service è in stato non valido allora il recupero della chiave pubblica fallisce con errore algorithmNotAllowed
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
@@ -387,6 +408,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                    |
       | dpopValidation                       | PASSED  | []                    |
 
+  @devToolsClientAssertion
   Scenario: [KEY_RETREIVE_INVALID_SIGNATURE_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando l'e-service è in stato non valido allora il recupero della chiave pubblica fallisce con errore invalidSignature
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
@@ -402,6 +424,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                 |
       | dpopValidation                       | PASSED  | []                 |
 
+  @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_ALGORITHM_NOT_FOUND_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il claim alg non è valido allora il recupero della chiave pubblica fallisce con errore algorithmNotFound
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
@@ -419,6 +442,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                  |
       | dpopValidation                       | PASSED  | []                  |
 
+  @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_INVALID_DIGEST_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il claim DIGEST non è valido allora il recupero della chiave pubblica fallisce con errore invalidDigestClaim
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
@@ -436,6 +460,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                   |
       | dpopValidation                       | PASSED  | []                   |
 
+  @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_INVALID_HASH_LENGTH_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il claim DIGEST ha un value diverso da 64 caratteri allora il recupero della chiave pubblica fallisce con errore invalidHashLength
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
@@ -453,6 +478,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                  |
       | dpopValidation                       | PASSED  | []                  |
 
+  @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_INVALID_HASH_ALGORITHM_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il claim DIGEST ha un algoritmo non valido allora il recupero della chiave pubblica fallisce con errore invalidHashAlgorithm
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client

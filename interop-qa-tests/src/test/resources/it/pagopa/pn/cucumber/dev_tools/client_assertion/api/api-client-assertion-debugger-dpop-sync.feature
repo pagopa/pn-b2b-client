@@ -3,6 +3,7 @@ Feature: Debugger Client Assertion Sync DPoP
   Voglio validare la mia DPoP Proof legata a una Client Assertion
   Al fine di verificare il binding di sicurezza (HTM/HTU/JWK) e identificare errori specifici DPoP durante la quarta fase di validazione
 
+  @devToolsClientAssertion
   Scenario: [VALIDATION_SUCCESS_API_CLIENT_DPOP] Dato un client CONSUMER valido, quando viene inviata una client assertion corretta allora tutte le fasi di validazione risultano PASSED
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     When "PA1" crea una client assertion valida per un client di tipo API
@@ -17,6 +18,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | PASSED | []     |
       | dpopValidation                       | PASSED | []     |
 
+  @devToolsClientAssertion
   Scenario Outline: [VALIDATION_INVALID_TYPE_ERROR_API_CLIENT_DPOP] Dato un client API valido, quando il grant_type è <grant_type> e la client_assertion_type è <client_assertion_type>  allora la validazione formale fallisce con errore <expectedError>
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     When "PA1" crea una client assertion valida per un client di tipo API
@@ -37,6 +39,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | urn:ietf:params:oauth:client-assertion-type:jwt-bearer | authorization_code | invalidGrantType                       |
       | invalid_type                                           | authorization_code | invalidAssertionType, invalidGrantType |
 
+  @devToolsClientAssertion
   Scenario: [VALIDATION_INVALID_AUD_ERROR_API_CLIENT_DPOP] Dato un client API valido, quando l'audience è invalida allora la validazione formale fallisce con errore 0004
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     When "PA1" crea una client assertion per un client di tipo API con:
@@ -53,6 +56,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                |
       | dpopValidation                       | PASSED  | []                |
 
+  @devToolsClientAssertion
   Scenario Outline: [VALIDATION_NOT_FOUND_ERROR_API_CLIENT_DPOP] Dato un client API valido, quando il claim <claimToRemove> non è presente allora la validazione formale fallisce con errore <expectedError>"
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     When "PA1" crea una client assertion per un client di tipo API con:
@@ -78,6 +82,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | iss           | issuerNotFound   |
       | sub           | subjectNotFound  |
 
+  @devToolsClientAssertion
   Scenario: [VALIDATION_ERROR_COMBINED_NOT_FOUND_ERROR_API_CLIENT_DPOP] Dato un client API valido, quando i claim jti, iat, aud non sono presenti allora la validazione formale fallisce con i rispettivi errori
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     When "PA1" crea una client assertion per un client di tipo API con:
@@ -99,6 +104,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                                                                                              |
       | dpopValidation                       | PASSED  | []                                                                                              |
 
+  @devToolsClientAssertion
   Scenario: [VALIDATION_EXPIRED_ERROR_API_CLIENT_DPOP] Dato un client API valido, quando il token è scaduto allora la validazione formale fallisce con errore 0017
   Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
   When "PA1" crea una client assertion per un client di tipo API con:
@@ -116,6 +122,7 @@ Feature: Debugger Client Assertion Sync DPoP
     | dpopValidation                       | PASSED  | []                  |
 
   # Errore non riproducibile con la configurazione usata per l'ambiente
+  @devToolsClientAssertion
   Scenario: [VALIDATION_JWT_ERROR_API_CLIENT_DPOP] Dato un client API valido, quando il JWT non è interpretabile allora la validazione formale fallisce con errore jsonWebTokenError
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     When "PA1" crea una client assertion per un client di tipo API con:
@@ -132,6 +139,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                  |
       | dpopValidation                       | PASSED  | []                  |
 
+  @devToolsClientAssertion
   Scenario: [VALIDATION_UNEXPECTED_PAYLOAD_API_CLIENT_DPOP] Dato un client API valido, quando il JWT ha un payload non atteso allora la validazione formale fallisce con errore unexpectedClientAssertionPayload
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     And "PA1" crea una client assertion per un client di tipo API con:
@@ -148,6 +156,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                                 |
       | dpopValidation                       | PASSED  | []                                 |
 
+  @devToolsClientAssertion
   Scenario: [VALIDATION_INVALID_FORMAT_ERROR_API_CLIENT_DPOP] Dato un client API valido, quando la client assertion è malformata allora la validazione formale fallisce con errore invalidClientAssertionFormat
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     And "PA1" crea una client assertion per un client di tipo API con:
@@ -164,6 +173,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                             |
       | dpopValidation                       | PASSED  | []                  |
 
+  @devToolsClientAssertion
   Scenario: [VALIDATION_ERROR_CODE_0019_API_CLIENT_DPOP] Dato un client API valido, quando il claim nbf è nel futuro allora la validazione formale fallisce con errore clientAssertionInvalidClaims
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     When "PA1" crea una client assertion per un client di tipo API con:
@@ -182,6 +192,7 @@ Feature: Debugger Client Assertion Sync DPoP
 
   #Bug aperto: https://pagopa.atlassian.net/browse/PIN-9993
   @wait_for_fix
+  @devToolsClientAssertion
   Scenario Outline: [VALIDATION_INVALID_CLAIM_API_CLIENT_DPOP] Dato un client API valido, quando il claim <claim> non è in formato valido allora la validazione formale fallisce con errore <expectedError>
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     When "PA1" crea una client assertion per un client di tipo API con:
@@ -205,6 +216,7 @@ Feature: Debugger Client Assertion Sync DPoP
 
   #TODO: dipende da https://pagopa.atlassian.net/browse/PIN-9993
   @wait_for_fix
+  @devToolsClientAssertion
   Scenario: [VALIDATION_INVALID_CLAIMS_API_CLIENT_DPOP] Dato un client API valido, quando diversi claims sono in formato valido allora la validazione formale fallisce con errore clientAssertionInvalidClaims
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     When "PA1" crea una client assertion per un client di tipo API con:
@@ -223,6 +235,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | dpopValidation                       | PASSED  | []                             |
 
   # TODO clientAssertionValidation -> kidNotFound
+  @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_KID_NOT_FOUND_API_CLIENT_DPOP] Dato un client API valido, quando il claim kid non è presente allora il recupero della chiave pubblica fallisce con errore kidNotFound
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     When "PA1" crea una client assertion per un client di tipo API con:
@@ -240,6 +253,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | dpopValidation                       | PASSED  | []            |
 
   #Bug aperto: https://pagopa.atlassian.net/browse/PIN-9998
+  @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_INVALID_KID_FORMAT_API_CLIENT_DPOP] Dato un client API valido, quando il claim kid non è in formato valido allora il recupero della chiave pubblica fallisce con errore invalidKidFormat
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     When "PA1" crea una client assertion per un client di tipo API con:
@@ -256,6 +270,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                 |
       | dpopValidation                       | PASSED  | []                 |
 
+  @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_INVALID_SUBJECT_API_CLIENT_DPOP] Dato un client API valido, quando il subject non corrisponde al client atteso allora il recupero della chiave pubblica fallisce con errore invalidSubject
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     When "PA1" crea una client assertion per un client di tipo API con:
@@ -273,6 +288,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | dpopValidation                       | PASSED  | []               |
 
   #Bug aperto: https://pagopa.atlassian.net/browse/PIN-9999
+  @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_PURPOSE_ID_NOT_PROVIDED_API_CLIENT_DPOP] Dato un client API valido, quando il claim purposeId non è presente allora il recupero della chiave pubblica fallisce con errore purposeIdNotProvided
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     When "PA1" crea una client assertion per un client di tipo API con:
@@ -289,6 +305,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                     |
       | dpopValidation                       | PASSED  | []                     |
 
+  @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_INVALID_PURPOSE_ID_FORMAT_API_CLIENT_DPOP] Dato un client API valido, quando il claim purposeId non è in formato UUID allora il recupero della chiave pubblica fallisce con errore invalidPurposeIdClaimFormat
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     When "PA1" crea una client assertion per un client di tipo API con:
@@ -305,23 +322,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                            |
       | dpopValidation                       | PASSED  | []                            |
 
-  # TODO Questo scenario ha senso per API? La purpose ID viene passata soltanto se client type è consumer
-  # Scenario: [KEY_RETRIEVE_INVALID_AGREEMENT_STATE_API_CLIENT_DPOP] Dato un client API valido, quando l'agreement è in stato non valido allora il recupero della chiave pubblica fallisce con errore invalidAgreementState
-  #   Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
-  #   And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
-  #   And l'utente è un "admin" di "PA1"
-  #   When l'utente richiede una operazione di sospensione di quella richiesta di fruizione
-  #   And "PA1" crea una client assertion valida per un client di tipo API
-  #   And "PA1" richiede la validazione della client assertion appena creata
-  #   And si ottiene response status code 200
-  #   Then i risultati di validazione sono:
-  #     | step                                 | result | errors                  |
-  #     | clientAssertionValidation            | PASSED | []                      |
-  #     | publicKeyRetrieve                    | PASSED | []                      |
-  #     | clientAssertionSignatureVerification | PASSED | []                      |
-  #     | platformStatesVerification           | FAILED | [invalidAgreementState] |
-  #     | dpopValidation                       | PASSED | []                      |
-
+  @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_INVALID_ESERVICE_STATE_API_CLIENT_DPOP] Dato un client API valido, quando l'e-service è in stato non valido allora il recupero della chiave pubblica fallisce con errore invalidEServiceState
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'utente è un "admin" di "PA2"
@@ -338,6 +339,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | FAILED | [invalidEServiceState] |
       | dpopValidation                       | PASSED | []                     |
 
+  @devToolsClientAssertion
   Scenario: [KEY_RETREIVE_ALGORITHM_NOT_ALLOWED_API_CLIENT_DPOP] Dato un client API valido, quando l'e-service è in stato non valido allora il recupero della chiave pubblica fallisce con errore algorithmNotAllowed
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     When "PA1" crea una client assertion per un client di tipo API utilizzando una chiave "EC" di lunghezza 1024
@@ -352,6 +354,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                    |
       | dpopValidation                       | PASSED  | []                    |
 
+  @devToolsClientAssertion
   Scenario: [KEY_RETREIVE_INVALID_SIGNATURE_API_CLIENT_DPOP] Dato un client API valido, quando l'e-service è in stato non valido allora il recupero della chiave pubblica fallisce con errore invalidSignature
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     When "PA1" crea una client assertion per un client di tipo API utilizzando una chiave "RSA" di lunghezza 2048
@@ -366,6 +369,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                 |
       | dpopValidation                       | PASSED  | []                 |
 
+  @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_ALGORITHM_NOT_FOUND_API_CLIENT_DPOP] Dato un client API valido, quando il claim alg non è valido allora il recupero della chiave pubblica fallisce con errore algorithmNotFound
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     And "PA1" crea una client assertion per un client di tipo API con:
@@ -382,6 +386,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                  |
       | dpopValidation                       | PASSED  | []                  |
 
+  @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_INVALID_DIGEST_API_CLIENT_DPOP] Dato un client API valido, quando il claim DIGEST non è valido allora il recupero della chiave pubblica fallisce con errore invalidDigestClaim
     And l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     And "PA1" crea una client assertion per un client di tipo API con:
@@ -398,6 +403,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                   |
       | dpopValidation                       | PASSED  | []                   |
 
+  @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_INVALID_HASH_LENGTH_API_CLIENT_DPOP] Dato un client API valido, quando il claim DIGEST ha un value diverso da 64 caratteri allora il recupero della chiave pubblica fallisce con errore invalidHashLength
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     And "PA1" crea una client assertion per un client di tipo API con:
@@ -414,6 +420,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                  |
       | dpopValidation                       | PASSED  | []                  |
 
+  @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_INVALID_HASH_ALGORITHM_API_CLIENT_DPOP] Dato un client API valido, quando il claim DIGEST ha un algoritmo non valido allora il recupero della chiave pubblica fallisce con errore invalidHashAlgorithm
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     And "PA1" crea una client assertion per un client di tipo API con:
