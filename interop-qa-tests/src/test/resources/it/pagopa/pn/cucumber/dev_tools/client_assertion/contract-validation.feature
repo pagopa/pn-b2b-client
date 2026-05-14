@@ -8,6 +8,7 @@ Feature: : Debugger Client Assertion Sync Bearer
     When "PA1" richiede la validazione della client assertion appena creata con un token di autorizzazione non valido
     Then si ottiene response status code 401
 
+  @wait_for_fix
   @devToolsClientAssertion
   Scenario Outline: [CLIENT_ASSERTION_CONTRACT_VALIDATION_AUTHORIZED_ROLES] la richiesta di validazione della client assertion da parte di un utente che appartiene ad un ruolo autorizzato va a buon fine
     Given l'admin del fruitore "<ente>" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi

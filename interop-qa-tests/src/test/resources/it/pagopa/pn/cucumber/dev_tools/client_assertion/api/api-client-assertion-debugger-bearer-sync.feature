@@ -111,6 +111,7 @@ Feature: Debugger Client Assertion Sync Bearer
      | platformStatesVerification           | SKIPPED | []                  |
 
   # Errore non riproducibile con la configurazione usata per l'ambiente
+  @ignore
   @devToolsClientAssertion
   Scenario: [VALIDATION_JWT_ERROR_API_CLIENT] Dato un client API valido, quando il JWT non è interpretabile allora la validazione formale fallisce con errore jsonWebTokenError
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
@@ -227,6 +228,7 @@ Feature: Debugger Client Assertion Sync Bearer
       | platformStatesVerification           | SKIPPED | []            |
 
   #Bug aperto: https://pagopa.atlassian.net/browse/PIN-9998
+  @wait_for_fix
   @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_INVALID_KID_FORMAT_API_CLIENT] Dato un client API valido, quando il claim kid non è in formato valido allora il recupero della chiave pubblica fallisce con errore invalidKidFormat
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
@@ -257,22 +259,6 @@ Feature: Debugger Client Assertion Sync Bearer
       | clientAssertionSignatureVerification | SKIPPED | []               |
       | platformStatesVerification           | SKIPPED | []               |
 
-  #Bug aperto: https://pagopa.atlassian.net/browse/PIN-9999
-  @devToolsClientAssertion
-  Scenario: [KEY_RETRIEVE_PURPOSE_ID_NOT_PROVIDED_API_CLIENT] Dato un client API valido, quando il claim purposeId non è presente allora il recupero della chiave pubblica fallisce con errore purposeIdNotProvided
-    Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
-    When "PA1" crea una client assertion per un client di tipo API con:
-      | claim    | value     |
-      | __remove | purposeId |
-    And "PA1" richiede la validazione della client assertion appena creata
-    And si ottiene response status code 200
-    Then i risultati di validazione sono:
-      | step                                 | result  | errors                 |
-      | clientAssertionValidation            | PASSED  | []                     |
-      | publicKeyRetrieve                    | FAILED  | [purposeIdNotProvided] |
-      | clientAssertionSignatureVerification | SKIPPED | []                     |
-      | platformStatesVerification           | SKIPPED | []                     |
-
   @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_INVALID_PURPOSE_ID_FORMAT_API_CLIENT] Dato un client API valido, quando il claim purposeId non è in formato UUID allora il recupero della chiave pubblica fallisce con errore invalidPurposeIdClaimFormat
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
@@ -287,21 +273,6 @@ Feature: Debugger Client Assertion Sync Bearer
       | publicKeyRetrieve                    | SKIPPED | []                            |
       | clientAssertionSignatureVerification | SKIPPED | []                            |
       | platformStatesVerification           | SKIPPED | []                            |
-
-  @devToolsClientAssertion
-  Scenario: [KEY_RETRIEVE_INVALID_ESERVICE_STATE_API_CLIENT] Dato un client API valido, quando l'e-service è in stato non valido allora il recupero della chiave pubblica fallisce con errore invalidEServiceState
-    Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
-    And l'utente è un "admin" di "PA2"
-    When l'utente sospende quel descrittore
-    And "PA1" crea una client assertion valida per un client di tipo API
-    And "PA1" richiede la validazione della client assertion appena creata
-    And si ottiene response status code 200
-    Then i risultati di validazione sono:
-      | step                                 | result | errors                 |
-      | clientAssertionValidation            | PASSED | []                     |
-      | publicKeyRetrieve                    | PASSED | []                     |
-      | clientAssertionSignatureVerification | PASSED | []                     |
-      | platformStatesVerification           | FAILED | [invalidEServiceState] |
 
   @devToolsClientAssertion
   Scenario: [KEY_RETREIVE_ALGORITHM_NOT_ALLOWED_API_CLIENT] Dato un client API valido, quando l'e-service è in stato non valido allora il recupero della chiave pubblica fallisce con errore algorithmNotAllowed

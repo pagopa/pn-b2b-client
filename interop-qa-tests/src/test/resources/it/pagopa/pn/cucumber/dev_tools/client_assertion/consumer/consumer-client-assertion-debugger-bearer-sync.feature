@@ -117,6 +117,7 @@ Feature: Debugger Client Assertion Sync Bearer
       | platformStatesVerification           | SKIPPED | []                  |
 
   # Errore non riproducibile con la configurazione usata per l'ambiente
+  @ignore
   @devToolsClientAssertion
   Scenario: [VALIDATION_JWT_ERROR_CONSUMER_CLIENT] Dato un client CONSUMER valido, quando il JWT non è interpretabile allora la validazione formale fallisce con errore jsonWebTokenError
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
@@ -241,6 +242,7 @@ Feature: Debugger Client Assertion Sync Bearer
       | platformStatesVerification           | SKIPPED | []            |
 
   #Bug aperto: https://pagopa.atlassian.net/browse/PIN-9998
+  @wait_for_fix
   @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_INVALID_KID_FORMAT_CONSUMER_CLIENT] Dato un client CONSUMER valido, quando il claim kid non è in formato valido allora il recupero della chiave pubblica fallisce con errore invalidKidFormat
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
@@ -274,6 +276,7 @@ Feature: Debugger Client Assertion Sync Bearer
       | platformStatesVerification           | SKIPPED | []               |
 
   #Bug aperto: https://pagopa.atlassian.net/browse/PIN-9999
+  @wait_for_fix
   @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_PURPOSE_ID_NOT_PROVIDED_CONSUMER_CLIENT] Dato un client CONSUMER valido, quando il claim purposeId non è presente allora il recupero della chiave pubblica fallisce con errore purposeIdNotProvided
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi

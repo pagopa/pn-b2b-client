@@ -9,10 +9,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import it.pagopa.interop.authorization.service.DPoPTokenService;
 import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
 import it.pagopa.interop.authorization.service.utils.voucher.domain.ClientAssertionOptions;
@@ -36,6 +33,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
+import java.security.Signature;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
@@ -260,7 +258,7 @@ public class DevToolsSteps {
         String clientAssertion = validClientAssertion.signWith(preparedClient.keyPair().getPrivate()).compact();
 
         try {
-            clientAssertion = applyOverridesToEncodedJwt(clientAssertion, overrides);
+            clientAssertion = applyOverridesToEncodedJwt(clientAssertion, overrides, preparedClient.keyPair().getKeyPair());
         } catch (Exception e) {
             throw new RuntimeException("Error processing JSON for client assertion header: " + e.getMessage(), e);
         }
@@ -276,7 +274,7 @@ public class DevToolsSteps {
         String clientAssertion = validClientAssertion.signWith(keyPair.getPrivate()).compact();
 
         try {
-            clientAssertion = applyOverridesToEncodedJwt(clientAssertion, overrides);
+            clientAssertion = applyOverridesToEncodedJwt(clientAssertion, overrides, keyPair);
         } catch (Exception e) {
             throw new RuntimeException("Error processing JSON for client assertion header: " + e.getMessage(), e);
         }
@@ -317,7 +315,7 @@ public class DevToolsSteps {
             dpopProof = jwtBuilder.compact();
 
             try {
-                dpopProof = applyOverridesToEncodedJwt(dpopProof, overrides);
+                dpopProof = applyOverridesToEncodedJwt(dpopProof, overrides, keyPair);
             } catch (Exception e) {
                 throw new RuntimeException("Error processing JSON for client assertion header: " + e.getMessage(), e);
             }
@@ -352,7 +350,8 @@ public class DevToolsSteps {
 
     private String applyOverridesToEncodedJwt(
             String encodedJwt,
-            List<JwtClaimOverride> overrides
+            List<JwtClaimOverride> overrides,
+            KeyPair keyPair
     ) throws Exception {
 
         String[] jwtParts = encodedJwt.split("\\.", -1);
@@ -413,6 +412,26 @@ public class DevToolsSteps {
         String newPayloadBase64Url = rawPayloadOverride != null
                 ? encodeBase64Url(rawPayloadOverride)
                 : encodeBase64Url(mapper.writeValueAsString(payload));
+
+        if (keyPair != null) {
+            String signingInput = newHeaderBase64Url + "." + newPayloadBase64Url;
+
+            String keyAlg = keyPair.getPrivate().getAlgorithm();
+            String sigAlg = switch (keyAlg) {
+                case "RSA" -> "SHA256withRSA";
+                case "EC"  -> "SHA256withECDSA";
+                case "Ed25519" -> "Ed25519";
+                default -> throw new IllegalArgumentException("Unsupported key");
+            };
+
+            Signature signature = Signature.getInstance(sigAlg);
+            signature.initSign(keyPair.getPrivate());
+            signature.update(signingInput.getBytes());
+            String encodedSignature =Base64.getUrlEncoder()
+                    .withoutPadding()
+                    .encodeToString(signature.sign());
+            return newHeaderBase64Url + "." + newPayloadBase64Url + "." + encodedSignature;
+        }
 
         return newHeaderBase64Url + "." + newPayloadBase64Url + "." + jwtParts[2];
     }
