@@ -1,4 +1,4 @@
-Feature: : Debugger Client Assertion Sync Bearer
+Feature: Debugger Client Assertion Sync Bearer
   Come Aderente in possesso di un client di tipo CONSUMER
   Voglio validare la mia Client Assertion standard
   Al fine di identificare errori strutturali, temporali o crittografici nelle tre fasi di validazione (Formale, Recupero Chiave, Firma)

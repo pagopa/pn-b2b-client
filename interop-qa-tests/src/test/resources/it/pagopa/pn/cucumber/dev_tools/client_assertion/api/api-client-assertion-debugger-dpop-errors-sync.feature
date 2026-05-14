@@ -1,4 +1,4 @@
-Feature: Debugger Client Assertion Sync DPoP
+Feature: Debugger Client Assertion Sync DPoP Errors
   Come Aderente in possesso di un client di tipo API
   Voglio validare la mia DPoP Proof legata a una Client Assertion
   Al fine di verificare il binding di sicurezza (HTM/HTU/JWK) e identificare errori specifici DPoP durante la quarta fase di validazione
