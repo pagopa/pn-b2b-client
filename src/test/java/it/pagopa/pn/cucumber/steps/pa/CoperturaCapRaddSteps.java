@@ -22,13 +22,18 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.*;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 
+import static it.pagopa.common.util.StringUtils.resolveValue;
+import static it.pagopa.common.util.StringUtils.ALPHABET;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static it.pagopa.common.util.DateUtils.FORMATTER_ISO;
+import static it.pagopa.common.util.DateUtils.resolveDate;
+
 
 
 @Slf4j
@@ -43,10 +48,9 @@ public class CoperturaCapRaddSteps {
     private String randomLocality;
     private LocalDate searchDate = null;
 
-    private static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static final int LENGTH = 6;
     private static final Random RANDOM = new Random();
-    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
 
     private CreateCoverageRequest request;
     private ResponseEntity<Coverage> response;
@@ -81,10 +85,10 @@ public class CoperturaCapRaddSteps {
         this.randomLocality = generateRandomWord();
         Map<String, String> data = dataTable.asMaps().get(0);
         request = new CreateCoverageRequest()
-                .cap(toNullable(data.get("cap")))
-                .locality(toNullable(randomLocality))
-                .cadastralCode(toNullable(data.get("cadastralCode")))
-                .province(toNullable(data.get("province")));
+                .cap(resolveValue(data.get("cap")))
+                .locality(resolveValue(randomLocality))
+                .cadastralCode(resolveValue(data.get("cadastralCode")))
+                .province(resolveValue(data.get("province")));
     }
 
     @Given("setto i dati per creare una nuova copertura Radd:")
@@ -92,10 +96,10 @@ public class CoperturaCapRaddSteps {
 
         Map<String, String> data = dataTable.asMaps().get(0);
         request = new CreateCoverageRequest()
-                .cap(toNullable(data.get("cap")))
-                .locality(toNullable(data.get("locality")))
-                .cadastralCode(toNullable(data.get("cadastralCode")))
-                .province(toNullable(data.get("province")));
+                .cap(resolveValue(data.get("cap")))
+                .locality(resolveValue(data.get("locality")))
+                .cadastralCode(resolveValue(data.get("cadastralCode")))
+                .province(resolveValue(data.get("province")));
     }
 
     public static String generateRandomWord() {
@@ -114,15 +118,6 @@ public class CoperturaCapRaddSteps {
         assertNotNull(response.getBody());
         assertEquals(randomLocality, response.getBody().getLocality());
         assertEquals(expectedCap, response.getBody().getCap());
-    }
-
-    private String toNullable(String value) {
-        if (value == null) return null;
-        value = value.trim();
-        if (value.isEmpty() || value.equalsIgnoreCase("null")) {
-            return null;
-        }
-        return value;
     }
 
     @Then("l'operazione di copertura Radd ha prodotto un errore con status code {string}")
@@ -146,25 +141,20 @@ public class CoperturaCapRaddSteps {
         if (data.get("locality").equalsIgnoreCase("/"))
             this.locality = this.randomLocality;
         else
-            this.locality = toNullable(data.get("locality"));
+            this.locality = resolveValue(data.get("locality"));
 
         updateRequest = new UpdateCoverageRequest()
-                .cadastralCode(toNullable(data.get("cadastralCode")))
-                .province(toNullable(data.get("province")))
-                .startValidity(toNullable(data.get("startValidity")) != null
-                        ? toNullable(data.get("startValidity")).toString()
-                        : null)
-                .endValidity(toNullable(data.get("endValidity")) != null
-                        ? toNullable(data.get("endValidity")).toString()
-                        : null);
+                .cadastralCode(resolveValue(data.get("cadastralCode")))
+                .province(resolveValue(data.get("province")))
+                .startValidity(resolveDate(data.get("startValidity")))
+                .endValidity(resolveDate(data.get("endValidity")));
 
     }
 
     @And("setto la data per la quale voglio verificare la copertura al {string}")
     public void setSearchDate(String searchDateStr) {
 
-        if (!searchDateStr.equalsIgnoreCase("OGGI"))
-            searchDate = LocalDate.parse(searchDateStr);
+        searchDate = Optional.ofNullable(resolveDate(searchDateStr)).map(LocalDate::parse).orElse(null);
     }
 
 
@@ -226,18 +216,18 @@ public class CoperturaCapRaddSteps {
         Map<String, String> data = dataTable.asMaps().get(0);
 
         String city;
-        String nameRow2 = toNullable(data.get("nameRow2"));
-        String addressRow = toNullable(data.get("addressRow"));
-        String addressRow2 = toNullable(data.get("addressRow2"));
-        String cap = toNullable(data.get("cap"));
-        String city2 = toNullable(data.get("city2"));
-        String pr = toNullable(data.get("pr"));
-        String country = toNullable(data.get("country"));
+        String nameRow2 = resolveValue(data.get("nameRow2"));
+        String addressRow = resolveValue(data.get("addressRow"));
+        String addressRow2 = resolveValue(data.get("addressRow2"));
+        String cap = resolveValue(data.get("cap"));
+        String city2 = resolveValue(data.get("city2"));
+        String pr = resolveValue(data.get("pr"));
+        String country = resolveValue(data.get("country"));
 
         if (data.get("city").equalsIgnoreCase("/"))
             city = this.locality;
         else
-            city = toNullable(data.get("city"));
+            city = resolveValue(data.get("city"));
 
         checkCoverageRequest = new CheckCoverageRequest()
                 .nameRow2(nameRow2)
@@ -332,7 +322,7 @@ public class CoperturaCapRaddSteps {
             String line;
             boolean isHeader = true;
 
-            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
             LocalDate now = LocalDate.now();
 
             while ((line = br.readLine()) != null) {
@@ -352,10 +342,10 @@ public class CoperturaCapRaddSteps {
                 if (cap.isEmpty()) continue;
 
                 try {
-                    LocalDate start = LocalDate.parse(startValidityStr, dateFormatter);
+                    LocalDate start = LocalDate.parse(startValidityStr, FORMATTER_ISO);
                     LocalDate end = endValidityStr.isEmpty()
-                            ? LocalDate.parse("9999-12-31", dateFormatter)
-                            : LocalDate.parse(endValidityStr, dateFormatter);
+                            ? LocalDate.parse("9999-12-31", FORMATTER_ISO)
+                            : LocalDate.parse(endValidityStr, FORMATTER_ISO);
 
                     boolean isActive = (now.isEqual(start) || now.isAfter(start)) &&
                             (now.isEqual(end) || now.isBefore(end));
@@ -449,10 +439,10 @@ public class CoperturaCapRaddSteps {
                 if (cap.isEmpty()) continue;
 
                 CreateCoverageRequest createRequest = new CreateCoverageRequest()
-                        .cap(toNullable(cap))
+                        .cap(resolveValue(cap))
                         .locality(locality.isEmpty() ? "ND" : locality)
-                        .cadastralCode(toNullable(cadastralCode))
-                        .province(toNullable(province));
+                        .cadastralCode(resolveValue(cadastralCode))
+                        .province(resolveValue(province));
 
                 try {
                     raddCapCoverageClient.addCoverageWithHttpInfo(createRequest);
@@ -470,8 +460,8 @@ public class CoperturaCapRaddSteps {
                     failed++;
                 }
                 UpdateCoverageRequest updateRequest = new UpdateCoverageRequest()
-                        .cadastralCode(toNullable(cadastralCode))
-                        .province(toNullable(province))
+                        .cadastralCode(resolveValue(cadastralCode))
+                        .province(resolveValue(province))
                         .startValidity(startValidityStr.isEmpty() ? null : startValidityStr)
                         .endValidity(endValidityStr.isEmpty() ? null : endValidityStr);
 

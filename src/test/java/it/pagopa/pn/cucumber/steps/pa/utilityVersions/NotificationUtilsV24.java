@@ -135,42 +135,6 @@ public class NotificationUtilsV24 extends B2bUtils {
             }
             notificationRecipient.setPayments(listPayment);
         }
-        /*
-            if (getValue(data,PAYMENT.key)!= null && (listPayment==null || (listPayment!= null && listPayment.isEmpty()))){
-                listPayment = new ArrayList<NotificationPaymentItem>();
-                NotificationPaymentItem addPaymentsItem = new NotificationPaymentItem();
-                addPaymentsItem.pagoPa(
-                        new PagoPaPayment()
-                                .creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
-                                .noticeCode(getValue(data, PAYMENT_NOTICE_CODE.key))
-                                .applyCost(getValue(data, PAYMENT_APPLY_COST_PAGOPA.key).equalsIgnoreCase("SI") ? true : false)
-                                .attachment(utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key))));
-
-                                 addPaymentsItem.f24(getValue(data, PAYMENT_F24_STANDARD.key) == null ? null :
-                                 (getValue(data, PAYMENT_F24_STANDARD.key).equalsIgnoreCase("SI") ?
-                                 new F24Payment()
-                                 .title(getValue(data, TITLE_PAYMENT.key))
-                                 .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                 .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD.key))) : null));
-
-
-
-                listPayment.add(addPaymentsItem);
-            }
-
-         */
-
-
-        /* TEST
-        if(getValue(data,DIGITAL_DOMICILE.key) != null && !getValue(data,DIGITAL_DOMICILE.key).equalsIgnoreCase(EXCLUDE_VALUE)){
-            notificationRecipient = notificationRecipient.digitalDomicile(getValue(data,DIGITAL_DOMICILE.key) == null? null : (new NotificationDigitalAddress()
-                    .type((getValue(data,DIGITAL_DOMICILE_TYPE.key) == null?
-                            null : NotificationDigitalAddress.TypeEnum.PEC ))
-                    .address( getValue(data,DIGITAL_DOMICILE_ADDRESS.key)))
-            );
-        }
-
-         */
         try {
             Thread.sleep(2);
         } catch (InterruptedException e) {

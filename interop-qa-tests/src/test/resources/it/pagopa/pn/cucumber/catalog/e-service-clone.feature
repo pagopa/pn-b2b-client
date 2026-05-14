@@ -8,7 +8,7 @@ Feature: Clonazione di un e-service
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     Given "<ente>" ha già creato una versione in "<statoDescrittore>" per quell'e-service
-    When l'utente clona quell'e-service
+    When l'utente tenta di clonare quell'e-service
     Then si ottiene status code <risultato>
 
     @happy-path
