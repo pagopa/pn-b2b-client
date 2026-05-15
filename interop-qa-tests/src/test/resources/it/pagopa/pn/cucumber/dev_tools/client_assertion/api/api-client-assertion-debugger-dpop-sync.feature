@@ -106,20 +106,20 @@ Feature: Debugger Client Assertion Sync DPoP
 
   @devToolsClientAssertion
   Scenario: [VALIDATION_EXPIRED_ERROR_API_CLIENT_DPOP] Dato un client API valido, quando il token è scaduto allora la validazione formale fallisce con errore 0017
-  Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
-  When "PA1" crea una client assertion per un client di tipo API con:
-    | claim | value     |
-    | exp   | now-10800 |
-  And "PA1" crea una DPoP proof per la client assertion
-  And "PA1" richiede la validazione della client assertion appena creata
-  And si ottiene response status code 200
-  Then i risultati di validazione sono:
-    | step                                 | result  | errors              |
-    | clientAssertionValidation            | PASSED  | []                  |
-    | publicKeyRetrieve                    | PASSED  | []                  |
-    | clientAssertionSignatureVerification | FAILED  | [tokenExpiredError] |
-    | platformStatesVerification           | SKIPPED | []                  |
-    | dpopValidation                       | PASSED  | []                  |
+    Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
+    When "PA1" crea una client assertion per un client di tipo API con:
+      | claim | value     |
+      | exp   | now-10800 |
+    And "PA1" crea una DPoP proof per la client assertion
+    And "PA1" richiede la validazione della client assertion appena creata
+    And si ottiene response status code 200
+    Then i risultati di validazione sono:
+      | step                                 | result  | errors              |
+      | clientAssertionValidation            | PASSED  | []                  |
+      | publicKeyRetrieve                    | PASSED  | []                  |
+      | clientAssertionSignatureVerification | FAILED  | [tokenExpiredError] |
+      | platformStatesVerification           | SKIPPED | []                  |
+      | dpopValidation                       | PASSED  | []                  |
 
   # Errore non riproducibile con la configurazione usata per l'ambiente
   @ignore
@@ -140,23 +140,22 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                  |
       | dpopValidation                       | PASSED  | []                  |
 
-  @wait_for_fix
   @devToolsClientAssertion
   Scenario: [VALIDATION_UNEXPECTED_PAYLOAD_API_CLIENT_DPOP] Dato un client API valido, quando il JWT ha un payload non atteso allora la validazione formale fallisce con errore unexpectedClientAssertionPayload
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     And "PA1" crea una client assertion per un client di tipo API con:
-      | claim        | value                  |
-      | __rawHeader  | invalid_header         |
+      | claim       | value          |
+      | __rawHeader | invalid_header |
     And "PA1" crea una DPoP proof per la client assertion
     When "PA1" richiede la validazione della client assertion appena creata
     And si ottiene response status code 200
     Then i risultati di validazione sono:
-      | step                                 | result  | errors                             |
-      | clientAssertionValidation            | FAILED  | [unexpectedClientAssertionPayload] |
-      | publicKeyRetrieve                    | SKIPPED | []                                 |
-      | clientAssertionSignatureVerification | SKIPPED | []                                 |
-      | platformStatesVerification           | SKIPPED | []                                 |
-      | dpopValidation                       | PASSED  | []                                 |
+      | step                                 | result  | errors                      |
+      | clientAssertionValidation            | FAILED  | [unexpectedClientAssertion] |
+      | publicKeyRetrieve                    | SKIPPED | []                          |
+      | clientAssertionSignatureVerification | SKIPPED | []                          |
+      | platformStatesVerification           | SKIPPED | []                          |
+      | dpopValidation                       | PASSED  | []                          |
 
   @devToolsClientAssertion
   Scenario: [VALIDATION_INVALID_FORMAT_ERROR_API_CLIENT_DPOP] Dato un client API valido, quando la client assertion è malformata allora la validazione formale fallisce con errore invalidClientAssertionFormat
@@ -173,7 +172,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | publicKeyRetrieve                    | SKIPPED | []                             |
       | clientAssertionSignatureVerification | SKIPPED | []                             |
       | platformStatesVerification           | SKIPPED | []                             |
-      | dpopValidation                       | PASSED  | []                  |
+      | dpopValidation                       | PASSED  | []                             |
 
   @devToolsClientAssertion
   Scenario: [VALIDATION_ERROR_CODE_0019_API_CLIENT_DPOP] Dato un client API valido, quando il claim nbf è nel futuro allora la validazione formale fallisce con errore clientAssertionInvalidClaims
@@ -185,12 +184,12 @@ Feature: Debugger Client Assertion Sync DPoP
     And "PA1" richiede la validazione della client assertion appena creata
     And si ottiene response status code 200
     Then i risultati di validazione sono:
-      | step                                 | result  | errors           |
+      | step                                 | result  | errors                         |
       | clientAssertionValidation            | FAILED  | [clientAssertionInvalidClaims] |
-      | publicKeyRetrieve                    | SKIPPED | []               |
-      | clientAssertionSignatureVerification | SKIPPED | []               |
-      | platformStatesVerification           | SKIPPED | []               |
-      | dpopValidation                       | PASSED  | []               |
+      | publicKeyRetrieve                    | SKIPPED | []                             |
+      | clientAssertionSignatureVerification | SKIPPED | []                             |
+      | platformStatesVerification           | SKIPPED | []                             |
+      | dpopValidation                       | PASSED  | []                             |
 
   #Bug aperto: https://pagopa.atlassian.net/browse/PIN-9993
 

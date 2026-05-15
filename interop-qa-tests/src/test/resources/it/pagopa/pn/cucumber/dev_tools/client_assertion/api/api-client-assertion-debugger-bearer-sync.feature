@@ -127,7 +127,6 @@ Feature: Debugger Client Assertion Sync Bearer
       | clientAssertionSignatureVerification | SKIPPED | []                  |
       | platformStatesVerification           | SKIPPED | []                  |
 
-  @wait_for_fix
   @devToolsClientAssertion
   Scenario: [VALIDATION_UNEXPECTED_PAYLOAD_API_CLIENT] Dato un client API valido, quando il JWT ha un payload non atteso allora la validazione formale fallisce con errore unexpectedClientAssertionPayload
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
@@ -137,11 +136,11 @@ Feature: Debugger Client Assertion Sync Bearer
     When "PA1" richiede la validazione della client assertion appena creata
     And si ottiene response status code 200
     Then i risultati di validazione sono:
-      | step                                 | result  | errors                             |
-      | clientAssertionValidation            | FAILED  | [unexpectedClientAssertionPayload] |
-      | publicKeyRetrieve                    | SKIPPED | []                                 |
-      | clientAssertionSignatureVerification | SKIPPED | []                                 |
-      | platformStatesVerification           | SKIPPED | []                                 |
+      | step                                 | result  | errors                      |
+      | clientAssertionValidation            | FAILED  | [unexpectedClientAssertion] |
+      | publicKeyRetrieve                    | SKIPPED | []                          |
+      | clientAssertionSignatureVerification | SKIPPED | []                          |
+      | platformStatesVerification           | SKIPPED | []                          |
 
   @devToolsClientAssertion
   Scenario: [VALIDATION_INVALID_FORMAT_ERROR_API_CLIENT] Dato un client API valido, quando la client assertion è malformata allora la validazione formale fallisce con errore invalidClientAssertionFormat
