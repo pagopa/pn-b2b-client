@@ -359,8 +359,8 @@ public class DelayerSevice {
             int totalCapacity = 0;
 
             for (var item : items) {
+                // TODO fix con codice corretto
                 // var productsNode = item.path("products");
-                var productsNode = item.getUnifiedDeliveryDriver();
 
 
                 // Check if products list contains the given product
