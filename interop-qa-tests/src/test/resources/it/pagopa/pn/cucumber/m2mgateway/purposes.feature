@@ -973,7 +973,6 @@ Feature: Gestione purposes attraverso APIs M2M V2
     Given l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     Then la finalità non ha subito modifiche
 
-  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7808
   @m2m-patch
   @m2m-parte2-settembre @reversePurpose
   Scenario Outline: [M2M_REVERSE_PURPOSE_PATCH_5] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di una finalità associata ad un e-service ad erogazione inversa in stato diverso da DRAFT
