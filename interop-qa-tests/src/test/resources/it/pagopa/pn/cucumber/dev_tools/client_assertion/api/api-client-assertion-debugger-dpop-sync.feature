@@ -209,7 +209,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                |
       | dpopValidation                       | PASSED  | []                |
 
-    @wait-for-fix
+    @wait_for_fix
     Examples:
       | claim | value      | expectedError         |
       | iss   | not-a-uuid | invalidClientIdFormat |
