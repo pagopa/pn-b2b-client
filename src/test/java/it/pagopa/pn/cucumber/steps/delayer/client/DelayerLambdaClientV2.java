@@ -238,6 +238,11 @@ public class DelayerLambdaClientV2 {
     }
 
     public DelayerCountersSumEstimates getCountersSumEstimates(String deliveryDate, String province,
+                                                               String productType) {
+        return getCountersSumEstimates(deliveryDate, province, productType, null);
+    }
+
+    public DelayerCountersSumEstimates getCountersSumEstimates(String deliveryDate, String province,
                                                                String productType,
                                                                String lastEvaluatedKey) {
         var params = mapOf(
@@ -252,6 +257,11 @@ public class DelayerLambdaClientV2 {
                 params,
                 DelayerCountersSumEstimates.class
         );
+    }
+
+    public DelayerCountersExclude getCountersExclude(String deliveryDate, String province,
+                                                     String productType) {
+        return getCountersExclude(deliveryDate, province, productType, null);
     }
 
     public DelayerCountersExclude getCountersExclude(String deliveryDate, String province,

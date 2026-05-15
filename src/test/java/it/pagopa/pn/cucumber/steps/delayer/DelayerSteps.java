@@ -1,5 +1,7 @@
 package it.pagopa.pn.cucumber.steps.delayer;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -18,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 
 import java.util.*;
 import java.util.function.BiFunction;
@@ -27,6 +31,7 @@ import java.util.stream.Collectors;
 import static it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps.*;
 import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.*;
 
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
 @RequiredArgsConstructor
 public class DelayerSteps {
@@ -249,6 +254,12 @@ public class DelayerSteps {
         planner.simulateAlgorithm2(context.expectedPianification);
     }
 
+    @When("viene avviata la step function BatchWorkflowStateMachine con deliveryDate: {string}")
+    public void runFirstStepFunctionWithFixedDeliveryDate(String deliveryWeek) throws Exception {
+        context.currentExecutionArn = service.runBatchWorkflowStateMachine(context.printCapacity, deliveryWeek);
+        service.waitUntilStepFunctionEnd(context);
+    }
+
     @When("viene avviata la step function BatchWorkflowStateMachine con deliveryDate in avanti di {int} settimane")
     public void runFirstStepFunctionWithDeliveryDate(int weeksToAdd) throws Exception {
         context.currentExecutionArn = service.runBatchWorkflowStateMachine(context.printCapacity, getNextMonday(weeksToAdd));
@@ -413,5 +424,44 @@ public class DelayerSteps {
 
         softly.assertAll();
     }
+
+
+    @Then("viene verificato il limite garantito per la pa: {string} relativo a provincia: {string}, prodotto: {string} e deliveryDate: {string}")
+    public void checkSenderLimitForPA(String paId, String province, String product, String deliveryDate) {
+
+        String pk = new StringBuilder(paId).append("~")
+                .append(product).append("~")
+                .append(province).toString();
+
+        int sumEstimate = service.getCountersSumEstimates(deliveryDate, province, product);
+        int weeklyEstimate = service.fetchWeeklyEstimateForPA(deliveryDate, pk);
+        Set<String> productsWithCapacity = new HashSet<>();
+        int sumDeclaredCapacity = service.getDeclaredCapacity(deliveryDate, province, product, productsWithCapacity);
+
+        int toBeExcluded = 0;
+        for (String productWithCapacity : productsWithCapacity) {
+            toBeExcluded += service.getCountersExclude(deliveryDate, province, productWithCapacity);
+        }
+
+        Assertions.assertThat(sumEstimate)
+                .as("SUM_ESTIMATES deve essere > 0 per calcolare il limite mittente. paId=%s, province=%s, product=%s, deliveryDate=%s, sumEstimate=%s",
+                        paId, province, product, deliveryDate, sumEstimate)
+                .isGreaterThan(0);
+
+        double senderLimitPercentage = Math.ceil(((double) weeklyEstimate / (sumEstimate)) * 1000) / 10;
+
+        double expectedSenderLimit = Math.ceil((sumDeclaredCapacity - toBeExcluded) * (senderLimitPercentage / 100.0));
+
+        int actualSenderLimit = service.getUsedSenderLimit(deliveryDate, pk);
+
+        Assertions.assertThat(expectedSenderLimit).as("Confronto di actual ed expected del limite del mittente").isEqualTo(actualSenderLimit);
+
+    }
+
+
+
+
+
+
 
 }

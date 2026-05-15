@@ -399,6 +399,16 @@ public class DelayerPaperDeliveryUtils {
         return nextMonday.format(DateTimeFormatter.ISO_LOCAL_DATE);
     }
 
+    public static String getNextMondayFromDate(String date, int weeksToAdd) {
+        LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE).plusWeeks(weeksToAdd);
+        return localDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
+    }
+
+    public static String getPreviousMondayFromDate(String date, int weeksToRemove) {
+        LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE).minusWeeks(weeksToRemove);
+        return localDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
+    }
+
     public static String getCurrentMonday() {
         LocalDate nextMonday = LocalDate.now().with(DayOfWeek.MONDAY);
         return nextMonday.format(DateTimeFormatter.ISO_LOCAL_DATE);

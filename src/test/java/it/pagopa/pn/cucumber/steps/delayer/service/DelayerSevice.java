@@ -6,8 +6,10 @@ import it.pagopa.pn.cucumber.steps.delayer.model.*;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.Assertions;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -42,6 +44,21 @@ public class DelayerSevice {
         }
     }
 
+    public Integer getCountersSumEstimates(String deliveryDate, String province, String product) {
+        try {
+
+            var counters = lambdaClient.getCountersSumEstimates(deliveryDate, province, product);
+            return extractLatestNumberOfShipments(counters.getItems());
+
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "Errore durante GET_PRINT_CAPACITY_COUNTER per deliveryDate %s"
+                            .formatted(deliveryDate),
+                    e
+            );
+        }
+    }
+
     public Integer getPaperDeliveryItemsSize(String deliveryDate, WorkflowSteps workFlowStep) {
         return lambdaClient.getPaperDelivery(deliveryDate, workFlowStep).getItems().size();
     }
@@ -58,9 +75,13 @@ public class DelayerSevice {
         return lambdaClient.getUsedSenderLimitByPk(deliveryDate, pk).getItems().size();
     }
 
+    public Integer getUsedSenderLimit(String deliveryDate, String pk) {
+        return lambdaClient.getUsedSenderLimitByPk(deliveryDate, pk).getItems().get(0).getSenderLimit();
+    }
+
     public Stream<DelayerPaperDelivery> getResidualPapers(String deliveryDate) {
         var residualPapersRes = lambdaClient.getResidualPapers(deliveryDate, LocalDate.now().toString());
-        return  csvLoader.downloadResidualPapers(residualPapersRes.getDownloadUrl());
+        return csvLoader.downloadResidualPapers(residualPapersRes.getDownloadUrl());
     }
 
     public void deleteDataAll() {
@@ -264,5 +285,120 @@ public class DelayerSevice {
         return lambdaClient.delayerToPaperChannel();
     }
 
+    private Instant extractRightmostTimestamp(String sk) {
+        if (sk == null || sk.isBlank()) {
+            return null;
+        }
+
+        String[] parts = sk.split("~");
+        for (int i = parts.length - 1; i >= 0; i--) {
+            try {
+                return Instant.parse(parts[i]);
+            } catch (Exception ignored) {
+                // non è un timestamp, continuo a sinistra
+            }
+        }
+
+        return null;
+    }
+
+
+    private int extractLatestNumberOfShipments(List<? extends DelayerCountersSumEstimatesItem> items) {
+        try {
+            Instant latestInstant = null;
+            Integer latestShipments = null;
+
+            for (var item : items) {
+                String sk = item.getSk();
+                Instant itemTimestamp = extractRightmostTimestamp(sk);
+
+                if (itemTimestamp == null) {
+                    continue; // item senza timestamp valido nello sk
+                }
+
+                if (latestInstant == null || itemTimestamp.isAfter(latestInstant)) {
+                    latestInstant = itemTimestamp;
+                    latestShipments = Optional.ofNullable(item.getNumberOfShipments()).orElse(0);
+                }
+            }
+
+            if (latestShipments == null && !items.isEmpty()) {
+                latestShipments = Optional.of(items).map(a -> a.get(0)).map(DelayerCountersSumEstimatesItem::getNumberOfShipments).orElse(0); // fallback: prendo il primo item se nessuno ha timestamp valido
+            }
+
+            return (latestShipments == null) ? 0 : latestShipments;
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid JSON input", e);
+        }
+    }
+
+    public int getCountersExclude(String deliveryDate, String province, String product) {
+        try {
+            var counters = lambdaClient.getCountersExclude(deliveryDate, province, product);
+            return extractLatestNumberOfShipments(counters.getItems());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int getDeclaredCapacity(String deliveryDate, String province, String product, Set<String> foundProducts) {
+        try {
+            var declaredCapacityResponse = lambdaClient.getDeclaredCapacity(province, deliveryDate);
+
+            return extractTotalCapacityForProduct(declaredCapacityResponse, product, foundProducts);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private int extractTotalCapacityForProduct(DelayerDeclaredCapacity declaredCapacityRespons, String product, Set<String> foundProducts) {
+        try {
+
+            var items = declaredCapacityRespons.getItems();
+
+            int totalCapacity = 0;
+
+            for (var item : items) {
+                // var productsNode = item.path("products");
+                var productsNode = item.getUnifiedDeliveryDriver();
+
+
+                // Check if products list contains the given product
+//                boolean hasProduct = false;
+//                for (var p : productsNode) {
+//                    String foundProduct = p.asText();
+//                    foundProducts.add(foundProduct);
+//
+//                    if (foundProduct.equals(product)) {
+////                        hasProduct = true;
+//                        totalCapacity += Optional.of(item.getCapacity()).orElse(0);
+//                    }
+//                }
+
+//                if (hasProduct) {
+//                    totalCapacity += Optional.of(item.getCapacity()).orElse(0);
+//                }
+            }
+
+            return totalCapacity;
+
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid JSON input", e);
+        }
+    }
+
+    public int fetchWeeklyEstimateForPA(String deliveryDate, String pk) {
+
+        try {
+            var senderLimitResponse = lambdaClient.getSenderLimitByPk(deliveryDate, pk);
+
+            Assertions.assertThat(senderLimitResponse.getItems().size())
+                    .as("L'operation deve restituire una lista di items non vuota altrimenti le stime non sono state elaborate")
+                    .isGreaterThan(0);
+            return senderLimitResponse.getItems().get(0).getWeeklyEstimate();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }

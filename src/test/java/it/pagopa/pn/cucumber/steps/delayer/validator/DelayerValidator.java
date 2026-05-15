@@ -16,6 +16,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.getNextMondayFromDate;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -136,7 +138,7 @@ public class DelayerValidator {
         List<DelayerPaperDelivery> actualFrozen = lambdaClient.findByWorkflowStep(
                 frozenExpected.stream().map(DelayerPaperDelivery::getRequestId).collect(Collectors.toSet()),
                 step.name(),
-                getNextMonday(),
+                getNextMondayFromDate(context.expectedDeliveryDate, 1),
                 FROZEN_POLLING_MAX_MINUTES
         );
 

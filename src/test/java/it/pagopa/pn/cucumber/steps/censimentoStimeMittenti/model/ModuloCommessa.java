@@ -48,9 +48,8 @@ public class ModuloCommessa {
                     )
                     .forEach(prodotto -> {
                         int valoreTotale = prodotto.getValoreTotale();
-                        int valorePerGiorno = valoreTotale / giorniMeseTarget;
-                        int weeklyEstimate = valorePerGiorno * giorniValidi;
-
+                        double valorePerGiorno = (double) valoreTotale / giorniMeseTarget;
+                        int weeklyEstimate = (int) Math.round(valorePerGiorno * giorniValidi);
                         DelayerSenderLimit limit = new DelayerSenderLimit();
                         limit.setProductType(prodotto.getId());
                         limit.setDeliveryDate(lunedi.toString());
