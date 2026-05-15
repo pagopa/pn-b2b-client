@@ -93,9 +93,14 @@ public class DevToolsSteps {
 
     @Given("l'admin del fruitore {string} ha già creato un client di tipo {interopClientType} aggiungendo se stesso come membro e caricando una coppia di chiavi")
     public void createClient(String tenantType, ClientAssertionOptions.ClientType clientType) {
+        createClient("admin", tenantType, clientType);
+    }
+
+    @Given("un {string} del fruitore {string} ha già creato un client di tipo {interopClientType} aggiungendo se stesso come membro e caricando una coppia di chiavi")
+    public void createClient(String role, String tenantType, ClientAssertionOptions.ClientType clientType) {
         clientCommonSteps.createClientsForTenants(tenantType, 1, clientType.name());
-        clientCommonSteps.tenantHasAlreadyAddUsersWithRole(tenantType, "admin");
-        clientKeyReadSteps.clientPublicKeyUpload("admin", tenantType);
+        clientCommonSteps.tenantHasAlreadyAddUsersWithRole(tenantType, role);
+        clientKeyReadSteps.clientPublicKeyUpload(role, tenantType);
     }
 
     @When("{string} crea una client assertion valida per un client di tipo {interopClientType}")

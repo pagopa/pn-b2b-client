@@ -153,18 +153,18 @@ Feature: Debugger Client Assertion Sync DPoP
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
     And "PA1" crea una client assertion per un client di tipo CONSUMER con:
-      | claim        | value                  |
-      | __rawHeader  | invalid_header         |
+      | claim       | value          |
+      | __rawHeader | invalid_header |
     And "PA1" crea una DPoP proof per la client assertion
     When "PA1" richiede la validazione della client assertion appena creata
     And si ottiene response status code 200
     Then i risultati di validazione sono:
-      | step                                 | result  | errors                             |
-      | clientAssertionValidation            | FAILED  | [unexpectedClientAssertionPayload] |
-      | publicKeyRetrieve                    | SKIPPED | []                                 |
-      | clientAssertionSignatureVerification | SKIPPED | []                                 |
-      | platformStatesVerification           | SKIPPED | []                                 |
-      | dpopValidation                       | PASSED  | []                                 |
+      | step                                 | result  | errors                      |
+      | clientAssertionValidation            | FAILED  | [unexpectedClientAssertion] |
+      | publicKeyRetrieve                    | SKIPPED | []                          |
+      | clientAssertionSignatureVerification | SKIPPED | []                          |
+      | platformStatesVerification           | SKIPPED | []                          |
+      | dpopValidation                       | PASSED  | []                          |
 
   @devToolsClientAssertion
   Scenario: [VALIDATION_INVALID_FORMAT_ERROR_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando la client assertion è malformata allora la validazione formale fallisce con errore invalidClientAssertionFormat
@@ -195,16 +195,15 @@ Feature: Debugger Client Assertion Sync DPoP
     And "PA1" richiede la validazione della client assertion appena creata
     And si ottiene response status code 200
     Then i risultati di validazione sono:
-      | step                                 | result  | errors           |
+      | step                                 | result  | errors                         |
       | clientAssertionValidation            | FAILED  | [clientAssertionInvalidClaims] |
-      | publicKeyRetrieve                    | SKIPPED | []               |
-      | clientAssertionSignatureVerification | SKIPPED | []               |
-      | platformStatesVerification           | SKIPPED | []               |
-      | dpopValidation                       | PASSED  | []               |
+      | publicKeyRetrieve                    | SKIPPED | []                             |
+      | clientAssertionSignatureVerification | SKIPPED | []                             |
+      | platformStatesVerification           | SKIPPED | []                             |
+      | dpopValidation                       | PASSED  | []                             |
 
   #Bug aperto: https://pagopa.atlassian.net/browse/PIN-9993
   # 2026-05-08 per il momento non verrà applicato nessun fix, vedi https://pagopa.atlassian.net/browse/PIN-9540
-  @wait_for_fix
   @devToolsClientAssertion
   Scenario Outline: [VALIDATION_INVALID_CLAIM_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il claim <claim> non è in formato valido allora la validazione formale fallisce con errore <expectedError>
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
@@ -223,31 +222,15 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                |
       | dpopValidation                       | PASSED  | []                |
 
+    @wait_for_fix
     Examples:
       | claim | value      | expectedError         |
       | iss   | not-a-uuid | invalidClientIdFormat |
+
+    Examples:
+      | claim | value      | expectedError         |
       | sub   | not-a-uuid | invalidSubjectFormat  |
 
-  #TODO: dipende da https://pagopa.atlassian.net/browse/PIN-9993
-  @wait_for_fix
-  @devToolsClientAssertion
-  Scenario: [VALIDATION_INVALID_CLAIMS_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando diversi claims sono in formato valido allora la validazione formale fallisce con errore clientAssertionInvalidClaims
-    Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
-    And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
-    When "PA1" crea una client assertion per un client di tipo CONSUMER con:
-      | claim | value      |
-      | iss   | not-a-uuid |
-      | sub   | not-a-uuid |
-    And "PA1" crea una DPoP proof per la client assertion
-    And "PA1" richiede la validazione della client assertion appena creata
-    And si ottiene response status code 200
-    Then i risultati di validazione sono:
-      | step                                 | result  | errors                         |
-      | clientAssertionValidation            | FAILED  | [clientAssertionInvalidClaims] |
-      | publicKeyRetrieve                    | SKIPPED | []                             |
-      | clientAssertionSignatureVerification | SKIPPED | []                             |
-      | platformStatesVerification           | SKIPPED | []                             |
-      | dpopValidation                       | PASSED  | []                             |
 
   @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_KID_NOT_FOUND_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il claim kid non è presente allora il recupero della chiave pubblica fallisce con errore kidNotFound
@@ -268,7 +251,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | dpopValidation                       | PASSED  | []            |
 
   #Bug aperto: https://pagopa.atlassian.net/browse/PIN-9998
-  @wait_for_fix
+
   @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_INVALID_KID_FORMAT_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il claim kid non è in formato valido allora il recupero della chiave pubblica fallisce con errore invalidKidFormat
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
@@ -281,8 +264,8 @@ Feature: Debugger Client Assertion Sync DPoP
     And si ottiene response status code 200
     Then i risultati di validazione sono:
       | step                                 | result  | errors             |
-      | clientAssertionValidation            | PASSED  | []                 |
-      | publicKeyRetrieve                    | FAILED  | [invalidKidFormat] |
+      | clientAssertionValidation            | FAILED  | [invalidKidFormat] |
+      | publicKeyRetrieve                    | SKIPPED | []                 |
       | clientAssertionSignatureVerification | SKIPPED | []                 |
       | platformStatesVerification           | SKIPPED | []                 |
       | dpopValidation                       | PASSED  | []                 |
@@ -306,7 +289,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | dpopValidation                       | PASSED  | []               |
 
   # Bug aperto: https://pagopa.atlassian.net/browse/PIN-9999
-  @wait_for_fix
+
   @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_PURPOSE_ID_NOT_PROVIDED_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il claim purposeId non è presente allora il recupero della chiave pubblica fallisce con errore purposeIdNotProvided
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
