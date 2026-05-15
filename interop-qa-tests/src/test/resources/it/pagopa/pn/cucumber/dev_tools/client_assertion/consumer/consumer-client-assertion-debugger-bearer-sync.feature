@@ -200,7 +200,7 @@ Feature: Debugger Client Assertion Sync Bearer
       | clientAssertionSignatureVerification | SKIPPED | []                |
       | platformStatesVerification           | SKIPPED | []                |
 
-    @wait-for-fix
+    @wait_for_fix
     Examples:
       | claim | value      | expectedError         |
       | iss   | not-a-uuid | invalidClientIdFormat |
