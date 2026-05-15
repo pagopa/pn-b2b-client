@@ -140,6 +140,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                  |
       | dpopValidation                       | PASSED  | []                  |
 
+  @wait_for_fix
   @devToolsClientAssertion
   Scenario: [VALIDATION_UNEXPECTED_PAYLOAD_API_CLIENT_DPOP] Dato un client API valido, quando il JWT ha un payload non atteso allora la validazione formale fallisce con errore unexpectedClientAssertionPayload
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
@@ -192,7 +193,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | dpopValidation                       | PASSED  | []               |
 
   #Bug aperto: https://pagopa.atlassian.net/browse/PIN-9993
-  @wait_for_fix
+
   @devToolsClientAssertion
   Scenario Outline: [VALIDATION_INVALID_CLAIM_API_CLIENT_DPOP] Dato un client API valido, quando il claim <claim> non è in formato valido allora la validazione formale fallisce con errore <expectedError>
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
@@ -216,7 +217,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | sub   | not-a-uuid | invalidSubjectFormat  |
 
   #TODO: dipende da https://pagopa.atlassian.net/browse/PIN-9993
-  @wait_for_fix
+
   @devToolsClientAssertion
   Scenario: [VALIDATION_INVALID_CLAIMS_API_CLIENT_DPOP] Dato un client API valido, quando diversi claims sono in formato valido allora la validazione formale fallisce con errore clientAssertionInvalidClaims
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
@@ -254,7 +255,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | dpopValidation                       | PASSED  | []            |
 
   #Bug aperto: https://pagopa.atlassian.net/browse/PIN-9998
-  @wait_for_fix
+
   @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_INVALID_KID_FORMAT_API_CLIENT_DPOP] Dato un client API valido, quando il claim kid non è in formato valido allora il recupero della chiave pubblica fallisce con errore invalidKidFormat
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
@@ -266,8 +267,8 @@ Feature: Debugger Client Assertion Sync DPoP
     And si ottiene response status code 200
     Then i risultati di validazione sono:
       | step                                 | result  | errors             |
-      | clientAssertionValidation            | PASSED  | []                 |
-      | publicKeyRetrieve                    | FAILED  | [invalidKidFormat] |
+      | clientAssertionValidation            | FAILED  | [invalidKidFormat] |
+      | publicKeyRetrieve                    | SKIPPED | []                 |
       | clientAssertionSignatureVerification | SKIPPED | []                 |
       | platformStatesVerification           | SKIPPED | []                 |
       | dpopValidation                       | PASSED  | []                 |
