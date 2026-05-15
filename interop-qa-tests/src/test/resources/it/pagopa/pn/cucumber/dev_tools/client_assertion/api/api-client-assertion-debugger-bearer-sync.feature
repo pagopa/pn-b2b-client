@@ -97,18 +97,18 @@ Feature: Debugger Client Assertion Sync Bearer
   #TODO: da passare ai test per la fase 3, rieseguire per verificare cosa fa platformStatesVerification
   @devToolsClientAssertion
   Scenario: [VALIDATION_EXPIRED_ERROR_API_CLIENT] Dato un client API valido, quando il token è scaduto allora la validazione formale fallisce con errore 0017
-   Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
-   When "PA1" crea una client assertion per un client di tipo API con:
-     | claim | value     |
-     | exp   | now-10800 |
-   And "PA1" richiede la validazione della client assertion appena creata
-   And si ottiene response status code 200
-   Then i risultati di validazione sono:
-     | step                                 | result  | errors              |
-     | clientAssertionValidation            | PASSED  | []                  |
-     | publicKeyRetrieve                    | PASSED  | []                  |
-     | clientAssertionSignatureVerification | FAILED  | [tokenExpiredError] |
-     | platformStatesVerification           | SKIPPED | []                  |
+    Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
+    When "PA1" crea una client assertion per un client di tipo API con:
+      | claim | value     |
+      | exp   | now-10800 |
+    And "PA1" richiede la validazione della client assertion appena creata
+    And si ottiene response status code 200
+    Then i risultati di validazione sono:
+      | step                                 | result  | errors              |
+      | clientAssertionValidation            | PASSED  | []                  |
+      | publicKeyRetrieve                    | PASSED  | []                  |
+      | clientAssertionSignatureVerification | FAILED  | [tokenExpiredError] |
+      | platformStatesVerification           | SKIPPED | []                  |
 
   # Errore non riproducibile con la configurazione usata per l'ambiente
   @ignore
@@ -127,12 +127,13 @@ Feature: Debugger Client Assertion Sync Bearer
       | clientAssertionSignatureVerification | SKIPPED | []                  |
       | platformStatesVerification           | SKIPPED | []                  |
 
+  @wait_for_fix
   @devToolsClientAssertion
   Scenario: [VALIDATION_UNEXPECTED_PAYLOAD_API_CLIENT] Dato un client API valido, quando il JWT ha un payload non atteso allora la validazione formale fallisce con errore unexpectedClientAssertionPayload
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     And "PA1" crea una client assertion per un client di tipo API con:
-      | claim        | value                  |
-      | __rawHeader  | invalid_header         |
+      | claim       | value          |
+      | __rawHeader | invalid_header |
     When "PA1" richiede la validazione della client assertion appena creata
     And si ottiene response status code 200
     Then i risultati di validazione sono:
@@ -166,14 +167,14 @@ Feature: Debugger Client Assertion Sync Bearer
     And "PA1" richiede la validazione della client assertion appena creata
     And si ottiene response status code 200
     Then i risultati di validazione sono:
-      | step                                 | result  | errors           |
+      | step                                 | result  | errors                         |
       | clientAssertionValidation            | FAILED  | [clientAssertionInvalidClaims] |
-      | publicKeyRetrieve                    | SKIPPED | []               |
-      | clientAssertionSignatureVerification | SKIPPED | []               |
-      | platformStatesVerification           | SKIPPED | []               |
+      | publicKeyRetrieve                    | SKIPPED | []                             |
+      | clientAssertionSignatureVerification | SKIPPED | []                             |
+      | platformStatesVerification           | SKIPPED | []                             |
 
   #Bug aperto: https://pagopa.atlassian.net/browse/PIN-9993
-  @wait_for_fix
+
   @devToolsClientAssertion
   Scenario Outline: [VALIDATION_INVALID_CLAIM_API_CLIENT] Dato un client API valido, quando il claim <claim> non è in formato valido allora la validazione formale fallisce con errore <expectedError>
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
@@ -195,7 +196,7 @@ Feature: Debugger Client Assertion Sync Bearer
       | sub   | not-a-uuid | invalidSubjectFormat  |
 
   #TODO: dipende da https://pagopa.atlassian.net/browse/PIN-9993
-  @wait_for_fix
+
   @devToolsClientAssertion
   Scenario: [VALIDATION_INVALID_CLAIMS_API_CLIENT] Dato un client API valido, quando diversi claims sono in formato valido allora la validazione formale fallisce con errore clientAssertionInvalidClaims
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
@@ -228,7 +229,6 @@ Feature: Debugger Client Assertion Sync Bearer
       | platformStatesVerification           | SKIPPED | []            |
 
   #Bug aperto: https://pagopa.atlassian.net/browse/PIN-9998
-  @wait_for_fix
   @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_INVALID_KID_FORMAT_API_CLIENT] Dato un client API valido, quando il claim kid non è in formato valido allora il recupero della chiave pubblica fallisce con errore invalidKidFormat
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
@@ -239,8 +239,8 @@ Feature: Debugger Client Assertion Sync Bearer
     And si ottiene response status code 200
     Then i risultati di validazione sono:
       | step                                 | result  | errors             |
-      | clientAssertionValidation            | PASSED  | []                 |
-      | publicKeyRetrieve                    | FAILED  | [invalidKidFormat] |
+      | clientAssertionValidation            | FAILED  | [invalidKidFormat] |
+      | publicKeyRetrieve                    | SKIPPED | []                 |
       | clientAssertionSignatureVerification | SKIPPED | []                 |
       | platformStatesVerification           | SKIPPED | []                 |
 
