@@ -206,26 +206,9 @@ Feature: Debugger Client Assertion Sync Bearer
       | iss   | not-a-uuid | invalidClientIdFormat |
 
     Examples:
-      | claim | value      | expectedError         |
-      | sub   | not-a-uuid | invalidSubjectFormat  |
+      | claim | value      | expectedError        |
+      | sub   | not-a-uuid | invalidSubjectFormat |
 
-  #TODO: dipende da https://pagopa.atlassian.net/browse/PIN-9993
-  @devToolsClientAssertion
-  Scenario: [VALIDATION_INVALID_CLAIMS_CONSUMER_CLIENT] Dato un client CONSUMER valido, quando diversi claims sono in formato valido allora la validazione formale fallisce con errore clientAssertionInvalidClaims
-    Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
-    And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
-    When "PA1" crea una client assertion per un client di tipo CONSUMER con:
-      | claim | value      |
-      | iss   | not-a-uuid |
-      | sub   | not-a-uuid |
-    And "PA1" richiede la validazione della client assertion appena creata
-    And si ottiene response status code 200
-    Then i risultati di validazione sono:
-      | step                                 | result  | errors                         |
-      | clientAssertionValidation            | FAILED  | [clientAssertionInvalidClaims] |
-      | publicKeyRetrieve                    | SKIPPED | []                             |
-      | clientAssertionSignatureVerification | SKIPPED | []                             |
-      | platformStatesVerification           | SKIPPED | []                             |
 
   @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_KID_NOT_FOUND_CONSUMER_CLIENT] Dato un client CONSUMER valido, quando il claim kid non è presente allora il recupero della chiave pubblica fallisce con errore kidNotFound
