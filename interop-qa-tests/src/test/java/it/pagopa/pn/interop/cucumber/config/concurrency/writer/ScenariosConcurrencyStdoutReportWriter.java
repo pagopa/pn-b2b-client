@@ -38,7 +38,7 @@ public class ScenariosConcurrencyStdoutReportWriter implements ScenariosConcurre
             sb.append(String.format("S%02d -> %s%n", i, model.scenarioNames().get(i)));
         }
 
-        System.out.print(sb.toString());
+        System.out.print(sb);
     }
 
     /**
@@ -71,6 +71,6 @@ public class ScenariosConcurrencyStdoutReportWriter implements ScenariosConcurre
             sb.append("\n");
         }
 
-        System.out.print(sb.toString());
+        System.out.print(sb);
     }
 }

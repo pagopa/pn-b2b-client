@@ -47,8 +47,8 @@ import it.pagopa.interop.tracing.service.impl.QAAbstractInteropTracingClient;
 import it.pagopa.interop.users.service.M2MV3UsersClient;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.config.concurrency.ScenariosConcurrencyConfiguration;
+import it.pagopa.pn.interop.cucumber.config.concurrency.ScenariosConcurrencyProperties;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps._experimentsScenariosCounter;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeTemplateCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.M2MDataPreparationService;
@@ -216,8 +216,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         IPurposeTemplateClient.class,
         ProbingClient.class,
         DevToolsClientImpl.class,
-        _experimentsScenariosCounter.class,
         ScenariosConcurrencyConfiguration.class,
+        ScenariosConcurrencyProperties.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

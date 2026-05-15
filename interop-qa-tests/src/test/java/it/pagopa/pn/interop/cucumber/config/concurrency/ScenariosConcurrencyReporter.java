@@ -15,43 +15,51 @@ public class ScenariosConcurrencyReporter {
 
     private final ScenariosConcurrencyAuditor auditor;
     private final List<ScenariosConcurrencyReportWriter> reportWriters;
+    private final long bucketMs;
 
     /**
-     * Rappresenta la timeline: ogni riga è un istante di tempo,
-     * ogni booleano indica se lo scenario i-esimo era attivo.
+     * Rappresenta lo stato di attivazione degli scenari lungo una linea temporale suddivisa in bucket.
      */
     public record TimelineModel(List<String> scenarioNames, List<Long> timeBuckets, boolean[][] matrix) {}
 
     /**
-     * Rappresenta la sovrapposizione: matrix[i][j] è true se lo scenario i
-     * e lo scenario j sono stati eseguiti contemporaneamente.
+     * Rappresenta le intersezioni temporali (concorrenza) tra coppie di scenari.
      */
     public record OverlapModel(List<String> scenarioNames, boolean[][] matrix) {}
 
+    /**
+     * Allo spegnimento del contesto Spring, genera i modelli e invoca i writer.
+     * La gestione degli errori garantisce che il fallimento di un writer non blocchi gli altri.
+     */
     @EventListener
     public void onContextClosed(ContextClosedEvent event) {
         List<ScenariosConcurrencyAuditor.ExecutionRecord> history = auditor.getSortedHistory();
 
         if (history.isEmpty()) {
-            log.warn("[REPORT] Nessun dato raccolto. Verificare la registrazione degli hooks.");
+            log.warn("[REPORT] Nessun dato raccolto. Verificare che gli hooks stiano registrando correttamente.");
             return;
         }
 
-        TimelineModel timelineModel = this.calculateTimelineModel(history, 1000);
+        log.info("[REPORT] Elaborazione modelli di concorrenza per {} record...", history.size());
+
+        TimelineModel timelineModel = this.calculateTimelineModel(history, bucketMs);
         OverlapModel overlapModel = this.calculateOverlapModel(history);
+
         for (var writer : reportWriters) {
-            writer.write(timelineModel);
-            writer.write(overlapModel);
+            try {
+                writer.write(timelineModel);
+                writer.write(overlapModel);
+            } catch (Exception e) {
+                log.error("[REPORT] Errore critico durante l'esecuzione del writer: {}",
+                        writer.getClass().getSimpleName(), e);
+            }
         }
-
-
     }
 
     /**
-     * Calcola la matrice della timeline.
-     * @param bucketMs la risoluzione temporale (es. 1000ms)
+     * Trasforma i record di esecuzione in una matrice temporale discreta.
      */
-    public TimelineModel calculateTimelineModel(List<ScenariosConcurrencyAuditor.ExecutionRecord> records, long bucketMs) {
+    public TimelineModel calculateTimelineModel(List<ScenariosConcurrencyAuditor.ExecutionRecord> records, long resolutionMs) {
         if (records.isEmpty()) return new TimelineModel(List.of(), List.of(), new boolean[0][0]);
 
         long minStart = records.stream().mapToLong(ScenariosConcurrencyAuditor.ExecutionRecord::start).min().getAsLong();
@@ -59,8 +67,7 @@ public class ScenariosConcurrencyReporter {
 
         List<String> names = records.stream().map(ScenariosConcurrencyAuditor.ExecutionRecord::scenarioName).toList();
 
-        // Creazione dei bucket temporali
-        List<Long> buckets = LongStream.iterate(minStart, t -> t < maxEnd, t -> t + bucketMs)
+        List<Long> buckets = LongStream.iterate(minStart, t -> t < maxEnd, t -> t + resolutionMs)
                 .boxed()
                 .toList();
 
@@ -68,10 +75,11 @@ public class ScenariosConcurrencyReporter {
 
         for (int tIdx = 0; tIdx < buckets.size(); tIdx++) {
             long tStart = buckets.get(tIdx);
-            long tEnd = tStart + bucketMs;
+            long tEnd = tStart + resolutionMs;
 
             for (int sIdx = 0; sIdx < records.size(); sIdx++) {
                 ScenariosConcurrencyAuditor.ExecutionRecord rec = records.get(sIdx);
+                // Uno scenario è attivo se il suo intervallo [start, end] si sovrappone al bucket [tStart, tEnd]
                 matrix[tIdx][sIdx] = (rec.start() < tEnd) && (rec.end() > tStart);
             }
         }
@@ -80,7 +88,7 @@ public class ScenariosConcurrencyReporter {
     }
 
     /**
-     * Calcola la matrice di sovrapposizione tra scenari.
+     * Calcola la matrice di adiacenza delle sovrapposizioni tra scenari.
      */
     public OverlapModel calculateOverlapModel(List<ScenariosConcurrencyAuditor.ExecutionRecord> records) {
         int size = records.size();
@@ -94,6 +102,7 @@ public class ScenariosConcurrencyReporter {
                 ScenariosConcurrencyAuditor.ExecutionRecord recA = records.get(i);
                 ScenariosConcurrencyAuditor.ExecutionRecord recB = records.get(j);
 
+                // Formula matematica di intersezione tra due segmenti
                 matrix[i][j] = (recA.start() < recB.end()) && (recB.start() < recA.end());
             }
         }

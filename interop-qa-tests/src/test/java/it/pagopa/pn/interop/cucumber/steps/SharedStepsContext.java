@@ -120,14 +120,17 @@ public class SharedStepsContext {
 
     @After(order = Integer.MAX_VALUE)
     public void eventuallyUnlock(Scenario scenario) {
-        stopWatch.start("Rilascio Lock");
-
-        this.concurrencyAuditor.recordEnd(scenario.getName());
-        concurrencyManager.releaseLocks(this.acquiredLocks);
-
-        stopWatch.stop();
-        System.out.printf("[AFTER] Scenario: %s - Tempo rilascio lock: %d ms%n",
-                scenario.getName(), stopWatch.getLastTaskTimeMillis());
+        try {
+            stopWatch.start("Rilascio Lock");
+            concurrencyAuditor.recordEnd(scenario.getName());
+        } finally {
+            // Il rilascio DEVE essere in un finally per garantire
+            // che i semafori tornino liberi anche se l'auditor fallisce
+            concurrencyManager.releaseLocks(this.acquiredLocks);
+            stopWatch.stop();
+            System.out.printf("[AFTER] Scenario: %s - Tempo rilascio lock: %d ms%n",
+                    scenario.getName(), stopWatch.getLastTaskTimeMillis());
+        }
     }
 
     private static String extractScenarioId(String scenarioName) {

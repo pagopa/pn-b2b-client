@@ -1,6 +1,5 @@
 package it.pagopa.pn.interop.cucumber;
 
-import io.cucumber.java.AfterAll;
 import org.junit.platform.suite.api.*;
 
 import static io.cucumber.junit.platform.engine.Constants.*;
@@ -33,13 +32,11 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 
         @ConfigurationParameter(key = "cucumber.execution.execution-mode.scenario", value = "concurrent"),
-        @ConfigurationParameter(key = "cucumber.execution.exclusive-resources.vincolato.read-write", value = "@exp_vincolato"),
+        @ConfigurationParameter(key = "cucumber.execution.exclusive-resources.vincolato.read-write", value = "@concurrency-exp_vincolato"),
 })
 @ExcludeTags({"wait_for_fix", "ignore"})
-@IncludeTags({"exp"})
-public class _ExperimentsTest {
-        @AfterAll
-        public static void globalTearDown() {
-                // Recupera il bean ConcurrencyAuditor dal contesto e genera il report
-        }
+@IncludeTags({"concurrency-exp"})
+//Test utili solo per verificare i meccanismi di gestione della concorrenza, non hanno alcun legame coi test di dominio
+public class ConcurrencyExperimentsTest {
+
 }
