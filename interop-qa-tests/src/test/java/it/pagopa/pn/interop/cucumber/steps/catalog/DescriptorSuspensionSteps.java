@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.catalog;
 
 import io.cucumber.java.en.When;
+import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -26,6 +27,16 @@ public class DescriptorSuspensionSteps {
                         sharedStepsContext.getEServicesCommonContext().getEserviceId(),
                         sharedStepsContext.getEServicesCommonContext().getDescriptorId()
                 )
+        );
+
+        PollingService.makePolling(
+                () -> clientTokenConfigurator.getEServiceClient().getEServiceDescriptor(
+                        sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                        sharedStepsContext.getEServicesCommonContext().getDescriptorId()
+                ),
+                res -> res.getState().equals(EServiceDescriptorState.SUSPENDED),
+                "Errore durante la sospensione del descrittore dell'e-service",
+                4, 2_500
         );
     }
 
