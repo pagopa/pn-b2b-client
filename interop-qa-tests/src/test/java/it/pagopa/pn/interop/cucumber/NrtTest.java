@@ -19,7 +19,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
                         "api.set=M2M;" +
                         "api.bff.version=V1"
         ),
-        @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.interop.cucumber.steps"),
+        @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.interop.cucumber.steps, it.pagopa.pn.interop.cucumber.config.concurrency"),
 
         // abilita parallelismo JUnit
         @ConfigurationParameter(key = "junit.jupiter.execution.parallel.enabled", value = "true"),
