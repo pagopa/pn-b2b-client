@@ -365,6 +365,7 @@ Feature: Gestione degli attributi dichiarati degli e-services attraverso APIs M2
       | ARCHIVED    |
 
   @m2m-parte2-ottobre
+  @deleghe1
   Scenario: [M2M_ESERVICES_DECLARED_ATTRIBUTES_DELETE_06_B] Un utente NON può rimuovere gli attributi dichiarati da una versione di un e-service in stato diverso WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 275)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1"

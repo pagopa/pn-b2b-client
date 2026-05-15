@@ -596,7 +596,7 @@ Feature: Gestione degli eServices attraverso APIs M2M
       | DRAFT |
     #  | ARCHIVED    |
 
-  @deleghe2
+  @deleghe1
   @m2m-patch
   Scenario: [M2MG_ESERVICES_47_B] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale del nome di un e-service in stato WAITING_FOR_APPROVAL
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
@@ -705,7 +705,7 @@ Feature: Gestione degli eServices attraverso APIs M2M
     Then si ottiene lo status code 403
     And l'e-service non ha subito modifiche
 
-  @deleghe2
+  @deleghe1
   @m2m-patch
   Scenario: [M2MG_ESERVICES_48_C] Un utente delegato con ruolo M2M-ADMIN NON può effettuare una modifica parziale della descrizione di un e-service in stato WAITING_FOR_APPROVAL
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
