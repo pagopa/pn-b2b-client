@@ -75,7 +75,8 @@ public class NotificationStore {
 
     private void initializeNotifications() {
         this.applyTaskForEveryUser(
-            List.of("security", "api", "support", "api,security"), // 14 01 2026 causa problemi tecnici lato backend si può testare solo per ADMIN https://pagopaspa.slack.com/archives/C08RZ0ATBJ6/p1768317958663119
+            List.of("support"), // FIXME 18 05 2026 mi risulta che solo support non riceve notifiche in-app
+            //List.of("security", "api", "support", "api,security"), // 14 01 2026 causa problemi tecnici lato backend si può testare solo per ADMIN https://pagopaspa.slack.com/archives/C08RZ0ATBJ6/p1768317958663119
             (role, tenant) -> {
                 int offset = 0;
                 List<Notification> currentNotif;
@@ -100,6 +101,10 @@ public class NotificationStore {
     }
 
     public Set<Notification> get(NotificationUser user) {
+        // TODO Ora che i test sono automatici, le notifiche non possono essere recuperate solo 1 volta
+        // Ma ogni volta che si esegue il Then e dunque il get delle notifiche, si deve aggiornare
+        // Qui viene ri-inizializzato NotificationStore ma si deve trovare una soluzione meno impattante
+        initializeNotifications();
         Set<Notification> notificationsSet = this.notifications.get(user);
         if (notificationsSet == null) {
             notificationsSet = new HashSet<>();
