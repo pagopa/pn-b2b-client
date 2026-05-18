@@ -230,3 +230,9 @@ Feature: Gestione dei documenti attraverso APIs M2M V2
       | mode        |
       | erogazione  |
       #| ricezione   |   <-- 22/09/2025 e-service template in mod. receive non ancora supportati
+
+  Scenario: [M2MG_DOCUMENTS_23] Un utente con ruolo M2M-ADMIN non può effettuare il caricamento di un'interfaccia di tipo YAML non valida per un e-service
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare il caricamento di un'interfaccia di tipo YAML che non include né la versione di specifica né quella dell'API per un e-service
+    Then si ottiene lo status code 400

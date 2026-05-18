@@ -4,6 +4,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
+import it.pagopa.interop.e_service_template.IEServiceTemplateClient.EServiceTemplateDocumentKind;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
@@ -75,6 +76,20 @@ public class DocumentUploadSteps {
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().createEServiceDocument(eServicesCommonContext.getEserviceId(),
                         eServicesCommonContext.getDescriptorId(), "INTERFACE", "Interfaccia", resource)
+        );
+    }
+
+    @Given("l'utente carica un documento di interfaccia di tipo YAML che non include né la versione di specifica né quella dell'API")
+    public void loadDescriptorInvalidInterface() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        String fileName = "invalid-interface.yaml";
+        String filePath = String.format("src/main/resources/%s", fileName);
+        Resource resource = blobFileCreator.createBlobFile(filePath, fileName);
+
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getEServiceClient().createEServiceDocument(eServicesCommonContext.getEserviceId(),
+                        eServicesCommonContext.getDescriptorId(), EServiceTemplateDocumentKind.INTERFACE.name(), "Interfaccia", resource)
         );
     }
 
