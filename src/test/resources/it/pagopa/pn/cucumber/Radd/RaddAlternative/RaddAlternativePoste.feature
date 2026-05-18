@@ -1,43 +1,268 @@
 Feature: Radd Alternative integrazione con Poste
 
+# Api testate:
+#  /radd-net/api/v1/download/{operationType}/{operationId}:   01/02
+#  /radd-net/api/v1/act/inquiry: description:                 03A/03B/04A/04B
+#  /radd-net/api/v1/act/transaction/start:                    coperto
+#  /radd-net/api/v1/act/transaction/complete:                 c operto
+#  /radd-net/api/v1/act/transaction/abort:                    05A/05B
+#  /radd-net/api/v1/aor/inquiry: description:                 coperto
+#  /radd-net/api/v1/aor/transaction/start:                    07/coperto
+#  /radd-net/api/v1/aor/transaction/complete:                 coperto
+#  /radd-net/api/v1/aor/transaction/abort:                    06A/06B
 
 
-#  /radd-net/api/v1/download/{operationType}/{operationId}:
-And L'operatore esegue il download del frontespizio del operazione "act"
-And L'operatore esegue il download del frontespizio del operazione "aor"
 
 
-#  /radd-net/api/v1/act/inquiry: description:
-When L'operatore scansione il qrCode per recuperare gli atti di <CITIZEN>
-When L'operatore usa lo IUN "corretto" per recuperare gli atti di Mario Cucumber
+
+  Scenario: [RADD_POSTE_01] PF - Verifica restituzione al cittadino del documento Frontespizio (nome e cognome del destinatario) come primo documento del plico
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber radd alternative |
+      | senderDenomination    | Comune di Palermo                            |
+      | physicalCommunication | AR_REGISTERED_LETTER                         |
+    And destinatario Signor Casuale e:
+      | digitalDomicile         | NULL                                         |
+      | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+    When la persona fisica Signor Casuale chiede di verificare la presenza di notifiche
+    Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
+    Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
+    And il recupero degli aar in stato irreperibile si conclude correttamente su radd alternative
+    And L'operatore esegue il download del frontespizio del operazione "aor"
+    And viene chiusa la transazione per il recupero degli aar su radd alternative
+    And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
 
-#  /radd-net/api/v1/act/transaction/start:
-And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+  Scenario: [RADD_POSTE_02] PG - Verifica restituzione al cittadino del documento Frontespizio (ragione sociale dell'impresa destinataria) come primo documento del plico
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+    And destinatario CucumberSpa
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    When Il cittadino CucumberSpa come destinatario 0 mostra il QRCode "corretto"
+    Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
+    And la scansione si conclude correttamente su radd alternative
+    Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+    And l'operazione di download degli atti si conclude correttamente su radd alternative
+    And L'operatore esegue il download del frontespizio del operazione "act"
+    Then viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
 
 
-#  /radd-net/api/v1/act/transaction/complete:
-And viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
+  Scenario: [RADD_POSTE_03A] PF - Scansione QR code esistente associato al CF corretto, per una notifica con allegati di pagamento (Avviso PagoPA e F24)
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+      | feePolicy          | DELIVERY_MODE                                |
+      | paFee              | 0                                            |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL                          |
+      | physicalAddress_address | Via @ok_890                   |
+      | payment_pagoPaForm      | SI                            |
+      | payment_f24             | PAYMENT_F24_STANDARD          |
+      | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
+      | apply_cost_pagopa       | SI                            |
+      | apply_cost_f24          | SI                            |
+      | payment_multy_number    | 1                             |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And Il cittadino Mario Gherkin come destinatario 0 mostra il QRCode "corretto"
+    When L'operatore scansione il qrCode per recuperare gli atti di Mario Gherkin
+    Then la scansione si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+    And l'operazione di download degli atti si conclude correttamente su radd alternative
+    And l'operazione di download restituisce 7 documenti
 
 
-#  /radd-net/api/v1/act/transaction/abort:
-And la transazione viene abortita per gli "act"
+  Scenario: [RADD_POSTE_03B] PF - Scansione QR code esistente associato al CF corretto, per una notifica con allegato di pagamento (solo F24)
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+      | feePolicy          | DELIVERY_MODE                                |
+      | paFee              | 0                                            |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile         | NULL                          |
+      | physicalAddress_address | Via @ok_890                   |
+      | payment_pagoPaForm      | NULL                          |
+      | payment_f24             | PAYMENT_F24_STANDARD          |
+      | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
+      | apply_cost_pagopa       | NO                            |
+      | apply_cost_f24          | SI                            |
+      | payment_multy_number    | 1                             |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
+    When L'operatore scansione il qrCode per recuperare gli atti di Mario Cucumber
+    Then la scansione si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+    And l'operazione di download degli atti si conclude correttamente su radd alternative
+    And l'operazione di download restituisce 6 documenti
+    And viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
+    And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
 
-#  /radd-net/api/v1/aor/inquiry: description:  ***chiede di verificare la presenza di notifiche
-And la persona giuridica Gherkin Irreperibile chiede di verificare la presenza di notifiche
-And la persona fisica Gherkin Irreperibile chiede di verificare la presenza di notifiche
-And la persona fisica Signor Casuale chiede di verificare ad operatore radd "UPLOADER" la presenza di notifiche
+  Scenario: [RADD_POSTE_04A] PF -  Recupero notifica con allegato di pagamento (solo Avviso PagoPA)  con codice IUN esistente associato a CF corretto
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+      | feePolicy          | DELIVERY_MODE                                |
+      | paFee              | 0                                            |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile         | NULL        |
+      | physicalAddress_address | Via @ok_890 |
+      | payment_pagoPaForm      | SI          |
+      | payment_f24             | NULL        |
+      | apply_cost_pagopa       | SI          |
+      | apply_cost_f24          | NO          |
+      | payment_multy_number    | 1           |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    Then L'operatore usa lo IUN "corretto" per recuperare gli atti di Mario Cucumber
+    And la lettura si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+    And l'operazione di download degli atti si conclude correttamente su radd alternative
+    And l'operazione di download restituisce 6 documenti
+    And viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
+    And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
 
-#  /radd-net/api/v1/aor/transaction/start:
-Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
-Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona giuridica su radd alternative
+  Scenario: [RADD_POSTE_04A] PG -  Recupero notifica con allegato di pagamento (solo Avviso PagoPA)  con codice IUN esistente associato a CF corretto
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+      | feePolicy          | DELIVERY_MODE                                |
+      | paFee              | 0                                            |
+    And destinatario CucumberSpa e:
+      | payment_pagoPaForm   | SI   |
+      | payment_f24          | NULL |
+      | apply_cost_pagopa    | SI   |
+      | apply_cost_f24       | NO   |
+      | payment_multy_number | 1    |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    Then L'operatore usa lo IUN "corretto" per recuperare gli atti di CucumberSpa
+    And la lettura si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+    And l'operazione di download degli atti si conclude correttamente su radd alternative
+    And l'operazione di download restituisce 5 documenti
+    And viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
+    And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
 
-#  /radd-net/api/v1/aor/transaction/complete: description:
-And viene chiusa la transazione per il recupero degli aar su radd alternative
+  Scenario: [RADD_POSTE_05A] PF - Interruzione processo recupero atti e avvio nuovo processo su stessa notifica
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And "Mario Cucumber" legge la notifica
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
+    Then Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
+    And L'operatore scansione il qrCode per recuperare gli atti da radd alternative
+    And la scansione si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+    And la transazione viene abortita per gli "act"
+    Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
+    And la scansione si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+    And l'operazione di download degli atti si conclude correttamente su radd alternative
+    Then viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
 
 
-#  /radd-net/api/v1/aor/transaction/abort: description:
-And la transazione viene abortita per gli "aor"
+  Scenario: [RADD_POSTE_05B] PG - Interruzione processo recupero atti e avvio nuovo processo su stessa notifica
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+    And destinatario CucumberSpa
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And "CucumberSpa" legge la notifica
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
+    Then Il cittadino CucumberSpa come destinatario 0 mostra il QRCode "corretto"
+    And L'operatore scansione il qrCode per recuperare gli atti da radd alternative
+    And la scansione si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+    And la transazione viene abortita per gli "act"
+    And L'operatore scansione il qrCode per recuperare gli atti da radd alternative
+    And la scansione si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+    And l'operazione di download degli atti si conclude correttamente su radd alternative
+    Then viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
+    And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
+
+
+  Scenario: [RADD_POSTE_06A] PF - Visualizzazione AAR di notifiche i cui documenti sono già stati stampati, ma inibizione stampa documenti associati alla notifica
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber radd alternative |
+      | senderDenomination    | Comune di milano                             |
+      | physicalCommunication | AR_REGISTERED_LETTER                         |
+    And destinatario Signor Casuale e:
+      | digitalDomicile         | NULL                                         |
+      | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+    And la persona fisica Signor Casuale chiede di verificare la presenza di notifiche
+    And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    And Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
+    And il recupero degli aar in stato irreperibile si conclude correttamente su radd alternative
+    And viene chiusa la transazione per il recupero degli aar su radd alternative
+    And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
+    And la transazione viene abortita per gli "aor"
+    And l'operazione di abort genera un errore "La transazione risulta già completa" con codice 2 su radd alternative
+
+
+  Scenario: [RADD_POSTE_06B] PG - Visualizzazione AAR di notifiche i cui documenti sono già stati stampati, ma inibizione stampa documenti associati alla notifica
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di milano                             |
+    And destinatario Gherkin Irreperibile e:
+      | digitalDomicile         | NULL                                         |
+      | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+    When la persona giuridica Gherkin Irreperibile chiede di verificare la presenza di notifiche
+    And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona giuridica su radd alternative
+    And il recupero degli aar in stato irreperibile si conclude correttamente su radd alternative
+    And viene chiusa la transazione per il recupero degli aar su radd alternative
+    And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
+    And la transazione viene abortita per gli "aor"
+    And l'operazione di abort genera un errore "La transazione risulta già completa" con codice 2 su radd alternative
+
+
+  Scenario: [RADD_POSTE_07] PG - Visualizzazione link AAR disponibili con consegna documenti alla PG successivi alla stampa documenti per notifiche associate al CF corretto (irreperibile totale)
+    Given viene generata una nuova notifica
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
+    And destinatario Gherkin Irreperibile e:
+      | digitalDomicile         | NULL                                         |
+      | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+    And la persona giuridica Gherkin Irreperibile chiede di verificare la presenza di notifiche
+    And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    And Vengono recuperati gli aar delle notifiche in stato irreperibile della persona giuridica su radd alternative
+    And il recupero degli aar in stato irreperibile si conclude correttamente su radd alternative
+    And viene chiusa la transazione per il recupero degli aar su radd alternative
+    And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative

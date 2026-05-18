@@ -678,6 +678,17 @@ Feature: Radd Alternative
     And viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
+  Scenario: [RAtest62] PG -  Recupero notifica con allegato di pagamento (solo Avviso PagoPA)  con codice IUN esistente associato a CF corretto
+    Given imposto lo iun di SharedSteps a "ZLAX-EDRK-ULMR-202605-R-1" e la pa a "Comune_Multi"
+    Then L'operatore usa lo IUN "corretto" per recuperare gli atti di CucumberSpa
+    And la lettura si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+    And l'operazione di download degli atti si conclude correttamente su radd alternative
+    And l'operazione di download restituisce 5 documenti
+    And viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
+    And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
+
   @raddAlt
   Scenario: [RADD-ALT_ACT-63] PG - Recupero notifica con allegati di pagamento (due o più Avvisi PagoPA e due o più F24) con codice IUN esistente associato a CF corretto
     Given viene generata una nuova notifica

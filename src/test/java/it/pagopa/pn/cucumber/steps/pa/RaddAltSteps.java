@@ -7,6 +7,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
+import it.pagopa.pn.client.b2b.pa.service.IPnRaddAlternativeClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddAlternativeClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.RaddOperator;
@@ -46,7 +47,8 @@ import static it.pagopa.pn.cucumber.utils.NotificationValue.generateRandomNumber
 
 @Slf4j
 public class RaddAltSteps {
-    private final PnRaddAlternativeClientImpl raddAltClient;
+    //private final PnRaddAlternativeClientImpl raddAltClient;todo t radd
+    private IPnRaddAlternativeClient raddClient;
     private final PnExternalServiceClientImpl externalServiceClient;
     private final SharedSteps sharedSteps;
     private String qrCode;
@@ -82,15 +84,21 @@ public class RaddAltSteps {
 
     @Autowired
     public RaddAltSteps(PnRaddAlternativeClientImpl raddAltClient, PnExternalServiceClientImpl externalServiceClient, SharedSteps sharedSteps) {
-        this.raddAltClient = raddAltClient;
+        this.raddClient = raddAltClient;
         this.externalServiceClient = externalServiceClient;
         this.sharedSteps = sharedSteps;
     }
 
+
+    public void setRaddClient(IPnRaddAlternativeClient raddClient) {
+        this.raddClient = raddClient;
+    }
+
+
     @When("L'operatore scansione il qrCode per recuperare gli atti di {destinatario}")
     public void lOperatoreScansioneIlQrCodePerRecuperareGliAttiAlternative(Destinatario destinatario) {
         selectUserRaddAlternative(destinatario);
-        ActInquiryResponse actInquiryResponse = raddAltClient.actInquiry(uid,
+        ActInquiryResponse actInquiryResponse = raddClient.actInquiry(uid,
                 this.currentUserCf,
                 this.recipientType,
                 qrCode,
@@ -103,7 +111,7 @@ public class RaddAltSteps {
     @When("L'operatore usa lo IUN {string} per recuperare gli atti di {destinatario}")
     public void lOperatoreUsoIUNPerRecuperareGliAtti(String tipologiaIun, Destinatario destinatario) {
         selectUserRaddAlternative(destinatario);
-        ActInquiryResponse actInquiryResponse = raddAltClient.actInquiry(uid,
+        ActInquiryResponse actInquiryResponse = raddClient.actInquiry(uid,
                 this.currentUserCf,
                 this.recipientType,
                 null,
@@ -120,7 +128,7 @@ public class RaddAltSteps {
         selectUserRaddAlternative(destinatario);
         ActInquiryResponse actInquiryResponse = null;
         try {
-            actInquiryResponse = raddAltClient.actInquiry(uid,
+            actInquiryResponse = raddClient.actInquiry(uid,
                     this.currentUserCf,
                     this.recipientType,
                     null,
@@ -138,7 +146,7 @@ public class RaddAltSteps {
         selectUserRaddAlternative(destinatario);
         ActInquiryResponse actInquiryResponse = null;
         try {
-            actInquiryResponse = raddAltClient.actInquiry(uid,
+            actInquiryResponse = raddClient.actInquiry(uid,
                     this.currentUserCf,
                     this.recipientType,
                     null,
@@ -261,7 +269,8 @@ public class RaddAltSteps {
     private void uploadDocumentRaddAlternative(boolean usePresignedUrl) {
         try {
             creazioneZip();
-            B2bUtils.Pair<String, String> uploadResponse = B2bUtils.preloadRaddAlternativeDocument(sharedSteps.getContext(), raddAltClient, null, "classpath:/" + this.fileZip, usePresignedUrl, this.operationId);
+            PnRaddAlternativeClientImpl altClient = (PnRaddAlternativeClientImpl) raddClient;
+            B2bUtils.Pair<String, String> uploadResponse = B2bUtils.preloadRaddAlternativeDocument(sharedSteps.getContext(), altClient, null, "classpath:/" + this.fileZip, usePresignedUrl, this.operationId);
             Assertions.assertNotNull(uploadResponse);
             this.documentUploadResponse = uploadResponse;
             log.info("documentUploadResponse: {}", documentUploadResponse);
@@ -270,10 +279,88 @@ public class RaddAltSteps {
         }
     }
 
+    //todo t radd
+//    private void uploadDocumentRaddAlternative(boolean usePresignedUrl) {
+//        try {
+//            creazioneZip();
+//
+//            B2bUtils.Pair<String, String> uploadResponse;
+//
+//            if (raddClient instanceof PnRaddNetVpceClientImpl vpceClient) {
+//
+//                uploadResponse = B2bUtils.preloadRaddVpceDocument(
+//                        sharedSteps.getContext(),
+//                        vpceClient,
+//                        null,
+//                        "classpath:/" + this.fileZip,
+//                        usePresignedUrl,
+//                        this.operationId
+//                );
+//
+//            } else {
+//
+//                uploadResponse = B2bUtils.preloadRaddAlternativeDocument(
+//                        sharedSteps.getContext(),
+//                        (PnRaddAlternativeClientImpl) raddClient,
+//                        null,
+//                        "classpath:/" + this.fileZip,
+//                        usePresignedUrl,
+//                        this.operationId
+//                );
+//            }
+//
+//            Assertions.assertNotNull(uploadResponse);
+//            this.documentUploadResponse = uploadResponse;
+//            log.info("documentUploadResponse: {}", documentUploadResponse);
+//
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
+
+
+//    private void uploadDocumentRaddOperatorAlternative(boolean usePresignedUrl, RaddOperator raddOperator) {
+//        try {
+//            creazioneZip();
+//
+//            Pair<String, String> uploadResponse;
+//
+//            if (raddClient instanceof PnRaddVpceClientImpl vpceClient) {
+//
+//                uploadResponse = B2bUtils.preloadRaddVpceDocument(
+//                        sharedSteps.getContext(),
+//                        vpceClient,
+//                        raddOperator,
+//                        "classpath:/" + this.fileZip,
+//                        usePresignedUrl,
+//                        this.operationId
+//                );
+//
+//            } else {
+//
+//                uploadResponse = B2bUtils.preloadRaddAlternativeDocument(
+//                        sharedSteps.getContext(),
+//                        (PnRaddAlternativeClientImpl) raddClient,
+//                        raddOperator,
+//                        "classpath:/" + this.fileZip,
+//                        usePresignedUrl,
+//                        this.operationId
+//                );
+//            }
+//
+//            Assertions.assertNotNull(uploadResponse);
+//            this.documentUploadResponse = uploadResponse;
+//
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
+
     private void uploadDocumentRaddOperatorAlternative(boolean usePresignedUrl, RaddOperator raddOperator) {
         try {
             creazioneZip();
-            B2bUtils.Pair<String, String> uploadResponse = B2bUtils.preloadRaddAlternativeDocument(sharedSteps.getContext(), raddAltClient, raddOperator, "classpath:/" + this.fileZip, usePresignedUrl, this.operationId);
+            PnRaddAlternativeClientImpl altClient = (PnRaddAlternativeClientImpl) raddClient;
+            B2bUtils.Pair<String, String> uploadResponse = B2bUtils.preloadRaddAlternativeDocument(sharedSteps.getContext(), altClient, raddOperator, "classpath:/" + this.fileZip, usePresignedUrl, this.operationId);
             Assertions.assertNotNull(uploadResponse);
             this.documentUploadResponse = uploadResponse;
             log.info("documentUploadResponse: {}", documentUploadResponse);
@@ -315,7 +402,7 @@ public class RaddAltSteps {
         RaddOperator raddOperator = RaddOperator.valueOf(raddOperatorType);
         this.operationId = this.operationId == null ? generateRandomNumber() : this.operationId;
         this.fileKey = this.fileKey != null && (this.fileKey.isEmpty() || this.fileKey.equals("null")) ? setFileKeyValue(this.fileKey) : this.documentUploadResponse != null ? this.documentUploadResponse.getValue1() : null;
-        raddAltClient.setAuthTokenRadd(raddOperator.getIssuerType());
+        raddClient.setAuthTokenRadd(raddOperator.getIssuerType());
         startTransactionActRaddAlternativeForOperator(this.operationId, true, raddOperator.getUid());
     }
 
@@ -355,7 +442,7 @@ public class RaddAltSteps {
         System.out.println("actStartTransactionRequest: " + actStartTransactionRequest);
         int attempts = 5;
         for (int i = 0; i < attempts; i++) {
-            this.startTransactionResponse = raddAltClient.startActTransaction(uid, actStartTransactionRequest);
+            this.startTransactionResponse = raddClient.startActTransaction(uid, actStartTransactionRequest);
             if (this.startTransactionResponse.getStatus().getCode().equals(StartTransactionResponseStatus.CodeEnum.NUMBER_2) && retry) {
                 waitFor(this.startTransactionResponse.getStatus().getRetryAfter().longValue());
             } else break;
@@ -366,11 +453,11 @@ public class RaddAltSteps {
     private void startTransactionActRaddAlternativeForOperator(String operationId, boolean retry, String uidRaddOperator) {
         ActStartTransactionRequest actStartTransactionRequest = createActStartTransactionRequest(operationId);
         System.out.println("actStartTransactionRequest: " + actStartTransactionRequest);
-        this.startTransactionResponse = raddAltClient.startActTransaction(uidRaddOperator, actStartTransactionRequest);
+        this.startTransactionResponse = raddClient.startActTransaction(uidRaddOperator, actStartTransactionRequest);
 
         if (this.startTransactionResponse.getStatus().getCode().equals(StartTransactionResponseStatus.CodeEnum.NUMBER_2) && retry) {
             waitFor(this.startTransactionResponse.getStatus().getRetryAfter().longValue());
-            this.startTransactionResponse = raddAltClient.startActTransaction(uid, actStartTransactionRequest);
+            this.startTransactionResponse = raddClient.startActTransaction(uid, actStartTransactionRequest);
         }
         System.out.println("startTransactionResponse: " + startTransactionResponse);
     }
@@ -439,7 +526,7 @@ public class RaddAltSteps {
                 new CompleteTransactionRequest()
                         .operationId(this.operationId)
                         .operationDate(dateTimeFormatter.format(OffsetDateTime.now()));
-        this.completeTransactionResponse = raddAltClient.completeActTransaction(this.uid, completeTransactionRequest);
+        this.completeTransactionResponse = raddClient.completeActTransaction(this.uid, completeTransactionRequest);
         System.out.println(completeTransactionResponse);
         Assertions.assertNotNull(completeTransactionResponse);
     }
@@ -448,7 +535,7 @@ public class RaddAltSteps {
     public void ilCittadinoChiedeDiVerificareLaPresenzaDiNotifiche(Destinatario destinatario) {
         selectUserRaddAlternative(destinatario);
         this.versionToken = "string";
-        this.aorInquiryResponse = raddAltClient.aorInquiry(uid,
+        this.aorInquiryResponse = raddClient.aorInquiry(uid,
                 this.currentUserCf,
                 this.recipientType);
     }
@@ -458,7 +545,7 @@ public class RaddAltSteps {
         RaddOperator raddOperator = RaddOperator.valueOf(raddOperatorType);
         selectUserRaddAlternative(destinatario);
         this.versionToken = raddOperatorType.equalsIgnoreCase("UPLOADER") ? "string" : null;
-        this.aorInquiryResponse = raddAltClient.aorInquiry(raddOperator.getUid(),
+        this.aorInquiryResponse = raddClient.aorInquiry(raddOperator.getUid(),
                 this.currentUserCf,
                 this.recipientType);
     }
@@ -486,21 +573,21 @@ public class RaddAltSteps {
                         .operationDate(dateTimeFormatter.format(OffsetDateTime.now()))
                         //.delegateTaxId("")
                         .checksum(this.documentUploadResponse.getValue2());
-        this.aorStartTransactionResponse = raddAltClient.startAorTransaction(this.uid, aorStartTransactionRequest);
+        this.aorStartTransactionResponse = raddClient.startAorTransaction(this.uid, aorStartTransactionRequest);
     }
 
     @Then("Vengono recuperati gli aar delle notifiche in stato irreperibile della persona (fisica)(giuridica) 2 volte su radd alternative")
     public void vengonoRecuperatiGliAttiDelleNotificheInStatoIrreperibile2volte() {
         AorStartTransactionRequest aorStartTransactionRequest = createAorStartTransactionRequest();
-        this.aorStartTransactionResponse = raddAltClient.startAorTransaction(this.uid, aorStartTransactionRequest);
-        this.aorStartTransactionResponse = raddAltClient.startAorTransaction(this.uid, aorStartTransactionRequest);
+        this.aorStartTransactionResponse = raddClient.startAorTransaction(this.uid, aorStartTransactionRequest);
+        this.aorStartTransactionResponse = raddClient.startAorTransaction(this.uid, aorStartTransactionRequest);
     }
 
     @Then("Vengono recuperati gli aar delle notifiche in stato irreperibile della persona (fisica)(giuridica) con lo stesso operationId dal raddista {string}")
     public void vengonoRecuperatiGliAttiDelleNotificheInStatoIrreperibileStessoOperationId(String organizzazione) {
         changeRaddista(organizzazione);
         AorStartTransactionRequest aorStartTransactionRequest = createAorStartTransactionRequest();
-        this.aorStartTransactionResponse = raddAltClient.startAorTransaction(this.uid,
+        this.aorStartTransactionResponse = raddClient.startAorTransaction(this.uid,
                 aorStartTransactionRequest);
     }
 
@@ -509,7 +596,7 @@ public class RaddAltSteps {
         RaddOperator raddOperator = setOperatorRaddJWT(raddOperatorType);
         this.fileKey = this.fileKey != null && (this.fileKey.isEmpty() || this.fileKey.equals("null")) ? setFileKeyValue(this.fileKey) : this.documentUploadResponse != null ? this.documentUploadResponse.getValue1() : null;
         AorStartTransactionRequest aorStartTransactionRequest = createAorStartTransactionRequest();
-        this.aorStartTransactionResponse = raddAltClient.startAorTransaction(raddOperator.getUid(), aorStartTransactionRequest);
+        this.aorStartTransactionResponse = raddClient.startAorTransaction(raddOperator.getUid(), aorStartTransactionRequest);
     }
 
     @Then("Vengono recuperati gli aar delle notifiche in stato irreperibile della persona (fisica)(giuridica) su radd alternative da operatore radd {string} con file key {string}")
@@ -618,7 +705,7 @@ public class RaddAltSteps {
                 new CompleteTransactionRequest()
                         .operationId(this.operationId)
                         .operationDate(dateTimeFormatter.format(OffsetDateTime.now()));
-        this.completeTransactionResponse = raddAltClient.completeAorTransaction(this.uid, completeTransactionRequest);
+        this.completeTransactionResponse = raddClient.completeAorTransaction(this.uid, completeTransactionRequest);
         log.info("completeTransactionResponse: {}", completeTransactionResponse);
     }
 
@@ -651,7 +738,7 @@ public class RaddAltSteps {
         documentUploadRequest = without.equalsIgnoreCase("contentType") ? documentUploadRequest : documentUploadRequest.checksum(sha256);
 
         try {
-            DocumentUploadResponse documentUploadResponse = raddAltClient.documentUpload(this.uid, documentUploadRequest);
+            DocumentUploadResponse documentUploadResponse = raddClient.documentUpload(this.uid, documentUploadRequest);
             log.debug("DocumentUploadResponse: {}", documentUploadResponse);
         } catch (HttpStatusCodeException httpStatusCodeException) {
             this.documentUploadError = httpStatusCodeException;
@@ -667,12 +754,12 @@ public class RaddAltSteps {
     @Then("la transazione viene abortita per gli {string}")
     public void laTransazioneVieneAbortitaAor(String tipologia) {
         switch (tipologia.toLowerCase()) {
-            case "aor" -> this.abortActTransaction = this.raddAltClient.abortAorTransaction(this.uid,
+            case "aor" -> this.abortActTransaction = this.raddClient.abortAorTransaction(this.uid,
                     new AbortTransactionRequest()
                             .operationId(this.operationId)
                             .operationDate(dateTimeFormatter.format(OffsetDateTime.now()))
                             .reason("TEST"));
-            case "act" -> this.abortActTransaction = this.raddAltClient.abortActTransaction(this.uid,
+            case "act" -> this.abortActTransaction = this.raddClient.abortActTransaction(this.uid,
                     new AbortTransactionRequest()
                             .operationId(this.operationId)
                             .operationDate(dateTimeFormatter.format(OffsetDateTime.now()))
@@ -746,7 +833,7 @@ public class RaddAltSteps {
 
     @When("L'operatore scansione il qrCode per recuperare gli atti da radd alternative")
     public void lOperatoreScansioneIlQrCodePerRecuperareGliAtti() {
-        ActInquiryResponse actInquiryResponse = raddAltClient.actInquiry(uid, this.currentUserCf, this.recipientType, qrCode, iun);
+        ActInquiryResponse actInquiryResponse = raddClient.actInquiry(uid, this.currentUserCf, this.recipientType, qrCode, iun);
         log.info("actInquiryResponse: {}", actInquiryResponse);
         this.actInquiryResponse = actInquiryResponse;
     }
@@ -755,7 +842,7 @@ public class RaddAltSteps {
     public void lOperatoreUploaderScansioneIlQrCodePerRecuperareGliAtti(String raddOperatorType) {
         RaddOperator raddOperator = setOperatorRaddJWT(raddOperatorType);
         this.versionToken = raddOperatorType.equalsIgnoreCase("UPLOADER") ? "string" : null;
-        ActInquiryResponse actInquiryResponse = raddAltClient.actInquiry(raddOperator.getUid(), this.currentUserCf, this.recipientType, qrCode, null);
+        ActInquiryResponse actInquiryResponse = raddClient.actInquiry(raddOperator.getUid(), this.currentUserCf, this.recipientType, qrCode, null);
         log.info("actInquiryResponse: {}", actInquiryResponse);
         this.actInquiryResponse = actInquiryResponse;
     }
@@ -808,7 +895,7 @@ public class RaddAltSteps {
     }
 
     private void downloadFrontespizio(String operationType, String operationId, String attachmentId) {
-        byte[] download = raddAltClient.documentDownload(operationType,
+        byte[] download = raddClient.documentDownload(operationType,
                 operationId,
                 attachmentId);
         Assertions.assertNotNull(download);
@@ -866,24 +953,24 @@ public class RaddAltSteps {
 
     public void changeRaddista(String raddista) {
         switch (raddista.toLowerCase()) {
-            case "issuer_1" -> raddAltClient.setAuthTokenRadd(SettableAuthTokenRadd.AuthTokenRaddType.ISSUER_1);
-            case "issuer_2" -> raddAltClient.setAuthTokenRadd(SettableAuthTokenRadd.AuthTokenRaddType.ISSUER_2);
+            case "issuer_1" -> raddClient.setAuthTokenRadd(SettableAuthTokenRadd.AuthTokenRaddType.ISSUER_1);
+            case "issuer_2" -> raddClient.setAuthTokenRadd(SettableAuthTokenRadd.AuthTokenRaddType.ISSUER_2);
             case "issuer_non_censito" ->
-                    raddAltClient.setAuthTokenRadd(SettableAuthTokenRadd.AuthTokenRaddType.ISSUER_NON_CENSITO);
+                    raddClient.setAuthTokenRadd(SettableAuthTokenRadd.AuthTokenRaddType.ISSUER_NON_CENSITO);
             case "issuer_dati_errati" ->
-                    raddAltClient.setAuthTokenRadd(SettableAuthTokenRadd.AuthTokenRaddType.DATI_ERRATI);
+                    raddClient.setAuthTokenRadd(SettableAuthTokenRadd.AuthTokenRaddType.DATI_ERRATI);
             case "issuer_scaduto" ->
-                    raddAltClient.setAuthTokenRadd(SettableAuthTokenRadd.AuthTokenRaddType.ISSUER_SCADUTO);
+                    raddClient.setAuthTokenRadd(SettableAuthTokenRadd.AuthTokenRaddType.ISSUER_SCADUTO);
             case "issuer_aud_errata" ->
-                    raddAltClient.setAuthTokenRadd(SettableAuthTokenRadd.AuthTokenRaddType.AUD_ERRATA);
+                    raddClient.setAuthTokenRadd(SettableAuthTokenRadd.AuthTokenRaddType.AUD_ERRATA);
             case "issuer_kid_diverso" ->
-                    raddAltClient.setAuthTokenRadd(SettableAuthTokenRadd.AuthTokenRaddType.KID_DIVERSO);
+                    raddClient.setAuthTokenRadd(SettableAuthTokenRadd.AuthTokenRaddType.KID_DIVERSO);
             case "issuer_private_diverso" ->
-                    raddAltClient.setAuthTokenRadd(SettableAuthTokenRadd.AuthTokenRaddType.PRIVATE_DIVERSO);
+                    raddClient.setAuthTokenRadd(SettableAuthTokenRadd.AuthTokenRaddType.PRIVATE_DIVERSO);
             case "issuer_header_errato" ->
-                    raddAltClient.setAuthTokenRadd(SettableAuthTokenRadd.AuthTokenRaddType.HEADER_ERRATO);
+                    raddClient.setAuthTokenRadd(SettableAuthTokenRadd.AuthTokenRaddType.HEADER_ERRATO);
             case "issuer_over_50kb" ->
-                    raddAltClient.setAuthTokenRadd(SettableAuthTokenRadd.AuthTokenRaddType.OVER_50KB);
+                    raddClient.setAuthTokenRadd(SettableAuthTokenRadd.AuthTokenRaddType.OVER_50KB);
             default -> throw new IllegalArgumentException();
         }
     }
@@ -916,7 +1003,7 @@ public class RaddAltSteps {
 
     private RaddOperator setOperatorRaddJWT(String raddOperatorType) {
         RaddOperator raddOperator = RaddOperator.valueOf(raddOperatorType);
-        raddAltClient.setAuthTokenRadd(raddOperator.getIssuerType());
+        raddClient.setAuthTokenRadd(raddOperator.getIssuerType());
         return raddOperator;
     }
 

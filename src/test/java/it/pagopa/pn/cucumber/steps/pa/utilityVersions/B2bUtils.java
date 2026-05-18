@@ -350,6 +350,35 @@ public abstract class B2bUtils {
         return new Pair<>(key, sha256);
     }
 
+//    public static Pair<String, String> preloadRaddVpceDocument(
+//            ApplicationContext context,
+//            PnRaddNetVpceClientImpl raddVpceClient,
+//            RaddOperator raddOperator,
+//            String resourcePath,
+//            boolean usePresignedUrl,
+//            String operationId) throws IOException {
+//
+//        String sha256 = computeSha256(context, resourcePath);
+//
+//               it.pagopa.pn.client.b2b.radd.generated.openapi.clients.vpce.model.DocumentUploadResponse vpceResponse =
+//                raddVpceClient.preloadDocument(sha256, operationId, raddOperator);
+//
+//        String key = vpceResponse.getFileKey();
+//        String secret = vpceResponse.getSecret();
+//        String url = vpceResponse.getUrl();
+//
+//        log.info(ATTACHMENT_RESOURCE_KEY_SHA_256_SECRET_PRESIGNED_URL, resourcePath, sha256, url);
+//
+//        if (usePresignedUrl) {
+//            loadToPresigned(context, url, secret, sha256, resourcePath, APPLICATION_ZIP);
+//            log.info("UPLOAD RADD VPCE COMPLETE");
+//        } else {
+//            log.info("UPLOAD RADD VPCE COMPLETE WITHOUT UPLOAD");
+//        }
+//
+//        return new Pair<>(key, sha256);
+//    }todo t radd
+
     private static it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model.DocumentUploadResponse getPreloadRaddAlternativeResponse(PnRaddAlternativeClientImpl raddAltClient, RaddOperator raddOperator, String sha256, String operationId) {
         String uidRaddOperator;
         if (raddOperator == null) {
