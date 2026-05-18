@@ -79,13 +79,18 @@ public class DocumentUploadSteps {
         );
     }
 
-    @Given("l'utente carica un documento di interfaccia di tipo YAML che non include né la versione di specifica né quella dell'API")
-    public void loadDescriptorInvalidInterface() {
+    @When("l'utente carica un documento di interfaccia di tipo YAML {string}")
+    public void uploadInterfaceWithNoVersion(String versionState) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
-        String fileName = "invalid-interface.yaml";
-        String filePath = String.format("src/main/resources/%s", fileName);
-        Resource resource = blobFileCreator.createBlobFile(filePath, fileName);
+        String filename = switch (versionState) {
+            case "senza versione" -> "missing-version-interface.yaml";
+            case "con versione obsoleta" -> "invalid-version-interface.yaml";
+            default -> throw new IllegalStateException("Unexpected value: " + versionState);
+        };
+
+        String filePath = String.format("src/main/resources/%s", filename);
+        Resource resource = blobFileCreator.createBlobFile(filePath, filename);
 
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().createEServiceDocument(eServicesCommonContext.getEserviceId(),

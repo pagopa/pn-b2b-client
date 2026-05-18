@@ -287,12 +287,19 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         uploadInterface(interfaceName, eServiceId, descriptorId);
     }
 
-    @When("l'utente tenta di effettuare il caricamento di un'interfaccia di tipo YAML che non include né la versione di specifica né quella dell'API per un e-service")
-    public void uploadInterfaceWithNoVersion() {
+    @When("l'utente tenta di effettuare il caricamento di un'interfaccia di tipo YAML {string}")
+    public void uploadInterfaceWithNoVersion(String versionState) {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
         String interfaceName = buildInterfaceName(eServiceId, descriptorId);
-        uploadInterface(interfaceName, eServiceId, descriptorId, "invalid-interface.yaml");
+
+        String filename = switch (versionState) {
+            case "senza versione" -> "missing-version-interface.yaml";
+            case "con versione obsoleta" -> "invalid-version-interface.yaml";
+            default -> throw new IllegalStateException("Unexpected value: " + versionState);
+        };
+
+        uploadInterface(interfaceName, eServiceId, descriptorId, filename);
     }
 
     @When("l'utente tenta di effettuare la cancellazione di un'interfaccia di un e-service inesistente")
