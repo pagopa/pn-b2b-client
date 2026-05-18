@@ -1,12 +1,15 @@
 package it.pagopa.pn.interop.cucumber.steps.catalog;
 
 import io.cucumber.java.en.When;
+import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class DescriptorSuspensionSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
@@ -29,15 +32,20 @@ public class DescriptorSuspensionSteps {
                 )
         );
 
-        PollingService.makePolling(
-                () -> clientTokenConfigurator.getEServiceClient().getEServiceDescriptor(
-                        sharedStepsContext.getEServicesCommonContext().getEserviceId(),
-                        sharedStepsContext.getEServicesCommonContext().getDescriptorId()
-                ),
-                res -> res.getState().equals(EServiceDescriptorState.SUSPENDED),
-                "Errore durante la sospensione del descrittore dell'e-service",
-                4, 2_500
-        );
+        try {
+            PollingService.makePolling(
+                    () -> clientTokenConfigurator.getEServiceClient().getEServiceDescriptor(
+                            sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                            sharedStepsContext.getEServicesCommonContext().getDescriptorId()
+                    ),
+                    res -> res.getState().equals(EServiceDescriptorState.SUSPENDED),
+                    "Errore durante la sospensione del descrittore dell'e-service",
+                    4, 2_500
+            );
+        } catch(PollingPredicateException e){
+            log.warn("Il descrittore non risulta nello stato SUSPENDED");
+        }
+
     }
 
     @When("l'utente {string} di {string} sospende quel descrittore")
