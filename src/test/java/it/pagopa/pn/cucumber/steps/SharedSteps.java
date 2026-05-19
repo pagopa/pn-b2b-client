@@ -239,6 +239,7 @@ public class SharedSteps {
 
     private boolean checkAuditLogDisabled;
 
+    @Getter
     private final DynamoDbService dynamoDbService;
 
     /**

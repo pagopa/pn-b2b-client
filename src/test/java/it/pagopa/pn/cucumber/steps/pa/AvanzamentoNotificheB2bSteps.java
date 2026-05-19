@@ -5,9 +5,11 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
+import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.polling.exception.PnPollingException;
+import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnPrivateDeliveryPushExternalClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
@@ -27,6 +29,8 @@ import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.HttpStatusCodeException;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 import java.lang.reflect.Field;
 import java.time.Duration;
@@ -64,6 +68,8 @@ public class AvanzamentoNotificheB2bSteps {
     private final PnPollingFactory pnPollingFactory;
     @Getter
     private final TimingForPolling timingForPolling;
+    @Getter
+    private final DynamoDbService dbService;
 
     private final Map<NotificationVersion, B2bStepsInterface> mapOfVersionSteps = new HashMap<>();
 
@@ -78,6 +84,7 @@ public class AvanzamentoNotificheB2bSteps {
         this.externalClient = sharedSteps.getPnExternalServiceClient();
         this.b2bClient = sharedSteps.getB2bClient();
         this.pnPollingFactory = sharedSteps.getPollingFactory();
+        this.dbService = sharedSteps.getDynamoDbService();
     }
 
     private B2bStepsInterface getB2bStepsInterface() {
@@ -1849,5 +1856,57 @@ public class AvanzamentoNotificheB2bSteps {
         dataTest.setLoadTimeline(loadTimeline != null ? Boolean.valueOf(loadTimeline) : null);
 
         return dataTest;
+    }
+
+    @Then("viene verificato che i dati di indirizzo nell'elemento di timeline {string} siano valorizzati")
+    public void checkAddressDataInTimelineElementsOnDB(String timelineElement) {
+        QueryResponse queryResponse = dbService.call(DynamoTableName.TIMELINE, Map.of(
+                ":v_iun", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build(),
+                ":v_category", AttributeValue.builder().s(timelineElement).build()
+        ));
+
+        log.info("Elementi trovati con categoria {}: {}", timelineElement, queryResponse.count());
+
+        try {
+            for (Map<String, AttributeValue> item : queryResponse.items()) {
+
+                String category = item.get("category").s();
+
+                Map<String, AttributeValue> physicalAddress = item.get("physicalAddress") != null
+                        ? item.get("physicalAddress").m()
+                        : null;
+
+                // Controllo comune (tutti gli eventi)
+                assertNotNull(physicalAddress, "physicalAddress non deve essere null");
+                assertTrue(isNotEmpty(physicalAddress.get("municipality")),
+                        "physicalAddress.municipality non valorizzato");
+
+                // Controllo specifico solo per NORMALIZED_ADDRESS
+                if ("NORMALIZED_ADDRESS".equals(category)) {
+
+                    Map<String, AttributeValue> newAddress = item.get("newAddress") != null
+                            ? item.get("newAddress").m()
+                            : null;
+
+                    assertNotNull(newAddress, "newAddress non deve essere null");
+
+                    assertTrue(isNotEmpty(newAddress.get("foreignState")),
+                            "newAddress.foreignState non valorizzato");
+                    assertTrue(isNotEmpty(newAddress.get("municipality")),
+                            "newAddress.municipality non valorizzato");
+                    assertTrue(isNotEmpty(newAddress.get("zip")),
+                            "newAddress.zip non valorizzato");
+                }
+            }
+
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
+    }
+
+    private boolean isNotEmpty(AttributeValue attributeValue) {
+        return attributeValue != null
+                && attributeValue.s() != null
+                && !attributeValue.s().trim().isEmpty();
     }
 }
