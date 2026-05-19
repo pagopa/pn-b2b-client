@@ -68,16 +68,16 @@ public class PresaInCaricoNoticaBonariaSteps {
     private String savedIun;
 
     private NewInformalNotificationResponse newInformalNotificationResponse;
-    private InformalNotificationRequestMapper informalNotificationRequestMapper = new InformalNotificationRequestMapper();
+    private final InformalNotificationRequestMapper informalNotificationRequestMapper;
     private NotificationAttachmentDownloadMetadataResponse attachmentResponse;
 
     private NewInformalNotificationRequestStatusResponseV1 statusResponse;
     private String savedNotificationRequestId;
-    private NotificationInformalUtilsV1 notificationInformalUtilsV1;
-
+    private final NotificationInformalUtilsV1 notificationInformalUtilsV1;
+    private TerminationRequestStatus terminationStatus;
 
     @Autowired
-    public PresaInCaricoNoticaBonariaSteps(PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl, SharedSteps sharedSteps, TimingForPolling timingForPolling, IPnPrivateDeliveryPushExternalClient pnPrivateDeliveryPushExternalClient) {
+    public PresaInCaricoNoticaBonariaSteps(InformalNotificationRequestMapper informalNotificationRequestMapper, PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl, SharedSteps sharedSteps, TimingForPolling timingForPolling, IPnPrivateDeliveryPushExternalClient pnPrivateDeliveryPushExternalClient) {
         this.sharedSteps = sharedSteps;
         this.timingForPolling = timingForPolling;
         this.pnPrivateDeliveryPushExternalClient = pnPrivateDeliveryPushExternalClient;
@@ -85,92 +85,21 @@ public class PresaInCaricoNoticaBonariaSteps {
         this.externalClient = sharedSteps.getPnExternalServiceClient();
         this.b2bClient = sharedSteps.getB2bClient();
         this.pnPollingFactory = sharedSteps.getPollingFactory();
-        //this.informalNotificationRequestMapper = informalNotificationRequestMapper;
+        this.informalNotificationRequestMapper = informalNotificationRequestMapper;
         notificationInformalUtilsV1 = new NotificationInformalUtilsV1(sharedSteps.getContext(), b2bClient, sharedSteps.getPollingFactory());
 
     }
 
 
-
-    @And("destinatario della notifica bonaria")
-    public void addInformalRecipient(Map<String, String> data) {
-
-        assertNotNull(informalNotificationRequestV1, "Creare prima la notifica bonaria");
-
-        InformalNotificationRecipientV1 recipient = new InformalNotificationRecipientV1();
-
-        // recipientType (PF / PG)
-        String recipientType = getValue(data, RECIPIENT_TYPE.key);
-        if (recipientType != null) {
-            recipient.setRecipientType(InformalNotificationRecipientV1.RecipientTypeEnum.fromValue(recipientType));
-        }
-        recipient.setTaxId(getValue(data, RECIPIENT_TAX_ID.key));
-        recipient.setDenomination(getValue(data, RECIPIENT_DENOMINATION.key));
-
-        // digital domicile
-        String digitalDomicile = getValue(data, DIGITAL_DOMICILE.key);
-        if (digitalDomicile != null) {
-            recipient.setDigitalDomicile(new NotificationDigitalAddress().type(NotificationDigitalAddress.TypeEnum.PEC).address(digitalDomicile));
-        } else {
-            recipient.setDigitalDomicile(null);
-        }
-
-        informalNotificationRequestV1.getRecipients().add(recipient);
-
-        //Pagamenti
-        int paymentNumber = Integer.parseInt(getValue(data, PAYMENT_MULTY_NUMBER.key));
-
-        List<InformalNotificationPaymentItem> payments = new ArrayList<>();
-
-        for (int i = 0; i < paymentNumber; i++) {
-
-            NotificationPaymentAttachment attachment = informalNotificationRequestMapper.buildPaymentAttachment(data);
-
-            PagoPaPaymentBase pagoPa = new PagoPaPaymentBase().noticeCode(generateNoticeCode(getValue(data, PAYMENT_NOTICE_CODE.key), i)).creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key)).attachment(attachment);
-
-            InformalNotificationPaymentItem item = new InformalNotificationPaymentItem();
-            item.setPagoPa(pagoPa);
-
-            payments.add(item);
-        }
-        recipient.setPayments(payments);
-    }
-
-    @Then("viene inviata una nuova notifica bonaria")
-    public void sendInformal() {
-
-        try {
-
-            informalNotificationRequestV1 =
-                    notificationInformalUtilsV1.preloadAndPrepare(informalNotificationRequestV1);
-
-
-            newInformalNotificationResponse = pnPaB2bInternalInformalClientImpl.sendNewInformalNotificationV1(informalNotificationRequestV1);
-
-            //TODO t bonarie -> savedIun =
-
-            savedNotificationRequestId =
-                    newInformalNotificationResponse.getNotificationRequestId();
-
-            lastException = null;
-        } catch (Exception e) {
-            lastException = e;
-            messageResponse = null;
-            newInformalNotificationResponse = null;
-            log.info("Eccezione: ", e);
-        }
-    }
+   // STEP CREAZIONE E INVIO NOTIFICA
 
     @And("mittente della notifica bonaria: {string}")
     public void setSenderInformal(String paName) {
 
         switch (paName) {
             case "COMUNE_1" -> pnPaB2bInternalInformalClientImpl.setCxId(senderId);
-
             case "COMUNE_2" -> pnPaB2bInternalInformalClientImpl.setCxId(senderId2);
-
             case "COMUNE_MULTI" -> pnPaB2bInternalInformalClientImpl.setCxId(senderIdGA);
-
             default -> throw new IllegalArgumentException("PA bonaria non valida: " + paName);
         }
     }
@@ -190,21 +119,167 @@ public class PresaInCaricoNoticaBonariaSteps {
         log.info("Invio notifica bonaria - request: {}", informalNotificationRequestV1);
     }
 
-    @And("si riceve errore {int}")
-    public void verifyError(int expectedStatus) {
-        assertNotNull(lastException, "Non è stato generato l'errore atteso");
-        if (lastException instanceof HttpClientErrorException ex) {
-            assertEquals(expectedStatus, ex.getStatusCode().value());
+    @And("destinatario della notifica bonaria")
+    public void addInformalRecipient(Map<String, String> data) {
+
+        assertNotNull(informalNotificationRequestV1, "Creare prima la notifica bonaria");
+
+        InformalNotificationRecipientV1 recipient = new InformalNotificationRecipientV1();
+
+
+        String recipientType = getValue(data, RECIPIENT_TYPE.key);
+        if (recipientType != null) {
+            recipient.setRecipientType(InformalNotificationRecipientV1.RecipientTypeEnum.fromValue(recipientType));
+        }
+        recipient.setTaxId(getValue(data, RECIPIENT_TAX_ID.key));
+        recipient.setDenomination(getValue(data, RECIPIENT_DENOMINATION.key));
+
+        String digitalDomicile = getValue(data, DIGITAL_DOMICILE.key);
+        if (digitalDomicile != null) {
+            recipient.setDigitalDomicile(new NotificationDigitalAddress().type(NotificationDigitalAddress.TypeEnum.PEC).address(digitalDomicile));
         } else {
-            fail("Eccezione inattesa: " + lastException.getClass());
+            recipient.setDigitalDomicile(null);
+        }
+        informalNotificationRequestV1.getRecipients().add(recipient);
+
+        int paymentNumber = Integer.parseInt(getValue(data, PAYMENT_MULTY_NUMBER.key));
+
+        List<InformalNotificationPaymentItem> payments = new ArrayList<>();
+
+        for (int i = 0; i < paymentNumber; i++) {
+
+            NotificationPaymentAttachment attachment = informalNotificationRequestMapper.buildPaymentAttachment(data);
+            PagoPaPaymentBase pagoPa = new PagoPaPaymentBase().noticeCode(generateNoticeCode(getValue(data, PAYMENT_NOTICE_CODE.key), i)).creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key)).attachment(attachment);
+            InformalNotificationPaymentItem item = new InformalNotificationPaymentItem();
+
+            item.setPagoPa(pagoPa);
+
+            payments.add(item);
+        }
+        recipient.setPayments(payments);
+    }
+
+    @Then("viene inviata una nuova notifica bonaria")
+    public void sendInformal() {
+        try {
+
+            informalNotificationRequestV1 = notificationInformalUtilsV1.preloadAndPrepare(informalNotificationRequestV1);
+            newInformalNotificationResponse = pnPaB2bInternalInformalClientImpl.sendNewInformalNotificationV1(informalNotificationRequestV1);
+            savedNotificationRequestId = newInformalNotificationResponse.getNotificationRequestId();
+            NewInformalNotificationRequestStatusResponseV1 status = pnPaB2bInternalInformalClientImpl.getNotificationStatusByRequestId(savedNotificationRequestId);
+            savedIun = status.getIun();
+            lastException = null;
+
+        } catch (Exception e) {
+            lastException = e;
+            newInformalNotificationResponse = null;
+            log.info("Eccezione: ", e);
         }
     }
 
-    @And("l'operazione non ha generato errori")
-    public void verifyMessageRetrieved() {
+    @And("la sottomissione della notifica bonaria è andata a buon fine")
+    public void verifyNotificationSent() {
         assertNull(lastException, "Errore non atteso");
-        assertNotNull(messageResponse, "La response non deve essere null");
+        assertNotNull(newInformalNotificationResponse, "Response notifica nulla");
+    }
 
+
+    //*** STEP MESSAGGI ***
+
+    @When("si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie")
+    public void createNewInformalMessage(NewMessageRequest newMessageRequest) {
+        try {
+            this.messageResponse = pnPaB2bInternalInformalClientImpl.createMessage(newMessageRequest);
+            assertNotNull(this.messageResponse.getMessageId(), "messageId non valorizzato: creazione messaggio fallita");
+            this.messageId = this.messageResponse.getMessageId();
+            this.lastException = null;
+        } catch (Exception e) {
+            this.lastException = e;
+            this.messageResponse = null;
+            this.messageId = null;
+        }
+    }
+
+    @Then("tento il recupero del messaggio precedentemente creato per le comunicazioni bonarie")
+    public void getInformalMessage() {
+        try {
+            messageResponse = pnPaB2bInternalInformalClientImpl.getMessage(messageId);
+            lastException = null;
+        } catch (Exception e) {
+            lastException = e;
+            messageResponse = null;
+        }
+    }
+
+    @Then("tento il recupero del messaggio per le comunicazioni bonarie con message id {string}")
+    public void getInformalMessageById(String messageIdString) {
+        UUID messageId = toUuid(messageIdString);
+        try {
+            messageResponse = pnPaB2bInternalInformalClientImpl.getMessage(messageId);
+            lastException = null;
+        } catch (Exception e) {
+            lastException = e;
+            messageResponse = null;
+        }
+    }
+
+    @And("l'operazione sul messaggio utile per le bonarie è andata a buon fine")
+    public void verifyMessageCreated() {
+        assertNull(lastException, "Errore non atteso");
+        assertNotNull(messageResponse, "Response messaggio nulla");
+    }
+
+
+    //*** RECUPERO DOCUMENTI ***
+
+    @When("si tenta il recupero documento della notifica bonaria")
+    public void getDocument() {
+        try {
+            attachmentResponse =
+                    pnPaB2bInternalInformalClientImpl.getSentInformalNotificationDocument(savedIun, 0);
+
+            lastException = null;
+
+        } catch (Exception e) {
+            lastException = e;
+            attachmentResponse = null;
+        }
+    }
+
+    @When("si tenta il recupero documento con indice {int}")
+    public void getDocumentWithIndex(int docIdx) {
+        try {
+            attachmentResponse =
+                    pnPaB2bInternalInformalClientImpl
+                            .getSentInformalNotificationDocument(savedIun, docIdx);
+
+            lastException = null;
+
+        } catch (Exception e) {
+            lastException = e;
+            attachmentResponse = null;
+        }
+    }
+
+    @When("si tenta il recupero documento con IUN {string}")
+    public void getDocumentWithIun(String iun) {
+        try {
+            attachmentResponse =
+                    pnPaB2bInternalInformalClientImpl
+                            .getSentInformalNotificationDocument(iun, 0);
+
+            lastException = null;
+
+        } catch (Exception e) {
+            lastException = e;
+            attachmentResponse = null;
+        }
+    }
+
+    @Then("il download risulta correttamente effettuato")
+    public void verifyAttachmentAvailable() {
+        assertNotNull(attachmentResponse, "attachmentResponse nulla");
+        assertNotNull(attachmentResponse.getUrl(), "URL allegato mancante");
     }
 
     //*** STEP ALLEGATI PAGAMENTO
@@ -248,94 +323,6 @@ public class PresaInCaricoNoticaBonariaSteps {
         }
     }
 
-    //*** STEP MESSAGGI ***
-
-    @When("si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie")
-    public void createNewInformalMessage(NewMessageRequest newMessageRequest) {
-        try {
-            this.messageResponse = pnPaB2bInternalInformalClientImpl.createMessage(newMessageRequest);
-            assertNotNull(this.messageResponse.getMessageId(), "messageId non valorizzato: creazione messaggio fallita");
-            this.messageId = this.messageResponse.getMessageId();
-            this.lastException = null;
-        } catch (Exception e) {
-            this.lastException = e;
-            this.messageResponse = null;
-            this.messageId = null;
-        }
-    }
-
-    @Then("tento il recupero del messaggio precedentemente creato per le comunicazioni bonarie")
-    public void getInformalMessage() {
-        try {
-            messageResponse = pnPaB2bInternalInformalClientImpl.getMessage(messageId);
-            lastException = null;
-        } catch (Exception e) {
-            lastException = e;
-            messageResponse = null;
-        }
-    }
-
-    @Then("tento il recupero del messaggio per le comunicazioni bonarie con message id {string}")
-    public void getInformalMessageById(String messageIdString) {
-        UUID messageId = toUuid(messageIdString);
-        try {
-            messageResponse = pnPaB2bInternalInformalClientImpl.getMessage(messageId);
-            lastException = null;
-        } catch (Exception e) {
-            lastException = e;
-            messageResponse = null;
-        }
-    }
-
-    //*** RECUPERO DOCUMENTI ***
-
-
-    @When("si tenta il recupero documento della notifica bonaria")
-    public void getDocument() {
-        try {
-            attachmentResponse =
-                    pnPaB2bInternalInformalClientImpl.getSentInformalNotificationDocument(savedIun, 0);
-
-            lastException = null;
-
-        } catch (Exception e) {
-            lastException = e;
-            attachmentResponse = null;
-        }
-    }
-
-
-    @When("si tenta il recupero documento con indice {int}")
-    public void getDocumentWithIndex(int docIdx) {
-        try {
-            attachmentResponse =
-                    pnPaB2bInternalInformalClientImpl
-                            .getSentInformalNotificationDocument(savedIun, docIdx);
-
-            lastException = null;
-
-        } catch (Exception e) {
-            lastException = e;
-            attachmentResponse = null;
-        }
-    }
-
-
-    @When("si tenta il recupero documento con IUN {string}")
-    public void getDocumentWithIun(String iun) {
-        try {
-            attachmentResponse =
-                    pnPaB2bInternalInformalClientImpl
-                            .getSentInformalNotificationDocument(iun, 0);
-
-            lastException = null;
-
-        } catch (Exception e) {
-            lastException = e;
-            attachmentResponse = null;
-        }
-    }
-
     //*** STATO DELLA NOTIFICA
 
     @When("si verifica lo stato della richiesta di notifica bonaria")
@@ -355,6 +342,75 @@ public class PresaInCaricoNoticaBonariaSteps {
         }
     }
 
+    //*** TERMINAZIONE DELLA NOTIFICA
+
+    @When("si tenta la terminazione della notifica bonaria")
+    public void terminateInformalNotification() {
+        try {
+            terminationStatus =
+                    pnPaB2bInternalInformalClientImpl
+                            .terminateInformalWorkflow(savedIun);
+
+            lastException = null;
+
+        } catch (Exception e) {
+            lastException = e;
+        }
+    }
+
+    @Then("la terminazione della notifica bonaria è andata a buon fine")
+    public void verifyTerminationSucceeded() {
+        assertNull(lastException, "Errore non atteso durante la terminazione");
+    }
+
+    @Then("la terminazione della notifica bonaria è accettata")
+    public void verifyTerminationAccepted() {
+
+        assertNull(lastException, "Errore non atteso durante la terminazione");
+        assertNotNull(terminationStatus, "terminationStatus nullo");
+
+        boolean accepted =
+                terminationStatus.getDetails().stream()
+                        .anyMatch(d -> "NOTIFICATION_TERMINATION_ACCEPTED".equals(d.getCode()));
+
+        assertTrue(accepted, "Codice NOTIFICATION_TERMINATION_ACCEPTED non presente");
+
+
+    }
+
+    @Then("la notifica bonaria risulta già terminata")
+    public void verifyAlreadyTerminated() {
+
+        assertNull(lastException, "Errore non atteso durante la terminazione");
+        assertNotNull(terminationStatus, "terminationStatus nullo");
+
+        assertTrue(
+                terminationStatus.getDetails().stream()
+                        .anyMatch(d ->
+                                "NOTIFICATION_ALREADY_TERMINATED".equals(d.getCode())
+                        ),
+                "Codice NOTIFICATION_ALREADY_TERMINATED non presente"
+        );
+    }
+
+    //*** CONTROLLI GENERICI
+
+    @And("si riceve errore {int}")
+    public void verifyError(int expectedStatus) {
+        assertNotNull(lastException, "Non è stato generato l'errore atteso");
+        if (lastException instanceof HttpClientErrorException ex) {
+            assertEquals(expectedStatus, ex.getStatusCode().value());
+        } else {
+            fail("Eccezione inattesa: " + lastException.getClass());
+        }
+    }
+
+    @And("l'operazione non ha generato errori")
+    public void verifyMessageRetrieved() {
+        assertNull(lastException, "Errore non atteso");
+        assertNotNull(messageResponse, "La response non deve essere null");
+
+    }
 
     public UUID toUuid(String value) {
         if (value == null || value.isBlank()) {
@@ -369,39 +425,38 @@ public class PresaInCaricoNoticaBonariaSteps {
 
     private String generateNoticeCode(String base, int index) {
 
-            //  fallback totale
-            if (base == null) {
-                return NotificationInformalValue.generateRandomNumber();
-            }
-
-            //  pulizia input
-            String cleaned = base.trim();
-
-            // rimuovo tutto ciò che non è numero
-            cleaned = cleaned.replaceAll("\\D", "");
-
-            //  se NON valido → fallback
-            if (cleaned.isEmpty()) {
-                return NotificationInformalValue.generateRandomNumber();
-            }
-
-            //  costruisco codice variando le ultime cifre
-            if (cleaned.length() >= 18) {
-
-                // mantengo primi 16 numeri e vario ultimi 2
-                String prefix = cleaned.substring(0, 16);
-                String suffix = String.format("%02d", index % 100);
-
-                return prefix + suffix;
-            }
-
-            //  se troppo corto → padding
-            if (cleaned.length() < 18) {
-                return cleaned + "0".repeat(18 - cleaned.length());
-            }
-
-            // fallback sicurezza
+        //  fallback totale
+        if (base == null) {
             return NotificationInformalValue.generateRandomNumber();
         }
 
+        //  pulizia input
+        String cleaned = base.trim();
+
+        // rimuovo tutto ciò che non è numero
+        cleaned = cleaned.replaceAll("\\D", "");
+
+        //  se NON valido → fallback
+        if (cleaned.isEmpty()) {
+            return NotificationInformalValue.generateRandomNumber();
+        }
+
+        //  costruisco codice variando le ultime cifre
+        if (cleaned.length() >= 18) {
+
+            // mantengo primi 16 numeri e vario ultimi 2
+            String prefix = cleaned.substring(0, 16);
+            String suffix = String.format("%02d", index % 100);
+
+            return prefix + suffix;
+        }
+
+        //  se troppo corto → padding
+        if (cleaned.length() < 18) {
+            return cleaned + "0".repeat(18 - cleaned.length());
+        }
+
+        // fallback sicurezza
+        return NotificationInformalValue.generateRandomNumber();
     }
+}

@@ -66,7 +66,6 @@ public class PnPaB2bInternalInformalClientImpl {
         return senderReadInformalNotificationB2BApi.getInformalNotificationRequestStatusV1(operatorId, CxTypeAuthFleet.PA, cxId, groups, notificationRequestId, null, null);
     }
 
-
     public NotificationAttachmentDownloadMetadataResponse getSentInformalNotificationDocument(String iun, int docIdx) {
         return senderReadInformalNotificationB2BApi.getSentInformalNotificationDocument(operatorId, CxTypeAuthFleet.PA, cxId, iun, docIdx, groups);
     }
@@ -75,8 +74,8 @@ public class PnPaB2bInternalInformalClientImpl {
         return senderReadInformalNotificationB2BApi.getSentInformalNotificationAttachment(operatorId, CxTypeAuthFleet.PA, cxId, iun, recipientIdx, "PAGOPA", groups, attachmentIdx);
     }
 
-    public TerminationRequestStatus terminateInformalWorkflow(String xPagopaPnUid, CxTypeAuthFleet xPagopaPnCxType, String xPagopaPnCxId, String iun, List<String> xPagopaPnCxGroups) throws RestClientException {
-        return informalNotificationTerminationApi.terminateInformalWorkflow(xPagopaPnUid, xPagopaPnCxType, xPagopaPnCxId, iun, xPagopaPnCxGroups);
+    public TerminationRequestStatus terminateInformalWorkflow(String iun) {
+        return informalNotificationTerminationApi.terminateInformalWorkflow(operatorId, CxTypeAuthFleet.PA, cxId, iun, groups);
     }
 
     public void setCxId(String cxId) {
