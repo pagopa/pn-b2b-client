@@ -2,6 +2,8 @@ package it.pagopa.pn.client.b2b.pa.service.impl;
 
 import it.pagopa.pn.client.b2b.generated.openapi.clients.generate.api.externalregistry.ApiClient;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.generate.api.externalregistry.privateapi.InternalOnlyApi;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.generate.api.externalregistry.privateapi.PaperCostApi;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.generate.model.externalregistry.privateapi.PaperCostToInvalidate;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.generate.model.externalregistry.privateapi.PgUser;
 import it.pagopa.pn.client.b2b.pa.service.IPnExternalRegistryPrivateUserApi;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
@@ -22,6 +24,8 @@ public class PnExternalRegistryPrivateUserApiImpl implements IPnExternalRegistry
 
     private InternalOnlyApi externalRegistryUserApi;
 
+    private PaperCostApi paperCostApi;
+
     public PnExternalRegistryPrivateUserApiImpl(RestTemplate restTemplate,
                                                 @Value("${pn.bearer-token.pg5}") String nildeIottiPGBearerToken,
                                                 @Value("${pn.bearer-token.pg3}") String aldameriniPGBearerToken,
@@ -34,11 +38,12 @@ public class PnExternalRegistryPrivateUserApiImpl implements IPnExternalRegistry
         this.restTemplate = restTemplate;
         this.basePath = basePath;
         this.externalRegistryUserApi = new InternalOnlyApi(createApiClient(aldameriniPGBearerToken));
+        this.paperCostApi = new PaperCostApi(createApiClient(aldameriniPGBearerToken));
     }
 
     private ApiClient createApiClient(String bearerToken) {
         ApiClient newApiClient = new ApiClient(restTemplate);
-        newApiClient.addDefaultHeader("Authorization","Bearer " + bearerToken);
+        newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
         newApiClient.setBasePath(basePath);
         return newApiClient;
     }
@@ -49,12 +54,17 @@ public class PnExternalRegistryPrivateUserApiImpl implements IPnExternalRegistry
     }
 
     @Override
+    public void invalidatePaperCost(String iun, PaperCostToInvalidate paperCostToInvalidate) throws RestClientException {
+        paperCostApi.invalidatePaperCost(iun, paperCostToInvalidate);
+    }
+
+    @Override
     public void setBearerToken(SettableBearerToken.BearerTokenType bearerToken) {
         switch (bearerToken) {
             case PG_3 -> this.externalRegistryUserApi.setApiClient(createApiClient(aldameriniPGBearerToken));
             case PG_4 -> this.externalRegistryUserApi.setApiClient(createApiClient(mariaMontessoriPGBearerToken));
             case PG_5 -> this.externalRegistryUserApi.setApiClient(createApiClient(nildeIottiPGBearerToken));
             default -> throw new IllegalArgumentException("user not allowed");
-            }
+        }
     }
 }

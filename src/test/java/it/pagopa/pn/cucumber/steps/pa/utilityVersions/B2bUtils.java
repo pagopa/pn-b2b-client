@@ -586,4 +586,19 @@ public abstract class B2bUtils {
         log.info("Environment in use is: {}", env);
         return env;
     }
+
+    /**
+     * Metodo di utility per estrarre i valori di una DataTable, con la possibilità di restituire un valore di default in caso di valore null
+     */
+    public static String getDataTableParams(Map<String, String> inputData, String key, String defaultValue) {
+        String value = inputData.get(key);
+        if (value == null) {
+            return defaultValue;
+        }
+        return value.equalsIgnoreCase("EMPTY_STRING") ? null : value;
+    }
+
+    public static String assertWithIun(String iun, String msg) {
+        return String.format("Assertion failed. Iun %s : %s", iun, msg);
+    }
 }

@@ -102,5 +102,8 @@ public class ParameterTypes {
         return value.equals("può");
     }
 
-
+    @ParameterType("rework|restart")
+    public static String timelineInvalidation(String value) {
+        return value.toUpperCase();
+    }
 }

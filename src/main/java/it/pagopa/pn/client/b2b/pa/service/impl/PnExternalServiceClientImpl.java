@@ -275,7 +275,6 @@ public class PnExternalServiceClientImpl {
         };
         return invokeAPI(restTemplate, basePathWebApi, "/ext-registry/pg/v1/groups", HttpMethod.GET, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
     }
-    ///ext-registry-private/pg/v1/groups-all
 
 
     private ResponseEntity<List<HashMap<String, String>>> paGroupInfoWithHttpInfo(String apiKey) throws RestClientException {
@@ -654,7 +653,8 @@ public class PnExternalServiceClientImpl {
                 StringUtils.arrayToCommaDelimitedString(localVarAccepts));
         final MediaType localVarContentType = MediaType.APPLICATION_JSON;
 
-        ParameterizedTypeReference<String> returnType = new ParameterizedTypeReference<>() {};
+        ParameterizedTypeReference<String> returnType = new ParameterizedTypeReference<>() {
+        };
 
         return invokeAPI(restTemplate, dataVaultBasePath,
                 "/consolidatore-ingress/v1/push-progress-events",
