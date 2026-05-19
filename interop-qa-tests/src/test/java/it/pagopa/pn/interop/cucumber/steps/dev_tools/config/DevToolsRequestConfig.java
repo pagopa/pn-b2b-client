@@ -1,19 +1,67 @@
 package it.pagopa.pn.interop.cucumber.steps.dev_tools.config;
 
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.DataTableType;
-import it.pagopa.interop.generated.openapi.clients.bff.model.TokenGenerationValidationEntry;
-import it.pagopa.interop.generated.openapi.clients.bff.model.TokenGenerationValidationStepFailure;
-import it.pagopa.interop.generated.openapi.clients.bff.model.TokenGenerationValidationStepResult;
-import it.pagopa.interop.generated.openapi.clients.bff.model.TokenGenerationValidationSteps;
-
+import io.cucumber.java.ParameterType;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class DevToolsRequestConfig {
 
+    private final ExpressionParser parser = new SpelExpressionParser();
+
     public record JwtClaimOverride(String claim, String value) {}
     public record ValidationRow(String step, TokenGenerationValidationEntry entry) {}
+
+    @ParameterType("asincrono")
+    public boolean isAsynchronous(String value) {
+        return switch (value) {
+            case "asincrono" -> true;
+            case "sincrono" -> false;
+            default -> throw new IllegalArgumentException("Invalid async mode: " + value);
+        };
+    }
+
+    @DataTableType
+    public UpdateEServiceDescriptorSeed updateEServiceDescriptorSeed(DataTable dataTable) {
+        UpdateEServiceDescriptorSeed seed = new UpdateEServiceDescriptorSeed();
+        seed.setAttributes(new DescriptorAttributesSeed());
+
+        Map<String, String> rows = new HashMap<>();
+        dataTable.cells().forEach(row -> {
+            if (row.size() >= 2) {
+                rows.put(row.get(0) != null ? row.get(0).trim() : "", row.get(1) != null ? row.get(1).trim() : "");
+            }
+        });
+
+        StandardEvaluationContext context = new StandardEvaluationContext(seed);
+
+        rows.forEach((key, value) -> {
+            if (key.contains(".") && key.startsWith("asyncExchangeProperties")) {
+                if (seed.getAsyncExchangeProperties() == null) {
+                    seed.setAsyncExchangeProperties(new AsyncExchangeProperties());
+                }
+            }
+
+            if ("audience".equals(key)) {
+                seed.setAudience(Arrays.stream(value.split(",")).map(String::trim).toList());
+            } else if ("agreementApprovalPolicy".equals(key)) {
+                seed.setAgreementApprovalPolicy(AgreementApprovalPolicy.fromValue(value));
+            } else {
+                // SpEL automatically handles String -> Integer, String -> Boolean, etc.
+                parser.parseExpression(key).setValue(context, value);
+            }
+        });
+
+        return seed;
+    }
 
     @DataTableType
     public JwtClaimOverride jwtBuilder(Map<String, String> row) {
