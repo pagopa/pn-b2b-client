@@ -55,3 +55,18 @@ Feature: Creazione e-service
     Given l'utente è un "admin" di "PA1"
     When l'utente crea un e-service con una descrizione di 401 caratteri
     Then si ottiene status code 400
+
+  Scenario: [ASYNC_EXCHANGE_ESERVICE_CREATION] La creazione di un e-service in modalità asincrona, con le proprietà specificate nel descrittore, va a buon fine
+    Given l'utente è un "admin" di "PA1"
+    When "PA1" ha già creato un e-service asincrono con un descrittore in stato "DRAFT" con:
+      | asyncExchangeProperties.responseTime          | 10   |
+      | asyncExchangeProperties.resourceAvailableTime | 10   |
+      | asyncExchangeProperties.confirmation          | true |
+      | asyncExchangeProperties.bulk                  | true |
+      | asyncExchangeProperties.maxResultSet          | 50   |
+    Then l'e-service ha questa configurazione:
+      | asyncExchangeProperties.responseTime          | 10   |
+      | asyncExchangeProperties.resourceAvailableTime | 10   |
+      | asyncExchangeProperties.confirmation          | true |
+      | asyncExchangeProperties.bulk                  | true |
+      | asyncExchangeProperties.maxResultSet          | 50   |
