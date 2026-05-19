@@ -8,7 +8,7 @@ Feature: Creazione di una delega e gestione delle richieste di fruizione
   #TC-55: Delegato può rifiutare una finalità in stato pending
   #TC-59: Delegato NON può sospendere finalità in stato pending
 
-  @happy-path @deleghe1
+  @happy-path @delega-erogazione
   Scenario: [TC_CAPOFILA_35_55_59] Un delegato all’erogazione che gestisce finalità per conto del delegante può rifiutare e non sospendere una finalità in stato pending
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
@@ -26,7 +26,7 @@ Feature: Creazione di una delega e gestione delle richieste di fruizione
   #TC-59: Delegato NON può sospendere finalità in stato pending
   #TC-60: Delegato può sospendere una finalità ATTIVA
   #TC-61: Delegato NON può rifiutare una finalità ATTIVA
-  @deleghe1
+  @delega-erogazione
   Scenario Outline: [TC_CAPOFILA_58_59_60_61] Un delegato all’erogazione che gestisce finalità per conto del delegante può attivare/sospendere finalità in pending o attive
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
@@ -59,7 +59,7 @@ Feature: Creazione di una delega e gestione delle richieste di fruizione
   #TC-23: Delegato NON può revocare una delega in stato attivo
   #TC-37: Delegato da la disponibilità a ricevere deleghe
   #TC-66: Delegato accetta richiesta di fruizione e-service
-  @happy-path @deleghe1
+  @happy-path @delega-erogazione
   Scenario: [TC_CAPOFILA_22_23_37_66] Un delegato all'erogazione accetta la richieste di fruizione di un e-service per conto di un delegante
     Given l'utente è un "admin" di "PA2"
     Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
@@ -75,7 +75,7 @@ Feature: Creazione di una delega e gestione delle richieste di fruizione
     And l'ente "PA2" con ruolo "admin" revoca la delega
     Then si ottiene lo status code 200
 
-  @happy-path @deleghe1
+  @happy-path @delega-erogazione
   Scenario: [TC_CAPOFILA_67] Un delegato all'erogazione accetta la richieste di fruizione di un e-service per conto di un delegante
     Given l'utente è un "admin" di "PA2"
     Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"

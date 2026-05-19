@@ -85,7 +85,7 @@ Feature: Attivazione richiesta di fruizione
       | ACTIVE         |
       | ARCHIVED       |
 
-  @deleghe1
+  @delega-fruizione
   Scenario: Un delegato alla fruizione sospende ed attiva una finalità/richiesta di fruizione agendo come delegato e passando il delegationId
     Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
     Given l'ente delegato "PA1"
@@ -109,7 +109,8 @@ Feature: Attivazione richiesta di fruizione
     When l'ente delegato richiede una operazione di sospensione di quella richiesta di fruizione
     And l'ente delegato ha già approvato quella richiesta di fruizione
 
-  @deleghe1
+  @delega-fruizione
+  @delega-erogazione
   Scenario: Un delegato sia all'erogazione che alla fruizione sospende ed approva una richiesta di fruizione passando il Delegation-id come discriminante per capire se agisce come delegato all'erogazione o alla fruizione - Delegato all'erogazione
     Given "PA2" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione automatica
     Given l'utente è un "admin" di "PA1"

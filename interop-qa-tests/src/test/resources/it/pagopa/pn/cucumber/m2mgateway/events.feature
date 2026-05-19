@@ -51,6 +51,7 @@ Feature: Eventi M2M
       | producerDelegationId | %null         |
 
   @m2m-events-e-service
+  @delega-erogazione
   Scenario: [M2M_E-SERVICE_EVENTS_04] Verifica che il producer di un e-service in stato PUBLISHED, con delega in erogazione in attesa di approvazione verso un altro ente, visualizza gli eventi di creazione e pubblicazione senza producerDelegationId
     Given l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -72,7 +73,7 @@ Feature: Eventi M2M
       | producerDelegationId | %null         |
 
   @m2m-events-e-service
-  @deleghe1
+  @delega-erogazione
   Scenario: [M2M_E-SERVICE_EVENTS_05] Verifica che il producer di un e-service in stato PUBLISHED, con delega in erogazione rifiutata, visualizza gli eventi di creazione e pubblicazione senza producerDelegationId
     Given l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -97,7 +98,7 @@ Feature: Eventi M2M
       | producerDelegationId | %null         |
 
   @m2m-events-e-service
-  @deleghe1
+  @delega-erogazione
   Scenario: [M2M_E-SERVICE_EVENTS_06] Verifica che il producer di un e-service creato in stato DRAFT, con delega in erogazione accettata da un altro ente e successivamente pubblicato dal delegato, visualizza gli eventi di creazione e pubblicazione relativi all'e-service con producerDelegationId valorizzato solo sull'evento di pubblicazione
     Given l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -127,7 +128,7 @@ Feature: Eventi M2M
       | producerDelegationId | :producerDelegationId |
 
   @m2m-events-e-service
-  @deleghe1
+  @delega-erogazione
   Scenario: [M2M_E-SERVICE_EVENTS_07] Verifica che il creatore di un e-service creato in bozza e pubblicato dal delegato possa visualizzare tutti gli eventi correlati anche dopo la revoca della delega
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato un e-service in stato DRAFT
@@ -173,6 +174,7 @@ Feature: Eventi M2M
       | producerDelegationId | :producerDelegationId |
 
   @m2m-events-e-service
+  @delega-erogazione
   Scenario: [M2M_E-SERVICE_EVENTS_10] Verifica che il client con delega non ancora accettata visualizzi solo l'evento di pubblicazione di un e-service di un producer
   Il producer di un e-service pubblica l'e-service, se un client ha ricevuto una delega in erogazione dal
   producer non ancora accettata, il client può visualizzare solo l'evento di pubblicazione e non quello di creazione.
@@ -200,7 +202,7 @@ Feature: Eventi M2M
     And "PA2" visualizza l'evento EServiceDescriptorPublished precedente
 
   @m2m-events-e-service
-  @deleghe1
+  @delega-erogazione
   Scenario: [M2M_E-SERVICE_EVENTS_11] Verifica che il client con delega rifiutata visualizzi solo l'evento di pubblicazione di un e-service di un producer
   Il producer di un e-service pubblica l'e-service, se un client ha ricevuto una delega in erogazione dal
   producer e l'ha rifiutata, il client può visualizzare solo l'evento di pubblicazione e non quello di creazione
@@ -256,6 +258,7 @@ Feature: Eventi M2M
     And "PA2" visualizza l'evento EServiceDescriptorPublished precedente
 
   @m2m-events-e-service
+  @delega-erogazione
   Scenario: [M2M_E-SERVICE_EVENTS_13] Verifica che il client con delega revocata visualizzi solo l'evento di pubblicazione di un e-service di un producer
   Il producer di un e-service pubblica l'e-service, se un client ha ricevuto una delega in erogazione dal
   producer ma poi è stata revocata, il client può visualizzare solo l'evento di pubblicazione e non quello di creazione.

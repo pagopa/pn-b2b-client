@@ -1,6 +1,7 @@
 @archiviazione-documentale
 Feature: Archiviazione documentale e verifica firma/marca temporale
 
+  @delega-fruizione
   Scenario: [TRIGGER]
     Given "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA2"
@@ -84,6 +85,7 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
     And verifica che il file contenga le opportune informazioni
 
+  @delega-fruizione
   Scenario: [DELEGATION_DOC_ARCHIVE_1] Delega in fruizione - archiviazione PDF firmato
     Given "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA2"
@@ -105,6 +107,7 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
     And verifica che il file contenga le opportune informazioni
 
+  @delega-erogazione
   Scenario: [DELEGATION_DOC_ARCHIVE_2] Delega in erogazione - archiviazione PDF firmato
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
@@ -123,6 +126,7 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
     And verifica che il file contenga le opportune informazioni
 
+  @delega-fruizione
   Scenario: [DELEGATION_DOC_ARCHIVE_3] Rifiuto delega in fruizione - archiviazione PDF firmato
     Given "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA1"
@@ -143,6 +147,7 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
     And verifica che il file contenga le opportune informazioni
 
+  @delega-erogazione
   Scenario: [DELEGATION_DOC_ARCHIVE_4] Rifiuto delega in erogazione - archiviazione PDF firmato
     Given l'utente è un "admin" di "PA2"
     And "PA1" ha già creato e pubblicato 1 e-service

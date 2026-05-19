@@ -7,7 +7,7 @@ Feature: Creazione di una delega in erogazione
   #TC-4: Un utente con ruolo admin può creare una delega
   #TC-5: Un utente con ruolo diverso da admin NON può creare una delega
   #TC-31: Una delega può essere creata dal delegante se delegato da la disponibilità a ricevere la delega
-  @deleghe2
+  @delega-erogazione
   Scenario Outline: [TC_CAPOFILA_4_5] Il richiamo dell’API di creazione di una delega possa essere compiuto da un utente di livello operatore amministrativo (admin)
     Given l'utente è un "<ruolo>" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -28,7 +28,7 @@ Feature: Creazione di una delega in erogazione
       | api,security |        403 |
       | support      |        403 |
 
-  @deleghe2
+  @delega-erogazione
   Scenario Outline: [TC_CAPOFILA_RIFIUTO_PENDING] Il rifiuto di una delega in stato di pending possa essere compiuto solo da un utente con ruolo admin
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
@@ -77,7 +77,7 @@ Feature: Creazione di una delega in erogazione
       # Esito: si ottiene 403 "Unauthorized"
       | support      | delegante | 403         |
 
-  @sad-path @deleghe2
+  @sad-path @delega-erogazione
   Scenario Outline: [TC_CAPOFILA_RIFIUTO_DELEGA_ACCETTATA] Il rifiuto di una delega già accettata non possa essere compiuto da nessun utente indipendentemente dal ruolo
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
@@ -121,7 +121,7 @@ Feature: Creazione di una delega in erogazione
       # Esito: si ottiene 403 "Unauthorized"
       | support      | delegante | 403         |
 
-  @sad-path @deleghe2
+  @sad-path @delega-erogazione
   Scenario: [TC_CAPOFILA_33] La creazione di una delega in erogazione NON può essere compiuto da un utente ADMIN se l’aderente non si è reso disponibile ad accettare deleghe
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato e pubblicato 1 e-service
@@ -132,7 +132,7 @@ Feature: Creazione di una delega in erogazione
   #TC-8: La revoca di una delega NON può essere fatta da un utente con ruolo diverso da ADMIN
   #TC-13: L'accettazione di una delega può essere fatta da un utente con ruolo ADMIN
   #TC-14: La revoca di una delega può essere fatta da un utente con ruolo ADMIN
-  @deleghe2
+  @delega-erogazione
   Scenario Outline: [TC_CAPOFILA_ACCETTA_REVOCA_DELEGA] L'accettazione e la revoca di una delega non può essere effettuata da un utente diverso da admin
     Given l'utente è un "<ruolo>" di "PA2"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -157,7 +157,7 @@ Feature: Creazione di una delega in erogazione
       | support      |        403 |
 
   #TC-21: Delegato con ruolo admin non può revocare la delega
-  @sad-path @deleghe2
+  @sad-path @delega-erogazione
   Scenario: [TC_CAPOFILA_DELEGATO_REVOCA] La revoca di una delega in stato PENDING non può essere effettuata da un delegato con ruolo admin
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
@@ -178,7 +178,7 @@ Feature: Creazione di una delega in erogazione
     Then si ottiene lo status code 403
 
   #TC-11: La disponibilità di una delega può essere fatta soltanto da un utente con ruolo ADMIN
-  @deleghe2
+  @delega-erogazione
   Scenario Outline: [TC_CAPOFILA_DISPONIBILITA_DELEGHE] L'accettazione e la revoca di una delega non può essere effettuata da un utente diverso da admin
     Given l'utente è un "<ruolo>" di "PA2"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -198,7 +198,7 @@ Feature: Creazione di una delega in erogazione
       | api,security |        403 |
       | support      |        403 |
 
-  @sad-path @deleghe2
+  @sad-path @delega-erogazione
   Scenario: [TC_CAPOFILA_35] Un delegante può delegare un solo ente per volta per un e-service
     Given l'utente è un "admin" di "PA1"
     Given l'ente "PA3" rimuove la disponibilità a ricevere deleghe
@@ -223,7 +223,7 @@ Feature: Creazione di una delega in erogazione
     Then viene verificato che le deleghe ritornate sono soltanto quelle in stato ACTIVE e WAITING_FOR_APPROVAL
 
   # NOTA 30/07/2025: aggiunto a posteriori, momentaneamente assente in SRS
-  @deleghe2
+  @delega-erogazione
   Scenario: [TC_CAPOFILA_PUB_1] La pubblicazione di un e-service da parte di un ente delegato all'erogazione conduce l'e-service allo stato WAITING_FOR_APPROVAL
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
@@ -238,7 +238,7 @@ Feature: Creazione di una delega in erogazione
     And l'e-service è in stato "WAITING_FOR_APPROVAL"
 
   # NOTA 08/08/2025: aggiunto a posteriori, momentaneamente assente in SRS
-  @deleghe2
+  @delega-erogazione
   Scenario: [TC_CAPOFILA_APPROVE_1] Un utente ADMIN dell'ente delegante è in grado di effettuare l'approvazione dell'e-service in stato WAITING_FOR_APPROVAL
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     When l'utente è un "admin" di "PA1"
@@ -250,7 +250,7 @@ Feature: Creazione di una delega in erogazione
   # NOTA 08/08/2025: aggiunto a posteriori, momentaneamente assente in SRS
   # DEV. NOTE 08/08/2025: evitato l'uso di Scenario Outline per eseguire una sola volta la creazione dell'e-service e il processo di delega
   # Ticket aperto: https://pagopa.atlassian.net/browse/PIN-7927
-  @deleghe2
+  @delega-erogazione
   Scenario: [TC_CAPOFILA_APPROVE_2] Un utente dell'ente delegante di livello inappropriato NON è in grado di effettuare l'approvazione dell'e-service in stato WAITING_FOR_APPROVAL
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
 
@@ -280,7 +280,7 @@ Feature: Creazione di una delega in erogazione
 
   # NOTA 08/08/2025: aggiunto a posteriori, momentaneamente assente in SRS
   # DEV. NOTE 08/08/2025: evitato l'uso di Scenario Outline per eseguire una sola volta la creazione dell'e-service e il processo di delega
-  @deleghe2
+  @delega-erogazione
   Scenario: [TC_CAPOFILA_APPROVE_3] Un ente diverso dal delegante NON è in grado di effettuare l'approvazione dell'e-service in stato WAITING_FOR_APPROVAL
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
 
@@ -297,7 +297,7 @@ Feature: Creazione di una delega in erogazione
     Then l'e-service è in stato "WAITING_FOR_APPROVAL"
 
   # NOTA 08/08/2025: aggiunto a posteriori, momentaneamente assente in SRS
-  @deleghe2
+  @delega-erogazione
   Scenario: [TC_CAPOFILA_APPROVE_3_B] Il delegante NON può sospendere l'e-service se una delega è in corso
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente è un "admin" di "PA1"
@@ -306,7 +306,6 @@ Feature: Creazione di una delega in erogazione
     Then si ottiene lo status code 403
     And l'e-service è in stato "PUBLISHED"
 
-  @deleghe1
   @hotfix_QA-13870
   Scenario Outline: [TC_CAPOFILA_DELEGA_NON_PA_1] Verificare che la disponibilità alla delega in erogazione di un e-service NON possa essere data da un ente che non sia una pubblica amministrazione
     Given l'utente è un "admin" di "<ente>"
@@ -319,6 +318,7 @@ Feature: Creazione di una delega in erogazione
       | GSP       |
       | Privato   |
 
+  @delega-erogazione
   @hotfix_QA-13870
   Scenario Outline: [TC_CAPOFILA_DELEGA_NON_PA_2] Un ente che non sia una Pubblica Amministrazione non può fungere da delegante in erogazione per un proprio e-service
     Given l'utente è un "admin" di "<delegante>"
