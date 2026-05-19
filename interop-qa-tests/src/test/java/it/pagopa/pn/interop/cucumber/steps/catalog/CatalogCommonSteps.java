@@ -51,9 +51,14 @@ public class CatalogCommonSteps {
                 ((ResponseEntity<CompactEServicesLight>) httpCallExecutor.getResponse()).getBody().getResults().size());
     }
 
+    @Given("{string} ha già creato un e-service {isAsynchronous} con un descrittore in stato {string} con:")
+    public void createEserviceWithDescriptorAndState(String tenantType, Boolean isAsync, String descriptorState, UpdateEServiceDescriptorSeed descriptorSeed) {
+        createEServiceWithDescriptorInState(tenantType, descriptorState, new EServiceSeed().asyncExchange(isAsync), descriptorSeed);
+    }
+
     @Given("{string} ha già creato un e-service con un descrittore in stato {string}")
     public void createEserviceWithDescriptor(String tenantType, String descriptorState) {
-        createEServiceWithDescriptorInState(tenantType, descriptorState);
+        createEServiceWithDescriptorInState(tenantType, descriptorState, new EServiceSeed(), new UpdateEServiceDescriptorSeed());
     }
 
     @Given("{string} ha già creato un e-service con un descrittore in stato {string} e impostando delega amministrativa a {string} e delega tecnica a {string}")
@@ -69,10 +74,11 @@ public class CatalogCommonSteps {
         sharedStepsContext.getEServicesCommonContext().setDescriptorId(eServiceDescriptor.getDescriptorId());
     }
 
-    private void createEServiceWithDescriptorInState(String tenantType, String descriptorState) {
+    private void createEServiceWithDescriptorInState(String tenantType, String descriptorState, EServiceSeed eServiceSeed, UpdateEServiceDescriptorSeed descriptorSeed) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         createEServiceWithDescriptor(descriptorState, dataPreparationService,
-                sharedStepsContext.getEServicesCommonContext());
+                sharedStepsContext.getEServicesCommonContext(),
+                eServiceSeed, descriptorSeed);
     }
 
     private void createEServiceWithDescriptorInStateSpecifyingConsumerDelegationFlags(String tenantType, String descriptorState, Boolean isConsumerDelegable, Boolean isClientAccessDelegable) {
@@ -97,9 +103,13 @@ public class CatalogCommonSteps {
     public static void createEServiceWithDescriptor(
             String descriptorState,
             BFFDataPreparationService dataPreparationService,
-            EServicesCommonContext eServiceContext
+            EServicesCommonContext eServiceContext,
+            EServiceSeed eServiceSeed,
+            UpdateEServiceDescriptorSeed descriptorSeed
     ) {
-        EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(new EServiceSeed(), new UpdateEServiceDescriptorSeed());
+        EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
+                eServiceSeed == null ? new EServiceSeed() : eServiceSeed,
+                descriptorSeed == null ? new UpdateEServiceDescriptorSeed() : descriptorSeed);
         dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(),
                 eServiceDescriptor.getDescriptorId(), EServiceDescriptorState.valueOf(
                         descriptorState), false);

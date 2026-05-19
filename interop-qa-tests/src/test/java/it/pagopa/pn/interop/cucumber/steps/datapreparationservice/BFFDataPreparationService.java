@@ -1223,6 +1223,7 @@ public class BFFDataPreparationService {
         eServiceSeed.setIsConsumerDelegable(useOrDefault(partialClientSeed.getIsConsumerDelegable(), defaultClientSeed.getIsConsumerDelegable()));
         eServiceSeed.setIsClientAccessDelegable(useOrDefault(partialClientSeed.getIsClientAccessDelegable(), defaultClientSeed.getIsClientAccessDelegable()));
         eServiceSeed.setPersonalData(useOrDefault(partialClientSeed.getPersonalData(), defaultClientSeed.getPersonalData()));
+        eServiceSeed.setAsyncExchange(useOrDefault(partialClientSeed.getAsyncExchange(), defaultClientSeed.getAsyncExchange()));
         return eServiceSeed;
     }
 

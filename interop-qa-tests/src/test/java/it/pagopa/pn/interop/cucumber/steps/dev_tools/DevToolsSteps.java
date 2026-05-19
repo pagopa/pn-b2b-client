@@ -256,6 +256,14 @@ public class DevToolsSteps {
         clientPurposeRemoveStep.addPurposeToClient(tenantFruitore);
     }
 
+    @And("l'admin dell'erogatore {string} ha creato un eservice di tipo {isAsynchronous} e l'admin del fruitore {string} ha creato una richiesta di fruizione per quell'eservice e ha associato una finalità in stato {string} a quel client")
+    public void createEserviceAndPurpose(String tenantErogatore, Boolean isAsync, String tenantFruitore, String statoPurpose) {
+        agreementCommonSteps.tenantHasAlreadyCreatedAndPublishedEServiceWithAsyncExchange(tenantErogatore, 1, isAsync);
+        agreementCommonSteps.tenantAlreadyHasFruitionRequestWithState(tenantFruitore, "ACTIVE");
+        purposeCommonStep.tenantHasAlreadyCreateFinalizationWithStatus(tenantFruitore, 1, statoPurpose);
+        clientPurposeRemoveStep.addPurposeToClient(tenantFruitore);
+    }
+
     private void createCustomClientAssertion(ClientAssertionOptions.ClientType clientType, List<JwtClaimOverride> overrides) {
         DPoPTokenService.PreparedClient preparedClient = sharedStepsContext.getClientCommonContext().getLastPreparedClient();
         JwtBuilder validClientAssertion = buildValidClientAssertion(clientType);
@@ -401,6 +409,9 @@ public class DevToolsSteps {
                 case "algorithm" -> payload.put("algorithm", raw);
                 case "assertionType" -> payload.put("client_assertion_type", raw);
                 case "grantType" -> payload.put("grant_type", raw);
+
+                case "urlCallback" -> payload.put("url_callback", raw);
+                case "scope" -> payload.put("scope", raw);
 
                 case "invalidClaim" -> payload.put("invalid_claim", raw);
 
