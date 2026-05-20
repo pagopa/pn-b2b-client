@@ -83,6 +83,25 @@ Feature: Correzione timeline fase 3
     Then si verifica che la chiamata sia andata in errore con il seguente status code: 409
 
   @timelineReworkF3
+  Scenario: [TR3_NOTIFICATION_REWORKED_RESTART_FAIL] Verificare l'impossibilità di effettuare un restart per una notifica avente un rework in status diverso da ERROR o DONE
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | Via@OK_AR |
+      | digitalDomicile         | NULL      |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
+    And viene invocata una richiesta di rework per la notifica appena creata
+    And si verifica che la richiesta di rework effettuata sia in stato "CREATED" entro 130 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
+    When viene invocata una richiesta di restart per la notifica appena creata
+    Then si verifica che la chiamata sia andata in errore con il seguente status code: 400
+
+  @timelineReworkF3
   Scenario: [TR3_RESTART_UPDATE_KO] Verificare l'impossibilità di poter eseguire l'update di un'operazione di restart
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
