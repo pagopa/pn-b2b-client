@@ -2023,7 +2023,7 @@ Feature: Workflow analogico
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
-      | physicalAddress_address | via @OK_AR |
+      | physicalAddress_address | <SEQUENCE> |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
  #   Given imposto lo iun di SharedSteps a "TNMW-RAZH-ZMDR-202605-M-1" e la pa a "Comune_Multi"
