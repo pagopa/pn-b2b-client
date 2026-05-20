@@ -76,7 +76,8 @@ public class AvanzamentoNotificheB2bSteps {
     @Autowired
     public AvanzamentoNotificheB2bSteps(SharedSteps sharedSteps,
                                         TimingForPolling timingForPolling,
-                                        IPnPrivateDeliveryPushExternalClient pnPrivateDeliveryPushExternalClient) {
+                                        IPnPrivateDeliveryPushExternalClient pnPrivateDeliveryPushExternalClient,
+                                        DynamoDbService dbService) {
         this.sharedSteps = sharedSteps;
         this.timingForPolling = timingForPolling;
         this.pnPrivateDeliveryPushExternalClient = pnPrivateDeliveryPushExternalClient;
@@ -84,7 +85,7 @@ public class AvanzamentoNotificheB2bSteps {
         this.externalClient = sharedSteps.getPnExternalServiceClient();
         this.b2bClient = sharedSteps.getB2bClient();
         this.pnPollingFactory = sharedSteps.getPollingFactory();
-        this.dbService = sharedSteps.getDynamoDbService();
+        this.dbService = dbService;
     }
 
     private B2bStepsInterface getB2bStepsInterface() {
@@ -1868,34 +1869,45 @@ public class AvanzamentoNotificheB2bSteps {
         log.info("Elementi trovati con categoria {}: {}", timelineElement, queryResponse.count());
 
         try {
+            // Assertion: almeno un elemento deve esistere
+            assertTrue(queryResponse.count() > 0,
+                    "Nessun elemento trovato per la category: " + timelineElement);
+
             for (Map<String, AttributeValue> item : queryResponse.items()) {
 
                 String category = item.get("category").s();
 
-                Map<String, AttributeValue> physicalAddress = item.get("physicalAddress") != null
-                        ? item.get("physicalAddress").m()
+                // details
+                Map<String, AttributeValue> details = item.get("details") != null
+                        ? item.get("details").m()
                         : null;
 
-                // Controllo comune (tutti gli eventi)
-                assertNotNull(physicalAddress, "physicalAddress non deve essere null");
-                assertTrue(isNotEmpty(physicalAddress.get("municipality")),
-                        "physicalAddress.municipality non valorizzato");
+                assertNotNull(details, "details non deve essere null");
 
-                // Controllo specifico solo per NORMALIZED_ADDRESS
+                // physicalAddress (sempre presente)
+                Map<String, AttributeValue> physicalAddress = details.get("physicalAddress") != null
+                        ? details.get("physicalAddress").m()
+                        : null;
+
+                assertNotNull(physicalAddress, "details.physicalAddress non deve essere null");
+                assertTrue(isNotEmpty(physicalAddress.get("municipality")),
+                        "details.physicalAddress.municipality non valorizzato");
+
+                // newAddress solo per NORMALIZED_ADDRESS
                 if ("NORMALIZED_ADDRESS".equals(category)) {
 
-                    Map<String, AttributeValue> newAddress = item.get("newAddress") != null
-                            ? item.get("newAddress").m()
+                    Map<String, AttributeValue> newAddress = details.get("newAddress") != null
+                            ? details.get("newAddress").m()
                             : null;
 
-                    assertNotNull(newAddress, "newAddress non deve essere null");
+                    assertNotNull(newAddress, "details.newAddress non deve essere null");
 
                     assertTrue(isNotEmpty(newAddress.get("foreignState")),
-                            "newAddress.foreignState non valorizzato");
+                            "details.newAddress.foreignState non valorizzato");
                     assertTrue(isNotEmpty(newAddress.get("municipality")),
-                            "newAddress.municipality non valorizzato");
+                            "details.newAddress.municipality non valorizzato");
                     assertTrue(isNotEmpty(newAddress.get("zip")),
-                            "newAddress.zip non valorizzato");
+                            "details.newAddress.zip non valorizzato");
                 }
             }
 
@@ -1909,4 +1921,55 @@ public class AvanzamentoNotificheB2bSteps {
                 && attributeValue.s() != null
                 && !attributeValue.s().trim().isEmpty();
     }
+//    @Then("viene verificato che i dati di indirizzo nell'elemento di timeline {string} siano valorizzati")
+//    public void checkAddressDataInTimelineElementsOnDB(String timelineElement) {
+//        QueryResponse queryResponse = dbService.call(DynamoTableName.TIMELINE, Map.of(
+//                ":v_iun", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build(),
+//                ":v_category", AttributeValue.builder().s(timelineElement).build()
+//        ));
+//
+//        log.info("Elementi trovati con categoria {}: {}", timelineElement, queryResponse.count());
+//
+//        try {
+//            for (Map<String, AttributeValue> item : queryResponse.items()) {
+//
+//                String category = item.get("category").s();
+//
+//                Map<String, AttributeValue> physicalAddress = item.get("physicalAddress") != null
+//                        ? item.get("physicalAddress").m()
+//                        : null;
+//
+//                // Controllo comune (tutti gli eventi)
+//                assertNotNull(physicalAddress, "physicalAddress non deve essere null");
+//                assertTrue(isNotEmpty(physicalAddress.get("municipality")),
+//                        "physicalAddress.municipality non valorizzato");
+//
+//                // Controllo specifico solo per NORMALIZED_ADDRESS
+//                if ("NORMALIZED_ADDRESS".equals(category)) {
+//
+//                    Map<String, AttributeValue> newAddress = item.get("newAddress") != null
+//                            ? item.get("newAddress").m()
+//                            : null;
+//
+//                    assertNotNull(newAddress, "newAddress non deve essere null");
+//
+//                    assertTrue(isNotEmpty(newAddress.get("foreignState")),
+//                            "newAddress.foreignState non valorizzato");
+//                    assertTrue(isNotEmpty(newAddress.get("municipality")),
+//                            "newAddress.municipality non valorizzato");
+//                    assertTrue(isNotEmpty(newAddress.get("zip")),
+//                            "newAddress.zip non valorizzato");
+//                }
+//            }
+//
+//        } catch (AssertionError assertionError) {
+//            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+//        }
+//    }
+//
+//    private boolean isNotEmpty(AttributeValue attributeValue) {
+//        return attributeValue != null
+//                && attributeValue.s() != null
+//                && !attributeValue.s().trim().isEmpty();
+//    }
 }
