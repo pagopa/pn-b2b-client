@@ -2016,7 +2016,7 @@ Feature: Workflow analogico
       | details_sentAttemptMade | 0        |
 
   @timelineElementsAddress
-  Scenario Outline: [E2E-WF-TIMELINE-ADDRESSES-01] Invio notifica AR  e verifica valorizzazione indirizzo in tabella
+  Scenario Outline: [E2E-WF-TIMELINE-ADDRESSES-01.1] Invio notifica AR  e verifica valorizzazione indirizzo in tabella
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
@@ -2035,7 +2035,7 @@ Feature: Workflow analogico
       | via @OK_890 |
 
   @timelineElementsAddress
-  Scenario Outline: [E2E-WF-TIMELINE-ADDRESSES-02] Invio notifiche RS e RIS e verifica valorizzazione indirizzo in tabella
+  Scenario Outline: [E2E-WF-TIMELINE-ADDRESSES-01.2] Invio notifiche RS e RIS e verifica valorizzazione indirizzo in tabella
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
@@ -2053,7 +2053,7 @@ Feature: Workflow analogico
 
 
   @timelineElementsAddress
-  Scenario: [E2E-WF-TIMELINE-ADDRESSES-03] Invio notifica digitale e verifica valorizzazione indirizzo in tabella
+  Scenario: [E2E-WF-TIMELINE-ADDRESSES-01.3] Invio notifica digitale e verifica valorizzazione indirizzo in tabella
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
