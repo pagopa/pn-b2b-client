@@ -20,8 +20,10 @@ public interface IAgreementClient extends SettableBearerToken {
     CreatedResource createAgreement(AgreementPayload agreementPayload);
     Agreement getAgreementById(UUID agreementId);
     ResponseEntity<Void> getAgreementContract(UUID agreementId);
-    Agreement activateAgreement(UUID agreementId, DelegationRef delegationRef);
-    Agreement activateAgreement(UUID agreementId);
+    Agreement approveAgreement(UUID agreementId, DelegationRef delegationRef);
+    Agreement approveAgreement(UUID agreementId);
+    Agreement unsuspendAgreement(UUID agreementId, DelegationRef delegationRef);
+    Agreement unsuspendAgreement(UUID agreementId);
     Agreement submitAgreement(UUID agreementId, AgreementSubmissionPayload agreementSubmissionPayload);
     Agreement suspendAgreement(UUID agreementId, DelegationRef delegationRef);
     Agreement suspendAgreement(UUID agreementId);
