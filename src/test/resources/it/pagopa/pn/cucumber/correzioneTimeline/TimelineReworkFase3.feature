@@ -220,3 +220,149 @@ Feature: Correzione timeline fase 3
     When viene invocata una richiesta di restart per la notifica appena creata
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
+
+  @timelineReworkF3
+  Scenario: [TR3_RESTART_CREATION_IN_DELIVERING_MONODEST] Tentativi di creazione di una restart per una notifica mono-destinatario in stato delivering
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | Via@OK_AR |
+      | digitalDomicile         | NULL      |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino allo stato della notifica "DELIVERING"
+    When viene invocata una richiesta di restart per la notifica appena creata
+    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
+
+  @timelineReworkF3
+  Scenario: [TR3_RESTART_CREATION_IN_DELIVERING_MULTIDEST] Tentativi di creazione di una restart per una notifica multi-destinatario in stato delivering
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | Via@OK_AR |
+      | digitalDomicile         | NULL      |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@OK_AR |
+      | digitalDomicile         | NULL      |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino allo stato della notifica "DELIVERING"
+    When viene invocata una richiesta di restart per la notifica appena creata
+    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
+
+  @timelineReworkF3
+  Scenario: [TR3_RESTART_CREATION_DELIVERED_MONODEST] Tentativi di creazione di una restart per una notifica mono-destinatario in stato delivered
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | Via@OK_AR |
+      | digitalDomicile         | NULL      |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
+    When viene invocata una richiesta di restart per la notifica appena creata
+    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
+
+  @timelineReworkF3
+  Scenario: [TR3_RESTART_CREATION_DELIVERED_MULTIDEST] Tentativi di creazione di una restart per una notifica multi-destinatario in stato delivered
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | Via@OK_AR |
+      | digitalDomicile         | NULL      |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@OK_AR |
+      | digitalDomicile         | NULL      |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
+    When viene invocata una richiesta di restart per la notifica appena creata
+    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
+
+  @timelineReworkF3
+  Scenario: [TR3_RESTART_CREATION_PAID_MONODEST] Tentativi di creazione di una restart per una notifica mono-destinatario con avviso di pagamento PAID
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+      | feePolicy             | DELIVERY_MODE               |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | Via@OK_AR |
+      | digitalDomicile         | NULL      |
+      | payment_pagoPaForm      | SI        |
+      | apply_cost_pagopa       | SI        |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And l'avviso pagopa viene pagato correttamente dall'utente 0
+    And si attende il corretto pagamento della notifica dell'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PAYMENT" per l'utente 0
+    When viene invocata una richiesta di restart per la notifica appena creata
+    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
+
+  @timelineReworkF3
+  Scenario: [TR3_RESTART_CREATION_PAID_MULTIDEST] Tentativi di creazione di una restart per una notifica multi-destinatario con avviso di pagamento PAID
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+      | feePolicy             | DELIVERY_MODE               |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | Via@OK_AR |
+      | digitalDomicile         | NULL      |
+      | payment_pagoPaForm      | SI        |
+      | apply_cost_pagopa       | SI        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@OK_AR |
+      | digitalDomicile         | NULL      |
+      | payment_pagoPaForm      | SI        |
+      | apply_cost_pagopa       | SI        |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And l'avviso pagopa viene pagato correttamente dall'utente 0
+    And si attende il corretto pagamento della notifica dell'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PAYMENT" per l'utente 0
+    When viene invocata una richiesta di restart per la notifica appena creata
+    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
+
+  @timelineReworkF3
+  Scenario: [TR3_RESTART_CREATION_CANCELLED_MONODEST] Tentativi di creazione di una restart per una notifica mono-destinatario in stato cancelled
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | Via@OK_AR |
+      | digitalDomicile         | NULL      |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED e successivamente annullata
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
+    And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
+    When viene invocata una richiesta di restart per la notifica appena creata
+    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
+
+  @timelineReworkF3
+  Scenario: [TR3_RESTART_CREATION_CANCELLED_MULTIDEST] Tentativi di creazione di una restart per una notifica multi-destinatario in stato cancelled
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | Via@OK_AR |
+      | digitalDomicile         | NULL      |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@OK_AR |
+      | digitalDomicile         | NULL      |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED e successivamente annullata
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
+    And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
+    When viene invocata una richiesta di restart per la notifica appena creata
+    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
