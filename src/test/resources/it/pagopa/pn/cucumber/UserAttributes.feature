@@ -104,3 +104,41 @@ Feature: Attributi utente
       | qazwsxedcrfvtgbyhnujmikolpQAZWSXEDCRFVTGBYHNUJMIKOLP1234567890!#$%&'+/=?^_`{}~-£@gmail.com                   |
 
 
+  @userAttributes
+  Scenario Outline: [USER-ATTR_10] inserimento telefono e recupero header lang
+    Given si predispone addressbook per l'utente "Mario Cucumber"
+    When viene richiesto l'inserimento del numero di telefono "+393297078181"
+    Then viene recuperata dall'header la lingua "<lang>" selezionata dal destinatario
+    Examples:
+      | lang
+      | it
+      | en
+      | sl
+      | de
+      | fr
+
+  @userAttributes
+  Scenario Outline: [USER-ATTR_11] inserimento pec e recupero header lang
+    Given si predispone addressbook per l'utente "Mario Cucumber"
+    When viene richiesto l'inserimento della pec "test@test@fail.@"
+    Then viene recuperata dall'header la lingua "<lang>" selezionata dal destinatario
+    Examples:
+      | lang
+      | it
+      | en
+      | sl
+      | de
+      | fr
+
+  @userAttributes
+  Scenario Outline: [USER-ATTR_12] inserimento email di cortesia e recupero header lang
+    Given si predispone addressbook per l'utente "Mario Cucumber"
+    When viene richiesto l'inserimento del email di cortesia "qazwsxedcrfvtgbyhnujmikolpQAZWSXEDCRFVTGBYHNUJMIKOLP1234567890!#$%&'+/=?^_`{|}~-@gmail.com"
+    Then viene recuperata dall'header la lingua "<lang>" selezionata dal destinatario
+    Examples:
+      | lang
+      | it
+      | en
+      | sl
+      | de
+      | fr

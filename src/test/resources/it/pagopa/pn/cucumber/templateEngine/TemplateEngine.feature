@@ -637,3 +637,77 @@ Feature: Template engine
     | tedesca | PG |
     | slovena | PF |
     | slovena | PG |
+
+
+
+
+  @templateEngine @templateEngineCM #templates-engine-private/v1/templates/notification-aar-for-sms
+  Scenario: [TEMPLATE-ENGINE_44] Richiamare l’API per il recupero del template di avviso di cortesia SMS - lingua inglese
+    When recupero il template per "avviso di cortesia SMS" in lingua "inglese" con recipient Type "PF"
+    Then verifico che il template è in formato "text"
+    And controllo che per il template "avviso di cortesia SMS" il file "text" sia in lingua "inglese"
+    And il corpo del messaggio contiene il testo "accedi con SPID"
+
+  @templateEngine @templateEngineCM #Per flusso Analogico o con flag courtesy message:OFF - templates-engine-private/v1/templates/notification-aar-for-sms
+  Scenario: [TEMPLATE-ENGINE_45] Richiamare l’API per il recupero del template di avviso di cortesia SMS - lingua inglese (PG)
+    When recupero il template per "avviso di cortesia SMS" in lingua "inglese" con recipient Type "PG"
+    Then verifico che il template è in formato "text"
+    And controllo che per il template "avviso di cortesia SMS" il file "text" sia in lingua "inglese"
+    And il corpo del messaggio contiene il testo "accedi con SPID"
+
+  @templateEngine @templateEngineCM # con flag courtesy message:ON - templates-engine-private/v1/templates/notification-aar-for-email-digital
+  Scenario: [TEMPLATE-ENGINE_46] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
+    When recupero il template per "avviso di cortesia EMAIL digitale" in lingua "inglese" con recipient Type "PG"
+    Then verifico che il template è in formato "html"
+    And controllo che per il template "avviso di cortesia EMAIL digitale" il file "html" sia in lingua "inglese"
+    And il corpo del messaggio contiene il testo "una comunicazione a valore legale da parte di"
+
+  @templateEngine @templateEngineCM #Per flusso Analogico o con flag courtesy message:OFF - templates-engine-private/v1/templates/notification-aar-for-email
+  Scenario: [TEMPLATE-ENGINE_47] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
+    When recupero il template per "avviso di cortesia EMAIL" in lingua "inglese" con recipient Type "PG"
+    Then verifico che il template è in formato "html"
+    And controllo che per il template "avviso di cortesia EMAIL" il file "html" sia in lingua "inglese"
+    And il corpo del messaggio contiene il testo "una notifica da parte di"
+
+  @templateEngine @templateEngineCM #templates-engine-private/v1/templates/notification-aar-for-email-digital
+  Scenario: [TEMPLATE-ENGINE_48] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
+    When recupero il template per "avviso di cortesia EMAIL digitale" in lingua "inglese" con recipient Type "PF"
+    Then verifico che il template è in formato "html"
+    And controllo che per il template "avviso di cortesia EMAIL digitale" il file "html" sia in lingua "inglese"
+    And il corpo del messaggio contiene il testo "una comunicazione a valore legale da parte di"
+
+  @templateEngine @templateEngineCM #Per flusso Analogico o con flag courtesy message:OFF - templates-engine-private/v1/templates/notification-aar-for-email
+  Scenario: [TEMPLATE-ENGINE_49] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese (PF)
+    When recupero il template per "avviso di cortesia EMAIL" in lingua "inglese" con recipient Type "PF"
+    Then verifico che il template è in formato "html"
+    And controllo che per il template "avviso di cortesia EMAIL" il file "html" sia in lingua "inglese"
+    And il corpo del messaggio contiene il testo "una notifica da parte di"
+
+  @templateEngine @templateEngineCM
+  Scenario: [TEMPLATE-ENGINE_50] Richiamare l’API per il recupero del template di avviso di cortesia SMS - lingua italiana
+    When recupero il template per "AVVISO DI CORTESIA SMS DIGITALE" in lingua "inglese" con recipient Type "PG"
+    Then verifico che il template è in formato "text"
+    And controllo che per il template "AVVISO DI CORTESIA SMS DIGITALE" il file "text" sia in lingua "italiana"
+    And il corpo del messaggio contiene il testo "accedi a SEND"
+
+
+  @templateEngine #81 /templates-engine-private/v1/templates/notification-aar-subject
+  Scenario: [TEMPLATE-ENGINE_51] Richiamare l’API per il recupero dell’oggetto relativo all’avviso di cortesia per l’SMS
+    When recupero l'oggetto per "avviso di cortesia per email object" in lingua "inglese"
+    Then verifico che il template è in formato "text"
+    And controllo che per il template "avviso di cortesia per email object" il file "text" sia in lingua "inglese"
+
+  @templateEngine #100 /templates-engine-private/v1/templates/notification-aar-subject
+  Scenario: [TEMPLATE-ENGINE_33_2] Richiamare l’API per il recupero dell’oggetto relativo all’avviso di cortesia per l’SMS - body vuoto
+    When recupero l'oggetto per "avviso di cortesia per email object" in lingua "inglese" con il body "vuoto"
+    Then verifico che la chiamata sia andata in "400" error
+
+  @templateEngine #94 /templates-engine-private/v1/templates/notificationAARForEMAIL
+  Scenario: [TEMPLATE-ENGINE_18_1] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - body vuoto
+    When recupero il template per "avviso di cortesia EMAIL" in lingua "inglese" con il body "null"
+    Then verifico che la chiamata sia andata in "400" error
+
+  @templateEngine #95 /templates-engine-private/v1/templates/notification-aar-for-pec
+  Scenario: [TEMPLATE-ENGINE_20_1] Richiamare l’API per il recupero del template di avviso di cortesia PEC - body vuoto
+    When recupero il template per "avviso di cortesia PEC" in lingua "inglese" con il body "null"
+    Then verifico che la chiamata sia andata in "400" error
