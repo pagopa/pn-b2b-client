@@ -82,17 +82,19 @@ Feature: Attivazione richiesta di fruizione
   @sad-path
   @nrt-minimal
   @agreement_activate4a @agreement_activate_refactor
-  Scenario Outline: [AGREEMENT_ACTIVATE_04A] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato ACTIVE, ARCHIVED, alla richiesta di attivazione da parte di un utente con sufficienti permessi dell’ente erogatore, ottiene un errore
+  Scenario Outline: [AGREEMENT_ACTIVATE_04A] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato ACTIVE, ARCHIVED o SUSPENDED, alla richiesta di attivazione da parte di un utente con sufficienti permessi dell’ente erogatore, ottiene un errore
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     Given "GSP" ha una richiesta di fruizione in stato "<statoAgreement>" per quell'e-service
     When l'utente richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 400
+    And la richiesta di fruizione è in stato "<statoAgreement>"
 
     Examples:
       | statoAgreement |
       | ACTIVE         |
       | ARCHIVED       |
+      | SUSPENDED      |
 
   @deleghe1
   Scenario: Un delegato alla fruizione sospende ed attiva una finalità/richiesta di fruizione agendo come delegato e passando il delegationId
@@ -153,6 +155,7 @@ Feature: Attivazione richiesta di fruizione
     Given la richiesta di fruizione è passata in stato "MISSING_CERTIFIED_ATTRIBUTES"
     When l'utente richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 400
+    And la richiesta di fruizione è in stato "MISSING_CERTIFIED_ATTRIBUTES"
 
     Examples:
       | enteFruitore | enteCertificatore | enteErogatore |
@@ -168,6 +171,7 @@ Feature: Attivazione richiesta di fruizione
     Given "PA1" ha già rifiutato quella richiesta di fruizione
     When l'utente richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 400
+    And la richiesta di fruizione è in stato "REJECTED"
 
   @sad-path
   @nrt-minimal
@@ -178,6 +182,7 @@ Feature: Attivazione richiesta di fruizione
     Given "PA1" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
     When l'utente richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 403
+    And la richiesta di fruizione è in stato "PENDING"
 
   @happy-path @nrt-minimal
   @agreement_activate6 @no-parallel @certifiedAttribute @agreement_activate_refactor
@@ -227,3 +232,46 @@ Feature: Attivazione richiesta di fruizione
       | %null       | 400        |
       | %random     | 404        |
 
+  @sad-path
+  @agreement_activate_refactor
+  Scenario Outline: [AGREEMENTS_UNSUSPEND_2] La riattivazione di una richiesta di fruizione in stato differente da SUSPENDED restituisce errore
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    And "PA2" ha una richiesta di fruizione in stato "<statoAgreement>" per quell'e-service
+    When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 400
+    And la richiesta di fruizione è in stato "<statoAgreement>"
+
+    Examples:
+      | statoAgreement |
+      | ACTIVE         |
+      | ARCHIVED       |
+      | PENDING        |
+
+  @sad-path
+  @agreement_activate_refactor
+  Scenario: [AGREEMENTS_UNSUSPEND_3] La riattivazione di una richiesta di fruizione in stato REJECTED restituisce errore
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
+    And "GSP" ha già creato e inviato una richiesta di fruizione per quell'e-service ed è in attesa di approvazione
+    And "PA1" ha già rifiutato quella richiesta di fruizione
+    When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 400
+    And la richiesta di fruizione è in stato "REJECTED"
+
+  @sad-path
+  @agreement_activate_refactor
+  Scenario Outline: [AGREEMENTS_UNSUSPEND_4] La riattivazione di una richiesta di fruizione in stato MISSING_CERTIFIED_ATTRIBUTES restituisce errore
+    Given l'utente è un "admin" di "<enteErogatore>"
+    Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
+    Given "<enteErogatore>" ha già creato un e-service in stato "PUBLISHED" che richiede quell'attributo certificato con approvazione automatica
+    Given "<enteFruitore>" ha una richiesta di fruizione in stato "DRAFT" per quell'e-service
+    Given "<enteCertificatore>" ha già revocato quell'attributo a "<enteFruitore>"
+    Given la richiesta di fruizione è passata in stato "MISSING_CERTIFIED_ATTRIBUTES"
+    When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 400
+    And la richiesta di fruizione è in stato "MISSING_CERTIFIED_ATTRIBUTES"
+
+    Examples:
+      | enteFruitore | enteCertificatore | enteErogatore |
+      | PA1          | PA2               | GSP           |
