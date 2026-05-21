@@ -23,6 +23,29 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     When l'utente tenta di recuperare una lista di 1 agreements creati
     Then si ottiene lo status code 401
 
+  @happy-path
+  @agreement_activate_refactor
+  Scenario: [M2M_AGREEMENTS_APPROVE_1] Una richiesta di fruizione in stato PENDING può essere approvata da un utente con ruolo M2M-ADMIN dell'ente erogatore
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
+    And "PA2" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente m2m richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 200
+    And la richiesta di fruizione m2m è stata approvata correttamente
+
+  @happy-path
+  @agreement_activate_refactor
+  Scenario: [M2M_AGREEMENTS_UNSUSPEND_1] Una richiesta di fruizione sospesa dal producer può essere riattivata da un utente con ruolo M2M-ADMIN dell'ente erogatore
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già sospeso quella richiesta di fruizione come PRODUCER
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente m2m richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 200
+    And la richiesta di fruizione m2m è stata riattivata correttamente
+
   # Da qui in poi test di "API V2 Parte 2" https://pagopa.atlassian.net/wiki/spaces/PDNDI/pages/1812562407/DRAFT+SRS+API+V2+Parte+2#Scenari-di-test
   @m2m-agreements-parte2-luglio
   Scenario Outline: [M2M_AGREEMENTS_PURPOSES_1] La lista delle finalità correlate a un agreement può essere visualizzata da un utente con ruolo M2M-ADMIN o M2M (Parte2#Scenario 12)
