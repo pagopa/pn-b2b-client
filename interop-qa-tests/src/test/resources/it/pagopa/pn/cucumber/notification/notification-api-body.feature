@@ -35,6 +35,7 @@ Feature: API Notifiche - verifica bodies
     When l'utente "admin" di "PA2" richiede una operazione di sospensione di quella richiesta di fruizione con successo
     Then per l'utente "admin" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "L'ente .+ ha sospeso la propria richiesta di fruizione per il suo e-service .+\." e "/erogazione/richieste/.+"
 
+  @agreement_activate_refactor
   Scenario: [NOTIFICATION_AGREEMENTS_6] La riattivazione - da parte del fruitore - di una richiesta di fruizione per un proprio e-service con approvazione automatica produce una notifica (Scenario 74)
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
