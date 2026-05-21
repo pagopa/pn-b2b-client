@@ -134,6 +134,29 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     Then si ottiene status code 200
     And la richiesta di fruizione m2m è stata riattivata correttamente
 
+  @sad-path
+  @agreement_activate_refactor
+  Scenario: [M2M_AGREEMENTS_APPROVE_5] L'approvazione di una richiesta di fruizione con ruolo M2M restituisce errore
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
+    And "PA2" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
+    When l'utente m2m richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 403
+    And la richiesta di fruizione m2m è rimasta in stato "PENDING"
+
+  @sad-path
+  @agreement_activate_refactor
+  Scenario: [M2M_AGREEMENTS_UNSUSPEND_5] La riattivazione di una richiesta di fruizione con ruolo M2M restituisce errore
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già sospeso quella richiesta di fruizione come PRODUCER
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
+    When l'utente m2m richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 403
+    And la richiesta di fruizione m2m è rimasta in stato "SUSPENDED"
+
 
   # Da qui in poi test di "API V2 Parte 2" https://pagopa.atlassian.net/wiki/spaces/PDNDI/pages/1812562407/DRAFT+SRS+API+V2+Parte+2#Scenari-di-test
   @m2m-agreements-parte2-luglio
