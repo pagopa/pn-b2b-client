@@ -19,6 +19,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreement;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementState;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreements;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DelegationRef;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Document;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Documents;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purpose;
@@ -145,10 +146,24 @@ public class AgreementSteps {
         httpCallExecutor.performCall(() -> agreementClient.approveAgreement(resolvedAgreementId));
     }
 
+    @When("l'utente m2m richiede una operazione di approvazione della richiesta di fruizione con id {string} e delegationId {string}")
+    public void m2mUserRequiresAgreementApprovalWithIdAndDelegationId(String agreementId, String delegationId) {
+        UUID resolvedAgreementId = agreementResolver.resolveAgreementId(agreementId);
+        DelegationRef delegationRef = new DelegationRef().delegationId(agreementResolver.resolveDelegationId(delegationId));
+        httpCallExecutor.performCall(() -> agreementClient.approveAgreement(resolvedAgreementId, delegationRef));
+    }
+
     @When("l'utente m2m richiede una operazione di riattivazione della richiesta di fruizione con id {string}")
     public void m2mUserRequiresAgreementUnsuspensionWithId(String agreementId) {
         UUID resolvedAgreementId = agreementResolver.resolveAgreementId(agreementId);
         httpCallExecutor.performCall(() -> agreementClient.unsuspendAgreement(resolvedAgreementId));
+    }
+
+    @When("l'utente m2m richiede una operazione di riattivazione della richiesta di fruizione con id {string} e delegationId {string}")
+    public void m2mUserRequiresAgreementUnsuspensionWithIdAndDelegationId(String agreementId, String delegationId) {
+        UUID resolvedAgreementId = agreementResolver.resolveAgreementId(agreementId);
+        DelegationRef delegationRef = new DelegationRef().delegationId(agreementResolver.resolveDelegationId(delegationId));
+        httpCallExecutor.performCall(() -> agreementClient.unsuspendAgreement(resolvedAgreementId, delegationRef));
     }
 
     @Then("la richiesta di fruizione m2m è stata approvata correttamente")

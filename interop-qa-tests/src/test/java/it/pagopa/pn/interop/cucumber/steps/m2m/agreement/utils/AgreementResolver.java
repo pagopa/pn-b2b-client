@@ -20,4 +20,15 @@ public class AgreementResolver extends AbstractResolver {
             null
         );
     }
+
+    public UUID resolveDelegationId(String raw) {
+        return resolveOrParse(
+            raw,
+            UUID::fromString,
+            () -> sharedStepsContext.getDelegationCommonContext().getDelegationId(),
+            () -> sharedStepsContext.getDelegationCommonContext().getDelegationId(),
+            UUID::randomUUID,
+            null
+        );
+    }
 }
