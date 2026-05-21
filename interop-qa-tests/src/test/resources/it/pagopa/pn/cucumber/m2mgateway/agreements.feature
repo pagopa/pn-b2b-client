@@ -79,6 +79,27 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
       | %null       | 400        |
       | %random     | 404        |
 
+  @sad-path
+  @agreement_activate_refactor
+  Scenario: [M2M_AGREEMENTS_APPROVE_3] L'approvazione di una richiesta di fruizione già in stato ACTIVE restituisce errore
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente m2m richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 409
+    And la richiesta di fruizione m2m è rimasta in stato "ACTIVE"
+
+  @sad-path
+  @agreement_activate_refactor
+  Scenario: [M2M_AGREEMENTS_UNSUSPEND_3] La riattivazione di una richiesta di fruizione già in stato ACTIVE restituisce errore
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente m2m richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 409
+    And la richiesta di fruizione m2m è rimasta in stato "ACTIVE"
 
   # Da qui in poi test di "API V2 Parte 2" https://pagopa.atlassian.net/wiki/spaces/PDNDI/pages/1812562407/DRAFT+SRS+API+V2+Parte+2#Scenari-di-test
   @m2m-agreements-parte2-luglio
