@@ -27,6 +27,7 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.DocumentMetadata;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.M2MDataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.m2m.agreement.utils.AgreementResolver;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -44,6 +45,7 @@ public class AgreementSteps {
     private final IM2MAgreementClient agreementClient;
     private final IHttpExecutor httpCallExecutor;
     private final PollingService pollingService;
+    private final AgreementResolver agreementResolver;
 
     public AgreementSteps(ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext,
@@ -55,6 +57,7 @@ public class AgreementSteps {
         this.agreementClient = clientTokenConfigurator.getM2mAgreementClient();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
+        this.agreementResolver = new AgreementResolver(sharedStepsContext);
     }
 
     @Given("{string} ha un agreement m2m attivo per ciascun e-service di {string}")
@@ -134,6 +137,55 @@ public class AgreementSteps {
         UUID agreementId = dataPreparationService.createAndCheckAgreement(eserviceId, descriptorId);
 
         sharedStepsContext.setAgreementId(agreementId);
+    }
+
+    @When("l'utente m2m richiede una operazione di approvazione della richiesta di fruizione con id {string}")
+    public void m2mUserRequiresAgreementApprovalWithId(String agreementId) {
+        UUID resolvedAgreementId = agreementResolver.resolveAgreementId(agreementId);
+        httpCallExecutor.performCall(() -> agreementClient.approveAgreement(resolvedAgreementId));
+    }
+
+    @When("l'utente m2m richiede una operazione di riattivazione della richiesta di fruizione con id {string}")
+    public void m2mUserRequiresAgreementUnsuspensionWithId(String agreementId) {
+        UUID resolvedAgreementId = agreementResolver.resolveAgreementId(agreementId);
+        httpCallExecutor.performCall(() -> agreementClient.unsuspendAgreement(resolvedAgreementId));
+    }
+
+    @Then("la richiesta di fruizione m2m è stata approvata correttamente")
+    public void m2mAgreementSuccessfullyApproved() {
+        verifyAgreementState(
+            AgreementState.ACTIVE,
+            "La richiesta di fruizione m2m non è stata approvata correttamente"
+        );
+    }
+
+    @Then("la richiesta di fruizione m2m è stata riattivata correttamente")
+    public void m2mAgreementSuccessfullyUnsuspended() {
+        verifyAgreementState(
+            AgreementState.ACTIVE,
+            "La richiesta di fruizione m2m non è stata riattivata correttamente"
+        );
+    }
+
+    @Then("la richiesta di fruizione m2m è rimasta in stato {string}")
+    public void m2mAgreementStateIsUnchanged(String agreementState) {
+        AgreementState expectedState = AgreementState.fromValue(agreementState);
+        verifyAgreementState(
+            expectedState,
+            "La richiesta di fruizione m2m non è rimasta in stato " + agreementState
+        );
+    }
+
+    private void verifyAgreementState(AgreementState expectedState, String errorMessage) {
+
+        UUID agreementId = sharedStepsContext.getAgreementId();
+        pollingService.makePolling(
+            () -> httpCallExecutor.performCall(() -> agreementClient.getAgreementById(agreementId)),
+            status -> status.is2xxSuccessful() &&
+                ((Agreement) httpCallExecutor.getResponse()).getState().equals(expectedState) &&
+                ((Agreement) httpCallExecutor.getResponse()).getId().equals(agreementId),
+            errorMessage
+        );
     }
 
     @When("l'utente tenta di ottenere la lista delle finalità correlate alla richiesta di fruizione")
