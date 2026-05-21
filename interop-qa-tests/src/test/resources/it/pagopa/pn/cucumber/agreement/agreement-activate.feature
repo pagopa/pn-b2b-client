@@ -12,7 +12,7 @@ Feature: Attivazione richiesta di fruizione
     Given "<enteErogatore>" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
     Given "<enteFruitore>" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
     Given "<enteErogatore>" ha già verificato l'attributo verificato a "<enteFruitore>"
-    When l'utente richiede una operazione di approvazione di quella richiesta di fruizione
+    When l'utente richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code <risultato>
 
     @happy-path
@@ -46,7 +46,7 @@ Feature: Attivazione richiesta di fruizione
     Given "<enteErogatore>" ha già approvato quella richiesta di fruizione
     Given "<enteErogatore>" ha già sospeso quella richiesta di fruizione come PRODUCER
     Given "<enteFruitore>" ha già sospeso quella richiesta di fruizione come CONSUMER
-    When l'utente richiede una operazione di riattivazione di quella richiesta di fruizione
+    When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 200
 
     @happy-path
@@ -72,7 +72,7 @@ Feature: Attivazione richiesta di fruizione
     Given "<enteErogatore>" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
     Given "<enteFruitore>" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
     Given "<enteErogatore>" verifica un attributo per ogni gruppo di attributi verificati a "<enteFruitore>"
-    When l'utente richiede una operazione di approvazione di quella richiesta di fruizione
+    When l'utente richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 200
 
     Examples:
@@ -86,7 +86,7 @@ Feature: Attivazione richiesta di fruizione
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     Given "GSP" ha una richiesta di fruizione in stato "<statoAgreement>" per quell'e-service
-    When l'utente richiede una operazione di approvazione di quella richiesta di fruizione
+    When l'utente richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 400
 
     Examples:
@@ -142,7 +142,7 @@ Feature: Attivazione richiesta di fruizione
 
 
   @sad-path @nrt-minimal
-  @agreement_activate4b @no-parallel @certifiedAttribute
+  @agreement_activate4b @no-parallel @certifiedAttribute @agreement_activate_refactor
     #BUG: https://pagopa.atlassian.net/browse/PIN-7747
   Scenario Outline: [AGREEMENT_ACTIVATE_04B] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, alla richiesta di attivazione da parte di un utente con sufficienti permessi dell’ente erogatore, ottiene un errore
     Given l'utente è un "admin" di "<enteErogatore>"
@@ -151,7 +151,7 @@ Feature: Attivazione richiesta di fruizione
     Given "<enteFruitore>" ha una richiesta di fruizione in stato "DRAFT" per quell'e-service
     Given "<enteCertificatore>" ha già revocato quell'attributo a "<enteFruitore>"
     Given la richiesta di fruizione è passata in stato "MISSING_CERTIFIED_ATTRIBUTES"
-    When l'utente richiede una operazione di approvazione di quella richiesta di fruizione
+    When l'utente richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 400
 
     Examples:
@@ -166,7 +166,7 @@ Feature: Attivazione richiesta di fruizione
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
     Given "GSP" ha già creato e inviato una richiesta di fruizione per quell'e-service ed è in attesa di approvazione
     Given "PA1" ha già rifiutato quella richiesta di fruizione
-    When l'utente richiede una operazione di approvazione di quella richiesta di fruizione
+    When l'utente richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 400
 
   @sad-path
@@ -176,7 +176,7 @@ Feature: Attivazione richiesta di fruizione
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
     Given "PA1" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
-    When l'utente richiede una operazione di approvazione di quella richiesta di fruizione
+    When l'utente richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 403
 
   @happy-path @nrt-minimal
@@ -189,7 +189,7 @@ Feature: Attivazione richiesta di fruizione
     Given "<enteFruitore>" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     Given "<enteCertificatore>" ha già revocato quell'attributo a "<enteFruitore>"
     Given la richiesta di fruizione è passata in stato "SUSPENDED"
-    When l'utente richiede una operazione di riattivazione di quella richiesta di fruizione
+    When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 200
 
     Examples:

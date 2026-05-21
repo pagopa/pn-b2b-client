@@ -12,6 +12,7 @@ import it.pagopa.pn.interop.cucumber.steps.common.AttributeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
+import it.pagopa.pn.interop.cucumber.steps.m2m.agreement.utils.AgreementResolver;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
@@ -27,6 +28,7 @@ public class AgreementActivateSteps {
     private final BFFDataPreparationService dataPreparationService;
     private final SharedStepsContext sharedStepsContext;
     private final IdentityService identityService;
+    private final AgreementResolver agreementResolver;
 
     public AgreementActivateSteps(ClientTokenConfigurator clientTokenConfigurator,
                                   BFFDataPreparationService dataPreparationService,
@@ -35,6 +37,7 @@ public class AgreementActivateSteps {
         this.dataPreparationService = dataPreparationService;
         this.sharedStepsContext = sharedStepsContext;
         this.identityService = sharedStepsContext.getIdentityService();
+        this.agreementResolver = new AgreementResolver(sharedStepsContext);
     }
 
     @Given("{string} ha già sospeso quella richiesta di fruizione come {clientType}")
@@ -142,20 +145,22 @@ public class AgreementActivateSteps {
                 sharedStepsContext.getAgreementId(), null);
     }
 
-    @When("l'utente richiede una operazione di approvazione di quella richiesta di fruizione")
-    public void userRequiresAgreementApproval() {
+    @When("l'utente richiede una operazione di approvazione della richiesta di fruizione con id {string}")
+    public void userRequiresAgreementApprovalWithId(String agreementId) {
+        UUID resolvedAgreementId = agreementResolver.resolveAgreementId(agreementId);
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient()
-                        .approveAgreement(sharedStepsContext.getAgreementId()));
+                        .approveAgreement(resolvedAgreementId));
     }
 
-    @When("l'utente richiede una operazione di riattivazione di quella richiesta di fruizione")
-    public void userRequiresAgreementUnsuspension() {
+    @When("l'utente richiede una operazione di riattivazione della richiesta di fruizione con id {string}")
+    public void userRequiresAgreementUnsuspensionWithId(String agreementId) {
+        UUID resolvedAgreementId = agreementResolver.resolveAgreementId(agreementId);
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient()
-                        .unsuspendAgreement(sharedStepsContext.getAgreementId()));
+                        .unsuspendAgreement(resolvedAgreementId));
     }
 
     @When("l'utente {string} di {string} richiede una operazione di approvazione di quella richiesta di fruizione")
