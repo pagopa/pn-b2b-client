@@ -195,3 +195,35 @@ Feature: Attivazione richiesta di fruizione
     Examples:
       | enteFruitore | enteCertificatore | enteErogatore |
       | PA1          | PA2               | GSP           |
+
+  @sad-path
+  @agreement_activate_refactor
+  Scenario Outline: [AGREEMENTS_APPROVE_1] L'approvazione di una richiesta di fruizione con id non valido restituisce errore
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
+    And "PA2" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    When l'utente richiede una operazione di approvazione della richiesta di fruizione con id "<agreementId>"
+    Then si ottiene status code <statusCode>
+    And la richiesta di fruizione è in stato "PENDING"
+
+    Examples:
+      | agreementId | statusCode |
+      | %null       | 400        |
+      | %random     | 404        |
+
+  @sad-path
+  @agreement_activate_refactor
+  Scenario Outline: [AGREEMENTS_UNSUSPEND_1] La riattivazione di una richiesta di fruizione con id non valido restituisce errore
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già sospeso quella richiesta di fruizione come PRODUCER
+    When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "<agreementId>"
+    Then si ottiene status code <statusCode>
+    And la richiesta di fruizione è in stato "SUSPENDED"
+
+    Examples:
+      | agreementId | statusCode |
+      | %null       | 400        |
+      | %random     | 404        |
+
