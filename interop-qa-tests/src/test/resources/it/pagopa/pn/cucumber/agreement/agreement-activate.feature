@@ -49,9 +49,18 @@ Feature: Attivazione richiesta di fruizione
     When l'utente richiede una operazione di riattivazione di quella richiesta di fruizione
     Then si ottiene status code 200
 
+    @happy-path
     Examples:
-      | enteFruitore | enteCertificatore | enteErogatore |
-      | PA1          | PA2               | GSP           |
+      | enteFruitore | enteCertificatore | enteErogatore |ruolo        | risultato |
+      | PA1          | PA2               | GSP           |admin        |       200 |
+          
+    @sad-path
+    Examples:
+      | enteFruitore | enteCertificatore | enteErogatore |ruolo        | risultato |
+      | PA1          | PA2               | GSP           |api          |       403 |
+      | PA1          | PA2               | GSP           |security     |       403 |
+      | PA1          | PA2               | GSP           |support      |       403 |
+      | PA1          | PA2               | GSP           |api,security |       403 |
 
   @happy-path @nrt-minimal
   @agreement_activate3 @no-parallel @agreement_activate_refactor
