@@ -10,9 +10,9 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     Then si ottiene lo status code 200
     And sono stati visualizzati correttamente 5 agreements creati
     Examples:
-      | ruolo-m2m  |
-      | m2m-admin  |
-      | m2m        |
+      | ruolo-m2m |
+      | m2m-admin |
+      | m2m       |
 
   @sad-path
   Scenario: [M2M_AGREEMENTS_LIST_2] La lista degli agreements NON può essere visionata da un utente che ha presentato un token m2m scaduto
@@ -81,25 +81,41 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
 
   @sad-path
   @agreement_activate_refactor
-  Scenario: [M2M_AGREEMENTS_APPROVE_3] L'approvazione di una richiesta di fruizione già in stato ACTIVE restituisce errore
+  Scenario Outline: [M2M_AGREEMENTS_APPROVE_3] L'approvazione di una richiesta di fruizione in stato differente da PENDING restituisce errore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha una richiesta di fruizione in stato <agreementStatus> per quell'e-service
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente m2m richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 409
-    And la richiesta di fruizione m2m è rimasta in stato "ACTIVE"
+    And la richiesta di fruizione m2m è rimasta in stato <agreementStatus>
+
+    Examples:
+      | agreementStatus                |
+      | "ACTIVE"                       |
+      | "ARCHIVED"                     |
+      | "REJECTED"                     |
+      | "SUSPENDED"                    |
+      | "MISSING_CERTIFIED_ATTRIBUTES" |
 
   @sad-path
   @agreement_activate_refactor
-  Scenario: [M2M_AGREEMENTS_UNSUSPEND_3] La riattivazione di una richiesta di fruizione già in stato ACTIVE restituisce errore
+  Scenario Outline: [M2M_AGREEMENTS_UNSUSPEND_3] La riattivazione di una richiesta di fruizione in stato differente da SUSPENDED restituisce errore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha una richiesta di fruizione in stato <agreementStatus> per quell'e-service
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente m2m richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 409
-    And la richiesta di fruizione m2m è rimasta in stato "ACTIVE"
+    And la richiesta di fruizione m2m è rimasta in stato <agreementStatus>
+
+    Examples:
+      | agreementStatus                |
+      | "ACTIVE"                       |
+      | "ARCHIVED"                     |
+      | "REJECTED"                     |
+      | "PENDING"                      |
+      | "MISSING_CERTIFIED_ATTRIBUTES" |
 
   @happy-path
   @agreement_activate_refactor
@@ -170,9 +186,9 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     Then si ottiene status code 200
     And le finalità vengono correttamente visualizzate
     Examples:
-      | ruolo-m2m  |
-      | m2m-admin  |
-      | m2m        |
+      | ruolo-m2m |
+      | m2m-admin |
+      | m2m       |
 
   @m2m-agreements-parte2-luglio
   Scenario: [M2M_AGREEMENTS_PURPOSES_2] La lista delle finalità correlate a un agreement non può essere visualizzata specificando un token non valido (Parte2#Scenario 14)
@@ -199,9 +215,9 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     Then si ottiene status code 200
     And i documenti vengono correttamente visualizzati
     Examples:
-      | ruolo-m2m  |
-      | m2m-admin  |
-      | m2m        |
+      | ruolo-m2m |
+      | m2m-admin |
+      | m2m       |
 
   @m2m-agreements-parte2-luglio
   Scenario: [M2M_AGREEMENTS_DOCUMENTS_2] La lista dei documenti correlati a un agreement non può essere visualizzata specificando un token non valido (Parte2#Scenario 18)
