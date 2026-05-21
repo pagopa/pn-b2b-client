@@ -11,6 +11,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreement;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementSubmission;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreements;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DelegationRef;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Documents;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.AgreementsApi;
@@ -57,6 +58,26 @@ public class M2MV3AgreementClientImpl extends AbstractDPoPClient implements IM2M
         it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.AgreementSubmission v3Bean = this.mapper.mapToV3(
             agreementSubmission);
         return this.mapper.mapToV2(agreementsApi.submitAgreement(agreementId, v3Bean));
+    }
+
+    @Override
+    public Agreement approveAgreement(UUID agreementId, DelegationRef delegationRef) {
+        return this.mapper.mapToV2(agreementsApi.approveAgreement(agreementId, mapper.mapToV3(delegationRef)));
+    }
+
+    @Override
+    public Agreement approveAgreement(UUID agreementId) {
+        return this.mapper.mapToV2(agreementsApi.approveAgreement(agreementId, null));
+    }
+
+    @Override
+    public Agreement unsuspendAgreement(UUID agreementId, DelegationRef delegationRef) {
+        return this.mapper.mapToV2(agreementsApi.unsuspendAgreement(agreementId, mapper.mapToV3(delegationRef)));
+    }
+
+    @Override
+    public Agreement unsuspendAgreement(UUID agreementId) {
+        return this.mapper.mapToV2(agreementsApi.unsuspendAgreement(agreementId, null));
     }
 
     @Override
