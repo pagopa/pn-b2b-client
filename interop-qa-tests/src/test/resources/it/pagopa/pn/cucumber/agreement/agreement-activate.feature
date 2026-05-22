@@ -199,6 +199,7 @@ Feature: Attivazione richiesta di fruizione
     Given la richiesta di fruizione è passata in stato "SUSPENDED"
     When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 200
+    And la richiesta di fruizione è in stato "SUSPENDED"
 
     Examples:
       | enteFruitore | enteCertificatore | enteErogatore |
