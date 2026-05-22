@@ -52,6 +52,12 @@ public class AgreementActivateSteps {
         dataPreparationService.approveAgreement(sharedStepsContext.getAgreementId(), null);
     }
 
+    @Given("{string} ha già riattivato quella richiesta di fruizione come {clientType}")
+    public void tenantHasAlreadyUnsuspendedThatRequest(String tenantType, ClientType status) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        dataPreparationService.unsuspendAgreement(sharedStepsContext.getAgreementId(),status, null);
+    }
+
     @Given("l'ente {delegationRole} ha già approvato quella richiesta di fruizione")
     public void tenantHasAlreadyAcceptedThatRequest(DelegationRole delegationRole) throws InterruptedException {
         Thread.sleep(5000);
@@ -59,6 +65,15 @@ public class AgreementActivateSteps {
         String token = identityService.getToken(tenant, null);
         clientTokenConfigurator.setBearerToken(token);
         dataPreparationService.approveAgreement(sharedStepsContext.getAgreementId(), new DelegationRef().delegationId(sharedStepsContext.getDelegationCommonContext().getDelegationId()));
+    }
+
+    @Given("l'ente {delegationRole} ha già riattivato quella richiesta di fruizione come {clientType}")
+    public void tenantHasAlreadyUnsuspendedThatRequest(DelegationRole delegationRole, ClientType status) throws InterruptedException {
+        Thread.sleep(5000);
+        String tenant = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
+        String token = identityService.getToken(tenant, null);
+        clientTokenConfigurator.setBearerToken(token);
+        dataPreparationService.unsuspendAgreement(sharedStepsContext.getAgreementId(),status, new DelegationRef().delegationId(sharedStepsContext.getDelegationCommonContext().getDelegationId()));
     }
 
     @Given("{string} ha già creato un e-service in stato {string} che richiede quegli attributi con approvazione {string}")
