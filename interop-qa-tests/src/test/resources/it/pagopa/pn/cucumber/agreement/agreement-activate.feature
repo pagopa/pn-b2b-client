@@ -13,30 +13,30 @@ Feature: Attivazione richiesta di fruizione
     Given "<enteFruitore>" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
     Given "<enteErogatore>" ha già verificato l'attributo verificato a "<enteFruitore>"
     When l'utente richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
-    Then si ottiene status code <risultato>
+    Then si ottiene status code <statusCode>
 
     @happy-path
     Examples:
-      | enteFruitore | enteCertificatore | enteErogatore | ruolo | risultato |
-      | PA1          | PA2               | GSP           | admin | 200       |
-      | GSP          | PA2               | PA1           | admin | 200       |
+      | enteFruitore | enteCertificatore | enteErogatore | ruolo | statusCode |
+      | PA1          | PA2               | GSP           | admin | 200        |
+      | GSP          | PA2               | PA1           | admin | 200        |
 
     @sad-path
     Examples:
-      | enteFruitore | enteCertificatore | enteErogatore | ruolo        | risultato |
-      | PA1          | PA2               | GSP           | api          | 403       |
-      | PA1          | PA2               | GSP           | security     | 403       |
-      | PA1          | PA2               | GSP           | support      | 403       |
-      | PA1          | PA2               | GSP           | api,security | 403       |
-      | GSP          | PA2               | PA1           | api          | 403       |
-      | GSP          | PA2               | PA1           | security     | 403       |
-      | GSP          | PA2               | PA1           | support      | 403       |
-      | GSP          | PA2               | PA1           | api,security | 403       |
+      | enteFruitore | enteCertificatore | enteErogatore | ruolo        | statusCode |
+      | PA1          | PA2               | GSP           | api          | 403        |
+      | PA1          | PA2               | GSP           | security     | 403        |
+      | PA1          | PA2               | GSP           | support      | 403        |
+      | PA1          | PA2               | GSP           | api,security | 403        |
+      | GSP          | PA2               | PA1           | api          | 403        |
+      | GSP          | PA2               | PA1           | security     | 403        |
+      | GSP          | PA2               | PA1           | support      | 403        |
+      | GSP          | PA2               | PA1           | api,security | 403        |
 
   @happy-path @nrt-minimal
   @agreement_activate2 @no-parallel @certifiedAttribute @agreement_activate_refactor
   Scenario Outline: [AGREEMENT_ACTIVATE_02] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato SUSPENDED (riattivazione), con tutti gli attributi richiesti certificati, tutti gli attributi richiesti dichiarati dal fruitore, e tutti gli attributi richiesti verificati dall’erogatore, alla richiesta di attivazione da parte di un utente con sufficienti permessi dell’ente erogatore, va a buon fine.
-    Given l'utente è un "admin" di "<enteErogatore>"
+    Given l'utente è un "<ruolo>" di "<enteErogatore>"
     Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
     Given "<enteFruitore>" ha già dichiarato un attributo
     Given "<enteFruitore>" ha già creato un attributo verificato
@@ -47,20 +47,20 @@ Feature: Attivazione richiesta di fruizione
     Given "<enteErogatore>" ha già sospeso quella richiesta di fruizione come PRODUCER
     Given "<enteFruitore>" ha già sospeso quella richiesta di fruizione come CONSUMER
     When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
-    Then si ottiene status code 200
+    Then si ottiene status code <statusCode>
 
     @happy-path
     Examples:
-      | enteFruitore | enteCertificatore | enteErogatore | ruolo | risultato |
-      | PA1          | PA2               | GSP           | admin | 200       |
+      | enteFruitore | enteCertificatore | enteErogatore | ruolo | statusCode |
+      | PA1          | PA2               | GSP           | admin | 200        |
 
     @sad-path
     Examples:
-      | enteFruitore | enteCertificatore | enteErogatore | ruolo        | risultato |
-      | PA1          | PA2               | GSP           | api          | 403       |
-      | PA1          | PA2               | GSP           | security     | 403       |
-      | PA1          | PA2               | GSP           | support      | 403       |
-      | PA1          | PA2               | GSP           | api,security | 403       |
+      | enteFruitore | enteCertificatore | enteErogatore | ruolo        | statusCode |
+      | PA1          | PA2               | GSP           | api          | 403        |
+      | PA1          | PA2               | GSP           | security     | 403        |
+      | PA1          | PA2               | GSP           | support      | 403        |
+      | PA1          | PA2               | GSP           | api,security | 403        |
 
   @happy-path @nrt-minimal
   @agreement_activate3 @no-parallel @agreement_activate_refactor
