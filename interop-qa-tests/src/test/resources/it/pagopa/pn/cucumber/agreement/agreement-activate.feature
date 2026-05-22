@@ -219,6 +219,19 @@ Feature: Attivazione richiesta di fruizione
       | %null       | 400        |
       | %random     | 404        |
 
+  @agreement_activate_refactor
+  Scenario: [AGREEMENTS_APPROVE_2] Un delegato all'erogazione attiva una richiesta di fruizione in stato PENDING per conto dell'erogatore
+    Given "PA2" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
+    And l'ente delegato "PA1"
+    And l'ente "PA1" concede la disponibilità a ricevere deleghe
+    And l'ente delegante "PA2"
+    And l'ente "PA2" richiede la creazione di una delega per l'ente "PA1"
+    And l'ente "PA1" accetta la delega
+    And "GSP" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    When l'ente delegato richiede una operazione di approvazione di quella richiesta di fruizione
+    Then si ottiene status code 200
+    And la richiesta di fruizione è in stato "ACTIVE"
+
   @sad-path
   @agreement_activate_refactor
   Scenario Outline: [AGREEMENTS_UNSUSPEND_1] La riattivazione di una richiesta di fruizione con id non valido restituisce errore
