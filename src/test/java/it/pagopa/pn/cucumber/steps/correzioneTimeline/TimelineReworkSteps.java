@@ -3,7 +3,6 @@ package it.pagopa.pn.cucumber.steps.correzioneTimeline;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.*;
 import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
@@ -129,6 +128,7 @@ public class TimelineReworkSteps {
     public void callReworkTimeline() {
         try {
             reworkResponse = reworkTimelineClient.notificationRework(sharedSteps.getNotificationIun(), createRequestRework());
+            log.info("Successfully reworked. Rework response: {}", reworkResponse);
         } catch (HttpStatusCodeException e) {
             httpStatusCode = e.getStatusCode();
         }

@@ -419,7 +419,7 @@ public class AvanzamentoNotificheB2bSteps {
     public void readingEventUpToTheTimelineElementOfNotificationWithDeliveryDetailCode(String timelineEventCategory, String deliveryDetailCode, String attempt) {
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder()
                 .deliveryDetailCode(deliveryDetailCode)
-                .attempt(attempt)
+                .withElementIdSuffix(attempt)
                 .build();
         B2bStepsInterface b2bStepsInterface = getB2bStepsInterface();
         b2bStepsInterface.waitForEventOrStatus(TIMELINE_SLOW, TIMELINE, timelineEventCategory, filters);
@@ -471,7 +471,7 @@ public class AvanzamentoNotificheB2bSteps {
     public void readingEventUpToTheTimelineElementOfNotificationWithDeliveryDetailCodeVerifyTypeDoc(String timelineEventCategory, String deliveryDetailCode, String documentType, String attempt) {
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder()
                 .deliveryDetailCode(deliveryDetailCode)
-                .attempt(attempt)
+                .withElementIdSuffix(attempt)
                 .documentType(documentType)
                 .build();
         B2bStepsInterface b2bStepsInterface = getB2bStepsInterface();
@@ -499,7 +499,7 @@ public class AvanzamentoNotificheB2bSteps {
     public void readingEventUpToTheTimelineElementOfNotificationWithDeliveryDetailCodeDeliveryFailureCause(String timelineEventCategory, String deliveryDetailCode, String deliveryFailureCause, String attempt) {
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder()
                 .deliveryDetailCode(deliveryDetailCode)
-                .attempt(attempt)
+                .withElementIdSuffix(attempt)
                 .build();
         B2bStepsInterface b2bStepsInterface = getB2bStepsInterface();
         b2bStepsInterface.waitForEventOrStatus(TIMELINE_RAPID, TIMELINE, timelineEventCategory, filters);
@@ -997,7 +997,7 @@ public class AvanzamentoNotificheB2bSteps {
     @Then("viene verificato che nell'elemento di timeline della notifica {string} e' presente il campo Digital Address di piattaforma")
     public void vieneVerificatoCheElementoTimelineSianoConfiguratoCampoDigitalAddressPiattaforma(String timelineEventCategory) {
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder()
-                .attempt("SOURCE_PLATFORM")
+                .withElementIdSuffix("SOURCE_PLATFORM")
                 .build();
         B2bStepsInterface b2bStepsInterface = getB2bStepsInterface();
         b2bStepsInterface.waitForEventOrStatus(TIMELINE_RAPID, TIMELINE, timelineEventCategory, filters);
@@ -1023,7 +1023,7 @@ public class AvanzamentoNotificheB2bSteps {
     @Then("viene verificato che nell'elemento di timeline della notifica {string} sia presente il campo Digital Address")
     public void vieneVerificatoCheElementoTimelineSianoConfiguratoCampoDigitalAddress(String timelineEventCategory) {
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder()
-                .attempt("SOURCE_PLATFORM")
+                .withElementIdSuffix("SOURCE_PLATFORM")
                 .build();
         B2bStepsInterface b2bStepsInterface = getB2bStepsInterface();
         b2bStepsInterface.waitForEventOrStatus(TIMELINE_RAPID, TIMELINE, timelineEventCategory, filters);
@@ -1208,7 +1208,7 @@ public class AvanzamentoNotificheB2bSteps {
     public void readingEventUpToTheTimelineElementOfNotificationWithVerifyPhysicalAddress(String timelineEventCategory, String attempt) {
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder()
                 .deliveryDetailCode(null)
-                .attempt(attempt)
+                .withElementIdSuffix(attempt)
                 .build();
         B2bStepsInterface b2bStepsInterface = getB2bStepsInterface();
         b2bStepsInterface.waitForEventOrStatus(TIMELINE_SLOW, TIMELINE, timelineEventCategory, filters);
@@ -1222,7 +1222,7 @@ public class AvanzamentoNotificheB2bSteps {
     public void readingEventUpToTheTimelineElementOfNotificationAtAttempt(String timelineEventCategory, String attempt) {
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder()
                 .deliveryDetailCode(null)
-                .attempt(attempt)
+                .withElementIdSuffix(attempt)
                 .build();
         B2bStepsInterface b2bStepsInterface = getB2bStepsInterface();
         b2bStepsInterface.waitForEventOrStatus(TIMELINE_SLOW, TIMELINE, timelineEventCategory, filters);
@@ -1234,7 +1234,7 @@ public class AvanzamentoNotificheB2bSteps {
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder()
                 .deliveryDetailCode(null)
                 .recipientIndex(recIndex)
-                .attempt(attempt)
+                .withElementIdSuffix(attempt)
                 .build();
         B2bStepsInterface b2bStepsInterface = getB2bStepsInterface();
         b2bStepsInterface.waitForEventOrStatus(TIMELINE_SLOW, TIMELINE, timelineEventCategory, filters);

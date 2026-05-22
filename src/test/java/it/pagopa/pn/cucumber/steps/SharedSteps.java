@@ -619,38 +619,23 @@ public class SharedSteps {
         }
     }
 
-    @Then("^verifico la (presenza|non presenza) di elementi di timeline con stringa \"([^\"]*)\"$")
-    public void verifyPresenceOfTimelineElementsWithString(String presence, String searchString) {
-
+    @Then("la timeline {contains} elementi con la stringa {string}")
+    public void verifyPresenceOfTimelineElementsWithString(boolean contains, String searchString) {
         FullSentNotificationV28 fullSentNotification = getSentNotificationLastVersion();
         List<TimelineElementV28> timeline = fullSentNotification.getTimeline();
-
-        List<TimelineElementV28> matchingElements = timeline.stream()
-                .filter(e -> e.getElementId() != null && e.getElementId().contains(searchString))
-                .toList();
+        List<TimelineElementV28> matchingElements = timeline.stream().filter(e -> e.getElementId() != null && e.getElementId().contains(searchString)).toList();
 
         if (!matchingElements.isEmpty()) {
             log.warn("Elementi di timeline contenenti '{}':", searchString);
-            matchingElements.forEach(e ->
-                    log.warn(" - elementId: {}, timestamp: {}", e.getElementId(), e.getTimestamp())
-            );
+            matchingElements.forEach(e -> log.warn(" - elementId: {}, timestamp: {}", e.getElementId(), e.getTimestamp()));
         } else {
             log.info("Nessun elemento di timeline contiene la stringa '{}'", searchString);
         }
-
-        boolean isPresenceExpected = presence.equalsIgnoreCase("presenza");
-
-        if (isPresenceExpected) {
-            Assertions.assertFalse(
-                    matchingElements.isEmpty(),
-                    "Attesa la presenza di elementi contenenti '" + searchString + "' ma non ne sono stati trovati"
-            );
+        int matchingElementsSize = matchingElements.size();
+        if (contains) {
+            assertThat(matchingElementsSize).as("Attesa la presenza di elementi contenenti '%s' ma non ne sono stati trovati", searchString).isGreaterThan(0);
         } else {
-            Assertions.assertTrue(
-                    matchingElements.isEmpty(),
-                    "Non attesa la presenza di elementi contenenti '" + searchString +
-                            "' ma ne sono stati trovati: " + matchingElements.size()
-            );
+            assertThat(matchingElementsSize).as("Non era attesa la presenza di elementi contenenti '%s' ma ne sono stati trovati %s", searchString, matchingElementsSize).isEqualTo(0);
         }
     }
 

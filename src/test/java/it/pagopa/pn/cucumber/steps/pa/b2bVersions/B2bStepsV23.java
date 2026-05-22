@@ -115,7 +115,7 @@ public class B2bStepsV23 implements B2bStepsInterface {
                 .anyMatch(element -> element.contains(relatedTimelineElement));
 
         assertThat(found)
-                .as("Il controllo sulla fullSentNotification V23 non dovrebbe avere l'elemento tra i relatedTimelineElements che contenga: %s", relatedTimelineElement +", IUN: "+sharedSteps.getNotificationIun())
+                .as("Il controllo sulla fullSentNotification V23 non dovrebbe avere l'elemento tra i relatedTimelineElements che contenga: %s", relatedTimelineElement + ", IUN: " + sharedSteps.getNotificationIun())
                 .isFalse();
     }
 
@@ -924,7 +924,7 @@ public class B2bStepsV23 implements B2bStepsInterface {
                         && (timelineEventCategory == null || Objects.requireNonNull(timelineElement.getCategory().getValue()).equals(timelineEventCategory))
                         && (filters.getRecipientIndex() == null || Objects.requireNonNull(Objects.requireNonNull(timelineElement.getDetails()).getRecIndex()).equals(filters.getRecipientIndex()))
                         && (filters.getDeliveryDetailCode() == null || Objects.equals(Objects.requireNonNull(timelineElement.getDetails()).getDeliveryDetailCode(), filters.getDeliveryDetailCode()))
-                        && (filters.getAttempt() == null || Objects.requireNonNull(timelineElement.getElementId()).contains(filters.getAttempt()))
+                        && (filters.getWithElementIdSuffix() == null || Objects.requireNonNull(timelineElement.getElementId()).contains(filters.getWithElementIdSuffix()))
                         && (filters.getDocumentType() == null || Objects.equals(Objects.requireNonNull(Objects.requireNonNull(timelineElement.getDetails()).getAttachments()).get(0).getDocumentType(), filters.getDocumentType()))
                         && (filters.getResponseStatus() == null || Objects.requireNonNull(Objects.requireNonNull(timelineElement.getDetails()).getResponseStatus().getValue()).equals(filters.getResponseStatus()))
                         && (!filters.isF24() || Objects.requireNonNull(timelineElement.getDetails()).getIdF24() != null)
