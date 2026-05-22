@@ -17,21 +17,21 @@ Feature: Attivazione richiesta di fruizione
 
     @happy-path
     Examples:
-      | enteFruitore | enteCertificatore | enteErogatore | ruolo        | risultato |
-      | PA1          | PA2               | GSP           | admin        |       200 |
-      | GSP          | PA2               | PA1           | admin        |       200 |
+      | enteFruitore | enteCertificatore | enteErogatore | ruolo | risultato |
+      | PA1          | PA2               | GSP           | admin | 200       |
+      | GSP          | PA2               | PA1           | admin | 200       |
 
     @sad-path
     Examples:
       | enteFruitore | enteCertificatore | enteErogatore | ruolo        | risultato |
-      | PA1          | PA2               | GSP           | api          |       403 |
-      | PA1          | PA2               | GSP           | security     |       403 |
-      | PA1          | PA2               | GSP           | support      |       403 |
-      | PA1          | PA2               | GSP           | api,security |       403 |
-      | GSP          | PA2               | PA1           | api          |       403 |
-      | GSP          | PA2               | PA1           | security     |       403 |
-      | GSP          | PA2               | PA1           | support      |       403 |
-      | GSP          | PA2               | PA1           | api,security |       403 |
+      | PA1          | PA2               | GSP           | api          | 403       |
+      | PA1          | PA2               | GSP           | security     | 403       |
+      | PA1          | PA2               | GSP           | support      | 403       |
+      | PA1          | PA2               | GSP           | api,security | 403       |
+      | GSP          | PA2               | PA1           | api          | 403       |
+      | GSP          | PA2               | PA1           | security     | 403       |
+      | GSP          | PA2               | PA1           | support      | 403       |
+      | GSP          | PA2               | PA1           | api,security | 403       |
 
   @happy-path @nrt-minimal
   @agreement_activate2 @no-parallel @certifiedAttribute @agreement_activate_refactor
@@ -51,16 +51,16 @@ Feature: Attivazione richiesta di fruizione
 
     @happy-path
     Examples:
-      | enteFruitore | enteCertificatore | enteErogatore |ruolo        | risultato |
-      | PA1          | PA2               | GSP           |admin        |       200 |
-          
+      | enteFruitore | enteCertificatore | enteErogatore | ruolo | risultato |
+      | PA1          | PA2               | GSP           | admin | 200       |
+
     @sad-path
     Examples:
-      | enteFruitore | enteCertificatore | enteErogatore |ruolo        | risultato |
-      | PA1          | PA2               | GSP           |api          |       403 |
-      | PA1          | PA2               | GSP           |security     |       403 |
-      | PA1          | PA2               | GSP           |support      |       403 |
-      | PA1          | PA2               | GSP           |api,security |       403 |
+      | enteFruitore | enteCertificatore | enteErogatore | ruolo        | risultato |
+      | PA1          | PA2               | GSP           | api          | 403       |
+      | PA1          | PA2               | GSP           | security     | 403       |
+      | PA1          | PA2               | GSP           | support      | 403       |
+      | PA1          | PA2               | GSP           | api,security | 403       |
 
   @happy-path @nrt-minimal
   @agreement_activate3 @no-parallel @agreement_activate_refactor
@@ -98,6 +98,7 @@ Feature: Attivazione richiesta di fruizione
       | SUSPENDED      |
 
   @deleghe1
+  @agreement_activate_refactor
   Scenario: Un delegato alla fruizione sospende ed attiva una finalità/richiesta di fruizione agendo come delegato e passando il delegationId
     Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
     Given l'ente delegato "PA1"
@@ -122,6 +123,7 @@ Feature: Attivazione richiesta di fruizione
     And l'ente delegato ha già approvato quella richiesta di fruizione
 
   @deleghe1
+  @agreement_activate_refactor
   Scenario: Un delegato sia all'erogazione che alla fruizione sospende ed approva una richiesta di fruizione passando il Delegation-id come discriminante per capire se agisce come delegato all'erogazione o alla fruizione - Delegato all'erogazione
     Given "PA2" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione automatica
     Given l'utente è un "admin" di "PA1"
@@ -293,3 +295,26 @@ Feature: Attivazione richiesta di fruizione
       | PA1            | PRODUCER    | PA1              |
       | PA2            | CONSUMER    | PA2              |
 
+  @sad-path
+  @agreement_activate_refactor
+  Scenario Outline: [AGREEMENTS_UNSUSPEND_6] La riattivazione di una richiesta di fruizione da parte di un utente non autorizzato restituisce errore
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "<enteSospensore>" ha già sospeso quella richiesta di fruizione come <suspendedBy>
+    And l'utente è un "<ruolo>" di "<ente>"
+    When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 403
+    And la richiesta di fruizione è in stato "SUSPENDED"
+
+    Examples:
+      | enteSospensore | suspendedBy | ente | ruolo        |
+      | PA1            | PRODUCER    | PA1  | api          |
+      | PA1            | PRODUCER    | PA1  | security     |
+      | PA1            | PRODUCER    | PA1  | support      |
+      | PA1            | PRODUCER    | PA1  | api,security |
+      | PA1            | PRODUCER    | PA2  | admin        |
+      | PA2            | CONSUMER    | PA2  | api          |
+      | PA2            | CONSUMER    | PA2  | security     |
+      | PA2            | CONSUMER    | PA2  | support      |
+      | PA2            | CONSUMER    | PA2  | api,security |
+      | PA2            | CONSUMER    | PA1  | admin        |
