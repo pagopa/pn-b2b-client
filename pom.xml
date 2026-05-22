@@ -1649,6 +1649,41 @@
                         </configuration>
                     </execution>
 
+                    <!--private delivery  -->
+                    <execution>
+                        <id>generate-private-delivery</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/refs/heads/feature/PN-19486-epic/docs/openapi/api-private.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <importMappings>
+                                FullSentNotificationV28=it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28
+                            </importMappings>
+                            <configOptions>
+                                <apiPackage>it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.api</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.model</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                            <apiPackage>it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.api</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.model</modelPackage>
+                        </configuration>
+                    </execution>
+
                     <!--serviceDesk external-->
                     <execution>
                         <id>generate-external-servicedesk</id>

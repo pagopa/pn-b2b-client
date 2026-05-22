@@ -38,7 +38,7 @@ public class InformalNotificationRequestMapper {
         InformalNotificationRequestV1 request = new InformalNotificationRequestV1();
 
         request.setSenderDenomination(getValue(data, SENDER_DENOMINATION.key));
-        request.setSenderTaxId(getValue(data, SENDER_TAX_ID.key));
+        //request.setSenderTaxId(getValue(data, SENDER_TAX_ID.key));
         request.setPaProtocolNumber(getValue(data, PA_PROTOCOL_NUMBER.key));
         request.setIdempotenceToken(getValue(data, IDEMPOTENCE_TOKEN.key));
         request.setCampaignId(getValue(data, CAMPAIGN_ID.key));
