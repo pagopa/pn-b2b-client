@@ -437,17 +437,17 @@ Feature: Sottomissione di una notifica bonaria.
 
 
 # ************************************************
-#  *****SCENARIO 7  - Termonazione della notifica
+#  *****SCENARIO 7  - Terminazione della notifica
 # ***********************************************
 
-
+  # Api ancora non implementata, da testare con gli sviluppi futuri
   Scenario:[NOTIFICHE_BONARIE_TERMINAZIONE_07_A] Come ente mittente creo una notifica bonarie e successivamente ne chiedo la Terminazione.
     Given mittente della notifica bonaria: "COMUNE_MULTI"
     And viene inviata una nuova notifica bonaria
     When si tenta la terminazione della notifica bonaria
     Then la terminazione della notifica bonaria è accettata
 
-
+  # Api ancora non implementata, da testare con gli sviluppi futuri
   Scenario:[NOTIFICHE_BONARIE_TERMINAZIONE_07_B] Come ente mittente creo una notifica bonarie e successivamente ne chiedo la Terminazione due volte ricevendo un errore.
     Given mittente della notifica bonaria: "COMUNE_MULTI"
     And viene inviata una nuova notifica bonaria
