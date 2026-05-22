@@ -9,6 +9,7 @@ Feature: finalità agevolata M2M, link e-service template a un template finalit�
 
   ## Macro scenario: Recupero lista risorse collegabili suggerite per un template finalità
 
+  @purposeTemplate @eServiceTemplateLink
   Scenario: [LINK_TEMPLATE_ESERVICE_2_1] Recupero lista dei soli e-service template suggeriti per un template finalità
     When recupera gli e-service template suggeriti per un template finalità
       | purpose_template_id | fb346d06-16e6-4481-8df2-f3fc590933a8 |
@@ -17,7 +18,7 @@ Feature: finalità agevolata M2M, link e-service template a un template finalit�
     Then le risorse collegabili presentano un e-service template
     Then le risorse collegabili non presentano un e-service concreto
 
-
+  @purposeTemplate @eServiceTemplateLink
   Scenario: [LINK_TEMPLATE_ESERVICE_2_2] Recupero lista dei soli e-service template suggeriti per un template finalità con paginazione
     Given recupera gli e-service template suggeriti per un template finalità
       | purpose_template_id | fb346d06-16e6-4481-8df2-f3fc590933a8 |
@@ -39,7 +40,7 @@ Feature: finalità agevolata M2M, link e-service template a un template finalit�
       | limit               | 2  |
     Then le risorse collegabili corrispondono alla lista di risorse di riferimento solo per i primi 2 risultati
 
-
+  @purposeTemplate @eServiceTemplateLink
   Scenario: [LINK_TEMPLATE_ESERVICE_2_3] Recupero lista dei soli e-service template suggeriti per un template finalità con filtri
     Given recupera gli e-service template suggeriti per un template finalità
       | purpose_template_id | fb346d06-16e6-4481-8df2-f3fc590933a8 |
@@ -96,7 +97,7 @@ Feature: finalità agevolata M2M, link e-service template a un template finalit�
       | limit                | 50 |
     Then le risorse collegabili corrispondono ad una lista vuota
 
-
+  @purposeTemplate @eServiceTemplateLink
   Scenario: [LINK_TEMPLATE_ESERVICE_2_4] Recupero lista e-service template suggeriti da un template finalità non esistente
     When recupera gli e-service template suggeriti per un template finalità
       | purpose_template_id | aaaabbbb-cccc-1111-2222-ddddeeee3333 |
@@ -104,7 +105,7 @@ Feature: finalità agevolata M2M, link e-service template a un template finalit�
       | limit               | 50 |
     Then la richiesta di risorse collegabili restituisce errore di template finalità non trovato
 
-
+  @purposeTemplate @eServiceTemplateLink
   Scenario: [LINK_TEMPLATE_ESERVICE_2_5] Errori formali nella richiesta della lista combinata e-service concreti e template e-service suggeriti per un template finalità
     # Formato non valido per purpose template ID
     When recupera gli e-service template suggeriti per un template finalità
@@ -127,6 +128,7 @@ Feature: finalità agevolata M2M, link e-service template a un template finalit�
 
   ## Macro scenario: Associazione di una risorsa collegabile ad un template finalità
 
+  @purposeTemplate @eServiceTemplateLink
   Scenario: [LINK_TEMPLATE_ESERVICE_4_1] Associazione di un singolo e-service template ad un template finalità con successo
     # Given: serve partire con un nuovo purpose template
     Given recupera gli e-service template suggeriti per un template finalità
@@ -163,7 +165,7 @@ Feature: finalità agevolata M2M, link e-service template a un template finalit�
       | risorsa_id |
       | ee556d06-16e6-4481-8df2-f3fc590977bb |
 
-
+  @purposeTemplate @eServiceTemplateLink
   Scenario: [LINK_TEMPLATE_ESERVICE_4_2] Errore di conflitto durante l'associazione di un singolo e-service template ad un template finalità
     # Associazione e-service concreto che sia istanza di un e-service template
     When associa un e-service template ad un template finalità
@@ -177,14 +179,14 @@ Feature: finalità agevolata M2M, link e-service template a un template finalit�
       | risorsa_id          | aaaabbbb-cccc-1111-2222-ddddeeee3333 |
     Then la richiesta di associazione restituisce errore di conflitto
 
-
+  @purposeTemplate @eServiceTemplateLink
   Scenario: [LINK_TEMPLATE_ESERVICE_4_3] Template finalità non trovato durante l'associazione di un singolo e-service template ad un template finalità
     When associa un e-service template ad un template finalità
       | purpose_template_id | aaaabbbb-cccc-1111-2222-ddddeeee3333 |
       | risorsa_id          | cbcb6d06-2222-4481-8df2-f3fc590933a8 |
     Then la richiesta di associazione restituisce errore di template finalità non trovato
 
-
+  @purposeTemplate @eServiceTemplateLink
   Scenario: [LINK_TEMPLATE_ESERVICE_4_4] Errori formali nell'associazione di un singolo e-service template ad un template finalità
     # Formato ID template finalità non valido
     When associa un e-service template ad un template finalità
@@ -199,6 +201,7 @@ Feature: finalità agevolata M2M, link e-service template a un template finalit�
 
   ## Macro scenario: Disassociazione di una risorsa collegata da un template finalità
 
+  @purposeTemplate @eServiceTemplateLink
   Scenario: [LINK_TEMPLATE_ESERVICE_6_1] Disassociazione di un singolo e-service template da un template finalità con successo
     #Given Preparare un template finalità con risorse associate da poter disassociare
     #Given Potrebbero esserci delle risorse note sempre associabile:
@@ -231,14 +234,14 @@ Feature: finalità agevolata M2M, link e-service template a un template finalit�
       | risorsa_id |
       | b01961b9-01ac-4e68-9fc1-b8071562fe55 |
 
-
+  @purposeTemplate @eServiceTemplateLink
   Scenario: [LINK_TEMPLATE_ESERVICE_6_2] Template finalità non trovato durante la disassociazione di un singolo e-service template da un template finalità
     When disassocia un e-service template da un template finalità
       | purpose_template_id | aaaabbbb-cccc-1111-2222-ddddeeee3333 |
       | risorsa_id          | eb8b9e5a-8f6d-455b-92ae-35b7ffccfaab |
     Then la richiesta di disassociazione restituisce errore di template finalità non trovato
 
-
+  @purposeTemplate @eServiceTemplateLink
   Scenario: [LINK_TEMPLATE_ESERVICE_6_3] Errori formali nella disassociazione di un singolo e-service template da un template finalità
     # Formato ID template finalità non valido
     When disassocia un e-service template da un template finalità
