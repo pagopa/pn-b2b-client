@@ -60,7 +60,6 @@ public class AgreementActivateSteps {
 
     @Given("l'ente {delegationRole} ha già approvato quella richiesta di fruizione")
     public void tenantHasAlreadyAcceptedThatRequest(DelegationRole delegationRole) throws InterruptedException {
-        Thread.sleep(5000);
         String tenant = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
         String token = identityService.getToken(tenant, null);
         clientTokenConfigurator.setBearerToken(token);
@@ -69,7 +68,6 @@ public class AgreementActivateSteps {
 
     @Given("l'ente {delegationRole} ha già riattivato quella richiesta di fruizione come {clientType}")
     public void tenantHasAlreadyUnsuspendedThatRequest(DelegationRole delegationRole, ClientType status) throws InterruptedException {
-        Thread.sleep(5000);
         String tenant = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
         String token = identityService.getToken(tenant, null);
         clientTokenConfigurator.setBearerToken(token);
