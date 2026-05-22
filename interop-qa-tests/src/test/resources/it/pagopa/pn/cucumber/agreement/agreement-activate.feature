@@ -74,6 +74,7 @@ Feature: Attivazione richiesta di fruizione
     Given "<enteErogatore>" verifica un attributo per ogni gruppo di attributi verificati a "<enteFruitore>"
     When l'utente richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 200
+    And la richiesta di fruizione è in stato "ACTIVE"
 
     Examples:
       | enteFruitore | enteCertificatore | enteErogatore |
@@ -275,3 +276,20 @@ Feature: Attivazione richiesta di fruizione
     Examples:
       | enteFruitore | enteCertificatore | enteErogatore |
       | PA1          | PA2               | GSP           |
+
+  @happy-path
+  @agreement_activate_refactor
+  Scenario Outline: [AGREEMENTS_UNSUSPEND_5] Una richiesta di fruizione sospesa dal producer o dal consumer può essere riattivata e tornare ACTIVE
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "<enteSospensore>" ha già sospeso quella richiesta di fruizione come <suspendedBy>
+    And l'utente è un "admin" di "<enteRiattivatore>"
+    When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 200
+    And la richiesta di fruizione è in stato "ACTIVE"
+
+    Examples:
+      | enteSospensore | suspendedBy | enteRiattivatore |
+      | PA1            | PRODUCER    | PA1              |
+      | PA2            | CONSUMER    | PA2              |
+
