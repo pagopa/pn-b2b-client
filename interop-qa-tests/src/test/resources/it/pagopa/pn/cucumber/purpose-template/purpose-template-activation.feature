@@ -23,6 +23,20 @@ Feature: finalità agevolata, purpose template ACTIVATION
       | SUSPENDED |
       | ARCHIVED  |
 
+  @purposeTemplate
+  Scenario Outline: [PURPOSE_TEMPLATE_CHANGE_STATUS_WRONG] Una purpose template non può essere spostata in stato <stato> se si trova in stato <stato> (error 409)
+    Given l'utente è un "admin" di "PA1"
+    And viene creato un nuovo purpose template
+    And il purpose template creato viene correttamente spostato in stato <stato>
+    And si ottiene lo status code 200
+    And il purpose template creato viene spostato in stato <stato>
+    Then si ottiene lo status code 409
+    Examples:
+      | stato     |
+      | PUBLISHED |
+      | SUSPENDED |
+      | ARCHIVED  |
+
   #41(KO)
   @purposeTemplate @purposeTemplateActivation
   Scenario Outline: [PURPOSE_TEMPLATE_ACTIVATION_NO_ADMIN] Attivazione di una finalità agevolata da parte di un utente NON admin (error 403)

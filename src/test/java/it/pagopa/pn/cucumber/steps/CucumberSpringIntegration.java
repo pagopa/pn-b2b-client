@@ -25,6 +25,8 @@ import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRaddCognito;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
+import it.pagopa.pn.cucumber.steps.pa.utilityVersions.AwsUtils;
+import it.pagopa.pn.cucumber.utils.validator.SchemaValidator;
 import it.pagopa.pn.cucumber.steps.paperTracker.parser.EventTimelineParser;
 import it.pagopa.pn.cucumber.steps.paperTracker.proxy.PaperTrackerSchemaValidatorProxy;
 import it.pagopa.pn.cucumber.steps.templateEngine.TemplateConfiguration;
@@ -42,6 +44,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         BearerTokenConfiguration.class,
         TimingConfiguration.class,
         RestTemplateConfiguration.class,
+        AwsConfig.class,
         PnPaB2bExternalClientImpl.class,
         PnWebRecipientExternalClientImpl.class,
         PnWebhookB2bExternalClientImpl.class,
@@ -203,7 +206,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         LambdaInvoker.class,
         TemplateEngineConfigBean.class,
         SchemaValidator.class,
-        PaperTrackerSchemaValidatorProxy.class
+        PaperTrackerSchemaValidatorProxy.class,
+        PnExternalChannelsInternalClientImpl.class,
+        PnEcInternalClientImpl.class,
+        AwsUtils.class,
+        PnNotificationCostClientImpl.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

@@ -64,6 +64,8 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.*;
+import java.time.*;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -151,7 +153,10 @@ public class SharedSteps {
 
     private final PnB2bClientTimingConfigs timingConfigs;
 
+    @Getter
     private final ObjectMapper objMapper;
+
+    private boolean checkAuditLogDisabled;
 
     /**
      * Rappresenta la versione con cui è stata generata una notifica. Viene impostata al momento di preparazione della request.
@@ -702,6 +707,11 @@ public class SharedSteps {
         getNotificationStepInterface().addIuvGpdToDestinatario(denominazione, getIuvGPD(posizioneDebitoria), posizioneDebitoria);
     }
 
+    @And("al destinatario {int} viene associato lo iuv creato mediante partita debitoria alla posizione {int} per il suo pagamento alla posizione {int}")
+    public void destinatarioAddIuvGPD(Integer recIndex, Integer posizioneDebitoria, Integer recipientPaymentIndex) {
+        getNotificationStepInterface().addIuvGpdToDestinatario(recIndex, getIuvGPD(posizioneDebitoria), recipientPaymentIndex);
+    }
+
     @And("al destinatario viene associato lo iuv creato mediante partita debitoria per {string} per la posizione debitoria {int} del pagamento {int}")
     public void destinatarioAddIuvGpdPerUtente(String denominazione, Integer posizioneDebitoria, Integer paymentIndex) {
         getNotificationStepInterface().addIuvGpdToDestinatario(denominazione, getIuvGPD(posizioneDebitoria), paymentIndex);
@@ -959,27 +969,34 @@ public class SharedSteps {
 
     private void setSenderTaxIdAndGroup(String pa) {
         NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface();
+        String senderTaxId = notificationStepsInterface.getSenderTaxId();
         switch (pa) {
             case COMUNE_1 -> {
-                notificationStepsInterface.setSenderTaxId(COMUNE_1_TAX_ID);
+                setIfNull(senderTaxId, () -> notificationStepsInterface.setSenderTaxId(COMUNE_1_TAX_ID));
                 setGroup(SettableApiKey.ApiKeyType.MVP_1);
             }
             case COMUNE_2 -> {
-                notificationStepsInterface.setSenderTaxId(COMUNE_2_TAX_ID);
+                setIfNull(senderTaxId, () -> notificationStepsInterface.setSenderTaxId(COMUNE_2_TAX_ID));
                 setGroup(SettableApiKey.ApiKeyType.MVP_2);
             }
             case COMUNE_MULTI -> {
-                notificationStepsInterface.setSenderTaxId(COMUNE_MULTI_TAX_ID);
+                setIfNull(senderTaxId, () -> notificationStepsInterface.setSenderTaxId(COMUNE_MULTI_TAX_ID));
                 setGroup(SettableApiKey.ApiKeyType.GA);
             }
             case COMUNE_SON -> {
-                notificationStepsInterface.setSenderTaxId(COMUNE_SON_TAX_ID);
+                setIfNull(senderTaxId, () -> notificationStepsInterface.setSenderTaxId(COMUNE_SON_TAX_ID));
                 setGroup(SettableApiKey.ApiKeyType.SON);
             }
             case COMUNE_ROOT -> {
-                notificationStepsInterface.setSenderTaxId(COMUNE_ROOT_TAX_ID);
+                setIfNull(senderTaxId, () -> notificationStepsInterface.setSenderTaxId(COMUNE_ROOT_TAX_ID));
                 setGroup(SettableApiKey.ApiKeyType.ROOT);
             }
+        }
+    }
+
+    private void setIfNull(String current, Runnable setter) {
+        if (current == null) {
+            setter.run();
         }
     }
 
@@ -1349,8 +1366,8 @@ public class SharedSteps {
      */
     @And("{string} recupera lato web PA una notifica inviata tra {int} e {int} giorni fa con destinatario {destinatario}")
     public void retrieveNotification120DaysOldByIunWebPaSide(String paName, int limitA, int limitB, Destinatario recipient) {
-        long upperLimit = limitA > limitB ? limitA : limitB;
-        long lowerLimit = limitB < limitA ? limitB : limitA;
+        long upperLimit = Math.max(limitA, limitB);
+        long lowerLimit = Math.min(limitB, limitA);
         setPA(paName);
         String recipientTaxId = recipient.getTaxId();
         OffsetDateTime todayDate = now().atZoneSameInstant(ZoneId.of("UTC")).toOffsetDateTime();

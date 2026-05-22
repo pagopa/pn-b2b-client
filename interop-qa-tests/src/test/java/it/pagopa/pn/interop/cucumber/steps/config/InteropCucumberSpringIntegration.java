@@ -18,6 +18,8 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.config.springconfig.InteropRestTemplateConfiguration;
 import it.pagopa.interop.config.springconfig.JwtTokenServiceConfiguration;
 import it.pagopa.interop.delegate.service.impl.*;
+import it.pagopa.interop.dev_tools.service.IDevToolsClient;
+import it.pagopa.interop.dev_tools.service.impl.DevToolsClientImpl;
 import it.pagopa.interop.e_service_template.impl.*;
 import it.pagopa.interop.e_service_template.mapper.DescriptorAttributesMapperImpl;
 import it.pagopa.interop.e_service_template.mapper.RiskAnalysisMapperImpl;
@@ -57,9 +59,11 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.assistant.ESe
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.assistant.EServiceDescriptorQuotasPatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.mapper.EServiceDescriptorMapperImpl;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.mapper.EServiceDescriptorQuotasMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.helpers.EServiceSeedFactory;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.*;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.assistant.EServiceTemplatePatchContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.assistant.EServiceTemplatePatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.helpers.EServiceTemplateSeedFactory;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.mapper.EServiceTemplateMapperImpl;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.version.assistant.EServiceTemplateVersionPatchContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.version.assistant.EServiceTemplateVersionPatchOperationsAssistant;
@@ -148,6 +152,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         EServiceDescriptorMapperImpl.class,
         EServiceTemplateMapperImpl.class,
         EServiceTemplateVersionQuotasMapperImpl.class,
+        EServiceSeedFactory.class,
         DocumentMapperImpl.class,
         PurposeMapperImpl.class,
         ReversePurposeMapperImpl.class,
@@ -167,6 +172,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         EServiceDescriptionPatchOperationsAssistant.class,
         EServiceDescriptorPatchOperationsAssistant.class,
         EServiceTemplateVersionPatchOperationsAssistant.class,
+        EServiceTemplateSeedFactory.class,
         PurposePatchOperationsAssistant.class,
         ReversePurposePatchOperationsAssistant.class,
         EServiceTemplatePatchOperationsAssistant.class,
@@ -208,6 +214,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         M2MV3UsersClient.class,
         IPurposeTemplateClient.class,
         ProbingClient.class,
+        DevToolsClientImpl.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
