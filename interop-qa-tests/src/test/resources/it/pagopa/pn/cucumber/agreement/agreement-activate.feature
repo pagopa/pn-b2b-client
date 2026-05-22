@@ -99,7 +99,7 @@ Feature: Attivazione richiesta di fruizione
 
   @deleghe1
   @agreement_activate_refactor
-  Scenario: Un delegato alla fruizione sospende ed attiva una finalità/richiesta di fruizione agendo come delegato e passando il delegationId
+  Scenario: Un delegato alla fruizione sospende ed riattiva una finalità/richiesta di fruizione agendo come delegato e passando il delegationId
     Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
     Given l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
@@ -120,7 +120,7 @@ Feature: Attivazione richiesta di fruizione
     And l'utente è un "admin" dell'ente delegato
     When l'utente delegato riattiva la finalità in stato "SUSPENDED" per quell'e-service
     When l'ente delegato richiede una operazione di sospensione di quella richiesta di fruizione
-    And l'ente delegato ha già approvato quella richiesta di fruizione
+    And l'ente delegato ha già riattivato quella richiesta di fruizione come CONSUMER
 
   @deleghe1
   @agreement_activate_refactor
@@ -143,7 +143,7 @@ Feature: Attivazione richiesta di fruizione
     And l'ente "PA1" accetta la delega
     Given "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     When l'ente delegato richiede una operazione di sospensione di quella richiesta di fruizione
-    And l'ente delegato ha già approvato quella richiesta di fruizione
+    And l'ente delegato ha già riattivato quella richiesta di fruizione come PRODUCER
 
 
   @sad-path @nrt-minimal
@@ -318,3 +318,17 @@ Feature: Attivazione richiesta di fruizione
       | PA2            | CONSUMER    | PA2  | support      |
       | PA2            | CONSUMER    | PA2  | api,security |
       | PA2            | CONSUMER    | PA1  | admin        |
+
+  @agreement_activate_refactor
+  Scenario: [AGREEMENTS_UNSUSPEND_7] Un delegato all'erogazione riattiva una richiesta di fruizione in stato SUSPENDED per conto dell'erogatore
+    Given "PA2" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione automatica
+    And l'ente delegato "PA1"
+    And l'ente "PA1" concede la disponibilità a ricevere deleghe
+    And l'ente delegante "PA2"
+    And l'ente "PA2" richiede la creazione di una delega per l'ente "PA1"
+    And l'ente "PA1" accetta la delega
+    And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'ente delegante richiede una operazione di sospensione di quella richiesta di fruizione
+    When l'ente delegato richiede una operazione di riattivazione di quella richiesta di fruizione
+    Then si ottiene status code 200
+    And la richiesta di fruizione è in stato "ACTIVE"
