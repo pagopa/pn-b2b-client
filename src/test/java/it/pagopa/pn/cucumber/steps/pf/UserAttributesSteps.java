@@ -4,7 +4,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesInternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaluserconsents.model.Consent;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaluserconsents.model.ConsentType;
 import org.junit.jupiter.api.Assertions;
@@ -24,7 +24,7 @@ public class UserAttributesSteps {
 
     @Autowired
 //    public UserAttributesSteps(IPnWebUserAttributesClient webUserAttributesClient) {
-    public UserAttributesSteps(PnWebUserAttributesExternalClientImpl webUserAttributesClient) {
+    public UserAttributesSteps(PnWebUserAttributesInternalClientImpl webUserAttributesClient) {
 //    public UserAttributesSteps(PnWebUserAttributesExternalClientImpl webUserAttributesClient) {
         this.webUserAttributesClient = webUserAttributesClient;
     }

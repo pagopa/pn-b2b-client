@@ -15,9 +15,9 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaluserconsents
 import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
 import it.pagopa.pn.client.b2b.pa.wrapper.RecipientWrapper;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.AddressVerification;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyDigitalAddress;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.UserAddresses;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.AddressVerification;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.CourtesyDigitalAddress;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.UserAddresses;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaluserconsents.api.ConsentsApi;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaluserconsents.model.Consent;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaluserconsents.model.ConsentAction;
@@ -159,13 +159,13 @@ public class B2BUserAttributesExternalClientImpl implements IPnWebUserAttributes
     public BearerTokenType getBearerTokenSetted() {
         return this.bearerTokenSetted;
     }
-    //TODO
+
     public void consentAction(ConsentType consentType, ConsentAction consentAction, String version) throws RestClientException {
-        this.consentsApi.consentAction(null, null, consentType, version, consentAction);
+        this.consentsApi.consentAction("pn-test", CxTypeAuthFleet.PG, consentType, version, consentAction);
     }
-    //TODO
+
     public Consent getConsentByType(ConsentType consentType, String version) throws RestClientException {
-        return this.consentsApi.getConsentByType(null, null, consentType, version);
+        return this.consentsApi.getConsentByType("pn-test", CxTypeAuthFleet.PG, consentType, version);
     }
 
     @Override
