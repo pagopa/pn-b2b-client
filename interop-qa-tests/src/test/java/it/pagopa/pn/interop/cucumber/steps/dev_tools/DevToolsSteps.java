@@ -145,27 +145,27 @@ public class DevToolsSteps {
     @When("un {string} di {string} richiede la validazione della client assertion appena creata")
     public void verifyClientAssertion(String role, String tenantType) {
         clientCreateStep.setRole(role, tenantType);
-        runClientAssertionValidation(null, null);
+        runClientAssertionValidation(null, null, null);
     }
 
     @When("{string} richiede la validazione della client assertion appena creata")
     @When("{string} richiede la validazione della client assertion e della DPoP Proof appena creata")
     public void verifyClientAssertion(String tenantType) {
         clientCreateStep.setRole("admin", tenantType);
-        runClientAssertionValidation(null, null);
+        runClientAssertionValidation(null, null, null);
     }
 
     @When("{string} richiede la validazione della client assertion appena creata con un token di autorizzazione non valido")
     public void verifyClientAssertionWithoutAuthorization(String tenantType) {
         clientTokenConfigurator.setBearerToken("invalidBearerToken");
         sharedStepsContext.setUserToken("invalidBearerToken");
-        runClientAssertionValidation(null, null);
+        runClientAssertionValidation(null, null, null);
     }
 
     @When("{string} richiede la validazione della client assertion appena creata specificando client_assertion_type={string} e grant_type={string}")
     public void verifyClientAssertion(String tenantType, String clientAssertionType, String grantType) {
         clientCreateStep.setRole("admin", tenantType);
-        runClientAssertionValidation(clientAssertionType, grantType);
+        runClientAssertionValidation(clientAssertionType, grantType, null);
     }
 
     @Then("i risultati di validazione sono:")
@@ -486,7 +486,7 @@ public class DevToolsSteps {
         }
     }
 
-    private void runClientAssertionValidation(String clientAssertionType, String grantType) {
+    private void runClientAssertionValidation(String clientAssertionType, String grantType, Boolean isAsync) {
 
         String clientAssertion = devToolsContext.getActualClientAssertion();
         UUID clientId = sharedStepsContext.getClientCommonContext().getLastClient();
@@ -496,7 +496,7 @@ public class DevToolsSteps {
         final String currentGrantType = grantType == null ? GRANT_TYPE : grantType;
 
         try {
-            var result = devToolsClient.validateTokenGeneration(clientAssertion, currentAssertionType, currentGrantType, clientId.toString(), dpopProof);
+            var result = devToolsClient.validateTokenGeneration(clientAssertion, currentAssertionType, currentGrantType, clientId.toString(), isAsync, dpopProof);
             devToolsContext.setLastValidationResult(result);
         } catch (Exception e) {
             log.error("Errore durante la validazione della client assertion: {}", e.getMessage());
