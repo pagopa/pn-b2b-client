@@ -64,3 +64,20 @@ Feature: Archiviazione manuale di un descrittore
 #    When l'utente archivia il primo(qui possiamo inserire una variabile) e meno recente descrittore con id "<descriptorId>" dell'e-service con id "<eserviceId>"
     Then si ottiene response status code 409
 #    And il primo(qui possiamo inserire una variabile) descrittore è in stato "<finalDescriptorState>" (ARCHIVING)
+
+  Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_6] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale di un suo descrittore se quest'ultimo è già in stato di archiviazione
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "<initialDescriptorState>"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    #Nel seguente Step And dobbiamo aggiungere il Polling
+#    And l'utente archivia il primo(qui possiamo inserire una variabile) e meno recente descrittore con id "<descriptorId>" dell'e-service con id "<eserviceId>"
+  #  When l'utente archivia il primo(qui possiamo inserire una variabile) e meno recente descrittore con id "<descriptorId>" dell'e-service con id "<eserviceId>"
+    Then si ottiene response status code 409
+#    And il primo(qui possiamo inserire una variabile) descrittore è in stato "<finalDescriptorState>" (ARCHIVING)
+
+    #quando il primo descrittore smetterà di essere il più recente, il suo stato passerà da PUBLISHED a DEPRECATED
+    Examples:
+      | initialDescriptorState | finalDescriptorState |
+      | PUBLISHED              | ARCHIVING            |
+      | SUSPENDED              | ARCHIVING_SUSPENDED  |
