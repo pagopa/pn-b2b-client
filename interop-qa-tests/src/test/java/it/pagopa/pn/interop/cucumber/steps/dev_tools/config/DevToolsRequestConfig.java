@@ -20,7 +20,7 @@ public class DevToolsRequestConfig {
     public record JwtClaimOverride(String claim, String value) {}
     public record ValidationRow(String step, TokenGenerationValidationEntry entry) {}
 
-    @ParameterType("asincrono")
+    @ParameterType("asincrono|sincrono")
     public boolean isAsynchronous(String value) {
         return switch (value) {
             case "asincrono" -> true;
