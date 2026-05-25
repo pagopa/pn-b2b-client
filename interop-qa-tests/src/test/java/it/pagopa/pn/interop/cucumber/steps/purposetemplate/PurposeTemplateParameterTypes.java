@@ -4,7 +4,7 @@ import io.cucumber.java.ParameterType;
 
 public class PurposeTemplateParameterTypes {
 
-    @ParameterType("e-service concreto|e-service template")
+    @ParameterType("risorsa|e-service concreto|e-service template")
     public String resourceKind(String value) {
         return value;
     }
