@@ -2026,8 +2026,8 @@ Feature: Workflow analogico
       | physicalAddress_address | <SEQUENCE> |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
- #   Given imposto lo iun di SharedSteps a "TNMW-RAZH-ZMDR-202605-M-1" e la pa a "Comune_Multi"
-    Then viene verificato che i dati di indirizzo nell'elemento di timeline "NORMALIZED_ADDRES" siano valorizzati
+#    Given imposto lo iun di SharedSteps a "TNMW-RAZH-ZMDR-202605-M-1" e la pa a "Comune_Multi"
+    Then viene verificato che i dati di indirizzo nell'elemento di timeline "NORMALIZED_ADDRESS" siano valorizzati
     Then viene verificato che i dati di indirizzo nell'elemento di timeline "SEND_ANALOG_DOMICILE" siano valorizzati
     Examples:
       | SEQUENCE    |
