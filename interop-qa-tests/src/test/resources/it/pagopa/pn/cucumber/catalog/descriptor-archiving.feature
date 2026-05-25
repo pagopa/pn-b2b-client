@@ -82,3 +82,10 @@ Feature: Archiviazione manuale di un descrittore
       | PUBLISHED              | ARCHIVING            |
       | SUSPENDED              | ARCHIVING_SUSPENDED  |
 
+  Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_2.1] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale di un suo descrittore se quest'ultimo è il più recente
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+#    When l'utente archivia il secondo(qui possiamo inserire una variabile) e più recente descrittore con id "%actual" dell'e-service con id "%actual"
+    Then si ottiene response status code 400
+#    And il secondo(qui possiamo inserire una variabile) descrittore è in stato "<finalDescriptorState>" (ARCHIVING)
