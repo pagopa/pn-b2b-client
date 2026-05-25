@@ -77,7 +77,7 @@ public class CacheManager<K, V> {
                 return existingEntry;
             }
             // Cache miss o scaduta, calcola il nuovo valore
-            log.debug("[{}] Cache MISS for key: {} - computing value", cacheName, k);
+            log.info("[{}] Cache MISS for key: {} - computing value", cacheName, k);
             V newValue = valueSupplier.get();
             if (newValue == null) {
                 log.warn("[{}] Computed value for key: {} is null, not caching", cacheName, k);
