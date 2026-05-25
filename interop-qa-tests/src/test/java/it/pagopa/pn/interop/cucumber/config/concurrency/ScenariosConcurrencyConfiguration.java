@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.config.concurrency;
 
 
+import it.pagopa.pn.interop.cucumber.config.concurrency.writer.ScenariosConcurrencyCsvReportWriter;
 import it.pagopa.pn.interop.cucumber.config.concurrency.writer.ScenariosConcurrencyReportWriter;
 import it.pagopa.pn.interop.cucumber.config.concurrency.writer.ScenariosConcurrencyStdoutReportWriter;
 import lombok.RequiredArgsConstructor;
@@ -42,9 +43,16 @@ public class ScenariosConcurrencyConfiguration {
     }
 
     @Bean
-    @Order(1)
+    @Order(2)
     public ScenariosConcurrencyReportWriter stdoutReportWriter() {
         return new ScenariosConcurrencyStdoutReportWriter();
+    }
+
+
+    @Bean
+    @Order(1)
+    public ScenariosConcurrencyReportWriter csvReportWriter() {
+        return new ScenariosConcurrencyCsvReportWriter();
     }
 
 }

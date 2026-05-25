@@ -1476,7 +1476,9 @@ Feature: Gestione degli eServices attraverso APIs M2M
 
   @eservice_published_delegation
   @eservice_published_delegation_m2m_v3
+
   @happy-path
+  @delega-fruizione
   Scenario Outline: [M2M_ESERVICE_PUBLISHED_ENABLE_DELEGATION_3] Un utente delegato in fruizione può associare un proprio client a una finalità creata in delega se la delega tecnica su un e-service in stato PUBLISHED viene abilitata dopo la creazione della delega in fruizione
     Given "<producerTenant>" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "true" e delega tecnica a "false"
     And l'ente delegante "PA2"
