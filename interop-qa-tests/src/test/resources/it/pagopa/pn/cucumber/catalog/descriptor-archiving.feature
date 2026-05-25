@@ -1,7 +1,7 @@
 @manual-archiving-eservice
 Feature: Archiviazione manuale di un descrittore
 
-  Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_1] Un ente erogatore di un e-service può avviare il processo di archiviazione manuale del primo e meno recente descrittore dell'e-service in questione
+  Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_1.1] Un ente erogatore di un e-service può avviare il processo di archiviazione manuale del primo e meno recente descrittore dell'e-service in questione
     Given l'utente è un "<role>" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "<initialDescriptorState>"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -20,7 +20,7 @@ Feature: Archiviazione manuale di un descrittore
       | api          | SUSPENDED              | ARCHIVING_SUSPENDED  |
       | api,security | SUSPENDED              | ARCHIVING_SUSPENDED  |
 
-  Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_2] Un utente con ruolo security NON può avviare il processo di archiviazione manuale del descrittore
+  Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_1.2] Un utente con ruolo security NON può avviare il processo di archiviazione manuale del descrittore
     Given l'utente è un "security" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -29,7 +29,7 @@ Feature: Archiviazione manuale di un descrittore
     Then si ottiene response status code 401
 #    And il primo(qui possiamo inserire una variabile) descrittore è in stato "DEPRECATED"
 
-  Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_3] Un utente con token non valido NON può avviare il processo di archiviazione manuale del descrittore
+  Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_1.3] Un utente con token non valido NON può avviare il processo di archiviazione manuale del descrittore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -39,7 +39,7 @@ Feature: Archiviazione manuale di un descrittore
     Then si ottiene response status code 401
 #    And il primo(qui possiamo inserire una variabile) descrittore è in stato "DEPRECATED"
 
-  Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_4] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale di un descrittore se gli attributi obbligatori non sono presenti o corretti
+  Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_1.4] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale di un descrittore se gli attributi obbligatori non sono presenti o corretti
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -57,7 +57,7 @@ Feature: Archiviazione manuale di un descrittore
       | %actual      | %random    | 404        |
       | %random      | %random    | 404        |
 
-  Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_5] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale di un suo descrittore se quest'ultimo è già stato già archiviato
+  Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_1.5] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale di un suo descrittore se quest'ultimo è già stato già archiviato
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
@@ -65,7 +65,7 @@ Feature: Archiviazione manuale di un descrittore
     Then si ottiene response status code 409
 #    And il primo(qui possiamo inserire una variabile) descrittore è in stato "<finalDescriptorState>" (ARCHIVING)
 
-  Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_6] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale di un suo descrittore se quest'ultimo è già in stato di archiviazione
+  Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_1.6] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale di un suo descrittore se quest'ultimo è già in stato di archiviazione
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "<initialDescriptorState>"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -81,3 +81,4 @@ Feature: Archiviazione manuale di un descrittore
       | initialDescriptorState | finalDescriptorState |
       | PUBLISHED              | ARCHIVING            |
       | SUSPENDED              | ARCHIVING_SUSPENDED  |
+
