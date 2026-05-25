@@ -119,18 +119,23 @@ public class AgreementActivateSteps {
             Assertions.assertEquals(Integer.parseInt(attributes.get("dailyCallsTotal")), eServiceDescriptor.getDailyCallsTotal());
         }
         if (attributes.containsKey("asyncExchangeProperties.responseTime")) {
+            Assertions.assertNotNull(eServiceDescriptor.getAsyncExchangeProperties());
             Assertions.assertEquals(Integer.parseInt(attributes.get("asyncExchangeProperties.responseTime")), eServiceDescriptor.getAsyncExchangeProperties().getResponseTime());
         }
         if (attributes.containsKey("asyncExchangeProperties.resourceAvailableTime")) {
+            Assertions.assertNotNull(eServiceDescriptor.getAsyncExchangeProperties());
             Assertions.assertEquals(Integer.parseInt(attributes.get("asyncExchangeProperties.resourceAvailableTime")), eServiceDescriptor.getAsyncExchangeProperties().getResourceAvailableTime());
         }
         if (attributes.containsKey("asyncExchangeProperties.confirmation")) {
+            Assertions.assertNotNull(eServiceDescriptor.getAsyncExchangeProperties());
             Assertions.assertEquals(Boolean.parseBoolean(attributes.get("asyncExchangeProperties.confirmation")), eServiceDescriptor.getAsyncExchangeProperties().getConfirmation());
         }
         if (attributes.containsKey("asyncExchangeProperties.bulk")) {
+            Assertions.assertNotNull(eServiceDescriptor.getAsyncExchangeProperties());
             Assertions.assertEquals(Boolean.parseBoolean(attributes.get("asyncExchangeProperties.bulk")), eServiceDescriptor.getAsyncExchangeProperties().getBulk());
         }
         if (attributes.containsKey("asyncExchangeProperties.maxResultSet")) {
+            Assertions.assertNotNull(eServiceDescriptor.getAsyncExchangeProperties());
             Assertions.assertEquals(Integer.parseInt(attributes.get("asyncExchangeProperties.maxResultSet")), eServiceDescriptor.getAsyncExchangeProperties().getMaxResultSet());
         }
     }
