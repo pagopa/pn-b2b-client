@@ -1,12 +1,12 @@
 Feature: Radd Alternative integrazione con Poste
 
 # Api testate:
-#  /radd-net/api/v1/download/{operationType}/{operationId}:   01/02
-#  /radd-net/api/v1/act/inquiry: description:                 03A/03B/04A/04B
+#  /radd-net/api/v1/download/{operationType}/{operationId}:   01_1/01_2/01_3
+#  /radd-net/api/v1/act/inquiry:                              03A/03B/04A/04B
 #  /radd-net/api/v1/act/transaction/start:                    coperto
 #  /radd-net/api/v1/act/transaction/complete:                 c operto
 #  /radd-net/api/v1/act/transaction/abort:                    05A/05B
-#  /radd-net/api/v1/aor/inquiry: description:                 coperto
+#  /radd-net/api/v1/aor/inquiry:                              coperto
 #  /radd-net/api/v1/aor/transaction/start:                    07/coperto
 #  /radd-net/api/v1/aor/transaction/complete:                 coperto
 #  /radd-net/api/v1/aor/transaction/abort:                    06A/06B
@@ -15,7 +15,7 @@ Feature: Radd Alternative integrazione con Poste
 
 
 
-  Scenario: [RADD_POSTE_01] PF - Verifica restituzione al cittadino del documento Frontespizio (nome e cognome del destinatario) come primo documento del plico
+  Scenario: [RADD_POSTE_01_2] PF - Verifica restituzione al cittadino del documento Frontespizio (nome e cognome del destinatario) come primo documento del plico
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber radd alternative |
       | senderDenomination    | Comune di Palermo                            |
@@ -34,7 +34,7 @@ Feature: Radd Alternative integrazione con Poste
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
 
-  Scenario: [RADD_POSTE_02] PG - Verifica restituzione al cittadino del documento Frontespizio (ragione sociale dell'impresa destinataria) come primo documento del plico
+  Scenario: [RADD_POSTE_01_1] PG - Verifica restituzione al cittadino del documento Frontespizio (ragione sociale dell'impresa destinataria) come primo documento del plico
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di Palermo                            |
@@ -50,8 +50,35 @@ Feature: Radd Alternative integrazione con Poste
     And L'operatore esegue il download del frontespizio del operazione "act"
     Then viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
 
+  Scenario: [RADD_POSTE_01_3] Verifica allegato ARCAD per secondo evento di timeline SEND_ANALOG_PROGRESS con deliveryDetailCode = RECAG011B
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL                         |
+      | physicalAddress_address | via@OK-Giacenza-gt10_890_ZIP |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                    |
+      | details_recIndex           | 0                           |
+      | details_deliveryDetailCode | RECAG011B                   |
+      | details_sentAttemptMade    | 0                           |
+      | details_attachments        | [{"documentType": "ARCAD"}] |
+    And abbia anche un valore per il campo "details_attachments[0]_url" compatibile con l'espressione regolare ".+PN_EXTERNAL_LEGAL_FACTS.+\.zip"
+    When Il cittadino Mario Gherkin come destinatario 0 mostra il QRCode "corretto"
+    Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
+    And la scansione si conclude correttamente su radd alternative
+    Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+    And l'operazione di download degli atti si conclude correttamente su radd alternative
+    And L'operatore esegue il download del frontespizio del operazione "act"
+    Then viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
 
-  Scenario: [RADD_POSTE_03A] PF - Scansione QR code esistente associato al CF corretto, per una notifica con allegati di pagamento (Avviso PagoPA e F24)
+
+ #   ACT
+
+
+  Scenario: [RADD_POSTE_02_1_A] PF - Scansione QR code esistente associato al CF corretto, per una notifica con allegati di pagamento (Avviso PagoPA e F24)
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di Palermo                            |
@@ -77,8 +104,34 @@ Feature: Radd Alternative integrazione con Poste
     And l'operazione di download degli atti si conclude correttamente su radd alternative
     And l'operazione di download restituisce 7 documenti
 
+  Scenario: [RADD_POSTE_02_1_C] PG - Scansione QR code esistente, associato al CF corretto, per una notifica con allegato di pagamento (solo F24)
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+      | feePolicy          | DELIVERY_MODE                                |
+      | paFee              | 0                                            |
+    And destinatario CucumberSpa e:
+      | payment_pagoPaForm   | NULL                 |
+      | payment_f24          | PAYMENT_F24_STANDARD |
+      | title_payment        | F24_STANDARD_PG      |
+      | apply_cost_pagopa    | NO                   |
+      | apply_cost_f24       | SI                   |
+      | payment_multy_number | 1                    |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And Il cittadino CucumberSpa come destinatario 0 mostra il QRCode "corretto"
+    When L'operatore scansione il qrCode per recuperare gli atti di CucumberSpa
+    And la scansione si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+    And l'operazione di download degli atti si conclude correttamente su radd alternative
+    And l'operazione di download restituisce 5 documenti
+    And viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
+    And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
-  Scenario: [RADD_POSTE_03B] PF - Scansione QR code esistente associato al CF corretto, per una notifica con allegato di pagamento (solo F24)
+
+  Scenario: [RADD_POSTE_02_1_F] PF - Scansione QR code esistente associato al CF corretto, per una notifica con allegato di pagamento (solo F24)
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di Palermo                            |
@@ -107,7 +160,7 @@ Feature: Radd Alternative integrazione con Poste
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
 
-  Scenario: [RADD_POSTE_04A] PF -  Recupero notifica con allegato di pagamento (solo Avviso PagoPA)  con codice IUN esistente associato a CF corretto
+  Scenario: [RADD_POSTE_02_1_E] PF -  Recupero notifica con allegato di pagamento (solo Avviso PagoPA)  con codice IUN esistente associato a CF corretto
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di Palermo                            |
@@ -134,7 +187,7 @@ Feature: Radd Alternative integrazione con Poste
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
 
-  Scenario: [RADD_POSTE_04A] PG -  Recupero notifica con allegato di pagamento (solo Avviso PagoPA)  con codice IUN esistente associato a CF corretto
+  Scenario: [RADD_POSTE_02_1_D] PG -  Recupero notifica con allegato di pagamento (solo Avviso PagoPA)  con codice IUN esistente associato a CF corretto
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di Palermo                            |
@@ -159,7 +212,7 @@ Feature: Radd Alternative integrazione con Poste
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
 
-  Scenario: [RADD_POSTE_05A] PF - Interruzione processo recupero atti e avvio nuovo processo su stessa notifica
+  Scenario: [RADD_POSTE_02_1_G] PF - Interruzione processo recupero atti e avvio nuovo processo su stessa notifica
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di Palermo                            |
@@ -183,7 +236,7 @@ Feature: Radd Alternative integrazione con Poste
     Then viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
 
 
-  Scenario: [RADD_POSTE_05B] PG - Interruzione processo recupero atti e avvio nuovo processo su stessa notifica
+  Scenario: [RADD_POSTE_02_1_H] PG - Interruzione processo recupero atti e avvio nuovo processo su stessa notifica
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di Palermo                            |
@@ -208,7 +261,9 @@ Feature: Radd Alternative integrazione con Poste
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
 
-  Scenario: [RADD_POSTE_06A] PF - Visualizzazione AAR di notifiche i cui documenti sono già stati stampati, ma inibizione stampa documenti associati alla notifica
+#   AOR
+
+  Scenario: [RADD_POSTE_AOR_03_1_C] PF - Visualizzazione AAR di notifiche i cui documenti sono già stati stampati, ma inibizione stampa documenti associati alla notifica
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber radd alternative |
       | senderDenomination    | Comune di milano                             |
@@ -229,7 +284,7 @@ Feature: Radd Alternative integrazione con Poste
     And l'operazione di abort genera un errore "La transazione risulta già completa" con codice 2 su radd alternative
 
 
-  Scenario: [RADD_POSTE_06B] PG - Visualizzazione AAR di notifiche i cui documenti sono già stati stampati, ma inibizione stampa documenti associati alla notifica
+  Scenario: [RADD_POSTE_AOR_03_1_A] PG - Visualizzazione AAR di notifiche i cui documenti sono già stati stampati, ma inibizione stampa documenti associati alla notifica
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di milano                             |
@@ -249,7 +304,7 @@ Feature: Radd Alternative integrazione con Poste
     And l'operazione di abort genera un errore "La transazione risulta già completa" con codice 2 su radd alternative
 
 
-  Scenario: [RADD_POSTE_07] PG - Visualizzazione link AAR disponibili con consegna documenti alla PG successivi alla stampa documenti per notifiche associate al CF corretto (irreperibile totale)
+  Scenario: [RADD_POSTE_AOR_03_1_B] PG - Visualizzazione link AAR disponibili con consegna documenti alla PG successivi alla stampa documenti per notifiche associate al CF corretto (irreperibile totale)
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
@@ -266,3 +321,19 @@ Feature: Radd Alternative integrazione con Poste
     And il recupero degli aar in stato irreperibile si conclude correttamente su radd alternative
     And viene chiusa la transazione per il recupero degli aar su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
+
+    # Errore su tentativo di upload dei documenti.
+
+  Scenario: [RADD_POSTE_02_1_I] PG - Come Operatore Radd con accesso da privatelink ricevo errore nel tentativo di effettuare l'upload dei documenti.
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+    And destinatario CucumberSpa
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    Then Il cittadino CucumberSpa come destinatario 0 mostra il QRCode "corretto"
+    And L'operatore scansione il qrCode per recuperare gli atti da radd alternative
+    And la scansione si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    #ERRORE 500 todo t radd
