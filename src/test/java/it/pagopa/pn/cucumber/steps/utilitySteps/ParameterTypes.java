@@ -102,6 +102,16 @@ public class ParameterTypes {
         return value.equals("può");
     }
 
+    @ParameterType("legge|non legge")
+    public static boolean readsOrNot(String value) {
+        return value.equals("legge");
+    }
+
+    @ParameterType("INVALIDATED|NEW")
+    public static String invoicingType(String value) {
+        return value;
+    }
+
     @ParameterType("rework|restart")
     public static String timelineInvalidation(String value) {
         return value.toUpperCase();

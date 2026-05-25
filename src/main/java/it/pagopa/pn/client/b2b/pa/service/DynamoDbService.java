@@ -5,9 +5,7 @@ import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
-import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
+import software.amazon.awssdk.services.dynamodb.model.*;
 
 import java.util.Map;
 
@@ -23,6 +21,7 @@ public class DynamoDbService {
             case NOTIFICATION_DELIVERY_COST -> buildNotificationDeliveryCostRequest(attributeValues);
             case ONBOARD_INSTITUTIONS -> buildOnboardInstitutionsRequest(attributeValues);
             case NOTIFICATION_REWORKS -> buildNotificationReworksRequest(attributeValues);
+            case REWORKED_TIMELINES_FOR_INVOICING -> buildReworkedTimelinesForInvoicingRequest(attributeValues);
         };
         return dynamoDbClient.query(queryRequest);
     }
@@ -46,14 +45,21 @@ public class DynamoDbService {
                 attributeValues);
     }
 
-    public static QueryRequest buildOnboardInstitutionsRequest(Map<String, AttributeValue> attributeValues) {
+    private static QueryRequest buildOnboardInstitutionsRequest(Map<String, AttributeValue> attributeValues) {
         return DynamoQueryBuilder.withoutFilter(DynamoTableName.ONBOARD_INSTITUTIONS.getValue(),
                 "id = :v_id",
                 attributeValues);
     }
 
-    public static QueryRequest buildNotificationReworksRequest(Map<String, AttributeValue> attributeValues) {
+    private static QueryRequest buildNotificationReworksRequest(Map<String, AttributeValue> attributeValues) {
         return DynamoQueryBuilder.withoutFilter(DynamoTableName.NOTIFICATION_REWORKS.getValue(),
+                "iun = :v_iun",
+                attributeValues);
+    }
+
+    private static QueryRequest buildReworkedTimelinesForInvoicingRequest(Map<String, AttributeValue> attributeValues) {
+        return DynamoQueryBuilder.withFilter(DynamoTableName.REWORKED_TIMELINES_FOR_INVOICING.getValue(),
+                "paId_invoicingDay = :pk",
                 "iun = :v_iun",
                 attributeValues);
     }

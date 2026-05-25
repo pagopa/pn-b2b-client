@@ -4,6 +4,7 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.*;
 import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
@@ -49,6 +50,8 @@ public class TimelineReworkSteps {
     private final ReworkTimelineClientImpl reworkTimelineClient;
     private final DynamoDbService dynamoDbService;
     private ReworkResponse reworkResponse;
+
+    private QueryResponse reworkedTimelinesForInvoicingResponse;
     private RestartAttemptResponse restartAttemptResponse;
     private HttpStatus httpStatusCode;
     private String timestampString;
@@ -489,10 +492,50 @@ public class TimelineReworkSteps {
         QueryResponse queryResponse = dynamoDbService.call(DynamoTableName.NOTIFICATION_REWORKS, Map.of(
                 ":v_iun", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build()
         ));
+        assertThat(queryResponse.items().size()).as(B2bUtils.assertWithIun(sharedSteps.getNotificationIun(), "Nessun record trovato in NOTIFICATION_REWORKS per lo IUN")).isGreaterThan(0);
         assertThat(queryResponse.items().get(0).get("requestType").s())
                 .as(B2bUtils.assertWithIun(sharedSteps.getNotificationIun(), "Il requestType non coincide con quanto atteso"))
                 .isEqualTo(requestType);
-        log.info("RESPONSE -> {}", queryResponse);
+        log.info("NOTIFICATION_REWORKS RESPONSE -> {}", queryResponse);
+    }
+
+    @When("vengono recuperati i record relativi agli elementi di timeline affetti dal rework")
+    public void queryReworkedTimelinesForInvoicing() {
+        String paId = sharedSteps.getSentNotificationLastVersion().getSenderPaId();
+        String sentAt = sharedSteps.getSentNotificationLastVersion().getSentAt().toLocalDate().toString();
+        String pk = paId + "_" + sentAt;
+        reworkedTimelinesForInvoicingResponse = dynamoDbService.call(DynamoTableName.REWORKED_TIMELINES_FOR_INVOICING, Map.of(
+                ":pk", AttributeValue.builder().s(pk).build(),
+                ":v_iun", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build()
+        ));
+        log.info("REWORKED_TIMELINES_FOR_INVOICING RESPONSE -> {}", reworkedTimelinesForInvoicingResponse);
+    }
+
+    @Then("controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato {invoicingType}")
+    public void checkReworkedTimelinesForInvoicing(String invoicingType, Map<String, String> expectedElements) {
+        assertThat(reworkedTimelinesForInvoicingResponse).as("Il risultato della query su pn-ReworkedTimelinesForInvoicing non dev'essere null").isNotNull();
+        List<Map<String, AttributeValue>> records = reworkedTimelinesForInvoicingResponse.items().stream().filter(
+                e -> e.containsKey("invoicingType") && e.get("invoicingType").s().equals(invoicingType)).toList();
+        if (invoicingType.equals("NEW")) {
+            for (Map<String, AttributeValue> record : records) {
+                assertThat(record.get("invoincingTimestamp_timelineElementId"))
+                        .as("Il record %s non contiene il campo timeline id", record)
+                        .isNotNull();
+                assertThat(record.get("invoincingTimestamp_timelineElementId").s())
+                        .as("Il timelineElementId del record %s dovrebbe esplicitare che si tratta di un rework", record)
+                        .contains("REWORK_");
+            }
+        }
+        expectedElements.forEach((key, value) -> {
+            String[] requirements = value.split(";");
+            Map<String, AttributeValue> expectedFound = records.stream()
+                    .filter(r -> r.containsKey("invoincingTimestamp_timelineElementId")
+                            && Arrays.stream(requirements).allMatch(r.get("invoincingTimestamp_timelineElementId").s()::contains))
+                    .findFirst().orElse(null);
+            assertThat(expectedFound)
+                    .as("Non è stato trovato nessun record che nel timelineElement id abbia tutte le sottostringhe attese: %s", Arrays.toString(requirements))
+                    .isNotNull();
+        });
     }
 }
 

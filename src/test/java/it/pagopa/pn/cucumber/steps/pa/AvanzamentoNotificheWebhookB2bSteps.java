@@ -803,11 +803,15 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         getWebhookStep(version).verifyNoEventsInStream();
     }
 
-    @And("{string} legge la notifica")
-    public void userReadNotification(String recipient) {
-        sharedSteps.selectUser(recipient);
-        Assertions.assertDoesNotThrow(() -> getWebRecipientClient().getFullReceivedNotification(sharedSteps.getNotificationIun(), null));
-        sleepTest(Long.valueOf(sharedSteps.getWorkFlowWait()));
+    @And("{string} {readsOrNot} la notifica")
+    public void userReadNotification(String recipient, boolean userReads) {
+        if (userReads) {
+            sharedSteps.selectUser(recipient);
+            Assertions.assertDoesNotThrow(() -> getWebRecipientClient().getFullReceivedNotification(sharedSteps.getNotificationIun(), null));
+            sleepTest(Long.valueOf(sharedSteps.getWorkFlowWait()));
+        } else {
+            log.info("L'utente %s non ha visualizzato la notifica", recipient);
+        }
     }
 
     @And("{string} legge la notifica dopo i 10 giorni")

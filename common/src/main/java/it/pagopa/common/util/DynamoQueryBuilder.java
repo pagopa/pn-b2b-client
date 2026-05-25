@@ -7,8 +7,10 @@ import java.util.Map;
 
 public class DynamoQueryBuilder {
 
-    public static QueryRequest withFilter(String tableName, String keyCondition,
-                                          String filter, Map<String, AttributeValue> expressionAttributeValues) {
+    public static QueryRequest withFilter(String tableName,
+                                          String keyCondition,
+                                          String filter,
+                                          Map<String, AttributeValue> expressionAttributeValues) {
         return QueryRequest.builder()
                 .tableName(tableName)
                 .keyConditionExpression(keyCondition)
@@ -17,7 +19,8 @@ public class DynamoQueryBuilder {
                 .build();
     }
 
-    public static QueryRequest withoutFilter(String tableName, String keyCondition,
+    public static QueryRequest withoutFilter(String tableName,
+                                             String keyCondition,
                                              Map<String, AttributeValue> expressionAttributeValues) {
         return withFilter(tableName, keyCondition, null, expressionAttributeValues);
     }
