@@ -2044,7 +2044,7 @@ Feature: Workflow analogico
       | physicalAddress_address | <SEQUENCE>   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
-    Then viene verificato che i dati di indirizzo nell'elemento di timeline "NORMALIZED_ADDRES" siano valorizzati
+    Then viene verificato che i dati di indirizzo nell'elemento di timeline "NORMALIZED_ADDRESS" siano valorizzati
     Then viene verificato che i dati di indirizzo nell'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" siano valorizzati
     Examples:
       | SEQUENCE    |
@@ -2061,5 +2061,5 @@ Feature: Workflow analogico
       | digitalDomicile         | test@pecOk.it |
       | physicalAddress_address |               |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "NORMALIZED_ADDRES"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NORMALIZED_ADDRESS"
     Then viene verificato che i dati di indirizzo nell'elemento di timeline "NORMALIZED_ADDRES" siano valorizzati
