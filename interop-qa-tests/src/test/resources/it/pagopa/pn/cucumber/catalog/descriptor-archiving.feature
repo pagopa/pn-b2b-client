@@ -35,4 +35,21 @@ Feature: Archiviazione manuale di un descrittore
     Then si ottiene response status code 401
 #    And il primo(qui possiamo inserire una variabile) descrittore è in stato "DEPRECATED"
 
+  Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_4] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale di un descrittore se gli attributi obbligatori non sono presenti o corretti
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+#    When l'utente archivia il primo(qui possiamo inserire una variabile) e meno recente descrittore con id "<descriptorId>" dell'e-service con id "<eserviceId>"
+    Then si ottiene response status code <statusCode>
+#    And il primo(qui possiamo inserire una variabile) descrittore è in stato "DEPRECATED"
+
+    Examples:
+      | descriptorId | eserviceId | statusCode |
+      | %null        | %actual    | 400        |
+      | %actual      | %null      | 400        |
+      | %null        | %null      | 400        |
+      | %random      | %actual    | 404        |
+      | %actual      | %random    | 404        |
+      | %random      | %random    | 404        |
 
