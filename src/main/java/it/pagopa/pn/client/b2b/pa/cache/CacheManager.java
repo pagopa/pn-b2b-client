@@ -7,12 +7,11 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Generica cache manager thread-safe con supporto a TTL
- * Può essere utilizzata per cachare qualsiasi tipo di dato
- *
+ * CacheManager è una semplice implementazione di cache in-memory con TTL (Time To Live)
+ * Thread-safe e adatta per caching di risultati di chiamate a servizi esterni o computazioni costose
  * Uso:
- * CacheManager<String, String> cache = new CacheManager<>("paCache", 300_000); // 5 min TTL
- * String value = cache.getOrCompute("key", () -> expensiveOperation());
+ * CacheManager<String, String> cache = new CacheManager<>("MyCache", 300); // TTL di 5 minuti
+ * String value = cache.getOrCompute("key1", () -> expensiveComputation());
  *
  * @param <K> Tipo della chiave
  * @param <V> Tipo del valore
@@ -61,32 +60,33 @@ public class CacheManager<K, V> {
     }
 
     /**
-     * Recupera un valore dalla cache con TTL personalizzato
+     * Versione con TTL personalizzato per questa specifica computazione
+     * Utile quando vuoi un TTL diverso dal default per alcune chiavi
      *
      * @param key Chiave per identificare il valore
      * @param valueSupplier Supplier che fornisce il valore se non in cache
-     * @param ttlMillis TTL personalizzato in millisecondi
+     * @param ttlMillis TTL in millisecondi per questa entry specifica (usa INFINITE_TTL per non scadere)
      * @return Valore dalla cache o computato
      */
     public V getOrCompute(K key, Supplier<V> valueSupplier, long ttlMillis) {
-        CacheEntry<V> entry = cache.get(key);
-
-        // Cache hit se entry esiste e non è scaduta
-        if (entry != null && entry.isValid()) {
-            log.debug("[{}] Cache HIT for key: {} (remaining: {}ms)",
-                    cacheName, key, entry.getTimeRemainingMillis());
-            return entry.getValue();
-        }
-
-        // Cache miss: calcola il valore
-        log.debug("[{}] Cache MISS for key: {} - computing value", cacheName, key);
-
-        V value = valueSupplier.get();
-        CacheEntry<V> newEntry = new CacheEntry<>(key.toString(), value, ttlMillis);
-        cache.put(key, newEntry);
-
-        log.debug("[{}] Cached new value for key: {}", cacheName, key);
-        return value;
+        CacheEntry<V> entry = cache.compute(key, (k, existingEntry) -> {
+            if (existingEntry != null && existingEntry.isValid()) {
+                // Cache hit, se l'entry esiste e non è scaduta, restituisci l'entry esistente
+                log.debug("[{}] Cache HIT for key: {} (remaining: {}ms)",
+                        cacheName, k, existingEntry.getTimeRemainingMillis());
+                return existingEntry;
+            }
+            // Cache miss o scaduta, calcola il nuovo valore
+            log.debug("[{}] Cache MISS for key: {} - computing value", cacheName, k);
+            V newValue = valueSupplier.get();
+            if (newValue == null) {
+                log.warn("[{}] Computed value for key: {} is null, not caching", cacheName, k);
+                return null; // Non cacheare valori null, ma restituisci comunque null
+            }
+            log.debug("[{}] Cached new value for key: {}", cacheName, k);
+            return new CacheEntry<>(k.toString(), newValue, ttlMillis);
+        });
+        return (entry != null) ? entry.getValue() : null;
     }
 
     /**
@@ -113,12 +113,19 @@ public class CacheManager<K, V> {
     }
 
     /**
-     * Get diretto (restituisce null se non trovato o scaduto)
+     * Recupera un valore dalla cache senza computare
+     * Restituisce null se non presente o scaduto
      */
     public V get(K key) {
         CacheEntry<V> entry = cache.get(key);
-        if (entry != null && entry.isValid()) {
-            return entry.getValue();
+        if(entry != null) {
+            if(entry.isValid()) {
+                return entry.getValue();
+            } else {
+                // Rimuovi l'entry scaduta per evitare accumulo di chiavi scadute
+                cache.remove(key, entry);
+                log.debug("[{}] Removed expired entry for key: {}", cacheName, key);
+            }
         }
         return null;
     }

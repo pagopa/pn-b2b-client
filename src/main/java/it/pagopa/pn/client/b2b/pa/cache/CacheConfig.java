@@ -15,10 +15,8 @@ import org.springframework.context.annotation.Scope;
 public class CacheConfig {
 
     /**
-     * Cache singleton per sender tax ID (String -> String)
-     * Chiave: "Comune_1" o "Comune_Multi"
-     * Valore: il tax ID da DynamoDB
-     * TTL: infinito fino a termine build
+     * Cache Manager per i Codici Fiscali dei destinatari
+     * TTL: INFINITE (i dati non cambiano e possono essere riutilizzati per più scenari)
      */
     @Bean(name = "senderTaxIdCacheManager")
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
