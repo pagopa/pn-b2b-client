@@ -11,8 +11,9 @@ Feature: finalità agevolata BFF, link e-service template a un template finalit�
 
   @purposeTemplate @eServiceTemplateLink
   Scenario: [LINK_TEMPLATE_ESERVICE_1_1] Recupero lista combinata e-service concreti ed e-service template suggeriti per un template finalità
+    # Given: fb61e42b-6a72-4146-bcc2-2ae6d5d2e1b0 presenta sia e-service che e-service template collegati
     When recupera le risorse collegabili suggerite per un template finalità
-      | purpose_template_id | 0c580291-7bde-46bd-b732-837d3f927727 |
+      | purpose_template_id | fb61e42b-6a72-4146-bcc2-2ae6d5d2e1b0 |
       | offset              | 0  |
       | limit               | 50 |
     Then le risorse collegabili presentano un e-service concreto
@@ -49,7 +50,7 @@ Feature: finalità agevolata BFF, link e-service template a un template finalit�
     And vengono salvate le risorse collegabili in una lista di risorse di riferimento
     And viene salvato 1 nome e-service template di riferimento dalle risorse collegabili
     And viene salvato 1 nome e-service concreto di riferimento dalle risorse collegabili
-    And vengono salvati 2 ID creatore di riferimento dalle risorse collegabili
+    And vengono salvati 2 ID pubblicatore di riferimento dalle risorse collegabili
 
     # Filtro nome e-service template
     When recupera le risorse collegabili suggerite per un template finalità
@@ -78,42 +79,42 @@ Feature: finalità agevolata BFF, link e-service template a un template finalit�
     Then le risorse collegabili corrispondono alla lista di risorse di riferimento aventi:
       | parte_del_nome       | e-service |
 
-    # Filtro con molteplici ID del creatore di una risorsa
+    # Filtro con molteplici ID del pubblicatore di una risorsa
     When recupera le risorse collegabili suggerite per un template finalità
-      | purpose_template_id  | fb346d06-16e6-4481-8df2-f3fc590933a8 |
-      | filtro_id_creatore   | $DA_CONTESTO(id_creatore_riferimento_1),$DA_CONTESTO(id_creatore_riferimento_2) |
-      | offset               | 0  |
-      | limit                | 50 |
+      | purpose_template_id    | fb346d06-16e6-4481-8df2-f3fc590933a8 |
+      | filtro_id_pubblicatore | $DA_CONTESTO(id_pubblicatore_riferimento_1),$DA_CONTESTO(id_pubblicatore_riferimento_2) |
+      | offset                 | 0  |
+      | limit                  | 50 |
     Then le risorse collegabili corrispondono alla lista di risorse di riferimento aventi:
-      | id_creatore          | $DA_CONTESTO(id_creatore_riferimento_1),$DA_CONTESTO(id_creatore_riferimento_2) |
+      | id_pubblicatore        | $DA_CONTESTO(id_pubblicatore_riferimento_1),$DA_CONTESTO(id_pubblicatore_riferimento_2) |
 
-    # Filtro con singolo ID del creatore di una risorsa
+    # Filtro con singolo ID del pubblicatore di una risorsa
     When recupera le risorse collegabili suggerite per un template finalità
-      | purpose_template_id  | fb346d06-16e6-4481-8df2-f3fc590933a8    |
-      | filtro_id_creatore   | $DA_CONTESTO(id_creatore_riferimento)   |
-      | offset               | 0  |
-      | limit                | 50 |
+      | purpose_template_id    | fb346d06-16e6-4481-8df2-f3fc590933a8    |
+      | filtro_id_pubblicatore | $DA_CONTESTO(id_pubblicatore_riferimento)   |
+      | offset                 | 0  |
+      | limit                  | 50 |
     Then le risorse collegabili corrispondono alla lista di risorse di riferimento aventi:
-      | id_creatore          | $DA_CONTESTO(id_creatore_riferimento) |
+      | id_pubblicatore        | $DA_CONTESTO(id_pubblicatore_riferimento) |
     And viene salvato 1 nome risorsa di riferimento dalle risorse collegabili
 
-    # Filtro doppio con ID del creatore e nome di una risorsa
+    # Filtro doppio con ID del pubblicatore e nome di una risorsa
     When recupera le risorse collegabili suggerite per un template finalità
-      | purpose_template_id  | fb346d06-16e6-4481-8df2-f3fc590933a8   |
-      | filtro_nome_eservice | $DA_CONTESTO(nome_risorsa_riferimento) |
-      | filtro_id_creatore   | $DA_CONTESTO(id_creatore_riferimento)  |
-      | offset               | 0  |
-      | limit                | 50 |
+      | purpose_template_id    | fb346d06-16e6-4481-8df2-f3fc590933a8   |
+      | filtro_nome_eservice   | $DA_CONTESTO(nome_risorsa_riferimento) |
+      | filtro_id_pubblicatore | $DA_CONTESTO(id_pubblicatore_riferimento)  |
+      | offset                 | 0  |
+      | limit                  | 50 |
     Then le risorse collegabili corrispondono alla lista di risorse di riferimento aventi:
-      | nome_eservice        | $DA_CONTESTO(nome_risorsa_riferimento) |
-      | id_creatore          | $DA_CONTESTO(id_creatore_riferimento)  |
+      | nome_eservice          | $DA_CONTESTO(nome_risorsa_riferimento) |
+      | id_pubblicatore        | $DA_CONTESTO(id_pubblicatore_riferimento)  |
 
     # Filtro con risultato lista vuota
     When recupera le risorse collegabili suggerite per un template finalità
-      | purpose_template_id  | fb346d06-16e6-4481-8df2-f3fc590933a8    |
-      | filtro_id_creatore   | aaaabbbb-cccc-1111-2222-ddddeeee3333    |
-      | offset               | 0  |
-      | limit                | 50 |
+      | purpose_template_id    | fb346d06-16e6-4481-8df2-f3fc590933a8    |
+      | filtro_id_pubblicatore | aaaabbbb-cccc-1111-2222-ddddeeee3333    |
+      | offset                 | 0  |
+      | limit                  | 50 |
     Then le risorse collegabili corrispondono ad una lista vuota
 
   @purposeTemplate @eServiceTemplateLink
