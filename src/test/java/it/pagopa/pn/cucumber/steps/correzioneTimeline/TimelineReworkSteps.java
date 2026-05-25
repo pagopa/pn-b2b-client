@@ -442,7 +442,7 @@ public class TimelineReworkSteps {
     }
 
     private String buildRequestId(String iun, String productType, String recindex, String attempt, String pcRetry) {
-        if (productType.equals("RS"))
+        if (productType.equals("RS") || productType.equals("RIR"))
             return String.format("PREPARE_SIMPLE_REGISTERED_LETTER.IUN_%s.%s.%s", iun, recindex, pcRetry);
         else
             return String.format("PREPARE_ANALOG_DOMICILE.IUN_%s.%s.%s.%s",
