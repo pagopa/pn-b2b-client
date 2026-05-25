@@ -4,15 +4,27 @@ Feature: Archiviazione manuale di un descrittore
   Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_1] Un ente erogatore di un e-service in stato PUBLISHED può avviare il processo di archiviazione manuale della secondo e meno recente descrittore dell'e-service in questione
     Given l'utente è un "<role>" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-#    When l'utente archivia il primo e meno recente descrittore dell'e-service
-    Then si ottiene status code 204
-#    And il descrittore e in stato "ARCHIVING"
+#    When l'utente archivia il primo(qui possiamo inserire una variabile) e meno recente descrittore con id "<descriptorId>" dell'e-service con id "<eserviceId>"
+    Then si ottiene response status code 204
+#    And il primo(qui possiamo inserire una variabile) descrittore è in stato "<descriptorState>" (ARCHIVING)
 
     Examples:
       | role         |
       | admin        |
       | api          |
       | api,security |
+
+  Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_2] Un utente con ruolo security NON può avviare il processo di archiviazione manuale del descrittore
+    Given l'utente è un "security" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+#    When l'utente archivia il primo(qui possiamo inserire una variabile) e meno recente descrittore con id "%actual" dell'e-service con id "%actual"
+    Then si ottiene response status code 401
+#    And il primo(qui possiamo inserire una variabile) descrittore è in stato "DEPRECATED"
+
+
 
 
