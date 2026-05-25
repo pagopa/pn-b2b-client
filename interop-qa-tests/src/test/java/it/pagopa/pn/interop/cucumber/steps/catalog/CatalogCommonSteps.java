@@ -110,9 +110,10 @@ public class CatalogCommonSteps {
         EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
                 eServiceSeed == null ? new EServiceSeed() : eServiceSeed,
                 descriptorSeed == null ? new UpdateEServiceDescriptorSeed() : descriptorSeed);
+        boolean isAsyncExchange = eServiceSeed != null && eServiceSeed.getAsyncExchange() != null && eServiceSeed.getAsyncExchange();
         dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(),
                 eServiceDescriptor.getDescriptorId(), EServiceDescriptorState.valueOf(
-                        descriptorState), false);
+                        descriptorState), false, isAsyncExchange);
         eServiceContext.setEserviceId(eServiceDescriptor.getEServiceId());
         eServiceContext.setDescriptorId(eServiceDescriptor.getDescriptorId());
     }
@@ -153,7 +154,7 @@ public class CatalogCommonSteps {
         MutateDescriptorResult result = dataPreparationService.bringDescriptorToGivenState(
                 eServiceDescriptor.getEServiceId(), eServiceDescriptor.getDescriptorId(),
                 EServiceDescriptorState.valueOf(descriptorState), documents, documentNamePrefix,
-                documentPrettyNamePrefix);
+                documentPrettyNamePrefix, false);
         EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
         eServicesCommonContext.setEserviceId(eServiceDescriptor.getEServiceId());
         eServicesCommonContext.setDescriptorId(eServiceDescriptor.getDescriptorId());

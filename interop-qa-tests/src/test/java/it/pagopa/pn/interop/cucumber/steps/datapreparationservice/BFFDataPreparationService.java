@@ -64,6 +64,7 @@ public class BFFDataPreparationService {
     public static class MutateDescriptorResult {
         private UUID descriptorId;
         private UUID interfaceId;
+        private UUID callbackInterfaceId;
         private List<DocumentMetadata> documentsMetadata;
 
         @Nullable
@@ -569,7 +570,11 @@ public class BFFDataPreparationService {
     }
 
     public MutateDescriptorResult bringDescriptorToGivenState(UUID eServiceId, UUID descriptorId, EServiceDescriptorState descriptorState, boolean withDocument) {
-        return bringDescriptorToGivenState(eServiceId, descriptorId, descriptorState, withDocument ? 1 : 0, null, null);
+        return bringDescriptorToGivenState(eServiceId, descriptorId, descriptorState, withDocument ? 1 : 0, null, null, false);
+    }
+
+    public MutateDescriptorResult bringDescriptorToGivenState(UUID eServiceId, UUID descriptorId, EServiceDescriptorState descriptorState, boolean withDocument, boolean addCallbackInterface) {
+        return bringDescriptorToGivenState(eServiceId, descriptorId, descriptorState, withDocument ? 1 : 0, null, null, addCallbackInterface);
     }
 
     public MutateDescriptorResult bringDescriptorToGivenState(
@@ -578,7 +583,8 @@ public class BFFDataPreparationService {
         EServiceDescriptorState descriptorState,
         int documents,
         @Nullable String documentNamePrefix,
-        @Nullable String documentPrettyNamePrefix
+        @Nullable String documentPrettyNamePrefix,
+        @Nullable Boolean addCallbackInterface
     ) {
         MutateDescriptorResult.MutateDescriptorResultBuilder resultBuilder = MutateDescriptorResult.builder();
 
@@ -607,6 +613,12 @@ public class BFFDataPreparationService {
         // 2. Add interface to descriptor
         UUID interfaceId = addInterfaceToDescriptor(eServiceId, descriptorId);
         resultBuilder.interfaceId(interfaceId);
+
+        // 2.1. Add callback interface to descriptor
+        if (addCallbackInterface != null && addCallbackInterface) {
+            UUID callbackInterfaceId = addCallbackInterfaceToDescriptor(eServiceId, descriptorId);
+            resultBuilder.callbackInterfaceId(callbackInterfaceId);
+        }
 
         // 3. Publish Descriptor
         publishDescriptor(eServiceId, descriptorId);
@@ -746,6 +758,20 @@ public class BFFDataPreparationService {
     public UUID addInterfaceToDescriptor(UUID eServiceId, UUID descriptorId) {
         Resource resource = blobFileCreator.createBlobFile("src/main/resources/origin-interface.yaml", "interface.yaml");
         httpCallExecutor.performCall(() -> eServiceClient.createEServiceDocument(eServiceId, descriptorId, "INTERFACE", "Interfaccia", resource));
+        assertValidResponse();
+
+        pollingService.makePolling(
+                () -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId),
+                res -> res.getInterface() != null,
+                ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
+        );
+
+        return ((CreatedResource) httpCallExecutor.getResponse()).getId();
+    }
+
+    public UUID addCallbackInterfaceToDescriptor(UUID eServiceId, UUID descriptorId) {
+        Resource resource = blobFileCreator.createBlobFile("src/main/resources/origin-interface.yaml", "interface.yaml");
+        httpCallExecutor.performCall(() -> eServiceClient.createEServiceDocument(eServiceId, descriptorId, "ASYNC_EXCHANGE_CALLBACK_INTERFACE", "Interfaccia Callback", resource));
         assertValidResponse();
 
         pollingService.makePolling(
@@ -1236,6 +1262,7 @@ public class BFFDataPreparationService {
         descriptorSeed.setAgreementApprovalPolicy(useOrDefault(partialDescriptorSeed.getAgreementApprovalPolicy(), defaultDescriptorSeed.getAgreementApprovalPolicy()));
         descriptorSeed.setDailyCallsTotal(useOrDefault(partialDescriptorSeed.getDailyCallsTotal(), defaultDescriptorSeed.getDailyCallsTotal()));
         descriptorSeed.setDailyCallsPerConsumer(useOrDefault(partialDescriptorSeed.getDailyCallsPerConsumer(), defaultDescriptorSeed.getDailyCallsPerConsumer()));
+        descriptorSeed.setAsyncExchangeProperties(useOrDefault(partialDescriptorSeed.getAsyncExchangeProperties(), defaultDescriptorSeed.getAsyncExchangeProperties()));
         return descriptorSeed;
     }
 
