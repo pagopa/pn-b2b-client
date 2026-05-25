@@ -25,6 +25,14 @@ Feature: Archiviazione manuale di un descrittore
     Then si ottiene response status code 401
 #    And il primo(qui possiamo inserire una variabile) descrittore è in stato "DEPRECATED"
 
-
+  Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_3] Un utente con token non valido NON può avviare il processo di archiviazione manuale del descrittore
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And viene impostato per l'utente un token non valido
+#    When l'utente archivia il primo(qui possiamo inserire una variabile) e meno recente descrittore con id "%actual" dell'e-service con id "%actual"
+    Then si ottiene response status code 401
+#    And il primo(qui possiamo inserire una variabile) descrittore è in stato "DEPRECATED"
 
 
