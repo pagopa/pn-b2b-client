@@ -691,8 +691,8 @@ public class RicezioneNotificheWebSteps {
     }
 
     @And("viene inserito un recapito legale {string} con verification code errato {string}")
-    public void nuovoRecapitoLegale(String pec, String verificationCode, CxLanguage xPagopaPnLanguage) {
-        postRecipientLegalAddressWrongCode("default", pec, verificationCode, xPagopaPnLanguage);
+    public void nuovoRecapitoLegale(String pec, String verificationCode) {
+        postRecipientLegalAddressWrongCode("default", pec, verificationCode, CxLanguage.IT);
     }
 
     @When("viene richiesto l'inserimento della pec {string}")
@@ -700,50 +700,65 @@ public class RicezioneNotificheWebSteps {
         postRecipientLegalAddress("default", pec, "00000", false, CxLanguage.IT);
     }
 
+    @When("viene richiesto l'inserimento della pec {string}, e passo la lingua selezionata dal destinatario {string}")
+    public void perLUtenteVieneSettatoLaPecELang(String pec, String language) {
+        postRecipientLegalAddress("default", pec, "00000", false, CxLanguage.fromValue(language));
+    }
+
     @When("viene richiesto l'inserimento del numero di telefono {string}")
-    public void vieneRichiestoLInserimentoDelNumeroDiTelefono(String phone, CxLanguage xPagopaPnLanguageCxLanguage) {
-        postRecipientCourtesyAddress("default", phone, LegalCourtesyAddressWrapper.ChannelType.SMS, "00000", false, xPagopaPnLanguageCxLanguage);
+    public void vieneRichiestoLInserimentoDelNumeroDiTelefono(String phone) {
+        postRecipientCourtesyAddress("default", phone, LegalCourtesyAddressWrapper.ChannelType.SMS, "00000", false, CxLanguage.IT);
+    }
+
+    @When("viene richiesto l'inserimento del numero di telefono {string}, e passo la lingua selezionata dal destinatario {string}")
+    public void vieneRichiestoLInserimentoDelNumeroDiTelefonoELang(String phone, String language) {
+        postRecipientCourtesyAddress("default", phone, LegalCourtesyAddressWrapper.ChannelType.SMS, "00000", false, CxLanguage.fromValue(language));
     }
 
     @When("viene richiesto l'inserimento del email di cortesia {string}")
-    public void vieneRichiestoLInserimentoDelEmailDiCortesia(String email, CxLanguage xPagopaPnLanguageCxLanguage) {
-        postRecipientCourtesyAddress("default", email, LegalCourtesyAddressWrapper.ChannelType.EMAIL, "00000", false, xPagopaPnLanguageCxLanguage);
+    public void vieneRichiestoLInserimentoDelEmailDiCortesia(String email) {
+        postRecipientCourtesyAddress("default", email, LegalCourtesyAddressWrapper.ChannelType.EMAIL, "00000", false, CxLanguage.IT);
+    }
+
+    @When("viene richiesto l'inserimento del email di cortesia {string}, e passo la lingua selezionata dal destinatario {string}")
+    public void vieneRichiestoLInserimentoDelEmailDiCortesiaeLang(String email, String language) {
+        postRecipientCourtesyAddress("default", email, LegalCourtesyAddressWrapper.ChannelType.EMAIL, "00000", false, CxLanguage.fromValue(language));
     }
 
     @And("viene inserito un recapito legale {string} per il comune {string}")
-    public void nuovoRecapitoLegaleDalComune(String pec, String pa, CxLanguage xPagopaPnLanguage) {
+    public void nuovoRecapitoLegaleDalComune(String pec, String pa) {
         String senderIdPa = getSenderIdPa(pa);
-        postRecipientLegalAddress(senderIdPa, pec, null, true, xPagopaPnLanguage);
+        postRecipientLegalAddress(senderIdPa, pec, null, true, CxLanguage.IT);
     }
 
     @And("viene inserito un recapito legale {string} per il comune {string} con verification code errato {string}")
-    public void nuovoRecapitoLegaleDalComuneConVerificationCodeErrato(String pec, String pa, String verificationCode, CxLanguage xPagopaPnLanguage) {
+    public void nuovoRecapitoLegaleDalComuneConVerificationCodeErrato(String pec, String pa, String verificationCode) {
         String senderIdPa = getSenderIdPa(pa);
-        postRecipientLegalAddressWrongCode(senderIdPa, pec, verificationCode, xPagopaPnLanguage);
+        postRecipientLegalAddressWrongCode(senderIdPa, pec, verificationCode, CxLanguage.IT);
     }
 
     @When("viene richiesto l'inserimento della pec {string} per il comune {string}")
-    public void perLUtenteVieneSettatoLaPecPerIlComune(String pec, String pa, CxLanguage xPagopaPnLanguage) {
+    public void perLUtenteVieneSettatoLaPecPerIlComune(String pec, String pa) {
         String senderIdPa = getSenderIdPa(pa);
-        postRecipientLegalAddress(senderIdPa, pec, "00000", false, xPagopaPnLanguage);
+        postRecipientLegalAddress(senderIdPa, pec, "00000", false, CxLanguage.IT);
     }
 
     @And("viene richiesto l'inserimento del email di cortesia {string} per il comune {string}")
-    public void vieneRichiestoLInserimentoDelEmailDiCortesiaDalComune(String email, String pa, CxLanguage xPagopaPnLanguageCxLanguage) {
+    public void vieneRichiestoLInserimentoDelEmailDiCortesiaDalComune(String email, String pa) {
         String senderIdPa = getSenderIdPa(pa);
-        postRecipientCourtesyAddress(senderIdPa, email, LegalCourtesyAddressWrapper.ChannelType.EMAIL, "00000", false, xPagopaPnLanguageCxLanguage);
+        postRecipientCourtesyAddress(senderIdPa, email, LegalCourtesyAddressWrapper.ChannelType.EMAIL, "00000", false, CxLanguage.IT);
     }
 
     @And("viene inserita l'email di cortesia {string} per il comune {string}")
-    public void vieneInseritaEmailDiCortesiaDalComune(String email, String pa, CxLanguage xPagopaPnLanguageCxLanguage) {
+    public void vieneInseritaEmailDiCortesiaDalComune(String email, String pa) {
         String senderIdPa = getSenderIdPa(pa);
-        postRecipientCourtesyAddress(senderIdPa, email, LegalCourtesyAddressWrapper.ChannelType.EMAIL, null, true, xPagopaPnLanguageCxLanguage);
+        postRecipientCourtesyAddress(senderIdPa, email, LegalCourtesyAddressWrapper.ChannelType.EMAIL, null, true, CxLanguage.IT);
     }
 
     @When("viene richiesto l'inserimento del numero di telefono {string} per il comune {string}")
-    public void vieneRichiestoLInserimentoDelNumeroDiTelefono(String phone, String pa, CxLanguage xPagopaPnLanguageCxLanguage) {
+    public void vieneRichiestoLInserimentoDelNumeroDiTelefono(String phone, String pa) {
         String senderIdPa = getSenderIdPa(pa);
-        postRecipientCourtesyAddress(senderIdPa, phone, LegalCourtesyAddressWrapper.ChannelType.SMS, "00000", false, xPagopaPnLanguageCxLanguage);
+        postRecipientCourtesyAddress(senderIdPa, phone, LegalCourtesyAddressWrapper.ChannelType.SMS, "00000", false, CxLanguage.IT);
     }
 
     private void postRecipientCourtesyAddress(String senderId, String addressVerification, LegalCourtesyAddressWrapper.ChannelType type, String verificationCode, boolean inserimento, CxLanguage xPagopaPnLanguageCxLanguage) {
@@ -807,6 +822,12 @@ public class RicezioneNotificheWebSteps {
         HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
         Assertions.assertTrue((httpStatusCodeException != null) &&
                 (httpStatusCodeException.getStatusCode().toString().substring(0, 3).equals(statusCode)));
+    }
+
+    @Then("l'inserimento va a buon fine e NON ha prodotto un errore")
+    public void lInserimentoNonHaProdottoErrore() {
+        HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
+        Assertions.assertTrue((httpStatusCodeException == null));
     }
 
     @And("verifico che l'atto opponibile a terzi di {string} sia lo stesso")
@@ -1009,24 +1030,24 @@ public class RicezioneNotificheWebSteps {
 
     //Come da SRS Abilitazione Domicilio Digitale, address è una stringa fissa "x-pagopa-pn-sercq:send-self:notification-already-delivered"
     @And("viene attivato il servizio SERCQ SEND per recapito principale")
-    public void attivazioneSercqSend(CxLanguage xPagopaPnLanguage) {
+    public void attivazioneSercqSend() {
         try {
             viewedSercqPerEnte("disabilitato", "default");
         } catch (AssertionFailedError failedError) {
             log.info("SERCQ già abilitato per la PA selezionata!");
             return;
         }
-        postRecipientLegalAddressSercq("default", "x-pagopa-pn-sercq:send-self:notification-already-delivered", xPagopaPnLanguage);
+        postRecipientLegalAddressSercq("default", "x-pagopa-pn-sercq:send-self:notification-already-delivered", CxLanguage.IT);
     }
 
     @And("viene attivato il servizio SERCQ SEND per recapito {string} con errore")
-    public void attivazioneSercqSendWithError(String pa, CxLanguage xPagopaPnLanguage) {
-        postRecipientLegalAddressSercqError(pa, "x-pagopa-pn-sercq:send-self:notification-already-delivered", xPagopaPnLanguage);
+    public void attivazioneSercqSendWithError(String pa) {
+        postRecipientLegalAddressSercqError(pa, "x-pagopa-pn-sercq:send-self:notification-already-delivered", CxLanguage.IT);
     }
 
     //Come da SRS Abilitazione Domicilio Digitale, address è una stringa fissa "x-pagopa-pn-sercq:send-self:notification-already-delivered"
     @And("viene attivato il servizio SERCQ SEND (per la PA)(come indirizzo di)(per il comune) {string}")
-    public void attivazioneSercqPerEnteSpecifico(String pa, CxLanguage xPagopaPnLanguage) {
+    public void attivazioneSercqPerEnteSpecifico(String pa) {
         try {
             viewedSercqPerEnte("disabilitato", pa);
         } catch (AssertionFailedError failedError) {
@@ -1034,12 +1055,12 @@ public class RicezioneNotificheWebSteps {
             return;
         }
         String senderIdPa = getSenderIdPa(pa);
-        postRecipientLegalAddressSercq(senderIdPa, "x-pagopa-pn-sercq:send-self:notification-already-delivered", xPagopaPnLanguage);
+        postRecipientLegalAddressSercq(senderIdPa, "x-pagopa-pn-sercq:send-self:notification-already-delivered", CxLanguage.IT);
     }
 
     @And("viene inserito un recapito legale {string}")
-    public void nuovoRecapitoLegale(String pec, CxLanguage xPagopaPnLanguage) {
-        postRecipientLegalAddress("default", pec, null, true, xPagopaPnLanguage);
+    public void nuovoRecapitoLegale(String pec) {
+        postRecipientLegalAddress("default", pec, null, true, CxLanguage.IT);
     }
 
     @And("viene controllato che siano presenti pec verificate inserite per il comune {string}")
