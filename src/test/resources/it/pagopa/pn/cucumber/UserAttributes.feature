@@ -142,3 +142,14 @@ Feature: Attributi utente
       | SL   |
       | DE   |
       | FR   |
+
+  @userAttributes
+  Scenario Outline: [USER-ATTR_13] inserimento email di cortesia e recupero header lang
+    Given si predispone addressbook per l'utente "Mario Cucumber"
+    When viene richiesto l'inserimento del email di cortesia "test@gmail.com", e passo la lingua selezionata dal destinatario "<lang>"
+    Then l'inserimento ha prodotto un errore con status code "400"
+    Examples:
+      | lang |
+      | ES   |
+      | ""   |
+      | "  " |
