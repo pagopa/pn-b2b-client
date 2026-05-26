@@ -243,7 +243,7 @@ public class SharedSteps {
 
     private final DynamoDbService dynamoDbService;
 
-    private CacheManager<String, String> senderTaxIdCacheManager;
+    private final CacheManager<String, String> senderTaxIdCacheManager;
 
     /**
      * Rappresenta la versione con cui è stata generata una notifica. Viene impostata al momento di preparazione della request.

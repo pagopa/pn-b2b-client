@@ -7,15 +7,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
 /**
- * Configurazione Spring per i CacheManager singleton
- * Questi bean vengono creati una volta per scenario e riutilizzati
+ * Configurazione Spring per i CacheManager singleton.
+ * Questi bean vengono creati una sola volta per ApplicationContext e riutilizzati.
  */
 @Configuration
 @Slf4j
 public class CacheConfig {
 
     /**
-     * Cache Manager per i Codici Fiscali dei destinatari
+     * Cache Manager per i Codici Fiscali del mittente
      * TTL: INFINITE (i dati non cambiano e possono essere riutilizzati per più scenari)
      */
     @Bean(name = "senderTaxIdCacheManager")
