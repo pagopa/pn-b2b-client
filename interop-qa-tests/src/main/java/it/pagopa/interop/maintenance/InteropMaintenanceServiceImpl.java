@@ -36,6 +36,7 @@ public class InteropMaintenanceServiceImpl implements InteropMaintenanceService 
             TenantMapper mapper,
             ITenantsApi tenantsBffClient
     ) {
+        System.out.println("HOST preso da envar: " + basePath);
         bffApiClient = new ApiClient(restTemplate).setBasePath(basePath);
         this.processBffTenantApi = new TenantApi(bffApiClient);
         maintenanceApiClient = new ApiClient(restTemplate).setBasePath(basePath);
@@ -52,6 +53,7 @@ public class InteropMaintenanceServiceImpl implements InteropMaintenanceService 
         UUID organizationId = identityService.getOrganizationId(tenantAlias);
 
         bffApiClient.setBearerToken(tokenBff);
+        System.out.println("Base path usato per get tenant: " + bffApiClient.getBasePath());
         ResponseEntity<Tenant> tenant = processBffTenantApi.getTenantWithHttpInfo(
                 xCorrelationId,
                 organizationId);
