@@ -8,7 +8,7 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface TenantMapper {
-    @Mapping(source = "tenant", target = ".")
+    @Mapping(source = "tenant", target = "tenant")
     @Mapping(source = "currentVersion", target = "currentVersion")
     @Mapping(source = "tenantKind", target = "tenant.kind")
     @Mapping(source = "selfcareInstitutionType", target = "tenant.selfcareInstitutionType")

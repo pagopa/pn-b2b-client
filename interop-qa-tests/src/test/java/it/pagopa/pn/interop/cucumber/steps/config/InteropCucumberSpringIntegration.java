@@ -30,6 +30,7 @@ import it.pagopa.interop.event.service.M2MEventClientImpl;
 import it.pagopa.interop.event.service.M2MV3EventClientImpl;
 import it.pagopa.interop.maintenance.EnvDebugLogger;
 import it.pagopa.interop.maintenance.InteropMaintenanceServiceImpl;
+import it.pagopa.interop.maintenance.TenantMapperImpl;
 import it.pagopa.interop.notification.NotificationClientImpl;
 import it.pagopa.interop.notification.NotificationConfigClient;
 import it.pagopa.interop.probing.config.ProbingClientConfigs;
@@ -217,7 +218,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         ProbingClient.class,
         DevToolsClientImpl.class,
         InteropMaintenanceServiceImpl.class,
-        EnvDebugLogger.class
+        EnvDebugLogger.class,
+        TenantMapperImpl.class,
 })
 @EnableScheduling
 @EnableConfigurationProperties
