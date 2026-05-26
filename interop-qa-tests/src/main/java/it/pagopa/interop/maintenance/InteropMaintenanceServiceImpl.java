@@ -39,6 +39,7 @@ public class InteropMaintenanceServiceImpl implements InteropMaintenanceService 
         System.out.println("HOST preso da envar: " + basePath);
         System.out.println("Contenuto della envar TENANT_PROCESS_HOST: " + System.getenv("TENANT_PROCESS_HOST"));
         System.out.println("Contenuto della property TENANT_PROCESS_HOST: " + System.getProperty("TENANT_PROCESS_HOST"));
+        System.out.println("Contenuto della envar GITHUB_ENV: " + System.getenv("GITHUB_ENV"));
         bffApiClient = new ApiClient(restTemplate).setBasePath(basePath);
         this.processBffTenantApi = new TenantApi(bffApiClient);
         maintenanceApiClient = new ApiClient(restTemplate).setBasePath(basePath);
