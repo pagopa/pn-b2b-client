@@ -35,7 +35,7 @@ Feature: Casi di test relativi alla nuova gestione degli eventi di dematerializz
       | Via@FAIL-CompiutaGiacenza_AR | RECRN005B                  |
 
   Scenario: [EVENTI_DEMAT_AR_2] Il sistema riceve due eventi di dematerializzazione RECRN001A e RECRN001B per il prodotto AR a seguito dell'evento finale
-  ed i nuovi evento di dematerializzazione sono visibili in timeline
+  ed i nuovi eventi di dematerializzazione sono visibili in timeline
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -57,7 +57,7 @@ Feature: Casi di test relativi alla nuova gestione degli eventi di dematerializz
       | details_deliveryDetailCode | RECRN001B |
 
   Scenario: [EVENTI_DEMAT_AR_3] Il sistema riceve due eventi di dematerializzazione RECRN002E e RECRN002D per il prodotto AR a seguito dell'evento finale
-  ed i nuovi evento di dematerializzazione sono visibili in timeline
+  ed i nuovi eventi di dematerializzazione sono visibili in timeline
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -165,7 +165,7 @@ Feature: Casi di test relativi alla nuova gestione degli eventi di dematerializz
       | details_sentAttemptMade    | 0                              |
       | details_attachments        | [{"documentType": "Indagine"}] |
 
-  Scenario: [EVENTI_DEMAT_890_3] Il sistema riceve degli evento di dematerializzazione RECAG011A, RECAG011B, RECAG005B  per il prodotto 890 dopo l'evento finale
+  Scenario: [EVENTI_DEMAT_890_3] Il sistema riceve degli eventi di dematerializzazione RECAG011A, RECAG011B, RECAG005B  per il prodotto 890 dopo l'evento finale
   ed essi sono visibili in timeline
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |

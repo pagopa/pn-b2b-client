@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Gestisce campi come statusCode, statusTimestamp, recrn005aTimestamp, etc.
  *
  * Validazione:
- * - Campi timestamp: valida il formato ISO 8601 senza confrontare il valore esatto
+ * - Campi timestamp: valida il formato senza confrontare il valore esatto
  * - Campi normali: confronta il valore atteso con quello effettivo
  */
 @Slf4j
