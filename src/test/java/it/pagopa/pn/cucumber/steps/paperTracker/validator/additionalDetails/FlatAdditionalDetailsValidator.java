@@ -47,7 +47,7 @@ public class FlatAdditionalDetailsValidator implements AdditionalDetailsValidato
     }
 
     /**
-     * Valida un campo timestamp verificando il formato ISO 8601
+     * Valida un campo timestamp verificando il formato del timestamp
      * @param fieldName nome del campo
      * @param actual valore effettivo
      */
@@ -56,7 +56,7 @@ public class FlatAdditionalDetailsValidator implements AdditionalDetailsValidato
 
         // Valida formato regex
         assertThat(timestamp)
-                .as("Timestamp invalido per " + fieldName + ": non rispetta il formato ISO 8601")
+                .as("Timestamp invalido per " + fieldName + ": non rispetta il formato atteso (YYYY-MM-DDTHH:MM:SSZ), ma trovato '" + timestamp + "'")
                 .matches(TIMESTAMP_PATTERN);
 
         // Valida che sia parseable come OffsetDateTime
