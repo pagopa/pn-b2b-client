@@ -154,7 +154,7 @@ public class TimelineReworkSteps {
                 .filter(reworkItem -> !List.of(ReworkItem.StatusEnum.DONE, ReworkItem.StatusEnum.ERROR).contains(reworkItem.getStatus()))
                 .findAny()
                 .ifPresent(value -> {
-                    throw new RuntimeException("Errore ci sono richieste in sospeso con stato diverso da DONE o ERROR");
+                    throw new RuntimeException("Errore: ci sono richieste in sospeso con stato diverso da DONE o ERROR");
                 });
     }
 
@@ -174,9 +174,7 @@ public class TimelineReworkSteps {
         String iun = getDataTableParams(inputData, "iun", sharedSteps.getNotificationIun());
         String attemptId = getDataTableParams(inputData, "attemptId", "ATTEMPT_0");
         ReworkRequest reworkRequest = createRequestRework(
-                attemptId != null
-                        ? ReworkRequest.AttemptIdEnum.fromValue(attemptId)
-                        : null,
+                attemptId != null ? ReworkRequest.AttemptIdEnum.fromValue(attemptId) : null,
                 getDataTableParams(inputData, "reason", "reason"),
                 getDataTableParams(inputData, "pcRetry", "PCRETRY_0"),
                 getDataTableParams(inputData, "recIndex", "RECINDEX_0"),
@@ -243,8 +241,12 @@ public class TimelineReworkSteps {
         return createRequestRework(ReworkRequest.AttemptIdEnum._0, "reason", "PCRETRY_0", "RECINDEX_0", "RECRI003C", null);
     }
 
-    private ReworkRequest createRequestRework(ReworkRequest.AttemptIdEnum attemptId, String reason, String pcRetry,
-                                              String recIndex, String expectedStatusCode, String expectedDeliveryFailureCause) {
+    private ReworkRequest createRequestRework(ReworkRequest.AttemptIdEnum attemptId,
+                                              String reason,
+                                              String pcRetry,
+                                              String recIndex,
+                                              String expectedStatusCode,
+                                              String expectedDeliveryFailureCause) {
         ReworkRequest reworkRequest = new ReworkRequest();
         reworkRequest.setAttemptId(attemptId);
         reworkRequest.setExpectedDeliveryFailureCause(expectedDeliveryFailureCause);
@@ -259,7 +261,10 @@ public class TimelineReworkSteps {
         return createRequestRestart(RestartAttemptRequest.AttemptIdEnum._0, "RECINDEX_0", "reasonTest", "TEST-12345");
     }
 
-    private RestartAttemptRequest createRequestRestart(RestartAttemptRequest.AttemptIdEnum attemptId, String recIndex, String reason, String task) {
+    private RestartAttemptRequest createRequestRestart(RestartAttemptRequest.AttemptIdEnum attemptId,
+                                                       String recIndex,
+                                                       String reason,
+                                                       String task) {
         RestartAttemptRequest restartAttemptRequest = new RestartAttemptRequest();
         restartAttemptRequest.setAttemptId(attemptId);
         restartAttemptRequest.setRecIndex(recIndex);
@@ -288,8 +293,7 @@ public class TimelineReworkSteps {
 
     public void verifyInvalidatedTimelineElementsFailFast(List<String> elementsToCheck) {
 
-        List<NotificationStatusHistoryInvalidatedElement> invalidatedHistory =
-                getInvalidatedHistoryFailFast();
+        List<NotificationStatusHistoryInvalidatedElement> invalidatedHistory = getInvalidatedHistoryFailFast();
 
         List<String> invalidElementIds = invalidatedHistory.stream()
                 .flatMap(h -> h.getRelatedTimelineElements().stream())
@@ -302,7 +306,6 @@ public class TimelineReworkSteps {
             log.error("Trovati elementId non validi in relatedTimelineElements:");
             invalidElementIds.forEach(id -> log.error(" - {}", id));
         }
-
         assertTrue(
                 invalidElementIds.isEmpty(),
                 "Trovati elementId non compatibili con elementsToCheck: " + invalidElementIds
@@ -439,7 +442,6 @@ public class TimelineReworkSteps {
     }
 
     private Map<String, Object> populateConsolidatoreMapCustom(Map<String, String> inputData) {
-
         String iun = sharedSteps.getNotificationIun();
         String timestampStringMethod = inputData.getOrDefault("timestamp", getOrInitNow());
         String validateTimestamp = timestampStringMethod.equals("<null>") ? null : timestampStringMethod;
@@ -492,11 +494,15 @@ public class TimelineReworkSteps {
         QueryResponse queryResponse = dynamoDbService.call(DynamoTableName.NOTIFICATION_REWORKS, Map.of(
                 ":v_iun", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build()
         ));
-        assertThat(queryResponse.items().size()).as(B2bUtils.assertWithIun(sharedSteps.getNotificationIun(), "Nessun record trovato in NOTIFICATION_REWORKS per lo IUN")).isGreaterThan(0);
-        assertThat(queryResponse.items().get(0).get("requestType").s())
-                .as(B2bUtils.assertWithIun(sharedSteps.getNotificationIun(), "Il requestType non coincide con quanto atteso"))
-                .isEqualTo(requestType);
-        log.info("NOTIFICATION_REWORKS RESPONSE -> {}", queryResponse);
+        try {
+            assertThat(queryResponse.items().size()).as(B2bUtils.assertWithIun(sharedSteps.getNotificationIun(), "Nessun record trovato in NOTIFICATION_REWORKS per lo IUN")).isGreaterThan(0);
+            assertThat(queryResponse.items().get(0).get("requestType").s())
+                    .as(B2bUtils.assertWithIun(sharedSteps.getNotificationIun(), "Il requestType non coincide con quanto atteso"))
+                    .isEqualTo(requestType);
+            log.info("NOTIFICATION_REWORKS RESPONSE -> {}", queryResponse);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
     }
 
     @When("vengono recuperati i record relativi agli elementi di timeline affetti dal rework")
@@ -513,29 +519,33 @@ public class TimelineReworkSteps {
 
     @Then("controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato {invoicingType}")
     public void checkReworkedTimelinesForInvoicing(String invoicingType, Map<String, String> expectedElements) {
-        assertThat(reworkedTimelinesForInvoicingResponse).as("Il risultato della query su pn-ReworkedTimelinesForInvoicing non dev'essere null").isNotNull();
-        List<Map<String, AttributeValue>> records = reworkedTimelinesForInvoicingResponse.items().stream().filter(
-                e -> e.containsKey("invoicingType") && e.get("invoicingType").s().equals(invoicingType)).toList();
-        if (invoicingType.equals("NEW")) {
-            for (Map<String, AttributeValue> record : records) {
-                assertThat(record.get("invoincingTimestamp_timelineElementId"))
-                        .as("Il record %s non contiene il campo timeline id", record)
-                        .isNotNull();
-                assertThat(record.get("invoincingTimestamp_timelineElementId").s())
-                        .as("Il timelineElementId del record %s dovrebbe esplicitare che si tratta di un rework", record)
-                        .contains("REWORK_");
+        try {
+            assertThat(reworkedTimelinesForInvoicingResponse).as("Il risultato della query su pn-ReworkedTimelinesForInvoicing non dev'essere null").isNotNull();
+            List<Map<String, AttributeValue>> records = reworkedTimelinesForInvoicingResponse.items().stream().filter(
+                    e -> e.containsKey("invoicingType") && e.get("invoicingType").s().equals(invoicingType)).toList();
+            if (invoicingType.equals("NEW")) {
+                for (Map<String, AttributeValue> record : records) {
+                    assertThat(record.get("invoincingTimestamp_timelineElementId"))
+                            .as("Il record %s non contiene il campo timeline id", record)
+                            .isNotNull();
+                    assertThat(record.get("invoincingTimestamp_timelineElementId").s())
+                            .as("Il timelineElementId del record %s dovrebbe esplicitare che si tratta di un rework", record)
+                            .contains("REWORK_");
+                }
             }
+            expectedElements.forEach((key, value) -> {
+                String[] requirements = value.split(";");
+                Map<String, AttributeValue> expectedFound = records.stream()
+                        .filter(r -> r.containsKey("invoincingTimestamp_timelineElementId")
+                                && Arrays.stream(requirements).allMatch(r.get("invoincingTimestamp_timelineElementId").s()::contains))
+                        .findFirst().orElse(null);
+                assertThat(expectedFound)
+                        .as("Non è stato trovato nessun record che nel timelineElement id abbia tutte le sottostringhe attese: %s", Arrays.toString(requirements))
+                        .isNotNull();
+            });
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
-        expectedElements.forEach((key, value) -> {
-            String[] requirements = value.split(";");
-            Map<String, AttributeValue> expectedFound = records.stream()
-                    .filter(r -> r.containsKey("invoincingTimestamp_timelineElementId")
-                            && Arrays.stream(requirements).allMatch(r.get("invoincingTimestamp_timelineElementId").s()::contains))
-                    .findFirst().orElse(null);
-            assertThat(expectedFound)
-                    .as("Non è stato trovato nessun record che nel timelineElement id abbia tutte le sottostringhe attese: %s", Arrays.toString(requirements))
-                    .isNotNull();
-        });
     }
 }
 

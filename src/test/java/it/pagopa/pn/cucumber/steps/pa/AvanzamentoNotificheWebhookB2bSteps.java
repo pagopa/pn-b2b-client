@@ -810,7 +810,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             Assertions.assertDoesNotThrow(() -> getWebRecipientClient().getFullReceivedNotification(sharedSteps.getNotificationIun(), null));
             sleepTest(Long.valueOf(sharedSteps.getWorkFlowWait()));
         } else {
-            log.info("L'utente %s non ha visualizzato la notifica", recipient);
+            log.info("L'utente {} non ha visualizzato la notifica", recipient);
         }
     }
 

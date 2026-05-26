@@ -66,13 +66,13 @@ Feature: Correzione timeline fase 3
       |     | ATTEMPT_0 | RECINDEX_0 |        |      |
     Then si verifica che la chiamata sia andata in errore con il seguente status code: 400
     When viene invocata una richiesta di restart per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | recIndex   | reason | task       |
-      |     | ATTEMPT_0 | RECINDEX_1 |        | TEST-12345 |
+      | iun | attemptId | recIndex   | reason     | task       |
+      |     | ATTEMPT_0 | RECINDEX_1 | reasonTest | TEST-12345 |
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     Then si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
     When viene invocata una richiesta di restart per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | recIndex   | reason | task       |
-      |     | ATTEMPT_1 | RECINDEX_0 |        | TEST-12345 |
+      | iun | attemptId | recIndex   | reason     | task       |
+      |     | ATTEMPT_1 | RECINDEX_0 | reasonTest | TEST-12345 |
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
     #dopo tutti i KO, ne invochiamo una che va a buon fine
@@ -99,7 +99,7 @@ Feature: Correzione timeline fase 3
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED" entro 130 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     When viene invocata una richiesta di restart per la notifica appena creata
-    Then si verifica che la chiamata sia andata in errore con il seguente status code: 400
+    Then si verifica che la chiamata sia andata in errore con il seguente status code: 409
 
   @timelineReworkF3
   Scenario: [TR3_RESTART_UPDATE_KO] Verificare l'impossibilità di poter eseguire l'update di un'operazione di restart
@@ -293,12 +293,19 @@ Feature: Correzione timeline fase 3
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
+      | pagoPaIntMode         | SYNC                        |
       | feePolicy             | DELIVERY_MODE               |
+      | paFee                 | 17                          |
+      | vat                   | 10                          |
     And destinatario Mario Gherkin e:
-      | physicalAddress_address | Via@OK_AR |
-      | digitalDomicile         | NULL      |
-      | payment_pagoPaForm      | SI        |
-      | apply_cost_pagopa       | SI        |
+      | physicalAddress_address | Via@OK_AR          |
+      | digitalDomicile         | NULL               |
+      | payment_pagoPaForm      | SI                 |
+      | apply_cost_pagopa       | SI                 |
+      | payment_creditorTaxId   | 77777777777        |
+      | payment_pagoPaForm      | SI                 |
+      | payment_f24             | NULL               |
+      | title_payment           | PagoPa_testRestart |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
@@ -316,17 +323,28 @@ Feature: Correzione timeline fase 3
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
+      | pagoPaIntMode         | SYNC                        |
       | feePolicy             | DELIVERY_MODE               |
+      | paFee                 | 17                          |
+      | vat                   | 10                          |
     And destinatario Mario Gherkin e:
-      | physicalAddress_address | Via@OK_AR |
-      | digitalDomicile         | NULL      |
-      | payment_pagoPaForm      | SI        |
-      | apply_cost_pagopa       | SI        |
+      | physicalAddress_address | Via@OK_AR          |
+      | digitalDomicile         | NULL               |
+      | payment_pagoPaForm      | SI                 |
+      | apply_cost_pagopa       | SI                 |
+      | payment_creditorTaxId   | 77777777777        |
+      | payment_pagoPaForm      | SI                 |
+      | payment_f24             | NULL               |
+      | title_payment           | PagoPa_testRestart |
     And destinatario Mario Cucumber e:
-      | physicalAddress_address | Via@OK_AR |
-      | digitalDomicile         | NULL      |
-      | payment_pagoPaForm      | SI        |
-      | apply_cost_pagopa       | SI        |
+      | physicalAddress_address | Via@OK_AR          |
+      | digitalDomicile         | NULL               |
+      | payment_pagoPaForm      | SI                 |
+      | apply_cost_pagopa       | SI                 |
+      | payment_creditorTaxId   | 77777777777        |
+      | payment_pagoPaForm      | SI                 |
+      | payment_f24             | NULL               |
+      | title_payment           | PagoPa_testRestart |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
