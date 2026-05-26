@@ -34,6 +34,77 @@ Feature: Casi di test relativi alla nuova gestione degli eventi di dematerializz
       | Via@FAIL-Giacenza_AR         | RECRN004B                  |
       | Via@FAIL-CompiutaGiacenza_AR | RECRN005B                  |
 
+  Scenario: [EVENTI_DEMAT_AR_2] Il sistema riceve due eventi di dematerializzazione RECRN001A e RECRN001B per il prodotto AR a seguito dell'evento finale
+  ed i nuovi evento di dematerializzazione sono visibili in timeline
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@OK_AR_EVENTS_AFTER |
+      | digitalDomicile         | NULL                   |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
+    And viene verificato che il numero di elementi di timeline "SEND_ANALOG_PROGRESS" sia di 2
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
+      | details_sentAttemptMade    | 0         |
+      | details_deliveryDetailCode | RECRN001A |
+    And viene verificato che il numero di elementi di timeline "SEND_ANALOG_PROGRESS" sia di 2
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
+      | details_sentAttemptMade    | 0         |
+      | details_deliveryDetailCode | RECRN001B |
+
+  Scenario: [EVENTI_DEMAT_AR_3] Il sistema riceve due eventi di dematerializzazione RECRN002E e RECRN002D per il prodotto AR a seguito dell'evento finale
+  ed i nuovi evento di dematerializzazione sono visibili in timeline
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@FAIL_AR_EVENTS_AFTER |
+      | digitalDomicile         | NULL                     |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
+    And viene verificato che il numero di elementi di timeline "SEND_ANALOG_PROGRESS" sia di 2
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
+      | details_sentAttemptMade    | 0         |
+      | details_deliveryDetailCode | RECRN002E |
+    And viene verificato che il numero di elementi di timeline "SEND_ANALOG_PROGRESS" sia di 2
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
+      | details_sentAttemptMade    | 0         |
+      | details_deliveryDetailCode | RECRN002D |
+
+  Scenario: [EVENTI_DEMAT_AR_4] Il sistema riceve degli evento di dematerializzazione RECAG011A, RECAG011B, RECAG005B  per il prodotto AR dopo l'evento finale
+  ed essi sono visibili in timeline
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@OK_890_GIACENZA_EVENTS_AFTER |
+      | digitalDomicile         | NULL                             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
+    And viene verificato che il numero di elementi di timeline "SEND_ANALOG_PROGRESS" sia di 2
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
+      | details_sentAttemptMade    | 0         |
+      | details_deliveryDetailCode | RECAG011A |
+    And viene verificato che il numero di elementi di timeline "SEND_ANALOG_PROGRESS" sia di 1
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
+      | details_sentAttemptMade    | 0         |
+      | details_deliveryDetailCode | RECAG011B |
+    And viene verificato che il numero di elementi di timeline "SEND_ANALOG_PROGRESS" sia di 3
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
+      | details_sentAttemptMade    | 0         |
+      | details_deliveryDetailCode | RECAG005B |
+
     # ============ PRODOTTO RIR ============
 
   Scenario Outline: [EVENTI_DEMAT_RIR_1] Il sistema riceve un evento di dematerializzazione per il prodotto RIR dopo l'evento finale (C)
