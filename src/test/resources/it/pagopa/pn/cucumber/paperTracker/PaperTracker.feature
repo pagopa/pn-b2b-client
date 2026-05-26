@@ -371,19 +371,18 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
 
   @paperTrackerARRunMode
   Scenario Outline: [PAPER_TRACKER_RUN_RIR_1] Viene verificato che gli elementi di timeline sono presenti per le sequence RIR
-#    Given viene generata una nuova notifica
-#      | subject               | invio notifica con cucumber |
-#      | senderDenomination    | Comune di Palermo           |
-#      | physicalCommunication | AR_REGISTERED_LETTER        |
-#    And destinatario Mario Cucumber e:
-#      | physicalAddress_address | Via@<sequence> |
-#      | digitalDomicile         | NULL           |
-#      | physicalAddress_State   | MESSICO        |
-#      | physicalAddress_zip     | ZONE_2         |
-#    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-#    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-#    Then si controlla che non ci siano eventi duplicati
-    And imposto lo iun di SharedSteps a "WDGV-JPNL-QLVX-202604-E-1" e la pa a "Comune_Multi"
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@<sequence> |
+      | digitalDomicile         | NULL           |
+      | physicalAddress_State   | MESSICO        |
+      | physicalAddress_zip     | ZONE_2         |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    Then si controlla che non ci siano eventi duplicati
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
     And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
@@ -392,11 +391,11 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     Examples:
       | sequence                      |
       | OK_RIR                        |
-#      | FAIL_RIR                      |
-#      | OK-Retry_RIR                  |
-#      | OK_RIR_NOT_ORDERED            |
-#      | FAIL_CON996_PCRETRY_FURTO_RIR |
-#      | OK_PCRETRY_CON996_RIR         |
+      | FAIL_RIR                      |
+      | OK-Retry_RIR                  |
+      | OK_RIR_NOT_ORDERED            |
+      | FAIL_CON996_PCRETRY_FURTO_RIR |
+      | OK_PCRETRY_CON996_RIR         |
 
 
   @paperTrackerARRunMode
