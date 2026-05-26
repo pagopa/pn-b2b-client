@@ -5,6 +5,8 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainforma
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.api.NewInformalNotificationApi;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.api.SenderReadInformalNotificationB2BApi;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.*;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.api.InternalOnlyApi;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.model.InformalSentNotificationV1;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
@@ -25,6 +27,8 @@ public class PnPaB2bInternalInformalClientImpl {
     private final NewInformalNotificationApi newInformalNotificationApi;
     private final InformalNotificationTerminationApi informalNotificationTerminationApi;
 
+    private final InternalOnlyApi internalOnlyApi;
+
     private final List<String> groups;
 
     private String cxId;
@@ -42,12 +46,24 @@ public class PnPaB2bInternalInformalClientImpl {
         this.senderReadInformalNotificationB2BApi = new SenderReadInformalNotificationB2BApi(newInformalApiClient(restTemplate, deliveryBasePath));
         this.newInformalNotificationApi = new NewInformalNotificationApi(newInformalApiClient(restTemplate, deliveryBasePath));
         this.informalNotificationTerminationApi = new InformalNotificationTerminationApi();
+
+        this.internalOnlyApi =
+                new InternalOnlyApi(newPrivateDeliveryApiClient(restTemplate, deliveryBasePath));
+
+
+
     }
 
     private static it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.ApiClient newInformalApiClient(RestTemplate restTemplate, String basePath) {
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.ApiClient newApiClient = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
         return newApiClient;
+    }
+
+    private static it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.ApiClient newPrivateDeliveryApiClient(RestTemplate restTemplate, String basePath) {
+        it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.ApiClient client = new it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.ApiClient(restTemplate);
+        client.setBasePath(basePath);
+        return client;
     }
 
     public MessageResponse createMessage(NewMessageRequest request) {
@@ -77,6 +93,12 @@ public class PnPaB2bInternalInformalClientImpl {
     public TerminationRequestStatus terminateInformalWorkflow(String iun) {
         return informalNotificationTerminationApi.terminateInformalWorkflow(operatorId, CxTypeAuthFleet.PA, cxId, iun, groups);
     }
+
+
+    public InformalSentNotificationV1 getSentInformalNotification(String iun) {
+        return internalOnlyApi.getSentInformalNotificationPrivateV1(iun);
+    }
+
 
     public void setCxId(String cxId) {
         this.cxId = cxId;

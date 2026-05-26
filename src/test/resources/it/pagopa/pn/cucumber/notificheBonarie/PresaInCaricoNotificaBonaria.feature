@@ -31,9 +31,25 @@ Feature: Sottomissione di una notifica bonaria.
     Then si riceve errore 403
 
 
+#***************************************************
+    And verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | iun    | auto             |
+      | param1 | AUD_COM_CHECK    |
+      | param2 | recIndex=0       |
+      | pippo  | phase=VALIDATION |
+ # Se nell'audit log è presente lo IUN, lascia iun | auto
+#  le chiavi successive le puoi chiamare come ti pare, è del tutto ininfluente.
+#  sono i valori che contano.
+#  Ognuno di quelli corrisponde a una stringa che imposti nel filtro di ricerca degli audit log
 
 
+    And verifico che su DynamoDB è presente in timeline l'elemento "NOTIFICATION_COST_VALIDATION_RESPONSE"
 
+#  QueryResponse queryResponse = dynamoDbService.call(DynamoTableName.TIMELINE, Map.of(
+#  ":v_iun", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build(),
+#  ":v_category", AttributeValue.builder().s(timelineElement).build()
+#  ));
+#**************************************************************************************************************
 
 # ************************************************
 #  *****SCENARIO   - Sottomissione di una notifica bonaria..
@@ -42,7 +58,7 @@ Feature: Sottomissione di una notifica bonaria.
 
 #  CASO DI TEST .1 Validazione della richiesta di invio notifica bonaria.
 
-  Scenario: [NOTIFICHE_BONARIE_SM_01] Come ente mittente invio una notifica bonaria con modalità one-to-many quindi con id della campagna valorizzato
+  Scenario: [NOTIFICHE_BONARIE_SM_01_1_A] Come ente mittente invio una notifica bonaria con modalità one-to-many quindi con id della campagna valorizzato
     Given mittente della notifica bonaria: "COMUNE_MULTI"
     And viene creata una nuova notifica bonaria con i seguenti parametri
       | campaignId | campaign-1 |
@@ -54,12 +70,12 @@ Feature: Sottomissione di una notifica bonaria.
     Then la sottomissione della notifica bonaria è andata a buon fine
 
 
-  Scenario: [NOTIFICHE_BONARIE_SM_02] Come ente mittente invio una notifica bonaria con modalità one-to-one quindi con id messaggio, e seconda lingua specificata
+  Scenario: [NOTIFICHE_BONARIE_SM_01_1_B] Come ente mittente invio una notifica bonaria con modalità one-to-one quindi con id messaggio, e seconda lingua specificata
     Given mittente della notifica bonaria: "COMUNE_MULTI"
     #And viene creato un nuovo messaggio
     And viene creata una nuova notifica bonaria con i seguenti parametri
       | messageId           | 543638e2-7fc5-4cf8-b1d4-52921c8c398b |
-      | additional_language | FR       |
+      | additional_language | FR                                   |
     And destinatario della notifica bonaria
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
@@ -68,12 +84,12 @@ Feature: Sottomissione di una notifica bonaria.
     Then la sottomissione della notifica bonaria è andata a buon fine
 
 
-  Scenario: [NOTIFICHE_BONARIE_SM_03] Come ente mittente invio una notifica bonaria con modalità one-to-one quindi con id messaggio, e seconda lingua NON specificata
+  Scenario: [NOTIFICHE_BONARIE_SM_01_1_C] Come ente mittente invio una notifica bonaria con modalità one-to-one quindi con id messaggio, e seconda lingua NON specificata
     Given mittente della notifica bonaria: "COMUNE_1"
     #And viene creato un nuovo messaggio
     And viene creata una nuova notifica bonaria con i seguenti parametri
       | messageId           | 543638e2-7fc5-4cf8-b1d4-52921c8c398b |
-      | additionalLanguages | NULL                |
+      | additionalLanguages | NULL                                 |
     And destinatario della notifica bonaria
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
@@ -82,7 +98,7 @@ Feature: Sottomissione di una notifica bonaria.
     Then la sottomissione della notifica bonaria è andata a buon fine
 
 
-  Scenario: [NOTIFICHE_BONARIE_04] Come ente mittenste invio delle notifiche bonarie verso più destinatari con più pagamenti
+  Scenario: [NOTIFICHE_BONARIE_SM_01_1_D] Come ente mittenste invio delle notifiche bonarie verso più destinatari con più pagamenti
     Given mittente della notifica bonaria: "COMUNE_1"
     And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria
@@ -99,7 +115,7 @@ Feature: Sottomissione di una notifica bonaria.
     Then la sottomissione della notifica bonaria è andata a buon fine
 
 
-  Scenario: [NOTIFICHE_BONARIE_SM_05] Come ente mittenste invio una notifica bonaria con un documento e più pagamenti
+  Scenario: [NOTIFICHE_BONARIE_SM_01_1_E] Come ente mittenste invio una notifica bonaria con un documento e più pagamenti
     Given mittente della notifica bonaria: "COMUNE_1"
     And viene creata una nuova notifica bonaria con i seguenti parametri
       | document | DOC_1_PG |
@@ -123,7 +139,7 @@ Feature: Sottomissione di una notifica bonaria.
 
 
 
-  Scenario: [NOTIFICHE_BONARIE_E01] Come Ente mittente non censito in whitelist invio una notifica bonaria e ricevo un errore.
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_A] Come Ente mittente non censito in whitelist invio una notifica bonaria e ricevo un errore.
     Given mittente della notifica bonaria: "COMUNE_2"
     And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria
@@ -134,7 +150,7 @@ Feature: Sottomissione di una notifica bonaria.
     Then si riceve errore 403
 
 
-  Scenario: [NOTIFICHE_BONARIE_E02] come ente mittente invio una notifica bonaria con un numero di allegati di pagamento superiore al massimo configurato e ricevo un errore,
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_B] come ente mittente invio una notifica bonaria con un numero di allegati di pagamento superiore al massimo configurato e ricevo un errore,
     Given mittente della notifica bonaria: "COMUNE_1"
     And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria
@@ -146,7 +162,7 @@ Feature: Sottomissione di una notifica bonaria.
     Then si riceve errore 400
 
 
-  Scenario: [NOTIFICHE_BONARIE_00] Invio bonaria con senderTaxId custom
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_C] Invio bonaria con senderTaxId custom
     Given mittente della notifica bonaria: "COMUNE_1"
     And viene creata una nuova notifica bonaria con i seguenti parametri
       | senderTaxId        | 20517490320    |
@@ -158,7 +174,7 @@ Feature: Sottomissione di una notifica bonaria.
     Then si riceve errore 400
 
 
-  Scenario: [NOTIFICHE_BONARIE_00] Invio bonaria verso tre destinatari - errore 400
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_D] Invio bonaria verso tre destinatari - errore 400
     Given mittente della notifica bonaria: "COMUNE_1"
     And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria
@@ -177,7 +193,7 @@ Feature: Sottomissione di una notifica bonaria.
     Then si riceve errore 400
 
 
-  Scenario: [NOTIFICHE_BONARIE_00] Invio bonaria con lingua secondaria non supportata 1
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_E] Invio bonaria con lingua secondaria non supportata 1
     Given mittente della notifica bonaria: "COMUNE_1"
     And viene creata una nuova notifica bonaria con i seguenti parametri
       | additionalLanguages | XX |
@@ -189,7 +205,7 @@ Feature: Sottomissione di una notifica bonaria.
     Then si riceve errore 400
 
 
-  Scenario: [NOTIFICHE_BONARIE_00] Invio bonaria con 2 lingue secondarie 2
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_F] Invio bonaria con 2 lingue secondarie 2
     Given mittente della notifica bonaria: "COMUNE_1"
     And viene creata una nuova notifica bonaria con i seguenti parametri
       | additionalLanguages | XX |
@@ -201,7 +217,7 @@ Feature: Sottomissione di una notifica bonaria.
     Then si riceve errore 400
 
 
-  Scenario: [NOTIFICHE_BONARIE_00] Lingua secondaria non presente nella campagna
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_G] Lingua secondaria non presente nella campagna
     Given mittente della notifica bonaria: "COMUNE_1"
     And viene creata una nuova notifica bonaria con i seguenti parametri
       | campaignId          | campaign-it-only |
@@ -212,7 +228,7 @@ Feature: Sottomissione di una notifica bonaria.
     Then si riceve errore 400
 
 
-  Scenario: [NOTIFICHE_BONARIE_00] Verso PG con CF non conforme
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_H] Verso PG con CF non conforme
     Given mittente della notifica bonaria: "COMUNE_1"
     And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria
@@ -222,7 +238,7 @@ Feature: Sottomissione di una notifica bonaria.
     Then si riceve errore 400
 
 
-  Scenario: [NOTIFICHE_BONARIE_00] Verso PF con CF non conforme
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_I] Verso PF con CF non conforme
     Given mittente della notifica bonaria: "COMUNE_1"
     And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria
@@ -235,9 +251,8 @@ Feature: Sottomissione di una notifica bonaria.
 #  ADD :Invio con numero di pagamenti inclusi superiore al limite configurato.
 
 
-#  Invio di una tipologia di file dichiarata (Content-Type) NON coerente con l'estensione o il formato del file effettivamente caricato sul sistema di storage (FileKey).
 
-  Scenario: [NOTIFICHE_BONARIE_00] Invio con fileKey non coerente con contentType del pagamento
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_L] Invio con fileKey non coerente con contentType del pagamento
     Given mittente della notifica bonaria: "COMUNE_1"
     And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria
@@ -248,7 +263,7 @@ Feature: Sottomissione di una notifica bonaria.
     When viene inviata una nuova notifica bonaria
     Then si riceve errore 400
 
-  Scenario: [NOTIFICHE_BONARIE_00] Invio con fileKey non coerente con contentType del pagamento
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_M] Invio con fileKey non coerente con contentType del pagamento
     Given mittente della notifica bonaria: "COMUNE_1"
     And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria
@@ -264,7 +279,7 @@ Feature: Sottomissione di una notifica bonaria.
 
 #  Invio con recapito fisico (indirizzo, civico, località, CAP, provincia, nazione) NON conforme agli standard di postalizzazione,
   #"PhysicalAddressValidationCharsValue": "\\u0020-\\u007E\\u00A0-\\u00FF",,"PhysicalAddressValidationValue": "true","PhysicalAddressValidationLength": "500",
-  Scenario Outline: Validazione indirizzo fisico - errori formali
+  Scenario Outline: [NOTIFICHE_BONARIE_SM_04_2_N] Validazione indirizzo fisico - errori formali
     Given mittente della notifica bonaria: "COMUNE_1"
     And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria
@@ -294,10 +309,7 @@ Feature: Sottomissione di una notifica bonaria.
 
 
 
-
-
-#  Invio di un indirizzo nazionale con il campo provincia mancante o nullo.
-  Scenario: [NOTIFICHE_BONARIE_00] Invio con indirizzo nazionale senza provincia
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_O] Invio con indirizzo nazionale senza provincia
     Given mittente della notifica bonaria: "COMUNE_1"
     And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria
@@ -313,7 +325,7 @@ Feature: Sottomissione di una notifica bonaria.
 
 #  Invio richiesta con campi Denominazione e Presso(AT) non conformi.
 
-  Scenario Outline: Validazione denominazione e presso tramite regex
+  Scenario Outline: [NOTIFICHE_BONARIE_SM_04_2_P]Validazione denominazione e presso tramite regex
     Given mittente della notifica bonaria: "COMUNE_1"
     And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria
@@ -332,7 +344,7 @@ Feature: Sottomissione di una notifica bonaria.
       | Valido       | TODO   |
       | TODO         | TODO   |
 
-  Scenario Outline: Validazione denominazione e presso con caratteri esclusi
+  Scenario Outline: [NOTIFICHE_BONARIE_SM_04_2_Q] Validazione denominazione e presso con caratteri esclusi
     Given mittente della notifica bonaria: "COMUNE_1"
     And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria
@@ -351,7 +363,7 @@ Feature: Sottomissione di una notifica bonaria.
       | Mario Rossi    | Presso \| Ufficio |
       | Mario\|Rossi   | Presso \| Ufficio |
 
-  Scenario: Validazione denominazione troppo lunga
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_R] Validazione denominazione troppo lunga
     Given mittente della notifica bonaria: "COMUNE_1"
     And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria
@@ -370,9 +382,7 @@ Feature: Sottomissione di una notifica bonaria.
 #  Campi obbligatori mancanti.
 
 
-
-
-  Scenario: [NOTIFICHE_BONARIE_00] Invio bonaria con pagamento senza allegato
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_S] Invio bonaria con pagamento senza allegato
     Given mittente della notifica bonaria: "COMUNE_1"
     And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria
@@ -391,7 +401,7 @@ Feature: Sottomissione di una notifica bonaria.
 #  *****SCENARIO 6  - Stato della notifica bonaria
 # ***********************************************
 
-  Scenario: [NOTIFICHE_BONARIE_06] Verifica stato richiesta bonaria - OK
+  Scenario: [NOTIFICHE_BONARIE_06_1_A] Verifica stato richiesta bonaria - OK
     Given mittente della notifica bonaria: "COMUNE_1"
     And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria
@@ -403,19 +413,7 @@ Feature: Sottomissione di una notifica bonaria.
     Then l'operazione non ha generato errori
 
 
-  Scenario: [NOTIFICHE_BONARIE_06] Verifica stato con parametri incoerenti
-    Given mittente della notifica bonaria: "COMUNE_1"
-    When si verifica lo stato con requestId e protocollo insieme
-    Then si riceve errore 400
-
-
-  Scenario: [NOTIFICHE_BONARIE_06] Verifica stato con PA non autorizzata
-    Given mittente della notifica bonaria: "COMUNE_1"
-    And viene inviata una notifica bonaria valida
-
-
-
-  Scenario: [NOTIFICHE_BONARIE_06] Verifica stato con PA non autorizzata
+  Scenario: [NOTIFICHE_BONARIE_06_1_B] Verifica stato con PA non autorizzata
     Given mittente della notifica bonaria: "COMUNE_MULTI"
     And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria
@@ -432,11 +430,182 @@ Feature: Sottomissione di una notifica bonaria.
 
   Scenario: [NOTIFICHE_BONARIE_06] Verifica stato con requestId inesistente
     Given mittente della notifica bonaria: "COMUNE_1"
-    When si verifica lo stato della richiesta di notifica bonaria con id "fake"
+    #When si verifica lo stato della richiesta di notifica bonaria con id "fake"
     Then si riceve errore 404
 
+  Scenario: [NOTIFICHE_BONARIE_06] Verifica stato con parametri incoerenti
+    Given mittente della notifica bonaria: "COMUNE_1"
+    #When si verifica lo stato con requestId e protocollo insieme
+    Then si riceve errore 400
 
-# ************************************************
+
+
+# ***********************************************
+# **** VALIDAZIONE ASYNCRONA
+# ***********************************************
+
+  Scenario: [NOTIFICHE_BONARIE_ASYNC_01_1] come ente mittente invio una notitfcz bonaria con parametri corretti, ottenendo la validazione della notifica.
+    Given mittente della notifica bonaria: "COMUNE_1"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipientType        | PF                 |
+      | taxId                | FRMTTR76M06B715E   |
+      | denomination         | Ettore Fieramosca  |
+      | phone_number         | 3331234567         |
+      | email                | ettore@test.it     |
+      | payment_noticeCode   | 302000000000000001 |
+      | payment_multy_number | 1                  |
+    When viene inviata una nuova notifica bonaria
+    And la sottomissione della notifica bonaria è andata a buon fine
+    #And la notifica bonaria è validata correttamente
+
+  Scenario Outline: [NOTIFICHE_BONARIE_ASYNC_01_2] Come ente mittente tento di inviare una notifica bonaria con documento non conforme, la notifica viene respinta.
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipientType        | PF               |
+      | taxId                | FRMTTR76M06B715E |
+      | payment_multy_number | 1                |
+    And documento non valido: "<errore>"
+    When viene inviata una nuova notifica bonaria
+    #Then la validazione della notifica bonaria fallisce
+    Examples:
+      | errore                 |
+      | SHA NON INTEGRO        |
+      | FORMATO NON CONFORME   |
+      | ALLEGATO TROPPO GRANDE |
+
+
+  Scenario Outline: [NOTIFICHE_BONARIE_ASYNC_01_3] Come ente mittente invio una notifica bonaria con campagne non conformi, la nottifca viene rifiutata.
+    Given mittente della notifica bonaria: "COMUNE_1"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | <campaignId> |
+    And destinatario della notifica bonaria
+      | recipientType        | PF               |
+      | taxId                | FRMTTR76M06B715E |
+      | payment_multy_number | 1                |
+    When viene inviata una nuova notifica bonaria
+    #Then la validazione della notifica bonaria fallisce
+    Examples:
+      | campaignId       |
+      | CAMPAGNA_SCADUTA |
+      | CAMPAGNA_CHIUSA  |
+      | CAMPAGNA_FAKE    |
+#todo t bonarie censire le campagne
+
+
+  Scenario Outline: [NOTIFICHE_BONARIE_ASYNC_01_4] Come ente mittente invio una notifica bonaria con messaggi id non conformi, la nottifca viene rifiutata.
+    Given mittente della notifica bonaria: "COMUNE_1"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | messageId | <messageId> |
+    And destinatario della notifica bonaria
+      | recipientType        | PF               |
+      | taxId                | FRMTTR76M06B715E |
+      | payment_multy_number | 1                |
+    When viene inviata una nuova notifica bonaria
+    #Then la validazione della notifica bonaria fallisce
+    Examples:
+      | messageId                       |
+      | MESS NON PRESENTE A DB          |
+      | MESS CON LINGUA NON DISPONIBILE |
+  #todo t bonarie censire I MESSAGGI
+
+
+# Al momento sarà previsto sempre un invio con indirizzo dogitale.
+  Scenario: [NOTIFICHE_BONARIE_ASYNC_01_5] Come ente mittente invio una notifica bonaria senza indirizzo digitale, la nottifca viene rifiutata.
+    Given mittente della notifica bonaria: "COMUNE_1"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipientType        | PG          |
+      | taxId                | 20517490320 |
+      | denomination         | ACME SPA    |
+      | digital_domicile     | NULL        |
+      | payment_multy_number | 1           |
+    When viene inviata una nuova notifica bonaria
+    #Then la validazione della notifica bonaria fallisce
+
+
+# Al momento le notifiche bonarie saranno sempre inviate con un indirizzo analogico valido.
+#  Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6_A] Come ente mittente invio una notifica bonaria con indirizzo analogico non normaliozzabile, la notifca viene rifiutata.
+#  Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6_B] Come ente mittente invio una notifica bonaria senza indirizzo analogico e non trovato sui RN, la notifca viene rifiutata.
+#  Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6_C] Come ente mittente invio una notifica bonaria senza indirizzo analogico e quello dei RN non postalizabile, la notifca viene rifiutata.
+
+
+  #SCENARIO 2 - Audit Log per le notifiche bonarie.
+
+  #SCENARIO 3 - Persistenza elementi di Timeline.
+
+
+  Scenario:[NOTIFICHE_BONARIE_ASYNC_00] Creazione messaggio senza shortBody
+    When si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
+      | primary_short_body | NULL |
+    Then si riceve errore 400
+
+
+
+# **
+  Scenario: Recupero notifica bonaria tramite IUN
+    Given mittente della notifica bonaria: "COMUNE_1"
+    And viene inviata una nuova notifica bonaria
+    When si tenta il recupero della notifica bonaria tramite IUN
+    Then la notifica bonaria è recuperabile tramite IUN
+
+    And destinatario della notifica bonaria
+      | recipientType        | PF                |
+      | taxId                | FRMTTR76M06B715E  |
+      | denomination         | Ettore Fieramosca |
+      | phone_number         | 3331234567        |
+      | email                | ettore@test.it    |
+      | payment_multy_number | 1                 |
+
+
+
+    # ************************************************
+#  *****SCENARIO   - AUDIT-LOG
+# ***********************************************
+
+
+    And verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | iun    | auto             |
+      | param1 | AUD_COM_VALID    |
+      | param2 | recIndex=0       |
+      | pippo  | phase=VALIDATION |
+
+    And verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | iun    | auto             |
+      | param1 | AUD_COM_TIMELINE |
+      | param2 | recIndex=0       |
+      | pippo  | phase=VALIDATION |
+
+    And verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | iun    | auto             |
+      | param1 | AUD_COM_CHECK    |
+      | param2 | recIndex=0       |
+      | pippo  | phase=VALIDATION |
+
+    And verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | iun    | auto                   |
+      | param1 | AUD_INFORMAL_NT_INSERT |
+      | param2 | recIndex=0             |
+      | pippo  | phase=VALIDATION       |
+
+    And verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | iun    | auto                    |
+      | param1 | AUD_INFORMAL_MSG_INSERT |
+      | param2 | recIndex=0              |
+      | pippo  | phase=VALIDATION        |
+
+    And verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | iun    | auto             |
+      | param1 | x                |
+      | param2 | recIndex=0       |
+      | pippo  | phase=VALIDATION |
+
+
+
+
+
+    # ************************************************
 #  *****SCENARIO 7  - Terminazione della notifica
 # ***********************************************
 

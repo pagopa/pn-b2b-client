@@ -62,7 +62,12 @@ public enum NotificationInformalValue {
     PAYMENT_CREDITOR_TAX_ID("payment_creditorTaxId", "77777777777", false),
     PAYMENT_NOTICE_CODE("payment_noticeCode", null, true),
 
-    DOCUMENT("document", null, false);
+    DOCUMENT("document", null, false),
+
+
+    PHONE_NUMBER("phone_number", null, false),
+    EMAIL("email", null, false);
+
 
     private static final String NULL_VALUE = "NULL";
     private static final Integer NOTICE_CODE_LENGTH = 18;

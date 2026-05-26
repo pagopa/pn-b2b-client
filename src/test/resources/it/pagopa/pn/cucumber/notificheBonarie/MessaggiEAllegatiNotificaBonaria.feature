@@ -100,7 +100,6 @@ Feature: Sottomissione di una notifica bonaria.
 
 
 
-#  Scenario: [NOTIFICHE_BONARIE_MESSAGGI_07_1] Come ente mittente non abilitato alla creazione di un messaggio ricevo un errore sulla creazione di un nuovo messaggio.
   Scenario: [NOTIFICHE_BONARIE_MESSAGGI_02_1_A] Come ente mittente non abilitato alla creazione di un messaggio tento di crearlo con valori di default.
     Given mittente della notifica bonaria: "COMUNE_2"
     When si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
@@ -226,7 +225,7 @@ Feature: Sottomissione di una notifica bonaria.
 
     #  CASO DI TEST 5.2 Corretto Download degli allegati di pagamento di una notifica.
 
-  Scenario: [NOTIFICHE_BONARIE_05_2] Come ente mittente Recupero l'allegato di pagamento di una notifica bonaria
+  Scenario: [NOTIFICHE_BONARIE_05_4_] Come ente mittente Recupero l'allegato di pagamento di una notifica bonaria
     Given mittente della notifica bonaria: "COMUNE_1"
     And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria
@@ -242,7 +241,7 @@ Feature: Sottomissione di una notifica bonaria.
 
 #  CASO DI TEST 5.3 Errore Download dei documenti.
 
-  Scenario: [NOTIFICHE_BONARIE_05_2_A] Rcome ente mittente tento il recupero del documento di una notifica non inviata da me ricevendo un errore
+  Scenario: [NOTIFICHE_BONARIE_05_3_A] Rcome ente mittente tento il recupero del documento di una notifica non inviata da me ricevendo un errore
     Given mittente della notifica bonaria: "COMUNE_MULTI"
     And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria
@@ -255,7 +254,7 @@ Feature: Sottomissione di una notifica bonaria.
     Then si riceve errore 403
 
 
-  Scenario: [NOTIFICHE_BONARIE_05_2_B] Come ente mittente tento il Recupero del documento con indice non valido ricevendo errore
+  Scenario: [NOTIFICHE_BONARIE_05_3_B] Come ente mittente tento il Recupero del documento con indice non valido ricevendo errore
     Given mittente della notifica bonaria: "COMUNE_1"
     And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria
@@ -267,7 +266,7 @@ Feature: Sottomissione di una notifica bonaria.
     Then si riceve errore 404
 
 
-  Scenario: [NOTIFICHE_BONARIE_05_2_C] Come ente mittente tento il Recupero del documento con IUN non valido ricevendo errore
+  Scenario: [NOTIFICHE_BONARIE_05_3_C] Come ente mittente tento il Recupero del documento con IUN non valido ricevendo errore
     Given mittente della notifica bonaria: "COMUNE_1"
     When si tenta il recupero documento con IUN "fake"
     Then si riceve errore 404
@@ -279,7 +278,7 @@ Feature: Sottomissione di una notifica bonaria.
 
 
 
-  Scenario: [NOTIFICHE_BONARIE_05_3_A] Come ente mittente tento il Recupero del allegato di pagamento con iun non valido ricevendo errore
+  Scenario: [NOTIFICHE_BONARIE_05_4_A] Come ente mittente tento il Recupero del allegato di pagamento con iun non valido ricevendo errore
     Given mittente della notifica bonaria: "COMUNE_MULTI"
     And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria
@@ -291,7 +290,7 @@ Feature: Sottomissione di una notifica bonaria.
     Then si riceve errore 404
 
 
-  Scenario: [NOTIFICHE_BONARIE_05_3_B] Come ente mittente tento il Recupero del allegato di pagamento con indice non valido ricevendo errore
+  Scenario: [NOTIFICHE_BONARIE_05_4_B] Come ente mittente tento il Recupero del allegato di pagamento con indice non valido ricevendo errore
     Given mittente della notifica bonaria: "COMUNE_MULTI"
     And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria
@@ -304,7 +303,7 @@ Feature: Sottomissione di una notifica bonaria.
 
 
 
-  Scenario: [NOTIFICHE_BONARIE_05_3_C] Come ente mittente tento il Recupero del allegato di pagamento con indice non valido ricevendo errore
+  Scenario: [NOTIFICHE_BONARIE_05_4_C] Come ente mittente tento il Recupero del allegato di pagamento con indice non valido ricevendo errore
     Given mittente della notifica bonaria: "COMUNE_MULTI"
     And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria

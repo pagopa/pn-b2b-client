@@ -11,6 +11,7 @@ import it.pagopa.pn.client.b2b.pa.service.IPnPrivateDeliveryPushExternalClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bInternalInformalClientImpl;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.model.InformalSentNotificationV1;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.dataTable.InformalNotificationRequestMapper;
 import it.pagopa.pn.cucumber.steps.pa.utilityInformalVersion.NotificationInformalUtilsV1;
@@ -22,12 +23,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import static it.pagopa.pn.cucumber.utils.NotificationInformalValue.*;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
@@ -75,6 +78,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     private String savedNotificationRequestId;
     private final NotificationInformalUtilsV1 notificationInformalUtilsV1;
     private TerminationRequestStatus terminationStatus;
+    private InformalSentNotificationV1 informalNotificationResponse;
 
     @Autowired
     public PresaInCaricoNoticaBonariaSteps(InformalNotificationRequestMapper informalNotificationRequestMapper, PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl, SharedSteps sharedSteps, TimingForPolling timingForPolling, IPnPrivateDeliveryPushExternalClient pnPrivateDeliveryPushExternalClient) {
@@ -126,7 +130,6 @@ public class PresaInCaricoNoticaBonariaSteps {
 
         InformalNotificationRecipientV1 recipient = new InformalNotificationRecipientV1();
 
-
         String recipientType = getValue(data, RECIPIENT_TYPE.key);
         if (recipientType != null) {
             recipient.setRecipientType(InformalNotificationRecipientV1.RecipientTypeEnum.fromValue(recipientType));
@@ -140,6 +143,18 @@ public class PresaInCaricoNoticaBonariaSteps {
         } else {
             recipient.setDigitalDomicile(null);
         }
+//todo t bonarie
+
+//        String phone = getValue(data, PHONE_NUMBER.key);
+//        if (phone != null) {
+//            recipient.setPhoneNumber(phone);
+//        }
+//
+//        String email = getValue(data, EMAIL.key);
+//        if (email != null) {
+//            recipient.setEmail(email);
+//        }
+
         informalNotificationRequestV1.getRecipients().add(recipient);
 
         int paymentNumber = Integer.parseInt(getValue(data, PAYMENT_MULTY_NUMBER.key));
@@ -181,7 +196,10 @@ public class PresaInCaricoNoticaBonariaSteps {
     public void verifyNotificationSent() {
         assertNull(lastException, "Errore non atteso");
         assertNotNull(newInformalNotificationResponse, "Response notifica nulla");
+        assertNotNull(savedIun, "IUN non valorizzato");
+        assertNotNull(savedNotificationRequestId, "notificationRequestId non valorizzato");
     }
+
 
 
     //*** STEP MESSAGGI ***
@@ -282,6 +300,39 @@ public class PresaInCaricoNoticaBonariaSteps {
         assertNotNull(attachmentResponse.getUrl(), "URL allegato mancante");
     }
 
+    //*** DOCUMENTO NON CONFORME
+
+    @And("documento non valido: {string}")
+    public void setInvalidDocument(String tipoErrore) {
+
+        switch (tipoErrore) {
+
+            case "SHA NON INTEGRO" -> {
+                informalNotificationRequestV1.getDocuments()
+                        .forEach(doc -> doc.setDigests(new NotificationAttachmentDigests().sha256("INVALID_SHA")));
+            }
+
+            case "FORMATO NON CONFORME" -> {
+                informalNotificationRequestV1.getDocuments().forEach(doc -> {
+                            doc.setContentType("text/plain");
+                            //doc.getRef().setKey("classpath:/file.txt");todo t bonarie
+                        });
+            }
+
+            case "ALLEGATO TROPPO GRANDE" -> {
+                informalNotificationRequestV1.getDocuments()
+                        .forEach(doc -> {
+                            doc.setContentType("application/pdf");
+                            doc.getRef().setKey("classpath:/allegato_30Mb.pdf");
+                        });
+            }
+            default -> throw new IllegalArgumentException(
+                    "Tipo errore non supportato: " + tipoErrore
+            );
+        }
+    }
+
+
     //*** STEP ALLEGATI PAGAMENTO
 
     @When("si tenta il recupero allegato pagamento della notifica bonaria")
@@ -341,6 +392,52 @@ public class PresaInCaricoNoticaBonariaSteps {
             statusResponse = null;
         }
     }
+
+    @Then("si verifica che la notifica bonaria sia in stato {string}")
+    public void verifyNotificationStatus(String expectedStatus) {
+
+        await()
+                .atMost(Duration.ofMinutes(10))
+                .pollInterval(Duration.ofSeconds(5))
+                .untilAsserted(() -> {
+
+                    NewInformalNotificationRequestStatusResponseV1 status =
+                            pnPaB2bInternalInformalClientImpl
+                                    .getNotificationStatusByRequestId(savedNotificationRequestId);
+
+                    assertNotNull(status);
+                    String actualStatus = status.getNotificationRequestStatus();
+                    System.out.println("Stato attuale: " + actualStatus);
+                    assertEquals(expectedStatus, actualStatus);
+                });
+        lastException = null;
+    }
+
+
+    @When("si tenta il recupero della notifica bonaria tramite IUN")
+    public void getInformalNotification() {
+        try {
+            informalNotificationResponse =
+                    pnPaB2bInternalInformalClientImpl
+                            .getSentInformalNotification(savedIun);
+
+            lastException = null;
+
+        } catch (Exception e) {
+            lastException = e;
+            informalNotificationResponse = null;
+        }
+    }
+
+    @Then("la notifica bonaria è recuperabile tramite IUN")
+    public void verifyNotificationRetrieved() {
+
+        assertNull(lastException, "Errore non atteso");
+        assertNotNull(informalNotificationResponse, "Response nulla");
+
+        assertEquals(savedIun, informalNotificationResponse.getIun());
+    }
+
 
     //*** TERMINAZIONE DELLA NOTIFICA
 
