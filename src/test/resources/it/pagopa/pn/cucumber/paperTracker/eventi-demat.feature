@@ -2,6 +2,8 @@
 Feature: Casi di test relativi alla nuova gestione degli eventi di dematerializzazione introdotta in paper-tracker
   in cui si va a rendere il ms più permissivo rendendolo compatibile con quanto implementato su pn-paper-channel.
 
+  # ============ PRODOTTO AR ============
+
   Scenario Outline: [EVENTI_DEMAT_AR_1] Il sistema riceve un evento di dematerializzazione per il prodotto AR dopo l'evento finale (C o F)
   e il nuovo evento di dematerializzazione è visibile in timeline
     Given viene generata una nuova notifica
@@ -32,6 +34,8 @@ Feature: Casi di test relativi alla nuova gestione degli eventi di dematerializz
       | Via@FAIL-Giacenza_AR         | RECRN004B                  |
       | Via@FAIL-CompiutaGiacenza_AR | RECRN005B                  |
 
+    # ============ PRODOTTO RIR ============
+
   Scenario Outline: [EVENTI_DEMAT_RIR_1] Il sistema riceve un evento di dematerializzazione per il prodotto RIR dopo l'evento finale (C)
   e il nuovo evento di dematerializzazione è visibile in timeline
     Given viene generata una nuova notifica
@@ -59,6 +63,8 @@ Feature: Casi di test relativi alla nuova gestione degli eventi di dematerializz
       | physicalAddress_address | details_deliveryDetailCode |
       | Via@OK_RIR              | RECRI003B                  |
       | Via@FAIL_RIR            | RECRI004B                  |
+
+    # ============ PRODOTTO 890 ============
 
   Scenario Outline: [EVENTI_DEMAT_890_1] Il sistema riceve un evento di dematerializzazione per il prodotto 890 dopo l'evento finale (C)
   e il nuovo evento di dematerializzazione è visibile in timeline
@@ -114,35 +120,79 @@ Feature: Casi di test relativi alla nuova gestione degli eventi di dematerializz
       | details_sentAttemptMade    | 0                              |
       | details_attachments        | [{"documentType": "Indagine"}] |
 
-  Scenario Outline: [EVENTI_DEMAT_RS_1] Il sistema riceve un evento di dematerializzazione per il prodotto RS dopo l'evento finale (C)
+
+    # ============ PRODOTTO RS ============
+
+  Scenario: [EVENTI_DEMAT_RS_1] Il sistema riceve un evento di dematerializzazione per il prodotto RS dopo l'evento finale (C)
   e il nuovo evento di dematerializzazione è visibile in timeline
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
     And destinatario Mario Gherkin e:
-      | digitalDomicile_address | test@fail.it              |
-      | physicalAddress_address | <physicalAddress_address> |
+      | digitalDomicile_address | test@fail.it |
+      | physicalAddress_address | Via@FAIL_RS  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" con deliveryDetailCode "RECRS002C"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     Then viene invocato il consolidatore con i seguenti dati:
-      | productType | attemptId | pcRetry   | recIndex   | statusCode                   | deliveryFailureCause | attachment_1 | attachment_2 |
-      | RS          | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | <details_deliveryDetailCode> |                      | Indagine     |              |
+      | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
+      | RS          | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRS002B  |                      | Indagine     |              |
     And viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" esista
       | loadTimeline               | true                           |
       | details                    | NOT_NULL                       |
-      | details_deliveryDetailCode | <details_deliveryDetailCode>   |
+      | details_deliveryDetailCode | RECRS002B                      |
       | details_recIndex           | 0                              |
       | details_sentAttemptMade    | 0                              |
       | details_attachments        | [{"documentType": "Indagine"}] |
-    Examples:
-      | physicalAddress_address                | details_deliveryDetailCode |
-      | Via@FAIL_RS                            | RECRS002B                  |
-      | Via@FAIL_RS_MANCATA_CONSEGNA_PGIACENZA | RECRS004B                  |
-      | Via@OK_RS_COMPIUTA_GIACENZA            | RECRS005B                  |
 
-  Scenario: [EVENTI_DEMAT_RS_2] Il sistema riceve un evento di dematerializzazione per il prodotto RS dopo l'evento finale (F)
+  Scenario: [EVENTI_DEMAT_RS_2] Il sistema riceve un evento di dematerializzazione per il prodotto RS dopo l'evento finale (C)
+  e il nuovo evento di dematerializzazione è visibile in timeline
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile_address | test@fail.it                           |
+      | physicalAddress_address | Via@FAIL_RS_MANCATA_CONSEGNA_PGIACENZA |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" con deliveryDetailCode "RECRS004C"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
+    Then viene invocato il consolidatore con i seguenti dati:
+      | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
+      | RS          | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRS004B  |                      | Indagine     |              |
+    And viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" esista
+      | loadTimeline               | true                           |
+      | details                    | NOT_NULL                       |
+      | details_deliveryDetailCode | RECRS004B                      |
+      | details_recIndex           | 0                              |
+      | details_sentAttemptMade    | 0                              |
+      | details_attachments        | [{"documentType": "Indagine"}] |
+
+  Scenario: [EVENTI_DEMAT_RS_3] Il sistema riceve un evento di dematerializzazione per il prodotto RS dopo l'evento finale (C)
+  e il nuovo evento di dematerializzazione è visibile in timeline
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile_address | test@fail.it                |
+      | physicalAddress_address | Via@OK_RS_COMPIUTA_GIACENZA |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" con deliveryDetailCode "RECRS005C"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
+    Then viene invocato il consolidatore con i seguenti dati:
+      | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
+      | RS          | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRS005B  |                      | Indagine     |              |
+    And viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" esista
+      | loadTimeline               | true                           |
+      | details                    | NOT_NULL                       |
+      | details_deliveryDetailCode | RECRS005B                      |
+      | details_recIndex           | 0                              |
+      | details_sentAttemptMade    | 0                              |
+      | details_attachments        | [{"documentType": "Indagine"}] |
+
+  Scenario: [EVENTI_DEMAT_RS_4] Il sistema riceve un evento di dematerializzazione per il prodotto RS dopo l'evento finale (F)
   e il nuovo evento di dematerializzazione è visibile in timeline
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -165,6 +215,8 @@ Feature: Casi di test relativi alla nuova gestione degli eventi di dematerializz
       | details_sentAttemptMade    | 0                              |
       | details_attachments        | [{"documentType": "Indagine"}] |
 
+    # ============ PRODOTTO RIS ============
+
   Scenario: [EVENTI_DEMAT_RIS_1] Il sistema riceve un evento di dematerializzazione per il prodotto RIS dopo l'evento finale (C)
   e il nuovo evento di dematerializzazione è visibile in timeline
     Given viene generata una nuova notifica
@@ -184,7 +236,7 @@ Feature: Casi di test relativi alla nuova gestione degli eventi di dematerializz
     Then viene invocato il consolidatore con i seguenti dati:
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
       | RIS         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRSI004B |                      | Indagine     |              |
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+    And viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" esista
       | loadTimeline               | true                           |
       | details                    | NOT_NULL                       |
       | details_deliveryDetailCode | RECRSI004B                     |
