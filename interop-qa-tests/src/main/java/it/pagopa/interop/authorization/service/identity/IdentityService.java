@@ -9,6 +9,8 @@ public interface IdentityService {
 
     String getToken(String tenantType, String role, int userIndex);
 
+    String getMaintenanceToken();
+
     UUID getUserId(String tenantType, String role);
 
     UUID getUserId(String tenantType, String role, int userIndex);

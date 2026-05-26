@@ -38,3 +38,25 @@ Feature: Cancellazione di un'analisi del rischio ad un e-service
     Given "PA1" ha già aggiunto un'analisi del rischio a quell'e-service
     When l'utente cancella quell'analisi del rischio di quell'e-service
     Then si ottiene status code 204
+
+  @adeguamento-analisi-rischio
+  Scenario Outline: [DESCRIPTOR_TK_RA_DELETE_1] A seguito del cambiamento di tenant kind si tenta eliminare una risk analysis associata a un proprio e-service
+    Given l'utente è un "admin" di "<ente>"
+    And "<ente>" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "DRAFT"
+    And "PA1" ha già aggiunto un'analisi del rischio a quell'e-service
+    And il tenant kind dell'ente "<ente>" viene impostato a "<kind>"
+    When l'utente cancella quell'analisi del rischio di quell'e-service
+    Then si ottiene status code 200
+    Examples:
+      | ente    | kind    |
+      | PA4     | Privato |
+      | PA4     | GSP     |
+      | GSP2    | PA      |
+      | GSP2    | Privato |
+      | Privato | PA      |
+      | Privato | GSP     |
+
+    # FIXME utile solo per debug locale, rimuovere
+  @debug-adeguamento-analisi-rischio
+  Scenario: Verifica ambiente test maintenance
+    And il tenant kind dell'ente "PA4" viene impostato a "GSP"

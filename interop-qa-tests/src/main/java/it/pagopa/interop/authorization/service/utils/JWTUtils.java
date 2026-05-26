@@ -45,12 +45,11 @@ public final class JWTUtils {
         );
     }
 
-    /* TODO 08/07/2025: codifica non ancora funzionante. Il risultato atteso è che "encodeJwt" sia
+    /* TODO 08/07/2025: codifica non ancora del tutto funzionante. Il risultato atteso è che "encodeJwt" sia
      *   l'operazione inversa di "decodeJwt"; tuttavia, dato in input un token JWT, la sequenza
      *   decodifica con decodeJwt --> ricodifica con encodeJwt non produce ancora un risultato
      *   identico all'input.*/
-    //public static String encodeJwt(JWTPojo jwt) {
-    private static String encodeJwt(JWTPojo jwt) {
+    public static String encodeJwt(JWTPojo jwt) {
         return String.format("%s.%s.%s",
                 encodeJwtPart(jwt.getHeader()),
                 encodeJwtPart(jwt.getPayload()),

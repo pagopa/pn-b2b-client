@@ -89,3 +89,35 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
     Given "PA1" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "DRAFT"
     When l'utente aggiunge un'analisi del rischio con versione template non aggiornata
     Then si ottiene status code 400
+
+  @adeguamento-analisi-rischio
+  Scenario Outline: [DESCRIPTOR_TK_RA_ADD_1] A seguito del cambiamento di tenant kind si tenta di aggiungere una risk analysis coerente con il precedente tenant kind ad un proprio e-service in bozza
+    Given l'utente è un "admin" di "<ente>"
+    And "<ente>" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "DRAFT"
+    And il tenant kind dell'ente "<ente>" viene impostato a "<kind>"
+    When l'utente aggiunge un'analisi del rischio
+    Then si ottiene status code 200
+    Examples:
+      | ente    | kind    |
+      | PA4     | Privato |
+      | PA4     | GSP     |
+      | GSP2    | PA      |
+      | GSP2    | Privato |
+      | Privato | PA      |
+      | Privato | GSP     |
+
+  @adeguamento-analisi-rischio
+  Scenario Outline: [DESCRIPTOR_TK_RA_ADD_2] A seguito del cambiamento di tenant kind si tenta di aggiungere una risk analysis coerente con il nuovo tenant kind ad un proprio e-service in bozza
+    Given l'utente è un "admin" di "<ente>"
+    And "<ente>" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "DRAFT"
+    And il tenant kind dell'ente "<ente>" viene impostato a "<kind>"
+    When l'utente aggiunge un'analisi del rischio coerente con il tenant kind "<kind>"
+    Then si ottiene status code 200
+    Examples:
+      | ente    | kind    |
+      | PA4     | Privato |
+      | PA4     | GSP     |
+      | GSP2    | PA      |
+      | GSP2    | Privato |
+      | Privato | PA      |
+      | Privato | GSP     |

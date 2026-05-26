@@ -10,13 +10,10 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysi
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
-
-import java.util.List;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 
 public class EServiceRiskAnalysisAdditionSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
@@ -50,8 +47,13 @@ public class EServiceRiskAnalysisAdditionSteps {
 
     @When("l'utente aggiunge un'analisi del rischio")
     public void addRiskAnalysis() {
+        addRiskAnalysisByTenantKind(sharedStepsContext.getTenantType());
+    }
+
+    @When("l'utente aggiunge un'analisi del rischio coerente con il tenant kind {string}")
+    public void addRiskAnalysisByTenantKind(String tenantType) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-        RiskAnalysis eServiceRiskAnalysisSeed = dataPreparationService.getRiskAnalysis(sharedStepsContext.getTenantType(), true);
+        RiskAnalysis eServiceRiskAnalysisSeed = dataPreparationService.getRiskAnalysis(tenantType, true);
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getEServiceClient().addRiskAnalysisToEService(
                         eServicesCommonContext.getEserviceId(),

@@ -64,3 +64,20 @@ Feature: Pubblicazione di un descrittore
     Given l'utente ha compilato parzialmente l'analisi del rischio
     When l'utente pubblica quel descrittore
     Then si ottiene status code 400
+
+  @adeguamento-analisi-rischio
+  Scenario Outline: [DESCRIPTOR_TK_PUBBLICATION_1] A seguito del cambiamento di tenant kind si tenta di pubblicare un proprio e-service in bozza
+    Given l'utente è un "admin" di "<ente>"
+    And "<ente>" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And il tenant kind dell'ente "<ente>" viene impostato a "<kind>"
+    When l'utente attiva il descrittore di quell'e-service
+    Then si ottiene status code 200
+    And il descrittore risulta in stato "PUBLISHED"
+    Examples:
+      | ente    | kind    |
+      | PA4     | Privato |
+      | PA4     | GSP     |
+      | GSP2    | PA      |
+      | GSP2    | Privato |
+      | Privato | PA      |
+      | Privato | GSP     |

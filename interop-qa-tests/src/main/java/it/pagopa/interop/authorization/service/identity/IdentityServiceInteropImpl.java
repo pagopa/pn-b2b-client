@@ -39,6 +39,11 @@ public class IdentityServiceInteropImpl implements IdentityService {
     }
 
     @Override
+    public String getMaintenanceToken() {
+        return defaultIdentityService.getMaintenanceToken();
+    }
+
+    @Override
     public UUID getUserId(String tenantType, String role) {
         return defaultIdentityService.getUserId(tenantType, role);
     }
