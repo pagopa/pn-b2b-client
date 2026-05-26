@@ -17,6 +17,6 @@ public class TenantSteps {
         //String maintenanceToken = sharedStepsContext.getIdentityService().getMaintenanceToken();
         //System.out.println("Maintenance token: " + maintenanceToken);
 
-        //this.maintenanceService.changeTenantKind(tenant, kind);
+        this.maintenanceService.changeTenantKind(tenant, kind);
     }
 }
