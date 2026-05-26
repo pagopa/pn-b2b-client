@@ -2,8 +2,8 @@ package it.pagopa.pn.cucumber.steps;
 
 import io.cucumber.spring.CucumberContextConfiguration;
 import it.pagopa.common.config.AwsConfig;
+import it.pagopa.pn.client.b2b.pa.cache.CacheConfig;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
-import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
 import it.pagopa.pn.client.b2b.pa.config.TemplateEngineConfigBean;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.ApiKeysConfiguration;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.BearerTokenConfiguration;
@@ -105,6 +105,7 @@ import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceValidationSta
 import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceValidationStatusNoAcceptedV29;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceValidationStatusV29;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceWebhookV29;
+import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.client.b2b.pa.service.IBffMandateServiceApi;
 import it.pagopa.pn.client.b2b.pa.service.IMandateReverseServiceClient;
@@ -337,7 +338,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnNotificationCostClientImpl.class,
         DynamoDbService.class,
         AwsConfig.class,
-        SenderInfoProvider.class
+        SenderInfoProvider.class,
+        CacheConfig.class,
 })
 @EnableScheduling
 @EnableConfigurationProperties
