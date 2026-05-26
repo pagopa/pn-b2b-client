@@ -143,7 +143,7 @@ Feature: Casi di test relativi alla nuova gestione degli eventi di dematerializz
       | Via@FAIL-Giacenza-lte10_890       | RECAG007B                  | Indagine     |
       | Via@OK-CompiutaGiacenza_890       | RECAG008B                  | Indagine     |
 
-  Scenario: [EVENTI_DEMAT_890_2] Il sistema riceve un evento di dematerializzazione per il prodotto 890 dopo l'evento finale (F)
+  Scenario: [EVENTI_DEMAT_890_1.2] Il sistema riceve un evento di dematerializzazione per il prodotto 890 dopo l'evento finale (F)
   e il nuovo evento di dematerializzazione è visibile in timeline
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -218,7 +218,7 @@ Feature: Casi di test relativi alla nuova gestione degli eventi di dematerializz
       | details_sentAttemptMade    | 0                              |
       | details_attachments        | [{"documentType": "Indagine"}] |
 
-  Scenario: [EVENTI_DEMAT_RS_2] Il sistema riceve un evento di dematerializzazione per il prodotto RS dopo l'evento finale (C)
+  Scenario: [EVENTI_DEMAT_RS_1.2] Il sistema riceve un evento di dematerializzazione per il prodotto RS dopo l'evento finale (C)
   e il nuovo evento di dematerializzazione è visibile in timeline
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
