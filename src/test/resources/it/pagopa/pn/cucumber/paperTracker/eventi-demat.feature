@@ -45,7 +45,7 @@ Feature: Casi di test relativi alla nuova gestione degli eventi di dematerializz
       | digitalDomicile         | NULL                   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
-    And viene verificato che il numero di elementi di timeline "SEND_ANALOG_PROGRESS" sia di 2
+    And viene verificato che il numero di elementi di timeline "SEND_ANALOG_PROGRESS" sia di 1
       | details                    | NOT_NULL  |
       | details_recIndex           | 0         |
       | details_sentAttemptMade    | 0         |
