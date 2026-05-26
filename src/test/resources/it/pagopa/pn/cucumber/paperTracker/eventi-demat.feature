@@ -72,38 +72,12 @@ Feature: Casi di test relativi alla nuova gestione degli eventi di dematerializz
       | details_recIndex           | 0         |
       | details_sentAttemptMade    | 0         |
       | details_deliveryDetailCode | RECRN002E |
-    And viene verificato che il numero di elementi di timeline "SEND_ANALOG_PROGRESS" sia di 2
+    And viene verificato che il numero di elementi di timeline "SEND_ANALOG_PROGRESS" sia di 1
       | details                    | NOT_NULL  |
       | details_recIndex           | 0         |
       | details_sentAttemptMade    | 0         |
       | details_deliveryDetailCode | RECRN002D |
 
-  Scenario: [EVENTI_DEMAT_AR_4] Il sistema riceve degli evento di dematerializzazione RECAG011A, RECAG011B, RECAG005B  per il prodotto AR dopo l'evento finale
-  ed essi sono visibili in timeline
-    Given viene generata una nuova notifica
-      | subject               | invio notifica con cucumber |
-      | senderDenomination    | Comune di Palermo           |
-      | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Cucumber e:
-      | physicalAddress_address | Via@OK_890_GIACENZA_EVENTS_AFTER |
-      | digitalDomicile         | NULL                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
-    And viene verificato che il numero di elementi di timeline "SEND_ANALOG_PROGRESS" sia di 2
-      | details                    | NOT_NULL  |
-      | details_recIndex           | 0         |
-      | details_sentAttemptMade    | 0         |
-      | details_deliveryDetailCode | RECAG011A |
-    And viene verificato che il numero di elementi di timeline "SEND_ANALOG_PROGRESS" sia di 1
-      | details                    | NOT_NULL  |
-      | details_recIndex           | 0         |
-      | details_sentAttemptMade    | 0         |
-      | details_deliveryDetailCode | RECAG011B |
-    And viene verificato che il numero di elementi di timeline "SEND_ANALOG_PROGRESS" sia di 3
-      | details                    | NOT_NULL  |
-      | details_recIndex           | 0         |
-      | details_sentAttemptMade    | 0         |
-      | details_deliveryDetailCode | RECAG005B |
 
     # ============ PRODOTTO RIR ============
 
@@ -150,7 +124,7 @@ Feature: Casi di test relativi alla nuova gestione degli eventi di dematerializz
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
     Then viene invocato il consolidatore con i seguenti dati:
       | productType | attemptId | pcRetry   | recIndex   | statusCode                   | deliveryFailureCause | attachment_1   | attachment_2 |
-      | RIR         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | <details_deliveryDetailCode> |                      | <documentType> |              |
+      | 890         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | <details_deliveryDetailCode> |                      | <documentType> |              |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | loadTimeline               | true                                 |
       | details                    | NOT_NULL                             |
@@ -182,7 +156,7 @@ Feature: Casi di test relativi alla nuova gestione degli eventi di dematerializz
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
     Then viene invocato il consolidatore con i seguenti dati:
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
-      | RIR         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECAG003E  |                      | Indagine     |              |
+      | 890         | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECAG003E  |                      | Indagine     |              |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | loadTimeline               | true                           |
       | details                    | NOT_NULL                       |
@@ -190,6 +164,33 @@ Feature: Casi di test relativi alla nuova gestione degli eventi di dematerializz
       | details_recIndex           | 0                              |
       | details_sentAttemptMade    | 0                              |
       | details_attachments        | [{"documentType": "Indagine"}] |
+
+  Scenario: [EVENTI_DEMAT_890_3] Il sistema riceve degli evento di dematerializzazione RECAG011A, RECAG011B, RECAG005B  per il prodotto 890 dopo l'evento finale
+  ed essi sono visibili in timeline
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@OK_890_GIACENZA_EVENTS_AFTER |
+      | digitalDomicile         | NULL                             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
+    And viene verificato che il numero di elementi di timeline "SEND_ANALOG_PROGRESS" sia di 1
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
+      | details_sentAttemptMade    | 0         |
+      | details_deliveryDetailCode | RECAG011A |
+    And viene verificato che il numero di elementi di timeline "SEND_ANALOG_PROGRESS" sia di 1
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
+      | details_sentAttemptMade    | 0         |
+      | details_deliveryDetailCode | RECAG011B |
+    And viene verificato che il numero di elementi di timeline "SEND_ANALOG_PROGRESS" sia di 3
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
+      | details_sentAttemptMade    | 0         |
+      | details_deliveryDetailCode | RECAG005B |
 
 
     # ============ PRODOTTO RS ============
