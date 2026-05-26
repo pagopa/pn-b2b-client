@@ -134,13 +134,13 @@ Feature: Casi di test relativi alla nuova gestione degli eventi di dematerializz
       | details_attachments        | [{"documentType": "<documentType>"}] |
     Examples:
       | physicalAddress_address           | details_deliveryDetailCode | documentType |
-      | Via@OK_890                        | RECAG001B                  | AR           |
-      | Via@OK-PersonaAbilitata_890       | RECAG002B                  | AR           |
+      | Via@OK_890                        | RECAG001B                  | Indagine     |
+      | Via@OK-PersonaAbilitata_890       | RECAG002B                  | Indagine     |
       | Via@FAIL_890                      | RECAG003B                  | Indagine     |
-      | Via@OK-Giacenza-gt10_890          | RECAG011B                  | AR           |
-      | Via@OK-Giacenza-lte10_890         | RECAG005B                  | AR           |
-      | Via@OK-GiacenzaDelegato-lte10_890 | RECAG006B                  | AR           |
-      | Via@FAIL-Giacenza-lte10_890       | RECAG007B                  | AR           |
+      | Via@OK-Giacenza-gt10_890          | RECAG011B                  | Indagine     |
+      | Via@OK-Giacenza-lte10_890         | RECAG005B                  | Indagine     |
+      | Via@OK-GiacenzaDelegato-lte10_890 | RECAG006B                  | Indagine     |
+      | Via@FAIL-Giacenza-lte10_890       | RECAG007B                  | Indagine     |
       | Via@OK-CompiutaGiacenza_890       | RECAG008B                  | Indagine     |
 
   Scenario: [EVENTI_DEMAT_890_2] Il sistema riceve un evento di dematerializzazione per il prodotto 890 dopo l'evento finale (F)
@@ -170,7 +170,7 @@ Feature: Casi di test relativi alla nuova gestione degli eventi di dematerializz
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
-      | physicalCommunication | REGISTERED_LETTER_890        |
+      | physicalCommunication | REGISTERED_LETTER_890       |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | Via@OK_890_GIACENZA_EVENTS_AFTER |
       | digitalDomicile         | NULL                             |
