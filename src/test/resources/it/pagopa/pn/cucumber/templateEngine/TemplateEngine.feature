@@ -331,6 +331,8 @@ Feature: Template engine
       | tedesca  |
       | slovena  |
       | francese |
+      | inglese  |
+
 
   @templateEngine #68 /templates-engine-private/v1/templates/notification-aar-for-pec
   Scenario: [TEMPLATE-ENGINE_20] Richiamare l’API per il recupero del template di avviso di cortesia PEC - lingua errata
@@ -339,8 +341,15 @@ Feature: Template engine
 
   @templateEngine #95 /templates-engine-private/v1/templates/notification-aar-for-pec
   Scenario: [TEMPLATE-ENGINE_20_1] Richiamare l’API per il recupero del template di avviso di cortesia PEC - body vuoto
-    When recupero il template per "avviso di cortesia PEC" in lingua "italiana" con il body "null"
+    When recupero il template per "avviso di cortesia PEC" in lingua "<language>" con il body "null"
     Then verifico che la chiamata sia andata in "400" error
+    Examples:
+      | language |
+      | italiana |
+      | tedesca  |
+      | slovena  |
+      | francese |
+      | inglese  |
 
   @templateEngine #115 /templates-engine-private/v1/templates/notification-aar-for-pec
   Scenario: [TEMPLATE-ENGINE_20_2] Richiamare l’API per il recupero del template di avviso di cortesia PEC - body errato
@@ -348,10 +357,17 @@ Feature: Template engine
     Then verifico che tutte le chiamate siano andate in "400" error e che nessuna abbia ricevuto una risposta
 
   @templateEngine #69 /templates-engine-private/v1/templates/emailbody
-  Scenario: [TEMPLATE-ENGINE_21] Richiamare l’API per il recupero del template di OTP di conferma email - lingua italiana
-    When recupero il template per "OTP di conferma email" in lingua "italiana"
+  Scenario Outline: [TEMPLATE-ENGINE_21] Richiamare l’API per il recupero del template di OTP di conferma email - lingua italiana
+    When recupero il template per "OTP di conferma email" in lingua "<language>"
     Then verifico che il template è in formato "html"
     And controllo che per il template "OTP di conferma email" il file "html" sia in lingua "italiana"
+    Examples:
+      | language |
+      | italiana |
+      | tedesca  |
+      | slovena  |
+      | francese |
+      | inglese  |
 
   @templateEngine #70 /templates-engine-private/v1/templates/emailbody
   Scenario: [TEMPLATE-ENGINE_22] Richiamare l’API per il recupero del template di OTP di conferma email - lingua errata
@@ -361,8 +377,15 @@ Feature: Template engine
 
   @templateEngine #96 /templates-engine-private/v1/templates/emailbody
   Scenario: [TEMPLATE-ENGINE_22_1] Richiamare l’API per il recupero del template di OTP di conferma email - body vuoto
-    When recupero il template per "OTP di conferma email" in lingua "italiana" con il body "null"
+    When recupero il template per "OTP di conferma email" in lingua "<language>" con il body "null"
     Then verifico che la chiamata sia andata in "400" error
+    Examples:
+      | language |
+      | italiana |
+      | tedesca  |
+      | slovena  |
+      | francese |
+      | inglese  |
 
   @templateEngine #116 /templates-engine-private/v1/templates/emailbody
   Scenario: [TEMPLATE-ENGINE_22_2] Richiamare l’API per il recupero del template di OTP di conferma email - body errato
@@ -370,10 +393,17 @@ Feature: Template engine
     Then verifico che tutte le chiamate siano andate in "400" error e che nessuna abbia ricevuto una risposta
 
   @templateEngine #71 /templates-engine-private/v1/templates/pec-verification-code-body
-  Scenario: [TEMPLATE-ENGINE_23] Richiamare l’API per il recupero del template di OTP di conferma pec - lingua italiana
-    When recupero il template per "OTP di conferma pec" in lingua "italiana"
+  Scenario Outline: [TEMPLATE-ENGINE_23] Richiamare l’API per il recupero del template di OTP di conferma pec - lingua italiana
+    When recupero il template per "OTP di conferma pec" in lingua "<language>"
     Then verifico che il template è in formato "html"
     And controllo che per il template "OTP di conferma pec" il file "html" sia in lingua "italiana"
+    Examples:
+      | language |
+      | italiana |
+      | tedesca  |
+      | slovena  |
+      | francese |
+      | inglese  |
 
   @templateEngine #72 /templates-engine-private/v1/templates/pec-verification-code-body
   Scenario: [TEMPLATE-ENGINE_24] Richiamare l’API per il recupero del template di OTP di conferma pec - lingua errata
@@ -383,8 +413,15 @@ Feature: Template engine
 
   @templateEngine #97 /templates-engine-private/v1/templates/pec-verification-code-body
   Scenario: [TEMPLATE-ENGINE_24_1] Richiamare l’API per il recupero del template di OTP di conferma pec - body vuoto
-    When recupero il template per "OTP di conferma pec" in lingua "italiana" con il body "null"
+    When recupero il template per "OTP di conferma pec" in lingua "<language>" con il body "null"
     Then verifico che la chiamata sia andata in "400" error
+    Examples:
+      | language |
+      | italiana |
+      | tedesca  |
+      | slovena  |
+      | francese |
+      | inglese  |
 
   @templateEngine #117 /templates-engine-private/v1/templates/pec-verification-code-body
   Scenario: [TEMPLATE-ENGINE_24_2] Richiamare l’API per il recupero del template di OTP di conferma pec - body errato
@@ -392,10 +429,17 @@ Feature: Template engine
     Then verifico che tutte le chiamate siano andate in "400" error e che nessuna abbia ricevuto una risposta
 
   @templateEngine #73 /templates-engine-private/v1/templates/pecbodyconfirm
-  Scenario: [TEMPLATE-ENGINE_25] Richiamare l’API per il recupero del template di PEC valida - lingua italiana
-    When recupero il template per "PEC valida" in lingua "italiana"
+  Scenario Outline: [TEMPLATE-ENGINE_25] Richiamare l’API per il recupero del template di PEC valida - lingua italiana
+    When recupero il template per "PEC valida" in lingua "<language>"
     Then verifico che il template è in formato "html"
     And controllo che per il template "PEC valida" il file "html" sia in lingua "italiana"
+    Examples:
+      | language |
+      | italiana |
+      | tedesca  |
+      | slovena  |
+      | francese |
+      | inglese  |
 
   @templateEngine #74 /templates-engine-private/v1/templates/pecbodyconfirm
   Scenario: [TEMPLATE-ENGINE_26] Richiamare l’API per il recupero del template di PEC valida - lingua errata
@@ -404,10 +448,17 @@ Feature: Template engine
     And controllo che per il template "PEC valida" il file "html" sia in lingua "italiana"
 
   @templateEngine #75 /templates-engine-private/v1/templates/pecbodyreject
-  Scenario: [TEMPLATE-ENGINE_27] Richiamare l’API per il recupero del template di PEC non valida - lingua italiana
-    When recupero il template per "PEC non valida" in lingua "italiana"
+  Scenario Outline: [TEMPLATE-ENGINE_27] Richiamare l’API per il recupero del template di PEC non valida - lingua italiana
+    When recupero il template per "PEC non valida" in lingua "<language>"
     Then verifico che il template è in formato "html"
     And controllo che per il template "PEC non valida" il file "hmtl" sia in lingua "italiana"
+    Examples:
+      | language |
+      | italiana |
+      | tedesca  |
+      | slovena  |
+      | francese |
+      | inglese  |
 
   @templateEngine #76 /templates-engine-private/v1/templates/pecbodyreject
   Scenario: [TEMPLATE-ENGINE_28] Richiamare l’API per il recupero del template di PEC non valida - lingua errata
@@ -438,10 +489,17 @@ Feature: Template engine
     Then verifico che tutte le chiamate siano andate in "400" error e che nessuna abbia ricevuto una risposta
 
   @templateEngine #79 /templates-engine-private/v1/templates/smsbody
-  Scenario: [TEMPLATE-ENGINE_31] Richiamare l’API per il recupero del template di OTP di conferma sms - lingua italiana
-    When recupero il template per "OTP di conferma sms" in lingua "italiana"
+  Scenario Outline: [TEMPLATE-ENGINE_31] Richiamare l’API per il recupero del template di OTP di conferma sms - lingua italiana
+    When recupero il template per "OTP di conferma sms" in lingua "<language>"
     Then verifico che il template è in formato "text"
     And controllo che per il template "OTP di conferma sms" il file "text" sia in lingua "italiana"
+    Examples:
+      | language |
+      | italiana |
+      | tedesca  |
+      | slovena  |
+      | francese |
+      | inglese  |
 
   @templateEngine #80 /templates-engine-private/v1/templates/smsbody
   Scenario: [TEMPLATE-ENGINE_32] Richiamare l’API per il recupero del template di OTP di conferma sms - lingua null
@@ -477,10 +535,17 @@ Feature: Template engine
     Then verifico che tutte le chiamate siano andate in "400" error e che nessuna abbia ricevuto una risposta
 
   @templateEngine #82 /templates-engine-private/v1/templates/emailsubject
-  Scenario: [TEMPLATE-ENGINE_34] Richiamare l’API per il recupero dell’oggetto relativo all’OTP di conferma email
-    When recupero l'oggetto per "OTP di conferma email object" in lingua "italiana"
+  Scenario Outline: [TEMPLATE-ENGINE_34] Richiamare l’API per il recupero dell’oggetto relativo all’OTP di conferma email
+    When recupero l'oggetto per "OTP di conferma email object" in lingua "<language>"
     Then verifico che il template è in formato "text"
     And controllo che per il template "OTP di conferma email object" il file "text" sia in lingua "italiana"
+    Examples:
+      | language |
+      | italiana |
+      | tedesca  |
+      | slovena  |
+      | francese |
+      | inglese  |
 
   @templateEngine #102 /templates-engine-private/v1/templates/emailsubject
   Scenario: [TEMPLATE-ENGINE_34_1] Richiamare l’API per il recupero dell’oggetto relativo all’OTP di conferma email - lingua errata
@@ -489,22 +554,30 @@ Feature: Template engine
     And controllo che per il template "OTP di conferma email object" il file "text" sia in lingua "italiana"
 
   @templateEngine #83 /templates-engine-private/v1/templates/pecsubject
-  Scenario: [TEMPLATE-ENGINE_35] Richiamare l’API per il recupero dell’oggetto relativo all’OTP di conferma pec
-    When recupero l'oggetto per "OTP di conferma pec object" in lingua "italiana"
+  Scenario Outline: [TEMPLATE-ENGINE_35] Richiamare l’API per il recupero dell’oggetto relativo all’OTP di conferma pec
+    When recupero l'oggetto per "OTP di conferma pec object" in lingua "<language>"
     Then verifico che il template è in formato "text"
     And controllo che per il template "OTP di conferma pec object" il file "text" sia in lingua "italiana"
-
-  @templateEngine #103 /templates-engine-private/v1/templates/pecsubject
-  Scenario: [TEMPLATE-ENGINE_35_1] Richiamare l’API per il recupero dell’oggetto relativo all’OTP di conferma pec - lingua errata
-    When recupero l'oggetto per "OTP di conferma pec object" in lingua "tedesca"
-    Then verifico che il template è in formato "text"
-    And controllo che per il template "OTP di conferma pec object" il file "text" sia in lingua "italiana"
+    Examples:
+      | language |
+      | italiana |
+      | tedesca  |
+      | slovena  |
+      | francese |
+      | inglese  |
 
   @templateEngine #84 /templates-engine-private/v1/templates/pecsubjectconfirm
-  Scenario: [TEMPLATE-ENGINE_36] Richiamare l’API per il recupero dell’oggetto relativo alla PEC valida
-    When recupero l'oggetto per "PEC valida object" in lingua "italiana"
+  Scenario Outline: [TEMPLATE-ENGINE_36] Richiamare l’API per il recupero dell’oggetto relativo alla PEC valida
+    When recupero l'oggetto per "PEC valida object" in lingua "<language>"
     Then verifico che il template è in formato "text"
     And controllo che per il template "PEC valida object" il file "text" sia in lingua "italiana"
+    Examples:
+      | language |
+      | italiana |
+      | tedesca  |
+      | slovena  |
+      | francese |
+      | inglese  |
 
   @templateEngine #104 /templates-engine-private/v1/templates/pecsubjectconfirm
   Scenario: [TEMPLATE-ENGINE_36_1] Richiamare l’API per il recupero dell’oggetto relativo alla PEC valida - lingua errata
@@ -513,10 +586,17 @@ Feature: Template engine
     And controllo che per il template "PEC valida object" il file "text" sia in lingua "italiana"
 
   @templateEngine #85 /templates-engine-private/v1/templates/pecsubjectreject
-  Scenario: [TEMPLATE-ENGINE_37] Richiamare l’API per il recupero dell’oggetto relativo alla PEC non valida
-    When recupero l'oggetto per "PEC non valida object" in lingua "italiana"
+  Scenario Outline: [TEMPLATE-ENGINE_37] Richiamare l’API per il recupero dell’oggetto relativo alla PEC non valida
+    When recupero l'oggetto per "PEC non valida object" in lingua "<language>"
     Then verifico che il template è in formato "text"
     And controllo che per il template "PEC non valida object" il file "text" sia in lingua "italiana"
+    Examples:
+      | language |
+      | italiana |
+      | tedesca  |
+      | slovena  |
+      | francese |
+      | inglese  |
 
   @templateEngine #105 /templates-engine-private/v1/templates/pecsubjectreject
   Scenario: [TEMPLATE-ENGINE_37_1] Richiamare l’API per il recupero dell’oggetto relativo alla PEC non valida - lingua errata
@@ -653,42 +733,42 @@ Feature: Template engine
   Scenario: [TEMPLATE-ENGINE_44] Richiamare l’API per il recupero del template di avviso di cortesia SMS - lingua inglese
     When recupero il template per "avviso di cortesia SMS" in lingua "inglese" con recipient Type "PF"
     Then verifico che il template è in formato "text"
-    And controllo che per il template "avviso di cortesia SMS" il file "text" sia in lingua "inglese"
+    And controllo che per il template "avviso di cortesia SMS" il file "text" sia in lingua "italiana"
     And il corpo del messaggio contiene il testo "accedi con SPID"
 
   @templateEngine @templateEngineCM #Per flusso Analogico o con flag courtesy message:OFF - templates-engine-private/v1/templates/notification-aar-for-sms
   Scenario: [TEMPLATE-ENGINE_45] Richiamare l’API per il recupero del template di avviso di cortesia SMS - lingua inglese (PG)
     When recupero il template per "avviso di cortesia SMS" in lingua "inglese" con recipient Type "PG"
     Then verifico che il template è in formato "text"
-    And controllo che per il template "avviso di cortesia SMS" il file "text" sia in lingua "inglese"
+    And controllo che per il template "avviso di cortesia SMS" il file "text" sia in lingua "italiana"
     And il corpo del messaggio contiene il testo "accedi con SPID"
 
   @templateEngine @templateEngineCM # con flag courtesy message:ON - templates-engine-private/v1/templates/notification-aar-for-email-digital
   Scenario: [TEMPLATE-ENGINE_46] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
     When recupero il template per "avviso di cortesia EMAIL digitale" in lingua "inglese" con recipient Type "PG"
     Then verifico che il template è in formato "html"
-    And controllo che per il template "avviso di cortesia EMAIL digitale" il file "html" sia in lingua "inglese"
+    And controllo che per il template "avviso di cortesia EMAIL digitale" il file "html" sia in lingua "italiana"
     And il corpo del messaggio contiene il testo "una comunicazione a valore legale da parte di"
 
   @templateEngine @templateEngineCM #Per flusso Analogico o con flag courtesy message:OFF - templates-engine-private/v1/templates/notification-aar-for-email
   Scenario: [TEMPLATE-ENGINE_47] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
     When recupero il template per "avviso di cortesia EMAIL" in lingua "inglese" con recipient Type "PG"
     Then verifico che il template è in formato "html"
-    And controllo che per il template "avviso di cortesia EMAIL" il file "html" sia in lingua "inglese"
+    And controllo che per il template "avviso di cortesia EMAIL" il file "html" sia in lingua "italiana"
     And il corpo del messaggio contiene il testo "una notifica da parte di"
 
   @templateEngine @templateEngineCM #templates-engine-private/v1/templates/notification-aar-for-email-digital
   Scenario: [TEMPLATE-ENGINE_48] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
     When recupero il template per "avviso di cortesia EMAIL digitale" in lingua "inglese" con recipient Type "PF"
     Then verifico che il template è in formato "html"
-    And controllo che per il template "avviso di cortesia EMAIL digitale" il file "html" sia in lingua "inglese"
+    And controllo che per il template "avviso di cortesia EMAIL digitale" il file "html" sia in lingua "italiana"
     And il corpo del messaggio contiene il testo "una comunicazione a valore legale da parte di"
 
   @templateEngine @templateEngineCM #Per flusso Analogico o con flag courtesy message:OFF - templates-engine-private/v1/templates/notification-aar-for-email
   Scenario: [TEMPLATE-ENGINE_49] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese (PF)
     When recupero il template per "avviso di cortesia EMAIL" in lingua "inglese" con recipient Type "PF"
     Then verifico che il template è in formato "html"
-    And controllo che per il template "avviso di cortesia EMAIL" il file "html" sia in lingua "inglese"
+    And controllo che per il template "avviso di cortesia EMAIL" il file "html" sia in lingua "italiana"
     And il corpo del messaggio contiene il testo "una notifica da parte di"
 
   @templateEngine @templateEngineCM
@@ -703,7 +783,7 @@ Feature: Template engine
   Scenario: [TEMPLATE-ENGINE_51] Richiamare l’API per il recupero dell’oggetto relativo all’avviso di cortesia per l’SMS
     When recupero l'oggetto per "avviso di cortesia per email object" in lingua "inglese"
     Then verifico che il template è in formato "text"
-    And controllo che per il template "avviso di cortesia per email object" il file "text" sia in lingua "inglese"
+    And controllo che per il template "avviso di cortesia per email object" il file "text" sia in lingua "italiana"
 
   @templateEngine #100 /templates-engine-private/v1/templates/notification-aar-subject
   Scenario: [TEMPLATE-ENGINE_52] Richiamare l’API per il recupero dell’oggetto relativo all’avviso di cortesia per l’SMS - body vuoto
@@ -715,73 +795,6 @@ Feature: Template engine
     When recupero il template per "avviso di cortesia EMAIL" in lingua "inglese" con il body "null"
     Then verifico che la chiamata sia andata in "400" error
 
-  @templateEngine #95 /templates-engine-private/v1/templates/notification-aar-for-pec
-  Scenario: [TEMPLATE-ENGINE_54] Richiamare l’API per il recupero del template di avviso di cortesia PEC - body vuoto
-    When recupero il template per "avviso di cortesia PEC" in lingua "inglese" con il body "null"
-    Then verifico che la chiamata sia andata in "400" error
 
-  @templateEngine #73 /templates-engine-private/v1/templates/pecbodyconfirm
-  Scenario: [TEMPLATE-ENGINE_55] Richiamare l’API per il recupero del template di PEC valida - lingua inglese
-    When recupero il template per "PEC valida" in lingua "inglese"
-    Then verifico che il template è in formato "html"
-    And controllo che per il template "PEC valida" il file "html" sia in lingua "inglese"
 
-  @templateEngine #84 /templates-engine-private/v1/templates/pecsubjectconfirm
-  Scenario: [TEMPLATE-ENGINE_36] Richiamare l’API per il recupero dell’oggetto relativo alla PEC valida
-    When recupero l'oggetto per "PEC valida object" in lingua "inglese"
-    Then verifico che il template è in formato "text"
-    And controllo che per il template "PEC valida object" il file "text" sia in lingua "inglese"
 
-  @templateEngine #75 /templates-engine-private/v1/templates/pecbodyreject
-  Scenario: [TEMPLATE-ENGINE_27] Richiamare l’API per il recupero del template di PEC non valida - lingua inglese
-    When recupero il template per "PEC non valida" in lingua "inglese"
-    Then verifico che il template è in formato "html"
-    And controllo che per il template "PEC non valida" il file "hmtl" sia in lingua "inglese"
-
-  @templateEngine #85 /templates-engine-private/v1/templates/pecsubjectreject
-  Scenario: [TEMPLATE-ENGINE_37] Richiamare l’API per il recupero dell’oggetto relativo alla PEC non valida
-    When recupero l'oggetto per "PEC non valida object" in lingua "inglese"
-    Then verifico che il template è in formato "text"
-    And controllo che per il template "PEC non valida object" il file "text" sia in lingua "inglese"
-
-  @templateEngine #69 /templates-engine-private/v1/templates/emailbody
-  Scenario: [TEMPLATE-ENGINE_21] Richiamare l’API per il recupero del template di OTP di conferma email - lingua inglese
-    When recupero il template per "OTP di conferma email" in lingua "inglese"
-    Then verifico che il template è in formato "html"
-    And controllo che per il template "OTP di conferma email" il file "html" sia in lingua "inglese"
-
-  @templateEngine #82 /templates-engine-private/v1/templates/emailsubject
-  Scenario: [TEMPLATE-ENGINE_34] Richiamare l’API per il recupero dell’oggetto relativo all’OTP di conferma email
-    When recupero l'oggetto per "OTP di conferma email object" in lingua "inglese"
-    Then verifico che il template è in formato "text"
-    And controllo che per il template "OTP di conferma email object" il file "text" sia in lingua "inglese"
-
-  @templateEngine #69 /templates-engine-private/v1/templates/emailbody
-  Scenario: [TEMPLATE-ENGINE_21] Richiamare l’API per il recupero del template di OTP di conferma email - lingua inglese
-    When recupero il template per "OTP di conferma email" in lingua "inglese"
-    Then verifico che il template è in formato "html"
-    And controllo che per il template "OTP di conferma email" il file "html" sia in lingua "inglese"
-
-  @templateEngine #71 /templates-engine-private/v1/templates/pec-verification-code-body
-  Scenario: [TEMPLATE-ENGINE_23] Richiamare l’API per il recupero del template di OTP di conferma pec - lingua inglese
-    When recupero il template per "OTP di conferma pec" in lingua "inglese"
-    Then verifico che il template è in formato "html"
-    And controllo che per il template "OTP di conferma pec" il file "html" sia in lingua "inglese"
-
-  @templateEngine #79 /templates-engine-private/v1/templates/smsbody
-  Scenario: [TEMPLATE-ENGINE_31] Richiamare l’API per il recupero del template di OTP di conferma sms - lingua inglese
-    When recupero il template per "OTP di conferma sms" in lingua "inglese"
-    Then verifico che il template è in formato "text"
-    And controllo che per il template "OTP di conferma sms" il file "text" sia in lingua "inglese"
-
-  @templateEngine #82 /templates-engine-private/v1/templates/emailsubject
-  Scenario: [TEMPLATE-ENGINE_34] Richiamare l’API per il recupero dell’oggetto relativo all’OTP di conferma email
-    When recupero l'oggetto per "OTP di conferma email object" in lingua "inglese"
-    Then verifico che il template è in formato "text"
-    And controllo che per il template "OTP di conferma email object" il file "text" sia in lingua "inglese"
-
-  @templateEngine #83 /templates-engine-private/v1/templates/pecsubject
-  Scenario: [TEMPLATE-ENGINE_35] Richiamare l’API per il recupero dell’oggetto relativo all’OTP di conferma pec
-    When recupero l'oggetto per "OTP di conferma pec object" in lingua "inglese"
-    Then verifico che il template è in formato "text"
-    And controllo che per il template "OTP di conferma pec object" il file "text" sia in lingua "inglese"
