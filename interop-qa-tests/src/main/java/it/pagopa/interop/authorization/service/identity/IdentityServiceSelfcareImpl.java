@@ -4,19 +4,15 @@ import it.pagopa.interop.authorization.domain.Tenant;
 import it.pagopa.interop.authorization.service.DPoPTokenService;
 import it.pagopa.interop.authorization.service.factory.SessionTokenFactory;
 import it.pagopa.interop.authorization.service.utils.ConfigFileReader;
-import it.pagopa.interop.authorization.service.utils.JWTUtils;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-
-import static java.util.Objects.nonNull;
 
 @Slf4j
 @ToString
@@ -28,19 +24,8 @@ public class IdentityServiceSelfcareImpl implements IdentityService {
     @Value("${spring.profiles.active}")
     private String runProfile;
 
-    /* DEV. NOTE 26/05/2026: le logiche di costruzione dei token sono contenutie in SessionTokenFactory, tuttavia
-    * la costruzione di un token di maintenance segue un iter leggermente diverso dal solito.
-    * In futuro andrebbe verificato che non si possa portare anche questa responsabilità in SessionTokenFactory. */
-    @Value("${pn.interop.maintenance.tokenTemplate}")
-    private String maintenanceTokenTemplate;
-
     @Value("${session.tokens.duration.seconds}")
     private int sessionTokenDurationSeconds;
-
-    private String lastMaintenanceToken;
-    /* ***********************************************************************************************************
-    **************************************************************************************************************
-    **************************************************************************************************************/
 
     public IdentityServiceSelfcareImpl(SessionTokenFactory sessionTokenFactory,
                                        ConfigFileReader configFileReader) {
@@ -65,38 +50,11 @@ public class IdentityServiceSelfcareImpl implements IdentityService {
 
     @Override
     public String getMaintenanceToken() {
-        if(nonNull(lastMaintenanceToken) && isNotExpired(lastMaintenanceToken)) {
-            return lastMaintenanceToken;
+        try {
+            return sessionTokenFactory.getMaintenanceToken();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-
-        long exp = Instant.now().plusSeconds(this.sessionTokenDurationSeconds).getEpochSecond();
-        JWTUtils.JWTPojo jwtPojo = JWTUtils.decodeJwt(this.maintenanceTokenTemplate);
-        jwtPojo.getPayload().put("exp", exp);
-        lastMaintenanceToken = JWTUtils.encodeJwt(jwtPojo);
-        return lastMaintenanceToken;
-    }
-
-    private boolean isNotExpired(String token) {
-        long now = Instant.now().getEpochSecond();
-        Object oExp = Objects.requireNonNull(
-            JWTUtils.decodeJwt(token).getPayload().get("exp"),
-            "Il campo 'exp' non è presente nel token '%s'".formatted(token)
-        );
-
-        long exp;
-        // DEV.NOTE al momento si usa Java 17, dunque pattern matching non supportato
-        if (oExp instanceof Integer iExp) {
-            exp = iExp.longValue();
-        } else if (oExp instanceof Long lExp) {
-            exp = lExp;
-        } else {
-            throw new IllegalArgumentException(
-                    "Il campo 'exp' deve essere di tipo Integer o Long, trovato invece: " + oExp.getClass().getName()
-            );
-        }
-
-        // Il token è considerato scaduto se: exp <= (adesso + 2 secondi di sicurezza)
-        return exp > (now + 2);
     }
 
     @Override
