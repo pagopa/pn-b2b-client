@@ -98,6 +98,7 @@ public class InteropMaintenanceServiceImpl implements InteropMaintenanceService 
 
         // FIXME utile solo ai fini di debug, il ripristino del corretto tenant kind dovrà essere fatto altrove
         mapped.getTenant().setKind(kindIniziale);
+        mapped.setCurrentVersion(Integer.parseInt(processTenantPostKindUpdate.getHeaders().get("X-Metadata-Version").get(0)));
         processMaintTenantApi.maintenanceTenantUpdate(xCorrelationId, organizationId, mapped);
         sleep();
         processTenantPostKindUpdate = processBffTenantApi.getTenantWithHttpInfo(
