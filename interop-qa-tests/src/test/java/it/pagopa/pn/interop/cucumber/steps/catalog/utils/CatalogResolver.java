@@ -21,4 +21,15 @@ public class CatalogResolver extends AbstractResolver {
                 () -> null
         );
     }
+
+    public UUID resolveOldDescriptorId(String descriptorId) {
+        return resolveOrParse(
+                descriptorId,
+                UUID::fromString,
+                () -> sharedStepsContext.getEServicesCommonContext().getOldDescriptorId(),
+                null,
+                UUID::randomUUID,
+                () -> null
+        );
+    }
 }
