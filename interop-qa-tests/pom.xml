@@ -542,6 +542,61 @@
 
                 </executions>
              </plugin>
+
+             <!-- TODO: le patch al codice generato sono necessarie per far sì che i modelli LinkableEService e LinkableEServiceTemplate estendano LinkableResource, in modo da poter essere trattati in maniera polimorfica. In futuro, quando sarà possibile aggiornare la versione di openapi-generator, è auspicabile che queste patch non siano più necessarie. -->
+             <plugin>
+                 <groupId>com.google.code.maven-replacer-plugin</groupId>
+                 <artifactId>replacer</artifactId>
+                 <version>1.5.3</version>
+                 <executions>
+
+                     <execution>
+                         <id>patch-linkable-eservice</id>
+                         <phase>process-resources</phase>
+                         <goals>
+                             <goal>replace</goal>
+                         </goals>
+                         <configuration>
+                             <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/LinkableEService.java</file>
+                             <regex>true</regex>
+                             <replacements>
+                                 <replacement>
+                                     <token>public class LinkableEService \{</token>
+                                     <value>public class LinkableEService extends LinkableResource {</value>
+                                 </replacement>
+                                 <replacement>
+                                     <token>/\*\*\s*\*\s*Get resourceKind[\s\S]*?public\s+ResourceKindEnum\s+getResourceKind\(\)\s*\{[\s\S]*?\}</token>
+                                     <value></value>
+                                 </replacement>
+                             </replacements>
+                         </configuration>
+                     </execution>
+
+                     <execution>
+                         <id>patch-linkable-eservice-template</id>
+                         <phase>process-resources</phase>
+                         <goals>
+                             <goal>replace</goal>
+                         </goals>
+                         <configuration>
+                             <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/LinkableEServiceTemplate.java</file>
+                             <regex>true</regex>
+                             <replacements>
+                                 <replacement>
+                                     <token>public class LinkableEServiceTemplate \{</token>
+                                     <value>public class LinkableEServiceTemplate extends LinkableResource {</value>
+                                 </replacement>
+                                 <replacement>
+                                     <token>/\*\*\s*\*\s*Get resourceKind[\s\S]*?public\s+ResourceKindEnum\s+getResourceKind\(\)\s*\{[\s\S]*?\}</token>
+                                     <value></value>
+                                 </replacement>
+                             </replacements>
+                         </configuration>
+                     </execution>
+
+                 </executions>
+             </plugin>
+
              <plugin>
                  <groupId>org.apache.maven.plugins</groupId>
                  <artifactId>maven-compiler-plugin</artifactId>
