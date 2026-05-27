@@ -2,6 +2,7 @@ package it.pagopa.pn.cucumber.steps.pa.hooks;
 
 import io.cucumber.java.Before;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddAlternativeClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddVpceAdapter;
 import it.pagopa.pn.cucumber.steps.pa.RaddAltSteps;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +20,16 @@ public class RaddHooks {
         this.raddAltSteps = raddAltSteps;
     }
 
-//    @Before("@useRaddVpce")
-//    public void useRaddVpce() {
-//        log.info("Using RADD VPCE adapter");
-//
-//        raddAltSteps.setRaddClient(
-//                context.getBean(PnRaddVpceAdapter.class)
-//        );
-//    }
+
+    @Before("@useRaddVpce")
+    public void useRaddVpce() {
+        log.info("Using RADD VPCE adapter");
+
+        raddAltSteps.setRaddClient(
+                context.getBean(PnRaddVpceAdapter.class)
+        );
+
+    }
 
     @Before("@useRaddAlternative")
     public void useRaddAlternative() {
