@@ -62,7 +62,8 @@ public class InteropMaintenanceServiceImpl implements InteropMaintenanceService 
         ResponseEntity<Tenant> processTenant = processBffTenantApi.getTenantWithHttpInfo(
                 xCorrelationId,
                 organizationId);
-        System.out.println("Prima della modifica, il tenant kind risulta essere: " + processTenant.getBody().getKind());
+        TenantKind kindIniziale = processTenant.getBody().getKind();
+        System.out.println("Prima della modifica, il tenant kind risulta essere: " + kindIniziale);
 
         List<String> metadataVersion = processTenant.getHeaders().get("X-Metadata-Version");
         System.out.println("Header metadata version: " + metadataVersion);
@@ -84,6 +85,7 @@ public class InteropMaintenanceServiceImpl implements InteropMaintenanceService 
 
         // FIXME utile solo a fini di debug, si verifica che il tenant appena modificato differisca dal
         //  precedente solo per il tenant kind e per il campo "updatedAt"
+        sleep();
         ResponseEntity<Tenant> processTenantPostKindUpdate = processBffTenantApi.getTenantWithHttpInfo(
                 xCorrelationId,
                 organizationId);
@@ -95,12 +97,21 @@ public class InteropMaintenanceServiceImpl implements InteropMaintenanceService 
         System.out.println("A meno di tenantKind e updatedAt le due versioni del tenant risultano uguali -> " + processTenant.getBody().equals(processTenantPostKindUpdate.getBody()));
 
         // FIXME utile solo ai fini di debug, il ripristino del corretto tenant kind dovrà essere fatto altrove
-        mapped.getTenant().setKind(processTenant.getBody().getKind());
+        mapped.getTenant().setKind(kindIniziale);
         processMaintTenantApi.maintenanceTenantUpdate(xCorrelationId, organizationId, mapped);
+        sleep();
         processTenantPostKindUpdate = processBffTenantApi.getTenantWithHttpInfo(
                 xCorrelationId,
                 organizationId);
         System.out.println("Dopo il ripristino, il tenant kind risulta ora essere: " +  processTenantPostKindUpdate.getBody().getKind());
+    }
+
+    private static void sleep() {
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
