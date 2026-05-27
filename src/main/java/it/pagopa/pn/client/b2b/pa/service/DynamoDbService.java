@@ -9,6 +9,8 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -22,6 +24,7 @@ public class DynamoDbService {
             case PAYMENT_INFO -> buildPaymentInfoRequest(attributeValues);
             case NOTIFICATION_DELIVERY_COST -> buildNotificationDeliveryCostRequest(attributeValues);
             case ONBOARD_INSTITUTIONS -> buildOnboardInstitutionsRequest(attributeValues);
+            case BATCH_REQUESTS -> buildBatchRequestsByStatusAndTimeRequest(attributeValues);
         };
         return dynamoDbClient.query(queryRequest);
     }
@@ -49,5 +52,54 @@ public class DynamoDbService {
         return DynamoQueryBuilder.withoutFilter(DynamoTableName.ONBOARD_INSTITUTIONS.getValue(),
                 "id = :v_id",
                 attributeValues);
+    }
+
+    // added for cases when the result might be paginated
+    public List<Map<String, AttributeValue>> callAll(
+            DynamoTableName tableName,
+            Map<String, AttributeValue> attributeValues
+    ) {
+        QueryRequest baseRequest = switch (tableName) {
+            case TIMELINE -> buildTimelinesCategoryRequest(attributeValues);
+            case PAYMENT_INFO -> buildPaymentInfoRequest(attributeValues);
+            case NOTIFICATION_DELIVERY_COST -> buildNotificationDeliveryCostRequest(attributeValues);
+            case ONBOARD_INSTITUTIONS -> buildOnboardInstitutionsRequest(attributeValues);
+            case BATCH_REQUESTS -> buildBatchRequestsByStatusAndTimeRequest(attributeValues);
+        };
+
+        List<Map<String, AttributeValue>> allItems = new ArrayList<>();
+
+        Map<String, AttributeValue> lastEvaluatedKey = null;
+
+        do {
+            QueryRequest.Builder requestBuilder = baseRequest.toBuilder();
+
+            if (lastEvaluatedKey != null && !lastEvaluatedKey.isEmpty()) {
+                requestBuilder.exclusiveStartKey(lastEvaluatedKey);
+            }
+
+            QueryResponse response = dynamoDbClient.query(requestBuilder.build());
+
+            if (response.hasItems()) {
+                allItems.addAll(response.items());
+            }
+
+            lastEvaluatedKey = response.lastEvaluatedKey();
+
+        } while (lastEvaluatedKey != null && !lastEvaluatedKey.isEmpty());
+
+        return allItems;
+    }
+
+    private static QueryRequest buildBatchRequestsByStatusAndTimeRequest(
+            Map<String, AttributeValue> attributeValues) {
+
+        return DynamoQueryBuilder.withIndex(
+                DynamoTableName.BATCH_REQUESTS.getValue(),
+                "sendStatus = :v_sendStatus",
+                "lastReserved > :v_lastReserved",
+                attributeValues,
+                "sendStatus-lastReserved-index"
+        );
     }
 }

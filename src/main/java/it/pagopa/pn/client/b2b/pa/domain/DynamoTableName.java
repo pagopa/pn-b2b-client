@@ -7,7 +7,8 @@ public enum DynamoTableName {
     TIMELINE("pn-Timelines"),
     PAYMENT_INFO("pn-PaymentInfo"),
     NOTIFICATION_DELIVERY_COST("pn-NotificationDeliveryCost"),
-    ONBOARD_INSTITUTIONS("pn-OnboardInstitutions");
+    ONBOARD_INSTITUTIONS("pn-OnboardInstitutions"),
+    BATCH_REQUESTS("pn-batchRequests");
 
     private final String value;
 

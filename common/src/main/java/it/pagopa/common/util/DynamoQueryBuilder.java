@@ -21,4 +21,14 @@ public class DynamoQueryBuilder {
                                              Map<String, AttributeValue> expressionAttributeValues) {
         return withFilter(tableName, keyCondition, null, expressionAttributeValues);
     }
+
+    public static QueryRequest withIndex(String tableName, String keyCondition,
+                                         String sortKeyCondition, Map<String, AttributeValue> expressionAttributeValues, String indexName) {
+        return QueryRequest.builder()
+                .tableName(tableName)
+                .indexName(indexName)
+                .keyConditionExpression(keyCondition + " AND " + sortKeyCondition)
+                .expressionAttributeValues(expressionAttributeValues)
+                .build();
+    }
 }
