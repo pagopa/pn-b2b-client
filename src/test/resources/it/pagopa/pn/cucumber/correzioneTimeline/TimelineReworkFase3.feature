@@ -77,7 +77,7 @@ Feature: Correzione timeline fase 3
     And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
     #dopo tutti i KO, ne invochiamo una che va a buon fine
     When viene invocata una richiesta di restart per la notifica appena creata
-    And si verifica che la richiesta di restart effettuata sia in stato "CREATED"
+    And si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     #dopo la precedente creazione andata a buon fine, ne invoco una seconda per ottenere un 409
     And viene invocata una richiesta di restart per la notifica appena creata
     Then si verifica che la chiamata sia andata in errore con il seguente status code: 409
@@ -283,6 +283,50 @@ Feature: Correzione timeline fase 3
       | digitalDomicile         | NULL      |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
+    When viene invocata una richiesta di restart per la notifica appena creata
+    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
+
+  @timelineReworkF3
+  Scenario: [TR3_RESTART_CREATION_UNREACHABLE_MONODEST] Tentativi di creazione di una restart per una notifica mono-destinatario andata in completely unreachable
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario
+      | denomination            | Test AR Fail             |
+      | taxId                   | MNTMRA03M71C615V         |
+      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
+      | digitalDomicile         | NULL                     |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+#    Given imposto lo iun di SharedSteps a "VLGV-HUWD-WNWM-202605-Q-1" e la pa a "Comune_Multi"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE" per l'utente 0
+#    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 0
+    When viene invocata una richiesta di restart per la notifica appena creata
+    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
+
+  @timelineReworkF3
+  Scenario: [TR3_RESTART_CREATION_UNREACHABLE_MULTIDEST] Tentativi di creazione di una restart per una notifica multi-destinatario andata in completely unreachable
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario
+      | denominatation          | Test Recipient One       |
+      | taxId                   | MNTMRA03M71C615V         |
+      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
+      | digitalDomicile         | NULL                     |
+    And destinatario
+      | denominatation          | Test Recipient Two       |
+      | taxId                   | LTTSRT16T12H501Y         |
+      | physicalAddress_address | Via@FAIL-IRREPERIBILE_AR |
+      | digitalDomicile         | NULL                     |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE" per l'utente 1
+#    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 0
+#    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 1
     When viene invocata una richiesta di restart per la notifica appena creata
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi

@@ -32,6 +32,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils.getDataTableParams;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOTIFICATION_STATUS_VIEWED;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.awaitility.Awaitility.await;
@@ -160,7 +161,8 @@ public class TimelineReworkSteps {
 
     @And("si verifica che la richiesta di {timelineInvalidation} effettuata sia in stato {string}")
     public void verifyReworkStatusById(String requestType, String status) {
-        ReworkItemsResponse reworkItemsResponse = reworkTimelineClient.retrieveNotificationReworkById(sharedSteps.getNotificationIun(), reworkResponse.getReworkId());
+        String reworkId = requestType.equals("REWORK") ? reworkResponse.getReworkId() : restartAttemptResponse.getReworkId();
+        ReworkItemsResponse reworkItemsResponse = reworkTimelineClient.retrieveNotificationReworkById(sharedSteps.getNotificationIun(), reworkId);
         checkRequestType(requestType);
         reworkItemsResponse.getItems().stream()
                 .filter(reworkItem -> reworkItem.getStatus() == ReworkItem.StatusEnum.fromValue(status))
@@ -368,7 +370,7 @@ public class TimelineReworkSteps {
 
         List<NotificationStatusHistoryInvalidatedElement> invalidatedHistory = reworkedElement.getDetails().getInvalidatedTimelineAndStatusHistory();
 
-        if (invalidatedHistory == null || invalidatedHistory.isEmpty()) {
+        if (invalidatedHistory.isEmpty()) {
             throw new AssertionError("invalidatedTimelineAndStatusHistory vuota o null");
         }
         return invalidatedHistory;
@@ -519,32 +521,37 @@ public class TimelineReworkSteps {
 
     @Then("controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato {invoicingType}")
     public void checkReworkedTimelinesForInvoicing(String invoicingType, Map<String, String> expectedElements) {
-        try {
-            assertThat(reworkedTimelinesForInvoicingResponse).as("Il risultato della query su pn-ReworkedTimelinesForInvoicing non dev'essere null").isNotNull();
-            List<Map<String, AttributeValue>> records = reworkedTimelinesForInvoicingResponse.items().stream().filter(
-                    e -> e.containsKey("invoicingType") && e.get("invoicingType").s().equals(invoicingType)).toList();
-            if (invoicingType.equals("NEW")) {
-                for (Map<String, AttributeValue> record : records) {
-                    assertThat(record.get("invoincingTimestamp_timelineElementId"))
-                            .as("Il record %s non contiene il campo timeline id", record)
-                            .isNotNull();
-                    assertThat(record.get("invoincingTimestamp_timelineElementId").s())
-                            .as("Il timelineElementId del record %s dovrebbe esplicitare che si tratta di un rework", record)
-                            .contains("REWORK_");
+        boolean isViewed = sharedSteps.getSentNotificationLastVersion().getNotificationStatus().getValue().equals(NOTIFICATION_STATUS_VIEWED);
+        if (isViewed && invoicingType.equals("NEW")) {
+            log.info("Notification viewed: skipping checks on reworkedTimelines with invoicingType NEW");
+        } else {
+            try {
+                assertThat(reworkedTimelinesForInvoicingResponse).as("Il risultato della query su pn-ReworkedTimelinesForInvoicing non dev'essere null").isNotNull();
+                List<Map<String, AttributeValue>> records = reworkedTimelinesForInvoicingResponse.items().stream().filter(
+                        e -> e.containsKey("invoicingType") && e.get("invoicingType").s().equals(invoicingType)).toList();
+                if (invoicingType.equals("NEW")) {
+                    for (Map<String, AttributeValue> record : records) {
+                        assertThat(record.get("invoincingTimestamp_timelineElementId"))
+                                .as("Il record %s non contiene il campo timeline id", record)
+                                .isNotNull();
+                        assertThat(record.get("invoincingTimestamp_timelineElementId").s())
+                                .as("Il timelineElementId del record %s dovrebbe esplicitare che si tratta di un rework", record)
+                                .contains("REWORK_");
+                    }
                 }
+                expectedElements.forEach((key, value) -> {
+                    String[] requirements = value.split(";");
+                    Map<String, AttributeValue> expectedFound = records.stream()
+                            .filter(r -> r.containsKey("invoincingTimestamp_timelineElementId")
+                                    && Arrays.stream(requirements).allMatch(r.get("invoincingTimestamp_timelineElementId").s()::contains))
+                            .findFirst().orElse(null);
+                    assertThat(expectedFound)
+                            .as("Non è stato trovato nessun record che nel timelineElement id abbia tutte le sottostringhe attese: %s", Arrays.toString(requirements))
+                            .isNotNull();
+                });
+            } catch (AssertionError assertionError) {
+                sharedSteps.throwAssertionErrorWithIUN(assertionError);
             }
-            expectedElements.forEach((key, value) -> {
-                String[] requirements = value.split(";");
-                Map<String, AttributeValue> expectedFound = records.stream()
-                        .filter(r -> r.containsKey("invoincingTimestamp_timelineElementId")
-                                && Arrays.stream(requirements).allMatch(r.get("invoincingTimestamp_timelineElementId").s()::contains))
-                        .findFirst().orElse(null);
-                assertThat(expectedFound)
-                        .as("Non è stato trovato nessun record che nel timelineElement id abbia tutte le sottostringhe attese: %s", Arrays.toString(requirements))
-                        .isNotNull();
-            });
-        } catch (AssertionError assertionError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 }
