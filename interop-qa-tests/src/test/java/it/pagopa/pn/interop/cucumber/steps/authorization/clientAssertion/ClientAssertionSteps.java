@@ -34,56 +34,65 @@ public class ClientAssertionSteps {
         this.voucherContext = voucherContext;
     }
 
-    @When("{string} crea una client assertion valida per un client di tipo {interopClientType}")
-    public void createValidClientAssertion(String tenantType, ClientAssertionOptions.ClientType clientType) {
-        createCustomClientAssertion(clientType, Collections.emptyList());
-    }
-
-    @When("{string} crea una client assertion per un client di tipo {interopClientType} utilizzando una chiave {string} di lunghezza {int}")
-    public void createClientAssertion(String tenantType, ClientAssertionOptions.ClientType clientType, String keyType, int keySize) {
-        KeyPair keyPair = KeyPairGeneratorUtil.createKeyPair(keyType, keySize);
-        createCustomClientAssertionWithKey(clientType, Collections.emptyList(), keyPair);
-    }
-
-    @When("{string} crea una client assertion per un client di tipo {interopClientType} utilizzando una chiave {string} di lunghezza {int} con:")
-    public void createClientAssertion(String tenantType, ClientAssertionOptions.ClientType clientType, String keyType, int keySize, List<DevToolsRequestConfig.JwtClaimOverride> overrides) {
-        KeyPair keyPair = KeyPairGeneratorUtil.createKeyPair(keyType, keySize);
-        createCustomClientAssertionWithKey(clientType, overrides, keyPair);
-    }
-
-    @When("{string} crea una client assertion per un client di tipo {interopClientType} con:")
-    public void createClientAssertion(String tenantType, ClientAssertionOptions.ClientType clientType, List<DevToolsRequestConfig.JwtClaimOverride> overrides) {
-        createCustomClientAssertion(clientType, overrides);
-    }
-
-    @When("{string} crea una client assertion per un client di tipo {interopClientType}, firmando con una producer key e con:")
-    public void createProducerClientAssertion(String tenantType, ClientAssertionOptions.ClientType clientType, List<DevToolsRequestConfig.JwtClaimOverride> overrides) {
-        KeyPair keyPair = sharedStepsContext.getProducerKeychainCommonContext().getProducerKeyPairs().get(0).getKeyPair();
-        createCustomClientAssertionWithKey(clientType, overrides, keyPair);
-    }
-
-    private void createCustomClientAssertion(ClientAssertionOptions.ClientType clientType, List<DevToolsRequestConfig.JwtClaimOverride> overrides) {
-        DPoPTokenService.PreparedClient preparedClient = sharedStepsContext.getClientCommonContext().getLastPreparedClient();
-        JwtBuilder validClientAssertion = buildValidClientAssertion(clientType);
-
-        String clientAssertion = validClientAssertion.signWith(preparedClient.keyPair().getPrivate()).compact();
-
-        if (voucherContext.getActualInteractionId() != null && !voucherContext.getActualInteractionId().isBlank()) {
-            overrides.add(new DevToolsRequestConfig.JwtClaimOverride("interactionId", voucherContext.getActualInteractionId()));
+    @When("il tenant {currentActor} {string} crea una client assertion valida per un client di tipo {interopClientType}")
+    public void createValidClientAssertion(String actor, String tenant, ClientAssertionOptions.ClientType clientType) {
+        String purposeId = null;
+        KeyPair keyPair = null;
+        String clientId = null;
+        switch (actor) {
+            case "fruitore" -> {
+                purposeId = sharedStepsContext.getPurposeCommonContext().getLastPurposeId().toString();
+                DPoPTokenService.PreparedClient preparedClient = sharedStepsContext.getClientCommonContext().getLastPreparedClient();
+                keyPair = preparedClient.keyPair().getKeyPair();
+                clientId = preparedClient.clientId().toString();
+            }
+            case "erogatore" -> {
+                keyPair = sharedStepsContext.getProducerKeychainCommonContext().getProducerKeyPairs().get(0).getKeyPair();
+                clientId = sharedStepsContext.getProducerKeychainCommonContext().getFirstProducerKeychainId().toString();
+            }
         }
-
-        try {
-            clientAssertion = applyOverridesToEncodedJwt(clientAssertion, overrides, preparedClient.keyPair().getKeyPair());
-        } catch (Exception e) {
-            throw new RuntimeException("Error processing JSON for client assertion header: " + e.getMessage(), e);
-        }
-
-        logClientAssertion(clientAssertion);
-        voucherContext.setActualClientAssertion(clientAssertion);
+        createCustomClientAssertion(clientType, Collections.emptyList(), keyPair, clientId, purposeId);
     }
 
-    private void createCustomClientAssertionWithKey(ClientAssertionOptions.ClientType clientType, List<DevToolsRequestConfig.JwtClaimOverride> overrides, KeyPair keyPair) {
-        JwtBuilder validClientAssertion = buildValidClientAssertion(clientType);
+    @When("il tenant {currentActor} {string} crea una client assertion per un client di tipo {interopClientType} utilizzando una chiave {string} di lunghezza {int}")
+    public void createClientAssertion(String actor, String tenant, ClientAssertionOptions.ClientType clientType, String keyType, int keySize) {
+        String purposeId = null;
+        String clientId = null;
+        if (actor.equals("erogatore")) {
+            // Producer has no prepared client
+        } else if (actor.equals("fruitore")) {
+            purposeId = sharedStepsContext.getPurposeCommonContext().getLastPurposeId().toString();
+            DPoPTokenService.PreparedClient preparedClient = sharedStepsContext.getClientCommonContext().getLastPreparedClient();
+            clientId = preparedClient.clientId().toString();
+        } else {
+            throw new RuntimeException("Actor not recognized");
+        }
+        KeyPair keyPair = KeyPairGeneratorUtil.createKeyPair(keyType, keySize);
+        createCustomClientAssertionWithKey(clientType, Collections.emptyList(), keyPair, clientId, purposeId);
+    }
+
+    @When("il tenant {currentActor} {string} crea una client assertion per un client di tipo {interopClientType} con:")
+    public void createClientAssertion(String actor, String tenant, ClientAssertionOptions.ClientType clientType, List<DevToolsRequestConfig.JwtClaimOverride> overrides) {
+        String purposeId = null;
+        KeyPair keyPair = null;
+        String clientId = null;
+        if (actor.equals("erogatore")) {
+            keyPair = sharedStepsContext.getProducerKeychainCommonContext().getProducerKeyPairs().get(0).getKeyPair();
+            clientId = sharedStepsContext.getProducerKeychainCommonContext().getFirstProducerKeychainId().toString();
+        } else if (actor.equals("fruitore")) {
+            purposeId = sharedStepsContext.getPurposeCommonContext().getLastPurposeId().toString();
+            DPoPTokenService.PreparedClient preparedClient = sharedStepsContext.getClientCommonContext().getLastPreparedClient();
+            keyPair = preparedClient.keyPair().getKeyPair();
+            clientId = preparedClient.clientId().toString();
+        } else {
+            throw new RuntimeException("Actor not recognized");
+        }
+        createCustomClientAssertionWithKey(clientType, overrides, keyPair, clientId, purposeId);
+    }
+
+    private void createCustomClientAssertion(ClientAssertionOptions.ClientType clientType, List<DevToolsRequestConfig.JwtClaimOverride> overrides, KeyPair keyPair, String clientId, String purposeId) {
+
+        JwtBuilder validClientAssertion = buildValidClientAssertion(clientType, keyPair, clientId, purposeId);
 
         String clientAssertion = validClientAssertion.signWith(keyPair.getPrivate()).compact();
 
@@ -101,24 +110,40 @@ public class ClientAssertionSteps {
         voucherContext.setActualClientAssertion(clientAssertion);
     }
 
-    private JwtBuilder buildValidClientAssertion(ClientAssertionOptions.ClientType clientType) {
-        DPoPTokenService.PreparedClient preparedClient = sharedStepsContext.getClientCommonContext().getLastPreparedClient();
-        String rawClientId = preparedClient != null ? preparedClient.clientId().toString() : null;
-        String rawKid = preparedClient != null ? calculateKidFromPublicKey(preparedClient.keyPair().getPublic()) : null;
+    private void createCustomClientAssertionWithKey(ClientAssertionOptions.ClientType clientType, List<DevToolsRequestConfig.JwtClaimOverride> overrides, KeyPair keyPair, String clientId, String purposeId) {
+        JwtBuilder validClientAssertion = buildValidClientAssertion(clientType, keyPair, clientId, purposeId);
+
+        String clientAssertion = validClientAssertion.signWith(keyPair.getPrivate()).compact();
+
+        if (voucherContext.getActualInteractionId() != null && !voucherContext.getActualInteractionId().isBlank()) {
+            overrides.add(new DevToolsRequestConfig.JwtClaimOverride("interactionId", voucherContext.getActualInteractionId()));
+        }
+
+        try {
+            clientAssertion = applyOverridesToEncodedJwt(clientAssertion, overrides, keyPair);
+        } catch (Exception e) {
+            throw new RuntimeException("Error processing JSON for client assertion header: " + e.getMessage(), e);
+        }
+
+        logClientAssertion(clientAssertion);
+        voucherContext.setActualClientAssertion(clientAssertion);
+    }
+
+    private JwtBuilder buildValidClientAssertion(ClientAssertionOptions.ClientType clientType, KeyPair keyPair, String clientId, String purposeId) {
+        String rawKid = keyPair != null ? calculateKidFromPublicKey(keyPair.getPublic()) : null;
 
         // Builder base "valido", poi alterato con DataTable
         JwtBuilder jwtBuilder = Jwts.builder()
-                .issuer(rawClientId)
-                .subject(rawClientId)
+                .issuer(clientId)
+                .subject(clientId)
                 .audience().add(this.clientAssertionJwtAudience).and()
                 .id(UUID.randomUUID().toString())
                 .issuedAt(new Date())
                 .expiration(Date.from(Instant.now().plusSeconds(43200)))
                 .header().add("kid", rawKid).and();
 
-        if (clientType == ClientAssertionOptions.ClientType.CONSUMER) {
-            UUID purposeId = sharedStepsContext.getPurposeCommonContext().getLastPurposeId();
-            jwtBuilder.claim("purposeId", purposeId);
+        if (purposeId != null && clientType == ClientAssertionOptions.ClientType.CONSUMER) {
+            jwtBuilder.claim("purposeId", UUID.fromString(purposeId));
         }
 
         return jwtBuilder;

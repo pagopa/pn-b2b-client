@@ -9,4 +9,13 @@ public class CommonParameterType {
     public ClientAssertionOptions.ClientType interopClientType(String clientType) {
         return ClientAssertionOptions.ClientType.valueOf(clientType.toUpperCase());
     }
+
+    @ParameterType("fruitore|erogatore")
+    public String currentActor(String actor) {
+        return switch (actor.toLowerCase()) {
+            case "fruitore" -> "fruitore";
+            case "erogatore" -> "erogatore";
+            default -> throw new IllegalArgumentException("Invalid actor: " + actor);
+        };
+    }
 }
