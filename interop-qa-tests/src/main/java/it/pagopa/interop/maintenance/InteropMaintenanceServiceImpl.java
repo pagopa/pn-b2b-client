@@ -92,6 +92,14 @@ public class InteropMaintenanceServiceImpl implements InteropMaintenanceService 
         processTenant.getBody().setUpdatedAt(null);
         processTenant.getBody().setKind(null);
         System.out.println("A meno di tenantKind e updatedAt le due versioni del tenant risultano uguali -> " + processTenant.getBody().equals(processTenantPostKindUpdate.getBody()));
+
+        // FIXME utile solo ai fini di debug, il ripristino del corretto tenant kind dovrà essere fatto altrove
+        mapped.getTenant().setKind(processTenant.getBody().getKind());
+        processMaintTenantApi.maintenanceTenantUpdate(xCorrelationId, organizationId, mapped);
+        processTenantPostKindUpdate = processBffTenantApi.getTenantWithHttpInfo(
+                xCorrelationId,
+                organizationId);
+        System.out.println("Dopo il ripristino, il tenant kind risulta ora essere: " +  processTenantPostKindUpdate.getBody().getKind());
     }
 
 }
