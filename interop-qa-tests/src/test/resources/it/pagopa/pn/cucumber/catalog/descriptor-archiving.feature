@@ -6,9 +6,9 @@ Feature: Archiviazione manuale di un descrittore
     And "PA1" ha già creato un e-service con un descrittore in stato "<initialDescriptorState>"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-#    When l'utente archivia la versione numero <versionNumber> con id "<descriptorId>" dell'e-service con id "<eserviceId>"
+    When l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
     Then si ottiene response status code 204
-#    And il primo(qui possiamo inserire una variabile) descrittore è in stato "<finalDescriptorState>" (ARCHIVING)
+    And la vecchia versione dell'e-service è in stato "<finalDescriptorState>"
 
     #quando il primo descrittore smetterà di essere il più recente, il suo stato passerà da PUBLISHED a DEPRECATED
     Examples:
@@ -25,9 +25,9 @@ Feature: Archiviazione manuale di un descrittore
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-#    When l'utente archivia il primo(qui possiamo inserire una variabile) e meno recente descrittore con id "%actual" dell'e-service con id "%actual"
-    Then si ottiene response status code 401
-#    And il primo(qui possiamo inserire una variabile) descrittore è in stato "DEPRECATED"
+    When l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    Then si ottiene response status code 403
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
 
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_1.3] Un utente con token non valido NON può avviare il processo di archiviazione manuale del descrittore
     Given l'utente è un "admin" di "PA1"
@@ -35,18 +35,18 @@ Feature: Archiviazione manuale di un descrittore
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And viene impostato per l'utente un token non valido
-#    When l'utente archivia il primo(qui possiamo inserire una variabile) e meno recente descrittore con id "%actual" dell'e-service con id "%actual"
+    When l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
     Then si ottiene response status code 401
-#    And il primo(qui possiamo inserire una variabile) descrittore è in stato "DEPRECATED"
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
 
-  Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_1.4] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale di un descrittore se gli attributi obbligatori non sono presenti o corretti
+  Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_1.4] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale di un descrittore se i parametri obbligatori non sono presenti o corretti
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-#    When l'utente archivia il primo(qui possiamo inserire una variabile) e meno recente descrittore con id "<descriptorId>" dell'e-service con id "<eserviceId>"
+    When l'utente archivia la vecchia versione con id "<descriptorId>" dell'e-service con id "<eserviceId>"
     Then si ottiene response status code <statusCode>
-#    And il primo(qui possiamo inserire una variabile) descrittore è in stato "DEPRECATED"
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
 
     Examples:
       | descriptorId | eserviceId | statusCode |
@@ -61,9 +61,9 @@ Feature: Archiviazione manuale di un descrittore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-#    When l'utente archivia il primo(qui possiamo inserire una variabile) e meno recente descrittore con id "<descriptorId>" dell'e-service con id "<eserviceId>"
+    When l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
     Then si ottiene response status code 409
-#    And il primo(qui possiamo inserire una variabile) descrittore è in stato "<finalDescriptorState>" (ARCHIVING)
+    And la vecchia versione dell'e-service è in stato "ARCHIVING"
 
   Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_1.6] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale di un suo descrittore se quest'ultimo è già in stato di archiviazione
     Given l'utente è un "admin" di "PA1"
@@ -71,10 +71,10 @@ Feature: Archiviazione manuale di un descrittore
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     #Nel seguente Step And dobbiamo aggiungere il Polling
-#    And l'utente archivia il primo(qui possiamo inserire una variabile) e meno recente descrittore con id "<descriptorId>" dell'e-service con id "<eserviceId>"
-  #  When l'utente archivia il primo(qui possiamo inserire una variabile) e meno recente descrittore con id "<descriptorId>" dell'e-service con id "<eserviceId>"
+#    And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    When l'utente archivia la vecchia versione con id "<descriptorId>" dell'e-service con id "<eserviceId>"
     Then si ottiene response status code 409
-#    And il primo(qui possiamo inserire una variabile) descrittore è in stato "<finalDescriptorState>" (ARCHIVING)
+    And la vecchia versione dell'e-service è in stato "<finalDescriptorState>"
 
     #quando il primo descrittore smetterà di essere il più recente, il suo stato passerà da PUBLISHED a DEPRECATED
     Examples:
@@ -99,7 +99,7 @@ Feature: Archiviazione manuale di un descrittore
 #    And l'utente archivia la versione numero <versionNumber> con id "<descriptorId>" dell'e-service con id "<eserviceId>"
 #    When l'utente annulla il processo di archiviazione della versione numero <versionNumber> con id "<descriptorId>" dell'e-service con id "<eserviceId>"
     Then si ottiene response status code 204
-#    And il primo(qui possiamo inserire una variabile) descrittore è in stato "<finalDescriptorState>" (DEPRECATED)
+    And la vecchia versione dell'e-service è in stato "<finalDescriptorState>"
 
     Examples:
       | role         | initialDescriptorState | finalDescriptorState |
