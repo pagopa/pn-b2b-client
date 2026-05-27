@@ -1,4 +1,4 @@
-@m2m-purpose-template-events @m2m-events
+@m2m-purpose-template-events
 Feature: Eventi M2M di Purpose Template
 
   Scenario: [M2M_PURPOSE_TEMPLATE_EVENTS_01] L'evento di creazione in DRAFT di purpose template deve essere visibile solo all'owner della risorsa
