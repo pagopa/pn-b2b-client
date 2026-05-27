@@ -28,6 +28,8 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.INEXISTENT_IUN;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.INVALID_IUN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -218,8 +220,8 @@ public class CostiNotificaSteps {
             case "recIndex null" -> request.getCostRecipients().get(0).setRecIndex(null);
             case "iuv null" -> request.getCostRecipients().get(0).getPayments().get(0).setIuv(null);
             case "applyCost null" -> request.getCostRecipients().get(0).getPayments().get(0).setApplyCost(null);
-            case "iun invalido" -> iun = "INVALID-IUN";
-            case "iun inesistente" -> iun = "TEST-INEX-ISTE-123456-Z-1";
+            case "iun invalido" -> iun = INVALID_IUN;
+            case "iun inesistente" -> iun = INEXISTENT_IUN;
             case "pagamenti vuoti" -> request.getCostRecipients().get(0).setPayments(new ArrayList<>());
         }
         try {

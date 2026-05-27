@@ -74,6 +74,9 @@ public class Costanti {
     public static final String COMUNE_SON_TAX_ID = "03509990788";
     public static final String COMUNE_ROOT_TAX_ID = "03509990788";
 
+    public static final String INVALID_IUN = "INVALID-IUN";
+    public static final String INEXISTENT_IUN = "TEST-INEX-ISTE-123456-Z-1";
+
     /**
      * 07/05/2025
      * I seguenti taxID per PG sono ora i soli validi per intraprendere il flusso analogico senza che recuperi indirizzi digitali dai registri nazionali
@@ -270,7 +273,6 @@ public class Costanti {
                     "COMPLETELY_UNREACHABLE",
                     "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
             );
-
 
 
     public static String getDigitalAddressValue() {

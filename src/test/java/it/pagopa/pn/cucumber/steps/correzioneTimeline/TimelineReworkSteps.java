@@ -6,11 +6,15 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.*;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.generate.model.externalregistry.privateapi.AnalogUpdateCostPhase;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.generate.model.externalregistry.privateapi.PaperCostToInvalidate;
 import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryInvalidatedElement;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
+import it.pagopa.pn.client.b2b.pa.service.IPnExternalRegistryPrivateUserApi;
+import it.pagopa.pn.client.b2b.pa.service.IPnNotificationCostClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.ReworkTimelineClientImpl;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
@@ -32,9 +36,10 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils.getDataTableParams;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOTIFICATION_STATUS_VIEWED;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -50,8 +55,9 @@ public class TimelineReworkSteps {
     private final SharedSteps sharedSteps;
     private final ReworkTimelineClientImpl reworkTimelineClient;
     private final DynamoDbService dynamoDbService;
+    private final IPnNotificationCostClient notificationCostClient;
+    private final IPnExternalRegistryPrivateUserApi externalRegistryPrivateUserApi;
     private ReworkResponse reworkResponse;
-
     private QueryResponse reworkedTimelinesForInvoicingResponse;
     private RestartAttemptResponse restartAttemptResponse;
     private HttpStatus httpStatusCode;
@@ -559,6 +565,68 @@ public class TimelineReworkSteps {
             } catch (AssertionError assertionError) {
                 sharedSteps.throwAssertionErrorWithIUN(assertionError);
             }
+        }
+    }
+
+    @Then("verifico la che il reworkId del {timelineInvalidation} generato sia corretto, con rework {int} try {int} e recIndex {int}")
+    public void checkReworkId(String requestType, int reworkIndex, int tryIndex, int recIndex) {
+        String reworkId = requestType.equals("REWORK") ? reworkResponse.getReworkId() : restartAttemptResponse.getReworkId();
+        try {
+            assertSoftly(softly -> {
+                softly.assertThat(reworkId).as("Il rework id dovrebbe avere rework index pari a %s", reworkIndex).contains("REWORK_" + reworkIndex);
+                softly.assertThat(reworkId).as("Il rework id dovrebbe avere try index pari a %s", tryIndex).contains("TRY_" + tryIndex);
+                softly.assertThat(reworkId).as("Il rework id dovrebbe avere rec index pari a %s", recIndex).contains("RECINDEX_" + recIndex);
+            });
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
+    }
+
+    @When("invoco l'api di external-registry per l'invalidazione dei costi con {string}")
+    public void testExternalRegistryApi(String inputParams) {
+        String iun = sharedSteps.getNotificationIun();
+        PaperCostToInvalidate request = new PaperCostToInvalidate();
+        request.setVat(20);
+        request.setCostPhases(List.of(AnalogUpdateCostPhase._0));
+        request.setPaymentsInfo(List.of());
+        switch (inputParams) {
+            case "iun null" -> iun = null;
+            case "iun non valido" -> iun = INVALID_IUN;
+            case "iun inesistente" -> iun = INEXISTENT_IUN;
+            case "vat null" -> request.setVat(null);
+            case "vat non valido" -> request.setVat(-20);
+            case "costPhases null" -> request.setCostPhases(null);
+            case "paymentsInfo null" -> request.setPaymentsInfo(null);
+        }
+        log.info("external-registry invalidatePaperCost request: IUN: {}, request-body: {}", iun, request);
+        try {
+            externalRegistryPrivateUserApi.invalidatePaperCost(iun, request);
+        } catch (HttpStatusCodeException exception) {
+            httpStatusCode = exception.getStatusCode();
+        }
+    }
+
+    @When("invoco l'api di notification-cost per l'invalidazione dei costi con {string}")
+    public void testNotificationCostApi(String inputParams) {
+        String iun = sharedSteps.getNotificationIun();
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.PaperCostToInvalidate request =
+                new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.PaperCostToInvalidate();
+        request.setRecIndex("RECINDEX_0");
+        request.setCostPhases(List.of(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.AnalogUpdateCostPhase._0));
+        switch (inputParams) {
+            case "iun null" -> iun = null;
+            case "iun non valido" -> iun = INVALID_IUN;
+            case "iun inesistente" -> iun = INEXISTENT_IUN;
+            case "recIndex null" -> request.setRecIndex(null);
+            case "recIndex non presente" -> request.setRecIndex("RECINDEX_1");
+            case "recIndex non valido" -> request.setRecIndex("1");
+            case "costPhases null" -> request.setCostPhases(null);
+        }
+        log.info("notification-cost invalidatePaperCost request: IUN: {}, request-body: {}", iun, request);
+        try {
+            notificationCostClient.invalidatePaperCost(iun, request);
+        } catch (HttpStatusCodeException exception) {
+            httpStatusCode = exception.getStatusCode();
         }
     }
 }

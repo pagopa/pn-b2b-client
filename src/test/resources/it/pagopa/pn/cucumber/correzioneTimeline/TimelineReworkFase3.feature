@@ -69,15 +69,19 @@ Feature: Correzione timeline fase 3
       | iun | attemptId | recIndex   | reason     | task       |
       |     | ATTEMPT_0 | RECINDEX_1 | reasonTest | TEST-12345 |
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
-    Then si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
+    And verifico la che il reworkId del restart generato sia corretto, con rework 0 try 0 e recIndex 1
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
     When viene invocata una richiesta di restart per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | recIndex   | reason     | task       |
       |     | ATTEMPT_1 | RECINDEX_0 | reasonTest | TEST-12345 |
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
+    And verifico la che il reworkId del restart generato sia corretto, con rework 0 try 0 e recIndex 0
     And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
     #dopo tutti i KO, ne invochiamo una che va a buon fine
     When viene invocata una richiesta di restart per la notifica appena creata
     And si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
+    And verifico la che il reworkId del restart generato sia corretto, con rework 0 try 1 e recIndex 0
+    And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     #dopo la precedente creazione andata a buon fine, ne invoco una seconda per ottenere un 409
     And viene invocata una richiesta di restart per la notifica appena creata
     Then si verifica che la chiamata sia andata in errore con il seguente status code: 409
@@ -477,6 +481,7 @@ Feature: Correzione timeline fase 3
     And destinatario Mario Cucumber e:
       | physicalAddress_address | Via@OK_AR |
       | digitalDomicile         | NULL      |
+#    Given imposto lo iun di SharedSteps a "LGMD-ZKPT-MRQU-202605-Z-1" e la pa a "Comune_Multi"
     And si predispone 1 nuovo stream denominato "stream-testLast" con eventType "TIMELINE" con versione "più recente"
     And si predispone 1 nuovo stream denominato "stream-testV28" con eventType "TIMELINE" con versione "V28"
     And si predispone 1 nuovo stream denominato "stream-testV25" con eventType "TIMELINE" con versione "V25"
@@ -497,17 +502,94 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     Then vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
     Then viene invocata una richiesta di restart per la notifica appena creata
-    And si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 130 secondi controllando ogni 5 secondi
-    And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
+    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
-    And si invoca l'api Webhook versione "più recente" per ottenere gli elementi di timeline di tale notifica
     And si invoca l'api Webhook versione "V28" per ottenere gli elementi di timeline di tale notifica
+    And si invoca l'api Webhook versione "più recente" per ottenere gli elementi di timeline di tale notifica
     And si invoca l'api Webhook versione "V25" per ottenere gli elementi di timeline di tale notifica
     And si invoca l'api Webhook versione "V23" per ottenere gli elementi di timeline di tale notifica
     And si invoca l'api Webhook versione "V10" per ottenere gli elementi di timeline di tale notifica
-    And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "NOTIFICATION_TIMELINE_REWORKED" con la versione "più recente"
+    And la category "NOTIFICATION_TIMELINE_REWORKED" è presente in almeno un elemento di timeline restituito dalla consumeStream con versione "più recente"
     And la category "NOTIFICATION_TIMELINE_REWORKED" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V28"
     And la category "NOTIFICATION_TIMELINE_REWORKED" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V25"
     And la category "NOTIFICATION_TIMELINE_REWORKED" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V23"
     And la category "NOTIFICATION_TIMELINE_REWORKED" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V10"
 
+#  @timelineReworkF3 @checkRestart
+  Scenario: [TR3_EXTERNAL_REGISTRY_API_VALIDATION] Restart di notifica che va in OK all'attempt 0 (anche al restart va in OK all'attempt 0)
+#    Given viene generata una nuova notifica
+#      | subject               | invio notifica con cucumber |
+#      | senderDenomination    | Comune di Palermo           |
+#      | physicalCommunication | AR_REGISTERED_LETTER        |
+#      | pagoPaIntMode         | SYNC                        |
+#      | feePolicy             | DELIVERY_MODE               |
+#      | paFee                 | 17                          |
+#      | vat                   | 10                          |
+#    And destinatario Mario Gherkin e:
+#      | physicalAddress_address | Via@OK_AR          |
+#      | digitalDomicile         | NULL               |
+#      | payment_creditorTaxId   | 77777777777        |
+#      | payment_pagoPaForm      | SI                 |
+#      | payment_f24             | NULL               |
+#      | title_payment           | PagoPa_testRestart |
+#      | apply_cost_pagopa       | SI                 |
+#      | payment_multy_number    | 1                  |
+#    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+#    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
+#    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+#    And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
+#    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    Given imposto lo iun di SharedSteps a "NATV-XMKX-YKXY-202605-Q-1" e la pa a "Comune_Multi"
+    When invoco l'api di external-registry per l'invalidazione dei costi con "iun null"
+    Then si verifica che la chiamata sia andata in errore con il seguente status code: 400
+    When invoco l'api di external-registry per l'invalidazione dei costi con "iun non valido"
+    Then si verifica che la chiamata sia andata in errore con il seguente status code: 400
+    When invoco l'api di external-registry per l'invalidazione dei costi con "iun inesistente"
+    Then si verifica che la chiamata sia andata in errore con il seguente status code: 404
+    When invoco l'api di external-registry per l'invalidazione dei costi con "vat null"
+    Then si verifica che la chiamata sia andata in errore con il seguente status code: 400
+    When invoco l'api di external-registry per l'invalidazione dei costi con "vat non valido"
+    Then si verifica che la chiamata sia andata in errore con il seguente status code: 400
+    When invoco l'api di external-registry per l'invalidazione dei costi con "costPhases null"
+    Then si verifica che la chiamata sia andata in errore con il seguente status code: 400
+    When invoco l'api di external-registry per l'invalidazione dei costi con "paymentsInfo null"
+    Then si verifica che la chiamata sia andata in errore con il seguente status code: 400
+
+
+  @timelineReworkF3 @checkRestart
+  Scenario: [TR3_NOTIFICATION_COST_API_VALIDATION] Restart di notifica che va in OK all'attempt 0 (anche al restart va in OK all'attempt 0)
+#    Given viene generata una nuova notifica
+#      | subject               | invio notifica con cucumber |
+#      | senderDenomination    | Comune di Palermo           |
+#      | physicalCommunication | AR_REGISTERED_LETTER        |
+#      | pagoPaIntMode         | SYNC                        |
+#      | feePolicy             | DELIVERY_MODE               |
+#      | paFee                 | 17                          |
+#      | vat                   | 10                          |
+#    And destinatario Mario Gherkin e:
+#      | physicalAddress_address | Via@OK_AR          |
+#      | digitalDomicile         | NULL               |
+#      | payment_creditorTaxId   | 77777777777        |
+#      | payment_pagoPaForm      | SI                 |
+#      | payment_f24             | NULL               |
+#      | title_payment           | PagoPa_testRestart |
+#      | apply_cost_pagopa       | SI                 |
+#      | payment_multy_number    | 1                  |
+#    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+#    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
+#    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+#    And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
+#    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    Given imposto lo iun di SharedSteps a "NATV-XMKX-YKXY-202605-Q-1" e la pa a "Comune_Multi"
+    When invoco l'api di notification-cost per l'invalidazione dei costi con "iun non valido"
+    Then si verifica che la chiamata sia andata in errore con il seguente status code: 400
+#    When invoco l'api di notification-cost per l'invalidazione dei costi con "iun inesistente"
+#    Then si verifica che la chiamata sia andata in errore con il seguente status code: 404
+    When invoco l'api di notification-cost per l'invalidazione dei costi con "recIndex null"
+    Then si verifica che la chiamata sia andata in errore con il seguente status code: 400
+    When invoco l'api di notification-cost per l'invalidazione dei costi con "recIndex non presente"
+    Then si verifica che la chiamata sia andata in errore con il seguente status code: 404
+    When invoco l'api di notification-cost per l'invalidazione dei costi con "recIndex non valido"
+    Then si verifica che la chiamata sia andata in errore con il seguente status code: 400
+    When invoco l'api di notification-cost per l'invalidazione dei costi con "costPhases null"
+    Then si verifica che la chiamata sia andata in errore con il seguente status code: 400
