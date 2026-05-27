@@ -72,7 +72,7 @@ public class InteropMaintenanceServiceImpl implements InteropMaintenanceService 
         it.pagopa.interop.generated.openapi.clients.bff.model.Tenant tenant1 = tenantsBffClient.getTenant(organizationId);
         String selfcareInstitutionType = tenant1.getSelfcareInstitutionType();
 
-        MaintenanceTenantUpdatePayload mapped = this.mapper.mapWith(tenant.getBody(), Integer.getInteger(currentVersion), TenantKind.valueOf(tenantKind), selfcareInstitutionType);
+        MaintenanceTenantUpdatePayload mapped = this.mapper.mapWith(tenant.getBody(), Integer.parseInt(currentVersion), TenantKind.valueOf(tenantKind), selfcareInstitutionType);
         System.out.println("Tenant finale, prima dell'applicazione del cambio kind: ");
         System.out.println(mapped);
 
