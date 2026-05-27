@@ -30,5 +30,5 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 })
 @ExcludeTags({"wait_for_fix", "ignore"})
 @IncludeTags({"m2m-purpose-template-events"})
-public class PurposeTemplateEvents {
+public class PurposeTemplateEventsTest {
 }
