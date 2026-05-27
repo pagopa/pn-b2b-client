@@ -1,7 +1,9 @@
 package it.pagopa.pn.interop.cucumber.steps.catalog;
 
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.catalog.utils.CatalogResolver;
@@ -36,6 +38,21 @@ public class DescriptorArchivingSteps {
                 () -> clientTokenConfigurator.getEServiceClient()
                         .scheduleArchiveDescriptor(resolvedEServiceId, resolvedDescriptorId),
                 ResponseEntity::getStatusCode
+        );
+    }
+
+    @Then("la vecchia versione dell'e-service è in stato {string}")
+    public void oldEServiceVersionIsInState(String descriptorState) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID oldDescriptorId = sharedStepsContext.getEServicesCommonContext().getOldDescriptorId();
+        EServiceDescriptorState expectedState = EServiceDescriptorState.fromValue(descriptorState);
+
+        sharedStepsContext.getPollingService().makePolling(
+                () -> clientTokenConfigurator.getEServiceClient().getEServiceDescriptor(eServiceId, oldDescriptorId),
+                descriptor -> descriptor != null && expectedState.equals(descriptor.getState()),
+                "La vecchia versione dell'e-service non risulta in stato " + expectedState
         );
     }
 }
