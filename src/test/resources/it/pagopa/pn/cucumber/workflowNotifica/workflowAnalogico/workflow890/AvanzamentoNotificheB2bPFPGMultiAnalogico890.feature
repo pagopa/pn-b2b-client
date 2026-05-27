@@ -74,7 +74,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico 890
       | senderDenomination | Comune di palermo               |
     And destinatario
       | denomination            | Test 890 Fail             |
-      | taxId                   | DVNLRD52D15M059P          |
+      | taxId                   | FNTLCU80T25F205R          |
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@FAIL-Irreperibile_890 |
     And destinatario Cucumber Society
