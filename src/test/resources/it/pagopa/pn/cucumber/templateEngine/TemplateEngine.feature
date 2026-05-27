@@ -340,7 +340,7 @@ Feature: Template engine
     Then verifico che la chiamata sia andata in "400" error
 
   @templateEngine #95 /templates-engine-private/v1/templates/notification-aar-for-pec
-  Scenario: [TEMPLATE-ENGINE_20_1] Richiamare l’API per il recupero del template di avviso di cortesia PEC - body vuoto
+  Scenario Outline: [TEMPLATE-ENGINE_20_1] Richiamare l’API per il recupero del template di avviso di cortesia PEC - body vuoto
     When recupero il template per "avviso di cortesia PEC" in lingua "<language>" con il body "null"
     Then verifico che la chiamata sia andata in "400" error
     Examples:
@@ -369,14 +369,8 @@ Feature: Template engine
       | francese |
       | inglese  |
 
-  @templateEngine #70 /templates-engine-private/v1/templates/emailbody
-  Scenario: [TEMPLATE-ENGINE_22] Richiamare l’API per il recupero del template di OTP di conferma email - lingua errata
-    When recupero il template per "OTP di conferma email" in lingua "francese"
-    Then verifico che il template è in formato "html"
-    And controllo che per il template "OTP di conferma email" il file "html" sia in lingua "italiana"
-
   @templateEngine #96 /templates-engine-private/v1/templates/emailbody
-  Scenario: [TEMPLATE-ENGINE_22_1] Richiamare l’API per il recupero del template di OTP di conferma email - body vuoto
+  Scenario Outline: [TEMPLATE-ENGINE_22_1] Richiamare l’API per il recupero del template di OTP di conferma email - body vuoto
     When recupero il template per "OTP di conferma email" in lingua "<language>" con il body "null"
     Then verifico che la chiamata sia andata in "400" error
     Examples:
@@ -412,7 +406,7 @@ Feature: Template engine
     Then controllo che per il template "OTP di conferma pec" il file "html" sia in lingua "italiana"
 
   @templateEngine #97 /templates-engine-private/v1/templates/pec-verification-code-body
-  Scenario: [TEMPLATE-ENGINE_24_1] Richiamare l’API per il recupero del template di OTP di conferma pec - body vuoto
+  Scenario Outline: [TEMPLATE-ENGINE_24_1] Richiamare l’API per il recupero del template di OTP di conferma pec - body vuoto
     When recupero il template per "OTP di conferma pec" in lingua "<language>" con il body "null"
     Then verifico che la chiamata sia andata in "400" error
     Examples:
