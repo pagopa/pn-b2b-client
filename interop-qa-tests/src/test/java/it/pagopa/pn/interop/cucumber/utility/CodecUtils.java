@@ -78,6 +78,8 @@ public class CodecUtils {
 
                 case "urlCallback" -> payload.put("urlCallback", raw);
                 case "scope" -> payload.put("scope", raw);
+                case "interactionId" -> payload.put("interactionId", raw);
+                case "entityNumber" -> payload.put("entityNumber", Integer.valueOf(raw));
 
                 case "invalidClaim" -> payload.put("invalid_claim", raw);
 
