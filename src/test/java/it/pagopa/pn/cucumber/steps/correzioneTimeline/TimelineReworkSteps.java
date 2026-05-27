@@ -535,13 +535,14 @@ public class TimelineReworkSteps {
     @Then("controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato {invoicingType}")
     public void checkReworkedTimelinesForInvoicing(String invoicingType, Map<String, String> expectedElements) {
         boolean isViewed = sharedSteps.getSentNotificationLastVersion().getNotificationStatus().getValue().equals(NOTIFICATION_STATUS_VIEWED);
-        if (isViewed && invoicingType.equals("NEW")) {
-            log.info("Notification viewed: skipping checks on reworkedTimelines with invoicingType NEW");
-        } else {
-            try {
-                assertThat(reworkedTimelinesForInvoicingResponse).as("Il risultato della query su pn-ReworkedTimelinesForInvoicing non dev'essere null").isNotNull();
-                List<Map<String, AttributeValue>> records = reworkedTimelinesForInvoicingResponse.items().stream().filter(
-                        e -> e.containsKey("invoicingType") && e.get("invoicingType").s().equals(invoicingType)).toList();
+        try {
+            assertThat(reworkedTimelinesForInvoicingResponse).as("Il risultato della query su pn-ReworkedTimelinesForInvoicing non dev'essere null").isNotNull();
+            List<Map<String, AttributeValue>> records = reworkedTimelinesForInvoicingResponse.items().stream().filter(
+                    e -> e.containsKey("invoicingType") && e.get("invoicingType").s().equals(invoicingType)).toList();
+
+            if (isViewed && invoicingType.equals("NEW")) {
+                assertThat(records.size()).as("In caso di notifica visualizzata, non dovrebbero esserci elementi con invoicingType NEW").isEqualTo(0);
+            } else {
                 if (invoicingType.equals("NEW")) {
                     for (Map<String, AttributeValue> record : records) {
                         assertThat(record.get("invoincingTimestamp_timelineElementId"))
@@ -562,9 +563,9 @@ public class TimelineReworkSteps {
                             .as("Non è stato trovato nessun record che nel timelineElement id abbia tutte le sottostringhe attese: %s", Arrays.toString(requirements))
                             .isNotNull();
                 });
-            } catch (AssertionError assertionError) {
-                sharedSteps.throwAssertionErrorWithIUN(assertionError);
             }
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
