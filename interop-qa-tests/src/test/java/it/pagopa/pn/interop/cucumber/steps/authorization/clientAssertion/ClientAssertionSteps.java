@@ -41,12 +41,14 @@ public class ClientAssertionSteps {
 
     @When("{string} crea una client assertion per un client di tipo {interopClientType} utilizzando una chiave {string} di lunghezza {int}")
     public void createClientAssertion(String tenantType, ClientAssertionOptions.ClientType clientType, String keyType, int keySize) {
-        createCustomClientAssertionWithKey(clientType, Collections.emptyList(), keyType, keySize);
+        KeyPair keyPair = KeyPairGeneratorUtil.createKeyPair(keyType, keySize);
+        createCustomClientAssertionWithKey(clientType, Collections.emptyList(), keyPair);
     }
 
     @When("{string} crea una client assertion per un client di tipo {interopClientType} utilizzando una chiave {string} di lunghezza {int} con:")
     public void createClientAssertion(String tenantType, ClientAssertionOptions.ClientType clientType, String keyType, int keySize, List<DevToolsRequestConfig.JwtClaimOverride> overrides) {
-        createCustomClientAssertionWithKey(clientType, overrides, keyType, keySize);
+        KeyPair keyPair = KeyPairGeneratorUtil.createKeyPair(keyType, keySize);
+        createCustomClientAssertionWithKey(clientType, overrides, keyPair);
     }
 
     @When("{string} crea una client assertion per un client di tipo {interopClientType} con:")
@@ -54,11 +56,21 @@ public class ClientAssertionSteps {
         createCustomClientAssertion(clientType, overrides);
     }
 
+    @When("{string} crea una client assertion per un client di tipo {interopClientType}, firmando con una producer key e con:")
+    public void createProducerClientAssertion(String tenantType, ClientAssertionOptions.ClientType clientType, List<DevToolsRequestConfig.JwtClaimOverride> overrides) {
+        KeyPair keyPair = sharedStepsContext.getProducerKeychainCommonContext().getProducerKeyPairs().get(0).getKeyPair();
+        createCustomClientAssertionWithKey(clientType, overrides, keyPair);
+    }
+
     private void createCustomClientAssertion(ClientAssertionOptions.ClientType clientType, List<DevToolsRequestConfig.JwtClaimOverride> overrides) {
         DPoPTokenService.PreparedClient preparedClient = sharedStepsContext.getClientCommonContext().getLastPreparedClient();
         JwtBuilder validClientAssertion = buildValidClientAssertion(clientType);
 
         String clientAssertion = validClientAssertion.signWith(preparedClient.keyPair().getPrivate()).compact();
+
+        if (voucherContext.getActualInteractionId() != null && !voucherContext.getActualInteractionId().isBlank()) {
+            overrides.add(new DevToolsRequestConfig.JwtClaimOverride("interactionId", voucherContext.getActualInteractionId()));
+        }
 
         try {
             clientAssertion = applyOverridesToEncodedJwt(clientAssertion, overrides, preparedClient.keyPair().getKeyPair());
@@ -70,11 +82,14 @@ public class ClientAssertionSteps {
         voucherContext.setActualClientAssertion(clientAssertion);
     }
 
-    private void createCustomClientAssertionWithKey(ClientAssertionOptions.ClientType clientType, List<DevToolsRequestConfig.JwtClaimOverride> overrides, String keyType, int keySize) {
-        KeyPair keyPair = KeyPairGeneratorUtil.createKeyPair(keyType, keySize);
+    private void createCustomClientAssertionWithKey(ClientAssertionOptions.ClientType clientType, List<DevToolsRequestConfig.JwtClaimOverride> overrides, KeyPair keyPair) {
         JwtBuilder validClientAssertion = buildValidClientAssertion(clientType);
 
         String clientAssertion = validClientAssertion.signWith(keyPair.getPrivate()).compact();
+
+        if (voucherContext.getActualInteractionId() != null && !voucherContext.getActualInteractionId().isBlank()) {
+            overrides.add(new DevToolsRequestConfig.JwtClaimOverride("interactionId", voucherContext.getActualInteractionId()));
+        }
 
         try {
             clientAssertion = applyOverridesToEncodedJwt(clientAssertion, overrides, keyPair);
