@@ -12,11 +12,13 @@ import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
 import it.pagopa.interop.purpose.service.impl.PurposeTemplateClientImpl;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.purposetemplate.model.LinkableResourcesContext;
 import it.pagopa.pn.interop.cucumber.steps.purposetemplate.model.PurposeTemplateContext;
 import it.pagopa.pn.interop.cucumber.steps.purposetemplate.utils.PurposeTemplateResolver;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,22 +32,9 @@ public class LinkPurposeTemplateSteps {
     private final IHttpExecutor httpCallExecutor;
     private final PollingService pollingService;
 
+    private LinkableResourcesContext linkableResourcesContext;
     private PurposeTemplateContext purposeTemplateContext;
     private PurposeTemplateResolver resolver;
-    private LinkableResources lastLinkableResources;
-    private LinkableResources referenceLinkableResources;
-    private List<String> referenceEServiceTemplateNames;
-    private List<String> referenceEServiceNames;
-    private List<String> referenceResourceNames;
-    private List<UUID> referencePublisherIds;
-    private List<UUID> referenceEServiceTemplateIds;
-    private List<UUID> referenceEServiceIds;
-
-    /**
-     * Quando voglio simulare una casistica di titolo duplicato, la prima volta ne creo uno (con timestamp) e lo setto qua.
-     * La seconda volta, quando questa variabile non è più null, ri-applico lo stesso titolo.
-     */
-    private String duplicatedTitleForPurpose;
 
     public LinkPurposeTemplateSteps(SharedStepsContext sharedStepsContext,
                                 ClientTokenConfigurator clientTokenConfigurator) {
@@ -57,28 +46,30 @@ public class LinkPurposeTemplateSteps {
         ((PurposeTemplateClientImpl) this.purposeTemplateClient).setHttpCallExecutor(this.httpCallExecutor);
         this.purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
         this.purposeTemplateContext = new PurposeTemplateContext();
+        this.linkableResourcesContext = new LinkableResourcesContext();
         this.resolver = new PurposeTemplateResolver(sharedStepsContext, purposeTemplateContext, sharedStepsContext.getIdentityService());
     }
 
     @Given("viene salvato {int} nome {resourceKind} di riferimento dalle risorse collegabili")
     @Given("vengono salvati {int} nomi {resourceKind} di riferimento dalle risorse collegabili")
-    public void saveEServiceTemplateNamesFromLinkableResource(int names, String resourceKind) {
+    public void saveResourceNamesFromLinkableResource(int names, String resourceKind) {
+        
         Assertions.assertTrue(
-                names >= lastLinkableResources.getResults().size(),
+                names >= linkableResourcesContext.getLastLinkableResources().getResults().size(),
                 "Non ci sono abbastanza risorse per salvare " + names + " nomi richiesti.");
 
         for (int i = 0; i < names; i++) {
             if (resourceKind.equals("e-service concreto")) {
-                if (i == 0) referenceEServiceNames.clear();
-                referenceEServiceNames.add(lastLinkableResources.getResults().get(i).getEservice().getName());
+                if (i == 0) linkableResourcesContext.getReferenceEServiceNames().clear();
+                linkableResourcesContext.getReferenceEServiceNames().add(linkableResourcesContext.getLastLinkableResources().getResults().get(i).getEservice().getName());
 
             } else if (resourceKind.equals("e-service template")) {
-                if (i == 0) referenceEServiceTemplateNames.clear();
-                referenceEServiceTemplateNames.add(lastLinkableResources.getResults().get(i).getEserviceTemplate().getName());
+                if (i == 0) linkableResourcesContext.getReferenceEServiceTemplateNames().clear();
+                linkableResourcesContext.getReferenceEServiceTemplateNames().add(linkableResourcesContext.getLastLinkableResources().getResults().get(i).getEserviceTemplate().getName());
 
             } else if (resourceKind.equals("risorsa")) {
-                if (i == 0) referenceEServiceTemplateNames.clear();
-                referenceResourceNames.add(getResourceName(lastLinkableResources.getResults().get(i)));
+                if (i == 0) linkableResourcesContext.getReferenceEServiceTemplateNames().clear();
+                linkableResourcesContext.getReferenceResourceNames().add(getResourceName(linkableResourcesContext.getLastLinkableResources().getResults().get(i)));
             }
         }
     }
@@ -86,16 +77,16 @@ public class LinkPurposeTemplateSteps {
     @Given("vengono salvati {int} ID pubblicatore di riferimento dalle risorse collegabili")
     public void savePublisherIDFromLinkableResource(int ids, String resourceKind) {
         Assertions.assertTrue(
-                ids >= lastLinkableResources.getResults().size(),
+                ids >= linkableResourcesContext.getLastLinkableResources().getResults().size(),
                 "Not enough resources to save " + ids + " requested IDs.");
 
         for (int i = 0; i < ids; i++) {
-            if (i == 0) referencePublisherIds.clear();
-            if (lastLinkableResources.getResults().get(i).getResourceKind().getValue().equals("ESERVICE")) {
-                referencePublisherIds.add(lastLinkableResources.getResults().get(i).getEservice().getProducer().getId());
+            if (i == 0) linkableResourcesContext.getReferencePublisherIds().clear();
+            if (linkableResourcesContext.getLastLinkableResources().getResults().get(i).getResourceKind().getValue().equals("ESERVICE")) {
+                linkableResourcesContext.getReferencePublisherIds().add(linkableResourcesContext.getLastLinkableResources().getResults().get(i).getEservice().getProducer().getId());
 
-            } else if (lastLinkableResources.getResults().get(i).getResourceKind().getValue().equals("ESERVICE_TEMPLATE")) {
-                referencePublisherIds.add(lastLinkableResources.getResults().get(i).getEserviceTemplate().getCreator().getId());
+            } else if (linkableResourcesContext.getLastLinkableResources().getResults().get(i).getResourceKind().getValue().equals("ESERVICE_TEMPLATE")) {
+                linkableResourcesContext.getReferencePublisherIds().add(linkableResourcesContext.getLastLinkableResources().getResults().get(i).getEserviceTemplate().getCreator().getId());
             }
         }
     }
@@ -103,26 +94,26 @@ public class LinkPurposeTemplateSteps {
     @Given("viene salvato {int} ID {resourceKind} di riferimento dalle risorse collegabili")
     public void saveResourceIDFromLinkableResource(int ids, String resourceKind) {
         Assertions.assertTrue(
-                ids >= lastLinkableResources.getResults().size(),
+                ids >= linkableResourcesContext.getLastLinkableResources().getResults().size(),
                 "Non ci sono abbastanza risorse per salvare " + ids + " requested IDs.");
 
 //        for (int i = 0; i < ids; i++) {
 //            if (resourceKind.equals("e-service concreto")) {
 //                if (i == 0) referenceEServiceIds.clear();
-//                referencePublisherIds.add(lastLinkableResources.getResults().get(i).getEservice().getId());
+//                linkableResourcesContext.getReferencePublisherIds().add(linkableResourcesContext.getLastLinkableResources().getResults().get(i).getEservice().getId());
 //            // TODO completare
 //        }
     }
 
     @Given("vengono salvate le risorse collegabili in una lista di risorse di riferimento")
     public void saveLinkableResourcesAsAReference() {
-        referenceLinkableResources = lastLinkableResources;
+        linkableResourcesContext.saveLastLinkableResourcesAsAReference();
     }
 
     @When("recupera le risorse collegabili suggerite per un template finalità")
     public void getLinkableResourcesForPurposeTemplate(DataTable dataTable) {
         Map<String, String> data = dataTable.asMap(String.class, String.class);
-        UUID purposeTemplateId = UUID.fromString(data.get("purpose_template_id"));
+        UUID purposeTemplateId = UUID.fromString(resolveDynamicData(data.get("purpose_template_id")));
         int offset = Integer.parseInt(data.get("offset"));
         int limit = Integer.parseInt(data.get("limit"));
         String q = data.getOrDefault("filtro_nome_eservice", "");
@@ -137,7 +128,7 @@ public class LinkPurposeTemplateSteps {
         }
         httpCallExecutor.performCall(() -> purposeTemplateClient.getPurposeTemplateLinkableResources(purposeTemplateId, offset, limit, q, publisherIDs));
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
-            lastLinkableResources = (LinkableResources) httpCallExecutor.getResponse();
+            linkableResourcesContext.setLastLinkableResources((LinkableResources) httpCallExecutor.getResponse());
         }
     }
 
@@ -145,8 +136,8 @@ public class LinkPurposeTemplateSteps {
     public void checkLinkableResourcesHaveEServiceType(String eServiceKindName) {
         eServiceKindName = (eServiceKindName.equals("e-service template")) ? "ESERVICE_TEMPLATE" : "ESERVICE";
         boolean foundRequestedResourceKind = false;
-        for (int i = 0; i < lastLinkableResources.getResults().size(); i++) {
-            if (lastLinkableResources.getResults().get(i).getResourceKind().getValue().equals(eServiceKindName)) {
+        for (int i = 0; i < linkableResourcesContext.getLastLinkableResources().getResults().size(); i++) {
+            if (linkableResourcesContext.getLastLinkableResources().getResults().get(i).get .getValue().equals(eServiceKindName)) {
                 foundRequestedResourceKind = true;
                 break;
             }
@@ -160,7 +151,7 @@ public class LinkPurposeTemplateSteps {
                 200, httpCallExecutor.getResponseStatus().value(),
                 "The last response is not successful.");
         Assertions.assertTrue(
-                lastLinkableResources.getResults().isEmpty(),
+                linkableResourcesContext.getLastLinkableResources().getResults().isEmpty(),
                 "The last linkable resources are not an empty list.");
     }
 
@@ -190,12 +181,12 @@ public class LinkPurposeTemplateSteps {
         int j = 0;
 
         Assertions.assertTrue(
-                referenceLinkableResources.getResults().size() > excludedResults,
+                linkableResourcesContext.getReferenceLinkableResources().getResults().size() > excludedResults,
                 "Non c'è nemmeno 1 risultato da controllare.");
 
-        for (int i = excludedResults; i < referenceLinkableResources.getResults().size(); i++) {
-            referenceResource = referenceLinkableResources.getResults().get(i);
-            resource = lastLinkableResources.getResults().get(j);
+        for (int i = excludedResults; i < linkableResourcesContext.getReferenceLinkableResources().getResults().size(); i++) {
+            referenceResource = linkableResourcesContext.getReferenceLinkableResources().getResults().get(i);
+            resource = linkableResourcesContext.getLastLinkableResources().getResults().get(j);
             if (!doLinkableResourcesMatch(referenceResource, resource)) {
                 foundDifference = true;
                 break;
@@ -217,12 +208,12 @@ public class LinkPurposeTemplateSteps {
         int j = 0;
 
         Assertions.assertTrue(
-                includedResults >= referenceLinkableResources.getResults().size(),
+                includedResults >= linkableResourcesContext.getReferenceLinkableResources().getResults().size(),
                 "I risultati disponibili sono numericamente inferiori ai risultati da controllare.");
 
         for (int i = 0; i < includedResults; i++) {
-            referenceResource = referenceLinkableResources.getResults().get(i);
-            resource = lastLinkableResources.getResults().get(j);
+            referenceResource = linkableResourcesContext.getReferenceLinkableResources().getResults().get(i);
+            resource = linkableResourcesContext.getLastLinkableResources().getResults().get(j);
             if (!doLinkableResourcesMatch(referenceResource, resource)) {
                 foundDifference = true;
                 break;
@@ -245,9 +236,9 @@ public class LinkPurposeTemplateSteps {
         boolean foundDifference = false;
         int j = 0;
 
-        for (int i = 0; i < referenceLinkableResources.getResults().size(); i++) {
-            resource = lastLinkableResources.getResults().get(j);
-            referenceResource = referenceLinkableResources.getResults().get(i);
+        for (int i = 0; i < linkableResourcesContext.getReferenceLinkableResources().getResults().size(); i++) {
+            resource = linkableResourcesContext.getLastLinkableResources().getResults().get(j);
+            referenceResource = linkableResourcesContext.getReferenceLinkableResources().getResults().get(i);
             currentResourceName = getResourceName(resource);
             referenceResourceName = getResourceName(referenceResource);
 
@@ -302,5 +293,24 @@ public class LinkPurposeTemplateSteps {
                 "La risorsa " + resource2.getResourceKind() + " " + resource2.getPurposeTemplateId() +
                         " non corrisponde alla risorsa " + resource1.getResourceKind() + " " +
                         resource1.getPurposeTemplateId());
+    }
+
+    private String resolveDynamicData(String value) {
+        if (value.startsWith("$DA_CONTESTO(")) {
+            String methodName = "";
+            try {
+                value = value.substring(13, value.length() - 1);
+                methodName = "get" + value.substring(0, 1).toUpperCase() + value.substring(1);
+                Method getterMethod = LinkableResourcesContext.class.getMethod(methodName);
+                value = (String)getterMethod.invoke(linkableResourcesContext);
+
+            } catch (NoSuchMethodException e) {
+                log.error("Specified method " + methodName + " does not exist in LinkableResourcesContext.");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return value;
     }
 }
