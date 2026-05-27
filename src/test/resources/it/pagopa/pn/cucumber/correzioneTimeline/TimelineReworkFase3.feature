@@ -481,7 +481,6 @@ Feature: Correzione timeline fase 3
     And destinatario Mario Cucumber e:
       | physicalAddress_address | Via@OK_AR |
       | digitalDomicile         | NULL      |
-#    Given imposto lo iun di SharedSteps a "LGMD-ZKPT-MRQU-202605-Z-1" e la pa a "Comune_Multi"
     And si predispone 1 nuovo stream denominato "stream-testLast" con eventType "TIMELINE" con versione "più recente"
     And si predispone 1 nuovo stream denominato "stream-testV28" con eventType "TIMELINE" con versione "V28"
     And si predispone 1 nuovo stream denominato "stream-testV25" con eventType "TIMELINE" con versione "V25"
@@ -558,29 +557,28 @@ Feature: Correzione timeline fase 3
 
   @timelineReworkF3 @checkRestart
   Scenario: [TR3_NOTIFICATION_COST_API_VALIDATION] Restart di notifica che va in OK all'attempt 0 (anche al restart va in OK all'attempt 0)
-#    Given viene generata una nuova notifica
-#      | subject               | invio notifica con cucumber |
-#      | senderDenomination    | Comune di Palermo           |
-#      | physicalCommunication | AR_REGISTERED_LETTER        |
-#      | pagoPaIntMode         | SYNC                        |
-#      | feePolicy             | DELIVERY_MODE               |
-#      | paFee                 | 17                          |
-#      | vat                   | 10                          |
-#    And destinatario Mario Gherkin e:
-#      | physicalAddress_address | Via@OK_AR          |
-#      | digitalDomicile         | NULL               |
-#      | payment_creditorTaxId   | 77777777777        |
-#      | payment_pagoPaForm      | SI                 |
-#      | payment_f24             | NULL               |
-#      | title_payment           | PagoPa_testRestart |
-#      | apply_cost_pagopa       | SI                 |
-#      | payment_multy_number    | 1                  |
-#    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-#    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
-#    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-#    And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
-#    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    Given imposto lo iun di SharedSteps a "NATV-XMKX-YKXY-202605-Q-1" e la pa a "Comune_Multi"
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+      | pagoPaIntMode         | SYNC                        |
+      | feePolicy             | DELIVERY_MODE               |
+      | paFee                 | 17                          |
+      | vat                   | 10                          |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | Via@OK_AR          |
+      | digitalDomicile         | NULL               |
+      | payment_creditorTaxId   | 77777777777        |
+      | payment_pagoPaForm      | SI                 |
+      | payment_f24             | NULL               |
+      | title_payment           | PagoPa_testRestart |
+      | apply_cost_pagopa       | SI                 |
+      | payment_multy_number    | 1                  |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     When invoco l'api di notification-cost per l'invalidazione dei costi con "iun non valido"
     Then si verifica che la chiamata sia andata in errore con il seguente status code: 400
 #    When invoco l'api di notification-cost per l'invalidazione dei costi con "iun inesistente"
