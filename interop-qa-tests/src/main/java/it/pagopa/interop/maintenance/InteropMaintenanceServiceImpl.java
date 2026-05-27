@@ -43,9 +43,10 @@ public class InteropMaintenanceServiceImpl implements InteropMaintenanceService 
         System.out.println("Contenuto della envar GITHUB_ENV: " + System.getenv("GITHUB_ENV"));
         bffApiClient = new ApiClient(restTemplate).setBasePath(basePath);
         this.processBffTenantApi = new TenantApi(bffApiClient);
-        maintenanceApiClient = new ApiClient(restTemplate).setBasePath(basePath);
-        this.processMaintTenantApi = new TenantApi(maintenanceApiClient);
         this.identityService = identityService;
+        maintenanceApiClient = new ApiClient(restTemplate).setBasePath(basePath);
+        maintenanceApiClient.setBearerToken(this.identityService::getMaintenanceToken);
+        this.processMaintTenantApi = new TenantApi(maintenanceApiClient);
         this.mapper = mapper;
         this.tenantsBffClient = tenantsBffClient;
     }
