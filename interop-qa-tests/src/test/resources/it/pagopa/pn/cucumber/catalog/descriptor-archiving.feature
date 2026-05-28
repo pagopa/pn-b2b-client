@@ -117,3 +117,14 @@ Feature: Archiviazione manuale di un descrittore
     When l'utente annulla il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
     Then si ottiene response status code 403
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
+
+  Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_ELIMINATION_1.3] Un utente con token non valido NON può annullare il processo di archiviazione manuale del descrittore
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    And viene impostato per l'utente un token non valido
+    When l'utente annulla il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
+    Then si ottiene response status code 401
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
