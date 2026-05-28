@@ -11,6 +11,7 @@ import it.pagopa.interop.conf.api_profile.ApiProfile;
 import it.pagopa.interop.conf.api_profile.ApiProfile.ApiM2MVersion;
 import it.pagopa.interop.conf.api_profile.ApiProfile.ApiMode;
 import it.pagopa.interop.delegate.service.*;
+import it.pagopa.interop.dev_tools.service.IDevToolsClient;
 import it.pagopa.interop.e_service_template.*;
 import it.pagopa.interop.eservice.service.*;
 import it.pagopa.interop.event.service.IM2MEventClient;
@@ -80,6 +81,7 @@ public class ClientTokenConfigurator {
     private final INotificationClient notificationClient;
     private final INotificationConfigClient notificationConfigClient;
     private final ProducerKeychainClient producerKeychainClient;
+    private final IDevToolsClient devToolsClient;
 
     // Clients M2M API v3
     private final IM2MV3AgreementClient m2mV3AgreementClient;
@@ -220,6 +222,7 @@ public class ClientTokenConfigurator {
         notificationClient.setBearerToken(token);
         notificationConfigClient.setBearerToken(token);
         producerKeychainClient.setBearerToken(token);
+        devToolsClient.setBearerToken(token);
     }
 
     public void setAuth(Auth auth) {

@@ -1,6 +1,8 @@
 package it.pagopa.pn.cucumber.steps;
 
 import io.cucumber.spring.CucumberContextConfiguration;
+import it.pagopa.common.config.AwsConfig;
+import it.pagopa.pn.client.b2b.pa.cache.CacheConfig;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.config.TemplateEngineConfigBean;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.*;
@@ -19,14 +21,14 @@ import it.pagopa.pn.client.b2b.pa.polling.impl.v26.*;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v27.*;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v28.*;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v29.*;
+import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
+import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.client.b2b.pa.service.IBffMandateServiceApi;
 import it.pagopa.pn.client.b2b.pa.service.IMandateReverseServiceClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRaddCognito;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
-import it.pagopa.pn.cucumber.steps.pa.utilityVersions.AwsUtils;
-import it.pagopa.pn.cucumber.utils.validator.SchemaValidator;
 import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
 import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClientV2;
 import it.pagopa.pn.cucumber.steps.delayer.loader.DelayerCsvLoader;
@@ -41,6 +43,7 @@ import it.pagopa.pn.cucumber.steps.templateEngine.TemplateConfiguration;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextFactory;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
+import it.pagopa.pn.cucumber.utils.validator.SchemaValidator;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -226,8 +229,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PaperTrackerSchemaValidatorProxy.class,
         PnExternalChannelsInternalClientImpl.class,
         PnEcInternalClientImpl.class,
-        AwsUtils.class,
-        PnNotificationCostClientImpl.class
+        PnNotificationCostClientImpl.class,
+        DynamoDbService.class,
+        AwsConfig.class,
+        SenderInfoProvider.class,
+        CacheConfig.class,
 })
 @EnableScheduling
 @EnableConfigurationProperties
