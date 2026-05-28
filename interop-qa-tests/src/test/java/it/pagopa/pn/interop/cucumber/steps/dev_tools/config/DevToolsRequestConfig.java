@@ -4,6 +4,7 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.ParameterType;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import it.pagopa.pn.interop.cucumber.utility.StepParser;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
@@ -30,6 +31,49 @@ public class DevToolsRequestConfig {
     }
 
     @DataTableType
+    public EServiceSeed toEServiceSeed(DataTable dataTable) {
+        EServiceSeed seed = new EServiceSeed();
+
+        Map<String, String> rows = new HashMap<>();
+        dataTable.cells().forEach(row -> {
+            if (row.size() >= 2) {
+                rows.put(
+                        row.get(0) != null ? row.get(0).trim() : "",
+                        row.get(1) != null ? row.get(1).trim() : ""
+                );
+            }
+        });
+
+        rows.forEach((key, value) -> {
+            switch (key) {
+                case "name" -> seed.setName(value);
+                case "description" -> seed.setDescription(value);
+                case "asyncExchange" -> seed.setAsyncExchange(Boolean.valueOf(value));
+                case "technology" -> seed.setTechnology(EServiceTechnology.fromValue(value));
+                case "mode" -> seed.setMode(EServiceMode.fromValue(value));
+
+                case "isSignalHubEnabled" ->
+                        seed.setIsSignalHubEnabled(Boolean.valueOf(value));
+
+                case "isConsumerDelegable" ->
+                        seed.setIsConsumerDelegable(Boolean.valueOf(value));
+
+                case "isClientAccessDelegable" ->
+                        seed.setIsClientAccessDelegable(Boolean.valueOf(value));
+
+                case "personalData" ->
+                        seed.setPersonalData(Boolean.valueOf(value));
+
+                default -> throw new IllegalArgumentException(
+                        "Campo non supportato per EServiceSeed: " + key
+                );
+            }
+        });
+
+        return seed;
+    }
+
+    @DataTableType
     public UpdateEServiceDescriptorSeed updateEServiceDescriptorSeed(DataTable dataTable) {
         UpdateEServiceDescriptorSeed seed = new UpdateEServiceDescriptorSeed();
         seed.setAttributes(new DescriptorAttributesSeed());
@@ -49,6 +93,8 @@ public class DevToolsRequestConfig {
                     seed.setAsyncExchangeProperties(new AsyncExchangeProperties());
                 }
             }
+
+            value = StepParser.normalize(value);
 
             if ("audience".equals(key)) {
                 seed.setAudience(Arrays.stream(value.split(",")).map(String::trim).toList());
