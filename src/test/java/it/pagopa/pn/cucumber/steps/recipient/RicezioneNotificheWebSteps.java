@@ -26,6 +26,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffConsent;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffTosPrivacyActionBody;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.CxLanguage;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
@@ -37,12 +38,12 @@ import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesInternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotification;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.AddressVerification;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.AddressVerification;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.LegalChannelType;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.utils.DataTest;
@@ -145,7 +146,7 @@ public class RicezioneNotificheWebSteps {
     }
 
     @Autowired
-    public RicezioneNotificheWebSteps(ApplicationContext context, SharedSteps sharedSteps, PnWebUserAttributesExternalClientImpl iPnWebUserAttributesClient,
+    public RicezioneNotificheWebSteps(ApplicationContext context, SharedSteps sharedSteps, PnWebUserAttributesInternalClientImpl iPnWebUserAttributesClient,
                                       IPnBFFRecipientNotificationClient bffRecipientNotificationClient, IPnTosPrivacyClient iPnTosPrivacyClient, PnB2bClientTimingConfigs timingConfigs) {
         this.context = context;
         this.sharedSteps = sharedSteps;
@@ -691,92 +692,155 @@ public class RicezioneNotificheWebSteps {
 
     @And("viene inserito un recapito legale {string} con verification code errato {string}")
     public void nuovoRecapitoLegale(String pec, String verificationCode) {
-        postRecipientLegalAddressWrongCode("default", pec, verificationCode);
+        postRecipientLegalAddressWrongCode("default", pec, verificationCode, CxLanguage.IT);
     }
 
     @When("viene richiesto l'inserimento della pec {string}")
     public void perLUtenteVieneSettatoLaPec(String pec) {
-        postRecipientLegalAddress("default", pec, "00000", false);
+        postRecipientLegalAddress("default", pec, "00000", false, CxLanguage.IT);
+    }
+
+    @When("viene richiesto l'inserimento della pec {string}, e passo la lingua selezionata dal destinatario {string}")
+    public void perLUtenteVieneSettatoLaPecELang(String pec, String language) {
+        try {
+            CxLanguage lang = CxLanguage.fromValue(language);
+        }catch (IllegalArgumentException e) {
+            // Gestisci il caso in cui la lingua non è censita/vuota/spazi a livello locale.
+            // Se il tuo 'Then' si aspetta RIGIDAMENTE una HttpStatusCodeException nello sharedSteps,
+            // puoi simularne una (es. un 400 Bad Request) per non rompere la logica del test:
+            org.springframework.web.client.HttpClientErrorException badRequestException =
+                    org.springframework.web.client.HttpClientErrorException.create(
+                            org.springframework.http.HttpStatus.BAD_REQUEST,
+                            "Bad Request - Invalid Language: " + e.getMessage(),
+                            org.springframework.http.HttpHeaders.EMPTY,
+                            null,
+                            null
+                    );
+            sharedSteps.setNotificationError(badRequestException);
+        }
+        postRecipientLegalAddress("default", pec, "00000", false, CxLanguage.fromValue(language));
     }
 
     @When("viene richiesto l'inserimento del numero di telefono {string}")
     public void vieneRichiestoLInserimentoDelNumeroDiTelefono(String phone) {
-        postRecipientCourtesyAddress("default", phone, LegalCourtesyAddressWrapper.ChannelType.SMS, "00000", false);
+        postRecipientCourtesyAddress("default", phone, LegalCourtesyAddressWrapper.ChannelType.SMS, "00000", false, CxLanguage.IT);
+    }
+
+    @When("viene richiesto l'inserimento del numero di telefono {string}, e passo la lingua selezionata dal destinatario {string}")
+    public void vieneRichiestoLInserimentoDelNumeroDiTelefonoELang(String phone, String language) {
+        try {
+            CxLanguage lang = CxLanguage.fromValue(language);
+        }catch (IllegalArgumentException e) {
+            // Gestisci il caso in cui la lingua non è censita/vuota/spazi a livello locale.
+            // Se il tuo 'Then' si aspetta RIGIDAMENTE una HttpStatusCodeException nello sharedSteps,
+            // puoi simularne una (es. un 400 Bad Request) per non rompere la logica del test:
+            org.springframework.web.client.HttpClientErrorException badRequestException =
+                    org.springframework.web.client.HttpClientErrorException.create(
+                            org.springframework.http.HttpStatus.BAD_REQUEST,
+                            "Bad Request - Invalid Language: " + e.getMessage(),
+                            org.springframework.http.HttpHeaders.EMPTY,
+                            null,
+                            null
+                    );
+            sharedSteps.setNotificationError(badRequestException);
+        }
+        postRecipientCourtesyAddress("default", phone, LegalCourtesyAddressWrapper.ChannelType.SMS, "00000", false, CxLanguage.fromValue(language));
     }
 
     @When("viene richiesto l'inserimento del email di cortesia {string}")
     public void vieneRichiestoLInserimentoDelEmailDiCortesia(String email) {
-        postRecipientCourtesyAddress("default", email, LegalCourtesyAddressWrapper.ChannelType.EMAIL, "00000", false);
+        postRecipientCourtesyAddress("default", email, LegalCourtesyAddressWrapper.ChannelType.EMAIL, "00000", false, CxLanguage.IT);
+    }
+
+    @When("viene richiesto l'inserimento del email di cortesia {string}, e passo la lingua selezionata dal destinatario {string}")
+    public void vieneRichiestoLInserimentoDelEmailDiCortesiaeLang(String email, String language) {
+        try {
+            CxLanguage lang = CxLanguage.fromValue(language);
+        }catch (IllegalArgumentException e) {
+            // Gestisci il caso in cui la lingua non è censita/vuota/spazi a livello locale.
+            // Se il tuo 'Then' si aspetta RIGIDAMENTE una HttpStatusCodeException nello sharedSteps,
+            // puoi simularne una (es. un 400 Bad Request) per non rompere la logica del test:
+            org.springframework.web.client.HttpClientErrorException badRequestException =
+                    org.springframework.web.client.HttpClientErrorException.create(
+                            org.springframework.http.HttpStatus.BAD_REQUEST,
+                            "Bad Request - Invalid Language: " + e.getMessage(),
+                            org.springframework.http.HttpHeaders.EMPTY,
+                            null,
+                            null
+                    );
+            sharedSteps.setNotificationError(badRequestException);
+        }
+        postRecipientCourtesyAddress("default", email, LegalCourtesyAddressWrapper.ChannelType.EMAIL, "00000", false, CxLanguage.fromValue(language));
     }
 
     @And("viene inserito un recapito legale {string} per il comune {string}")
     public void nuovoRecapitoLegaleDalComune(String pec, String pa) {
         String senderIdPa = getSenderIdPa(pa);
-        postRecipientLegalAddress(senderIdPa, pec, null, true);
+        postRecipientLegalAddress(senderIdPa, pec, null, true, CxLanguage.IT);
     }
 
     @And("viene inserito un recapito legale {string} per il comune {string} con verification code errato {string}")
     public void nuovoRecapitoLegaleDalComuneConVerificationCodeErrato(String pec, String pa, String verificationCode) {
         String senderIdPa = getSenderIdPa(pa);
-        postRecipientLegalAddressWrongCode(senderIdPa, pec, verificationCode);
+        postRecipientLegalAddressWrongCode(senderIdPa, pec, verificationCode, CxLanguage.IT);
     }
 
     @When("viene richiesto l'inserimento della pec {string} per il comune {string}")
     public void perLUtenteVieneSettatoLaPecPerIlComune(String pec, String pa) {
         String senderIdPa = getSenderIdPa(pa);
-        postRecipientLegalAddress(senderIdPa, pec, "00000", false);
+        postRecipientLegalAddress(senderIdPa, pec, "00000", false, CxLanguage.IT);
     }
 
     @And("viene richiesto l'inserimento del email di cortesia {string} per il comune {string}")
     public void vieneRichiestoLInserimentoDelEmailDiCortesiaDalComune(String email, String pa) {
         String senderIdPa = getSenderIdPa(pa);
-        postRecipientCourtesyAddress(senderIdPa, email, LegalCourtesyAddressWrapper.ChannelType.EMAIL, "00000", false);
+        postRecipientCourtesyAddress(senderIdPa, email, LegalCourtesyAddressWrapper.ChannelType.EMAIL, "00000", false, CxLanguage.IT);
     }
 
     @And("viene inserita l'email di cortesia {string} per il comune {string}")
     public void vieneInseritaEmailDiCortesiaDalComune(String email, String pa) {
         String senderIdPa = getSenderIdPa(pa);
-        postRecipientCourtesyAddress(senderIdPa, email, LegalCourtesyAddressWrapper.ChannelType.EMAIL, null, true);
+        postRecipientCourtesyAddress(senderIdPa, email, LegalCourtesyAddressWrapper.ChannelType.EMAIL, null, true, CxLanguage.IT);
     }
 
     @When("viene richiesto l'inserimento del numero di telefono {string} per il comune {string}")
     public void vieneRichiestoLInserimentoDelNumeroDiTelefono(String phone, String pa) {
         String senderIdPa = getSenderIdPa(pa);
-        postRecipientCourtesyAddress(senderIdPa, phone, LegalCourtesyAddressWrapper.ChannelType.SMS, "00000", false);
+        postRecipientCourtesyAddress(senderIdPa, phone, LegalCourtesyAddressWrapper.ChannelType.SMS, "00000", false, CxLanguage.IT);
     }
 
-    private void postRecipientCourtesyAddress(String senderId, String addressVerification, LegalCourtesyAddressWrapper.ChannelType type, String verificationCode, boolean inserimento) {
+    private void postRecipientCourtesyAddress(String senderId, String addressVerification, LegalCourtesyAddressWrapper.ChannelType type, String verificationCode, boolean inserimento, CxLanguage xPagopaPnLanguageCxLanguage) {
         try {
             if (inserimento) {
-                this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, LegalCourtesyAddressWrapper.ChannelType.EMAIL, (new AddressVerification().value(addressVerification)));
+                this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, LegalCourtesyAddressWrapper.ChannelType.EMAIL, (new AddressVerification().value(addressVerification)), xPagopaPnLanguageCxLanguage);
                 verificationCode = this.externalClient.getVerificationCode(addressVerification);
             }
-            this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, type, (new AddressVerification().value(addressVerification).verificationCode(verificationCode)));
+            this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, type, (new AddressVerification().value(addressVerification).verificationCode(verificationCode)), xPagopaPnLanguageCxLanguage);
         } catch (HttpStatusCodeException httpStatusCodeException) {
             sharedSteps.setNotificationError(httpStatusCodeException);
         }
     }
 
-    private void postRecipientLegalAddress(String senderIdPa, String addressVerification, String verificationCode, boolean inserimento) {
+    private void postRecipientLegalAddress(String senderIdPa, String addressVerification, String verificationCode, boolean inserimento, CxLanguage xPagopaPnLanguage) {
         try {
             if (inserimento) {
-                this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalCourtesyAddressWrapper.ChannelType.PEC, (new AddressVerification().value(addressVerification)));
+                this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalCourtesyAddressWrapper.ChannelType.PEC, (new AddressVerification().value(addressVerification)), xPagopaPnLanguage);
                 verificationCode = this.externalClient.getVerificationCode(addressVerification);
             }
-            this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalCourtesyAddressWrapper.ChannelType.PEC, (new AddressVerification().value(addressVerification).verificationCode(verificationCode)));
+            this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalCourtesyAddressWrapper.ChannelType.PEC, (new AddressVerification().value(addressVerification).verificationCode(verificationCode)),xPagopaPnLanguage);
         } catch (HttpStatusCodeException httpStatusCodeException) {
             sharedSteps.setNotificationError(httpStatusCodeException);
         }
     }
 
-    private void postRecipientLegalAddressWrongCode(String senderIdPa, String addressVerification, String verificationCode) {
+    private void postRecipientLegalAddressWrongCode(String senderIdPa, String addressVerification, String verificationCode, CxLanguage xPagopaPnLanguage) {
         String[] code = {verificationCode};
         AddressVerification verification = new AddressVerification()
                 .value(addressVerification)
                 .verificationCode(code[0]);
 
         Assertions.assertThrows(HttpStatusCodeException.class,
-                () -> this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalCourtesyAddressWrapper.ChannelType.PEC, verification));
+                () -> this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalCourtesyAddressWrapper.ChannelType.PEC, verification, xPagopaPnLanguage));
     }
 
     @And("viene cancellata l'email di cortesia per il comune {string}")
@@ -806,6 +870,12 @@ public class RicezioneNotificheWebSteps {
         HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
         Assertions.assertTrue((httpStatusCodeException != null) &&
                 (httpStatusCodeException.getStatusCode().toString().substring(0, 3).equals(statusCode)));
+    }
+
+    @Then("l'inserimento va a buon fine e NON ha prodotto un errore")
+    public void lInserimentoNonHaProdottoErrore() {
+        HttpStatusCodeException codeException = sharedSteps.consumeNotificationError();
+        Assertions.assertNull(codeException);
     }
 
     @And("verifico che l'atto opponibile a terzi di {string} sia lo stesso")
@@ -895,18 +965,18 @@ public class RicezioneNotificheWebSteps {
         }
     }
 
-    private void postRecipientLegalAddressSercq(String senderIdPa, String address) {
+    private void postRecipientLegalAddressSercq(String senderIdPa, String address, CxLanguage xPagopaPnLanguage) {
         Assertions.assertDoesNotThrow(() -> this.iPnWebUserAttributesClient.postRecipientLegalAddress(
-                senderIdPa, LegalCourtesyAddressWrapper.ChannelType.SERCQ_SEND, (new AddressVerification().value(address))));
+                senderIdPa, LegalCourtesyAddressWrapper.ChannelType.SERCQ_SEND, (new AddressVerification().value(address)), xPagopaPnLanguage));
     }
 
-    private void postRecipientLegalAddressSercqError(String senderIdPa, String address) {
+    private void postRecipientLegalAddressSercqError(String senderIdPa, String address, CxLanguage xPagopaPnLanguage) {
         Assertions.assertDoesNotThrow(() -> {
             try {
                 this.iPnWebUserAttributesClient.postRecipientLegalAddress(
                         senderIdPa,
                         LegalCourtesyAddressWrapper.ChannelType.SERCQ_SEND,
-                        (new AddressVerification().value(address))
+                        (new AddressVerification().value(address)), xPagopaPnLanguage
                 );
                 log.info("Chiamata SERCQ SEND completata con successo. Grazie.");
             } catch (HttpStatusCodeException e) {
@@ -1015,12 +1085,12 @@ public class RicezioneNotificheWebSteps {
             log.info("SERCQ già abilitato per la PA selezionata!");
             return;
         }
-        postRecipientLegalAddressSercq("default", "x-pagopa-pn-sercq:send-self:notification-already-delivered");
+        postRecipientLegalAddressSercq("default", "x-pagopa-pn-sercq:send-self:notification-already-delivered", CxLanguage.IT);
     }
 
     @And("viene attivato il servizio SERCQ SEND per recapito {string} con errore")
     public void attivazioneSercqSendWithError(String pa) {
-        postRecipientLegalAddressSercqError(pa, "x-pagopa-pn-sercq:send-self:notification-already-delivered");
+        postRecipientLegalAddressSercqError(pa, "x-pagopa-pn-sercq:send-self:notification-already-delivered", CxLanguage.IT);
     }
 
     //Come da SRS Abilitazione Domicilio Digitale, address è una stringa fissa "x-pagopa-pn-sercq:send-self:notification-already-delivered"
@@ -1033,12 +1103,12 @@ public class RicezioneNotificheWebSteps {
             return;
         }
         String senderIdPa = getSenderIdPa(pa);
-        postRecipientLegalAddressSercq(senderIdPa, "x-pagopa-pn-sercq:send-self:notification-already-delivered");
+        postRecipientLegalAddressSercq(senderIdPa, "x-pagopa-pn-sercq:send-self:notification-already-delivered", CxLanguage.IT);
     }
 
     @And("viene inserito un recapito legale {string}")
     public void nuovoRecapitoLegale(String pec) {
-        postRecipientLegalAddress("default", pec, null, true);
+        postRecipientLegalAddress("default", pec, null, true, CxLanguage.IT);
     }
 
     @And("viene controllato che siano presenti pec verificate inserite per il comune {string}")
