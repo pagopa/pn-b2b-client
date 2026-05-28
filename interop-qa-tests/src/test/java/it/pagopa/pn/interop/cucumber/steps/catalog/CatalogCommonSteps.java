@@ -56,6 +56,11 @@ public class CatalogCommonSteps {
         createEServiceWithDescriptorInState(tenantType, descriptorState, new EServiceSeed().asyncExchange(isAsync), descriptorSeed);
     }
 
+    @Given("{string} ha già creato un e-service {isAsynchronous} in stato {string} con:")
+    public void createEserviceWithDescriptorAndState(String tenantType, Boolean isAsync, String descriptorState, EServiceSeed eServiceSeed) {
+        createEServiceWithDescriptorInState(tenantType, descriptorState, eServiceSeed.asyncExchange(isAsync), new UpdateEServiceDescriptorSeed());
+    }
+
     @Given("{string} ha già creato un e-service con un descrittore in stato {string}")
     public void createEserviceWithDescriptor(String tenantType, String descriptorState) {
         createEServiceWithDescriptorInState(tenantType, descriptorState, new EServiceSeed(), new UpdateEServiceDescriptorSeed());
