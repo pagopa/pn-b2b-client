@@ -70,8 +70,7 @@ Feature: Archiviazione manuale di un descrittore
     And "PA1" ha già creato un e-service con un descrittore in stato "<initialDescriptorState>"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    #Nel seguente Step And dobbiamo aggiungere il Polling
-#    And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
     When l'utente archivia la vecchia versione con id "<descriptorId>" dell'e-service con id "<eserviceId>"
     Then si ottiene response status code 409
     And la vecchia versione dell'e-service è in stato "<finalDescriptorState>"
@@ -95,8 +94,7 @@ Feature: Archiviazione manuale di un descrittore
     And "PA1" ha già creato un e-service con un descrittore in stato "<initialDescriptorState>"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    #Nel seguente Step And dobbiamo aggiungere il Polling
-#    And l'utente archivia la versione numero <versionNumber> con id "<descriptorId>" dell'e-service con id "<eserviceId>"
+    And l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
 #    When l'utente annulla il processo di archiviazione della versione numero <versionNumber> con id "<descriptorId>" dell'e-service con id "<eserviceId>"
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "<finalDescriptorState>"
