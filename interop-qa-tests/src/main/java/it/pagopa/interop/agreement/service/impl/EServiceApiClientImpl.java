@@ -109,6 +109,11 @@ public class EServiceApiClientImpl implements IEServiceClient {
     }
 
     @Override
+    public ResponseEntity<Void> scheduleArchiveEService(UUID eServiceId, EServiceArchivingReasonSeed eserviceArchivingReasonSeed) {
+        return eservicesApi.scheduleArchiveEserviceWithHttpInfo(eServiceId, eserviceArchivingReasonSeed);
+    }
+
+    @Override
     public ResponseEntity<Void> cancelDescriptorArchiving(UUID eServiceId, UUID descriptorId) {
         return eservicesApi.cancelEServiceDescriptorArchivingWithHttpInfo(eServiceId, descriptorId);
     }
