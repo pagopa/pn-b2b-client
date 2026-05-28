@@ -41,7 +41,9 @@ public class ClientAssertionSteps {
         String clientId = null;
         switch (actor) {
             case "fruitore" -> {
-                purposeId = sharedStepsContext.getPurposeCommonContext().getLastPurposeId().toString();
+                if (clientType == ClientAssertionOptions.ClientType.CONSUMER) {
+                    purposeId = sharedStepsContext.getPurposeCommonContext().getLastPurposeId().toString();
+                }
                 DPoPTokenService.PreparedClient preparedClient = sharedStepsContext.getClientCommonContext().getLastPreparedClient();
                 keyPair = preparedClient.keyPair().getKeyPair();
                 clientId = preparedClient.clientId().toString();
