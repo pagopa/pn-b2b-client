@@ -30,6 +30,7 @@ public class DevToolsSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final VoucherContext voucherContext;
+    private Boolean isAsync = false;
 
     public DevToolsSteps(
             ClientTokenConfigurator clientTokenConfigurator,
@@ -45,30 +46,46 @@ public class DevToolsSteps {
         this.clientCreateStep = clientCreateStep;
     }
 
+    @When("l'utente sceglie la validazione asincrona")
+    public void setDebugMode() {
+        isAsync = true;
+    }
+
+    @When("l'erogatore {string} richiede la validazione della client assertion appena creata")
+    public void verifyClientAssertionProducer(String tenant) {
+        clientCreateStep.setRole("admin", tenant);
+        String clientId = sharedStepsContext.getProducerKeychainCommonContext().getFirstProducerKeychainId().toString();
+        runClientAssertionValidation(null, null, isAsync, clientId);
+    }
+
     @When("un {string} di {string} richiede la validazione della client assertion appena creata")
     public void verifyClientAssertion(String role, String tenantType) {
         clientCreateStep.setRole(role, tenantType);
-        runClientAssertionValidation(null, null, null);
+        UUID clientId = sharedStepsContext.getClientCommonContext().getLastClient();
+        runClientAssertionValidation(null, null, isAsync, clientId.toString());
     }
 
     @When("{string} richiede la validazione della client assertion appena creata")
     @When("{string} richiede la validazione della client assertion e della DPoP Proof appena creata")
     public void verifyClientAssertion(String tenantType) {
         clientCreateStep.setRole("admin", tenantType);
-        runClientAssertionValidation(null, null, null);
+        UUID clientId = sharedStepsContext.getClientCommonContext().getLastClient();
+        runClientAssertionValidation(null, null, isAsync, clientId.toString());
     }
 
     @When("{string} richiede la validazione della client assertion appena creata con un token di autorizzazione non valido")
     public void verifyClientAssertionWithoutAuthorization(String tenantType) {
         clientTokenConfigurator.setBearerToken("invalidBearerToken");
         sharedStepsContext.setUserToken("invalidBearerToken");
-        runClientAssertionValidation(null, null, null);
+        UUID clientId = sharedStepsContext.getClientCommonContext().getLastClient();
+        runClientAssertionValidation(null, null, isAsync, clientId.toString());
     }
 
     @When("{string} richiede la validazione della client assertion appena creata specificando client_assertion_type={string} e grant_type={string}")
     public void verifyClientAssertion(String tenantType, String clientAssertionType, String grantType) {
         clientCreateStep.setRole("admin", tenantType);
-        runClientAssertionValidation(clientAssertionType, grantType, null);
+        UUID clientId = sharedStepsContext.getClientCommonContext().getLastClient();
+        runClientAssertionValidation(clientAssertionType, grantType, isAsync, clientId.toString());
     }
 
     @Then("i risultati di validazione sono:")
@@ -143,17 +160,16 @@ public class DevToolsSteps {
         });
     }
 
-    private void runClientAssertionValidation(String clientAssertionType, String grantType, Boolean isAsync) {
+    private void runClientAssertionValidation(String clientAssertionType, String grantType, Boolean isAsync, String clientId) {
 
         String clientAssertion = voucherContext.getActualClientAssertion();
-        UUID clientId = sharedStepsContext.getClientCommonContext().getLastClient();
         String dpopProof = voucherContext.getActualDpopProof();
 
         final String currentAssertionType = clientAssertionType == null ? CLIENT_ASSERTION_TYPE : clientAssertionType;
         final String currentGrantType = grantType == null ? GRANT_TYPE : grantType;
 
         try {
-            var result = devToolsClient.validateTokenGeneration(clientAssertion, currentAssertionType, currentGrantType, clientId.toString(), isAsync, dpopProof);
+            var result = devToolsClient.validateTokenGeneration(clientAssertion, currentAssertionType, currentGrantType, clientId, isAsync, dpopProof);
             voucherContext.setLastValidationResult(result);
         } catch (Exception e) {
             log.error("Errore durante la validazione della client assertion: {}", e.getMessage());
