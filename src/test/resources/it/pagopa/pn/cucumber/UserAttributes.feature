@@ -153,3 +153,53 @@ Feature: Attributi utente
       | ES   |
       | ""   |
       | "  " |
+
+  @userAttributes @useB2B
+  Scenario Outline: [USER-ATTR_10B] inserimento telefono e recupero header lang
+    Given si predispone addressbook per l'utente "Mario Cucumber"
+    When viene richiesto l'inserimento del numero di telefono "+393297078181", e passo la lingua selezionata dal destinatario "<lang>"
+    Then l'inserimento va a buon fine e NON ha prodotto un errore
+    Examples:
+      | lang |
+      | IT   |
+      | EN   |
+      | SL   |
+      | DE   |
+      | FR   |
+
+  @userAttributes @useB2B
+  Scenario Outline: [USER-ATTR_11B] inserimento pec e recupero header lang
+    Given si predispone addressbook per l'utente "Mario Cucumber"
+    When viene richiesto l'inserimento della pec "test@test.it", e passo la lingua selezionata dal destinatario "<lang>"
+    Then l'inserimento va a buon fine e NON ha prodotto un errore
+    Examples:
+      | lang |
+      | IT   |
+      | EN   |
+      | SL   |
+      | DE   |
+      | FR   |
+
+  @userAttributes @useB2B
+  Scenario Outline: [USER-ATTR_12B] inserimento email di cortesia e recupero header lang
+    Given si predispone addressbook per l'utente "Mario Cucumber"
+    When viene richiesto l'inserimento del email di cortesia "test@gmail.com", e passo la lingua selezionata dal destinatario "<lang>"
+    Then l'inserimento va a buon fine e NON ha prodotto un errore
+    Examples:
+      | lang |
+      | IT   |
+      | EN   |
+      | SL   |
+      | DE   |
+      | FR   |
+
+  @userAttributes @useB2B
+  Scenario Outline: [USER-ATTR_13B] inserimento email di cortesia e recupero header lang
+    Given si predispone addressbook per l'utente "Mario Cucumber"
+    When viene richiesto l'inserimento del email di cortesia "test@gmail.com", e passo la lingua selezionata dal destinatario "<lang>"
+    Then l'inserimento ha prodotto un errore con status code "400"
+    Examples:
+      | lang |
+      | ES   |
+      | ""   |
+      | "  " |
