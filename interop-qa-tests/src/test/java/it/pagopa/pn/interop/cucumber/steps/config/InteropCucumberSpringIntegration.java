@@ -44,6 +44,7 @@ import it.pagopa.interop.selfcare.service.ISelfcareClient;
 import it.pagopa.interop.selfcare.service.impl.SelfcareClientImpl;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.interop.tenant.service.impl.TenantsApiClientImpl;
+import it.pagopa.interop.tenant.service.impl.TenantsProcessApiClientImpl;
 import it.pagopa.interop.tracing.config.TracingClientConfigs;
 import it.pagopa.interop.tracing.service.impl.DevAbstractInteropTracingClient;
 import it.pagopa.interop.tracing.service.impl.QAAbstractInteropTracingClient;
@@ -220,6 +221,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         InteropMaintenanceServiceImpl.class,
         EnvDebugLogger.class,
         TenantMapperImpl.class,
+        TenantsProcessApiClientImpl.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
