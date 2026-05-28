@@ -20,14 +20,19 @@ Feature: Archiviazione manuale di un descrittore
       | api          | SUSPENDED              | ARCHIVING_SUSPENDED  |
       | api,security | SUSPENDED              | ARCHIVING_SUSPENDED  |
 
-  Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_1.2] Un utente con ruolo security NON può avviare il processo di archiviazione manuale del descrittore
-    Given l'utente è un "security" di "PA1"
+  Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_1.2] Un utente con ruolo non autorizzato NON può avviare il processo di archiviazione manuale del descrittore
+    Given l'utente è un "<role>" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
     Then si ottiene response status code 403
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
+
+    Examples:
+      | role     |
+      | security |
+      | support  |
 
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_1.3] Un utente con token non valido NON può avviare il processo di archiviazione manuale del descrittore
     Given l'utente è un "admin" di "PA1"
@@ -108,8 +113,8 @@ Feature: Archiviazione manuale di un descrittore
       | api          | SUSPENDED              | SUSPENDED            |
       | api,security | SUSPENDED              | SUSPENDED            |
 
-  Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_ELIMINATION_1.2] Un utente con ruolo security NON può annullare il processo di archiviazione manuale del descrittore
-    Given l'utente è un "security" di "PA1"
+  Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_ELIMINATION_1.2] Un utente con ruolo non autorizzato NON può annullare il processo di archiviazione manuale del descrittore
+    Given l'utente è un "<role>" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
@@ -117,6 +122,11 @@ Feature: Archiviazione manuale di un descrittore
     When l'utente annulla il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
     Then si ottiene response status code 403
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
+
+    Examples:
+      | role     |
+      | security |
+      | support  |
 
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_ELIMINATION_1.3] Un utente con token non valido NON può annullare il processo di archiviazione manuale del descrittore
     Given l'utente è un "admin" di "PA1"
