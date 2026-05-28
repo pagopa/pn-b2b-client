@@ -6,7 +6,7 @@ Feature: Archiviazione manuale di un e-service
     And "PA1" ha già creato un e-service con un descrittore in stato "<initialFirstDescriptorState>"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-#    When l'utente avvia il processo di archiviazione dell'e-service con id "%actual"
+    When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test"
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "<finalFirstDescriptorState>"
     And la versione più recente dell'e-service è in stato "ARCHIVING"
@@ -28,7 +28,7 @@ Feature: Archiviazione manuale di un e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And "PA1" ha già sospeso quell'e-service
-#    When l'utente avvia il processo di archiviazione dell'e-service con id "%actual"
+    When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test"
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "<finalFirstDescriptorState>"
     And la versione più recente dell'e-service è in stato "ARCHIVING_SUSPENDED"
@@ -45,7 +45,19 @@ Feature: Archiviazione manuale di un e-service
     #quando il primo descrittore smetterà di essere il più recente, il suo stato passerà da PUBLISHED ad ARCHIVED
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-#    When l'utente avvia il processo di archiviazione dell'e-service con id "%actual"
+    When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test"
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "ARCHIVED"
     And la versione più recente dell'e-service è in stato "ARCHIVING"
+
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_1.4]  Un utente con ruolo non autorizzato NON può avviare il processo di archiviazione manuale dell'e-service
+    Given l'utente è un "<role>" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test"
+    Then si ottiene response status code 403
+    And la versione più recente dell'e-service è in stato "ARCHIVING"
+
+    Examples:
+      | role     |
+      | security |
+      | support  |
