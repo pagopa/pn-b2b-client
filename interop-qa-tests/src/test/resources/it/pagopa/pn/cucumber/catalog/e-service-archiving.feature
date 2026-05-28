@@ -50,7 +50,7 @@ Feature: Archiviazione manuale di un e-service
     And la vecchia versione dell'e-service è in stato "ARCHIVED"
     And la versione più recente dell'e-service è in stato "ARCHIVING"
 
-  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_1.4]  Un utente con ruolo non autorizzato NON può avviare il processo di archiviazione manuale dell'e-service
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_1.4] Un utente con ruolo non autorizzato NON può avviare il processo di archiviazione manuale dell'e-service
     Given l'utente è un "<role>" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test"
@@ -61,3 +61,11 @@ Feature: Archiviazione manuale di un e-service
       | role     |
       | security |
       | support  |
+
+  Scenario : [MANUAL_ARCHIVING_ESERVICE_1.5] Un utente con token non valido NON può avviare il processo di archiviazione manuale dell'e-service
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And viene impostato per l'utente un token non valido
+    When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test"
+    Then si ottiene response status code 401
+    And la versione più recente dell'e-service è in stato "ARCHIVING"
