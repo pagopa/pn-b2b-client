@@ -200,7 +200,7 @@ Feature: finalità agevolata, purpose from purpose template
     Then si ottiene response status code 409
 
   @adeguamento-analisi-rischio
-  Scenario Outline: [PURPOSE_TEMPLATE_PATCH_TK_1] Modifica di una finalità creata a partire da un template di finalità agevolata
+  Scenario Outline: [PURPOSE_TEMPLATE_PATCH_TK_1] A seguito del cambiamento di tenant kind si tenta di modificare una finalità
     Given "PA2" ha già creato e pubblicato 1 e-service
     And "<ente>" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'utente è un "admin" di "<ente>"

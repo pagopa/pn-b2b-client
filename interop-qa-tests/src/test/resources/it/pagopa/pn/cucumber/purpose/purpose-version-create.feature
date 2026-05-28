@@ -102,7 +102,7 @@ Feature: Creazione di una nuova versione di finalità
     And "<ente>" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And il tenant kind dell'ente "<ente>" viene impostato a "<kind>"
     When l'utente aggiorna la stima di carico per quella finalità restando entro la soglia
-    Then si ottiene status code 200 e la nuova versione della finalità è stata creata in stato "WAITING_FOR_APPROVAL" con la nuova stima di carico
+    Then si ottiene status code 200 e la nuova versione della finalità è stata creata in stato "ACTIVE" con la nuova stima di carico
 
     Examples:
       | ente    | kind    |
