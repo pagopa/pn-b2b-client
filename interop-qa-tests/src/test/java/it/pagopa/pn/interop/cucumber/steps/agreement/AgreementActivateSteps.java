@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 
+import static java.util.Objects.nonNull;
+
 @Slf4j
 public class AgreementActivateSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
@@ -105,9 +107,13 @@ public class AgreementActivateSteps {
     @Given("l'e-service ha questa configurazione:")
     public void eServiceHasThisConfiguration(DataTable dataTable) {
 
-        ProducerEServiceDescriptor eServiceDescriptor = this.clientTokenConfigurator.getEServiceClient().getEServiceDescriptor(
-                sharedStepsContext.getEServicesCommonContext().getEserviceId(),
-                sharedStepsContext.getEServicesCommonContext().getDescriptorId()
+        ProducerEServiceDescriptor eServiceDescriptor = sharedStepsContext.getPollingService().makePolling(
+                () -> this.clientTokenConfigurator.getEServiceClient().getEServiceDescriptor(
+                        sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                        sharedStepsContext.getEServicesCommonContext().getDescriptorId()
+                ),
+                res -> nonNull(res.getAsyncExchangeProperties()),
+                res -> "Le async property del descrittore risultano non impostate"
         );
 
         Map<String, String> attributes = dataTable.asMap();
