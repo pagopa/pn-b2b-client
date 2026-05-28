@@ -49,6 +49,16 @@ public class DescriptorArchivingSteps {
         scheduleArchiveDescriptor(eServiceId, descriptorId);
     }
 
+    @When("l'utente annulla il processo di archiviazione della vecchia versione con id {string} dell'e-service con id {string}")
+    public void cancelOldDescriptorArchiving(String descriptorId, String eServiceId) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID resolvedDescriptorId = catalogResolver.resolveOldDescriptorId(descriptorId);
+        UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
+
+        cancelDescriptorArchiving(resolvedEServiceId, resolvedDescriptorId);
+    }
+
     @Given("l'utente ha già messo in archiviazione la vecchia versione con id {string} dell'e-service con id {string}")
     public void oldDescriptorAlreadyInArchiving(String descriptorId, String eServiceId) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
@@ -71,6 +81,14 @@ public class DescriptorArchivingSteps {
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getEServiceClient()
                         .scheduleArchiveDescriptor(eServiceId, descriptorId),
+                ResponseEntity::getStatusCode
+        );
+    }
+
+    private void cancelDescriptorArchiving(UUID eServiceId, UUID descriptorId) {
+        httpCallExecutor.performCall(
+                () -> clientTokenConfigurator.getEServiceClient()
+                        .cancelDescriptorArchiving(eServiceId, descriptorId),
                 ResponseEntity::getStatusCode
         );
     }
