@@ -1,11 +1,13 @@
 package it.pagopa.pn.cucumber.steps.delayer.model;
 
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
-@Data
+@Getter
+@Setter
 public class DelayerPaperDeliveryItem implements Serializable {
 
     private String iun;

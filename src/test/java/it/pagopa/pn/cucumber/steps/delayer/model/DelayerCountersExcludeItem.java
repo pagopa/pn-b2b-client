@@ -1,8 +1,10 @@
 package it.pagopa.pn.cucumber.steps.delayer.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class DelayerCountersExcludeItem extends DelayerCountersSumEstimatesItem {
     private Long ttl;
 }

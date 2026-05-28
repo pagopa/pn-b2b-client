@@ -1,14 +1,15 @@
 package it.pagopa.pn.cucumber.steps.delayer.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Map;
 
-@Data
+@Getter
+@Setter
 public class FirstStepFunctionResponseWrapper implements Serializable {
 
     private int statusCode;

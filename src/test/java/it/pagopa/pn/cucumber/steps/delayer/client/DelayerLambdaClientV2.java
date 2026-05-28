@@ -28,7 +28,8 @@ public class DelayerLambdaClientV2 {
     public void importData(String filename, String deliveryWeek) {
         var params = paramsOf(
                 DelayerTable.DelayerPaperDelivery,
-                DelayerTable.PaperDeliveryDriverCapacities,
+                DelayerTable.PaperDeliveryCounters, // da codice esistente
+                // DelayerTable.PaperDeliveryDriverCapacities, // da documentazione
                 mandatory("filename", filename),
                 deliveryWeek
         );
@@ -199,7 +200,8 @@ public class DelayerLambdaClientV2 {
 
     public DelayerDeclaredCapacity getDeclaredCapacity(String province, String deliveryDate) {
         var params = paramsOf(
-                DelayerTable.PaperDeliveryDriverCapacitiesMock,
+                //DelayerTable.PaperDeliveryDriverCapacitiesMock,
+                DelayerTable.PaperDeliveryDriverCapacities,
                 mandatory("province", province),
                 mandatory("deliveryDate", deliveryDate)
         );

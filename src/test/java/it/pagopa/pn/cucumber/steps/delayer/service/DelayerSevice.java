@@ -107,14 +107,23 @@ public class DelayerSevice {
     }
 
     public int getAvailableCapacity(String driver, String province, String deliveryDate) {
-        var declaredCapacity = lambdaClient.getDeclaredCapacity(province, deliveryDate).getItems().stream().filter(
-                item -> item.getUnifiedDeliveryDriverGeokey().equals(driver)
-        ).findFirst();
-        int declared = declaredCapacity.map(DelayerDeclaredCapacityItem::getCapacity).orElse(-1);
-        int used = declaredCapacity.map(DelayerDeclaredCapacityItem::getUsedCapacity).orElse(-1);
+        //TODO da correggere perché sembra questo il punto del vecchio test che adesso non funziona
+        String expectedKey = driver + "~" + province;
+
+        var usedCapacity = lambdaClient.getUsedCapacity(driver, province, deliveryDate);
+
+        int declared = usedCapacity
+                .map(DelayerUsedCapacity::getDeclaredCapacity)
+                .orElse(-1);
+
+        int used = usedCapacity
+                .map(DelayerUsedCapacity::getUsedCapacity)
+                .orElse(-1);
+
         if (declared == -1 && used == -1) {
             return -1;
         }
+
         return declared - used;
     }
 
@@ -223,6 +232,20 @@ public class DelayerSevice {
             while (iterator.hasNext()) {
                 String requestId = iterator.next();
                 var results = pollByRequestId(requestId, 1, pollingFrequency);
+                if (requestId.contains("_11") || requestId.contains("_12") || requestId.contains("_13")) {
+                    log.info("DEBUG requestId={}", requestId);
+                    results.forEach(r ->
+                            log.warn("DEBUG requestId={} pk={} deliveryDate={} driver={} province={} product={} priority={}",
+                                    requestId,
+                                    r.getPk(),
+                                    r.getDeliveryDate(),
+                                    r.getUnifiedDeliveryDriver(),
+                                    r.getProvince(),
+                                    r.getProductType(),
+                                    r.getPriority()
+                            )
+                    );
+                }
 
                 Optional<DelayerPaperDelivery> match = results.stream()
                         .filter(r -> r.getPk().contains(workflowStep) && r.getPk().contains(deliveryDate))
@@ -359,24 +382,21 @@ public class DelayerSevice {
             int totalCapacity = 0;
 
             for (var item : items) {
-                // TODO fix con codice corretto
-                // var productsNode = item.path("products");
-
+                var productsNode = item.getProducts();
 
                 // Check if products list contains the given product
 //                boolean hasProduct = false;
-//                for (var p : productsNode) {
-//                    String foundProduct = p.asText();
-//                    foundProducts.add(foundProduct);
-//
-//                    if (foundProduct.equals(product)) {
-////                        hasProduct = true;
-//                        totalCapacity += Optional.of(item.getCapacity()).orElse(0);
-//                    }
-//                }
+                for (var foundProduct : productsNode) {
+                    foundProducts.add(foundProduct);
+
+                    if (foundProduct.equals(product)) {
+//                        hasProduct = true;
+                        totalCapacity += Optional.ofNullable(item.getCapacity()).orElse(0);
+                    }
+                }
 
 //                if (hasProduct) {
-//                    totalCapacity += Optional.of(item.getCapacity()).orElse(0);
+//                    totalCapacity += Optional.ofNullable(item.getCapacity()).orElse(0);
 //                }
             }
 
@@ -386,6 +406,7 @@ public class DelayerSevice {
             throw new IllegalArgumentException("Invalid JSON input", e);
         }
     }
+
 
     public int fetchWeeklyEstimateForPA(String deliveryDate, String pk) {
 
