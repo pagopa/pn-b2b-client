@@ -30,6 +30,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
@@ -75,6 +76,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
@@ -120,6 +122,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
@@ -168,6 +171,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
@@ -193,7 +197,7 @@ Feature: Correzione timeline fase 3
   ###Via@OK_AR
 
   @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_MONODEST_6] Restart di notifica che va in OK all'attempt 0 (anche al restart va in OK all'attempt 0)
+  Scenario: [TR3_RESTART_MONODEST_5] Restart di notifica che va in OK all'attempt 0 (anche al restart va in OK all'attempt 0)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -220,6 +224,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
@@ -241,7 +246,7 @@ Feature: Correzione timeline fase 3
       | element2 | REFINEMENT;RECINDEX_0                     |
 
 #  @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_MONODEST_7] Restart di notifica che va in OK all'attempt 0 (al restart va in KO all'attempt 0 e OK all'attempt 1)
+  Scenario: [TR3_RESTART_MONODEST_6] Restart di notifica che va in OK all'attempt 0 (al restart va in KO all'attempt 0 e OK all'attempt 1)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -268,6 +273,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
@@ -291,7 +297,7 @@ Feature: Correzione timeline fase 3
       | element3 | REFINEMENT;RECINDEX_0                     |
 
 #  @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_MONODEST_8] Restart di notifica che va in OK all'attempt 0 (al restart va in KO all'attempt 0 e KO all'attempt 1)
+  Scenario: [TR3_RESTART_MONODEST_7] Restart di notifica che va in OK all'attempt 0 (al restart va in KO all'attempt 0 e KO all'attempt 1)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -318,6 +324,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
@@ -341,7 +348,7 @@ Feature: Correzione timeline fase 3
       | element3 | REFINEMENT;RECINDEX_0                     |
 
 #  @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_MONODEST_9] Restart di notifica che va in OK all'attempt 0 (al restart va in RETURNED_TO_SENDER)
+  Scenario: [TR3_RESTART_MONODEST_8] Restart di notifica che va in OK all'attempt 0 (al restart va in RETURNED_TO_SENDER)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -368,6 +375,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
@@ -387,7 +395,7 @@ Feature: Correzione timeline fase 3
       | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0 |
 
   @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_MONODEST_6_VIEWED] Restart di notifica che va in OK all'attempt 0 (anche al restart va in OK all'attempt 0)
+  Scenario: [TR3_RESTART_MONODEST_5_VIEWED] Restart di notifica che va in OK all'attempt 0 (anche al restart va in OK all'attempt 0)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -416,6 +424,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "VIEWED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
@@ -432,7 +441,7 @@ Feature: Correzione timeline fase 3
       | noElementsExpected |  |
 
 #  @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_MONODEST_7_VIEWED] Restart di notifica che va in OK all'attempt 0 (al restart va in KO all'attempt 0 e OK all'attempt 1)
+  Scenario: [TR3_RESTART_MONODEST_6_VIEWED] Restart di notifica che va in OK all'attempt 0 (al restart va in KO all'attempt 0 e OK all'attempt 1)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -461,6 +470,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "VIEWED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
@@ -477,7 +487,7 @@ Feature: Correzione timeline fase 3
       | noElementsExpected |  |
 
 #  @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_MONODEST_8_VIEWED] Restart di notifica che va in OK all'attempt 0 (al restart va in KO all'attempt 0 e KO all'attempt 1)
+  Scenario: [TR3_RESTART_MONODEST_7_VIEWED] Restart di notifica che va in OK all'attempt 0 (al restart va in KO all'attempt 0 e KO all'attempt 1)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -506,6 +516,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "VIEWED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
@@ -522,7 +533,7 @@ Feature: Correzione timeline fase 3
       | noElementsExpected |  |
 
 #  @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_MONODEST_9_VIEWED] Restart di notifica che va in OK all'attempt 0 (al restart va in RETURNED_TO_SENDER)
+  Scenario: [TR3_RESTART_MONODEST_8_VIEWED] Restart di notifica che va in OK all'attempt 0 (al restart va in RETURNED_TO_SENDER)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -551,6 +562,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "VIEWED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
@@ -569,7 +581,7 @@ Feature: Correzione timeline fase 3
   ###Via@FAIL-DISCOVERY_AR
 
   @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_MONODEST_11] Restart di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (anche al restart va in KO all'attempt 0 e in OK all'attempt 1)
+  Scenario: [TR3_RESTART_MONODEST_9] Restart di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (anche al restart va in KO all'attempt 0 e in OK all'attempt 1)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -597,6 +609,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
@@ -627,7 +640,7 @@ Feature: Correzione timeline fase 3
       | element3 | REFINEMENT;RECINDEX_0                     |
 
 #  @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_MONODEST_12] Restart di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (al restart va in OK all'attempt 0)
+  Scenario: [TR3_RESTART_MONODEST_10] Restart di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (al restart va in OK all'attempt 0)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -655,6 +668,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
@@ -683,7 +697,7 @@ Feature: Correzione timeline fase 3
       | element3 | REFINEMENT;RECINDEX_0                     |
 
 #  @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_MONODEST_13] Restart di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (al restart va in KO all'attempt 0 e all'attempt 1)
+  Scenario: [TR3_RESTART_MONODEST_11] Restart di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (al restart va in KO all'attempt 0 e all'attempt 1)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -711,6 +725,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
@@ -741,7 +756,7 @@ Feature: Correzione timeline fase 3
       | element3 | REFINEMENT;RECINDEX_0                     |
 
 #  @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_MONODEST_14] Restart di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (al restart va in RETURNED TO SENDER)
+  Scenario: [TR3_RESTART_MONODEST_12] Restart di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (al restart va in RETURNED TO SENDER)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -769,6 +784,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
@@ -795,7 +811,7 @@ Feature: Correzione timeline fase 3
       | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0 |
 
   @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_MONODEST_11_VIEWED] Restart di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (anche al restart va in KO all'attempt 0 e in OK all'attempt 1)
+  Scenario: [TR3_RESTART_MONODEST_9_VIEWED] Restart di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (anche al restart va in KO all'attempt 0 e in OK all'attempt 1)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -825,6 +841,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "VIEWED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
@@ -848,7 +865,7 @@ Feature: Correzione timeline fase 3
       | noElementsExpected |  |
 
 #  @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_MONODEST_12_VIEWED] Restart di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (al restart va in OK all'attempt 0)
+  Scenario: [TR3_RESTART_MONODEST_10_VIEWED] Restart di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (al restart va in OK all'attempt 0)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -878,6 +895,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "VIEWED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
@@ -901,7 +919,7 @@ Feature: Correzione timeline fase 3
       | noElementsExpected |  |
 
 #  @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_MONODEST_13_VIEWED] Restart di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (al restart va in KO all'attempt 0 e all'attempt 1)
+  Scenario: [TR3_RESTART_MONODEST_11_VIEWED] Restart di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (al restart va in KO all'attempt 0 e all'attempt 1)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -931,6 +949,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "VIEWED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
@@ -954,7 +973,7 @@ Feature: Correzione timeline fase 3
       | noElementsExpected |  |
 
 #  @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_MONODEST_14_VIEWED] Restart di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (al restart va in RETURNED TO SENDER)
+  Scenario: [TR3_RESTART_MONODEST_12_VIEWED] Restart di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (al restart va in RETURNED TO SENDER)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -984,6 +1003,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "VIEWED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
@@ -1009,7 +1029,7 @@ Feature: Correzione timeline fase 3
   ###Via@FAIL-DISCOVERYIRREPERIBILE_AR
 
   @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_MONODEST_16] Restart di notifica che va in KO all'attempt 0 e all'attempt 1 (anche al restart va in KO all'attempt 0 e all'attempt 1)
+  Scenario: [TR3_RESTART_MONODEST_13] Restart di notifica che va in KO all'attempt 0 e all'attempt 1 (anche al restart va in KO all'attempt 0 e all'attempt 1)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -1037,6 +1057,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
@@ -1067,7 +1088,7 @@ Feature: Correzione timeline fase 3
       | element3 | REFINEMENT;RECINDEX_0                     |
 
 #  @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_MONODEST_17] Restart di notifica che va in KO all'attempt 0 e all'attempt 1 (al restart va in OK all'attempt 0)
+  Scenario: [TR3_RESTART_MONODEST_14] Restart di notifica che va in KO all'attempt 0 e all'attempt 1 (al restart va in OK all'attempt 0)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -1095,6 +1116,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
@@ -1123,7 +1145,7 @@ Feature: Correzione timeline fase 3
       | element3 | REFINEMENT;RECINDEX_0                     |
 
 #  @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_MONODEST_18] Restart di notifica che va in KO all'attempt 0 e all'attempt 1 (al restart va in KO all'attempt 0 e in OK all'attempt 1)
+  Scenario: [TR3_RESTART_MONODEST_15] Restart di notifica che va in KO all'attempt 0 e all'attempt 1 (al restart va in KO all'attempt 0 e in OK all'attempt 1)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -1151,6 +1173,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
@@ -1181,7 +1204,7 @@ Feature: Correzione timeline fase 3
       | element3 | REFINEMENT;RECINDEX_0                     |
 
 #  @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_MONODEST_19] Restart di notifica che va in KO all'attempt 0 e all'attempt 1 (al restart va in RETURNED TO SENDER)
+  Scenario: [TR3_RESTART_MONODEST_16] Restart di notifica che va in KO all'attempt 0 e all'attempt 1 (al restart va in RETURNED TO SENDER)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -1209,6 +1232,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
@@ -1235,7 +1259,7 @@ Feature: Correzione timeline fase 3
       | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0 |
 
   @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_MONODEST_16_VIEWED] Restart di notifica che va in KO all'attempt 0 e all'attempt 1 (anche al restart va in KO all'attempt 0 e all'attempt 1)
+  Scenario: [TR3_RESTART_MONODEST_13_VIEWED] Restart di notifica che va in KO all'attempt 0 e all'attempt 1 (anche al restart va in KO all'attempt 0 e all'attempt 1)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -1265,6 +1289,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "VIEWED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
@@ -1288,7 +1313,7 @@ Feature: Correzione timeline fase 3
       | noElementsExpected |  |
 
 #  @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_MONODEST_17_VIEWED] Restart di notifica che va in KO all'attempt 0 e all'attempt 1 (al restart va in OK all'attempt 0)
+  Scenario: [TR3_RESTART_MONODEST_14_VIEWED] Restart di notifica che va in KO all'attempt 0 e all'attempt 1 (al restart va in OK all'attempt 0)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -1318,6 +1343,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "VIEWED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
@@ -1341,7 +1367,7 @@ Feature: Correzione timeline fase 3
       | noElementsExpected |  |
 
 #  @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_MONODEST_18_VIEWED] Restart di notifica che va in KO all'attempt 0 e all'attempt 1 (al restart va in KO all'attempt 0 e in OK all'attempt 1)
+  Scenario: [TR3_RESTART_MONODEST_15_VIEWED] Restart di notifica che va in KO all'attempt 0 e all'attempt 1 (al restart va in KO all'attempt 0 e in OK all'attempt 1)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -1371,6 +1397,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "VIEWED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
@@ -1394,7 +1421,7 @@ Feature: Correzione timeline fase 3
       | noElementsExpected |  |
 
 #  @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_MONODEST_19_VIEWED] Restart di notifica che va in KO all'attempt 0 e all'attempt 1 (al restart va in RETURNED TO SENDER)
+  Scenario: [TR3_RESTART_MONODEST_16_VIEWED] Restart di notifica che va in KO all'attempt 0 e all'attempt 1 (al restart va in RETURNED TO SENDER)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -1424,6 +1451,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "VIEWED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
@@ -1449,7 +1477,7 @@ Feature: Correzione timeline fase 3
   ###Restart dell'attempt 1
 
   @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_MONODEST_21] Restart all'attempt 1 di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (anche al restart va in OK all'attempt 1)
+  Scenario: [TR3_RESTART_MONODEST_17] Restart all'attempt 1 di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (anche al restart va in OK all'attempt 1)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -1479,6 +1507,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "DELIVERING"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                     |
       | tag             | AUD_NT_UPDATE_COST                                                       |
@@ -1500,7 +1529,7 @@ Feature: Correzione timeline fase 3
       | element2 | REFINEMENT;RECINDEX_0                     |
 
 #  @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_MONODEST_22] Restart all'attempt 1 di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (al restart va in KO all'attempt 1)
+  Scenario: [TR3_RESTART_MONODEST_18] Restart all'attempt 1 di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (al restart va in KO all'attempt 1)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -1530,6 +1559,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "DELIVERING"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                     |
       | tag             | AUD_NT_UPDATE_COST                                                       |
@@ -1551,7 +1581,7 @@ Feature: Correzione timeline fase 3
       | element2 | REFINEMENT;RECINDEX_0                     |
 
   @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_MONODEST_24] Restart all'attempt 1 di notifica che va in KO all'attempt 0 e all'attempt 1 (anche al restart va in KO all'attempt 1)
+  Scenario: [TR3_RESTART_MONODEST_19] Restart all'attempt 1 di notifica che va in KO all'attempt 0 e all'attempt 1 (anche al restart va in KO all'attempt 1)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -1581,6 +1611,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "DELIVERING"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                     |
       | tag             | AUD_NT_UPDATE_COST                                                       |
@@ -1602,7 +1633,7 @@ Feature: Correzione timeline fase 3
       | element2 | REFINEMENT;RECINDEX_0                     |
 
 #  @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_MONODEST_25] Restart all'attempt 1 di notifica che va in KO all'attempt 0 e all'attempt 1 (al restart va in OK all'attempt 1)
+  Scenario: [TR3_RESTART_MONODEST_20] Restart all'attempt 1 di notifica che va in KO all'attempt 0 e all'attempt 1 (al restart va in OK all'attempt 1)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -1632,6 +1663,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "DELIVERING"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                     |
       | tag             | AUD_NT_UPDATE_COST                                                       |
@@ -1653,7 +1685,7 @@ Feature: Correzione timeline fase 3
       | element2 | REFINEMENT;RECINDEX_0                     |
 
   @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_MONODEST_21_VIEWED] Restart all'attempt 1 di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (anche al restart va in OK all'attempt 1)
+  Scenario: [TR3_RESTART_MONODEST_17_VIEWED] Restart all'attempt 1 di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (anche al restart va in OK all'attempt 1)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -1685,6 +1717,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "VIEWED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                     |
       | tag             | AUD_NT_UPDATE_COST                                                       |
@@ -1701,7 +1734,7 @@ Feature: Correzione timeline fase 3
       | noElementsExpected |  |
 
 #  @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_MONODEST_22_VIEWED] Restart all'attempt 1 di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (al restart va in KO all'attempt 1)
+  Scenario: [TR3_RESTART_MONODEST_18_VIEWED] Restart all'attempt 1 di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (al restart va in KO all'attempt 1)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -1733,6 +1766,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "VIEWED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                     |
       | tag             | AUD_NT_UPDATE_COST                                                       |
@@ -1749,7 +1783,7 @@ Feature: Correzione timeline fase 3
       | noElementsExpected |  |
 
   @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_MONODEST_24_VIEWED] Restart all'attempt 1 di notifica che va in KO all'attempt 0 e all'attempt 1 (anche al restart va in KO all'attempt 1)
+  Scenario: [TR3_RESTART_MONODEST_19_VIEWED] Restart all'attempt 1 di notifica che va in KO all'attempt 0 e all'attempt 1 (anche al restart va in KO all'attempt 1)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -1781,6 +1815,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "VIEWED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                     |
       | tag             | AUD_NT_UPDATE_COST                                                       |
@@ -1797,7 +1832,7 @@ Feature: Correzione timeline fase 3
       | noElementsExpected |  |
 
 #  @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_MONODEST_25_VIEWED] Restart all'attempt 1 di notifica che va in KO all'attempt 0 e all'attempt 1 (al restart va in OK all'attempt 1)
+  Scenario: [TR3_RESTART_MONODEST_20_VIEWED] Restart all'attempt 1 di notifica che va in KO all'attempt 0 e all'attempt 1 (al restart va in OK all'attempt 1)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -1829,6 +1864,7 @@ Feature: Correzione timeline fase 3
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "VIEWED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                     |
       | tag             | AUD_NT_UPDATE_COST                                                       |
