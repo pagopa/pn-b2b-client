@@ -76,3 +76,25 @@ Feature: Lettura singola finalità
       | SUSPENDED            |
       | WAITING_FOR_APPROVAL |
       | ARCHIVED             |
+
+  @adeguamento-analisi-rischio
+  Scenario Outline: [LETTURA_FINALITA_TK_1] A seguito del cambiamento di tenant kind si tenta di reperire una finalità attiva
+    Given l'utente è un "admin" di "<ente>"
+    And "PA2" ha già creato e pubblicato 1 e-service
+    And "<ente>" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "<ente>" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    And il tenant kind dell'ente "<ente>" viene impostato a "<kind>"
+    When l'utente richiede la lettura della finalità
+    Then si ottiene status code 200 ma l'analisi del rischio solo per admin
+    When l'utente è un "api" di "<ente>"
+    And l'utente richiede la lettura della finalità
+    Then si ottiene status code 200 ma l'analisi del rischio solo per admin
+
+    Examples:
+      | ente    | kind    |
+      | PA4     | Privato |
+      | PA4     | GSP     |
+      | GSP2    | PA      |
+      | GSP2    | Privato |
+      | Privato | PA      |
+      | Privato | GSP     |

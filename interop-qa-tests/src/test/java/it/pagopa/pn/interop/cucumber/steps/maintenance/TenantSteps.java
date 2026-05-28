@@ -18,5 +18,6 @@ public class TenantSteps {
         //System.out.println("Maintenance token: " + maintenanceToken);
 
         this.maintenanceService.changeTenantKind(tenant, kind);
+        sharedStepsContext.setTenantType(kind);
     }
 }

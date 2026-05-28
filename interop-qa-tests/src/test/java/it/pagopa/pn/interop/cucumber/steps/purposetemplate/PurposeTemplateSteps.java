@@ -10,11 +10,13 @@ import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplateDraftUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplates;
+import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
 import it.pagopa.interop.purpose.service.impl.PurposeTemplateClientImpl;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose_template.assistant.PurposeTemplatePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.purposetemplate.ParameterTypesInterop.ResourceState;
 import it.pagopa.pn.interop.cucumber.steps.purposetemplate.model.PurposeTemplateContext;
@@ -30,7 +32,6 @@ import org.springframework.http.HttpStatus;
 
 import javax.annotation.Nonnull;
 import java.io.File;
-import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Stream;
@@ -58,6 +59,8 @@ public class PurposeTemplateSteps {
     private final PollingService pollingService;
 
     private final PurposeTemplatePatchOperationsAssistant patchAssistant;
+
+    private final BFFDataPreparationService dataPreparationService;
 
     private PurposeTemplateSeed purposeTemplateCreationRequest;
 
@@ -96,7 +99,8 @@ public class PurposeTemplateSteps {
     public PurposeTemplateSteps(SharedStepsContext sharedStepsContext,
                                 ClientTokenConfigurator clientTokenConfigurator,
                                 BlobFileCreator blobFileCreator,
-                                PurposeTemplatePatchOperationsAssistant patchAssistant) {
+                                PurposeTemplatePatchOperationsAssistant patchAssistant,
+                                BFFDataPreparationService dataPreparationService) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.blobFileCreator = blobFileCreator;
@@ -108,6 +112,7 @@ public class PurposeTemplateSteps {
         this.purposeTemplateContext = new PurposeTemplateContext();
         this.resolver = new PurposeTemplateResolver(sharedStepsContext, purposeTemplateContext, sharedStepsContext.getIdentityService());
         this.patchAssistant = patchAssistant;
+        this.dataPreparationService = dataPreparationService;
     }
 
     @AllArgsConstructor
@@ -871,6 +876,11 @@ public class PurposeTemplateSteps {
         updatePurposeWithParams(exists, "DATI VALIDI");
     }
 
+    @When("si modifica la finalità {exists} specificando una nuova risk analysis coerente con il tenant kind")
+    public void updatePurposeWithRA(boolean exists) {
+        updatePurposeWithParams(exists, "NUOVA RA");
+    }
+
     @When("si modifica la finalità {exists} passando {string}")
     public void updatePurposeWithParams(boolean exists, String parameterType) {
         UUID ptId = createdPurposeTemplate.getId();
@@ -894,6 +904,12 @@ public class PurposeTemplateSteps {
                 Purpose purposeWithTitleToBeCopied = clientTokenConfigurator.getPurposeApiClient().getPurpose(lastCreatedPurposeId);
                 assertThat(purposeWithTitleToBeCopied).isNotNull();
                 patch.setTitle(purposeWithTitleToBeCopied.getTitle());
+            }
+            case "NUOVA RA" -> {
+                patch.setTitle(purpose.getTitle() + "_updated");
+                patch.setDailyCalls(20);
+                RiskAnalysis riskAnalysis1 = dataPreparationService.getRiskAnalysis(sharedStepsContext.getTenantType(), true);
+                patch.setRiskAnalysisForm(riskAnalysis1.getRiskAnalysisForm());
             }
             default -> {
                 patch.setTitle(purpose.getTitle() + "_updated");
