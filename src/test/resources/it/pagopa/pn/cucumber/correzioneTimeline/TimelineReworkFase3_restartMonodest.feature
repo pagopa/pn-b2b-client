@@ -422,7 +422,7 @@ Feature: Correzione timeline fase 3
       | recIndex        | recIndex=0                                                              |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
       | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And si verifica che la richiesta di restart effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 240 secondi controllando ogni 5 secondi
     And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
     When vengono recuperati i record relativi agli elementi di timeline affetti dal rework
     Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
@@ -467,7 +467,7 @@ Feature: Correzione timeline fase 3
       | recIndex        | recIndex=0                                                              |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
       | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And si verifica che la richiesta di restart effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 240 secondi controllando ogni 5 secondi
     And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
     When vengono recuperati i record relativi agli elementi di timeline affetti dal rework
     Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
@@ -512,7 +512,7 @@ Feature: Correzione timeline fase 3
       | recIndex        | recIndex=0                                                              |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
       | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And si verifica che la richiesta di restart effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 240 secondi controllando ogni 5 secondi
     And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
     When vengono recuperati i record relativi agli elementi di timeline affetti dal rework
     Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
@@ -557,7 +557,7 @@ Feature: Correzione timeline fase 3
       | recIndex        | recIndex=0                                                              |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
       | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And si verifica che la richiesta di restart effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 240 secondi controllando ogni 5 secondi
     And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
     When vengono recuperati i record relativi agli elementi di timeline affetti dal rework
     Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
@@ -837,7 +837,7 @@ Feature: Correzione timeline fase 3
       | recIndex        | recIndex=0                                                               |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1                                     |
       | invalidatedCost | SecondAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And si verifica che la richiesta di restart effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 240 secondi controllando ogni 5 secondi
     And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
     When vengono recuperati i record relativi agli elementi di timeline affetti dal rework
     Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
@@ -890,7 +890,7 @@ Feature: Correzione timeline fase 3
       | recIndex        | recIndex=0                                                               |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1                                     |
       | invalidatedCost | SecondAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And si verifica che la richiesta di restart effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 240 secondi controllando ogni 5 secondi
     And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
     When vengono recuperati i record relativi agli elementi di timeline affetti dal rework
     Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
@@ -943,7 +943,7 @@ Feature: Correzione timeline fase 3
       | recIndex        | recIndex=0                                                               |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1                                     |
       | invalidatedCost | SecondAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And si verifica che la richiesta di restart effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 240 secondi controllando ogni 5 secondi
     And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
     When vengono recuperati i record relativi agli elementi di timeline affetti dal rework
     Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
@@ -996,7 +996,7 @@ Feature: Correzione timeline fase 3
       | recIndex        | recIndex=0                                                               |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1                                     |
       | invalidatedCost | SecondAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And si verifica che la richiesta di restart effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 240 secondi controllando ogni 5 secondi
     And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
     When vengono recuperati i record relativi agli elementi di timeline affetti dal rework
     Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
@@ -1277,7 +1277,7 @@ Feature: Correzione timeline fase 3
       | recIndex        | recIndex=0                                                               |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1                                     |
       | invalidatedCost | SecondAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And si verifica che la richiesta di restart effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 240 secondi controllando ogni 5 secondi
     And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
     When vengono recuperati i record relativi agli elementi di timeline affetti dal rework
     Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
@@ -1330,7 +1330,7 @@ Feature: Correzione timeline fase 3
       | recIndex        | recIndex=0                                                               |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1                                     |
       | invalidatedCost | SecondAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And si verifica che la richiesta di restart effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 240 secondi controllando ogni 5 secondi
     And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
     When vengono recuperati i record relativi agli elementi di timeline affetti dal rework
     Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
@@ -1383,7 +1383,7 @@ Feature: Correzione timeline fase 3
       | recIndex        | recIndex=0                                                               |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1                                     |
       | invalidatedCost | SecondAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And si verifica che la richiesta di restart effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 240 secondi controllando ogni 5 secondi
     And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
     When vengono recuperati i record relativi agli elementi di timeline affetti dal rework
     Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
@@ -1436,7 +1436,7 @@ Feature: Correzione timeline fase 3
       | recIndex        | recIndex=0                                                               |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1                                     |
       | invalidatedCost | SecondAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And si verifica che la richiesta di restart effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 240 secondi controllando ogni 5 secondi
     And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
     When vengono recuperati i record relativi agli elementi di timeline affetti dal rework
     Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
@@ -1691,7 +1691,7 @@ Feature: Correzione timeline fase 3
       | recIndex        | recIndex=0                                                               |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1                                     |
       | invalidatedCost | SecondAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And si verifica che la richiesta di restart effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 240 secondi controllando ogni 5 secondi
     And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
     When vengono recuperati i record relativi agli elementi di timeline affetti dal rework
     Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
@@ -1739,7 +1739,7 @@ Feature: Correzione timeline fase 3
       | recIndex        | recIndex=0                                                               |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1                                     |
       | invalidatedCost | SecondAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And si verifica che la richiesta di restart effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 240 secondi controllando ogni 5 secondi
     And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
     When vengono recuperati i record relativi agli elementi di timeline affetti dal rework
     Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
@@ -1787,7 +1787,7 @@ Feature: Correzione timeline fase 3
       | recIndex        | recIndex=0                                                               |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1                                     |
       | invalidatedCost | SecondAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And si verifica che la richiesta di restart effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 240 secondi controllando ogni 5 secondi
     And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
     When vengono recuperati i record relativi agli elementi di timeline affetti dal rework
     Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
@@ -1835,7 +1835,7 @@ Feature: Correzione timeline fase 3
       | recIndex        | recIndex=0                                                               |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1                                     |
       | invalidatedCost | SecondAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And si verifica che la richiesta di restart effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 240 secondi controllando ogni 5 secondi
     And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
     When vengono recuperati i record relativi agli elementi di timeline affetti dal rework
     Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED

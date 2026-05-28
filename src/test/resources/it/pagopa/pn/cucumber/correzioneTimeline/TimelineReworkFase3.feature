@@ -134,9 +134,7 @@ Feature: Correzione timeline fase 3
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL                  |
-      | physicalAddress_address | Via@FAIL-Discovery_AR |
-      | payment                 | NULL                  |
+      | payment | NULL |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     When viene invocata una richiesta di restart per la notifica appena creata
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
@@ -151,13 +149,9 @@ Feature: Correzione timeline fase 3
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL                  |
-      | physicalAddress_address | Via@FAIL-Discovery_AR |
-      | payment                 | NULL                  |
+      | payment | NULL |
     And destinatario Mario Cucumber e:
-      | digitalDomicile         | NULL                  |
-      | physicalAddress_address | Via@FAIL-Discovery_AR |
-      | payment                 | NULL                  |
+      | payment | NULL |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     When viene invocata una richiesta di restart per la notifica appena creata
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
@@ -345,7 +339,6 @@ Feature: Correzione timeline fase 3
     And destinatario Mario Gherkin e:
       | physicalAddress_address | Via@OK_AR          |
       | digitalDomicile         | NULL               |
-      | payment_pagoPaForm      | SI                 |
       | apply_cost_pagopa       | SI                 |
       | payment_creditorTaxId   | 77777777777        |
       | payment_pagoPaForm      | SI                 |
@@ -375,7 +368,6 @@ Feature: Correzione timeline fase 3
     And destinatario Mario Gherkin e:
       | physicalAddress_address | Via@OK_AR          |
       | digitalDomicile         | NULL               |
-      | payment_pagoPaForm      | SI                 |
       | apply_cost_pagopa       | SI                 |
       | payment_creditorTaxId   | 77777777777        |
       | payment_pagoPaForm      | SI                 |
@@ -384,7 +376,6 @@ Feature: Correzione timeline fase 3
     And destinatario Mario Cucumber e:
       | physicalAddress_address | Via@OK_AR          |
       | digitalDomicile         | NULL               |
-      | payment_pagoPaForm      | SI                 |
       | apply_cost_pagopa       | SI                 |
       | payment_creditorTaxId   | 77777777777        |
       | payment_pagoPaForm      | SI                 |
