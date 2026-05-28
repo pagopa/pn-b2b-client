@@ -25,12 +25,14 @@ import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.INEXISTENT_IUN;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.INVALID_IUN;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.not;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @Slf4j
@@ -43,6 +45,8 @@ public class CostiNotificaSteps {
     private NotificationCostPaymentResponse notificationCostPaymentResponse;
     private NotificationCostRecipientResponse notificationCostRecipientResponse;
 
+    private Map<String, String> notificationCostsPreRework;
+    private Map<String, String> notificationCostsPostRework;
 
     @And("verifico che per il destinatario {int} il record su Pn-NotificationDeliveryCost sia stato (inserito)(modificato) e correttamente valorizzato")
     public void checkNotificationDeliveryCostRecord(int recIndex, Map<String, String> expectedData) {
@@ -309,6 +313,39 @@ public class CostiNotificaSteps {
                 } else if (feePolicy.equals("FLAT_RATE")) {
                     softly.assertThat(totalCost).as("In caso di feePolicy=FLAT_RATE, il costo totale della notifica restituito da delivery-push dev'essere pari a 0").isEqualTo(0);
                     softly.assertThat(partialCost).as("In caso di feePolicy=FLAT_RATE, il costo parziale della notifica restituito da delivery-push dev'essere pari a 0").isEqualTo(0);
+                }
+            });
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
+    }
+
+    @And("verifico che {isBefore} rework per il destinatario {int} con indirizzo {string} i record su Pn-NotificationDeliveryCost siano stati (inseriti)(modificati) e correttamente valorizzati")
+    public void checkNotificationDeliveryCostRecordForRework(boolean isBeforeRestart, int recIndex, String address, Map<String, String> expectedData) {
+        try {
+            List<String> costiValorizzati = Arrays.asList("baseCost", "firstAnalogCost");
+            String sequence = address.replace("Via@", "");
+            switch (sequence.toUpperCase()) {
+                //TODO: aggiungere le altre sequence che prevedono il secondAnalogCost
+                case "FAIL-DISCOVERY_890", "FAIL-DISCOVERYIRREPERIBILE_890" -> costiValorizzati.add("secondAnalogCost");
+            }
+            Map<String, AttributeValue> record = searchNotificationDeliveryCostRecord(recIndex);
+            FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
+            //verifica che tutte le colonne siano valorizzate in modo coerente
+            assertSoftly(softly -> {
+                softly.assertThat(record.get("senderTaxId").s()).as("Il senderTaxId del record non coincide con quello della fullSentNotification").isEqualTo(fsn.getSenderTaxId());
+                softly.assertThat(record.get("notificationFeePolicy").s()).as("Il notificationFeePolicy del record non coincide con quello della fullSentNotification").isEqualTo(fsn.getNotificationFeePolicy().getValue());
+                softly.assertThat(record.get("pagoPaIntMode").s()).as("Il pagoPaIntMode del record non coincide con quello della fullSentNotification").isEqualTo(fsn.getPagoPaIntMode().getValue());
+                softly.assertThat(record.get("vat").n()).as("Il campo vat del record non coincide con quello della fullSentNotification").isEqualTo(fsn.getVat().toString());
+            });
+            notificationCostRecipientResponse = notificationCostClient.getNotificationCost(sharedSteps.getNotificationIun(), recIndex);
+            log.info("NotificationCostRecipientResponse:\n {}", notificationCostRecipientResponse);
+            costiValorizzati.forEach(costo -> {
+                assertThat(record.get(costo)).as("Il record salvato su Pn-NotificationDeliveryCost dovrebbe avere il campo %s valorizzato", costo).isNotNull();
+                if (isBeforeRestart) {
+                    notificationCostsPreRework.put(costo, record.get(costo).n());
+                } else {
+                    notificationCostsPostRework.put(costo, record.get(costo).n());
                 }
             });
         } catch (AssertionError assertionError) {

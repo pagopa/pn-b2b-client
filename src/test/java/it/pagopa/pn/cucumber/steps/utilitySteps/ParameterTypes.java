@@ -102,9 +102,9 @@ public class ParameterTypes {
         return value.equals("può");
     }
 
-    @ParameterType("legge|non legge")
-    public static boolean readsOrNot(String value) {
-        return value.equals("legge");
+    @ParameterType("pre|post")
+    public static boolean isBefore(String value) {
+        return value.equals("pre");
     }
 
     @ParameterType("INVALIDATED|NEW")

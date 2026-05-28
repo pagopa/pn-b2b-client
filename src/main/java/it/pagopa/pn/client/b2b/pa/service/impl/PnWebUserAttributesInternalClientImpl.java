@@ -217,8 +217,6 @@ public class PnWebUserAttributesInternalClientImpl implements IPnWebUserAttribut
     }
 
 
-
-
     public RecipientWrapper getAddressesByRecipient() throws RestClientException {
 
         List<BffUserAddress> bffUserAddress = addressesApi.getAddressesV1();
@@ -243,7 +241,7 @@ public class PnWebUserAttributesInternalClientImpl implements IPnWebUserAttribut
     public void postRecipientLegalAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType, AddressVerification addressVerification, CxLanguage xPagopaPnLanguage) throws RestClientException {
         BffAddressVerificationRequest bffAddressVerificationRequest = new BffAddressVerificationRequest().requestId(addressVerification.getRequestId())
                 .verificationCode(addressVerification.getVerificationCode()).value(addressVerification.getValue());
-        addressesApi.createOrUpdateAddressV1(BffAddressType.LEGAL, senderId, BffChannelType.fromValue(channelType.getValue()), bffAddressVerificationRequest);
+        addressesApi.createOrUpdateAddressV1(BffAddressType.LEGAL, senderId, BffChannelType.fromValue(channelType.getValue()), bffAddressVerificationRequest, null);
         //legalApi.postRecipientLegalAddress("pn-test", CxTypeAuthFleet.PF, senderId, deepCopy(channelType, LegalChannelType.class), addressVerification, null, null, deepCopy(xPagopaPnLanguage, it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.CxLanguage.class));
 
     }
@@ -262,7 +260,7 @@ public class PnWebUserAttributesInternalClientImpl implements IPnWebUserAttribut
     public void postRecipientCourtesyAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType, AddressVerification addressVerification, CxLanguage xPagopaPnLanguageCxLanguage) throws RestClientException {
         BffAddressVerificationRequest bffAddressVerificationRequest = new BffAddressVerificationRequest().requestId(addressVerification.getRequestId())
                 .verificationCode(addressVerification.getVerificationCode()).value(addressVerification.getValue());
-        addressesApi.createOrUpdateAddressV1(BffAddressType.COURTESY, senderId, BffChannelType.fromValue(channelType.getValue()), bffAddressVerificationRequest);
+        addressesApi.createOrUpdateAddressV1(BffAddressType.COURTESY, senderId, BffChannelType.fromValue(channelType.getValue()), bffAddressVerificationRequest, null);
         //AddressVerificationResponse response = courtesyApiAddressBook.postRecipientCourtesyAddress("pn-test", CxTypeAuthFleet.PF, senderId, deepCopy(channelType, CourtesyChannelType.class), addressVerification, null, null, deepCopy(xPagopaPnLanguageCxLanguage, it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.CxLanguage.class));
     }
 
