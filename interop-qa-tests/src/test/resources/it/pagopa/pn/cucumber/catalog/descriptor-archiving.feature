@@ -85,7 +85,7 @@ Feature: Archiviazione manuale di un descrittore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-#    When l'utente archivia il secondo(qui possiamo inserire una variabile) e più recente descrittore con id "%actual" dell'e-service con id "%actual"
+    When l'utente archivia la versione più recente dell'e-service
     Then si ottiene response status code 400
     And la versione più recente dell'e-service è in stato "DEPRECATED"
 

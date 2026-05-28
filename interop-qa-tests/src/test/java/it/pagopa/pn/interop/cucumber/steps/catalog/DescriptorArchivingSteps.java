@@ -39,6 +39,16 @@ public class DescriptorArchivingSteps {
         scheduleArchiveDescriptor(resolvedEServiceId, resolvedDescriptorId);
     }
 
+    @When("l'utente archivia la versione più recente dell'e-service")
+    public void archiveLatestDescriptor() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+
+        scheduleArchiveDescriptor(eServiceId, descriptorId);
+    }
+
     @Given("l'utente ha già messo in archiviazione la vecchia versione con id {string} dell'e-service con id {string}")
     public void oldDescriptorAlreadyInArchiving(String descriptorId, String eServiceId) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
