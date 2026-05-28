@@ -205,6 +205,7 @@ public class EServiceCatalogListingSteps {
         dataPreparationService.publishDescriptor(eServiceDescriptor.getEServiceId(), eServiceDescriptor.getDescriptorId());
     }
 
+    @Then("la versione più recente dell'e-service è in stato {string}")
     @Then("l'e-service è in stato {string}")
     public void checkEServiceState(String eServiceState) {
         pollingService.makePolling(() -> httpExecutor.performCall(() -> eServiceClient.getProducerEServiceDescriptorWithHttpInfo(
