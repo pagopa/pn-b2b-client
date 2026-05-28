@@ -32,4 +32,15 @@ public class CatalogResolver extends AbstractResolver {
                 () -> null
         );
     }
+
+    public String resolveArchivingReason(String raw) {
+        return resolveOrParse(
+                raw,
+                v -> v, 
+                null,
+                null,
+                null,
+                () -> ""
+        );
+    }
 }
