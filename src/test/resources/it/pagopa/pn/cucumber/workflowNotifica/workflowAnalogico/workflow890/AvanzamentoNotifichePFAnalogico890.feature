@@ -367,14 +367,17 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
+  # Viene utilizzato un taxId per cui NR restituisce Città e Località null, in modo da verificare che in questi casi non venga valorizzato
+  # il campo "details_foundAddress" nell'elemento di timeline "PREPARE_ANALOG_DOMICILE_FAILURE"
+  # e che venga invece valorizzato il campo "details_failureCause" con il codice D01 (Indirizzo Irreperibile)
   @workflowAnalogico
-  Scenario: [B2B_TIMELINE_ANALOG_890_15AAA] Verifica della non presenza dell'indirizzo nell'elemento di timeline PREPARE_ANALOG_DOMICILE
+  Scenario: [B2B_TIMELINE_ANALOG_890_15AAA] Verifica della NON presenza dell'indirizzo nell'elemento di timeline PREPARE_ANALOG_DOMICILE
   in caso di physicalAddress con Città e Località ritornati null da NR - PN-19480
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
     And destinatario
-      | taxId                   | MRGVPC67R10H501Y          |
+      | taxId                   | BLLBBR95D46L781R          |
       | recipientType           | PF                        |
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@FAIL-Irreperibile_890 |
@@ -389,9 +392,12 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
 
+  # Viene utilizzato un taxId per cui NR restituisce Città e Località come stringa vuota, in modo da verificare che in questi casi non venga valorizzato
+  # il campo "details_foundAddress" nell'elemento di timeline "PREPARE_ANALOG_DOMICILE_FAILURE"
+  # e che venga invece valorizzato il campo "details_failureCause" con il codice D01 (Indirizzo Irreperibile)
   @workflowAnalogico
   Scenario: [B2B_TIMELINE_ANALOG_890_15BBB] Verifica della NON presenza dell'indirizzo nell'elemento di timeline PREPARE_ANALOG_DOMICILE
-  in caso di physicalAddress con Città e Località ritornati NULL da NR - PN-19480
+  in caso di physicalAddress con Città e Località ritornati come stringa vuota da NR - PN-19480
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
@@ -409,26 +415,6 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
       | details_foundAddress    | NULL     |
       | details_failureCause    | D01      |
       | details_sentAttemptMade | 1        |
-
-  @workflowAnalogico
-  Scenario: [B2B_TIMELINE_ANALOG_890_15BBB] Verifica della presenza dell'indirizzo nell'elemento di timeline PREPARE_ANALOG_DOMICILE
-  in caso di physicalAddress con Città e Località ritornati con valori vuoti da NR - PN-19480
-    Given viene generata una nuova notifica
-      | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo               |
-    And destinatario
-      | taxId                   | VRSVLR80A01L781H          |
-      | recipientType           | PF                        |
-      | digitalDomicile         | NULL                      |
-      | physicalAddress_address | Via@FAIL-Irreperibile_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT_WORKFLOW"
-    And viene verificato che l'elemento di timeline "PREPARE_ANALOG_DOMICILE_FAILURE" esista
-      | loadTimelime            | true     |
-      | details                 | NOT_NULL |
-      | details_recIndex        | 0        |
-      | details_sentAttemptMade | 1        |
-
 
   @workflowAnalogico
   Scenario: [B2B_TIMELINE_ANALOG_890_16] Attesa elemento di timeline REFINEMENT con physicalAddress OK-REC008_890 - PN-9929
