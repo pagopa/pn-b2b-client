@@ -401,6 +401,7 @@ public class TimelineReworkSteps {
         Map<String, Object> mapInfo = new HashMap<>();
         mapInfo.put("requestId", buildRequestId(
                 iun,
+                inputData.get("productType"),
                 inputData.get("recIndex"),
                 inputData.get("attemptId"),
                 inputData.get("pcRetry")
@@ -435,13 +436,16 @@ public class TimelineReworkSteps {
             case "dev" -> "safestorage://PN_EXTERNAL_LEGAL_FACTS-970c9a266a3e44fa88ff66f4c3f4e5ae.pdf";
             case "test" -> "safestorage://PN_EXTERNAL_LEGAL_FACTS-243648ce692946f987b86fb72b33d98a.pdf";
             case "uat" -> "safestorage://PN_EXTERNAL_LEGAL_FACTS-dd7dc6811b024202ac66044671f3e2ad.pdf";
+            case "hotfix" -> "safestorage://PN_EXTERNAL_LEGAL_FACTS-31ea166ced054f63952e736f04647f0a.pdf";
             default -> throw new IllegalArgumentException("Invalid environment name: " + environment);
         };
     }
 
-    private String buildRequestId(String iun, String recindex, String attempt, String pcRetry) {
-        return String.format(
-                "PREPARE_ANALOG_DOMICILE.IUN_%s.%s.%s.%s",
+    private String buildRequestId(String iun, String productType, String recindex, String attempt, String pcRetry) {
+        if (productType.equals("RS") || productType.equals("RIS"))
+            return String.format("PREPARE_SIMPLE_REGISTERED_LETTER.IUN_%s.%s.%s", iun, recindex, pcRetry);
+        else
+            return String.format("PREPARE_ANALOG_DOMICILE.IUN_%s.%s.%s.%s",
                 iun, recindex, attempt, pcRetry
         );
     }

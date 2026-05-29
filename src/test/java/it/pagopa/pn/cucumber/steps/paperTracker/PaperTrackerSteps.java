@@ -26,6 +26,7 @@ import it.pagopa.pn.cucumber.steps.paperTracker.parser.EventTimelineParser;
 import it.pagopa.pn.cucumber.steps.paperTracker.proxy.PaperTrackerSchemaValidatorProxy;
 import it.pagopa.pn.cucumber.steps.paperTracker.validator.additionalDetails.AdditionalDetailsValidator;
 import it.pagopa.pn.cucumber.steps.paperTracker.validator.additionalDetails.AffectedEventsValidator;
+import it.pagopa.pn.cucumber.steps.paperTracker.validator.additionalDetails.FlatAdditionalDetailsValidator;
 import it.pagopa.pn.cucumber.steps.paperTracker.validator.additionalDetails.MissingAttachmentsValidator;
 import it.pagopa.pn.cucumber.steps.paperTracker.validator.additionalDetails.MissingStatusCodeValidator;
 import it.pagopa.pn.cucumber.steps.paperTracker.validator.additionalDetails.OcrDataResultPayloadValidator;
@@ -69,7 +70,8 @@ public class PaperTrackerSteps {
             "ocrDataResultPayload", new OcrDataResultPayloadValidator(),
             "affectedEvents", new AffectedEventsValidator(),
             "missingStatusCodes", new MissingStatusCodeValidator(),
-            "missingAttachments", new MissingAttachmentsValidator()
+            "missingAttachments", new MissingAttachmentsValidator(),
+            "flatAdditionalDetails", new FlatAdditionalDetailsValidator()
     );
 
     private final EventTimelineParser eventTimelineParser;
@@ -341,20 +343,37 @@ public class PaperTrackerSteps {
             assertThat(expectedMessage).isEqualTo(actualMessage);
         }
 
-        //details.affectedEvents
         JsonNode expectedAdditionalDetails = expected.at("/details/additionalDetails");
         if (!expectedAdditionalDetails.isEmpty()) {
             JsonNode actualAdditionalDetails = actual.at("/details/additionalDetails");
-            AdditionalDetailsValidator validator = VALIDATORS.get(expectedAdditionalDetails.fieldNames().next());
-            assertThat(validator).as("Non è stato definito nessun validatore per questo node").isNotNull();
-            validator.validate(actualAdditionalDetails, expectedAdditionalDetails);
+            if (isAdditionalDetailsNested(expectedAdditionalDetails)) {
+                // Se additionalDetails è nested, prendi il primo field name e usa il validatore corrispondente
+                String validatorKey = expectedAdditionalDetails.fieldNames().next();
+                AdditionalDetailsValidator validator = VALIDATORS.get(validatorKey);
+                assertThat(validator).as("Non è stato definito nessun validatore per: " + validatorKey).isNotNull();
+                validator.validate(actualAdditionalDetails, expectedAdditionalDetails);
+            } else {
+                // Se additionalDetails è flat, usa il validatore flat per confrontare tutti i campi
+                AdditionalDetailsValidator flatValidator = VALIDATORS.get("flatAdditionalDetails");
+                assertThat(flatValidator).as("Validatore flat non trovato").isNotNull();
+                flatValidator.validate(actualAdditionalDetails, expectedAdditionalDetails);
+            }
         }
+
         if (expected.get("flowThrow") == null) assertThat(actual.get("flowThrow") == null).isTrue();
         else assertThat(expected.get("flowThrow").asText()).isEqualTo(actual.get("flowThrow").asText());
         assertThat(expected.get("eventThrow").asText()).isEqualTo(actual.get("eventThrow").asText());
         assertThat(actual.get("eventIdThrow").asText()).isNotNull();
         assertThat(expected.get("productType").asText()).isEqualTo(actual.get("productType").asText());
         assertThat(expected.get("type").asText()).isEqualTo(actual.get("type").asText());
+    }
+
+    private boolean isAdditionalDetailsNested(JsonNode additionalDetails) {
+        if (additionalDetails.isEmpty()) {
+            return false;
+        }
+        String firstFieldName = additionalDetails.fieldNames().next();
+        return VALIDATORS.containsKey(firstFieldName) && !firstFieldName.equals("flatAdditionalDetails");
     }
 
     @Then("si controlla che non ci siano eventi duplicati")
