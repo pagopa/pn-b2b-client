@@ -14,7 +14,7 @@ Feature: Radd Alternative integrazione con Poste
 
 
 
-
+  @useRaddVpce
   Scenario: [RADD_POSTE_01_2] PF - Verifica restituzione al cittadino del documento Frontespizio (nome e cognome del destinatario) come primo documento del plico
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber radd alternative |
@@ -27,13 +27,13 @@ Feature: Radd Alternative integrazione con Poste
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     When la persona fisica Signor Casuale chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
-    Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
+    Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisicagiuridica su radd vpce
     And il recupero degli aar in stato irreperibile si conclude correttamente su radd alternative
     And L'operatore esegue il download del frontespizio del operazione "aor"
     And viene chiusa la transazione per il recupero degli aar su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
-
+  #@useRaddVpce
   Scenario: [RADD_POSTE_01_1] PG - Verifica restituzione al cittadino del documento Frontespizio (ragione sociale dell'impresa destinataria) come primo documento del plico
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
@@ -50,6 +50,7 @@ Feature: Radd Alternative integrazione con Poste
     And L'operatore esegue il download del frontespizio del operazione "act"
     Then viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
 
+  #@useRaddVpce
   Scenario: [RADD_POSTE_01_3] Verifica allegato ARCAD per secondo evento di timeline SEND_ANALOG_PROGRESS con deliveryDetailCode = RECAG011B
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -77,7 +78,7 @@ Feature: Radd Alternative integrazione con Poste
 
  #   ACT
 
-
+  @useRaddVpce
   Scenario: [RADD_POSTE_02_1_A] PF - Scansione QR code esistente associato al CF corretto, per una notifica con allegati di pagamento (Avviso PagoPA e F24)
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
@@ -99,11 +100,11 @@ Feature: Radd Alternative integrazione con Poste
     And Il cittadino Mario Gherkin come destinatario 0 mostra il QRCode "corretto"
     When L'operatore scansione il qrCode per recuperare gli atti di Mario Gherkin
     Then la scansione si conclude correttamente su radd alternative
-    And vengono caricati i documento di identità del cittadino su radd alternative
     And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
     And l'operazione di download degli atti si conclude correttamente su radd alternative
     And l'operazione di download restituisce 7 documenti
 
+  @useRaddVpce
   Scenario: [RADD_POSTE_02_1_C] PG - Scansione QR code esistente, associato al CF corretto, per una notifica con allegato di pagamento (solo F24)
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
@@ -123,14 +124,13 @@ Feature: Radd Alternative integrazione con Poste
     And Il cittadino CucumberSpa come destinatario 0 mostra il QRCode "corretto"
     When L'operatore scansione il qrCode per recuperare gli atti di CucumberSpa
     And la scansione si conclude correttamente su radd alternative
-    And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
     And l'operazione di download degli atti si conclude correttamente su radd alternative
     And l'operazione di download restituisce 5 documenti
     And viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
-
+  @useRaddVpce
   Scenario: [RADD_POSTE_02_1_F] PF - Scansione QR code esistente associato al CF corretto, per una notifica con allegato di pagamento (solo F24)
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
@@ -152,14 +152,13 @@ Feature: Radd Alternative integrazione con Poste
     And Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
     When L'operatore scansione il qrCode per recuperare gli atti di Mario Cucumber
     Then la scansione si conclude correttamente su radd alternative
-    And vengono caricati i documento di identità del cittadino su radd alternative
     And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
     And l'operazione di download degli atti si conclude correttamente su radd alternative
     And l'operazione di download restituisce 6 documenti
     And viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
-
+  @useRaddVpce
   Scenario: [RADD_POSTE_02_1_E] PF -  Recupero notifica con allegato di pagamento (solo Avviso PagoPA)  con codice IUN esistente associato a CF corretto
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
@@ -179,14 +178,13 @@ Feature: Radd Alternative integrazione con Poste
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     Then L'operatore usa lo IUN "corretto" per recuperare gli atti di Mario Cucumber
     And la lettura si conclude correttamente su radd alternative
-    And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
     And l'operazione di download degli atti si conclude correttamente su radd alternative
     And l'operazione di download restituisce 6 documenti
     And viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
-
+  @useRaddVpce
   Scenario: [RADD_POSTE_02_1_D] PG -  Recupero notifica con allegato di pagamento (solo Avviso PagoPA)  con codice IUN esistente associato a CF corretto
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
@@ -204,14 +202,13 @@ Feature: Radd Alternative integrazione con Poste
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     Then L'operatore usa lo IUN "corretto" per recuperare gli atti di CucumberSpa
     And la lettura si conclude correttamente su radd alternative
-    And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
     And l'operazione di download degli atti si conclude correttamente su radd alternative
     And l'operazione di download restituisce 5 documenti
     And viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
-
+  @useRaddVpce
   Scenario: [RADD_POSTE_02_1_G] PF - Interruzione processo recupero atti e avvio nuovo processo su stessa notifica
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
@@ -225,17 +222,15 @@ Feature: Radd Alternative integrazione con Poste
     Then Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
     And L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
-    And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
     And la transazione viene abortita per gli "act"
     Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
-    And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
     And l'operazione di download degli atti si conclude correttamente su radd alternative
     Then viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
 
-
+  @useRaddVpce
   Scenario: [RADD_POSTE_02_1_H] PG - Interruzione processo recupero atti e avvio nuovo processo su stessa notifica
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
@@ -249,12 +244,10 @@ Feature: Radd Alternative integrazione con Poste
     Then Il cittadino CucumberSpa come destinatario 0 mostra il QRCode "corretto"
     And L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
-    And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
     And la transazione viene abortita per gli "act"
     And L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
-    And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
     And l'operazione di download degli atti si conclude correttamente su radd alternative
     Then viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
@@ -262,7 +255,7 @@ Feature: Radd Alternative integrazione con Poste
 
 
 #   AOR
-
+  #@useRaddVpce
   Scenario: [RADD_POSTE_AOR_03_1_C] PF - Visualizzazione AAR di notifiche i cui documenti sono già stati stampati, ma inibizione stampa documenti associati alla notifica
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber radd alternative |
@@ -275,15 +268,14 @@ Feature: Radd Alternative integrazione con Poste
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     And la persona fisica Signor Casuale chiede di verificare la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
-    And vengono caricati i documento di identità del cittadino su radd alternative
-    And Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
+    And Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisicagiuridica su radd vpce
     And il recupero degli aar in stato irreperibile si conclude correttamente su radd alternative
     And viene chiusa la transazione per il recupero degli aar su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
     And la transazione viene abortita per gli "aor"
     And l'operazione di abort genera un errore "La transazione risulta già completa" con codice 2 su radd alternative
 
-
+  @useRaddVpce
   Scenario: [RADD_POSTE_AOR_03_1_A] PG - Visualizzazione AAR di notifiche i cui documenti sono già stati stampati, ma inibizione stampa documenti associati alla notifica
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
@@ -295,15 +287,14 @@ Feature: Radd Alternative integrazione con Poste
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     When la persona giuridica Gherkin Irreperibile chiede di verificare la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
-    And vengono caricati i documento di identità del cittadino su radd alternative
-    Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona giuridica su radd alternative
+    Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona giuridica su radd vpce
     And il recupero degli aar in stato irreperibile si conclude correttamente su radd alternative
     And viene chiusa la transazione per il recupero degli aar su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
     And la transazione viene abortita per gli "aor"
     And l'operazione di abort genera un errore "La transazione risulta già completa" con codice 2 su radd alternative
 
-
+  @useRaddVpce
   Scenario: [RADD_POSTE_AOR_03_1_B] PG - Visualizzazione link AAR disponibili con consegna documenti alla PG successivi alla stampa documenti per notifiche associate al CF corretto (irreperibile totale)
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -316,14 +307,13 @@ Feature: Radd Alternative integrazione con Poste
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     And la persona giuridica Gherkin Irreperibile chiede di verificare la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
-    And vengono caricati i documento di identità del cittadino su radd alternative
-    And Vengono recuperati gli aar delle notifiche in stato irreperibile della persona giuridica su radd alternative
+    And Vengono recuperati gli aar delle notifiche in stato irreperibile della persona giuridica su radd vpce
     And il recupero degli aar in stato irreperibile si conclude correttamente su radd alternative
     And viene chiusa la transazione per il recupero degli aar su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
     # Errore su tentativo di upload dei documenti.
-
+  @useRaddVpce
   Scenario: [RADD_POSTE_02_1_I] PG - Come Operatore Radd con accesso da privatelink ricevo errore nel tentativo di effettuare l'upload dei documenti.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
@@ -335,5 +325,5 @@ Feature: Radd Alternative integrazione con Poste
     Then Il cittadino CucumberSpa come destinatario 0 mostra il QRCode "corretto"
     And L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
-    And vengono caricati i documento di identità del cittadino su radd alternative
+    And non viene concesso l'upload documento via VPCE
     #ERRORE 500 todo t radd
