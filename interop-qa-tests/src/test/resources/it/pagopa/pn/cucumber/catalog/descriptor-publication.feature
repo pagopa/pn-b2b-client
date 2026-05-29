@@ -65,7 +65,7 @@ Feature: Pubblicazione di un descrittore
     When l'utente pubblica quel descrittore
     Then si ottiene status code 400
 
-  #@adeguamento-analisi-rischio
+  @adeguamento-analisi-rischio
   Scenario Outline: [DESCRIPTOR_TK_PUBBLICATION_1] A seguito del cambiamento di tenant kind si tenta di pubblicare un proprio e-service in bozza
     Given l'utente è un "admin" di "<ente>"
     And "<ente>" ha già creato un e-service con un descrittore in stato "DRAFT"
