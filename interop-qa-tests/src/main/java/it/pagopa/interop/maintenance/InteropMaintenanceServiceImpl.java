@@ -122,6 +122,9 @@ public class InteropMaintenanceServiceImpl implements InteropMaintenanceService 
 
         String xCorrelationId = String.valueOf(UUID.randomUUID());
         UUID organizationId = identityService.getOrganizationId(tenant.getName());
+
+        String token = identityService.getToken(tenant.getName(), "admin");
+        tenantsProcessClient.setBearerToken(token);
         String actualKind = tenantsProcessClient.getTenant(xCorrelationId, organizationId).getBody().getKind().toString();
 
         if(!actualKind.equals(expectedKind)) {

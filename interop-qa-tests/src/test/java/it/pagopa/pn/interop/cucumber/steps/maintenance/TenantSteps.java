@@ -35,7 +35,7 @@ public class TenantSteps {
             lock.lock();
             try {
                 if (!setupPerformed) {
-                    log.info("Aligning tenant kinds");
+                    log.info("Aligning tenant kinds...");
                     maintenanceService.alignTenantKinds();
                     log.info("Tenant kinds aligned");
                     setupPerformed = true;
