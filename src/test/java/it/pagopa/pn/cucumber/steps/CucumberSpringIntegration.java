@@ -1,9 +1,16 @@
 package it.pagopa.pn.cucumber.steps;
 
 import io.cucumber.spring.CucumberContextConfiguration;
+import it.pagopa.common.config.AwsConfig;
+import it.pagopa.pn.client.b2b.pa.cache.CacheConfig;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.config.TemplateEngineConfigBean;
-import it.pagopa.pn.client.b2b.pa.config.springconfig.*;
+import it.pagopa.pn.client.b2b.pa.config.springconfig.ApiKeysConfiguration;
+import it.pagopa.pn.client.b2b.pa.config.springconfig.BearerTokenConfiguration;
+import it.pagopa.pn.client.b2b.pa.config.springconfig.LegalFactTokenConfiguration;
+import it.pagopa.pn.client.b2b.pa.config.springconfig.MailSenderConfig;
+import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
+import it.pagopa.pn.client.b2b.pa.config.springconfig.TimingConfiguration;
 import it.pagopa.pn.client.b2b.pa.parsing.config.PnLegalFactTokenProperty;
 import it.pagopa.pn.client.b2b.pa.parsing.config.PnLegalFactTokens;
 import it.pagopa.pn.client.b2b.pa.parsing.parser.impl.PnParser;
@@ -98,20 +105,63 @@ import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceValidationSta
 import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceValidationStatusNoAcceptedV29;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceValidationStatusV29;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceWebhookV29;
+import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
+import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.client.b2b.pa.service.IBffMandateServiceApi;
 import it.pagopa.pn.client.b2b.pa.service.IMandateReverseServiceClient;
-import it.pagopa.pn.client.b2b.pa.service.impl.*;
+import it.pagopa.pn.client.b2b.pa.service.impl.B2BDeliveryPushServiceClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.B2bMandateServiceClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.BffMandateServiceClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.EmdIntegrationApiImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.IPnInteropProbingClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.IPnLegalPersonAuthClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.IPnLegalPersonVirtualKeyServiceClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.IPnTosPrivacyClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.MandateReverseServiceClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PaperCalculatorClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnApiKeyManagerExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnAppIOB2bExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnBFFRecipientNotificationClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnBffPaClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnCfgClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnDowntimeLogsExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnEcInternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalChannelsInternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalChannelsServiceClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalRegistryPrivateUserApiImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnGPDClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnIoUserAttributerExternaClient;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnMandateAppIoClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnNotificationCostClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnPaperTrackerClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnPrivateDeliveryPushExternalClient;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddAlternativeClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddAlternativeV2ClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddCapCoverageClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddFsuClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnSafeStoragePrivateClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnServiceDeskClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnWebMandateExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnWebRecipientExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnWebhookB2bExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.ReworkTimelineClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.TemplateEngineClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRaddCognito;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
-import it.pagopa.pn.cucumber.steps.pa.utilityVersions.AwsUtils;
-import it.pagopa.pn.cucumber.utils.validator.SchemaValidator;
 import it.pagopa.pn.cucumber.steps.paperTracker.parser.EventTimelineParser;
 import it.pagopa.pn.cucumber.steps.paperTracker.proxy.PaperTrackerSchemaValidatorProxy;
 import it.pagopa.pn.cucumber.steps.templateEngine.TemplateConfiguration;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextFactory;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
+import it.pagopa.pn.cucumber.utils.validator.SchemaValidator;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -122,7 +172,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         BearerTokenConfiguration.class,
         TimingConfiguration.class,
         RestTemplateConfiguration.class,
-        AwsConfig.class,
         PnPaB2bExternalClientImpl.class,
         PnWebRecipientExternalClientImpl.class,
         PnWebhookB2bExternalClientImpl.class,
@@ -286,8 +335,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PaperTrackerSchemaValidatorProxy.class,
         PnExternalChannelsInternalClientImpl.class,
         PnEcInternalClientImpl.class,
-        AwsUtils.class,
-        PnNotificationCostClientImpl.class
+        PnNotificationCostClientImpl.class,
+        DynamoDbService.class,
+        AwsConfig.class,
+        SenderInfoProvider.class,
+        CacheConfig.class,
 })
 @EnableScheduling
 @EnableConfigurationProperties
