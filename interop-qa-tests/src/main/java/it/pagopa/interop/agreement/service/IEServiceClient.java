@@ -35,6 +35,8 @@ public interface IEServiceClient extends SettableBearerToken {
 
     ResponseEntity<Void> cancelDescriptorArchiving(UUID eServiceId, UUID descriptorId);
 
+    ResponseEntity<Void> cancelEServiceArchiving(UUID eServiceId);
+
     CreatedResource createDescriptor(UUID eServiceId);
 
     void deleteDraft(UUID eServiceId, UUID descriptorId);

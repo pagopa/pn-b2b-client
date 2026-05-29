@@ -119,6 +119,11 @@ public class EServiceApiClientImpl implements IEServiceClient {
     }
 
     @Override
+    public ResponseEntity<Void> cancelEServiceArchiving(UUID eServiceId) {
+        return eservicesApi.cancelScheduleArchiveEserviceWithHttpInfo(eServiceId);
+    }
+
+    @Override
     public CreatedResource createDescriptor(UUID eServiceId) {
         return eservicesApi.createDescriptor(eServiceId);
     }
