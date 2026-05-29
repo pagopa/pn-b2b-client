@@ -23,10 +23,10 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 
         // abilita parallelismo JUnit
         @ConfigurationParameter(key = "junit.jupiter.execution.parallel.enabled", value = "false"),
-        //@ConfigurationParameter(key = "junit.jupiter.execution.parallel.mode.default", value = "concurrent"),
+        @ConfigurationParameter(key = "junit.jupiter.execution.parallel.mode.default", value = "same_thread"),
 
         // abilita parallelismo Cucumber
-        @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
+        @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "same_thread"),
 })
 @ExcludeTags({"wait_for_fix", "ignore"})
 @IncludeTags({"adeguamento-analisi-rischio"})
