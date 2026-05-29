@@ -6,6 +6,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceArchivingRe
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.catalog.utils.CatalogResolver;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.http.ResponseEntity;
 
 import java.util.UUID;
@@ -35,6 +36,16 @@ public class EServiceArchivingSteps {
         String resolvedArchivingReason = catalogResolver.resolveArchivingReason(archivingReason);
 
         scheduleArchiveEService(resolvedEServiceId, resolvedArchivingReason);
+    }
+
+    @When("l'utente avvia il processo di archiviazione dell'e-service con id {string} e specificando la motivazione composta da {int} caratteri")
+    public void scheduleEServiceArchivingWithReasonLength(String eServiceId, int archivingReasonLength) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
+        String archivingReason = RandomStringUtils.insecure().nextAlphanumeric(archivingReasonLength);
+
+        scheduleArchiveEService(resolvedEServiceId, archivingReason);
     }
 
     private void scheduleArchiveEService(UUID eServiceId, String archivingReason) {
