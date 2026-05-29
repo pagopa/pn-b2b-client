@@ -177,3 +177,19 @@ Feature: Archiviazione manuale di un e-service
     When l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
     Then si ottiene response status code 401
     And la versione più recente dell'e-service è in stato "ARCHIVING"
+
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_CANCELLATION_1.6] Un ente erogatore di un e-service NON può annullare il processo di archiviazione manuale dell'e-service se i parametri obbligatori non sono presenti o corretti
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    When l'utente annulla il processo di archiviazione dell'e-service con id "<eserviceId>"
+    Then si ottiene response status code <statusCode>
+    And la vecchia versione dell'e-service è in stato "ARCHIVING"
+    And la versione più recente dell'e-service è in stato "ARCHIVING"
+
+    Examples:
+      | eserviceId | statusCode |
+      | %null      | 400        |
+      | %random    | 404        |
