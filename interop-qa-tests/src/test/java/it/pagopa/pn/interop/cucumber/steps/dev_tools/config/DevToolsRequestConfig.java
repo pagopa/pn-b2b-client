@@ -4,7 +4,9 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.ParameterType;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.utility.StepParser;
+import lombok.RequiredArgsConstructor;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
@@ -14,8 +16,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@RequiredArgsConstructor
 public class DevToolsRequestConfig {
 
+    private final SharedStepsContext sharedStepsContext;
     private final ExpressionParser parser = new SpelExpressionParser();
 
     public record JwtClaimOverride(String claim, String value) {}
@@ -74,7 +78,57 @@ public class DevToolsRequestConfig {
     }
 
     @DataTableType
-    public UpdateEServiceDescriptorSeed updateEServiceDescriptorSeed(DataTable dataTable) {
+    public UpdateEServiceSeed toUpdateEServiceSeed(DataTable dataTable) {
+        UpdateEServiceSeed seed = new UpdateEServiceSeed();
+
+        Map<String, String> rows = new HashMap<>();
+        dataTable.cells().forEach(row -> {
+            if (row.size() >= 2) {
+                rows.put(
+                        row.get(0) != null ? row.get(0).trim() : "",
+                        row.get(1) != null ? row.get(1).trim() : ""
+                );
+            }
+        });
+
+        rows.forEach((key, value) -> {
+            switch (key) {
+                case "name" -> seed.setName(value);
+                case "description" -> seed.setDescription(value);
+                case "asyncExchange" -> seed.setAsyncExchange(Boolean.valueOf(value));
+                case "technology" -> seed.setTechnology(EServiceTechnology.fromValue(value));
+                case "mode" -> seed.setMode(EServiceMode.fromValue(value));
+
+                case "isSignalHubEnabled" ->
+                        seed.setIsSignalHubEnabled(Boolean.valueOf(value));
+
+                case "isConsumerDelegable" ->
+                        seed.setIsConsumerDelegable(Boolean.valueOf(value));
+
+                case "isClientAccessDelegable" ->
+                        seed.setIsClientAccessDelegable(Boolean.valueOf(value));
+
+                case "personalData" ->
+                        seed.setPersonalData(Boolean.valueOf(value));
+
+                default -> throw new IllegalArgumentException(
+                        "Campo non supportato per EServiceSeed: " + key
+                );
+            }
+        });
+
+        if (!rows.containsKey("name")) {
+            seed.setName(sharedStepsContext.getEServicesCommonContext().getName());
+        }
+        if (!rows.containsKey("description")) {
+            seed.setDescription(sharedStepsContext.getEServicesCommonContext().getDescription());
+        }
+
+        return seed;
+    }
+
+    @DataTableType
+    public UpdateEServiceDescriptorSeed toUpdateEServiceDescriptorSeed(DataTable dataTable) {
         UpdateEServiceDescriptorSeed seed = new UpdateEServiceDescriptorSeed();
         seed.setAttributes(new DescriptorAttributesSeed());
 
