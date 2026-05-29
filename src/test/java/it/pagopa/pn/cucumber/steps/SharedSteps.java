@@ -366,7 +366,7 @@ public class SharedSteps {
 
     public NotificationVersion getNotificationVersion(String version) {
         if (version.trim().equalsIgnoreCase(MOST_RECENT)) {
-            return NotificationVersion.V25;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
+            return NotificationVersion.V26;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
         }
         return NotificationVersion.valueOf(version.trim().toUpperCase());
     }

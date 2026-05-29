@@ -14,18 +14,18 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.digitaladdresses.BffUserAddress;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffConsent;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffTosPrivacyActionBody;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.api.CourtesyApi;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.api.LegalApi;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.CxLanguage;
 import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.*;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
 import it.pagopa.pn.client.b2b.pa.wrapper.RecipientWrapper;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaluserconsents.model.Consent;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaluserconsents.model.ConsentAction;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaluserconsents.model.ConsentType;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.AddressVerification;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyDigitalAddress;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalAndUnverifiedDigitalAddress;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.UserAddresses;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.Consent;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.ConsentAction;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.ConsentType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -33,13 +33,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class PnWebUserAttributesInternalClientImpl implements IPnWebUserAttributesClient {
+public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttributesClient {
     private final RestTemplate restTemplate;
     private final UserConsentsApi consentsApi;
     private final AddressesApi addressesApi;
@@ -58,12 +59,8 @@ public class PnWebUserAttributesInternalClientImpl implements IPnWebUserAttribut
     private final String userAgent;
     private final String basePath;
 
-    private final LegalApi legalApi;
 
-    private final CourtesyApi courtesyApiAddressBook;
-
-
-    public PnWebUserAttributesInternalClientImpl(RestTemplate restTemplate,
+    public PnWebUserAttributesExternalClientImpl(RestTemplate restTemplate,
                                                  @Value("${pn.webapi.external.base-url}") String basePath,
                                                  @Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
                                                  @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken,
@@ -91,8 +88,6 @@ public class PnWebUserAttributesInternalClientImpl implements IPnWebUserAttribut
         this.userAgent = userAgent;
         this.consentsApi = new UserConsentsApi(newConsentsApiClient(restTemplate, basePath, marioCucumberBearerToken, userAgent));
         this.addressesApi = new AddressesApi(newAddressBookApiClient(restTemplate, basePath, marioCucumberBearerToken, userAgent));
-        this.legalApi = new LegalApi(newAddressBookInternalApiClient(restTemplate, basePath, marioCucumberBearerToken, userAgent));
-        this.courtesyApiAddressBook = new CourtesyApi(newAddressBookInternalApiClient(restTemplate, basePath, marioCucumberBearerToken, userAgent));
     }
 
     private static it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.tos.ApiClient newConsentsApiClient(RestTemplate restTemplate, String basePath, String bearerToken, String userAgent) {
@@ -106,14 +101,6 @@ public class PnWebUserAttributesInternalClientImpl implements IPnWebUserAttribut
 
     private static ApiClient newAddressBookApiClient(RestTemplate restTemplate, String basePath, String bearerToken, String userAgent) {
         ApiClient newApiClient = new ApiClient(restTemplate);
-        newApiClient.setBasePath(basePath);
-        newApiClient.addDefaultHeader("user-agent", userAgent);
-        newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
-        return newApiClient;
-    }
-
-    private static it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.ApiClient newAddressBookInternalApiClient(RestTemplate restTemplate, String basePath, String bearerToken, String userAgent) {
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.ApiClient newApiClient = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
         newApiClient.addDefaultHeader("user-agent", userAgent);
         newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
@@ -216,6 +203,24 @@ public class PnWebUserAttributesInternalClientImpl implements IPnWebUserAttribut
                 .toList();
     }
 
+    public UserAddresses getAddressesByRecipientOld() throws RestClientException {
+        List<LegalAndUnverifiedDigitalAddress> legal = new ArrayList<>();
+        List<CourtesyDigitalAddress> courtesy = new ArrayList<>();
+
+        UserAddresses userAddresses = new UserAddresses();
+        addressesApi.getAddressesV1()
+                .forEach(item -> {
+                    if ("LEGAL".equals(item.getAddressType())) {
+                        legal.add(deepCopy(item, LegalAndUnverifiedDigitalAddress.class));
+                    } else {
+                        courtesy.add(deepCopy(item, CourtesyDigitalAddress.class));
+                    }
+                });
+        userAddresses.legal(legal);
+        userAddresses.courtesy(courtesy);
+        return userAddresses;
+    }
+
 
     public RecipientWrapper getAddressesByRecipient() throws RestClientException {
 
@@ -238,12 +243,10 @@ public class PnWebUserAttributesInternalClientImpl implements IPnWebUserAttribut
                 .toList();
     }
 
-    public void postRecipientLegalAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType, AddressVerification addressVerification, CxLanguage xPagopaPnLanguage) throws RestClientException {
+    public void postRecipientLegalAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType, AddressVerification addressVerification) throws RestClientException {
         BffAddressVerificationRequest bffAddressVerificationRequest = new BffAddressVerificationRequest().requestId(addressVerification.getRequestId())
                 .verificationCode(addressVerification.getVerificationCode()).value(addressVerification.getValue());
         addressesApi.createOrUpdateAddressV1(BffAddressType.LEGAL, senderId, BffChannelType.fromValue(channelType.getValue()), bffAddressVerificationRequest, null);
-        //legalApi.postRecipientLegalAddress("pn-test", CxTypeAuthFleet.PF, senderId, deepCopy(channelType, LegalChannelType.class), addressVerification, null, null, deepCopy(xPagopaPnLanguage, it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.CxLanguage.class));
-
     }
 
     public void deleteRecipientCourtesyAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType) throws RestClientException {
@@ -257,11 +260,10 @@ public class PnWebUserAttributesInternalClientImpl implements IPnWebUserAttribut
                 .toList();
     }
 
-    public void postRecipientCourtesyAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType, AddressVerification addressVerification, CxLanguage xPagopaPnLanguageCxLanguage) throws RestClientException {
+    public void postRecipientCourtesyAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType, AddressVerification addressVerification) throws RestClientException {
         BffAddressVerificationRequest bffAddressVerificationRequest = new BffAddressVerificationRequest().requestId(addressVerification.getRequestId())
                 .verificationCode(addressVerification.getVerificationCode()).value(addressVerification.getValue());
         addressesApi.createOrUpdateAddressV1(BffAddressType.COURTESY, senderId, BffChannelType.fromValue(channelType.getValue()), bffAddressVerificationRequest, null);
-        //AddressVerificationResponse response = courtesyApiAddressBook.postRecipientCourtesyAddress("pn-test", CxTypeAuthFleet.PF, senderId, deepCopy(channelType, CourtesyChannelType.class), addressVerification, null, null, deepCopy(xPagopaPnLanguageCxLanguage, it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.CxLanguage.class));
     }
 
     private <T> T deepCopy(Object obj, Class<T> toClass) {
@@ -276,5 +278,4 @@ public class PnWebUserAttributesInternalClientImpl implements IPnWebUserAttribut
             throw new PnB2bException(exc.getMessage());
         }
     }
-
 }

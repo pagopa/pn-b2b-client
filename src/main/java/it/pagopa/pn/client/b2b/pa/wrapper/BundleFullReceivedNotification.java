@@ -20,7 +20,7 @@ public class BundleFullReceivedNotification {
     private NotificationFeePolicy notificationFeePolicy;
     private String cancelledIun;
 
-    private FullReceivedNotificationV27.PhysicalCommunicationTypeEnum physicalCommunicationType;
+    private FullReceivedNotificationV28.PhysicalCommunicationTypeEnum physicalCommunicationType;
 
     @lombok.ToString.Exclude
     private String senderDenomination;
@@ -32,7 +32,7 @@ public class BundleFullReceivedNotification {
     private Integer paFee;
     private Integer vat;
 
-    private FullReceivedNotificationV27.PagoPaIntModeEnum pagoPaIntMode;
+    private FullReceivedNotificationV28.PagoPaIntModeEnum pagoPaIntMode;
     private List<String> additionalLanguages;
     private String senderPaId;
     private String iun;
