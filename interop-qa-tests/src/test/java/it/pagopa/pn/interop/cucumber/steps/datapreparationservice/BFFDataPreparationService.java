@@ -446,6 +446,10 @@ public class BFFDataPreparationService {
                 ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
 
+        ProducerEServiceDescriptor producerEServiceDescriptor = (ProducerEServiceDescriptor) httpCallExecutor.getResponse();
+        sharedStepsContext.getEServicesCommonContext().setName(producerEServiceDescriptor.getEservice().getName());
+        sharedStepsContext.getEServicesCommonContext().setDescription(producerEServiceDescriptor.getEservice().getDescription());
+
         updateDraftDescriptor(eserviceId, descriptorId, partialDescriptorSeed);
         return new EServiceDescriptor(eserviceId, descriptorId);
     }
