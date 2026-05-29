@@ -6,30 +6,28 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.util.Map;
 
-/* TODO 25/05/2026: ad uso temporaneo per verificare eventuali problemi con la feature Adeguamento analisi del
-*   rischio, il quale dovrà fare pesante affidamento sul workflow Github. Questa classe sarà eventualmente usata
-*   per facilitare operazioni di debug remoto.
-*   A sviluppo concluso, si valuterà se mantenere questa classe per uso futuro - rendendola eventualmente disattivabile
-*   attraverso configurazione - o rimuoverla. */
+/* Logger delle variabili d'ambiente del sistema. Utile per operazioni di debug remoto (e.g. quando il test viene
+ * eseguito attraverso workflow Github).
+ * Si noti che è necessario attivare il debug level per i log di questa classe. */
 @Slf4j
 @Component
 public class EnvDebugLogger {
 
     @PostConstruct
     public void logEnvironmentVariableNames() {
-        log.info("========================================================================");
-        log.info("         DEBUG: ELENCO CHIAVI DELLE VARIABILI D'AMBIENTE DISPONIBILI     ");
-        log.info("========================================================================");
+        log.debug("========================================================================");
+        log.debug("         DEBUG: ELENCO CHIAVI DELLE VARIABILI D'AMBIENTE DISPONIBILI     ");
+        log.debug("========================================================================");
 
         Map<String, String> env = System.getenv();
 
         // Estraiamo solo i nomi delle chiavi e le ordiniamo alfabeticamente
         env.keySet().stream()
                 .sorted()
-                .forEach(key -> log.info("Disponibile variabile d'ambiente: {}", key));
+                .forEach(key -> log.debug("Disponibile variabile d'ambiente: {}", key));
 
-        log.info("========================================================================");
-        log.info("Totale variabili rilevate: {}", env.size());
-        log.info("========================================================================");
+        log.debug("========================================================================");
+        log.debug("Totale variabili rilevate: {}", env.size());
+        log.debug("========================================================================");
     }
 }
