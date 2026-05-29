@@ -168,3 +168,12 @@ Feature: Archiviazione manuale di un e-service
       | role     |
       | security |
       | support  |
+
+  Scenario : [MANUAL_ARCHIVING_ESERVICE_CANCELLATION_1.5] Un utente con token non valido NON può annullare il processo di archiviazione manuale dell'e-service
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And viene impostato per l'utente un token non valido
+    When l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
+    Then si ottiene response status code 401
+    And la versione più recente dell'e-service è in stato "ARCHIVING"
