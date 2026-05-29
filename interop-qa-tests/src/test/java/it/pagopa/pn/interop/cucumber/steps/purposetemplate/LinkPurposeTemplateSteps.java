@@ -7,6 +7,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EService;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
 import it.pagopa.interop.purpose.service.impl.PurposeTemplateClientImpl;
@@ -110,6 +111,42 @@ public class LinkPurposeTemplateSteps {
         linkableResourcesContext.saveLastLinkableResourcesAsAReference();
     }
 
+    @When("associa una risorsa a un template finalità")
+    public void linkResourceToPurposeTemplate(DataTable dataTable) {
+        LinkParameters params = getLinkParametersFromDataTable(dataTable);
+        httpCallExecutor.performCall(() -> purposeTemplateClient.linkResourceToPurposeTemplate(params.purposeTemplateId(), params.resourceRequest()));
+        Assertions.assertTrue(httpCallExecutor.getResponseStatus().is2xxSuccessful(), "Resource association failed.");
+    }
+
+    @When("disassocia una risorsa da un template finalità")
+    public void unlinkResourceFromPurposeTemplate(DataTable dataTable) {
+        LinkParameters params = getLinkParametersFromDataTable(dataTable);
+        httpCallExecutor.performCall(() -> purposeTemplateClient.unlinkResourceFromPurposeTemplate(params.purposeTemplateId(), params.resourceRequest()));
+        Assertions.assertTrue(httpCallExecutor.getResponseStatus().is2xxSuccessful(), "Resource disassociation failed.");
+    }
+
+    private record LinkParameters (
+            UUID purposeTemplateId,
+            LinkableResourceRequest resourceRequest
+    ) {}
+
+    private LinkParameters getLinkParametersFromDataTable(DataTable dataTable) {
+        Map<String, String> data = dataTable.asMap(String.class, String.class);
+        UUID purposeTemplateId = UUID.fromString(resolveDynamicData(data.get("id_template_finalita")));
+        String eServiceIdValue = data.getOrDefault("id_e_service", "");
+        LinkableResourceRequest resourceRequest = new LinkableResourceRequest();
+        if (!eServiceIdValue.isEmpty()) {
+            resourceRequest.setResourceKind(LinkableResourceRequest.ResourceKindEnum.fromValue("ESERVICE"));
+            UUID eServiceId = UUID.fromString(resolveDynamicData(eServiceIdValue));
+            resourceRequest.setEserviceId(eServiceId);
+        } else {
+            resourceRequest.setResourceKind(LinkableResourceRequest.ResourceKindEnum.fromValue("ESERVICE_TEMPLATE"));
+            UUID eServiceTemplateId = UUID.fromString(resolveDynamicData(data.get("id_e_service_template")));
+            resourceRequest.setEserviceTemplateId(eServiceTemplateId);
+        }
+        return new LinkParameters(purposeTemplateId, resourceRequest);
+    }
+
     @When("recupera le risorse collegabili suggerite per un template finalità")
     public void getLinkableResourcesForPurposeTemplate(DataTable dataTable) {
         Map<String, String> data = dataTable.asMap(String.class, String.class);
@@ -137,7 +174,7 @@ public class LinkPurposeTemplateSteps {
         eServiceKindName = (eServiceKindName.equals("e-service template")) ? "ESERVICE_TEMPLATE" : "ESERVICE";
         boolean foundRequestedResourceKind = false;
         for (int i = 0; i < linkableResourcesContext.getLastLinkableResources().getResults().size(); i++) {
-            if (linkableResourcesContext.getLastLinkableResources().getResults().get(i).get .getValue().equals(eServiceKindName)) {
+            if (getResourceKind(linkableResourcesContext.getLastLinkableResources().getResults().get(i)).equals(eServiceKindName)) {
                 foundRequestedResourceKind = true;
                 break;
             }
@@ -182,7 +219,7 @@ public class LinkPurposeTemplateSteps {
 
         Assertions.assertTrue(
                 linkableResourcesContext.getReferenceLinkableResources().getResults().size() > excludedResults,
-                "Non c'è nemmeno 1 risultato da controllare.");
+                "There is no result to check.");
 
         for (int i = excludedResults; i < linkableResourcesContext.getReferenceLinkableResources().getResults().size(); i++) {
             referenceResource = linkableResourcesContext.getReferenceLinkableResources().getResults().get(i);
@@ -269,6 +306,10 @@ public class LinkPurposeTemplateSteps {
         Assertions.assertTrue(j > 0, "Non è stata trovata nessuna corrispondenza soddisfatta.");
     }
 
+    private String getResourceKind(LinkableResource resource) {
+        return (resource instanceof LinkableEServiceTemplate) ? "ESERVICE_TEMPLATE" : "ESERVICE";
+    }
+
     private String getResourceName(LinkableResource resource) {
         return (resource.getResourceKind().getValue().equals("ESERVICE_TEMPLATE")) ?
                 resource.getEserviceTemplate().getName() : resource.getEservice().getName();
@@ -280,9 +321,23 @@ public class LinkPurposeTemplateSteps {
     }
 
     private boolean doLinkableResourcesMatch(LinkableResource resource1, LinkableResource resource2) {
-        return resource1.getResourceKind() == resource2.getResourceKind() &&
-                resource1.getPurposeTemplateId() == resource2.getPurposeTemplateId() &&
-                resource1.getCreatedAt().equals(resource2.getCreatedAt());
+        String resource1Kind = getResourceKind(resource1);
+        String resource2Kind = getResourceKind(resource2);
+        if (resource1Kind.equals(resource2Kind)) {
+            if ("ESERVICE_TEMPLATE".equals(resource1Kind)) {
+                LinkableEServiceTemplate eserviceTemplate1 = (LinkableEServiceTemplate)resource1;
+                LinkableEServiceTemplate eserviceTemplate2 = (LinkableEServiceTemplate)resource2;
+                return eserviceTemplate1.getPurposeTemplateId() == eserviceTemplate2.getPurposeTemplateId() &&
+                        eserviceTemplate1.getCreatedAt().equals(eserviceTemplate2.getCreatedAt());
+            } else {
+                LinkableEService eservice1 = (LinkableEService)resource1;
+                LinkableEService eservice2 = (LinkableEService)resource2;
+                return eservice1.getEservice().getId() == eservice2.getEservice().getId() &&
+                        eservice1.getCreatedAt().equals(eservice2.getCreatedAt());
+            }
+        } else {
+            return false;
+        }
     }
 
     private void assertLinkableResourcesMatch(boolean difference, LinkableResource resource1, LinkableResource resource2) {
@@ -297,18 +352,27 @@ public class LinkPurposeTemplateSteps {
 
     private String resolveDynamicData(String value) {
         if (value.startsWith("$DA_CONTESTO(")) {
-            String methodName = "";
-            try {
-                value = value.substring(13, value.length() - 1);
-                methodName = "get" + value.substring(0, 1).toUpperCase() + value.substring(1);
-                Method getterMethod = LinkableResourcesContext.class.getMethod(methodName);
-                value = (String)getterMethod.invoke(linkableResourcesContext);
+            value = value.substring(13, value.length() - 1);
 
-            } catch (NoSuchMethodException e) {
-                log.error("Specified method " + methodName + " does not exist in LinkableResourcesContext.");
+            switch (value) {
+                case "purposeTemplateId":
+                    return sharedStepsContext.getPurposeTemplateContext().getPurposeTemplateId().toString();
+                case "eServiceId":
+                    return sharedStepsContext.getEServicesCommonContext().getEserviceId().toString();
+                case "eServiceTemplateId":
+                    return sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId().toString();
+                default:
+                    String methodName = "get" + value.substring(0, 1).toUpperCase() + value.substring(1);
+                    try {
+                        Method getterMethod = LinkableResourcesContext.class.getMethod(methodName);
+                        value = (String)getterMethod.invoke(linkableResourcesContext);
 
-            } catch (Exception e) {
-                e.printStackTrace();
+                    } catch (NoSuchMethodException e) {
+                        log.error("Specified method " + methodName + " does not exist in LinkableResourcesContext.");
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
             }
         }
         return value;

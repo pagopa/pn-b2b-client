@@ -184,4 +184,14 @@ public class PurposeTemplateClientImpl extends AbstractClient implements IPurpos
     public LinkableResources getPurposeTemplateLinkableResources(UUID purposeTemplateId, Integer offset, Integer limit, String q, List<UUID> publisherIds) {
         return purposesTemplateApi.getPurposeTemplateLinkableResources(purposeTemplateId, offset, limit, q, publisherIds);
     }
+
+    @Override
+    public LinkedResource linkResourceToPurposeTemplate(UUID purposeTemplateId, LinkableResourceRequest linkableResourceRequest) {
+        return purposesTemplateApi.linkResourceToPurposeTemplate(purposeTemplateId, linkableResourceRequest);
+    }
+
+    @Override
+    public void unlinkResourceFromPurposeTemplate(UUID purposeTemplateId, LinkableResourceRequest linkableResourceRequest) {
+        purposesTemplateApi.unlinkResourceFromPurposeTemplate(purposeTemplateId, linkableResourceRequest);
+    }
 }

@@ -8,12 +8,23 @@ Feature: finalità agevolata BFF, link e-service template a un template finalit�
     # probabilmente conviene avere un purpose template dedicato da utilizzare
 
   ## Macro scenario: Recupero lista risorse collegabili suggerite per un template finalità
+  # Given: fb61e42b-6a72-4146-bcc2-2ae6d5d2e1b0 presenta sia e-service che e-service template collegati
 
   @purposeTemplate @eServiceTemplateLink
   Scenario: [LINK_TEMPLATE_ESERVICE_1_1] Recupero lista combinata e-service concreti ed e-service template suggeriti per un template finalità
-    # Given: fb61e42b-6a72-4146-bcc2-2ae6d5d2e1b0 presenta sia e-service che e-service template collegati
+    Given viene creato un nuovo purpose template
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And associa una risorsa a un template finalità
+      | id_template_finalita  | $DA_CONTESTO(purposeTemplateId)  |
+      | id_e_service          | $DA_CONTESTO(eServiceId)         |
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And associa una risorsa a un template finalità
+      | id_template_finalita  | $DA_CONTESTO(purposeTemplateId)  |
+      | id_e_service_template | $DA_CONTESTO(eServiceTemplateId) |
+
     When recupera le risorse collegabili suggerite per un template finalità
-      | purpose_template_id | fb61e42b-6a72-4146-bcc2-2ae6d5d2e1b0 |
+      | purpose_template_id | $DA_CONTESTO(purposeTemplateId) |
+      #| purpose_template_id | fb61e42b-6a72-4146-bcc2-2ae6d5d2e1b0 |
       | offset              | 0  |
       | limit               | 50 |
     Then le risorse collegabili presentano un e-service concreto
@@ -22,21 +33,21 @@ Feature: finalità agevolata BFF, link e-service template a un template finalit�
   @purposeTemplate @eServiceTemplateLink
   Scenario: [LINK_TEMPLATE_ESERVICE_1_2] Recupero lista combinata e-service concreti e template suggeriti per un template finalità con paginazione
     Given recupera le risorse collegabili suggerite per un template finalità
-      | purpose_template_id | fb346d06-16e6-4481-8df2-f3fc590933a8 |
+      | purpose_template_id | fb61e42b-6a72-4146-bcc2-2ae6d5d2e1b0 |
       | offset              | 0  |
       | limit               | 50 |
     And vengono salvate le risorse collegabili in una lista di risorse di riferimento
 
     # Paginazione con offset
     When recupera le risorse collegabili suggerite per un template finalità
-      | purpose_template_id | fb346d06-16e6-4481-8df2-f3fc590933a8 |
+      | purpose_template_id | fb61e42b-6a72-4146-bcc2-2ae6d5d2e1b0 |
       | offset              | 1  |
       | limit               | 50 |
     Then le risorse collegabili corrispondono alla lista di risorse di riferimento ignorando il primo risultato
 
     # Paginazione con limit
     When recupera le risorse collegabili suggerite per un template finalità
-      | purpose_template_id | fb346d06-16e6-4481-8df2-f3fc590933a8 |
+      | purpose_template_id | fb61e42b-6a72-4146-bcc2-2ae6d5d2e1b0 |
       | offset              | 0  |
       | limit               | 2  |
     Then le risorse collegabili corrispondono alla lista di risorse di riferimento solo per i primi 2 risultati
@@ -159,16 +170,16 @@ Feature: finalità agevolata BFF, link e-service template a un template finalit�
     And viene salvato 1 ID e-service concreto di riferimento dalle risorse collegabili
 
     # Associazione e-service template suggerito
-    When associa una risorsa ad un template finalità
-      | purpose_template_id | bb346d06-16e6-4481-8df2-f3fc590933a8 |
-      | risorsa_id          | $DA_CONTESTO(id_eservice_template_riferimento) |
+    When associa una risorsa a un template finalità
+      | id_template_finalita | bb346d06-16e6-4481-8df2-f3fc590933a8 |
+      | id_risorsa           | $DA_CONTESTO(id_eservice_template_riferimento) |
     And recupera le risorse collegate ad un template finalità
     Then le risorse collegate includono:
       | risorsa_id |
       | $DA_CONTESTO(id_eservice_template_riferimento) |
 
     # Associazione e-service concreto suggerito
-    When associa una risorsa ad un template finalità
+    When associa una risorsa a un template finalità
       | purpose_template_id | bb346d06-16e6-4481-8df2-f3fc590933a8 |
       | risorsa_id          | $DA_CONTESTO(id_eservice_concreto_riferimento) |
     And recupera le risorse collegate ad un template finalità
@@ -177,7 +188,7 @@ Feature: finalità agevolata BFF, link e-service template a un template finalit�
       | $DA_CONTESTO(id_eservice_concreto_riferimento) |
 
     # Associazione risorsa non suggerita
-    When associa una risorsa ad un template finalità
+    When associa una risorsa a un template finalità
       | purpose_template_id | bb346d06-16e6-4481-8df2-f3fc590933a8 |
       | risorsa_id          | ee556d06-16e6-4481-8df2-f3fc590977bb |
     And recupera le risorse collegate ad un template finalità
@@ -188,20 +199,20 @@ Feature: finalità agevolata BFF, link e-service template a un template finalit�
   @purposeTemplate @eServiceTemplateLink
   Scenario: [LINK_TEMPLATE_ESERVICE_3_2] Errore di conflitto durante l'associazione di un singolo e-service template ad un template finalità
     # Associazione e-service concreto che sia istanza di un e-service template
-    When associa una risorsa ad un template finalità
+    When associa una risorsa a un template finalità
       | purpose_template_id | bb346d06-16e6-4481-8df2-f3fc590933a8 |
       | risorsa_id          | cbcb6d06-2222-4481-8df2-f3fc590933a8 |
     Then la richiesta di associazione restituisce errore di conflitto
 
     # Associazione con e-service non esistente
-    When associa una risorsa ad un template finalità
+    When associa una risorsa a un template finalità
       | purpose_template_id | bb346d06-16e6-4481-8df2-f3fc590933a8 |
       | risorsa_id          | aaaabbbb-cccc-1111-2222-ddddeeee3333 |
     Then la richiesta di associazione restituisce errore di conflitto
 
   @purposeTemplate @eServiceTemplateLink
   Scenario: [LINK_TEMPLATE_ESERVICE_3_3] Template finalità non trovato durante l'associazione di un singolo e-service template ad un template finalità
-    When associa una risorsa ad un template finalità
+    When associa una risorsa a un template finalità
       | purpose_template_id | aaaabbbb-cccc-1111-2222-ddddeeee3333 |
       | risorsa_id          | cbcb6d06-2222-4481-8df2-f3fc590933a8 |
     Then la richiesta di associazione restituisce errore di template finalità non trovato
@@ -209,13 +220,13 @@ Feature: finalità agevolata BFF, link e-service template a un template finalit�
   @purposeTemplate @eServiceTemplateLink
   Scenario: [LINK_TEMPLATE_ESERVICE_3_4] Errori formali nell'associazione di un singolo e-service template ad un template finalità
     # Formato ID template finalità non valido
-    When associa una risorsa ad un template finalità
+    When associa una risorsa a un template finalità
       | purpose_template_id | xyz |
       | risorsa_id          | cbcb6d06-2222-4481-8df2-f3fc590933a8 |
     Then la richiesta di associazione restituisce errore di richiesta non valida
 
     # Campo ID risorsa errato
-    When associa una risorsa ad un template finalità con nome campo della risorsa errato
+    When associa una risorsa a un template finalità con nome campo della risorsa errato
       | purpose_template_id | bb346d06-16e6-4481-8df2-f3fc590933a8 |
     Then la richiesta di associazione restituisce errore di richiesta non valida
 
