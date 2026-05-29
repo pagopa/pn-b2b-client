@@ -193,3 +193,9 @@ Feature: Archiviazione manuale di un e-service
       | eserviceId | statusCode |
       | %null      | 400        |
       | %random    | 404        |
+
+  Scenario: [AUTOMATIC_ARCHIVING_ESERVICE_1.1] Avendo un e-service con un solo descrittore in stato PUBLISHE. Dopo la pubblicazione di un nuovo descrittore, il descrittore precedente, se non ha richieste di fruizione attive, passerà automaticamente allo stato ARCHIVED
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "<initialFirstDescriptorState>"
+    When "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And la vecchia versione dell'e-service è in stato "ARCHIVED"
