@@ -76,14 +76,31 @@ Feature: Archiviazione manuale di un e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente avvia il processo di archiviazione dell'e-service con id "<eserviceId>" e specificando la motivazione "<archivingReason>"
-    Then si ottiene response status code 204
+    Then si ottiene response status code <statusCode>
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And la versione più recente dell'e-service è in stato "PUBLISHED"
 
     Examples:
-      | eserviceId | archivingReason          | archivingReason |
-      | %null      | QA test manual-archiving | %actual         |
-      | %actual    | %null                    | %actual         |
-      | %null      | %null                    | %actual         |
-      | %random    | QA test manual-archiving | %actual         |
-      | %actual    | %empty                   | %actual         |
+      | eserviceId | archivingReason          | archivingReason | statusCode |
+      | %null      | QA test manual-archiving | %actual         | 400        |
+      | %actual    | %null                    | %actual         | 400        |
+      | %null      | %null                    | %actual         | 400        |
+      | %actual    | %empty                   | %actual         | 400        |
+      | %random    | QA test manual-archiving | %actual         | 404        |
+
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_1.7] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale dell'e-service se la stringa archivingReason non rispetta la lunghezza attesa
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione composta da <archivingReasonLength> caratteri
+    Then si ottiene response status code 400
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
+
+    Examples:
+       #min lenght = 10 , max lenght = 250
+      | archivingReasonLength |
+      | 9                     |
+      | 251                   |
+
