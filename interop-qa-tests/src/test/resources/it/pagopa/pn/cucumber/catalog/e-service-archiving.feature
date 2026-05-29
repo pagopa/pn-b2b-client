@@ -69,3 +69,21 @@ Feature: Archiviazione manuale di un e-service
     When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test"
     Then si ottiene response status code 401
     And la versione più recente dell'e-service è in stato "ARCHIVING"
+
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_1.6] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale dell'e-service se i parametri obbligatori non sono presenti o corretti
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    When l'utente avvia il processo di archiviazione dell'e-service con id "<eserviceId>" e specificando la motivazione "<archivingReason>"
+    Then si ottiene response status code 204
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
+
+    Examples:
+      | eserviceId | archivingReason | archivingReason |
+      | %null      | QA test         | %actual         |
+      | %actual    | %null           | %actual         |
+      | %null      | %null           | %actual         |
+      | %random    | QA test         | %actual         |
+      | %actual    | %empty          | %actual         |
