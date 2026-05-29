@@ -194,8 +194,17 @@ Feature: Archiviazione manuale di un e-service
       | %null      | 400        |
       | %random    | 404        |
 
-  Scenario: [AUTOMATIC_ARCHIVING_ESERVICE_1.1] Avendo un e-service con un solo descrittore in stato PUBLISHE. Dopo la pubblicazione di un nuovo descrittore, il descrittore precedente, se non ha richieste di fruizione attive, passerà automaticamente allo stato ARCHIVED
+  Scenario: [AUTOMATIC_ARCHIVING_ESERVICE_2.1] Avendo un e-service con un solo descrittore in stato PUBLISHED. Dopo la pubblicazione di un nuovo descrittore, il descrittore precedente, se non ha richieste di fruizione attive, passerà automaticamente allo stato ARCHIVED
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "<initialFirstDescriptorState>"
     When "PA1" ha già pubblicato una nuova versione per quell'e-service
-    And la vecchia versione dell'e-service è in stato "ARCHIVED"
+    Then la vecchia versione dell'e-service è in stato "ARCHIVED"
+
+  Scenario: [MANUAL_ARCHIVING_ESERVICE_3.1] Essendo in corso l'archiviazione di un e-service, se il descrittore più recente in stato ARCHIVING non ha più richieste di fruizioni attive, questo NON sarà archiviato in automatico
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    When "PA2" ha già archiviato quella richiesta di fruizione
+    Then la versione più recente dell'e-service è in stato "ARCHIVING"
