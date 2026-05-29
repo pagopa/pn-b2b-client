@@ -287,6 +287,21 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         uploadInterface(interfaceName, eServiceId, descriptorId);
     }
 
+    @When("l'utente tenta di effettuare il caricamento di un'interfaccia di tipo YAML {string}")
+    public void uploadInterfaceWithNoVersion(String versionState) {
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+        String interfaceName = buildInterfaceName(eServiceId, descriptorId);
+
+        String filename = switch (versionState) {
+            case "senza versione" -> "missing-version-interface.yaml";
+            case "con versione obsoleta" -> "invalid-version-interface.yaml";
+            default -> throw new IllegalStateException("Unexpected value: " + versionState);
+        };
+
+        uploadInterface(interfaceName, eServiceId, descriptorId, filename);
+    }
+
     @When("l'utente tenta di effettuare la cancellazione di un'interfaccia di un e-service inesistente")
     public void deleteNonExistentEServiceInterface() {
         UUID eServiceId = UUID.randomUUID();
@@ -295,8 +310,11 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     }
 
     private void uploadInterface(String interfaceName, UUID eServiceId, UUID descriptorId) {
+        uploadInterface(interfaceName, eServiceId, descriptorId, String.format("interface.%s", "yaml"));
+    }
+
+    private void uploadInterface(String interfaceName, UUID eServiceId, UUID descriptorId, String fileName) {
         delayService.delay();
-        String fileName = String.format("interface.%s", "yaml");
         String filePath = String.format("src/main/resources/%s", fileName);
         Resource resource = blobFileCreator.createBlobFile(filePath, fileName);
         sharedStepsContext.getEServicesCommonContext().setInterfaceName(interfaceName);
