@@ -83,21 +83,23 @@ Feature: Configurazione e gestione di E-Service per scambi asincroni e massivi
     Then si ottiene status code <expectedResult>
 
     Examples:
+    Examples:
       | technology | responseTime | resourceAvailableTime | maxResultSet | confirmation | bulk  | expectedResult |
       | REST       | %null        | 10                    | 100          | false        | false | 400            |
       | REST       | 10           | %null                 | 100          | false        | false | 400            |
       | REST       | 10           | 10                    | %null        | false        | false | 400            |
-      # Nel PST mancano alcuni valori; poiché sono tutti obbligatori e dobbiamo testare casi negativi non validi, li aggiungiamo comunque.
-      # va in 200
+      # bug PIN-10217
       | REST       | -30          | 10                    | 100          | true         | true  | 400            |
-      # va in 200
-      | REST       | 10           | 100000000             | 100          | true         | true  | 400            |
-      # non si può assegnare 3000000000 ad un int
-      | REST       | 10           | 10                    | 3000000000   | true         | true  | 400            |
+      | REST       | 10           | -30                   | 100          | true         | true  | 400            |
+      | REST       | 10           | 30                    | -100         | true         | true  | 400            |
+      | REST       | 10           | 2147483647            | 100          | true         | true  | 200            |
+      | REST       | 10           | 10                    | 2147483647   | true         | true  | 200            |
       | SOAP       | %null        | 10                    | 100          | false        | false | 400            |
       | SOAP       | 10           | %null                 | 100          | false        | false | 400            |
       | SOAP       | 10           | 10                    | %null        | false        | false | 400            |
+      # bug PIN-10214
       | SOAP       | 10           | 10                    | 100          | true         | true  | 400            |
+      # bug PIN-10214
       | SOAP       | 10           | 10                    | 100          | false        | true  | 400            |
 
   Scenario: [ASYNC_ESERVICE_CREATION_2c] Errore configurazione parametri asincroni su e-service sincrono.
@@ -115,3 +117,62 @@ Feature: Configurazione e gestione di E-Service per scambi asincroni e massivi
       | asyncExchangeProperties.bulk                  | true      |
       | asyncExchangeProperties.maxResultSet          | 100       |
     Then si ottiene status code 400
+
+  Scenario Outline: [ASYNC_ESERVICE_UPDATE_1] Aggiornamento modalità ed exchange di un e-service asincrono in stato DRAFT.
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service asincrono in stato "DRAFT" con:
+      | technology | <technology> |
+      | mode       | <mode>       |
+    And "PA1" aggiorna quell'e-service con:
+      | technology    | <technology>       |
+      | mode          | <newMode>          |
+      | asyncExchange | <newAsyncExchange> |
+    Then si ottiene status code <expectedResult>
+
+    Examples:
+      | technology | mode    | newMode | newAsyncExchange | expectedResult |
+      | REST       | DELIVER | DELIVER | false            | 200            |
+      | REST       | DELIVER | RECEIVE | true             | 400            |
+      | REST       | DELIVER | RECEIVE | false            | 200            |
+      | SOAP       | DELIVER | DELIVER | false            | 200            |
+      | SOAP       | DELIVER | RECEIVE | true             | 400            |
+      | SOAP       | DELIVER | RECEIVE | false            | 200            |
+
+  Scenario Outline: [ASYNC_ESERVICE_TECH_SPEC_UPDATE_1] Aggiornamento specifiche tecniche di exchange per un e-service
+  asincrono in stato DRAFT.
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service asincrono in stato "DRAFT" con:
+      | technology | <technology> |
+    When l'utente aggiorna alcuni parametri di quel descrittore con:
+      | voucherLifespan                               | 60                      |
+      | dailyCallsPerConsumer                         | 50                      |
+      | dailyCallsTotal                               | 2000                    |
+      | agreementApprovalPolicy                       | AUTOMATIC               |
+      | asyncExchangeProperties.responseTime          | <responseTime>          |
+      | asyncExchangeProperties.resourceAvailableTime | <resourceAvailableTime> |
+      | asyncExchangeProperties.confirmation          | <confirmation>          |
+      | asyncExchangeProperties.bulk                  | <bulk>                  |
+      | asyncExchangeProperties.maxResultSet          | <maxResultSet>          |
+    Then si ottiene status code <expectedResult>
+
+    Examples:
+      | technology | responseTime | resourceAvailableTime | maxResultSet | confirmation | bulk  | expectedResult |
+      | REST       | %null        | 200                   | 100          | false        | false | 400            |
+      | REST       | 200          | %null                 | 100          | false        | false | 400            |
+      | REST       | 200          | 200                   | %null        | false        | false | 400            |
+      | REST       | 200          | 200                   | 200          | false        | false | 200            |
+      | REST       | 200          | 200                   | 200          | true         | false | 200            |
+      | REST       | 200          | 200                   | 200          | false        | true  | 200            |
+      | REST       | 200          | 200                   | 200          | true         | true  | 200            |
+      # bug PIN-10217
+      | REST       | -30          | 200                   | 200          | true         | true  | 400            |
+      # "maxResultSet":3000000000 non è possibile utilizzare questo valore per un int32
+      | REST       | 200          | 2147483647            | 200          | true         | true  | 200            |
+      | SOAP       | %null        | 200                   | 100          | false        | false | 400            |
+      | SOAP       | 200          | %null                 | 100          | false        | false | 400            |
+      | SOAP       | 200          | 200                   | %null        | false        | false | 400            |
+      | SOAP       | 200          | 200                   | 200          | false        | false | 200            |
+      # bug PIN-10214
+      | SOAP       | 200          | 200                   | 200          | true         | true  | 400            |
+      # bug PIN-10214
+      | SOAP       | 200          | 200                   | 200          | false        | true  | 400            |
