@@ -48,6 +48,15 @@ public class EServiceArchivingSteps {
         scheduleArchiveEService(resolvedEServiceId, archivingReason);
     }
 
+    @When("l'utente annulla il processo di archiviazione dell'e-service con id {string}")
+    public void cancelEServiceArchiving(String eServiceId) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
+
+        cancelArchiveEService(resolvedEServiceId);
+    }
+
     private void scheduleArchiveEService(UUID eServiceId, String archivingReason) {
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getEServiceClient()
@@ -55,6 +64,14 @@ public class EServiceArchivingSteps {
                                 eServiceId,
                                 new EServiceArchivingReasonSeed().archivingReason(archivingReason)
                         ),
+                ResponseEntity::getStatusCode
+        );
+    }
+
+    private void cancelArchiveEService(UUID eServiceId) {
+        httpCallExecutor.performCall(
+                () -> clientTokenConfigurator.getEServiceClient()
+                        .cancelEServiceArchiving(eServiceId),
                 ResponseEntity::getStatusCode
         );
     }
