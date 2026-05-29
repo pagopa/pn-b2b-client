@@ -312,6 +312,16 @@ Feature: Radd Alternative integrazione con Poste
     And viene chiusa la transazione per il recupero degli aar su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
+  Scenario: [RADD_POSTE_AOR_03_1_D] PG - Restituzione errore - nessuna Notifica disponibile in stato Irreperibile associata al CF corretto
+    Given viene generata una nuova notifica
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
+    And destinatario CucumberSpa
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Given la persona giuridica CucumberSpa chiede di verificare la presenza di notifiche
+    Then La verifica della presenza di notifiche in stato irreperibile genera un errore "Non ci sono notifiche non consegnate per questo codice fiscale" con codice 99 su radd alternative
+
     # Errore su tentativo di upload dei documenti.
   @useRaddVpce
   Scenario: [RADD_POSTE_02_1_I] PG - Come Operatore Radd con accesso da privatelink ricevo errore nel tentativo di effettuare l'upload dei documenti.

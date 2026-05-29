@@ -1217,7 +1217,7 @@ Feature: Radd Alternative
 
   # AOR TRANSACTION
 
-  @raddAlt @zip
+  @raddAlt @zip @useRaddAlternative
   Scenario: [RADD-ALT_AOR-74] PF -  Start di una AOR transaction con stesso operationId - ricezione Errore
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
