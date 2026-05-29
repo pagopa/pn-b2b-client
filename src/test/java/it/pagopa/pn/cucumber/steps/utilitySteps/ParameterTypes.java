@@ -36,7 +36,7 @@ public class ParameterTypes {
     }
 
     @ParameterType("uguale|differente")
-    public static boolean isUguale(String value) {
+    public static boolean isTheSame(String value) {
         return value.equals("uguale");
     }
 
@@ -105,6 +105,11 @@ public class ParameterTypes {
     @ParameterType("pre|post")
     public static boolean isBefore(String value) {
         return value.equals("pre");
+    }
+
+    @ParameterType("baseCost|firstAnalogCost|secondAnalogCost|simpleRegisteredLetterCost")
+    public static String deliveryNotificationCost(String value) {
+        return value;
     }
 
     @ParameterType("INVALIDATED|NEW")

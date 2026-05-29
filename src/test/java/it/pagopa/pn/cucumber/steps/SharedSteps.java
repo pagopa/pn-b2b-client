@@ -302,7 +302,7 @@ public class SharedSteps {
                        DynamoDbService dynamoDbService,
                        SenderInfoProvider senderInfoProvider,
                        @Qualifier("senderTaxIdCacheManager") CacheManager<String, String> senderTaxIdCacheManager
-                       ) {
+    ) {
         this.context = context;
         this.b2bClient = b2bClient;
         this.pollingFactory = pollingFactory;
@@ -505,7 +505,7 @@ public class SharedSteps {
         }
     }
 
-    @And("viene generata una nuova notifica con uguale codice fiscale del creditore e codice avviso {isUguale}")
+    @And("viene generata una nuova notifica con uguale codice fiscale del creditore e codice avviso {isTheSame}")
     public void vienePredispostaEInviataUnaNuovaNotificaConUgualeCodiceFiscaleDelCreditoreAndCodiceAvvisoVariabile(boolean isCodiceAvvisoUguale) {
         getNotificationStepInterface().prepareNotificationRequestSimileAllaPrecedente(
                 true, isCodiceAvvisoUguale, false, null);
@@ -1461,5 +1461,10 @@ public class SharedSteps {
         notificationIunList.add(oldNotification.getIun());
         log.info("RECIPIENTS OLDER {} GG: {}", lowerLimit, oldNotification.getRecipients().stream().map(r -> r.getTaxId()).toList());
         log.info("IUN OLDER {} GG: {}", lowerLimit, oldNotification.getIun());
+    }
+
+    @And("al destinatario {int} viene settato l'applyCost del pagamento PagoPa alla posizione {int} a false")
+    public void setApplyCostFalse(int recIndex, int paymentIndex, boolean bool) {
+        getNotificationStepInterface().setApplyCostFalse(recIndex, paymentIndex);
     }
 }

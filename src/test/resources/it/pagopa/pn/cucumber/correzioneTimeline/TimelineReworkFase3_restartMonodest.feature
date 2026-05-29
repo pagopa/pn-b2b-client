@@ -44,11 +44,11 @@ Feature: Correzione timeline fase 3
     And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
     When vengono recuperati i record relativi agli elementi di timeline affetti dal rework
     Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
-      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0    |
-      | element2 | ANALOG_WORKFLOW_RECIPIENT_DECEASED;RECINDEX0 |
+      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0     |
+      | element2 | ANALOG_WORKFLOW_RECIPIENT_DECEASED;RECINDEX_0 |
     And controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato NEW
-      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0    |
-      | element2 | ANALOG_WORKFLOW_RECIPIENT_DECEASED;RECINDEX0 |
+      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0     |
+      | element2 | ANALOG_WORKFLOW_RECIPIENT_DECEASED;RECINDEX_0 |
 
 #  @timelineReworkF3 @checkRestart
   Scenario: [TR3_RESTART_MONODEST_2] Restart di notifica che va in RETURNED TO SENDER (al restart va in OK all'attempt 0)
@@ -91,8 +91,8 @@ Feature: Correzione timeline fase 3
     And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
     When vengono recuperati i record relativi agli elementi di timeline affetti dal rework
     Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
-      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0    |
-      | element2 | ANALOG_WORKFLOW_RECIPIENT_DECEASED;RECINDEX0 |
+      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0     |
+      | element2 | ANALOG_WORKFLOW_RECIPIENT_DECEASED;RECINDEX_0 |
     And controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato NEW
       | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0 |
 
@@ -138,8 +138,8 @@ Feature: Correzione timeline fase 3
     And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
     When vengono recuperati i record relativi agli elementi di timeline affetti dal rework
     Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
-      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0    |
-      | element2 | ANALOG_WORKFLOW_RECIPIENT_DECEASED;RECINDEX0 |
+      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0     |
+      | element2 | ANALOG_WORKFLOW_RECIPIENT_DECEASED;RECINDEX_0 |
     And controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato NEW
       | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0 |
       | element2 | SEND_ANALOG_DOMICILE;ATTEMPT_1;RECINDEX_0 |
@@ -187,8 +187,8 @@ Feature: Correzione timeline fase 3
     And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
     When vengono recuperati i record relativi agli elementi di timeline affetti dal rework
     Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
-      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0    |
-      | element2 | ANALOG_WORKFLOW_RECIPIENT_DECEASED;RECINDEX0 |
+      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0     |
+      | element2 | ANALOG_WORKFLOW_RECIPIENT_DECEASED;RECINDEX_0 |
     And controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato NEW
       | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0 |
       | element2 | SEND_ANALOG_DOMICILE;ATTEMPT_1;RECINDEX_0 |
@@ -1477,7 +1477,7 @@ Feature: Correzione timeline fase 3
   ###Restart dell'attempt 1
 
   @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_MONODEST_17] Restart all'attempt 1 di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (anche al restart va in OK all'attempt 1)
+  Scenario: [TR3_RESTART_MONODEST_17] Restart all'attempt 1 di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (anche al restart va in KO all'attempt 0 e in OK all'attempt 1)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |

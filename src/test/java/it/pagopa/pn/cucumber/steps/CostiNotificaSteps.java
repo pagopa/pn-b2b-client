@@ -320,14 +320,21 @@ public class CostiNotificaSteps {
         }
     }
 
-    @And("verifico che {isBefore} rework per il destinatario {int} con indirizzo {string} i record su Pn-NotificationDeliveryCost siano stati (inseriti)(modificati) e correttamente valorizzati")
-    public void checkNotificationDeliveryCostRecordForRework(boolean isBeforeRestart, int recIndex, String address, Map<String, String> expectedData) {
+    @And("verifico che {isBefore} {timelineInvalidation} per il destinatario {int} con indirizzo {string} i record su Pn-NotificationDeliveryCost siano stati (inseriti)(modificati) e correttamente valorizzati")
+    public void checkNotificationDeliveryCostRecordForRework(boolean isBeforeRestart, String requestType, int recIndex, String address) {
         try {
-            List<String> costiValorizzati = Arrays.asList("baseCost", "firstAnalogCost");
-            String sequence = address.replace("Via@", "");
-            switch (sequence.toUpperCase()) {
+            List<String> costsPreRework = Arrays.asList("baseCost", "firstAnalogCost");
+            List<String> costsPostRework = Arrays.asList("baseCost", "firstAnalogCost");
+            String sequence = address.toUpperCase().replace("VIA@", "");
+            switch (sequence) {
                 //TODO: aggiungere le altre sequence che prevedono il secondAnalogCost
-                case "FAIL-DISCOVERY_890", "FAIL-DISCOVERYIRREPERIBILE_890" -> costiValorizzati.add("secondAnalogCost");
+                case "FAIL-DISCOVERY_890", "FAIL-DISCOVERYIRREPERIBILE_890" -> {
+                    costsPostRework.add("secondAnalogCost");
+                    costsPostRework.add("secondAnalogCost");
+                }
+                case "FAIL_DECEDUTO_890", "FAIL_DECEDUTO_AR" -> {
+
+                }
             }
             Map<String, AttributeValue> record = searchNotificationDeliveryCostRecord(recIndex);
             FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
@@ -340,16 +347,35 @@ public class CostiNotificaSteps {
             });
             notificationCostRecipientResponse = notificationCostClient.getNotificationCost(sharedSteps.getNotificationIun(), recIndex);
             log.info("NotificationCostRecipientResponse:\n {}", notificationCostRecipientResponse);
-            costiValorizzati.forEach(costo -> {
-                assertThat(record.get(costo)).as("Il record salvato su Pn-NotificationDeliveryCost dovrebbe avere il campo %s valorizzato", costo).isNotNull();
-                if (isBeforeRestart) {
+
+            if (isBeforeRestart) {
+                costsPreRework.forEach(costo -> {
+                    assertThat(record.get(costo)).as("Pre rework, il record salvato su Pn-NotificationDeliveryCost dovrebbe avere il campo %s valorizzato", costo).isNotNull();
                     notificationCostsPreRework.put(costo, record.get(costo).n());
-                } else {
+                });
+            } else {
+                costsPostRework.forEach(costo -> {
+                    assertThat(record.get(costo)).as("Post rework, il record salvato su Pn-NotificationDeliveryCost dovrebbe avere il campo %s valorizzato", costo).isNotNull();
                     notificationCostsPostRework.put(costo, record.get(costo).n());
-                }
-            });
+                });
+            }
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
+    }
+
+    @And("il {deliveryNotificationCost} è {isTheSame} rispetto a prima del rework")
+    public void checkIfCostChangedAfterRestart(String cost, boolean isTheSame) {
+        assertSoftly(softly -> {
+            softly.assertThat(notificationCostsPreRework).as("The map of costs before rework should not be null").isNotNull();
+            softly.assertThat(notificationCostsPostRework).as("The map of costs after rework should not be null").isNotNull();
+            softly.assertThat(notificationCostsPreRework).containsKey(cost);
+            softly.assertThat(notificationCostsPostRework).containsKey(cost);
+            if (isTheSame) {
+                softly.assertThat(notificationCostsPreRework.get(cost)).as("After rework the cost %s should be the same", cost).isEqualTo(notificationCostsPostRework.get(cost));
+            } else {
+                softly.assertThat(notificationCostsPreRework.get(cost)).as("After rework the cost %s should not be the same", cost).isNotEqualTo(notificationCostsPostRework.get(cost));
+            }
+        });
     }
 }
