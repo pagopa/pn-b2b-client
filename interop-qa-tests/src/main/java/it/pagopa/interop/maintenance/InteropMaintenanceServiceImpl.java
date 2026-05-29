@@ -8,7 +8,9 @@ import it.pagopa.interop.generated.openapi.clients.tenant_process.model.Tenant;
 import it.pagopa.interop.generated.openapi.clients.tenant_process.model.TenantKind;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.interop.tenant.service.ITenantsProcessApi;
+import it.pagopa.interop.tenant.service.impl.TenantsProcessApiClientImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -132,10 +134,21 @@ public class InteropMaintenanceServiceImpl implements InteropMaintenanceService 
         }
     }
 
-    @Nullable
+    /* 29/05/2026 L'uso delle API di maintenance al momento è fattibile solo in ambienti controllati. Al momento,
+    * per esempio, può essere fatto solo attraverso workflow Github. Si astrae in questo metodo la verifica che
+    * suddette api siano utilizzabili. */
+    @Override
+    public boolean isExecutable() {
+        /* 29/05/2026 La variabile d'ambiente qui usata è presente solo su workflow Github, ed ha senso solo lì; se
+        * è assente o vuota - perché l'esecuzione non sta avvenendo su Github o perché l'ambiente Github non è
+        * correttamente configurato - allora il servizio non è servibile. */
+        return StringUtils.isNotBlank(System.getenv(TenantsProcessApiClientImpl.TENANT_PROCESS_HOST));
+    }
+
     /* DEV. NOTE 29/05/2026: necessario recuperare il valore di selfcareInstitutionType dal client BFF perché
      * il client process al momento non espone questa informazione. Il caching è fattibile perché l'informazione
      * non cambia durante i test. */
+    @Nullable
     private String getSelfcareInstitutionType(String tokenBff, UUID organizationId) {
         if(sitCache.containsKey(organizationId)) {
             return sitCache.get(organizationId);

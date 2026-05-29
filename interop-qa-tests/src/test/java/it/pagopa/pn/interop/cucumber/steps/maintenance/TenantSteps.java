@@ -30,6 +30,11 @@ public class TenantSteps {
      * cioè nella stessa run con gli altri test, per evitare che il cambio di tenant kind possa interferire */
     @Before
     public void resetTenantKind(Scenario scenario) {
+        if(!maintenanceService.isExecutable()) {
+            log.info("Impossible to use maintenance service in current environment. Skipping.");
+            return;
+        }
+
         // Double-Checked Locking
         if (!setupPerformed) {
             lock.lock();

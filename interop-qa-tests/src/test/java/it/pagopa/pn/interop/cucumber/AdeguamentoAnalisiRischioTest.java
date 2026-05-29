@@ -22,13 +22,13 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.interop.cucumber.steps"),
 
         // abilita parallelismo JUnit
-        @ConfigurationParameter(key = "junit.jupiter.execution.parallel.enabled", value = "true"),
-        @ConfigurationParameter(key = "junit.jupiter.execution.parallel.mode.default", value = "concurrent"),
+        @ConfigurationParameter(key = "junit.jupiter.execution.parallel.enabled", value = "false"),
+        //@ConfigurationParameter(key = "junit.jupiter.execution.parallel.mode.default", value = "concurrent"),
 
         // abilita parallelismo Cucumber
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 })
 @ExcludeTags({"wait_for_fix", "ignore"})
-@IncludeTags({"debug-adeguamento-analisi-rischio"})
+@IncludeTags({"adeguamento-analisi-rischio"})
 public class AdeguamentoAnalisiRischioTest {
 }

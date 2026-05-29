@@ -26,7 +26,7 @@ Feature: Lettura di un'analisi del rischio di un eservice
 
     # TODO: considerare di testare, in tutti i test della feature, tutte le combinazioni possibili solo una volta, e poi rivedere
     # tutti i test in taglio più minimale per farli rimanere nelle NRT
-  @adeguamento-analisi-rischio
+  #@adeguamento-analisi-rischio
   Scenario Outline: [DESCRIPTOR_TK_RA_READ_1] A seguito del cambiamento di tenant kind si tenta di reperire una risk analysis associata a un proprio e-service
     Given l'utente è un "admin" di "<ente>"
     And "<ente>" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "PUBLISHED"

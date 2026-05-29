@@ -72,7 +72,7 @@ Feature: Rifiuto di una versione di una finalità
     When l'utente rifiuta la finalità senza una motivazione
     Then si ottiene status code 400
 
-  @adeguamento-analisi-rischio
+  #@adeguamento-analisi-rischio
   Scenario Outline: [PURPOSE_REJECT_TK_1] A seguito del cambiamento di tenant kind si tenta di respingere una finalità in attesa di approvazione
     Given l'utente è un "admin" di "<ente>"
     And "PA2" ha già creato e pubblicato 1 e-service

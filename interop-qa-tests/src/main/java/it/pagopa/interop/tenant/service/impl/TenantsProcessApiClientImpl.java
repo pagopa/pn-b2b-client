@@ -31,7 +31,7 @@ import java.util.UUID;
  * TENANT_PROCESS_HOST è attraverso il workflow Github */
 public class TenantsProcessApiClientImpl implements ITenantsProcessApi {
     // Nome della variabile d'ambiente contenente il base path per contattare il tenant process
-    private static final String TENANT_PROCESS_HOST = "TENANT_PROCESS_HOST";
+    public static final String TENANT_PROCESS_HOST = "TENANT_PROCESS_HOST";
 
     // Client da usare per le apis che richiedono autenticazione uguale a BFF
     private final TenantApi processBffTenantApi;

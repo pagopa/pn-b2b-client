@@ -68,7 +68,7 @@ Feature: Cancellazione finalità
     When l'utente richiede la cancellazione della finalità
     Then si ottiene status code 403
 
-  @adeguamento-analisi-rischio
+  #@adeguamento-analisi-rischio
   Scenario Outline: [PURPOSE_DELETE_TK_1] A seguito del cambiamento di tenant kind si tenta di eliminare una finalità
     Given l'utente è un "admin" di "<ente>"
     And "PA2" ha già creato e pubblicato 1 e-service

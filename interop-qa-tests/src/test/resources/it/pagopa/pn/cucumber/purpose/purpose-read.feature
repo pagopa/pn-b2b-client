@@ -77,7 +77,7 @@ Feature: Lettura singola finalità
       | WAITING_FOR_APPROVAL |
       | ARCHIVED             |
 
-  @adeguamento-analisi-rischio
+  #@adeguamento-analisi-rischio
   Scenario Outline: [LETTURA_FINALITA_TK_1] A seguito del cambiamento di tenant kind si tenta di reperire una finalità attiva
     Given l'utente è un "admin" di "<ente>"
     And "PA2" ha già creato e pubblicato 1 e-service

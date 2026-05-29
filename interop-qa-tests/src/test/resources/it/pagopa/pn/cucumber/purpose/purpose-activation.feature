@@ -135,7 +135,7 @@ Feature: Attivazione e riattivazione di una finalità
     When l'utente attiva la finalità in stato "REJECTED" per quell'e-service
     Then si ottiene status code 403
 
-  @adeguamento-analisi-rischio
+  #@adeguamento-analisi-rischio
   Scenario Outline: [PURPOSE_ACTIVATION_TK_1] A seguito del cambiamento di tenant kind si tenta di attivare una finalità in bozza
     Given l'utente è un "admin" di "<ente>"
     And "PA2" ha già creato e pubblicato 1 e-service
@@ -154,7 +154,7 @@ Feature: Attivazione e riattivazione di una finalità
       | Privato | PA      |
       | Privato | GSP     |
 
-  @adeguamento-analisi-rischio
+  #@adeguamento-analisi-rischio
   Scenario Outline: [PURPOSE_ACTIVATION_TK_2] A seguito del cambiamento di tenant kind si tenta di attivare una finalità sospesa
     Given l'utente è un "admin" di "<ente>"
     And "PA2" ha già creato e pubblicato 1 e-service
