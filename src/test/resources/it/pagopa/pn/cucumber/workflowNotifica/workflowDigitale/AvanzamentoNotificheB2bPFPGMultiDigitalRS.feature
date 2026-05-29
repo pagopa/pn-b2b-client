@@ -68,7 +68,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico RS
       | digitalDomicile_address      | test@fail.it |
       | physicalAddress_address      | Via@fail_RIS |
       | payment_pagoPaForm           | NOALLEGATO   |
-    And destinatario Cucumber Society
+    And destinatario GherkinSrl
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con responseStatus "KO" per l'utente 0

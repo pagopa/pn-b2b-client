@@ -2,6 +2,7 @@ package it.pagopa.pn.cucumber.steps;
 
 import io.cucumber.spring.CucumberContextConfiguration;
 import it.pagopa.common.config.AwsConfig;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.generate.api.externalregistry.selfcare.privateapi.AooUoIdsApi;
 import it.pagopa.pn.client.b2b.pa.cache.CacheConfig;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.config.TemplateEngineConfigBean;
@@ -109,6 +110,7 @@ import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.client.b2b.pa.service.IBffMandateServiceApi;
 import it.pagopa.pn.client.b2b.pa.service.IMandateReverseServiceClient;
+import it.pagopa.pn.client.b2b.pa.service.impl.AooUoIdsClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BDeliveryPushServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
@@ -340,6 +342,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         AwsConfig.class,
         SenderInfoProvider.class,
         CacheConfig.class,
+        AooUoIdsClientImpl.class,
+        AooUoIdsApi.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
