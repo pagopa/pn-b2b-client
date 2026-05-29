@@ -11,4 +11,6 @@ public class DelayerCountersSumEstimatesItem implements Serializable {
     private String pk;
     private String sk;
     private Integer numberOfShipments;
+    private Integer firstWeekNumberOfShipments;
+    private Integer secondWeekNumberOfShipments;
 }

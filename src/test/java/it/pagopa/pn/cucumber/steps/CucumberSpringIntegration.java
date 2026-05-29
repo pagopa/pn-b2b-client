@@ -25,6 +25,7 @@ import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRaddCognito;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
+import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.model.StimeMittentiContext;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.AwsUtils;
 import it.pagopa.pn.cucumber.utils.validator.SchemaValidator;
 import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
@@ -227,7 +228,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnExternalChannelsInternalClientImpl.class,
         PnEcInternalClientImpl.class,
         AwsUtils.class,
-        PnNotificationCostClientImpl.class
+        PnNotificationCostClientImpl.class,
+        StimeMittentiContext.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

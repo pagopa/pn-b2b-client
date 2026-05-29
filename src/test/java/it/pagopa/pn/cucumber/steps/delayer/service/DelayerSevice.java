@@ -44,11 +44,16 @@ public class DelayerSevice {
         }
     }
 
-    public Integer getCountersSumEstimates(String deliveryDate, String province, String product) {
+    public DelayerCountersSumEstimatesItem getCountersSumEstimates(String deliveryDate, String province, String product) {
         try {
 
-            var counters = lambdaClient.getCountersSumEstimates(deliveryDate, province, product);
-            return extractLatestNumberOfShipments(counters.getItems());
+            return lambdaClient.getCountersSumEstimates(deliveryDate, province, product)
+                    .getItems()
+                    .stream()
+                    .filter(item -> item.getSk().equals(String.format("SUM_ESTIMATES~%s~%s", product, province)))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Nessun item trovato con deliveryDate %s nello sk".formatted(deliveryDate)));
+//            return extractLatestNumberOfShipments(counters.getItems());
 
         } catch (Exception e) {
             throw new RuntimeException(

@@ -3,11 +3,13 @@ package it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.model;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimit;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerSenderLimitUtils;
 import lombok.Getter;
+import org.springframework.stereotype.Component;
 
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+@Component
 public class StimeMittentiContext {
 
     public static class SenderLimitsForPeriod {
