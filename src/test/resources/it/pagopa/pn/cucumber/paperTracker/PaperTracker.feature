@@ -304,7 +304,6 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | FAIL-CompiutaGiacenza_AR     | Via@FAIL-CompiutaGiacenza_AR     |
       | OK-NonRendicontabile_AR      | Via@OK-NonRendicontabile_AR      |
       | OK-CausaForzaMaggiore_AR     | Via@OK-CausaForzaMaggiore_AR     |
-      | OK_AR_NOT_ORDERED            | Via@OK_AR_NOT_ORDERED            |
       | OK_GIACENZA_AR_2             | Via@OK_GIACENZA_AR_2             |
       | OK_GIACENZA_AR_3             | Via@OK_GIACENZA_AR_3             |
       | OK_GIACENZA_AR_4             | Via@OK_GIACENZA_AR_4             |
@@ -322,6 +321,29 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | OK_PCRETRY_CON996_AR         | Via@OK_PCRETRY_CON996_AR         |
       | OK_AR_ALL_CON                | Via@OK_AR_ALL_CON                |
       | OK-GiacenzaCorrected_AR      | Via@OK-GiacenzaCorrected_AR      |
+
+  @paperTrackerARRunMode
+  Scenario Outline: [PAPER_TRACKER_RUN_AR_4.A] Viene verificato che tutti gli elementi di timeline per la sequence OK_AR_NOT_ORDERED siano presenti
+    e che ci sia un errore di tipo DUPLICATED_EVENT in PaperTrackingsError per l'evento RECRN001A
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@OK_AR_NOT_ORDERED |
+      | digitalDomicile         | NULL              |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    Then si controlla che non ci siano eventi duplicati
+    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
+    And si controlla che siano presenti tutti gli eventi relativi alla sequence "OK_AR_NOT_ORDERED"
+    And si verifica che la risposta tracking per la sequence "OK_AR_NOT_ORDERED" contenga tutti gli elementi attesi e che sia strutturalmente valida
+    And si verifica che non ci siano outputs per i trackingId richiesti
+    Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
+    Examples:
+      | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+      | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-04-29T07:27:17.130111793Z\",\"errorCategory\":\"DUPLICATED_EVENT\",\"details\":{\"message\":\"Duplicated event found for statusCode: RECRN001A\",\"additionalDetails\":{\"statusTimestamp\":\"2026-04-29T07:27:04Z\",\"statusCode\":\"RECRN001A\"}},\"flowThrow\":\"DUPLICATED_EVENT_VALIDATION\",\"eventThrow\":\"RECRN001A\",\"eventIdThrow\":\"17ad944a-b7e3-4c4b-a839-39c7b384b7df\",\"productType\":\"AR\",\"type\":\"WARNING\"}" |
 
   @paperTrackerARRunMode
   Scenario Outline: [PAPER_TRACKER_VERIFY_TIMELINE_4] Viene verificato che gli elementi di timeline sono presenti per le sequence in cui non è previsto l'evento CON020

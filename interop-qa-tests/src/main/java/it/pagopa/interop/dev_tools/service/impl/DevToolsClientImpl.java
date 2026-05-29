@@ -11,6 +11,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.UUID;
+
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class DevToolsClientImpl extends AbstractClient implements IDevToolsClient {
@@ -34,7 +36,7 @@ public class DevToolsClientImpl extends AbstractClient implements IDevToolsClien
     @Override
     public TokenGenerationValidationResult validateTokenGeneration(String clientAssertion, String clientAssertionType, String grantType, String clientId, String dpopProof) {
         return performOperation(
-                () -> toolsApi.validateTokenGenerationWithHttpInfo(clientAssertion, clientAssertionType, grantType, clientId, dpopProof)
+                () -> toolsApi.validateTokenGenerationWithHttpInfo(clientAssertion, clientAssertionType, grantType, UUID.fromString(clientId), Boolean.toString(false), dpopProof)
         ).orElseThrow(
                 () -> new IllegalStateException("Failed to validate token generation request after retries")
         );
