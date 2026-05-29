@@ -1,6 +1,7 @@
 package it.pagopa.interop.maintenance;
 
 import it.pagopa.interop.authorization.service.identity.IdentityService;
+import it.pagopa.interop.authorization.service.utils.ConfigFileReader;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.generated.openapi.clients.tenant_process.model.MaintenanceTenantUpdatePayload;
 import it.pagopa.interop.generated.openapi.clients.tenant_process.model.Tenant;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -28,6 +30,7 @@ public class InteropMaintenanceServiceImpl implements InteropMaintenanceService 
 
     private final IdentityService identityService;
     private final PollingService pollingService;
+    private final ConfigFileReader configFileReader;
 
     private final Map<UUID, String> sitCache = new HashMap<>();
 
@@ -36,17 +39,20 @@ public class InteropMaintenanceServiceImpl implements InteropMaintenanceService 
             TenantMapper mapper,
             ITenantsApi tenantsBffClient,
             ITenantsProcessApi tenantsProcessClient,
-            PollingService pollingService
+            PollingService pollingService,
+            ConfigFileReader configFileReader
     ) {
         this.mapper = mapper;
         this.identityService = identityService;
         this.tenantsBffClient = tenantsBffClient;
         this.tenantsProcessClient = tenantsProcessClient;
         this.pollingService = pollingService;
+        this.configFileReader = configFileReader;
     }
 
     @Override
     public void changeTenantKind(String tenantAlias, String tenantKind) {
+        log.debug("Target tenant kind of {}: {}",  tenantAlias, tenantKind);
         String xCorrelationId = UUID.randomUUID().toString();
         String tokenBff = identityService.getToken(tenantAlias, "admin");
         UUID organizationId = identityService.getOrganizationId(tenantAlias);
@@ -97,6 +103,32 @@ public class InteropMaintenanceServiceImpl implements InteropMaintenanceService 
         System.out.println("Dopo il ripristino, il tenant kind risulta ora essere: " + processTenantPostKindUpdate.getBody().getKind());*/
     }
 
+    /* Confronta i tenant kind di tutti gli enti presenti in configurazione (PA1, PA2...) e verifica che siano coerenti
+    * con quando presente in piattaforma. Se così non è per uno o più di questi (es PA1 risulta GSP quando dovrebbe
+    * essere PA) allora corregge. */
+    @Override
+    public void alignTenantKinds() {
+        List<it.pagopa.interop.authorization.domain.Tenant> tenantList = configFileReader.getTenantList();
+        for (it.pagopa.interop.authorization.domain.Tenant tenant : tenantList) {
+            alignTenantKind(tenant);
+        }
+    }
+
+    /* Verifica che il tenant kind indicato in piattaforma è coerente con quello passato in input, ed in caso contrario
+    * lo corregge. */
+    @Override
+    public void alignTenantKind(it.pagopa.interop.authorization.domain.Tenant tenant) {
+        String expectedKind = tenant.getKind();
+
+        String xCorrelationId = String.valueOf(UUID.randomUUID());
+        UUID organizationId = identityService.getOrganizationId(tenant.getName());
+        String actualKind = tenantsProcessClient.getTenant(xCorrelationId, organizationId).getBody().getKind().toString();
+
+        if(!actualKind.equals(expectedKind)) {
+            this.changeTenantKind(tenant.getName(), expectedKind);
+        }
+    }
+
     @Nullable
     /* DEV. NOTE 29/05/2026: necessario recuperare il valore di selfcareInstitutionType dal client BFF perché
      * il client process al momento non espone questa informazione. Il caching è fattibile perché l'informazione
@@ -111,14 +143,6 @@ public class InteropMaintenanceServiceImpl implements InteropMaintenanceService 
         String selfcareInstitutionType = tenantFromBff.getSelfcareInstitutionType();
         sitCache.put(organizationId, selfcareInstitutionType);
         return selfcareInstitutionType;
-    }
-
-    private static void sleep() {
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
     }
 
 }

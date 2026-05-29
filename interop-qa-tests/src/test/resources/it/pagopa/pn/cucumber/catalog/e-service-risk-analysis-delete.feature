@@ -59,4 +59,4 @@ Feature: Cancellazione di un'analisi del rischio ad un e-service
     # FIXME utile solo per debug locale, rimuovere
   @debug-adeguamento-analisi-rischio
   Scenario: Verifica ambiente test maintenance
-    And il tenant kind dell'ente "PA4" viene impostato a "PA"
+    And il tenant kind dell'ente "PA4" viene impostato a "GSP"
