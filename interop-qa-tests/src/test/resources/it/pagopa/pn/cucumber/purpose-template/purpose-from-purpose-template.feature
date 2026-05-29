@@ -212,9 +212,9 @@ Feature: finalità agevolata, purpose from purpose template
     Then si ottiene response status code 200
     Examples:
       | ente    | kind    |
-      | PA4     | Privato |
+      | PA4     | PRIVATE |
       | PA4     | GSP     |
       | GSP2    | PA      |
-      | GSP2    | Privato |
+      | GSP2    | PRIVATE |
       | Privato | PA      |
       | Privato | GSP     |

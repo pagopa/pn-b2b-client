@@ -3155,10 +3155,10 @@ Feature: Test API of e-service template
     And la riattivazione della versione dell'e-service template è stata effettuata correttamente
     Examples:
       | ente    | kind    |
-      | PA4     | Privato |
+      | PA4     | PRIVATE |
       | PA4     | GSP     |
       | GSP2    | PA      |
-      | GSP2    | Privato |
+      | GSP2    | PRIVATE |
       | Privato | PA      |
       | Privato | GSP     |
 
@@ -3175,10 +3175,10 @@ Feature: Test API of e-service template
     And la modifica della risk analysis dell'e-service è stata effettuata correttamente
     Examples:
       | ente    | kind    |
-      | PA4     | Privato |
+      | PA4     | PRIVATE |
       | PA4     | GSP     |
       | GSP2    | PA      |
-      | GSP2    | Privato |
+      | GSP2    | PRIVATE |
       | Privato | PA      |
       | Privato | GSP     |
 
@@ -3195,9 +3195,9 @@ Feature: Test API of e-service template
     And la cancellazione della risk analysis dell'e-service è stata effettuata correttamente
     Examples:
       | ente    | kind    |
-      | PA4     | Privato |
+      | PA4     | PRIVATE |
       | PA4     | GSP     |
       | GSP2    | PA      |
-      | GSP2    | Privato |
+      | GSP2    | PRIVATE |
       | Privato | PA      |
       | Privato | GSP     |

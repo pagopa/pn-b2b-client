@@ -106,9 +106,9 @@ Feature: Creazione di una nuova versione di finalità
 
     Examples:
       | ente    | kind    |
-      | PA4     | Privato |
+      | PA4     | PRIVATE |
       | PA4     | GSP     |
       | GSP2    | PA      |
-      | GSP2    | Privato |
+      | GSP2    | PRIVATE |
       | Privato | PA      |
       | Privato | GSP     |
