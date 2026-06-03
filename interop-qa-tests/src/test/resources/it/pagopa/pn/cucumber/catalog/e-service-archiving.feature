@@ -114,7 +114,7 @@ Feature: Archiviazione manuale di un e-service
     #in tal caso è l'unico e più recente descrittore
     And la versione più recente dell'e-service è in stato "ARCHIVING"
 
-  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_3.1] Un ente erogatore di un e-service in stato ARCHIVING è in grado di sospenderlo
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_SUSPENSION_1.1] Un ente erogatore di un e-service in stato ARCHIVING è in grado di sospenderlo
     Given l'utente è un "<role>" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
