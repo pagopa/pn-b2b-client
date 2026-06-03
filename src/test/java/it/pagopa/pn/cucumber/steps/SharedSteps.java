@@ -1464,7 +1464,7 @@ public class SharedSteps {
     }
 
     @And("al destinatario {int} viene settato l'applyCost del pagamento PagoPa alla posizione {int} a false")
-    public void setApplyCostFalse(int recIndex, int paymentIndex, boolean bool) {
+    public void setApplyCostFalse(int recIndex, int paymentIndex) {
         getNotificationStepInterface().setApplyCostFalse(recIndex, paymentIndex);
     }
 }

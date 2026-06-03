@@ -3,7 +3,7 @@ Feature: Correzione timeline fase 3 costi
   #PST: https://pagopa.atlassian.net/wiki/spaces/PN/pages/3002826778/PST+-+Correzione+Timeline+-+FASE+3
 
   @timelineReworkF3_costi
-  Scenario Outline: [TR3_PAYMENTS_1]
+  Scenario Outline: [TR3_PAYMENTS_RESTART_1]
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
       | subject            | test costi notifica fase 5 |
@@ -46,7 +46,7 @@ Feature: Correzione timeline fase 3 costi
       | 2        |
 
   @timelineReworkF3_costi #11.3 ??? attemptId = ATTEMPT_0 in KO per destinatario deceduto
-  Scenario: [TR3_PAYMENTS_2]
+  Scenario: [TR3_PAYMENTS_RESTART_2]
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
       | subject            | test costi notifica fase 5 |

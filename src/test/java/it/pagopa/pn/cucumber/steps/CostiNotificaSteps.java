@@ -23,10 +23,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.INEXISTENT_IUN;
@@ -45,8 +42,8 @@ public class CostiNotificaSteps {
     private NotificationCostPaymentResponse notificationCostPaymentResponse;
     private NotificationCostRecipientResponse notificationCostRecipientResponse;
 
-    private Map<String, String> notificationCostsPreRework;
-    private Map<String, String> notificationCostsPostRework;
+    private Map<String, String> notificationCostsPreRework = new HashMap<>();
+    private Map<String, String> notificationCostsPostRework = new HashMap<>();
 
     @And("verifico che per il destinatario {int} il record su Pn-NotificationDeliveryCost sia stato (inserito)(modificato) e correttamente valorizzato")
     public void checkNotificationDeliveryCostRecord(int recIndex, Map<String, String> expectedData) {
@@ -323,14 +320,18 @@ public class CostiNotificaSteps {
     @And("verifico che {isBefore} {timelineInvalidation} per il destinatario {int} con indirizzo {string} i record su Pn-NotificationDeliveryCost siano stati (inseriti)(modificati) e correttamente valorizzati")
     public void checkNotificationDeliveryCostRecordForRework(boolean isBeforeRestart, String requestType, int recIndex, String address) {
         try {
-            List<String> costsPreRework = Arrays.asList("baseCost", "firstAnalogCost");
-            List<String> costsPostRework = Arrays.asList("baseCost", "firstAnalogCost");
+            List<String> costsExcludingSecondAnalog = Arrays.asList("baseCost", "firstAnalogCost");
+            List<String> costsIncludingSecondAnalog = Arrays.asList("baseCost", "firstAnalogCost", "secondAnalogCost");
+
+            List<String> costsPreRework = new ArrayList<>(costsExcludingSecondAnalog);
+            List<String> costsPostRework = new ArrayList<>(costsExcludingSecondAnalog);
+
             String sequence = address.toUpperCase().replace("VIA@", "");
             switch (sequence) {
                 //TODO: aggiungere le altre sequence che prevedono il secondAnalogCost
                 case "FAIL-DISCOVERY_890", "FAIL-DISCOVERYIRREPERIBILE_890" -> {
-                    costsPostRework.add("secondAnalogCost");
-                    costsPostRework.add("secondAnalogCost");
+                    costsPreRework = new ArrayList<>(costsIncludingSecondAnalog);
+                    costsPostRework = new ArrayList<>(costsIncludingSecondAnalog);
                 }
                 case "FAIL_DECEDUTO_890", "FAIL_DECEDUTO_AR" -> {
 
