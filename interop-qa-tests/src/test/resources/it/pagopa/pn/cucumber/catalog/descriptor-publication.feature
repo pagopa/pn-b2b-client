@@ -97,3 +97,8 @@ Feature: Pubblicazione di un descrittore
       | PA4     | GSP         |
       | GSP2    | PA          |
       | Privato | PA          |
+
+  # FIXME rimuovere
+  @debug
+  Scenario: Utile solo a innescare il reset dei tenant kind
+    Given l'utente è un "admin" di "<ente>"
