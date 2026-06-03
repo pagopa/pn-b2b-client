@@ -181,7 +181,7 @@ Feature: Archiviazione manuale di un descrittore
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And la versione più recente dell'e-service è in stato "PUBLISHED"
 
-  Scenario: [DIFFERENT_TENANT_ARCHIVING_DESCRIPTOR_2.1] Il processo di archiviazione dello specifico descrittore NON può essere annullato da un ente differente dall'erogatore dell'e-service anche se questo è delegato all'erogazione
+  Scenario: [DIFFERENT_TENANT_ARCHIVING_DESCRIPTOR_1.3] Il processo di archiviazione dello specifico descrittore NON può essere annullato da un ente differente dall'erogatore dell'e-service anche se questo è delegato all'erogazione
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
@@ -194,7 +194,7 @@ Feature: Archiviazione manuale di un descrittore
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And la versione più recente dell'e-service è in stato "PUBLISHED"
 
-  Scenario: [DIFFERENT_TENANT_ARCHIVING_ESERVICE_2.2] Il processo di archiviazione dello specifico descrittore NON può essere annullato da un ente differente dall'erogatore dell'e-service anche se questo è delegato all'erogazione
+  Scenario: [DIFFERENT_TENANT_ARCHIVING_ESERVICE_1.4] Il processo di archiviazione dello specifico descrittore NON può essere annullato da un ente differente dall'erogatore dell'e-service anche se questo è delegato all'erogazione
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
