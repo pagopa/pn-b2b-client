@@ -275,3 +275,14 @@ Feature: Archiviazione manuale di un e-service
     When l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
     Then la vecchia versione dell'e-service è in stato "ARCHIVED"
     And la versione più recente dell'e-service è in stato "PUBLISHED"
+
+  Scenario: [DIFFERENT_TENANT_ARCHIVING_ESERVICE_1.1] Il processo di archiviazione dell'intero e-service NON può essere eseguito da un ente differente dall'erogatore dell'e-service
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    When l'utente è un "admin" di "PA3"
+    And l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    Then si ottiene response status code 403
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
