@@ -104,6 +104,16 @@ Feature: Archiviazione manuale di un e-service
       | 9                     |
       | 251                   |
 
+  Scenario: [MANUAL_ARCHIVING_ESERVICE_2.1] L'avvio del processo di archiviazione dell'e-service, causa l'eliminazione dell'ultimo descrittore in stato DRAFT, se presente
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA1" ha già creato una versione in "DRAFT" per quell'e-service
+    When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    Then si ottiene response status code 204
+    And l'ultimo descrittore in stato DRAFT è stato cancellato
+    #in tal caso è l'unico e più recente descrittore
+    And la versione più recente dell'e-service è in stato "ARCHIVING"
+
   Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_CANCELLATION_1.1] L'ente erogatore di un e-service in stato PUBLISHED può annullare il processo di archiviazione manuale di un e-service in corso
     Given l'utente è un "<role>" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "<initialFirstDescriptorState>"
