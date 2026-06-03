@@ -169,7 +169,7 @@ Feature: Archiviazione manuale di un e-service
       | security |
       | support  |
 
-  Scenario : [MANUAL_ARCHIVING_ESERVICE_CANCELLATION_1.5] Un utente con token non valido NON può annullare il processo di archiviazione manuale dell'e-service
+  Scenario: [MANUAL_ARCHIVING_ESERVICE_CANCELLATION_1.5] Un utente con token non valido NON può annullare il processo di archiviazione manuale dell'e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
@@ -200,7 +200,7 @@ Feature: Archiviazione manuale di un e-service
     When "PA1" ha già pubblicato una nuova versione per quell'e-service
     Then la vecchia versione dell'e-service è in stato "ARCHIVED"
 
-  Scenario: [MANUAL_ARCHIVING_ESERVICE_3.1] Essendo in corso l'archiviazione di un e-service, se il descrittore più recente in stato ARCHIVING non ha più richieste di fruizioni attive, questo NON sarà archiviato in automatico
+  Scenario: [AUTOMATIC_ARCHIVING_ESERVICE_3.1] Essendo in corso l'archiviazione di un e-service, se il descrittore più recente in stato ARCHIVING non ha più richieste di fruizioni attive, questo NON sarà archiviato in automatico
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
@@ -209,7 +209,7 @@ Feature: Archiviazione manuale di un e-service
     When "PA2" ha già archiviato quella richiesta di fruizione
     Then la versione più recente dell'e-service è in stato "ARCHIVING"
 
-  Scenario: [MANUAL_ARCHIVING_ESERVICE_3.2] Essendo in corso l'archiviazione di un e-service, se il descrittore più recente in stato ARCHIVING_SUSPENDED non ha più richieste di fruizioni attive, questo NON sarà archiviato in automatico
+  Scenario: [AUTOMATIC_ARCHIVING_ESERVICE_3.2] Essendo in corso l'archiviazione di un e-service, se il descrittore più recente in stato ARCHIVING_SUSPENDED non ha più richieste di fruizioni attive, questo NON sarà archiviato in automatico
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
@@ -218,3 +218,15 @@ Feature: Archiviazione manuale di un e-service
     And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     When "PA2" ha già archiviato quella richiesta di fruizione
     Then la versione più recente dell'e-service è in stato "ARCHIVING_SUSPENDED"
+
+  Scenario: [AUTOMATIC_ARCHIVING_ESERVICE_4.1] Con archiviazione dell'e-service in corso, se avviene un archiviazione automatica data dall'archiviazione dell'ultima richiesta di fruizione, e a seguito viene annullato il processo di archiviazione; il descrittore archiviato in automatico rimarrà in stato ARCHIVED
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And "PA2" ha già archiviato quella richiesta di fruizione
+    When l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
+    Then si ottiene response status code 204
+    And la vecchia versione dell'e-service è in stato "ARCHIVED"
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
