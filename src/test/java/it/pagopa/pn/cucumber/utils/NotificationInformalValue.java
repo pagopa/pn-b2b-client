@@ -13,10 +13,10 @@ public enum NotificationInformalValue {
     PRIMARY_SHORT_BODY("primary_short_body", "Sollecito: hai una nuova comunicazione.", false),
     PRIMARY_LANGUAGE("primary_language", "IT", false),
 
-    ADDITIONAL_SUBJECT("additional_subject", "Sollecito per..",false),
-    ADDITIONAL_LONG_BODY("additional_long_body", "Gentile cittadino, la informiamo che... ", false),
-    ADDITIONAL_SHORT_BODY("additional_short_body", "Le comunichiamo che..", false),
-    ADDITIONAL_LANGUAGE("additional_language", "FR",false),
+    ADDITIONAL_SUBJECT("additional_subject", null,false),
+    ADDITIONAL_LONG_BODY("additional_long_body", null, false),
+    ADDITIONAL_SHORT_BODY("additional_short_body", null, false),
+    ADDITIONAL_LANGUAGE("additional_language", null,false),
 
     // Informal Request
     SENDER_DENOMINATION("senderDenomination", "Comune di Palermo", false),
@@ -28,9 +28,9 @@ public enum NotificationInformalValue {
     SUBJECT("subject", "Test notifica..", true),
     GROUP("group", null, false),
 
-    RECIPIENT_TYPE("recipient_type", "PF", false),
-    RECIPIENT_TAX_ID("recipient_tax_id", "FRMTTR76M06B715E", false),
-    RECIPIENT_DENOMINATION("recipient_denomination", "Ettore Fieramosca", false),
+    RECIPIENT_TYPE("recipientType", "PF", false),
+    RECIPIENT_TAX_ID("taxId", "FRMTTR76M06B715E", false),
+    RECIPIENT_DENOMINATION("denomination", "Ettore Fieramosca", false),
 
     PEC_ADDRESS("pec_address", null, false),
 
@@ -42,7 +42,7 @@ public enum NotificationInformalValue {
     DOCUMENT_TITLE("document_title", null, false),
     DOCUMENT_DOCIDX("document_docidx", null, false),
 
-    NOTIFICATION_ADDITIONAL_LANGUAGE("additionalLanguages", "DE", false),
+    NOTIFICATION_ADDITIONAL_LANGUAGE("additionalLanguages", null, false),
 
     //ATTACHMENT_SHA256("attachment_sha256","1QKD/Ks6BohyQ+bgMxHf9NrpNhVmGUPxRYE1aerU4JQ=", false),
     //ATTACHMENT_KEY("attachment_key", "PN_NOTIFICATION_ATTACHMENTS-d7ec10e00bf847fcac1e4c70ea6e2afd.pdf", false),
@@ -51,22 +51,28 @@ public enum NotificationInformalValue {
     //DOCUMENT_KEY("document_key", "PN_NOTIFICATION_ATTACHMENTS-c3bc9525a5ac4f45a4fb7e940b2b9815.pdf", false),
     //DOCUMENT_VERSION_TOKEN("document_version_token", "sNP2YBogBBD2CXXe2dxx0DbOJO0AzyH.", false),
     ATTACHMENT_CONTENT_TYPE("attachment_contentType", "application/pdf", false),
-
     ATTACHMENT_KEY("attachment_key", "classpath:/AvvisoPagoPA.pdf", false),
     DOCUMENT_KEY("document_key", "classpath:/sample_1pg.pdf", false),
-
-
-    DIGITAL_DOMICILE("digitalDomicile", null, false),
+    DOCUMENT("document", null, false),
 
     PAYMENT_MULTY_NUMBER("payment_multy_number", "1", false),
     PAYMENT_CREDITOR_TAX_ID("payment_creditorTaxId", "77777777777", false),
     PAYMENT_NOTICE_CODE("payment_noticeCode", null, true),
 
-    DOCUMENT("document", null, false),
-
-
     PHONE_NUMBER("phone_number", null, false),
-    EMAIL("email", null, false);
+    EMAIL("email", null, false),
+    DIGITAL_DOMICILE("digitalDomicile", null, false),
+
+    PHYSICAL_ADDRESS("physicalAddress", "", false),
+    PHYSICAL_ADDRESS_ADDRESS("physical_address_address", "via Roma", false),
+    PHYSICAL_ADDRESS_DETAILS("physical_address_details", "Strega", false),
+    PHYSICAL_ADDRESS_ZIP("physical_address_zip", "82100", false),
+    PHYSICAL_ADDRESS_CITY("physical_address_city", "Benevento", false),
+    PHYSICAL_ADDRESS_PROVINCE("physical_address_province", "BN", false),
+    PHYSICAL_ADDRESS_AT("physical_address_at", "presso", false),
+    PHYSICAL_ADDRESS_MUNICIPALITY_DETAILS("physical_address_municipality_details", null, false),
+    PHYSICAL_ADDRESS_STATE("physical_address_state", "ITALIA", false);
+
 
 
     private static final String NULL_VALUE = "NULL";
