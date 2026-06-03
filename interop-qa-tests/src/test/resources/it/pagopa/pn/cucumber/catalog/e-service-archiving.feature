@@ -340,3 +340,19 @@ Feature: Archiviazione manuale di un e-service
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And la versione più recente dell'e-service è in stato "ARCHIVING"
+
+  Scenario Outline: [COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_1.1] Un ente erogatore può avviare il processo di archiviazione dell'intero e-service anche se l'archiviazione di uno specifico descrittore di quell'e-service è già in corso
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "<initialFirstDescriptorState>"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    Then si ottiene response status code 204
+    And la vecchia versione dell'e-service è in stato "<finalFirstDescriptorState>"
+    And la versione più recente dell'e-service è in stato "ARCHIVING"
+
+    Examples:
+      | initialFirstDescriptorState | finalFirstDescriptorState |
+      | PUBLISHED                   | ARCHIVING                 |
+      | SUSPENDED                   | ARCHIVING_SUSPENDED       |
