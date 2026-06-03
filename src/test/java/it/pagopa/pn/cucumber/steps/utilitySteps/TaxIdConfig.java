@@ -25,4 +25,5 @@ public class TaxIdConfig {
     private String comuneMulti;
     private String comuneSon;
     private String comuneRoot;
+    private String erroreD01;
 }

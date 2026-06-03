@@ -429,9 +429,8 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario
+    And destinatario Errore D01 e:
       | denomination            | Test AR Fail 2               |
-      | taxId                   | NNVFNC80A01H501G             |
       | digitalDomicile         | NULL                         |
       | physicalAddress_address | via @FAIL-Irreperibile_AR 16 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
