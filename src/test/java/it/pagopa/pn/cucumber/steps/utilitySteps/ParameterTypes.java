@@ -111,14 +111,4 @@ public class ParameterTypes {
     public static String deliveryNotificationCost(String value) {
         return value;
     }
-
-    @ParameterType("INVALIDATED|NEW")
-    public static String invoicingType(String value) {
-        return value;
-    }
-
-    @ParameterType("rework|restart")
-    public static String timelineInvalidation(String value) {
-        return value.toUpperCase();
-    }
 }

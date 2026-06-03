@@ -1,9 +1,9 @@
-Feature: Correzione timeline fase 3 costi
+Feature: Correzione timeline fase 2 costi
   #SRS: https://pagopa.atlassian.net/wiki/spaces/PN/pages/2700673102/SRS+Correzione+timeline+-+Fase+3
-  #PST: https://pagopa.atlassian.net/wiki/spaces/PN/pages/3002826778/PST+-+Correzione+Timeline+-+FASE+3
+  #https://pagopa.atlassian.net/wiki/spaces/PN/pages/2383118368/SRS+Correzione+timeline+-+FASE+2
 
   @timelineReworkF3_costi
-  Scenario Outline: [TR3_PAYMENTS_1]
+  Scenario Outline: [TR3_PAYMENTS_REWORK_1]
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
       | subject            | test costi notifica fase 5 |
@@ -46,7 +46,7 @@ Feature: Correzione timeline fase 3 costi
       | 2        |
 
   @timelineReworkF3_costi #11.3 ??? attemptId = ATTEMPT_0 in KO per destinatario deceduto
-  Scenario: [TR3_PAYMENTS_2]
+  Scenario: [TR3_PAYMENTS_REWORK_2]
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
       | subject            | test costi notifica fase 5 |
@@ -83,7 +83,7 @@ Feature: Correzione timeline fase 3 costi
     And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
 
   @timelineReworkF3_costi #11.4
-  Scenario Outline: [TR3_PAYMENTS_RESTART_3_FLATRATE_SYNC] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al restart
+  Scenario Outline: [TR3_PAYMENTS_REWORK_3_FLATRATE_SYNC] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al restart
     Given viene generata una nuova notifica
       | subject            | test costi notifica fase 5 |
       | senderDenomination | Comune di palermo          |
@@ -126,7 +126,7 @@ Feature: Correzione timeline fase 3 costi
       #TODO ADD ALL SEQUENCES ONCE THEY ARE CREATED
 
   @timelineReworkF3_costi #11.5
-  Scenario Outline: [TR3_PAYMENTS_RESTART_4_FLATRATE_ASYNC] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate async) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al restart
+  Scenario Outline: [TR3_PAYMENTS_REWORK_4_FLATRATE_ASYNC] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate async) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al restart
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
       | subject            | test costi notifica fase 5 |
@@ -171,7 +171,7 @@ Feature: Correzione timeline fase 3 costi
       #TODO ADD ALL SEQUENCES ONCE THEY ARE CREATED
 
   @timelineReworkF3_costi #11.6 dopo restart il baseCost non cambia, costi supplementari si
-  Scenario Outline: [TR3_PAYMENTS_RESTART_3_DELIVERY_MODE_SYNC] Invio di una notifica mono-destinatario con pagamento/i PagoPA(delivery mode sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al restart
+  Scenario Outline: [TR3_PAYMENTS_REWORK_3_DELIVERY_MODE_SYNC] Invio di una notifica mono-destinatario con pagamento/i PagoPA(delivery mode sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al restart
     Given viene generata una nuova notifica
       | subject            | test costi notifica fase 5 |
       | senderDenomination | Comune di palermo          |
@@ -216,7 +216,7 @@ Feature: Correzione timeline fase 3 costi
     # il baseCost cambia
     # firstAnalogCost immutato
   @timelineReworkF3_costi #11.7
-  Scenario Outline: [TR3_PAYMENTS_RESTART_4_DELIVERY_MODE_ASYNC] Invio di una notifica mono-destinatario con pagamento/i PagoPA(delivery mode async) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al restart
+  Scenario Outline: [TR3_PAYMENTS_REWORK_4_DELIVERY_MODE_ASYNC] Invio di una notifica mono-destinatario con pagamento/i PagoPA(delivery mode async) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al restart
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
       | subject            | test costi notifica fase 5 |

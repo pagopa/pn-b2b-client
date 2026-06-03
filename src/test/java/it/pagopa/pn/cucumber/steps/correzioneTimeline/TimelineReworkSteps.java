@@ -2,6 +2,7 @@ package it.pagopa.pn.cucumber.steps.correzioneTimeline;
 
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.Before;
+import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -63,6 +64,28 @@ public class TimelineReworkSteps {
     private HttpStatus httpStatusCode;
     private String timestampString;
     private List<String> attempt1ElementIds = new ArrayList<>();
+    private final Map<ReworkItem.StatusEnum, Integer> reworkStatusValueMap = Map.of(
+            ReworkItem.StatusEnum.ERROR, 1,
+            ReworkItem.StatusEnum.CREATED, 2,
+            ReworkItem.StatusEnum.READY, 3,
+            ReworkItem.StatusEnum.IN_PROGRESS, 4,
+            ReworkItem.StatusEnum.DONE, 5
+    );
+
+    @ParameterType("rework|restart")
+    public static String timelineInvalidation(String value) {
+        return value.toUpperCase();
+    }
+
+    @ParameterType("INVALIDATED|NEW")
+    public static String invoicingType(String value) {
+        return value;
+    }
+
+    @ParameterType("ERROR|CREATED|READY|IN_PROGRESS|DONE")
+    public static ReworkItem.StatusEnum reworkItemStatus(String value) {
+        return ReworkItem.StatusEnum.fromValue(value);
+    }
 
     @And("viene resettato il timestamp")
     public void resetTimestamp() {
@@ -401,7 +424,11 @@ public class TimelineReworkSteps {
                                 .toList();
                         lastFoundStatuses.set(statuses);
                         log.info("Polling rework | IUN={} | reworkId={} | stati trovati={}", iun, reworkId, statuses);
-                        return statuses.contains(expectedStatus);
+
+                        Integer expectedStatusValue = reworkStatusValueMap.get(ReworkItem.StatusEnum.valueOf(expectedStatus));
+                        List<Integer> actualStatusValues = statuses.stream().map(x -> reworkStatusValueMap.get(ReworkItem.StatusEnum.valueOf(x))).toList();
+                        Integer statusWithValueSameOrHigher = actualStatusValues.stream().filter(s -> s >= expectedStatusValue).findFirst().orElse(null);
+                        return statusWithValueSameOrHigher != null;
                     });
             checkRequestType(requestType);
         } catch (ConditionTimeoutException e) {
