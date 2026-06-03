@@ -157,3 +157,14 @@ Feature: Archiviazione manuale di un descrittore
       | %random      | %actual    | 404        |
       | %actual      | %random    | 404        |
       | %random      | %random    | 404        |
+
+  Scenario: [DIFFERENT_TENANT_ARCHIVING_DESCRIPTOR_1.1] Il processo di archiviazione dello specifico descrittore NON può essere eseguito da un ente differente dall'erogatore dell'e-service
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    When l'utente è un "admin" di "PA3"
+    And l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    Then si ottiene response status code 403
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
