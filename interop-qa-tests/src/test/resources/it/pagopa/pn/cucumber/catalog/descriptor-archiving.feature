@@ -181,7 +181,7 @@ Feature: Archiviazione manuale di un descrittore
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And la versione più recente dell'e-service è in stato "PUBLISHED"
 
-  Scenario: [DIFFERENT_TENANT_ARCHIVING_DESCRIPTOR_1.3] Il processo di archiviazione dello specifico descrittore NON può essere annullato da un ente differente dall'erogatore dell'e-service anche se questo è delegato all'erogazione
+  Scenario: [DIFFERENT_TENANT_ARCHIVING_DESCRIPTOR_1.3] Il processo di archiviazione dello specifico descrittore NON può essere effettuato da un ente differente dall'erogatore dell'e-service anche se questo è delegato all'erogazione
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
@@ -194,7 +194,7 @@ Feature: Archiviazione manuale di un descrittore
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And la versione più recente dell'e-service è in stato "PUBLISHED"
 
-  Scenario: [DIFFERENT_TENANT_ARCHIVING_ESERVICE_1.4] Il processo di archiviazione dello specifico descrittore NON può essere annullato da un ente differente dall'erogatore dell'e-service anche se questo è delegato all'erogazione
+  Scenario: [DIFFERENT_TENANT_ARCHIVING_DESCRIPTOR_1.4] Il processo di archiviazione dello specifico descrittore NON può essere annullato da un ente differente dall'erogatore dell'e-service anche se questo è delegato all'erogazione
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
@@ -206,5 +206,19 @@ Feature: Archiviazione manuale di un descrittore
     And l'utente accetta la delega
     When l'utente annulla il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
     Then si ottiene response status code 403
+    And la vecchia versione dell'e-service è in stato "ARCHIVING"
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
+
+  Scenario: [DIFFERENT_TENANT_ARCHIVING_DESCRIPTOR_2.1] Il processo di archiviazione dello specifico descrittore può essere effettuato dall'ente erogatore senza dover prima revocare la delega in erogazione attiva verso il delegato dell'e-service in questione
+    Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'ente "PA3" concede la disponibilità a ricevere deleghe
+    And l'ente "PA1" richiede la creazione di una delega per l'ente "PA3"
+    And l'utente è un "admin" di "PA3"
+    And l'utente accetta la delega
+    And l'utente è un "admin" di "PA1"
+    When l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And la versione più recente dell'e-service è in stato "PUBLISHED"
