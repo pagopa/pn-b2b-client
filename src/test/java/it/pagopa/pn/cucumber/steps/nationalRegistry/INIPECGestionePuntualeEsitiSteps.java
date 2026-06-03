@@ -1,6 +1,7 @@
 package it.pagopa.pn.cucumber.steps.nationalRegistry;
 
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
@@ -17,10 +18,13 @@ import java.util.concurrent.TimeUnit;
 import static org.awaitility.Awaitility.await;
 
 @Slf4j
-@AllArgsConstructor
 public class INIPECGestionePuntualeEsitiSteps {
 
-    private DynamoDbService dynamoDbService;
+    public INIPECGestionePuntualeEsitiSteps(DynamoDbService dynamoDbService) {
+        this.dynamoDbService = dynamoDbService;
+    }
+
+    private final DynamoDbService dynamoDbService;
     private String notificationSentTimestamp;
 
 
@@ -92,4 +96,13 @@ public class INIPECGestionePuntualeEsitiSteps {
                         && cf.equals(item.get("cf").s()))
                 .toList();
     }
+
+
+    @Given("imposto il timestamp a 10 minuti fa")
+    public void storeTimestampTenMinutesAgo() {
+        notificationSentTimestamp = java.time.OffsetDateTime.now()
+                .minusMinutes(300)
+                .toString();
+    }
+
 }
