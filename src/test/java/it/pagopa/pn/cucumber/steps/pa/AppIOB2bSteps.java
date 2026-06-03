@@ -60,6 +60,8 @@ public class AppIOB2bSteps {
             case "corretto" -> sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0);
             case "malformato" ->
                     sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0) + "MALF";
+            case "esteso" ->
+                    sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0) + "&utm_campaign=<XXXX>&utm_source=<YYYYY>&utm_medium=<ZZZZZ>";
             default -> throw new IllegalArgumentException("Valore passato come qrCodeType non valido: " + qrCodeType);
         };
     }
