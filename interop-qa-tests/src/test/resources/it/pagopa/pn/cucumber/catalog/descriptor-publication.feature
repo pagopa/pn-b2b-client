@@ -101,4 +101,4 @@ Feature: Pubblicazione di un descrittore
   # FIXME rimuovere
   @debug
   Scenario: Utile solo a innescare il reset dei tenant kind
-    Given l'utente è un "admin" di "<ente>"
+    Given l'utente è un "admin" di "PA1"
