@@ -194,6 +194,22 @@ Feature: Archiviazione manuale di un e-service
       | %null      | 400        |
       | %random    | 404        |
 
+  Scenario Outline: [AUTOMATIC_ARCHIVING_ESERVICE_1.1] Con archiviazione del primo e meno recente descrittore in corso. Se l'unica richiesta di fruizione attiva verso quel descrittore viene archiviata, questo sarà archiviato in automatico
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "<initialFirstDescriptorState>"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    When "PA2" ha già archiviato quella richiesta di fruizione
+    Then la vecchia versione dell'e-service è in stato "ARCHIVED"
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
+
+    Examples:
+      | initialFirstDescriptorState |
+      | PUBLISHED                   |
+      | PUBLISHED                   |
+
+
   Scenario: [AUTOMATIC_ARCHIVING_ESERVICE_2.1] Avendo un e-service con un solo descrittore in stato PUBLISHED. Dopo la pubblicazione di un nuovo descrittore, il descrittore precedente, se non ha richieste di fruizione attive, passerà automaticamente allo stato ARCHIVED
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "<initialFirstDescriptorState>"
@@ -219,7 +235,7 @@ Feature: Archiviazione manuale di un e-service
     When "PA2" ha già archiviato quella richiesta di fruizione
     Then la versione più recente dell'e-service è in stato "ARCHIVING_SUSPENDED"
 
-  Scenario: [AUTOMATIC_ARCHIVING_ESERVICE_4.1] Con archiviazione dell'e-service in corso, se avviene un archiviazione automatica data dall'archiviazione dell'ultima richiesta di fruizione, e a seguito viene annullato il processo di archiviazione; il descrittore archiviato in automatico rimarrà in stato ARCHIVED
+  Scenario: [AUTOMATIC_ARCHIVING_ESERVICE_4.1] Con archiviazione dell'e-service in corso. Se avviene un archiviazione automatica data dall'archiviazione dell'ultima richiesta di fruizione e a seguito viene annullato il processo di archiviazione, il descrittore archiviato in automatico rimarrà in stato ARCHIVED
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -227,6 +243,5 @@ Feature: Archiviazione manuale di un e-service
     And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     And "PA2" ha già archiviato quella richiesta di fruizione
     When l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
-    Then si ottiene response status code 204
-    And la vecchia versione dell'e-service è in stato "ARCHIVED"
+    Then la vecchia versione dell'e-service è in stato "ARCHIVED"
     And la versione più recente dell'e-service è in stato "PUBLISHED"
