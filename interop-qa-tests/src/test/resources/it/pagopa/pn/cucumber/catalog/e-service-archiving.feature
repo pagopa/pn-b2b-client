@@ -356,3 +356,21 @@ Feature: Archiviazione manuale di un e-service
       | initialFirstDescriptorState | finalFirstDescriptorState |
       | PUBLISHED                   | ARCHIVING                 |
       | SUSPENDED                   | ARCHIVING_SUSPENDED       |
+
+  Scenario Outline: [COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_2.1] Un ente erogatore può annullare il processo di archiviazione dello specifico descrittore in corso anche se è parallelamente in esecuzione l'archiviazione dell'intero e-service
+    E' in corso un processo di archiviazione combinata. Ovvero archiviazione dell'intero e-service e del primo e meno recente descrittore contemporaneamente
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "<initialFirstDescriptorState>"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    When l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
+    Then si ottiene response status code 204
+    And la vecchia versione dell'e-service è in stato "<finalFirstDescriptorState>"
+    And la versione più recente dell'e-service è in stato "ARCHIVING"
+
+    Examples:
+      | initialFirstDescriptorState | finalFirstDescriptorState |
+      | PUBLISHED                   | ARCHIVING                 |
+      | SUSPENDED                   | ARCHIVING_SUSPENDED       |
