@@ -36,7 +36,6 @@ Feature: Validazione delle Client Assertion ed emissione dei Token PDND per scam
     When il tenant erogatore "PA1" crea una client assertion per un client di tipo CONSUMER con:
       | claim        | value                     |
       | scope        | callback_invocation       |
-      | urlCallback  | https://www.hostname.com/ |
       | entityNumber | 10                        |
     And il tenant erogatore "PA1" richiede un voucher asincrono per l'e-service
     Then si ottiene status code 200
@@ -90,7 +89,6 @@ Feature: Validazione delle Client Assertion ed emissione dei Token PDND per scam
     And il tenant erogatore "PA1" crea una client assertion per un client di tipo CONSUMER con:
       | claim        | value                     |
       | scope        | callback_invocation       |
-      | urlCallback  | https://www.hostname.com/ |
       | entityNumber | 10                        |
     And il tenant erogatore "PA1" richiede un voucher asincrono per l'e-service
     And si ottiene status code 200
@@ -142,7 +140,6 @@ Feature: Validazione delle Client Assertion ed emissione dei Token PDND per scam
     And il tenant erogatore "PA1" crea una client assertion per un client di tipo CONSUMER con:
       | claim        | value                     |
       | scope        | callback_invocation       |
-      | urlCallback  | https://www.hostname.com/ |
       | entityNumber | 10                        |
     And il tenant erogatore "PA1" richiede un voucher asincrono per l'e-service
     And si ottiene status code 200
@@ -239,7 +236,6 @@ Feature: Validazione delle Client Assertion ed emissione dei Token PDND per scam
     And il tenant erogatore "PA1" crea una client assertion per un client di tipo CONSUMER con:
       | claim        | value                     |
       | scope        | callback_invocation       |
-      | urlCallback  | https://www.hostname.com/ |
       | entityNumber | 10                        |
     And il tenant erogatore "PA1" richiede un voucher asincrono per l'e-service
     And si ottiene status code 200
@@ -285,7 +281,6 @@ Feature: Validazione delle Client Assertion ed emissione dei Token PDND per scam
     And il tenant erogatore "PA1" crea una client assertion per un client di tipo CONSUMER con:
       | claim        | value                     |
       | scope        | callback_invocation       |
-      | urlCallback  | https://www.hostname.com/ |
       | entityNumber | 10                        |
     And il tentant erogatore "PA1" attende la scadenza di responseTime di 15 secondi
     When il tenant erogatore "PA1" richiede un voucher asincrono per l'e-service
