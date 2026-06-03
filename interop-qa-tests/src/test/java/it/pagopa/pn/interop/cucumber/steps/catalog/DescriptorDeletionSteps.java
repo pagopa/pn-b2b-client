@@ -3,7 +3,6 @@ package it.pagopa.pn.interop.cucumber.steps.catalog;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import org.junit.jupiter.api.Assertions;
@@ -47,6 +46,19 @@ public class DescriptorDeletionSteps {
                 ),
                 res -> res == HttpStatus.NOT_FOUND,
                 "There was an error while retrieving e-service details"
+        );
+    }
+
+    @Then("l'ultimo descrittore in stato DRAFT è stato cancellato")
+    public void lastDraftDescriptorCancelled() {
+        sharedStepsContext.getPollingService().makePolling(
+                () -> httpCallExecutor.performCall(() -> clientTokenConfigurator.getProducerClient().getProducerEServiceDescriptor(
+                                sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                                sharedStepsContext.getEServicesCommonContext().getDescriptorId()
+                        )
+                ),
+                res -> res == HttpStatus.NOT_FOUND,
+                "There was an error while retrieving the e-service descriptor"
         );
     }
 
