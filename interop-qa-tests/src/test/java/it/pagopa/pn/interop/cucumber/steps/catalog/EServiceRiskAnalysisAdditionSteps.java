@@ -14,6 +14,9 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
+import org.apache.commons.collections4.IterableUtils;
+
+import java.util.UUID;
 
 public class EServiceRiskAnalysisAdditionSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
@@ -48,6 +51,20 @@ public class EServiceRiskAnalysisAdditionSteps {
     @When("l'utente aggiunge un'analisi del rischio")
     public void addRiskAnalysis() {
         addRiskAnalysisByTenantKind(sharedStepsContext.getTenantType());
+    }
+
+    @When("l'utente aggiunge con successo un'analisi del rischio coerente con il tenant kind {string}")
+    public void successfullyAddRiskAnalysisByTenantKind(String tenantType) {
+        addRiskAnalysisByTenantKind(tenantType);
+        if(httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+            UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+            sharedStepsContext.getPollingService().makePolling(
+                    () -> clientTokenConfigurator.getEServiceClient().getEServiceDescriptor(eServiceId, descriptorId),
+                    desc -> !IterableUtils.isEmpty(desc.getEservice().getRiskAnalysis()),
+                    "Nessuna analisi del rischio rilevata"
+            );
+        }
     }
 
     @When("l'utente aggiunge un'analisi del rischio coerente con il tenant kind {string}")

@@ -66,18 +66,39 @@ Feature: Pubblicazione di un descrittore
     Then si ottiene status code 400
 
   @adeguamento-analisi-rischio
-  Scenario Outline: [DESCRIPTOR_TK_PUBBLICATION_1] A seguito del cambiamento di tenant kind si tenta di pubblicare un proprio e-service in bozza
+  Scenario Outline: [DESCRIPTOR_TK_PUBBLICATION_1_A] A seguito del cambiamento di tenant kind si tenta di pubblicare un proprio e-service in bozza ad erogazione inversa, con analisi del rischio coerente con il kind iniziale
     Given l'utente è un "admin" di "<ente>"
-    And "<ente>" ha già creato un e-service con un descrittore in stato "DRAFT"
-    And il tenant kind dell'ente "<ente>" viene impostato a "<kind>"
-    When l'utente attiva il descrittore di quell'e-service
+    And "<ente>" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "DRAFT"
+    And "<ente>" ha già caricato un'interfaccia per quel descrittore
+    And l'utente aggiunge con successo un'analisi del rischio coerente con il tenant kind "<kind_iniziale>"
+    And il tenant kind dell'ente "<ente>" viene impostato a "<kind_target>"
+    When l'utente pubblica quel descrittore
     Then si ottiene status code 200
     And il descrittore risulta in stato "PUBLISHED"
     Examples:
-      | ente    | kind    |
-      | PA4     | PRIVATE |
-      | PA4     | GSP     |
-      | GSP2    | PA      |
-      | GSP2    | PRIVATE |
-      | Privato | PA      |
-      | Privato | GSP     |
+      | ente    | kind_iniziale | kind_target |
+      | PA4     | PA            | PRIVATE     |
+      | PA4     | PA            | GSP        |
+      | GSP2    | GSP           | PA         |
+      | GSP2    | GSP           | PRIVATE    |
+      | Privato | PRIVATE       | PA         |
+      | Privato | PRIVATE       | GSP        |
+
+  @adeguamento-analisi-rischio
+  Scenario Outline: [DESCRIPTOR_TK_PUBBLICATION_1_B] A seguito del cambiamento di tenant kind si tenta di pubblicare un proprio e-service in bozza ad erogazione inversa, con analisi del rischio coerente con il kind finale
+    Given l'utente è un "admin" di "<ente>"
+    And "<ente>" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "DRAFT"
+    And "<ente>" ha già caricato un'interfaccia per quel descrittore
+    And l'utente aggiunge con successo un'analisi del rischio coerente con il tenant kind "<kind_iniziale>"
+    And il tenant kind dell'ente "<ente>" viene impostato a "<kind_target>"
+    When l'utente pubblica quel descrittore
+    Then si ottiene status code 200
+    And il descrittore risulta in stato "PUBLISHED"
+    Examples:
+      | ente    | kind_iniziale | kind_target |
+      | PA4     | PA            | PRIVATE     |
+      | PA4     | PA            | GSP        |
+      | GSP2    | GSP           | PA         |
+      | GSP2    | GSP           | PRIVATE    |
+      | Privato | PRIVATE       | PA         |
+      | Privato | PRIVATE       | GSP        |
