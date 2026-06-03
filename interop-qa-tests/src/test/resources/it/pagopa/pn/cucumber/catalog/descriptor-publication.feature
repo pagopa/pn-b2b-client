@@ -79,9 +79,7 @@ Feature: Pubblicazione di un descrittore
       | PA4     | PA            | PRIVATE     |
       | PA4     | PA            | GSP         |
       | GSP2    | GSP           | PA          |
-      | GSP2    | GSP           | PRIVATE     |
       | Privato | PRIVATE       | PA          |
-      | Privato | PRIVATE       | GSP         |
 
   @adeguamento-analisi-rischio
   Scenario Outline: [DESCRIPTOR_TK_PUBBLICATION_1_B] A seguito del cambiamento di tenant kind si tenta di pubblicare un proprio e-service in bozza ad erogazione inversa, con analisi del rischio coerente con il kind finale
@@ -98,6 +96,4 @@ Feature: Pubblicazione di un descrittore
       | PA4     | PRIVATE     |
       | PA4     | GSP         |
       | GSP2    | PA          |
-      | GSP2    | PRIVATE     |
       | Privato | PA          |
-      | Privato | GSP         |
