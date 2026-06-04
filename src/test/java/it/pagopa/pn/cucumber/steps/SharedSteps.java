@@ -53,6 +53,7 @@ import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Costanti;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
+import it.pagopa.pn.cucumber.steps.utilitySteps.DestinatarioRegistry;
 import it.pagopa.pn.cucumber.utils.DataTest;
 import it.pagopa.pn.cucumber.utils.EventId;
 import it.pagopa.pn.cucumber.utils.GroupPosition;
@@ -163,6 +164,9 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 public class SharedSteps {
 
     private final SenderInfoProvider senderInfoProvider;
+
+    @Getter
+    private final DestinatarioRegistry destinatarioRegistry;
 
     @Getter
     private final ApplicationContext context;
@@ -301,7 +305,8 @@ public class SharedSteps {
                        PnB2bClientTimingConfigs timingConfigs,
                        DynamoDbService dynamoDbService,
                        SenderInfoProvider senderInfoProvider,
-                       @Qualifier("senderTaxIdCacheManager") CacheManager<String, String> senderTaxIdCacheManager
+                       @Qualifier("senderTaxIdCacheManager") CacheManager<String, String> senderTaxIdCacheManager,
+                       DestinatarioRegistry destinatarioRegistry
                        ) {
         this.context = context;
         this.b2bClient = b2bClient;
@@ -322,6 +327,7 @@ public class SharedSteps {
         this.senderInfoProvider = senderInfoProvider;
         versionUsed = getNotificationVersion(MOST_RECENT);
         this.senderTaxIdCacheManager = senderTaxIdCacheManager;
+        this.destinatarioRegistry = destinatarioRegistry;
     }
 
     @BeforeAll
@@ -399,7 +405,7 @@ public class SharedSteps {
         getNotificationStepInterface().prepareNotificationRequest(Map.of(
                 "subject", "MOCKED NOTIFICATION",
                 "senderDenomination", "Comune di Palermo"));
-        getNotificationStepInterface().addRecipientToNotification(Destinatario.DESTINATARIO_MARIO_CUCUMBER, new HashMap<>());
+        getNotificationStepInterface().addRecipientToNotification(destinatarioRegistry.DESTINATARIO_MARIO_CUCUMBER, new HashMap<>());
     }
 
     /**
@@ -417,7 +423,7 @@ public class SharedSteps {
         getNotificationStepInterface().prepareNotificationRequest(Map.of(
                 "subject", "MOCKED NOTIFICATION",
                 "senderDenomination", "Comune di Palermo"));
-        getNotificationStepInterface().addRecipientToNotification(Destinatario.DESTINATARIO_MARIO_CUCUMBER, new HashMap<>());
+        getNotificationStepInterface().addRecipientToNotification(destinatarioRegistry.DESTINATARIO_MARIO_CUCUMBER, new HashMap<>());
     }
 
     /**

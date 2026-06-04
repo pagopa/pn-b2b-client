@@ -194,7 +194,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
       | senderDenomination | Comune di palermo               |
     And destinatario
       | denomination            | Test AR Fail 2            |
-      | taxId                   | DVNLRD52D15M059P          |
+      | taxId                   | FNTLCU80T25F205R          |
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@FAIL-Irreperibile_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -207,7 +207,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
       | senderDenomination | Comune di palermo               |
     And destinatario
       | denomination            | Test 890 Fail 2                              |
-      | taxId                   | DVNLRD52D15M059P                             |
+      | taxId                   | FNTLCU80T25F205R                             |
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries@FAIL-Irreperibile_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -390,10 +390,10 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
       | details_deliveryDetailCode | RECAG011A |
       | details_sentAttemptMade    | 0         |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL                  |
-      | details_recIndex           | 0                         |
-      | details_deliveryDetailCode | RECAG008B                 |
-      | details_sentAttemptMade    | 0                         |
+      | details                    | NOT_NULL                    |
+      | details_recIndex           | 0                           |
+      | details_deliveryDetailCode | RECAG008B                   |
+      | details_sentAttemptMade    | 0                           |
       | details_attachments        | [{"documentType": "ARCAD"}] |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL  |

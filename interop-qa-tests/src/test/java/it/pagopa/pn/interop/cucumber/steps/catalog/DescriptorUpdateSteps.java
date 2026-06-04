@@ -2,6 +2,8 @@ package it.pagopa.pn.interop.cucumber.steps.catalog;
 
 import io.cucumber.java.en.When;
 import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.eservice.service.IM2MV3EserviceDescriptorClient;
+import it.pagopa.interop.eservice.service.IM2MV3EserviceDescriptorClient.EServiceDescriptorAttributePatchRequest;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -19,6 +21,7 @@ public class DescriptorUpdateSteps {
     private final SharedStepsContext sharedStepsContext;
     private final IHttpExecutor httpCallExecutor;
     private final EServiceDescriptorUtils eServiceDescriptorUtils;
+    private final IM2MV3EserviceDescriptorClient eserviceDescriptorClient;
 
     public DescriptorUpdateSteps(ClientTokenConfigurator clientTokenConfigurator,
                                      SharedStepsContext sharedStepsContext) {
@@ -26,6 +29,8 @@ public class DescriptorUpdateSteps {
         this.sharedStepsContext = sharedStepsContext;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.eServiceDescriptorUtils = new EServiceDescriptorUtils(clientTokenConfigurator, sharedStepsContext);
+        eserviceDescriptorClient = clientTokenConfigurator.getM2mV3EserviceDescriptorClient();
+        eserviceDescriptorClient.setHttpCallExecutor(httpCallExecutor);
     }
 
     @When("l'utente aggiorna alcuni parametri di quel descrittore")
@@ -68,6 +73,26 @@ public class DescriptorUpdateSteps {
     @When("l'utente tenta di aggiungere una soglia differenziata di {int} per l'attributo {attributeKind} {int}-esimo creato")
     public void updateDailyCallsPerConsumer(int dailyCallsPerConsumer, AttributeKind attributeType, int attributeIndex) {
         updateDailyCallsPerConsumer(dailyCallsPerConsumer, attributeType, attributeIndex, 0);
+    }
+
+    @When("l'utente tenta di aggiungere una soglia differenziata di {int} per l'attributo {attributeKind} {int}-esimo creato nel gruppo {int}-esimo con m2m")
+    public void updateDailyCallsPerConsumerWithM2M(int dailyCallsPerConsumer, AttributeKind attributeType, int attributeIndex, int groupIndex) {
+
+        if (attributeType != AttributeKind.CERTIFIED) {
+            throw new UnsupportedOperationException("L'attributo deve essere certificato");
+        }
+
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+        UUID certifiedAttributeId = sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes()
+                .get(groupIndex).get(attributeIndex);
+        EServiceDescriptorAttributePatchRequest seed = EServiceDescriptorAttributePatchRequest.builder()
+                .dailyCallsPerConsumer(dailyCallsPerConsumer)
+                .build();
+
+        eserviceDescriptorClient.patchEServiceDescriptorCertifiedAttribute(
+            eServiceId, descriptorId, groupIndex, certifiedAttributeId, seed
+        );
     }
 
     @When("l'utente tenta di aggiungere una soglia differenziata di {int} per l'attributo {attributeKind} {int}-esimo creato nel gruppo {int}-esimo")
