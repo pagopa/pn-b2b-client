@@ -92,7 +92,7 @@ Feature: Archiviazione manuale di un descrittore
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente archivia la versione più recente dell'e-service
     Then si ottiene response status code 400
-    And la versione più recente dell'e-service è in stato "DEPRECATED"
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
 
   Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_ELIMINATION_1.1] L'ente erogatore di un e-service può annullare il processo di archiviazione manuale del primo e meno recente descrittore se l'archiviazione è in corso
     Given l'utente è un "<role>" di "PA1"

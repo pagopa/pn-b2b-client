@@ -62,6 +62,15 @@ Feature: Archiviazione manuale di un descrittore
       | %actual      | %random    | 404        |
       | %random      | %random    | 404        |
 
+  Scenario: [M2M_V3_MANUAL_ARCHIVING_DESCRIPTOR_2.1] Un ente erogatore M2M di un e-service NON può avviare il processo di archiviazione manuale di un suo descrittore se quest'ultimo è il più recente
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+#    And l'utente avvia il processo di archiviazione dell'ULTIMA con id "<descriptorId>" dell'e-service con id "<eserviceId>"
+    Then si ottiene response status code 400
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
+
   Scenario Outline: [M2M_V3_MANUAL_ARCHIVING_DESCRIPTOR_ELIMINATION_1.1] L'ente erogatore M2M di un e-service può annullare il processo di archiviazione manuale del primo e meno recente descrittore se l'archiviazione è in corso
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "<initialDescriptorState>"
