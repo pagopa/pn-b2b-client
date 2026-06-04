@@ -52,3 +52,14 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     Then si ottiene response status code 200
     And la vecchia versione dell'e-service è in stato "ARCHIVED"
     And la versione più recente dell'e-service è in stato "ARCHIVING"
+
+  Scenario: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_1.4] Un utente con ruolo M2M non autorizzato NON può avviare il processo di archiviazione manuale dell'e-service
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m
+#    And viene avviato processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    Then si ottiene response status code 403
+    And la vecchia versione dell'e-service è in stato "ARCHIVED"
+#    And il processo di archiviazione della vecchia versione dell'e-service è fallita
+    And la versione più recente dell'e-service è in stato "ARCHIVING"
+#    And il processo di archiviazione della più recente versione dell'e-service è fallita
