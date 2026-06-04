@@ -29,7 +29,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.INEXISTENT_IUN;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.INVALID_IUN;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.not;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @Slf4j
@@ -317,23 +316,13 @@ public class CostiNotificaSteps {
         }
     }
 
-    @And("verifico che {isBefore} {timelineInvalidation} per il destinatario {int} con indirizzo {string} i record su Pn-NotificationDeliveryCost siano stati (inseriti)(modificati) e correttamente valorizzati")
-    public void checkNotificationDeliveryCostRecordForRework(boolean isBeforeRestart, String requestType, int recIndex, String address) {
+    @And("verifico che {isBefore} {timelineInvalidation} per il destinatario {int} i record su Pn-NotificationDeliveryCost siano stati (inseriti)(modificati) e correttamente valorizzati fino all'attempt {int}")
+    public void checkNotificationDeliveryCostRecordForRework(boolean isBeforeRestart, String requestType, int recIndex, int attempt) {
         try {
-            List<String> costsExcludingSecondAnalog = Arrays.asList("baseCost", "firstAnalogCost");
-            List<String> costsIncludingSecondAnalog = Arrays.asList("baseCost", "firstAnalogCost", "secondAnalogCost");
+            List<String> costsToConsider = attempt == 0 ? Arrays.asList("baseCost", "firstAnalogCost") : Arrays.asList("baseCost", "firstAnalogCost", "secondAnalogCost");
+            List<String> costsPreRework = new ArrayList<>(costsToConsider);
+            List<String> costsPostRework = new ArrayList<>(costsToConsider);
 
-            List<String> costsPreRework = new ArrayList<>(costsExcludingSecondAnalog);
-            List<String> costsPostRework = new ArrayList<>(costsExcludingSecondAnalog);
-
-            String sequence = address.toUpperCase().replace("VIA@", "");
-
-            //TODO: aggiungere all'occorrenza altre sequence che prevedono secondo tentativo
-            List<String> sequencesWithSecondAttempt = Arrays.asList("FAIL-DISCOVERY_890", "FAIL-DISCOVERYIRREPERIBILE_890", "FAIL-DISCOVERY_AR", "FAIL-DISCOVERYIRREPERIBILE_AR");
-            if (sequencesWithSecondAttempt.contains(sequence)) {
-                costsPreRework = new ArrayList<>(costsIncludingSecondAnalog);
-                costsPostRework = new ArrayList<>(costsIncludingSecondAnalog);
-            }
             Map<String, AttributeValue> record = searchNotificationDeliveryCostRecord(recIndex);
             FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
             //verifica che tutte le colonne siano valorizzate in modo coerente

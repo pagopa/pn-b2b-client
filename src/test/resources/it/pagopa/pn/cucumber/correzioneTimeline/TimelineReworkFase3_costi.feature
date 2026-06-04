@@ -111,7 +111,7 @@ Feature: Correzione timeline fase 3 costi
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
     And vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
-    Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
+    Then l'avviso pagopa 1 viene pagato correttamente dall'utente 0
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PAYMENT" per l'utente 0
     When viene invocata una richiesta di restart per la notifica appena creata
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
@@ -144,7 +144,7 @@ Feature: Correzione timeline fase 3 costi
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEvent>"
     And vengono letti gli eventi fino allo stato della notifica "<finalStatus>"
-    And verifico che pre restart per il destinatario 0 con indirizzo "<sequence>" i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati
+    And verifico che pre restart per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attempt>
     When viene invocata una richiesta di restart per la notifica appena creata
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
@@ -153,14 +153,14 @@ Feature: Correzione timeline fase 3 costi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEventRestart>" al tentativo "REWORK_0"
     And vengono letti gli eventi fino allo stato della notifica "<finalStatusRestart>"
     And la timeline contiene elementi con la stringa "REWORK_"
-    And verifico che post restart per il destinatario 0 con indirizzo "<sequence>" i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati
+    And verifico che post restart per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attemptRestart>
     And il baseCost è uguale rispetto a prima del rework
     Examples:
-      | sequence                           | finalEvent                         | finalStatus        | finalEventRestart                  | finalStatusRestart |
-      | Via@OK_890                         | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     |
-      | Via@FAIL-DISCOVERY_890             | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     |
-      | Via@FAIL_DECEDUTO_890              | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER |
-      | Via@FAIL-DISCOVERYIRREPERIBILE_890 | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     |
+      | sequence                           | finalEvent                         | finalStatus        | attempt | finalEventRestart                  | finalStatusRestart | attemptRestart |
+      | Via@OK_890                         | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              |
+      | Via@FAIL-DISCOVERY_890             | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+      | Via@FAIL_DECEDUTO_890              | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              |
+      | Via@FAIL-DISCOVERYIRREPERIBILE_890 | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
       #TODO ADD ALL SEQUENCES ONCE THEY ARE CREATED
 
   @timelineReworkF3_costi #11.5
@@ -189,7 +189,7 @@ Feature: Correzione timeline fase 3 costi
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEvent>"
     And vengono letti gli eventi fino allo stato della notifica "<finalStatus>"
-    And verifico che pre restart per il destinatario 0 con indirizzo "<sequence>" i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati
+    And verifico che pre restart per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attempt>
     When viene invocata una richiesta di restart per la notifica appena creata
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
@@ -198,14 +198,14 @@ Feature: Correzione timeline fase 3 costi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEventRestart>" al tentativo "REWORK_0"
     And vengono letti gli eventi fino allo stato della notifica "<finalStatusRestart>"
     And la timeline contiene elementi con la stringa "REWORK_"
-    And verifico che post restart per il destinatario 0 con indirizzo "<sequence>" i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati
+    And verifico che post restart per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attemptRestart>
     And il baseCost è uguale rispetto a prima del rework
     Examples:
-      | sequence                           | finalEvent                         | finalStatus        | finalEventRestart                  | finalStatusRestart |
-      | Via@OK_890                         | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     |
-      | Via@FAIL-DISCOVERY_890             | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     |
-      | Via@FAIL_DECEDUTO_890              | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER |
-      | Via@FAIL-DISCOVERYIRREPERIBILE_890 | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     |
+      | sequence                           | finalEvent                         | finalStatus        | attempt | finalEventRestart                  | finalStatusRestart | attemptRestart |
+      | Via@OK_890                         | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              |
+      | Via@FAIL-DISCOVERY_890             | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+      | Via@FAIL_DECEDUTO_890              | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              |
+      | Via@FAIL-DISCOVERYIRREPERIBILE_890 | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
       #TODO ADD ALL SEQUENCES ONCE THEY ARE CREATED
 
   @timelineReworkF3_costi #11.6 dopo restart il baseCost non cambia, costi supplementari si
@@ -232,7 +232,7 @@ Feature: Correzione timeline fase 3 costi
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEvent>"
     And vengono letti gli eventi fino allo stato della notifica "<finalStatus>"
-    And verifico che pre restart per il destinatario 0 con indirizzo "<sequence>" i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati
+    And verifico che pre restart per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attempt>
     When viene invocata una richiesta di restart per la notifica appena creata
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
@@ -241,14 +241,14 @@ Feature: Correzione timeline fase 3 costi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEventRestart>" al tentativo "REWORK_0"
     And vengono letti gli eventi fino allo stato della notifica "<finalStatusRestart>"
     And la timeline contiene elementi con la stringa "REWORK_"
-    And verifico che post restart per il destinatario 0 con indirizzo "<sequence>" i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati
+    And verifico che post restart per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt <attemptRestart>
     And il baseCost è uguale rispetto a prima del rework
     Examples:
-      | sequence                           | finalEvent                         | finalStatus        | finalEventRestart                  | finalStatusRestart |
-      | Via@OK_890                         | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     |
-      | Via@FAIL-DISCOVERY_890             | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     |
-      | Via@FAIL_DECEDUTO_890              | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER |
-      | Via@FAIL-DISCOVERYIRREPERIBILE_890 | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     |
+      | sequence                           | finalEvent                         | finalStatus        | attempt | finalEventRestart                  | finalStatusRestart | attemptRestart |
+      | Via@OK_890                         | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              |
+      | Via@FAIL-DISCOVERY_890             | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+      | Via@FAIL_DECEDUTO_890              | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              |
+      | Via@FAIL-DISCOVERYIRREPERIBILE_890 | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
       #TODO ADD ALL SEQUENCES ONCE THEY ARE CREATED
 
     # il baseCost cambia
@@ -279,7 +279,7 @@ Feature: Correzione timeline fase 3 costi
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEvent>"
     And vengono letti gli eventi fino allo stato della notifica "<finalStatus>"
-    And verifico che pre restart per il destinatario 0 con indirizzo "<sequence>" i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati
+    And verifico che pre restart per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attempt>
     When viene invocata una richiesta di restart per la notifica appena creata
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
@@ -288,13 +288,12 @@ Feature: Correzione timeline fase 3 costi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEventRestart>" al tentativo "REWORK_0"
     And vengono letti gli eventi fino allo stato della notifica "<finalStatusRestart>"
     And la timeline contiene elementi con la stringa "REWORK_"
-    And verifico che post restart per il destinatario 0 con indirizzo "<sequence>" i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati
-    And il baseCost è uguale rispetto a prima del rework
-
+    And verifico che post restart per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attemptRestart>
+    And il baseCost è <baseCostEqual> rispetto a prima del rework
     Examples:
-      | sequence                           | finalEvent                         | finalStatus        | finalEventRestart                  | finalStatusRestart |
-      | Via@OK_890                         | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     |
-      | Via@FAIL-DISCOVERY_890             | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     |
-      | Via@FAIL_DECEDUTO_890              | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER |
-      | Via@FAIL-DISCOVERYIRREPERIBILE_890 | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     |
+      | sequence                           | finalEvent                         | finalStatus        | attempt | finalEventRestart                  | finalStatusRestart | attemptRestart | baseCostEqual |
+      | Via@OK_890                         | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              | uguale        |
+      | Via@FAIL-DISCOVERY_890             | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              | uguale        |
+      | Via@FAIL_DECEDUTO_890              | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              | uguale        |
+      | Via@FAIL-DISCOVERYIRREPERIBILE_890 | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              | uguale        |
       #TODO ADD ALL SEQUENCES ONCE THEY ARE CREATED
