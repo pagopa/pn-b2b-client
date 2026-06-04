@@ -127,7 +127,7 @@ public class AgreementCommonSteps {
         tenantHasAlreadyCreatedAndPublishedEService(tenantType, totalEservices, Optional.of(build));
     }
 
-    @Given("{string} ha già creato e pubblicato {int} e-service(s) con asyncExchange {bool}")
+    @Given("{string} ha già creato e pubblicato {int} e-service con asyncExchange {bool}")
     public void tenantHasAlreadyCreatedAndPublishedEServiceWithAsyncExchange(String tenantType, int totalEservices, Boolean asyncExchange) {
         Optional<EServiceConfig> eServiceConfig = asyncExchange == null ?
                 Optional.empty() :
