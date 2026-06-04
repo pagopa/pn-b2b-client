@@ -6,12 +6,13 @@ Feature: Correzione timeline fase 3 costi
   Scenario: [TR3_PAYMENTS_RESTART_1_MONOPAY]
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
-      | subject            | test costi notifica fase 5 |
-      | senderDenomination | Comune di palermo          |
-      | pagoPaIntMode      | ASYNC                      |
-      | feePolicy          | DELIVERY_MODE              |
-      | paFee              | 17                         |
-      | vat                | 10                         |
+      | subject               | test costi notifica fase 5 |
+      | physicalCommunication | AR_REGISTERED_LETTER       |
+      | senderDenomination    | Comune di palermo          |
+      | pagoPaIntMode         | ASYNC                      |
+      | feePolicy             | DELIVERY_MODE              |
+      | paFee                 | 17                         |
+      | vat                   | 10                         |
     And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                    |
       | physicalAddress_address      | Via@OK_890              |
@@ -46,12 +47,13 @@ Feature: Correzione timeline fase 3 costi
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
-      | subject            | test costi notifica fase 5 |
-      | senderDenomination | Comune di palermo          |
-      | pagoPaIntMode      | ASYNC                      |
-      | feePolicy          | DELIVERY_MODE              |
-      | paFee              | 17                         |
-      | vat                | 10                         |
+      | subject               | test costi notifica fase 5 |
+      | physicalCommunication | AR_REGISTERED_LETTER       |
+      | senderDenomination    | Comune di palermo          |
+      | pagoPaIntMode         | ASYNC                      |
+      | feePolicy             | DELIVERY_MODE              |
+      | paFee                 | 17                         |
+      | vat                   | 10                         |
     And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                    |
       | physicalAddress_address      | Via@OK_890              |
@@ -64,6 +66,7 @@ Feature: Correzione timeline fase 3 costi
       | title_payment                | PagoPa_mono_async_sada0 |
       | apply_cost_pagopa            | SI                      |
       | payment_multy_number         | 2                       |
+    And al destinatario 0 viene settato l'applyCost del pagamento PagoPa alla posizione 1 a false
     And al destinatario 0 viene associato lo iuv creato mediante partita debitoria alla posizione 0 per il suo pagamento alla posizione 0
     And al destinatario 0 viene associato lo iuv creato mediante partita debitoria alla posizione 1 per il suo pagamento alla posizione 1
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -71,7 +74,7 @@ Feature: Correzione timeline fase 3 costi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    And l'avviso pagopa viene pagato correttamente dall'utente 0
+    Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica dell'utente 0
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PAYMENT" per l'utente 0
     When viene invocata una richiesta di restart per la notifica appena creata
@@ -87,12 +90,13 @@ Feature: Correzione timeline fase 3 costi
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
-      | subject            | test costi notifica fase 5 |
-      | senderDenomination | Comune di palermo          |
-      | pagoPaIntMode      | ASYNC                      |
-      | feePolicy          | DELIVERY_MODE              |
-      | paFee              | 17                         |
-      | vat                | 10                         |
+      | subject               | test costi notifica fase 5 |
+      | physicalCommunication | AR_REGISTERED_LETTER       |
+      | senderDenomination    | Comune di palermo          |
+      | pagoPaIntMode         | ASYNC                      |
+      | feePolicy             | DELIVERY_MODE              |
+      | paFee                 | 17                         |
+      | vat                   | 10                         |
     And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                    |
       | physicalAddress_address      | Via@FAIL_DECEDUTO_890   |
@@ -123,12 +127,13 @@ Feature: Correzione timeline fase 3 costi
   @timelineReworkF3_costi #11.4
   Scenario Outline: [TR3_PAYMENTS_RESTART_4_FLATRATE_SYNC] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al restart
     Given viene generata una nuova notifica
-      | subject            | test costi notifica fase 5 |
-      | senderDenomination | Comune di palermo          |
-      | pagoPaIntMode      | SYNC                       |
-      | feePolicy          | FLAT_RATE                  |
-      | paFee              | 17                         |
-      | vat                | 10                         |
+      | subject               | test costi notifica fase 5 |
+      | physicalCommunication | AR_REGISTERED_LETTER       |
+      | senderDenomination    | Comune di palermo          |
+      | pagoPaIntMode         | SYNC                       |
+      | feePolicy             | FLAT_RATE                  |
+      | paFee                 | 17                         |
+      | vat                   | 10                         |
     And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                       |
       | physicalAddress_address      | <sequence>                 |
@@ -167,12 +172,13 @@ Feature: Correzione timeline fase 3 costi
   Scenario Outline: [TR3_PAYMENTS_RESTART_5_FLATRATE_ASYNC] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate async) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al restart
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
-      | subject            | test costi notifica fase 5 |
-      | senderDenomination | Comune di palermo          |
-      | pagoPaIntMode      | ASYNC                      |
-      | feePolicy          | FLAT_RATE                  |
-      | paFee              | 17                         |
-      | vat                | 10                         |
+      | subject               | test costi notifica fase 5 |
+      | physicalCommunication | AR_REGISTERED_LETTER       |
+      | senderDenomination    | Comune di palermo          |
+      | pagoPaIntMode         | ASYNC                      |
+      | feePolicy             | FLAT_RATE                  |
+      | paFee                 | 17                         |
+      | vat                   | 10                         |
     And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                        |
       | physicalAddress_address      | <sequence>                  |
@@ -211,12 +217,13 @@ Feature: Correzione timeline fase 3 costi
   @timelineReworkF3_costi #11.6 dopo restart il baseCost non cambia, costi supplementari potrebbero cambiare
   Scenario Outline: [TR3_PAYMENTS_RESTART_6_DELIVERY_MODE_SYNC] Invio di una notifica mono-destinatario con pagamento/i PagoPA(delivery mode sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al restart
     Given viene generata una nuova notifica
-      | subject            | test costi notifica fase 5 |
-      | senderDenomination | Comune di palermo          |
-      | pagoPaIntMode      | SYNC                       |
-      | feePolicy          | DELIVERY_MODE              |
-      | paFee              | 17                         |
-      | vat                | 10                         |
+      | subject               | test costi notifica fase 5 |
+      | physicalCommunication | AR_REGISTERED_LETTER       |
+      | senderDenomination    | Comune di palermo          |
+      | pagoPaIntMode         | SYNC                       |
+      | feePolicy             | DELIVERY_MODE              |
+      | paFee                 | 17                         |
+      | vat                   | 10                         |
     And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                    |
       | physicalAddress_address      | <sequence>              |
@@ -260,12 +267,13 @@ Feature: Correzione timeline fase 3 costi
   Scenario Outline: [TR3_PAYMENTS_RESTART_7_DELIVERY_MODE_ASYNC] Invio di una notifica mono-destinatario con pagamento/i PagoPA(delivery mode async) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al restart
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
-      | subject            | test costi notifica fase 5 |
-      | senderDenomination | Comune di palermo          |
-      | pagoPaIntMode      | ASYNC                      |
-      | feePolicy          | DELIVERY_MODE              |
-      | paFee              | 17                         |
-      | vat                | 10                         |
+      | subject               | test costi notifica fase 5 |
+      | physicalCommunication | AR_REGISTERED_LETTER       |
+      | senderDenomination    | Comune di palermo          |
+      | pagoPaIntMode         | ASYNC                      |
+      | feePolicy             | DELIVERY_MODE              |
+      | paFee                 | 17                         |
+      | vat                   | 10                         |
     And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                     |
       | physicalAddress_address      | <sequence>               |
