@@ -177,6 +177,12 @@ public class M2MV3EserviceDescriptorClientImpl extends AbstractDPoPClient implem
     }
 
     @Override
+    public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor scheduleArchiveEServiceDescriptor(
+        UUID eserviceId, UUID descriptorId) {
+        return vMapper.mapToV2(eservicesApi.scheduleArchiveEserviceDescriptor(eserviceId, descriptorId));
+    }
+
+    @Override
     public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor patchEServiceDescriptorQuotas(
         UUID eserviceId, UUID descriptorId, EServiceDescriptorQuotasPatchRequest body) {
         return vMapper.mapToV2(eservicesApi.updatePublishedEServiceDescriptorQuotas(
