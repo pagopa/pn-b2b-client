@@ -68,7 +68,8 @@ Feature: Archiviazione manuale di un descrittore
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
-#    When l'utente tenta di annullare il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+#    And l'utente tenta di annullare il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
     Then si ottiene response status code 200
     And la vecchia versione dell'e-service è in stato "<finalDescriptorState>"
     #    And il processo di archiviazione della vecchia versione dell'e-service è stato annullato con successo
@@ -78,3 +79,14 @@ Feature: Archiviazione manuale di un descrittore
       | initialDescriptorState | finalDescriptorState |
       | PUBLISHED              | PUBLISHED            |
       | SUSPENDED              | SUSPENDED            |
+
+  Scenario: [M2M_V3_MANUAL_ARCHIVING_DESCRIPTOR_ELIMINATION_1.2] Un utente con ruolo M2M NON può annullare il processo di archiviazione manuale del descrittore
+    Given l'utente è un "<role>" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m
+#    And l'utente tenta di annullare il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
+    Then si ottiene response status code 403
+    And la vecchia versione dell'e-service è in stato "ARCHIVING"
