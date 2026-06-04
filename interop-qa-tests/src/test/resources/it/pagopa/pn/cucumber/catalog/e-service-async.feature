@@ -18,12 +18,13 @@ Feature: Configurazione e gestione di E-Service per scambi asincroni e massivi
   Scenario: [ASYNC_ESERVICE_CREATION_1] La creazione di un e-service in stato DRAFT in modalità asincrona con
   le proprietà specificate nel descrittore va a buon fine
     Given l'utente è un "admin" di "PA1"
-    When "PA1" ha già creato un e-service asincrono con un descrittore in stato "DRAFT" con:
+    When "PA1" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
       | asyncExchangeProperties.responseTime          | 10   |
       | asyncExchangeProperties.resourceAvailableTime | 10   |
       | asyncExchangeProperties.confirmation          | true |
       | asyncExchangeProperties.bulk                  | true |
       | asyncExchangeProperties.maxResultSet          | 50   |
+    And si ottiene status code 200
     Then l'e-service ha questa configurazione:
       | asyncExchangeProperties.responseTime          | 10   |
       | asyncExchangeProperties.resourceAvailableTime | 10   |
@@ -62,7 +63,6 @@ Feature: Configurazione e gestione di E-Service per scambi asincroni e massivi
       | REST       | 10           | 10                    | 100          | true         | true  |
       | SOAP       | 10           | 10                    | 100          | false        | false |
       | SOAP       | 10           | 10                    | 100          | true         | false |
-
 
   Scenario Outline: [ASYNC_ESERVICE_CREATION_2b] Errore aggiornamento dei parametri asincroni di un e-service
   in DRAFT del descrittore testando diverse combinazioni.
@@ -137,6 +137,35 @@ Feature: Configurazione e gestione di E-Service per scambi asincroni e massivi
       | SOAP       | DELIVER | DELIVER | false            | 200            |
       | SOAP       | DELIVER | RECEIVE | true             | 400            |
       | SOAP       | DELIVER | RECEIVE | false            | 200            |
+
+  Scenario: [ASYNC_ESERVICE_UPDATE_PUBLISHED] Fallimento dell'aggiornamento dei parametri di configurazione su un e-service
+  asincrono già pubblicato.
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service asincrono in stato "DRAFT" con:
+      | technology | REST    |
+      | mode       | DELIVER |
+    And si ottiene response status code 200
+    And l'utente aggiorna alcuni parametri di quel descrittore con:
+      | voucherLifespan                               | 60        |
+      | dailyCallsPerConsumer                         | 50        |
+      | dailyCallsTotal                               | 2000      |
+      | audience                                      | pagopa.it |
+      | agreementApprovalPolicy                       | AUTOMATIC |
+      | asyncExchangeProperties.responseTime          | 100       |
+      | asyncExchangeProperties.resourceAvailableTime | 100       |
+      | asyncExchangeProperties.confirmation          | true      |
+      | asyncExchangeProperties.bulk                  | true      |
+      | asyncExchangeProperties.maxResultSet          | 100       |
+    And si ottiene response status code 200
+    And "PA1" ha già caricato un'interfaccia per quel descrittore
+    And "PA1" ha già caricato un'interfaccia di callback per quel descrittore
+    And l'utente pubblica l'e-service
+    And si ottiene response status code 200
+    When "PA1" aggiorna quell'e-service con:
+      | technology    | REST    |
+      | mode          | DELIVER |
+      | asyncExchange | false   |
+    Then si ottiene status code 400
 
   Scenario Outline: [ASYNC_ESERVICE_TECH_SPEC_UPDATE_1] Aggiornamento specifiche tecniche di exchange per un e-service
   asincrono in stato DRAFT.
