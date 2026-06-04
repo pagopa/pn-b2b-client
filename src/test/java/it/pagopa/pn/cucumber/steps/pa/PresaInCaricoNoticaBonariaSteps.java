@@ -212,6 +212,23 @@ public class PresaInCaricoNoticaBonariaSteps {
         }
     }
 
+    @Then("viene inviata una nuova notifica bonaria con sha non valido")
+    public void sendInformalShaNotValid() {
+        try {
+            informalNotificationRequestV1 = notificationInformalUtilsV1.preloadAndPrepare(informalNotificationRequestV1);
+            informalNotificationRequestV1.getDocuments().forEach(doc -> doc.setDigests(new NotificationAttachmentDigests().sha256("INVALID_SHA")));
+            newInformalNotificationResponse = pnPaB2bInternalInformalClientImpl.sendNewInformalNotificationV1(informalNotificationRequestV1);
+            savedNotificationRequestId = newInformalNotificationResponse.getNotificationRequestId();
+            lastException = null;
+
+        } catch (Exception e) {
+            lastException = e;
+            newInformalNotificationResponse = null;
+            log.info("Eccezione: ", e);
+        }
+
+    }
+
     @And("la sottomissione della notifica bonaria è andata a buon fine")
     public void verifyNotificationSent() {
         assertNull(lastException, "Errore non atteso");
@@ -415,6 +432,19 @@ public class PresaInCaricoNoticaBonariaSteps {
         lastException = null;
     }
 
+    @Then("la notifica bonaria è stata rifiutata per l'errore: {string}")
+    public void verifyNotificationStatusError(String expectedError) {
+
+        assertNotNull(statusResponse, "StatusResponse nullo");
+        List<NotificationRequestRefusedProblemError> errors = statusResponse.getErrors();
+        assertNotNull(errors, "Lista errori nulla");
+        assertFalse(errors.isEmpty(), "Nessun errore presente");
+
+        boolean found = errors.stream().anyMatch(e -> expectedError.equals(e.getCode()));
+
+        assertTrue(found, "Errore atteso non trovato: " + expectedError);
+    }
+
 
     @When("si tenta il recupero della notifica bonaria tramite IUN")
     public void getInformalNotification() {
@@ -487,6 +517,23 @@ public class PresaInCaricoNoticaBonariaSteps {
         assertNotNull(lastException, "Non è stato generato l'errore atteso");
         if (lastException instanceof HttpClientErrorException ex) {
             assertEquals(expectedStatus, ex.getStatusCode().value());
+        } else {
+            fail("Eccezione inattesa: " + lastException.getClass());
+        }
+    }
+
+    @And("si riceve errore {int} {string}")
+    public void verifyErrorAndMessage(int expectedStatus, String expectedErrorCode) {
+
+        assertNotNull(lastException, "Non è stato generato l'errore atteso");
+
+        if (lastException instanceof HttpClientErrorException ex) {
+
+            assertEquals(expectedStatus, ex.getStatusCode().value());
+            String responseBody = ex.getResponseBodyAsString();
+            assertNotNull(responseBody, "Response body nullo");
+            assertTrue(responseBody.contains(expectedErrorCode), "Codice errore atteso non trovato: " + expectedErrorCode + "\nResponse body: " + responseBody);
+
         } else {
             fail("Eccezione inattesa: " + lastException.getClass());
         }
