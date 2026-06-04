@@ -185,6 +185,12 @@ public class M2MEserviceDescriptorClientImpl extends AbstractClient implements I
     }
 
     @Override
+    public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor cancelEServiceDescriptorArchiving(
+        UUID eserviceId, UUID descriptorId) {
+        throw new APIUnavailableException("Endpoint disponibile solo per M2M v3");
+    }
+
+    @Override
     public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor patchEServiceDescriptorQuotas(
         UUID eserviceId, UUID descriptorId, EServiceDescriptorQuotasPatchRequest body) {
         return eservicesApi.updatePublishedEServiceDescriptorQuotas(
