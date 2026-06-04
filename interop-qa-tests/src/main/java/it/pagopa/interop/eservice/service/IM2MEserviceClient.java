@@ -127,6 +127,12 @@ public interface IM2MEserviceClient extends IClient<EService, UUID> {
         private String description;
     }
 
+    @Data
+    @Builder
+    class EServiceArchivingRequest {
+        private String archivingReason;
+    }
+
     EServices getAll(EserviceListRequest payload);
 
     void delete(UUID id);
@@ -144,6 +150,8 @@ public interface IM2MEserviceClient extends IClient<EService, UUID> {
     EService patchEServiceDelegation(UUID eServiceId, EServiceDelegationPatchRequest body);
 
     EService patchEServiceDescription(UUID eServiceId, EServiceDescriptionPatchRequest body);
+
+    EService scheduleArchiveEService(UUID eServiceId, EServiceArchivingRequest body);
 
     FileDownloadMultipart getDescriptorInterface(UUID eServiceId, UUID descriptorId);
 }
