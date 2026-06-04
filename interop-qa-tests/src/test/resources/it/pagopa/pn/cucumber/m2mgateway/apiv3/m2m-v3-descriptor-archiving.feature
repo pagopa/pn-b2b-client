@@ -28,3 +28,15 @@ Feature: Archiviazione manuale di un descrittore
     Then si ottiene response status code 403
 #    And il processo di archiviazione della vecchia versione dell'e-service è fallito
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
+
+  Scenario: [M2M_V3_MANUAL_ARCHIVING_DESCRIPTOR_1.3] Un utente M2M con token non valido NON può avviare il processo di archiviazione manuale del descrittore
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene impostato per l'utente un token m2m non valido
+#    And l'utente avvia il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
+    Then si ottiene response status code 401
+#    And il processo di archiviazione della vecchia versione dell'e-service è fallito
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
