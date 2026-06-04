@@ -114,7 +114,7 @@ Feature: Archiviazione manuale di un e-service
     #in tal caso è l'unico e più recente descrittore
     And la versione più recente dell'e-service è in stato "ARCHIVING"
 
-  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_SUSPENSION_1.1] Un ente erogatore di un e-service in stato ARCHIVING è in grado di sospenderlo
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_SUSPENSION_1.1] Un ente erogatore di un e-service in stato ARCHIVING è in grado di sospendere l'e-service in questione
     Given l'utente è un "<role>" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
@@ -128,6 +128,22 @@ Feature: Archiviazione manuale di un e-service
       | api,security | ARCHIVING_SUSPENDED  | 204        |
       | support      | ARCHIVING            | 403        |
       | security     | ARCHIVING            | 403        |
+
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_SUSPENSION_1.2] Un ente erogatore di un e-service in stato ARCHIVING_SUSPENDED è in grado di riattivare l'e-service in questione
+    Given l'utente è un "<role>" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA1" ha già sospeso quell'e-service
+    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    When l'utente attiva il descrittore di quell'e-service
+    Then si ottiene response status code <statusCode>
+    And la versione più recente dell'e-service è in stato "<finalDescriptorState>"
+    Examples:
+      | role         | finalDescriptorState | statusCode |
+      | admin        | ARCHIVING            | 204        |
+      | api          | ARCHIVING            | 204        |
+      | api,security | ARCHIVING            | 204        |
+      | support      | ARCHIVING_SUSPENDED  | 403        |
+      | security     | ARCHIVING_SUSPENDED  | 403        |
 
   Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_CANCELLATION_1.1] L'ente erogatore di un e-service in stato PUBLISHED può annullare il processo di archiviazione manuale di un e-service in corso
     Given l'utente è un "<role>" di "PA1"
