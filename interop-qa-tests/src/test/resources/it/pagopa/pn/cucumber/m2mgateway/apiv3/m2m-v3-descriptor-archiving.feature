@@ -17,3 +17,14 @@ Feature: Archiviazione manuale di un descrittore
       | initialDescriptorState | finalDescriptorState |
       | PUBLISHED              | ARCHIVING            |
       | SUSPENDED              | ARCHIVING_SUSPENDED  |
+
+  Scenario: [M2M_V3_MANUAL_ARCHIVING_DESCRIPTOR_1.2] Un utente con ruolo M2M NON può avviare il processo di archiviazione manuale del descrittore
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m
+#    And l'utente avvia il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
+    Then si ottiene response status code 403
+#    And il processo di archiviazione della vecchia versione dell'e-service è fallito
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
