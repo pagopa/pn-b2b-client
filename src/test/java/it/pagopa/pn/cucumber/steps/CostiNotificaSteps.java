@@ -3,6 +3,7 @@ package it.pagopa.pn.cucumber.steps;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationPriceResponseV23;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PagoPaPayment;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.NewNotificationCostRequest;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.NotificationCostPaymentResponse;
@@ -14,6 +15,7 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostserv
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.client.b2b.pa.service.IPnNotificationCostClient;
 import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
+import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v26.NotificationProcessCostResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,11 +40,14 @@ public class CostiNotificaSteps {
     private final SharedSteps sharedSteps;
     private final DynamoDbService dynamoDbService;
     private final IPnNotificationCostClient notificationCostClient;
+    private final IPnPaB2bClient paB2bClient;
     private NotificationCostPaymentResponse notificationCostPaymentResponse;
     private NotificationCostRecipientResponse notificationCostRecipientResponse;
 
     private Map<String, String> notificationCostsPreRework = new HashMap<>();
     private Map<String, String> notificationCostsPostRework = new HashMap<>();
+    private NotificationPriceResponseV23 notificationPriceResponsePreRework;
+    private NotificationPriceResponseV23 notificationPriceResponsePostRework;
 
     @And("verifico che per il destinatario {int} il record su Pn-NotificationDeliveryCost sia stato (inserito)(modificato) e correttamente valorizzato")
     public void checkNotificationDeliveryCostRecord(int recIndex, Map<String, String> expectedData) {
@@ -351,6 +356,18 @@ public class CostiNotificaSteps {
         }
     }
 
+    @And("{isBefore} {timelineInvalidation} vengono recuperati i costi dall'api di delivery per il destinatario {int}")
+    public void checkDeliveryCosts(boolean isBeforeRestart, String requestType, int recIndex) {
+        FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
+        PagoPaPayment singlePayment = fsn.getRecipients().get(recIndex).getPayments().get(0).getPagoPa();
+        NotificationPriceResponseV23 priceResponse = paB2bClient.getNotificationPriceV23(singlePayment.getCreditorTaxId(), singlePayment.getNoticeCode());
+        if (isBeforeRestart) {
+            notificationPriceResponsePreRework = priceResponse;
+        } else {
+            notificationPriceResponsePostRework = priceResponse;
+        }
+    }
+
     @And("il {deliveryNotificationCost} è {isTheSame} rispetto a prima del rework")
     public void checkIfCostChangedAfterRestart(String cost, boolean isTheSame) {
         assertSoftly(softly -> {
@@ -362,6 +379,19 @@ public class CostiNotificaSteps {
                 softly.assertThat(notificationCostsPreRework.get(cost)).as("After rework the cost %s should be the same", cost).isEqualTo(notificationCostsPostRework.get(cost));
             } else {
                 softly.assertThat(notificationCostsPreRework.get(cost)).as("After rework the cost %s should not be the same", cost).isNotEqualTo(notificationCostsPostRework.get(cost));
+            }
+        });
+    }
+
+    @And("il valore dei costi restituiti dall'api di delivery è {isTheSame} rispetto a prima del rework")
+    public void checkIfDeliveryCostChangedAfterRestart(boolean isTheSame) {
+        assertSoftly(softly -> {
+            softly.assertThat(notificationPriceResponsePreRework).as("The notificationPriceResponse before rework should not be null").isNotNull();
+            softly.assertThat(notificationPriceResponsePostRework).as("The notificationPriceResponse after rework should not be null").isNotNull();
+            if (isTheSame) {
+                softly.assertThat(notificationPriceResponsePreRework).as("After rework the notificationPriceResponse should be the same").isEqualTo(notificationPriceResponsePostRework);
+            } else {
+                softly.assertThat(notificationPriceResponsePreRework).as("After rework the notificationPriceResponse should not be the same").isNotEqualTo(notificationPriceResponsePostRework);
             }
         });
     }

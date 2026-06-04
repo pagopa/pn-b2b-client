@@ -208,7 +208,7 @@ Feature: Correzione timeline fase 3 costi
       | Via@FAIL-DISCOVERYIRREPERIBILE_890 | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
       #TODO ADD ALL SEQUENCES ONCE THEY ARE CREATED
 
-  @timelineReworkF3_costi #11.6 dopo restart il baseCost non cambia, costi supplementari si
+  @timelineReworkF3_costi #11.6 dopo restart il baseCost non cambia, costi supplementari potrebbero cambiare
   Scenario Outline: [TR3_PAYMENTS_RESTART_6_DELIVERY_MODE_SYNC] Invio di una notifica mono-destinatario con pagamento/i PagoPA(delivery mode sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al restart
     Given viene generata una nuova notifica
       | subject            | test costi notifica fase 5 |
@@ -218,20 +218,21 @@ Feature: Correzione timeline fase 3 costi
       | paFee              | 17                         |
       | vat                | 10                         |
     And destinatario Mario Gherkin e:
-      | digitalDomicile              | NULL                       |
-      | physicalAddress_address      | <sequence>                 |
-      | physicalAddress_municipality | LAGO PATRIA                |
-      | physicalAddress_zip          | 80014                      |
-      | physicalAddress_province     | NA                         |
-      | payment_creditorTaxId        | 77777777777                |
-      | payment_pagoPaForm           | SI                         |
-      | payment_f24                  | NULL                       |
-      | title_payment                | PagoPa_mono_sync_flat_rate |
-      | apply_cost_pagopa            | SI                         |
-      | payment_multy_number         | 1                          |
+      | digitalDomicile              | NULL                    |
+      | physicalAddress_address      | <sequence>              |
+      | physicalAddress_municipality | LAGO PATRIA             |
+      | physicalAddress_zip          | 80014                   |
+      | physicalAddress_province     | NA                      |
+      | payment_creditorTaxId        | 77777777777             |
+      | payment_pagoPaForm           | SI                      |
+      | payment_f24                  | NULL                    |
+      | title_payment                | PagoPa_mono_sync_d_mode |
+      | apply_cost_pagopa            | SI                      |
+      | payment_multy_number         | 1                       |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEvent>"
     And vengono letti gli eventi fino allo stato della notifica "<finalStatus>"
+    And pre restart vengono recuperati i costi dall'api di delivery per il destinatario 0
     And verifico che pre restart per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attempt>
     When viene invocata una richiesta di restart per la notifica appena creata
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
@@ -241,14 +242,16 @@ Feature: Correzione timeline fase 3 costi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEventRestart>" al tentativo "REWORK_0"
     And vengono letti gli eventi fino allo stato della notifica "<finalStatusRestart>"
     And la timeline contiene elementi con la stringa "REWORK_"
+    And post restart vengono recuperati i costi dall'api di delivery per il destinatario 0
+    And il valore dei costi restituiti dall'api di delivery è <deliveryCostEqual> rispetto a prima del rework
     And verifico che post restart per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt <attemptRestart>
     And il baseCost è uguale rispetto a prima del rework
     Examples:
-      | sequence                           | finalEvent                         | finalStatus        | attempt | finalEventRestart                  | finalStatusRestart | attemptRestart |
-      | Via@OK_890                         | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              |
-      | Via@FAIL-DISCOVERY_890             | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
-      | Via@FAIL_DECEDUTO_890              | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              |
-      | Via@FAIL-DISCOVERYIRREPERIBILE_890 | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+      | sequence                           | finalEvent                         | finalStatus        | attempt | finalEventRestart                  | finalStatusRestart | attemptRestart | deliveryCostEqual |
+      | Via@OK_890                         | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              | uguale            |
+      | Via@FAIL-DISCOVERY_890             | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              | uguale            |
+      | Via@FAIL_DECEDUTO_890              | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              | uguale            |
+      | Via@FAIL-DISCOVERYIRREPERIBILE_890 | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              | uguale            |
       #TODO ADD ALL SEQUENCES ONCE THEY ARE CREATED
 
     # il baseCost cambia
@@ -264,17 +267,17 @@ Feature: Correzione timeline fase 3 costi
       | paFee              | 17                         |
       | vat                | 10                         |
     And destinatario Mario Gherkin e:
-      | digitalDomicile              | NULL                        |
-      | physicalAddress_address      | <sequence>                  |
-      | physicalAddress_municipality | LAGO PATRIA                 |
-      | physicalAddress_zip          | 80014                       |
-      | physicalAddress_province     | NA                          |
-      | payment_creditorTaxId        | 77777777777                 |
-      | payment_pagoPaForm           | SI                          |
-      | payment_f24                  | NULL                        |
-      | title_payment                | PagoPa_mono_async_flat_rate |
-      | apply_cost_pagopa            | SI                          |
-      | payment_multy_number         | 1                           |
+      | digitalDomicile              | NULL                     |
+      | physicalAddress_address      | <sequence>               |
+      | physicalAddress_municipality | LAGO PATRIA              |
+      | physicalAddress_zip          | 80014                    |
+      | physicalAddress_province     | NA                       |
+      | payment_creditorTaxId        | 77777777777              |
+      | payment_pagoPaForm           | SI                       |
+      | payment_f24                  | NULL                     |
+      | title_payment                | PagoPa_mono_async_d_mode |
+      | apply_cost_pagopa            | SI                       |
+      | payment_multy_number         | 1                        |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEvent>"
