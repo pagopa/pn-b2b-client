@@ -154,6 +154,11 @@ public class M2MEserviceClientImpl extends AbstractClient implements IM2MEservic
     }
 
     @Override
+    public EService cancelScheduleArchiveEService(UUID eServiceId) {
+        throw new APIUnavailableException("Endpoint disponibile solo per M2M v3");
+    }
+
+    @Override
     public UUID generateId(EntityIdType type) {
         return switch (type){
             case INVALID_ID -> UUID.fromString("00000000-0000-4000-8000-abcdefabcdef"); // La classe UUID non permette di formare un UUID malformato

@@ -153,5 +153,7 @@ public interface IM2MEserviceClient extends IClient<EService, UUID> {
 
     EService scheduleArchiveEService(UUID eServiceId, EServiceArchivingRequest body);
 
+    EService cancelScheduleArchiveEService(UUID eServiceId);
+
     FileDownloadMultipart getDescriptorInterface(UUID eServiceId, UUID descriptorId);
 }
