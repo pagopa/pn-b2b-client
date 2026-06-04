@@ -53,7 +53,7 @@ public class DestinatarioRegistry {
         DESTINATARIO_CUCUMBER_SOCIETY = new Destinatario(CUCUMBER_SOCIETY, taxIds.getCucumberSociety(), PG, PEC);
         DESTINATARIO_SIGNOR_GENERATO = new Destinatario(SIGNOR_GENERATO, FiscalCodeGenerator.generateCF(System.nanoTime()), PF, PEC);
         DESTINATARIO_NESSUNO = new Destinatario(NESSUNO, null, null, null);
-        DESTINATARIO_ERRORE_D01 = new Destinatario(ERRORE_D01, taxIds.getErroreD01(), PF, PEC);
+        DESTINATARIO_ERRORE_D01 = new Destinatario(UTENZA_CON_INDIRIZZO_NON_VALIDO, taxIds.getUserIndirizzoNonValidoD01(), PF, PEC);
 
         all = List.of(
                 DESTINATARIO_MARIO_GHERKIN, DESTINATARIO_MARIO_CUCUMBER, DESTINATARIO_SIGNOR_CASUALE,
@@ -93,7 +93,7 @@ public class DestinatarioRegistry {
             SIGNOR_GENERATO + "|" +
             GALILEO_GALILEI + "|" +
             NESSUNO + "|" +
-            ERRORE_D01
+            UTENZA_CON_INDIRIZZO_NON_VALIDO
     )
     public Destinatario destinatario(String name) {
         return all.stream()

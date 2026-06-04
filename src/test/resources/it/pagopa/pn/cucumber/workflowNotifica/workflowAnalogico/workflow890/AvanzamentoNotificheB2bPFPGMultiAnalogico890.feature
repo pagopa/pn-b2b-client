@@ -89,7 +89,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario Errore D01 e:
+    And destinatario Utenza con Errore D01 e:
       | denomination            | Test 890 Fail             |
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@FAIL-Irreperibile_890 |
