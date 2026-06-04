@@ -81,12 +81,12 @@ Feature: Archiviazione manuale di un e-service
     And la versione più recente dell'e-service è in stato "PUBLISHED"
 
     Examples:
-      | eserviceId | archivingReason          | archivingReason | statusCode |
-      | %null      | QA test manual-archiving | %actual         | 400        |
-      | %actual    | %null                    | %actual         | 400        |
-      | %null      | %null                    | %actual         | 400        |
-      | %actual    | %empty                   | %actual         | 400        |
-      | %random    | QA test manual-archiving | %actual         | 404        |
+      | eserviceId | archivingReason          | statusCode |
+      | %null      | QA test manual-archiving | 400        |
+      | %actual    | %null                    | 400        |
+      | %null      | %null                    | 400        |
+      | %actual    | %empty                   | 400        |
+      | %random    | QA test manual-archiving | 404        |
 
   Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_1.7] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale dell'e-service se la stringa archivingReason non rispetta la lunghezza attesa
     Given l'utente è un "admin" di "PA1"

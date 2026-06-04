@@ -72,3 +72,24 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     And la versione più recente dell'e-service è in stato "PUBLISHED"
 #    And il processo di archiviazione della più recente versione dell'e-service è fallita
 
+  Scenario Outline: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_1.6] Un ente erogatore M2M di un e-service NON può avviare il processo di archiviazione manuale dell'e-service se i parametri obbligatori non sono presenti o corretti
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+#    And viene avviato processo di archiviazione dell'e-service con id "<eserviceId>" e specificando la motivazione "<archivingReason>"
+    Then si ottiene response status code <statusCode>
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
+    #    And il processo di archiviazione della più vecchia versione dell'e-service è fallita
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
+    #    And il processo di archiviazione della più recente versione dell'e-service è fallita
+
+    Examples:
+      | eserviceId | archivingReason          | statusCode |
+      | %null      | QA test manual-archiving | 400        |
+      | %actual    | %null                    | 400        |
+      | %null      | %null                    | 400        |
+      | %actual    | %empty                   | 400        |
+      | %random    | QA test manual-archiving | 404        |
+
