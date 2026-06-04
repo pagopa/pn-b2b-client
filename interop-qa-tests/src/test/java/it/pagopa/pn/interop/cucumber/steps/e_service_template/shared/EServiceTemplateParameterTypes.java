@@ -52,11 +52,12 @@ public class EServiceTemplateParameterTypes {
         };
     }
 
-    @ParameterType("DOCUMENT|INTERFACE")
+    @ParameterType("DOCUMENT|INTERFACE|ASYNC_EXCHANGE_CALLBACK_INTERFACE")
     public EServiceTemplateDocumentKind eServiceTemplateDocumentKind(String kind) {
         return switch (kind) {
             case "DOCUMENT"     -> DOCUMENT;
             case "INTERFACE"    -> EServiceTemplateDocumentKind.INTERFACE;
+            case "ASYNC_EXCHANGE_CALLBACK_INTERFACE" -> EServiceTemplateDocumentKind.ASYNC_EXCHANGE_CALLBACK_INTERFACE;
             default             -> throw new IllegalArgumentException("Unsupported %s value: %s".formatted(
                 EServiceTemplateDocumentKind.class.getSimpleName(),
                 kind));

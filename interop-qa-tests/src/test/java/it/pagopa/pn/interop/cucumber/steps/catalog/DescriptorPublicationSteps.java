@@ -48,10 +48,11 @@ public class DescriptorPublicationSteps {
     @Given("{string} ha già caricato un'interfaccia di callback per quel descrittore")
     public void loadCallbackDescriptorInterface(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        dataPreparationService.addCallbackInterfaceToDescriptor(
+        UUID callbackInterfaceId = dataPreparationService.addCallbackInterfaceToDescriptor(
                 sharedStepsContext.getEServicesCommonContext().getEserviceId(),
                 sharedStepsContext.getEServicesCommonContext().getDescriptorId()
         );
+        sharedStepsContext.getEServicesCommonContext().setCallbackInterfaceId(callbackInterfaceId);
     }
 
     @Given("{string} ha già creato un e-service in modalità {string} con un descrittore in stato {string}")
