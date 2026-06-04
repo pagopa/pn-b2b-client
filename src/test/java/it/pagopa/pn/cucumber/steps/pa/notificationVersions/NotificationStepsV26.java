@@ -51,8 +51,6 @@ import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.OVERSIZE_ALLEGAT
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.OVER_15_ALLEGATO;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.VALIDATION_STATUS;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WRONG_EXTENSION;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario.DESTINATARIO_NESSUNO;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario.DESTINATARIO_SIGNOR_CASUALE;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.DOCUMENT;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.PAYMENT_PAGOPA_FORM;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.getDefaultValue;
@@ -140,7 +138,7 @@ public class NotificationStepsV26 implements NotificationStepsInterface {
 
     @Override
     public void addRecipientToNotification(Destinatario destinatario, Map<String, String> data) {
-        if (destinatario != null && destinatario.equals(DESTINATARIO_NESSUNO)) return;
+        if (destinatario != null && destinatario.isNessuno()) return;
         NotificationRecipientV24 notificationRecipient = utils.convertNotificationRecipient(data);
         if (notificationRequest.getNotificationFeePolicy() == NotificationFeePolicy.DELIVERY_MODE
                 && NotificationValue.getValue(data, NotificationValue.PAYMENT.key) != null) {
@@ -153,7 +151,7 @@ public class NotificationStepsV26 implements NotificationStepsInterface {
         }
         if (destinatario != null) {
             notificationRecipient.setDenomination(destinatario.getDenomination());
-            notificationRecipient.setTaxId(destinatario.equals(DESTINATARIO_SIGNOR_CASUALE) ?
+            notificationRecipient.setTaxId(destinatario.isSignorCasuale() ?
                     FiscalCodeGenerator.generateCF(System.nanoTime()) : destinatario.getTaxId());
             notificationRecipient.setRecipientType(NotificationRecipientV24.RecipientTypeEnum.valueOf(destinatario.getRecipientType()));
             /* Nei vecchi metodi @And("Destinatario xxx") denomination e taxId venivano sempre settati
