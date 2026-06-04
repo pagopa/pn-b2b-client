@@ -42,7 +42,7 @@ Feature: Correzione timeline fase 3 costi
       | details_recIndex | 0        |
 
   @timelineReworkF3_costi
-  Scenario: [TR3_PAYMENTS_RESTART_1_MULTIPAY]
+  Scenario: [TR3_PAYMENTS_RESTART_2_MULTIPAY]
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
@@ -83,7 +83,7 @@ Feature: Correzione timeline fase 3 costi
       | details_recIndex | 0        |
 
   @timelineReworkF3_costi #11.3 ??? attemptId = ATTEMPT_0 in KO per destinatario deceduto
-  Scenario: [TR3_PAYMENTS_RESTART_2]
+  Scenario: [TR3_PAYMENTS_RESTART_3_MIXED_APPLY_COST]
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica

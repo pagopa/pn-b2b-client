@@ -445,8 +445,16 @@ public class TimelineReworkSteps {
         }
     }
 
+    @When("viene invocato il consolidatore per inserire tutti gli eventi previsti per il destinatario {int} che portano allo status code {string} al tentativo {int}")
+    public void invokeConsolidatorForAllEvents(int recIndex, String expectedStatusCode, int attempt) {
+        List<DataTable> dataTableList = buildDataTableListForMultipleConsolidatorCalls(recIndex, expectedStatusCode, attempt);
+        for (DataTable dt : dataTableList) {
+            invokeConsolidatorCustom(dt);
+        }
+    }
+
     @Then("viene invocato il consolidatore con i seguenti dati:")
-    public void vieneInvocatoIlConsolidatoreCustom(DataTable params) {
+    public void invokeConsolidatorCustom(DataTable params) {
 
         Map<String, String> inputData = params.asMaps().get(0);
         Map<String, Object> mapInfo = populateConsolidatoreMapCustom(inputData);
@@ -466,6 +474,197 @@ public class TimelineReworkSteps {
                         body
                 )
         );
+    }
+
+    private List<DataTable> buildDataTableListForMultipleConsolidatorCalls(int recIndex, String expectedStatusCode, int attempt) {
+        List<DataTable> dataTableList = new ArrayList<>();
+
+        Map<String, String> defaultMap = new HashMap<>();
+        defaultMap.put("productType", "AR");
+        defaultMap.put("attemptId", "ATTEMPT_0");
+        defaultMap.put("pcRetry", "PCRETRY_0");
+        defaultMap.put("recIndex", recIndex == 0 ? "RECINDEX_0" : "RECINDEX_1");
+        defaultMap.put("deliveryFailureCause", "");
+        defaultMap.put("attachment_1", "");
+        defaultMap.put("attachment_2", "");
+
+        switch (expectedStatusCode) {
+            case "RECRN002C" -> {
+                Map<String, String> map1 = new HashMap<>(defaultMap);
+                map1.put("statusCode", "RECRN002A");
+                map1.put("deliveryFailureCause", "M02");
+                dataTableList.add(DataTable.create(
+                        map1.entrySet()
+                                .stream()
+                                .map(e -> List.of(e.getKey(), e.getValue()))
+                                .toList()
+                ));
+                Map<String, String> map2 = new HashMap<>(defaultMap);
+                map2.put("statusCode", "RECRN002B");
+                map2.put("deliveryFailureCause", "M02");
+                map2.put("attachment_1", "Plico");
+                dataTableList.add(DataTable.create(
+                        map2.entrySet()
+                                .stream()
+                                .map(e -> List.of(e.getKey(), e.getValue()))
+                                .toList()
+                ));
+                Map<String, String> map3 = new HashMap<>(defaultMap);
+                map3.put("statusCode", "RECRN002C");
+                dataTableList.add(DataTable.create(
+                        map3.entrySet()
+                                .stream()
+                                .map(e -> List.of(e.getKey(), e.getValue()))
+                                .toList()
+                ));
+            }
+            case "RECRN001C" -> {
+                if (attempt == 0) {
+                    Map<String, String> map1 = new HashMap<>(defaultMap);
+                    map1.put("statusCode", "RECRN001A");
+                    dataTableList.add(DataTable.create(
+                            map1.entrySet()
+                                    .stream()
+                                    .map(e -> List.of(e.getKey(), e.getValue()))
+                                    .toList()
+                    ));
+                    Map<String, String> map2 = new HashMap<>(defaultMap);
+                    map2.put("statusCode", "RECRN001B");
+                    map2.put("attachment_1", "AR");
+                    dataTableList.add(DataTable.create(
+                            map2.entrySet()
+                                    .stream()
+                                    .map(e -> List.of(e.getKey(), e.getValue()))
+                                    .toList()
+                    ));
+                    Map<String, String> map3 = new HashMap<>(defaultMap);
+                    map3.put("statusCode", "RECRN001C");
+                    dataTableList.add(DataTable.create(
+                            map3.entrySet()
+                                    .stream()
+                                    .map(e -> List.of(e.getKey(), e.getValue()))
+                                    .toList()
+                    ));
+                } else {
+                    Map<String, String> map1 = new HashMap<>(defaultMap);
+                    map1.put("statusCode", "RECRN002D");
+                    map1.put("deliveryFailureCause", "M01");
+                    dataTableList.add(DataTable.create(
+                            map1.entrySet()
+                                    .stream()
+                                    .map(e -> List.of(e.getKey(), e.getValue()))
+                                    .toList()
+                    ));
+                    Map<String, String> map2 = new HashMap<>(defaultMap);
+                    map2.put("statusCode", "RECRN002E");
+                    map2.put("attachment_1", "Plico");
+                    map2.put("attachment_2", "Indagine");
+                    dataTableList.add(DataTable.create(
+                            map2.entrySet()
+                                    .stream()
+                                    .map(e -> List.of(e.getKey(), e.getValue()))
+                                    .toList()
+                    ));
+                    Map<String, String> map3 = new HashMap<>(defaultMap);
+                    map3.put("statusCode", "RECRN002F");
+                    dataTableList.add(DataTable.create(
+                            map3.entrySet()
+                                    .stream()
+                                    .map(e -> List.of(e.getKey(), e.getValue()))
+                                    .toList()
+                    ));
+                    Map<String, String> map4 = new HashMap<>(defaultMap);
+                    map4.put("attemptId", "ATTEMPT_1");
+                    map4.put("statusCode", "RECRN001A");
+                    dataTableList.add(DataTable.create(
+                            map4.entrySet()
+                                    .stream()
+                                    .map(e -> List.of(e.getKey(), e.getValue()))
+                                    .toList()
+                    ));
+                    Map<String, String> map5 = new HashMap<>(defaultMap);
+                    map5.put("attemptId", "ATTEMPT_1");
+                    map5.put("statusCode", "RECRN001B");
+                    map5.put("attachment_1", "AR");
+                    dataTableList.add(DataTable.create(
+                            map5.entrySet()
+                                    .stream()
+                                    .map(e -> List.of(e.getKey(), e.getValue()))
+                                    .toList()
+                    ));
+                    Map<String, String> map6 = new HashMap<>(defaultMap);
+                    map6.put("attemptId", "ATTEMPT_1");
+                    map6.put("statusCode", "RECRN001C");
+                    dataTableList.add(DataTable.create(
+                            map6.entrySet()
+                                    .stream()
+                                    .map(e -> List.of(e.getKey(), e.getValue()))
+                                    .toList()
+                    ));
+                }
+            }
+            case "RECRN002F" -> {
+                Map<String, String> map1 = new HashMap<>(defaultMap);
+                map1.put("statusCode", "RECRN002D");
+                map1.put("deliveryFailureCause", "M01");
+                dataTableList.add(DataTable.create(
+                        map1.entrySet()
+                                .stream()
+                                .map(e -> List.of(e.getKey(), e.getValue()))
+                                .toList()
+                ));
+                Map<String, String> map2 = new HashMap<>(defaultMap);
+                map2.put("statusCode", "RECRN002E");
+                map2.put("attachment_1", "Plico");
+                map2.put("attachment_2", "Indagine");
+                dataTableList.add(DataTable.create(
+                        map2.entrySet()
+                                .stream()
+                                .map(e -> List.of(e.getKey(), e.getValue()))
+                                .toList()
+                ));
+                Map<String, String> map3 = new HashMap<>(defaultMap);
+                map3.put("statusCode", "RECRN002F");
+                dataTableList.add(DataTable.create(
+                        map3.entrySet()
+                                .stream()
+                                .map(e -> List.of(e.getKey(), e.getValue()))
+                                .toList()
+                ));
+                Map<String, String> map4 = new HashMap<>(defaultMap);
+                map4.put("attemptId", "ATTEMPT_1");
+                map4.put("statusCode", "RECRN002D");
+                map4.put("deliveryFailureCause", "M01");
+                dataTableList.add(DataTable.create(
+                        map4.entrySet()
+                                .stream()
+                                .map(e -> List.of(e.getKey(), e.getValue()))
+                                .toList()
+                ));
+                Map<String, String> map5 = new HashMap<>(defaultMap);
+                map5.put("attemptId", "ATTEMPT_1");
+                map5.put("statusCode", "RECRN002E");
+                map5.put("attachment_1", "Plico");
+                map5.put("attachment_2", "Indagine");
+                dataTableList.add(DataTable.create(
+                        map5.entrySet()
+                                .stream()
+                                .map(e -> List.of(e.getKey(), e.getValue()))
+                                .toList()
+                ));
+                Map<String, String> map6 = new HashMap<>(defaultMap);
+                map6.put("attemptId", "ATTEMPT_1");
+                map6.put("statusCode", "RECRN002F");
+                dataTableList.add(DataTable.create(
+                        map6.entrySet()
+                                .stream()
+                                .map(e -> List.of(e.getKey(), e.getValue()))
+                                .toList()
+                ));
+            }
+            default -> throw new IllegalArgumentException("Unexpected expectedStatusCode value: " + expectedStatusCode);
+        }
+        return dataTableList;
     }
 
     private String getOrInitNow() {

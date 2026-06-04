@@ -327,15 +327,12 @@ public class CostiNotificaSteps {
             List<String> costsPostRework = new ArrayList<>(costsExcludingSecondAnalog);
 
             String sequence = address.toUpperCase().replace("VIA@", "");
-            switch (sequence) {
-                //TODO: aggiungere le altre sequence che prevedono il secondAnalogCost
-                case "FAIL-DISCOVERY_890", "FAIL-DISCOVERYIRREPERIBILE_890" -> {
-                    costsPreRework = new ArrayList<>(costsIncludingSecondAnalog);
-                    costsPostRework = new ArrayList<>(costsIncludingSecondAnalog);
-                }
-                case "FAIL_DECEDUTO_890", "FAIL_DECEDUTO_AR" -> {
 
-                }
+            //TODO: aggiungere all'occorrenza altre sequence che prevedono secondo tentativo
+            List<String> sequencesWithSecondAttempt = Arrays.asList("FAIL-DISCOVERY_890", "FAIL-DISCOVERYIRREPERIBILE_890", "FAIL-DISCOVERY_AR", "FAIL-DISCOVERYIRREPERIBILE_AR");
+            if (sequencesWithSecondAttempt.contains(sequence)) {
+                costsPreRework = new ArrayList<>(costsIncludingSecondAnalog);
+                costsPostRework = new ArrayList<>(costsIncludingSecondAnalog);
             }
             Map<String, AttributeValue> record = searchNotificationDeliveryCostRecord(recIndex);
             FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
