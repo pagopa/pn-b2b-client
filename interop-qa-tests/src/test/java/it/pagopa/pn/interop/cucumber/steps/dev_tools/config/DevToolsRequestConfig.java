@@ -128,6 +128,55 @@ public class DevToolsRequestConfig {
     }
 
     @DataTableType
+    public UpdateEServiceTemplateVersionSeed toUpdateEServiceTemplateSeed(DataTable dataTable) {
+        UpdateEServiceTemplateVersionSeed seed = new UpdateEServiceTemplateVersionSeed();
+        seed.setAttributes(new EServiceTemplateAttributesSeed());
+
+        Map<String, String> rows = new HashMap<>();
+        dataTable.cells().forEach(row -> {
+            if (row.size() >= 2) {
+                rows.put(
+                    row.get(0) != null ? row.get(0).trim() : "",
+                    row.get(1) != null ? row.get(1).trim() : ""
+                );
+            }
+        });
+
+        StandardEvaluationContext context = new StandardEvaluationContext(seed);
+
+        rows.forEach((key, value) -> {
+
+            if (value.equals(":null")) {
+                value = null;
+            }
+
+            if (key.contains(".") && key.startsWith("asyncExchangeProperties")) {
+                if (seed.getAsyncExchangeProperties() == null) {
+                    seed.setAsyncExchangeProperties(new AsyncExchangeProperties());
+                }
+                value = StepParser.normalize(value);
+
+                // SpEL automatically handles String -> Integer, String -> Boolean, etc.
+                parser.parseExpression(key).setValue(context, value);
+                return;
+            }
+
+            switch (key) {
+                case "description" -> seed.setDescription(value);
+                case "voucherLifespan" -> seed.setVoucherLifespan(Integer.valueOf(value));
+                case "dailyCallsPerConsumer" -> seed.setDailyCallsPerConsumer(Integer.valueOf(value));
+                case "dailyCallsTotal" -> seed.setDailyCallsTotal(Integer.valueOf(value));
+                case "agreementApprovalPolicy" -> seed.setAgreementApprovalPolicy(AgreementApprovalPolicy.fromValue(value));
+                default -> throw new IllegalArgumentException(
+                        "Campo non supportato per EServiceSeed: " + key
+                );
+            }
+        });
+
+        return seed;
+    }
+
+    @DataTableType
     public UpdateEServiceDescriptorSeed toUpdateEServiceDescriptorSeed(DataTable dataTable) {
         UpdateEServiceDescriptorSeed seed = new UpdateEServiceDescriptorSeed();
         seed.setAttributes(new DescriptorAttributesSeed());
@@ -157,6 +206,34 @@ public class DevToolsRequestConfig {
             } else {
                 // SpEL automatically handles String -> Integer, String -> Boolean, etc.
                 parser.parseExpression(key).setValue(context, value);
+            }
+        });
+
+        return seed;
+    }
+
+    @DataTableType
+    public AsyncExchangePropertiesInstanceSeed toAsyncExchangePropertiesInstanceSeed(DataTable dataTable) {
+        AsyncExchangePropertiesInstanceSeed seed = new AsyncExchangePropertiesInstanceSeed();
+
+        Map<String, String> rows = new HashMap<>();
+        dataTable.cells().forEach(row -> {
+            if (row.size() >= 2) {
+                rows.put(row.get(0) != null ? row.get(0).trim() : "", row.get(1) != null ? row.get(1).trim() : "");
+            }
+        });
+
+        rows.forEach((key, value) -> {
+            if (value.equals(":null")) {
+                value = null;
+            }
+            switch (key) {
+                case "responseTime" -> seed.responseTime(Integer.valueOf(value));
+                case "voucherLifespan" -> seed.resourceAvailableTime(Integer.valueOf(value));
+                case "dailyCallsPerConsumer" -> seed.maxResultSet(Integer.valueOf(value));
+                default -> throw new IllegalArgumentException(
+                        "Campo non supportato per EServiceSeed: " + key
+                );
             }
         });
 
