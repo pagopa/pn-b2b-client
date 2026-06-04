@@ -195,7 +195,6 @@ Feature: Configurazione e gestione di E-Service per scambi asincroni e massivi
       | REST       | 200          | 200                   | 200          | true         | true  | 200            |
       # bug PIN-10217
       | REST       | -30          | 200                   | 200          | true         | true  | 400            |
-      # "maxResultSet":3000000000 non è possibile utilizzare questo valore per un int32
       | REST       | 200          | 2147483647            | 200          | true         | true  | 200            |
       | SOAP       | %null        | 200                   | 100          | false        | false | 400            |
       | SOAP       | 200          | %null                 | 100          | false        | false | 400            |
