@@ -77,24 +77,23 @@ Feature: Lettura singola finalità
       | WAITING_FOR_APPROVAL |
       | ARCHIVED             |
 
-  #@adeguamento-analisi-rischio
+  @adeguamento-analisi-rischio
+  # TODO in tutte le descrizioni degli scenari di questa feature si sta descrivendo quello che si tenta di fare senza parlare dei risultati attesi. Correggere.
+  # TODO 04/06/2026: al momento l'analisi del rischio viene restituita anche per ruolo API. Chiesto conferma https://pagopaspa.slack.com/archives/C069AP16WG7/p1780565330577099, eventualmente modificare test.
   Scenario Outline: [LETTURA_FINALITA_TK_1] A seguito del cambiamento di tenant kind si tenta di reperire una finalità attiva
-    Given l'utente è un "admin" di "<ente>"
-    And "PA2" ha già creato e pubblicato 1 e-service
+    Given "PA2" ha già creato e pubblicato 1 e-service
     And "<ente>" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "<ente>" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     And il tenant kind dell'ente "<ente>" viene impostato a "<kind>"
-    When l'utente richiede la lettura della finalità
+    When l'utente è un "admin" di "<ente>"
+    And l'utente richiede la lettura della finalità
     Then si ottiene status code 200 ma l'analisi del rischio solo per admin
     When l'utente è un "api" di "<ente>"
     And l'utente richiede la lettura della finalità
     Then si ottiene status code 200 ma l'analisi del rischio solo per admin
-
     Examples:
-      | ente    | kind    |
-      | PA4     | PRIVATE |
-      | PA4     | GSP     |
-      | GSP2    | PA      |
-      | GSP2    | PRIVATE |
-      | Privato | PA      |
-      | Privato | GSP     |
+      | ente    | kind        |
+      | PA4     | PRIVATE     |
+      | PA4     | GSP         |
+      | GSP2    | PA          |
+      | Privato | PA          |

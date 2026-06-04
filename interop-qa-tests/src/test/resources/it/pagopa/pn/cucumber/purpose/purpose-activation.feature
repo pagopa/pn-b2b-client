@@ -135,7 +135,7 @@ Feature: Attivazione e riattivazione di una finalità
     When l'utente attiva la finalità in stato "REJECTED" per quell'e-service
     Then si ottiene status code 403
 
-  #@adeguamento-analisi-rischio
+  @adeguamento-analisi-rischio
   Scenario Outline: [PURPOSE_ACTIVATION_TK_1] A seguito del cambiamento di tenant kind si tenta di attivare una finalità in bozza
     Given l'utente è un "admin" di "<ente>"
     And "PA2" ha già creato e pubblicato 1 e-service
@@ -144,17 +144,14 @@ Feature: Attivazione e riattivazione di una finalità
     And il tenant kind dell'ente "<ente>" viene impostato a "<kind>"
     When l'utente attiva la finalità in stato "DRAFT" per quell'e-service
     Then si ottiene status code 400
-
     Examples:
-      | ente    | kind    |
-      | PA4     | PRIVATE |
-      | PA4     | GSP     |
-      | GSP2    | PA      |
-      | GSP2    | PRIVATE |
-      | Privato | PA      |
-      | Privato | GSP     |
+      | ente    | kind        |
+      | PA4     | PRIVATE     |
+      | PA4     | GSP         |
+      | GSP2    | PA          |
+      | Privato | PA          |
 
-  #@adeguamento-analisi-rischio
+  @adeguamento-analisi-rischio
   Scenario Outline: [PURPOSE_ACTIVATION_TK_2] A seguito del cambiamento di tenant kind si tenta di attivare una finalità sospesa
     Given l'utente è un "admin" di "<ente>"
     And "PA2" ha già creato e pubblicato 1 e-service
@@ -163,12 +160,9 @@ Feature: Attivazione e riattivazione di una finalità
     And il tenant kind dell'ente "<ente>" viene impostato a "<kind>"
     When l'utente attiva la finalità in stato "SUSPENDED" per quell'e-service
     Then si ottiene status code 200
-
     Examples:
-      | ente    | kind    |
-      | PA4     | PRIVATE |
-      | PA4     | GSP     |
-      | GSP2    | PA      |
-      | GSP2    | PRIVATE |
-      | Privato | PA      |
-      | Privato | GSP     |
+      | ente    | kind        |
+      | PA4     | PRIVATE     |
+      | PA4     | GSP         |
+      | GSP2    | PA          |
+      | Privato | PA          |

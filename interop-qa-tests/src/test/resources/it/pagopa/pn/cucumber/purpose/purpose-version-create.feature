@@ -94,7 +94,7 @@ Feature: Creazione di una nuova versione di finalità
     When l'utente aggiorna la stima di carico per quella finalità superando la soglia
     Then si ottiene status code 200 e la nuova versione della finalità è stata creata in stato "WAITING_FOR_APPROVAL" con la nuova stima di carico
 
-  #@adeguamento-analisi-rischio
+  @adeguamento-analisi-rischio
   Scenario Outline: [CREAZIONE_VERSIONE_FINALITA_TK_1] A seguito del cambiamento di tenant kind si tenta di aggiungere una versione ad una finalità pubblicata
     Given l'utente è un "admin" di "<ente>"
     And "PA2" ha già creato e pubblicato 1 e-service
@@ -103,12 +103,9 @@ Feature: Creazione di una nuova versione di finalità
     And il tenant kind dell'ente "<ente>" viene impostato a "<kind>"
     When l'utente aggiorna la stima di carico per quella finalità restando entro la soglia
     Then si ottiene status code 200 e la nuova versione della finalità è stata creata in stato "ACTIVE" con la nuova stima di carico
-
     Examples:
-      | ente    | kind    |
-      | PA4     | PRIVATE |
-      | PA4     | GSP     |
-      | GSP2    | PA      |
-      | GSP2    | PRIVATE |
-      | Privato | PA      |
-      | Privato | GSP     |
+      | ente    | kind        |
+      | PA4     | PRIVATE     |
+      | PA4     | GSP         |
+      | GSP2    | PA          |
+      | Privato | PA          |

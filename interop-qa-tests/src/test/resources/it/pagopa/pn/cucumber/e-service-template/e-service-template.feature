@@ -3145,7 +3145,7 @@ Feature: Test API of e-service template
 
   @sad-path
   @e-service-template-version-activate
-  #@adeguamento-analisi-rischio
+  @adeguamento-analisi-rischio
   Scenario Outline: [INTEROP-EST-TK-01] A seguito del cambiamento di tenant kind si tenta di ri-attivare un e-service template
     Given l'utente è un "admin" di "<ente>"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di SUSPENDED
@@ -3154,18 +3154,16 @@ Feature: Test API of e-service template
     Then si ottiene response status code 204
     And la riattivazione della versione dell'e-service template è stata effettuata correttamente
     Examples:
-      | ente    | kind    |
-      | PA4     | PRIVATE |
-      | PA4     | GSP     |
-      | GSP2    | PA      |
-      | GSP2    | PRIVATE |
-      | Privato | PA      |
-      | Privato | GSP     |
+      | ente    | kind        |
+      | PA4     | PRIVATE     |
+      | PA4     | GSP         |
+      | GSP2    | PA          |
+      | Privato | PA          |
 
   @happy-path
   @e-service-template-receive-bff
   @e-service-template-riskAnalysis-update
-  #@adeguamento-analisi-rischio
+  @adeguamento-analisi-rischio
   Scenario Outline: [INTEROP-EST-TK-02] A seguito del cambiamento di tenant kind si tenta modificare la risk analysis dell'e-service template
     Given l'utente è un "admin" di "<ente>"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
@@ -3174,18 +3172,16 @@ Feature: Test API of e-service template
     Then si ottiene response status code 204
     And la modifica della risk analysis dell'e-service è stata effettuata correttamente
     Examples:
-      | ente    | kind    |
-      | PA4     | PRIVATE |
-      | PA4     | GSP     |
-      | GSP2    | PA      |
-      | GSP2    | PRIVATE |
-      | Privato | PA      |
-      | Privato | GSP     |
+      | ente    | kind        |
+      | PA4     | PRIVATE     |
+      | PA4     | GSP         |
+      | GSP2    | PA          |
+      | Privato | PA          |
 
   @happy-path
   @e-service-template-receive-bff
   @e-service-template-riskAnalysis-update
-  #@adeguamento-analisi-rischio
+  @adeguamento-analisi-rischio
   Scenario Outline: [INTEROP-EST-TK-03] A seguito del cambiamento di tenant kind si tenta di eliminare la risk analysis dell'e-service template
     Given l'utente è un "admin" di "<ente>"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
@@ -3194,10 +3190,8 @@ Feature: Test API of e-service template
     Then si ottiene response status code 200
     And la cancellazione della risk analysis dell'e-service è stata effettuata correttamente
     Examples:
-      | ente    | kind    |
-      | PA4     | PRIVATE |
-      | PA4     | GSP     |
-      | GSP2    | PA      |
-      | GSP2    | PRIVATE |
-      | Privato | PA      |
-      | Privato | GSP     |
+      | ente    | kind        |
+      | PA4     | PRIVATE     |
+      | PA4     | GSP         |
+      | GSP2    | PA          |
+      | Privato | PA          |

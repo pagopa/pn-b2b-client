@@ -54,6 +54,10 @@ public class InteropMaintenanceServiceImpl implements InteropMaintenanceService 
 
     @Override
     public void changeTenantKind(String tenantAlias, String tenantKind) {
+        if (!this.isExecutable()) {
+            throw new IllegalStateException("Maintenance APIs are not usable in the current environment");
+        }
+
         log.debug("Target tenant kind of {}: {}",  tenantAlias, tenantKind);
         String xCorrelationId = UUID.randomUUID().toString();
         String tokenBff = identityService.getToken(tenantAlias, "admin");
@@ -134,7 +138,7 @@ public class InteropMaintenanceServiceImpl implements InteropMaintenanceService 
         }
     }
 
-    /* 29/05/2026 L'uso delle API di maintenance al momento è fattibile solo in ambienti controllati. Al momento,
+    /* 29/05/2026 L'uso delle API di maintenance al momento è fattibile solo in ambienti controllati. Attualmente,
     * per esempio, può essere fatto solo attraverso workflow Github. Si astrae in questo metodo la verifica che
     * suddette api siano utilizzabili. */
     @Override

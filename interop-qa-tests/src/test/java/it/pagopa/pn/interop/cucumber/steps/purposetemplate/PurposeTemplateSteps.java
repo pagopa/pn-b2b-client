@@ -134,6 +134,13 @@ public class PurposeTemplateSteps {
         invokeCreatePurposeTemplate();
     }
 
+    @When("viene creato un nuovo purpose template coerente con la tipologia dell'ente")
+    public void createPurposeTemplateWithTenantKindCoherentWithTenantType() {
+        TargetTenantKind targetTenantKind = resolveTargetTenantKindFromContextTenantType();
+        prepareCreationRequest(false, targetTenantKind);
+        invokeCreatePurposeTemplate();
+    }
+
     //Il seguente metodo crea un purpose template in stato draft
     @When("viene creato un nuovo purpose template con handlePersonalData {bool}")
     public void createPurposeTemplateWithHandlePersonalData(Boolean handlePersonalDataValue) {
@@ -175,11 +182,30 @@ public class PurposeTemplateSteps {
     }
 
     private PurposeTemplateSeed prepareCreationRequest(Boolean handlePersonalDataValue) {
+        return prepareCreationRequest(handlePersonalDataValue, TargetTenantKind.PA);
+    }
+
+    private TargetTenantKind resolveTargetTenantKindFromContextTenantType() {
+        String tenantType = sharedStepsContext.getTenantType();
+        if (isNull(tenantType)) {
+            throw new IllegalStateException("Tenant type assente nello SharedStepsContext");
+        }
+
+        String tenantKind = sharedStepsContext.getIdentityService().getKind(tenantType);
+        try {
+            return "PA".equals(tenantKind) ? TargetTenantKind.PA : TargetTenantKind.PRIVATE;
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalStateException("Tenant kind '%s' non supportato per tenantType '%s'"
+                    .formatted(tenantKind, tenantType), ex);
+        }
+    }
+
+    private PurposeTemplateSeed prepareCreationRequest(Boolean handlePersonalDataValue, TargetTenantKind targetTenantKind) {
         purposeTemplateCreationRequest = new PurposeTemplateSeed();
         purposeTemplateCreationRequest.setPurposeTitle("purposeTitle" + DateTime.now());
         purposeTemplateCreationRequest.setPurposeDescription("purposeDescription_CREATE");
         purposeTemplateCreationRequest.setTargetDescription("targetDescription_CREATE");
-        purposeTemplateCreationRequest.setTargetTenantKind(TargetTenantKind.PA);
+        purposeTemplateCreationRequest.setTargetTenantKind(targetTenantKind);
         purposeTemplateCreationRequest.setPurposeIsFreeOfCharge(true);
         purposeTemplateCreationRequest.setPurposeDailyCalls(10);
 
@@ -188,11 +214,20 @@ public class PurposeTemplateSteps {
 
         if (handlePersonalDataValue != null) {
             RiskAnalysisFormTemplateSeed riskAnalysisForm = new RiskAnalysisFormTemplateSeed()
-                    .version("3.1")
+                    .version(getPurposeTemplateVersion())
                     .answers(getRiskAnalysysTemplateFormAnswerMap(purposeTemplateCreationRequest.getHandlesPersonalData()));
             purposeTemplateCreationRequest.setPurposeRiskAnalysisForm(riskAnalysisForm);
         }
         return purposeTemplateCreationRequest;
+    }
+
+    @Nonnull
+    private String getPurposeTemplateVersion() {
+        // L'inclusione dei valori null è volta a favorire retrocompatibilità con il comportamento antecedente
+        // a questa aggiunta, che considerava "3.1" come versione hardcoded.
+        String tenant = sharedStepsContext.getTenantType();
+        String tenantKind = isNull(tenant) ? null : sharedStepsContext.getIdentityService().getKind(tenant);
+        return isNull(tenantKind) || "PA".equals(tenantKind) ? "3.1" : "2.0";
     }
 
     private void invokeCreatePurposeTemplate() {
@@ -221,7 +256,14 @@ public class PurposeTemplateSteps {
         answersMap.put("purpose", answerPurpose);
         answersMap.put("institutionalPurpose", answerInstitutionalPurpose);
         answersMap.put("usesPersonalData", answerPersonalData);
-        answersMap.put("isRequestOnBehalfOfThirdParties", answerThirdParties);
+
+        String tenant = sharedStepsContext.getTenantType();
+        String tenantKind = sharedStepsContext.getIdentityService().getKind(tenant);
+
+        if ("PA".equals(tenantKind)) {
+            answersMap.put("isRequestOnBehalfOfThirdParties", answerThirdParties);
+        }
+
         answersMap.put("usesThirdPartyPersonalData", answerThirdPartiesPersonalData);
 
         if (handlePersonalData) {
@@ -866,7 +908,7 @@ public class PurposeTemplateSteps {
 
     private RiskAnalysisFormSeed getRiskAnalysisForTemplateFromPurposeTemplate() {
         RiskAnalysisFormSeed riskAnalysisFormSeed = new RiskAnalysisFormSeed()
-                .version("3.1")
+                .version(getPurposeTemplateVersion())
                 .answers(Map.of("institutionalPurpose", List.of("Answer1")));
         return riskAnalysisFormSeed;
     }
@@ -874,11 +916,6 @@ public class PurposeTemplateSteps {
     @When("si modifica la finalità {exists}")
     public void updatePurpose(boolean exists) {
         updatePurposeWithParams(exists, "DATI VALIDI");
-    }
-
-    @When("si modifica la finalità {exists} specificando una nuova risk analysis coerente con il tenant kind")
-    public void updatePurposeWithRA(boolean exists) {
-        updatePurposeWithParams(exists, "NUOVA RA");
     }
 
     @When("si modifica la finalità {exists} passando {string}")
@@ -933,7 +970,7 @@ public class PurposeTemplateSteps {
             throw new RuntimeException("Eccezione in fase di get dellà finalità creata a partire dal purpose template");
         }
         switch (state) {
-            case DRAFT -> log.info("Created Purpose: " + purpose);
+            case DRAFT -> log.info("Created Purpose: {}", purpose);
             case ACTIVE -> {
                 httpCallExecutor.performCall(() -> purposeApiClient.activatePurposeVersion(purpose.getId(), purpose.getCurrentVersion().getId()));
                 if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {

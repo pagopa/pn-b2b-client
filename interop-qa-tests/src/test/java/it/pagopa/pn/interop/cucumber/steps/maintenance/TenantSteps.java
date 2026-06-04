@@ -23,6 +23,10 @@ public class TenantSteps {
     }
 
 
+    // FIXME: inadeguato, limitare la correzione del tenant kind all'inizio mantiene correttezza nei test automatici,
+    //  ma rischia di guastare l'esecuzione di quelli manuali, che potrebbero ritrovarsi con una combinazione sfasata
+    //  a seguito dell'esecuzione dei test automatici.
+    //  MODIFICARE così che la correzione venga eseguita alla fine (o quantomeno "anche" alla fine).
     /* Resetta i tenant kind al loro valore "naturale", qualora in un'esecuzione precedente siano stati
      * eseguiti test che ne hanno modificato il valore.
      * DEV NOTE 29/05/2026: si prevede di eseguire i test della feature "adeguamento analisi del rischio" in isolamentp,
