@@ -102,3 +102,23 @@ Feature: Archiviazione manuale di un descrittore
 #    And l'utente tenta di annullare il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
     Then si ottiene response status code 401
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
+
+  Scenario Outline: [M2M_V3_MANUAL_ARCHIVING_DESCRIPTOR_ELIMINATION_1.4] Un ente M2M erogatore di un e-service NON può annullare il processo di archiviazione manuale di un descrittore se i parametri obbligatori non sono presenti o corretti
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+#    And l'utente tenta di annullare il processo di archiviazione della vecchia versione con id "<descriptorId>" dell'e-service con id "<eserviceId>"
+    Then si ottiene response status code <statusCode>
+    And la vecchia versione dell'e-service è in stato "ARCHIVING"
+
+    Examples:
+      | descriptorId | eserviceId | statusCode |
+      | %null        | %actual    | 400        |
+      | %actual      | %null      | 400        |
+      | %null        | %null      | 400        |
+      | %random      | %actual    | 404        |
+      | %actual      | %random    | 404        |
+      | %random      | %random    | 404        |
