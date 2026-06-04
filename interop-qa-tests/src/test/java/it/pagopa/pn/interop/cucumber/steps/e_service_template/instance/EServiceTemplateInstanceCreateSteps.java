@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.instance;
 
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -119,6 +120,13 @@ public class EServiceTemplateInstanceCreateSteps {
     public void createEServiceFromTemplateMinimalSpecSuccessfully() {
         createEServiceFromTemplateMinimalSpec();
         checkEServiceCreated(EServiceDescriptorState.DRAFT);
+    }
+
+    @Given("l'utente effettua la creazione di un nuovo e-service a partire dal template con successo indicando solo le specifiche strettamente necessarie e impostando l'e-service come {isAsynchronous}")
+    public void createEServiceFromTemplateMinimalSpecSuccessfullyAndNonAsynchronous(Boolean isAsynchronous) {
+        InstanceEServiceSeed seed = new InstanceEServiceSeed();
+        seed.asyncExchange(isAsynchronous);
+        createEServiceFromTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), seed);
     }
 
     @Given("l'utente effettua la creazione di un nuovo e-service a partire dal template con successo indicando tutte le specifiche")
