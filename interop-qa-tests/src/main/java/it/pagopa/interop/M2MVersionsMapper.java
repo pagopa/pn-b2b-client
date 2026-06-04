@@ -4,6 +4,9 @@ import it.pagopa.interop.eservice.service.EServiceAttribute;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.ValueMapping;
+import org.mapstruct.ValueMappings;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -72,6 +75,13 @@ public interface M2MVersionsMapper {
     EServices mapToV2(it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServices bean);
     it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTechnology mapToV3(EServiceTechnology bean);
     it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceMode mapToV3(EServiceMode bean);
+
+    @ValueMappings({
+        @ValueMapping(source = "ARCHIVING", target = MappingConstants.NULL),
+        @ValueMapping(source = "ARCHIVING_SUSPENDED", target = MappingConstants.NULL)
+    })
+    EServiceDescriptorState mapToV2(it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptorState bean);
+
     EServiceDescriptor mapToV2(it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptor bean);
     EServiceDescriptors mapToV2(it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptors bean);
     it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptorState mapToV3(EServiceDescriptorState bean);
