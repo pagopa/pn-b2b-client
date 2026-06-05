@@ -329,3 +329,58 @@ Feature: Validazione delle Client Assertion ed emissione dei Token PDND per scam
     And il tentant fruitore "PA2" attende la scadenza di resourceAvailableTime di 15 secondi
     When il tenant fruitore "PA2" richiede un voucher asincrono per l'e-service
     Then si ottiene status code 400
+
+
+  Scenario: [ASYNC_TOKEN_RETRIEVE_8] Errore richiesta token per timeout (resourceAvailableTime scaduto)
+  Verifica il rilascio dei voucher fino a get_resource e il fallimento per lo scope confirmation dovuto al
+  superamento del tempo massimo di disponibilità della risorsa (resourceAvailableTime).
+
+    Given l'admin del fruitore "PA2" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
+    And "PA1" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
+      | asyncExchangeProperties.responseTime          | 10  |
+      | asyncExchangeProperties.resourceAvailableTime | 10  |
+      | asyncExchangeProperties.confirmation          | true |
+      | asyncExchangeProperties.bulk                  | true |
+      | asyncExchangeProperties.maxResultSet          | 50   |
+    And si ottiene status code 200
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    And "PA2" associa la finalità al client creato con successo
+    And l'utente "admin" di "PA1" crea un portachiavi erogatore con successo
+    And l'utente "admin" di "PA1" associa il portachiavi erogatore all'e-service con successo
+    And l'utente "admin" di "PA1" aggiunge una chiave al portachiavi erogatore
+    When il tenant fruitore "PA2" crea una client assertion per un client di tipo CONSUMER con:
+      | claim       | value                     |
+      | scope       | start_interaction         |
+      | urlCallback | https://www.hostname.com/ |
+    And il tenant fruitore "PA2" richiede un voucher asincrono per l'e-service
+    Then si ottiene status code 200
+    And il voucher contiene i seguenti dati:
+      | scope       | start_interaction         |
+      | urlCallback | https://www.hostname.com/ |
+
+    When il tenant erogatore "PA1" crea una client assertion per un client di tipo CONSUMER con:
+      | claim        | value                     |
+      | scope        | callback_invocation       |
+      | entityNumber | 10                        |
+    And il tenant erogatore "PA1" richiede un voucher asincrono per l'e-service
+    Then si ottiene status code 200
+    And il voucher contiene i seguenti dati:
+      | scope       | callback_invocation       |
+
+    When il tenant fruitore "PA2" crea una client assertion per un client di tipo CONSUMER con:
+      | claim       | value        |
+      | scope       | get_resource |
+    And il tenant fruitore "PA2" richiede un voucher asincrono per l'e-service
+    Then si ottiene status code 200
+    And il voucher contiene i seguenti dati:
+      | scope       | get_resource |
+
+    When il tenant fruitore "PA2" crea una client assertion per un client di tipo CONSUMER con:
+      | claim       | value        |
+      | scope       | confirmation |
+
+    And il tentant erogatore "PA1" attende la scadenza di responseTime di 15 secondi
+
+    And il tenant fruitore "PA2" richiede un voucher asincrono per l'e-service
+    Then si ottiene status code 400
