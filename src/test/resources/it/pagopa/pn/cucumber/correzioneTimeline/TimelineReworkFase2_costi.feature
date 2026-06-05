@@ -63,37 +63,37 @@ Feature: Correzione timeline fase 2 costi
 
   @timelineReworkF3_costi #11.9
   Scenario Outline: [TR3_PAYMENTS_REWORK_10_FLATRATE_ASYNC] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate async) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
-#    Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
-#    And viene generata una nuova notifica
-#      | subject               | test costi notifica fase 5 |
-#      | physicalCommunication | AR_REGISTERED_LETTER       |
-#      | senderDenomination    | Comune di palermo          |
-#      | pagoPaIntMode         | ASYNC                      |
-#      | feePolicy             | FLAT_RATE                  |
-#      | paFee                 | 17                         |
-#      | vat                   | 10                         |
-#    And destinatario Mario Gherkin e:
-#      | digitalDomicile              | NULL                        |
-#      | physicalAddress_address      | <sequence>                  |
-#      | physicalAddress_municipality | LAGO PATRIA                 |
-#      | physicalAddress_zip          | 80014                       |
-#      | physicalAddress_province     | NA                          |
-#      | payment_creditorTaxId        | 77777777777                 |
-#      | payment_pagoPaForm           | SI                          |
-#      | payment_f24                  | NULL                        |
-#      | title_payment                | PagoPa_mono_async_flat_rate |
-#      | apply_cost_pagopa            | NO                          |
-#      | payment_multy_number         | 1                           |
-#    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
-#    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-#    And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEvent>"
-#    And vengono letti gli eventi fino allo stato della notifica "<finalStatus>"
-#    And verifico che pre rework per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attempt>
-#    When viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-#      | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode   | expectedDeliveryFailureCause | reason     |
-#      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | <expectedStatusCode> | <failCode>                   | reasonTest |
-#    Then si verifica che la richiesta di rework effettuata sia in stato "CREATED" entro 130 secondi controllando ogni 5 secondi
-#    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
+    Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
+    And viene generata una nuova notifica
+      | subject               | test costi notifica fase 5 |
+      | physicalCommunication | AR_REGISTERED_LETTER       |
+      | senderDenomination    | Comune di palermo          |
+      | pagoPaIntMode         | ASYNC                      |
+      | feePolicy             | FLAT_RATE                  |
+      | paFee                 | 17                         |
+      | vat                   | 10                         |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile              | NULL                        |
+      | physicalAddress_address      | <sequence>                  |
+      | physicalAddress_municipality | LAGO PATRIA                 |
+      | physicalAddress_zip          | 80014                       |
+      | physicalAddress_province     | NA                          |
+      | payment_creditorTaxId        | 77777777777                 |
+      | payment_pagoPaForm           | SI                          |
+      | payment_f24                  | NULL                        |
+      | title_payment                | PagoPa_mono_async_flat_rate |
+      | apply_cost_pagopa            | NO                          |
+      | payment_multy_number         | 1                           |
+    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEvent>"
+    And vengono letti gli eventi fino allo stato della notifica "<finalStatus>"
+    And verifico che pre rework per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attempt>
+    When viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
+      | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode   | expectedDeliveryFailureCause | reason     |
+      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | <expectedStatusCode> | <failCode>                   | reasonTest |
+    Then si verifica che la richiesta di rework effettuata sia in stato "CREATED" entro 130 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     When viene invocato il consolidatore per inserire tutti gli eventi previsti per il destinatario 0 che portano allo status code "<expectedStatusCode>" al tentativo <attemptRestart>
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
