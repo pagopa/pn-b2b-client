@@ -199,6 +199,7 @@ Feature: finalità agevolata, purpose from purpose template
     When si modifica la finalità creata passando "TITLE ESISTENTE"
     Then si ottiene response status code 409
 
+  @debug
   @adeguamento-analisi-rischio
   Scenario Outline: [PURPOSE_TEMPLATE_PATCH_TK_1] A seguito del cambiamento di tenant kind si tenta di modificare una finalità
     Given "PA2" ha già creato e pubblicato 1 e-service

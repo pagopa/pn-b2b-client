@@ -111,7 +111,6 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
 
   # 05/06/2026: Diversamente da [DESCRIPTOR_TK_RA_ADD_1_A], tra "PRIVATE" e "PA" non ci sono incoerenze rilevabili
   # già in fase di bozza (essendo anche le due versioni di RA coincidenti con 3.1), per cui è previsto il successo.
-  @debug
   @adeguamento-analisi-rischio
   Scenario: [DESCRIPTOR_TK_RA_ADD_1_B] A seguito del cambiamento di tenant kind si tenta di aggiungere una risk analysis coerente con il precedente tenant kind ad un proprio e-service in bozza
     Given l'utente è un "admin" di "Privato"
@@ -120,7 +119,6 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
     When l'utente aggiunge un'analisi del rischio coerente con il tenant kind "PRIVATE"
     Then si ottiene status code 200
 
-  @debug
   @adeguamento-analisi-rischio
   Scenario Outline: [DESCRIPTOR_TK_RA_ADD_2] A seguito del cambiamento di tenant kind si tenta di aggiungere una risk analysis coerente con il nuovo tenant kind ad un proprio e-service in bozza
     Given l'utente è un "admin" di "<ente>"

@@ -39,7 +39,6 @@ Feature: Cancellazione di un'analisi del rischio ad un e-service
     When l'utente cancella quell'analisi del rischio di quell'e-service
     Then si ottiene status code 204
 
-  @debug
   @adeguamento-analisi-rischio
   Scenario Outline: [DESCRIPTOR_TK_RA_DELETE_1] A seguito del cambiamento di tenant kind si tenta eliminare una risk analysis associata a un proprio e-service
     Given l'utente è un "admin" di "<ente>"

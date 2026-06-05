@@ -105,7 +105,6 @@ Feature: Pubblicazione di un descrittore
 
   # TODO 05/06/2026: a differenza di [DESCRIPTOR_TK_PUBBLICATION_1_B] qui si effettua il cambiamento di tenant kind
   #   PRIMA di aggiungere l'analisi del rischio. Aggiungere scenario in PST.
-  @debug
   @adeguamento-analisi-rischio
   Scenario Outline: [DESCRIPTOR_TK_PUBBLICATION_1_B2] A seguito del cambiamento di tenant kind si tenta di pubblicare un proprio e-service in bozza ad erogazione inversa, con analisi del rischio coerente con il kind finale
     Given l'utente è un "admin" di "<ente>"
