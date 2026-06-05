@@ -97,7 +97,6 @@ Feature: Configurazione e gestione di E-Service per scambi asincroni e massivi
     Then si ottiene status code <expectedResult>
 
     Examples:
-    Examples:
       | technology | responseTime | resourceAvailableTime | maxResultSet | confirmation | bulk  | expectedResult |
       | REST       | %null        | 10                    | 100          | false        | false | 400            |
       | REST       | 10           | %null                 | 100          | false        | false | 400            |
