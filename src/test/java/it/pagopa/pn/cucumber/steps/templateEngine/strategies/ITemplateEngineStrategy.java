@@ -16,6 +16,7 @@ public interface ITemplateEngineStrategy {
             case "TEDESCA" -> LanguageEnum.DE;
             case "SLOVENA" -> LanguageEnum.SL;
             case "FRANCESE" -> LanguageEnum.FR;
+            case "INGLESE" -> LanguageEnum.EN;
             case "NULL" -> null;
             default -> throw new IllegalArgumentException();
         };

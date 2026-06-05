@@ -41,14 +41,14 @@ public class NotificationAARRADDaltStrategy implements ITemplateEngineStrategy {
         return new NotificationAarRaddAlt()
                 .recipient(createRecipient(context))
                 .notification(createNotification(context))
-                .qrCodeQuickAccessLink(context.getQrCodeQuickAccessLink())
-                .piattaformaNotificheURL(context.getPiattaformaNotificheURL())
-                .piattaformaNotificheURLLabel(context.getPiattaformaNotificheURLLabel())
-                .perfezionamentoURL(context.getPerfezionamentoURL())
-                .perfezionamentoURLLabel(context.getPerfezionamentoURLLabel())
-                .sendURL(context.getSendURL())
-                .sendURLLAbel(context.getSendURLLAbel())
-                .raddPhoneNumber(context.getRaddPhoneNumber());
+                .qrCodeQuickAccessLink(context.getQrCodeQuickAccessLink());
+               // .piattaformaNotificheURL(context.getPiattaformaNotificheURL())
+               // .piattaformaNotificheURLLabel(context.getPiattaformaNotificheURLLabel())
+               // .perfezionamentoURL(context.getPerfezionamentoURL())
+               // .perfezionamentoURLLabel(context.getPerfezionamentoURLLabel())
+               // .sendURL(context.getSendURL())
+               // .sendURLLAbel(context.getSendURLLAbel())
+               // .raddPhoneNumber(context.getRaddPhoneNumber());
     }
 
     private AarRaddAltNotification createNotification(TemplateRequestContext context) {

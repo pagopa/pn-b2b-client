@@ -44,11 +44,11 @@ public class NotificationAARStrategy implements ITemplateEngineStrategy {
         return new NotificationAar()
                 .recipient(createRecipient(context))
                 .notification(createNotification(context))
-                .qrCodeQuickAccessLink(context.getQrCodeQuickAccessLink())
-                .piattaformaNotificheURL(context.getPiattaformaNotificheURL())
-                .piattaformaNotificheURLLabel(context.getPiattaformaNotificheURLLabel())
-                .perfezionamentoURL(context.getPerfezionamentoURL())
-                .perfezionamentoURLLabel(context.getPerfezionamentoURLLabel());
+                .qrCodeQuickAccessLink(context.getQrCodeQuickAccessLink());
+                //.piattaformaNotificheURL(context.getPiattaformaNotificheURL())
+                //.piattaformaNotificheURLLabel(context.getPiattaformaNotificheURLLabel())
+                //.perfezionamentoURL(context.getPerfezionamentoURL())
+                //.perfezionamentoURLLabel(context.getPerfezionamentoURLLabel());
     }
 
     private AarRecipient createRecipient(TemplateRequestContext context) {

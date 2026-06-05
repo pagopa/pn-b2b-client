@@ -51,10 +51,10 @@ public class NotificationAARForPECStrategy implements ITemplateEngineStrategy {
 
         return new NotificationAarForPec()
                 .notification(createNotification(context))
-                .pnFaqSendURL(context.getPnFaqSendURL())
+                //.pnFaqSendURL(context.getPnFaqSendURL())
                 .quickAccessLink(context.getQrCodeQuickAccessLink())
-                .piattaformaNotificheURL(context.getPiattaformaNotificheURL())
-                .perfezionamentoURL(context.getPerfezionamentoURL())
+                //.piattaformaNotificheURL(context.getPiattaformaNotificheURL())
+                //.perfezionamentoURL(context.getPerfezionamentoURL())
                 .recipientType(context.getRecipientType())
                 .recipient(createRecipient(context));
     }

@@ -266,7 +266,7 @@ Feature: Template engine
     Then verifico che tutte le chiamate siano andate in "400" error e che nessuna abbia ricevuto una risposta
 
   @templateEngine #54 55 56 57 /templates-engine-private/v1/templates/notification-aar-radd-alt
-  Scenario Outline: [TEMPLATE-ENGINE_15] Richiamare l’API per il recupero del template di avviso di avvenuta ricezione RADD - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
+  Scenario Outline: [TEMPLATE-ENGINE_15] Richiamare l’API per il recupero del template di avviso di avvenuta ricezione RADD
     When recupero il template per "avviso di avvenuta ricezione RADD" in lingua "<language>"
     Then verifico che il template è in formato ".pdf"
     And controllo che per il template "avviso di avvenuta ricezione RADD" il file "pdf" sia in lingua "<language>"

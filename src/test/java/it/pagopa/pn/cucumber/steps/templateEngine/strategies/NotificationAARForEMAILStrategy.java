@@ -54,10 +54,10 @@ public class NotificationAARForEMAILStrategy implements ITemplateEngineStrategy 
 
         return new NotificationAarForEmailAnalog()
                 .notification(createAarForEmailNotificationAnalog(context))
-                .pnFaqSendURL(context.getPnFaqSendURL())
+                //.pnFaqSendURL(context.getPnFaqSendURL())
                 .quickAccessLink(context.getQrCodeQuickAccessLink())
-                .piattaformaNotificheURL(context.getPiattaformaNotificheURL())
-                .perfezionamentoURL(context.getPerfezionamentoURL())
+                //.piattaformaNotificheURL(context.getPiattaformaNotificheURL())
+               // .perfezionamentoURL(context.getPerfezionamentoURL())
                 .recipient(new AarForEmailRecipientAnalog().recipientType(context.getRecipientType()));
     }
 

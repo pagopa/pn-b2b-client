@@ -52,10 +52,10 @@ public class NotificationAARForEMAILDigitalStrategy implements ITemplateEngineSt
 
         return new NotificationAarForEmailDigital()
                 .notification(createAarForEmailNotification(context))
-                .pnFaqSendURL(context.getPnFaqSendURL())
+                //.pnFaqSendURL(context.getPnFaqSendURL())
                 .quickAccessLink(context.getQrCodeQuickAccessLink())
-                .piattaformaNotificheURL(context.getPiattaformaNotificheURL())
-                .perfezionamentoURL(context.getPerfezionamentoURL())
+               // .piattaformaNotificheURL(context.getPiattaformaNotificheURL())
+               // .perfezionamentoURL(context.getPerfezionamentoURL())
                 .recipient(new AarForEmailRecipientDigital().recipientType(context.getRecipientType()));
     }
 
