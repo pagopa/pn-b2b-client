@@ -81,6 +81,7 @@ Feature: Pubblicazione di un descrittore
       | GSP2    | GSP           | PA          |
       | Privato | PRIVATE       | PA          |
 
+  @debug
   @adeguamento-analisi-rischio
   Scenario Outline: [DESCRIPTOR_TK_PUBBLICATION_1_B] A seguito del cambiamento di tenant kind si tenta di pubblicare un proprio e-service in bozza ad erogazione inversa, con analisi del rischio coerente con il kind finale
     Given l'utente è un "admin" di "<ente>"
