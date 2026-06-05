@@ -17,6 +17,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationsResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationSearchRow;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.digitaladdresses.BffUserAddress;
+import it.pagopa.pn.client.b2b.pa.cache.CacheManager;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
@@ -52,6 +53,7 @@ import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Costanti;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
+import it.pagopa.pn.cucumber.steps.utilitySteps.DestinatarioRegistry;
 import it.pagopa.pn.cucumber.utils.DataTest;
 import it.pagopa.pn.cucumber.utils.EventId;
 import it.pagopa.pn.cucumber.utils.GroupPosition;
@@ -65,6 +67,7 @@ import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -163,6 +166,9 @@ public class SharedSteps {
     private final SenderInfoProvider senderInfoProvider;
 
     @Getter
+    private final DestinatarioRegistry destinatarioRegistry;
+
+    @Getter
     private final ApplicationContext context;
 
     @Getter
@@ -241,6 +247,8 @@ public class SharedSteps {
 
     private final DynamoDbService dynamoDbService;
 
+    private final CacheManager<String, String> senderTaxIdCacheManager;
+
     /**
      * Rappresenta la versione con cui è stata generata una notifica. Viene impostata al momento di preparazione della request.
      * Va da sè che gli step successivi (aggiunta di destinatari, invio, etc) dovranno anch'essi utilizzare tale versione, salvo diversamente specificato.
@@ -296,7 +304,10 @@ public class SharedSteps {
                        IPnTosPrivacyClientImpl iPnTosPrivacyClientImpl,
                        PnB2bClientTimingConfigs timingConfigs,
                        DynamoDbService dynamoDbService,
-                       SenderInfoProvider senderInfoProvider) {
+                       SenderInfoProvider senderInfoProvider,
+                       @Qualifier("senderTaxIdCacheManager") CacheManager<String, String> senderTaxIdCacheManager,
+                       DestinatarioRegistry destinatarioRegistry
+                       ) {
         this.context = context;
         this.b2bClient = b2bClient;
         this.pollingFactory = pollingFactory;
@@ -315,6 +326,8 @@ public class SharedSteps {
         this.dynamoDbService = dynamoDbService;
         this.senderInfoProvider = senderInfoProvider;
         versionUsed = getNotificationVersion(MOST_RECENT);
+        this.senderTaxIdCacheManager = senderTaxIdCacheManager;
+        this.destinatarioRegistry = destinatarioRegistry;
     }
 
     @BeforeAll
@@ -392,7 +405,7 @@ public class SharedSteps {
         getNotificationStepInterface().prepareNotificationRequest(Map.of(
                 "subject", "MOCKED NOTIFICATION",
                 "senderDenomination", "Comune di Palermo"));
-        getNotificationStepInterface().addRecipientToNotification(Destinatario.DESTINATARIO_MARIO_CUCUMBER, new HashMap<>());
+        getNotificationStepInterface().addRecipientToNotification(destinatarioRegistry.DESTINATARIO_MARIO_CUCUMBER, new HashMap<>());
     }
 
     /**
@@ -410,7 +423,7 @@ public class SharedSteps {
         getNotificationStepInterface().prepareNotificationRequest(Map.of(
                 "subject", "MOCKED NOTIFICATION",
                 "senderDenomination", "Comune di Palermo"));
-        getNotificationStepInterface().addRecipientToNotification(Destinatario.DESTINATARIO_MARIO_CUCUMBER, new HashMap<>());
+        getNotificationStepInterface().addRecipientToNotification(destinatarioRegistry.DESTINATARIO_MARIO_CUCUMBER, new HashMap<>());
     }
 
     /**
@@ -1052,7 +1065,12 @@ public class SharedSteps {
 
         // Recupera il senderTaxId da Dynamo solo se non passato da scenario
         if (senderTaxId == null) {
-            senderTaxId = fetchSenderTaxIdFromDynamo(pa);
+            // Recupera da cache o computa
+            senderTaxId = senderTaxIdCacheManager.getOrCompute(
+                    pa,  // Chiave: il nome della PA
+                    () -> fetchSenderTaxIdFromDynamo(pa)  // Supplier che ritorna String
+            );
+
             Assertions.assertNotNull(senderTaxId, "La sender tax id non è presente nel DB DynamoDb ONBOARD_INSTITUTIONS");
             notificationStepsInterface.setSenderTaxId(senderTaxId);
         }
@@ -1062,6 +1080,7 @@ public class SharedSteps {
 
     private String fetchSenderTaxIdFromDynamo(String pa) {
         String senderId = senderInfoProvider.getSenderId(pa);
+        log.debug("Fetching sender tax ID for PA: {} with senderId: {}", pa, senderId);
         QueryResponse response = dynamoDbService.call(DynamoTableName.ONBOARD_INSTITUTIONS, Map.of(
                 ":v_id", AttributeValue.builder().s(senderId).build()
         ));
