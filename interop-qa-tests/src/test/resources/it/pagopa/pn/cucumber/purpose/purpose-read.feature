@@ -77,7 +77,7 @@ Feature: Lettura singola finalità
       | WAITING_FOR_APPROVAL |
       | ARCHIVED             |
 
-  @debug
+  # Ticket aperto: https://pagopa.atlassian.net/browse/PIN-10265
   @adeguamento-analisi-rischio
   # TODO in tutte le descrizioni degli scenari di questa feature si sta descrivendo quello che si tenta di fare senza parlare dei risultati attesi. Correggere.
   # TODO 04/06/2026: al momento l'analisi del rischio viene restituita anche per ruolo API. Chiesto conferma https://pagopaspa.slack.com/archives/C069AP16WG7/p1780565330577099, eventualmente modificare test.

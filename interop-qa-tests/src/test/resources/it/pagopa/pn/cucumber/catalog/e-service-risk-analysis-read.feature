@@ -25,7 +25,6 @@ Feature: Lettura di un'analisi del rischio di un eservice
       | PA1  | support      |
 
   # Ticket aperto: https://pagopa.atlassian.net/browse/PIN-10265
-  @debug
   @adeguamento-analisi-rischio
   Scenario Outline: [DESCRIPTOR_TK_RA_READ_1] A seguito del cambiamento di tenant kind si tenta di reperire una risk analysis associata a un proprio e-service
     Given l'utente è un "admin" di "<ente>"

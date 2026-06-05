@@ -94,7 +94,7 @@ Feature: Creazione di una nuova versione di finalità
     When l'utente aggiorna la stima di carico per quella finalità superando la soglia
     Then si ottiene status code 200 e la nuova versione della finalità è stata creata in stato "WAITING_FOR_APPROVAL" con la nuova stima di carico
 
-  @debug
+  # Ticket aperto: https://pagopa.atlassian.net/browse/PIN-10265
   @adeguamento-analisi-rischio
   Scenario Outline: [CREAZIONE_VERSIONE_FINALITA_TK_1] A seguito del cambiamento di tenant kind si tenta di aggiungere una versione ad una finalità pubblicata
     Given l'utente è un "admin" di "<ente>"
