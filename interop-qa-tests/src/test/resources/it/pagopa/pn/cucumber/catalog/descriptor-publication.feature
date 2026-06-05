@@ -100,6 +100,6 @@ Feature: Pubblicazione di un descrittore
       | Privato | PA          |
 
   # FIXME rimuovere
-  @debug
+  #@debug
   Scenario: Utile solo a innescare il reset dei tenant kind
     Given l'utente è un "admin" di "PA1"

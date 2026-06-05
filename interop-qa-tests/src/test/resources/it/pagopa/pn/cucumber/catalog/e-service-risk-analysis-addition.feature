@@ -94,6 +94,8 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
   # fatta al momento della pubblicazione. In questo fase, se vengono rilevati - per esempio - degli attributi non
   # previsti, la creazione fallisce. Avendo le RA di tipo "PA" il campo in più "isRequestOnBehalfOfThirdParties"
   # rispetto ai tipi PRIVATE e GSP, è previsto che la generazione della RA fallisca già come bozza.
+  # Inoltre, corrispondendo a GSP la versione "2.0" e a PA la versione "3.1", è previsto che anche il caso con kind
+  # iniziale GSP fallisca.
   @debug
   @adeguamento-analisi-rischio
   Scenario Outline: [DESCRIPTOR_TK_RA_ADD_1_A] A seguito del cambiamento di tenant kind si tenta di aggiungere una risk analysis coerente con il precedente tenant kind ad un proprio e-service in bozza
@@ -106,19 +108,18 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
       | ente    | kind_iniziale | kind_target |
       | PA4     | PA            | PRIVATE     |
       | PA4     | PA            | GSP         |
+      | GSP2    | GSP           | PA          |
 
+  # 05/06/2026: Diversamente da [DESCRIPTOR_TK_RA_ADD_1_A], tra "PRIVATE" e "PA" non ci sono incoerenze rilevabili
+  # già in fase di bozza (essendo anche le due versioni di RA coincidenti con 3.1), per cui è previsto il successo.
   @debug
   @adeguamento-analisi-rischio
-  Scenario Outline: [DESCRIPTOR_TK_RA_ADD_1_B] A seguito del cambiamento di tenant kind si tenta di aggiungere una risk analysis coerente con il precedente tenant kind ad un proprio e-service in bozza
-    Given l'utente è un "admin" di "<ente>"
-    And "<ente>" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "DRAFT"
-    And il tenant kind dell'ente "<ente>" viene impostato a "<kind_target>"
-    When l'utente aggiunge un'analisi del rischio coerente con il tenant kind "<kind_iniziale>"
+  Scenario: [DESCRIPTOR_TK_RA_ADD_1_B] A seguito del cambiamento di tenant kind si tenta di aggiungere una risk analysis coerente con il precedente tenant kind ad un proprio e-service in bozza
+    Given l'utente è un "admin" di "Privato"
+    And "Privato" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "DRAFT"
+    And il tenant kind dell'ente "Privato" viene impostato a "PA"
+    When l'utente aggiunge un'analisi del rischio coerente con il tenant kind "PRIVATE"
     Then si ottiene status code 200
-    Examples:
-      | ente    | kind_iniziale | kind_target |
-      | GSP2    | GSP           | PA          |
-      | Privato | PRIVATE       | PA          |
 
   @adeguamento-analisi-rischio
   Scenario Outline: [DESCRIPTOR_TK_RA_ADD_2_A] A seguito del cambiamento di tenant kind si tenta di aggiungere una risk analysis coerente con il nuovo tenant kind ad un proprio e-service in bozza
