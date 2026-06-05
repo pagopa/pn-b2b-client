@@ -69,7 +69,7 @@ public class EServiceRiskAnalysisAdditionSteps {
 
     @When("l'utente aggiunge un'analisi del rischio coerente con il tenant kind {string}")
     public void addRiskAnalysisByTenantKind(String tenantType) {
-        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         RiskAnalysis eServiceRiskAnalysisSeed = dataPreparationService.getRiskAnalysis(tenantType, true);
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getEServiceClient().addRiskAnalysisToEService(
@@ -79,6 +79,7 @@ public class EServiceRiskAnalysisAdditionSteps {
                                 .riskAnalysisForm(eServiceRiskAnalysisSeed.getRiskAnalysisForm())
                 )
         );
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
     }
 
     @When("l'utente aggiunge un'analisi del rischio non corretta per la tipologia di ente")
