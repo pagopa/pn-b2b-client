@@ -61,7 +61,7 @@ Feature: Correzione timeline fase 2 costi
       | Via@FAIL-DISCOVERYIRREPERIBILE_AR | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | RECRN002F          | M01      | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
       #TODO ADD ALL SEQUENCES ONCE THEY ARE CREATED
 
-  @timelineReworkF3_costi #11.9
+  @timelineReworkF3_costi #11.10
   Scenario Outline: [TR3_PAYMENTS_REWORK_10_FLATRATE_ASYNC] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate async) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
@@ -122,7 +122,7 @@ Feature: Correzione timeline fase 2 costi
       | Via@FAIL-DISCOVERYIRREPERIBILE_AR | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | RECRN002F          | M01      | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
       #TODO ADD ALL SEQUENCES ONCE THEY ARE CREATED
 
-  @timelineReworkF3_costi #11.6 dopo restart il baseCost non cambia, costi supplementari si
+  @timelineReworkF3_costi #11.11 dopo restart il baseCost non cambia, costi supplementari si
   Scenario Outline: [TR3_PAYMENTS_REWORK_11_DELIVERY_MODE_SYNC] Invio di una notifica mono-destinatario con pagamento/i PagoPA(delivery mode sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene generata una nuova notifica
       | subject               | test costi notifica fase 5 |
@@ -186,7 +186,7 @@ Feature: Correzione timeline fase 2 costi
 
     # il baseCost cambia
     # firstAnalogCost immutato
-  @timelineReworkF3_costi #11.7
+  @timelineReworkF3_costi #11.12
   Scenario Outline: [TR3_PAYMENTS_REWORK_12_DELIVERY_MODE_ASYNC] Invio di una notifica mono-destinatario con pagamento/i PagoPA(delivery mode async) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
