@@ -117,7 +117,9 @@ public class ClientAssertionSteps {
 
         String clientAssertion = validClientAssertion.signWith(keyPair.getPrivate()).compact();
 
-        if (voucherContext.getActualInteractionId() != null && !voucherContext.getActualInteractionId().isBlank()) {
+        if (overrides.stream().noneMatch(i -> "interactionId".equals(i.claim())) &&
+            voucherContext.getActualInteractionId() != null &&
+            !voucherContext.getActualInteractionId().isBlank()) {
             overrides.add(new DevToolsRequestConfig.JwtClaimOverride("interactionId", voucherContext.getActualInteractionId()));
         }
 
