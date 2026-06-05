@@ -201,17 +201,14 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
-    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-#    And l'utente tenta di sospende quel descrittore
+    When l'utente è un "admin" di "PA1" con ruolo M2M <role>
+    And l'utente tenta di sospende quel descrittore
     Then si ottiene response status code <statusCode>
     And la versione più recente dell'e-service è in stato "<finalDescriptorState>"
     Examples:
-      | role         | finalDescriptorState | statusCode |
-      | admin        | ARCHIVING_SUSPENDED  | 204        |
-      | api          | ARCHIVING_SUSPENDED  | 204        |
-      | api,security | ARCHIVING_SUSPENDED  | 204        |
-      | support      | ARCHIVING            | 403        |
-      | security     | ARCHIVING            | 403        |
+      | role      | finalDescriptorState | statusCode |
+      | m2m-admin | ARCHIVING_SUSPENDED  | 204        |
+      | m2m       | ARCHIVING            | 403        |
 
   Scenario Outline: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_SUSPENSION_1.2] Un ente erogatore M2M di un e-service in stato ARCHIVING_SUSPENDED è in grado di riattivare l'e-service in questione
     Given l'utente è un "admin" di "PA1"

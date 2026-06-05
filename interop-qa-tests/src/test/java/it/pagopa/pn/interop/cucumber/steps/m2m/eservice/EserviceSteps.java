@@ -184,6 +184,14 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         httpExecutor.performCall(() -> client.cancelScheduleArchiveEService(resolvedEServiceId));
     }
 
+    @When("l'utente tenta di sospende quel descrittore")
+    public void suspendDescriptor() {
+        UUID eserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+
+        httpExecutor.performCall(() -> descriptorClient.suspendDescriptor(eserviceId, descriptorId));
+    }
+
     @When("l'utente tenta di effettuare la riattivazione dell'e-service")
     public void unsuspendEService() {
         UUID eserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
