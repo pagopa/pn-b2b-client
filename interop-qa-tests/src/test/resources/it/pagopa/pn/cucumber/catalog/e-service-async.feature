@@ -102,7 +102,6 @@ Feature: Configurazione e gestione di E-Service per scambi asincroni e massivi
       | REST       | %null        | 10                    | 100          | false        | false | 400            |
       | REST       | 10           | %null                 | 100          | false        | false | 400            |
       | REST       | 10           | 10                    | %null        | false        | false | 400            |
-      # bug PIN-10217
       | REST       | -30          | 10                    | 100          | true         | true  | 400            |
       | REST       | 10           | -30                   | 100          | true         | true  | 400            |
       | REST       | 10           | 30                    | -100         | true         | true  | 400            |
@@ -207,7 +206,6 @@ Feature: Configurazione e gestione di E-Service per scambi asincroni e massivi
       | REST       | 200          | 200                   | 200          | true         | false | 200            |
       | REST       | 200          | 200                   | 200          | false        | true  | 200            |
       | REST       | 200          | 200                   | 200          | true         | true  | 200            |
-      # bug PIN-10217
       | REST       | -30          | 200                   | 200          | true         | true  | 400            |
       | REST       | 200          | 2147483647            | 200          | true         | true  | 200            |
       | SOAP       | %null        | 200                   | 100          | false        | false | 400            |
@@ -218,3 +216,27 @@ Feature: Configurazione e gestione di E-Service per scambi asincroni e massivi
       | SOAP       | 200          | 200                   | 200          | true         | true  | 400            |
       # bug PIN-10214
       | SOAP       | 200          | 200                   | 200          | false        | true  | 400            |
+
+
+  Scenario: [ASYNC_ESERVICE_CALLBACK_INTERFACE_REQUIRED] Fallimento della pubblicazione di un e-service asincrono senza
+    aver caricato un interfaccia di callback.
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service asincrono in stato "DRAFT" con:
+      | technology | REST    |
+      | mode       | DELIVER |
+    And si ottiene response status code 200
+    And l'utente aggiorna alcuni parametri di quel descrittore con:
+      | voucherLifespan                               | 60        |
+      | dailyCallsPerConsumer                         | 50        |
+      | dailyCallsTotal                               | 2000      |
+      | audience                                      | pagopa.it |
+      | agreementApprovalPolicy                       | AUTOMATIC |
+      | asyncExchangeProperties.responseTime          | 100       |
+      | asyncExchangeProperties.resourceAvailableTime | 100       |
+      | asyncExchangeProperties.confirmation          | true      |
+      | asyncExchangeProperties.bulk                  | true      |
+      | asyncExchangeProperties.maxResultSet          | 100       |
+    And si ottiene response status code 200
+    And "PA1" ha già caricato un'interfaccia per quel descrittore
+    And l'utente pubblica l'e-service
+    And si ottiene response status code 400
