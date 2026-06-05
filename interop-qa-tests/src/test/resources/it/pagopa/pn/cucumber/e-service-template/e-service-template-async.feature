@@ -63,9 +63,6 @@ Feature: Configurazione e gestione di template e-service per scambi asincroni e 
       # bug PIN-10214
       | SOAP       | 200          | 200                   | 200          | false        | true  | 400            |
 
-
-  # TODO è possibile modificare la version del template sincrono con gli asyncExchangeProps, ma non dovrebbe essere possibile.
-  # Aprire bug?
   Scenario: [ASYNC_TEMPLATE_ESERVICE_UPDATE_2] Aggiornamento specifiche tecniche di exchange per un e-service
   template sincrono in stato DRAFT.
     Given l'utente è un "admin" di "PA1"
