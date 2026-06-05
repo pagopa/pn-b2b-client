@@ -98,6 +98,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
       | physicalAddress_address | Via@fail_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con responseStatus "OK"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL |
       | details_recIndex           | 0        |
@@ -471,21 +472,19 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
-
   @workflowAnalogico
   Scenario: [B2B_TIMELINE_ANALOG_RIR_2] Attesa elemento di timeline SEND_ANALOG_FEEDBACK_fail_RIR_scenario negativo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario
-      | denomination            | PF non censito   |
-      | taxId                   | STTSGT90A01H501J |
+    And destinatario Utenza con Indirizzo Valido da ANPR e:
       | digitalDomicile         | NULL             |
       | physicalAddress_State   | MESSICO          |
       | physicalAddress_zip     | ZONE_2           |
       | physicalAddress_address | Via@FAIL_RIR     |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRI002"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
       | details                 | NOT_NULL |
@@ -506,27 +505,3 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
       | physicalAddress_address | Via@ok_RIR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRI001"
-
-
-  @workflowAnalogico
-  Scenario: [B2B_TIMELINE_ANALOG_RIR_5] Invio notifica ed attesa elemento di timeline SEND_ANALOG_PROGRESS_deliveryDetailCode "RECRI002" scenario positivo PN-6634
-    Given viene generata una nuova notifica
-      | subject               | notifica analogica con cucumber |
-      | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario
-      | denomination            | PF non censito   |
-      | taxId                   | STTSGT90A01H501J |
-      | digitalDomicile         | NULL             |
-      | physicalAddress_State   | MESSICO          |
-      | physicalAddress_zip     | ZONE_2           |
-      | physicalAddress_address | Via@fail_RIR     |
-
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRI002"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | details                 | NOT_NULL |
-      | details_recIndex        | 0        |
-      | details_sentAttemptMade | 0        |
-      | details_responseStatus  | KO       |
