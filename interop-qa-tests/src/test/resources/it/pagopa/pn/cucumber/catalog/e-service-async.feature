@@ -32,6 +32,20 @@ Feature: Configurazione e gestione di E-Service per scambi asincroni e massivi
       | asyncExchangeProperties.bulk                  | true |
       | asyncExchangeProperties.maxResultSet          | 50   |
 
+
+  Scenario Outline: [ASYNC_ESERVICE_CREATION_1b] La creazione di un e-service in stato DRAFT in modalità asincrona non
+  è consentita per la modalità ricezione
+    Given l'utente è un "admin" di "PA1"
+    When l'utente crea un e-service asincrono "<technology>" in modalità <mode>
+    Then si ottiene response status code <expectedResult>
+
+    Examples:
+      | technology | mode       | expectedResult |
+      | REST       | erogazione | 200            |
+      | REST       | ricezione  | 400            |
+      | SOAP       | erogazione | 200            |
+      | SOAP       | ricezione  | 400            |
+
   Scenario Outline: [ASYNC_ESERVICE_CREATION_2a] Aggiornamento corretto dei parametri asincroni di un e-service
   in DRAFT del descrittore testando diverse combinazioni.
     Given l'utente è un "admin" di "PA1"
