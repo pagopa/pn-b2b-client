@@ -161,6 +161,12 @@ public class M2MV3EserviceDescriptorClientImpl extends AbstractDPoPClient implem
     }
 
     @Override
+    public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor suspendDescriptor(
+        UUID eServiceId, UUID descriptorId) {
+        return vMapper.mapToV2(this.eservicesApi.suspendDescriptor(eServiceId, descriptorId));
+    }
+
+    @Override
     public void unsuspendEService(UUID eServiceId, UUID descriptorId) {
         this.eservicesApi.unsuspendDescriptor(eServiceId, descriptorId);
     }
