@@ -110,3 +110,23 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
       | 9                     |
       | 251                   |
 
+  Scenario Outline: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_CANCELLATION_1.1] L'ente erogatore M2M di un e-service in stato PUBLISHED può annullare il processo di archiviazione manuale di un e-service in corso
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "<initialFirstDescriptorState>"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+#    And viene annullato il processo di archiviazione dell'e-service con id "%actual"
+    Then si ottiene response status code 200
+    And la vecchia versione dell'e-service è in stato "<finalFirstDescriptorState>"
+#    And il processo di archiviazione della vecchia versione dell'e-service è avvenuto con successo
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
+#    And il processo di archiviazione della più recente versione dell'e-service è avvenuto con successo
+
+    Examples:
+      | initialFirstDescriptorState | finalFirstDescriptorState |
+      | PUBLISHED                   | DEPRECATED                |
+      | SUSPENDED                   | SUSPENDED                 |
+
+
