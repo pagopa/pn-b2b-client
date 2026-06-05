@@ -57,10 +57,11 @@ public class EServiceTemplateRiskAnalysisUpdateSteps {
     }
 
     @When("l'utente tenta la modifica della risk analysis dell'e-service template indicandone una coerente con il tenant kind {string}")
-    public void editRiskAnalysisFromEServiceTemplate(String tenant) {
+    public void editRiskAnalysisFromEServiceTemplate(String tenantKind) {
         IdentityService identityService = sharedStepsContext.getIdentityService();
-        String tenantKind = identityService.getKind(tenant);
-        editRiskAnalysisBySupplier(() -> testAssistant.getEServiceRiskAnalysisSeedWithType(tenantKind, true));
+        String tenant = identityService.getTenantTypesByKind(tenantKind).stream()
+                .findFirst().orElseThrow(() -> new IllegalStateException("Nessun tenant type trovato per il tenant kind " + tenantKind));
+        editRiskAnalysisBySupplier(() -> testAssistant.getEServiceRiskAnalysisSeedWithType(tenant, true));
     }
 
     private void editRiskAnalysisBySupplier(Supplier<EServiceTemplateRiskAnalysisSeed> raSupplier) {
