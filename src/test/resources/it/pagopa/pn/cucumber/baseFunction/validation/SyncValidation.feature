@@ -36,7 +36,6 @@ Feature: verifica validazione sincrona
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And viene generata una nuova notifica con uguale codice fiscale del creditore e codice avviso uguale
     And la notifica viene inviata dal "Comune_1" con errore "INVALID_DOCUMENT_KEY_SYNC"
-    #Then l'operazione ha prodotto un errore con status code "400"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "does not contain the expected value: PN_NOTIFICATION_ATTACHMENTS"
 
 
