@@ -7,7 +7,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-#    And viene avviato processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And viene avviato processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     Then si ottiene response status code 200
     And la vecchia versione dell'e-service è in stato "<finalFirstDescriptorState>"
     #    And il processo di archiviazione della vecchia versione dell'e-service è avvenuto con successo
@@ -28,7 +28,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And "PA1" ha già sospeso quell'e-service
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-#    And viene avviato processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And viene avviato processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     Then si ottiene response status code 200
     And la vecchia versione dell'e-service è in stato "<finalFirstDescriptorState>"
     #    And il processo di archiviazione della vecchia versione dell'e-service è avvenuto con successo
@@ -48,7 +48,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-#    And viene avviato processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And viene avviato processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     Then si ottiene response status code 200
     And la vecchia versione dell'e-service è in stato "ARCHIVED"
     And la versione più recente dell'e-service è in stato "ARCHIVING"
@@ -57,7 +57,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m
-#    And viene avviato processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And viene avviato processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     Then si ottiene response status code 403
     And la versione più recente dell'e-service è in stato "PUBLISHED"
 #    And il processo di archiviazione della più recente versione dell'e-service è fallita
@@ -67,7 +67,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene impostato per l'utente un token m2m non valido
-#    And viene avviato processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And viene avviato processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     Then si ottiene response status code 401
     And la versione più recente dell'e-service è in stato "PUBLISHED"
 #    And il processo di archiviazione della più recente versione dell'e-service è fallita
@@ -78,7 +78,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-#    And viene avviato il processo di archiviazione dell'e-service con id "<eserviceId>" e specificando la motivazione "<archivingReason>"
+    And viene avviato processo di archiviazione dell'e-service con id "<eserviceId>" e specificando la motivazione "<archivingReason>"
     Then si ottiene response status code <statusCode>
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     #    And il processo di archiviazione della più vecchia versione dell'e-service è fallita
@@ -99,7 +99,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-#    And viene avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione composta da <archivingReasonLength> caratteri
+    And viene avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione composta da <archivingReasonLength> caratteri
     Then si ottiene response status code 400
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And la versione più recente dell'e-service è in stato "PUBLISHED"
@@ -117,7 +117,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-#    And viene annullato il processo di archiviazione dell'e-service con id "%actual"
+    And viene annullato il processo di archiviazione dell'e-service con id "%actual"
     Then si ottiene response status code 200
     And la vecchia versione dell'e-service è in stato "<finalFirstDescriptorState>"
 #    And il processo di archiviazione della vecchia versione dell'e-service è avvenuto con successo
@@ -137,7 +137,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     And "PA1" ha già sospeso quell'e-service
     And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-#    And viene annullato il processo di archiviazione dell'e-service con id "%actual"
+    And viene annullato il processo di archiviazione dell'e-service con id "%actual"
     Then si ottiene response status code 200
     And la vecchia versione dell'e-service è in stato "<finalFirstDescriptorState>"
 #    And il processo di archiviazione della vecchia versione dell'e-service è avvenuto con successo
@@ -156,7 +156,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-#    And viene annullato il processo di archiviazione dell'e-service con id "%actual"
+    And viene annullato il processo di archiviazione dell'e-service con id "%actual"
     Then si ottiene response status code 200
     And la vecchia versione dell'e-service è in stato "ARCHIVED"
     And la versione più recente dell'e-service è in stato "PUBLISHED"
@@ -166,7 +166,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m
-#    And viene annullato il processo di archiviazione dell'e-service con id "%actual"
+    And viene annullato il processo di archiviazione dell'e-service con id "%actual"
     Then si ottiene response status code 403
     And la versione più recente dell'e-service è in stato "ARCHIVING"
 
@@ -176,7 +176,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene impostato per l'utente un token m2m non valido
-#    And viene annullato il processo di archiviazione dell'e-service con id "%actual"
+    And viene annullato il processo di archiviazione dell'e-service con id "%actual"
     Then si ottiene response status code 401
     And la versione più recente dell'e-service è in stato "ARCHIVING"
 
@@ -187,7 +187,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-#    And viene annullato il processo di archiviazione dell'e-service con id "<eserviceId>"
+    And viene annullato il processo di archiviazione dell'e-service con id "<eserviceId>"
     Then si ottiene response status code <statusCode>
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And la versione più recente dell'e-service è in stato "ARCHIVING"
