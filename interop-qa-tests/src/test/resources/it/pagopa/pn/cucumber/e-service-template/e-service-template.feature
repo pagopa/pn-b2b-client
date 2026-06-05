@@ -3143,6 +3143,7 @@ Feature: Test API of e-service template
     When l'utente aggiorna la descrizione dell'e-service template in stato PUBLISHED con una descrizione di 401 caratteri
     Then si ottiene response status code 400
 
+  @debug
   @sad-path
   @e-service-template-version-activate
   @adeguamento-analisi-rischio
