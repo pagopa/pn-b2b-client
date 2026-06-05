@@ -160,3 +160,12 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     Then si ottiene response status code 200
     And la vecchia versione dell'e-service è in stato "ARCHIVED"
     And la versione più recente dell'e-service è in stato "PUBLISHED"
+
+  Scenario: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_CANCELLATION_1.4] Un utente con ruolo M2M NON può annullare il processo di archiviazione manuale dell'e-service
+    Given l'utente è un "<role>" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m
+#    And viene annullato il processo di archiviazione dell'e-service con id "%actual"
+    Then si ottiene response status code 403
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
