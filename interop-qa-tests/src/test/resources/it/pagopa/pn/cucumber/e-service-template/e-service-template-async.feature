@@ -50,9 +50,7 @@ Feature: Configurazione e gestione di template e-service per scambi asincroni e 
       | REST       | 200          | 200                   | 200          | true         | false | 200            |
       | REST       | 200          | 200                   | 200          | false        | true  | 200            |
       | REST       | 200          | 200                   | 200          | true         | true  | 200            |
-      # bug PIN-10217
       | REST       | -30          | 200                   | 200          | true         | true  | 400            |
-      # "maxResultSet":3000000000 non è possibile utilizzare questo valore per un int32
       | REST       | 200          | 2147483647            | 200          | true         | true  | 200            |
       | SOAP       | %null        | 200                   | 100          | false        | false | 400            |
       | SOAP       | 200          | %null                 | 100          | false        | false | 400            |
@@ -99,7 +97,8 @@ Feature: Configurazione e gestione di template e-service per scambi asincroni e 
     And l'utente effettua la creazione di un nuovo e-service a partire dal template con successo indicando solo le specifiche strettamente necessarie e impostando l'e-service come sincrono
     And si ottiene status code 400
 
-  Scenario Outline: [ASYNC_TEMPLATE_ESERVICE_UPDATE_4] ...
+  Scenario Outline: [ASYNC_TEMPLATE_ESERVICE_UPDATE_4] Aggiornamento delle specifiche tecniche di scambio asincrono su
+  un'istanza di e-service creata da un template pubblicato.
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template asincrono in modalità erogazione con tecnologia "<technology>" in stato di DRAFT
     And si ottiene response status code 200
@@ -130,6 +129,24 @@ Feature: Configurazione e gestione di template e-service per scambi asincroni e 
     Examples:
       | technology | responseTime | resourceAvailableTime | maxResultSet | confirmation | bulk  | expectedResult |
       | REST       | 200          | 200                   | 100          | false        | false | 200            |
-      # | REST       | :null        | 200                   | 100          | false        | false | 400            |
-      # | REST       | 200          | :null                 | 100          | false        | false | 400            |
-      # | REST       | 200          | 200                   | :null        | false        | false | 400            |
+      | REST       | :null        | 200                   | 100          | false        | false | 400            |
+      | REST       | 200          | :null                 | 100          | false        | false | 400            |
+      | REST       | 200          | 200                   | :null        | false        | false | 400            |
+
+  Scenario: [ASYNC_TEMPLATE_ESERVICE_UPDATE_5] La pubblicazione di un e-service template fallisce se non viene
+  specificata l'interfaccia di callback.
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template asincrono in modalità erogazione con tecnologia "REST" in stato di DRAFT
+    And si ottiene response status code 200
+    And l'e-service template creato è configurato come asincrono
+    And l'utente modifica la versione dell'e-service template con:
+      | voucherLifespan                               | 6000 |
+      | asyncExchangeProperties.responseTime          | 100  |
+      | asyncExchangeProperties.resourceAvailableTime | 100  |
+      | asyncExchangeProperties.maxResultSet          | 100  |
+      | asyncExchangeProperties.confirmation          | true |
+      | asyncExchangeProperties.bulk                  | true |
+    And si ottiene status code 200
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+    And l'utente effettua la pubblicazione dell'e-service template
+    And si ottiene status code 400
