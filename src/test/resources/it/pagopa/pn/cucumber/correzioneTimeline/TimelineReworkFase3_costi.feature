@@ -6,16 +6,16 @@ Feature: Correzione timeline fase 3 costi
   Scenario: [TR3_PAYMENTS_RESTART_1_MONOPAY]
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
-      | subject               | test costi notifica fase 5 |
-      | physicalCommunication | AR_REGISTERED_LETTER       |
-      | senderDenomination    | Comune di palermo          |
-      | pagoPaIntMode         | ASYNC                      |
-      | feePolicy             | DELIVERY_MODE              |
-      | paFee                 | 17                         |
-      | vat                   | 10                         |
+      | subject               | test costi restart   |
+      | physicalCommunication | AR_REGISTERED_LETTER |
+      | senderDenomination    | Comune di palermo    |
+      | pagoPaIntMode         | ASYNC                |
+      | feePolicy             | DELIVERY_MODE        |
+      | paFee                 | 17                   |
+      | vat                   | 10                   |
     And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                    |
-      | physicalAddress_address      | Via@OK_890              |
+      | physicalAddress_address      | Via@OK_AR               |
       | physicalAddress_municipality | LAGO PATRIA             |
       | physicalAddress_zip          | 80014                   |
       | physicalAddress_province     | NA                      |
@@ -47,16 +47,16 @@ Feature: Correzione timeline fase 3 costi
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
-      | subject               | test costi notifica fase 5 |
-      | physicalCommunication | AR_REGISTERED_LETTER       |
-      | senderDenomination    | Comune di palermo          |
-      | pagoPaIntMode         | ASYNC                      |
-      | feePolicy             | DELIVERY_MODE              |
-      | paFee                 | 17                         |
-      | vat                   | 10                         |
+      | subject               | test costi restart   |
+      | physicalCommunication | AR_REGISTERED_LETTER |
+      | senderDenomination    | Comune di palermo    |
+      | pagoPaIntMode         | ASYNC                |
+      | feePolicy             | DELIVERY_MODE        |
+      | paFee                 | 17                   |
+      | vat                   | 10                   |
     And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                    |
-      | physicalAddress_address      | Via@OK_890              |
+      | physicalAddress_address      | Via@OK_AR               |
       | physicalAddress_municipality | LAGO PATRIA             |
       | physicalAddress_zip          | 80014                   |
       | physicalAddress_province     | NA                      |
@@ -90,16 +90,16 @@ Feature: Correzione timeline fase 3 costi
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
-      | subject               | test costi notifica fase 5 |
-      | physicalCommunication | AR_REGISTERED_LETTER       |
-      | senderDenomination    | Comune di palermo          |
-      | pagoPaIntMode         | ASYNC                      |
-      | feePolicy             | DELIVERY_MODE              |
-      | paFee                 | 17                         |
-      | vat                   | 10                         |
+      | subject               | test costi restart   |
+      | physicalCommunication | AR_REGISTERED_LETTER |
+      | senderDenomination    | Comune di palermo    |
+      | pagoPaIntMode         | ASYNC                |
+      | feePolicy             | DELIVERY_MODE        |
+      | paFee                 | 17                   |
+      | vat                   | 10                   |
     And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                    |
-      | physicalAddress_address      | Via@FAIL_DECEDUTO_890   |
+      | physicalAddress_address      | Via@FAIL_DECEDUTO_AR    |
       | physicalAddress_municipality | LAGO PATRIA             |
       | physicalAddress_zip          | 80014                   |
       | physicalAddress_province     | NA                      |
@@ -127,13 +127,13 @@ Feature: Correzione timeline fase 3 costi
   @timelineReworkF3_costi #11.4
   Scenario Outline: [TR3_PAYMENTS_RESTART_4_FLATRATE_SYNC] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al restart
     Given viene generata una nuova notifica
-      | subject               | test costi notifica fase 5 |
-      | physicalCommunication | AR_REGISTERED_LETTER       |
-      | senderDenomination    | Comune di palermo          |
-      | pagoPaIntMode         | SYNC                       |
-      | feePolicy             | FLAT_RATE                  |
-      | paFee                 | 17                         |
-      | vat                   | 10                         |
+      | subject               | test costi restart   |
+      | physicalCommunication | AR_REGISTERED_LETTER |
+      | senderDenomination    | Comune di palermo    |
+      | pagoPaIntMode         | SYNC                 |
+      | feePolicy             | FLAT_RATE            |
+      | paFee                 | 17                   |
+      | vat                   | 10                   |
     And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                       |
       | physicalAddress_address      | <sequence>                 |
@@ -161,24 +161,24 @@ Feature: Correzione timeline fase 3 costi
     And verifico che post restart per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attemptRestart>
     And il baseCost è uguale rispetto a prima del rework
     Examples:
-      | sequence                           | finalEvent                         | finalStatus        | attempt | finalEventRestart                  | finalStatusRestart | attemptRestart |
-      | Via@OK_890                         | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              |
-      | Via@FAIL-DISCOVERY_890             | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
-      | Via@FAIL_DECEDUTO_890              | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              |
-      | Via@FAIL-DISCOVERYIRREPERIBILE_890 | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+      | sequence                          | finalEvent                         | finalStatus        | attempt | finalEventRestart                  | finalStatusRestart | attemptRestart |
+      | Via@OK_AR                         | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              |
+      | Via@FAIL-DISCOVERY_AR             | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+      | Via@FAIL_DECEDUTO_AR              | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              |
+      | Via@FAIL-DISCOVERYIRREPERIBILE_AR | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
       #TODO ADD ALL SEQUENCES ONCE THEY ARE CREATED
 
   @timelineReworkF3_costi #11.5
   Scenario Outline: [TR3_PAYMENTS_RESTART_5_FLATRATE_ASYNC] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate async) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al restart
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
-      | subject               | test costi notifica fase 5 |
-      | physicalCommunication | AR_REGISTERED_LETTER       |
-      | senderDenomination    | Comune di palermo          |
-      | pagoPaIntMode         | ASYNC                      |
-      | feePolicy             | FLAT_RATE                  |
-      | paFee                 | 17                         |
-      | vat                   | 10                         |
+      | subject               | test costi restart   |
+      | physicalCommunication | AR_REGISTERED_LETTER |
+      | senderDenomination    | Comune di palermo    |
+      | pagoPaIntMode         | ASYNC                |
+      | feePolicy             | FLAT_RATE            |
+      | paFee                 | 17                   |
+      | vat                   | 10                   |
     And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                        |
       | physicalAddress_address      | <sequence>                  |
@@ -207,23 +207,23 @@ Feature: Correzione timeline fase 3 costi
     And verifico che post restart per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attemptRestart>
     And il baseCost è uguale rispetto a prima del rework
     Examples:
-      | sequence                           | finalEvent                         | finalStatus        | attempt | finalEventRestart                  | finalStatusRestart | attemptRestart |
-      | Via@OK_890                         | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              |
-      | Via@FAIL-DISCOVERY_890             | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
-      | Via@FAIL_DECEDUTO_890              | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              |
-      | Via@FAIL-DISCOVERYIRREPERIBILE_890 | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+      | sequence                          | finalEvent                         | finalStatus        | attempt | finalEventRestart                  | finalStatusRestart | attemptRestart |
+      | Via@OK_AR                         | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              |
+      | Via@FAIL-DISCOVERY_AR             | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+      | Via@FAIL_DECEDUTO_AR              | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              |
+      | Via@FAIL-DISCOVERYIRREPERIBILE_AR | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
       #TODO ADD ALL SEQUENCES ONCE THEY ARE CREATED
 
   @timelineReworkF3_costi #11.6 dopo restart il baseCost non cambia, costi supplementari potrebbero cambiare
   Scenario Outline: [TR3_PAYMENTS_RESTART_6_DELIVERY_MODE_SYNC] Invio di una notifica mono-destinatario con pagamento/i PagoPA(delivery mode sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al restart
     Given viene generata una nuova notifica
-      | subject               | test costi notifica fase 5 |
-      | physicalCommunication | AR_REGISTERED_LETTER       |
-      | senderDenomination    | Comune di palermo          |
-      | pagoPaIntMode         | SYNC                       |
-      | feePolicy             | DELIVERY_MODE              |
-      | paFee                 | 17                         |
-      | vat                   | 10                         |
+      | subject               | test costi restart   |
+      | physicalCommunication | AR_REGISTERED_LETTER |
+      | senderDenomination    | Comune di palermo    |
+      | pagoPaIntMode         | SYNC                 |
+      | feePolicy             | DELIVERY_MODE        |
+      | paFee                 | 17                   |
+      | vat                   | 10                   |
     And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                    |
       | physicalAddress_address      | <sequence>              |
@@ -254,11 +254,11 @@ Feature: Correzione timeline fase 3 costi
     And verifico che post restart per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt <attemptRestart>
     And il baseCost è uguale rispetto a prima del rework
     Examples:
-      | sequence                           | finalEvent                         | finalStatus        | attempt | finalEventRestart                  | finalStatusRestart | attemptRestart | deliveryCostEqual |
-      | Via@OK_890                         | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              | uguale            |
-      | Via@FAIL-DISCOVERY_890             | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              | uguale            |
-      | Via@FAIL_DECEDUTO_890              | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              | uguale            |
-      | Via@FAIL-DISCOVERYIRREPERIBILE_890 | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              | uguale            |
+      | sequence                          | finalEvent                         | finalStatus        | attempt | finalEventRestart                  | finalStatusRestart | attemptRestart | deliveryCostEqual |
+      | Via@OK_AR                         | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              | uguale            |
+      | Via@FAIL-DISCOVERY_AR             | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              | uguale            |
+      | Via@FAIL_DECEDUTO_AR              | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              | uguale            |
+      | Via@FAIL-DISCOVERYIRREPERIBILE_AR | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              | uguale            |
       #TODO ADD ALL SEQUENCES ONCE THEY ARE CREATED
 
     # il baseCost cambia
@@ -267,13 +267,13 @@ Feature: Correzione timeline fase 3 costi
   Scenario Outline: [TR3_PAYMENTS_RESTART_7_DELIVERY_MODE_ASYNC] Invio di una notifica mono-destinatario con pagamento/i PagoPA(delivery mode async) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al restart
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
-      | subject               | test costi notifica fase 5 |
-      | physicalCommunication | AR_REGISTERED_LETTER       |
-      | senderDenomination    | Comune di palermo          |
-      | pagoPaIntMode         | ASYNC                      |
-      | feePolicy             | DELIVERY_MODE              |
-      | paFee                 | 17                         |
-      | vat                   | 10                         |
+      | subject               | test costi restart   |
+      | physicalCommunication | AR_REGISTERED_LETTER |
+      | senderDenomination    | Comune di palermo    |
+      | pagoPaIntMode         | ASYNC                |
+      | feePolicy             | DELIVERY_MODE        |
+      | paFee                 | 17                   |
+      | vat                   | 10                   |
     And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                     |
       | physicalAddress_address      | <sequence>               |
@@ -302,9 +302,9 @@ Feature: Correzione timeline fase 3 costi
     And verifico che post restart per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attemptRestart>
     And il baseCost è <baseCostEqual> rispetto a prima del rework
     Examples:
-      | sequence                           | finalEvent                         | finalStatus        | attempt | finalEventRestart                  | finalStatusRestart | attemptRestart | baseCostEqual |
-      | Via@OK_890                         | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              | uguale        |
-      | Via@FAIL-DISCOVERY_890             | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              | uguale        |
-      | Via@FAIL_DECEDUTO_890              | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              | uguale        |
-      | Via@FAIL-DISCOVERYIRREPERIBILE_890 | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              | uguale        |
+      | sequence                          | finalEvent                         | finalStatus        | attempt | finalEventRestart                  | finalStatusRestart | attemptRestart | baseCostEqual |
+      | Via@OK_AR                         | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              | uguale        |
+      | Via@FAIL-DISCOVERY_AR             | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              | uguale        |
+      | Via@FAIL_DECEDUTO_AR              | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              | uguale        |
+      | Via@FAIL-DISCOVERYIRREPERIBILE_AR | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              | uguale        |
       #TODO ADD ALL SEQUENCES ONCE THEY ARE CREATED

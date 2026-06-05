@@ -5,13 +5,13 @@ Feature: Correzione timeline fase 2 costi
   @timelineReworkF3_costi #11.9
   Scenario Outline: [TR3_PAYMENTS_REWORK_9_FLATRATE_SYNC] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene generata una nuova notifica
-      | subject               | test costi notifica fase 5 |
-      | physicalCommunication | AR_REGISTERED_LETTER       |
-      | senderDenomination    | Comune di palermo          |
-      | pagoPaIntMode         | SYNC                       |
-      | feePolicy             | FLAT_RATE                  |
-      | paFee                 | 17                         |
-      | vat                   | 10                         |
+      | subject               | test costi rework    |
+      | physicalCommunication | AR_REGISTERED_LETTER |
+      | senderDenomination    | Comune di palermo    |
+      | pagoPaIntMode         | SYNC                 |
+      | feePolicy             | FLAT_RATE            |
+      | paFee                 | 17                   |
+      | vat                   | 10                   |
     And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                       |
       | physicalAddress_address      | <sequence>                 |
@@ -65,13 +65,13 @@ Feature: Correzione timeline fase 2 costi
   Scenario Outline: [TR3_PAYMENTS_REWORK_10_FLATRATE_ASYNC] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate async) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
-      | subject               | test costi notifica fase 5 |
-      | physicalCommunication | AR_REGISTERED_LETTER       |
-      | senderDenomination    | Comune di palermo          |
-      | pagoPaIntMode         | ASYNC                      |
-      | feePolicy             | FLAT_RATE                  |
-      | paFee                 | 17                         |
-      | vat                   | 10                         |
+      | subject               | test costi rework    |
+      | physicalCommunication | AR_REGISTERED_LETTER |
+      | senderDenomination    | Comune di palermo    |
+      | pagoPaIntMode         | ASYNC                |
+      | feePolicy             | FLAT_RATE            |
+      | paFee                 | 17                   |
+      | vat                   | 10                   |
     And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                        |
       | physicalAddress_address      | <sequence>                  |
@@ -125,13 +125,13 @@ Feature: Correzione timeline fase 2 costi
   @timelineReworkF3_costi #11.11 dopo restart il baseCost non cambia, costi supplementari si
   Scenario Outline: [TR3_PAYMENTS_REWORK_11_DELIVERY_MODE_SYNC] Invio di una notifica mono-destinatario con pagamento/i PagoPA(delivery mode sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene generata una nuova notifica
-      | subject               | test costi notifica fase 5 |
-      | physicalCommunication | AR_REGISTERED_LETTER       |
-      | senderDenomination    | Comune di palermo          |
-      | pagoPaIntMode         | SYNC                       |
-      | feePolicy             | DELIVERY_MODE              |
-      | paFee                 | 17                         |
-      | vat                   | 10                         |
+      | subject               | test costi rework    |
+      | physicalCommunication | AR_REGISTERED_LETTER |
+      | senderDenomination    | Comune di palermo    |
+      | pagoPaIntMode         | SYNC                 |
+      | feePolicy             | DELIVERY_MODE        |
+      | paFee                 | 17                   |
+      | vat                   | 10                   |
     And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                    |
       | physicalAddress_address      | <sequence>              |
@@ -190,13 +190,13 @@ Feature: Correzione timeline fase 2 costi
   Scenario Outline: [TR3_PAYMENTS_REWORK_12_DELIVERY_MODE_ASYNC] Invio di una notifica mono-destinatario con pagamento/i PagoPA(delivery mode async) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
-      | subject               | test costi notifica fase 5 |
-      | physicalCommunication | AR_REGISTERED_LETTER       |
-      | senderDenomination    | Comune di palermo          |
-      | pagoPaIntMode         | ASYNC                      |
-      | feePolicy             | DELIVERY_MODE              |
-      | paFee                 | 17                         |
-      | vat                   | 10                         |
+      | subject               | test costi rework    |
+      | physicalCommunication | AR_REGISTERED_LETTER |
+      | senderDenomination    | Comune di palermo    |
+      | pagoPaIntMode         | ASYNC                |
+      | feePolicy             | DELIVERY_MODE        |
+      | paFee                 | 17                   |
+      | vat                   | 10                   |
     And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                     |
       | physicalAddress_address      | <sequence>               |
