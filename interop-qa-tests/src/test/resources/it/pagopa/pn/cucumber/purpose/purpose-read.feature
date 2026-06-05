@@ -88,10 +88,10 @@ Feature: Lettura singola finalità
     And il tenant kind dell'ente "<ente>" viene impostato a "<kind>"
     When l'utente è un "admin" di "<ente>"
     And l'utente richiede la lettura della finalità
-    Then si ottiene status code 200 ma l'analisi del rischio solo per admin
+    Then si ottiene status code 200
     When l'utente è un "api" di "<ente>"
     And l'utente richiede la lettura della finalità
-    Then si ottiene status code 200 ma l'analisi del rischio solo per admin
+    Then si ottiene status code 200
     Examples:
       | ente    | kind        |
       | PA4     | PRIVATE     |
