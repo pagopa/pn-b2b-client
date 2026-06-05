@@ -445,6 +445,12 @@ public class TimelineReworkSteps {
         }
     }
 
+    @Then("viene invocato il consolidatore con i seguenti dati:")
+    public void invokeConsolidatorCustomFromDataTable(DataTable params) {
+        Map<String, String> inputData = params.asMaps().get(0);
+        invokeConsolidatorCustomFromMap(inputData);
+    }
+
     @When("viene invocato il consolidatore per inserire tutti gli eventi previsti per il destinatario {int} che portano allo status code {string} al tentativo {int}")
     public void invokeConsolidatorForAllEvents(int recIndex, String expectedStatusCode, int attempt) {
         List<Map<String, String>> mapsList = buildDataTableListForMultipleConsolidatorCalls(recIndex, expectedStatusCode, attempt);
@@ -453,30 +459,7 @@ public class TimelineReworkSteps {
         }
     }
 
-    @Then("viene invocato il consolidatore con i seguenti dati:")
-    public void invokeConsolidatorCustomFromDataTable(DataTable params) {
-        Map<String, String> inputData = params.asMaps().get(0);
-        Map<String, Object> mapInfo = populateConsolidatoreMapCustom(inputData);
-        String body = Assertions.assertDoesNotThrow(
-                () -> sharedSteps.getPnExternalServiceClient()
-                        .pushConsolidatoreNotificationAttach(mapInfo),
-                () -> String.format(
-                        "Chiamata al consolidatore fallita | IUN=%s",
-                        mapInfo.get("iun")
-                )
-        );
-        Assertions.assertFalse(
-                body.contains("\"resultCode\":\"500") || body.contains("\"resultCode\":\"403"),
-                () -> String.format(
-                        "Errore applicativo dal consolidatore | IUN=%s | body=%s",
-                        mapInfo.get("iun"),
-                        body
-                )
-        );
-    }
-
     private void invokeConsolidatorCustomFromMap(Map<String, String> map) {
-//        Map<String, String> inputData = params.asMaps().get(0);
         Map<String, Object> mapInfo = populateConsolidatoreMapCustom(map);
         String body = Assertions.assertDoesNotThrow(
                 () -> sharedSteps.getPnExternalServiceClient()
@@ -504,9 +487,6 @@ public class TimelineReworkSteps {
         defaultMap.put("attemptId", "ATTEMPT_0");
         defaultMap.put("pcRetry", "PCRETRY_0");
         defaultMap.put("recIndex", recIndex == 0 ? "RECINDEX_0" : "RECINDEX_1");
-        defaultMap.put("deliveryFailureCause", "");
-        defaultMap.put("attachment_1", "");
-        defaultMap.put("attachment_2", "");
 
         switch (expectedStatusCode) {
             case "RECRN002C" -> {

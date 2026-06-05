@@ -85,7 +85,7 @@ Feature: Correzione timeline fase 3 costi
       | details          | NOT_NULL |
       | details_recIndex | 0        |
 
-  @timelineReworkF3_costi #11.3 ??? attemptId = ATTEMPT_0 in KO per destinatario deceduto
+  #@timelineReworkF3_costi #11.3 ??? attemptId = ATTEMPT_0 in KO per destinatario deceduto DIVENTA MANUALE
   Scenario: [TR3_PAYMENTS_RESTART_3_MIXED_APPLY_COST]
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
@@ -161,11 +161,23 @@ Feature: Correzione timeline fase 3 costi
     And verifico che post restart per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attemptRestart>
     And il baseCost è uguale rispetto a prima del rework
     Examples:
-      | sequence                          | finalEvent                         | finalStatus        | attempt | finalEventRestart                  | finalStatusRestart | attemptRestart |
-      | Via@OK_AR                         | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              |
-      | Via@FAIL-DISCOVERY_AR             | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
-      | Via@FAIL_DECEDUTO_AR              | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              |
-      | Via@FAIL-DISCOVERYIRREPERIBILE_AR | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+      | sequence                                             | finalEvent                         | finalStatus        | attempt | finalEventRestart                  | finalStatusRestart | attemptRestart |
+      | Via@FAIL_DECEDUTO_AR                                 | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              |
+      | Via@OK_DECEDUTO_RESTART_CONS_AR                      | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              |
+      | Via@DECEDUTO_RESTART_CONS_ATT1_AR                    | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+      | Via@DECEDUTO_RESTART_IRREPERIBILE_AR                 | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+      | Via@OK_AR                                            | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              |
+      | Via@OK_RESTART_CONS_ATT1_AR                          | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+      | Via@OK_RESTART_IRREPERIBILE_AR                       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+      | Via@OK_RESTART_DECEDUTO_AR                           | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              |
+      | Via@FAIL-DISCOVERY_AR                                | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+      | Via@FAIL_DISCOVERY_RESTART_CONS_AR                   | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              |
+      | Via@FAIL_DISCOVERY_RESTART_IRREPERIBILE_AR           | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+      | Via@FAIL_DISCOVERY_RESTART_DECEDUTO_AR               | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              |
+      | Via@FAIL-DISCOVERYIRREPERIBILE_AR                    | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+      | Via@FAIL_DISCOVERY_IRREPERIBILE_RESTART_CONS_AR      | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              |
+      | Via@FAIL_DISCOVERY_IRREPERIBILE_RESTART_CONS_ATT1_AR | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+      | Via@FAIL_DISCOVERY_IRRERERIBILE_RESTART_DECEDUTO_AR  | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              |
       #TODO ADD ALL SEQUENCES ONCE THEY ARE CREATED
 
   @timelineReworkF3_costi #11.5
@@ -207,11 +219,23 @@ Feature: Correzione timeline fase 3 costi
     And verifico che post restart per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attemptRestart>
     And il baseCost è uguale rispetto a prima del rework
     Examples:
-      | sequence                          | finalEvent                         | finalStatus        | attempt | finalEventRestart                  | finalStatusRestart | attemptRestart |
-      | Via@OK_AR                         | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              |
-      | Via@FAIL-DISCOVERY_AR             | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
-      | Via@FAIL_DECEDUTO_AR              | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              |
-      | Via@FAIL-DISCOVERYIRREPERIBILE_AR | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+      | sequence                                             | finalEvent                         | finalStatus        | attempt | finalEventRestart                  | finalStatusRestart | attemptRestart |
+      | Via@FAIL_DECEDUTO_AR                                 | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              |
+      | Via@OK_DECEDUTO_RESTART_CONS_AR                      | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              |
+      | Via@DECEDUTO_RESTART_CONS_ATT1_AR                    | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+      | Via@DECEDUTO_RESTART_IRREPERIBILE_AR                 | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+      | Via@OK_AR                                            | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              |
+      | Via@OK_RESTART_CONS_ATT1_AR                          | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+      | Via@OK_RESTART_IRREPERIBILE_AR                       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+      | Via@OK_RESTART_DECEDUTO_AR                           | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              |
+      | Via@FAIL-DISCOVERY_AR                                | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+      | Via@FAIL_DISCOVERY_RESTART_CONS_AR                   | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              |
+      | Via@FAIL_DISCOVERY_RESTART_IRREPERIBILE_AR           | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+      | Via@FAIL_DISCOVERY_RESTART_DECEDUTO_AR               | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              |
+      | Via@FAIL-DISCOVERYIRREPERIBILE_AR                    | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+      | Via@FAIL_DISCOVERY_IRREPERIBILE_RESTART_CONS_AR      | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              |
+      | Via@FAIL_DISCOVERY_IRREPERIBILE_RESTART_CONS_ATT1_AR | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+      | Via@FAIL_DISCOVERY_IRRERERIBILE_RESTART_DECEDUTO_AR  | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              |
       #TODO ADD ALL SEQUENCES ONCE THEY ARE CREATED
 
   @timelineReworkF3_costi #11.6 dopo restart il baseCost non cambia, costi supplementari potrebbero cambiare
@@ -254,11 +278,23 @@ Feature: Correzione timeline fase 3 costi
     And verifico che post restart per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt <attemptRestart>
     And il baseCost è uguale rispetto a prima del rework
     Examples:
-      | sequence                          | finalEvent                         | finalStatus        | attempt | finalEventRestart                  | finalStatusRestart | attemptRestart | deliveryCostEqual |
-      | Via@OK_AR                         | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              | uguale            |
-      | Via@FAIL-DISCOVERY_AR             | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              | uguale            |
-      | Via@FAIL_DECEDUTO_AR              | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              | uguale            |
-      | Via@FAIL-DISCOVERYIRREPERIBILE_AR | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              | uguale            |
+      | sequence                                             | finalEvent                         | finalStatus        | attempt | finalEventRestart                  | finalStatusRestart | attemptRestart | deliveryCostEqual |
+      | Via@FAIL_DECEDUTO_AR                                 | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              | uguale            |
+      | Via@OK_DECEDUTO_RESTART_CONS_AR                      | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              | differente        |
+      | Via@DECEDUTO_RESTART_CONS_ATT1_AR                    | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              | differente        |
+      | Via@DECEDUTO_RESTART_IRREPERIBILE_AR                 | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              | differente        |
+      | Via@OK_AR                                            | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              | uguale            |
+      | Via@OK_RESTART_CONS_ATT1_AR                          | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              | differente        |
+      | Via@OK_RESTART_IRREPERIBILE_AR                       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              | differente        |
+      | Via@OK_RESTART_DECEDUTO_AR                           | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              | differente        |
+      | Via@FAIL-DISCOVERY_AR                                | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              | uguale            |
+      | Via@FAIL_DISCOVERY_RESTART_CONS_AR                   | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              | differente        |
+      | Via@FAIL_DISCOVERY_RESTART_IRREPERIBILE_AR           | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              | differente        |
+      | Via@FAIL_DISCOVERY_RESTART_DECEDUTO_AR               | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              | differente        |
+      | Via@FAIL-DISCOVERYIRREPERIBILE_AR                    | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              | uguale            |
+      | Via@FAIL_DISCOVERY_IRREPERIBILE_RESTART_CONS_AR      | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              | differente        |
+      | Via@FAIL_DISCOVERY_IRREPERIBILE_RESTART_CONS_ATT1_AR | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              | differente        |
+      | Via@FAIL_DISCOVERY_IRRERERIBILE_RESTART_DECEDUTO_AR  | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              | differente        |
       #TODO ADD ALL SEQUENCES ONCE THEY ARE CREATED
 
     # il baseCost cambia
@@ -302,9 +338,21 @@ Feature: Correzione timeline fase 3 costi
     And verifico che post restart per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attemptRestart>
     And il baseCost è <baseCostEqual> rispetto a prima del rework
     Examples:
-      | sequence                          | finalEvent                         | finalStatus        | attempt | finalEventRestart                  | finalStatusRestart | attemptRestart | baseCostEqual |
-      | Via@OK_AR                         | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              | uguale        |
-      | Via@FAIL-DISCOVERY_AR             | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              | uguale        |
-      | Via@FAIL_DECEDUTO_AR              | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              | uguale        |
-      | Via@FAIL-DISCOVERYIRREPERIBILE_AR | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              | uguale        |
+      | sequence                                             | finalEvent                         | finalStatus        | attempt | finalEventRestart                  | finalStatusRestart | attemptRestart | baseCostEqual |
+      | Via@FAIL_DECEDUTO_AR                                 | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              | uguale        |
+      | Via@OK_DECEDUTO_RESTART_CONS_AR                      | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              | differente    |
+      | Via@DECEDUTO_RESTART_CONS_ATT1_AR                    | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              | differente    |
+      | Via@DECEDUTO_RESTART_IRREPERIBILE_AR                 | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              | differente    |
+      | Via@OK_AR                                            | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              | uguale        |
+      | Via@OK_RESTART_CONS_ATT1_AR                          | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              | differente    |
+      | Via@OK_RESTART_IRREPERIBILE_AR                       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              | differente    |
+      | Via@OK_RESTART_DECEDUTO_AR                           | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              | differente    |
+      | Via@FAIL-DISCOVERY_AR                                | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              | uguale        |
+      | Via@FAIL_DISCOVERY_RESTART_CONS_AR                   | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              | differente    |
+      | Via@FAIL_DISCOVERY_RESTART_IRREPERIBILE_AR           | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              | differente    |
+      | Via@FAIL_DISCOVERY_RESTART_DECEDUTO_AR               | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              | differente    |
+      | Via@FAIL-DISCOVERYIRREPERIBILE_AR                    | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              | uguale        |
+      | Via@FAIL_DISCOVERY_IRREPERIBILE_RESTART_CONS_AR      | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              | differente    |
+      | Via@FAIL_DISCOVERY_IRREPERIBILE_RESTART_CONS_ATT1_AR | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              | differente    |
+      | Via@FAIL_DISCOVERY_IRRERERIBILE_RESTART_DECEDUTO_AR  | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              | differente    |
       #TODO ADD ALL SEQUENCES ONCE THEY ARE CREATED
