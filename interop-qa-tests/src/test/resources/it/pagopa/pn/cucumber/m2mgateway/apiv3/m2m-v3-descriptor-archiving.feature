@@ -78,7 +78,7 @@ Feature: Archiviazione manuale di un descrittore
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-#    And l'utente tenta di annullare il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
+    And l'utente tenta di annullare il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
     Then si ottiene response status code 200
     And la vecchia versione dell'e-service è in stato "<finalDescriptorState>"
     #    And il processo di archiviazione della vecchia versione dell'e-service è stato annullato con successo
@@ -96,7 +96,7 @@ Feature: Archiviazione manuale di un descrittore
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m
-#    And l'utente tenta di annullare il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
+    And l'utente tenta di annullare il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
     Then si ottiene response status code 403
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
 
@@ -108,7 +108,7 @@ Feature: Archiviazione manuale di un descrittore
     And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene impostato per l'utente un token m2m non valido
-#    And l'utente tenta di annullare il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
+    And l'utente tenta di annullare il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
     Then si ottiene response status code 401
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
 
@@ -119,7 +119,7 @@ Feature: Archiviazione manuale di un descrittore
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-#    And l'utente tenta di annullare il processo di archiviazione della vecchia versione con id "<descriptorId>" dell'e-service con id "<eserviceId>"
+    And l'utente tenta di annullare il processo di archiviazione della vecchia versione con id "<descriptorId>" dell'e-service con id "<eserviceId>"
     Then si ottiene response status code <statusCode>
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
 

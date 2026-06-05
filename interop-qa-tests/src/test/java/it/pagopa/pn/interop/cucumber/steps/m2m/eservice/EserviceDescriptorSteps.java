@@ -161,6 +161,15 @@ public class EserviceDescriptorSteps extends AbstractCommonSteps<EServiceDescrip
                 () -> client.scheduleArchiveEServiceDescriptor(eServiceId, descriptorId));
     }
 
+    @When("l'utente tenta di annullare il processo di archiviazione della vecchia versione con id {string} dell'e-service con id {string}")
+    public void cancelOldDescriptorArchiving(String descriptorId, String eServiceId) {
+        UUID resolvedDescriptorId = catalogResolver.resolveOldDescriptorId(descriptorId);
+        UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
+
+        sharedStepsContext.getHttpCallExecutor().performCall(
+            () -> client.cancelEServiceDescriptorArchiving(resolvedEServiceId, resolvedDescriptorId));
+    }
+
     @Override
     public void bindActual(SharedStepsContext context, List<EServiceDescriptor> actualEntities) {
         var eserviceContext = this.sharedStepsContext.getEServicesCommonContext();
