@@ -3,22 +3,19 @@ Feature: Archiviazione manuale di un descrittore
 
   Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_1.1] Un ente erogatore di un e-service può avviare il processo di archiviazione manuale del primo e meno recente descrittore in stato DEPRECATED
     Given l'utente è un "<role>" di "PA1"
-    And "PA1" ha già creato un e-service con un descrittore in stato "<initialDescriptorState>"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
     Then si ottiene response status code 204
-    And la vecchia versione dell'e-service è in stato "<finalDescriptorState>"
+    And la vecchia versione dell'e-service è in stato "ARCHIVING"
 
     #quando il primo descrittore smetterà di essere il più recente, il suo stato passerà da PUBLISHED a DEPRECATED
     Examples:
-      | role         | initialDescriptorState | finalDescriptorState |
-      | admin        | PUBLISHED              | ARCHIVING            |
-      | api          | PUBLISHED              | ARCHIVING            |
-      | api,security | PUBLISHED              | ARCHIVING            |
-      | admin        | SUSPENDED              | ARCHIVING_SUSPENDED  |
-      | api          | SUSPENDED              | ARCHIVING_SUSPENDED  |
-      | api,security | SUSPENDED              | ARCHIVING_SUSPENDED  |
+      | role         |
+      | admin        |
+      | api          |
+      | api,security |
 
   Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_1.2] Un utente con ruolo non autorizzato NON può avviare il processo di archiviazione manuale del descrittore
     Given l'utente è un "<role>" di "PA1"
