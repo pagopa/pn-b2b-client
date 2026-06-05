@@ -7,7 +7,7 @@ Feature: Archiviazione manuale di un descrittore
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-#    And l'utente avvia il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
+    And l'utente avvia il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
     Then si ottiene response status code 200
 #    Controllo dei valori nella risposta :
 #    And il processo di archiviazione della vecchia versione dell'e-service è avvenuto con successo
@@ -25,7 +25,7 @@ Feature: Archiviazione manuale di un descrittore
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m
-#    And l'utente avvia il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
+    And l'utente avvia il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
     Then si ottiene response status code 403
 #    And il processo di archiviazione della vecchia versione dell'e-service è fallito
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
@@ -37,7 +37,7 @@ Feature: Archiviazione manuale di un descrittore
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene impostato per l'utente un token m2m non valido
-#    And l'utente avvia il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
+    And l'utente avvia il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
     Then si ottiene response status code 401
 #    And il processo di archiviazione della vecchia versione dell'e-service è fallito
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
@@ -48,7 +48,7 @@ Feature: Archiviazione manuale di un descrittore
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-#    And l'utente avvia il processo di archiviazione della vecchia versione con id "<descriptorId>" dell'e-service con id "<eserviceId>"
+    And l'utente avvia il processo di archiviazione della vecchia versione con id "<descriptorId>" dell'e-service con id "<eserviceId>"
     Then si ottiene response status code <statusCode>
 #    And il processo di archiviazione della vecchia versione dell'e-service è fallito
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
@@ -67,7 +67,7 @@ Feature: Archiviazione manuale di un descrittore
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-#    And l'utente avvia il processo di archiviazione dell'ULTIMA con id "<descriptorId>" dell'e-service con id "<eserviceId>"
+    And l'utente avvia il processo di archiviazione della versione più recente dell'e-service
     Then si ottiene response status code 400
     And la versione più recente dell'e-service è in stato "PUBLISHED"
 
