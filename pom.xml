@@ -1159,7 +1159,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-user-attributes/41fd146d797f13297af57d683defae9e1a342686/docs/openapi/pn-user-consents-api-internal.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-user-attributes/086800b99d422adf3491f629ce9ef7a8426d1f68/docs/openapi/pn-user-consents-api-internal.yaml</inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
@@ -1342,7 +1342,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-user-attributes/41fd146d797f13297af57d683defae9e1a342686/docs/openapi/pn-address-book-api-internal.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-user-attributes/086800b99d422adf3491f629ce9ef7a8426d1f68/docs/openapi/pn-address-book-api-internal.yaml</inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
@@ -2403,7 +2403,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-user-attributes/41fd146d797f13297af57d683defae9e1a342686/docs/openapi/pn-address-book-b2b-pg-external.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-user-attributes/086800b99d422adf3491f629ce9ef7a8426d1f68/docs/openapi/pn-address-book-b2b-pg-external.yaml</inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
