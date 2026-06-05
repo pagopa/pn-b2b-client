@@ -96,7 +96,6 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
   # rispetto ai tipi PRIVATE e GSP, è previsto che la generazione della RA fallisca già come bozza.
   # Inoltre, corrispondendo a GSP la versione "2.0" e a PA la versione "3.1", è previsto che anche il caso con kind
   # iniziale GSP fallisca.
-  @debug
   @adeguamento-analisi-rischio
   Scenario Outline: [DESCRIPTOR_TK_RA_ADD_1_A] A seguito del cambiamento di tenant kind si tenta di aggiungere una risk analysis coerente con il precedente tenant kind ad un proprio e-service in bozza
     Given l'utente è un "admin" di "<ente>"
@@ -121,6 +120,7 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
     When l'utente aggiunge un'analisi del rischio coerente con il tenant kind "PRIVATE"
     Then si ottiene status code 200
 
+  @debug
   @adeguamento-analisi-rischio
   Scenario Outline: [DESCRIPTOR_TK_RA_ADD_2_A] A seguito del cambiamento di tenant kind si tenta di aggiungere una risk analysis coerente con il nuovo tenant kind ad un proprio e-service in bozza
     Given l'utente è un "admin" di "<ente>"
@@ -133,6 +133,7 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
       | PA4     | PRIVATE     |
       | PA4     | GSP         |
 
+  @debug
   @adeguamento-analisi-rischio
   Scenario Outline: [DESCRIPTOR_TK_RA_ADD_2_B] A seguito del cambiamento di tenant kind si tenta di aggiungere una risk analysis coerente con il nuovo tenant kind ad un proprio e-service in bozza
     Given l'utente è un "admin" di "<ente>"
