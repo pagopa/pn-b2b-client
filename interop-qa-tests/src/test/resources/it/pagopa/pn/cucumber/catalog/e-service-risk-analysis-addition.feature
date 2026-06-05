@@ -122,7 +122,7 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
 
   @debug
   @adeguamento-analisi-rischio
-  Scenario Outline: [DESCRIPTOR_TK_RA_ADD_2_A] A seguito del cambiamento di tenant kind si tenta di aggiungere una risk analysis coerente con il nuovo tenant kind ad un proprio e-service in bozza
+  Scenario Outline: [DESCRIPTOR_TK_RA_ADD_2] A seguito del cambiamento di tenant kind si tenta di aggiungere una risk analysis coerente con il nuovo tenant kind ad un proprio e-service in bozza
     Given l'utente è un "admin" di "<ente>"
     And "<ente>" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "DRAFT"
     And il tenant kind dell'ente "<ente>" viene impostato a "<kind_target>"
@@ -132,16 +132,5 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
       | ente    | kind_target |
       | PA4     | PRIVATE     |
       | PA4     | GSP         |
-
-  @debug
-  @adeguamento-analisi-rischio
-  Scenario Outline: [DESCRIPTOR_TK_RA_ADD_2_B] A seguito del cambiamento di tenant kind si tenta di aggiungere una risk analysis coerente con il nuovo tenant kind ad un proprio e-service in bozza
-    Given l'utente è un "admin" di "<ente>"
-    And "<ente>" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "DRAFT"
-    And il tenant kind dell'ente "<ente>" viene impostato a "<kind_target>"
-    When l'utente aggiunge un'analisi del rischio coerente con il tenant kind "<kind_target>"
-    Then si ottiene status code 400
-    Examples:
-      | ente    | kind_target |
       | GSP2    | PA          |
       | Privato | PA          |
