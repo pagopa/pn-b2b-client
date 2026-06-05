@@ -3143,7 +3143,6 @@ Feature: Test API of e-service template
     When l'utente aggiorna la descrizione dell'e-service template in stato PUBLISHED con una descrizione di 401 caratteri
     Then si ottiene response status code 400
 
-  @debug
   @sad-path
   @e-service-template-version-activate
   @adeguamento-analisi-rischio
@@ -3170,7 +3169,7 @@ Feature: Test API of e-service template
     Given l'utente è un "admin" di "<ente>"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
     And il tenant kind dell'ente "<ente>" viene impostato a "<kind>"
-    When l'utente tenta la modifica della risk analysis dell'e-service template indicandone una coerente con il tenant "<ente>"
+    When l'utente tenta la modifica della risk analysis dell'e-service template indicandone una coerente con il tenant kind "<kind>"
     Then si ottiene response status code 204
     And la modifica della risk analysis dell'e-service è stata effettuata correttamente
     Examples:
@@ -3180,7 +3179,6 @@ Feature: Test API of e-service template
       | GSP2    | PA          |
       | Privato | PA          |
 
-  @debug
   @happy-path
   @e-service-template-receive-bff
   @e-service-template-riskAnalysis-update

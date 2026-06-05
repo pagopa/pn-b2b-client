@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.e_service_template.risk_analysis;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
@@ -55,9 +56,11 @@ public class EServiceTemplateRiskAnalysisUpdateSteps {
         editRiskAnalysisBySupplier(() -> testAssistant.getEServiceRiskAnalysisSeed(false));
     }
 
-    @When("l'utente tenta la modifica della risk analysis dell'e-service template indicandone una coerente con il tenant {string}")
+    @When("l'utente tenta la modifica della risk analysis dell'e-service template indicandone una coerente con il tenant kind {string}")
     public void editRiskAnalysisFromEServiceTemplate(String tenant) {
-        editRiskAnalysisBySupplier(() -> testAssistant.getEServiceRiskAnalysisSeedWithType(tenant, true));
+        IdentityService identityService = sharedStepsContext.getIdentityService();
+        String tenantKind = identityService.getKind(tenant);
+        editRiskAnalysisBySupplier(() -> testAssistant.getEServiceRiskAnalysisSeedWithType(tenantKind, true));
     }
 
     private void editRiskAnalysisBySupplier(Supplier<EServiceTemplateRiskAnalysisSeed> raSupplier) {

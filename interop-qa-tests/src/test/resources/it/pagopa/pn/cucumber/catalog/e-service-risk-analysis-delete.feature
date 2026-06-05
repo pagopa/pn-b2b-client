@@ -54,6 +54,11 @@ Feature: Cancellazione di un'analisi del rischio ad un e-service
       | GSP2    | PA          |
       | Privato | PA          |
 
+  # FIXME utile solo a innescare re-allineamento dei tenant kinds, rimuovere
+  @tenant-kind-alignment
+  Scenario: allinea kinds
+    Given l'utente è un "admin" di "<ente>"
+
     # FIXME utile solo per debug locale, rimuovere
   @debug-adeguamento-analisi-rischio
   Scenario: Verifica ambiente test maintenance
