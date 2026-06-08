@@ -3164,7 +3164,6 @@ Feature: Test API of e-service template
   @e-service-template-receive-bff
   @e-service-template-riskAnalysis-update
   @adeguamento-analisi-rischio
-  @debug
   Scenario Outline: [INTEROP-EST-TK-02] A seguito del cambiamento di tenant kind si tenta modificare la risk analysis dell'e-service template
     Given l'utente è un "admin" di "<ente>"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT

@@ -44,6 +44,7 @@ Feature: Attivazione di un descrittore
       | DEPRECATED       |
       | PUBLISHED        |
 
+  @debug
   @adeguamento-analisi-rischio
   Scenario Outline: [DESCRIPTOR_TK_ACTIVATION_1] A seguito del cambiamento di tenant kind si tenta di ri-attivare un proprio e-service sospeso
     Given l'utente è un "admin" di "<ente>"
