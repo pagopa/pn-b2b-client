@@ -116,6 +116,7 @@ public class DescriptorArchivingSteps {
     }
 
     @Then("il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore")
+    @Then("l'annullamento dell'archiviazione manuale del vecchio descrittore è fallita")
     public void oldDescriptorIsCorrectlyArchivedByManualDescriptorArchiving() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
@@ -125,8 +126,8 @@ public class DescriptorArchivingSteps {
         pollDescriptorArchivingSchedule(eServiceId, oldDescriptorId, "DESCRIPTOR");
     }
 
-    @And("l'archiviazione manuale del singolo descrittore è stata annullata con successo")
-    @And("il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore")
+    @Then("l'archiviazione manuale del singolo descrittore è stata annullata con successo")
+    @Then("il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore")
     public void oldDescriptorHasNotBeenManuallyArchived() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
