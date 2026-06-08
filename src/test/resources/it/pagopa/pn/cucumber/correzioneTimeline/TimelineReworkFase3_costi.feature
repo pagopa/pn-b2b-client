@@ -170,7 +170,9 @@ Feature: Correzione timeline fase 3 costi
       | Via@FAIL_IRREP_RESTART_1_CONS_AT1_AR   | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              |
       | Via@FAIL_DISC_IRR_RESTART_CONS_ATT1_AR | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
       | Via@FAIL_DISC_IRR_RESTART_DEC_AR       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              |
-      #TODO ADD ALL SEQUENCES ONCE THEY ARE CREATED
+      #Restart all'attempt 1
+      | Via@FAIL_DISC_RESTART_1_IRREP_AR       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+      | Via@FAIL_IRREP_RESTART_1_CONS_AT2_AR   | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
 
   @timelineReworkF3_costi #11.4
   Scenario Outline: [TR3_PAYMENTS_RESTART_SAME_4_FLATRATE_SYNC] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al restart
@@ -263,7 +265,9 @@ Feature: Correzione timeline fase 3 costi
       | Via@FAIL_IRREP_RESTART_1_CONS_AT1_AR   | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              |
       | Via@FAIL_DISC_IRR_RESTART_CONS_ATT1_AR | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
       | Via@FAIL_DISC_IRR_RESTART_DEC_AR       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              |
-      #TODO ADD ALL SEQUENCES ONCE THEY ARE CREATED
+      #Restart all'attempt 1
+      | Via@FAIL_DISC_RESTART_1_IRREP_AR       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+      | Via@FAIL_IRREP_RESTART_1_CONS_AT2_AR   | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
 
   @timelineReworkF3_costi #11.5
   Scenario Outline: [TR3_PAYMENTS_RESTART_SAME_5_FLATRATE_ASYNC] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate async) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al restart
@@ -359,7 +363,9 @@ Feature: Correzione timeline fase 3 costi
       | Via@FAIL_IRREP_RESTART_1_CONS_AT1_AR   | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              |
       | Via@FAIL_DISC_IRR_RESTART_CONS_ATT1_AR | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
       | Via@FAIL_DISC_IRR_RESTART_DEC_AR       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              |
-      #TODO ADD ALL SEQUENCES ONCE THEY ARE CREATED
+      #Restart all'attempt 1
+      | Via@FAIL_DISC_RESTART_1_IRREP_AR       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+      | Via@FAIL_IRREP_RESTART_1_CONS_AT2_AR   | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
 
   @timelineReworkF3_costi #11.6 dopo restart il baseCost non cambia, costi supplementari potrebbero cambiare
   Scenario Outline: [TR3_PAYMENTS_RESTART_SAME_6_DELIVERY_MODE_SYNC] Invio di una notifica mono-destinatario con pagamento/i PagoPA(delivery mode sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al restart
@@ -457,7 +463,9 @@ Feature: Correzione timeline fase 3 costi
       | Via@FAIL_IRREP_RESTART_1_CONS_AT1_AR   | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              |
       | Via@FAIL_DISC_IRR_RESTART_CONS_ATT1_AR | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
       | Via@FAIL_DISC_IRR_RESTART_DEC_AR       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              |
-      #TODO ADD ALL SEQUENCES ONCE THEY ARE CREATED
+      #Restart all'attempt 1
+      | Via@FAIL_DISC_RESTART_1_IRREP_AR       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+      | Via@FAIL_IRREP_RESTART_1_CONS_AT2_AR   | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
 
   # il baseCost cambia
   # firstAnalogCost immutato
