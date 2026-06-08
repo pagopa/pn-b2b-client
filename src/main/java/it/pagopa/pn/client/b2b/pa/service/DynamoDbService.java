@@ -22,6 +22,7 @@ public class DynamoDbService {
             case PAYMENT_INFO -> buildPaymentInfoRequest(attributeValues);
             case NOTIFICATION_DELIVERY_COST -> buildNotificationDeliveryCostRequest(attributeValues);
             case ONBOARD_INSTITUTIONS -> buildOnboardInstitutionsRequest(attributeValues);
+            case IO_CONNECTOR_REQUESTS -> buildIOConnectorRequestsRequest(attributeValues);
         };
         return dynamoDbClient.query(queryRequest);
     }
@@ -48,6 +49,12 @@ public class DynamoDbService {
     public static QueryRequest buildOnboardInstitutionsRequest(Map<String, AttributeValue> attributeValues) {
         return DynamoQueryBuilder.withoutFilter(DynamoTableName.ONBOARD_INSTITUTIONS.getValue(),
                 "id = :v_id",
+                attributeValues);
+    }
+
+    private static QueryRequest buildIOConnectorRequestsRequest(Map<String, AttributeValue> attributeValues) {
+        return DynamoQueryBuilder.withoutFilter(DynamoTableName.IO_CONNECTOR_REQUESTS.getValue(),
+                "requestId = :v_requestId",
                 attributeValues);
     }
 }
