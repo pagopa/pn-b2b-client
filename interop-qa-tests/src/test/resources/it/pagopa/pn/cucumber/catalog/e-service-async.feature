@@ -208,16 +208,18 @@ Feature: Configurazione e gestione di E-Service per scambi asincroni e massivi
       | REST       | 200          | 200                   | 200          | false        | true  | 200            |
       | REST       | 200          | 200                   | 200          | true         | true  | 200            |
       | REST       | -30          | 200                   | 200          | true         | true  | 400            |
-      | REST       | 200          | 2147483647            | 200          | true         | true  | 200            |
+      | REST       | 999999       | 200                   | 200          | true         | true  | 200            |
+      | REST       | 1000000      | 200                   | 200          | true         | true  | 400            |
+      | REST       | 200          | 999999                | 200          | true         | true  | 200            |
+      | REST       | 200          | 1000000               | 200          | true         | true  | 400            |
+      | REST       | 200          | 200                   | 99999        | true         | true  | 200            |
+      | REST       | 200          | 200                   | 100000       | true         | true  | 400            |
       | SOAP       | %null        | 200                   | 100          | false        | false | 400            |
       | SOAP       | 200          | %null                 | 100          | false        | false | 400            |
       | SOAP       | 200          | 200                   | %null        | false        | false | 400            |
       | SOAP       | 200          | 200                   | 200          | false        | false | 200            |
-      # bug PIN-10214
       | SOAP       | 200          | 200                   | 200          | true         | true  | 400            |
-      # bug PIN-10214
       | SOAP       | 200          | 200                   | 200          | false        | true  | 400            |
-
 
   Scenario: [ASYNC_ESERVICE_CALLBACK_INTERFACE_REQUIRED] Fallimento della pubblicazione di un e-service asincrono senza
   aver caricato un interfaccia di callback.
