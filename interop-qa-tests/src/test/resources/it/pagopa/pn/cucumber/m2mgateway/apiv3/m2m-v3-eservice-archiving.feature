@@ -62,7 +62,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     And la versione più recente dell'e-service è in stato "PUBLISHED"
 #    And il processo di archiviazione della più recente versione dell'e-service è fallita
 
-  Scenario : [M2M_V3_MANUAL_ARCHIVING_ESERVICE_1.5] Un utente M2M con token non valido NON può avviare il processo di archiviazione manuale dell'e-service
+  Scenario: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_1.5] Un utente M2M con token non valido NON può avviare il processo di archiviazione manuale dell'e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin

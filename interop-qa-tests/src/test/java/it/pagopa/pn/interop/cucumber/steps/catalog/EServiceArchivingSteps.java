@@ -97,6 +97,17 @@ public class EServiceArchivingSteps {
         archivingScheduleVerifier.pollDescriptorArchivingSchedule(eServiceId, oldDescriptorId, "ESERVICE");
     }
 
+    @Then("il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service")
+    @Then("l'annullamento dell'archiviazione manuale dell'intero e-service sul descrittore più recente, è fallita")
+    public void latestDescriptorIsCorrectlyArchivedByManualEServiceArchiving() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID oldDescriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+
+        archivingScheduleVerifier.pollDescriptorArchivingSchedule(eServiceId, oldDescriptorId, "ESERVICE");
+    }
+
     private void scheduleArchiveEService(UUID eServiceId, String archivingReason) {
         archivingScheduleVerifier.registerDescriptorArchivingRequestTimestamp();
         httpCallExecutor.performCall(

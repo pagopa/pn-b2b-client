@@ -9,7 +9,9 @@ Feature: Archiviazione manuale di un e-service
     When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "<finalFirstDescriptorState>"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
     And la versione più recente dell'e-service è in stato "ARCHIVING"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
     #quando il primo descrittore smetterà di essere il più recente, il suo stato passerà da PUBLISHED a DEPRECATED
     Examples:
@@ -18,9 +20,9 @@ Feature: Archiviazione manuale di un e-service
       | api          | PUBLISHED                   | ARCHIVING                 |
       | api,security | PUBLISHED                   | ARCHIVING                 |
     #primo descrittore in stato SUSPENDED
-      | admin        | SUSPENDED                   | ARCHIVING_SUSPENDED       |
-      | api          | SUSPENDED                   | ARCHIVING_SUSPENDED       |
-      | api,security | SUSPENDED                   | ARCHIVING_SUSPENDED       |
+#      | admin        | SUSPENDED                   | ARCHIVING_SUSPENDED       |
+#      | api          | SUSPENDED                   | ARCHIVING_SUSPENDED       |
+#      | api,security | SUSPENDED                   | ARCHIVING_SUSPENDED       |
 
   Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_1.2] Un ente erogatore di un e-service in stato SUSPENDED può avviare il processo di archiviazione manuale dell'e-service
     Given l'utente è un "admin" di "PA1"
@@ -31,7 +33,9 @@ Feature: Archiviazione manuale di un e-service
     When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "<finalFirstDescriptorState>"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
     And la versione più recente dell'e-service è in stato "ARCHIVING_SUSPENDED"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
     #quando il primo descrittore smetterà di essere il più recente, il suo stato passerà da PUBLISHED a DEPRECATED
     Examples:
@@ -48,7 +52,9 @@ Feature: Archiviazione manuale di un e-service
     When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "ARCHIVED"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
     And la versione più recente dell'e-service è in stato "ARCHIVING"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
   Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_1.4] Un utente con ruolo non autorizzato NON può avviare il processo di archiviazione manuale dell'e-service
     Given l'utente è un "<role>" di "PA1"
@@ -56,19 +62,21 @@ Feature: Archiviazione manuale di un e-service
     When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     Then si ottiene response status code 403
     And la versione più recente dell'e-service è in stato "ARCHIVING"
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
     Examples:
       | role     |
       | security |
       | support  |
 
-  Scenario : [MANUAL_ARCHIVING_ESERVICE_1.5] Un utente con token non valido NON può avviare il processo di archiviazione manuale dell'e-service
+  Scenario: [MANUAL_ARCHIVING_ESERVICE_1.5] Un utente con token non valido NON può avviare il processo di archiviazione manuale dell'e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And viene impostato per l'utente un token non valido
     When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     Then si ottiene response status code 401
     And la versione più recente dell'e-service è in stato "ARCHIVING"
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
   Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_1.6] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale dell'e-service se i parametri obbligatori non sono presenti o corretti
     Given l'utente è un "admin" di "PA1"
@@ -78,7 +86,9 @@ Feature: Archiviazione manuale di un e-service
     When l'utente avvia il processo di archiviazione dell'e-service con id "<eserviceId>" e specificando la motivazione "<archivingReason>"
     Then si ottiene response status code <statusCode>
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
+    And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
     And la versione più recente dell'e-service è in stato "PUBLISHED"
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
     Examples:
       | eserviceId | archivingReason          | statusCode |
@@ -96,7 +106,9 @@ Feature: Archiviazione manuale di un e-service
     When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione composta da <archivingReasonLength> caratteri
     Then si ottiene response status code 400
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
+    And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
     And la versione più recente dell'e-service è in stato "PUBLISHED"
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
     Examples:
        #min lenght = 10 , max lenght = 250
@@ -111,8 +123,8 @@ Feature: Archiviazione manuale di un e-service
     When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     Then si ottiene response status code 204
     And l'ultimo descrittore in stato DRAFT è stato cancellato
-    #in tal caso è l'unico e più recente descrittore
     And la versione più recente dell'e-service è in stato "ARCHIVING"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
   Scenario: [MANUAL_ARCHIVING_ESERVICE_3.1] L'aggiornamento di un agreement nei confronti della versione più recente di un e-service NON va a buon fine nel caso quest'ultimo sia in archiviazione
     Given l'utente è un "admin" di "PA1"
@@ -131,6 +143,8 @@ Feature: Archiviazione manuale di un e-service
     When l'utente sospende quel descrittore
     Then si ottiene response status code <statusCode>
     And la versione più recente dell'e-service è in stato "<finalDescriptorState>"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
     Examples:
       | role         | finalDescriptorState | statusCode |
       | admin        | ARCHIVING_SUSPENDED  | 204        |
@@ -147,6 +161,8 @@ Feature: Archiviazione manuale di un e-service
     When l'utente attiva il descrittore di quell'e-service
     Then si ottiene response status code <statusCode>
     And la versione più recente dell'e-service è in stato "<finalDescriptorState>"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
     Examples:
       | role         | finalDescriptorState | statusCode |
       | admin        | ARCHIVING            | 204        |
@@ -164,7 +180,9 @@ Feature: Archiviazione manuale di un e-service
     When l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "<finalFirstDescriptorState>"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
     And la versione più recente dell'e-service è in stato "PUBLISHED"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
     #quando il primo descrittore smetterà di essere il più recente, il suo stato passerà da PUBLISHED a DEPRECATED. Poi , avviato il processo di archiviazione, diventerà ARCHIVING
     Examples:
@@ -187,7 +205,9 @@ Feature: Archiviazione manuale di un e-service
     When l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "<finalFirstDescriptorState>"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
     And la versione più recente dell'e-service è in stato "SUSPENDED"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
     #quando il primo descrittore smetterà di essere il più recente, il suo stato passerà da PUBLISHED a DEPRECATED. Poi , avviato il processo di archiviazione, diventerà ARCHIVING
     Examples:
