@@ -304,6 +304,7 @@ Feature: Template engine
       | tedesca  |
       | slovena  |
       | francese |
+      | inglese  |
 
   @templateEngine #63 /templates-engine-private/v1/templates/notificationAARForEMAIL
   Scenario: [TEMPLATE-ENGINE_18] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - lingua errata
