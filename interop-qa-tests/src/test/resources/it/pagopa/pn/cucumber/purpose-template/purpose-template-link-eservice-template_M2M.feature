@@ -1,44 +1,59 @@
 Feature: finalità agevolata M2M, link e-service template a un template finalità
 
-  Background:
-    Given l'utente è un "admin" di "PA1"
-    And viene creato un nuovo purpose template
-    And il purpose template viene gradualmente spostato in stato PUBLISHED
-    # Altri step di preparazione oppure:
-    # probabilmente conviene avere un purpose template dedicato da utilizzare
-
   ## Macro scenario: Recupero lista risorse collegabili suggerite per un template finalità
 
   @purposeTemplate @eServiceTemplateLink
-  Scenario: [LINK_TEMPLATE_ESERVICE_2_1] Recupero lista dei soli e-service template suggeriti per un template finalità
-    When recupera gli e-service template suggeriti per un template finalità
-      | purpose_template_id | fb346d06-16e6-4481-8df2-f3fc590933a8 |
-      | offset              | 0  |
-      | limit               | 50 |
-    Then le risorse collegabili presentano un e-service template
-    Then le risorse collegabili non presentano un e-service concreto
+  Scenario: [LINK_TEMPLATE_ESERVICE_2_1] Recupero lista dei soli e-service template collegati per suggerire il template finalità
+    Given l'utente è un "admin" di "PA1"
+    And viene creato un nuovo purpose template
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And associa una risorsa a un template finalità
+      | id_template_finalita  | $DA_CONTESTO(purposeTemplateId)  |
+      | id_e_service          | $DA_CONTESTO(eServiceId)         |
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And associa una risorsa a un template finalità
+      | id_template_finalita  | $DA_CONTESTO(purposeTemplateId)  |
+      | id_e_service_template | $DA_CONTESTO(eServiceTemplateId) |
+
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    Then recupera gli e-service template collegati per suggerire il template finalità
+      | id_template_finalita  | $DA_CONTESTO(purposeTemplateId)  |
+      | id_risorsa_attesa     | $DA_CONTESTO(eServiceTemplateId) |
 
   @purposeTemplate @eServiceTemplateLink
-  Scenario: [LINK_TEMPLATE_ESERVICE_2_2] Recupero lista dei soli e-service template suggeriti per un template finalità con paginazione
-    Given recupera gli e-service template suggeriti per un template finalità
-      | purpose_template_id | fb346d06-16e6-4481-8df2-f3fc590933a8 |
-      | offset              | 0  |
-      | limit               | 50 |
-    And vengono salvate le risorse collegabili in una lista di risorse di riferimento
+  Scenario: [LINK_TEMPLATE_ESERVICE_2_2] Recupero lista dei soli e-service template collegati per suggerire il template finalità con paginazione
+    Given viene creato un nuovo purpose template
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And associa una risorsa a un template finalità
+      | id_template_finalita  | $DA_CONTESTO(purposeTemplateId)  |
+      | id_e_service          | $DA_CONTESTO(eServiceId)         |
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And associa una risorsa a un template finalità
+      | id_template_finalita  | $DA_CONTESTO(purposeTemplateId)  |
+      | id_e_service_template | $DA_CONTESTO(eServiceTemplateId) |
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And associa una risorsa a un template finalità
+      | id_template_finalita  | $DA_CONTESTO(purposeTemplateId)  |
+      | id_e_service_template | $DA_CONTESTO(eServiceTemplateId) |
+    And recupera le risorse collegate per suggerire il template finalità
+      | id_template_finalita  | $DA_CONTESTO(purposeTemplateId)  |
+      | id_risorsa_attesa     | $DA_CONTESTO(eServiceTemplateId) |
+    And vengono salvati gli e-service template in una lista di risorse di riferimento
 
     # Paginazione con offset
-    When recupera gli e-service template suggeriti per un template finalità
-      | purpose_template_id | fb346d06-16e6-4481-8df2-f3fc590933a8 |
-      | offset              | 1  |
-      | limit               | 50 |
-    Then le risorse collegabili corrispondono alla lista di risorse di riferimento eccetto il 1° risultato
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And recupera gli e-service template collegati per suggerire il template finalità
+      | id_template_finalita | $DA_CONTESTO(purposeTemplateId) |
+      | offset               | 1  |
+      | limit                | 10 |
+    Then gli e-service template collegati corrispondono alla lista di risorse di riferimento ignorando il primo risultato
 
     # Paginazione con limit
-    When recupera gli e-service template suggeriti per un template finalità
-      | purpose_template_id | fb346d06-16e6-4481-8df2-f3fc590933a8 |
-      | offset              | 0  |
-      | limit               | 2  |
-    Then le risorse collegabili corrispondono alla lista di risorse di riferimento solo per i primi 2 risultati
+    When recupera gli e-service template collegati per suggerire il template finalità
+      | id_template_finalita | $DA_CONTESTO(purposeTemplateId) |
+      | offset               | 0  |
+      | limit                | 1  |
+    Then gli e-service template collegati corrispondono alla lista di risorse di riferimento ignorando i primi 1 risultati
 
   @purposeTemplate @eServiceTemplateLink
   Scenario: [LINK_TEMPLATE_ESERVICE_2_3] Recupero lista dei soli e-service template suggeriti per un template finalità con filtri
