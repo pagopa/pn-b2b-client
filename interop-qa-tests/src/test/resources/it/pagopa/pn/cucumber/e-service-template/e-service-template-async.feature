@@ -98,7 +98,7 @@ Feature: Configurazione e gestione di template e-service per scambi asincroni e 
     And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
     And l'utente effettua la pubblicazione dell'e-service template
     And si ottiene status code 200
-    # bug https://pagopa.atlassian.net/browse/PIN-10248
+    # TODO bug https://pagopa.atlassian.net/browse/PIN-10248
     And l'utente effettua la creazione di un nuovo e-service a partire dal template con successo indicando solo le specifiche strettamente necessarie e impostando l'e-service come sincrono
     And si ottiene status code 400
 
@@ -120,6 +120,7 @@ Feature: Configurazione e gestione di template e-service per scambi asincroni e 
     And l'utente effettua la pubblicazione dell'e-service template
     And si ottiene status code 200
     And l'utente effettua la creazione di un nuovo e-service a partire dal template con successo indicando solo le specifiche strettamente necessarie e impostando l'e-service come asincrono
+    And si ottiene response status code 200
     # TODO a causa del bug PIN-10248 non è possibile procedere con l'implementazione
     # https://pagopa.atlassian.net/browse/PIN-10248
     When l'utente aggiorna la descrizione dell'e-service template con le seguenti specifiche tecniche relative agli scambi asincroni:
@@ -132,11 +133,11 @@ Feature: Configurazione e gestione di template e-service per scambi asincroni e 
     Then si ottiene response status code <expectedResult>
 
     Examples:
-      | technology | responseTime | resourceAvailableTime | maxResultSet | confirmation | bulk  | expectedResult |
-      | REST       | 200          | 200                   | 100          | false        | false | 200            |
-      | REST       | :null        | 200                   | 100          | false        | false | 400            |
-      | REST       | 200          | :null                 | 100          | false        | false | 400            |
-      | REST       | 200          | 200                   | :null        | false        | false | 400            |
+      | technology | responseTime | resourceAvailableTime | maxResultSet | expectedResult |
+      | REST       | 200          | 200                   | 100          | 200            |
+      | REST       | :null        | 200                   | 100          | 400            |
+      | REST       | 200          | :null                 | 100          | 400            |
+      | REST       | 200          | 200                   | :null        | 400            |
 
   Scenario: [ASYNC_TEMPLATE_ESERVICE_UPDATE_5] La pubblicazione di un e-service template fallisce se non viene
   specificata l'interfaccia di callback.
@@ -154,4 +155,5 @@ Feature: Configurazione e gestione di template e-service per scambi asincroni e 
     And si ottiene status code 200
     And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
     And l'utente effettua la pubblicazione dell'e-service template
+    # TODO bug https://pagopa.atlassian.net/browse/PIN-10270
     And si ottiene status code 400
