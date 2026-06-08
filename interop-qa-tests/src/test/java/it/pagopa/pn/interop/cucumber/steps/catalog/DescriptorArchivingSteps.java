@@ -122,6 +122,7 @@ public class DescriptorArchivingSteps {
 
     @Then("l'archiviazione manuale del singolo descrittore è stata annullata con successo")
     @Then("il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore")
+    @Then("il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service")
     public void oldDescriptorHasNotBeenManuallyArchived() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
@@ -132,6 +133,7 @@ public class DescriptorArchivingSteps {
     }
 
     @And("il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore")
+    @And("il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service")
     public void latestDescriptorHasNotBeenManuallyArchived() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
