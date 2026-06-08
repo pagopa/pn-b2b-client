@@ -32,14 +32,13 @@ public class TenantWriteSteps {
     public TenantWriteSteps(
             ClientTokenConfigurator clientTokenConfigurator,
             SharedStepsContext sharedStepsContext,
-            ITenantsProcessApi tenantsProcessClient,
             TenantMapper mapper) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.identityService = sharedStepsContext.getIdentityService();
 
         this.tenantsBffClient = clientTokenConfigurator.getTenantsApi();
-        this.tenantsProcessClient = tenantsProcessClient;
+        this.tenantsProcessClient = clientTokenConfigurator.getTenantsProcessApi();
         this.mapper = mapper;
     }
 
