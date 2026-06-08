@@ -7,7 +7,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EService;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.PurposeTemplateLinkEServiceTemplate;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
 import it.pagopa.interop.purpose.service.impl.PurposeTemplateClientImpl;
@@ -19,9 +19,10 @@ import it.pagopa.pn.interop.cucumber.steps.purposetemplate.utils.PurposeTemplate
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static it.pagopa.pn.interop.cucumber.steps.purposetemplate.utils.LinkableResourcesHelper.*;
 
 @Slf4j
 public class LinkPurposeTemplateSteps {
@@ -51,62 +52,114 @@ public class LinkPurposeTemplateSteps {
         this.resolver = new PurposeTemplateResolver(sharedStepsContext, purposeTemplateContext, sharedStepsContext.getIdentityService());
     }
 
-    @Given("viene salvato {int} nome {resourceKind} di riferimento dalle risorse collegabili")
-    @Given("vengono salvati {int} nomi {resourceKind} di riferimento dalle risorse collegabili")
+    @Given("viene salvato {int} nome {resourceKind} di riferimento dalle risorse collegate")
+    @Given("vengono salvati {int} nomi {resourceKind} di riferimento dalle risorse collegate")
     public void saveResourceNamesFromLinkableResource(int names, String resourceKind) {
-        
         Assertions.assertTrue(
-                names >= linkableResourcesContext.getLastLinkableResources().getResults().size(),
-                "Non ci sono abbastanza risorse per salvare " + names + " nomi richiesti.");
-
+                linkableResourcesContext.getReferenceLinkableResources().getResults().size() >= names,
+                "Not enough resources to save " + names + " requested names");
+        int j = 0;
         for (int i = 0; i < names; i++) {
             if (resourceKind.equals("e-service concreto")) {
-                if (i == 0) linkableResourcesContext.getReferenceEServiceNames().clear();
-                linkableResourcesContext.getReferenceEServiceNames().add(linkableResourcesContext.getLastLinkableResources().getResults().get(i).getEservice().getName());
-
+                if (linkableResourcesContext.getReferenceLinkableResources().getResults().get(j).getEservice() == null) {
+                    i--;
+                } else {
+                    if (i == 0) linkableResourcesContext.getReferenceEServiceNames().clear();
+                    String eServiceName = linkableResourcesContext.getReferenceLinkableResources().getResults().get(j).getEservice().getName();
+                    linkableResourcesContext.getReferenceEServiceNames().add(eServiceName);
+                    log.info("Added e-service name " + eServiceName + " to the reference");
+                }
             } else if (resourceKind.equals("e-service template")) {
-                if (i == 0) linkableResourcesContext.getReferenceEServiceTemplateNames().clear();
-                linkableResourcesContext.getReferenceEServiceTemplateNames().add(linkableResourcesContext.getLastLinkableResources().getResults().get(i).getEserviceTemplate().getName());
-
+                if (linkableResourcesContext.getReferenceLinkableResources().getResults().get(j).getEserviceTemplate() == null) {
+                    i--;
+                } else {
+                    if (i == 0) linkableResourcesContext.getReferenceEServiceTemplateNames().clear();
+                    String eServiceTemplateName = linkableResourcesContext.getReferenceLinkableResources().getResults().get(j).getEserviceTemplate().getName();
+                    linkableResourcesContext.getReferenceEServiceTemplateNames().add(eServiceTemplateName);
+                    log.info("Added e-service template name " + eServiceTemplateName + " to the reference");
+                }
             } else if (resourceKind.equals("risorsa")) {
-                if (i == 0) linkableResourcesContext.getReferenceEServiceTemplateNames().clear();
-                linkableResourcesContext.getReferenceResourceNames().add(getResourceName(linkableResourcesContext.getLastLinkableResources().getResults().get(i)));
+                if (i == 0) linkableResourcesContext.getReferenceResourceNames().clear();
+                String resourceName = getResourceName(linkableResourcesContext.getReferenceLinkableResources().getResults().get(j));
+                linkableResourcesContext.getReferenceResourceNames().add(resourceName);
+                log.info("Added resource name " + resourceName + " to the reference");
             }
+            j++;
         }
     }
 
-    @Given("vengono salvati {int} ID pubblicatore di riferimento dalle risorse collegabili")
-    public void savePublisherIDFromLinkableResource(int ids, String resourceKind) {
+    @Given("vengono salvati {int} ID pubblicatore di riferimento dalle risorse collegate")
+    public void savePublisherIDFromLinkableResource(int ids) {
         Assertions.assertTrue(
-                ids >= linkableResourcesContext.getLastLinkableResources().getResults().size(),
+                linkableResourcesContext.getReferenceLinkableResources().getResults().size() >= ids,
                 "Not enough resources to save " + ids + " requested IDs.");
 
         for (int i = 0; i < ids; i++) {
             if (i == 0) linkableResourcesContext.getReferencePublisherIds().clear();
-            if (linkableResourcesContext.getLastLinkableResources().getResults().get(i).getResourceKind().getValue().equals("ESERVICE")) {
-                linkableResourcesContext.getReferencePublisherIds().add(linkableResourcesContext.getLastLinkableResources().getResults().get(i).getEservice().getProducer().getId());
-
-            } else if (linkableResourcesContext.getLastLinkableResources().getResults().get(i).getResourceKind().getValue().equals("ESERVICE_TEMPLATE")) {
-                linkableResourcesContext.getReferencePublisherIds().add(linkableResourcesContext.getLastLinkableResources().getResults().get(i).getEserviceTemplate().getCreator().getId());
+            LinkableResource resource = linkableResourcesContext.getLastLinkableResources().getResults().get(i);
+            UUID publisherId = null;
+            if (getResourceKind(resource).equals("ESERVICE")) {
+                publisherId = resource.getEservice().getProducer().getId();
+            } else if (getResourceKind(resource).equals("ESERVICE_TEMPLATE")) {
+                publisherId = resource.getEserviceTemplate().getCreator().getId();
+            }
+            if (linkableResourcesContext.getReferencePublisherIds().contains(publisherId)) {
+                // Se l'ID pubblicatore è già presente non viene aggiunto,
+                // saltando questo indice serve incrementare di 1 la ricerca degli ID
+                ids++;
+            } else {
+                linkableResourcesContext.getReferencePublisherIds().add(publisherId);
+                log.info("Added publisher ID " + publisherId + " to the reference");
             }
         }
     }
 
-    @Given("viene salvato {int} ID {resourceKind} di riferimento dalle risorse collegabili")
+    @Given("viene salvato {int} ID {resourceKind} di riferimento dalle risorse collegate")
+    @Given("vengono salvati {int} ID {resourceKind} di riferimento dalle risorse collegate")
     public void saveResourceIDFromLinkableResource(int ids, String resourceKind) {
         Assertions.assertTrue(
-                ids >= linkableResourcesContext.getLastLinkableResources().getResults().size(),
-                "Non ci sono abbastanza risorse per salvare " + ids + " requested IDs.");
+                linkableResourcesContext.getLastLinkableResources().getResults().size() >= ids,
+                "Not enough resources to save " + ids + " requested IDs");
+        resourceKind = switch (resourceKind) {
+            case "e-service concreto" -> "ESERVICE";
+            case "e-service template" -> "ESERVICE_TEMPLATE";
+            default -> "RESOURCE";
+        };
+        for (int i = 0; i < ids; i++) {
+            if (i == 0) {
+                if ("ESERVICE".equals(resourceKind)) {
+                    linkableResourcesContext.getReferenceEServiceIds().clear();
 
-//        for (int i = 0; i < ids; i++) {
-//            if (resourceKind.equals("e-service concreto")) {
-//                if (i == 0) referenceEServiceIds.clear();
-//                linkableResourcesContext.getReferencePublisherIds().add(linkableResourcesContext.getLastLinkableResources().getResults().get(i).getEservice().getId());
-//            // TODO completare
-//        }
+                } else if ("ESERVICE_TEMPLATE".equals(resourceKind)) {
+                    linkableResourcesContext.getReferenceEServiceTemplateIds().clear();
+                }
+            }
+            LinkableResource resource = linkableResourcesContext.getLastLinkableResources().getResults().get(i);
+            String currentResourceKind = getResourceKind(resource);
+            if (!currentResourceKind.equals(resourceKind)) {
+                // Se l'ID non è della risorsa richiesta non viene aggiunto,
+                // saltando questo indice serve incrementare di 1 la ricerca degli ID
+                ids++;
+                if (ids > linkableResourcesContext.getLastLinkableResources().getResults().size()) {
+                    Assertions.assertTrue(true,
+                            "Not enough resources of kind " + resourceKind + " found");
+                }
+            } else {
+                UUID resourceId = null;
+                if (currentResourceKind.equals("ESERVICE")) {
+                    resourceId = resource.getEservice().getId();
+                    linkableResourcesContext.getReferenceEServiceIds().add(resourceId);
+
+                } else if (currentResourceKind.equals("ESERVICE_TEMPLATE")) {
+                    resourceId = resource.getEserviceTemplate().getId();
+                    linkableResourcesContext.getReferenceEServiceTemplateIds().add(resourceId);
+                }
+                log.info("Added " + resourceKind + " resource ID " + resourceId + " to the reference");
+            }
+        }
     }
 
-    @Given("vengono salvate le risorse collegabili in una lista di risorse di riferimento")
+    @Given("vengono salvate le risorse collegate in una lista di risorse di riferimento")
     public void saveLinkableResourcesAsAReference() {
         linkableResourcesContext.saveLastLinkableResourcesAsAReference();
     }
@@ -114,104 +167,238 @@ public class LinkPurposeTemplateSteps {
     @When("associa una risorsa a un template finalità")
     public void linkResourceToPurposeTemplate(DataTable dataTable) {
         LinkParameters params = getLinkParametersFromDataTable(dataTable);
-        httpCallExecutor.performCall(() -> purposeTemplateClient.linkResourceToPurposeTemplate(params.purposeTemplateId(), params.resourceRequest()));
-        Assertions.assertTrue(httpCallExecutor.getResponseStatus().is2xxSuccessful(), "Resource association failed.");
+        tryToLinkResourceToPurposeTemplate(dataTable);
+        Assertions.assertTrue(
+                httpCallExecutor.getResponseStatus().is2xxSuccessful(),
+                "Resource " + params.resourceKind() + " with ID " + params.resourceId() + " association failed."
+        );
     }
+
+    @When("prova ad associare una risorsa a un template finalità")
+    public void tryToLinkResourceToPurposeTemplate(DataTable dataTable) {
+        LinkParameters params = getLinkParametersFromDataTable(dataTable);
+        httpCallExecutor.performCall(() -> purposeTemplateClient.linkResourceToPurposeTemplate(params.purposeTemplateId(), params.resourceRequest()));
+    }
+
+//    @When("associa una risorsa a un template finalità con errori formali")
+//    public void linkResourceToPurposeTemplateWithFormalErrors(DataTable dataTable) {
+//        Map<String, String> data = dataTable.asMap(String.class, String.class);
+//        LinkParameters params = getLinkParametersFromDataTable(dataTable);
+//        String purposeTemplateId = params.purposeTemplateId().toString();
+//        String resourceKind = params.resourceRequest().getResourceKind().getValue();
+//        String resourceId;
+//        if ("ESERVICE".equals(resourceKind)) {
+//            resourceId = params.resourceRequest().getEserviceId().toString();
+//        } else {
+//            resourceId = params.resourceRequest().getEserviceTemplateId().toString();
+//        }
+//        httpCallExecutor.performCall(() -> purposeTemplateClient.linkResourceToPurposeTemplateWithFormalErrors(purposeTemplateId, resourceKind, resourceId));
+//    }
 
     @When("disassocia una risorsa da un template finalità")
     public void unlinkResourceFromPurposeTemplate(DataTable dataTable) {
         LinkParameters params = getLinkParametersFromDataTable(dataTable);
+        pollingService.makePolling(
+                () -> (httpCallExecutor.performCall(() -> purposeTemplateClient.unlinkResourceFromPurposeTemplate(params.purposeTemplateId(), params.resourceRequest()))),
+                res -> (httpCallExecutor.getResponseStatus().is2xxSuccessful()),
+                "Resource " + params.resourceKind() + " with ID " + params.resourceId() + " disassociation failed."
+        );
+    }
+
+    @When("prova a disassociare una risorsa da un template finalità")
+    public void tryToUnlinkResourceToPurposeTemplate(DataTable dataTable) {
+        LinkParameters params = getLinkParametersFromDataTable(dataTable);
         httpCallExecutor.performCall(() -> purposeTemplateClient.unlinkResourceFromPurposeTemplate(params.purposeTemplateId(), params.resourceRequest()));
-        Assertions.assertTrue(httpCallExecutor.getResponseStatus().is2xxSuccessful(), "Resource disassociation failed.");
     }
 
     private record LinkParameters (
             UUID purposeTemplateId,
-            LinkableResourceRequest resourceRequest
-    ) {}
+            LinkableResourceRequest resourceRequest,
+            PurposeTemplateLinkEServiceTemplate eServiceTemplateLink
+    ) {
+        public UUID resourceId() {
+            return this.resourceRequest.getEserviceId() != null ? this.resourceRequest.getEserviceId() : this.resourceRequest.getEserviceTemplateId();
+        }
+
+        public String resourceKind() {
+            return this.resourceRequest.getEserviceId() != null ? "ESERVICE" : "ESERVICE_TEMPLATE";
+        }
+    }
 
     private LinkParameters getLinkParametersFromDataTable(DataTable dataTable) {
         Map<String, String> data = dataTable.asMap(String.class, String.class);
-        UUID purposeTemplateId = UUID.fromString(resolveDynamicData(data.get("id_template_finalita")));
+        UUID purposeTemplateId = UUID.fromString(
+                resolveDynamicData(data.get("id_template_finalita"), sharedStepsContext, linkableResourcesContext)
+        );
         String eServiceIdValue = data.getOrDefault("id_e_service", "");
         LinkableResourceRequest resourceRequest = new LinkableResourceRequest();
+        PurposeTemplateLinkEServiceTemplate eServiceTemplateLink = new PurposeTemplateLinkEServiceTemplate();
         if (!eServiceIdValue.isEmpty()) {
             resourceRequest.setResourceKind(LinkableResourceRequest.ResourceKindEnum.fromValue("ESERVICE"));
-            UUID eServiceId = UUID.fromString(resolveDynamicData(eServiceIdValue));
+            UUID eServiceId = UUID.fromString(resolveDynamicData(
+                    eServiceIdValue, sharedStepsContext, linkableResourcesContext)
+            );
             resourceRequest.setEserviceId(eServiceId);
         } else {
             resourceRequest.setResourceKind(LinkableResourceRequest.ResourceKindEnum.fromValue("ESERVICE_TEMPLATE"));
-            UUID eServiceTemplateId = UUID.fromString(resolveDynamicData(data.get("id_e_service_template")));
+            UUID eServiceTemplateId = UUID.fromString(resolveDynamicData(
+                    data.get("id_e_service_template"), sharedStepsContext, linkableResourcesContext
+            ));
             resourceRequest.setEserviceTemplateId(eServiceTemplateId);
+            eServiceTemplateLink.setEserviceTemplateId(eServiceTemplateId);
         }
-        return new LinkParameters(purposeTemplateId, resourceRequest);
+        return new LinkParameters(purposeTemplateId, resourceRequest, eServiceTemplateLink);
     }
 
-    @When("recupera le risorse collegabili suggerite per un template finalità")
+    @When("recupera le risorse collegate per suggerire il template finalità")
     public void getLinkableResourcesForPurposeTemplate(DataTable dataTable) {
         Map<String, String> data = dataTable.asMap(String.class, String.class);
-        UUID purposeTemplateId = UUID.fromString(resolveDynamicData(data.get("purpose_template_id")));
-        int offset = Integer.parseInt(data.get("offset"));
-        int limit = Integer.parseInt(data.get("limit"));
-        String q = data.getOrDefault("filtro_nome_eservice", "");
+        UUID purposeTemplateId = UUID.fromString(resolveDynamicData(
+                data.get("id_template_finalita"), sharedStepsContext, linkableResourcesContext
+        ));
+        int offset = Integer.parseInt(data.getOrDefault("offset", "0"));
+        int limit = Integer.parseInt(data.getOrDefault("limit", "50"));
+        String q = resolveDynamicData(
+                data.getOrDefault("filtro_nome_e_service", ""), sharedStepsContext, linkableResourcesContext
+        );
         String publisherIDsCommaSeparated = data.getOrDefault("id_pubblicatore", "");
+        if (publisherIDsCommaSeparated.isEmpty()) {
+            publisherIDsCommaSeparated = data.getOrDefault("filtro_id_pubblicatore", "");
+        }
+        final String expectedResourceId = resolveDynamicData(
+                data.getOrDefault("id_risorsa_attesa", ""), sharedStepsContext, linkableResourcesContext
+        );
         List<UUID> publisherIDs;
         if (publisherIDsCommaSeparated.isEmpty()) {
             publisherIDs = List.of();
         } else {
             publisherIDs = Arrays.stream(publisherIDsCommaSeparated.split(","))
+                    .map(id -> resolveDynamicData(id, sharedStepsContext, linkableResourcesContext))
                     .map(UUID::fromString)
                     .collect(Collectors.toList());
         }
-        httpCallExecutor.performCall(() -> purposeTemplateClient.getPurposeTemplateLinkableResources(purposeTemplateId, offset, limit, q, publisherIDs));
-        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
-            linkableResourcesContext.setLastLinkableResources((LinkableResources) httpCallExecutor.getResponse());
-        }
-    }
-
-    @Then("le risorse collegabili presentano un {resourceKind}")
-    public void checkLinkableResourcesHaveEServiceType(String eServiceKindName) {
-        eServiceKindName = (eServiceKindName.equals("e-service template")) ? "ESERVICE_TEMPLATE" : "ESERVICE";
-        boolean foundRequestedResourceKind = false;
-        for (int i = 0; i < linkableResourcesContext.getLastLinkableResources().getResults().size(); i++) {
-            if (getResourceKind(linkableResourcesContext.getLastLinkableResources().getResults().get(i)).equals(eServiceKindName)) {
-                foundRequestedResourceKind = true;
-                break;
+        if (expectedResourceId.isEmpty()) {
+            httpCallExecutor.performCall(() -> purposeTemplateClient.getPurposeTemplateLinkableResources(purposeTemplateId, offset, limit, q, publisherIDs));
+            if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+                linkableResourcesContext.setLastLinkableResources((LinkableResources) httpCallExecutor.getResponse());
             }
+        } else {
+            pollingService.makePolling(
+                    () -> (httpCallExecutor.performCall(() -> purposeTemplateClient.getPurposeTemplateLinkableResources(purposeTemplateId, offset, limit, q, publisherIDs))),
+                    res -> ((LinkableResources)httpCallExecutor.getResponse()).getResults().stream().anyMatch(resource -> {
+                        String resourceKind = getResourceKind(resource);
+                        if ((resourceKind.equals("ESERVICE") && resource.getEservice().getId().toString().equals(expectedResourceId)) || (resourceKind.equals("ESERVICE_TEMPLATE") && resource.getEserviceTemplate().getId().toString().equals(expectedResourceId))) {
+                            linkableResourcesContext.setLastLinkableResources((LinkableResources) httpCallExecutor.getResponse());
+                            return true;
+                        }
+                        return false;
+                    }),
+                    "Expected resource ID in the list is missing: " + expectedResourceId
+            );
         }
-        Assertions.assertTrue(foundRequestedResourceKind, "Resource type " + eServiceKindName + " not found.");
     }
 
-    @Then("le risorse collegabili corrispondono ad una lista vuota")
+//    @When("recupera le risorse collegate per suggerire il template finalità con errori formali")
+//    public void getLinkableResourcesForPurposeTemplateWithFormalErrors(DataTable dataTable) {
+//        Map<String, String> data = dataTable.asMap(String.class, String.class);
+//        String purposeTemplateId = data.get("id_template_finalita");
+//        String offset = data.getOrDefault("offset", "");
+//        String limit = data.getOrDefault("limit", "");
+//        String q = data.getOrDefault("q", "");
+//        String publisherIds = data.getOrDefault("publisherIds", "");
+//        httpCallExecutor.performCall(() -> purposeTemplateClient.getPurposeTemplateLinkableResourcesWithFormalErrors(purposeTemplateId, offset, limit, q, publisherIds));
+//    }
+
+    @Then("le risorse collegate al template finalità sono una lista vuota")
+    public void checkLinkableResourcesAreEmpty(DataTable dataTable) {
+        Map<String, String> data = dataTable.asMap(String.class, String.class);
+        UUID purposeTemplateId = UUID.fromString(resolveDynamicData(
+                data.get("id_template_finalita"), sharedStepsContext, linkableResourcesContext
+        ));
+        pollingService.makePolling(
+                () -> (httpCallExecutor.performCall(() -> purposeTemplateClient.getPurposeTemplateLinkableResources(purposeTemplateId, 0, 10, "", List.of()))),
+                res -> (httpCallExecutor.getResponseStatus().is2xxSuccessful()),
+                "Failed retrieving resources for purpose template " + purposeTemplateId
+        );
+        Assertions.assertEquals(0, ((LinkableResources)httpCallExecutor.getResponse()).getResults().size(),
+                "The retrieved resources are not an empty list");
+    }
+
+    @Then("le risorse recuperate presentano un {resourceKind}")
+    public void checkLinkableResourcesHaveEServiceType(String eServiceKindName) {
+        Assertions.assertTrue(
+                foundResourceKindInLinkableResources(
+                        eServiceKindName, linkableResourcesContext.getLastLinkableResources().getResults()
+                ),
+                "Resource type " + eServiceKindName + " not found."
+        );
+        log.info("Found resource: " + eServiceKindName);
+    }
+
+    @Then("le risorse recuperate non presentano un {resourceKind}")
+    public void checkLinkableResourcesDoNotHaveEServiceType(String eServiceKindName) {
+        Assertions.assertFalse(
+                foundResourceKindInLinkableResources(
+                        eServiceKindName, linkableResourcesContext.getLastLinkableResources().getResults()
+                ),
+                "Found resource type " + eServiceKindName
+        );
+        log.info("Not found resource: " + eServiceKindName);
+    }
+
+    @Then("le risorse collegate corrispondono ad una lista vuota")
     public void lastLinkableResourcesAreEmpty() {
         Assertions.assertEquals(
                 200, httpCallExecutor.getResponseStatus().value(),
-                "The last response is not successful.");
+                "The last response is not successful");
         Assertions.assertTrue(
                 linkableResourcesContext.getLastLinkableResources().getResults().isEmpty(),
-                "The last linkable resources are not an empty list.");
+                "The last linkable resources are not an empty list");
+        log.info("The last response is 200 successful and it is an empty list");
     }
 
-    @Then("la richiesta di risorse collegabili restituisce errore di template finalità non trovato")
+    @Then("la richiesta restituisce errore di template finalità non trovato")
     public void lastResponseIsPurposeTemplateNotFound() {
         Assertions.assertEquals(
                 404, httpCallExecutor.getResponseStatus().value(),
-                "The last response is different from Not Found error.");
-        // TODO verificare l'errore più specifico Purpose Template Not Found nel messaggio
+                "The last response is different from Not Found error");
+        Assertions.assertTrue(
+                httpCallExecutor.getErrorMessage().contains("Purpose Template Not Found"),
+                "Missing error message 'Purpose Template Not Found'");
+        log.info("Found response " + httpCallExecutor.getErrorMessage());
     }
-    @Then("le risorse collegabili non vengono fornite causa richiesta non valida")
+
+    @Then("le risorse collegate non vengono fornite causa richiesta non valida")
     public void lastResponseIsBadRequestError() {
         Assertions.assertEquals(
                 400, httpCallExecutor.getResponseStatus().value(),
-                "The last response is different from Bad Request error.");
-        // TODO verificare l'errore più specifico Purpose Template Not Found nel messaggio
+                "The last response is different from Bad Request error");
+        Assertions.assertEquals(
+                "Bad Request",
+                httpCallExecutor.getResponseStatus().getReasonPhrase());
+        log.info("Found response " + httpCallExecutor.getErrorMessage());
     }
-    @Then("le risorse collegabili corrispondono alla lista di risorse di riferimento ignorando il primo risultato")
+
+    @Then("^la richiesta di (associazione|disassociazione) fallisce per errore di conflitto$")
+    public void lastResponseIsConflictError(String operation) {
+        String expectedMessage = ("associazione".equals(operation)) ?
+                "Association between e-service template and purpose template already exists":
+                "Association between e-service template and purpose template does not exist";
+        Assertions.assertEquals(
+                409, httpCallExecutor.getResponseStatus().value(),
+                "The last response is different from Conflict error");
+        Assertions.assertTrue(
+                httpCallExecutor.getErrorMessage().contains(expectedMessage),
+                "Missing error message '" + expectedMessage + "' and found: " + httpCallExecutor.getErrorMessage());
+        log.info("Found response " + httpCallExecutor.getErrorMessage());
+    }
+
+    @Then("le risorse collegate corrispondono alla lista di risorse di riferimento ignorando il primo risultato")
     public void lastLinkableResourcesMatchReferenceResources() {
         lastLinkableResourcesMatchReferenceResourcesWithInitialExclusion(1);
     }
 
-    @Then("le risorse collegabili corrispondono alla lista di risorse di riferimento ignorando i primi {int} risultati")
+    @Then("le risorse collegate corrispondono alla lista di risorse di riferimento ignorando i primi {int} risultati")
     public void lastLinkableResourcesMatchReferenceResourcesWithInitialExclusion(int excludedResults) {
         LinkableResource referenceResource = null, resource = null;
         boolean foundDifference = false;
@@ -219,7 +406,7 @@ public class LinkPurposeTemplateSteps {
 
         Assertions.assertTrue(
                 linkableResourcesContext.getReferenceLinkableResources().getResults().size() > excludedResults,
-                "There is no result to check.");
+                "There is no result to check!");
 
         for (int i = excludedResults; i < linkableResourcesContext.getReferenceLinkableResources().getResults().size(); i++) {
             referenceResource = linkableResourcesContext.getReferenceLinkableResources().getResults().get(i);
@@ -233,20 +420,20 @@ public class LinkPurposeTemplateSteps {
         assertLinkableResourcesMatch(foundDifference, referenceResource, resource);
     }
 
-    @Then("le risorse collegabili corrispondono alla lista di risorse di riferimento solo per il primo risultato")
+    @Then("le risorse collegate corrispondono alla lista di risorse di riferimento solo per il primo risultato")
     public void lastLinkableResourcesMatchReferenceResourcesAtBeginning() {
         lastLinkableResourcesMatchReferenceResourcesAtBeginning(1);
     }
 
-    @Then("le risorse collegabili corrispondono alla lista di risorse di riferimento solo per i primi {int} risultati")
+    @Then("le risorse collegate corrispondono alla lista di risorse di riferimento solo per i primi {int} risultati")
     public void lastLinkableResourcesMatchReferenceResourcesAtBeginning(int includedResults) {
         LinkableResource referenceResource = null, resource = null;
         boolean foundDifference = false;
         int j = 0;
 
         Assertions.assertTrue(
-                includedResults >= linkableResourcesContext.getReferenceLinkableResources().getResults().size(),
-                "I risultati disponibili sono numericamente inferiori ai risultati da controllare.");
+                linkableResourcesContext.getLastLinkableResources().getResults().size() >= includedResults,
+                "Available results are lesser than the results to check");
 
         for (int i = 0; i < includedResults; i++) {
             referenceResource = linkableResourcesContext.getReferenceLinkableResources().getResults().get(i);
@@ -260,84 +447,79 @@ public class LinkPurposeTemplateSteps {
         assertLinkableResourcesMatch(foundDifference, referenceResource, resource);
     }
 
-    @Then("le risorse collegabili corrispondono alla lista di risorse di riferimento aventi:")
+    @Then("le risorse collegate corrispondono alla lista di risorse di riferimento aventi:")
     public void lastLinkableResourcesMatchReferenceResourcesHaving(DataTable dataTable) {
-        LinkableResource referenceResource = null, resource = null;
+        LinkableResource referenceResource, currentResource;
         Map<String, String> data = dataTable.asMap(String.class, String.class);
-        String eServiceName = data.getOrDefault("nome_eservice", "");
+        String eServiceName = resolveDynamicData(
+                data.getOrDefault("nome_e_service", ""), sharedStepsContext, linkableResourcesContext
+        );
         String partOfName = data.getOrDefault("parte_del_nome", "");
-        String publisherIdString = data.getOrDefault("id_pubblicatore", "");
-        UUID publisherId = (publisherIdString.isEmpty()) ? null : UUID.fromString(publisherIdString);
+        String publisherIdString = resolveDynamicData(
+                data.getOrDefault("id_pubblicatore", ""), sharedStepsContext, linkableResourcesContext
+        );
         String currentResourceName, referenceResourceName;
         UUID currentResourcePublisherId, referenceResourcePublisherId;
-        boolean foundDifference = false;
+        boolean mismatch = false;
         int j = 0;
 
-        for (int i = 0; i < linkableResourcesContext.getReferenceLinkableResources().getResults().size(); i++) {
-            resource = linkableResourcesContext.getLastLinkableResources().getResults().get(j);
-            referenceResource = linkableResourcesContext.getReferenceLinkableResources().getResults().get(i);
-            currentResourceName = getResourceName(resource);
+        Assertions.assertTrue(
+                !linkableResourcesContext.getLastLinkableResources().getResults().isEmpty(),
+                "There is no resource to check!"
+        );
+        Assertions.assertTrue(
+                !linkableResourcesContext.getReferenceLinkableResources().getResults().isEmpty(),
+                "There is no reference resource to compare with!"
+        );
+
+        for (int i = 0; i < linkableResourcesContext.getLastLinkableResources().getResults().size(); i++) {
+            currentResource = linkableResourcesContext.getLastLinkableResources().getResults().get(i);
+            referenceResource = linkableResourcesContext.getReferenceLinkableResources().getResults().get(j);
+            currentResourceName = getResourceName(currentResource);
             referenceResourceName = getResourceName(referenceResource);
 
             if (!eServiceName.isEmpty()) {
-                if (!currentResourceName.equals(eServiceName)) j++;
-                if (!referenceResourceName.equals(eServiceName)) continue;
+                Assertions.assertEquals(currentResourceName, eServiceName);
+                if (!referenceResourceName.equals(eServiceName)) {
+                    j++; i--; continue;
+                }
             }
             if (!partOfName.isEmpty()) {
-                if (!currentResourceName.contains(partOfName)) j++;
-                if (!referenceResourceName.contains(partOfName)) continue;
+                Assertions.assertTrue(
+                        currentResourceName.contains(partOfName),
+                        "Current resource name " + currentResourceName + " does not contains '" + partOfName + "'."
+                );
+                if (!referenceResourceName.contains(partOfName)) {
+                    j++; i--; continue;
+                }
             }
-            if (publisherId != null) {
-                currentResourcePublisherId = getPublisherId(resource);
+            if (!publisherIdString.isEmpty()) {
+                currentResourcePublisherId = getPublisherId(currentResource);
                 referenceResourcePublisherId = getPublisherId(referenceResource);
-                if (!currentResourcePublisherId.equals(publisherId)) j++;
-                if (!referenceResourcePublisherId.equals(publisherId)) continue;
+                Assertions.assertTrue(publisherIdString.contains(currentResourcePublisherId.toString()));
+                if (!publisherIdString.contains(referenceResourcePublisherId.toString())) {
+                    j++; i--; continue;
+                }
             }
-
-            if (!doLinkableResourcesMatch(referenceResource, resource)) {
-                foundDifference = true;
+            if (!doLinkableResourcesMatch(referenceResource, currentResource)) {
+                mismatch = true;
                 break;
             } else {
+                log.info("Checked resource " + getResourceKind(currentResource) + " " + getResourceName(currentResource));
                 j++;
             }
         }
-        // TODO verificare che l'ordine delle risorse collegabili sia sempre lo stesso, che questo ciclo
-        // funzioni effettivamente, altrimenti serve un altro approccio (ciclo dentro un ciclo)
-        Assertions.assertTrue(j > 0, "Non è stata trovata nessuna corrispondenza soddisfatta.");
-    }
-
-    private String getResourceKind(LinkableResource resource) {
-        return (resource instanceof LinkableEServiceTemplate) ? "ESERVICE_TEMPLATE" : "ESERVICE";
+        Assertions.assertFalse(mismatch, "Applying the filter there is a resource not matching the reference resource.");
     }
 
     private String getResourceName(LinkableResource resource) {
-        return (resource.getResourceKind().getValue().equals("ESERVICE_TEMPLATE")) ?
+        return (getResourceKind(resource).equals("ESERVICE_TEMPLATE")) ?
                 resource.getEserviceTemplate().getName() : resource.getEservice().getName();
     }
 
     private UUID getPublisherId(LinkableResource resource) {
-        return (resource.getResourceKind().getValue().equals("ESERVICE_TEMPLATE")) ?
+        return (getResourceKind(resource).equals("ESERVICE_TEMPLATE")) ?
                 resource.getEserviceTemplate().getCreator().getId() : resource.getEservice().getProducer().getId();
-    }
-
-    private boolean doLinkableResourcesMatch(LinkableResource resource1, LinkableResource resource2) {
-        String resource1Kind = getResourceKind(resource1);
-        String resource2Kind = getResourceKind(resource2);
-        if (resource1Kind.equals(resource2Kind)) {
-            if ("ESERVICE_TEMPLATE".equals(resource1Kind)) {
-                LinkableEServiceTemplate eserviceTemplate1 = (LinkableEServiceTemplate)resource1;
-                LinkableEServiceTemplate eserviceTemplate2 = (LinkableEServiceTemplate)resource2;
-                return eserviceTemplate1.getPurposeTemplateId() == eserviceTemplate2.getPurposeTemplateId() &&
-                        eserviceTemplate1.getCreatedAt().equals(eserviceTemplate2.getCreatedAt());
-            } else {
-                LinkableEService eservice1 = (LinkableEService)resource1;
-                LinkableEService eservice2 = (LinkableEService)resource2;
-                return eservice1.getEservice().getId() == eservice2.getEservice().getId() &&
-                        eservice1.getCreatedAt().equals(eservice2.getCreatedAt());
-            }
-        } else {
-            return false;
-        }
     }
 
     private void assertLinkableResourcesMatch(boolean difference, LinkableResource resource1, LinkableResource resource2) {
@@ -345,36 +527,8 @@ public class LinkPurposeTemplateSteps {
         Assertions.assertNotNull(resource2);
         Assertions.assertFalse(
                 difference,
-                "La risorsa " + resource2.getResourceKind() + " " + resource2.getPurposeTemplateId() +
-                        " non corrisponde alla risorsa " + resource1.getResourceKind() + " " +
+                "Resource " + getResourceKind(resource2) + " " + resource2.getPurposeTemplateId() +
+                        " does not match to resource " + getResourceKind(resource1) + " " +
                         resource1.getPurposeTemplateId());
-    }
-
-    private String resolveDynamicData(String value) {
-        if (value.startsWith("$DA_CONTESTO(")) {
-            value = value.substring(13, value.length() - 1);
-
-            switch (value) {
-                case "purposeTemplateId":
-                    return sharedStepsContext.getPurposeTemplateContext().getPurposeTemplateId().toString();
-                case "eServiceId":
-                    return sharedStepsContext.getEServicesCommonContext().getEserviceId().toString();
-                case "eServiceTemplateId":
-                    return sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId().toString();
-                default:
-                    String methodName = "get" + value.substring(0, 1).toUpperCase() + value.substring(1);
-                    try {
-                        Method getterMethod = LinkableResourcesContext.class.getMethod(methodName);
-                        value = (String)getterMethod.invoke(linkableResourcesContext);
-
-                    } catch (NoSuchMethodException e) {
-                        log.error("Specified method " + methodName + " does not exist in LinkableResourcesContext.");
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-            }
-        }
-        return value;
     }
 }
