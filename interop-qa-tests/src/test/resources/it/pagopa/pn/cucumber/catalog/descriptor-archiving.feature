@@ -229,7 +229,7 @@ Feature: Archiviazione manuale di un descrittore
     And l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
     Then si ottiene response status code 403
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
-    And la versione più recente dell'e-service è in stato "PUBLISHED"
+    And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
   @sad-path
   Scenario: [DIFFERENT_TENANT_ARCHIVING_DESCRIPTOR_1.2] Il processo di archiviazione dello specifico descrittore NON può essere annullato da un ente differente dall'erogatore dell'e-service
@@ -242,7 +242,7 @@ Feature: Archiviazione manuale di un descrittore
     And l'utente annulla il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
     Then si ottiene response status code 403
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
-    And la versione più recente dell'e-service è in stato "PUBLISHED"
+    And l'annullamento dell'archiviazione manuale del vecchio descrittore è fallita
 
   @sad-path
   Scenario: [DIFFERENT_TENANT_ARCHIVING_DESCRIPTOR_1.3] Il processo di archiviazione dello specifico descrittore NON può essere effettuato da un ente differente dall'erogatore dell'e-service anche se questo è delegato all'erogazione
@@ -256,7 +256,7 @@ Feature: Archiviazione manuale di un descrittore
     When l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
     Then si ottiene response status code 403
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
-    And la versione più recente dell'e-service è in stato "PUBLISHED"
+    And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
   @sad-path
   Scenario: [DIFFERENT_TENANT_ARCHIVING_DESCRIPTOR_1.4] Il processo di archiviazione dello specifico descrittore NON può essere annullato da un ente differente dall'erogatore dell'e-service anche se questo è delegato all'erogazione
@@ -272,7 +272,7 @@ Feature: Archiviazione manuale di un descrittore
     When l'utente annulla il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
     Then si ottiene response status code 403
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
-    And la versione più recente dell'e-service è in stato "PUBLISHED"
+    And l'annullamento dell'archiviazione manuale del vecchio descrittore è fallita
 
   @happy-path
   Scenario: [DIFFERENT_TENANT_ARCHIVING_DESCRIPTOR_2.1] Il processo di archiviazione dello specifico descrittore può essere effettuato dall'ente erogatore senza dover prima revocare la delega in erogazione attiva verso il delegato dell'e-service in questione
@@ -287,4 +287,4 @@ Feature: Archiviazione manuale di un descrittore
     When l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
-    And la versione più recente dell'e-service è in stato "PUBLISHED"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
