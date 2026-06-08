@@ -135,6 +135,16 @@ public class DescriptorArchivingSteps {
         pollDescriptorWithoutArchivingSchedule(eServiceId, oldDescriptorId);
     }
 
+    @And("il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore")
+    public void latestDescriptorHasNotBeenManuallyArchived() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+
+        pollDescriptorWithoutArchivingSchedule(eServiceId, descriptorId);
+    }
+
     private void pollDescriptorState(UUID eServiceId, UUID descriptorId, EServiceDescriptorState expectedState) {
         sharedStepsContext.getPollingService().makePolling(
                 () -> clientTokenConfigurator.getEServiceClient().getEServiceDescriptor(eServiceId, descriptorId),
@@ -147,7 +157,7 @@ public class DescriptorArchivingSteps {
         sharedStepsContext.getPollingService().makePolling(
                 () -> clientTokenConfigurator.getEServiceClient().getEServiceDescriptor(eServiceId, descriptorId),
                 descriptor -> descriptor != null && descriptor.getArchivingSchedule() == null,
-                "La vecchia versione dell'e-service contiene l'attributo inatteso archivingSchedule"
+            "Il descrittore dell'e-service contiene l'attributo inatteso archivingSchedule"
         );
     }
 
