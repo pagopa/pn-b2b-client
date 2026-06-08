@@ -5,28 +5,22 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ArchivingSchedule;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.catalog.utils.CatalogResolver;
+import it.pagopa.pn.interop.cucumber.steps.catalog.utils.DescriptorArchivingScheduleVerifier;
 import org.springframework.http.ResponseEntity;
 
-import java.time.Duration;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeParseException;
 import java.util.UUID;
 
 public class DescriptorArchivingSteps {
-    private static final int GRACE_PERIOD_ARCHIVING_ESERVICE = 1;
-    private static final Duration STARTED_AT_TOLERANCE = Duration.ofSeconds(5);
-
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final IHttpExecutor httpCallExecutor;
     private final CatalogResolver catalogResolver;
+    private final DescriptorArchivingScheduleVerifier archivingScheduleVerifier;
 
     public DescriptorArchivingSteps(
             ClientTokenConfigurator clientTokenConfigurator,
@@ -36,6 +30,7 @@ public class DescriptorArchivingSteps {
         this.sharedStepsContext = sharedStepsContext;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.catalogResolver = new CatalogResolver(sharedStepsContext);
+        this.archivingScheduleVerifier = new DescriptorArchivingScheduleVerifier(clientTokenConfigurator, sharedStepsContext);
     }
 
     @When("l'utente archivia la vecchia versione con id {string} dell'e-service con id {string}")
@@ -87,7 +82,7 @@ public class DescriptorArchivingSteps {
     }
 
     private void scheduleArchiveDescriptor(UUID eServiceId, UUID descriptorId) {
-        registerDescriptorArchivingRequestTimestamp();
+        archivingScheduleVerifier.registerDescriptorArchivingRequestTimestamp();
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getEServiceClient()
                         .scheduleArchiveDescriptor(eServiceId, descriptorId),
@@ -122,7 +117,7 @@ public class DescriptorArchivingSteps {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID oldDescriptorId = sharedStepsContext.getEServicesCommonContext().getOldDescriptorId();
 
-        pollDescriptorArchivingSchedule(eServiceId, oldDescriptorId, "DESCRIPTOR");
+        archivingScheduleVerifier.pollDescriptorArchivingSchedule(eServiceId, oldDescriptorId, "DESCRIPTOR");
     }
 
     @Then("l'archiviazione manuale del singolo descrittore è stata annullata con successo")
@@ -133,7 +128,7 @@ public class DescriptorArchivingSteps {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID oldDescriptorId = sharedStepsContext.getEServicesCommonContext().getOldDescriptorId();
 
-        pollDescriptorWithoutArchivingSchedule(eServiceId, oldDescriptorId);
+        archivingScheduleVerifier.pollDescriptorWithoutArchivingSchedule(eServiceId, oldDescriptorId);
     }
 
     @And("il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore")
@@ -143,7 +138,7 @@ public class DescriptorArchivingSteps {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
 
-        pollDescriptorWithoutArchivingSchedule(eServiceId, descriptorId);
+        archivingScheduleVerifier.pollDescriptorWithoutArchivingSchedule(eServiceId, descriptorId);
     }
 
     private void pollDescriptorState(UUID eServiceId, UUID descriptorId, EServiceDescriptorState expectedState) {
@@ -152,85 +147,6 @@ public class DescriptorArchivingSteps {
                 descriptor -> descriptor != null && expectedState.equals(descriptor.getState()),
                 "La vecchia versione dell'e-service non risulta in stato " + expectedState
         );
-    }
-
-    private void pollDescriptorWithoutArchivingSchedule(UUID eServiceId, UUID descriptorId) {
-        sharedStepsContext.getPollingService().makePolling(
-                () -> clientTokenConfigurator.getEServiceClient().getEServiceDescriptor(eServiceId, descriptorId),
-                descriptor -> descriptor != null && descriptor.getArchivingSchedule() == null,
-                "Il descrittore dell'e-service contiene l'attributo inatteso archivingSchedule"
-        );
-    }
-
-    private void pollDescriptorArchivingSchedule(UUID eServiceId, UUID descriptorId, String expectedScope) {
-        sharedStepsContext.getPollingService().makePolling(
-                () -> clientTokenConfigurator.getEServiceClient().getEServiceDescriptor(eServiceId, descriptorId),
-                descriptor -> hasExpectedArchivingSchedule(descriptor, expectedScope),
-                "Il vecchio descrittore dell'e-service non contiene un archivingSchedule valido: "
-                        + "scope, startedAt o archivableOn assente o non corretto"
-        );
-    }
-
-    private boolean hasExpectedArchivingSchedule(ProducerEServiceDescriptor descriptor, String expectedScope) {
-        if (descriptor == null || descriptor.getArchivingSchedule() == null) {
-            return false;
-        }
-
-        ArchivingSchedule archivingSchedule = descriptor.getArchivingSchedule();
-        return archivingSchedule.getScope() != null
-                && expectedScope.equals(archivingSchedule.getScope().getValue())
-                && isStartedAtWithinTolerance(archivingSchedule.getStartedAt())
-                && hasExpectedArchivableOn(archivingSchedule.getArchivableOn());
-    }
-
-    private boolean hasExpectedArchivableOn(String archivableOn) {
-        if (archivableOn == null || archivableOn.isBlank()) {
-            return false;
-        }
-
-        try {
-            OffsetDateTime actualArchivableOn = OffsetDateTime.parse(archivableOn);
-            return ZoneOffset.UTC.equals(actualArchivableOn.getOffset())
-                    && calculateExpectedArchivableOn().isEqual(actualArchivableOn);
-        } catch (DateTimeParseException e) {
-            return false;
-        }
-    }
-
-    private OffsetDateTime calculateExpectedArchivableOn() {
-        OffsetDateTime descriptorArchivingRequestTimestamp = sharedStepsContext.getEServicesCommonContext()
-                .getDescriptorArchivingRequestTimestamp();
-        OffsetDateTime referenceTimestamp = descriptorArchivingRequestTimestamp != null
-                ? descriptorArchivingRequestTimestamp
-                : OffsetDateTime.now(ZoneOffset.UTC);
-        return referenceTimestamp.toLocalDate()
-                .plusDays(GRACE_PERIOD_ARCHIVING_ESERVICE + 1L)
-                .atStartOfDay()
-                .atOffset(ZoneOffset.UTC);
-    }
-
-    private boolean isStartedAtWithinTolerance(String startedAt) {
-        OffsetDateTime descriptorArchivingRequestTimestamp = sharedStepsContext.getEServicesCommonContext()
-                .getDescriptorArchivingRequestTimestamp();
-        if (startedAt == null || startedAt.isBlank() || descriptorArchivingRequestTimestamp == null) {
-            return false;
-        }
-
-        try {
-            OffsetDateTime actualStartedAt = OffsetDateTime.parse(startedAt);
-            Duration delta = Duration.between(
-                    descriptorArchivingRequestTimestamp.toInstant(),
-                    actualStartedAt.toInstant()
-            ).abs();
-            return ZoneOffset.UTC.equals(actualStartedAt.getOffset()) && delta.compareTo(STARTED_AT_TOLERANCE) <= 0;
-        } catch (DateTimeParseException e) {
-            return false;
-        }
-    }
-
-    private void registerDescriptorArchivingRequestTimestamp() {
-        sharedStepsContext.getEServicesCommonContext()
-                .setDescriptorArchivingRequestTimestamp(OffsetDateTime.now(ZoneOffset.UTC));
     }
 
     private EServiceDescriptorState expectedArchivingState(EServiceDescriptorState descriptorState) {

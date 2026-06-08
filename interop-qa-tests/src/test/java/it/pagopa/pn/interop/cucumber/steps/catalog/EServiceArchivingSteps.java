@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.catalog;
 
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactDescriptor;
@@ -10,6 +11,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDes
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.catalog.utils.CatalogResolver;
+import it.pagopa.pn.interop.cucumber.steps.catalog.utils.DescriptorArchivingScheduleVerifier;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.http.ResponseEntity;
 
@@ -24,6 +26,7 @@ public class EServiceArchivingSteps {
     private final SharedStepsContext sharedStepsContext;
     private final IHttpExecutor httpCallExecutor;
     private final CatalogResolver catalogResolver;
+    private final DescriptorArchivingScheduleVerifier archivingScheduleVerifier;
 
     public EServiceArchivingSteps(
             ClientTokenConfigurator clientTokenConfigurator,
@@ -33,6 +36,7 @@ public class EServiceArchivingSteps {
         this.sharedStepsContext = sharedStepsContext;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.catalogResolver = new CatalogResolver(sharedStepsContext);
+        this.archivingScheduleVerifier = new DescriptorArchivingScheduleVerifier(clientTokenConfigurator, sharedStepsContext);
     }
 
     @When("l'utente avvia il processo di archiviazione dell'e-service con id {string} e specificando la motivazione {string}")
@@ -82,7 +86,19 @@ public class EServiceArchivingSteps {
         );
     }
 
+    @Then("il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service")
+    @Then("l'annullamento dell'archiviazione manuale dell'intero e-service sul vecchio descrittore, è fallita")
+    public void oldDescriptorIsCorrectlyArchivedByManualEServiceArchiving() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID oldDescriptorId = sharedStepsContext.getEServicesCommonContext().getOldDescriptorId();
+
+        archivingScheduleVerifier.pollDescriptorArchivingSchedule(eServiceId, oldDescriptorId, "ESERVICE");
+    }
+
     private void scheduleArchiveEService(UUID eServiceId, String archivingReason) {
+        archivingScheduleVerifier.registerDescriptorArchivingRequestTimestamp();
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getEServiceClient()
                         .scheduleArchiveEService(
