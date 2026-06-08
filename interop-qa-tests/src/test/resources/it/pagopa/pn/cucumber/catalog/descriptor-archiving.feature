@@ -147,6 +147,7 @@ Feature: Archiviazione manuale di un descrittore
     When l'utente annulla il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "<finalDescriptorState>"
+    And l'archiviazione manuale del singolo descrittore è stata annullata con successo
 
     Examples:
       | role         | initialDescriptorState | finalDescriptorState |

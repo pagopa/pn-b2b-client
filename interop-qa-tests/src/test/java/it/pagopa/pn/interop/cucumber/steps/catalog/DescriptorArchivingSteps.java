@@ -125,6 +125,7 @@ public class DescriptorArchivingSteps {
         pollDescriptorArchivingSchedule(eServiceId, oldDescriptorId, "DESCRIPTOR");
     }
 
+    @And("l'archiviazione manuale del singolo descrittore è stata annullata con successo")
     @And("il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore")
     public void oldDescriptorHasNotBeenManuallyArchived() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
@@ -157,7 +158,7 @@ public class DescriptorArchivingSteps {
         sharedStepsContext.getPollingService().makePolling(
                 () -> clientTokenConfigurator.getEServiceClient().getEServiceDescriptor(eServiceId, descriptorId),
                 descriptor -> descriptor != null && descriptor.getArchivingSchedule() == null,
-            "Il descrittore dell'e-service contiene l'attributo inatteso archivingSchedule"
+                "Il descrittore dell'e-service contiene l'attributo inatteso archivingSchedule"
         );
     }
 
@@ -166,7 +167,7 @@ public class DescriptorArchivingSteps {
                 () -> clientTokenConfigurator.getEServiceClient().getEServiceDescriptor(eServiceId, descriptorId),
                 descriptor -> hasExpectedArchivingSchedule(descriptor, expectedScope),
                 "Il vecchio descrittore dell'e-service non contiene un archivingSchedule valido: "
-                    + "scope, startedAt o archivableOn assente o non corretto"
+                        + "scope, startedAt o archivableOn assente o non corretto"
         );
     }
 
