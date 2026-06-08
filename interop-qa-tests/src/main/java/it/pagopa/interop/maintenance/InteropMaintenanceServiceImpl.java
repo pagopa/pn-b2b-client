@@ -59,14 +59,13 @@ public class InteropMaintenanceServiceImpl implements InteropMaintenanceService 
         }
 
         log.debug("Target tenant kind of {}: {}",  tenantAlias, tenantKind);
-        String xCorrelationId = UUID.randomUUID().toString();
         String tokenBff = identityService.getToken(tenantAlias, "admin");
         UUID organizationId = identityService.getOrganizationId(tenantAlias);
 
         tenantsBffClient.setBearerToken(tokenBff);
         tenantsProcessClient.setBearerToken(tokenBff);
         ResponseEntity<Tenant> processTenant = tenantsProcessClient.getTenant(
-                xCorrelationId,
+                randomUUID(),
                 organizationId);
         TenantKind kindIniziale = processTenant.getBody().getKind();
         log.debug("Actual tenant kind of {}: {}",  tenantAlias, kindIniziale);
@@ -84,14 +83,14 @@ public class InteropMaintenanceServiceImpl implements InteropMaintenanceService 
 
         // Modifica del tenant
         pollingService.makePolling(
-                () -> tenantsProcessClient.maintenanceTenantUpdate(xCorrelationId, organizationId, mapped),
+                () -> tenantsProcessClient.maintenanceTenantUpdate(randomUUID(), organizationId, mapped),
                 response -> response.getStatusCode().is2xxSuccessful(),
                 "Error during maintenance tenant update"
         );
 
         // Verifica che il tenant kind sia stato modificato
         Tenant modifiedTenant = pollingService.makePolling(
-                () -> tenantsProcessClient.getTenant(xCorrelationId, organizationId),
+                () -> tenantsProcessClient.getTenant(randomUUID(), organizationId),
                 response -> response.getStatusCode().is2xxSuccessful()
                         && response.getBody().getKind().equals(eTenantKind),
                 "Error during maintenance tenant update"
@@ -107,6 +106,10 @@ public class InteropMaintenanceServiceImpl implements InteropMaintenanceService 
                 xCorrelationId,
                 organizationId);
         System.out.println("Dopo il ripristino, il tenant kind risulta ora essere: " + processTenantPostKindUpdate.getBody().getKind());*/
+    }
+
+    private static String randomUUID() {
+        return UUID.randomUUID().toString();
     }
 
     /* Confronta i tenant kind di tutti gli enti presenti in configurazione (PA1, PA2...) e verifica che siano coerenti
@@ -126,12 +129,11 @@ public class InteropMaintenanceServiceImpl implements InteropMaintenanceService 
     public void alignTenantKind(it.pagopa.interop.authorization.domain.Tenant tenant) {
         String expectedKind = tenant.getKind();
 
-        String xCorrelationId = String.valueOf(UUID.randomUUID());
         UUID organizationId = identityService.getOrganizationId(tenant.getName());
 
         String token = identityService.getToken(tenant.getName(), "admin");
         tenantsProcessClient.setBearerToken(token);
-        String actualKind = tenantsProcessClient.getTenant(xCorrelationId, organizationId).getBody().getKind().toString();
+        String actualKind = tenantsProcessClient.getTenant(randomUUID(), organizationId).getBody().getKind().toString();
 
         if(!actualKind.equals(expectedKind)) {
             this.changeTenantKind(tenant.getName(), expectedKind);
