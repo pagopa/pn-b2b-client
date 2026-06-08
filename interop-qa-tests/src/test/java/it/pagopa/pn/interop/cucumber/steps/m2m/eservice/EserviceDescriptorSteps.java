@@ -15,6 +15,8 @@ import it.pagopa.pn.interop.cucumber.steps.catalog.utils.CatalogResolver;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.AbstractCommonSteps;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.assistant.EServiceDescriptorPatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.assistant.EServiceDescriptorQuotasPatchOperationsAssistant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -148,6 +150,7 @@ public class EserviceDescriptorSteps extends AbstractCommonSteps<EServiceDescrip
         UUID resolvedDescriptorId = catalogResolver.resolveOldDescriptorId(descriptorId);
         UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
 
+        registerDescriptorArchivingRequestTimestamp();
         sharedStepsContext.getHttpCallExecutor().performCall(
             () -> client.scheduleArchiveEServiceDescriptor(resolvedEServiceId, resolvedDescriptorId));
     }
@@ -157,6 +160,7 @@ public class EserviceDescriptorSteps extends AbstractCommonSteps<EServiceDescrip
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
 
+        registerDescriptorArchivingRequestTimestamp();
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> client.scheduleArchiveEServiceDescriptor(eServiceId, descriptorId));
     }
@@ -193,5 +197,10 @@ public class EserviceDescriptorSteps extends AbstractCommonSteps<EServiceDescrip
         this.actualEntities.clear();
         this.actualEntities.addAll(actualDescriptors);
         this.bindActual(sharedStepsContext, actualDescriptors);
+    }
+
+    private void registerDescriptorArchivingRequestTimestamp() {
+        sharedStepsContext.getEServicesCommonContext()
+                .setDescriptorArchivingRequestTimestamp(OffsetDateTime.now(ZoneOffset.UTC));
     }
 }

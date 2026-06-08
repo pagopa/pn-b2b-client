@@ -51,6 +51,7 @@ public class EServicesCommonContext {
     private OffsetDateTime creationTimestamp;
     private OffsetDateTime publicationTimestamp;
     private OffsetDateTime eServiceEditTimestamp;
+    private OffsetDateTime descriptorArchivingRequestTimestamp;
 
     public void addCertifiedAttributes(List<UUID> attributesIds) {
         this.certifiedAttributesIds.addAll(attributesIds);

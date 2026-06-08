@@ -27,7 +27,6 @@ public class DescriptorArchivingSteps {
     private final SharedStepsContext sharedStepsContext;
     private final IHttpExecutor httpCallExecutor;
     private final CatalogResolver catalogResolver;
-    private OffsetDateTime descriptorArchivingRequestTimestamp;
 
     public DescriptorArchivingSteps(
             ClientTokenConfigurator clientTokenConfigurator,
@@ -88,7 +87,7 @@ public class DescriptorArchivingSteps {
     }
 
     private void scheduleArchiveDescriptor(UUID eServiceId, UUID descriptorId) {
-        descriptorArchivingRequestTimestamp = OffsetDateTime.now(ZoneOffset.UTC);
+        registerDescriptorArchivingRequestTimestamp();
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getEServiceClient()
                         .scheduleArchiveDescriptor(eServiceId, descriptorId),
@@ -199,6 +198,8 @@ public class DescriptorArchivingSteps {
     }
 
     private OffsetDateTime calculateExpectedArchivableOn() {
+        OffsetDateTime descriptorArchivingRequestTimestamp = sharedStepsContext.getEServicesCommonContext()
+                .getDescriptorArchivingRequestTimestamp();
         OffsetDateTime referenceTimestamp = descriptorArchivingRequestTimestamp != null
                 ? descriptorArchivingRequestTimestamp
                 : OffsetDateTime.now(ZoneOffset.UTC);
@@ -209,6 +210,8 @@ public class DescriptorArchivingSteps {
     }
 
     private boolean isStartedAtWithinTolerance(String startedAt) {
+        OffsetDateTime descriptorArchivingRequestTimestamp = sharedStepsContext.getEServicesCommonContext()
+                .getDescriptorArchivingRequestTimestamp();
         if (startedAt == null || startedAt.isBlank() || descriptorArchivingRequestTimestamp == null) {
             return false;
         }
@@ -223,6 +226,11 @@ public class DescriptorArchivingSteps {
         } catch (DateTimeParseException e) {
             return false;
         }
+    }
+
+    private void registerDescriptorArchivingRequestTimestamp() {
+        sharedStepsContext.getEServicesCommonContext()
+                .setDescriptorArchivingRequestTimestamp(OffsetDateTime.now(ZoneOffset.UTC));
     }
 
     private EServiceDescriptorState expectedArchivingState(EServiceDescriptorState descriptorState) {
