@@ -42,7 +42,9 @@ public class TenantSteps {
         * di eseguire in isolamento, non nella stessa esecuzione di altri test) allora l'allineamento deve essere
         * effettuato AD OGNI test, perché ogni test cambia lo stato dei tenant kind */
         if("true".equals(System.getProperty("suite.AdeguamentoAnalisiRischioTest"))) {
+            log.info("Aligning tenant kinds...");
             maintenanceService.alignTenantKinds();
+            log.info("Tenant kinds aligned");
         }
 
         /* 29/05/2026 se, invece, non è in esecuzione la specifica suite di test di "Adeguamento analisi del rischio"

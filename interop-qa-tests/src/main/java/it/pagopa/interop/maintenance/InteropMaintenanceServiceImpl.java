@@ -24,7 +24,7 @@ import java.util.UUID;
 @Slf4j
 @Component
 public class InteropMaintenanceServiceImpl implements InteropMaintenanceService {
-    private static final String X_METADATA_VERSION = "X-Metadata-Version";
+    public static final String X_METADATA_VERSION = "X-Metadata-Version";
 
     private final ITenantsApi tenantsBffClient;
     private final ITenantsProcessApi tenantsProcessClient;

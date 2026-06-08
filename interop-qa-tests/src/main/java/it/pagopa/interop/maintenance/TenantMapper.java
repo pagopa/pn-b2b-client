@@ -17,4 +17,12 @@ public interface TenantMapper {
             int currentVersion,
             TenantKind tenantKind,
             String selfcareInstitutionType);
+
+    @Mapping(source = "tenant", target = "tenant")
+    @Mapping(source = "currentVersion", target = "currentVersion")
+    @Mapping(source = "selfcareInstitutionType", target = "tenant.selfcareInstitutionType")
+    MaintenanceTenantUpdatePayload mapWith(
+            Tenant tenant,
+            int currentVersion,
+            String selfcareInstitutionType);
 }
