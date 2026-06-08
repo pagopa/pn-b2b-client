@@ -1,4 +1,4 @@
-@eservice @eservice_async
+@eservice @e-service-async
 Feature: Configurazione e gestione di E-Service per scambi asincroni e massivi
 
   Come Erogatore di PDND

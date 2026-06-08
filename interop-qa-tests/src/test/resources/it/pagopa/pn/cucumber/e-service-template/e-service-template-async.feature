@@ -1,4 +1,4 @@
-@e-service-template @eservice_async
+@e-service-template @e-service-template-async
 Feature: Configurazione e gestione di template e-service per scambi asincroni e massivi
 
   Scenario Outline: [ASYNC_TEMPLATE_ESERVICE_CREATION_1] La creazione di un e-service template asincrono in stato DRAFT
