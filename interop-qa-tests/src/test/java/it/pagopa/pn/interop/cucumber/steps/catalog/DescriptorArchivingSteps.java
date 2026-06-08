@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.catalog;
 
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -124,11 +125,29 @@ public class DescriptorArchivingSteps {
         pollDescriptorArchivingSchedule(eServiceId, oldDescriptorId, "DESCRIPTOR");
     }
 
+    @And("il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore")
+    public void oldDescriptorHasNotBeenManuallyArchived() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID oldDescriptorId = sharedStepsContext.getEServicesCommonContext().getOldDescriptorId();
+
+        pollDescriptorWithoutArchivingSchedule(eServiceId, oldDescriptorId);
+    }
+
     private void pollDescriptorState(UUID eServiceId, UUID descriptorId, EServiceDescriptorState expectedState) {
         sharedStepsContext.getPollingService().makePolling(
                 () -> clientTokenConfigurator.getEServiceClient().getEServiceDescriptor(eServiceId, descriptorId),
                 descriptor -> descriptor != null && expectedState.equals(descriptor.getState()),
                 "La vecchia versione dell'e-service non risulta in stato " + expectedState
+        );
+    }
+
+    private void pollDescriptorWithoutArchivingSchedule(UUID eServiceId, UUID descriptorId) {
+        sharedStepsContext.getPollingService().makePolling(
+                () -> clientTokenConfigurator.getEServiceClient().getEServiceDescriptor(eServiceId, descriptorId),
+                descriptor -> descriptor != null && descriptor.getArchivingSchedule() == null,
+                "La vecchia versione dell'e-service contiene l'attributo inatteso archivingSchedule"
         );
     }
 
