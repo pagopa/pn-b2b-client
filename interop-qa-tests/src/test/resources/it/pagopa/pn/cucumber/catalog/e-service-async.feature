@@ -104,14 +104,16 @@ Feature: Configurazione e gestione di E-Service per scambi asincroni e massivi
       | REST       | -30          | 10                    | 100          | true         | true  | 400            |
       | REST       | 10           | -30                   | 100          | true         | true  | 400            |
       | REST       | 10           | 30                    | -100         | true         | true  | 400            |
-      | REST       | 10           | 2147483647            | 100          | true         | true  | 200            |
-      | REST       | 10           | 10                    | 2147483647   | true         | true  | 200            |
+      | REST       | 999999       | 10                    | 100          | true         | true  | 200            |
+      | REST       | 1000000      | 10                    | 100          | true         | true  | 400            |
+      | REST       | 10           | 999999                | 100          | true         | true  | 200            |
+      | REST       | 10           | 1000000               | 100          | true         | true  | 400            |
+      | REST       | 10           | 10                    | 99999        | true         | true  | 200            |
+      | REST       | 10           | 10                    | 100000       | true         | true  | 400            |
       | SOAP       | %null        | 10                    | 100          | false        | false | 400            |
       | SOAP       | 10           | %null                 | 100          | false        | false | 400            |
       | SOAP       | 10           | 10                    | %null        | false        | false | 400            |
-      # bug PIN-10214
       | SOAP       | 10           | 10                    | 100          | true         | true  | 400            |
-      # bug PIN-10214
       | SOAP       | 10           | 10                    | 100          | false        | true  | 400            |
 
   Scenario: [ASYNC_ESERVICE_CREATION_2c] Errore configurazione parametri asincroni su e-service sincrono.
@@ -218,7 +220,7 @@ Feature: Configurazione e gestione di E-Service per scambi asincroni e massivi
 
 
   Scenario: [ASYNC_ESERVICE_CALLBACK_INTERFACE_REQUIRED] Fallimento della pubblicazione di un e-service asincrono senza
-    aver caricato un interfaccia di callback.
+  aver caricato un interfaccia di callback.
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service asincrono in stato "DRAFT" con:
       | technology | REST    |
