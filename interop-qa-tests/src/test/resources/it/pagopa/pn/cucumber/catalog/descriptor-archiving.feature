@@ -1,6 +1,7 @@
 @manual-archiving-eservice
 Feature: Archiviazione manuale di un descrittore
 
+  @happy-path
   Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_1.1] Un ente erogatore di un e-service può avviare il processo di archiviazione manuale del primo e meno recente descrittore in stato DEPRECATED
     Given l'utente è un "<role>" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -18,6 +19,7 @@ Feature: Archiviazione manuale di un descrittore
       | api          |
       | api,security |
 
+  @sad-path
   Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_1.2] Un utente con ruolo non autorizzato NON può avviare il processo di archiviazione manuale del descrittore
     Given l'utente è un "<role>" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -33,6 +35,7 @@ Feature: Archiviazione manuale di un descrittore
       | security |
       | support  |
 
+  @sad-path
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_1.3] Un utente con token non valido NON può avviare il processo di archiviazione manuale del descrittore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -44,6 +47,7 @@ Feature: Archiviazione manuale di un descrittore
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
+  @sad-path
   Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_1.4] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale di un descrittore se i parametri obbligatori non sono presenti o corretti
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -63,6 +67,7 @@ Feature: Archiviazione manuale di un descrittore
       | %actual      | %random    | 404        |
       | %random      | %random    | 404        |
 
+  @sad-path
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_1.5] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale di un suo descrittore se quest'ultimo è già stato già archiviato
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -72,6 +77,7 @@ Feature: Archiviazione manuale di un descrittore
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
+  @sad-path
   Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_1.6] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale di un suo descrittore se quest'ultimo è già in stato di archiviazione
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "<initialDescriptorState>"
@@ -89,6 +95,7 @@ Feature: Archiviazione manuale di un descrittore
       | PUBLISHED              | ARCHIVING            |
       | SUSPENDED              | ARCHIVING_SUSPENDED  |
 
+  @happy-path
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_1.7] Un ente erogatore di un e-service con 4 descrittori può avviare il processo di archiviazione manuale per i 3 descrittori meno recenti
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -112,6 +119,7 @@ Feature: Archiviazione manuale di un descrittore
     And la vecchia versione dell'e-service è in stato "ARCHIVING_SUSPENDED"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
+  @happy-path
   Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_1.8] Un ente erogatore di un e-service può avviare il processo di archiviazione manuale del primo e meno recente descrittore in stato SUSPENDED
     Given l'utente è un "<role>" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -129,6 +137,7 @@ Feature: Archiviazione manuale di un descrittore
       | api          |
       | api,security |
 
+  @sad-path
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_2.1] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale di un suo descrittore se quest'ultimo è il più recente
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -138,6 +147,7 @@ Feature: Archiviazione manuale di un descrittore
     And la versione più recente dell'e-service è in stato "PUBLISHED"
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
+  @happy-path
   Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_ELIMINATION_1.1] L'ente erogatore di un e-service può annullare il processo di archiviazione manuale del primo e meno recente descrittore se l'archiviazione è in corso
     Given l'utente è un "<role>" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "<initialDescriptorState>"
@@ -158,6 +168,7 @@ Feature: Archiviazione manuale di un descrittore
       | api          | SUSPENDED              | SUSPENDED            |
       | api,security | SUSPENDED              | SUSPENDED            |
 
+  @sad-path
   Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_ELIMINATION_1.2] Un utente con ruolo non autorizzato NON può annullare il processo di archiviazione manuale del descrittore
     Given l'utente è un "<role>" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -174,6 +185,7 @@ Feature: Archiviazione manuale di un descrittore
       | security |
       | support  |
 
+  @sad-path
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_ELIMINATION_1.3] Un utente con token non valido NON può annullare il processo di archiviazione manuale del descrittore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -186,6 +198,7 @@ Feature: Archiviazione manuale di un descrittore
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And l'annullamento dell'archiviazione manuale del vecchio descrittore è fallita
 
+  @sad-path
   Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_ELIMINATION_1.4] Un ente erogatore di un e-service NON può annullare il processo di archiviazione manuale di un descrittore se i parametri obbligatori non sono presenti o corretti
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -206,6 +219,7 @@ Feature: Archiviazione manuale di un descrittore
       | %actual      | %random    | 404        |
       | %random      | %random    | 404        |
 
+  @sad-path
   Scenario: [DIFFERENT_TENANT_ARCHIVING_DESCRIPTOR_1.1] Il processo di archiviazione dello specifico descrittore NON può essere eseguito da un ente differente dall'erogatore dell'e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -217,6 +231,7 @@ Feature: Archiviazione manuale di un descrittore
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And la versione più recente dell'e-service è in stato "PUBLISHED"
 
+  @sad-path
   Scenario: [DIFFERENT_TENANT_ARCHIVING_DESCRIPTOR_1.2] Il processo di archiviazione dello specifico descrittore NON può essere annullato da un ente differente dall'erogatore dell'e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -229,6 +244,7 @@ Feature: Archiviazione manuale di un descrittore
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And la versione più recente dell'e-service è in stato "PUBLISHED"
 
+  @sad-path
   Scenario: [DIFFERENT_TENANT_ARCHIVING_DESCRIPTOR_1.3] Il processo di archiviazione dello specifico descrittore NON può essere effettuato da un ente differente dall'erogatore dell'e-service anche se questo è delegato all'erogazione
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -242,6 +258,7 @@ Feature: Archiviazione manuale di un descrittore
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And la versione più recente dell'e-service è in stato "PUBLISHED"
 
+  @sad-path
   Scenario: [DIFFERENT_TENANT_ARCHIVING_DESCRIPTOR_1.4] Il processo di archiviazione dello specifico descrittore NON può essere annullato da un ente differente dall'erogatore dell'e-service anche se questo è delegato all'erogazione
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -257,6 +274,7 @@ Feature: Archiviazione manuale di un descrittore
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And la versione più recente dell'e-service è in stato "PUBLISHED"
 
+  @happy-path
   Scenario: [DIFFERENT_TENANT_ARCHIVING_DESCRIPTOR_2.1] Il processo di archiviazione dello specifico descrittore può essere effettuato dall'ente erogatore senza dover prima revocare la delega in erogazione attiva verso il delegato dell'e-service in questione
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
