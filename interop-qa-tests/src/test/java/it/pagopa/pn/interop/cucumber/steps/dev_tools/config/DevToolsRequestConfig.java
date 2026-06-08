@@ -228,12 +228,9 @@ public class DevToolsRequestConfig {
                 value = null;
             }
             switch (key) {
-                case "responseTime" -> seed.responseTime(Integer.valueOf(value));
-                case "voucherLifespan" -> seed.resourceAvailableTime(Integer.valueOf(value));
-                case "dailyCallsPerConsumer" -> seed.maxResultSet(Integer.valueOf(value));
-                default -> throw new IllegalArgumentException(
-                        "Campo non supportato per EServiceSeed: " + key
-                );
+                case "responseTime" -> seed.responseTime(value == null ? null : Integer.valueOf(value));
+                case "resourceAvailableTime" -> seed.resourceAvailableTime(value == null ? null : Integer.valueOf(value));
+                case "maxResultSet" -> seed.maxResultSet(value == null ? null : Integer.valueOf(value));
             }
         });
 
