@@ -321,3 +321,88 @@ Feature: recupero notifiche tramite api AppIO b2b
     Then a seguito della scansione del QR Code, il documento di pagamento "F24" può essere recuperata tramite AppIO
     And il download non ha prodotto errori
 
+  @appIo
+  Scenario: [QR_CODE_HF_1] Viene creata una notifica e recuperato il documento di pagamento PAGOPA tramite AppIO (/delivery/notifications/received/{iun}/attachments/payment/{attachmentName})
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 0                           |
+    And destinatario Mario Cucumber e:
+      | payment_pagoPaForm   | SI   |
+      | payment_f24          | NULL |
+      | apply_cost_f24       | NO   |
+      | apply_cost_pagopa    | SI   |
+      | payment_multy_number | 1    |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    And viene generato il QR Code "esteso" per la notifica appena creata
+    And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica con versione "0.9"
+    Then a seguito della scansione del QR Code, il documento di pagamento "PAGOPA" può essere recuperata tramite AppIO
+    And il download non ha prodotto errori
+
+  @appIo
+  Scenario: [QR_CODE_HF_2] Viene creata una notifica e recuperato l'F24 tramite AppIO (/delivery/notifications/received/{iun}/attachments/payment/{attachmentName})
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 0                           |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile              | NULL                 |
+      | physicalAddress_address      | Via@ok_AR            |
+      | physicalAddress_municipality | NAPOLI               |
+      | physicalAddress_province     | NA                   |
+      | physicalAddress_zip          | 80124                |
+      | payment_f24                  | PAYMENT_F24_STANDARD |
+      | title_payment                | F24_STANDARD_GHERKIN |
+      | apply_cost_f24               | SI                   |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    And viene generato il QR Code "esteso" per la notifica appena creata
+    And l'utente Mario Gherkin scansiona il QR Code per recuperare i dettagli della notifica con versione "0.9"
+    Then a seguito della scansione del QR Code, il documento di pagamento "F24" può essere recuperata tramite AppIO
+    And il download non ha prodotto errori
+
+  @appIo
+  Scenario: [QR_CODE_HF_3] Viene creata una notifica e recuperato il documento di pagamento PAGOPA tramite AppIO (/delivery/notifications/received/{iun}/attachments/payment/{attachmentName})
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 0                           |
+    And destinatario Mario Cucumber e:
+      | payment_pagoPaForm   | SI   |
+      | payment_f24          | NULL |
+      | apply_cost_f24       | NO   |
+      | apply_cost_pagopa    | SI   |
+      | payment_multy_number | 1    |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    And viene generato il QR Code "esteso" per la notifica appena creata
+    And l'utente Mario Cucumber scansiona il QR Code per recuperare i dettagli della notifica con versione "1.0"
+    Then a seguito della scansione del QR Code, il documento di pagamento "PAGOPA" può essere recuperata tramite AppIO
+    And il download non ha prodotto errori
+
+  @appIo
+  Scenario: [QR_CODE_HF_4] Viene creata una notifica e recuperato il documento di pagamento PAGOPA tramite AppIO (/delivery/notifications/received/{iun}/attachments/payment/{attachmentName})
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 0                           |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile              | NULL                 |
+      | physicalAddress_address      | Via@ok_AR            |
+      | physicalAddress_municipality | NAPOLI               |
+      | physicalAddress_province     | NA                   |
+      | physicalAddress_zip          | 80124                |
+      | payment_f24                  | PAYMENT_F24_STANDARD |
+      | title_payment                | F24_STANDARD_GHERKIN |
+      | apply_cost_f24               | SI                   |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    And viene generato il QR Code "esteso" per la notifica appena creata
+    And l'utente Mario Gherkin scansiona il QR Code per recuperare i dettagli della notifica con versione "1.0"
+    Then a seguito della scansione del QR Code, il documento di pagamento "F24" può essere recuperata tramite AppIO
+    And il download non ha prodotto errori

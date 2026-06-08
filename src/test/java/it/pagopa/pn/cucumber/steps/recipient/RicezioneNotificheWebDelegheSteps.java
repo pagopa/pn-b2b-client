@@ -90,10 +90,10 @@ public class RicezioneNotificheWebDelegheSteps {
 
     private String getTaxIdByUser(String user) {
         return switch (user) {
-            case MARIO_CUCUMBER -> MARIO_CUCUMBER_TAX_ID;
-            case MARIO_GHERKIN -> MARIO_GHERKIN_TAX_ID;
-            case GHERKIN_SRL -> GHERKIN_SRL_TAX_ID;
-            case CUCUMBER_SPA -> CUCUMBER_SPA_TAX_ID;
+            case MARIO_CUCUMBER -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_CUCUMBER.getTaxId();
+            case MARIO_GHERKIN -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_GHERKIN.getTaxId();
+            case GHERKIN_SRL -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_GHERKIN_SRL.getTaxId();
+            case CUCUMBER_SPA -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_CUCUMBER_SPA.getTaxId();
             case "Utente errato" -> "asdasdasd";
             default -> throw new IllegalArgumentException();
         };
@@ -102,11 +102,11 @@ public class RicezioneNotificheWebDelegheSteps {
     private UserDto getUserDtoByUser(String user) {
         return switch (user.trim().toLowerCase()) {
             case "mario cucumber" ->
-                    createUserDto(MARIO_CUCUMBER, "Mario", "Cucumber", MARIO_CUCUMBER_TAX_ID, null, true);
-            case "mario gherkin" -> createUserDto(MARIO_GHERKIN, "Mario", "Gherkin", MARIO_GHERKIN_TAX_ID, null, true);
-            case "gherkinsrl" -> createUserDto(GHERKIN_SRL, "gherkin", "srl", GHERKIN_SRL_TAX_ID, GHERKIN_SRL, false);
+                    createUserDto(MARIO_CUCUMBER, "Mario", "Cucumber", sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_CUCUMBER.getTaxId(), null, true);
+            case "mario gherkin" -> createUserDto(MARIO_GHERKIN, "Mario", "Gherkin", sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_GHERKIN.getTaxId(), null, true);
+            case "gherkinsrl" -> createUserDto(GHERKIN_SRL, "gherkin", "srl", sharedSteps.getDestinatarioRegistry().DESTINATARIO_GHERKIN_SRL.getTaxId(), GHERKIN_SRL, false);
             case "cucumberspa" ->
-                    createUserDto(CUCUMBER_SPA, "cucumber", "spa", CUCUMBER_SPA_TAX_ID, CUCUMBER_SPA, false);
+                    createUserDto(CUCUMBER_SPA, "cucumber", "spa", sharedSteps.getDestinatarioRegistry().DESTINATARIO_CUCUMBER_SPA.getTaxId(), CUCUMBER_SPA, false);
             default -> throw new IllegalArgumentException();
         };
     }
