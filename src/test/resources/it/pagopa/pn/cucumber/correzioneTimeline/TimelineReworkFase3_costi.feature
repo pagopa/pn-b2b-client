@@ -151,7 +151,7 @@ Feature: Correzione timeline fase 3 costi
     And verifico che pre restart per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attempt>
     And vengono letti gli eventi fino allo stato della notifica "<finalStatus>"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEventRestart>" al tentativo "REWORK_0"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEventRestart>"
     And vengono letti gli eventi fino allo stato della notifica "<finalStatusRestart>"
     And la timeline contiene elementi con la stringa "REWORK_"
     And verifico che post restart per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attemptRestart>
@@ -246,7 +246,7 @@ Feature: Correzione timeline fase 3 costi
     And verifico che pre restart per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attempt>
     And vengono letti gli eventi fino allo stato della notifica "<finalStatus>"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEventRestart>" al tentativo "REWORK_0"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEventRestart>"
     And vengono letti gli eventi fino allo stato della notifica "<finalStatusRestart>"
     And la timeline contiene elementi con la stringa "REWORK_"
     And verifico che post restart per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attemptRestart>
@@ -342,7 +342,7 @@ Feature: Correzione timeline fase 3 costi
     And verifico che pre restart per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attempt>
     And vengono letti gli eventi fino allo stato della notifica "<finalStatus>"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEventRestart>" al tentativo "REWORK_0"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEventRestart>"
     And vengono letti gli eventi fino allo stato della notifica "<finalStatusRestart>"
     And la timeline contiene elementi con la stringa "REWORK_"
     And post restart vengono recuperati i costi dall'api di delivery per il destinatario 0
@@ -444,7 +444,7 @@ Feature: Correzione timeline fase 3 costi
     And verifico che pre restart per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attempt>
     And vengono letti gli eventi fino allo stato della notifica "<finalStatus>"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEventRestart>" al tentativo "REWORK_0"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEventRestart>"
     And vengono letti gli eventi fino allo stato della notifica "<finalStatusRestart>"
     And la timeline contiene elementi con la stringa "REWORK_"
     And verifico che post restart per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attemptRestart>

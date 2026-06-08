@@ -392,7 +392,7 @@ public class TimelineReworkSteps {
         List<TimelineElementV28> timeline = fullSentNotification.getTimeline();
         TimelineElementV28 reworkedElement = timeline.stream()
                 .filter(e -> e.getCategory() != null)
-                .filter(e -> "NOTIFICATION_TIMELINE_REWORKED".equals(e.getCategory().getValue()))
+                .filter(e -> NOTIFICATION_TIMELINE_REWORKED.equals(e.getCategory().getValue()))
                 .findFirst()
                 .orElseThrow(() ->
                         new AssertionError("Elemento NOTIFICATION_TIMELINE_REWORKED non trovato"));
