@@ -26,6 +26,7 @@ Feature: connettore app IO per invio messaggi di cortesia per comunicazioni bona
 
   Scenario Outline: [IO_CONNECTOR_3.1.4] Richiesta non valida presa in carico
     Given viene generata una richiesta valida per la presa in carico del messaggio
+    When come orchestratore SEND richiedo l'invio del messaggio verso IO
     And sostituisco un valore non valido nel campo "<field>"
     Then verifico che si ottenga una response di "BAD REQUEST"
     Examples:

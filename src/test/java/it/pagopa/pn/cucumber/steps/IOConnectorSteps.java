@@ -50,7 +50,7 @@ public class IOConnectorSteps {
         messageRequest.setRequestId(requestId);
         messageRequest.setIun("IUN-" + System.currentTimeMillis());
         messageRequest.setRecipientTaxId("ABCDEFG1234567890");
-        messageRequest.setSenderServiceId("VALID_SENDER_SERVICE_ID");//TODO
+        messageRequest.setSenderServiceId("01KP5QYVRZDDEMHCN3TV1QY1H6");//TODO
         messageRequest.setSubject("Oggetto di test");
         messageRequest.setMarkdown("Contenuto del messaggio");
 
@@ -81,7 +81,7 @@ public class IOConnectorSteps {
     }
 
     @When("come orchestratore SEND richiedo l'invio del messaggio verso IO")
-    public void invokeMessageAPIOK(String recipientTaxId) {
+    public void invokeMessageAPIOK() {
 
         try {
             MessageResponse resp = pnIOConnectorClient.sendIOMessage("VALID_SENDER_SERVICE_ID",//TODO
@@ -129,10 +129,10 @@ public class IOConnectorSteps {
 
         GetProfileRequest getProfileRequest = new GetProfileRequest();
         getProfileRequest.setRecipientTaxId(recipientTaxId);
-        getProfileRequest.setSenderServiceId("VALID_SENDER_SERVICE_ID");//TODO
+        getProfileRequest.setSenderServiceId("01KP5QYVRZDDEMHCN3TV1QY1H6");//TODO
 
         try {
-            GetProfileResponse resp = pnIOConnectorClient.getIOProfile("VALID_SENDER_SERVICE_ID",//TODO
+            GetProfileResponse resp = pnIOConnectorClient.getIOProfile("CLIENT_ID",//TODO
                     getProfileRequest);
             log.info("profile response: {}", resp);
             getProfileResponse = resp;
