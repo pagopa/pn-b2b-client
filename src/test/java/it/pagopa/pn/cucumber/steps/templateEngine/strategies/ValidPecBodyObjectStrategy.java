@@ -21,6 +21,23 @@ public class ValidPecBodyObjectStrategy implements ITemplateEngineStrategy {
 
     @Override
     public String getTextToCheckLanguage(String language, String recipientType) {
-        return "SEND - Domicilio digitale PEC confermato";
+        return switch (language.toUpperCase()) {
+            case  "ITALIANA" -> {
+                yield "SEND - Domicilio digitale PEC confermato";
+            }
+            case "TEDESCA" -> {
+                yield "SEND - Digitales PEC-Domizil bestätigt";
+            }
+            case "SLOVENA" -> {
+                yield "SEND - Digitalno prebivališče PEC potrjeno";
+            }
+            case "FRANCESE" -> {
+                yield "SEND - Domicile numérique PEC confirmé";
+            }
+            case  "INGLESE" -> {
+                yield "SEND - PEC digital domicile confirmed";
+            }
+            default -> throw new IllegalArgumentException("NO VALID LANGUANGE");
+        };
     }
 }

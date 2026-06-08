@@ -42,6 +42,9 @@ public class NotificationAARForEMAILStrategy implements ITemplateEngineStrategy 
             case "FRANCESE" -> {
                 yield "avez pas d&#39;adresse de courrier &eacute;lectronique certifi&eacute; (PEC) et que vous consultez les documents dans les 5 jours (120 heures) suivant l&#39;envoi du message, vous ne recevrez pas la notification par courrier recommand&eacute";
             }
+            case "INGLESE" -> {
+                yield "If you access the communication within 5 days of this email being sent, you will avoid registered post and any associated costs";
+            }
             default -> throw new IllegalArgumentException("NO VALID LANGUANGE");
         };
     }

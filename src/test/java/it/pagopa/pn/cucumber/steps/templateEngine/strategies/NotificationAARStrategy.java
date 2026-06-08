@@ -87,6 +87,7 @@ public class NotificationAARStrategy implements ITemplateEngineStrategy {
             case "TEDESCA" -> localizedText.getDe();
             case "FRANCESE" -> localizedText.getFr();
             case "SLOVENA" -> localizedText.getSl();
+            case "INGLESE" -> localizedText.getEn();
             default -> throw new IllegalArgumentException("Lingua non valida: " + language);
         };
     }

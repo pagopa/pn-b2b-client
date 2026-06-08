@@ -41,6 +41,9 @@ public class AnalogDeliveryWorkflowFailureLegalFactStrategy implements ITemplate
             case "FRANCESE" -> {
                 yield "Deposito avviso di avvenuta ricezione En ce qui concerne la notification comportant IUN , conformément à l'article 26, alinéa 7, du décret législatif 76string /2020, le destinataire étant string Code fiscale";
             }
+            case "INGLESE" -> {
+                yield "Deposito avviso di avvenuta ricezione With reference to the notification with IUN , pursuant to Art. 26, paragraph 7 of D.L. 76/2020, as the recipient string string Fiscal Code";
+            }
             default -> throw new IllegalArgumentException("NO VALID LANGUANGE");
         };
     }

@@ -549,12 +549,6 @@ Feature: Template engine
       | francese |
       | inglese  |
 
-  @templateEngine #104 /templates-engine-private/v1/templates/pecsubjectconfirm
-  Scenario: [TEMPLATE-ENGINE_36_1] Richiamare l’API per il recupero dell’oggetto relativo alla PEC valida - lingua errata
-    When recupero l'oggetto per "PEC valida object" in lingua "francese"
-    Then verifico che il template è in formato "text"
-    And controllo che per il template "PEC valida object" il file "text" sia in lingua "italiana"
-
   @templateEngine #85 /templates-engine-private/v1/templates/pecsubjectreject
   Scenario Outline: [TEMPLATE-ENGINE_37] Richiamare l’API per il recupero dell’oggetto relativo alla PEC non valida
     When recupero l'oggetto per "PEC non valida object" in lingua "<language>"
@@ -675,7 +669,7 @@ Feature: Template engine
   | inglese | PG |
 
   @templateEngine
-  Scenario Outline: [TEMPLATE-ENGINE_43] Verifica dell'intero template AAR-RADD per PF e PG per le lingue IT,DE,FR,SL
+  Scenario Outline: [TEMPLATE-ENGINE_43B] Verifica dell'intero template AAR-RADD per PF e PG per le lingue IT,DE,FR,SL,EN
   When recupero il template per "avviso di avvenuta ricezione RADD" in lingua "<language>" con recipient Type "<recipientType>"
   Then verifico che il template è in formato ".pdf"
   And controllo che per il template "avviso di avvenuta ricezione RADD" il file "pdf" sia in lingua "<language>"
@@ -689,6 +683,8 @@ Feature: Template engine
     | tedesca | PG |
     | slovena | PF |
     | slovena | PG |
+    | inglese | PF |
+    | inglese | PG |
 
 
 

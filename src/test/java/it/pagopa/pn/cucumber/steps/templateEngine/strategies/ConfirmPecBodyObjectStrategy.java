@@ -21,6 +21,23 @@ public class ConfirmPecBodyObjectStrategy implements ITemplateEngineStrategy {
 
     @Override
     public String getTextToCheckLanguage(String language, String recipientType) {
-        return "SEND - Conferma la tua PEC";
+        return switch (language.toUpperCase()) {
+            case  "ITALIANA" -> {
+                yield "SEND - Conferma la tua PEC";
+            }
+            case "TEDESCA" -> {
+                yield "SEND - Bestätige deine PEC";
+            }
+            case "SLOVENA" -> {
+                yield "SEND - Potrdi svoj PEC";
+            }
+            case "FRANCESE" -> {
+                yield "SEND - Confirme ta PEC";
+            }
+            case  "INGLESE" -> {
+                yield "SEND - Confirm your PEC";
+            }
+            default -> throw new IllegalArgumentException("NO VALID LANGUANGE");
+        };
     }
 }
