@@ -453,7 +453,8 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
   # Viene utilizzato un taxId per cui NR restituisce Città e Località null, in modo da verificare che in questi casi non venga valorizzato
   # il campo "details_foundAddress" nell'elemento di timeline "PREPARE_ANALOG_DOMICILE_FAILURE"
   # e che venga invece valorizzato il campo "details_failureCause" con il codice D01 (Indirizzo Irreperibile)
-  @workflowAnalogico
+  # L'Annotazione @qa14580 è da rimuovere una volta che le modifiche della GA26Q2.B sono arrivate su tutti gli ambienti
+  @workflowAnalogico @qa14580
   Scenario: [B2B_TIMELINE_ANALOG_FOUND_ADDRESS_1] Verifica della NON presenza dell'indirizzo nell'elemento di timeline PREPARE_ANALOG_DOMICILE
   in caso di physicalAddress con Città e Località ritornati null da NR - PN-19480
     Given viene generata una nuova notifica
@@ -477,7 +478,8 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
   # Viene utilizzato un taxId per cui NR restituisce Città e Località come stringa vuota, in modo da verificare che in questi casi non venga valorizzato
   # il campo "details_foundAddress" nell'elemento di timeline "PREPARE_ANALOG_DOMICILE_FAILURE"
   # e che venga invece valorizzato il campo "details_failureCause" con il codice D01 (Indirizzo Irreperibile)
-  @workflowAnalogico
+  # L'Annotazione @qa14580 è da rimuovere una volta che le modifiche della GA26Q2.B sono arrivate su tutti gli ambienti
+  @workflowAnalogico @qa14580
   Scenario: [B2B_TIMELINE_ANALOG_FOUND_ADDRESS_2] Verifica della NON presenza dell'indirizzo nell'elemento di timeline PREPARE_ANALOG_DOMICILE
   in caso di physicalAddress con Città e Località ritornati come stringa vuota da NR - PN-19480
     Given viene generata una nuova notifica
