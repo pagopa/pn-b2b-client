@@ -32,17 +32,17 @@ public class DescriptorDeletionSteps {
     public void descriptorAndEserviceCancelled() {
         sharedStepsContext.getPollingService().makePolling(
                 () -> httpCallExecutor.performCall(() -> clientTokenConfigurator.getProducerClient().getProducerEServiceDescriptor(
-                        sharedStepsContext.getEServicesCommonContext().getEserviceId(),
-                        sharedStepsContext.getEServicesCommonContext().getDescriptorId()
-                    )
+                                sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                                sharedStepsContext.getEServicesCommonContext().getDescriptorId()
+                        )
                 ),
                 res -> res == HttpStatus.NOT_FOUND,
                 "There was an error while retrieving the e-service descriptor"
         );
         sharedStepsContext.getPollingService().makePolling(
                 () -> httpCallExecutor.performCall(() -> clientTokenConfigurator.getProducerClient().getProducerEServiceDetails(
-                        sharedStepsContext.getEServicesCommonContext().getEserviceId()
-                    )
+                                sharedStepsContext.getEServicesCommonContext().getEserviceId()
+                        )
                 ),
                 res -> res == HttpStatus.NOT_FOUND,
                 "There was an error while retrieving e-service details"
@@ -50,6 +50,7 @@ public class DescriptorDeletionSteps {
     }
 
     @Then("l'ultimo descrittore in stato DRAFT è stato cancellato")
+    @Then("l'ultimo descrittore in stato WAITING_FOR_APPROVAL è stato cancellato")
     public void lastDraftDescriptorCancelled() {
         sharedStepsContext.getPollingService().makePolling(
                 () -> httpCallExecutor.performCall(() -> clientTokenConfigurator.getProducerClient().getProducerEServiceDescriptor(
