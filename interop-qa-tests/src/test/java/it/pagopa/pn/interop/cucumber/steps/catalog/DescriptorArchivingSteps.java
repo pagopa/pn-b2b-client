@@ -130,6 +130,16 @@ public class DescriptorArchivingSteps {
         archivingScheduleVerifier.pollDescriptorPopulatedArchivingSchedule(eServiceId, oldDescriptorId, "DESCRIPTOR");
     }
 
+    @Then("il descrittore più recente è stato correttamente archiviato tramite l'archiviazione manuale del singolo descrittore")
+    public void latestDescriptorAttributeArchivingScheduleIsPresent() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID oldDescriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+
+        archivingScheduleVerifier.pollDescriptorPopulatedArchivingSchedule(eServiceId, oldDescriptorId, "DESCRIPTOR");
+    }
+
     @Then("l'archiviazione manuale del singolo descrittore è stata annullata con successo")
     @Then("il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore")
     @Then("il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service")
