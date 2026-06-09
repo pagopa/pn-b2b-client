@@ -45,14 +45,14 @@ public class INIPECGestionePuntualeEsitiSteps {
                         .isZero());
     }
 
-    @Then("viene verificato che la richiesta per il cf {string} risulti inviata in DLQ e con retry>0")
+    @Then("viene verificato che la richiesta per il cf {string} risulti in retry")
     public void verifySentToDLQAndRetriesAreGreaterThanZero(String cf) {
 
-        List<Map<String, AttributeValue>> filtered = retreiveBatchRequestItems(cf, "SENT_TO_DLQ");
+        List<Map<String, AttributeValue>> filtered = retreiveBatchRequestItems(cf, "NOT_SENT");
 
         // Assert at least one match
         AssertionsForClassTypes.assertThat(filtered.size())
-                .as("No items found for cf=%s and sendStatus=SENT_TO_DLQ", cf)
+                .as("No items found for cf=%s and sendStatus=NOT_SENT", cf)
                 .isNotZero();
 
         // Assert all retries are > 0
@@ -72,7 +72,7 @@ public class INIPECGestionePuntualeEsitiSteps {
 
     @And("salvo il timestamp corrente")
     public void storeCurrentTimestamp() {
-        notificationSentTimestamp = java.time.OffsetDateTime.now().toString();
+        notificationSentTimestamp = java.time.OffsetDateTime.now().minusHours(2).minusMinutes(1).toString();
     }
 
 
@@ -98,10 +98,10 @@ public class INIPECGestionePuntualeEsitiSteps {
     }
 
 
-    @Given("imposto il timestamp a 10 minuti fa")
+    @Given("imposto il timestamp a 30 minuti fa")
     public void storeTimestampTenMinutesAgo() {
         notificationSentTimestamp = java.time.OffsetDateTime.now()
-                .minusMinutes(300)
+                .minusMinutes(150)
                 .toString();
     }
 
