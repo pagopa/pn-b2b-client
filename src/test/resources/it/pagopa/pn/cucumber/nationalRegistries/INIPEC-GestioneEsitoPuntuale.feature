@@ -6,7 +6,7 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
     And destinatario
-      | taxId           | 39274018561 |
+      | taxId           | 00845483379 |
       | digitalDomicile | NULL        |
       | recipientType   | PG          |
     And destinatario
@@ -15,9 +15,8 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
       | recipientType   | PG          |
     And salvo il timestamp corrente
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    When imposto lo iun di SharedSteps a "IUN ZDNJ-PQNP-HTET-202606-U-1" e la pa a "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
-    Then viene verificato che la richiesta per il cf "39274018561" non risulti in retry
+    Then viene verificato che la richiesta per il cf "00845483379" non risulti in retry
     Then viene verificato che la richiesta per il cf "17492068394" risulti in retry
 
 
