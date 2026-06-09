@@ -9,7 +9,9 @@ public enum DynamoTableName {
     NOTIFICATION_DELIVERY_COST("pn-NotificationDeliveryCost"),
     ONBOARD_INSTITUTIONS("pn-OnboardInstitutions"),
     NOTIFICATION_REWORKS("pn-NotificationReworks"),
-    REWORKED_TIMELINES_FOR_INVOICING("pn-ReworkedTimelinesForInvoicing");
+    REWORKED_TIMELINES_FOR_INVOICING("pn-ReworkedTimelinesForInvoicing"),
+    COST_COMPONENTS("pn-CostComponents"),
+    COST_UPDATE_RESULT("pn-CostUpdateResult");
 
     private final String value;
 

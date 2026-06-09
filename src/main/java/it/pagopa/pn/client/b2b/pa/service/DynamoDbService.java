@@ -22,6 +22,8 @@ public class DynamoDbService {
             case ONBOARD_INSTITUTIONS -> buildOnboardInstitutionsRequest(attributeValues);
             case NOTIFICATION_REWORKS -> buildNotificationReworksRequest(attributeValues);
             case REWORKED_TIMELINES_FOR_INVOICING -> buildReworkedTimelinesForInvoicingRequest(attributeValues);
+            case COST_COMPONENTS -> buildCostComponentsRequest(attributeValues);
+            case COST_UPDATE_RESULT -> buildCostUpdateResultRequest(attributeValues);
         };
         return dynamoDbClient.query(queryRequest);
     }
@@ -61,6 +63,18 @@ public class DynamoDbService {
         return DynamoQueryBuilder.withFilter(DynamoTableName.REWORKED_TIMELINES_FOR_INVOICING.getValue(),
                 "paId_invoicingDay = :pk",
                 "iun = :v_iun",
+                attributeValues);
+    }
+
+    private static QueryRequest buildCostComponentsRequest(Map<String, AttributeValue> attributeValues) {
+        return DynamoQueryBuilder.withoutFilter(DynamoTableName.COST_COMPONENTS.getValue(),
+                "pk = :v_pk",
+                attributeValues);
+    }
+
+    private static QueryRequest buildCostUpdateResultRequest(Map<String, AttributeValue> attributeValues) {
+        return DynamoQueryBuilder.withoutFilter(DynamoTableName.COST_UPDATE_RESULT.getValue(),
+                "pk = :v_pk",
                 attributeValues);
     }
 }

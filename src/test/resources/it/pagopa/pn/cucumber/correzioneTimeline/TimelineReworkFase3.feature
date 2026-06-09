@@ -297,7 +297,6 @@ Feature: Correzione timeline fase 3
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
       | digitalDomicile         | NULL                     |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-#    Given imposto lo iun di SharedSteps a "VLGV-HUWD-WNWM-202605-Q-1" e la pa a "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE" per l'utente 0
     When viene invocata una richiesta di restart per la notifica appena creata
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
@@ -314,11 +313,9 @@ Feature: Correzione timeline fase 3
       | taxId                   | MNTMRA03M71C615V         |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
       | digitalDomicile         | NULL                     |
-    And destinatario
-      | denominatation          | Test Recipient Two       |
-      | taxId                   | LTTSRT16T12H501Y         |
-      | physicalAddress_address | Via@FAIL-IRREPERIBILE_AR |
-      | digitalDomicile         | NULL                     |
+    And destinatario Gherkin Irreperibile e:
+      | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
+      | digitalDomicile         | NULL                                         |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE" per l'utente 0
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE" per l'utente 1

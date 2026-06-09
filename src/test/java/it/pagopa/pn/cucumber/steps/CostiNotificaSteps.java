@@ -322,7 +322,7 @@ public class CostiNotificaSteps {
     }
 
     @And("verifico che {isBefore} {timelineInvalidation} per il destinatario {int} i record su Pn-NotificationDeliveryCost siano stati (inseriti)(modificati) e correttamente valorizzati fino all'attempt {int}")
-    public void checkNotificationDeliveryCostRecordForRework(boolean isBeforeRestart, String requestType, int recIndex, int attempt) {
+    public void checkNotificationDeliveryCostRecordForRework(boolean isBeforeRework, String requestType, int recIndex, int attempt) {
         try {
             List<String> costsToConsider = attempt == 0 ? Arrays.asList("baseCost", "firstAnalogCost") : Arrays.asList("baseCost", "firstAnalogCost", "secondAnalogCost");
             List<String> costsPreRework = new ArrayList<>(costsToConsider);
@@ -340,7 +340,7 @@ public class CostiNotificaSteps {
             notificationCostRecipientResponse = notificationCostClient.getNotificationCost(sharedSteps.getNotificationIun(), recIndex);
             log.info("NotificationCostRecipientResponse:\n {}", notificationCostRecipientResponse);
 
-            if (isBeforeRestart) {
+            if (isBeforeRework) {
                 costsPreRework.forEach(costo -> {
                     assertThat(record.get(costo)).as("Pre rework, il record salvato su Pn-NotificationDeliveryCost dovrebbe avere il campo %s valorizzato", costo).isNotNull();
                     notificationCostsPreRework.put(costo, record.get(costo).n());
@@ -357,11 +357,11 @@ public class CostiNotificaSteps {
     }
 
     @And("{isBefore} {timelineInvalidation} vengono recuperati i costi dall'api di delivery per il destinatario {int}")
-    public void checkDeliveryCosts(boolean isBeforeRestart, String requestType, int recIndex) {
+    public void checkDeliveryCosts(boolean isBeforeRework, String requestType, int recIndex) {
         FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
         PagoPaPayment singlePayment = fsn.getRecipients().get(recIndex).getPayments().get(0).getPagoPa();
         NotificationPriceResponseV23 priceResponse = paB2bClient.getNotificationPriceV23(singlePayment.getCreditorTaxId(), singlePayment.getNoticeCode());
-        if (isBeforeRestart) {
+        if (isBeforeRework) {
             notificationPriceResponsePreRework = priceResponse;
         } else {
             notificationPriceResponsePostRework = priceResponse;
@@ -394,5 +394,24 @@ public class CostiNotificaSteps {
                 softly.assertThat(notificationPriceResponsePreRework).as("After rework the notificationPriceResponse should not be the same").isNotEqualTo(notificationPriceResponsePostRework);
             }
         });
+    }
+
+    @And("{isBefore} {timelineInvalidation} recupero i valori dei costi notifica relativi all'utente {int} sulla tabella pn-CostComponents")
+    public void checkPnCostComponentsDynamo(boolean isBeforeRework, String requestType, int recIndex) {
+        String pk = sharedSteps.getNotificationIun() + "##" + recIndex;
+        QueryResponse queryResponse = dynamoDbService.call(DynamoTableName.COST_COMPONENTS, Map.of(
+                ":v_pk", AttributeValue.builder().s(pk).build()));
+        log.info("CostComponents: {}", queryResponse);
+    }
+
+    @And("{isBefore} {timelineInvalidation} recupero i valori dei costi notifica relativi al pagamento {int} dell'utente {int} sulla tabella pn-CostUpdateResult")
+    public void checkPnCostUpdateResultDynamo(boolean isBeforeRework, String requestType, int paymentIndex, int recIndex) {
+        FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
+        String creditorTaxId = fsn.getRecipients().get(recIndex).getPayments().get(paymentIndex).getPagoPa().getCreditorTaxId();
+        String noticeCode = fsn.getRecipients().get(recIndex).getPayments().get(paymentIndex).getPagoPa().getNoticeCode();
+        String pk = creditorTaxId + "##" + noticeCode;
+        QueryResponse queryResponse = dynamoDbService.call(DynamoTableName.COST_UPDATE_RESULT, Map.of(
+                ":v_pk", AttributeValue.builder().s(pk).build()));
+        log.info("CostUpdateResult: {}", queryResponse);
     }
 }
