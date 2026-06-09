@@ -126,6 +126,27 @@ Feature: Archiviazione manuale di un e-service
     And la versione più recente dell'e-service è in stato "ARCHIVING"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
+  Scenario: [MANUAL_ARCHIVING_ESERVICE_2.2] L'avvio del processo di archiviazione dell'e-service, causa l'eliminazione dell'ultimo descrittore in stato WAITING_FOR_APPROVAL, se presente
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA1" ha già creato una versione in "DRAFT" per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    And l'utente aggiorna alcuni parametri di quel descrittore
+    And "PA1" ha già caricato un'interfaccia per quel descrittore
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega
+    And l'utente è un "admin" di "PA2"
+    And l'utente pubblica l'e-service
+    And l'e-service è in stato "WAITING_FOR_APPROVAL"
+    When l'utente è un "admin" di "PA1"
+    And l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    Then si ottiene response status code 204
+    And l'ultimo descrittore in stato WAITING_FOR_APPROVAL è stato cancellato
+    And la vecchia versione dell'e-service è in stato "ARCHIVING"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
   Scenario: [MANUAL_ARCHIVING_ESERVICE_3.1] L'aggiornamento di un agreement nei confronti della versione più recente di un e-service NON va a buon fine nel caso quest'ultimo sia in archiviazione
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "<initialFirstDescriptorState>"
