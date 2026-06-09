@@ -649,8 +649,8 @@ public class WebhookStepsV24 implements WebhookStepsInterface {
     private String logTimelineWebhook() {
         StringBuilder sb = new StringBuilder("\n");
         progressResponseElementList.forEach(x -> {
-            sb.append("eventType: ");
-            sb.append(x.getEventId());
+            sb.append("elementId: ");
+            sb.append(x.getElement().getElementId());
             sb.append(" status:");
             sb.append(x.getNewStatus());
             sb.append("\n");

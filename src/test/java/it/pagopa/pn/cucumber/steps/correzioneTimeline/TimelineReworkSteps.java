@@ -33,6 +33,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -518,7 +519,7 @@ public class TimelineReworkSteps {
                 } else {
                     Map<String, String> map1 = new HashMap<>(defaultMap);
                     map1.put("statusCode", "RECRN002D");
-                    map1.put("deliveryFailureCause", "M01");
+                    map1.put("deliveryFailureCause", "M04");
                     mapsList.add(map1);
                     Map<String, String> map2 = new HashMap<>(defaultMap);
                     map2.put("statusCode", "RECRN002E");
@@ -656,50 +657,50 @@ public class TimelineReworkSteps {
         }
     }
 
-    @When("vengono recuperati i record relativi agli elementi di timeline affetti dal rework")
-    public void queryReworkedTimelinesForInvoicing() {
-        String paId = sharedSteps.getSentNotificationLastVersion().getSenderPaId();
-        String sentAt = sharedSteps.getSentNotificationLastVersion().getSentAt().toLocalDate().toString();
-        String pk = paId + "_" + sentAt;
-        reworkedTimelinesForInvoicingResponse = dynamoDbService.call(DynamoTableName.REWORKED_TIMELINES_FOR_INVOICING, Map.of(
-                ":pk", AttributeValue.builder().s(pk).build(),
-                ":v_iun", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build()
-        ));
-        log.info("REWORKED_TIMELINES_FOR_INVOICING RESPONSE -> {}", reworkedTimelinesForInvoicingResponse);
-    }
-
     @Then("controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato {invoicingType}")
     public void checkReworkedTimelinesForInvoicing(String invoicingType, Map<String, String> expectedElements) {
         boolean isViewed = sharedSteps.getSentNotificationLastVersion().getNotificationStatus().getValue().equals(NOTIFICATION_STATUS_VIEWED);
-        try {
-            assertThat(reworkedTimelinesForInvoicingResponse).as("Il risultato della query su pn-ReworkedTimelinesForInvoicing non dev'essere null").isNotNull();
-            List<Map<String, AttributeValue>> records = reworkedTimelinesForInvoicingResponse.items().stream().filter(
-                    e -> e.containsKey("invoicingType") && e.get("invoicingType").s().equals(invoicingType)).toList();
+        String paId = sharedSteps.getSentNotificationLastVersion().getSenderPaId();
+        String sentAt = sharedSteps.getSentNotificationLastVersion().getSentAt().toLocalDate().toString();
+        String pk = paId + "_" + sentAt;
 
-            if (isViewed && invoicingType.equals("NEW")) {
-                assertThat(records.size()).as("In caso di notifica visualizzata, non dovrebbero esserci elementi con invoicingType NEW").isEqualTo(0);
-            } else {
-                if (invoicingType.equals("NEW")) {
-                    for (Map<String, AttributeValue> record : records) {
-                        assertThat(record.get("invoincingTimestamp_timelineElementId"))
-                                .as("Il record %s non contiene il campo timeline id", record)
-                                .isNotNull();
-                        assertThat(record.get("invoincingTimestamp_timelineElementId").s())
-                                .as("Il timelineElementId del record %s dovrebbe esplicitare che si tratta di un rework", record)
-                                .contains("REWORK_");
+        try {
+            await().atMost(4, TimeUnit.MINUTES).pollInterval(30, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(() -> {
+                reworkedTimelinesForInvoicingResponse = dynamoDbService.call(DynamoTableName.REWORKED_TIMELINES_FOR_INVOICING, Map.of(
+                        ":pk", AttributeValue.builder().s(pk).build(),
+                        ":v_iun", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build()
+                ));
+                log.info("REWORKED_TIMELINES_FOR_INVOICING RESPONSE -> {}", reworkedTimelinesForInvoicingResponse);
+                assertThat(reworkedTimelinesForInvoicingResponse).as("Il risultato della query su pn-ReworkedTimelinesForInvoicing non dev'essere null").isNotNull();
+                List<Map<String, AttributeValue>> records = reworkedTimelinesForInvoicingResponse.items().stream().filter(
+                        e -> e.containsKey("invoicingType") && e.get("invoicingType").s().equals(invoicingType)).toList();
+                log.info("Filtered records -> {}", records);
+
+                if (isViewed && invoicingType.equals("NEW")) {
+                    assertThat(records.size()).as("In caso di notifica visualizzata, non dovrebbero esserci elementi con invoicingType NEW").isEqualTo(0);
+                } else {
+                    if (invoicingType.equals("NEW")) {
+                        for (Map<String, AttributeValue> record : records) {
+                            assertThat(record.get("invoincingTimestamp_timelineElementId"))
+                                    .as("Il record %s non contiene il campo timeline id", record)
+                                    .isNotNull();
+                            assertThat(record.get("invoincingTimestamp_timelineElementId").s())
+                                    .as("Il timelineElementId del record %s dovrebbe esplicitare che si tratta di un rework", record)
+                                    .contains("REWORK_");
+                        }
                     }
+                    expectedElements.forEach((key, value) -> {
+                        String[] requirements = value.split(";");
+                        Map<String, AttributeValue> expectedFound = records.stream()
+                                .filter(r -> r.containsKey("invoincingTimestamp_timelineElementId")
+                                        && Arrays.stream(requirements).allMatch(r.get("invoincingTimestamp_timelineElementId").s()::contains))
+                                .findFirst().orElse(null);
+                        assertThat(expectedFound)
+                                .as("Non è stato trovato nessun record che nel timelineElement id abbia tutte le sottostringhe attese: %s", Arrays.toString(requirements))
+                                .isNotNull();
+                    });
                 }
-                expectedElements.forEach((key, value) -> {
-                    String[] requirements = value.split(";");
-                    Map<String, AttributeValue> expectedFound = records.stream()
-                            .filter(r -> r.containsKey("invoincingTimestamp_timelineElementId")
-                                    && Arrays.stream(requirements).allMatch(r.get("invoincingTimestamp_timelineElementId").s()::contains))
-                            .findFirst().orElse(null);
-                    assertThat(expectedFound)
-                            .as("Non è stato trovato nessun record che nel timelineElement id abbia tutte le sottostringhe attese: %s", Arrays.toString(requirements))
-                            .isNotNull();
-                });
-            }
+            });
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
