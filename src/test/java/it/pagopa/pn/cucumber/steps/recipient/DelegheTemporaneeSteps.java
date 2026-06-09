@@ -138,7 +138,7 @@ public class DelegheTemporaneeSteps {
         switch (inputParamsType.toUpperCase()) {
             case "TAXID NULL" -> taxId = null;
             case "EMPTY REQUEST BODY" -> mandateCreationRequest = null;
-            case "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI" -> taxId = Costanti.GALILEO_GALILEI_TAX_ID;
+            case "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI" -> taxId = sharedSteps.getDestinatarioRegistry().DESTINATARIO_GALILEO_GALILEI.getTaxId();
         }
         try {
             mandateCreationResponse = mandateAppIoClient.createIOMandate(
@@ -215,7 +215,7 @@ public class DelegheTemporaneeSteps {
                 mrtdDataDg1 = replacement + mrtdDataDg1.substring(1);
                 cieValidationData.getNisData().setPubKey(mrtdDataDg1);
             }
-            case "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI" -> lollipopUserId = Costanti.GALILEO_GALILEI_TAX_ID;
+            case "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI" -> lollipopUserId = sharedSteps.getDestinatarioRegistry().DESTINATARIO_GALILEO_GALILEI.getTaxId();
         }
         try {
             mandateAppIoClient.acceptIOMandate(
@@ -258,7 +258,7 @@ public class DelegheTemporaneeSteps {
         String cieOwnerTaxId = delegatorTaxId;
         switch (inputParamsType.toUpperCase()) {
             case "DATI DI UNA CIE SCADUTA" -> expirationDate = LocalDate.now().minusYears(1L);
-            case "DATI CIE DI UTENTE DIVERSO DAL DESTINATARIO" -> cieOwnerTaxId = Costanti.GALILEO_GALILEI_TAX_ID;
+            case "DATI CIE DI UTENTE DIVERSO DAL DESTINATARIO" -> cieOwnerTaxId = sharedSteps.getDestinatarioRegistry().DESTINATARIO_GALILEO_GALILEI.getTaxId();
             case "SIGNED NONCE ERRATO" -> nonce = "00000";
         }
         return cieGeneratorTool.generateCieValidationData(path, delegatorTaxId, cieOwnerTaxId, expirationDate, nonce);
