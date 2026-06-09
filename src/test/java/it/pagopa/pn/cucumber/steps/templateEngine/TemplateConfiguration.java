@@ -102,8 +102,7 @@ public class TemplateConfiguration {
 
     @Bean
     public List<String> notificationAARForEMAILFields() {
-        return List.of("context_notification", "notification_iun", "notification_sender", "notification_sender_paDenomination", "context_qrCodeQuickAccessLink",
-                "context_piattaformaNotificheURL", "context_perfezionamentoURL", "context_pnFaqSendURL");
+        return List.of("context_notification", "notification_iun", "notification_sender", "notification_sender_paDenomination", "context_qrCodeQuickAccessLink");
     }
 
     @Bean
