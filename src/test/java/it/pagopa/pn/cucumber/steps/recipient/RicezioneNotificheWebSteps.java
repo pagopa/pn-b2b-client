@@ -744,7 +744,7 @@ public class RicezioneNotificheWebSteps {
                     );
             sharedSteps.setNotificationError(badRequestException);
         }
-        postRecipientCourtesyAddress("default", phone, LegalCourtesyAddressWrapper.ChannelType.SMS, "00000", false, CxLanguage.fromValue(language));
+        postRecipientCourtesyAddress("default", phone, LegalCourtesyAddressWrapper.ChannelType.SMS, "00000", true, CxLanguage.fromValue(language));
     }
 
     @When("viene richiesto l'inserimento del email di cortesia {string}")
