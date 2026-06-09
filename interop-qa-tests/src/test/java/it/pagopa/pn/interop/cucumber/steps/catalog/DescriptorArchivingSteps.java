@@ -120,24 +120,24 @@ public class DescriptorArchivingSteps {
         archivingScheduleVerifier.pollDescriptorArchivingSchedule(eServiceId, oldDescriptorId, "DESCRIPTOR");
     }
 
-    @Then("il vecchio descrittore è stato correttamente archiviato tramite l'archiviazione manuale del singolo descrittore")
-    public void oldDescriptorAttributeArchivingScheduleIsPresent() {
+    @Then("il descrittore con id {string} dell'e-service avente id {string} è stato correttamente archiviato tramite l'archiviazione manuale del singolo descrittore")
+    public void descriptorAttributeArchivingScheduleIsPresent(String descriptorId, String eServiceId) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
-        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
-        UUID oldDescriptorId = sharedStepsContext.getEServicesCommonContext().getOldDescriptorId();
+        UUID eServiceUUID = UUID.fromString(eServiceId);
+        UUID descriptorUUID = UUID.fromString(descriptorId);
 
-        archivingScheduleVerifier.pollDescriptorPopulatedArchivingSchedule(eServiceId, oldDescriptorId, "DESCRIPTOR");
+        archivingScheduleVerifier.pollDescriptorPopulatedArchivingSchedule(eServiceUUID, descriptorUUID, "DESCRIPTOR");
     }
 
-    @Then("il descrittore più recente è stato correttamente archiviato tramite l'archiviazione manuale del singolo descrittore")
-    public void latestDescriptorAttributeArchivingScheduleIsPresent() {
+    @Then("il descrittore con id {string} dell'e-service avente id {string} NON è stato archiviato")
+    public void descriptorHasNotBeenManuallyArchived(String descriptorId, String eServiceId) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
-        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
-        UUID oldDescriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+        UUID eServiceUUID = UUID.fromString(eServiceId);
+        UUID descriptorUUID = UUID.fromString(descriptorId);
 
-        archivingScheduleVerifier.pollDescriptorPopulatedArchivingSchedule(eServiceId, oldDescriptorId, "DESCRIPTOR");
+        archivingScheduleVerifier.pollDescriptorWithoutArchivingSchedule(eServiceUUID, descriptorUUID);
     }
 
     @Then("l'archiviazione manuale del singolo descrittore è stata annullata con successo")
