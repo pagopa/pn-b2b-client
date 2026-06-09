@@ -32,7 +32,6 @@ Feature: Configurazione e gestione di E-Service per scambi asincroni e massivi
       | asyncExchangeProperties.bulk                  | true |
       | asyncExchangeProperties.maxResultSet          | 50   |
 
-
   Scenario Outline: [ASYNC_ESERVICE_CREATION_1b] La creazione di un e-service in stato DRAFT in modalità asincrona non
   è consentita per la modalità ricezione
     Given l'utente è un "admin" di "PA1"
@@ -116,7 +115,9 @@ Feature: Configurazione e gestione di E-Service per scambi asincroni e massivi
       | SOAP       | 10           | 10                    | 100          | true         | true  | 400            |
       | SOAP       | 10           | 10                    | 100          | false        | true  | 400            |
 
-  Scenario: [ASYNC_ESERVICE_CREATION_2c] Errore configurazione parametri asincroni su e-service sincrono.
+  # https://pagopa.atlassian.net/browse/PIN-10289
+  # https://pagopaspa.slack.com/archives/C0A7AMD53MM/p1780923086687109
+  Scenario: [ASYNC_ESERVICE_CREATION_2c] La configurazione dei parametri asincroni su un e-service sincrono non genera errori.
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service sincrono in stato "DRAFT" con:
       | technology | REST |
@@ -130,7 +131,7 @@ Feature: Configurazione e gestione di E-Service per scambi asincroni e massivi
       | asyncExchangeProperties.confirmation          | true      |
       | asyncExchangeProperties.bulk                  | true      |
       | asyncExchangeProperties.maxResultSet          | 100       |
-    Then si ottiene status code 400
+    Then si ottiene status code 200
 
   Scenario Outline: [ASYNC_ESERVICE_UPDATE_1] Aggiornamento modalità ed exchange di un e-service asincrono in stato DRAFT.
     Given l'utente è un "admin" di "PA1"
