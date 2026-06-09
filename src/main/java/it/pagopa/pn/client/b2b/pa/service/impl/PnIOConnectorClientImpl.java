@@ -23,7 +23,7 @@ public class PnIOConnectorClientImpl implements IPnIOConnectorClient {
 
 
     public PnIOConnectorClientImpl(RestTemplate restTemplate,
-                                   @Value("https://api.io.pagopa.it/api/v1") String basePath
+                                   @Value("http://localhost:8080") String basePath
                                    //TODO mettere base path a config
     ) {
         this.apiIOConnector = new IoConnectorApi(newApiClientExternal(restTemplate, basePath));

@@ -3190,7 +3190,7 @@
                                 <typeMapping>file=org.springframework.core.io.Resource</typeMapping>
                             </typeMappings>
                             <inputSpec>
-                                https://raw.githubusercontent.com/pagopa/pn-io-connector/refs/heads/feature/PN-19124-bis/docs/openapi/pn-io-connector-internal.yaml
+                                https://raw.githubusercontent.com/pagopa/pn-io-connector/refs/heads/feature/PN-19126-bis/docs/openapi/pn-io-connector-internal.yaml
                             </inputSpec>
                             <skipValidateSpec>true</skipValidateSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>

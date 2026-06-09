@@ -33,6 +33,15 @@ public class IOConnectorSteps {
     private final DynamoDbService dynamoDbService;
     private final IPnIOConnectorClient pnIOConnectorClient;
 
+    public static final String SENDER_SERVICE_ID = "01KP5QYVRZDDEMHCN3TV1QY1H6";
+    public static final String RECIPIENT_TAX_ID = "PF-ef4f3181-c2a9-4924-9307-d107af8f0c34";
+    public static final String CLIENT_ID = "QA_CLIENT_ID";
+
+    //scenario 5 va richiesta data-preparation. si deve richiedere un requestId e un recipientTaxId
+    //di un messaggio censito e dotato di allegati. il recipientTaxId viene passato allo step parametrico dal file feature
+    public static final String REQUEST_ID_FOR_PREEXISTING_MESSAGE = "TEST-POLLING_REQ-20260603-PAYMENT_2";
+
+
     private MessageRequest messageRequest;
     private MessageResponse messageResponse;
     private GetMessageResponse getMessageResponse;
@@ -45,12 +54,12 @@ public class IOConnectorSteps {
     public void createValidRequest() {
         messageRequest = new MessageRequest();
 
-        String requestId = "REQ-" + System.currentTimeMillis();
+        String requestId = "TEST-" + System.currentTimeMillis();
 
         messageRequest.setRequestId(requestId);
-        messageRequest.setIun("IUN-" + System.currentTimeMillis());
-        messageRequest.setRecipientTaxId("ABCDEFG1234567890");
-        messageRequest.setSenderServiceId("01KP5QYVRZDDEMHCN3TV1QY1H6");//TODO
+        messageRequest.setIun("IUN-TEST");
+        messageRequest.setRecipientTaxId(RECIPIENT_TAX_ID);
+        messageRequest.setSenderServiceId(SENDER_SERVICE_ID);
         messageRequest.setSubject("Oggetto di test");
         messageRequest.setMarkdown("Contenuto del messaggio");
 
@@ -81,10 +90,10 @@ public class IOConnectorSteps {
     }
 
     @When("come orchestratore SEND richiedo l'invio del messaggio verso IO")
-    public void invokeMessageAPIOK() {
+    public void invokeMessageAPI() {
 
         try {
-            MessageResponse resp = pnIOConnectorClient.sendIOMessage("VALID_SENDER_SERVICE_ID",//TODO
+            MessageResponse resp = pnIOConnectorClient.sendIOMessage(CLIENT_ID,
                     messageRequest);
             log.info("profile response: {}", resp);
             messageResponse = resp;
@@ -123,16 +132,33 @@ public class IOConnectorSteps {
                 .isNotEmpty();
     }
 
+
+    @Then("verifico che la risposta contenga tutti i campi obbligatori valorizzati")
+    public void verificaCampiObbligatoriValorizzati() throws Exception {
+
+        assertThat(messageResponse).isNotNull();
+
+        // campi obbligatori
+        assertThat(messageResponse.getRequestId())
+                .isNotNull()
+                .isNotBlank();
+
+        assertThat(messageResponse.getStatus())
+                .isNotNull()
+                .isEqualTo(MessageResponse.StatusEnum.ACCEPTED);
+    }
+
+
     //--------SCENARIO 4:
     @Given("come orchestratore SEND tento la verifica raggiungibilità profilo con senderServiceId valido e CF destinatario: {string}")
     public void invokeProfileVerificationAPIOK(String recipientTaxId) {
 
         GetProfileRequest getProfileRequest = new GetProfileRequest();
         getProfileRequest.setRecipientTaxId(recipientTaxId);
-        getProfileRequest.setSenderServiceId("01KP5QYVRZDDEMHCN3TV1QY1H6");//TODO
+        getProfileRequest.setSenderServiceId(SENDER_SERVICE_ID);//TODO
 
         try {
-            GetProfileResponse resp = pnIOConnectorClient.getIOProfile("CLIENT_ID",//TODO
+            GetProfileResponse resp = pnIOConnectorClient.getIOProfile(CLIENT_ID,
                     getProfileRequest);
             log.info("profile response: {}", resp);
             getProfileResponse = resp;
@@ -182,7 +208,7 @@ public class IOConnectorSteps {
     public void invokeMessageDetialAPI(String recipientTaxId) {
 
         try {
-            GetMessageResponse resp = pnIOConnectorClient.getMessage("TEST-POLLING_REQ-20260603-PAYMENT_2", StringUtils.resolveValue(recipientTaxId));
+            GetMessageResponse resp = pnIOConnectorClient.getMessage(REQUEST_ID_FOR_PREEXISTING_MESSAGE, StringUtils.resolveValue(recipientTaxId));
             log.info("message details response: {}", resp);
             getMessageResponse = resp;
 
