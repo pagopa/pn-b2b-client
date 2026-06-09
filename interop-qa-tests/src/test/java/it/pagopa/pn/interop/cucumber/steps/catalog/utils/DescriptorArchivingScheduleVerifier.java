@@ -48,6 +48,15 @@ public class DescriptorArchivingScheduleVerifier {
         );
     }
 
+    public void pollDescriptorPopulatedArchivingSchedule(UUID eServiceId, UUID descriptorId, String expectedScope) {
+        sharedStepsContext.getPollingService().makePolling(
+                () -> clientTokenConfigurator.getEServiceClient().getEServiceDescriptor(eServiceId, descriptorId),
+                descriptor -> hasPopulatedArchivingSchedule(descriptor, expectedScope),
+                "Il descrittore dell'e-service non contiene un archivingSchedule valorizzato: "
+                        + "scope, startedAt o archivableOn assente o vuoto"
+        );
+    }
+
     private boolean hasExpectedArchivingSchedule(ProducerEServiceDescriptor descriptor, String expectedScope) {
         if (descriptor == null || descriptor.getArchivingSchedule() == null) {
             return false;
@@ -58,6 +67,22 @@ public class DescriptorArchivingScheduleVerifier {
                 && expectedScope.equals(archivingSchedule.getScope().getValue())
                 && isStartedAtWithinTolerance(archivingSchedule.getStartedAt())
                 && hasExpectedArchivableOn(archivingSchedule.getArchivableOn());
+    }
+
+    private boolean hasPopulatedArchivingSchedule(ProducerEServiceDescriptor descriptor, String expectedScope) {
+        if (descriptor == null || descriptor.getArchivingSchedule() == null) {
+            return false;
+        }
+
+        ArchivingSchedule archivingSchedule = descriptor.getArchivingSchedule();
+        return archivingSchedule.getScope() != null
+                && expectedScope.equals(archivingSchedule.getScope().getValue())
+                && isPopulated(archivingSchedule.getStartedAt())
+                && isPopulated(archivingSchedule.getArchivableOn());
+    }
+
+    private boolean isPopulated(String value) {
+        return value != null && !value.isBlank();
     }
 
     private boolean hasExpectedArchivableOn(String archivableOn) {
