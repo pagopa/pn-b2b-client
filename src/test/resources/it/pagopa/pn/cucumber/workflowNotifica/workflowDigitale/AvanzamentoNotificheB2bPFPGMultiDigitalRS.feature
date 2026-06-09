@@ -60,14 +60,16 @@ Feature: avanzamento b2b notifica multi destinatario analogico RS
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario Mario Gherkin e:
-      | physicalAddress_State        | FRANCIA      |
-      | physicalAddress_municipality | Parigi       |
-      | physicalAddress_zip          | ZONE_1       |
-      | physicalAddress_province     | Paris        |
-      | digitalDomicile_address      | test@fail.it |
-      | physicalAddress_address      | Via@fail_RIS |
-      | payment_pagoPaForm           | NOALLEGATO   |
+    And destinatario
+      | denomination                 | PF non censito   |
+      | taxId                        | STTSGT90A01H501J |
+      | physicalAddress_State        | FRANCIA          |
+      | physicalAddress_municipality | Parigi           |
+      | physicalAddress_zip          | ZONE_1           |
+      | physicalAddress_province     | Paris            |
+      | digitalDomicile_address      | test@fail.it     |
+      | physicalAddress_address      | Via@fail_RIS     |
+      | payment_pagoPaForm           | NOALLEGATO       |
     And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
