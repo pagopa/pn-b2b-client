@@ -299,5 +299,7 @@ Feature: Archiviazione manuale di un descrittore
 
     Examples:
       | firstDescriptorId  | secondDescriptorId  | eserviceId  |
+#      firstDescriptorId=descrittore in Archiving . secondDescriptorId=descrittore in Published
       | firstDescriptorId1 | secondDescriptorId1 | eserviceId1 |
+#      firstDescriptorId=descrittore in Archiving_Suspended . secondDescriptorId=descrittore in Published
       | firstDescriptorId2 | secondDescriptorId2 | eserviceId2 |
