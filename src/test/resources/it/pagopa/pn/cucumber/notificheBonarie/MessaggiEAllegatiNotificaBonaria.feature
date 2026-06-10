@@ -31,7 +31,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_MESSAGGI_02_1_A] Come ente mittente creo un nuovo messaggio con valori di default.
   Il messaggio creato è utilizzabile in una campagna per le notifiche bonarie.
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    Given mittente della notifica bonaria: "Comune_Multi"
     When si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
       | primary_subject                       |
       | Nuovo messaggio per notifiche bonarie |
@@ -41,7 +41,7 @@ Feature: Sottomissione di una notifica bonaria.
 
   @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_MESSAGGI_02_1_B] Come ente mittente creo un nuovo messaggio con valori di default con seconda lingua non specificata
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    Given mittente della notifica bonaria: "Comune_Multi"
     Then si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
       | primary_subject   | additional_language |
       | Messaggio bonario | NULL                |
@@ -49,7 +49,7 @@ Feature: Sottomissione di una notifica bonaria.
 
   @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_MESSAGGI_02_1_C] Come ente mittente creo un nuovo messaggio con valori di default con seconda lingua specificata
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    Given mittente della notifica bonaria: "Comune_Multi"
     Then si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
       | primary_subject   | additional_language |
       | Messaggio bonario | FR                  |
@@ -57,7 +57,7 @@ Feature: Sottomissione di una notifica bonaria.
 
   @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_MESSAGGI_02_1_D] Come ente mittente creo un nuovo messaggio con valori di default con seconda lingua non specificata
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    Given mittente della notifica bonaria: "Comune_Multi"
     Then si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
       | primary_subject   | additional_language | additional_short_body | additional_long_body | additional_subject |
       | Messaggio bonario | FR                  | Testo short add       | testo long add       | subj add           |
@@ -66,7 +66,7 @@ Feature: Sottomissione di una notifica bonaria.
 
   @informalNotificationsMessageAttachment
   Scenario Outline: [NOTIFICHE_BONARIE_MESSAGGI_02_1_D2] Come ente mittente creo un nuovo messaggio con campi addizionali a null, ricevo errore.
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    Given mittente della notifica bonaria: "Comune_Multi"
     Then si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
       | additional_subject   | additional_long_body   | additional_short_body   |
       | <additional_subject> | <additional_long_body> | <additional_short_body> |
@@ -83,7 +83,7 @@ Feature: Sottomissione di una notifica bonaria.
 
   @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_MESSAGGI_02_1_A] Come ente mittente non abilitato alla creazione di un messaggio tento di crearlo con valori di default.
-    Given mittente della notifica bonaria: "COMUNE_2"
+    Given mittente della notifica bonaria: "Comune_2"
     When si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
       | primary_subject                       |
       | Nuovo messaggio per notifiche bonarie |
@@ -91,7 +91,7 @@ Feature: Sottomissione di una notifica bonaria.
 
   @informalNotificationsMessageAttachment
   Scenario Outline: [NOTIFICHE_BONARIE_MESSAGGI_02_2_B] Come ente mittente ricevo un errore sulla creazione di un nuovo messaggio non valorizzando campi obbligatori.
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    Given mittente della notifica bonaria: "Comune_Multi"
     Then si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
       | primary_subject   | primary_long_body   | primary_short_body   |
       | <primary_subject> | <primary_long_body> | <primary_short_body> |
@@ -104,7 +104,7 @@ Feature: Sottomissione di una notifica bonaria.
 
   @informalNotificationsMessageAttachment
   Scenario Outline: [NOTIFICHE_BONARIE_MESSAGGI_02_2_C] Come ente mittente ricevo un Errore sulla creazione di un nuovo messaggio compilando i campi in maniera non conforme.
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    Given mittente della notifica bonaria: "Comune_Multi"
     Then si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
       | primary_subject   | primary_long_body   | primary_short_body   |
       | <primary_subject> | <primary_long_body> | <primary_short_body> |
@@ -117,7 +117,7 @@ Feature: Sottomissione di una notifica bonaria.
 
   @informalNotificationsMessageAttachment
   Scenario Outline: [NOTIFICHE_BONARIE_MESSAGGI_02_2_D] Come ente mittente ricevo un Errore sulla creazione di un nuovo messaggio compilando i campi addizionali in maniera non conforme.
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    Given mittente della notifica bonaria: "Comune_Multi"
     Then si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
       | additional_subject   | additional_long_body   | additional_short_body   |
       | <additional_subject> | <additional_long_body> | <additional_short_body> |
@@ -130,7 +130,7 @@ Feature: Sottomissione di una notifica bonaria.
 
   @informalNotificationsMessageAttachment
   Scenario Outline: [NOTIFICHE_BONARIE_MESSAGGI_02_2_E] Come ente mittente ricevo un Errore sulla creazione di un nuovo messaggio compilando i campi relativi alla lingua in maniera non conforme.
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    Given mittente della notifica bonaria: "Comune_Multi"
     Then si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
       | primary_language   | additional_language   |
       | <primary_language> | <additional_language> |
@@ -160,7 +160,7 @@ Feature: Sottomissione di una notifica bonaria.
 
   @informalNotificationsMessageAttachment
   Scenario Outline: [NOTIFICHE_BONARIE_MESSAGGI_03_2_A] Come ente mittente ricevo un Errore nel recuperare un messaggio con un id non valido.
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    Given mittente della notifica bonaria: "Comune_Multi"
     Then tento il recupero del messaggio per le comunicazioni bonarie con message id "<messageId>"
     Then si riceve errore 400
     Examples:
@@ -169,7 +169,7 @@ Feature: Sottomissione di una notifica bonaria.
 
   @informalNotificationsMessageAttachment
   Scenario Outline: [NOTIFICHE_BONARIE_MESSAGGI_03_2_A2] Come ente mittente ricevo un Errore nel recuperare un messaggio con un id non censito.
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    Given mittente della notifica bonaria: "Comune_Multi"
     Then tento il recupero del messaggio per le comunicazioni bonarie con message id "<messageId>"
     Then si riceve errore 404
     Examples:
@@ -178,14 +178,14 @@ Feature: Sottomissione di una notifica bonaria.
 
   @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_MESSAGGI_03_2_B] Come ente mittente creo un nuovo messaggio e tento il recupero tramite diverso ente.
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    Given mittente della notifica bonaria: "Comune_Multi"
     When si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
       | primary_subject                       |
       | Nuovo messaggio per notifiche bonarie |
     And l'operazione sul messaggio utile per le bonarie è andata a buon fine
     Then tento il recupero del messaggio precedentemente creato per le comunicazioni bonarie
     And l'operazione sul messaggio utile per le bonarie è andata a buon fine
-    Then mittente della notifica bonaria: "COMUNE_2"
+    Then mittente della notifica bonaria: "Comune_2"
     And tento il recupero del messaggio precedentemente creato per le comunicazioni bonarie
     Then si riceve errore 403
 
@@ -204,7 +204,7 @@ Feature: Sottomissione di una notifica bonaria.
 
   @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_05_1] Come ente mittente Recupero i documenti di una notifica bonaria
-    Given mittente della notifica bonaria: "COMUNE_1"
+    Given mittente della notifica bonaria: "Comune_1"
     And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria
       | recipientType | PF                |
@@ -218,7 +218,7 @@ Feature: Sottomissione di una notifica bonaria.
     #  CASO DI TEST 5.2 Corretto Download degli allegati di pagamento di una notifica.
   @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_05_4_] Come ente mittente Recupero l'allegato di pagamento di una notifica bonaria
-    Given mittente della notifica bonaria: "COMUNE_1"
+    Given mittente della notifica bonaria: "Comune_1"
     And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria
       | recipientType | PF                |
@@ -234,20 +234,20 @@ Feature: Sottomissione di una notifica bonaria.
 #  CASO DI TEST 5.3 Errore Download dei documenti.
   @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_05_3_A] Rcome ente mittente tento il recupero del documento di una notifica non inviata da me ricevendo un errore
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
     When viene inviata una nuova notifica bonaria
-    Given mittente della notifica bonaria: "COMUNE_2"
+    Given mittente della notifica bonaria: "Comune_2"
     And si tenta il recupero documento della notifica bonaria
     Then si riceve errore 403
 
   @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_05_3_B] Come ente mittente tento il Recupero del documento con indice non valido ricevendo errore
-    Given mittente della notifica bonaria: "COMUNE_1"
+    Given mittente della notifica bonaria: "Comune_1"
     And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria
       | recipientType | PF                |
@@ -259,7 +259,7 @@ Feature: Sottomissione di una notifica bonaria.
 
   @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_05_3_C] Come ente mittente tento il Recupero del documento con IUN non valido ricevendo errore
-    Given mittente della notifica bonaria: "COMUNE_1"
+    Given mittente della notifica bonaria: "Comune_1"
     When si tenta il recupero documento con IUN "fake"
     Then si riceve errore 404
 
@@ -271,7 +271,7 @@ Feature: Sottomissione di una notifica bonaria.
 
   @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_05_4_A] Come ente mittente tento il Recupero del allegato di pagamento con iun non valido ricevendo errore
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria
       | recipientType | PF                |
@@ -283,7 +283,7 @@ Feature: Sottomissione di una notifica bonaria.
 
   @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_05_4_B] Come ente mittente tento il Recupero del allegato di pagamento con indice non valido ricevendo errore
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria
       | recipientType | PF                |
@@ -296,7 +296,7 @@ Feature: Sottomissione di una notifica bonaria.
 
   @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_05_4_C] Come ente mittente tento il Recupero del allegato di pagamento con indice non valido ricevendo errore
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria
       | recipientType | PF                |

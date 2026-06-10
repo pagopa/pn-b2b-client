@@ -26,12 +26,12 @@ import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRaddCognito;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.AwsUtils;
-import it.pagopa.pn.cucumber.utils.validator.SchemaValidator;
 import it.pagopa.pn.cucumber.steps.paperTracker.parser.EventTimelineParser;
 import it.pagopa.pn.cucumber.steps.paperTracker.proxy.PaperTrackerSchemaValidatorProxy;
 import it.pagopa.pn.cucumber.steps.templateEngine.TemplateConfiguration;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextFactory;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
+import it.pagopa.pn.cucumber.utils.InformalMessageProvider;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import it.pagopa.pn.cucumber.utils.validator.SchemaValidator;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -210,7 +210,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnExternalChannelsInternalClientImpl.class,
         PnEcInternalClientImpl.class,
         AwsUtils.class,
-        PnNotificationCostClientImpl.class
+        PnNotificationCostClientImpl.class,
+        InformalMessageProvider.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

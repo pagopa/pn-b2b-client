@@ -15,6 +15,8 @@ import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.mod
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.dataTable.InformalNotificationRequestMapper;
 import it.pagopa.pn.cucumber.steps.pa.utilityInformalVersion.NotificationInformalUtilsV1;
+import it.pagopa.pn.cucumber.utils.GroupPosition;
+import it.pagopa.pn.cucumber.utils.InformalMessageProvider;
 import it.pagopa.pn.cucumber.utils.NotificationInformalValue;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -24,10 +26,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static it.pagopa.pn.cucumber.utils.NotificationInformalValue.*;
 import static org.awaitility.Awaitility.await;
@@ -74,6 +73,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     private UUID messageId;
     private Exception lastException;
     private String savedIun;
+    private String currentGroupId;
 
     private NewInformalNotificationResponse newInformalNotificationResponse;
     //private final InformalNotificationRequestMapper informalNotificationRequestMapper;
@@ -86,8 +86,13 @@ public class PresaInCaricoNoticaBonariaSteps {
     private TerminationRequestStatus terminationStatus;
     private InformalSentNotificationV1 informalNotificationResponse;
 
+
+    //private static String staticMessageIdIT;
+    //private static String staticMessageIdITFR;
+    private InformalMessageProvider messageProvider;
+
     @Autowired
-    public PresaInCaricoNoticaBonariaSteps(PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl, SharedSteps sharedSteps, TimingForPolling timingForPolling, IPnPrivateDeliveryPushExternalClient pnPrivateDeliveryPushExternalClient) {
+    public PresaInCaricoNoticaBonariaSteps(InformalMessageProvider messageProvider,PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl, SharedSteps sharedSteps, TimingForPolling timingForPolling, IPnPrivateDeliveryPushExternalClient pnPrivateDeliveryPushExternalClient) {
         this.sharedSteps = sharedSteps;
         this.timingForPolling = timingForPolling;
         this.pnPrivateDeliveryPushExternalClient = pnPrivateDeliveryPushExternalClient;
@@ -97,6 +102,7 @@ public class PresaInCaricoNoticaBonariaSteps {
         this.pnPollingFactory = sharedSteps.getPollingFactory();
         //this.informalNotificationRequestMapper = informalNotificationRequestMapper;
         notificationInformalUtilsV1 = new NotificationInformalUtilsV1(sharedSteps.getContext(), b2bClient, sharedSteps.getPollingFactory());
+        this.messageProvider = messageProvider;
 
     }
 
@@ -107,20 +113,34 @@ public class PresaInCaricoNoticaBonariaSteps {
     public void setSenderInformal(String paName) {
 
         switch (paName) {
-            case "COMUNE_1" -> pnPaB2bInternalInformalClientImpl.setCxId(senderId);
-            case "COMUNE_2" -> pnPaB2bInternalInformalClientImpl.setCxId(senderId2);
-            case "COMUNE_MULTI" -> pnPaB2bInternalInformalClientImpl.setCxId(senderIdGA);
+            case "Comune_1" -> pnPaB2bInternalInformalClientImpl.setCxId(senderId);
+            case "Comune_2" -> pnPaB2bInternalInformalClientImpl.setCxId(senderId2);
+            case "Comune_Multi" -> pnPaB2bInternalInformalClientImpl.setCxId(senderIdGA);
             default -> throw new IllegalArgumentException("PA bonaria non valida: " + paName);
         }
+        // recupero groupId dinamicamente
+        this.currentGroupId =
+                sharedSteps.getGroupIdByPa(paName, GroupPosition.FIRST);
+
+    }
+
+    @And("imposto un gruppo non attivo per {string}")
+    public void getDeletedGroupId(String paName) {
+        this.currentGroupId = sharedSteps.getGroupIdByPa(paName, GroupPosition.FIRST, "DELETED");
     }
 
     @Given("viene creata una nuova notifica bonaria con i seguenti parametri")
-    public void createInformal(Map<String, String> data) {
+    public void createInformal(Map<String, String> dataInput) {
 
-        informalNotificationRequestV1 = informalNotificationRequestMapper.buildInformalNotificationRequest(data);
+        Map<String, String> data = new HashMap<>(dataInput);
 
-        log.info("Invio notifica bonaria - request: {}", informalNotificationRequestV1);
+        //gestione custom group
+        handleGroup(data);
+
+        informalNotificationRequestV1 =
+                informalNotificationRequestMapper.buildInformalNotificationRequest(data);
     }
+
 
     @Given("viene creata una nuova notifica bonaria con valori di default")
     public void createInformal() {
@@ -134,6 +154,8 @@ public class PresaInCaricoNoticaBonariaSteps {
     public void addInformalRecipient(Map<String, String> data) {
 
         assertNotNull(informalNotificationRequestV1, "Creare prima la notifica bonaria");
+
+        //initMessagesIfNeeded();
 
         InformalNotificationRecipientV1 recipient = new InformalNotificationRecipientV1();
 
@@ -665,15 +687,92 @@ public class PresaInCaricoNoticaBonariaSteps {
         return NotificationInformalValue.generateRandomNumber();
     }
 
+    private void handleGroup(Map<String, String> data) {
+
+        if (data.containsKey("group")) {
+
+            String value = data.get("group");
+
+            //NULL esplicito → null
+            if ("NULL".equalsIgnoreCase(value)) {
+                data.put("group", null);
+                return;
+            }
+            // vuoto → fallback API
+            if (value == null || value.trim().isEmpty()) {
+                data.put("group", currentGroupId);
+                return;
+            }
+            //valore reale → lascia così
+            return;
+        }
+        //CHIAVE ASSENTE → fallback API
+        if (currentGroupId != null) {
+            data.put("group", currentGroupId);
+        }
+    }
+
     private UUID resolveMessageId(String value) {
 
         if (value == null) {
             return null;
         }
+
         return switch (value) {
-            case "${IT}" -> UUID.fromString(messageIdIT);
-            case "${IT-FR}" -> UUID.fromString(messageIdITFR);
+            case "${IT}" -> UUID.fromString(messageProvider.getMessageIT());
+            case "${IT-FR}" -> UUID.fromString(messageProvider.getMessageITFR());
             default -> UUID.fromString(value);
         };
     }
+
+
+//    private void initMessagesIfNeeded() {
+//
+//        if (staticMessageIdIT == null) {
+//            staticMessageIdIT = createMessageIT();
+//            log.info("Creato message IT: {}", messageIdIT);
+//        }
+//
+//        if (staticMessageIdITFR == null) {
+//            staticMessageIdITFR = createMessageITFR();
+//            log.info("Creato message IT-FR: {}", messageIdITFR);
+//        }
+//    }
+//
+//    private String createMessageIT() {
+//
+//        NewMessageRequestPrimaryMessage primary = new NewMessageRequestPrimaryMessage()
+//                .language("IT")
+//                .subject("Oggetto IT")
+//                .longBody("Test body IT")
+//                .shortBody("Short IT");
+//
+//        NewMessageRequest request = new NewMessageRequest()
+//                .primaryMessage(primary);
+//
+//        return pnPaB2bInternalInformalClientImpl.createMessage(request).getMessageId().toString();
+//    }
+//
+//    private String createMessageITFR() {
+//
+//        NewMessageRequestPrimaryMessage primary = new NewMessageRequestPrimaryMessage()
+//                .language("IT")
+//                .subject("Oggetto IT")
+//                .longBody("Test body IT")
+//                .shortBody("Short IT");
+//
+//        NewMessageRequestAdditionalMessage additional = new NewMessageRequestAdditionalMessage()
+//                .language("FR")
+//                .subject("Objet FR")
+//                .longBody("Message en français")
+//                .shortBody("Short FR");
+//
+//        NewMessageRequest request = new NewMessageRequest()
+//                .primaryMessage(primary)
+//                .additionalMessage(additional);
+//
+//        return pnPaB2bInternalInformalClientImpl.createMessage(request).getMessageId().toString();
+//    }
+
+
 }

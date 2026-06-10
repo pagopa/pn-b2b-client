@@ -50,6 +50,9 @@ public class InformalNotificationRequestMapper {
             request.setAdditionalLanguages(List.of(notifLang));
         }
 
+        request.setGroup(getValue(data, GROUP.key));
+
+
         //request.setRecipients(List.of(buildRecipient(data)));
 
         //  NESSUN DESTINATARIO DI DEFAULT

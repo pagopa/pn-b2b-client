@@ -64,8 +64,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.*;
-import java.time.*;
-import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -1193,6 +1191,26 @@ public class SharedSteps {
         int count = 0;
         for (HashMap<String, String> elem : hashMapsList) {
             if (elem.get("status").equalsIgnoreCase("ACTIVE")) {
+                id = elem.get("id");
+                count++;
+                if (GroupPosition.FIRST.equals(position)) {
+                    break;
+                }
+            }
+        }
+        Assertions.assertNotNull(id);
+        if (!GroupPosition.FIRST.equals(position)) {
+            Assertions.assertTrue(count >= 2);
+        }
+        return id;
+    }
+
+    public String getGroupIdByPa(String paName, GroupPosition position, String status) {
+        List<HashMap<String, String>> hashMapsList = getGroupsByPa(paName);
+        String id = null;
+        int count = 0;
+        for (HashMap<String, String> elem : hashMapsList) {
+            if (elem.get("status").equalsIgnoreCase(status)) {
                 id = elem.get("id");
                 count++;
                 if (GroupPosition.FIRST.equals(position)) {
