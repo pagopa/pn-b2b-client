@@ -108,6 +108,7 @@ Feature: Attributi utente
   Scenario Outline: [USER-ATTR_10] inserimento telefono e recupero header lang
     Given si predispone addressbook per l'utente "Mario Cucumber"
     Given vengono rimossi eventuali recapiti presenti per l'utente
+    Then verifico che su DynamoDB sia presente l'otpCode tramite userId "a6c1350d-1d69-4209-8bf8-31de58c79d6e"
     When viene richiesto l'inserimento del numero di telefono "+393214210000", e passo la lingua selezionata dal destinatario "<lang>"
     Then l'inserimento va a buon fine e NON ha prodotto un errore
     Examples:

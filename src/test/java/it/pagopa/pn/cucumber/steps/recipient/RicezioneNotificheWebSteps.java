@@ -13,6 +13,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.common.util.CloudWatchQueryBuilder;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.TimelineElementV28;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationsResponse;
@@ -28,13 +29,10 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.CxLanguage;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
+import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
-import it.pagopa.pn.client.b2b.pa.service.IPnBFFRecipientNotificationClient;
-import it.pagopa.pn.client.b2b.pa.service.IPnTosPrivacyClient;
-import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
-import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
-import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
+import it.pagopa.pn.client.b2b.pa.service.*;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
@@ -47,13 +45,18 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.utils.DataTest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
 import org.springframework.web.client.HttpStatusCodeException;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 import java.io.ByteArrayInputStream;
 import java.time.LocalDate;
@@ -94,6 +97,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.awaitility.Awaitility.await;
 
 @Slf4j
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class RicezioneNotificheWebSteps {
     private final ApplicationContext context;
     private IPnWebRecipientClient webRecipientClient;
@@ -108,6 +112,9 @@ public class RicezioneNotificheWebSteps {
     private HttpStatusCodeException notificationError;
     private BundleFullReceivedNotification fullReceivedNotification;
     private BffFullNotificationV1 bffFullNotificationV1Recipient;
+
+    private final DynamoDbService dynamoDbService;
+    private String otpCode;
     private it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffFullNotificationV1 bffFullNotificationV1Sender;
 
     private static final String TOS_VERSION = "8";
@@ -147,7 +154,7 @@ public class RicezioneNotificheWebSteps {
 
     @Autowired
     public RicezioneNotificheWebSteps(ApplicationContext context, SharedSteps sharedSteps, PnWebUserAttributesInternalClientImpl iPnWebUserAttributesClient,
-                                      IPnBFFRecipientNotificationClient bffRecipientNotificationClient, IPnTosPrivacyClient iPnTosPrivacyClient, PnB2bClientTimingConfigs timingConfigs) {
+                                      IPnBFFRecipientNotificationClient bffRecipientNotificationClient, IPnTosPrivacyClient iPnTosPrivacyClient, PnB2bClientTimingConfigs timingConfigs, DynamoDbService dynamoDbService) {
         this.context = context;
         this.sharedSteps = sharedSteps;
         this.webRecipientClient = sharedSteps.getWebRecipientClient();
@@ -157,6 +164,7 @@ public class RicezioneNotificheWebSteps {
         this.bffRecipientNotificationClient = bffRecipientNotificationClient;
         this.iPnTosPrivacyClient = sharedSteps.getIPnTosPrivacyClientImpl();
         this.timingConfigs = timingConfigs;
+        this.dynamoDbService = dynamoDbService;
     }
 
     @Then("la notifica può essere correttamente recuperata da {string}")
@@ -812,10 +820,10 @@ public class RicezioneNotificheWebSteps {
     private void postRecipientCourtesyAddress(String senderId, String addressVerification, LegalCourtesyAddressWrapper.ChannelType type, String verificationCode, boolean inserimento, CxLanguage xPagopaPnLanguageCxLanguage) {
         try {
             if (inserimento) {
-                this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, LegalCourtesyAddressWrapper.ChannelType.EMAIL, (new AddressVerification().value(addressVerification)), xPagopaPnLanguageCxLanguage);
-                verificationCode = this.externalClient.getVerificationCode(addressVerification);
+                this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, type, (new AddressVerification().value(addressVerification)), xPagopaPnLanguageCxLanguage);
+                //verificationCode = this.externalClient.getVerificationCode(addressVerification);
             }
-            this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, type, (new AddressVerification().value(addressVerification).verificationCode(verificationCode)), xPagopaPnLanguageCxLanguage);
+            this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, type, (new AddressVerification().value(addressVerification).verificationCode(this.otpCode)), xPagopaPnLanguageCxLanguage);
         } catch (HttpStatusCodeException httpStatusCodeException) {
             sharedSteps.setNotificationError(httpStatusCodeException);
         }
@@ -825,9 +833,9 @@ public class RicezioneNotificheWebSteps {
         try {
             if (inserimento) {
                 this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalCourtesyAddressWrapper.ChannelType.PEC, (new AddressVerification().value(addressVerification)), xPagopaPnLanguage);
-                verificationCode = this.externalClient.getVerificationCode(addressVerification);
+                //verificationCode = this.externalClient.getVerificationCode(addressVerification);
             }
-            this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalCourtesyAddressWrapper.ChannelType.PEC, (new AddressVerification().value(addressVerification).verificationCode(verificationCode)),xPagopaPnLanguage);
+            this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalCourtesyAddressWrapper.ChannelType.PEC, (new AddressVerification().value(addressVerification).verificationCode(this.otpCode)),xPagopaPnLanguage);
         } catch (HttpStatusCodeException httpStatusCodeException) {
             sharedSteps.setNotificationError(httpStatusCodeException);
         }
@@ -1251,6 +1259,15 @@ public class RicezioneNotificheWebSteps {
             Assertions.assertEquals(ConsentType.TOS_SERCQ, data.getConsentType());
             Assertions.assertEquals(data.getAccepted(), tosStatus.equalsIgnoreCase("positiva"));
         });
+    }
+
+    @Then("verifico che su DynamoDB sia presente l'otpCode tramite userId {string}")
+    public void checkOtpCodeOnDynamoDB(String userId) {
+        String pk = "VC#PF-" + userId;
+        QueryResponse queryResponse = dynamoDbService.call(DynamoTableName.PN_USER_ATTRIBUTES, Map.of(
+                ":v_pk", AttributeValue.builder().s(pk).build()));
+        log.info("OTP RESPONSE: {}", queryResponse);
+        this.otpCode = queryResponse.items().get(0).get("verificationCode").s();
     }
 
     private <T> T deepCopy(Object obj, Class<T> toClass) {
