@@ -108,6 +108,17 @@ public class EServiceArchivingSteps {
         archivingScheduleVerifier.pollDescriptorArchivingSchedule(eServiceId, oldDescriptorId, "ESERVICE");
     }
 
+    @Then("il descrittore con id {string} dell'e-service avente id {string} è stato correttamente archiviato tramite l'archiviazione manuale dell'intero e-service")
+    @Then("il descrittore con id {string} dell'e-service avente id {string} è in fase di archiviazione tramite l'archiviazione manuale dell'intero e-service")
+    public void eserviceAttributeArchivingScheduleIsPresent(String descriptorId, String eServiceId) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID eServiceUUID = UUID.fromString(eServiceId);
+        UUID descriptorUUID = UUID.fromString(descriptorId);
+
+        archivingScheduleVerifier.pollDescriptorPopulatedArchivingSchedule(eServiceUUID, descriptorUUID, "ESERVICE");
+    }
+
     private void scheduleArchiveEService(UUID eServiceId, String archivingReason) {
         archivingScheduleVerifier.registerDescriptorArchivingRequestTimestamp();
         httpCallExecutor.performCall(
