@@ -96,14 +96,14 @@ Feature: finalità agevolata BFF, link e-service template a un template finalit�
       | id_template_finalita  | $DA_CONTESTO(purposeTemplateId)               |
       | filtro_nome_e_service | $DA_CONTESTO(referenceEServiceTemplateName_1) |
     Then le risorse collegate corrispondono alla lista di risorse di riferimento aventi:
-      | nome_e_service        | $DA_CONTESTO(referenceEServiceTemplateName_1) |
+      | nome_risorsa          | $DA_CONTESTO(referenceEServiceTemplateName_1) |
 
     # Filtro nome e-service concreto
     When recupera le risorse collegate per suggerire il template finalità
       | id_template_finalita  | $DA_CONTESTO(purposeTemplateId)       |
       | filtro_nome_e_service | $DA_CONTESTO(referenceEServiceName_1) |
     Then le risorse collegate corrispondono alla lista di risorse di riferimento aventi:
-      | nome_e_service        | $DA_CONTESTO(referenceEServiceName_1) |
+      | nome_risorsa          | $DA_CONTESTO(referenceEServiceName_1) |
 
     # Filtro parte del nome di una risorsa
     When recupera le risorse collegate per suggerire il template finalità
@@ -112,7 +112,7 @@ Feature: finalità agevolata BFF, link e-service template a un template finalit�
     Then le risorse collegate corrispondono alla lista di risorse di riferimento aventi:
       | parte_del_nome        | eservice |
 
-    # Filtro con molteplici ID del pubblicatore di una risorsa  referencePublisherId1
+    # Filtro con molteplici ID del pubblicatore di una risorsa
     When recupera le risorse collegate per suggerire il template finalità
       | id_template_finalita   | $DA_CONTESTO(purposeTemplateId)      |
       | filtro_id_pubblicatore | $DA_CONTESTO(referencePublisherId_1),$DA_CONTESTO(referencePublisherId_2) |
@@ -133,7 +133,7 @@ Feature: finalità agevolata BFF, link e-service template a un template finalit�
       | filtro_nome_e_service  | $DA_CONTESTO(referenceResourceName_1) |
       | filtro_id_pubblicatore | $DA_CONTESTO(referencePublisherId_1)  |
     Then le risorse collegate corrispondono alla lista di risorse di riferimento aventi:
-      | nome_e_service         | $DA_CONTESTO(referenceResourceName_1) |
+      | nome_risorsa           | $DA_CONTESTO(referenceResourceName_1) |
       | id_pubblicatore        | $DA_CONTESTO(referencePublisherId_1)  |
 
     # Filtro con risultato lista vuota
