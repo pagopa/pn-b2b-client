@@ -82,4 +82,9 @@ public class M2MV3PurposeTemplateClientImpl extends AbstractDPoPClient implement
     public ResponseEntity<Object> linkEServiceTemplateToPurposeTemplate(UUID purposeTemplateId, PurposeTemplateLinkEServiceTemplate purposeTemplateLinkEServiceTemplate) {
         return purposesTemplateApi.addPurposeTemplateEServiceTemplateWithHttpInfo(purposeTemplateId, purposeTemplateLinkEServiceTemplate);
     }
+
+    @Override
+    public ResponseEntity<Object> unlinkEServiceTemplateFromPurposeTemplate(UUID purposeTemplateId, UUID eServiceTemplateId) {
+        return purposesTemplateApi.removePurposeTemplateEServiceTemplateWithHttpInfo(purposeTemplateId, eServiceTemplateId);
+    }
 }

@@ -14,4 +14,5 @@ public interface IM2MV3PurposeTemplateClient extends IM2MPurposeTemplateClient, 
 
     ResponseEntity<EServiceTemplates> getPurposeTemplateLinkableEServiceTemplate(UUID purposeTemplateId, int offset, int limit, List<UUID> creatorIds, String eserviceTemplateName);
     ResponseEntity<Object> linkEServiceTemplateToPurposeTemplate(UUID purposeTemplateId, PurposeTemplateLinkEServiceTemplate purposeTemplateLinkEServiceTemplate);
+    ResponseEntity<Object> unlinkEServiceTemplateFromPurposeTemplate(UUID purposeTemplateId, UUID eServiceTemplateId);
 }
