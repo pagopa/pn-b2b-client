@@ -303,3 +303,19 @@ Feature: Archiviazione manuale di un descrittore
       | firstDescriptorId1 | secondDescriptorId1 | eserviceId1 |
 #      firstDescriptorId=descrittore in Archiving_Suspended . secondDescriptorId=descrittore in Published
       | firstDescriptorId2 | secondDescriptorId2 | eserviceId2 |
+
+  @happy-path
+  Scenario Outline: [ARCHIVING_DESCRIPTOR_BY_JOB_1.2] Se la data finale del tempo di preavviso per l'archiviazione di un descrittore non viene raggiunta, questo non risulterà ancora archiviato
+    Then l'utente è un "admin" di "PA1"
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
+    And il descrittore con id "<secondDescriptorId>" dell'e-service avente id "<eserviceId>" NON è stato archiviato
+    And la vecchia versione dell'e-service è in stato "<secondDescriptorState>"
+#    utilizziamo questo step anche nel caso di archiviazione in corso poichè viene controllata la presenza del campo archivingSchedule
+    And il descrittore con id "<firstDescriptorId>" dell'e-service avente id "<eserviceId>" è stato correttamente archiviato tramite l'archiviazione manuale del singolo descrittore
+
+    Examples:
+      | firstDescriptorId  | secondDescriptorId  | eserviceId  | secondDescriptorState |
+#      firstDescriptorId=descrittore in Archiving . secondDescriptorId=descrittore in Published
+      | firstDescriptorId1 | secondDescriptorId1 | eserviceId1 | ARCHIVING             |
+#      firstDescriptorId=descrittore in Archiving_Suspended . secondDescriptorId=descrittore in Published
+      | firstDescriptorId2 | secondDescriptorId2 | eserviceId2 | ARCHIVING_SUSPENDED   |
