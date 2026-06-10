@@ -63,7 +63,9 @@ public class ClientAssertionSteps {
         if (actor.equals("erogatore")) {
             // Producer has no prepared client
         } else if (actor.equals("fruitore")) {
-            purposeId = sharedStepsContext.getPurposeCommonContext().getLastPurposeId().toString();
+            if (clientType == ClientAssertionOptions.ClientType.CONSUMER) {
+                purposeId = sharedStepsContext.getPurposeCommonContext().getLastPurposeId().toString();
+            }
             DPoPTokenService.PreparedClient preparedClient = sharedStepsContext.getClientCommonContext().getLastPreparedClient();
             clientId = preparedClient.clientId().toString();
         } else {
@@ -82,7 +84,9 @@ public class ClientAssertionSteps {
             keyPair = sharedStepsContext.getProducerKeychainCommonContext().getProducerKeyPairs().get(0).getKeyPair();
             clientId = sharedStepsContext.getProducerKeychainCommonContext().getFirstProducerKeychainId().toString();
         } else if (actor.equals("fruitore")) {
-            purposeId = sharedStepsContext.getPurposeCommonContext().getLastPurposeId().toString();
+            if (clientType.equals(ClientAssertionOptions.ClientType.CONSUMER)) {
+                purposeId = sharedStepsContext.getPurposeCommonContext().getLastPurposeId().toString();
+            }
             DPoPTokenService.PreparedClient preparedClient = sharedStepsContext.getClientCommonContext().getLastPreparedClient();
             keyPair = preparedClient.keyPair().getKeyPair();
             clientId = preparedClient.clientId().toString();
