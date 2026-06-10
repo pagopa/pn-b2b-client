@@ -9,12 +9,15 @@ public class Destinatario {
 
     private final String denomination;
     private final String taxId;
+    private final String uid;
     private final String recipientType;
     private final String digitalDomicileType;
 
-    public Destinatario(String denomination, String taxId, String recipientType, String digitalDomicileType) {
+    public Destinatario(String denomination, String taxId, String uid,
+                        String recipientType, String digitalDomicileType) {
         this.denomination = denomination;
         this.taxId = taxId;
+        this.uid = uid;
         this.recipientType = recipientType;
         this.digitalDomicileType = digitalDomicileType;
     }
