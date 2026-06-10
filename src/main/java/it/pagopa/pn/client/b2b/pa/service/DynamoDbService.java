@@ -24,7 +24,9 @@ public class DynamoDbService {
             case PAYMENT_INFO -> buildPaymentInfoRequest(attributeValues);
             case NOTIFICATION_DELIVERY_COST -> buildNotificationDeliveryCostRequest(attributeValues);
             case ONBOARD_INSTITUTIONS -> buildOnboardInstitutionsRequest(attributeValues);
-            case BATCH_REQUESTS -> buildBatchRequestsByStatusAndTimeRequest(attributeValues);
+            case BATCH_REQUESTS_WITH_INDEX_SEND_STATUS ->
+                    buildBatchRequestsBySendStatusAndLastReservedAfter(attributeValues);
+            case BATCH_REQUESTS_WITH_INDEX_STATUS -> buildBatchRequestsByStatus(attributeValues);
         };
         return dynamoDbClient.query(queryRequest);
     }
@@ -55,7 +57,7 @@ public class DynamoDbService {
     }
 
     // added for cases when the result might be paginated
-    public List<Map<String, AttributeValue>> callAll(
+    public List<Map<String, AttributeValue>> callAllPages(
             DynamoTableName tableName,
             Map<String, AttributeValue> attributeValues
     ) {
@@ -64,7 +66,9 @@ public class DynamoDbService {
             case PAYMENT_INFO -> buildPaymentInfoRequest(attributeValues);
             case NOTIFICATION_DELIVERY_COST -> buildNotificationDeliveryCostRequest(attributeValues);
             case ONBOARD_INSTITUTIONS -> buildOnboardInstitutionsRequest(attributeValues);
-            case BATCH_REQUESTS -> buildBatchRequestsByStatusAndTimeRequest(attributeValues);
+            case BATCH_REQUESTS_WITH_INDEX_SEND_STATUS ->
+                    buildBatchRequestsBySendStatusAndLastReservedAfter(attributeValues);
+            case BATCH_REQUESTS_WITH_INDEX_STATUS -> buildBatchRequestsByStatus(attributeValues);
         };
 
         List<Map<String, AttributeValue>> allItems = new ArrayList<>();
@@ -91,15 +95,27 @@ public class DynamoDbService {
         return allItems;
     }
 
-    private static QueryRequest buildBatchRequestsByStatusAndTimeRequest(
+    private static QueryRequest buildBatchRequestsBySendStatusAndLastReservedAfter(
             Map<String, AttributeValue> attributeValues) {
 
         return DynamoQueryBuilder.withIndex(
-                DynamoTableName.BATCH_REQUESTS.getValue(),
+                DynamoTableName.BATCH_REQUESTS_WITH_INDEX_SEND_STATUS.getValue(),
                 "sendStatus = :v_sendStatus",
                 "lastReserved > :v_lastReserved",
                 attributeValues,
                 "sendStatus-lastReserved-index"
+        );
+    }
+
+    private static QueryRequest buildBatchRequestsByStatus(
+            Map<String, AttributeValue> attributeValues) {
+
+        return DynamoQueryBuilder.withIndex(
+                DynamoTableName.BATCH_REQUESTS_WITH_INDEX_STATUS.getValue(),
+                "status = :v_status",
+                "lastReserved > :v_lastReserved",
+                attributeValues,
+                "status-index"
         );
     }
 }
