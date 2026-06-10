@@ -521,3 +521,22 @@ Feature: Archiviazione manuale di un e-service
       | firstDescriptorId3 | secondDescriptorId3 | eserviceId3 |
 #      firstDescriptorId=descrittore in Archived . secondDescriptorId=descrittore in Archiving
       | firstDescriptorId4 | secondDescriptorId4 | eserviceId4 |
+
+  @happy-path
+  Scenario Outline: [ARCHIVING_ESERVICE_BY_JOB_1.2] Se la data finale del tempo di preavviso per l'archiviazione di un e-service non viene raggiunta, questo non risulterà ancora archiviato
+    Then l'utente è un "admin" di "PA1"
+    And la versione più recente dell'e-service è in stato "<secondDescriptorState>"
+    And il descrittore con id "<secondDescriptorId>" dell'e-service avente id "<eserviceId>" è in fase di archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And la vecchia versione dell'e-service è in stato "<firstDescriptorState>"
+    And il descrittore con id "<firstDescriptorId>" dell'e-service avente id "<eserviceId>" è in fase di archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    Examples:
+      | firstDescriptorId  | secondDescriptorId  | eserviceId  | firstDescriptorState | secondDescriptorState |
+#      firstDescriptorId=descrittore in Archiving . secondDescriptorId=descrittore in Archiving
+      | firstDescriptorId1 | secondDescriptorId1 | eserviceId1 | ARCHIVING            | ARCHIVING             |
+#      firstDescriptorId=descrittore in Archiving . secondDescriptorId=descrittore in Archiving_Suspended
+      | firstDescriptorId2 | secondDescriptorId2 | eserviceId2 | ARCHIVING            | ARCHIVING_SUSPENDED   |
+#      firstDescriptorId=descrittore in Archiving_Suspended . secondDescriptorId=descrittore in Archiving
+      | firstDescriptorId3 | secondDescriptorId3 | eserviceId3 | ARCHIVING_SUSPENDED  | ARCHIVING             |
+#      firstDescriptorId=descrittore in Archived . secondDescriptorId=descrittore in Archiving
+      | firstDescriptorId4 | secondDescriptorId4 | eserviceId4 | ARCHIVED             | ARCHIVING             |
