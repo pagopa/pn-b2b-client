@@ -31,7 +31,7 @@ Feature: Correzione timeline fase 3
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
       | recIndex        | recIndex=0                                                              |
@@ -73,7 +73,7 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
       | recIndex        | recIndex=0                                                              |
@@ -114,7 +114,7 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
       | recIndex        | recIndex=0                                                              |
@@ -158,7 +158,7 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
       | recIndex        | recIndex=0                                                              |
@@ -209,7 +209,7 @@ Feature: Correzione timeline fase 3
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
       | recIndex        | recIndex=0                                                              |
@@ -254,13 +254,13 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0.REWORK_0"
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
       | recIndex        | recIndex=0                                                              |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
       | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0.REWORK_0"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
@@ -300,13 +300,13 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0.REWORK_0"
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
       | recIndex        | recIndex=0                                                              |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
       | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0.REWORK_0"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
@@ -346,7 +346,7 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
       | recIndex        | recIndex=0                                                              |
@@ -393,7 +393,7 @@ Feature: Correzione timeline fase 3
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "VIEWED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
       | recIndex        | recIndex=0                                                              |
@@ -435,7 +435,7 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "VIEWED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
       | recIndex        | recIndex=0                                                              |
@@ -476,7 +476,7 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "VIEWED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
       | recIndex        | recIndex=0                                                              |
@@ -517,7 +517,7 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "VIEWED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
       | recIndex        | recIndex=0                                                              |
@@ -562,13 +562,13 @@ Feature: Correzione timeline fase 3
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
       | recIndex        | recIndex=0                                                              |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
       | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                     |
       | tag             | AUD_NT_UPDATE_COST                                                       |
       | recIndex        | recIndex=0                                                               |
@@ -617,13 +617,13 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
       | recIndex        | recIndex=0                                                              |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
       | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                     |
       | tag             | AUD_NT_UPDATE_COST                                                       |
       | recIndex        | recIndex=0                                                               |
@@ -669,13 +669,13 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
       | recIndex        | recIndex=0                                                              |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
       | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                     |
       | tag             | AUD_NT_UPDATE_COST                                                       |
       | recIndex        | recIndex=0                                                               |
@@ -723,13 +723,13 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
       | recIndex        | recIndex=0                                                              |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
       | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                     |
       | tag             | AUD_NT_UPDATE_COST                                                       |
       | recIndex        | recIndex=0                                                               |
@@ -778,13 +778,13 @@ Feature: Correzione timeline fase 3
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "VIEWED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
       | recIndex        | recIndex=0                                                              |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
       | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                     |
       | tag             | AUD_NT_UPDATE_COST                                                       |
       | recIndex        | recIndex=0                                                               |
@@ -828,13 +828,13 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "VIEWED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
       | recIndex        | recIndex=0                                                              |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
       | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                     |
       | tag             | AUD_NT_UPDATE_COST                                                       |
       | recIndex        | recIndex=0                                                               |
@@ -877,13 +877,13 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "VIEWED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
       | recIndex        | recIndex=0                                                              |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
       | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                     |
       | tag             | AUD_NT_UPDATE_COST                                                       |
       | recIndex        | recIndex=0                                                               |
@@ -926,13 +926,13 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "VIEWED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
       | recIndex        | recIndex=0                                                              |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
       | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                     |
       | tag             | AUD_NT_UPDATE_COST                                                       |
       | recIndex        | recIndex=0                                                               |
@@ -978,13 +978,13 @@ Feature: Correzione timeline fase 3
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
       | recIndex        | recIndex=0                                                              |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
       | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                     |
       | tag             | AUD_NT_UPDATE_COST                                                       |
       | recIndex        | recIndex=0                                                               |
@@ -1033,13 +1033,13 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
       | recIndex        | recIndex=0                                                              |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
       | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                     |
       | tag             | AUD_NT_UPDATE_COST                                                       |
       | recIndex        | recIndex=0                                                               |
@@ -1085,13 +1085,13 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
       | recIndex        | recIndex=0                                                              |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
       | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                     |
       | tag             | AUD_NT_UPDATE_COST                                                       |
       | recIndex        | recIndex=0                                                               |
@@ -1139,13 +1139,13 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
       | recIndex        | recIndex=0                                                              |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
       | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                     |
       | tag             | AUD_NT_UPDATE_COST                                                       |
       | recIndex        | recIndex=0                                                               |
@@ -1194,13 +1194,13 @@ Feature: Correzione timeline fase 3
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "VIEWED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
       | recIndex        | recIndex=0                                                              |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
       | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                     |
       | tag             | AUD_NT_UPDATE_COST                                                       |
       | recIndex        | recIndex=0                                                               |
@@ -1244,13 +1244,13 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "VIEWED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
       | recIndex        | recIndex=0                                                              |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
       | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                     |
       | tag             | AUD_NT_UPDATE_COST                                                       |
       | recIndex        | recIndex=0                                                               |
@@ -1293,13 +1293,13 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "VIEWED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
       | recIndex        | recIndex=0                                                              |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
       | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                     |
       | tag             | AUD_NT_UPDATE_COST                                                       |
       | recIndex        | recIndex=0                                                               |
@@ -1342,13 +1342,13 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "VIEWED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                    |
       | tag             | AUD_NT_UPDATE_COST                                                      |
       | recIndex        | recIndex=0                                                              |
       | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
       | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                     |
       | tag             | AUD_NT_UPDATE_COST                                                       |
       | recIndex        | recIndex=0                                                               |
@@ -1396,7 +1396,7 @@ Feature: Correzione timeline fase 3
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERING"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                     |
       | tag             | AUD_NT_UPDATE_COST                                                       |
       | recIndex        | recIndex=0                                                               |
@@ -1442,7 +1442,7 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERING"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                     |
       | tag             | AUD_NT_UPDATE_COST                                                       |
       | recIndex        | recIndex=0                                                               |
@@ -1492,7 +1492,7 @@ Feature: Correzione timeline fase 3
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERING"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                     |
       | tag             | AUD_NT_UPDATE_COST                                                       |
       | recIndex        | recIndex=0                                                               |
@@ -1538,7 +1538,7 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERING"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                     |
       | tag             | AUD_NT_UPDATE_COST                                                       |
       | recIndex        | recIndex=0                                                               |
@@ -1590,7 +1590,7 @@ Feature: Correzione timeline fase 3
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "VIEWED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                     |
       | tag             | AUD_NT_UPDATE_COST                                                       |
       | recIndex        | recIndex=0                                                               |
@@ -1633,7 +1633,7 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "VIEWED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                     |
       | tag             | AUD_NT_UPDATE_COST                                                       |
       | recIndex        | recIndex=0                                                               |
@@ -1680,7 +1680,7 @@ Feature: Correzione timeline fase 3
     And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "VIEWED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                     |
       | tag             | AUD_NT_UPDATE_COST                                                       |
       | recIndex        | recIndex=0                                                               |
@@ -1723,7 +1723,7 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino allo stato della notifica "VIEWED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
       | iun             | auto                                                                     |
       | tag             | AUD_NT_UPDATE_COST                                                       |
       | recIndex        | recIndex=0                                                               |

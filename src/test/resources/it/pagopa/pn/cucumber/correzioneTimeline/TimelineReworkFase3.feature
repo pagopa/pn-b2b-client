@@ -243,9 +243,9 @@ Feature: Correzione timeline fase 3
     And destinatario Mario Gherkin e:
       | physicalAddress_address | Via@OK_AR |
       | digitalDomicile         | NULL      |
-    And destinatario Mario Cucumber e:
-      | physicalAddress_address | Via@OK_AR |
-      | digitalDomicile         | NULL      |
+    And destinatario Gherkin Irreperibile e:
+      | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
+      | digitalDomicile         | NULL                                         |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERING"
     When viene invocata una richiesta di restart per la notifica appena creata

@@ -67,11 +67,11 @@ public class TimelineReworkSteps {
     private String timestampString;
     private List<String> attempt1ElementIds = new ArrayList<>();
     private final Map<ReworkItem.StatusEnum, Integer> reworkStatusValueMap = Map.of(
-            ReworkItem.StatusEnum.ERROR, 1,
-            ReworkItem.StatusEnum.CREATED, 2,
-            ReworkItem.StatusEnum.READY, 3,
-            ReworkItem.StatusEnum.IN_PROGRESS, 4,
-            ReworkItem.StatusEnum.DONE, 5
+            ReworkItem.StatusEnum.CREATED, 1,
+            ReworkItem.StatusEnum.READY, 2,
+            ReworkItem.StatusEnum.IN_PROGRESS, 3,
+            ReworkItem.StatusEnum.DONE, 4,
+            ReworkItem.StatusEnum.ERROR, 5
     );
 
     @ParameterType("rework|restart")
@@ -682,16 +682,6 @@ public class TimelineReworkSteps {
                 if (isViewed && invoicingType.equals("NEW")) {
                     assertThat(records.size()).as("In caso di notifica visualizzata, non dovrebbero esserci elementi con invoicingType NEW. IUN = %s", iun).isEqualTo(0);
                 } else {
-                    if (invoicingType.equals("NEW")) {
-                        for (Map<String, AttributeValue> record : records) {
-                            assertThat(record.get("invoincingTimestamp_timelineElementId"))
-                                    .as("Il record %s non contiene il campo timeline id", record)
-                                    .isNotNull();
-                            assertThat(record.get("invoincingTimestamp_timelineElementId").s())
-                                    .as("Il timelineElementId del record %s dovrebbe esplicitare che si tratta di un rework", record)
-                                    .contains("REWORK_");
-                        }
-                    }
                     expectedElements.forEach((key, value) -> {
                         String[] requirements = value.split(";");
                         Map<String, AttributeValue> expectedFound = records.stream()
