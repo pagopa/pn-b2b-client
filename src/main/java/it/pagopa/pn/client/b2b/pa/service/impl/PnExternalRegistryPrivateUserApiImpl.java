@@ -15,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class PnExternalRegistryPrivateUserApiImpl implements IPnExternalRegistryPrivateUserApi {
 
+    private final String pg2BearerToken;
     private final String aldameriniPGBearerToken;
     private final String mariaMontessoriPGBearerToken;
     private final String nildeIottiPGBearerToken;
@@ -27,18 +28,20 @@ public class PnExternalRegistryPrivateUserApiImpl implements IPnExternalRegistry
     private PaperCostApi paperCostApi;
 
     public PnExternalRegistryPrivateUserApiImpl(RestTemplate restTemplate,
-                                                @Value("${pn.bearer-token.pg5}") String nildeIottiPGBearerToken,
+                                                @Value("${pn.bearer-token.pg2}") String pg2BearerToken,
                                                 @Value("${pn.bearer-token.pg3}") String aldameriniPGBearerToken,
                                                 @Value("${pn.bearer-token.pg4}") String mariaMontessoriPGBearerToken,
+                                                @Value("${pn.bearer-token.pg5}") String nildeIottiPGBearerToken,
                                                 @Value("${pn.delivery.base-url}") String basePath) {
 
+        this.pg2BearerToken = pg2BearerToken;
         this.aldameriniPGBearerToken = aldameriniPGBearerToken;
         this.mariaMontessoriPGBearerToken = mariaMontessoriPGBearerToken;
         this.nildeIottiPGBearerToken = nildeIottiPGBearerToken;
         this.restTemplate = restTemplate;
         this.basePath = basePath;
-        this.externalRegistryUserApi = new InternalOnlyApi(createApiClient(aldameriniPGBearerToken));
-        this.paperCostApi = new PaperCostApi(createApiClient(aldameriniPGBearerToken));
+        this.externalRegistryUserApi = new InternalOnlyApi(createApiClient(pg2BearerToken));
+        this.paperCostApi = new PaperCostApi(createApiClient(pg2BearerToken));
     }
 
     private ApiClient createApiClient(String bearerToken) {
@@ -61,6 +64,7 @@ public class PnExternalRegistryPrivateUserApiImpl implements IPnExternalRegistry
     @Override
     public void setBearerToken(SettableBearerToken.BearerTokenType bearerToken) {
         switch (bearerToken) {
+            case PG_2 -> this.externalRegistryUserApi.setApiClient(createApiClient(pg2BearerToken));
             case PG_3 -> this.externalRegistryUserApi.setApiClient(createApiClient(aldameriniPGBearerToken));
             case PG_4 -> this.externalRegistryUserApi.setApiClient(createApiClient(mariaMontessoriPGBearerToken));
             case PG_5 -> this.externalRegistryUserApi.setApiClient(createApiClient(nildeIottiPGBearerToken));

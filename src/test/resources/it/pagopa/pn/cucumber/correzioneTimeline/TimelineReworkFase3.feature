@@ -502,7 +502,7 @@ Feature: Correzione timeline fase 3
     And la category "NOTIFICATION_TIMELINE_REWORKED" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V23"
     And la category "NOTIFICATION_TIMELINE_REWORKED" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V10"
 
-#  @timelineReworkF3 @checkRestart
+  @timelineReworkF3 @checkRestart
   Scenario: [TR3_EXTERNAL_REGISTRY_API_VALIDATION] Restart di notifica che va in OK all'attempt 0 (anche al restart va in OK all'attempt 0)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |

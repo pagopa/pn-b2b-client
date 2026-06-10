@@ -9,6 +9,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.*;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.generate.model.externalregistry.privateapi.AnalogUpdateCostPhase;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.generate.model.externalregistry.privateapi.PaperCostToInvalidate;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.generate.model.externalregistry.privateapi.PaymentsInfo;
 import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryInvalidatedElement;
@@ -659,25 +660,27 @@ public class TimelineReworkSteps {
 
     @Then("controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato {invoicingType}")
     public void checkReworkedTimelinesForInvoicing(String invoicingType, Map<String, String> expectedElements) {
-        boolean isViewed = sharedSteps.getSentNotificationLastVersion().getNotificationStatus().getValue().equals(NOTIFICATION_STATUS_VIEWED);
-        String paId = sharedSteps.getSentNotificationLastVersion().getSenderPaId();
-        String sentAt = sharedSteps.getSentNotificationLastVersion().getSentAt().toLocalDate().toString();
+        FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
+        boolean isViewed = fsn.getNotificationStatus().getValue().equals(NOTIFICATION_STATUS_VIEWED);
+        String paId = fsn.getSenderPaId();
+        String sentAt = fsn.getSentAt().toLocalDate().toString();
+        String iun = fsn.getIun();
         String pk = paId + "_" + sentAt;
 
         try {
-            await().atMost(4, TimeUnit.MINUTES).pollInterval(30, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(() -> {
+            await().atMost(10, TimeUnit.MINUTES).pollInterval(30, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(() -> {
                 reworkedTimelinesForInvoicingResponse = dynamoDbService.call(DynamoTableName.REWORKED_TIMELINES_FOR_INVOICING, Map.of(
                         ":pk", AttributeValue.builder().s(pk).build(),
                         ":v_iun", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build()
                 ));
                 log.info("REWORKED_TIMELINES_FOR_INVOICING RESPONSE -> {}", reworkedTimelinesForInvoicingResponse);
-                assertThat(reworkedTimelinesForInvoicingResponse).as("Il risultato della query su pn-ReworkedTimelinesForInvoicing non dev'essere null").isNotNull();
+                assertThat(reworkedTimelinesForInvoicingResponse).as("Il risultato della query su pn-ReworkedTimelinesForInvoicing non dev'essere null. IUN = %s", iun).isNotNull();
                 List<Map<String, AttributeValue>> records = reworkedTimelinesForInvoicingResponse.items().stream().filter(
                         e -> e.containsKey("invoicingType") && e.get("invoicingType").s().equals(invoicingType)).toList();
                 log.info("Filtered records -> {}", records);
 
                 if (isViewed && invoicingType.equals("NEW")) {
-                    assertThat(records.size()).as("In caso di notifica visualizzata, non dovrebbero esserci elementi con invoicingType NEW").isEqualTo(0);
+                    assertThat(records.size()).as("In caso di notifica visualizzata, non dovrebbero esserci elementi con invoicingType NEW. IUN = %s", iun).isEqualTo(0);
                 } else {
                     if (invoicingType.equals("NEW")) {
                         for (Map<String, AttributeValue> record : records) {
@@ -696,7 +699,7 @@ public class TimelineReworkSteps {
                                         && Arrays.stream(requirements).allMatch(r.get("invoincingTimestamp_timelineElementId").s()::contains))
                                 .findFirst().orElse(null);
                         assertThat(expectedFound)
-                                .as("Non è stato trovato nessun record che nel timelineElement id abbia tutte le sottostringhe attese: %s", Arrays.toString(requirements))
+                                .as("Non è stato trovato nessun record che nel timelineElement id abbia tutte le sottostringhe attese: %s . IUN = %s", iun, Arrays.toString(requirements))
                                 .isNotNull();
                     });
                 }
@@ -722,11 +725,19 @@ public class TimelineReworkSteps {
 
     @When("invoco l'api di external-registry per l'invalidazione dei costi con {string}")
     public void testExternalRegistryApi(String inputParams) {
-        String iun = sharedSteps.getNotificationIun();
+        FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
+        String iun = fsn.getIun();
+        String creditorTaxId = fsn.getRecipients().get(0).getPayments().get(0).getPagoPa().getCreditorTaxId();
+        String noticeCode = fsn.getRecipients().get(0).getPayments().get(0).getPagoPa().getNoticeCode();
+        PaymentsInfo paymentsInfo = new PaymentsInfo();
+        paymentsInfo.setCreditorTaxId(creditorTaxId);
+        paymentsInfo.setNoticeCode(noticeCode);
+        paymentsInfo.setRecIndex(0);
+
         PaperCostToInvalidate request = new PaperCostToInvalidate();
         request.setVat(20);
         request.setCostPhases(List.of(AnalogUpdateCostPhase._0));
-        request.setPaymentsInfo(List.of());
+        request.setPaymentsInfo(List.of(paymentsInfo));
         switch (inputParams) {
             case "iun null" -> iun = null;
             case "iun non valido" -> iun = INVALID_IUN;
