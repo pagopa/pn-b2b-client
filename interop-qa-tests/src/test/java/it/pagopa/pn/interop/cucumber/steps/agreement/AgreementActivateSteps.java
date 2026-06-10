@@ -107,16 +107,19 @@ public class AgreementActivateSteps {
     @Given("l'e-service ha questa configurazione:")
     public void eServiceHasThisConfiguration(DataTable dataTable) {
 
+        Map<String, String> attributes = dataTable.asMap();
+
+        boolean waitForAsyncProps = attributes.keySet().stream()
+            .anyMatch(key -> key.startsWith("asyncExchangeProperties."));
+
         ProducerEServiceDescriptor eServiceDescriptor = sharedStepsContext.getPollingService().makePolling(
                 () -> this.clientTokenConfigurator.getEServiceClient().getEServiceDescriptor(
                         sharedStepsContext.getEServicesCommonContext().getEserviceId(),
                         sharedStepsContext.getEServicesCommonContext().getDescriptorId()
                 ),
-                res -> nonNull(res.getAsyncExchangeProperties()),
+                res -> (!waitForAsyncProps) || nonNull(res.getAsyncExchangeProperties()),
                 res -> "Le async property del descrittore risultano non impostate"
         );
-
-        Map<String, String> attributes = dataTable.asMap();
 
         if (attributes.containsKey("dailyCallsPerConsumer")) {
             Assertions.assertEquals(Integer.parseInt(attributes.get("dailyCallsPerConsumer")), eServiceDescriptor.getDailyCallsPerConsumer());
