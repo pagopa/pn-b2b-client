@@ -1,9 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.purposetemplate.model;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.LinkableResources;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplateState;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTemplates;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 

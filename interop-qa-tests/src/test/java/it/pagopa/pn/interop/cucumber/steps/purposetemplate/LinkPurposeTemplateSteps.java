@@ -54,7 +54,7 @@ public class LinkPurposeTemplateSteps {
 
     @Given("viene salvato {int} nome {resourceKind} di riferimento dalle risorse collegate")
     @Given("vengono salvati {int} nomi {resourceKind} di riferimento dalle risorse collegate")
-    public void saveResourceNamesFromLinkableResource(int names, String resourceKind) {
+    public void saveResourceNamesFromLinkableResources(int names, String resourceKind) {
         Assertions.assertTrue(
                 linkableResourcesContext.getReferenceLinkableResources().getResults().size() >= names,
                 "Not enough resources to save " + names + " requested names");
@@ -89,7 +89,7 @@ public class LinkPurposeTemplateSteps {
     }
 
     @Given("vengono salvati {int} ID pubblicatore di riferimento dalle risorse collegate")
-    public void savePublisherIDFromLinkableResource(int ids) {
+    public void savePublisherIDFromLinkableResources(int ids) {
         Assertions.assertTrue(
                 linkableResourcesContext.getReferenceLinkableResources().getResults().size() >= ids,
                 "Not enough resources to save " + ids + " requested IDs.");
@@ -116,7 +116,7 @@ public class LinkPurposeTemplateSteps {
 
     @Given("viene salvato {int} ID {resourceKind} di riferimento dalle risorse collegate")
     @Given("vengono salvati {int} ID {resourceKind} di riferimento dalle risorse collegate")
-    public void saveResourceIDFromLinkableResource(int ids, String resourceKind) {
+    public void saveResourceIdFromLinkableResource(int ids, String resourceKind) {
         Assertions.assertTrue(
                 linkableResourcesContext.getLastLinkableResources().getResults().size() >= ids,
                 "Not enough resources to save " + ids + " requested IDs");
@@ -166,7 +166,7 @@ public class LinkPurposeTemplateSteps {
 
     @When("associa una risorsa a un template finalità")
     public void linkResourceToPurposeTemplate(DataTable dataTable) {
-        LinkParameters params = getLinkParametersFromDataTable(dataTable);
+        LinkParameters params = getLinkParametersFromDataTable(dataTable, sharedStepsContext, linkableResourcesContext);
         tryToLinkResourceToPurposeTemplate(dataTable);
         Assertions.assertTrue(
                 httpCallExecutor.getResponseStatus().is2xxSuccessful(),
@@ -176,28 +176,13 @@ public class LinkPurposeTemplateSteps {
 
     @When("prova ad associare una risorsa a un template finalità")
     public void tryToLinkResourceToPurposeTemplate(DataTable dataTable) {
-        LinkParameters params = getLinkParametersFromDataTable(dataTable);
+        LinkParameters params = getLinkParametersFromDataTable(dataTable, sharedStepsContext, linkableResourcesContext);
         httpCallExecutor.performCall(() -> purposeTemplateClient.linkResourceToPurposeTemplate(params.purposeTemplateId(), params.resourceRequest()));
     }
 
-//    @When("associa una risorsa a un template finalità con errori formali")
-//    public void linkResourceToPurposeTemplateWithFormalErrors(DataTable dataTable) {
-//        Map<String, String> data = dataTable.asMap(String.class, String.class);
-//        LinkParameters params = getLinkParametersFromDataTable(dataTable);
-//        String purposeTemplateId = params.purposeTemplateId().toString();
-//        String resourceKind = params.resourceRequest().getResourceKind().getValue();
-//        String resourceId;
-//        if ("ESERVICE".equals(resourceKind)) {
-//            resourceId = params.resourceRequest().getEserviceId().toString();
-//        } else {
-//            resourceId = params.resourceRequest().getEserviceTemplateId().toString();
-//        }
-//        httpCallExecutor.performCall(() -> purposeTemplateClient.linkResourceToPurposeTemplateWithFormalErrors(purposeTemplateId, resourceKind, resourceId));
-//    }
-
     @When("disassocia una risorsa da un template finalità")
     public void unlinkResourceFromPurposeTemplate(DataTable dataTable) {
-        LinkParameters params = getLinkParametersFromDataTable(dataTable);
+        LinkParameters params = getLinkParametersFromDataTable(dataTable, sharedStepsContext, linkableResourcesContext);
         pollingService.makePolling(
                 () -> (httpCallExecutor.performCall(() -> purposeTemplateClient.unlinkResourceFromPurposeTemplate(params.purposeTemplateId(), params.resourceRequest()))),
                 res -> (httpCallExecutor.getResponseStatus().is2xxSuccessful()),
@@ -207,47 +192,8 @@ public class LinkPurposeTemplateSteps {
 
     @When("prova a disassociare una risorsa da un template finalità")
     public void tryToUnlinkResourceToPurposeTemplate(DataTable dataTable) {
-        LinkParameters params = getLinkParametersFromDataTable(dataTable);
+        LinkParameters params = getLinkParametersFromDataTable(dataTable, sharedStepsContext, linkableResourcesContext);
         httpCallExecutor.performCall(() -> purposeTemplateClient.unlinkResourceFromPurposeTemplate(params.purposeTemplateId(), params.resourceRequest()));
-    }
-
-    private record LinkParameters (
-            UUID purposeTemplateId,
-            LinkableResourceRequest resourceRequest,
-            PurposeTemplateLinkEServiceTemplate eServiceTemplateLink
-    ) {
-        public UUID resourceId() {
-            return this.resourceRequest.getEserviceId() != null ? this.resourceRequest.getEserviceId() : this.resourceRequest.getEserviceTemplateId();
-        }
-
-        public String resourceKind() {
-            return this.resourceRequest.getEserviceId() != null ? "ESERVICE" : "ESERVICE_TEMPLATE";
-        }
-    }
-
-    private LinkParameters getLinkParametersFromDataTable(DataTable dataTable) {
-        Map<String, String> data = dataTable.asMap(String.class, String.class);
-        UUID purposeTemplateId = UUID.fromString(
-                resolveDynamicData(data.get("id_template_finalita"), sharedStepsContext, linkableResourcesContext)
-        );
-        String eServiceIdValue = data.getOrDefault("id_e_service", "");
-        LinkableResourceRequest resourceRequest = new LinkableResourceRequest();
-        PurposeTemplateLinkEServiceTemplate eServiceTemplateLink = new PurposeTemplateLinkEServiceTemplate();
-        if (!eServiceIdValue.isEmpty()) {
-            resourceRequest.setResourceKind(LinkableResourceRequest.ResourceKindEnum.fromValue("ESERVICE"));
-            UUID eServiceId = UUID.fromString(resolveDynamicData(
-                    eServiceIdValue, sharedStepsContext, linkableResourcesContext)
-            );
-            resourceRequest.setEserviceId(eServiceId);
-        } else {
-            resourceRequest.setResourceKind(LinkableResourceRequest.ResourceKindEnum.fromValue("ESERVICE_TEMPLATE"));
-            UUID eServiceTemplateId = UUID.fromString(resolveDynamicData(
-                    data.get("id_e_service_template"), sharedStepsContext, linkableResourcesContext
-            ));
-            resourceRequest.setEserviceTemplateId(eServiceTemplateId);
-            eServiceTemplateLink.setEserviceTemplateId(eServiceTemplateId);
-        }
-        return new LinkParameters(purposeTemplateId, resourceRequest, eServiceTemplateLink);
     }
 
     @When("recupera le risorse collegate per suggerire il template finalità")
@@ -261,22 +207,16 @@ public class LinkPurposeTemplateSteps {
         String q = resolveDynamicData(
                 data.getOrDefault("filtro_nome_e_service", ""), sharedStepsContext, linkableResourcesContext
         );
-        String publisherIDsCommaSeparated = data.getOrDefault("id_pubblicatore", "");
-        if (publisherIDsCommaSeparated.isEmpty()) {
-            publisherIDsCommaSeparated = data.getOrDefault("filtro_id_pubblicatore", "");
-        }
+        String publisherIDsCommaSeparated = data.getOrDefault("filtro_id_pubblicatore", "");
         final String expectedResourceId = resolveDynamicData(
                 data.getOrDefault("id_risorsa_attesa", ""), sharedStepsContext, linkableResourcesContext
         );
-        List<UUID> publisherIDs;
-        if (publisherIDsCommaSeparated.isEmpty()) {
-            publisherIDs = List.of();
-        } else {
-            publisherIDs = Arrays.stream(publisherIDsCommaSeparated.split(","))
-                    .map(id -> resolveDynamicData(id, sharedStepsContext, linkableResourcesContext))
-                    .map(UUID::fromString)
-                    .collect(Collectors.toList());
-        }
+        List<UUID> publisherIDs = (publisherIDsCommaSeparated.isEmpty()) ? List.of() :
+                Arrays.stream(publisherIDsCommaSeparated.split(","))
+                        .map(id -> resolveDynamicData(id, sharedStepsContext, linkableResourcesContext))
+                        .map(UUID::fromString)
+                        .collect(Collectors.toList());
+
         if (expectedResourceId.isEmpty()) {
             httpCallExecutor.performCall(() -> purposeTemplateClient.getPurposeTemplateLinkableResources(purposeTemplateId, offset, limit, q, publisherIDs));
             if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
@@ -297,17 +237,6 @@ public class LinkPurposeTemplateSteps {
             );
         }
     }
-
-//    @When("recupera le risorse collegate per suggerire il template finalità con errori formali")
-//    public void getLinkableResourcesForPurposeTemplateWithFormalErrors(DataTable dataTable) {
-//        Map<String, String> data = dataTable.asMap(String.class, String.class);
-//        String purposeTemplateId = data.get("id_template_finalita");
-//        String offset = data.getOrDefault("offset", "");
-//        String limit = data.getOrDefault("limit", "");
-//        String q = data.getOrDefault("q", "");
-//        String publisherIds = data.getOrDefault("publisherIds", "");
-//        httpCallExecutor.performCall(() -> purposeTemplateClient.getPurposeTemplateLinkableResourcesWithFormalErrors(purposeTemplateId, offset, limit, q, publisherIds));
-//    }
 
     @Then("le risorse collegate al template finalità sono una lista vuota")
     public void checkLinkableResourcesAreEmpty(DataTable dataTable) {
@@ -452,7 +381,7 @@ public class LinkPurposeTemplateSteps {
         LinkableResource referenceResource, currentResource;
         Map<String, String> data = dataTable.asMap(String.class, String.class);
         String eServiceName = resolveDynamicData(
-                data.getOrDefault("nome_e_service", ""), sharedStepsContext, linkableResourcesContext
+                data.getOrDefault("nome_risorsa", ""), sharedStepsContext, linkableResourcesContext
         );
         String partOfName = data.getOrDefault("parte_del_nome", "");
         String publisherIdString = resolveDynamicData(
@@ -520,15 +449,5 @@ public class LinkPurposeTemplateSteps {
     private UUID getPublisherId(LinkableResource resource) {
         return (getResourceKind(resource).equals("ESERVICE_TEMPLATE")) ?
                 resource.getEserviceTemplate().getCreator().getId() : resource.getEservice().getProducer().getId();
-    }
-
-    private void assertLinkableResourcesMatch(boolean difference, LinkableResource resource1, LinkableResource resource2) {
-        Assertions.assertNotNull(resource1);
-        Assertions.assertNotNull(resource2);
-        Assertions.assertFalse(
-                difference,
-                "Resource " + getResourceKind(resource2) + " " + resource2.getPurposeTemplateId() +
-                        " does not match to resource " + getResourceKind(resource1) + " " +
-                        resource1.getPurposeTemplateId());
     }
 }
