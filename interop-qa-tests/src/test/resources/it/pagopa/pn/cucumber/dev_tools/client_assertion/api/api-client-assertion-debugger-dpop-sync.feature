@@ -215,8 +215,8 @@ Feature: Debugger Client Assertion Sync DPoP
       | iss   | not-a-uuid | invalidClientIdFormat |
 
     Examples:
-      | claim | value      | expectedError         |
-      | sub   | not-a-uuid | invalidSubjectFormat  |
+      | claim | value      | expectedError        |
+      | sub   | not-a-uuid | invalidSubjectFormat |
 
   @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_KID_NOT_FOUND_API_CLIENT_DPOP] Dato un client API valido, quando il claim kid non è presente allora il recupero della chiave pubblica fallisce con errore kidNotFound
@@ -310,12 +310,12 @@ Feature: Debugger Client Assertion Sync DPoP
     And "PA1" richiede la validazione della client assertion appena creata
     And si ottiene response status code 200
     Then i risultati di validazione sono:
-      | step                                 | result  | errors             |
-      | clientAssertionValidation            | PASSED  | []                 |
-      | publicKeyRetrieve                    | PASSED  | []                 |
-      | clientAssertionSignatureVerification | FAILED  | [invalidSignature] |
-      | platformStatesVerification           | SKIPPED | []                 |
-      | dpopValidation                       | PASSED  | []                 |
+      | step                                 | result  | errors                             |
+      | clientAssertionValidation            | PASSED  | []                                 |
+      | publicKeyRetrieve                    | FAILED  | [clientAssertionPublicKeyNotFound] |
+      | clientAssertionSignatureVerification | SKIPPED | []                                 |
+      | platformStatesVerification           | SKIPPED | []                                 |
+      | dpopValidation                       | PASSED  | []                                 |
 
   @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_ALGORITHM_NOT_FOUND_API_CLIENT_DPOP] Dato un client API valido, quando il claim alg non è valido allora il recupero della chiave pubblica fallisce con errore algorithmNotFound

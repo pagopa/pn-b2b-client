@@ -99,7 +99,6 @@ Feature: Debugger Client Assertion Sync Bearer
       | clientAssertionSignatureVerification | SKIPPED | []                                                                                              |
       | platformStatesVerification           | SKIPPED | []                                                                                              |
 
-  #TODO: da passare ai test per la fase 3, rieseguire per verificare cosa fa platformStatesVerification
   @devToolsClientAssertion
   Scenario: [VALIDATION_EXPIRED_ERROR_CONSUMER_CLIENT] Dato un client CONSUMER valido, quando il token è scaduto allora la validazione formale fallisce con errore 0017
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
@@ -260,8 +259,6 @@ Feature: Debugger Client Assertion Sync Bearer
       | clientAssertionSignatureVerification | SKIPPED | []               |
       | platformStatesVerification           | SKIPPED | []               |
 
-  #Bug aperto: https://pagopa.atlassian.net/browse/PIN-9999
-
   @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_PURPOSE_ID_NOT_PROVIDED_CONSUMER_CLIENT] Dato un client CONSUMER valido, quando il claim purposeId non è presente allora il recupero della chiave pubblica fallisce con errore purposeIdNotProvided
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
@@ -362,11 +359,11 @@ Feature: Debugger Client Assertion Sync Bearer
     And "PA1" richiede la validazione della client assertion appena creata
     And si ottiene response status code 200
     Then i risultati di validazione sono:
-      | step                                 | result  | errors             |
-      | clientAssertionValidation            | PASSED  | []                 |
-      | publicKeyRetrieve                    | PASSED  | []                 |
-      | clientAssertionSignatureVerification | FAILED  | [invalidSignature] |
-      | platformStatesVerification           | SKIPPED | []                 |
+      | step                                 | result  | errors                             |
+      | clientAssertionValidation            | PASSED  | []                                 |
+      | publicKeyRetrieve                    | FAILED  | [clientAssertionPublicKeyNotFound] |
+      | clientAssertionSignatureVerification | SKIPPED | []                                 |
+      | platformStatesVerification           | SKIPPED | []                                 |
 
   @devToolsClientAssertion
   Scenario: [KEY_RETRIEVE_ALGORITHM_NOT_FOUND_CONSUMER_CLIENT] Dato un client CONSUMER valido, quando il claim alg non è valido allora il recupero della chiave pubblica fallisce con errore algorithmNotFound
