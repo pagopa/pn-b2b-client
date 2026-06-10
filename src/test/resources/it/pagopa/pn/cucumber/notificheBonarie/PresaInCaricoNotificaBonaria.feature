@@ -1,6 +1,1031 @@
 Feature: Sottomissione di una notifica bonaria.
 
 
+
+  Visto che costituisce maggiore effort la rimozione del codice, verrà generato un QR di accesso per ogni notifica. Questo potrebbe avere benefici per sviluppi futuri
+
+# ************************************************
+#  *****SCENARIO   - Sottomissione di una notifica bonaria..
+# ***********************************************
+
+
+#  CASO DI TEST .1 Validazione della richiesta di invio notifica bonaria.
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_03_1] Come ente mittente invio una notifica bonaria con gruppo.
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1               |
+      | group      | 63f359bc72337440a40f537e |
+    And destinatario della notifica bonaria
+      | recipientType | PF                |
+      | taxId         | FRMTTR76M06B715E  |
+      | denomination  | Ettore Fieramosca |
+      | messageId     | ${IT}             |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    Then la sottomissione della notifica bonaria è andata a buon fine
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_03_1b] Come ente mittente invio una notifica bonaria con gruppo non esistente
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1              |
+      | group      | 63f359bc72337440a40f111 |
+    And destinatario della notifica bonaria
+      | recipientType | PF                |
+      | taxId         | FRMTTR76M06B715E  |
+      | denomination  | Ettore Fieramosca |
+      | messageId     | ${IT}             |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 400 "PN_DELIVERY_INVALIDPARAMETER_GROUP"
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_01_1_A] Come ente mittente invio una notifica bonaria con modalità one-to-many quindi con id della campagna valorizzato
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType | PF                |
+      | taxId         | FRMTTR76M06B715E  |
+      | denomination  | Ettore Fieramosca |
+      | messageId     | ${IT}             |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    Then la sottomissione della notifica bonaria è andata a buon fine
+    And verifico che su DynamoDB è presente in timeline l'elemento "REQUEST_ACCEPTED"
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_01_1_B] Come ente mittente invio una notifica bonaria con modalità one-to-one quindi con id messaggio, e seconda lingua specificata
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId          | campaign-1 |
+      | additionalLanguages | FR         |
+    And destinatario della notifica bonaria
+      | recipientType | PF                |
+      | taxId         | FRMTTR76M06B715E  |
+      | denomination  | Ettore Fieramosca |
+      | messageId     | ${IT-FR}          |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    Then la sottomissione della notifica bonaria è andata a buon fine
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_01_1_BPG] Come ente mittente invio una notifica bonaria con modalità one-to-one quindi con id messaggio, e seconda lingua specificata
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType | PG                |
+      | taxId         | 20517490320       |
+      | denomination  | Ettore Fieramosca |
+      | messageId     | ${IT}             |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    Then la sottomissione della notifica bonaria è andata a buon fine
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_01_1_C] Come ente mittente invio una notifica bonaria con messaggio bilingue,  seconda lingua NON specificata
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId          | campaign-1 |
+      | additionalLanguages | NULL       |
+    And destinatario della notifica bonaria
+      | recipientType | PF                |
+      | taxId         | FRMTTR76M06B715E  |
+      | denomination  | Ettore Fieramosca |
+      | messageId     | ${IT-FR}          |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    Then la sottomissione della notifica bonaria è andata a buon fine
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_01_1_D] Come ente mittenste invio delle notifiche bonarie verso più destinatari con più pagamenti
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType        | PF                |
+      | taxId                | FRMTTR76M06B715E  |
+      | denomination         | Ettore Fieramosca |
+      | payment_multy_number | 2                 |
+      | messageId            | ${IT}             |
+    And destinatario della notifica bonaria
+      | denomination         | Vita Nova Sas |
+      | recipientType        | PG            |
+      | taxId                | 12666810299   |
+      | payment_multy_number | 1             |
+      | messageId            | ${IT}         |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    Then la sottomissione della notifica bonaria è andata a buon fine
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_01_1_E] Come ente mittenste invio una notifica bonaria con un documento e senza pagamneti e allegati
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | document   | DOC_1_PG   |
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType        | PF                |
+      | taxId                | FRMTTR76M06B715E  |
+      | denomination         | Ettore Fieramosca |
+      | payment_multy_number | 0                 |
+      | attachment_key       | NULL              |
+      | messageId            | ${IT}             |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    Then la sottomissione della notifica bonaria è andata a buon fine
+
+
+
+#  CASO DI TEST .1 Mancata validazione della richiesta di invio notifica bonaria.
+
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_A] Come Ente mittente non censito in whitelist invio una notifica bonaria e ricevo un errore.
+    Given mittente della notifica bonaria: "COMUNE_2"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType | PF                |
+      | taxId         | FRMTTR76M06B715E  |
+      | denomination  | Ettore Fieramosca |
+      | messageId     | ${IT}             |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 403 "PN_DELIVERY_SEND_IS_DISABLED"
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_B] come ente mittente invio una notifica bonaria con un numero di allegati di pagamento superiore al massimo configurato e ricevo un errore,
+  Nome Parametro: PN_DELIVERY_INFORMALNOTIFICATIONMAXPAYMENTS
+  Tipo parametro: Configurazione dichiarata nel file application-<env>.env
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipientType        | PF                |
+      | taxId                | FRMTTR76M06B715E  |
+      | denomination         | Ettore Fieramosca |
+      | payment_multy_number | 11                |
+      | messageId            | ${IT}             |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 400
+
+## il sender taxid viene sempre recuperto da db e non più passato
+#  Scenario: [NOTIFICHE_BONARIE_SM_04_2_C] Invio bonaria con senderTaxId custom
+#    Given mittente della notifica bonaria: "COMUNE_MULTI"
+#    And viene creata una nuova notifica bonaria con i seguenti parametri
+#      | campaignId         | campaign-1     |
+#      | senderTaxId        | 20517490320    |
+#      | senderDenomination | Comune di Test |
+#    And destinatario della notifica bonaria
+#      | recipientType | PF                |
+#      | taxId         | FRMTTR76M06B715E  |
+#      | denomination  | Ettore Fieramosca |
+#      | messageId     | ${IT}             |
+#    When viene inviata una nuova notifica bonaria
+#    Then si riceve errore 400
+
+
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_D3] Invio bonaria verso 2 destinatari con diverso message id
+  Nome Parametro Max numero destinatari: PN_DELIVERY_INFORMALNOTIFICATIONMAXRECIPIENTS.
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipientType | PF                |
+      | taxId         | FRMTTR76M06B715E  |
+      | denomination  | Ettore Fieramosca |
+      | messageId     | ${IT}             |
+    And destinatario della notifica bonaria
+      | recipientType | PF               |
+      | taxId         | GLLGLL64B15G702I |
+      | denomination  | Galileo Galilei  |
+      | messageId     | ${IT-FR}         |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 400
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_E] Invio bonaria con lingua secondaria non supportata 1
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | additionalLanguages | XX         |
+      | campaignId          | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType | PF                |
+      | taxId         | FRMTTR76M06B715E  |
+      | denomination  | Ettore Fieramosca |
+      | messageId     | ${IT}             |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 400 "PN_DELIVERY_ADDITIONAL_LANG_UNSUPPORTED_VALUE"
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_H] Verso PG con CF non conforme
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipientType | PG          |
+      | taxId         | ABCDEF12345 |
+      | messageId     | ${IT}       |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
+
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_I] Verso PF con CF non conforme
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipientType | PF          |
+      | taxId         | ABCDEF12345 |
+      | messageId     | ${IT}       |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
+
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_M] Invio con fileKey non coerente con contentType diverso da pdf
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipientType          | PF                |
+      | taxId                  | FRMTTR76M06B715E  |
+      | denomination           | Ettore Fieramosca |
+      | attachment_contentType | application/txt   |
+      | messageId              | ${IT}             |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
+
+
+  @informalNotificationsValidation
+#  Invio con recapito fisico (indirizzo, civico, località, CAP, provincia, nazione) NON conforme agli standard di postalizzazione,
+  #"PhysicalAddressValidationCharsValue": "\\u0020-\\u007E\\u00A0-\\u00FF",,"PhysicalAddressValidationValue": "true","PhysicalAddressValidationLength": "500",
+  Scenario Outline: [NOTIFICHE_BONARIE_SM_04_2_N] Validazione indirizzo fisico - errori formali
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipientType             | PF                |
+      | taxId                     | FRMTTR76M06B715E  |
+      | denomination              | Ettore Fieramosca |
+      | physicalAddress           | SI                |
+      | physical_address_address  | <address>         |
+      | physical_address_details  | <details>         |
+      | physical_address_zip      | <zip>             |
+      | physical_address_city     | <city>            |
+      | physical_address_province | RM                |
+      | physical_address_state    | ITALIA            |
+      | messageId                 | ${IT}             |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 400 "<error>"
+    Examples:
+      | address      | details   | zip   | city | error                                           |
+      | Via Roma ### | scala A   | 00100 | Roma | PN_DELIVERY_PHYSICAL_ADDRESS_INVALID_CHARACTERS |
+            # caratteri non validi
+      | Via Roma     | scala 😃  | 00100 | Roma | PN_DELIVERY_PHYSICAL_ADDRESS_INVALID_CHARACTERS |
+      | Via Roma     | dettaglio | ABCDE | Roma |                                                 |
+            # CAP non numerico
+      | Via Roma     | dettaglio | 00100 | Rom@ |                                                 |
+            # caratteri speciali city
+      | 501_CHAR     | dettaglio | 00100 | Roma | PN_DELIVERY_PHYSICAL_ADDRESS_LENGTH_EXCEEDED    |
+            # lunghezza > 500
+
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_O] Invio con indirizzo nazionale senza provincia
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipientType             | PF                |
+      | taxId                     | FRMTTR76M06B715E  |
+      | denomination              | Ettore Fieramosca |
+      | physicalAddress           | SI                |
+      | physical_address_state    | ITALIA            |
+      | physical_address_province | NULL              |
+      | messageId                 | ${IT}             |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 400 "PN_DELIVERY_PROVINCE_REQUIRED"
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_OA] Come ente mittente tento l'invio di una notifica bonaria con taxi id mancante, ricevo un errore.
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipientType             | PF                |
+      | taxId                     | NULL              |
+      | denomination              | Ettore Fieramosca |
+      | physicalAddress           | SI                |
+      | physical_address_state    | ITALIA            |
+      | physical_address_province | BN                |
+      | messageId                 | ${IT}             |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2T] Come ente mittente tento l'invio di una notifica bonaria con recipient type mancante, ricevo un errore.
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipientType             | NULL              |
+      | taxId                     | FRMTTR76M06B715E  |
+      | denomination              | Ettore Fieramosca |
+      | physicalAddress           | SI                |
+      | physical_address_state    | ITALIA            |
+      | physical_address_province | NULL              |
+      | messageId                 | ${IT}             |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
+
+
+
+#  Invio richiesta con campi Denominazione e Presso(AT) non conformi.
+
+  @informalNotificationsValidation
+  Scenario Outline: [NOTIFICHE_BONARIE_SM_04_2_P]Validazione denominazione e presso tramite regex
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipientType             | PF               |
+      | taxId                     | FRMTTR76M06B715E |
+      | denomination              | <denomination>   |
+      | physicalAddress           | SI               |
+      | physical_address_at       | <at>             |
+      | physical_address_state    | ITALIA           |
+      | physical_address_province | RM               |
+      | messageId                 | ${IT}            |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 400
+    Examples:
+      | denomination | at         |
+      | nome😃       | Valido     |
+      | Valido       | presso😃   |
+      | 测试           | Valido     |
+      | Valido       | परीक्षण    |
+      | 88_CHAR      | Valido     |
+      | Valido       | 88_CHAR    |
+      | Nome\ntest   | Valido     |
+      | Valido       | Riga\ntest |
+
+  @informalNotificationsValidation
+  Scenario Outline: [NOTIFICHE_BONARIE_SM_04_2_Q] Validazione denominazione e presso con caratteri esclusi
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipientType             | PF               |
+      | taxId                     | FRMTTR76M06B715E |
+      | denomination              | <denomination>   |
+      | physicalAddress           | SI               |
+      | physical_address_at       | <at>             |
+      | physical_address_state    | ITALIA           |
+      | physical_address_province | RM               |
+      | messageId                 | ${IT}            |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "REFUSED"
+    Then si riceve errore 400
+    Examples:
+      | denomination   | at                |
+      | Mario \| Rossi | Presso ufficio    |
+      | Mario Rossi    | Presso \| Ufficio |
+      | Mario\|Rossi   | Presso \| Ufficio |
+      | Rossi^Mario    | Presso ufficio    |
+      | Mario Rossi    | Presso ^Ufficio   |
+      | Mario~Rossi    | Presso \| Ufficio |
+
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_R] Validazione denominazione troppo lunga
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipientType             | PF               |
+      | taxId                     | FRMTTR76M06B715E |
+      | denomination              | 89_CHAR          |
+      | physicalAddress           | SI               |
+      | physical_address_at       | Presso           |
+      | physical_address_state    | ITALIA           |
+      | physical_address_province | RM               |
+      | messageId                 | ${IT}            |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 400 "PN_DELIVERY_DENOMINATION_LENGTH_EXCEEDED"
+
+
+#  Invio di risorsa (documento principale e avvisi di pagamento) duplicata.
+
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_S] Invio bonaria con pagamento senza allegato
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | document   | DOC_1_PG   |
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType        | PF                |
+      | taxId                | NULL              |
+      | denomination         | Ettore Fieramosca |
+      | payment_multy_number | 1                 |
+      | messageId            | ${IT}             |
+    Then viene inviata una nuova notifica bonaria con sha non valido
+    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
+
+#bug validation
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_S2] Invio bonaria con pagamento senza allegato
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | document   | DOC_1_PG   |
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType        | PF                |
+      | taxId                | FRMTTR76M06B715E  |
+      | denomination         | Ettore Fieramosca |
+      | payment_multy_number | 1                 |
+      | messageId            | ${IT}             |
+    Then viene inviata una nuova notifica bonaria con nome attachment non valido
+    Then si riceve errore 400 "PN_DELIVERY_INVALID_DOCUMENT_KEY"
+
+
+
+# ************************************************
+#  *****SCENARIO 6  - Stato della notifica bonaria
+# ***********************************************
+
+  #non necessario, api invocata in altri scenari
+  Scenario: [NOTIFICHE_BONARIE_06_1_A] Verifica stato richiesta bonaria - OK
+    Given mittente della notifica bonaria: "COMUNE_1"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipientType | PF                |
+      | taxId         | FRMTTR76M06B715E  |
+      | denomination  | Ettore Fieramosca |
+      | messageId     | ${IT}             |
+    When viene inviata una nuova notifica bonaria
+    And si verifica lo stato della richiesta di notifica bonaria
+    Then l'operazione non ha generato errori
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_06_1_B] Come ente mittente creo una notifica bonaria e tento la visualizzazione da ente diverso , ricevendo un errore.
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipientType | PF                |
+      | taxId         | FRMTTR76M06B715E  |
+      | denomination  | Ettore Fieramosca |
+      | messageId     | ${IT}             |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    Given mittente della notifica bonaria: "COMUNE_2"
+    When si verifica lo stato della richiesta di notifica bonaria
+    Then si riceve errore 404
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_06] Verifica stato con requestId inesistente
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    When si verifica lo stato della richiesta di notifica bonaria con notification id "qqq"
+    Then si riceve errore 404
+
+
+
+
+
+# ***********************************************
+# **** VALIDAZIONE ASYNCRONA
+# ***********************************************
+
+  #scenario testato con altri test nella suite
+  Scenario: [NOTIFICHE_BONARIE_ASYNC_01_1] come ente mittente invio una notitfca bonaria con parametri corretti, ottenendo la validazione della notifica.
+
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_G] Lingua secondaria non presente nella campagna
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId          | campaign-1 |
+      | additionalLanguages | FR         |
+    And destinatario della notifica bonaria
+      | recipientType   | PF                        |
+      | taxId           | FRMTTR76M06B715E          |
+      | denomination    | Ettore Fieramosca         |
+      | messageId       | ${IT}                     |
+      | digitalDomicile | testpagopa1@pec.pagopa.it |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "REFUSED"
+    Then la notifica bonaria è stata rifiutata per l'errore: "MESSAGE_LANGUAGE_MISMATCH"
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_L] Invio con fileKey non coerente con contentType del pagamento
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipientType          | PF                    |
+      | taxId                  | FRMTTR76M06B715E      |
+      | denomination           | Ettore Fieramosca     |
+      | attachment_key         | classpath:/sample.txt |
+      | attachment_contentType | application/pdf       |
+      | messageId              | ${IT}                 |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "REFUSED"
+    Then la notifica bonaria è stata rifiutata per l'errore: "FILE_PDF_INVALID_ERROR"
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_L2] Invio con allegato pdf
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId          | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType          | PF                    |
+      | taxId                  | FRMTTR76M06B715E      |
+      | denomination           | Ettore Fieramosca     |
+      | attachment_key         | classpath:/sample.pdf |
+      | attachment_contentType | application/pdf       |
+      | messageId              | ${IT}                 |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_01_1_E2] Come ente mittenste invio una notifica bonaria con un documento oltre il limite di grandezza massimo.
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | document   | DOC_30MB   |
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType | PF                |
+      | taxId         | FRMTTR76M06B715E  |
+      | denomination  | Ettore Fieramosca |
+      | messageId     | ${IT}             |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "REFUSED"
+    Then la notifica bonaria è stata rifiutata per l'errore: "FILE_PDF_TOOBIG_ERROR"
+    And verifico che su DynamoDB è presente in timeline l'elemento "REQUEST_REFUSED"
+
+
+  Scenario Outline: [NOTIFICHE_BONARIE_ASYNC_01_3] Come ente mittente invio una notifica bonaria con campagne non conformi, la nottifca viene rifiutata.
+    Given mittente della notifica bonaria: "COMUNE_1"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | <campaignId> |
+    And destinatario della notifica bonaria
+      | recipientType        | PF               |
+      | taxId                | FRMTTR76M06B715E |
+      | payment_multy_number | 1                |
+    When viene inviata una nuova notifica bonaria
+    #Then la validazione della notifica bonaria fallisce
+    Examples:
+      | campaignId       |
+      | CAMPAGNA_SCADUTA |
+      | CAMPAGNA_CHIUSA  |
+      | CAMPAGNA_FAKE    |
+#todo t bonarie censire le campagne
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_ASYNC_01_4] Come ente mittente invio una notifica bonaria con messaggi id non esistente, la nottifca viene rifiutata.
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType        | PF                                   |
+      | taxId                | FRMTTR76M06B715E                     |
+      | payment_multy_number | 1                                    |
+      | messageId            | 11111111-2222-3333-4444-555555555555 |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "REFUSED"
+    Then la notifica bonaria è stata rifiutata per l'errore: "MESSAGE_NOT_FOUND"
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_ASYNC_01_4B] Come ente mittente invio una notifica bonaria con campagna id non esistente, la nottifca viene rifiutata.
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-0 |
+    And destinatario della notifica bonaria
+      | recipientType        | PF               |
+      | taxId                | FRMTTR76M06B715E |
+      | payment_multy_number | 1                |
+      | messageId            | ${IT}            |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "REFUSED"
+    Then la notifica bonaria è stata rifiutata per l'errore: "CAMPAIGN_NOT_FOUND"
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_ASYNC_01_5] Come ente mittente invio una notifica bonaria con indirizzo digitale.
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-pec |
+    And destinatario della notifica bonaria
+      | recipientType   | PG           |
+      | taxId           | 20517490320  |
+      | denomination    | ACME SPA     |
+      | digitalDomicile | tu@gmail.com |
+      | messageId       | ${IT}        |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6_D] Come ente mittente tento invio una notifica bonaria senza indirizzo digitale per un campagna con canale digitale verso PF.
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-pec |
+    And destinatario della notifica bonaria
+      | recipientType   | PF                |
+      | taxId           | FRMTTR76M06B715E  |
+      | denomination    | Ettore Fieramosca |
+      | messageId       | ${IT}             |
+      | digitalDomicile | NULL              |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6_D_PG] Come ente mittente tento l'invio di una notifica bonaria senza indirizzo digitale per un campagna con canale digitale verso PG.Ottengo stato refused
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-pec |
+    And destinatario della notifica bonaria
+      | recipientType   | PG          |
+      | taxId           | 20517490320 |
+      | denomination    | Acme Spa    |
+      | messageId       | ${IT}       |
+      | digitalDomicile | NULL        |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "REFUSED"
+    Then la notifica bonaria è stata rifiutata per l'errore: "DIGITAL_ADDRESS_MISSING"
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6_D_PG2] Come ente mittente invio una notifica bonaria senza indirizzo digitale per un campagna NON digitale.
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType   | PG          |
+      | taxId           | 20517490320 |
+      | denomination    | Acme Spa    |
+      | messageId       | ${IT}       |
+      | digitalDomicile | NULL        |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "REFUSED"
+    Then la notifica bonaria è stata rifiutata per l'errore: "DIGITAL_ADDRESS_MISSING"
+
+  Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6] Come ente mittente tento l'invio di una notifica bonaria senza indirizzo analogico per un campagna con canale analogico.Ottengo stato refused.
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-analog-workflow |
+    And destinatario della notifica bonaria
+      | recipientType                 | PF                |
+      | taxId                         | FRMTTR76M06B715E  |
+      | denomination                  | Ettore Fieramosca |
+      | physical_address_address      | NULL              |
+      | physical_address_details      | NULL              |
+      | physical_address_zip          | NULL              |
+      | physical_address_municipality | NULL              |
+      | physical_address_province     | NULL              |
+      | physical_address_state        | NULL              |
+      | messageId                     | ${IT}             |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "REFUSED"
+
+  Scenario: [NOTIFICHE_BONARIE_VAS_SM_01_1_F] Come ente mittente tento l'invio di una notifica bonaria senza indirizzo analogico che varrà recuperato dal VAS.
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-analog-workflow |
+    And destinatario della notifica bonaria
+      | denomination                  | PG Censito VAS |
+      | recipientType                 | PG             |
+      | taxId                         | 01113570442    |
+      | digitalDomicile               | NULL           |
+      | physical_address_address      | NULL           |
+      | physical_address_details      | NULL           |
+      | physical_address_zip          | NULL           |
+      | physical_address_municipality | NULL           |
+      | physical_address_province     | NULL           |
+      | physical_address_state        | NULL           |
+      | messageId                     | ${IT}          |
+    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    Then la sottomissione della notifica bonaria è andata a buon fine
+    And verifico che su DynamoDB è presente in timeline l'elemento "NATIONAL_REGISTRY_VALIDATION_RESPONSE"
+    And verifico che su DynamoDB è presente in timeline l'elemento "NATIONAL_REGISTRY_VALIDATION_CALL"
+
+
+  Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6_B] Come ente mittente tento l'invio di una notifica bonaria senza indirizzo analogico che NON varrà recuperato dal VAS.
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-analog-workflow |
+    And destinatario della notifica bonaria
+      | taxId                         | 01113570442              |
+      | denomination                  | Leonardo Da Vinci no vas |
+      | taxId                         | DVNLRD52D15M059P         |
+      | digitalDomicile               | NULL                     |
+      | physical_address_address      | NULL                     |
+      | physical_address_details      | NULL                     |
+      | physical_address_zip          | NULL                     |
+      | physical_address_municipality | NULL                     |
+      | physical_address_province     | NULL                     |
+      | physical_address_state        | NULL                     |
+      | messageId                     | ${IT}                    |
+    And  si verifica che la notifica bonaria sia in stato "REFUSED"
+
+
+  Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6_A] Come ente mittente invio una notifica bonaria con indirizzo analogico non normaliozzabile, la notifca viene rifiutata
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-analog-workflow |
+    And destinatario della notifica bonaria
+      | denomination                  | Leonardo Da Vinci no vas |
+      | taxId                         | DVNLRD52D15M059P         |
+      | physical_address_zip          | 801005                   |
+      | physical_address_municipality | T                        |
+      | physical_address_province     | ZZ                       |
+      | physical_address_state        | Q                        |
+      | messageId                     | ${IT}                    |
+    And  si verifica che la notifica bonaria sia in stato "REFUSED"
+
+
+  Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6_C] Come ente mittente invio una notifica bonaria senza indirizzo analogico e quello dei RN non postalizabile, la notifca viene rifiutata.
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-analog-workflow |
+    And destinatario della notifica bonaria
+      | denomination                  | Matteo Rossi     |
+      | taxId                         | XVRSFN76E31L781N |
+      | recipientType                 | PF               |
+      | digitalDomicile               | NULL             |
+      | physical_address_address      | NULL             |
+      | physical_address_details      | NULL             |
+      | physical_address_zip          | NULL             |
+      | physical_address_municipality | NULL             |
+      | physical_address_province     | NULL             |
+      | physical_address_state        | NULL             |
+      | messageId                     | NULL             |
+    And  si verifica che la notifica bonaria sia in stato "REFUSED"
+
+
+
+
+  #SCENARIO 3 - Persistenza elementi di Timeline.
+
+
+# ************************************************
+#  *****SCENARIO   - AUDIT-LOG
+# ***********************************************
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_AUDITLOG_02_1] Come ente mittente invio una notifica bonaria e vengono generati i corretti auditlog in pn-delivery
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType | PF                |
+      | taxId         | FRMTTR76M06B715E  |
+      | denomination  | Ettore Fieramosca |
+      | messageId     | ${IT}             |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    And verifico la presenza di un audit log su "/aws/ecs/pn-delivery-push-validator-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | iun    | auto          |
+      | param1 | AUD_COM_VALID |
+      | param2 | SUCCESS       |
+    And verifico la presenza di un audit log su "/aws/ecs/pn-timeline-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | iun    | auto             |
+      | param1 | AUD_COM_TIMELINE |
+      | param2 | SUCCESS          |
+    And verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | iun    | auto          |
+      | param1 | AUD_COM_CHECK |
+      | param2 | SUCCESS       |
+
+
+  Scenario: [NOTIFICHE_BONARIE_WF_1] Come ente mittente invio una notifica bonaria e vengono generati i corretti auditlog in pn-workflow-manager
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType | PF                |
+      | taxId         | FRMTTR76M06B715E  |
+      | denomination  | Ettore Fieramosca |
+      | messageId     | ${IT}             |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    And verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | iun    | auto                   |
+      | param1 | AUD_INFORMAL_NT_INSERT |
+      | param2 | recIndex=0             |
+      | pippo  | phase=VALIDATION       |
+    And verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | iun    | auto                    |
+      | param1 | AUD_INFORMAL_MSG_INSERT |
+      | param2 | recIndex=0              |
+      | pippo  | phase=VALIDATION        |
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_WF_1_B] Come ente mittente invio una notifica bonaria e vengono generati i corretti log in pn-workflow-manager
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType | PF                |
+      | taxId         | FRMTTR76M06B715E  |
+      | denomination  | Ettore Fieramosca |
+      | messageId     | ${IT}             |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    And verifico la presenza di un audit log su "/aws/ecs/pn-workflow-manager" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | iun    | auto                          |
+      | param1 | workflowManagerActionConsumer |
+
+
+
+# ************************************************
+#  *****SCENARIO 7  - Terminazione della notifica
+# ***********************************************
+
+  # Api ancora non implementata, da testare con gli sviluppi futuri
+  Scenario:[NOTIFICHE_BONARIE_TERMINAZIONE_07_A] Come ente mittente creo una notifica bonarie e successivamente ne chiedo la Terminazione.
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene inviata una nuova notifica bonaria
+    When si tenta la terminazione della notifica bonaria
+    Then la terminazione della notifica bonaria è accettata
+
+  # Api ancora non implementata, da testare con gli sviluppi futuri
+  Scenario:[NOTIFICHE_BONARIE_TERMINAZIONE_07_B] Come ente mittente creo una notifica bonarie e successivamente ne chiedo la Terminazione due volte ricevendo un errore.
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene inviata una nuova notifica bonaria
+    When si tenta la terminazione della notifica bonaria
+    And si tenta la terminazione della notifica bonaria
+    Then la notifica bonaria risulta già terminata
+
+
+
+    # Ultimi aggiunti
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_DUP_SHA] Invio con SHA duplicato tra documenti
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | document   | DOC_1_PG;DOC_1_PG |
+      | campaignId | campaign-1        |
+    And destinatario della notifica bonaria
+      | recipientType | PF                |
+      | taxId         | FRMTTR76M06B715E  |
+      | denomination  | Ettore Fieramosca |
+      | messageId     | ${IT}             |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 400
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_DUP_KEY] Invio con fileKey duplicata tra allegati
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | document   | DOC_1_PG;DOC_1_PG |
+      | campaignId | campaign-1        |
+    And destinatario della notifica bonaria
+      | recipientType | PF                |
+      | taxId         | FRMTTR76M06B715E  |
+      | denomination  | Ettore Fieramosca |
+      | messageId     | ${IT}             |
+    When viene inviata una nuova notifica bonaria con fileKey duplicata
+    Then si riceve errore 400 "PN_DELIVERY_DUPLICATED_ATTACHMENTS"
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_MAX_ATTACHMENTS] Invio con numero documenti superiore al limite
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | document   | DOC_1_PG;DOC_1_PG;DOC_1_PG;DOC_1_PG;DOC_1_PG;DOC_1_PG;DOC_1_PG;DOC_1_PG;DOC_1_PG;DOC_1_PG;DOC_1_PG;DOC_1_PG |
+      | campaignId | campaign-1                                                                                                  |
+    And destinatario della notifica bonaria
+      | recipientType | PF                |
+      | taxId         | FRMTTR76M06B715E  |
+      | denomination  | Ettore Fieramosca |
+      | messageId     | ${IT}             |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 400 "PN_DELIVERY_MAX_ATTACHMENT_NUMBER_PASSED"
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_MULTI_LANG] Invio con più lingue aggiuntive
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId          | campaign-1 |
+      | additionalLanguages | FR,DE      |
+    And destinatario della notifica bonaria
+      | recipientType | PF                |
+      | taxId         | FRMTTR76M06B715E  |
+      | denomination  | Ettore Fieramosca |
+      | messageId     | ${IT-FR}          |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 400 "PN_DELIVERY_ADDITIONAL_LANG_UNSUPPORTED_VALUE"
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_NO_MESSAGE_ID] Invio senza messageId in one-to-one
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipientType | PF                |
+      | taxId         | FRMTTR76M06B715E  |
+      | denomination  | Ettore Fieramosca |
+      | messageId     | NULL              |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_PAYMENT_NO_ATTACHMENT] Invio pagamento senza attachment
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipientType        | PF                |
+      | taxId                | FRMTTR76M06B715E  |
+      | denomination         | Ettore Fieramosca |
+      | payment_multy_number | 1                 |
+      | attachment_key       | NULL              |
+      | messageId            | ${IT}             |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 400
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_GROUP_REQUIRED] Invio senza gruppo quando obbligatorio
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType | PF                |
+      | taxId         | FRMTTR76M06B715E  |
+      | denomination  | Ettore Fieramosca |
+      | messageId     | ${IT}             |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 400
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_DOC_CONTENT_TYPE] Invio documento principale con contentType errato
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipientType | PF                |
+      | taxId         | FRMTTR76M06B715E  |
+      | denomination  | Ettore Fieramosca |
+      | messageId     | ${IT}             |
+    When viene inviata una nuova notifica bonaria con content type non valido
+    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
+
+  @informalNotificationsValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_D] Invio bonaria verso 11 destinatari - errore 400
+  Nome Parametro Max numero destinatari: PN_DELIVERY_INFORMALNOTIFICATIONMAXRECIPIENTS.
+    Given mittente della notifica bonaria: "COMUNE_MULTI"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipientType | PF                |
+      | taxId         | FRMTTR76M06B715E  |
+      | denomination  | Ettore Fieramosca |
+      | messageId     | ${IT}             |
+    And destinatario della notifica bonaria
+      | denomination         | Vita Nova Sas |
+      | recipientType        | PG            |
+      | taxId                | 12666810299   |
+      | payment_multy_number | 1             |
+      | messageId            | ${IT}         |
+    And destinatario della notifica bonaria
+      | recipientType | PF               |
+      | taxId         | GLLGLL64B15G702I |
+      | denomination  | Galileo Galilei  |
+      | messageId     | ${IT-FR}         |
+    And destinatario della notifica bonaria
+      | recipientType | PG          |
+      | denomination  | CucumberSpa |
+      | taxId         | 20517490320 |
+      | messageId     | ${IT}       |
+    And destinatario della notifica bonaria
+      | recipientType        | PF                 |
+      | denomination         | Alessandro Manzoni |
+      | taxId                | MNZLSN99E05F205J   |
+      | payment_multy_number | 1                  |
+      | messageId            | ${IT}              |
+    And destinatario della notifica bonaria
+      | recipientType | PF               |
+      | denomination  | utenza radd      |
+      | taxId         | STTSGT90A01H501J |
+      | messageId     | ${IT-FR}         |
+    And destinatario della notifica bonaria
+      | recipientType | PF               |
+      | taxId         | LVLDAA85T50G702B |
+      | denomination  | Livilo Daia      |
+      | messageId     | ${IT}            |
+    And destinatario della notifica bonaria
+      | recipientType        | PG            |
+      | senderDenomination   | PagoPa S.p.A. |
+      | senderTaxId          | 15376371009   |
+      | payment_multy_number | 1             |
+      | messageId            | ${IT}         |
+    And destinatario della notifica bonaria
+      | denomination | Leonardo da Vinci |
+      | taxId        | DVNLRD52D15M059P  |
+      | messageId    | ${IT-FR}          |
+    And destinatario della notifica bonaria
+      | denomination | Giovanna D'Arco  |
+      | taxId        | DRCGNN12A46A326K |
+      | messageId    | ${IT}            |
+    And destinatario della notifica bonaria
+      | recipientType        | PF               |
+      | denomination         | Test AR Fail 2   |
+      | taxId                | NNTNRZ80A01H501D |
+      | payment_multy_number | 1                |
+      | messageId            | ${IT}            |
+    When viene inviata una nuova notifica bonaria
+    Then si riceve errore 400 "PN_DELIVERY_MAX_RECIPIENT_NUMBER_PASSED"
+
+#****************
+#**** HELPER ****
+#******************
+
   Scenario: [NOTIFICHE_BONARIE_TEST_01] Solo per Testing -> Creazione di un messaggio tutti i campi compilati
     Given si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
       | primary_subject             | primary_long_body                       | primary_short_body                      | primary_language | additional_subject | additional_long_body                    |
@@ -29,789 +1054,3 @@ Feature: Sottomissione di una notifica bonaria.
       | denomination  | Ettore Fieramosca |
     Then viene inviata una nuova notifica bonaria
     Then si riceve errore 403
-
-
-
-
-# ************************************************
-#  *****SCENARIO   - Sottomissione di una notifica bonaria..
-# ***********************************************
-
-
-#  CASO DI TEST .1 Validazione della richiesta di invio notifica bonaria.
-
-  @informalNotificationsValidation
-  Scenario: [NOTIFICHE_BONARIE_SM_01_1_A] Come ente mittente invio una notifica bonaria con modalità one-to-many quindi con id della campagna valorizzato
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | campaign-1 |
-    And destinatario della notifica bonaria
-      | recipientType | PF                                   |
-      | taxId         | FRMTTR76M06B715E                     |
-      | denomination  | Ettore Fieramosca                    |
-      | messageId     | d9d7545c-fa98-4e0e-8900-b4d3e6923015 |
-    When viene inviata una nuova notifica bonaria
-    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
-    Then la sottomissione della notifica bonaria è andata a buon fine
-    And verifico che su DynamoDB è presente in timeline l'elemento "REQUEST_ACCEPTED"
-
-
-  Scenario: [NOTIFICHE_BONARIE_SM_01_1_B] Come ente mittente invio una notifica bonaria con modalità one-to-one quindi con id messaggio, e seconda lingua specificata
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId          | campaign-1 |
-      | additionalLanguages | DE         |
-    And destinatario della notifica bonaria
-      | recipientType | PF                                   |
-      | taxId         | FRMTTR76M06B715E                     |
-      | denomination  | Ettore Fieramosca                    |
-      | messageId     | 5f9ff761-9de9-4655-a4a0-c211b2903961 |
-    When viene inviata una nuova notifica bonaria
-    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
-    Then la sottomissione della notifica bonaria è andata a buon fine
-
-
-#  Scenario: [NOTIFICHE_BONARIE_SM_01_1_C] Come ente mittente invio una notifica bonaria con modalità one-to-one quindi con id messaggio, e seconda lingua NON specificata
-#    Given mittente della notifica bonaria: "COMUNE_MULTI"
-#    And viene creata una nuova notifica bonaria con i seguenti parametri
-#      | campaignId          | campaign-1 |
-#      | additionalLanguages | NULL       |
-#    And destinatario della notifica bonaria
-#      | recipientType | PF                                   |
-#      | taxId         | FRMTTR76M06B715E                     |
-#      | denomination  | Ettore Fieramosca                    |
-#      | messageId     | 0327e9fc-d571-4401-97b5-175b70be01a1 |
-#    When viene inviata una nuova notifica bonaria
-#    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
-#    Then la sottomissione della notifica bonaria è andata a buon fine
-
-  @informalNotificationsValidation
-  Scenario: [NOTIFICHE_BONARIE_SM_01_1_D] Come ente mittenste invio delle notifiche bonarie verso più destinatari con più pagamenti
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | campaign-1 |
-    And destinatario della notifica bonaria
-      | recipientType        | PF                                   |
-      | taxId                | FRMTTR76M06B715E                     |
-      | denomination         | Ettore Fieramosca                    |
-      | payment_multy_number | 2                                    |
-      | messageId            | d9d7545c-fa98-4e0e-8900-b4d3e6923015 |
-    And destinatario della notifica bonaria
-      | denomination         | Vita Nova Sas                        |
-      | recipientType        | PG                                   |
-      | taxId                | 12666810299                          |
-      | payment_multy_number | 1                                    |
-      | messageId            | d9d7545c-fa98-4e0e-8900-b4d3e6923015 |
-    When viene inviata una nuova notifica bonaria
-    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
-    Then la sottomissione della notifica bonaria è andata a buon fine
-
-
-  @informalNotificationsValidation
-  Scenario: [NOTIFICHE_BONARIE_SM_01_1_E] Come ente mittenste invio una notifica bonaria con un documento e senza pagamneti e allegati
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | document   | DOC_1_PG   |
-      | campaignId | campaign-1 |
-    And destinatario della notifica bonaria
-      | recipientType        | PF                                   |
-      | taxId                | FRMTTR76M06B715E                     |
-      | denomination         | Ettore Fieramosca                    |
-      | payment_multy_number | 0                                    |
-      | attachment_key       | NULL                                 |
-      | messageId            | d9d7545c-fa98-4e0e-8900-b4d3e6923015 |
-    When viene inviata una nuova notifica bonaria
-    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
-    Then la sottomissione della notifica bonaria è andata a buon fine
-
-
-  @informalNotificationsValidation
-  Scenario: [NOTIFICHE_BONARIE_SM_01_1_E2] Come ente mittenste invio una notifica bonaria con un documento oltre il limite di grandezza massimo.
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | document   | DOC_30MB   |
-      | campaignId | campaign-1 |
-    And destinatario della notifica bonaria
-      | recipientType | PF                                   |
-      | taxId         | FRMTTR76M06B715E                     |
-      | denomination  | Ettore Fieramosca                    |
-      | messageId     | d9d7545c-fa98-4e0e-8900-b4d3e6923015 |
-    When viene inviata una nuova notifica bonaria
-    And  si verifica che la notifica bonaria sia in stato "REFUSED"
-    Then la notifica bonaria è stata rifiutata per l'errore: "FILE_PDF_TOOBIG_ERROR"
-
-
-
-#  CASO DI TEST .1 Mancata validazione della richiesta di invio notifica bonaria.
-
-
-  @informalNotificationsValidation
-  Scenario: [NOTIFICHE_BONARIE_SM_04_2_A] Come Ente mittente non censito in whitelist invio una notifica bonaria e ricevo un errore.
-    Given mittente della notifica bonaria: "COMUNE_2"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | campaign-1 |
-    And destinatario della notifica bonaria
-      | recipientType | PF                                   |
-      | taxId         | FRMTTR76M06B715E                     |
-      | denomination  | Ettore Fieramosca                    |
-      | messageId     | d9d7545c-fa98-4e0e-8900-b4d3e6923015 |
-    When viene inviata una nuova notifica bonaria
-    Then si riceve errore 403 "PN_DELIVERY_SEND_IS_DISABLED"
-
-
-  Scenario: [NOTIFICHE_BONARIE_SM_04_2_B] come ente mittente invio una notifica bonaria con un numero di allegati di pagamento superiore al massimo configurato e ricevo un errore,
-  Nome Parametro: PN_DELIVERY_INFORMALNOTIFICATIONMAXPAYMENTS
-  Tipo parametro: Configurazione dichiarata nel file application-<env>.env
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con valori di default
-    And destinatario della notifica bonaria
-      | recipientType        | PF                                   |
-      | taxId                | FRMTTR76M06B715E                     |
-      | denomination         | Ettore Fieramosca                    |
-      | payment_multy_number | 10                                   |
-      | messageId            | 0327e9fc-d571-4401-97b5-175b70be01a1 |
-    When viene inviata una nuova notifica bonaria
-    Then si riceve errore 400
-
-
-  Scenario: [NOTIFICHE_BONARIE_SM_04_2_C] Invio bonaria con senderTaxId custom
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId         | campaign-1     |
-      | senderTaxId        | 20517490320    |
-      | senderDenomination | Comune di Test |
-    And destinatario della notifica bonaria
-      | recipientType | PF                                   |
-      | taxId         | FRMTTR76M06B715E                     |
-      | denomination  | Ettore Fieramosca                    |
-      | messageId     | 0327e9fc-d571-4401-97b5-175b70be01a1 |
-    When viene inviata una nuova notifica bonaria
-    Then si riceve errore 400
-
-
-  Scenario: [NOTIFICHE_BONARIE_SM_04_2_D] Invio bonaria verso tre destinatari - errore 400
-  Nome Parametro Max numero destinatari: PN_DELIVERY_INFORMALNOTIFICATIONMAXRECIPIENTS.
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con valori di default
-    And destinatario della notifica bonaria
-      | recipientType | PF                                   |
-      | taxId         | FRMTTR76M06B715E                     |
-      | denomination  | Ettore Fieramosca                    |
-      | messageId     | 0327e9fc-d571-4401-97b5-175b70be01a1 |
-    And destinatario della notifica bonaria
-      | denomination         | Vita Nova Sas                        |
-      | recipientType        | PG                                   |
-      | taxId                | 12666810299                          |
-      | payment_multy_number | 1                                    |
-      | messageId            | 0327e9fc-d571-4401-97b5-175b70be01a1 |
-    And destinatario della notifica bonaria
-      | recipientType | PF                                   |
-      | taxId         | GLLGLL64B15G702I                     |
-      | denomination  | Galileo Galilei                      |
-      | messageId     | 0327e9fc-d571-4401-97b5-175b70be01a1 |
-    When viene inviata una nuova notifica bonaria
-    Then si riceve errore 400
-
-  @informalNotificationsValidation
-  Scenario: [NOTIFICHE_BONARIE_SM_04_2_E] Invio bonaria con lingua secondaria non supportata 1
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | additionalLanguages | XXX        |
-      | campaignId          | campaign-1 |
-    And destinatario della notifica bonaria
-      | recipientType | PF                                   |
-      | taxId         | FRMTTR76M06B715E                     |
-      | denomination  | Ettore Fieramosca                    |
-      | messageId     | 0327e9fc-d571-4401-97b5-175b70be01a1 |
-    When viene inviata una nuova notifica bonaria
-    Then si riceve errore 400 "PN_DELIVERY_ADDITIONAL_LANG_UNSUPPORTED_VALUE"
-
-
-  Scenario: [NOTIFICHE_BONARIE_SM_04_2_F] Invio bonaria con 2 lingue secondarie 2
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | additionalLanguages | XX |
-    And destinatario della notifica bonaria
-      | recipientType | PF               |
-      | taxId         | FRMTTR76M06B715E |
-      | denomination  | Mario Cucumber   |
-    When viene inviata una nuova notifica bonaria
-    Then si riceve errore 400
-
-
-  @informalNotificationsValidation
-  Scenario: [NOTIFICHE_BONARIE_SM_04_2_G] Lingua secondaria non presente nella campagna
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId          | campaign-1 |
-      | additionalLanguages | FR         |
-    And destinatario della notifica bonaria
-      | recipientType   | PF                                   |
-      | taxId           | FRMTTR76M06B715E                     |
-      | denomination    | Ettore Fieramosca                    |
-      | messageId       | d9d7545c-fa98-4e0e-8900-b4d3e6923015 |
-      | digitalDomicile | testpagopa1@pec.pagopa.it            |
-    When viene inviata una nuova notifica bonaria
-    And  si verifica che la notifica bonaria sia in stato "REFUSED"
-    Then la notifica bonaria è stata rifiutata per l'errore: "MESSAGE_LANGUAGE_MISMATCH"
-
-
-  @informalNotificationsValidation
-  Scenario: [NOTIFICHE_BONARIE_SM_04_2_H] Verso PG con CF non conforme
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con valori di default
-    And destinatario della notifica bonaria
-      | recipientType | PG                                   |
-      | taxId         | ABCDEF12345                          |
-      | messageId     | 0327e9fc-d571-4401-97b5-175b70be01a1 |
-    When viene inviata una nuova notifica bonaria
-    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
-
-
-  @informalNotificationsValidation
-  Scenario: [NOTIFICHE_BONARIE_SM_04_2_I] Verso PF con CF non conforme
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con valori di default
-    And destinatario della notifica bonaria
-      | recipientType | PF                                   |
-      | taxId         | ABCDEF12345                          |
-      | messageId     | 0327e9fc-d571-4401-97b5-175b70be01a1 |
-    When viene inviata una nuova notifica bonaria
-    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
-
-  @informalNotificationsValidation
-  Scenario: [NOTIFICHE_BONARIE_SM_04_2_L] Invio con fileKey non coerente con contentType del pagamento
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con valori di default
-    And destinatario della notifica bonaria
-      | recipientType          | PF                                   |
-      | taxId                  | FRMTTR76M06B715E                     |
-      | denomination           | Ettore Fieramosca                    |
-      | attachment_key         | classpath:/sample.txt                |
-      | attachment_contentType | application/pdf                      |
-      | messageId              | 0327e9fc-d571-4401-97b5-175b70be01a1 |
-    When viene inviata una nuova notifica bonaria
-    And  si verifica che la notifica bonaria sia in stato "REFUSED"
-    Then la notifica bonaria è stata rifiutata per l'errore: "FILE_PDF_INVALID_ERROR"
-
-
-  @informalNotificationsValidation
-  Scenario: [NOTIFICHE_BONARIE_SM_04_2_M] Invio con fileKey non coerente con contentType diverso da pdf
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con valori di default
-    And destinatario della notifica bonaria
-      | recipientType          | PF                                   |
-      | taxId                  | FRMTTR76M06B715E                     |
-      | denomination           | Ettore Fieramosca                    |
-      | attachment_contentType | application/txt                      |
-      | messageId              | 0327e9fc-d571-4401-97b5-175b70be01a1 |
-    When viene inviata una nuova notifica bonaria
-    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
-
-
-  @informalNotificationsValidation
-#  Invio con recapito fisico (indirizzo, civico, località, CAP, provincia, nazione) NON conforme agli standard di postalizzazione,
-  #"PhysicalAddressValidationCharsValue": "\\u0020-\\u007E\\u00A0-\\u00FF",,"PhysicalAddressValidationValue": "true","PhysicalAddressValidationLength": "500",
-  Scenario Outline: [NOTIFICHE_BONARIE_SM_04_2_N] Validazione indirizzo fisico - errori formali
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con valori di default
-    And destinatario della notifica bonaria
-      | recipientType             | PF                                   |
-      | taxId                     | FRMTTR76M06B715E                     |
-      | denomination              | Ettore Fieramosca                    |
-      | physicalAddress           | SI                                   |
-      | physical_address_address  | <address>                            |
-      | physical_address_details  | <details>                            |
-      | physical_address_zip      | <zip>                                |
-      | physical_address_city     | <city>                               |
-      | physical_address_province | RM                                   |
-      | physical_address_state    | ITALIA                               |
-      | messageId                 | 0327e9fc-d571-4401-97b5-175b70be01a1 |
-    When viene inviata una nuova notifica bonaria
-    Then si riceve errore 400 "<error>"
-    Examples:
-      | address      | details   | zip   | city | error                                           |
-      | Via Roma ### | scala A   | 00100 | Roma | PN_DELIVERY_PHYSICAL_ADDRESS_INVALID_CHARACTERS |
-            # caratteri non validi
-      | Via Roma     | scala 😃  | 00100 | Roma | PN_DELIVERY_PHYSICAL_ADDRESS_INVALID_CHARACTERS |
-      | Via Roma     | dettaglio | ABCDE | Roma |                                                 |
-            # CAP non numerico
-      | Via Roma     | dettaglio | 00100 | Rom@ |                                                 |
-            # caratteri speciali city
-      | 501_CHAR     | dettaglio | 00100 | Roma | PN_DELIVERY_PHYSICAL_ADDRESS_LENGTH_EXCEEDED    |
-            # lunghezza > 500
-
-
-  @informalNotificationsValidation
-  Scenario: [NOTIFICHE_BONARIE_SM_04_2_O] Invio con indirizzo nazionale senza provincia
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con valori di default
-    And destinatario della notifica bonaria
-      | recipientType             | PF                                   |
-      | taxId                     | FRMTTR76M06B715E                     |
-      | denomination              | Ettore Fieramosca                    |
-      | physicalAddress           | SI                                   |
-      | physical_address_state    | ITALIA                               |
-      | physical_address_province | NULL                                 |
-      | messageId                 | 0327e9fc-d571-4401-97b5-175b70be01a1 |
-    When viene inviata una nuova notifica bonaria
-    Then si riceve errore 400 "PN_DELIVERY_PROVINCE_REQUIRED"
-
-
-
-#  Invio richiesta con campi Denominazione e Presso(AT) non conformi.
-
-  Scenario Outline: [NOTIFICHE_BONARIE_SM_04_2_P]Validazione denominazione e presso tramite regex
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con valori di default
-    And destinatario della notifica bonaria
-      | recipientType             | PF                                   |
-      | taxId                     | FRMTTR76M06B715E                     |
-      | denomination              | <denomination>                       |
-      | physicalAddress           | SI                                   |
-      | physical_address_at       | <at>                                 |
-      | physical_address_state    | ITALIA                               |
-      | physical_address_province | RM                                   |
-      | messageId                 | 0327e9fc-d571-4401-97b5-175b70be01a1 |
-    When viene inviata una nuova notifica bonaria
-    Then si riceve errore 400
-    Examples:
-      | denomination | at     |
-      | TODO         | Valido |
-      | Valido       | TODO   |
-      | TODO         | TODO   |
-
-  Scenario Outline: [NOTIFICHE_BONARIE_SM_04_2_Q] Validazione denominazione e presso con caratteri esclusi
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con valori di default
-    And destinatario della notifica bonaria
-      | recipientType             | PF                                   |
-      | taxId                     | FRMTTR76M06B715E                     |
-      | denomination              | <denomination>                       |
-      | physicalAddress           | SI                                   |
-      | physical_address_at       | <at>                                 |
-      | physical_address_state    | ITALIA                               |
-      | physical_address_province | RM                                   |
-      | messageId                 | d9d7545c-fa98-4e0e-8900-b4d3e6923015 |
-    When viene inviata una nuova notifica bonaria
-    And  si verifica che la notifica bonaria sia in stato "REFUSED"
-    Then si riceve errore 400
-    Examples:
-      | denomination   | at                |
-      | Mario \| Rossi | Presso ufficio    |
-      | Mario Rossi    | Presso \| Ufficio |
-      | Mario\|Rossi   | Presso \| Ufficio |
-
-
-  @informalNotificationsValidation
-  Scenario: [NOTIFICHE_BONARIE_SM_04_2_R] Validazione denominazione troppo lunga
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con valori di default
-    And destinatario della notifica bonaria
-      | recipientType             | PF                                   |
-      | taxId                     | FRMTTR76M06B715E                     |
-      | denomination              | 89_CHAR                              |
-      | physicalAddress           | SI                                   |
-      | physical_address_at       | Presso                               |
-      | physical_address_state    | ITALIA                               |
-      | physical_address_province | RM                                   |
-      | messageId                 | d9d7545c-fa98-4e0e-8900-b4d3e6923015 |
-    When viene inviata una nuova notifica bonaria
-    Then si riceve errore 400 "PN_DELIVERY_DENOMINATION_LENGTH_EXCEEDED"
-
-
-#  Invio di risorsa (documento principale e avvisi di pagamento) duplicata.
-
-#  Campi obbligatori mancanti.
-
-  @informalNotificationsValidation
-  Scenario: [NOTIFICHE_BONARIE_SM_04_2_S] Invio bonaria con pagamento senza allegato
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | document   | DOC_1_PG   |
-      | campaignId | campaign-1 |
-    And destinatario della notifica bonaria
-      | recipientType        | PF                                   |
-      | taxId                | FRMTTR76M06B715E                     |
-      | denomination         | Ettore Fieramosca                    |
-      | payment_multy_number | 1                                    |
-      | messageId            | d9d7545c-fa98-4e0e-8900-b4d3e6923015 |
-    Then viene inviata una nuova notifica bonaria con sha non valido
-    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
-
-
-
-# ************************************************
-#  *****SCENARIO 6  - Stato della notifica bonaria
-# ***********************************************
-
-  #non necessario, api invocata in altri scenari
-  Scenario: [NOTIFICHE_BONARIE_06_1_A] Verifica stato richiesta bonaria - OK
-    Given mittente della notifica bonaria: "COMUNE_1"
-    And viene creata una nuova notifica bonaria con valori di default
-    And destinatario della notifica bonaria
-      | recipientType | PF                                   |
-      | taxId         | FRMTTR76M06B715E                     |
-      | denomination  | Ettore Fieramosca                    |
-      | messageId     | d9d7545c-fa98-4e0e-8900-b4d3e6923015 |
-    When viene inviata una nuova notifica bonaria
-    And si verifica lo stato della richiesta di notifica bonaria
-    Then l'operazione non ha generato errori
-
-  @informalNotificationsValidation
-  Scenario: [NOTIFICHE_BONARIE_06_1_B] Come ente mittente creo una notifica bonaria e tento la visualizzazione da ente diverso , ricevendo un errore.
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con valori di default
-    And destinatario della notifica bonaria
-      | recipientType | PF                                   |
-      | taxId         | FRMTTR76M06B715E                     |
-      | denomination  | Ettore Fieramosca                    |
-      | messageId     | d9d7545c-fa98-4e0e-8900-b4d3e6923015 |
-    When viene inviata una nuova notifica bonaria
-    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
-    Given mittente della notifica bonaria: "COMUNE_2"
-    When si verifica lo stato della richiesta di notifica bonaria
-    Then si riceve errore 404
-
-
-  Scenario: [NOTIFICHE_BONARIE_06] Verifica stato con requestId inesistente
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    #When si verifica lo stato della richiesta di notifica bonaria con id "fake"
-    Then si riceve errore 404
-
-  Scenario: [NOTIFICHE_BONARIE_06] Verifica stato con parametri incoerenti
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    #When si verifica lo stato con requestId e protocollo insieme
-    Then si riceve errore 400
-
-
-
-# ***********************************************
-# **** VALIDAZIONE ASYNCRONA
-# ***********************************************
-
-  Scenario: [NOTIFICHE_BONARIE_ASYNC_01_1] come ente mittente invio una notitfca bonaria con parametri corretti, ottenendo la validazione della notifica.
-    Given mittente della notifica bonaria: "COMUNE_1"
-    And viene creata una nuova notifica bonaria con valori di default
-    And destinatario della notifica bonaria
-      | recipientType        | PF                 |
-      | taxId                | FRMTTR76M06B715E   |
-      | denomination         | Ettore Fieramosca  |
-      | phone_number         | 3331234567         |
-      | email                | ettore@test.it     |
-      | payment_noticeCode   | 302000000000000001 |
-      | payment_multy_number | 1                  |
-    When viene inviata una nuova notifica bonaria
-    And la sottomissione della notifica bonaria è andata a buon fine
-    #And la notifica bonaria è validata correttamente
-
-
-
-#  Scenario Outline: [NOTIFICHE_BONARIE_ASYNC_01_2] Come ente mittente tento di inviare una notifica bonaria con documento non conforme, la notifica viene respinta.
-#    Given mittente della notifica bonaria: "COMUNE_MULTI"
-#    And viene creata una nuova notifica bonaria con valori di default
-#    And destinatario della notifica bonaria
-#      | recipientType        | PF               |
-#      | taxId                | FRMTTR76M06B715E |
-#      | payment_multy_number | 1                |
-#    And documento non valido: "<errore>"
-#    When viene inviata una nuova notifica bonaria
-#    #Then la validazione della notifica bonaria fallisce
-#    Examples:
-#      | errore                 |
-#      | SHA NON INTEGRO        |
-#      | FORMATO NON CONFORME   |
-#      | ALLEGATO TROPPO GRANDE |
-
-
-  Scenario Outline: [NOTIFICHE_BONARIE_ASYNC_01_3] Come ente mittente invio una notifica bonaria con campagne non conformi, la nottifca viene rifiutata.
-    Given mittente della notifica bonaria: "COMUNE_1"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | <campaignId> |
-    And destinatario della notifica bonaria
-      | recipientType        | PF               |
-      | taxId                | FRMTTR76M06B715E |
-      | payment_multy_number | 1                |
-    When viene inviata una nuova notifica bonaria
-    #Then la validazione della notifica bonaria fallisce
-    Examples:
-      | campaignId       |
-      | CAMPAGNA_SCADUTA |
-      | CAMPAGNA_CHIUSA  |
-      | CAMPAGNA_FAKE    |
-#todo t bonarie censire le campagne
-
-
-  Scenario Outline: [NOTIFICHE_BONARIE_ASYNC_01_4] Come ente mittente invio una notifica bonaria con messaggi id non conformi, la nottifca viene rifiutata.
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | messageId | <messageId> |
-    And destinatario della notifica bonaria
-      | recipientType        | PF               |
-      | taxId                | FRMTTR76M06B715E |
-      | payment_multy_number | 1                |
-    When viene inviata una nuova notifica bonaria
-    #Then la validazione della notifica bonaria fallisce
-    Examples:
-      | messageId                       |
-      | MESS NON PRESENTE A DB          |
-      | MESS CON LINGUA NON DISPONIBILE |
-  #todo t bonarie censire I MESSAGGI
-
-
-# Al momento sarà previsto sempre un invio con indirizzo digitale.
-  Scenario: [NOTIFICHE_BONARIE_ASYNC_01_5] Come ente mittente invio una notifica bonaria senza indirizzo digitale, la nottifca viene rifiutata.
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | campaign-1 |
-    And destinatario della notifica bonaria
-      | recipientType    | PG                                   |
-      | taxId            | 20517490320                          |
-      | denomination     | ACME SPA                             |
-      | digital_domicile | tu@gmail.com                         |
-      | messageId        | d9d7545c-fa98-4e0e-8900-b4d3e6923015 |
-    When viene inviata una nuova notifica bonaria
-    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
-
-
-  Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6] Come ente mittente tento l'invio di una notifica bonaria senza indirizzo analogico per un campagna con canale analogico.Ottengo stato refused.
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | campaign-analog-workflow |
-    And destinatario della notifica bonaria
-      | recipientType                 | PF                                   |
-      | taxId                         | FRMTTR76M06B715E                     |
-      | denomination                  | Ettore Fieramosca                    |
-      | physical_address_address      | NULL                                 |
-      | physical_address_details      | NULL                                 |
-      | physical_address_zip          | NULL                                 |
-      | physical_address_municipality | NULL                                 |
-      | physical_address_province     | NULL                                 |
-      | physical_address_state        | NULL                                 |
-      | messageId                     | d9d7545c-fa98-4e0e-8900-b4d3e6923015 |
-    When viene inviata una nuova notifica bonaria
-    And  si verifica che la notifica bonaria sia in stato "REFUSED"
-
-
-  Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6_D] Come ente mittente tento invio una notifica bonaria senza indirizzo digitale per un campagna con canale digitale verso PF.
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | campaign-pec |
-    And destinatario della notifica bonaria
-      | recipientType   | PF                                   |
-      | taxId           | FRMTTR76M06B715E                     |
-      | denomination    | Ettore Fieramosca                    |
-      | messageId       | d9d7545c-fa98-4e0e-8900-b4d3e6923015 |
-      | digitalDomicile | NULL                                 |
-    When viene inviata una nuova notifica bonaria
-    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
-
-
-  @informalNotificationsValidation
-  Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6_D_PG] Come ente mittente tento l'invio di una notifica bonaria senza indirizzo digitale per un campagna con canale digitale verso PG.Ottengo stato refused
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | campaign-pec |
-    And destinatario della notifica bonaria
-      | recipientType   | PG                                   |
-      | taxId           | 20517490320                          |
-      | denomination    | Acme Spa                             |
-      | messageId       | d9d7545c-fa98-4e0e-8900-b4d3e6923015 |
-      | digitalDomicile | NULL                                 |
-    When viene inviata una nuova notifica bonaria
-    And  si verifica che la notifica bonaria sia in stato "REFUSED"
-    Then la notifica bonaria è stata rifiutata per l'errore: "DIGITAL_ADDRESS_MISSING"
-
-  @informalNotificationsValidation
-  Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6_D_PG2] Come ente mittente invio una notifica bonaria senza indirizzo digitale per un campagna NON digitale.
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | campaign-1 |
-    And destinatario della notifica bonaria
-      | recipientType   | PG                                   |
-      | taxId           | 20517490320                          |
-      | denomination    | Acme Spa                             |
-      | messageId       | d9d7545c-fa98-4e0e-8900-b4d3e6923015 |
-      | digitalDomicile | NULL                                 |
-    When viene inviata una nuova notifica bonaria
-    And  si verifica che la notifica bonaria sia in stato "REFUSED"
-    Then la notifica bonaria è stata rifiutata per l'errore: "DIGITAL_ADDRESS_MISSING"
-
-
-  Scenario: [NOTIFICHE_BONARIE_VAS_SM_01_1_F] Come ente mittente tento l'invio di una notifica bonaria senza indirizzo analogico che varrà recuperato dal VAS.
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | campaign-analog-workflow |
-    And destinatario della notifica bonaria
-      | denomination                  | PG Censito VAS                       |
-      | recipientType                 | PG                                   |
-      | taxId                         | 01113570442                          |
-      | digitalDomicile               | NULL                                 |
-      | physical_address_address      | NULL                                 |
-      | physical_address_details      | NULL                                 |
-      | physical_address_zip          | NULL                                 |
-      | physical_address_municipality | NULL                                 |
-      | physical_address_province     | NULL                                 |
-      | physical_address_state        | NULL                                 |
-      | messageId                     | d9d7545c-fa98-4e0e-8900-b4d3e6923015 |
-    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
-    Then la sottomissione della notifica bonaria è andata a buon fine
-    And verifico che su DynamoDB è presente in timeline l'elemento "NATIONAL_REGISTRY_VALIDATION_RESPONSE"
-    And verifico che su DynamoDB è presente in timeline l'elemento "NATIONAL_REGISTRY_VALIDATION_CALL"
-
-
-  Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6_B] Come ente mittente tento l'invio di una notifica bonaria senza indirizzo analogico che NON varrà recuperato dal VAS.
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | campaign-analog-workflow |
-    And destinatario della notifica bonaria
-      | taxId                         | 01113570442                          |
-      | denomination                  | Leonardo Da Vinci no vas             |
-      | taxId                         | DVNLRD52D15M059P                     |
-      | digitalDomicile               | NULL                                 |
-      | physical_address_address      | NULL                                 |
-      | physical_address_details      | NULL                                 |
-      | physical_address_zip          | NULL                                 |
-      | physical_address_municipality | NULL                                 |
-      | physical_address_province     | NULL                                 |
-      | physical_address_state        | NULL                                 |
-      | messageId                     | d9d7545c-fa98-4e0e-8900-b4d3e6923015 |
-    And  si verifica che la notifica bonaria sia in stato "REFUSED"
-
-
-  Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6_A] Come ente mittente invio una notifica bonaria con indirizzo analogico non normaliozzabile, la notifca viene rifiutata
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | campaign-analog-workflow |
-    And destinatario della notifica bonaria
-      | denomination                  | Leonardo Da Vinci no vas             |
-      | taxId                         | DVNLRD52D15M059P                     |
-      | physical_address_zip          | 801005                               |
-      | physical_address_municipality | T                                    |
-      | physical_address_province     | ZZ                                   |
-      | physical_address_state        | Q                                    |
-      | messageId                     | d9d7545c-fa98-4e0e-8900-b4d3e6923015 |
-    And  si verifica che la notifica bonaria sia in stato "REFUSED"
-
-
-  Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6_C] Come ente mittente invio una notifica bonaria senza indirizzo analogico e quello dei RN non postalizabile, la notifca viene rifiutata.
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | campaign-analog-workflow |
-    And destinatario della notifica bonaria
-      | denomination                  | Matteo Rossi     |
-      | taxId                         | XVRSFN76E31L781N |
-      | recipientType                 | PF               |
-      | digitalDomicile               | NULL             |
-      | physical_address_address      | NULL             |
-      | physical_address_details      | NULL             |
-      | physical_address_zip          | NULL             |
-      | physical_address_municipality | NULL             |
-      | physical_address_province     | NULL             |
-      | physical_address_state        | NULL             |
-      | messageId                     | NULL             |
-    And  si verifica che la notifica bonaria sia in stato "REFUSED"
-
-
-
-
-  #SCENARIO 3 - Persistenza elementi di Timeline.
-
-
-  Scenario:[NOTIFICHE_BONARIE_ASYNC_00] Creazione messaggio senza shortBody
-    When si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
-      | primary_short_body | NULL |
-    Then si riceve errore 400
-
-
-
-
-# ************************************************
-#  *****SCENARIO   - AUDIT-LOG
-# ***********************************************
-
-  @informalNotificationsValidation
-  Scenario: [NOTIFICHE_BONARIE_AUDITLOG_02_1] Come ente mittente invio una notifica bonaria e vengono generati i corretti auditlog in pn-delivery
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | campaign-1 |
-    And destinatario della notifica bonaria
-      | recipientType | PF                                   |
-      | taxId         | FRMTTR76M06B715E                     |
-      | denomination  | Ettore Fieramosca                    |
-      | messageId     | d9d7545c-fa98-4e0e-8900-b4d3e6923015 |
-    When viene inviata una nuova notifica bonaria
-    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-delivery-push-validator-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
-      | iun    | auto          |
-      | param1 | AUD_COM_VALID |
-      | param2 | SUCCESS       |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-timeline-service" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
-      | iun    | auto             |
-      | param1 | AUD_COM_TIMELINE |
-      | param2 | SUCCESS          |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
-      | iun    | auto          |
-      | param1 | AUD_COM_CHECK |
-      | param2 | SUCCESS       |
-
-
-  Scenario: [NOTIFICHE_BONARIE_WF_1] Come ente mittente invio una notifica bonaria e vengono generati i corretti auditlog in pn-workflow-manager
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | campaign-1 |
-    And destinatario della notifica bonaria
-      | recipientType | PF                                   |
-      | taxId         | FRMTTR76M06B715E                     |
-      | denomination  | Ettore Fieramosca                    |
-      | messageId     | d9d7545c-fa98-4e0e-8900-b4d3e6923015 |
-    When viene inviata una nuova notifica bonaria
-    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
-      | iun    | auto                   |
-      | param1 | AUD_INFORMAL_NT_INSERT |
-      | param2 | recIndex=0             |
-      | pippo  | phase=VALIDATION       |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
-      | iun    | auto                    |
-      | param1 | AUD_INFORMAL_MSG_INSERT |
-      | param2 | recIndex=0              |
-      | pippo  | phase=VALIDATION        |
-
-
-  @informalNotificationsValidation
-  Scenario: [NOTIFICHE_BONARIE_WF_1_B] Come ente mittente invio una notifica bonaria e vengono generati i corretti log in pn-workflow-manager
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | campaign-1 |
-    And destinatario della notifica bonaria
-      | recipientType | PF                                   |
-      | taxId         | FRMTTR76M06B715E                     |
-      | denomination  | Ettore Fieramosca                    |
-      | messageId     | d9d7545c-fa98-4e0e-8900-b4d3e6923015 |
-    When viene inviata una nuova notifica bonaria
-    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-workflow-manager" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
-      | iun    | auto                          |
-      | param1 | workflowManagerActionConsumer |
-
-
-
-    # ************************************************
-#  *****SCENARIO 7  - Terminazione della notifica
-# ***********************************************
-
-  # Api ancora non implementata, da testare con gli sviluppi futuri
-  Scenario:[NOTIFICHE_BONARIE_TERMINAZIONE_07_A] Come ente mittente creo una notifica bonarie e successivamente ne chiedo la Terminazione.
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene inviata una nuova notifica bonaria
-    When si tenta la terminazione della notifica bonaria
-    Then la terminazione della notifica bonaria è accettata
-
-  # Api ancora non implementata, da testare con gli sviluppi futuri
-  Scenario:[NOTIFICHE_BONARIE_TERMINAZIONE_07_B] Come ente mittente creo una notifica bonarie e successivamente ne chiedo la Terminazione due volte ricevendo un errore.
-    Given mittente della notifica bonaria: "COMUNE_MULTI"
-    And viene inviata una nuova notifica bonaria
-    When si tenta la terminazione della notifica bonaria
-    And si tenta la terminazione della notifica bonaria
-    Then la notifica bonaria risulta già terminata

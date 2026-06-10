@@ -47,6 +47,11 @@ public class PresaInCaricoNoticaBonariaSteps {
     @Value("${pn.external.senderId-ROOT}")
     private String senderIdROOT;
 
+    @Value("${pn.external.messageInformal-IT}")
+    private String messageIdIT;
+    @Value("${pn.external.messageInformal-ITFR}")
+    private String messageIdITFR;
+
     @Getter
     private final SharedSteps sharedSteps;
     @Getter
@@ -136,11 +141,15 @@ public class PresaInCaricoNoticaBonariaSteps {
         if (recipientType != null) {
             recipient.setRecipientType(InformalNotificationRecipientV1.RecipientTypeEnum.fromValue(recipientType));
         }
+//        String messageIdValue = getValue(data, NotificationInformalValue.MESSAGE_ID.key);
+//        if (messageIdValue != null) {
+//            UUID messageIdUuid = UUID.fromString(messageIdValue);
+//            recipient.setMessageId(messageIdUuid);
+//        }
+
         String messageIdValue = getValue(data, NotificationInformalValue.MESSAGE_ID.key);
-        if (messageIdValue != null) {
-            UUID messageIdUuid = UUID.fromString(messageIdValue);
-            recipient.setMessageId(messageIdUuid);
-        }
+        recipient.setMessageId(resolveMessageId(messageIdValue));
+
         recipient.setTaxId(getValue(data, RECIPIENT_TAX_ID.key));
         recipient.setDenomination(getValue(data, RECIPIENT_DENOMINATION.key));
 
@@ -194,6 +203,24 @@ public class PresaInCaricoNoticaBonariaSteps {
         recipient.setPayments(payments);
     }
 
+
+    @Then("viene inviata una nuova notifica bonaria con content type non valido")
+    public void sendInformalInvalidContentType() {
+        try {
+            informalNotificationRequestV1 = notificationInformalUtilsV1.preloadAndPrepare(informalNotificationRequestV1);
+            informalNotificationRequestV1.getDocuments().forEach(doc -> doc.setContentType("application/txt"));
+            newInformalNotificationResponse = pnPaB2bInternalInformalClientImpl.sendNewInformalNotificationV1(informalNotificationRequestV1);
+            savedNotificationRequestId = newInformalNotificationResponse.getNotificationRequestId();
+            lastException = null;
+
+        } catch (Exception e) {
+            lastException = e;
+            newInformalNotificationResponse = null;
+            log.info("Eccezione: ", e);
+        }
+    }
+
+
     @Then("viene inviata una nuova notifica bonaria")
     public void sendInformal() {
         try {
@@ -227,6 +254,54 @@ public class PresaInCaricoNoticaBonariaSteps {
             log.info("Eccezione: ", e);
         }
 
+    }
+
+    @When("viene inviata una nuova notifica bonaria con fileKey duplicata")
+    public void sendInformalDuplicateKey() {
+        try {
+            informalNotificationRequestV1 = notificationInformalUtilsV1.preloadAndPrepare(informalNotificationRequestV1);
+            var docs = informalNotificationRequestV1.getDocuments();
+            if (docs.size() >= 2) {
+                docs.get(1).getRef().setKey(docs.get(0).getRef().getKey());
+            }
+            newInformalNotificationResponse = pnPaB2bInternalInformalClientImpl.sendNewInformalNotificationV1(informalNotificationRequestV1);
+            savedNotificationRequestId = newInformalNotificationResponse.getNotificationRequestId();
+            lastException = null;
+
+        } catch (Exception e) {
+            lastException = e;
+            newInformalNotificationResponse = null;
+            log.info("Eccezione: ", e);
+        }
+    }
+
+
+    @Then("viene inviata una nuova notifica bonaria con nome attachment non valido")
+    public void sendInformalInvalidAttachmentName() {
+        try {
+            informalNotificationRequestV1 = notificationInformalUtilsV1.preloadAndPrepare(informalNotificationRequestV1);
+            informalNotificationRequestV1.getDocuments().forEach(doc -> {
+                if (doc.getRef() != null) {
+                    doc.getRef().setKey("PN_NOTIFICATION_ATTACHMENT-c3bc9525a5ac4f45a4fb7e940b2b9815.pdf");
+                }
+            });
+//            informalNotificationRequestV1.getRecipients().forEach(rec -> rec.getPayments().forEach(p -> {
+//                if (p.getPagoPa() != null && p.getPagoPa().getAttachment() != null) {
+//                    var att = p.getPagoPa().getAttachment();
+//                    if (att.getRef() != null) {
+//                        att.getRef().setKey("###INVALID_PAYMENT_NAME###.pdf");
+//                    }
+//                }
+//            }));
+            newInformalNotificationResponse = pnPaB2bInternalInformalClientImpl.sendNewInformalNotificationV1(informalNotificationRequestV1);
+            savedNotificationRequestId = newInformalNotificationResponse.getNotificationRequestId();
+            lastException = null;
+
+        } catch (Exception e) {
+            lastException = e;
+            newInformalNotificationResponse = null;
+            log.info("Eccezione: ", e);
+        }
     }
 
     @And("la sottomissione della notifica bonaria è andata a buon fine")
@@ -270,10 +345,12 @@ public class PresaInCaricoNoticaBonariaSteps {
         UUID messageId = toUuid(messageIdString);
         try {
             messageResponse = pnPaB2bInternalInformalClientImpl.getMessage(messageId);
+            log.info("Message response: {}", messageResponse);
             lastException = null;
         } catch (Exception e) {
             lastException = e;
             messageResponse = null;
+            log.info("Eccezione durante getMessage", e);
         }
     }
 
@@ -281,6 +358,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     public void verifyMessageCreated() {
         assertNull(lastException, "Errore non atteso");
         assertNotNull(messageResponse, "Response messaggio nulla");
+        assertNotNull(messageResponse.getCreatedAt(), "Campo create AT messaggio nullo");
     }
 
 
@@ -407,9 +485,18 @@ public class PresaInCaricoNoticaBonariaSteps {
     public void getNotificationStatus() {
         try {
             statusResponse = pnPaB2bInternalInformalClientImpl.getNotificationStatusByRequestId(savedNotificationRequestId);
-
             lastException = null;
+        } catch (Exception e) {
+            lastException = e;
+            statusResponse = null;
+        }
+    }
 
+    @When("si verifica lo stato della richiesta di notifica bonaria con notification id {string}")
+    public void getNotificationStatusWithNotificationId(String notificationId) {
+        try {
+            statusResponse = pnPaB2bInternalInformalClientImpl.getNotificationStatusByRequestId(notificationId);
+            lastException = null;
         } catch (Exception e) {
             lastException = e;
             statusResponse = null;
@@ -559,38 +646,34 @@ public class PresaInCaricoNoticaBonariaSteps {
 
     private String generateNoticeCode(String base, int index) {
 
-        //  fallback totale
         if (base == null) {
             return NotificationInformalValue.generateRandomNumber();
         }
-
-        //  pulizia input
         String cleaned = base.trim();
-
-        // rimuovo tutto ciò che non è numero
         cleaned = cleaned.replaceAll("\\D", "");
-
-        //  se NON valido → fallback
         if (cleaned.isEmpty()) {
             return NotificationInformalValue.generateRandomNumber();
         }
-
-        //  costruisco codice variando le ultime cifre
         if (cleaned.length() >= 18) {
-
-            // mantengo primi 16 numeri e vario ultimi 2
             String prefix = cleaned.substring(0, 16);
             String suffix = String.format("%02d", index % 100);
-
             return prefix + suffix;
         }
-
-        //  se troppo corto → padding
         if (cleaned.length() < 18) {
             return cleaned + "0".repeat(18 - cleaned.length());
         }
-
-        // fallback sicurezza
         return NotificationInformalValue.generateRandomNumber();
+    }
+
+    private UUID resolveMessageId(String value) {
+
+        if (value == null) {
+            return null;
+        }
+        return switch (value) {
+            case "${IT}" -> UUID.fromString(messageIdIT);
+            case "${IT-FR}" -> UUID.fromString(messageIdITFR);
+            default -> UUID.fromString(value);
+        };
     }
 }
