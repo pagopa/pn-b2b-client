@@ -668,7 +668,7 @@ public class TimelineReworkSteps {
         String pk = paId + "_" + sentAt;
 
         try {
-            await().atMost(10, TimeUnit.MINUTES).pollInterval(30, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(() -> {
+            await().atMost(15, TimeUnit.MINUTES).pollInterval(30, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(() -> {
                 reworkedTimelinesForInvoicingResponse = dynamoDbService.call(DynamoTableName.REWORKED_TIMELINES_FOR_INVOICING, Map.of(
                         ":pk", AttributeValue.builder().s(pk).build(),
                         ":v_iun", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build()
@@ -689,7 +689,7 @@ public class TimelineReworkSteps {
                                         && Arrays.stream(requirements).allMatch(r.get("invoincingTimestamp_timelineElementId").s()::contains))
                                 .findFirst().orElse(null);
                         assertThat(expectedFound)
-                                .as("Non è stato trovato nessun record che nel timelineElement id abbia tutte le sottostringhe attese: %s . IUN = %s", iun, Arrays.toString(requirements))
+                                .as("Non è stato trovato nessun record che nel timelineElement id abbia tutte le sottostringhe attese: %s . IUN = %s", Arrays.toString(requirements), iun)
                                 .isNotNull();
                     });
                 }

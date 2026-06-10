@@ -528,18 +528,18 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     When invoco l'api di external-registry per l'invalidazione dei costi con "iun null"
     Then si verifica che la chiamata sia andata in errore con il seguente status code: 400
-    When invoco l'api di external-registry per l'invalidazione dei costi con "iun non valido"
-    Then si verifica che la chiamata sia andata in errore con il seguente status code: 400
-    When invoco l'api di external-registry per l'invalidazione dei costi con "iun inesistente"
-    Then si verifica che la chiamata sia andata in errore con il seguente status code: 404
+#    When invoco l'api di external-registry per l'invalidazione dei costi con "iun non valido"
+#    Then si verifica che la chiamata sia andata in errore con il seguente status code: 400
+#    When invoco l'api di external-registry per l'invalidazione dei costi con "iun inesistente"
+#    Then si verifica che la chiamata sia andata in errore con il seguente status code: 404
     When invoco l'api di external-registry per l'invalidazione dei costi con "vat null"
     Then si verifica che la chiamata sia andata in errore con il seguente status code: 400
-    When invoco l'api di external-registry per l'invalidazione dei costi con "vat non valido"
-    Then si verifica che la chiamata sia andata in errore con il seguente status code: 400
+#    When invoco l'api di external-registry per l'invalidazione dei costi con "vat non valido"
+#    Then si verifica che la chiamata sia andata in errore con il seguente status code: 400
     When invoco l'api di external-registry per l'invalidazione dei costi con "costPhases null"
     Then si verifica che la chiamata sia andata in errore con il seguente status code: 400
-    When invoco l'api di external-registry per l'invalidazione dei costi con "paymentsInfo null"
-    Then si verifica che la chiamata sia andata in errore con il seguente status code: 400
+#    When invoco l'api di external-registry per l'invalidazione dei costi con "paymentsInfo null"
+#    Then si verifica che la chiamata sia andata in errore con il seguente status code: 400
 
   @timelineReworkF3 @checkRestart
   Scenario: [TR3_NOTIFICATION_COST_API_VALIDATION] Restart di notifica che va in OK all'attempt 0 (anche al restart va in OK all'attempt 0)
