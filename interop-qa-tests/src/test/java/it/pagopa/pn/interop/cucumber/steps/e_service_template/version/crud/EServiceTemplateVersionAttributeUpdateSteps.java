@@ -65,6 +65,7 @@ public class EServiceTemplateVersionAttributeUpdateSteps {
                 case CERTIFIED -> certified;
                 case DECLARED -> declared;
                 case VERIFIED -> verified;
+                case CERTIFIED_DISCRETE -> throw new IllegalStateException("L'attributo di tipo CERTIFIED_DISCRETE non è supportato per l'associazione all'e-service");
             };
             DescriptorAttributeSeed seed = new DescriptorAttributeSeed()
                 .id(attribute.getId())
