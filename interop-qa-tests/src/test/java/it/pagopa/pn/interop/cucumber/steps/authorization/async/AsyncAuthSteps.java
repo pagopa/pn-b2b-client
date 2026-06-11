@@ -70,6 +70,7 @@ public class AsyncAuthSteps {
                     clientId
             );
 
+            Assertions.assertThat(response.getAccessToken()).isNotNull();
             voucherContext.setActualAsyncAccessToken(response.getAccessToken());
 
         } catch (Exception e) {
