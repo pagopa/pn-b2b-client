@@ -431,9 +431,9 @@ public class CostiNotificaSteps {
     public void compareCostComponentsAfterRework(boolean isTheSame) {
         try {
             if (isTheSame) {
-                assertThat(costComponentsPostRework).as("After rework, the record on pn-CostComponents should not have changed").isEqualTo(costComponentsPostRework);
+                assertThat(costComponentsPostRework).as("After rework, the record on pn-CostComponents should not have changed").isEqualTo(costComponentsPreRework);
             } else {
-                assertThat(costComponentsPostRework).as("After rework, the record on pn-CostComponents should have changed").isNotEqualTo(costComponentsPostRework);
+                assertThat(costComponentsPostRework).as("After rework, the record on pn-CostComponents should have changed").isNotEqualTo(costComponentsPreRework);
             }
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
@@ -488,6 +488,4 @@ public class CostiNotificaSteps {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
-
-
 }
