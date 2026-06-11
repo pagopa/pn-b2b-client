@@ -39,6 +39,20 @@ public class EServiceCreationSteps {
         );
     }
 
+    @When("l'utente crea un e-service {isAsynchronous} {string} in modalità {eServiceMode}")
+    public void userCreatesEserviceInSyncMode(Boolean isAsynchronous, String technology, EServiceMode eServiceMode) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        EServiceSeed eServiceSeed = new EServiceSeed()
+                .name(String.format("e-service-%s", sharedStepsContext.getTestSeed()))
+                .description("Questo è un e-service di test")
+                .technology(EServiceTechnology.fromValue(technology))
+                .mode(eServiceMode)
+                .asyncExchange(isAsynchronous);
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getEServiceClient().createEService(eServiceSeed)
+        );
+    }
+
     @Given("l'utente ha già creato un e-service contenente anche il primo descrittore")
     public void userCreateEServiceWithDescriptor() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());

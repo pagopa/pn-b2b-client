@@ -13,6 +13,7 @@ import it.pagopa.interop.authorization.service.impl.AuthorizationClientImpl;
 import it.pagopa.interop.authorization.service.impl.ProducerClientImpl;
 import it.pagopa.interop.authorization.service.utils.ConfigFileReader;
 import it.pagopa.interop.authorization.service.utils.PollingService;
+import it.pagopa.interop.authorization.service.utils.voucher.AsyncVoucherService;
 import it.pagopa.interop.authorization.service.utils.voucher.VoucherService;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.config.springconfig.InteropRestTemplateConfiguration;
@@ -122,6 +123,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         QAAbstractInteropTracingClient.class,
         CommonUtils.class,
         VoucherService.class,
+        AsyncVoucherService.class,
         EServiceTemplateApiClientImpl.class,
         DescriptorAttributesMapperImpl.class,
         EServiceTemplateTestAssistant.class,
