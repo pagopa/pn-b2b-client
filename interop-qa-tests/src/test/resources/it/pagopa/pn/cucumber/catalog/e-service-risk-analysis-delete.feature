@@ -62,4 +62,4 @@ Feature: Cancellazione di un'analisi del rischio ad un e-service
     # FIXME utile solo per debug locale, rimuovere
   @debug-adeguamento-analisi-rischio
   Scenario: Cambio kind manuale
-    And il tenant kind dell'ente "PA4" viene impostato a "Private"
+    And il tenant kind dell'ente "PA4" viene impostato a "PRIVATE"
