@@ -308,9 +308,7 @@
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
                             <!-- <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/develop/packages/api-clients/open-api/bffApi.yml</inputSpec> -->
-                            <inputSpec>
-                                https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/develop/packages/api-clients/open-api/bffApi.yml
-                            </inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/develop/packages/api-clients/open-api/bffApi.yml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -345,9 +343,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>
-                                https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.19.0-RC4/packages/api-clients/open-api/authorizationServerApi.yml
-                            </inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/develop/packages/api-clients/open-api/authorizationServerApi.yml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -381,20 +377,15 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>
-                                https://raw.githubusercontent.com/pagopa/interop-tracing-core/refs/tags/1.0.0-RC8/packages/api/open-api/api-external-interop-v1.yaml
-                            </inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-tracing-core/refs/tags/1.0.0-RC8/packages/api/open-api/api-external-interop-v1.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>
                             <skipValidateSpec>true</skipValidateSpec>
                             <configOptions>
-                                <apiPackage>it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.api
-                                </apiPackage>
-                                <modelPackage>
-                                    it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model
-                                </modelPackage>
+                                <apiPackage>it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.api</apiPackage>
+                                <modelPackage>it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model</modelPackage>
                                 <dateLibrary>java8</dateLibrary>
                                 <annotationLibrary>none</annotationLibrary>
                                 <documentationProvider>source</documentationProvider>
@@ -405,10 +396,8 @@
                                     @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
                                 </additionalModelTypeAnnotations>
                             </configOptions>
-                            <apiPackage>it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.api
-                            </apiPackage>
-                            <modelPackage>it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model
-                            </modelPackage>
+                            <apiPackage>it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.api</apiPackage>
+                            <modelPackage>it.pagopa.interop.client.b2b.generated.openapi.clients.interop.tracing.model</modelPackage>
                         </configuration>
                     </execution>
 
@@ -523,17 +512,14 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>
-                                https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/develop/packages/api-clients/open-api/m2mGatewayApi.yml
-                            </inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/develop/packages/api-clients/open-api/m2mGatewayApi.yml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>
                             <configOptions>
                                 <apiPackage>it.pagopa.interop.generated.openapi.clients.m2mGateway.api</apiPackage>
-                                <modelPackage>it.pagopa.interop.generated.openapi.clients.m2mGateway.model
-                                </modelPackage>
+                                <modelPackage>it.pagopa.interop.generated.openapi.clients.m2mGateway.model</modelPackage>
                                 <dateLibrary>java8</dateLibrary>
                                 <annotationLibrary>none</annotationLibrary>
                                 <documentationProvider>source</documentationProvider>
@@ -563,17 +549,14 @@
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
                             <!--<inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/release/2.10.0/packages/api-clients/open-api/m2mGatewayApi.yml</inputSpec> -->
-                            <inputSpec>
-                                https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/develop/packages/api-clients/open-api/m2mGatewayApiV3.yml
-                            </inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/develop/packages/api-clients/open-api/m2mGatewayApiV3.yml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>
                             <configOptions>
                                 <apiPackage>it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api</apiPackage>
-                                <modelPackage>it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model
-                                </modelPackage>
+                                <modelPackage>it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model</modelPackage>
                                 <dateLibrary>java8</dateLibrary>
                                 <annotationLibrary>none</annotationLibrary>
                                 <documentationProvider>source</documentationProvider>
@@ -609,9 +592,7 @@
                             <goal>replace</goal>
                         </goals>
                         <configuration>
-                            <file>
-                                ${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/LinkableEService.java
-                            </file>
+                            <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/LinkableEService.java</file>
                             <regex>true</regex>
                             <replacements>
                                 <replacement>
@@ -619,9 +600,7 @@
                                     <value>public class LinkableEService extends LinkableResource {</value>
                                 </replacement>
                                 <replacement>
-                                    <token>/\*\*\s*\*\s*Get
-                                        resourceKind[\s\S]*?public\s+ResourceKindEnum\s+getResourceKind\(\)\s*\{[\s\S]*?\}
-                                    </token>
+                                    <token>/\*\*\s*\*\s*Get resourceKind[\s\S]*?public\s+ResourceKindEnum\s+getResourceKind\(\)\s*\{[\s\S]*?\}</token>
                                     <value></value>
                                 </replacement>
                             </replacements>
@@ -635,9 +614,7 @@
                             <goal>replace</goal>
                         </goals>
                         <configuration>
-                            <file>
-                                ${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/LinkableEServiceTemplate.java
-                            </file>
+                            <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/LinkableEServiceTemplate.java</file>
                             <regex>true</regex>
                             <replacements>
                                 <replacement>
@@ -645,9 +622,7 @@
                                     <value>public class LinkableEServiceTemplate extends LinkableResource {</value>
                                 </replacement>
                                 <replacement>
-                                    <token>/\*\*\s*\*\s*Get
-                                        resourceKind[\s\S]*?public\s+ResourceKindEnum\s+getResourceKind\(\)\s*\{[\s\S]*?\}
-                                    </token>
+                                    <token>/\*\*\s*\*\s*Get resourceKind[\s\S]*?public\s+ResourceKindEnum\s+getResourceKind\(\)\s*\{[\s\S]*?\}</token>
                                     <value></value>
                                 </replacement>
                             </replacements>
@@ -661,14 +636,11 @@
                             <goal>replace</goal>
                         </goals>
                         <configuration>
-                            <file>
-                                ${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/LinkedResource.java
-                            </file>
+                            <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/LinkedResource.java</file>
                             <regex>true</regex>
                             <replacements>
                                 <replacement>
-                                    <token>@JsonIgnoreProperties\([\s\S]*?value\s*=\s*"resourceKind"[\s\S]*?\)\s*\n?
-                                    </token>
+                                    <token>@JsonIgnoreProperties\([\s\S]*?value\s*=\s*"resourceKind"[\s\S]*?\)\s*\n?</token>
                                     <value></value>
                                 </replacement>
                                 <replacement>
@@ -681,20 +653,14 @@
     ESERVICE(String.valueOf("ESERVICE"));]]></value>
                                 </replacement>
                                 <replacement>
-                                    <token>@JsonInclude\(value = JsonInclude.Include.ALWAYS\)[\s\n\r]+public UUID
-                                        getEservice
-                                    </token>
+                                    <token>@JsonInclude\(value = JsonInclude.Include.ALWAYS\)[\s\n\r]+public UUID getEservice</token>
                                     <value>@JsonInclude(value = JsonInclude.Include.NON_NULL)
-                                        public UUID getEservice
-                                    </value>
+                                        public UUID getEservice</value>
                                 </replacement>
                                 <replacement>
-                                    <token>@JsonInclude\(value = JsonInclude.Include.ALWAYS\)[\s\n\r]+public void
-                                        setEservice
-                                    </token>
+                                    <token>@JsonInclude\(value = JsonInclude.Include.ALWAYS\)[\s\n\r]+public void setEservice</token>
                                     <value>@JsonInclude(value = JsonInclude.Include.NON_NULL)
-                                        public void setEservice
-                                    </value>
+                                        public void setEservice</value>
                                 </replacement>
                             </replacements>
                         </configuration>
@@ -707,9 +673,7 @@
                             <goal>replace</goal>
                         </goals>
                         <configuration>
-                            <file>
-                                ${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/LinkableResource.java
-                            </file>
+                            <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/LinkableResource.java</file>
                             <regex>true</regex>
                             <replacements>
                                 <replacement>
@@ -728,14 +692,11 @@
                             <goal>replace</goal>
                         </goals>
                         <configuration>
-                            <file>
-                                ${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/LinkableResourceRequest.java
-                            </file>
+                            <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/LinkableResourceRequest.java</file>
                             <regex>true</regex>
                             <replacements>
                                 <replacement>
-                                    <token>@JsonIgnoreProperties\([\s\S]*?value\s*=\s*"resourceKind"[\s\S]*?\)\s*\n?
-                                    </token>
+                                    <token>@JsonIgnoreProperties\([\s\S]*?value\s*=\s*"resourceKind"[\s\S]*?\)\s*\n?</token>
                                     <value></value>
                                 </replacement>
                                 <replacement>
@@ -748,24 +709,19 @@
     ESERVICE(String.valueOf("ESERVICE"));]]></value>
                                 </replacement>
                                 <replacement>
-                                    <token>@JsonInclude\(value = JsonInclude.Include.ALWAYS\)[\s\n\r]+public UUID
-                                        getEservice
-                                    </token>
+                                    <token>@JsonInclude\(value = JsonInclude.Include.ALWAYS\)[\s\n\r]+public UUID getEservice</token>
                                     <value>@JsonInclude(value = JsonInclude.Include.NON_NULL)
-                                        public UUID getEservice
-                                    </value>
+                                        public UUID getEservice</value>
                                 </replacement>
                                 <replacement>
-                                    <token>@JsonInclude\(value = JsonInclude.Include.ALWAYS\)[\s\n\r]+public void
-                                        setEservice
-                                    </token>
+                                    <token>@JsonInclude\(value = JsonInclude.Include.ALWAYS\)[\s\n\r]+public void setEservice</token>
                                     <value>@JsonInclude(value = JsonInclude.Include.NON_NULL)
-                                        public void setEservice
-                                    </value>
+                                        public void setEservice</value>
                                 </replacement>
                             </replacements>
                         </configuration>
                     </execution>
+
 
                     <!-- TODO: le patch al codice generato sono necessarie per far sì che il modello StandardCertifiedTenantAttribute estenda CertifiedTenantAttribute, in modo da poter essere trattati in maniera polimorfica.-->
 
@@ -787,14 +743,11 @@
                                 <!--                                </replacement>-->
                                 <replacement>
                                     <token>public class StandardCertifiedTenantAttribute \{</token>
-                                    <value>public class StandardCertifiedTenantAttribute extends
-                                        CertifiedTenantAttribute {
+                                    <value>public class StandardCertifiedTenantAttribute extends CertifiedTenantAttribute {
                                     </value>
                                 </replacement>
                                 <replacement>
-                                    <token>/\*\*\s*\*\s*Get
-                                        kind[\s\S]*?public\s+KindEnum\s+getKind\(\)\s*\{[\s\S]*?\}\s*\n?
-                                    </token>
+                                    <token>/\*\*\s*\*\s*Get kind[\s\S]*?public\s+KindEnum\s+getKind\(\)\s*\{[\s\S]*?\}\s*\n?</token>
                                     <value></value>
                                 </replacement>
                             </replacements>
