@@ -46,6 +46,10 @@ public class CostiNotificaSteps {
 
     private Map<String, String> notificationCostsPreRework = new HashMap<>();
     private Map<String, String> notificationCostsPostRework = new HashMap<>();
+    private Map<String, AttributeValue> costComponentsPreRework = new HashMap<>();
+    private Map<String, AttributeValue> costComponentsPostRework = new HashMap<>();
+    private Integer costUpdateResultsPreRework;
+    private Integer costUpdateResultsPostRework;
     private NotificationPriceResponseV23 notificationPriceResponsePreRework;
     private NotificationPriceResponseV23 notificationPriceResponsePostRework;
 
@@ -369,42 +373,69 @@ public class CostiNotificaSteps {
     }
 
     @And("il {deliveryNotificationCost} è {isTheSame} rispetto a prima del rework")
-    public void checkIfCostChangedAfterRestart(String cost, boolean isTheSame) {
-        assertSoftly(softly -> {
-            softly.assertThat(notificationCostsPreRework).as("The map of costs before rework should not be null").isNotNull();
-            softly.assertThat(notificationCostsPostRework).as("The map of costs after rework should not be null").isNotNull();
-            softly.assertThat(notificationCostsPreRework).containsKey(cost);
-            softly.assertThat(notificationCostsPostRework).containsKey(cost);
-            if (isTheSame) {
-                softly.assertThat(notificationCostsPreRework.get(cost)).as("After rework the cost %s should be the same", cost).isEqualTo(notificationCostsPostRework.get(cost));
-            } else {
-                softly.assertThat(notificationCostsPreRework.get(cost)).as("After rework the cost %s should not be the same", cost).isNotEqualTo(notificationCostsPostRework.get(cost));
-            }
-        });
+    public void checkIfCostChangedAfterRework(String cost, boolean isTheSame) {
+        try {
+            assertSoftly(softly -> {
+                softly.assertThat(notificationCostsPreRework).as("The map of costs before rework should not be null").isNotNull();
+                softly.assertThat(notificationCostsPostRework).as("The map of costs after rework should not be null").isNotNull();
+                softly.assertThat(notificationCostsPreRework).containsKey(cost);
+                softly.assertThat(notificationCostsPostRework).containsKey(cost);
+                if (isTheSame) {
+                    softly.assertThat(notificationCostsPreRework.get(cost)).as("After rework the cost %s should be the same", cost).isEqualTo(notificationCostsPostRework.get(cost));
+                } else {
+                    softly.assertThat(notificationCostsPreRework.get(cost)).as("After rework the cost %s should not be the same", cost).isNotEqualTo(notificationCostsPostRework.get(cost));
+                }
+            });
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
     }
 
     @And("il valore dei costi restituiti dall'api di delivery è {isTheSame} rispetto a prima del rework")
-    public void checkIfDeliveryCostChangedAfterRestart(boolean isTheSame) {
-        assertSoftly(softly -> {
-            softly.assertThat(notificationPriceResponsePreRework).as("The notificationPriceResponse before rework should not be null").isNotNull();
-            softly.assertThat(notificationPriceResponsePostRework).as("The notificationPriceResponse after rework should not be null").isNotNull();
-            if (isTheSame) {
-                softly.assertThat(notificationPriceResponsePreRework).as("After rework the notificationPriceResponse should be the same").isEqualTo(notificationPriceResponsePostRework);
-            } else {
-                softly.assertThat(notificationPriceResponsePreRework).as("After rework the notificationPriceResponse should not be the same").isNotEqualTo(notificationPriceResponsePostRework);
-            }
-        });
+    public void checkIfDeliveryCostChangedAfterRework(boolean isTheSame) {
+        try {
+            assertSoftly(softly -> {
+                softly.assertThat(notificationPriceResponsePreRework).as("The notificationPriceResponse before rework should not be null").isNotNull();
+                softly.assertThat(notificationPriceResponsePostRework).as("The notificationPriceResponse after rework should not be null").isNotNull();
+                if (isTheSame) {
+                    softly.assertThat(notificationPriceResponsePreRework).as("After rework the notificationPriceResponse should be the same").isEqualTo(notificationPriceResponsePostRework);
+                } else {
+                    softly.assertThat(notificationPriceResponsePreRework).as("After rework the notificationPriceResponse should not be the same").isNotEqualTo(notificationPriceResponsePostRework);
+                }
+            });
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
     }
 
-    @And("{isBefore} {timelineInvalidation} recupero i valori dei costi notifica relativi all'utente {int} sulla tabella pn-CostComponents")
+    @And("{isBefore} {timelineInvalidation} vengono recuperati i valori dei costi notifica relativi all'utente {int} sulla tabella pn-CostComponents")
     public void checkPnCostComponentsDynamo(boolean isBeforeRework, String requestType, int recIndex) {
         String pk = sharedSteps.getNotificationIun() + "##" + recIndex;
         QueryResponse queryResponse = dynamoDbService.call(DynamoTableName.COST_COMPONENTS, Map.of(
                 ":v_pk", AttributeValue.builder().s(pk).build()));
         log.info("CostComponents: {}", queryResponse);
+        assertThat(queryResponse.items().size()).as("La query su pn-CostComponents con pk %s non ha prodotto risultati", pk).isGreaterThan(0);
+        if (isBeforeRework) {
+            costComponentsPreRework = queryResponse.items().get(0);
+        } else {
+            costComponentsPostRework = queryResponse.items().get(0);
+        }
     }
 
-    @And("{isBefore} {timelineInvalidation} recupero i valori dei costi notifica relativi al pagamento {int} dell'utente {int} sulla tabella pn-CostUpdateResult")
+    @And("il record recuperato su pn-CostComponents è {isTheSame} rispetto a prima del rework")
+    public void compareCostComponentsAfterRework(boolean isTheSame) {
+        try {
+            if (isTheSame) {
+                assertThat(costComponentsPostRework).as("After rework, the record on pn-CostComponents should not have changed").isEqualTo(costComponentsPostRework);
+            } else {
+                assertThat(costComponentsPostRework).as("After rework, the record on pn-CostComponents should have changed").isNotEqualTo(costComponentsPostRework);
+            }
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
+    }
+
+    @And("{isBefore} {timelineInvalidation} vengono recuperati i valori dei costi notifica relativi al pagamento {int} dell'utente {int} sulla tabella pn-CostUpdateResult")
     public void checkPnCostUpdateResultDynamo(boolean isBeforeRework, String requestType, int paymentIndex, int recIndex) {
         FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
         String creditorTaxId = fsn.getRecipients().get(recIndex).getPayments().get(paymentIndex).getPagoPa().getCreditorTaxId();
@@ -413,5 +444,45 @@ public class CostiNotificaSteps {
         QueryResponse queryResponse = dynamoDbService.call(DynamoTableName.COST_UPDATE_RESULT, Map.of(
                 ":v_pk", AttributeValue.builder().s(pk).build()));
         log.info("CostUpdateResult: {}", queryResponse);
+        assertThat(queryResponse.items().size())
+                .as("La query su pn-CostUpdateResult con pk %s non ha prodotto risultati. IUN: %s", pk, sharedSteps.getNotificationIun())
+                .isGreaterThan(0);
+        if (isBeforeRework) {
+            List<Map<String, AttributeValue>> notReworkedElements = queryResponse.items().stream().filter(
+                    x -> x.containsKey("sk") && !x.get("sk").s().contains("REWORKED")).toList();
+            costUpdateResultsPreRework = notReworkedElements.stream()
+                    .filter(x -> x.containsKey("notificationCost")) // sicurezza
+                    .map(x -> Integer.parseInt(x.get("notificationCost").n()))
+                    .max(Integer::compareTo)
+                    .orElse(0);
+
+        } else {
+            List<Map<String, AttributeValue>> reworkedElements = queryResponse.items().stream().filter(
+                    x -> x.containsKey("sk") && x.get("sk").s().contains("REWORKED")).toList();
+            costUpdateResultsPostRework = reworkedElements.stream()
+                    .filter(x -> x.containsKey("notificationCost")) // sicurezza
+                    .map(x -> Integer.parseInt(x.get("notificationCost").n()))
+                    .max(Integer::compareTo)
+                    .orElse(0);
+        }
     }
+
+    @And("il valore del notification cost dei record su pn-CostUpdateResult è {isTheSame} rispetto a prima del rework")
+    public void compareCostUpdateResultsAfterRework(boolean isTheSame) {
+        try {
+            if (isTheSame) {
+                assertThat(costUpdateResultsPostRework)
+                        .as("After rework, the notification costs of records on pn-CostUpdateResult should not have changed")
+                        .isEqualTo(costUpdateResultsPreRework);
+            } else {
+                assertThat(costUpdateResultsPostRework)
+                        .as("After rework, the notification costs of records on pn-CostUpdateResult should have changed")
+                        .isNotEqualTo(costUpdateResultsPreRework);
+            }
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
+    }
+
+
 }

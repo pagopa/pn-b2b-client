@@ -463,24 +463,26 @@ Feature: Correzione timeline fase 3 costi
     And vengono letti gli eventi fino allo stato della notifica "<finalStatusRestart>"
     And la timeline contiene elementi con la stringa "REWORK_"
     And verifico che post restart per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attemptRestart>
-    And il baseCost è differente rispetto a prima del rework
+    And il record recuperato su pn-CostComponents è <compareCosts> rispetto a prima del rework
+    And il valore del notification cost dei record su pn-CostUpdateResult è <compareCosts> rispetto a prima del rework
+#    And il baseCost è differente rispetto a prima del rework
     Examples:
-      | sequence                               | finalEvent                         | finalStatus        | attempt | finalEventRestart                  | finalStatusRestart | attemptRestart |
-      | Via@OK_DEC_RESTART_CONS_AR             | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              |
-      | Via@OK_DEC_RESTART_CONS_ATT1_AR        | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
-      | Via@OK_DEC_RESTART_IRR_AR              | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
-      | Via@OK_RESTART_CONS_ATT1_AR            | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
-      | Via@OK_RESTART_IRR_AR                  | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
-      | Via@OK_RESTART_DEC_AR                  | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              |
-      | Via@FAIL_DISC_RESTART_CONS_AR          | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              |
-      | Via@FAIL_DISC_RESTART_IRR_AR           | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
-      | Via@FAIL_DISC_RESTART_DEC_AR           | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              |
-      | Via@FAIL_IRREP_RESTART_1_CONS_AT1_AR   | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              |
-      | Via@FAIL_DISC_IRR_RESTART_CONS_ATT1_AR | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
-      | Via@FAIL_DISC_IRR_RESTART_DEC_AR       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              |
-      #Restart all'attempt 1
-      | Via@FAIL_DISC_RESTART_1_IRREP_AR       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
-      | Via@FAIL_IRREP_RESTART_1_CONS_AT2_AR   | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+      | sequence                               | finalEvent                         | finalStatus        | attempt | finalEventRestart                  | finalStatusRestart | attemptRestart | compareCosts |
+      | Via@OK_DEC_RESTART_CONS_AR             | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              | differente   |
+      | Via@OK_DEC_RESTART_CONS_ATT1_AR        | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              | differente   |
+      | Via@OK_DEC_RESTART_IRR_AR              | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              | differente   |
+      | Via@OK_RESTART_CONS_ATT1_AR            | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              | differente   |
+      | Via@OK_RESTART_IRR_AR                  | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              | differente   |
+      | Via@OK_RESTART_DEC_AR                  | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              | differente   |
+      | Via@FAIL_DISC_RESTART_CONS_AR          | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              | differente   |
+      | Via@FAIL_DISC_RESTART_IRR_AR           | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              | uguale       |
+      | Via@FAIL_DISC_RESTART_DEC_AR           | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              | differente   |
+      | Via@FAIL_IRREP_RESTART_1_CONS_AT1_AR   | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              | differente   |
+      | Via@FAIL_DISC_IRR_RESTART_CONS_ATT1_AR | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              | uguale       |
+      | Via@FAIL_DISC_IRR_RESTART_DEC_AR       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              | differente   |
+      #Restart all'attempt 1                 |
+      | Via@FAIL_DISC_RESTART_1_IRREP_AR       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              | uguale       |
+      | Via@FAIL_IRREP_RESTART_1_CONS_AT2_AR   | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              | uguale       |
 
   # il baseCost cambia
   # firstAnalogCost immutato
@@ -510,8 +512,10 @@ Feature: Correzione timeline fase 3 costi
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEvent>"
-    And vengono letti gli eventi fino allo stato della notifica "<finalStatus>"
+    And pre restart vengono recuperati i valori dei costi notifica relativi all'utente 0 sulla tabella pn-CostComponents
+    And pre restart vengono recuperati i valori dei costi notifica relativi al pagamento 0 dell'utente 0 sulla tabella pn-CostUpdateResult
     And verifico che pre restart per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attempt>
+    And vengono letti gli eventi fino allo stato della notifica "<finalStatus>"
     When viene invocata una richiesta di restart per la notifica appena creata con i seguenti parametri:
       | iun | attemptId   | recIndex   | reason     | task       |
       |     | <attemptId> | RECINDEX_0 | reasonTest | TEST-12345 |
@@ -522,7 +526,11 @@ Feature: Correzione timeline fase 3 costi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEventRestart>" al tentativo "REWORK_0"
     And vengono letti gli eventi fino allo stato della notifica "<finalStatusRestart>"
     And la timeline contiene elementi con la stringa "REWORK_"
+    And post restart vengono recuperati i valori dei costi notifica relativi all'utente 0 sulla tabella pn-CostComponents
+    And post restart vengono recuperati i valori dei costi notifica relativi al pagamento 0 dell'utente 0 sulla tabella pn-CostUpdateResult
     And verifico che post restart per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attemptRestart>
+    And il record recuperato su pn-CostComponents è uguale rispetto a prima del rework
+    And il valore del notification cost dei record su pn-CostUpdateResult è uguale rispetto a prima del rework
     And il baseCost è uguale rispetto a prima del rework
     Examples:
       | sequence                          | attemptId | finalEvent                         | finalStatus        | attempt | finalEventRestart                  | finalStatusRestart | attemptRestart |
@@ -533,42 +541,3 @@ Feature: Correzione timeline fase 3 costi
       #Restart all'attempt 1
       | Via@FAIL-DISCOVERY_AR             | ATTEMPT_1 | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
       | Via@FAIL-DISCOVERYIRREPERIBILE_AR | ATTEMPT_1 | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
-
-
-  #OK_RESTART_CONS_ATT1_AR
-  Scenario: [TODO_REMOVE_DEBUG_DELIVERY_MODE_ASYNC]
-#    Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
-#    And viene generata una nuova notifica
-#      | subject               | test costi restart   |
-#      | physicalCommunication | AR_REGISTERED_LETTER |
-#      | senderDenomination    | Comune di palermo    |
-#      | pagoPaIntMode         | ASYNC                |
-#      | feePolicy             | DELIVERY_MODE        |
-#      | paFee                 | 17                   |
-#      | vat                   | 10                   |
-#    And destinatario Mario Gherkin e:
-#      | digitalDomicile              | NULL                     |
-#      | physicalAddress_address      | <sequence>               |
-#      | physicalAddress_municipality | LAGO PATRIA              |
-#      | physicalAddress_zip          | 80014                    |
-#      | physicalAddress_province     | NA                       |
-#      | payment_creditorTaxId        | 77777777777              |
-#      | payment_pagoPaForm           | SI                       |
-#      | payment_f24                  | NULL                     |
-#      | title_payment                | PagoPa_mono_async_d_mode |
-#      | apply_cost_pagopa            | SI                       |
-#      | payment_multy_number         | 1                        |
-#    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
-#    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-#    And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEvent>"
-#    And verifico che pre restart per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attempt>
-#    And vengono letti gli eventi fino allo stato della notifica "<finalStatus>"
-#    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
-#    And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEventRestart>"
-#    And vengono letti gli eventi fino allo stato della notifica "<finalStatusRestart>"
-#    And la timeline contiene elementi con la stringa "REWORK_"
-    Given imposto lo iun di SharedSteps a "XJPW-XZXT-ARGX-202606-U-1" e la pa a "Comune_Multi"
-    And post restart recupero i valori dei costi notifica relativi all'utente 0 sulla tabella pn-CostComponents
-    And post restart recupero i valori dei costi notifica relativi al pagamento 0 dell'utente 0 sulla tabella pn-CostUpdateResult
-#    And verifico che post restart per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attemptRestart>
-#    And il baseCost è differente rispetto a prima del rework

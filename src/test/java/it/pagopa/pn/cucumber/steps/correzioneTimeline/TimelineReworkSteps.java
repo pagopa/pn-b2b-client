@@ -67,11 +67,11 @@ public class TimelineReworkSteps {
     private String timestampString;
     private List<String> attempt1ElementIds = new ArrayList<>();
     private final Map<ReworkItem.StatusEnum, Integer> reworkStatusValueMap = Map.of(
+            ReworkItem.StatusEnum.ERROR, 0,
             ReworkItem.StatusEnum.CREATED, 1,
             ReworkItem.StatusEnum.READY, 2,
             ReworkItem.StatusEnum.IN_PROGRESS, 3,
-            ReworkItem.StatusEnum.DONE, 4,
-            ReworkItem.StatusEnum.ERROR, 5
+            ReworkItem.StatusEnum.DONE, 4
     );
 
     @ParameterType("rework|restart")
@@ -427,10 +427,15 @@ public class TimelineReworkSteps {
                         lastFoundStatuses.set(statuses);
                         log.info("Polling rework | IUN={} | reworkId={} | stati trovati={}", iun, reworkId, statuses);
 
-                        Integer expectedStatusValue = reworkStatusValueMap.get(ReworkItem.StatusEnum.valueOf(expectedStatus));
+                        int expectedStatusValue = reworkStatusValueMap.get(ReworkItem.StatusEnum.valueOf(expectedStatus));
                         List<Integer> actualStatusValues = statuses.stream().map(x -> reworkStatusValueMap.get(ReworkItem.StatusEnum.valueOf(x))).toList();
-                        Integer statusWithValueSameOrHigher = actualStatusValues.stream().filter(s -> s >= expectedStatusValue).findFirst().orElse(null);
-                        return statusWithValueSameOrHigher != null;
+                        Integer actualStatusValue;
+                        if (expectedStatus.equals("ERROR")) {
+                            actualStatusValue = actualStatusValues.stream().filter(s -> s == expectedStatusValue).findFirst().orElse(null);
+                        } else {
+                            actualStatusValue = actualStatusValues.stream().filter(s -> s >= expectedStatusValue).findFirst().orElse(null);
+                        }
+                        return actualStatusValue != null;
                     });
             checkRequestType(requestType);
         } catch (ConditionTimeoutException e) {
