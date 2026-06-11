@@ -5,7 +5,7 @@ Feature: finalità agevolata BFF, link e-service template a un template finalit�
 
   ## Macro scenario: Recupero lista risorse collegate per suggerire il template finalità
 
-  @purposeTemplate @eServiceTemplateLink
+  @purposeTemplate @eServiceTemplateLink_bff
   Scenario: [LINK_TEMPLATE_ESERVICE_1_1] Recupero lista combinata e-service concreti ed e-service template collegati per suggerire il template finalità
     Given viene creato un nuovo purpose template
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -23,7 +23,7 @@ Feature: finalità agevolata BFF, link e-service template a un template finalit�
     Then le risorse recuperate presentano un e-service concreto
     And le risorse recuperate presentano un e-service template
 
-  @purposeTemplate @eServiceTemplateLink
+  @purposeTemplate @eServiceTemplateLink_bff
   Scenario: [LINK_TEMPLATE_ESERVICE_1_2] Recupero lista combinata e-service concreti e template collegati con paginazione
     Given viene creato un nuovo purpose template
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -57,7 +57,7 @@ Feature: finalità agevolata BFF, link e-service template a un template finalit�
       | limit                | 2  |
     Then le risorse collegate corrispondono alla lista di risorse di riferimento solo per i primi 2 risultati
 
-  @purposeTemplate @eServiceTemplateLink
+  @purposeTemplate @eServiceTemplateLink_bff
   Scenario: [LINK_TEMPLATE_ESERVICE_1_3] Recupero lista combinata e-service concreti e template collegati con filtri
     Given viene creato un nuovo purpose template
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -142,7 +142,7 @@ Feature: finalità agevolata BFF, link e-service template a un template finalit�
       | filtro_id_pubblicatore | aaaabbbb-cccc-1111-2222-ddddeeee3333 |
     Then le risorse collegate corrispondono ad una lista vuota
 
-  @purposeTemplate @eServiceTemplateLink
+  @purposeTemplate @eServiceTemplateLink_bff
   Scenario: [LINK_TEMPLATE_ESERVICE_1_4] Recupero lista combinata e-service concreti e template collegati ad un template finalità non esistente
     When recupera le risorse collegate per suggerire il template finalità
       | id_template_finalita | aaaabbbb-cccc-1111-2222-ddddeeee3333 |
@@ -150,7 +150,7 @@ Feature: finalità agevolata BFF, link e-service template a un template finalit�
 
   ## Macro scenario: Associazione di una risorsa collegabile ad un template finalità
 
-  @purposeTemplate @eServiceTemplateLink
+  @purposeTemplate @eServiceTemplateLink_bff
   Scenario: [LINK_TEMPLATE_ESERVICE_3_1] Associazione di un singolo e-service template ad un template finalità con successo
 
     # Stato in bozza (DRAFT) per il template finalità
@@ -195,7 +195,7 @@ Feature: finalità agevolata BFF, link e-service template a un template finalit�
       | id_template_finalita  | $DA_CONTESTO(purposeTemplateId)  |
       | id_risorsa_attesa     | $DA_CONTESTO(eServiceId)         |
 
-  @purposeTemplate @eServiceTemplateLink
+  @purposeTemplate @eServiceTemplateLink_bff
   Scenario: [LINK_TEMPLATE_ESERVICE_3_2] Errore di conflitto durante l’associazione di una risorsa già collegata ad un template finalità
     Given viene creato un nuovo purpose template
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
@@ -210,7 +210,7 @@ Feature: finalità agevolata BFF, link e-service template a un template finalit�
       | id_e_service_template | $DA_CONTESTO(eServiceTemplateId) |
     Then la richiesta di associazione fallisce per errore di conflitto
 
-  @purposeTemplate @eServiceTemplateLink
+  @purposeTemplate @eServiceTemplateLink_bff
   Scenario: [LINK_TEMPLATE_ESERVICE_3_3] Template finalità non trovato durante l’associazione di una singola risorsa ad un template finalità
     When prova ad associare una risorsa a un template finalità
       | id_template_finalita  | aaaabbbb-cccc-1111-2222-ddddeeee3333 |
@@ -219,7 +219,7 @@ Feature: finalità agevolata BFF, link e-service template a un template finalit�
 
   ## Macro scenario: Disassociazione di una risorsa collegata da un template finalità
 
-  @purposeTemplate @eServiceTemplateLink
+  @purposeTemplate @eServiceTemplateLink_bff
   Scenario: [LINK_TEMPLATE_ESERVICE_5_1] Disassociazione di una singola risorsa da un template finalità con successo
 
     # Stato in bozza (DRAFT) per il template finalità
@@ -274,7 +274,7 @@ Feature: finalità agevolata BFF, link e-service template a un template finalit�
     Then le risorse collegate al template finalità sono una lista vuota
       | id_template_finalita  | $DA_CONTESTO(purposeTemplateId) |
 
-  @purposeTemplate @eServiceTemplateLink
+  @purposeTemplate @eServiceTemplateLink_bff
   Scenario: [LINK_TEMPLATE_ESERVICE_5_2] Errore di conflitto durante la disassociazione di una singola risorsa già disassociata da un template finalità
     Given viene creato un nuovo purpose template
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
@@ -287,7 +287,7 @@ Feature: finalità agevolata BFF, link e-service template a un template finalit�
       | id_e_service_template | $DA_CONTESTO(eServiceTemplateId) |
     Then la richiesta di disassociazione fallisce per errore di conflitto
 
-  @purposeTemplate @eServiceTemplateLink
+  @purposeTemplate @eServiceTemplateLink_bff
   Scenario: [LINK_TEMPLATE_ESERVICE_5_3] Template finalità non trovato durante la disassociazione di una singola risorsa da un template finalità
     When prova a disassociare una risorsa da un template finalità
       | id_template_finalita  | aaaabbbb-cccc-1111-2222-ddddeeee3333 |
