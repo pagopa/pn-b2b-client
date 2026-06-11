@@ -65,3 +65,13 @@ Feature: Soglie differenziate con API M2M V3
       | purposeId | statusCode |
       | %random   | 404        |
       | %null     | 400        |
+
+  Scenario: [DESCRIPTOR_PUBLISHED_UPDATE_THRESHOLD_17] Per un e-service in stato PUBLISHED è possibile modificare dailyCallsPerConsumer all'interno degli attributi certificati utilizzando le API M2M v3
+    Given l'utente è un "admin" di "PA1"
+    And PA1 ha già creato 1 attributo CERTIFIED
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000
+    And si ottiene status code 200
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di aggiungere una soglia differenziata di 70 per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo con m2m
+    And si ottiene status code 200
+    Then la soglia differenziata per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo è uguale a "70"

@@ -14,7 +14,7 @@ Feature: Deleghe Temporanee 15755
   Background:
     Given vengono settati i parametri per il tool CIE
 
-  @delegheTemporanee
+  @delegheTemporanee @deleghe1
   #1-12-23-33-34(temp) ++ 11-30(perm)
   Scenario: [MANDATE_TEMP_HAPPY_PATH_1] Creazione e accettazione di una delega temporanea e visualizzazione notifica (scenario positivo)
     Given Mario Gherkin rifiuta l'eventuale delega permanente da parte di Mario Cucumber
@@ -46,7 +46,7 @@ Feature: Deleghe Temporanee 15755
     Then la lista di deleghe del delegato "Mario Gherkin" non contiene la delega temporanea creata
     And la lista di deleghe del delegante "Mario Cucumber" non contiene la delega temporanea creata
 
-  @delegheTemporanee
+  @delegheTemporanee @deleghe1
   #2-13-24-32-33-34
   Scenario: [MANDATE_TEMP_HAPPY_PATH_2] Creazione e accettazione di una delega temporanea e visualizzazione notifica pur in presenza di delega permanente (scenario positivo)
     Given Mario Gherkin rifiuta l'eventuale delega permanente da parte di Mario Cucumber
