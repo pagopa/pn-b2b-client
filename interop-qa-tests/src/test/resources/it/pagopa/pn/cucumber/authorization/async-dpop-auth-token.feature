@@ -267,7 +267,9 @@ Feature: Validazione delle Client Assertion ed emissione dei Token PDND per scam
       | scope       | confirmation |
     And "PA2" crea una DPoP proof per la client assertion
     When il tenant fruitore "PA2" richiede un voucher asincrono per l'e-service
-    Then si ottiene status code 400
+    Then si ottiene status code 200
+    And il voucher contiene i seguenti dati:
+      | scope       | confirmation |
 
   Scenario: [ASYNC_DPOP_TOKEN_RETRIEVE_6] Errore richiesta token per timeout (responseTime scaduto)
     Verifica il corretto rilascio del voucher per start_interaction e il fallimento della richiesta per lo scope
