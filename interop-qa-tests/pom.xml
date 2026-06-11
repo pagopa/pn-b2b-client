@@ -577,6 +577,154 @@
 
                 </executions>
              </plugin>
+
+             <!-- TODO: le patch al codice generato sono necessarie per far sì che i modelli LinkableEService e LinkableEServiceTemplate estendano LinkableResource, in modo da poter essere trattati in maniera polimorfica. Altri file sono modificati per avere coerenza con ResourceKindEnum. In futuro, quando sarà possibile aggiornare la versione di openapi-generator, è auspicabile che queste patch non siano più necessarie. -->
+             <plugin>
+                 <groupId>com.google.code.maven-replacer-plugin</groupId>
+                 <artifactId>replacer</artifactId>
+                 <version>1.5.3</version>
+                 <executions>
+
+                     <execution>
+                         <id>patch-linkable-eservice</id>
+                         <phase>process-resources</phase>
+                         <goals>
+                             <goal>replace</goal>
+                         </goals>
+                         <configuration>
+                             <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/LinkableEService.java</file>
+                             <regex>true</regex>
+                             <replacements>
+                                 <replacement>
+                                     <token>public class LinkableEService \{</token>
+                                     <value>public class LinkableEService extends LinkableResource {</value>
+                                 </replacement>
+                                 <replacement>
+                                     <token>/\*\*\s*\*\s*Get resourceKind[\s\S]*?public\s+ResourceKindEnum\s+getResourceKind\(\)\s*\{[\s\S]*?\}</token>
+                                     <value></value>
+                                 </replacement>
+                             </replacements>
+                         </configuration>
+                     </execution>
+
+                     <execution>
+                         <id>patch-linkable-eservice-template</id>
+                         <phase>process-resources</phase>
+                         <goals>
+                             <goal>replace</goal>
+                         </goals>
+                         <configuration>
+                             <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/LinkableEServiceTemplate.java</file>
+                             <regex>true</regex>
+                             <replacements>
+                                 <replacement>
+                                     <token>public class LinkableEServiceTemplate \{</token>
+                                     <value>public class LinkableEServiceTemplate extends LinkableResource {</value>
+                                 </replacement>
+                                 <replacement>
+                                     <token>/\*\*\s*\*\s*Get resourceKind[\s\S]*?public\s+ResourceKindEnum\s+getResourceKind\(\)\s*\{[\s\S]*?\}</token>
+                                     <value></value>
+                                 </replacement>
+                             </replacements>
+                         </configuration>
+                     </execution>
+
+                     <execution>
+                         <id>patch-linked-resource</id>
+                         <phase>process-resources</phase>
+                         <goals>
+                             <goal>replace</goal>
+                         </goals>
+                         <configuration>
+                             <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/LinkedResource.java</file>
+                             <regex>true</regex>
+                             <replacements>
+                                 <replacement>
+                                     <token>@JsonIgnoreProperties\([\s\S]*?value\s*=\s*"resourceKind"[\s\S]*?\)\s*\n?</token>
+                                     <value></value>
+                                 </replacement>
+                                 <replacement>
+                                     <token>JsonTypeInfo\.Id\.NAME</token>
+                                     <value>JsonTypeInfo.Id.NONE</value>
+                                 </replacement>
+                                 <replacement>
+                                    <token>ESERVICE_TEMPLATE\(String\.valueOf\("ESERVICE_TEMPLATE"\)\);</token>
+                                    <value><![CDATA[ESERVICE_TEMPLATE(String.valueOf("ESERVICE_TEMPLATE")),
+    ESERVICE(String.valueOf("ESERVICE"));]]></value>
+                                 </replacement>
+                                 <replacement>
+                                     <token>@JsonInclude\(value = JsonInclude.Include.ALWAYS\)[\s\n\r]+public UUID getEservice</token>
+                                     <value>@JsonInclude(value = JsonInclude.Include.NON_NULL)
+    public UUID getEservice</value>
+                                 </replacement>
+                                 <replacement>
+                                     <token>@JsonInclude\(value = JsonInclude.Include.ALWAYS\)[\s\n\r]+public void setEservice</token>
+                                     <value>@JsonInclude(value = JsonInclude.Include.NON_NULL)
+    public void setEservice</value>
+                                 </replacement>
+                             </replacements>
+                         </configuration>
+                     </execution>
+
+                     <execution>
+                         <id>patch-linkable-resource</id>
+                         <phase>process-resources</phase>
+                         <goals>
+                             <goal>replace</goal>
+                         </goals>
+                         <configuration>
+                             <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/LinkableResource.java</file>
+                             <regex>true</regex>
+                             <replacements>
+                                 <replacement>
+                                     <token>ESERVICE_TEMPLATE\(String\.valueOf\("ESERVICE_TEMPLATE"\)\);</token>
+                                     <value><![CDATA[ESERVICE_TEMPLATE(String.valueOf("ESERVICE_TEMPLATE")),
+    ESERVICE(String.valueOf("ESERVICE"));]]></value>
+                                 </replacement>
+                             </replacements>
+                         </configuration>
+                     </execution>
+
+                     <execution>
+                         <id>patch-linkable-resource-request</id>
+                         <phase>process-resources</phase>
+                         <goals>
+                             <goal>replace</goal>
+                         </goals>
+                         <configuration>
+                             <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/LinkableResourceRequest.java</file>
+                             <regex>true</regex>
+                             <replacements>
+                                 <replacement>
+                                     <token>@JsonIgnoreProperties\([\s\S]*?value\s*=\s*"resourceKind"[\s\S]*?\)\s*\n?</token>
+                                     <value></value>
+                                 </replacement>
+                                 <replacement>
+                                     <token>JsonTypeInfo\.Id\.NAME</token>
+                                     <value>JsonTypeInfo.Id.NONE</value>
+                                 </replacement>
+                                 <replacement>
+                                     <token>ESERVICE_TEMPLATE\(String\.valueOf\("ESERVICE_TEMPLATE"\)\);</token>
+                                     <value><![CDATA[ESERVICE_TEMPLATE(String.valueOf("ESERVICE_TEMPLATE")),
+    ESERVICE(String.valueOf("ESERVICE"));]]></value>
+                                 </replacement>
+                                 <replacement>
+                                     <token>@JsonInclude\(value = JsonInclude.Include.ALWAYS\)[\s\n\r]+public UUID getEservice</token>
+                                     <value>@JsonInclude(value = JsonInclude.Include.NON_NULL)
+    public UUID getEservice</value>
+                                 </replacement>
+                                 <replacement>
+                                     <token>@JsonInclude\(value = JsonInclude.Include.ALWAYS\)[\s\n\r]+public void setEservice</token>
+                                     <value>@JsonInclude(value = JsonInclude.Include.NON_NULL)
+    public void setEservice</value>
+                                 </replacement>
+                             </replacements>
+                         </configuration>
+                     </execution>
+
+                 </executions>
+             </plugin>
+
              <plugin>
                  <groupId>org.apache.maven.plugins</groupId>
                  <artifactId>maven-compiler-plugin</artifactId>
