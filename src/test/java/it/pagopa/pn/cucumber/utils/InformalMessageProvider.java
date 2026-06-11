@@ -24,33 +24,31 @@ public class InformalMessageProvider {
 
     private final Object lock = new Object();
 
-    public String getMessageIT() {
+    public String getMessageIT(String cxId) {
 
         if (messageIdIT == null) {
             synchronized (lock) {
                 if (messageIdIT == null) {
-                    messageIdIT = createMessageIT();
+                    messageIdIT = createMessageIT(cxId);
                 }
             }
         }
-
         return messageIdIT;
     }
 
-    public String getMessageITFR() {
+    public String getMessageITFR(String cxId) {
 
         if (messageIdITFR == null) {
             synchronized (lock) {
                 if (messageIdITFR == null) {
-                    messageIdITFR = createMessageITFR();
+                    messageIdITFR = createMessageITFR(cxId);
                 }
             }
         }
-
         return messageIdITFR;
     }
 
-    private String createMessageIT() {
+    private String createMessageIT(String cxId) {
 
         NewMessageRequestPrimaryMessage primary = new NewMessageRequestPrimaryMessage()
                 .language("IT")
@@ -61,10 +59,10 @@ public class InformalMessageProvider {
         NewMessageRequest request = new NewMessageRequest()
                 .primaryMessage(primary);
 
-        return pnPaB2bInternalInformalClientImpl.createMessage(request).getMessageId().toString();
+        return pnPaB2bInternalInformalClientImpl.createMessage(cxId, request).getMessageId().toString();
     }
 
-    private String createMessageITFR() {
+    private String createMessageITFR(String cxId) {
 
         NewMessageRequestPrimaryMessage primary = new NewMessageRequestPrimaryMessage()
                 .language("IT")
@@ -82,6 +80,6 @@ public class InformalMessageProvider {
                 .primaryMessage(primary)
                 .additionalMessage(additional);
 
-        return pnPaB2bInternalInformalClientImpl.createMessage(request).getMessageId().toString();
+        return pnPaB2bInternalInformalClientImpl.createMessage(cxId, request).getMessageId().toString();
     }
 }

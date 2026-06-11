@@ -31,7 +31,7 @@ public class PnPaB2bInternalInformalClientImpl {
 
     private final List<String> groups;
 
-    private String cxId;
+    //private String cxId;
 
     public PnPaB2bInternalInformalClientImpl(
             RestTemplate restTemplate,
@@ -66,31 +66,31 @@ public class PnPaB2bInternalInformalClientImpl {
         return client;
     }
 
-    public MessageResponse createMessage(NewMessageRequest request) {
+    public MessageResponse createMessage(String cxId, NewMessageRequest request) {
         return messagesApi.newMessage(operatorId, CxTypeAuthFleet.PA, cxId, request, groups);
     }
 
-    public MessageResponse getMessage(UUID messageId) {
+    public MessageResponse getMessage(UUID messageId, String cxId) {
         return messagesApi.getMessageById(messageId, operatorId, CxTypeAuthFleet.PA, cxId, groups);
     }
 
-    public NewInformalNotificationResponse sendNewInformalNotificationV1(InformalNotificationRequestV1 informalNotificationRequestV1) throws RestClientException {
+    public NewInformalNotificationResponse sendNewInformalNotificationV1(String cxId, InformalNotificationRequestV1 informalNotificationRequestV1) throws RestClientException {
         return newInformalNotificationApi.sendNewInformalNotificationV1(operatorId, CxTypeAuthFleet.PA, cxId, "B2B", informalNotificationRequestV1, groups, null, null);
     }
 
-    public NewInformalNotificationRequestStatusResponseV1 getNotificationStatusByRequestId(String notificationRequestId) {
+    public NewInformalNotificationRequestStatusResponseV1 getNotificationStatusByRequestId(String cxId, String notificationRequestId) {
         return senderReadInformalNotificationB2BApi.getInformalNotificationRequestStatusV1(operatorId, CxTypeAuthFleet.PA, cxId, groups, notificationRequestId, null, null);
     }
 
-    public NotificationAttachmentDownloadMetadataResponse getSentInformalNotificationDocument(String iun, int docIdx) {
+    public NotificationAttachmentDownloadMetadataResponse getSentInformalNotificationDocument(String cxId, String iun, int docIdx) {
         return senderReadInformalNotificationB2BApi.getSentInformalNotificationDocument(operatorId, CxTypeAuthFleet.PA, cxId, iun, docIdx, groups);
     }
 
-    public NotificationAttachmentDownloadMetadataResponse getSentInformalNotificationAttachment(String iun, int recipientIdx, int attachmentIdx) {
+    public NotificationAttachmentDownloadMetadataResponse getSentInformalNotificationAttachment(String iun, String cxId, int recipientIdx, int attachmentIdx) {
         return senderReadInformalNotificationB2BApi.getSentInformalNotificationAttachment(operatorId, CxTypeAuthFleet.PA, cxId, iun, recipientIdx, "PAGOPA", groups, attachmentIdx);
     }
 
-    public TerminationRequestStatus terminateInformalWorkflow(String iun) {
+    public TerminationRequestStatus terminateInformalWorkflow(String cxId, String iun) {
         return informalNotificationTerminationApi.terminateInformalWorkflow(operatorId, CxTypeAuthFleet.PA, cxId, iun, groups);
     }
 
@@ -100,8 +100,8 @@ public class PnPaB2bInternalInformalClientImpl {
     }
 
 
-    public void setCxId(String cxId) {
-        this.cxId = cxId;
-    }
+    //public void setCxId(String cxId) {
+        //this.cxId = cxId;
+    //}
 
 }
