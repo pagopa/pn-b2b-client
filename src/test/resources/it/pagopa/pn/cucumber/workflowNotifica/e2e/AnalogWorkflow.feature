@@ -2020,7 +2020,7 @@ Feature: Workflow analogico
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | AR_REGISTERED_LETTER            |
+      | physicalCommunication | <COMMUNICATION_TYPE>            |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | <SEQUENCE> |
@@ -2030,26 +2030,39 @@ Feature: Workflow analogico
     Then viene verificato che i dati di indirizzo nell'elemento di timeline "NORMALIZED_ADDRESS" siano valorizzati
     Then viene verificato che i dati di indirizzo nell'elemento di timeline "SEND_ANALOG_DOMICILE" siano valorizzati
     Examples:
-      | SEQUENCE    |
-      | via @OK_AR  |
-      | via @OK_890 |
+      | SEQUENCE    | COMMUNICATION_TYPE    |
+      | via @OK_AR  | AR_REGISTERED_LETTER  |
+      | via @OK_890 | REGISTERED_LETTER_890 |
 
   @timelineElementsAddress
-  Scenario Outline: [E2E-WF-TIMELINE-ADDRESSES-01.2] Invio notifiche RS e RIS e verifica valorizzazione indirizzo in tabella
+  Scenario: [E2E-WF-TIMELINE-ADDRESSES-01.2.A] Invio notifiche RS e verifica valorizzazione indirizzo in tabella
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | test@fail.it |
-      | physicalAddress_address | <SEQUENCE>   |
+      | digitalDomicile_address | test@fail.it |
+      | physicalAddress_address | Via@OK_RS    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     Then viene verificato che i dati di indirizzo nell'elemento di timeline "NORMALIZED_ADDRESS" siano valorizzati
     Then viene verificato che i dati di indirizzo nell'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" siano valorizzati
-    Examples:
-      | SEQUENCE    |
-      | Via @OK_RS  |
-      | Via @OK_RIS |
+
+  @timelineElementsAddress
+  Scenario: [E2E-WF-TIMELINE-ADDRESSES-01.2.B] Invio notifiche RIS e verifica valorizzazione indirizzo in tabella
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_State        | FRANCIA      |
+      | physicalAddress_municipality | Parigi       |
+      | physicalAddress_zip          | ZONE_1       |
+      | physicalAddress_province     | Paris        |
+      | digitalDomicile_address      | test@fail.it |
+      | physicalAddress_address      | Via@OK_RIS   |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
+    Then viene verificato che i dati di indirizzo nell'elemento di timeline "NORMALIZED_ADDRESS" siano valorizzati
+    Then viene verificato che i dati di indirizzo nell'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" siano valorizzati
 
 
   @timelineElementsAddress
@@ -2058,8 +2071,7 @@ Feature: Workflow analogico
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | test@pecOk.it |
-      | physicalAddress_address |               |
+      | digitalDomicile_address | test@pecOk.it |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NORMALIZED_ADDRESS"
     Then viene verificato che i dati di indirizzo nell'elemento di timeline "NORMALIZED_ADDRESS" siano valorizzati
