@@ -1859,7 +1859,7 @@ public class AvanzamentoNotificheB2bSteps {
         return dataTest;
     }
 
-    @Then("viene verificato che i dati di indirizzo nell'elemento di timeline {string} siano valorizzati")
+    @Then("viene verificato che i dati relativi all'indirizzo nell'elemento di timeline {string} siano valorizzati")
     public void checkAddressDataInTimelineElementsOnDB(String timelineElement) {
         QueryResponse queryResponse = dbService.call(DynamoTableName.TIMELINE, Map.of(
                 ":v_iun", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build(),

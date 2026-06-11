@@ -2016,7 +2016,7 @@ Feature: Workflow analogico
       | details_sentAttemptMade | 0        |
 
   @timelineElementsAddress
-  Scenario Outline: [E2E-WF-TIMELINE-ADDRESSES-01.1] Invio notifica AR  e verifica valorizzazione indirizzo in tabella
+  Scenario Outline: [E2E-WF-TIMELINE-ADDRESSES-01.1] Verifica valorizzazione indirizzo su timeline per AR e 890
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
@@ -2026,16 +2026,15 @@ Feature: Workflow analogico
       | physicalAddress_address | <SEQUENCE> |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-#    Given imposto lo iun di SharedSteps a "TNMW-RAZH-ZMDR-202605-M-1" e la pa a "Comune_Multi"
-    Then viene verificato che i dati di indirizzo nell'elemento di timeline "NORMALIZED_ADDRESS" siano valorizzati
-    Then viene verificato che i dati di indirizzo nell'elemento di timeline "SEND_ANALOG_DOMICILE" siano valorizzati
+    Then viene verificato che i dati relativi all'indirizzo nell'elemento di timeline "NORMALIZED_ADDRESS" siano valorizzati
+    Then viene verificato che i dati relativi all'indirizzo nell'elemento di timeline "SEND_ANALOG_DOMICILE" siano valorizzati
     Examples:
       | SEQUENCE    | COMMUNICATION_TYPE    |
       | via @OK_AR  | AR_REGISTERED_LETTER  |
       | via @OK_890 | REGISTERED_LETTER_890 |
 
   @timelineElementsAddress
-  Scenario: [E2E-WF-TIMELINE-ADDRESSES-01.2.A] Invio notifiche RS e verifica valorizzazione indirizzo in tabella
+  Scenario: [E2E-WF-TIMELINE-ADDRESSES-01.2.A] Verifica valorizzazione indirizzo su timeline per RS
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
@@ -2044,11 +2043,11 @@ Feature: Workflow analogico
       | physicalAddress_address | Via@OK_RS    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
-    Then viene verificato che i dati di indirizzo nell'elemento di timeline "NORMALIZED_ADDRESS" siano valorizzati
-    Then viene verificato che i dati di indirizzo nell'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" siano valorizzati
+    Then viene verificato che i dati relativi all'indirizzo nell'elemento di timeline "NORMALIZED_ADDRESS" siano valorizzati
+    Then viene verificato che i dati relativi all'indirizzo nell'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" siano valorizzati
 
   @timelineElementsAddress
-  Scenario: [E2E-WF-TIMELINE-ADDRESSES-01.2.B] Invio notifiche RIS e verifica valorizzazione indirizzo in tabella
+  Scenario: [E2E-WF-TIMELINE-ADDRESSES-01.2.B] Verifica valorizzazione indirizzo su timeline per RIS
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
@@ -2061,12 +2060,12 @@ Feature: Workflow analogico
       | physicalAddress_address      | Via@OK_RIS   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
-    Then viene verificato che i dati di indirizzo nell'elemento di timeline "NORMALIZED_ADDRESS" siano valorizzati
-    Then viene verificato che i dati di indirizzo nell'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" siano valorizzati
+    Then viene verificato che i dati relativi all'indirizzo nell'elemento di timeline "NORMALIZED_ADDRESS" siano valorizzati
+    Then viene verificato che i dati relativi all'indirizzo nell'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" siano valorizzati
 
 
   @timelineElementsAddress
-  Scenario: [E2E-WF-TIMELINE-ADDRESSES-01.3] Invio notifica digitale e verifica valorizzazione indirizzo in tabella
+  Scenario: [E2E-WF-TIMELINE-ADDRESSES-01.3] Verifica valorizzazione indirizzo su timeline per notifica digitale
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
@@ -2074,4 +2073,4 @@ Feature: Workflow analogico
       | digitalDomicile_address | test@pecOk.it |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NORMALIZED_ADDRESS"
-    Then viene verificato che i dati di indirizzo nell'elemento di timeline "NORMALIZED_ADDRESS" siano valorizzati
+    Then viene verificato che i dati relativi all'indirizzo nell'elemento di timeline "NORMALIZED_ADDRESS" siano valorizzati
