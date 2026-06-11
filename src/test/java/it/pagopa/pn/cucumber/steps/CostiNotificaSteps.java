@@ -325,7 +325,7 @@ public class CostiNotificaSteps {
         }
     }
 
-    @And("verifico che {isBefore} {timelineInvalidation} per il destinatario {int} i record su Pn-NotificationDeliveryCost siano stati (inseriti)(modificati) e correttamente valorizzati fino all'attempt {int}")
+    @And("{isBefore} {timelineInvalidation} verifico che per il destinatario {int} i record su Pn-NotificationDeliveryCost siano stati (inseriti)(modificati) e correttamente valorizzati fino all'attempt {int}")
     public void checkNotificationDeliveryCostRecordForRework(boolean isBeforeRework, String requestType, int recIndex, int attempt) {
         try {
             List<String> costsToConsider = attempt == 0 ? Arrays.asList("baseCost", "firstAnalogCost") : Arrays.asList("baseCost", "firstAnalogCost", "secondAnalogCost");
@@ -398,9 +398,19 @@ public class CostiNotificaSteps {
                 softly.assertThat(notificationPriceResponsePreRework).as("The notificationPriceResponse before rework should not be null").isNotNull();
                 softly.assertThat(notificationPriceResponsePostRework).as("The notificationPriceResponse after rework should not be null").isNotNull();
                 if (isTheSame) {
-                    softly.assertThat(notificationPriceResponsePreRework).as("After rework the notificationPriceResponse should be the same").isEqualTo(notificationPriceResponsePostRework);
+                    softly.assertThat(notificationPriceResponsePreRework.getTotalPrice()).as("After rework the notificationPriceResponse totalPrice should be the same").isEqualTo(notificationPriceResponsePostRework.getTotalPrice());
+                    softly.assertThat(notificationPriceResponsePreRework.getPartialPrice()).as("After rework the notificationPriceResponse partialPrice should be the same").isEqualTo(notificationPriceResponsePostRework.getPartialPrice());
+                    softly.assertThat(notificationPriceResponsePreRework.getAnalogCost()).as("After rework the notificationPriceResponse analogCost should be the same").isEqualTo(notificationPriceResponsePostRework.getAnalogCost());
+                    softly.assertThat(notificationPriceResponsePreRework.getPaFee()).as("After rework the notificationPriceResponse paFee should be the same").isEqualTo(notificationPriceResponsePostRework.getPaFee());
+                    softly.assertThat(notificationPriceResponsePreRework.getSendFee()).as("After rework the notificationPriceResponse sendFee should be the same").isEqualTo(notificationPriceResponsePostRework.getSendFee());
+                    softly.assertThat(notificationPriceResponsePreRework.getVat()).as("After rework the notificationPriceResponse vat should be the same").isEqualTo(notificationPriceResponsePostRework.getVat());
                 } else {
-                    softly.assertThat(notificationPriceResponsePreRework).as("After rework the notificationPriceResponse should not be the same").isNotEqualTo(notificationPriceResponsePostRework);
+                    softly.assertThat(notificationPriceResponsePreRework.getTotalPrice()).as("After rework the notificationPriceResponse totalPrice should not be the same").isNotEqualTo(notificationPriceResponsePostRework.getTotalPrice());
+                    softly.assertThat(notificationPriceResponsePreRework.getPartialPrice()).as("After rework the notificationPriceResponse partialPrice should not be the same").isNotEqualTo(notificationPriceResponsePostRework.getPartialPrice());
+                    softly.assertThat(notificationPriceResponsePreRework.getAnalogCost()).as("After rework the notificationPriceResponse analogCost should not be the same").isNotEqualTo(notificationPriceResponsePostRework.getAnalogCost());
+                    softly.assertThat(notificationPriceResponsePreRework.getPaFee()).as("After rework the notificationPriceResponse paFee should not be the same").isNotEqualTo(notificationPriceResponsePostRework.getPaFee());
+                    softly.assertThat(notificationPriceResponsePreRework.getSendFee()).as("After rework the notificationPriceResponse sendFee should not be the same").isNotEqualTo(notificationPriceResponsePostRework.getSendFee());
+                    softly.assertThat(notificationPriceResponsePreRework.getVat()).as("After rework the notificationPriceResponse vat should not be the same").isNotEqualTo(notificationPriceResponsePostRework.getVat());
                 }
             });
         } catch (AssertionError assertionError) {

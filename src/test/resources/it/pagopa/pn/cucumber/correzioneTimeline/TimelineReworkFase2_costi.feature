@@ -27,7 +27,7 @@ Feature: Correzione timeline fase 2 costi
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEvent>"
     And vengono letti gli eventi fino allo stato della notifica "<finalStatus>"
-    And verifico che pre rework per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attempt>
+    And pre rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attempt>
     When viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode   | expectedDeliveryFailureCause | reason     |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | <expectedStatusCode> | <failCode>                   | reasonTest |
@@ -39,7 +39,7 @@ Feature: Correzione timeline fase 2 costi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEventRestart>" al tentativo "REWORK_0"
     And vengono letti gli eventi fino allo stato della notifica "<finalStatusRestart>"
     And la timeline contiene elementi con la stringa "REWORK_"
-    And verifico che post rework per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt <attemptRestart>
+    And post rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt <attemptRestart>
     And il baseCost è uguale rispetto a prima del rework
     Examples:
       | sequence             | finalEvent                         | finalStatus        | attempt | expectedStatusCode | failCode | finalEventRestart                  | finalStatusRestart | attemptRestart |
@@ -88,7 +88,7 @@ Feature: Correzione timeline fase 2 costi
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEvent>"
     And vengono letti gli eventi fino allo stato della notifica "<finalStatus>"
-    And verifico che pre rework per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attempt>
+    And pre rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attempt>
     When viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode   | expectedDeliveryFailureCause | reason     |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | <expectedStatusCode> | <failCode>                   | reasonTest |
@@ -100,7 +100,7 @@ Feature: Correzione timeline fase 2 costi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEventRestart>" al tentativo "REWORK_0"
     And vengono letti gli eventi fino allo stato della notifica "<finalStatusRestart>"
     And la timeline contiene elementi con la stringa "REWORK_"
-    And verifico che post rework per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt <attemptRestart>
+    And post rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt <attemptRestart>
     And il baseCost è uguale rispetto a prima del rework
     Examples:
       | sequence             | finalEvent                         | finalStatus        | attempt | expectedStatusCode | failCode | finalEventRestart                  | finalStatusRestart | attemptRestart |
@@ -148,7 +148,7 @@ Feature: Correzione timeline fase 2 costi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEvent>"
     And vengono letti gli eventi fino allo stato della notifica "<finalStatus>"
     And pre rework vengono recuperati i costi dall'api di delivery per il destinatario 0
-    And verifico che pre rework per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attempt>
+    And pre rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attempt>
     When viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode   | expectedDeliveryFailureCause | reason     |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | <expectedStatusCode> | <failCode>                   | reasonTest |
@@ -162,7 +162,7 @@ Feature: Correzione timeline fase 2 costi
     And la timeline contiene elementi con la stringa "REWORK_"
     And post rework vengono recuperati i costi dall'api di delivery per il destinatario 0
     And il valore dei costi restituiti dall'api di delivery è <deliveryCostEqual> rispetto a prima del rework
-    And verifico che post rework per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt <attemptRestart>
+    And post rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt <attemptRestart>
     And il baseCost è uguale rispetto a prima del rework
     Examples:
       | sequence             | finalEvent                         | finalStatus        | attempt | expectedStatusCode | failCode | finalEventRestart                  | finalStatusRestart | attemptRestart | deliveryCostEqual |
@@ -213,7 +213,7 @@ Feature: Correzione timeline fase 2 costi
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEvent>"
     And vengono letti gli eventi fino allo stato della notifica "<finalStatus>"
-    And verifico che pre rework per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attempt>
+    And pre rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attempt>
     When viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode   | expectedDeliveryFailureCause | reason     |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | <expectedStatusCode> | <failCode>                   | reasonTest |
@@ -225,7 +225,7 @@ Feature: Correzione timeline fase 2 costi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEventRestart>" al tentativo "REWORK_0"
     And vengono letti gli eventi fino allo stato della notifica "<finalStatusRestart>"
     And la timeline contiene elementi con la stringa "REWORK_"
-    And verifico che post rework per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt <attemptRestart>
+    And post rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt <attemptRestart>
     And il baseCost è uguale rispetto a prima del rework
     Examples:
       | sequence             | finalEvent                         | finalStatus        | attempt | expectedStatusCode | failCode | finalEventRestart                  | finalStatusRestart | attemptRestart |
@@ -272,7 +272,7 @@ Feature: Correzione timeline fase 2 costi
 #    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
 #    And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEvent>"
 #    And vengono letti gli eventi fino allo stato della notifica "<finalStatus>"
-#    And verifico che pre rework per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attempt>
+#    And pre rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attempt>
     When viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode   | expectedDeliveryFailureCause | reason     |
       |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | <expectedStatusCode> | <failCode>                   | reasonTest |
@@ -284,7 +284,7 @@ Feature: Correzione timeline fase 2 costi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEventRestart>" al tentativo "REWORK_0"
     And vengono letti gli eventi fino allo stato della notifica "<finalStatusRestart>"
     And la timeline contiene elementi con la stringa "REWORK_"
-    And verifico che post rework per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt <attemptRestart>
+    And post rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt <attemptRestart>
     And il baseCost è uguale rispetto a prima del rework
     Examples:
       | sequence             | finalEvent                         | finalStatus        | attempt | expectedStatusCode | failCode | finalEventRestart       | finalStatusRestart | attemptRestart |
