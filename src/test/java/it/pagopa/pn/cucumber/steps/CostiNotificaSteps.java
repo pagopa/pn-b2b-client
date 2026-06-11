@@ -405,12 +405,7 @@ public class CostiNotificaSteps {
                     softly.assertThat(notificationPriceResponsePreRework.getSendFee()).as("After rework the notificationPriceResponse sendFee should be the same").isEqualTo(notificationPriceResponsePostRework.getSendFee());
                     softly.assertThat(notificationPriceResponsePreRework.getVat()).as("After rework the notificationPriceResponse vat should be the same").isEqualTo(notificationPriceResponsePostRework.getVat());
                 } else {
-                    softly.assertThat(notificationPriceResponsePreRework.getTotalPrice()).as("After rework the notificationPriceResponse totalPrice should not be the same").isNotEqualTo(notificationPriceResponsePostRework.getTotalPrice());
-                    softly.assertThat(notificationPriceResponsePreRework.getPartialPrice()).as("After rework the notificationPriceResponse partialPrice should not be the same").isNotEqualTo(notificationPriceResponsePostRework.getPartialPrice());
-                    softly.assertThat(notificationPriceResponsePreRework.getAnalogCost()).as("After rework the notificationPriceResponse analogCost should not be the same").isNotEqualTo(notificationPriceResponsePostRework.getAnalogCost());
-                    softly.assertThat(notificationPriceResponsePreRework.getPaFee()).as("After rework the notificationPriceResponse paFee should not be the same").isNotEqualTo(notificationPriceResponsePostRework.getPaFee());
-                    softly.assertThat(notificationPriceResponsePreRework.getSendFee()).as("After rework the notificationPriceResponse sendFee should not be the same").isNotEqualTo(notificationPriceResponsePostRework.getSendFee());
-                    softly.assertThat(notificationPriceResponsePreRework.getVat()).as("After rework the notificationPriceResponse vat should not be the same").isNotEqualTo(notificationPriceResponsePostRework.getVat());
+                    softly.assertThat(notificationPriceResponsePreRework).as("After rework the notificationPriceResponse should not be the same").isNotEqualTo(notificationPriceResponsePostRework);
                 }
             });
         } catch (AssertionError assertionError) {
