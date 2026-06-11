@@ -189,7 +189,7 @@ public class EServiceTemplateTestAssistant {
             case DOCUMENT -> {
                 return new PathResource(Path.of(documentPath));
             }
-            case INTERFACE -> {
+            case INTERFACE, ASYNC_EXCHANGE_CALLBACK_INTERFACE -> {
                 return new PathResource(Path.of(interfacePath));
             }
             default -> throw new IllegalArgumentException("Unsupported %s value: %s".formatted(
@@ -258,6 +258,7 @@ public class EServiceTemplateTestAssistant {
                             case DOCUMENT -> res.getBody().getDocs().stream().filter(d -> d.getId().equals(
                                 lastAddedDocument.id())).findFirst().orElse(null);
                             case INTERFACE -> res.getBody().getInterface();
+                            case ASYNC_EXCHANGE_CALLBACK_INTERFACE -> res.getBody().getAsyncExchangeCallbackInterface();
                             default -> throw new IllegalArgumentException("Unsupported %s value: %s".formatted(
                                 EServiceTemplateDocumentKind.class.getSimpleName(),
                                 kind));
