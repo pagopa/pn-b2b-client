@@ -42,6 +42,7 @@ public class EServicesCommonContext {
 
     private UUID interfaceId;
     private String interfaceName;
+    private UUID callbackInterfaceId;
     private UUID oldDescriptorId;
     private String name;
     private String description;
