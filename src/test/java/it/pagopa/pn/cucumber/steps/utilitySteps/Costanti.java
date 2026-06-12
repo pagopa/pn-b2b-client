@@ -41,6 +41,7 @@ public class Costanti {
     public static final String COMUNE_2 = "Comune_2";
     public static final String COMUNE_MULTI = "Comune_Multi";
     public static final String COMUNE_SON = "Comune_Son";
+    public static final String COMUNE_SON_2 = "Comune_Son_2";
     public static final String COMUNE_ROOT = "Comune_Root";
     public static final String DEFAULT_PA = COMUNE_1;
     // Tipologie destinatario
