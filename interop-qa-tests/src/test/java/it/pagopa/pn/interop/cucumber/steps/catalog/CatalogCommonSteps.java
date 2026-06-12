@@ -84,6 +84,7 @@ public class CatalogCommonSteps {
         createEServiceWithDescriptor(descriptorState, dataPreparationService,
                 sharedStepsContext.getEServicesCommonContext(),
                 eServiceSeed, descriptorSeed);
+        sharedStepsContext.getEServicesCommonContext().setProducerName(sharedStepsContext.getIdentityService().getTenantName(tenantType));
     }
 
     private void createEServiceWithDescriptorInStateSpecifyingConsumerDelegationFlags(String tenantType, String descriptorState, Boolean isConsumerDelegable, Boolean isClientAccessDelegable) {
