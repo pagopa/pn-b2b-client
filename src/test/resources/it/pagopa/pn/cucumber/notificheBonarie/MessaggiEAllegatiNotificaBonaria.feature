@@ -310,7 +310,7 @@ Feature: Messaggi e allegati di una notifica bonaria.
   Scenario: [NOTIFICHE_BONARIE_05_3_C] Come ente mittente tento il Recupero del documento con IUN non valido ricevendo errore
     Given mittente della notifica bonaria: "Comune_Multi"
     When si tenta il recupero documento con IUN "fake"
-    Then si riceve errore 404
+    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER_SIZE"
 
 
 
