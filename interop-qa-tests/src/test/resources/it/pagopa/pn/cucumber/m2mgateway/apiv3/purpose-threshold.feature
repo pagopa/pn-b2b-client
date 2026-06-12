@@ -66,7 +66,6 @@ Feature: Soglie differenziate con API M2M V3
       | %random   | 404        |
       | %null     | 400        |
 
-  @dailyCallsThreshold
   Scenario: [DESCRIPTOR_PUBLISHED_UPDATE_THRESHOLD_17] Per un e-service in stato PUBLISHED è possibile modificare dailyCallsPerConsumer all'interno degli attributi certificati utilizzando le API M2M v3
     Given l'utente è un "admin" di "PA1"
     And PA1 ha già creato 1 attributo CERTIFIED

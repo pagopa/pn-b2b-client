@@ -60,6 +60,8 @@ public class AppIOB2bSteps {
             case "corretto" -> sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0);
             case "malformato" ->
                     sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0) + "MALF";
+            case "esteso" ->
+                    sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), 0) + "&utm_campaign=<XXXX>&utm_source=<YYYYY>&utm_medium=<ZZZZZ>";
             default -> throw new IllegalArgumentException("Valore passato come qrCodeType non valido: " + qrCodeType);
         };
     }
@@ -341,9 +343,9 @@ public class AppIOB2bSteps {
 
     private String selectTaxIdUser(String recipient) {
         return switch (recipient.trim()) {
-            case MARIO_CUCUMBER -> MARIO_CUCUMBER_TAX_ID;
-            case MARIO_GHERKIN -> MARIO_GHERKIN_TAX_ID;
-            case CUCUMBER_SPA -> CUCUMBER_SPA_TAX_ID;
+            case MARIO_CUCUMBER -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_CUCUMBER.getTaxId();
+            case MARIO_GHERKIN -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_GHERKIN.getTaxId();
+            case CUCUMBER_SPA -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_CUCUMBER_SPA.getTaxId();
             default -> throw new IllegalStateException("Unexpected value: " + recipient.trim());
         };
     }

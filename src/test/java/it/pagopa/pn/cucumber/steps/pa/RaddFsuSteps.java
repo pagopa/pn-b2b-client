@@ -73,8 +73,8 @@ public class RaddFsuSteps {
 
     private void selectUser(String userName) {
         switch (userName) {
-            case MARIO_CUCUMBER -> this.currentUserCf = MARIO_CUCUMBER_TAX_ID;
-            case MARIO_GHERKIN -> this.currentUserCf = MARIO_GHERKIN_TAX_ID;
+            case MARIO_CUCUMBER -> this.currentUserCf = sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_CUCUMBER.getTaxId();
+            case MARIO_GHERKIN -> this.currentUserCf = sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_GHERKIN.getTaxId();
             case SIGNOR_CASUALE -> this.currentUserCf = getRecipientZeroTaxId();
             case SIGNOR_GENERATO -> this.currentUserCf = generateCF(System.nanoTime());
             default -> this.currentUserCf = userName;

@@ -376,3 +376,136 @@ Feature: Eventi M2M
     And "PA2" visualizza l'evento AgreementSubmitted precedente
     And "PA4" non visualizza l'evento AgreementAdded precedente
     And "PA4" non visualizza l'evento AgreementSubmitted precedente
+
+  Scenario: [M2M_TEMPLATE_ESERVICE_CALLBACK_INTERFACE_1] Verifica dell'emissione dell'evento di tracciamento dopo l'aggiunta
+  di un'interfaccia di callback a un template e-service asincrono.
+
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template asincrono in modalità erogazione con tecnologia "REST" in stato di DRAFT
+    And si ottiene response status code 200
+    And l'e-service template creato è configurato come asincrono
+    And l'utente modifica la versione dell'e-service template con:
+      | voucherLifespan                               | 6000 |
+      | asyncExchangeProperties.responseTime          | 100  |
+      | asyncExchangeProperties.resourceAvailableTime | 100  |
+      | asyncExchangeProperties.maxResultSet          | 100  |
+      | asyncExchangeProperties.confirmation          | true |
+      | asyncExchangeProperties.bulk                  | true |
+    And si ottiene status code 200
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+    When l'utente effettua l'aggiunta di un documento di tipo ASYNC_EXCHANGE_CALLBACK_INTERFACE alla versione dell'e-service template con successo
+    And si ottiene status code 200
+    Then "PA1" visualizza l'evento EServiceTemplateVersionAsyncExchangeCallbackInterfaceAdded con:
+      | field                     | value                      |
+      | eserviceTemplateId        | :eserviceTemplateId        |
+      | eserviceTemplateVersionId | :eserviceTemplateVersionId |
+
+  Scenario: [M2M_TEMPLATE_ESERVICE_CALLBACK_INTERFACE_2] Verifica dell'emissione dell'evento di tracciamento dopo la modifica
+  di un'interfaccia di callback in un template e-service asincrono.
+
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template asincrono in modalità erogazione con tecnologia "REST" in stato di DRAFT
+    And si ottiene response status code 200
+    And l'e-service template creato è configurato come asincrono
+    And l'utente modifica la versione dell'e-service template con:
+      | voucherLifespan                               | 6000 |
+      | asyncExchangeProperties.responseTime          | 100  |
+      | asyncExchangeProperties.resourceAvailableTime | 100  |
+      | asyncExchangeProperties.maxResultSet          | 100  |
+      | asyncExchangeProperties.confirmation          | true |
+      | asyncExchangeProperties.bulk                  | true |
+    And si ottiene status code 200
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+    And l'utente effettua l'aggiunta di un documento di tipo ASYNC_EXCHANGE_CALLBACK_INTERFACE alla versione dell'e-service template con successo
+    When l'utente tenta la modifica di un documento di tipo ASYNC_EXCHANGE_CALLBACK_INTERFACE
+    And la modifica del documento di tipo ASYNC_EXCHANGE_CALLBACK_INTERFACE dell'e-service template è stata effettuata correttamente
+    Then "PA1" visualizza l'evento EServiceTemplateVersionAsyncExchangeCallbackInterfaceUpdated con:
+      | field                     | value                      |
+      | eserviceTemplateId        | :eserviceTemplateId        |
+      | eserviceTemplateVersionId | :eserviceTemplateVersionId |
+
+  Scenario: [M2M_TEMPLATE_ESERVICE_CALLBACK_INTERFACE_3] Verifica dell'emissione dell'evento di tracciamento dopo l'eliminazione
+  di un'interfaccia di callback in un template e-service asincrono.
+
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template asincrono in modalità erogazione con tecnologia "REST" in stato di DRAFT
+    And si ottiene response status code 200
+    And l'e-service template creato è configurato come asincrono
+    And l'utente modifica la versione dell'e-service template con:
+      | voucherLifespan                               | 6000 |
+      | asyncExchangeProperties.responseTime          | 100  |
+      | asyncExchangeProperties.resourceAvailableTime | 100  |
+      | asyncExchangeProperties.maxResultSet          | 100  |
+      | asyncExchangeProperties.confirmation          | true |
+      | asyncExchangeProperties.bulk                  | true |
+    And si ottiene status code 200
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+    And l'utente effettua l'aggiunta di un documento di tipo ASYNC_EXCHANGE_CALLBACK_INTERFACE alla versione dell'e-service template con successo
+    When l'utente effettua la cancellazione del documento di tipo ASYNC_EXCHANGE_CALLBACK_INTERFACE dall'e-service template con successo
+    Then "PA1" visualizza l'evento EServiceTemplateVersionAsyncExchangeCallbackInterfaceDeleted con:
+      | field                     | value                      |
+      | eserviceTemplateId        | :eserviceTemplateId        |
+      | eserviceTemplateVersionId | :eserviceTemplateVersionId |
+
+  Scenario: [M2M_ESERVICE_CALLBACK_INTERFACE_1] Verifica dell'emissione dell'evento di tracciamento dopo l'aggiunta
+  di un'interfaccia di callback a un e-service asincrono.
+
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service asincrono con un descrittore in stato "DRAFT" con:
+      | asyncExchangeProperties.responseTime          | 10   |
+      | asyncExchangeProperties.resourceAvailableTime | 10   |
+      | asyncExchangeProperties.confirmation          | true |
+      | asyncExchangeProperties.bulk                  | true |
+      | asyncExchangeProperties.maxResultSet          | 50   |
+    And si ottiene status code 200
+    And "PA1" ha già caricato un'interfaccia per quel descrittore
+    When "PA1" ha già caricato un'interfaccia di callback per quel descrittore
+    And si ottiene status code 200
+    Then "PA1" visualizza l'evento EServiceDescriptorAsyncExchangeCallbackInterfaceAdded con:
+      | field                | value                 |
+      | eserviceId           | :eserviceId           |
+      | descriptorId         | :descriptorId         |
+      | producerDelegationId | :producerDelegationId |
+
+  Scenario: [M2M_ESERVICE_CALLBACK_INTERFACE_2] Verifica dell'emissione dell'evento di tracciamento dopo la modifica
+  di un'interfaccia di callback a un e-service asincrono.
+
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service asincrono con un descrittore in stato "DRAFT" con:
+      | asyncExchangeProperties.responseTime          | 10   |
+      | asyncExchangeProperties.resourceAvailableTime | 10   |
+      | asyncExchangeProperties.confirmation          | true |
+      | asyncExchangeProperties.bulk                  | true |
+      | asyncExchangeProperties.maxResultSet          | 50   |
+    And si ottiene status code 200
+    And "PA1" ha già caricato un'interfaccia per quel descrittore
+    And "PA1" ha già caricato un'interfaccia di callback per quel descrittore
+    And si ottiene status code 200
+    When l'utente aggiorna il nome dell'interfaccia di callback per quel descrittore
+    And si ottiene status code 200
+    Then "PA1" visualizza l'evento EServiceDescriptorAsyncExchangeCallbackInterfaceAdded con:
+      | field                | value                 |
+      | eserviceId           | :eserviceId           |
+      | descriptorId         | :descriptorId         |
+      | producerDelegationId | :producerDelegationId |
+
+  Scenario: [M2M_ESERVICE_CALLBACK_INTERFACE_3] Verifica dell'emissione dell'evento di tracciamento dopo l'eliminazione
+  di un'interfaccia di callback in un e-service asincrono.
+
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service asincrono con un descrittore in stato "DRAFT" con:
+      | asyncExchangeProperties.responseTime          | 10   |
+      | asyncExchangeProperties.resourceAvailableTime | 10   |
+      | asyncExchangeProperties.confirmation          | true |
+      | asyncExchangeProperties.bulk                  | true |
+      | asyncExchangeProperties.maxResultSet          | 50   |
+    And si ottiene status code 200
+    And "PA1" ha già caricato un'interfaccia per quel descrittore
+    And "PA1" ha già caricato un'interfaccia di callback per quel descrittore
+    And si ottiene status code 200
+    When l'utente cancella quell'interfaccia di callback
+    Then "PA1" visualizza l'evento EServiceDescriptorAsyncExchangeCallbackInterfaceDeleted con:
+      | field                | value                 |
+      | eserviceId           | :eserviceId           |
+      | descriptorId         | :descriptorId         |
+      | producerDelegationId | :producerDelegationId |

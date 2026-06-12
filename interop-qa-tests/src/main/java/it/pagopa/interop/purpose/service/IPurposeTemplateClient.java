@@ -38,4 +38,7 @@ public interface IPurposeTemplateClient extends SettableBearerToken {
     PurposeTemplate updatePurposeTemplate(UUID purposeTemplateId, PurposeTemplateSeed purposeTemplateSeed) throws RestClientException;
 
     PurposeTemplates getPurposeTemplates(Integer offset, Integer limit, String purposeTitle, List<UUID> creatorIds, List<UUID> eserviceIds, List<it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplateState> states, it.pagopa.interop.generated.openapi.clients.m2mGateway.model.TargetTenantKind targetTenantKind, Boolean handlesPersonalData);
+    LinkableResources getPurposeTemplateLinkableResources(UUID purposeTemplateId, Integer offset, Integer limit, String q, List<UUID> publisherIds);
+    LinkedResource linkResourceToPurposeTemplate(UUID purposeTemplateId, LinkableResourceRequest linkableResourceRequest);
+    void unlinkResourceFromPurposeTemplate(UUID purposeTemplateId, LinkableResourceRequest linkableResourceRequest);
 }

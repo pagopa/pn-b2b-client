@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 
+import static java.util.Objects.nonNull;
+
 @Slf4j
 public class AgreementActivateSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
@@ -102,22 +104,48 @@ public class AgreementActivateSteps {
     }
 
 
-    @Given("l'-eservice ha questa configurazione:")
+    @Given("l'e-service ha questa configurazione:")
     public void eServiceHasThisConfiguration(DataTable dataTable) {
 
-        ProducerEServiceDescriptor eServiceDescriptor = this.clientTokenConfigurator.getEServiceClient().getEServiceDescriptor(
-                sharedStepsContext.getEServicesCommonContext().getEserviceId(),
-                sharedStepsContext.getEServicesCommonContext().getDescriptorId()
-        );
-
         Map<String, String> attributes = dataTable.asMap();
+
+        boolean waitForAsyncProps = attributes.keySet().stream()
+            .anyMatch(key -> key.startsWith("asyncExchangeProperties."));
+
+        ProducerEServiceDescriptor eServiceDescriptor = sharedStepsContext.getPollingService().makePolling(
+                () -> this.clientTokenConfigurator.getEServiceClient().getEServiceDescriptor(
+                        sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                        sharedStepsContext.getEServicesCommonContext().getDescriptorId()
+                ),
+                res -> (!waitForAsyncProps) || nonNull(res.getAsyncExchangeProperties()),
+                res -> "Le async property del descrittore risultano non impostate"
+        );
 
         if (attributes.containsKey("dailyCallsPerConsumer")) {
             Assertions.assertEquals(Integer.parseInt(attributes.get("dailyCallsPerConsumer")), eServiceDescriptor.getDailyCallsPerConsumer());
         }
-
         if (attributes.containsKey("dailyCallsTotal")) {
             Assertions.assertEquals(Integer.parseInt(attributes.get("dailyCallsTotal")), eServiceDescriptor.getDailyCallsTotal());
+        }
+        if (attributes.containsKey("asyncExchangeProperties.responseTime")) {
+            Assertions.assertNotNull(eServiceDescriptor.getAsyncExchangeProperties());
+            Assertions.assertEquals(Integer.parseInt(attributes.get("asyncExchangeProperties.responseTime")), eServiceDescriptor.getAsyncExchangeProperties().getResponseTime());
+        }
+        if (attributes.containsKey("asyncExchangeProperties.resourceAvailableTime")) {
+            Assertions.assertNotNull(eServiceDescriptor.getAsyncExchangeProperties());
+            Assertions.assertEquals(Integer.parseInt(attributes.get("asyncExchangeProperties.resourceAvailableTime")), eServiceDescriptor.getAsyncExchangeProperties().getResourceAvailableTime());
+        }
+        if (attributes.containsKey("asyncExchangeProperties.confirmation")) {
+            Assertions.assertNotNull(eServiceDescriptor.getAsyncExchangeProperties());
+            Assertions.assertEquals(Boolean.parseBoolean(attributes.get("asyncExchangeProperties.confirmation")), eServiceDescriptor.getAsyncExchangeProperties().getConfirmation());
+        }
+        if (attributes.containsKey("asyncExchangeProperties.bulk")) {
+            Assertions.assertNotNull(eServiceDescriptor.getAsyncExchangeProperties());
+            Assertions.assertEquals(Boolean.parseBoolean(attributes.get("asyncExchangeProperties.bulk")), eServiceDescriptor.getAsyncExchangeProperties().getBulk());
+        }
+        if (attributes.containsKey("asyncExchangeProperties.maxResultSet")) {
+            Assertions.assertNotNull(eServiceDescriptor.getAsyncExchangeProperties());
+            Assertions.assertEquals(Integer.parseInt(attributes.get("asyncExchangeProperties.maxResultSet")), eServiceDescriptor.getAsyncExchangeProperties().getMaxResultSet());
         }
     }
 

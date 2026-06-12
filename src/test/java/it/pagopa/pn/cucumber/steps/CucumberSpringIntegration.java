@@ -162,6 +162,7 @@ import it.pagopa.pn.cucumber.steps.paperTracker.proxy.PaperTrackerSchemaValidato
 import it.pagopa.pn.cucumber.steps.templateEngine.TemplateConfiguration;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextFactory;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
+import it.pagopa.pn.cucumber.steps.utilitySteps.TaxIdConfiguration;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import it.pagopa.pn.cucumber.utils.validator.SchemaValidator;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -201,6 +202,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnB2bClientTimingConfigs.class,
         PnPollingFactory.class,
         CieGeneratorTool.class,
+        TaxIdConfiguration.class,
 
         PnPollingServiceTimelineRapidV1.class,
         PnPollingServiceStatusRapidV1.class,
