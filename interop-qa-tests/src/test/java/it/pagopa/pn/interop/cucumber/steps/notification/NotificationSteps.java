@@ -31,6 +31,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 @Slf4j
@@ -393,32 +394,48 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
     /* 08 05 2026: terza versione */
     @Then("l'utente {string} di {string} ha ricevuto la notifica in-app contenente il link {deepLink}")
     public void checkInAppNotificationBody(String role, String tenant, DeepLinkType deepLinkType, String message) {
-        // TODO usare polling
-        try {
-            Thread.sleep(8000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
-        Set<Notification> notifications = notificationStore.get(NotificationUser.of(role, tenant));
         message = message.replace("\n", " ");
-
         String deepLink = resolveLabelsWithSharedContext(deepLinkType.getValue());
         String finalMessage = resolveLabelsWithSharedContext(message);
 
-        assertThat(notifications)
-                .as("Verifica che almeno una notifica soddisfi i pattern di body e deepLink")
-                .anySatisfy(notif -> {
-                    assertThat(notif.getBody()).isEqualTo(finalMessage);
-                    if (!deepLink.isEmpty()) assertThat(notif.getDeepLink()).isEqualTo(deepLink);
-                    //assertThat(notif.getBody()).matches(finalMessage);
-                    //if (!deepLink.isEmpty()) assertThat(notif.getDeepLink()).matches(deepLink);
-                });
+        PollingService.makePolling(
+                () -> (notificationStore.get(NotificationUser.of(role, tenant))),
+                all -> {
+                    try {
+                        assertThat(all)
+                                .as("Check in-app body message and deep link")
+                                .anySatisfy(notif -> {
+                                    assertThat(notif.getBody()).isEqualTo(finalMessage);
+                                    if (!deepLink.isEmpty()) assertThat(notif.getDeepLink()).isEqualTo(deepLink);
+                                });
+                        return true;
+                    } catch (AssertionError e) {
+                        return false;
+                    }
+                },
+                "Not Found notification: \"" + finalMessage + "\" with DeepLink " + deepLink,
+                3,
+                3000
+        );
     }
 
     @Then("l'utente {string} di {string} ha ricevuto la notifica in-app")
     public void checkInAppNotificationBody(String role, String tenant, String message) {
         checkInAppNotificationBody(role, tenant, DeepLinkType.NO_DEEP_LINK, message);
+    }
+
+    @Then("l'utente {string} di {string} non ha ricevuto la notifica in-app")
+    public void checkNoInAppNotificationBody(String role, String tenant, String message) {
+        try {
+            checkInAppNotificationBody(role, tenant, DeepLinkType.NO_DEEP_LINK, message);
+            Assertions.fail("Found not expected notification");
+        } catch (Exception e) {
+            Assertions.assertTrue(
+                    e.getMessage().contains("Expected notification not found"),
+                    "In-app notification failed, but not for the reason: Found not expected notification." +
+                    "Actual reason: " + e.getMessage()
+            );
+        }
     }
 
     private String resolveLabelsWithSharedContext(String textTemplate) {
