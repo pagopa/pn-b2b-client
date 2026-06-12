@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.notification.model;
 
 public enum DeepLinkType {
+    NO_DEEP_LINK(""),
     CATALOGO_E_SERVICE("/catalogo-e-service/$DA_CONTESTO(eServiceId)/$DA_CONTESTO(descriptorId)"),
     API_E_SERVICE("/gestione-client/api-e-service/$DA_CONTESTO(clientId)"),
     E_SERVICE_EROGAZIONE("/erogazione/e-service/$DA_CONTESTO(eServiceId)/$DA_CONTESTO(descriptorId)"),

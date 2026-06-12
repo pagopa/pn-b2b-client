@@ -410,8 +410,13 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
                     //assertThat(notif.getBody()).isEqualTo(finalMessage);
                     //assertThat(notif.getDeepLink()).isEqualTo(deepLink);
                     assertThat(notif.getBody()).matches(finalMessage);
-                    assertThat(notif.getDeepLink()).matches(deepLink);
+                    if (!deepLink.isEmpty()) assertThat(notif.getDeepLink()).matches(deepLink);
                 });
+    }
+
+    @Then("l'utente {string} di {string} ha ricevuto la notifica in-app")
+    public void checkInAppNotificationBody(String role, String tenant, String message) {
+        checkInAppNotificationBody(role, tenant, DeepLinkType.NO_DEEP_LINK, message);
     }
 
     private String resolveLabelsWithSharedContext(String textTemplate) {
