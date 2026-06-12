@@ -517,7 +517,7 @@ Feature: Correzione timeline fase 3 costi
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEvent>"
     And pre restart vengono recuperati i valori dei costi notifica relativi all'utente 0 sulla tabella pn-CostComponents
-    And pre restart vengono recuperati i valori dei costi notifica relativi al pagamento 0 dell'utente 0 sulla tabella pn-CostUpdateResult all'attempt <attempt>
+    And pre restart vengono recuperati i valori dei costi notifica relativi al pagamento 0 dell'utente 0 sulla tabella pn-CostUpdateResult fino all'attempt <attempt>
     And pre restart verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attempt>
     And vengono letti gli eventi fino allo stato della notifica "<finalStatus>"
     When viene invocata una richiesta di restart per la notifica appena creata con i seguenti parametri:
@@ -531,7 +531,7 @@ Feature: Correzione timeline fase 3 costi
     And vengono letti gli eventi fino allo stato della notifica "<finalStatusRestart>"
     And la timeline contiene elementi con la stringa "REWORK_"
     And post restart vengono recuperati i valori dei costi notifica relativi all'utente 0 sulla tabella pn-CostComponents
-    And post restart vengono recuperati i valori dei costi notifica relativi al pagamento 0 dell'utente 0 sulla tabella pn-CostUpdateResult all'attempt <attemptRestart>
+    And post restart vengono recuperati i valori dei costi notifica relativi al pagamento 0 dell'utente 0 sulla tabella pn-CostUpdateResult fino all'attempt <attemptRestart>
     And post restart verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attemptRestart>
     And il record recuperato su pn-CostComponents è uguale rispetto a prima del rework
     And il valore del notification cost dei record su pn-CostUpdateResult è uguale rispetto a prima del rework

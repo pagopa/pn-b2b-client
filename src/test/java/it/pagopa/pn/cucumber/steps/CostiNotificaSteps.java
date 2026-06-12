@@ -25,6 +25,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -455,8 +456,8 @@ public class CostiNotificaSteps {
         if (isBeforeRework) {
             Optional<Map<String, AttributeValue>> selectedElement = queryResponse.items().stream()
                     .filter(x -> x.containsKey("sk") && x.get("sk").s().contains("SEND_ANALOG_DOMICILE_ATTEMPT_" + attempt))
-                    .filter(x -> x.containsKey("eventTimestamp"))
-                    .min(Comparator.comparingLong(x -> Long.parseLong(x.get("eventTimestamp").n())));
+                    .filter(x -> x.containsKey("eventTimestamp") && x.get("eventTimestamp").s() != null)
+                    .min(Comparator.comparing(x -> Instant.parse(x.get("eventTimestamp").s())));
             costUpdateResultsPreRework = selectedElement
                     .filter(x -> x.containsKey("notificationCost"))
                     .map(x -> Integer.parseInt(x.get("notificationCost").n()))
@@ -464,8 +465,8 @@ public class CostiNotificaSteps {
         } else {
             Optional<Map<String, AttributeValue>> selectedElement = queryResponse.items().stream()
                     .filter(x -> x.containsKey("sk") && x.get("sk").s().contains("SEND_ANALOG_DOMICILE_ATTEMPT_" + attempt))
-                    .filter(x -> x.containsKey("eventTimestamp"))
-                    .max(Comparator.comparingLong(x -> Long.parseLong(x.get("eventTimestamp").n())));
+                    .filter(x -> x.containsKey("eventTimestamp") && x.get("eventTimestamp").s() != null)
+                    .max(Comparator.comparing(x -> Instant.parse(x.get("eventTimestamp").s())));
             costUpdateResultsPostRework = selectedElement
                     .filter(x -> x.containsKey("notificationCost"))
                     .map(x -> Integer.parseInt(x.get("notificationCost").n()))
