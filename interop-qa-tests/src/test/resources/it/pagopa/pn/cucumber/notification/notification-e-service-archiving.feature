@@ -51,3 +51,30 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
     L'e-service $DA_CONTESTO(eServiceName) è stato archiviato definitivamente il giorno $DA_CONTESTO(archivedStateDay)
     e non può più essere utilizzato.
     """
+
+  Scenario: [MANUAL_ARCHIVING_ESERVICE_SUSPENSION_NOTIFICATION_1.1] L'utente erogatore riceve una notifica nel momento in cui il suo e-service in stato di archiviazione viene sospeso
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    When l'utente sospende quel descrittore in corso di archiviazione
+
+  Scenario: [MANUAL_ARCHIVING_ESERVICE_SUSPENSION_NOTIFICATION_1.2] L'utente fruitore riceve una notifica nel momento in cui un e-service per cui ha una richiesta di fruizione attiva viene sospeso
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente sospende quel descrittore in corso di archiviazione
+
+  Scenario: [MANUAL_ARCHIVING_ESERVICE_SUSPENSION_NOTIFICATION_1.3] L'utente erogatore riceve una notifica nel momento in cui il suo e-service, in stato di archiviazione e sospeso, viene riattivato
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA1" ha già sospeso quell'e-service
+    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    When l'utente attiva il descrittore di quell'e-service
+
+  Scenario: [MANUAL_ARCHIVING_ESERVICE_SUSPENSION_NOTIFICATION_1.4] L'utente fruitore riceve una notifica quando viene riattivato un e-service sospeso per cui ha una richiesta di fruizione attiva
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA1" ha già sospeso quell'e-service
+    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    When l'utente attiva il descrittore di quell'e-service
