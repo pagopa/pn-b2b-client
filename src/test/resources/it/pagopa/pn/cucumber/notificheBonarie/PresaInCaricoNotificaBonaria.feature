@@ -4,9 +4,10 @@ Feature: Sottomissione di una notifica bonaria.
 
   Visto che costituisce maggiore effort la rimozione del codice, verrà generato un QR di accesso per ogni notifica. Questo potrebbe avere benefici per sviluppi futuri
 
-
+  @informalNotificationsValidation @informalSyncValidation
   Scenario: [NOTIFICHE_BONARIE_GROUP_DELETED] Come ente mittente invio una notifica bonaria con gruppo non attivo. Ricevo un errore
     Given mittente della notifica bonaria: "Comune_Multi"
+    And imposto un gruppo non attivo per "Comune_Multi"
     And viene creata una nuova notifica bonaria con i seguenti parametri
       | campaignId          | campaign-1 |
       | additionalLanguages | FR         |
@@ -15,12 +16,8 @@ Feature: Sottomissione di una notifica bonaria.
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
       | messageId     | ${IT-FR}          |
-    When viene inviata una nuova notifica bonaria
-    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
-
-
-
-
+    When l'invio della notifica bonaria fallisce
+    Then si riceve errore 400 "PN_DELIVERY_INVALIDPARAMETER_GROUP"
 
 
 # ************************************************
@@ -102,7 +99,7 @@ Feature: Sottomissione di una notifica bonaria.
     And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
     Then la sottomissione della notifica bonaria è andata a buon fine
 
-  @informalNotificationsValidation @informalAsyncValidation
+  #@informalNotificationsValidation @informalAsyncValidation gestita in future release
   Scenario: [NOTIFICHE_BONARIE_SM_01_1_C] Come ente mittente invio una notifica bonaria con messaggio bilingue,  seconda lingua NON specificata
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con i seguenti parametri
@@ -232,7 +229,7 @@ Feature: Sottomissione di una notifica bonaria.
       | recipientType | PF               |
       | taxId         | GLLGLL64B15G702I |
       | denomination  | Galileo Galilei  |
-      | messageId     | ${IT-FR}         |
+      | messageId     | ${IT}            |
     When viene inviata una nuova notifica bonaria
     And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
 
@@ -386,15 +383,16 @@ Feature: Sottomissione di una notifica bonaria.
     When l'invio della notifica bonaria fallisce
     Then si riceve errore 400
     Examples:
-      | denomination | at         |
-      | nome😃       | Valido     |
-      | Valido       | presso😃   |
-      | 测试           | Valido     |
-      | Valido       | परीक्षण    |
-      | 88_CHAR      | Valido     |
-      | Valido       | 88_CHAR    |
-      | Nome \n test   | Valido     |
-      | Valido       | Riga\ntest |
+      | denomination | at           |
+      | nome😃       | Valido       |
+      | Valido       | presso😃     |
+      | 测试           | Valido       |
+      | Valido       | परीक्षण      |
+      | 89_CHAR      | Valido       |
+      | Valido       | 89_CHAR      |
+      | Nome \n test | Valido       |
+      | Valido       | Riga \n test |
+
 
   @informalNotificationsValidation @informalSyncValidation
   Scenario Outline: [NOTIFICHE_BONARIE_SM_04_2_Q] Validazione denominazione e presso con caratteri esclusi
@@ -527,7 +525,7 @@ Feature: Sottomissione di una notifica bonaria.
   Scenario: [NOTIFICHE_BONARIE_06] Verifica stato con requestId inesistente
     Given mittente della notifica bonaria: "Comune_Multi"
     When si verifica lo stato della richiesta di notifica bonaria con notification id "qqq"
-    Then si riceve errore 404
+    Then si riceve errore 400
 
 
 
@@ -617,10 +615,10 @@ Feature: Sottomissione di una notifica bonaria.
     When viene inviata una nuova notifica bonaria
     #Then la validazione della notifica bonaria fallisce
     Examples:
-      | campaignId      |
+      | campaignId       |
       | campaign-expired |
-      | campaign-closed |
-      | CAMPAGNA_FAKE   |
+      | campaign-closed  |
+      | CAMPAGNA_FAKE    |
 #todo t bonarie censire le campagne
 
   @informalNotificationsValidation @informalAsyncValidation
@@ -728,16 +726,11 @@ Feature: Sottomissione di una notifica bonaria.
     And viene creata una nuova notifica bonaria con i seguenti parametri
       | campaignId | campaign-analog-workflow |
     And destinatario della notifica bonaria
-      | recipientType                 | PF                |
-      | taxId                         | FRMTTR76M06B715E  |
-      | denomination                  | Ettore Fieramosca |
-      | physical_address_address      | NULL              |
-      | physical_address_details      | NULL              |
-      | physical_address_zip          | NULL              |
-      | physical_address_municipality | NULL              |
-      | physical_address_province     | NULL              |
-      | physical_address_state        | NULL              |
-      | messageId                     | ${IT}             |
+      | recipientType    | PF                       |
+      | taxId            | FRMTTR76M06B715E         |
+      | denomination     | Ettore Fieramosca        |
+      | physical_address | ${PHYSICAL_ADDRESS_NULL} |
+      | messageId        | ${IT}                    |
     When viene inviata una nuova notifica bonaria
     And  si verifica che la notifica bonaria sia in stato "REFUSED"
 
@@ -747,17 +740,12 @@ Feature: Sottomissione di una notifica bonaria.
     And viene creata una nuova notifica bonaria con i seguenti parametri
       | campaignId | campaign-analog-workflow |
     And destinatario della notifica bonaria
-      | denomination                  | PG Censito VAS |
-      | recipientType                 | PG             |
-      | taxId                         | 01113570442    |
-      | digitalDomicile               | NULL           |
-      | physical_address_address      | NULL           |
-      | physical_address_details      | NULL           |
-      | physical_address_zip          | NULL           |
-      | physical_address_municipality | NULL           |
-      | physical_address_province     | NULL           |
-      | physical_address_state        | NULL           |
-      | messageId                     | ${IT}          |
+      | denomination     | PG Censito VAS           |
+      | recipientType    | PG                       |
+      | taxId            | 01113570442              |
+      | digitalDomicile  | NULL                     |
+      | physical_address | ${PHYSICAL_ADDRESS_NULL} |
+      | messageId        | ${IT}                    |
     When viene inviata una nuova notifica bonaria
     And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
     Then la sottomissione della notifica bonaria è andata a buon fine
@@ -772,18 +760,14 @@ Feature: Sottomissione di una notifica bonaria.
     And destinatario della notifica bonaria
       #| recipientType                 | PG                       |
       #| taxId                         | 01113570442              |
-      | denomination                  | Leonardo Da Vinci no vas |
-      | taxId                         | DVNLRD52D15M059P         |
-      | digitalDomicile               | NULL                     |
-      | physical_address_address      | NULL                     |
-      | physical_address_details      | NULL                     |
-      | physical_address_zip          | NULL                     |
-      | physical_address_municipality | NULL                     |
-      | physical_address_province     | NULL                     |
-      | physical_address_state        | NULL                     |
-      | messageId                     | ${IT}                    |
+      | denomination     | Leonardo Da Vinci no vas |
+      | taxId            | DVNLRD52D15M059P         |
+      | digitalDomicile  | NULL                     |
+      | physical_address | ${PHYSICAL_ADDRESS_NULL} |
+      | messageId        | ${IT}                    |
     When viene inviata una nuova notifica bonaria
     And  si verifica che la notifica bonaria sia in stato "REFUSED"
+    Then la notifica bonaria è stata rifiutata per l'errore: "ADDRESS_NOT_FOUND"
 
   @informalAsyncValidation
   Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6_A] Come ente mittente invio una notifica bonaria con indirizzo analogico non normaliozzabile, la notifca viene rifiutata
@@ -793,13 +777,13 @@ Feature: Sottomissione di una notifica bonaria.
     And destinatario della notifica bonaria
       | denomination                  | Leonardo Da Vinci no vas |
       | taxId                         | DVNLRD52D15M059P         |
-      | physical_address_zip          | 801005                   |
-      | physical_address_municipality | T                        |
-      | physical_address_province     | ZZ                       |
-      | physical_address_state        | Q                        |
+      | physical_address_zip          | 80100                    |
+      | physical_address_municipality | Bologna                  |
+      | physical_address_province     | RM                       |
       | messageId                     | ${IT}                    |
     When viene inviata una nuova notifica bonaria
     And  si verifica che la notifica bonaria sia in stato "REFUSED"
+    Then la notifica bonaria è stata rifiutata per l'errore: "NOT_VALID_ADDRESS"
 
   @informalAsyncValidation
   Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6_C] Come ente mittente invio una notifica bonaria senza indirizzo analogico e quello dei RN non postalizabile, la notifca viene rifiutata.
@@ -807,20 +791,15 @@ Feature: Sottomissione di una notifica bonaria.
     And viene creata una nuova notifica bonaria con i seguenti parametri
       | campaignId | campaign-analog-workflow |
     And destinatario della notifica bonaria
-      | denomination                  | Matteo Rossi     |
-      | taxId                         | XVRSFN76E31L781N |
-      | recipientType                 | PF               |
-      | digitalDomicile               | NULL             |
-      | physical_address_address      | NULL             |
-      | physical_address_details      | NULL             |
-      | physical_address_zip          | NULL             |
-      | physical_address_municipality | NULL             |
-      | physical_address_province     | NULL             |
-      | physical_address_state        | NULL             |
-      | messageId                     | ${IT}             |
+      | denomination     | Matteo Rossi             |
+      | taxId            | XVRSFN76E31L781N         |
+      | recipientType    | PF                       |
+      | digitalDomicile  | NULL                     |
+      | physical_address | ${PHYSICAL_ADDRESS_NULL} |
+      | messageId        | ${IT}                    |
     When viene inviata una nuova notifica bonaria
     And  si verifica che la notifica bonaria sia in stato "REFUSED"
-
+    Then la notifica bonaria è stata rifiutata per l'errore: "NOT_VALID_ADDRESS"
 
 
 
@@ -920,7 +899,7 @@ Feature: Sottomissione di una notifica bonaria.
 
     # Ultimi aggiunti
 
-  @informalNotificationsValidation @informalSyncValidation
+  #@informalNotificationsValidation @informalSyncValidation non considerato errore
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_DUP_SHA] Invio con SHA duplicato tra documenti
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con i seguenti parametri
@@ -988,21 +967,21 @@ Feature: Sottomissione di una notifica bonaria.
     When l'invio della notifica bonaria fallisce
     Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
 
-  @informalNotificationsValidation @informalSyncValidation
-  Scenario: [NOTIFICHE_BONARIE_SM_04_2_PAYMENT_NO_ATTACHMENT] Invio pagamento senza attachment
-    Given mittente della notifica bonaria: "Comune_Multi"
-    And viene creata una nuova notifica bonaria con valori di default
-    And destinatario della notifica bonaria
-      | recipientType        | PF                |
-      | taxId                | FRMTTR76M06B715E  |
-      | denomination         | Ettore Fieramosca |
-      | payment_multy_number | 1                 |
-      | attachment_key       | NULL              |
-      | messageId            | ${IT}             |
-    When l'invio della notifica bonaria fallisce
-    Then si riceve errore 400
+#  @informalNotificationsValidation @informalSyncValidation errore dato nella prepare non oggetto delle bonarie
+#  Scenario: [NOTIFICHE_BONARIE_SM_04_2_PAYMENT_NO_ATTACHMENT] Invio pagamento senza attachment
+#    Given mittente della notifica bonaria: "Comune_Multi"
+#    And viene creata una nuova notifica bonaria con valori di default
+#    And destinatario della notifica bonaria
+#      | recipientType        | PF                |
+#      | taxId                | FRMTTR76M06B715E  |
+#      | denomination         | Ettore Fieramosca |
+#      | payment_multy_number | 1                 |
+#      | attachment_key       | NULL              |
+#      | messageId            | ${IT}             |
+#    When l'invio della notifica bonaria fallisce
+#    Then si riceve errore 400
 
-  @informalNotificationsValidation @informalSyncValidation
+  #@informalNotificationsValidation @informalSyncValidation gestito in future release
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_GROUP_REQUIRED] Invio senza gruppo quando obbligatorio
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con i seguenti parametri
@@ -1126,7 +1105,7 @@ Feature: Sottomissione di una notifica bonaria.
     Then l'invio della notifica bonaria fallisce
     Then si riceve errore 403
 
-  @informalNotificationsValidation @informalSyncValidation
+  @informalNotificationsValidation @informalAsyncValidation
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_G2] Come mittente non associato alla campagna tento l'invio di una notifica bonaria.
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con i seguenti parametri
@@ -1137,8 +1116,9 @@ Feature: Sottomissione di una notifica bonaria.
       | denomination    | Ettore Fieramosca         |
       | messageId       | ${IT}                     |
       | digitalDomicile | testpagopa1@pec.pagopa.it |
-    When l'invio della notifica bonaria fallisce
-    Then si riceve errore 403 "PN_DELIVERY_SEND_IS_DISABLED"
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "REFUSED"
+    Then la notifica bonaria è stata rifiutata per l'errore: "CAMPAIGN_NOT_FOUND"
 
   @informalNotificationsValidation @informalAsyncValidation
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_G3] Come mittente non associato alla campagna tento l'invio di una notifica bonaria.

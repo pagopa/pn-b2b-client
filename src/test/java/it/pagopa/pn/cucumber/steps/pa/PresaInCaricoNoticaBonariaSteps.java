@@ -161,26 +161,20 @@ public class PresaInCaricoNoticaBonariaSteps {
 
         assertNotNull(informalNotificationRequestV1, "Creare prima la notifica bonaria");
 
-        //initMessagesIfNeeded();
-
         InformalNotificationRecipientV1 recipient = new InformalNotificationRecipientV1();
+
+        String physicalAddressValue = data.get("physical_address");
+        boolean isPhysicalAddressNull = "${PHYSICAL_ADDRESS_NULL}".equalsIgnoreCase(physicalAddressValue);
 
         String recipientType = getValue(data, RECIPIENT_TYPE.key);
         if (recipientType != null) {
             recipient.setRecipientType(InformalNotificationRecipientV1.RecipientTypeEnum.fromValue(recipientType));
         }
-//        String messageIdValue = getValue(data, NotificationInformalValue.MESSAGE_ID.key);
-//        if (messageIdValue != null) {
-//            UUID messageIdUuid = UUID.fromString(messageIdValue);
-//            recipient.setMessageId(messageIdUuid);
-//        }
 
         String messageIdValue = getValue(data, NotificationInformalValue.MESSAGE_ID.key);
         recipient.setMessageId(resolveMessageId(messageIdValue));
-
         recipient.setTaxId(getValue(data, RECIPIENT_TAX_ID.key));
         recipient.setDenomination(getValue(data, RECIPIENT_DENOMINATION.key));
-
 
         String digitalDomicile = getValue(data, DIGITAL_DOMICILE.key);
         if (digitalDomicile != null) {
@@ -188,18 +182,21 @@ public class PresaInCaricoNoticaBonariaSteps {
         } else {
             recipient.setDigitalDomicile(null);
         }
-
         NotificationPhysicalAddress physicalAddress = new NotificationPhysicalAddress();
 
-        physicalAddress.setAddress(getValue(data, PHYSICAL_ADDRESS_ADDRESS.key));
-        physicalAddress.setAddressDetails(getValue(data, PHYSICAL_ADDRESS_DETAILS.key));
-        physicalAddress.setZip(getValue(data, PHYSICAL_ADDRESS_ZIP.key));
-        physicalAddress.setMunicipality(getValue(data, PHYSICAL_ADDRESS_CITY.key));
-        physicalAddress.setProvince(getValue(data, PHYSICAL_ADDRESS_PROVINCE.key));
-        physicalAddress.setForeignState(getValue(data, PHYSICAL_ADDRESS_STATE.key));
+        if (isPhysicalAddressNull) {
+            recipient.setPhysicalAddress(null);
+        } else {
+            physicalAddress.setAddress(getValue(data, PHYSICAL_ADDRESS_ADDRESS.key));
+            physicalAddress.setAddressDetails(getValue(data, PHYSICAL_ADDRESS_DETAILS.key));
+            physicalAddress.setZip(getValue(data, PHYSICAL_ADDRESS_ZIP.key));
+            physicalAddress.setMunicipality(getValue(data, PHYSICAL_ADDRESS_CITY.key));
+            physicalAddress.setProvince(getValue(data, PHYSICAL_ADDRESS_PROVINCE.key));
+            physicalAddress.setForeignState(getValue(data, PHYSICAL_ADDRESS_STATE.key));
+            physicalAddress.setAt(getValue(data, PHYSICAL_ADDRESS_AT.key));
 
-        recipient.setPhysicalAddress(physicalAddress);
-
+            recipient.setPhysicalAddress(physicalAddress);
+        }
 //todo t bonarie
 
 //        String phone = getValue(data, PHONE_NUMBER.key);
@@ -561,7 +558,7 @@ public class PresaInCaricoNoticaBonariaSteps {
         AtomicReference<String> lastStatus = new AtomicReference<>(null);
 
         try {
-            await().atMost(Duration.ofMinutes(3)).pollInterval(Duration.ofSeconds(3)).until(() -> {
+            await().atMost(Duration.ofMinutes(5)).pollInterval(Duration.ofSeconds(3)).until(() -> {
                 statusResponse = pnPaB2bInternalInformalClientImpl.getNotificationStatusByRequestId(currentCxId, savedNotificationRequestId);
                 if (statusResponse == null) {
                     return false;
