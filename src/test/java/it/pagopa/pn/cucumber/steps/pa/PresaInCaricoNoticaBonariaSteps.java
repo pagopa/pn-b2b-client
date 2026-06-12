@@ -573,7 +573,7 @@ public class PresaInCaricoNoticaBonariaSteps {
             });
 
         } catch (Exception e) {
-            throw new AssertionError("Stato finale non valido.\n" + "Atteso: " + expectedStatus + "\n" + "Ultimo stato ricevuto: " + lastStatus.get(), e);
+            throw new AssertionError("Stato finale non valido.\n" + "Atteso: " + expectedStatus + "\n" + "Ultimo stato ricevuto: " + lastStatus.get()+ "\n" + "Response: "+ statusResponse, e);
 
         } finally {
             log.info("=== RESPONSE FINALE NOTIFICA ===");

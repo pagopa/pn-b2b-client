@@ -493,7 +493,7 @@ Feature: Sottomissione di una notifica bonaria.
     And si verifica lo stato della richiesta di notifica bonaria
     Then l'operazione non ha generato errori
 
-  @informalNotificationsValidation
+  @informalNotificationsValidation @informalAsyncValidation
   Scenario: [NOTIFICHE_BONARIE_06_1_B] Come ente mittente creo una notifica bonaria e tento la visualizzazione da ente diverso , ricevendo un errore.
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con valori di default
@@ -508,7 +508,7 @@ Feature: Sottomissione di una notifica bonaria.
     When si verifica lo stato della richiesta di notifica bonaria
     Then si riceve errore 404
 
-  @informalNotificationsValidation
+  @informalNotificationsValidation @informalAsyncValidation
   Scenario: [NOTIFICHE_BONARIE_06_1_B3] Come ente mittente creo una notifica bonaria e tento la visualizzazione da ente diverso , ricevendo un errore.
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con valori di default
@@ -523,7 +523,7 @@ Feature: Sottomissione di una notifica bonaria.
     When si verifica lo stato della richiesta di notifica bonaria
     Then si riceve errore 404
 
-  @informalNotificationsValidation
+  @informalNotificationsValidation @informalAsyncValidation
   Scenario: [NOTIFICHE_BONARIE_06] Verifica stato con requestId inesistente
     Given mittente della notifica bonaria: "Comune_Multi"
     When si verifica lo stato della richiesta di notifica bonaria con notification id "qqq"
@@ -831,7 +831,7 @@ Feature: Sottomissione di una notifica bonaria.
 #  *****SCENARIO   - AUDIT-LOG
 # ***********************************************
 
-  @informalNotificationsValidation
+  @informalNotificationsValidation @informalAsyncValidation
   Scenario: [NOTIFICHE_BONARIE_AUDITLOG_02_1] Come ente mittente invio una notifica bonaria e vengono generati i corretti auditlog in pn-delivery
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con i seguenti parametri
@@ -856,7 +856,7 @@ Feature: Sottomissione di una notifica bonaria.
       | param1 | AUD_COM_CHECK |
       | param2 | SUCCESS       |
 
-  @informalNotificationsValidation
+  @informalNotificationsValidation @informalAsyncValidation
   Scenario: [NOTIFICHE_BONARIE_WF_1] Come ente mittente invio una notifica bonaria e vengono generati i corretti auditlog in pn-workflow-manager
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con i seguenti parametri
@@ -879,7 +879,7 @@ Feature: Sottomissione di una notifica bonaria.
       | param2 | recIndex=0              |
       | pippo  | phase=VALIDATION        |
 
-  @informalNotificationsValidation
+  @informalNotificationsValidation @informalAsyncValidation
   Scenario: [NOTIFICHE_BONARIE_WF_1_B] Come ente mittente invio una notifica bonaria e vengono generati i corretti log in pn-workflow-manager
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con i seguenti parametri
