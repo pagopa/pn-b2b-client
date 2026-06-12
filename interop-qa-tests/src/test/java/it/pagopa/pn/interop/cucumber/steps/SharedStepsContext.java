@@ -80,7 +80,7 @@ public class SharedStepsContext {
         tenantCommonContext = new TenantCommonContext();
     }
 
-    @Before(order = Integer.MIN_VALUE)
+    @Before(order = Integer.MIN_VALUE + 1)
     public void configLog(Scenario scenario) {
         MDC.clear();
         MDC.put("scenarioId", extractScenarioId(scenario.getName()));

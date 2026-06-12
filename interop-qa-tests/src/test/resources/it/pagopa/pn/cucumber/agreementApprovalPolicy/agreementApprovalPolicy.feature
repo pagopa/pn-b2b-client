@@ -46,7 +46,7 @@ Feature: Test modificabilità campo "agreementApprovalPolicy"
       | ARCHIVED  |
       | DRAFT     |
 
-  @app-edit-ff-on @deleghe2
+  @app-edit-ff-on @delega-erogazione
   Scenario: [MOD_APP_ON_2_B] Il campo "agreementApprovalPolicy" di un e-service in stato WAITING_FOR_APPROVAL non può essere modificato
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente è un "admin" di "PA2"
@@ -97,6 +97,7 @@ Feature: Test modificabilità campo "agreementApprovalPolicy"
       | DEPRECATED            |
 
   @app-edit-ff-off
+  @delega-erogazione
   Scenario: [MOD_APP_OFF_1_B] Il campo "agreementApprovalPolicy" di un e-service in stato WAITING_FOR_APPROVAL non può essere modificato
     Given l'ente "PA2" concede la disponibilità a ricevere deleghe
     And l'utente è un "admin" di "PA1"

@@ -129,6 +129,7 @@ Feature: Aggiornamento di un e-service non pubblicato
 
   @eservice_published_delegation
   @happy-path
+  @delega-erogazione
   Scenario Outline: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_06] Per un e-service creato dall'ente delegante, il quale ha un solo descrittore in stato NON DRAFT, è possibile modificare i flag di delega da parte dell'ente delegato in erogazione
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
@@ -152,6 +153,7 @@ Feature: Aggiornamento di un e-service non pubblicato
       | DEPRECATED      | true                | false                   | %actual    |
 
   @eservice_published_delegation
+  @delega-erogazione
   @sad-path
   Scenario Outline: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_07] Per un e-service creato dall'ente delegante, in stato NON DRAFT,NON è possibile modificare i flag di delega da parte dell'ente delegato in erogazione nel caso di parametri obbligatori mancanti o errati
     Given l'ente delegante "PA1"

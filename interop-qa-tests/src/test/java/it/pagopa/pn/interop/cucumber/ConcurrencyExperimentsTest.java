@@ -11,10 +11,10 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         @ConfigurationParameter(
                 key = PLUGIN_PROPERTY_NAME,
                 value = "pretty," +
-                        "json:target/cucumber-report-m2mv3.json," +
-                        "html:target/cucumber-report-m2mv3.html," +
+                        "json:target/cucumber-report-nrt-bff-m2mv2.json," +
+                        "html:target/cucumber-report-nrt-bff-m2mv2.html," +
                         "it.pagopa.pn.interop.cucumber.plugins.SetApiProfilePropsPlugin:" +
-                        "api.m2m.version=V3;" +
+                        "api.m2m.version=V2;" +
                         "api.mode=RIGHT_FIT;" +
                         "api.set=M2M;" +
                         "api.bff.version=V1"
@@ -25,17 +25,18 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         @ConfigurationParameter(key = "junit.jupiter.execution.parallel.enabled", value = "true"),
         @ConfigurationParameter(key = "junit.jupiter.execution.parallel.mode.default", value = "concurrent"),
 
+        @ConfigurationParameter(key = "junit.jupiter.execution.parallel.config.strategy", value = "fixed"),
+        @ConfigurationParameter(key = "cucumber.execution.parallel.config.fixed.parallelism", value = "30"),
+
         // abilita parallelismo Cucumber
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
+
+        @ConfigurationParameter(key = "cucumber.execution.execution-mode.scenario", value = "concurrent"),
+        @ConfigurationParameter(key = "cucumber.execution.exclusive-resources.vincolato.read-write", value = "@concurrency-exp_vincolato"),
 })
 @ExcludeTags({"wait_for_fix", "ignore"})
-@IncludeTags({// M2M
-        "m2m-agreements", "m2m-purposes", "m2m-attributes", "m2m-eservices", "m2m-agreements-parte2-luglio",
-        "m2m-parte2-agosto-rilascio1", "m2m-parte2-agosto-rilascio2", "m2m-parte2-settembre",
-        "m2m-parte2-ottobre", "m2mEservices", "m2m-apiv3-users", "m2m-apiv3-producer-keychains",
-        "m2m-apiv3-client-keychains", "m2m-apiv3-client-consumer", "m2m-apiv3-purposes-threshold", "m2m-client",
-        "eservice_published_delegation_m2m_v3", "m2m-purpose-template-events"
-})
-public class M2MV3Test {
+@IncludeTags({"concurrency-exp"})
+//Test utili solo per verificare i meccanismi di gestione della concorrenza, non hanno alcun legame coi test di dominio
+public class ConcurrencyExperimentsTest {
 
 }

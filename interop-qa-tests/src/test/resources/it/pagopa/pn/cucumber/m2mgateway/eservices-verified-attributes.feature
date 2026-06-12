@@ -34,6 +34,7 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
       | SUSPENDED   |
       | DEPRECATED  |
 
+  @delega-erogazione
   Scenario: [M2M_ESERVICES_VERIFIED_ATTRIBUTES_ADD_02_A] Un utente con ruolo M2M-ADMIN NON può aggiungere degli attributi verificati a una versione di un e-service in stato WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 197)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1"
@@ -185,6 +186,7 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
       | ARCHIVED    |
 
   @m2m-parte2-ottobre
+  @delega-erogazione
   Scenario: [M2M_ESERVICES_VERIFIED_ATTRIBUTES_LIST_01_B] Un utente con ruolo M2M o M2M-ADMIN può leggere gli attributi verificati di una versione di un e-service in stato WAITING_FOR_APPROVAL solo se appartiene all'ente creatore (Parte2#Scenario intorno a 244)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1"
@@ -364,6 +366,7 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
       | ARCHIVED    |
 
   @m2m-parte2-ottobre
+  @delega-erogazione
   Scenario: [M2M_ESERVICES_VERIFIED_ATTRIBUTES_DELETE_06_B] Un utente NON può rimuovere gli attributi verificati da una versione di un e-service in stato diverso WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 275)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1"
