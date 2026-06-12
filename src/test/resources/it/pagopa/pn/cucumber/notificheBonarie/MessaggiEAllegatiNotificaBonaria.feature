@@ -81,13 +81,13 @@ Feature: Messaggi e allegati di una notifica bonaria.
 #            CASO DI TEST 2.2  Errore sulla Creazione di un messaggio.
 
 
-  @informalNotificationsMessageAttachment
-  Scenario: [NOTIFICHE_BONARIE_MESSAGGI_02_1_A1] Come ente mittente non abilitato alla creazione di un messaggio tento di crearlo con valori di default.
-    Given mittente della notifica bonaria: "Comune_2"
-    When si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
-      | primary_subject                       |
-      | Nuovo messaggio per notifiche bonarie |
-    Then si riceve errore 403
+#  @informalNotificationsMessageAttachment tutte le pa sono abilitate
+#  Scenario: [NOTIFICHE_BONARIE_MESSAGGI_02_1_A1] Come ente mittente non abilitato alla creazione di un messaggio tento di crearlo con valori di default.
+#    Given mittente della notifica bonaria: "Comune_2"
+#    When si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
+#      | primary_subject                       |
+#      | Nuovo messaggio per notifiche bonarie |
+#    Then si riceve errore 403
 
   @informalNotificationsMessageAttachment
   Scenario Outline: [NOTIFICHE_BONARIE_MESSAGGI_02_2_B] Come ente mittente ricevo un errore sulla creazione di un nuovo messaggio non valorizzando campi obbligatori.
