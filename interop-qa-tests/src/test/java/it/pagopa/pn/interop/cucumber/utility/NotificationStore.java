@@ -130,6 +130,8 @@ public class NotificationStore {
         BiConsumer<String, Tenant> taskPerRole) {
         List<Tenant> tenantList = this.configFileReader.getTenantList();
         for (Tenant tenant : tenantList) {
+            // FIXME scorciatoia temporanea per interrogare solo PA1 e PA2
+            if (!tenant.getName().equals("PA1") && !tenant.getName().equals("PA2")) continue;
             Map<String, List<String>> rolesCopy = new HashMap<>(tenant.getUserRoles());
             Set<Entry<String, List<String>>> roles = rolesCopy.entrySet();
             for (Entry<String, List<String>> roleEntry : roles) {
