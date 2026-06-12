@@ -100,6 +100,10 @@ public class NotificationStore {
     }
 
     public Set<Notification> get(NotificationUser user) {
+        // TODO Ora che i test sono automatici, le notifiche non possono essere recuperate solo 1 volta
+        // Ma ogni volta che si esegue il Then e dunque il get delle notifiche, si deve aggiornare
+        // Qui viene ri-inizializzato NotificationStore ma si deve trovare una soluzione meno impattante
+        initializeNotifications();
         Set<Notification> notificationsSet = this.notifications.get(user);
         if (notificationsSet == null) {
             notificationsSet = new HashSet<>();
