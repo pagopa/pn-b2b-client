@@ -98,8 +98,11 @@ public class IOConnectorSteps {
             log.info("profile response: {}", resp);
             messageResponse = resp;
 
-            // If no exception is thrown, assume 200 OK (or 2xx)
+            // If no exception is thrown, assume 200 OK
             actualResponseHttpStatus = HttpStatus.OK;
+            // If no exception is thrown, and body is null, assume 204 NO_CONTENT
+            if (resp == null)
+                actualResponseHttpStatus = HttpStatus.NO_CONTENT;
 
         } catch (HttpStatusCodeException e) {
             log.info("HttpStatusException: {}", e.getMessage());
