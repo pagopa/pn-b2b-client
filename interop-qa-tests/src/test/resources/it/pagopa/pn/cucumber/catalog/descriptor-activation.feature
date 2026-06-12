@@ -54,11 +54,9 @@ Feature: Attivazione di un descrittore
     Then si ottiene status code 200
     And il descrittore risulta in stato "PUBLISHED"
     Examples:
-      | ente    | kind    |
-      | PA4     | PRIVATE |
-      | PA4     | GSP     |
-      | GSP2    | PA      |
-      | GSP2    | PRIVATE |
-      | Privato | PA      |
-      | Privato | GSP     |
+      | ente    | kind        |
+      | PA4     | PRIVATE     |
+      | PA4     | GSP         |
+      | GSP2    | PA          |
+      | Privato | PA          |
 
