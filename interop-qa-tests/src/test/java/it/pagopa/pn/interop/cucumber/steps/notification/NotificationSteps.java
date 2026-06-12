@@ -434,8 +434,10 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
             String value = ".+";
             switch (label) {
                 case "agreementId":
-                    value = sharedStepsContext.getAgreementId().toString();
-                    break;
+                    value = sharedStepsContext.getAgreementId().toString(); break;
+                case "eServiceName":
+                    value = sharedStepsContext.getEServicesCommonContext().getName(); break;
+                    
             }
             text.append(value);
             // Controlla se c'è un prossimo placeholder
