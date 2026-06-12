@@ -817,7 +817,7 @@ Feature: Sottomissione di una notifica bonaria.
       | physical_address_municipality | NULL             |
       | physical_address_province     | NULL             |
       | physical_address_state        | NULL             |
-      | messageId                     | NULL             |
+      | messageId                     | ${IT}             |
     When viene inviata una nuova notifica bonaria
     And  si verifica che la notifica bonaria sia in stato "REFUSED"
 
@@ -856,7 +856,7 @@ Feature: Sottomissione di una notifica bonaria.
       | param1 | AUD_COM_CHECK |
       | param2 | SUCCESS       |
 
-
+  @informalNotificationsValidation
   Scenario: [NOTIFICHE_BONARIE_WF_1] Come ente mittente invio una notifica bonaria e vengono generati i corretti auditlog in pn-workflow-manager
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con i seguenti parametri
