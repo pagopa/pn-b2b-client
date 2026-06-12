@@ -2248,7 +2248,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-external-registries/c5e443b6d85b94ddc93dddc1d8a8c79f5d6d9273/docs/openapi/pn-selfcare-internal-v1.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-external-registries/refs/tags/v2.18.0-RC.2/docs/openapi/pn-selfcare-internal-v1.yaml</inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
