@@ -68,7 +68,7 @@ public class NotificationStepsConfig {
                                 .purposeStatusChangedToProducer(false)
                                 .templateStatusChangedToProducer(false)
                                 .purposeQuotaAdjustmentRequestToProducer(false)
-                                .eserviceStateChangedToConsumer(false)
+                                .eserviceStateChangedToProducer(false)
 
                                 // Consumer
                                 .agreementSuspendedUnsuspendedToConsumer(false)
@@ -101,7 +101,7 @@ public class NotificationStepsConfig {
                                 .purposeStatusChangedToProducer(true)
                                 .templateStatusChangedToProducer(true)
                                 .purposeQuotaAdjustmentRequestToProducer(true)
-                                .eserviceStateChangedToConsumer(true)
+                                .eserviceStateChangedToProducer(true)
 
                                 // Consumer
                                 .agreementSuspendedUnsuspendedToConsumer(true)
@@ -143,6 +143,7 @@ public class NotificationStepsConfig {
                                 .purposeStatusChangedToProducer(false)
                                 .templateStatusChangedToProducer(false)
                                 .purposeQuotaAdjustmentRequestToProducer(false)
+                                .eserviceStateChangedToProducer(false)
 
                                 // Consumer
                                 .agreementSuspendedUnsuspendedToConsumer(false)
@@ -175,6 +176,7 @@ public class NotificationStepsConfig {
                                 .purposeStatusChangedToProducer(true)
                                 .templateStatusChangedToProducer(true)
                                 .purposeQuotaAdjustmentRequestToProducer(true)
+                                .eserviceStateChangedToProducer(true)
 
                                 // Consumer
                                 .agreementSuspendedUnsuspendedToConsumer(true)
@@ -215,6 +217,7 @@ public class NotificationStepsConfig {
                                 .purposeStatusChangedToProducer(false)
                                 .templateStatusChangedToProducer(false)
                                 .purposeQuotaAdjustmentRequestToProducer(false)
+                                .eserviceStateChangedToProducer(false)
 
                                 // Consumer
                                 .agreementSuspendedUnsuspendedToConsumer(false)
@@ -247,6 +250,7 @@ public class NotificationStepsConfig {
                                 .purposeStatusChangedToProducer(false)
                                 .templateStatusChangedToProducer(false)
                                 .purposeQuotaAdjustmentRequestToProducer(false)
+                                .eserviceStateChangedToProducer(false)
 
                                 // Consumer
                                 .agreementSuspendedUnsuspendedToConsumer(false)
@@ -287,6 +291,7 @@ public class NotificationStepsConfig {
                                 .purposeStatusChangedToProducer(false)
                                 .templateStatusChangedToProducer(false)
                                 .purposeQuotaAdjustmentRequestToProducer(false)
+                                .eserviceStateChangedToProducer(false)
 
                                 // Consumer
                                 .agreementSuspendedUnsuspendedToConsumer(false)
@@ -319,6 +324,7 @@ public class NotificationStepsConfig {
                                 .purposeStatusChangedToProducer(false)
                                 .templateStatusChangedToProducer(false)
                                 .purposeQuotaAdjustmentRequestToProducer(false)
+                                .eserviceStateChangedToProducer(false)
 
                                 // Consumer
                                 .agreementSuspendedUnsuspendedToConsumer(false)
@@ -359,6 +365,7 @@ public class NotificationStepsConfig {
                                 .purposeStatusChangedToProducer(false)
                                 .templateStatusChangedToProducer(false)
                                 .purposeQuotaAdjustmentRequestToProducer(false)
+                                .eserviceStateChangedToProducer(false)
 
                                 // Consumer
                                 .agreementSuspendedUnsuspendedToConsumer(false)
@@ -391,6 +398,7 @@ public class NotificationStepsConfig {
                                 .purposeStatusChangedToProducer(true)
                                 .templateStatusChangedToProducer(true)
                                 .purposeQuotaAdjustmentRequestToProducer(true)
+                                .eserviceStateChangedToProducer(true)
 
                                 // Consumer
                                 .agreementSuspendedUnsuspendedToConsumer(true)
@@ -431,7 +439,7 @@ public class NotificationStepsConfig {
                                 .purposeStatusChangedToProducer(false)
                                 .templateStatusChangedToProducer(false)
                                 .purposeQuotaAdjustmentRequestToProducer(false)
-                                .eserviceStateChangedToConsumer(false)
+                                .eserviceStateChangedToProducer(false)
 
                                 // Consumer
                                 .agreementSuspendedUnsuspendedToConsumer(false)
@@ -464,7 +472,7 @@ public class NotificationStepsConfig {
                                 .purposeStatusChangedToProducer(false)
                                 .templateStatusChangedToProducer(false)
                                 .purposeQuotaAdjustmentRequestToProducer(false)
-                                .eserviceStateChangedToConsumer(false)
+                                .eserviceStateChangedToProducer(false)
 
                                 // Consumer
                                 .agreementSuspendedUnsuspendedToConsumer(false)
@@ -599,6 +607,8 @@ public class NotificationStepsConfig {
     private void applyTaskForEveryUser(List<String> excludedRoles, ThrowingConsumer<String> taskPerRole) throws Exception {
         List<Tenant> tenantList = this.configFileReader.getTenantList();
         for (Tenant tenant : tenantList) {
+            // TODO temporanea restrizione a PA1 e PA2 perché lato server alcune configurazioni non sono inizializzate
+            if (!tenant.getName().equals("PA1") && !tenant.getName().equals("PA2")) continue;
             Map<String, List<String>> rolesCopy = new HashMap<>(tenant.getUserRoles());
             Set<Entry<String, List<String>>> roles = rolesCopy.entrySet();
             for (Entry<String, List<String>> roleEntry : roles) {
