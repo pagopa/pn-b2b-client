@@ -17,12 +17,14 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.utility.FeatureLifecycleManager;
 import it.pagopa.pn.interop.cucumber.utility.functionalint.Task;
 import it.pagopa.pn.interop.cucumber.utility.functionalint.ThrowingConsumer;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -53,452 +55,456 @@ public class NotificationStepsConfig {
     // TODO 13/01/2026 sostituibile con file di configurazione esterno
     static {
         GlobalNotificationConfig adminConfig = GlobalNotificationConfig.builder()
-            .tenantConfig(new TenantNotificationConfigUpdateSeed().enabled(true))
-            .userConfig(new UserNotificationConfigUpdateSeed()
-                .emailNotificationPreference(false)
-                .inAppNotificationPreference(true)
-                .emailDigestPreference(true)
-                .emailConfig(new NotificationConfig()
-                    // Producer
-                    .agreementManagementToProducer(false)
-                    .agreementSuspendedUnsuspendedToProducer(false)
-                    .clientAddedRemovedToProducer(false)
-                    .purposeStatusChangedToProducer(false)
-                    .templateStatusChangedToProducer(false)
-                    .purposeQuotaAdjustmentRequestToProducer(false)
+                .tenantConfig(new TenantNotificationConfigUpdateSeed().enabled(true))
+                .userConfig(new UserNotificationConfigUpdateSeed()
+                        .emailNotificationPreference(false)
+                        .inAppNotificationPreference(true)
+                        .emailDigestPreference(true)
+                        .emailConfig(new NotificationConfig()
+                                // Producer
+                                .agreementManagementToProducer(false)
+                                .agreementSuspendedUnsuspendedToProducer(false)
+                                .clientAddedRemovedToProducer(false)
+                                .purposeStatusChangedToProducer(false)
+                                .templateStatusChangedToProducer(false)
+                                .purposeQuotaAdjustmentRequestToProducer(false)
+                                .eserviceStateChangedToConsumer(false)
 
-                    // Consumer
-                    .agreementSuspendedUnsuspendedToConsumer(false)
-                    .eserviceStateChangedToConsumer(false)
-                    .agreementActivatedRejectedToConsumer(false)
-                    .purposeActivatedRejectedToConsumer(false)
-                    .purposeSuspendedUnsuspendedToConsumer(false)
-                    .purposeOverQuotaStateToConsumer(false)
+                                // Consumer
+                                .agreementSuspendedUnsuspendedToConsumer(false)
+                                .eserviceStateChangedToConsumer(false)
+                                .agreementActivatedRejectedToConsumer(false)
+                                .purposeActivatedRejectedToConsumer(false)
+                                .purposeSuspendedUnsuspendedToConsumer(false)
+                                .purposeOverQuotaStateToConsumer(false)
 
-                    // Instantiator
-                    .newEserviceTemplateVersionToInstantiator(false)
-                    .eserviceTemplateNameChangedToInstantiator(false)
-                    .eserviceTemplateStatusChangedToInstantiator(false)
+                                // Instantiator
+                                .newEserviceTemplateVersionToInstantiator(false)
+                                .eserviceTemplateNameChangedToInstantiator(false)
+                                .eserviceTemplateStatusChangedToInstantiator(false)
 
-                    // Delegator/Delegate
-                    .delegationApprovedRejectedToDelegator(false)
-                    .eserviceNewVersionSubmittedToDelegator(false)
-                    .eserviceNewVersionApprovedRejectedToDelegate(false)
-                    .delegationSubmittedRevokedToDelegate(false)
+                                // Delegator/Delegate
+                                .delegationApprovedRejectedToDelegator(false)
+                                .eserviceNewVersionSubmittedToDelegator(false)
+                                .eserviceNewVersionApprovedRejectedToDelegate(false)
+                                .delegationSubmittedRevokedToDelegate(false)
 
-                    // Altri
-                    .certifiedVerifiedAttributeAssignedRevokedToAssignee(false)
-                    .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(false)
-                )
-                .inAppConfig(new NotificationConfig()
-                    // Producer
-                    .agreementManagementToProducer(true)
-                    .agreementSuspendedUnsuspendedToProducer(true)
-                    .clientAddedRemovedToProducer(true)
-                    .purposeStatusChangedToProducer(true)
-                    .templateStatusChangedToProducer(true)
-                    .purposeQuotaAdjustmentRequestToProducer(true)
+                                // Altri
+                                .certifiedVerifiedAttributeAssignedRevokedToAssignee(false)
+                                .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(false)
+                        )
+                        .inAppConfig(new NotificationConfig()
+                                // Producer
+                                .agreementManagementToProducer(true)
+                                .agreementSuspendedUnsuspendedToProducer(true)
+                                .clientAddedRemovedToProducer(true)
+                                .purposeStatusChangedToProducer(true)
+                                .templateStatusChangedToProducer(true)
+                                .purposeQuotaAdjustmentRequestToProducer(true)
+                                .eserviceStateChangedToConsumer(true)
 
-                    // Consumer
-                    .agreementSuspendedUnsuspendedToConsumer(true)
-                    .eserviceStateChangedToConsumer(true)
-                    .agreementActivatedRejectedToConsumer(true)
-                    .purposeActivatedRejectedToConsumer(true)
-                    .purposeSuspendedUnsuspendedToConsumer(true)
-                    .purposeOverQuotaStateToConsumer(true)
+                                // Consumer
+                                .agreementSuspendedUnsuspendedToConsumer(true)
+                                .eserviceStateChangedToConsumer(true)
+                                .agreementActivatedRejectedToConsumer(true)
+                                .purposeActivatedRejectedToConsumer(true)
+                                .purposeSuspendedUnsuspendedToConsumer(true)
+                                .purposeOverQuotaStateToConsumer(true)
 
-                    // Instantiator
-                    .newEserviceTemplateVersionToInstantiator(true)
-                    .eserviceTemplateNameChangedToInstantiator(true)
-                    .eserviceTemplateStatusChangedToInstantiator(true)
+                                // Instantiator
+                                .newEserviceTemplateVersionToInstantiator(true)
+                                .eserviceTemplateNameChangedToInstantiator(true)
+                                .eserviceTemplateStatusChangedToInstantiator(true)
 
-                    // Delegator/Delegate
-                    .delegationApprovedRejectedToDelegator(true)
-                    .eserviceNewVersionSubmittedToDelegator(true)
-                    .eserviceNewVersionApprovedRejectedToDelegate(true)
-                    .delegationSubmittedRevokedToDelegate(true)
+                                // Delegator/Delegate
+                                .delegationApprovedRejectedToDelegator(true)
+                                .eserviceNewVersionSubmittedToDelegator(true)
+                                .eserviceNewVersionApprovedRejectedToDelegate(true)
+                                .delegationSubmittedRevokedToDelegate(true)
 
-                    // Altri
-                    .certifiedVerifiedAttributeAssignedRevokedToAssignee(true)
-                    .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(true)
-                ))
-            .build();
+                                // Altri
+                                .certifiedVerifiedAttributeAssignedRevokedToAssignee(true)
+                                .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(true)
+                        ))
+                .build();
 
         // TODO 13 01 2026 da tarare durante i test
         GlobalNotificationConfig supportConfig = GlobalNotificationConfig.builder()
-            .tenantConfig(new TenantNotificationConfigUpdateSeed().enabled(true))
-            .userConfig(new UserNotificationConfigUpdateSeed()
-                .emailNotificationPreference(false)
-                .inAppNotificationPreference(true)
-                .emailDigestPreference(true)
-                .emailConfig(new NotificationConfig()
-                    // Producer
-                    .agreementManagementToProducer(false)
-                    .agreementSuspendedUnsuspendedToProducer(false)
-                    .clientAddedRemovedToProducer(false)
-                    .purposeStatusChangedToProducer(false)
-                    .templateStatusChangedToProducer(false)
-                    .purposeQuotaAdjustmentRequestToProducer(false)
+                .tenantConfig(new TenantNotificationConfigUpdateSeed().enabled(true))
+                .userConfig(new UserNotificationConfigUpdateSeed()
+                        .emailNotificationPreference(false)
+                        .inAppNotificationPreference(true)
+                        .emailDigestPreference(true)
+                        .emailConfig(new NotificationConfig()
+                                // Producer
+                                .agreementManagementToProducer(false)
+                                .agreementSuspendedUnsuspendedToProducer(false)
+                                .clientAddedRemovedToProducer(false)
+                                .purposeStatusChangedToProducer(false)
+                                .templateStatusChangedToProducer(false)
+                                .purposeQuotaAdjustmentRequestToProducer(false)
 
-                    // Consumer
-                    .agreementSuspendedUnsuspendedToConsumer(false)
-                    .eserviceStateChangedToConsumer(false)
-                    .agreementActivatedRejectedToConsumer(false)
-                    .purposeActivatedRejectedToConsumer(false)
-                    .purposeSuspendedUnsuspendedToConsumer(false)
-                    .purposeOverQuotaStateToConsumer(false)
+                                // Consumer
+                                .agreementSuspendedUnsuspendedToConsumer(false)
+                                .eserviceStateChangedToConsumer(false)
+                                .agreementActivatedRejectedToConsumer(false)
+                                .purposeActivatedRejectedToConsumer(false)
+                                .purposeSuspendedUnsuspendedToConsumer(false)
+                                .purposeOverQuotaStateToConsumer(false)
 
-                    // Instantiator
-                    .newEserviceTemplateVersionToInstantiator(false)
-                    .eserviceTemplateNameChangedToInstantiator(false)
-                    .eserviceTemplateStatusChangedToInstantiator(false)
+                                // Instantiator
+                                .newEserviceTemplateVersionToInstantiator(false)
+                                .eserviceTemplateNameChangedToInstantiator(false)
+                                .eserviceTemplateStatusChangedToInstantiator(false)
 
-                    // Delegator/Delegate
-                    .delegationApprovedRejectedToDelegator(false)
-                    .eserviceNewVersionSubmittedToDelegator(false)
-                    .eserviceNewVersionApprovedRejectedToDelegate(false)
-                    .delegationSubmittedRevokedToDelegate(false)
+                                // Delegator/Delegate
+                                .delegationApprovedRejectedToDelegator(false)
+                                .eserviceNewVersionSubmittedToDelegator(false)
+                                .eserviceNewVersionApprovedRejectedToDelegate(false)
+                                .delegationSubmittedRevokedToDelegate(false)
 
-                    // Altri
-                    .certifiedVerifiedAttributeAssignedRevokedToAssignee(false)
-                    .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(false)
-                )
-                .inAppConfig(new NotificationConfig()
-                    // Producer
-                    .agreementManagementToProducer(true)
-                    .agreementSuspendedUnsuspendedToProducer(true)
-                    .clientAddedRemovedToProducer(true)
-                    .purposeStatusChangedToProducer(true)
-                    .templateStatusChangedToProducer(true)
-                    .purposeQuotaAdjustmentRequestToProducer(true)
+                                // Altri
+                                .certifiedVerifiedAttributeAssignedRevokedToAssignee(false)
+                                .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(false)
+                        )
+                        .inAppConfig(new NotificationConfig()
+                                // Producer
+                                .agreementManagementToProducer(true)
+                                .agreementSuspendedUnsuspendedToProducer(true)
+                                .clientAddedRemovedToProducer(true)
+                                .purposeStatusChangedToProducer(true)
+                                .templateStatusChangedToProducer(true)
+                                .purposeQuotaAdjustmentRequestToProducer(true)
 
-                    // Consumer
-                    .agreementSuspendedUnsuspendedToConsumer(true)
-                    .eserviceStateChangedToConsumer(true)
-                    .agreementActivatedRejectedToConsumer(true)
-                    .purposeActivatedRejectedToConsumer(true)
-                    .purposeSuspendedUnsuspendedToConsumer(true)
-                    .purposeOverQuotaStateToConsumer(true)
+                                // Consumer
+                                .agreementSuspendedUnsuspendedToConsumer(true)
+                                .eserviceStateChangedToConsumer(true)
+                                .agreementActivatedRejectedToConsumer(true)
+                                .purposeActivatedRejectedToConsumer(true)
+                                .purposeSuspendedUnsuspendedToConsumer(true)
+                                .purposeOverQuotaStateToConsumer(true)
 
-                    // Instantiator
-                    .newEserviceTemplateVersionToInstantiator(true)
-                    .eserviceTemplateNameChangedToInstantiator(true)
-                    .eserviceTemplateStatusChangedToInstantiator(true)
+                                // Instantiator
+                                .newEserviceTemplateVersionToInstantiator(true)
+                                .eserviceTemplateNameChangedToInstantiator(true)
+                                .eserviceTemplateStatusChangedToInstantiator(true)
 
-                    // Delegator/Delegate
-                    .delegationApprovedRejectedToDelegator(true)
-                    .eserviceNewVersionSubmittedToDelegator(true)
-                    .eserviceNewVersionApprovedRejectedToDelegate(true)
-                    .delegationSubmittedRevokedToDelegate(true)
+                                // Delegator/Delegate
+                                .delegationApprovedRejectedToDelegator(true)
+                                .eserviceNewVersionSubmittedToDelegator(true)
+                                .eserviceNewVersionApprovedRejectedToDelegate(true)
+                                .delegationSubmittedRevokedToDelegate(true)
 
-                    // Altri
-                    .certifiedVerifiedAttributeAssignedRevokedToAssignee(true)
-                    .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(true)
-                ))
-            .build();
+                                // Altri
+                                .certifiedVerifiedAttributeAssignedRevokedToAssignee(true)
+                                .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(true)
+                        ))
+                .build();
 
         // TODO 13 01 2026 da tarare durante i test
         GlobalNotificationConfig securityConfig = GlobalNotificationConfig.builder()
-            .userConfig(new UserNotificationConfigUpdateSeed()
-                .emailNotificationPreference(false)
-                .inAppNotificationPreference(true)
-                .emailDigestPreference(true)
-                .emailConfig(new NotificationConfig()
-                    // Producer
-                    .agreementManagementToProducer(false)
-                    .agreementSuspendedUnsuspendedToProducer(false)
-                    .clientAddedRemovedToProducer(false)
-                    .purposeStatusChangedToProducer(false)
-                    .templateStatusChangedToProducer(false)
-                    .purposeQuotaAdjustmentRequestToProducer(false)
+                .userConfig(new UserNotificationConfigUpdateSeed()
+                        .emailNotificationPreference(false)
+                        .inAppNotificationPreference(true)
+                        .emailDigestPreference(true)
+                        .emailConfig(new NotificationConfig()
+                                // Producer
+                                .agreementManagementToProducer(false)
+                                .agreementSuspendedUnsuspendedToProducer(false)
+                                .clientAddedRemovedToProducer(false)
+                                .purposeStatusChangedToProducer(false)
+                                .templateStatusChangedToProducer(false)
+                                .purposeQuotaAdjustmentRequestToProducer(false)
 
-                    // Consumer
-                    .agreementSuspendedUnsuspendedToConsumer(false)
-                    .eserviceStateChangedToConsumer(false)
-                    .agreementActivatedRejectedToConsumer(false)
-                    .purposeActivatedRejectedToConsumer(false)
-                    .purposeSuspendedUnsuspendedToConsumer(false)
-                    .purposeOverQuotaStateToConsumer(false)
+                                // Consumer
+                                .agreementSuspendedUnsuspendedToConsumer(false)
+                                .eserviceStateChangedToConsumer(false)
+                                .agreementActivatedRejectedToConsumer(false)
+                                .purposeActivatedRejectedToConsumer(false)
+                                .purposeSuspendedUnsuspendedToConsumer(false)
+                                .purposeOverQuotaStateToConsumer(false)
 
-                    // Instantiator
-                    .newEserviceTemplateVersionToInstantiator(false)
-                    .eserviceTemplateNameChangedToInstantiator(false)
-                    .eserviceTemplateStatusChangedToInstantiator(false)
+                                // Instantiator
+                                .newEserviceTemplateVersionToInstantiator(false)
+                                .eserviceTemplateNameChangedToInstantiator(false)
+                                .eserviceTemplateStatusChangedToInstantiator(false)
 
-                    // Delegator/Delegate
-                    .delegationApprovedRejectedToDelegator(false)
-                    .eserviceNewVersionSubmittedToDelegator(false)
-                    .eserviceNewVersionApprovedRejectedToDelegate(false)
-                    .delegationSubmittedRevokedToDelegate(false)
+                                // Delegator/Delegate
+                                .delegationApprovedRejectedToDelegator(false)
+                                .eserviceNewVersionSubmittedToDelegator(false)
+                                .eserviceNewVersionApprovedRejectedToDelegate(false)
+                                .delegationSubmittedRevokedToDelegate(false)
 
-                    // Altri
-                    .certifiedVerifiedAttributeAssignedRevokedToAssignee(false)
-                    .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(false)
-                )
-                .inAppConfig(new NotificationConfig()
-                    // Producer
-                    .agreementManagementToProducer(false)
-                    .agreementSuspendedUnsuspendedToProducer(false)
-                    .clientAddedRemovedToProducer(false)
-                    .purposeStatusChangedToProducer(false)
-                    .templateStatusChangedToProducer(false)
-                    .purposeQuotaAdjustmentRequestToProducer(false)
+                                // Altri
+                                .certifiedVerifiedAttributeAssignedRevokedToAssignee(false)
+                                .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(false)
+                        )
+                        .inAppConfig(new NotificationConfig()
+                                // Producer
+                                .agreementManagementToProducer(false)
+                                .agreementSuspendedUnsuspendedToProducer(false)
+                                .clientAddedRemovedToProducer(false)
+                                .purposeStatusChangedToProducer(false)
+                                .templateStatusChangedToProducer(false)
+                                .purposeQuotaAdjustmentRequestToProducer(false)
 
-                    // Consumer
-                    .agreementSuspendedUnsuspendedToConsumer(false)
-                    .eserviceStateChangedToConsumer(true)
-                    .agreementActivatedRejectedToConsumer(false)
-                    .purposeActivatedRejectedToConsumer(false)
-                    .purposeSuspendedUnsuspendedToConsumer(false)
-                    .purposeOverQuotaStateToConsumer(false)
+                                // Consumer
+                                .agreementSuspendedUnsuspendedToConsumer(false)
+                                .eserviceStateChangedToConsumer(true)
+                                .agreementActivatedRejectedToConsumer(false)
+                                .purposeActivatedRejectedToConsumer(false)
+                                .purposeSuspendedUnsuspendedToConsumer(false)
+                                .purposeOverQuotaStateToConsumer(false)
 
-                    // Instantiator
-                    .newEserviceTemplateVersionToInstantiator(false)
-                    .eserviceTemplateNameChangedToInstantiator(false)
-                    .eserviceTemplateStatusChangedToInstantiator(false)
+                                // Instantiator
+                                .newEserviceTemplateVersionToInstantiator(false)
+                                .eserviceTemplateNameChangedToInstantiator(false)
+                                .eserviceTemplateStatusChangedToInstantiator(false)
 
-                    // Delegator/Delegate
-                    .delegationApprovedRejectedToDelegator(false)
-                    .eserviceNewVersionSubmittedToDelegator(false)
-                    .eserviceNewVersionApprovedRejectedToDelegate(false)
-                    .delegationSubmittedRevokedToDelegate(false)
+                                // Delegator/Delegate
+                                .delegationApprovedRejectedToDelegator(false)
+                                .eserviceNewVersionSubmittedToDelegator(false)
+                                .eserviceNewVersionApprovedRejectedToDelegate(false)
+                                .delegationSubmittedRevokedToDelegate(false)
 
-                    // Altri
-                    .certifiedVerifiedAttributeAssignedRevokedToAssignee(false)
-                    .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(false)
-                ))
-            .build();
+                                // Altri
+                                .certifiedVerifiedAttributeAssignedRevokedToAssignee(false)
+                                .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(false)
+                        ))
+                .build();
 
         // TODO 13 01 2026 da tarare durante i test
         GlobalNotificationConfig apiConfig = GlobalNotificationConfig.builder()
-            .userConfig(new UserNotificationConfigUpdateSeed()
-                .emailNotificationPreference(false)
-                .inAppNotificationPreference(true)
-                .emailDigestPreference(false)
-                .emailConfig(new NotificationConfig()
-                    // Producer
-                    .agreementManagementToProducer(false)
-                    .agreementSuspendedUnsuspendedToProducer(false)
-                    .clientAddedRemovedToProducer(false)
-                    .purposeStatusChangedToProducer(false)
-                    .templateStatusChangedToProducer(false)
-                    .purposeQuotaAdjustmentRequestToProducer(false)
+                .userConfig(new UserNotificationConfigUpdateSeed()
+                        .emailNotificationPreference(false)
+                        .inAppNotificationPreference(true)
+                        .emailDigestPreference(false)
+                        .emailConfig(new NotificationConfig()
+                                // Producer
+                                .agreementManagementToProducer(false)
+                                .agreementSuspendedUnsuspendedToProducer(false)
+                                .clientAddedRemovedToProducer(false)
+                                .purposeStatusChangedToProducer(false)
+                                .templateStatusChangedToProducer(false)
+                                .purposeQuotaAdjustmentRequestToProducer(false)
 
-                    // Consumer
-                    .agreementSuspendedUnsuspendedToConsumer(false)
-                    .eserviceStateChangedToConsumer(false)
-                    .agreementActivatedRejectedToConsumer(false)
-                    .purposeActivatedRejectedToConsumer(false)
-                    .purposeSuspendedUnsuspendedToConsumer(false)
-                    .purposeOverQuotaStateToConsumer(false)
+                                // Consumer
+                                .agreementSuspendedUnsuspendedToConsumer(false)
+                                .eserviceStateChangedToConsumer(false)
+                                .agreementActivatedRejectedToConsumer(false)
+                                .purposeActivatedRejectedToConsumer(false)
+                                .purposeSuspendedUnsuspendedToConsumer(false)
+                                .purposeOverQuotaStateToConsumer(false)
 
-                    // Instantiator
-                    .newEserviceTemplateVersionToInstantiator(false)
-                    .eserviceTemplateNameChangedToInstantiator(false)
-                    .eserviceTemplateStatusChangedToInstantiator(false)
+                                // Instantiator
+                                .newEserviceTemplateVersionToInstantiator(false)
+                                .eserviceTemplateNameChangedToInstantiator(false)
+                                .eserviceTemplateStatusChangedToInstantiator(false)
 
-                    // Delegator/Delegate
-                    .delegationApprovedRejectedToDelegator(false)
-                    .eserviceNewVersionSubmittedToDelegator(false)
-                    .eserviceNewVersionApprovedRejectedToDelegate(false)
-                    .delegationSubmittedRevokedToDelegate(false)
+                                // Delegator/Delegate
+                                .delegationApprovedRejectedToDelegator(false)
+                                .eserviceNewVersionSubmittedToDelegator(false)
+                                .eserviceNewVersionApprovedRejectedToDelegate(false)
+                                .delegationSubmittedRevokedToDelegate(false)
 
-                    // Altri
-                    .certifiedVerifiedAttributeAssignedRevokedToAssignee(false)
-                    .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(false)
-                )
-                .inAppConfig(new NotificationConfig()
-                    // Producer
-                    .agreementManagementToProducer(false)
-                    .agreementSuspendedUnsuspendedToProducer(false)
-                    .clientAddedRemovedToProducer(true)
-                    .purposeStatusChangedToProducer(false)
-                    .templateStatusChangedToProducer(false)
-                    .purposeQuotaAdjustmentRequestToProducer(false)
+                                // Altri
+                                .certifiedVerifiedAttributeAssignedRevokedToAssignee(false)
+                                .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(false)
+                        )
+                        .inAppConfig(new NotificationConfig()
+                                // Producer
+                                .agreementManagementToProducer(false)
+                                .agreementSuspendedUnsuspendedToProducer(false)
+                                .clientAddedRemovedToProducer(true)
+                                .purposeStatusChangedToProducer(false)
+                                .templateStatusChangedToProducer(false)
+                                .purposeQuotaAdjustmentRequestToProducer(false)
 
-                    // Consumer
-                    .agreementSuspendedUnsuspendedToConsumer(false)
-                    .eserviceStateChangedToConsumer(false)
-                    .agreementActivatedRejectedToConsumer(false)
-                    .purposeActivatedRejectedToConsumer(false)
-                    .purposeSuspendedUnsuspendedToConsumer(false)
-                    .purposeOverQuotaStateToConsumer(false)
+                                // Consumer
+                                .agreementSuspendedUnsuspendedToConsumer(false)
+                                .eserviceStateChangedToConsumer(false)
+                                .agreementActivatedRejectedToConsumer(false)
+                                .purposeActivatedRejectedToConsumer(false)
+                                .purposeSuspendedUnsuspendedToConsumer(false)
+                                .purposeOverQuotaStateToConsumer(false)
 
-                    // Instantiator
-                    .newEserviceTemplateVersionToInstantiator(false)
-                    .eserviceTemplateNameChangedToInstantiator(false)
-                    .eserviceTemplateStatusChangedToInstantiator(false)
+                                // Instantiator
+                                .newEserviceTemplateVersionToInstantiator(false)
+                                .eserviceTemplateNameChangedToInstantiator(false)
+                                .eserviceTemplateStatusChangedToInstantiator(false)
 
-                    // Delegator/Delegate
-                    .delegationApprovedRejectedToDelegator(false)
-                    .eserviceNewVersionSubmittedToDelegator(false)
-                    .eserviceNewVersionApprovedRejectedToDelegate(false)
-                    .delegationSubmittedRevokedToDelegate(false)
+                                // Delegator/Delegate
+                                .delegationApprovedRejectedToDelegator(false)
+                                .eserviceNewVersionSubmittedToDelegator(false)
+                                .eserviceNewVersionApprovedRejectedToDelegate(false)
+                                .delegationSubmittedRevokedToDelegate(false)
 
-                    // Altri
-                    .certifiedVerifiedAttributeAssignedRevokedToAssignee(false)
-                    .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(false)
-                ))
-            .build();
+                                // Altri
+                                .certifiedVerifiedAttributeAssignedRevokedToAssignee(false)
+                                .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(false)
+                        ))
+                .build();
 
         // TODO 13 01 2026 da tarare durante i test
         GlobalNotificationConfig apiSecurityConfig = GlobalNotificationConfig.builder()
-            .userConfig(new UserNotificationConfigUpdateSeed()
-                .emailNotificationPreference(false)
-                .inAppNotificationPreference(true)
-                .emailDigestPreference(false)
-                .emailConfig(new NotificationConfig()
-                    // Producer
-                    .agreementManagementToProducer(false)
-                    .agreementSuspendedUnsuspendedToProducer(false)
-                    .clientAddedRemovedToProducer(false)
-                    .purposeStatusChangedToProducer(false)
-                    .templateStatusChangedToProducer(false)
-                    .purposeQuotaAdjustmentRequestToProducer(false)
+                .userConfig(new UserNotificationConfigUpdateSeed()
+                        .emailNotificationPreference(false)
+                        .inAppNotificationPreference(true)
+                        .emailDigestPreference(false)
+                        .emailConfig(new NotificationConfig()
+                                // Producer
+                                .agreementManagementToProducer(false)
+                                .agreementSuspendedUnsuspendedToProducer(false)
+                                .clientAddedRemovedToProducer(false)
+                                .purposeStatusChangedToProducer(false)
+                                .templateStatusChangedToProducer(false)
+                                .purposeQuotaAdjustmentRequestToProducer(false)
 
-                    // Consumer
-                    .agreementSuspendedUnsuspendedToConsumer(false)
-                    .eserviceStateChangedToConsumer(false)
-                    .agreementActivatedRejectedToConsumer(false)
-                    .purposeActivatedRejectedToConsumer(false)
-                    .purposeSuspendedUnsuspendedToConsumer(false)
-                    .purposeOverQuotaStateToConsumer(false)
+                                // Consumer
+                                .agreementSuspendedUnsuspendedToConsumer(false)
+                                .eserviceStateChangedToConsumer(false)
+                                .agreementActivatedRejectedToConsumer(false)
+                                .purposeActivatedRejectedToConsumer(false)
+                                .purposeSuspendedUnsuspendedToConsumer(false)
+                                .purposeOverQuotaStateToConsumer(false)
 
-                    // Instantiator
-                    .newEserviceTemplateVersionToInstantiator(false)
-                    .eserviceTemplateNameChangedToInstantiator(false)
-                    .eserviceTemplateStatusChangedToInstantiator(false)
+                                // Instantiator
+                                .newEserviceTemplateVersionToInstantiator(false)
+                                .eserviceTemplateNameChangedToInstantiator(false)
+                                .eserviceTemplateStatusChangedToInstantiator(false)
 
-                    // Delegator/Delegate
-                    .delegationApprovedRejectedToDelegator(false)
-                    .eserviceNewVersionSubmittedToDelegator(false)
-                    .eserviceNewVersionApprovedRejectedToDelegate(false)
-                    .delegationSubmittedRevokedToDelegate(false)
+                                // Delegator/Delegate
+                                .delegationApprovedRejectedToDelegator(false)
+                                .eserviceNewVersionSubmittedToDelegator(false)
+                                .eserviceNewVersionApprovedRejectedToDelegate(false)
+                                .delegationSubmittedRevokedToDelegate(false)
 
-                    // Altri
-                    .certifiedVerifiedAttributeAssignedRevokedToAssignee(false)
-                    .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(false)
-                )
-                .inAppConfig(new NotificationConfig()
-                    // Producer
-                    .agreementManagementToProducer(true)
-                    .agreementSuspendedUnsuspendedToProducer(true)
-                    .clientAddedRemovedToProducer(true)
-                    .purposeStatusChangedToProducer(true)
-                    .templateStatusChangedToProducer(true)
-                    .purposeQuotaAdjustmentRequestToProducer(true)
+                                // Altri
+                                .certifiedVerifiedAttributeAssignedRevokedToAssignee(false)
+                                .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(false)
+                        )
+                        .inAppConfig(new NotificationConfig()
+                                // Producer
+                                .agreementManagementToProducer(true)
+                                .agreementSuspendedUnsuspendedToProducer(true)
+                                .clientAddedRemovedToProducer(true)
+                                .purposeStatusChangedToProducer(true)
+                                .templateStatusChangedToProducer(true)
+                                .purposeQuotaAdjustmentRequestToProducer(true)
 
-                    // Consumer
-                    .agreementSuspendedUnsuspendedToConsumer(true)
-                    .eserviceStateChangedToConsumer(true)
-                    .agreementActivatedRejectedToConsumer(true)
-                    .purposeActivatedRejectedToConsumer(true)
-                    .purposeSuspendedUnsuspendedToConsumer(true)
-                    .purposeOverQuotaStateToConsumer(true)
+                                // Consumer
+                                .agreementSuspendedUnsuspendedToConsumer(true)
+                                .eserviceStateChangedToConsumer(true)
+                                .agreementActivatedRejectedToConsumer(true)
+                                .purposeActivatedRejectedToConsumer(true)
+                                .purposeSuspendedUnsuspendedToConsumer(true)
+                                .purposeOverQuotaStateToConsumer(true)
 
-                    // Instantiator
-                    .newEserviceTemplateVersionToInstantiator(true)
-                    .eserviceTemplateNameChangedToInstantiator(true)
-                    .eserviceTemplateStatusChangedToInstantiator(true)
+                                // Instantiator
+                                .newEserviceTemplateVersionToInstantiator(true)
+                                .eserviceTemplateNameChangedToInstantiator(true)
+                                .eserviceTemplateStatusChangedToInstantiator(true)
 
-                    // Delegator/Delegate
-                    .delegationApprovedRejectedToDelegator(true)
-                    .eserviceNewVersionSubmittedToDelegator(true)
-                    .eserviceNewVersionApprovedRejectedToDelegate(true)
-                    .delegationSubmittedRevokedToDelegate(true)
+                                // Delegator/Delegate
+                                .delegationApprovedRejectedToDelegator(true)
+                                .eserviceNewVersionSubmittedToDelegator(true)
+                                .eserviceNewVersionApprovedRejectedToDelegate(true)
+                                .delegationSubmittedRevokedToDelegate(true)
 
-                    // Altri
-                    .certifiedVerifiedAttributeAssignedRevokedToAssignee(true)
-                    .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(true)
-                ))
-            .build();
+                                // Altri
+                                .certifiedVerifiedAttributeAssignedRevokedToAssignee(true)
+                                .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(true)
+                        ))
+                .build();
 
         noNotificationConfig = GlobalNotificationConfig.builder()
-            .tenantConfig(new TenantNotificationConfigUpdateSeed().enabled(false))
-            .userConfig(new UserNotificationConfigUpdateSeed()
-                .emailNotificationPreference(false)
-                .inAppNotificationPreference(false)
-                .emailDigestPreference(false)
-                .emailConfig(new NotificationConfig()
-                    // Producer
-                    .agreementManagementToProducer(false)
-                    .agreementSuspendedUnsuspendedToProducer(false)
-                    .clientAddedRemovedToProducer(false)
-                    .purposeStatusChangedToProducer(false)
-                    .templateStatusChangedToProducer(false)
-                    .purposeQuotaAdjustmentRequestToProducer(false)
+                .tenantConfig(new TenantNotificationConfigUpdateSeed().enabled(false))
+                .userConfig(new UserNotificationConfigUpdateSeed()
+                        .emailNotificationPreference(false)
+                        .inAppNotificationPreference(false)
+                        .emailDigestPreference(false)
+                        .emailConfig(new NotificationConfig()
+                                // Producer
+                                .agreementManagementToProducer(false)
+                                .agreementSuspendedUnsuspendedToProducer(false)
+                                .clientAddedRemovedToProducer(false)
+                                .purposeStatusChangedToProducer(false)
+                                .templateStatusChangedToProducer(false)
+                                .purposeQuotaAdjustmentRequestToProducer(false)
+                                .eserviceStateChangedToConsumer(false)
 
-                    // Consumer
-                    .agreementSuspendedUnsuspendedToConsumer(false)
-                    .eserviceStateChangedToConsumer(false)
-                    .agreementActivatedRejectedToConsumer(false)
-                    .purposeActivatedRejectedToConsumer(false)
-                    .purposeSuspendedUnsuspendedToConsumer(false)
-                    .purposeOverQuotaStateToConsumer(false)
+                                // Consumer
+                                .agreementSuspendedUnsuspendedToConsumer(false)
+                                .eserviceStateChangedToConsumer(false)
+                                .agreementActivatedRejectedToConsumer(false)
+                                .purposeActivatedRejectedToConsumer(false)
+                                .purposeSuspendedUnsuspendedToConsumer(false)
+                                .purposeOverQuotaStateToConsumer(false)
 
-                    // Instantiator
-                    .newEserviceTemplateVersionToInstantiator(false)
-                    .eserviceTemplateNameChangedToInstantiator(false)
-                    .eserviceTemplateStatusChangedToInstantiator(false)
+                                // Instantiator
+                                .newEserviceTemplateVersionToInstantiator(false)
+                                .eserviceTemplateNameChangedToInstantiator(false)
+                                .eserviceTemplateStatusChangedToInstantiator(false)
 
-                    // Delegator/Delegate
-                    .delegationApprovedRejectedToDelegator(false)
-                    .eserviceNewVersionSubmittedToDelegator(false)
-                    .eserviceNewVersionApprovedRejectedToDelegate(false)
-                    .delegationSubmittedRevokedToDelegate(false)
+                                // Delegator/Delegate
+                                .delegationApprovedRejectedToDelegator(false)
+                                .eserviceNewVersionSubmittedToDelegator(false)
+                                .eserviceNewVersionApprovedRejectedToDelegate(false)
+                                .delegationSubmittedRevokedToDelegate(false)
 
-                    // Altri
-                    .certifiedVerifiedAttributeAssignedRevokedToAssignee(false)
-                    .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(false)
-                )
-                .inAppConfig(new NotificationConfig()
-                    // Producer
-                    .agreementManagementToProducer(false)
-                    .agreementSuspendedUnsuspendedToProducer(false)
-                    .clientAddedRemovedToProducer(false)
-                    .purposeStatusChangedToProducer(false)
-                    .templateStatusChangedToProducer(false)
-                    .purposeQuotaAdjustmentRequestToProducer(false)
+                                // Altri
+                                .certifiedVerifiedAttributeAssignedRevokedToAssignee(false)
+                                .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(false)
+                        )
+                        .inAppConfig(new NotificationConfig()
+                                // Producer
+                                .agreementManagementToProducer(false)
+                                .agreementSuspendedUnsuspendedToProducer(false)
+                                .clientAddedRemovedToProducer(false)
+                                .purposeStatusChangedToProducer(false)
+                                .templateStatusChangedToProducer(false)
+                                .purposeQuotaAdjustmentRequestToProducer(false)
+                                .eserviceStateChangedToConsumer(false)
 
-                    // Consumer
-                    .agreementSuspendedUnsuspendedToConsumer(false)
-                    .eserviceStateChangedToConsumer(false)
-                    .agreementActivatedRejectedToConsumer(false)
-                    .purposeActivatedRejectedToConsumer(false)
-                    .purposeSuspendedUnsuspendedToConsumer(false)
-                    .purposeOverQuotaStateToConsumer(false)
+                                // Consumer
+                                .agreementSuspendedUnsuspendedToConsumer(false)
+                                .eserviceStateChangedToConsumer(false)
+                                .agreementActivatedRejectedToConsumer(false)
+                                .purposeActivatedRejectedToConsumer(false)
+                                .purposeSuspendedUnsuspendedToConsumer(false)
+                                .purposeOverQuotaStateToConsumer(false)
 
-                    // Instantiator
-                    .newEserviceTemplateVersionToInstantiator(false)
-                    .eserviceTemplateNameChangedToInstantiator(false)
-                    .eserviceTemplateStatusChangedToInstantiator(false)
+                                // Instantiator
+                                .newEserviceTemplateVersionToInstantiator(false)
+                                .eserviceTemplateNameChangedToInstantiator(false)
+                                .eserviceTemplateStatusChangedToInstantiator(false)
 
-                    // Delegator/Delegate
-                    .delegationApprovedRejectedToDelegator(false)
-                    .eserviceNewVersionSubmittedToDelegator(false)
-                    .eserviceNewVersionApprovedRejectedToDelegate(false)
-                    .delegationSubmittedRevokedToDelegate(false)
+                                // Delegator/Delegate
+                                .delegationApprovedRejectedToDelegator(false)
+                                .eserviceNewVersionSubmittedToDelegator(false)
+                                .eserviceNewVersionApprovedRejectedToDelegate(false)
+                                .delegationSubmittedRevokedToDelegate(false)
 
-                    // Altri
-                    .certifiedVerifiedAttributeAssignedRevokedToAssignee(false)
-                    .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(false)
-                ))
-            .build();
+                                // Altri
+                                .certifiedVerifiedAttributeAssignedRevokedToAssignee(false)
+                                .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(false)
+                        ))
+                .build();
 
         rolesNotificationConfig = Map.of(
-            "admin", adminConfig,
-            "support", supportConfig,
-            "security", securityConfig,
-            "api", apiConfig,
-            "api,security", apiSecurityConfig
+                "admin", adminConfig,
+                "support", supportConfig,
+                "security", securityConfig,
+                "api", apiConfig,
+                "api,security", apiSecurityConfig
         );
     }
 
     public NotificationStepsConfig(
-        SharedStepsContext sharedStepsContext,
-        ClientTokenConfigurator clientTokenConfigurator,
-        ConfigFileReader configFileReader,
-        @Qualifier("notificationFeatureLifecycleManager") FeatureLifecycleManager notificationTestsManager
+            SharedStepsContext sharedStepsContext,
+            ClientTokenConfigurator clientTokenConfigurator,
+            ConfigFileReader configFileReader,
+            @Qualifier("notificationFeatureLifecycleManager") FeatureLifecycleManager notificationTestsManager
     ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
 
@@ -515,8 +521,8 @@ public class NotificationStepsConfig {
         // TODO 13 01 2026 si intende ridurre la lista durante i test attraverso sperimentazione,
         //  fino a che ogni ruolo permesso avrà la sua corretta configurazione e non ci sarà più bisogno di escluderne qualcuno
         List<String> excludedRoles = rolesNotificationConfig.keySet().stream()
-            .filter(role -> !List.of("admin").contains(role))
-            .toList();
+                .filter(role -> !List.of("admin").contains(role))
+                .toList();
         this.configNotificationTests(excludedRoles, this.notificationTestsManager::before, ConfigStrategy.PER_ROLE);
     }
 
@@ -525,8 +531,8 @@ public class NotificationStepsConfig {
         // TODO 13 01 2026 si intende ridurre la lista durante i test attraverso sperimentazione,
         //  fino a che ogni ruolo permesso avrà la sua configurazione e non ci sarà più bisogno di escluderne qualcuno
         List<String> excludedRoles = rolesNotificationConfig.keySet().stream()
-            .filter(role -> !List.of("admin").contains(role))
-            .toList();
+                .filter(role -> !List.of("admin").contains(role))
+                .toList();
         this.configNotificationTests(excludedRoles, this.notificationTestsManager::after, ConfigStrategy.NO_CONFIG);
     }
 
@@ -538,29 +544,29 @@ public class NotificationStepsConfig {
         IHttpExecutor executor = this.sharedStepsContext.getHttpCallExecutor();
         applyTaskForEveryUser(List.of("support"), role -> {
             List<Notification> notifications = pollingService.makePolling(
-                this.notificationClient::getAll,
-                res -> notificationExecutor.getResponseStatus().is2xxSuccessful(),
-                "Reperimento notifiche fallito");
-
-            while(!notifications.isEmpty()) {
-                List<UUID> notificationsIds = notifications.stream().map(Notification::getId).toList();
-
-                /* TODO 12/01/2026 per bypassare nel breve termine una problematica di sviluppo sono
-                  * utilizzati due executors distinti. Correggere usandone uno solo appena possibile. */
-                pollingService.makePolling(
-                    () -> executor.performCall(() -> this.notificationClient.deleteAll(notificationsIds)),
-                    HttpStatus::is2xxSuccessful,
-                    "Eliminazione notifiche fallita");
-                notifications = pollingService.makePolling(
                     this.notificationClient::getAll,
                     res -> notificationExecutor.getResponseStatus().is2xxSuccessful(),
                     "Reperimento notifiche fallito");
+
+            while (!notifications.isEmpty()) {
+                List<UUID> notificationsIds = notifications.stream().map(Notification::getId).toList();
+
+                /* TODO 12/01/2026 per bypassare nel breve termine una problematica di sviluppo sono
+                 * utilizzati due executors distinti. Correggere usandone uno solo appena possibile. */
+                pollingService.makePolling(
+                        () -> executor.performCall(() -> this.notificationClient.deleteAll(notificationsIds)),
+                        HttpStatus::is2xxSuccessful,
+                        "Eliminazione notifiche fallita");
+                notifications = pollingService.makePolling(
+                        this.notificationClient::getAll,
+                        res -> notificationExecutor.getResponseStatus().is2xxSuccessful(),
+                        "Reperimento notifiche fallito");
             }
         });
     }
 
     private void configNotificationTests(List<String> excludedRoles,
-        ThrowingConsumer<Task> hook, ConfigStrategy configStrategy
+                                         ThrowingConsumer<Task> hook, ConfigStrategy configStrategy
     ) throws Exception {
         PollingService pollingService = this.sharedStepsContext.getPollingService();
         IHttpExecutor configExecutor = this.notificationConfigClient.getHttpCallExecutor();
@@ -568,23 +574,23 @@ public class NotificationStepsConfig {
             GlobalNotificationConfig config = configStrategy == ConfigStrategy.NO_CONFIG ? noNotificationConfig : rolesNotificationConfig.get(role);
             if (config.getUserConfig() != null) {
                 pollingService.makePolling(
-                    () -> {
-                        this.notificationConfigClient.updateUserNotificationConfig(
-                            config.getUserConfig());
-                        return null;
-                    },
-                    res -> configExecutor.getResponseStatus().is2xxSuccessful(),
-                    "Configurazione notifiche user fallita");
+                        () -> {
+                            this.notificationConfigClient.updateUserNotificationConfig(
+                                    config.getUserConfig());
+                            return null;
+                        },
+                        res -> configExecutor.getResponseStatus().is2xxSuccessful(),
+                        "Configurazione notifiche user fallita");
             }
 
             if (config.getTenantConfig() != null) {
                 pollingService.makePolling(
-                    () -> {
-                        this.notificationConfigClient.updateTenantNotificationConfig(config.getTenantConfig());
-                        return null;
-                    },
-                    res -> configExecutor.getResponseStatus().is2xxSuccessful(),
-                    "Configurazione notifiche tenant fallita");
+                        () -> {
+                            this.notificationConfigClient.updateTenantNotificationConfig(config.getTenantConfig());
+                            return null;
+                        },
+                        res -> configExecutor.getResponseStatus().is2xxSuccessful(),
+                        "Configurazione notifiche tenant fallita");
             }
         }));
     }
@@ -600,7 +606,7 @@ public class NotificationStepsConfig {
                 List<String> users = roleEntry.getValue();
                 for (int i = 0; i < users.size() && !excludedRoles.contains(role); i++) {
                     String token = this.sharedStepsContext.getIdentityService()
-                        .getToken(tenant.getName(), role, i);
+                            .getToken(tenant.getName(), role, i);
                     this.clientTokenConfigurator.setBearerToken(token);
                     taskPerRole.accept(role);
                 }
