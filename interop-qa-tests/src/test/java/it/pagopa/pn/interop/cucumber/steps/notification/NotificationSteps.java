@@ -19,6 +19,8 @@ import it.pagopa.pn.interop.cucumber.utility.FeatureLifecycleManager;
 import it.pagopa.pn.interop.cucumber.utility.NotificationStore;
 import it.pagopa.pn.interop.cucumber.utility.NotificationStore.NotificationUser;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -393,7 +395,7 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
     public void checkInAppNotificationBody(String role, String tenant, DeepLinkType deepLinkType, String message) {
         // TODO usare polling
         try {
-            Thread.sleep(4000);
+            Thread.sleep(8000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -407,10 +409,10 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
         assertThat(notifications)
                 .as("Verifica che almeno una notifica soddisfi i pattern di body e deepLink")
                 .anySatisfy(notif -> {
-                    //assertThat(notif.getBody()).isEqualTo(finalMessage);
-                    //assertThat(notif.getDeepLink()).isEqualTo(deepLink);
-                    assertThat(notif.getBody()).matches(finalMessage);
-                    if (!deepLink.isEmpty()) assertThat(notif.getDeepLink()).matches(deepLink);
+                    assertThat(notif.getBody()).isEqualTo(finalMessage);
+                    if (!deepLink.isEmpty()) assertThat(notif.getDeepLink()).isEqualTo(deepLink);
+                    //assertThat(notif.getBody()).matches(finalMessage);
+                    //if (!deepLink.isEmpty()) assertThat(notif.getDeepLink()).matches(deepLink);
                 });
     }
 
@@ -433,11 +435,13 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
             // Il valore deve essere risolto dalla funzione comune // sharedStepsContext
             String value = ".+";
             switch (label) {
-                case "agreementId":
-                    value = sharedStepsContext.getAgreementId().toString(); break;
-                case "eServiceName":
-                    value = sharedStepsContext.getEServicesCommonContext().getName(); break;
-                    
+                case "agreementId": value = sharedStepsContext.getAgreementId().toString(); break;
+                case "eServiceName": value = sharedStepsContext.getEServicesCommonContext().getName(); break;
+                case "eServiceId": value = sharedStepsContext.getEServicesCommonContext().getEserviceId().toString(); break;
+                case "descriptorId": value = sharedStepsContext.getEServicesCommonContext().getDescriptorId().toString(); break;
+                case "producerName": value = sharedStepsContext.getEServicesCommonContext().getProducerName(); break;
+                case "TODAY+GRACE_PERIOD":
+                    value = LocalDate.now().plusDays(2).format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
             }
             text.append(value);
             // Controlla se c'è un prossimo placeholder
