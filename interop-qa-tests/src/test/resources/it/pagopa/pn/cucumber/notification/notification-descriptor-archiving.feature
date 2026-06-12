@@ -13,3 +13,17 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When "PA2" ha già archiviato quella richiesta di fruizione
+
+  Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_NOTIFICATION_1.1] L'utente erogatore riceve una notifica nel momento in cui avvia il processo di archiviazione di uno specifico descrittore
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    When l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
+
+  Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_NOTIFICATION_1.2] L'utente fruitore riceve una notifica nel momento in cui viene avviato il processo di archiviazione di un descrittore per cui ha una richiesta di fruizione attiva
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    When l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
