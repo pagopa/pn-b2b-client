@@ -14,9 +14,11 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.agreement.AgreementCommonSteps;
 import it.pagopa.pn.interop.cucumber.steps.authorization.ClientCreateStep;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.AbstractCommonSteps;
+import it.pagopa.pn.interop.cucumber.steps.notification.model.DeepLinkType;
 import it.pagopa.pn.interop.cucumber.utility.FeatureLifecycleManager;
 import it.pagopa.pn.interop.cucumber.utility.NotificationStore;
 import it.pagopa.pn.interop.cucumber.utility.NotificationStore.NotificationUser;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -25,6 +27,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -41,8 +44,9 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
         throw new UnsupportedOperationException();
     }
 
-    private enum NotificationOp { DELETE, READ, UNREAD, UPDATE, UNKNOWN }
-    private enum NotificationsTarget { MULTIPLE, SINGLE }
+    private enum NotificationOp {DELETE, READ, UNREAD, UPDATE, UNKNOWN}
+
+    private enum NotificationsTarget {MULTIPLE, SINGLE}
 
     private final AgreementCommonSteps agreementCommonSteps;
     private final ClientCreateStep clientCreateStep;
@@ -57,13 +61,13 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
     private final NotificationStore notificationStore;
 
     public NotificationSteps(
-        SharedStepsContext sharedStepsContext,
-        ClientTokenConfigurator clientTokenConfigurator,
-        @Qualifier("notificationFeatureLifecycleManager") FeatureLifecycleManager notificationTestsManager,
-        NotificationStore notificationStore,
-        AgreementCommonSteps agreementCommonSteps,
-        ClientCreateStep clientCreateStep
-    ){
+            SharedStepsContext sharedStepsContext,
+            ClientTokenConfigurator clientTokenConfigurator,
+            @Qualifier("notificationFeatureLifecycleManager") FeatureLifecycleManager notificationTestsManager,
+            NotificationStore notificationStore,
+            AgreementCommonSteps agreementCommonSteps,
+            ClientCreateStep clientCreateStep
+    ) {
         super("inAppNotification", clientTokenConfigurator.getNotificationClient(), sharedStepsContext);
         this.apiClient = (NotificationClientImpl) clientTokenConfigurator.getNotificationClient();
         this.apiClient.setHttpCallExecutor(sharedStepsContext.getHttpCallExecutor());
@@ -77,29 +81,29 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
     @When("l'utente tenta di recuperare la lista di notifiche create")
     public void pollUntilAllocate() {
         Set<UUID> touchedIds = sharedStepsContext
-            .getNotificationCommonContext()
-            .getTouchedIds();
+                .getNotificationCommonContext()
+                .getTouchedIds();
 
         PollingService.makePolling(
-            apiClient::getAll,
-            all -> tryAcquireFreshNotifications(all, touchedIds),
-            "Attesa di " + toAllocate + " notifiche fresh non ancora toccate",
-            30,
-            1000
+                apiClient::getAll,
+                all -> tryAcquireFreshNotifications(all, touchedIds),
+                "Attesa di " + toAllocate + " notifiche fresh non ancora toccate",
+                30,
+                1000
         );
     }
 
     private boolean tryAcquireFreshNotifications(List<Notification> all, Set<UUID> touchedIds) {
         // 1) filtro + ordinamento (più recenti prima)
         List<Notification> candidates = all.stream()
-            .filter(Objects::nonNull)
-            .filter(n ->  n.getReadAt() == null || n.getReadAt().isEmpty())
-            .sorted(Comparator.comparing(
-                Notification::getCreatedAt,
-                Comparator.nullsLast(String::compareTo)
-            ).reversed())
-            .filter(n -> !touchedIds.contains(n.getId()))
-            .toList();
+                .filter(Objects::nonNull)
+                .filter(n -> n.getReadAt() == null || n.getReadAt().isEmpty())
+                .sorted(Comparator.comparing(
+                        Notification::getCreatedAt,
+                        Comparator.nullsLast(String::compareTo)
+                ).reversed())
+                .filter(n -> !touchedIds.contains(n.getId()))
+                .toList();
 
         // 2) acquisizione "atomica" di toAllocate notifiche tramite touchedIds
         List<Notification> acquired = new ArrayList<>(toAllocate);
@@ -126,11 +130,11 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
     @When("l'utente tenta di recuperare lo stato aggiornato delle notifiche")
     public void refreshAllocated() {
         List<Notification> refreshed = allocated.stream()
-            .map(n -> apiClient.getByBody(n.getBody())
-                .orElseThrow(() -> new IllegalStateException(
-                    "Notifica non trovata per body: " + n.getBody()
-                )))
-            .toList();
+                .map(n -> apiClient.getByBody(n.getBody())
+                        .orElseThrow(() -> new IllegalStateException(
+                                "Notifica non trovata per body: " + n.getBody()
+                        )))
+                .toList();
 
         this.allocated = new LinkedList<>(refreshed);
     }
@@ -150,9 +154,9 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
 
     @When("l'utente tenta di recuperare la lista di notifiche")
     public void getAllNotifications() {
-        try{
+        try {
             allocated = apiClient.getAll();
-        }catch(IllegalStateException e){
+        } catch (IllegalStateException e) {
             log.warn(e.getMessage());
         }
     }
@@ -235,25 +239,29 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
     }
 
     @When("lista di notifiche {word} restituita")
-    public void checkNotifications(String assertion){
+    public void checkNotifications(String assertion) {
         boolean exists = parseExistenceToken(assertion);
 
         if (exists) {
             assertThat(allocated)
-                .as("Il count delle notifiche deve essere presente")
-                .isNotNull();
+                    .as("Il count delle notifiche deve essere presente")
+                    .isNotNull();
         } else {
             assertThat(allocated)
-                .as("Il count delle notifiche non deve essere presente")
-                .isNull();
+                    .as("Il count delle notifiche non deve essere presente")
+                    .isNull();
         }
     }
 
     @When("le notifiche create sono state eliminate")
-    public void checkSuccessDelete() { checkDelete("DELETED"); }
+    public void checkSuccessDelete() {
+        checkDelete("DELETED");
+    }
 
     @When("nessuna notifica è stata eliminata")
-    public void checkFailDelete() { checkDelete("PRESENT"); }
+    public void checkFailDelete() {
+        checkDelete("PRESENT");
+    }
 
     @When("le notifiche recuperate sono nello stato {string}")
     @When("la notifica recuperate è nello stato {string}")
@@ -263,20 +271,20 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
 
         if (read) {
             assertThat(allocated)
-                .as("Le notifiche devono essere read")
-                .extracting(Notification::getReadAt)
-                .allMatch(Objects::nonNull);
+                    .as("Le notifiche devono essere read")
+                    .extracting(Notification::getReadAt)
+                    .allMatch(Objects::nonNull);
         } else {
             assertThat(allocated)
-                .as("Le notifiche devono essere unread")
-                .extracting(Notification::getReadAt)
-                .allMatch(Objects::isNull);
+                    .as("Le notifiche devono essere unread")
+                    .extracting(Notification::getReadAt)
+                    .allMatch(Objects::isNull);
         }
     }
 
     @When("l'utente tenta di recuperare il count delle notifiche")
     public void getNotificationCount() {
-        try{
+        try {
             notificationsCountBySection = apiClient.countBySection();
         } catch (IllegalStateException e) {
             log.warn(e.getMessage());
@@ -289,12 +297,12 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
 
         if (exists) {
             assertThat(notificationsCountBySection)
-                .as("Il count delle notifiche deve essere presente")
-                .isNotNull();
+                    .as("Il count delle notifiche deve essere presente")
+                    .isNotNull();
         } else {
             assertThat(notificationsCountBySection)
-                .as("Il count delle notifiche non deve essere presente")
-                .isNull();
+                    .as("Il count delle notifiche non deve essere presente")
+                    .isNull();
         }
     }
 
@@ -362,11 +370,11 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
     }*/
 
     /* 14 01 2026: seconda versione in cui si tenta di innescare tutti le notifiche con una Nrt e visionare quindi le notifiche a posteriori */
-    @Then("per l'utente {string} di {string} è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern {string} e {string}")
+   /* @Then("per l'utente {string} di {string} è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern {string} e {string}")
     public void checkInAppNotificationBody(String role, String tenant, String bodyRegex, String deepLinkRegex){
         Set<Notification> notifications = notificationStore.get(NotificationUser.of(role, tenant));
 
-        /* FIXME per prove locali, rimuovere */
+         //FIXME per prove locali, rimuovere
         List<Notification> notificationStream = notifications.stream()
             .filter(a -> a.getBody().contains("stata rimossa dal client")).toList();
         notificationStream.forEach(notification -> System.out.println(notification.getBody()));
@@ -378,5 +386,61 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
                 assertThat(notif.getDeepLink()).matches(deepLinkRegex);
             });
     }
+    */
 
+    /* 08 05 2026: terza versione */
+    @Then("l'utente {string} di {string} ha ricevuto la notifica in-app contenente il link {deepLink}")
+    public void checkInAppNotificationBody(String role, String tenant, DeepLinkType deepLinkType, String message) {
+        // TODO usare polling
+        try {
+            Thread.sleep(4000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        Set<Notification> notifications = notificationStore.get(NotificationUser.of(role, tenant));
+        message = message.replace("\n", " ");
+
+        String deepLink = resolveLabelsWithSharedContext(deepLinkType.getValue());
+        String finalMessage = resolveLabelsWithSharedContext(message);
+
+        assertThat(notifications)
+                .as("Verifica che almeno una notifica soddisfi i pattern di body e deepLink")
+                .anySatisfy(notif -> {
+                    //assertThat(notif.getBody()).isEqualTo(finalMessage);
+                    //assertThat(notif.getDeepLink()).isEqualTo(deepLink);
+                    assertThat(notif.getBody()).matches(finalMessage);
+                    assertThat(notif.getDeepLink()).matches(deepLink);
+                });
+    }
+
+    private String resolveLabelsWithSharedContext(String textTemplate) {
+        StringBuilder text = new StringBuilder();
+        String functionName = "$DA_CONTESTO(";
+        int reachedIndex = 0;
+        int labelStartIndex = textTemplate.indexOf(functionName, reachedIndex);
+        int labelEndIndex;
+        while (labelStartIndex > -1) {
+            text.append(textTemplate.substring(reachedIndex, labelStartIndex));
+            labelStartIndex += functionName.length();
+            labelEndIndex = textTemplate.indexOf(')', labelStartIndex);
+            String label = textTemplate.substring(labelStartIndex, labelEndIndex);
+            // Il valore deve essere risolto dalla funzione comune // sharedStepsContext
+            String value = ".+";
+            switch (label) {
+                case "agreementId":
+                    value = sharedStepsContext.getAgreementId().toString();
+                    break;
+            }
+            text.append(value);
+            // Controlla se c'è un prossimo placeholder
+            reachedIndex = labelEndIndex + 1;
+            labelStartIndex = textTemplate.indexOf(functionName, reachedIndex);
+            if (labelStartIndex == -1) {
+                text.append(textTemplate.substring(reachedIndex));
+            }
+        }
+        if (text.isEmpty()) text.append(textTemplate);
+        return text.toString();
+    }
 }
