@@ -440,8 +440,8 @@ public class CostiNotificaSteps {
         }
     }
 
-    @And("{isBefore} {timelineInvalidation} vengono recuperati i valori dei costi notifica relativi al pagamento {int} dell'utente {int} sulla tabella pn-CostUpdateResult")
-    public void checkPnCostUpdateResultDynamo(boolean isBeforeRework, String requestType, int paymentIndex, int recIndex) {
+    @And("{isBefore} {timelineInvalidation} vengono recuperati i valori dei costi notifica relativi al pagamento {int} dell'utente {int} sulla tabella pn-CostUpdateResult fino all'attempt {int}")
+    public void checkPnCostUpdateResultDynamo(boolean isBeforeRework, String requestType, int paymentIndex, int recIndex, int attempt) {
         FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
         String creditorTaxId = fsn.getRecipients().get(recIndex).getPayments().get(paymentIndex).getPagoPa().getCreditorTaxId();
         String noticeCode = fsn.getRecipients().get(recIndex).getPayments().get(paymentIndex).getPagoPa().getNoticeCode();
@@ -453,21 +453,22 @@ public class CostiNotificaSteps {
                 .as("La query su pn-CostUpdateResult con pk %s non ha prodotto risultati. IUN: %s", pk, sharedSteps.getNotificationIun())
                 .isGreaterThan(0);
         if (isBeforeRework) {
-            List<Map<String, AttributeValue>> notReworkedElements = queryResponse.items().stream().filter(
-                    x -> x.containsKey("sk") && !x.get("sk").s().contains("REWORKED")).toList();
-            costUpdateResultsPreRework = notReworkedElements.stream()
-                    .filter(x -> x.containsKey("notificationCost")) // sicurezza
+            Optional<Map<String, AttributeValue>> selectedElement = queryResponse.items().stream()
+                    .filter(x -> x.containsKey("sk") && x.get("sk").s().contains("SEND_ANALOG_DOMICILE_ATTEMPT_" + attempt))
+                    .filter(x -> x.containsKey("eventTimestamp"))
+                    .min(Comparator.comparingLong(x -> Long.parseLong(x.get("eventTimestamp").n())));
+            costUpdateResultsPreRework = selectedElement
+                    .filter(x -> x.containsKey("notificationCost"))
                     .map(x -> Integer.parseInt(x.get("notificationCost").n()))
-                    .max(Integer::compareTo)
                     .orElse(0);
-
         } else {
-            List<Map<String, AttributeValue>> reworkedElements = queryResponse.items().stream().filter(
-                    x -> x.containsKey("sk") && x.get("sk").s().contains("REWORKED")).toList();
-            costUpdateResultsPostRework = reworkedElements.stream()
-                    .filter(x -> x.containsKey("notificationCost")) // sicurezza
+            Optional<Map<String, AttributeValue>> selectedElement = queryResponse.items().stream()
+                    .filter(x -> x.containsKey("sk") && x.get("sk").s().contains("SEND_ANALOG_DOMICILE_ATTEMPT_" + attempt))
+                    .filter(x -> x.containsKey("eventTimestamp"))
+                    .max(Comparator.comparingLong(x -> Long.parseLong(x.get("eventTimestamp").n())));
+            costUpdateResultsPostRework = selectedElement
+                    .filter(x -> x.containsKey("notificationCost"))
                     .map(x -> Integer.parseInt(x.get("notificationCost").n()))
-                    .max(Integer::compareTo)
                     .orElse(0);
         }
     }

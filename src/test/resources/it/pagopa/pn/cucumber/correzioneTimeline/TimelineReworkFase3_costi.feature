@@ -457,7 +457,7 @@ Feature: Correzione timeline fase 3 costi
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEvent>"
     And pre restart vengono recuperati i valori dei costi notifica relativi all'utente 0 sulla tabella pn-CostComponents
-    And pre restart vengono recuperati i valori dei costi notifica relativi al pagamento 0 dell'utente 0 sulla tabella pn-CostUpdateResult
+    And pre restart vengono recuperati i valori dei costi notifica relativi al pagamento 0 dell'utente 0 sulla tabella pn-CostUpdateResult fino all'attempt <attempt>
     And pre restart verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attempt>
     And vengono letti gli eventi fino allo stato della notifica "<finalStatus>"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
@@ -465,28 +465,28 @@ Feature: Correzione timeline fase 3 costi
     And vengono letti gli eventi fino allo stato della notifica "<finalStatusRestart>"
     Then la timeline contiene elementi con la stringa "REWORK_"
     And post restart vengono recuperati i valori dei costi notifica relativi all'utente 0 sulla tabella pn-CostComponents
-    And post restart vengono recuperati i valori dei costi notifica relativi al pagamento 0 dell'utente 0 sulla tabella pn-CostUpdateResult
+    And post restart vengono recuperati i valori dei costi notifica relativi al pagamento 0 dell'utente 0 sulla tabella pn-CostUpdateResult fino all'attempt <attemptRestart>
     And post restart verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attemptRestart>
-    And il record recuperato su pn-CostComponents è <compareCosts> rispetto a prima del rework
-    And il valore del notification cost dei record su pn-CostUpdateResult è <compareCosts> rispetto a prima del rework
+    And il record recuperato su pn-CostComponents è <costCompare> rispetto a prima del rework
+    And il valore del notification cost dei record su pn-CostUpdateResult è <costCompare> rispetto a prima del rework
 #    And il baseCost è differente rispetto a prima del rework
     Examples:
-      | sequence                               | finalEvent                         | finalStatus        | attempt | finalEventRestart                  | finalStatusRestart | attemptRestart | compareCosts |
-      | Via@OK_DEC_RESTART_CONS_AR             | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              | differente   |
-      | Via@OK_DEC_RESTART_CONS_ATT1_AR        | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              | differente   |
-      | Via@OK_DEC_RESTART_IRR_AR              | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              | differente   |
-      | Via@OK_RESTART_CONS_ATT1_AR            | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              | differente   |
-      | Via@OK_RESTART_IRR_AR                  | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              | differente   |
-      | Via@OK_RESTART_DEC_AR                  | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              | differente   |
-      | Via@FAIL_DISC_RESTART_CONS_AR          | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              | differente   |
-      | Via@FAIL_DISC_RESTART_IRR_AR           | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              | uguale       |
-      | Via@FAIL_DISC_RESTART_DEC_AR           | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              | differente   |
-      | Via@FAIL_IRREP_RESTART_1_CONS_AT1_AR   | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              | differente   |
-      | Via@FAIL_DISC_IRR_RESTART_CONS_ATT1_AR | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              | uguale       |
-      | Via@FAIL_DISC_IRR_RESTART_DEC_AR       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              | differente   |
+      | sequence                               | finalEvent                         | finalStatus        | attempt | finalEventRestart                  | finalStatusRestart | attemptRestart | costCompare |
+      | Via@OK_DEC_RESTART_CONS_AR             | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              | uguale      |
+      | Via@OK_DEC_RESTART_CONS_ATT1_AR        | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              | differente  |
+      | Via@OK_DEC_RESTART_IRR_AR              | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              | differente  |
+      | Via@OK_RESTART_CONS_ATT1_AR            | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              | differente  |
+      | Via@OK_RESTART_IRR_AR                  | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              | differente  |
+      | Via@OK_RESTART_DEC_AR                  | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              | uguale      |
+      | Via@FAIL_DISC_RESTART_CONS_AR          | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              | differente  |
+      | Via@FAIL_DISC_RESTART_IRR_AR           | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              | uguale      |
+      | Via@FAIL_DISC_RESTART_DEC_AR           | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              | differente  |
+      | Via@FAIL_IRREP_RESTART_1_CONS_AT1_AR   | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              | differente  |
+      | Via@FAIL_DISC_IRR_RESTART_CONS_ATT1_AR | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              | uguale      |
+      | Via@FAIL_DISC_IRR_RESTART_DEC_AR       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              | differente  |
       #Restart all'attempt 1                 |
-      | Via@FAIL_DISC_RESTART_1_IRREP_AR       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              | uguale       |
-      | Via@FAIL_IRREP_RESTART_1_CONS_AT2_AR   | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              | uguale       |
+      | Via@FAIL_DISC_RESTART_1_IRREP_AR       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              | uguale      |
+      | Via@FAIL_IRREP_RESTART_1_CONS_AT2_AR   | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              | uguale      |
 
   # il baseCost cambia
   # firstAnalogCost immutato
@@ -517,7 +517,7 @@ Feature: Correzione timeline fase 3 costi
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEvent>"
     And pre restart vengono recuperati i valori dei costi notifica relativi all'utente 0 sulla tabella pn-CostComponents
-    And pre restart vengono recuperati i valori dei costi notifica relativi al pagamento 0 dell'utente 0 sulla tabella pn-CostUpdateResult
+    And pre restart vengono recuperati i valori dei costi notifica relativi al pagamento 0 dell'utente 0 sulla tabella pn-CostUpdateResult all'attempt <attempt>
     And pre restart verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attempt>
     And vengono letti gli eventi fino allo stato della notifica "<finalStatus>"
     When viene invocata una richiesta di restart per la notifica appena creata con i seguenti parametri:
@@ -531,7 +531,7 @@ Feature: Correzione timeline fase 3 costi
     And vengono letti gli eventi fino allo stato della notifica "<finalStatusRestart>"
     And la timeline contiene elementi con la stringa "REWORK_"
     And post restart vengono recuperati i valori dei costi notifica relativi all'utente 0 sulla tabella pn-CostComponents
-    And post restart vengono recuperati i valori dei costi notifica relativi al pagamento 0 dell'utente 0 sulla tabella pn-CostUpdateResult
+    And post restart vengono recuperati i valori dei costi notifica relativi al pagamento 0 dell'utente 0 sulla tabella pn-CostUpdateResult all'attempt <attemptRestart>
     And post restart verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attemptRestart>
     And il record recuperato su pn-CostComponents è uguale rispetto a prima del rework
     And il valore del notification cost dei record su pn-CostUpdateResult è uguale rispetto a prima del rework
