@@ -115,9 +115,9 @@ public class RicezioneNotificheWebSteps {
     private HttpStatusCodeException notificationError;
     private BundleFullReceivedNotification fullReceivedNotification;
     private BffFullNotificationV1 bffFullNotificationV1Recipient;
+    private OtpCodeService otpCodeService;
 
     private final DynamoDbService dynamoDbService;
-    private String otpCode;
     private it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffFullNotificationV1 bffFullNotificationV1Sender;
 
     private static final String TOS_VERSION = "8";
@@ -157,7 +157,8 @@ public class RicezioneNotificheWebSteps {
 
     @Autowired
     public RicezioneNotificheWebSteps(ApplicationContext context, SharedSteps sharedSteps, PnWebUserAttributesInternalClientImpl iPnWebUserAttributesClient,
-                                      IPnBFFRecipientNotificationClient bffRecipientNotificationClient, IPnTosPrivacyClient iPnTosPrivacyClient, PnB2bClientTimingConfigs timingConfigs, DynamoDbService dynamoDbService) {
+                                      IPnBFFRecipientNotificationClient bffRecipientNotificationClient, IPnTosPrivacyClient iPnTosPrivacyClient, PnB2bClientTimingConfigs timingConfigs, DynamoDbService dynamoDbService,
+                                      OtpCodeService otpCodeService) {
         this.context = context;
         this.sharedSteps = sharedSteps;
         this.webRecipientClient = sharedSteps.getWebRecipientClient();
@@ -168,6 +169,7 @@ public class RicezioneNotificheWebSteps {
         this.iPnTosPrivacyClient = sharedSteps.getIPnTosPrivacyClientImpl();
         this.timingConfigs = timingConfigs;
         this.dynamoDbService = dynamoDbService;
+        this.otpCodeService = otpCodeService;
     }
 
     @Then("la notifica può essere correttamente recuperata da {string}")
@@ -833,9 +835,11 @@ public class RicezioneNotificheWebSteps {
     private void postRecipientCourtesyAddress(String senderId, String addressVerification, LegalCourtesyAddressWrapper.ChannelType type, String verificationCode, boolean inserimento, CxLanguage xPagopaPnLanguageCxLanguage) {
         try {
             if (inserimento) {
+                Destinatario destinatario = sharedSteps.getDestinatariList().get(0);
+                // il service tiene traccia dell'ultimo OTP già restituito per questa pk+canale
+                // e attende su Dynamo finché non ne compare uno nuovo dopo la POST
                 this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, type, (new AddressVerification().value(addressVerification)), xPagopaPnLanguageCxLanguage);
-                //verificationCode = this.externalClient.getVerificationCode(addressVerification);
-                verificationCode = checkOtpCodeOnDynamoDB(sharedSteps.getDestinatariList().get(0));
+                verificationCode = otpCodeService.getNewOtp(destinatario, type);
             }
             this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, type, (new AddressVerification().value(addressVerification).verificationCode(verificationCode)), xPagopaPnLanguageCxLanguage);
         } catch (HttpStatusCodeException httpStatusCodeException) {
@@ -846,8 +850,9 @@ public class RicezioneNotificheWebSteps {
     private void postRecipientLegalAddress(String senderIdPa, String addressVerification, String verificationCode, boolean inserimento, CxLanguage xPagopaPnLanguage) {
         try {
             if (inserimento) {
+                Destinatario destinatario = sharedSteps.getDestinatariList().get(0);
                 this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalCourtesyAddressWrapper.ChannelType.PEC, (new AddressVerification().value(addressVerification)), xPagopaPnLanguage);
-                verificationCode = checkOtpCodeOnDynamoDB(sharedSteps.getDestinatariList().get(0));
+                verificationCode = otpCodeService.getNewOtp(destinatario, LegalCourtesyAddressWrapper.ChannelType.PEC);
             }
             this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalCourtesyAddressWrapper.ChannelType.PEC, (new AddressVerification().value(addressVerification).verificationCode(verificationCode)),xPagopaPnLanguage);
         } catch (HttpStatusCodeException httpStatusCodeException) {
@@ -1166,29 +1171,53 @@ public class RicezioneNotificheWebSteps {
 
     @And("vengono rimossi eventuali recapiti presenti per l'utente")
     public void cleanLegalAddressForUser() {
+        // Rimuovo tutti gli indirizzi legali presenti per l'utente
         try {
-            // Rimuovo tutti gli indirizzi legali presenti per l'utente
             List<LegalCourtesyAddressWrapper> legalAddresses = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
             if (legalAddresses != null && !legalAddresses.isEmpty()) {
-                legalAddresses
-                        .forEach(address -> {
-                            this.iPnWebUserAttributesClient.deleteRecipientLegalAddress(address.getSenderId(), LegalCourtesyAddressWrapper.ChannelType.valueOf(address.getChannelType().getValue()));
-                            log.info("Cancellato indirizzo di tipo " + address.getChannelType() + " per il comune " + address.getSenderId());
-                        });
-            }
-
-            // Rimuovo tutti gli indirizzi di cortesia presenti per l'utente
-            List<CourtesyDigitalAddress> courtesyDigitalAddresses = this.iPnWebUserAttributesClient.getCourtesyAddressByRecipient();
-            if (courtesyDigitalAddresses != null && !courtesyDigitalAddresses.isEmpty()) {
-                courtesyDigitalAddresses
-                        .forEach(address -> {
-                            this.iPnWebUserAttributesClient.deleteRecipientCourtesyAddress(address.getSenderId(), LegalCourtesyAddressWrapper.ChannelType.valueOf(address.getChannelType().getValue()));
-                            log.info("Cancellato indirizzo di cortesia di tipo " + address.getChannelType() + " per il comune " + address.getSenderId());
-                        });
+                legalAddresses.forEach(address -> {
+                    try {
+                        this.iPnWebUserAttributesClient.deleteRecipientLegalAddress(
+                                address.getSenderId(),
+                                LegalCourtesyAddressWrapper.ChannelType.valueOf(address.getChannelType().getValue())
+                        );
+                        log.info("Cancellato indirizzo di tipo {} per il comune {}", address.getChannelType(), address.getSenderId());
+                    } catch (Exception e) {
+                        log.error("Errore nella rimozione indirizzo legale tipo={} senderId={}: {}",
+                                address.getChannelType(), address.getSenderId(), e.getMessage());
+                    }
+                });
             }
         } catch (Exception e) {
-            log.error("RIMOZIONE RECAPITI FALLITA: " + e.getStackTrace());
+            log.error("Errore nel recupero degli indirizzi legali: {}", e.getMessage());
         }
+
+        // Rimuovo tutti gli indirizzi di cortesia presenti per l'utente
+        try {
+            List<CourtesyDigitalAddress> courtesyDigitalAddresses = this.iPnWebUserAttributesClient.getCourtesyAddressByRecipient();
+            if (courtesyDigitalAddresses != null && !courtesyDigitalAddresses.isEmpty()) {
+                courtesyDigitalAddresses.forEach(address -> {
+                    try {
+                        this.iPnWebUserAttributesClient.deleteRecipientCourtesyAddress(
+                                address.getSenderId(),
+                                LegalCourtesyAddressWrapper.ChannelType.valueOf(address.getChannelType().getValue())
+                        );
+                        log.info("Cancellato indirizzo di cortesia di tipo {} per il comune {}", address.getChannelType(), address.getSenderId());
+                    } catch (Exception e) {
+                        log.error("Errore nella rimozione indirizzo di cortesia tipo={} senderId={}: {}",
+                                address.getChannelType(), address.getSenderId(), e.getMessage());
+                    }
+                });
+            }
+        } catch (Exception e) {
+            log.error("Errore nel recupero degli indirizzi di cortesia: {}", e.getMessage());
+        }
+
+        // warm-up: gli OTP eventualmente già presenti su Dynamo (residui di run/iterazioni
+        // precedenti) vengono marcati come "già visti", così il primo getNewOtp dello
+        // scenario attenderà un codice effettivamente nuovo dopo la POST
+        Destinatario destinatario = sharedSteps.getDestinatariList().get(0);
+        otpCodeService.markExistingOtpAsSeen(destinatario);
     }
 
 

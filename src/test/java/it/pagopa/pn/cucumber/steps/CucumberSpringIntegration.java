@@ -157,6 +157,7 @@ import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRaddCognito;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.cucumber.steps.paperTracker.parser.EventTimelineParser;
 import it.pagopa.pn.cucumber.steps.paperTracker.proxy.PaperTrackerSchemaValidatorProxy;
+import it.pagopa.pn.cucumber.steps.recipient.OtpCodeService;
 import it.pagopa.pn.cucumber.steps.templateEngine.TemplateConfiguration;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextFactory;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
@@ -342,6 +343,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         AwsConfig.class,
         SenderInfoProvider.class,
         CacheConfig.class,
+        OtpCodeService.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
