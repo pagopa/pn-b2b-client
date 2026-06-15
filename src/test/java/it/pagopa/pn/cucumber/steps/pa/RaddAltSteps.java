@@ -812,6 +812,12 @@ public class RaddAltSteps {
         this.actInquiryResponse = actInquiryResponse;
     }
 
+    @When("Imposto il cf {string} e recipient type {string}")
+    public void setDateFromPreparation(String cf, String recipientType) {
+        this.currentUserCf = cf;
+        this.recipientType = recipientType;
+    }
+
     @When("L'operatore {string} scansione il qrCode per recuperare gli atti da radd alternative")
     public void lOperatoreUploaderScansioneIlQrCodePerRecuperareGliAtti(String raddOperatorType) {
         RaddOperator raddOperator = setOperatorRaddJWT(raddOperatorType);
