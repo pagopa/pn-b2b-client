@@ -40,7 +40,7 @@ public class PnRaddNetVpceClientImpl {
 
     public PnRaddNetVpceClientImpl(
 
-            @Value("${pn.radd-vpce.base-url}") String basePath) throws Exception {
+            @Value("${pn.radd-vpc.base-url}") String basePath) throws Exception {
 
         RestTemplate unsafeRestTemplate = buildUnsafeRestTemplate(); //
 

@@ -31,7 +31,7 @@ public class RaddHooks {
 
     }
 
-    @Before("@useRaddAlternative")
+    @Before("@raddAlt")
     public void useRaddAlternative() {
         log.info("Using RADD Alternative client");
 
