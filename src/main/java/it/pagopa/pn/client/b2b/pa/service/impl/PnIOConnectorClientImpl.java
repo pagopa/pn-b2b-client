@@ -23,8 +23,8 @@ public class PnIOConnectorClientImpl implements IPnIOConnectorClient {
 
 
     public PnIOConnectorClientImpl(RestTemplate restTemplate,
-                                   @Value("http://localhost:8080") String basePath
-                                   //TODO mettere base path a config
+                                   @Value("${pn.internal.delivery-base-url}") String basePath
+                                   
     ) {
         this.apiIOConnector = new IoConnectorApi(newApiClientExternal(restTemplate, basePath));
     }
