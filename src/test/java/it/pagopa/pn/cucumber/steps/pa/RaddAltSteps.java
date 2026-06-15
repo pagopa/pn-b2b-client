@@ -803,6 +803,7 @@ public class RaddAltSteps {
     @Given("viene richiesto il codice QR per lo IUN {string} per il destinatario {int} su radd alternative")
     public void vieneRichiestoIlCodiceQRPerLoIUN(String iun, Integer destinatario) {
         this.qrCode = sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(iun, destinatario);
+        log.info("********  qrCode  *******/: {}", qrCode);
     }
 
     @When("L'operatore scansione il qrCode per recuperare gli atti da radd alternative")
@@ -812,10 +813,18 @@ public class RaddAltSteps {
         this.actInquiryResponse = actInquiryResponse;
     }
 
+    @When("Imposto il cf {string} e recipient type {string} e qrCode {string}")
+    public void setDateFromPreparationWithQrCode(String cf, String recipientType, String qrCode) {
+        this.currentUserCf = cf;
+        this.recipientType = recipientType;
+        this.qrCode= qrCode;
+    }
+
     @When("Imposto il cf {string} e recipient type {string}")
     public void setDateFromPreparation(String cf, String recipientType) {
         this.currentUserCf = cf;
         this.recipientType = recipientType;
+        this.qrCode= qrCode;
     }
 
     @When("L'operatore {string} scansione il qrCode per recuperare gli atti da radd alternative")

@@ -33,8 +33,8 @@ Feature: Radd Alternative integrazione con Poste
 #      | details_attachments        | [{"documentType": "ARCAD"}] |
 #    And abbia anche un valore per il campo "details_attachments[0]_url" compatibile con l'espressione regolare ".+PN_EXTERNAL_LEGAL_FACTS.+\.zip"
     Given imposto lo iun di SharedSteps a "XWUP-TDER-TZQW-202606-R-1" e la pa a "Comune_Multi"
-    Then Imposto il cf "CLMCST42R12D969Z" e recipient type "PF"
-    When Il cittadino Mario Gherkin come destinatario 0 mostra il QRCode "corretto"
+    Then Imposto il cf "CLMCST42R12D969Z" e recipient type "CF" e qrCode "WFdVUC1UREVSLVRaUVctMjAyNjA2LVItMV9QRi1hNmMxMzUwZC0xZDY5LTQyMDktOGJmOC0zMWRlNThjNzlkNmVfYTEzOTZjOTYtMmQ4ZC00NjAzLTlkZWYtNjAwYjM5ZmY3OGZm"
+    #When Il cittadino Mario Gherkin come destinatario 0 mostra il QRCode "corretto"
     Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
@@ -65,8 +65,8 @@ Feature: Radd Alternative integrazione con Poste
 #    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
 #    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     Given imposto lo iun di SharedSteps a "XVZM-TJME-KGWV-202606-V-1" e la pa a "Comune_Multi"
-    Then Imposto il cf "CLMCST42R12D969Z" e recipient type "PF"
-    And Il cittadino Mario Gherkin come destinatario 0 mostra il QRCode "corretto"
+    And Imposto il cf "CLMCST42R12D969Z" e recipient type "PF" e qrCode "WFZaTS1USk1FLUtHV1YtMjAyNjA2LVYtMV9QRi1hNmMxMzUwZC0xZDY5LTQyMDktOGJmOC0zMWRlNThjNzlkNmVfZjcwZjgzMmYtZDkzYy00ZGYxLWI0MDktMTg5ZGVmYmY4NTkz"
+    #And Il cittadino Mario Gherkin come destinatario 0 mostra il QRCode "corretto"
     When L'operatore scansione il qrCode per recuperare gli atti di Mario Gherkin
     Then la scansione si conclude correttamente su radd alternative
     And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
@@ -86,8 +86,9 @@ Feature: Radd Alternative integrazione con Poste
 #    And "Mario Cucumber" legge la notifica
 #    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     Given imposto lo iun di SharedSteps a "JYAY-GYDM-LWVL-202606-H-1" e la pa a "Comune_Multi"
-    Then Imposto il cf "FRMTTR76M06B715E" e recipient type "PF"
-    Then Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
+    #Then Imposto il cf "FRMTTR76M06B715E" e recipient type "PF"
+    Then Imposto il cf "FRMTTR76M06B715E" e recipient type "PF" e qrCode "SllBWS1HWURNLUxXVkwtMjAyNjA2LUgtMV9QRi00ZmM3NWRmMy0wOTEzLTQwN2UtYmRhYS1lNTAzMjk3MDhiN2RfMjRmZGRhYmItNTg2Yy00YjRiLWJlNjEtNjU3N2QxNzU0ZTE4"
+    #Then Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
     And L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
@@ -159,7 +160,7 @@ Feature: Radd Alternative integrazione con Poste
 #    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
 #    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     Given imposto lo iun di SharedSteps a "LTMP-WEQR-NGZK-202606-H-1" e la pa a "Comune_Multi"
-    Then Imposto il cf "20517490320" e recipient type "PG"
+    Then Imposto il cf "20517490320" e recipient type "PG" e qrCode "TFRNUC1XRVFSLU5HWkstMjAyNjA2LUgtMV9QRy1iMDVkZTc3Ny04MGM2LTQ1NDktYTA1NC1kOGRmZGExMzljNjJfNzk4ZmZjOTgtODhmNC00MTU5LWI2ODAtNGFkOWQ4NTg1ODdh"
     And Il cittadino CucumberSpa come destinatario 0 mostra il QRCode "corretto"
     When L'operatore scansione il qrCode per recuperare gli atti di CucumberSpa
     And la scansione si conclude correttamente su radd alternative
