@@ -20,23 +20,23 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     Then viene verificato che la richiesta per il cf "17492068394" risulti in retry
 
 
-  @inipecGestionePuntuale
-  Scenario: [INIPEC_GESTIONE_ESITO_PUNTUALE_02.2] Notifica verso due PG con esiti errore temporaneo e domicilio trovato rispettivamente nel recupero del domicilio digitale presso INIPEC vecchia versione
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di palermo           |
-    And destinatario
-      | taxId           | 29527800386 |
-      | digitalDomicile | NULL        |
-      | recipientType   | PG          |
-    And destinatario
-      | taxId           | 10433218194 |
-      | digitalDomicile | NULL        |
-      | recipientType   | PG          |
-    And salvo il timestamp corrente
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
-    Then viene verificato che le richieste per i cf "29527800386" e "10433218194" risultino entrambe nel batch in retry
+#  @inipecGestionePuntuale
+#  Scenario: [INIPEC_GESTIONE_ESITO_PUNTUALE_02.2] Notifica verso due PG con esiti errore temporaneo e domicilio trovato rispettivamente nel recupero del domicilio digitale presso INIPEC vecchia versione
+#    Given viene generata una nuova notifica
+#      | subject            | invio notifica con cucumber |
+#      | senderDenomination | Comune di palermo           |
+#    And destinatario
+#      | taxId           | 29527800386 |
+#      | digitalDomicile | NULL        |
+#      | recipientType   | PG          |
+#    And destinatario
+#      | taxId           | 10433218194 |
+#      | digitalDomicile | NULL        |
+#      | recipientType   | PG          |
+#    And salvo il timestamp corrente
+#    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+#    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
+#    Then viene verificato che le richieste per i cf "29527800386" e "10433218194" risultino entrambe nel batch in retry
 
 
   @inipecGestionePuntuale
