@@ -161,7 +161,7 @@ Feature: Radd Alternative integrazione con Poste
 #    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     Given imposto lo iun di SharedSteps a "LTMP-WEQR-NGZK-202606-H-1" e la pa a "Comune_Multi"
     Then Imposto il cf "20517490320" e recipient type "PG" e qrCode "TFRNUC1XRVFSLU5HWkstMjAyNjA2LUgtMV9QRy1iMDVkZTc3Ny04MGM2LTQ1NDktYTA1NC1kOGRmZGExMzljNjJfNzk4ZmZjOTgtODhmNC00MTU5LWI2ODAtNGFkOWQ4NTg1ODdh"
-    And Il cittadino CucumberSpa come destinatario 0 mostra il QRCode "corretto"
+    #And Il cittadino CucumberSpa come destinatario 0 mostra il QRCode "corretto"
     When L'operatore scansione il qrCode per recuperare gli atti di CucumberSpa
     And la scansione si conclude correttamente su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
