@@ -269,5 +269,6 @@ Feature: Aggiornamento di un descrittore in bozza
     Then l'e-service ha questa configurazione:
       | dailyCallsPerConsumer | 10 |
       | dailyCallsTotal       | 1000 |
-    And la soglia differenziata per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo è uguale a "100"
-    And la soglia differenziata per l'attributo CERTIFIED 1-esimo creato nel gruppo 0-esimo è uguale a "200"
+    # And la soglia differenziata per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo è uguale a "100", mentre il discrete comparator è "GTE" e il discrete threshhold è uguale a 1000000
+    # And la soglia differenziata per l'attributo CERTIFIED 1-esimo creato nel gruppo 0-esimo è uguale a "200"
+    And la soglia differenziata per l'attributo CERTIFIED 1-esimo creato nel gruppo 1-esimo è uguale a "%null", mentre il discrete comparator è "GTE" e il discrete threshhold è uguale a 500000

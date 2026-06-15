@@ -147,6 +147,11 @@ public class DescriptorUpdateSteps {
 
     @When("la soglia differenziata per l'attributo {attributeKind} {int}-esimo creato nel gruppo {int}-esimo è uguale a {string}")
     public void checkDailyCallsPerConsumer(AttributeKind attributeType, Integer attributeIndex, Integer groupIndex, String dailyCallsPerConsumer) {
+        checkDailyCallsPerConsumer(attributeType, attributeIndex, groupIndex, dailyCallsPerConsumer, null, null);
+    }
+
+    @When("la soglia differenziata per l'attributo {attributeKind} {int}-esimo creato nel gruppo {int}-esimo è uguale a {string}, mentre il discrete comparator è {string} e il discrete threshhold è uguale a {int}")
+    public void checkDailyCallsPerConsumer(AttributeKind attributeType, Integer attributeIndex, Integer groupIndex, String dailyCallsPerConsumer, String discreteComparator, Integer discreteThreshold) {
 
         Integer expectedDailyCallsPerConsumer = dailyCallsPerConsumer.equals("%null") ? null : Integer.parseInt(dailyCallsPerConsumer);
 
@@ -155,19 +160,24 @@ public class DescriptorUpdateSteps {
         List<List<UUID>> requiredVerifiedAttributes = sharedStepsContext.getAttributeCommonContext().getRequiredVerifiedAttributes();
 
         UUID attributeId = switch (attributeType) {
-            case CERTIFIED -> requiredCertifiedAttributes.get(groupIndex).get(attributeIndex);
+            case CERTIFIED, CERTIFIED_DISCRETE -> requiredCertifiedAttributes.get(groupIndex).get(attributeIndex);
             case DECLARED -> requiredDeclaredAttributes.get(groupIndex).get(attributeIndex);
             case VERIFIED -> requiredVerifiedAttributes.get(groupIndex).get(attributeIndex);
-            case CERTIFIED_DISCRETE -> throw new UnsupportedOperationException("Certified discrete attributes are not supported yet");
         };
 
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
 
-        Optional<DescriptorAttribute> certAttr = eServiceDescriptorUtils.getDescriptorCertifiedAttribute(eServiceId, descriptorId, attributeId, expectedDailyCallsPerConsumer);
+        DescriptorAttribute certAttr = eServiceDescriptorUtils.getDescriptorCertifiedAttribute(eServiceId, descriptorId, attributeId, expectedDailyCallsPerConsumer).orElse(null);
 
-        Assertions.assertTrue(certAttr.isPresent());
-        Assertions.assertEquals(attributeId, certAttr.get().getId());
-        Assertions.assertEquals(certAttr.get().getDailyCallsPerConsumer(), expectedDailyCallsPerConsumer);
+        Assertions.assertNotNull(certAttr);
+        Assertions.assertEquals(attributeId, certAttr.getId());
+        Assertions.assertEquals(certAttr.getDailyCallsPerConsumer(), expectedDailyCallsPerConsumer);
+
+        if (discreteComparator != null || discreteThreshold != null) {
+            Assertions.assertNotNull(certAttr.getDiscreteConfig());
+            Assertions.assertEquals(certAttr.getDiscreteConfig().getComparator().getValue(), discreteComparator);
+            Assertions.assertEquals(certAttr.getDiscreteConfig().getThreshold(), discreteThreshold);
+        }
     }
 }

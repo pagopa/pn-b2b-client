@@ -110,9 +110,6 @@ public class AgreementActivateSteps {
         // Create attributes and set them in the descriptorAttributesSeed
         DescriptorAttributesSeed descriptorAttributesSeed = new DescriptorAttributesSeed();
 
-        // TODO
-        // checkDailyCallsPerConsumer utilizza gli attributi definiti nell'AttributeCommonContext per fare le verifiche
-
         for (int i = 0; i < attributesSpec.size(); i++) {
             EServiceAttributeSpec attributeSpec = attributesSpec.get(i);
             Attribute attribute;
@@ -130,6 +127,7 @@ public class AgreementActivateSteps {
                     .explicitAttributeVerification(true)
                     .id(attribute.getId());
 
+            AttributeCommonContext attributeCommonContext = sharedStepsContext.getAttributeCommonContext();
             int group = attributeSpec.getGroup();
 
             switch (attributeSpec.getKind()) {
@@ -142,10 +140,17 @@ public class AgreementActivateSteps {
                                 .comparator(attributeSpec.getComparator())
                                 .threshold(attributeSpec.getValue()));
                     }
-                    addAttributeToGroup(descriptorAttributesSeed.getCertified(), group, seed);
+                    addAttributeSeedToGroup(descriptorAttributesSeed.getCertified(), group, seed);
+                    addAttributeToGroup(attributeCommonContext.getRequiredCertifiedAttributes(), group, attribute.getId());
                 }
-                case DECLARED -> addAttributeToGroup(descriptorAttributesSeed.getDeclared(), group, seed);
-                case VERIFIED -> addAttributeToGroup(descriptorAttributesSeed.getVerified(), group, seed);
+                case DECLARED -> {
+                    addAttributeSeedToGroup(descriptorAttributesSeed.getDeclared(), group, seed);
+                    addAttributeToGroup(attributeCommonContext.getRequiredDeclaredAttributes(), group, attribute.getId());
+                }
+                case VERIFIED -> {
+                    addAttributeSeedToGroup(descriptorAttributesSeed.getVerified(), group, seed);
+                    addAttributeToGroup(attributeCommonContext.getRequiredVerifiedAttributes(), group, attribute.getId());
+                }
             }
         }
 
@@ -369,10 +374,17 @@ public class AgreementActivateSteps {
         }
     }
 
-    private void addAttributeToGroup(List<List<DescriptorAttributeSeed>> groups, int groupIndex, DescriptorAttributeSeed seed) {
+    private void addAttributeSeedToGroup(List<List<DescriptorAttributeSeed>> groups, int groupIndex, DescriptorAttributeSeed seed) {
         while (groups.size() <= groupIndex) {
             groups.add(new ArrayList<>());
         }
         groups.get(groupIndex).add(seed);
+    }
+
+    private void addAttributeToGroup(List<List<UUID>> groups, int groupIndex, UUID uuid) {
+        while (groups.size() <= groupIndex) {
+            groups.add(new ArrayList<>());
+        }
+        groups.get(groupIndex).add(uuid);
     }
 }
