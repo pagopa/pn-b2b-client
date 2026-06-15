@@ -59,6 +59,17 @@ public class DescriptorSuspensionSteps {
         );
     }
 
+    @When("l'utente sospende il vecchio descrittore in corso di archiviazione")
+    public void suspendOldDescriptorInArchiving() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        httpCallExecutor.performCall(
+                () -> clientTokenConfigurator.getEServiceClient().suspendDescriptor(
+                        sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                        sharedStepsContext.getEServicesCommonContext().getOldDescriptorId()
+                )
+        );
+    }
+
     @When("l'utente {string} di {string} sospende quel descrittore")
     public void suspendDescriptor(String role, String tenant) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getIdentityService().getToken(tenant, role));
