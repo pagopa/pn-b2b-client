@@ -2,15 +2,15 @@ package it.pagopa.pn.client.b2b.pa.service.impl;
 
 import it.pagopa.pn.client.b2b.generated.openapi.clients.io.connector.ApiClient;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.io.connector.api.IoConnectorApi;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.io.connector.model.*;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.io.connector.model.GetMessageResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.io.connector.model.GetProfileRequest;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.io.connector.model.GetProfileResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.io.connector.model.MessageRequest;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.io.connector.model.MessageResponse;
 import it.pagopa.pn.client.b2b.pa.service.IPnIOConnectorClient;
-import it.pagopa.pn.client.b2b.pa.service.IPnRaddAlternativeV2Client;
-import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.api_AnagraficaCRUD_V2.RegistryV2Api;
-import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -23,7 +23,7 @@ public class PnIOConnectorClientImpl implements IPnIOConnectorClient {
 
 
     public PnIOConnectorClientImpl(RestTemplate restTemplate,
-                                   @Value("${pn.internal.delivery-base-url}") String basePath
+                                   @Value("${pn.delivery.base-url}") String basePath
                                    
     ) {
         this.apiIOConnector = new IoConnectorApi(newApiClientExternal(restTemplate, basePath));
