@@ -63,6 +63,7 @@ public class AttributeCommonSteps {
             case CERTIFIED -> attributeCommonContext.getRequiredCertifiedAttributes().isEmpty() ? 0 : attributeCommonContext.getRequiredCertifiedAttributes().get(0).size();
             case DECLARED -> attributeCommonContext.getRequiredDeclaredAttributes().isEmpty() ? 0 : attributeCommonContext.getRequiredDeclaredAttributes().get(0).size();
             case VERIFIED -> attributeCommonContext.getRequiredVerifiedAttributes().isEmpty() ? 0 : attributeCommonContext.getRequiredVerifiedAttributes().get(0).size();
+            case CERTIFIED_DISCRETE -> throw new UnsupportedOperationException();
         };
 
         List<Attribute> createdAttributes = new ArrayList<>();
@@ -180,6 +181,7 @@ public class AttributeCommonSteps {
                             .anyMatch(attr -> attr.getId()
                                     .equals(attributeCommonContext.getRequiredDeclaredAttributes().get(0).get(attributeIndex))
                             );
+                        case CERTIFIED_DISCRETE -> throw new UnsupportedOperationException();
                     };
                 }
 
@@ -236,6 +238,7 @@ public class AttributeCommonSteps {
             case CERTIFIED -> eServiceDescriptor.getAttributes().getCertified();
             case DECLARED -> eServiceDescriptor.getAttributes().getDeclared();
             case VERIFIED -> eServiceDescriptor.getAttributes().getVerified();
+            case CERTIFIED_DISCRETE -> throw new UnsupportedOperationException();
         };
 
         if ((existingAttributeGroups.isEmpty()) || (existingAttributeGroups.get(srcGroupIndex).isEmpty())) {
@@ -283,6 +286,7 @@ public class AttributeCommonSteps {
             case CERTIFIED -> eServiceDescriptor.getAttributes().getCertified();
             case DECLARED -> eServiceDescriptor.getAttributes().getDeclared();
             case VERIFIED -> eServiceDescriptor.getAttributes().getVerified();
+            case CERTIFIED_DISCRETE -> throw new UnsupportedOperationException();
         };
 
         UUID attributeId = getAttributeIdFromRequiredAttributes(attributeKind, groupIndex, attributeIndex);
@@ -351,11 +355,39 @@ public class AttributeCommonSteps {
         );
     }
 
+    @Given("l'utente {string} possiede almeno un attributo certificato discreto")
+    public void hasCertifiedDiscreteAttribute(String tenantType) {
+
+        UUID tenantId = identityService.getOrganizationId(tenantType);
+        Tenant tenant = clientTokenConfigurator.getTenantsApi().getTenant(tenantId);
+
+        Optional<CertifiedTenantAttribute> discreteAttrOptional = tenant.getAttributes().getCertified()
+                .stream()
+                .filter(attr -> attr.getKind() != null && attr.getKind().getValue() == AttributeKind.CERTIFIED_DISCRETE.getValue())
+                .findFirst();
+
+        CertifiedDiscreteTenantAttribute discreteAttr = (CertifiedDiscreteTenantAttribute) discreteAttrOptional.orElse(null);
+
+        Assertions.assertNotNull(discreteAttr, "Il tenant non ha nessun attributo certificato discreto");
+        Assertions.assertNull(discreteAttr.getRevocationTimestamp(), "L'attributo certificato discreto non deve essere revocato");
+
+        boolean isAttributeAvailable = sharedStepsContext.getAttributeCommonContext()
+                .getAvailableCertifiedDiscreteAttributes()
+                .stream()
+                .anyMatch(attr -> attr.getId().equals(discreteAttr.getId()));
+        Assertions.assertTrue(isAttributeAvailable, "L'attributo certificato discreto associato al tenant non è un attributo certificato discreto disponibile");
+
+        log.info("Il tenant {} ha un attributo certificato discreto con ID {}", tenantId, discreteAttr.getId());
+
+        sharedStepsContext.getAttributeCommonContext().getOwnedCertifiedDiscreteAttributes().add(discreteAttr);
+    }
+
     private UUID getAttributeIdFromRequiredAttributes(AttributeKind attributeKind, int groupIndex, int attributeIndex) {
         return switch (attributeKind) {
             case CERTIFIED -> sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes().get(groupIndex).get(attributeIndex);
             case DECLARED -> sharedStepsContext.getAttributeCommonContext().getRequiredDeclaredAttributes().get(groupIndex).get(attributeIndex);
             case VERIFIED -> sharedStepsContext.getAttributeCommonContext().getRequiredVerifiedAttributes().get(groupIndex).get(attributeIndex);
+            case CERTIFIED_DISCRETE -> throw new UnsupportedOperationException();
         };
     }
 }

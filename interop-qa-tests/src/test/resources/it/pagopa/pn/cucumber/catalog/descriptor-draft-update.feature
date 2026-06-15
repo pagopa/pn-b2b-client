@@ -248,3 +248,26 @@ Feature: Aggiornamento di un descrittore in bozza
       | dailyCallsPerConsumer | 10 |
       | dailyCallsTotal       | 10 |
     And la soglia differenziata per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo è uguale a "10"
+
+  @certifiedDiscreteAttribute
+  Scenario: l'erogatore di un e-service può assegnare all'e-service un attributo certificato discreto impostando una
+  soglia numerica.
+
+    # PA2 non ha nessun attributo certificato discreto
+    Given l'utente è un "admin" di "PA2"
+    And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
+    And l'utente "PA1" possiede almeno un attributo certificato discreto
+    When "PA2" ha già creato un e-service in stato "DRAFT" con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000 e con i seguenti attributi:
+      | kind               | group | comparator | value   | dailyCallsPerConsumer |
+      | CERTIFIED_DISCRETE | 0     | GTE        | 1000000 | 100                   |
+      | CERTIFIED          | 0     |            |         | 200                   |
+      | CERTIFIED          | 1     |            |         |                       |
+      | CERTIFIED_DISCRETE | 1     | GTE        | 500000  |                       |
+      | CERTIFIED          | 1     |            |         |                       |
+      | DECLARED           | 0     |            |         |                       |
+    And si ottiene response status code 200
+    Then l'e-service ha questa configurazione:
+      | dailyCallsPerConsumer | 10 |
+      | dailyCallsTotal       | 1000 |
+    And la soglia differenziata per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo è uguale a "100"
+    And la soglia differenziata per l'attributo CERTIFIED 1-esimo creato nel gruppo 0-esimo è uguale a "200"

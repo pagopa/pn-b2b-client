@@ -8,6 +8,7 @@ import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
+import it.pagopa.pn.interop.cucumber.steps.agreement.model.EServiceAttributeSpec;
 import it.pagopa.pn.interop.cucumber.steps.common.AttributeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -15,10 +16,8 @@ import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+
+import java.util.*;
 import java.util.function.BiConsumer;
 
 import static java.util.Objects.nonNull;
@@ -103,6 +102,65 @@ public class AgreementActivateSteps {
         }
     }
 
+    @When("{string} ha già creato un e-service in stato {string} con approvazione {string} con dailyCallsPerConsumer uguale a {int} e dailyCallsTotal uguale a {int} e con i seguenti attributi:")
+    public void tenantHasAlreadyCreateEservice(String tenantType, String descriptorState, String approvalAgreementPolicy, Integer dailyCallsPerConsumer, Integer dailyCallsTotal, List<EServiceAttributeSpec> attributesSpec) {
+
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+
+        // Create attributes and set them in the descriptorAttributesSeed
+        DescriptorAttributesSeed descriptorAttributesSeed = new DescriptorAttributesSeed();
+
+        // TODO
+        // checkDailyCallsPerConsumer utilizza gli attributi definiti nell'AttributeCommonContext per fare le verifiche
+
+        for (int i = 0; i < attributesSpec.size(); i++) {
+            EServiceAttributeSpec attributeSpec = attributesSpec.get(i);
+            Attribute attribute;
+
+            if (attributeSpec.getKind() != AttributeKind.CERTIFIED_DISCRETE) {
+                String attrName = "attribute-%d-%d-%s".formatted(2 * i, sharedStepsContext.getTestSeed(), attributeSpec.getKind());
+                attribute = dataPreparationService.createAttribute(attributeSpec.getKind(), attrName);
+            } else {
+                CertifiedDiscreteTenantAttribute ownedCertifiedDiscreteAttr = sharedStepsContext.getAttributeCommonContext().getOwnedCertifiedDiscreteAttributes().get(0);
+                attribute = new Attribute();
+                attribute.setId(ownedCertifiedDiscreteAttr.getId());
+            }
+
+            DescriptorAttributeSeed seed = new DescriptorAttributeSeed()
+                    .explicitAttributeVerification(true)
+                    .id(attribute.getId());
+
+            int group = attributeSpec.getGroup();
+
+            switch (attributeSpec.getKind()) {
+                case CERTIFIED, CERTIFIED_DISCRETE -> {
+                    if (attributeSpec.getDailyCallsPerConsumer() != null) {
+                        seed.dailyCallsPerConsumer(attributeSpec.getDailyCallsPerConsumer());
+                    }
+                    if (attributeSpec.getKind() == AttributeKind.CERTIFIED_DISCRETE) {
+                        seed.setDiscreteConfig(new EServiceAttributeCertifiedDiscreteConfig()
+                                .comparator(attributeSpec.getComparator())
+                                .threshold(attributeSpec.getValue()));
+                    }
+                    addAttributeToGroup(descriptorAttributesSeed.getCertified(), group, seed);
+                }
+                case DECLARED -> addAttributeToGroup(descriptorAttributesSeed.getDeclared(), group, seed);
+                case VERIFIED -> addAttributeToGroup(descriptorAttributesSeed.getVerified(), group, seed);
+            }
+        }
+
+        UpdateEServiceDescriptorSeed updateSeed = new UpdateEServiceDescriptorSeed()
+                .attributes(descriptorAttributesSeed)
+                .agreementApprovalPolicy(AgreementApprovalPolicy.valueOf(approvalAgreementPolicy))
+                .dailyCallsPerConsumer(dailyCallsPerConsumer)
+                .dailyCallsTotal(dailyCallsTotal);
+
+        EServiceDescriptor result = dataPreparationService.createEServiceAndDraftDescriptor(new EServiceSeed(), updateSeed);
+        dataPreparationService.bringDescriptorToGivenState(result.getEServiceId(), result.getDescriptorId(), EServiceDescriptorState.valueOf(descriptorState), false);
+
+        sharedStepsContext.getEServicesCommonContext().setEserviceId(result.getEServiceId());
+        sharedStepsContext.getEServicesCommonContext().setDescriptorId(result.getDescriptorId());
+    }
 
     @Given("l'e-service ha questa configurazione:")
     public void eServiceHasThisConfiguration(DataTable dataTable) {
@@ -309,5 +367,12 @@ public class AgreementActivateSteps {
         for (UUID attributeId : attributeIdsToVerify) {
             dataPreparationService.assignVerifiedAttributeToTenant(consumerId, verifierId, attributeId, sharedStepsContext.getAgreementId(), null);
         }
+    }
+
+    private void addAttributeToGroup(List<List<DescriptorAttributeSeed>> groups, int groupIndex, DescriptorAttributeSeed seed) {
+        while (groups.size() <= groupIndex) {
+            groups.add(new ArrayList<>());
+        }
+        groups.get(groupIndex).add(seed);
     }
 }

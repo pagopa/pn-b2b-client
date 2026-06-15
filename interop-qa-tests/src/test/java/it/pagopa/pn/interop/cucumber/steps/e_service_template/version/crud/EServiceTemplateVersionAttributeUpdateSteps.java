@@ -65,6 +65,7 @@ public class EServiceTemplateVersionAttributeUpdateSteps {
                 case CERTIFIED -> certified;
                 case DECLARED -> declared;
                 case VERIFIED -> verified;
+                case CERTIFIED_DISCRETE -> throw new UnsupportedOperationException();
             };
             DescriptorAttributeSeed seed = new DescriptorAttributeSeed()
                 .id(attribute.getId())
