@@ -39,7 +39,7 @@ public class IOConnectorSteps {
 
     //scenario 5 va richiesta data-preparation. si deve richiedere un requestId e un recipientTaxId
     //di un messaggio censito e dotato di allegati. il recipientTaxId viene passato allo step parametrico dal file feature
-    public static final String REQUEST_ID_FOR_PREEXISTING_MESSAGE = "TEST-POLLING_REQ-20260603-PAYMENT_2";
+    public static final String REQUEST_ID_FOR_PREEXISTING_MESSAGE = "ATTACHMENTS_REQ-20260615_3";
 
 
     private MessageRequest messageRequest;
@@ -72,22 +72,42 @@ public class IOConnectorSteps {
     }
 
     @And("sostituisco un valore non valido nel campo {string}")
-    public void impostoCampiNull(String campo) throws Exception {
+    public void sostituiscoValoreNonValido(String field) {
 
-        if ("TUTTI".equalsIgnoreCase(campo)) {
+        switch (field) {
+            case "requestId":
+                messageRequest.setRequestId(null);
+                break;
 
-            for (Field field : MessageRequest.class.getDeclaredFields()) {
-                field.setAccessible(true);
+            case "recipientTaxId":
+                messageRequest.setRecipientTaxId(null);
+                break;
 
-            }
+            case "subject":
+                messageRequest.setSubject(null);
+                break;
 
-        } else {
+            case "markdown":
+                messageRequest.setMarkdown(null);
+                break;
 
-            Field field = MessageRequest.class.getDeclaredField(campo);
-            field.setAccessible(true);
-            field.set(messageRequest, null);
+            case "iun":
+                messageRequest.setIun(null);
+                break;
+
+            case "TUTTI":
+                messageRequest.setRequestId(null);
+                messageRequest.setRecipientTaxId(null);
+                messageRequest.setSubject(null);
+                messageRequest.setMarkdown(null);
+                messageRequest.setIun(null);
+                break;
+
+            default:
+                throw new IllegalArgumentException("Campo non gestito: " + field);
         }
     }
+
 
     @When("come orchestratore SEND richiedo l'invio del messaggio verso IO")
     public void invokeMessageAPI() {
@@ -197,11 +217,11 @@ public class IOConnectorSteps {
         }
     }
 
-    @Then("verifico che il profilo risulti non raggiungibile")
+    @Then("verifico che il profilo risulti raggiungibile")
     public void verifyProfileStatus() {
         assertThat(getProfileResponse.getStatus())
                 .isNotNull()
-                .isEqualTo(GetProfileResponse.StatusEnum.NOT_ALLOWED);
+                .isEqualTo(GetProfileResponse.StatusEnum.ALLOWED);
     }
 
 

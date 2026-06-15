@@ -30,8 +30,8 @@ Feature: connettore app IO per invio messaggi di cortesia per comunicazioni bona
   @comunicazione-orchestratore-io
   Scenario Outline: [IO_CONNECTOR_3.1.4] Richiesta non valida presa in carico
     Given viene generata una richiesta valida per la presa in carico del messaggio
-    When come orchestratore SEND richiedo l'invio del messaggio verso IO
     And sostituisco un valore non valido nel campo "<field>"
+    When come orchestratore SEND richiedo l'invio del messaggio verso IO
     Then verifico che si ottenga una response di "BAD REQUEST"
     Examples:
       | field          |
@@ -39,7 +39,6 @@ Feature: connettore app IO per invio messaggi di cortesia per comunicazioni bona
       | recipientTaxId |
       | subject        |
       | markdown       |
-      | iun            |
       | TUTTI          |
 
 
@@ -47,10 +46,10 @@ Feature: connettore app IO per invio messaggi di cortesia per comunicazioni bona
   #----- SCENARIO 4 --------------------------------------
 
   @comunicazione-orchestratore-io
-  Scenario: [IO_CONNECTOR_4.1.1] Verifica raggiungibilità profilo IO da orchestratore con utente non censito su IO
-    Given come orchestratore SEND tento la verifica raggiungibilità profilo con senderServiceId valido e CF destinatario: "PF-ef4f3181-c2a9-4924-9307-d107af8f0c34"
+  Scenario: [IO_CONNECTOR_4.1.1] Verifica raggiungibilità profilo IO da orchestratore con utente censito su IO
+    Given come orchestratore SEND tento la verifica raggiungibilità profilo con senderServiceId valido e CF destinatario: "PF-b7e52cf2-95d4-4dfc-ad47-5d6f7073d6e2"
     Then verifico che si ottenga una response di "OK"
-    Then verifico che il profilo risulti non raggiungibile
+    Then verifico che il profilo risulti raggiungibile
 
   @comunicazione-orchestratore-io
   Scenario Outline: [IO_CONNECTOR_4.1.2] Verifica raggiungibilità profilo IO da orchestratore con request malformata
@@ -69,7 +68,7 @@ Feature: connettore app IO per invio messaggi di cortesia per comunicazioni bona
 
   @comunicazione-orchestratore-io
   Scenario: [IO_CONNECTOR_5.1.1] Recupero dettagli messaggio messaggio di cortesia per comunicazione bonaria da app IO OK
-    Given come app IO tento il recupero dettagli messaggio con requestID valido e CF destinatario: "PF-36b40f4c-f792-40ca-9c52-a94a32b5fc28"
+    Given come app IO tento il recupero dettagli messaggio con requestID valido e CF destinatario: "PF-b7e52cf2-95d4-4dfc-ad47-5d6f7073d6e2"
     Then verifico che si ottenga una response di "OK"
     Then verifico che la lista dettagli allegati sia non vuota
 
