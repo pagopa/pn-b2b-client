@@ -22,6 +22,15 @@ public class DescriptorActivationSteps {
         );
     }
 
+        @When("l'utente attiva il vecchio descrittore in corso di archiviazione di quell'e-service")
+    public void activeOldDescriptorInArchiving() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getEServiceClient().activateDescriptor(
+                        sharedStepsContext.getEServicesCommonContext().getEserviceId(), sharedStepsContext.getEServicesCommonContext().getOldDescriptorId())
+        );
+    }
+
     @When("l'utente {string} di {string} attiva il descrittore di quell'e-service")
     public void activeEServiceDescriptor(String role, String tenant) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getIdentityService().getToken(tenant, role));
