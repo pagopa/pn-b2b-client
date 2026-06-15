@@ -363,7 +363,7 @@ public class AttributeCommonSteps {
 
         Optional<CertifiedTenantAttribute> discreteAttrOptional = tenant.getAttributes().getCertified()
                 .stream()
-                .filter(attr -> attr.getKind() != null && attr.getKind().getValue() == AttributeKind.CERTIFIED_DISCRETE.getValue())
+                .filter(attr -> Objects.equals(attr.getKind().getValue(), AttributeKind.CERTIFIED_DISCRETE.getValue()))
                 .findFirst();
 
         CertifiedDiscreteTenantAttribute discreteAttr = (CertifiedDiscreteTenantAttribute) discreteAttrOptional.orElse(null);
