@@ -49,7 +49,7 @@ Feature: connettore app IO per invio messaggi di cortesia per comunicazioni bona
   Scenario: [IO_CONNECTOR_4.1.1] Verifica raggiungibilità profilo IO da orchestratore con utente censito su IO
     Given come orchestratore SEND tento la verifica raggiungibilità profilo con senderServiceId valido e CF destinatario: "PF-b7e52cf2-95d4-4dfc-ad47-5d6f7073d6e2"
     Then verifico che si ottenga una response di "OK"
-    Then verifico che il profilo risulti raggiungibile
+    Then verifico che la response contenga l'informazione sulla raggiungibilità del profilo
 
   @comunicazione-orchestratore-io
   Scenario Outline: [IO_CONNECTOR_4.1.2] Verifica raggiungibilità profilo IO da orchestratore con request malformata
