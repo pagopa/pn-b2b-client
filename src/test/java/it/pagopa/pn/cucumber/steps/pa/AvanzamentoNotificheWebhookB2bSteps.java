@@ -242,7 +242,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         setPaWebhook(pa);
         updateApiKeyForStream();
         StreamVersion streamVersion = getStreamVersion(version);
-        createStream(pa, streamVersion, getGroupForStream(position, pa), false, null, false, null);
+        createStream(pa, streamVersion, getGroupForStream(position, pa), false, List.of("DEFAULT"), false, null);
     }
 
     @And("si crea il nuovo stream con versione {string} per il {string} \\(caso errato)")
