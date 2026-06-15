@@ -76,7 +76,7 @@ public class RaddAltSteps {
     @Value("${pn.iun.120gg.lucio}")
     private String iunLucio120gg;
 
-    @Value("${pn.radd.vpce.base-url}")
+    @Value("${pn.radd-vpce.base-url}")
     private String baseUrl;
 
 

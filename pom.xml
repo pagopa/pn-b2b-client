@@ -1845,7 +1845,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-radd-alt/refs/heads/api-radd-vpce/docs/openapi/api-radd-net-VPCE.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-radd-alt/refs/heads/develop/docs/openapi/api-radd-net-VPCE.yaml</inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
