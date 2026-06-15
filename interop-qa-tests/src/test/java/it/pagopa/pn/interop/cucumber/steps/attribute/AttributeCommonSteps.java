@@ -307,7 +307,7 @@ public class AttributeCommonSteps {
 
         eServiceDescriptorUtils.updateEServiceDescriptor(eServiceDescriptor, attributesSeed);
 
-        Optional<DescriptorAttribute> updatedAttr = eServiceDescriptorUtils.getDescriptorCertifiedAttribute(eServiceId, descriptorId, attr.getId());
+        Optional<DescriptorAttribute> updatedAttr = eServiceDescriptorUtils.getDescriptorCertifiedAttribute(eServiceId, descriptorId, attr.getId(), groupIndex);
 
         Assertions.assertTrue(updatedAttr.isPresent());
         Assertions.assertEquals(attr.getId(), updatedAttr.get().getId());

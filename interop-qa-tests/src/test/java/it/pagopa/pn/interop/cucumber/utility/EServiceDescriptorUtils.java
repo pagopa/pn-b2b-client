@@ -56,12 +56,12 @@ public class EServiceDescriptorUtils {
     }
 
     @Nonnull
-    public Optional<DescriptorAttribute> getDescriptorCertifiedAttribute(UUID eServiceId, UUID descriptorId, UUID attributeId) {
-        return getDescriptorCertifiedAttribute(eServiceId, descriptorId, attributeId, null);
+    public Optional<DescriptorAttribute> getDescriptorCertifiedAttribute(UUID eServiceId, UUID descriptorId, UUID attributeId, Integer groupIndex) {
+        return getDescriptorCertifiedAttribute(eServiceId, descriptorId, attributeId, null, groupIndex);
     }
 
     @Nonnull
-    public Optional<DescriptorAttribute> getDescriptorCertifiedAttribute(UUID eServiceId, UUID descriptorId, UUID attributeId, Integer dailyCallsPerConsumer) {
+    public Optional<DescriptorAttribute> getDescriptorCertifiedAttribute(UUID eServiceId, UUID descriptorId, UUID attributeId, Integer dailyCallsPerConsumer, Integer groupIndex) {
 
         httpCallExecutor.snapshot();
 
@@ -75,8 +75,9 @@ public class EServiceDescriptorUtils {
 
                     return ((ProducerEServiceDescriptor) httpCallExecutor.getResponse()).getAttributes()
                                 .getCertified()
+                                .get(groupIndex)
                                 .stream()
-                                .flatMap(Collection::stream)
+                                //.flatMap(Collection::stream)
                                 .filter(attr -> attr.getId().equals(attributeId))
                                 .findFirst()
                                 .map(attr ->
@@ -91,8 +92,9 @@ public class EServiceDescriptorUtils {
 
         return producerEServiceDescriptor.getAttributes()
                 .getCertified()
+                .get(groupIndex)
                 .stream()
-                .flatMap(Collection::stream)
+                //.flatMap(Collection::stream)
                 .filter(attr -> attr.getId().equals(attributeId))
                 .findFirst();
     }

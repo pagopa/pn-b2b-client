@@ -168,7 +168,7 @@ public class DescriptorUpdateSteps {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
 
-        DescriptorAttribute certAttr = eServiceDescriptorUtils.getDescriptorCertifiedAttribute(eServiceId, descriptorId, attributeId, expectedDailyCallsPerConsumer).orElse(null);
+        DescriptorAttribute certAttr = eServiceDescriptorUtils.getDescriptorCertifiedAttribute(eServiceId, descriptorId, attributeId, expectedDailyCallsPerConsumer, groupIndex).orElse(null);
 
         Assertions.assertNotNull(certAttr);
         Assertions.assertEquals(attributeId, certAttr.getId());
