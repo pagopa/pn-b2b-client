@@ -1,8 +1,8 @@
+@eServiceTemplateLink_m2mv3
 Feature: finalità agevolata M2M, link e-service template a un template finalità
 
   ## Macro scenario: Recupero lista risorse collegabili suggerite per un template finalità
 
-  @purposeTemplate @@eServiceTemplateLink_m2mv3
   Scenario: [LINK_TEMPLATE_ESERVICE_2_1] Recupero lista dei soli e-service template collegati per suggerire il template finalità
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -20,7 +20,6 @@ Feature: finalità agevolata M2M, link e-service template a un template finalit�
       | id_template_finalita  | $DA_CONTESTO(purposeTemplateId)  |
       | id_risorsa_attesa     | $DA_CONTESTO(eServiceTemplateId) |
 
-  @purposeTemplate @@eServiceTemplateLink_m2mv3
   Scenario: [LINK_TEMPLATE_ESERVICE_2_2] Recupero lista dei soli e-service template collegati per suggerire il template finalità con paginazione
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -56,7 +55,6 @@ Feature: finalità agevolata M2M, link e-service template a un template finalit�
       | limit                | 1  |
     Then gli e-service template collegati corrispondono alla lista di risorse di riferimento solo per il primo risultato
 
-  @purposeTemplate @@eServiceTemplateLink_m2mv3
   Scenario: [LINK_TEMPLATE_ESERVICE_2_3] Recupero lista dei soli e-service template collegati per suggerire il template finalità con filtri
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -119,7 +117,6 @@ Feature: finalità agevolata M2M, link e-service template a un template finalit�
       | filtro_id_pubblicatore | aaaabbbb-cccc-1111-2222-ddddeeee3333 |
     Then gli e-service template collegati corrispondono ad una lista vuota
 
-  @purposeTemplate @@eServiceTemplateLink_m2mv3
   Scenario: [LINK_TEMPLATE_ESERVICE_2_4] Recupero lista e-service template collegati ad un template finalità non esistente
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When recupera gli e-service template collegati per suggerire il template finalità
@@ -128,7 +125,6 @@ Feature: finalità agevolata M2M, link e-service template a un template finalit�
 
   ## Macro scenario: Associazione di una risorsa collegabile ad un template finalità
 
-  @purposeTemplate @@eServiceTemplateLink_m2mv3
   Scenario: [LINK_TEMPLATE_ESERVICE_4_1] Associazione di un singolo e-service template ad un template finalità con successo
     Given l'utente è un "admin" di "PA1"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -157,7 +153,6 @@ Feature: finalità agevolata M2M, link e-service template a un template finalit�
       | id_template_finalita  | $DA_CONTESTO(purposeTemplateId)  |
       | id_risorsa_attesa     | $DA_CONTESTO(eServiceTemplateId) |
 
-  @purposeTemplate @@eServiceTemplateLink_m2mv3
   Scenario: [LINK_TEMPLATE_ESERVICE_4_2] Errore di conflitto durante l’associazione di un singolo e-service template ad un template finalità
     Il test verifica che venga generato un errore di conflitto quando si associa un e-service template già collegato
     al template finalità.
@@ -177,7 +172,6 @@ Feature: finalità agevolata M2M, link e-service template a un template finalit�
       | id_e_service_template | $DA_CONTESTO(eServiceTemplateId) |
     Then la richiesta di associazione fallisce per errore di conflitto
 
-  @purposeTemplate @@eServiceTemplateLink_m2mv3
   Scenario: [LINK_TEMPLATE_ESERVICE_4_3] Template finalità non trovato durante l'associazione di un singolo e-service template ad un template finalità
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When prova ad associare un e-service template a un template finalità
@@ -187,7 +181,6 @@ Feature: finalità agevolata M2M, link e-service template a un template finalit�
 
   ## Macro scenario: Disassociazione di una risorsa collegata da un template finalità
 
-  @purposeTemplate @@eServiceTemplateLink_m2mv3
   Scenario: [LINK_TEMPLATE_ESERVICE_6_1] Disassociazione di un singolo e-service template da un template finalità con successo
     Given l'utente è un "admin" di "PA1"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -225,7 +218,6 @@ Feature: finalità agevolata M2M, link e-service template a un template finalit�
     Then gli e-service template collegati al template finalità sono una lista vuota
       | id_template_finalita  | $DA_CONTESTO(purposeTemplateId) |
 
-  @purposeTemplate @@eServiceTemplateLink_m2mv3
   Scenario: [LINK_TEMPLATE_ESERVICE_6_2] Errore di conflitto durante la disassociazione di un singolo e-service template già scollegato da un template finalità
     Given l'utente è un "admin" di "PA1"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -243,7 +235,6 @@ Feature: finalità agevolata M2M, link e-service template a un template finalit�
       | id_e_service_template | $DA_CONTESTO(eServiceTemplateId) |
     Then la richiesta di disassociazione fallisce per errore di conflitto
 
-  @purposeTemplate @@eServiceTemplateLink_m2mv3
   Scenario: [LINK_TEMPLATE_ESERVICE_6_3] Template finalità non trovato durante la disassociazione di un singolo e-service template da un template finalità
     Given l'utente è un "admin" di "PA1"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
