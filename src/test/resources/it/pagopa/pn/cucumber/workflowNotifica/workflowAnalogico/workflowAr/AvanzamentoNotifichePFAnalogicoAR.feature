@@ -530,3 +530,46 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
       | details_recIndex        | 0        |
       | details_sentAttemptMade | 0        |
       | details_responseStatus  | KO       |
+
+  @workflowAnalogico
+  Scenario: [B2B_ANALOG_AR_SENDER_PRIORITY_1] Invio notifica con sender priority pari a 0 e verifica che venga accettata e processata correttamente
+    Given viene generata una nuova notifica
+      | subject                       | notifica analogica con cucumber |
+      | senderDenomination            | Comune di palermo               |
+      | physicalCommunication         | AR_REGISTERED_LETTER            |
+      | physicalCommunicationPriority | 0                               |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile         | NULL      |
+      | physicalAddress_address | Via@ok_AR |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+
+  @workflowAnalogico
+  Scenario: [B2B_ANALOG_AR_SENDER_PRIORITY_2] Invio notifica con sender priority superiore a 100 e verifica che venga ritornato un errore di richiesta non valida
+    Given viene generata una nuova notifica
+      | subject                       | notifica analogica con cucumber |
+      | senderDenomination            | Comune di palermo               |
+      | physicalCommunication         | AR_REGISTERED_LETTER            |
+      | physicalCommunicationPriority | 101                             |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile         | NULL      |
+      | physicalAddress_address | Via@ok_AR |
+    When la notifica viene inviata tramite api b2b
+    Then l'invio della notifica ha sollevato un errore "400"
+
+
+  @workflowAnalogico @webhookV29 @precondition @cleanWebhook @webhook2
+  Scenario: [B2B_ANALOG_AR_SENDER_PRIORITY_3] Invio notifica con sender priority e verifica che la lettura dello stream vada a buon fine
+    Given viene generata una nuova notifica
+      | subject                       | invio notifica con cucumber |
+      | senderDenomination            | Comune di milano            |
+      | physicalCommunication         | AR_REGISTERED_LETTER        |
+      | physicalCommunicationPriority | 100                         |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile         | NULL      |
+      | physicalAddress_address | Via@ok_AR |
+    And destinatario Mario Gherkin
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "più recente"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "più recente"
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "REQUEST_ACCEPTED" con la versione "più recente"

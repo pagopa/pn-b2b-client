@@ -22,6 +22,7 @@ public enum NotificationValue {
     PA_PROTOCOL_NUMBER("paProtocolNumber", "", true),
     NOTIFICATION_FEE_POLICY("feePolicy", "FLAT_RATE", false),
     PHYSICAL_COMMUNICATION_TYPE("physicalCommunication", "REGISTERED_LETTER_890", false),
+    PHYSICAL_COMMUNICATION_PRIORITY("physicalCommunicationPriority", "0", false),
     DOCUMENT("document", "classpath:/sample.pdf", false),
     DOCUMENT_1("document_1", null, false),
     DOCUMENT_2("document_2", null, false),
