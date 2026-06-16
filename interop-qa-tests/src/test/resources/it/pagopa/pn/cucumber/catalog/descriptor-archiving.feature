@@ -76,22 +76,16 @@ Feature: Archiviazione manuale di un descrittore
     And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
   @sad-path
-  Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_1.6] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale di un suo descrittore se quest'ultimo è già in stato di archiviazione
+  Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_1.6] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale di un suo descrittore se quest'ultimo è già in stato di archiviazione
     Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service con un descrittore in stato "<initialDescriptorState>"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
-    When l'utente archivia la vecchia versione con id "<descriptorId>" dell'e-service con id "<eserviceId>"
-    Then si ottiene response status code 409
-    And la vecchia versione dell'e-service è in stato "<finalDescriptorState>"
+    When l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    Then si ottiene response status code 400
+    And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
-
-    #quando il primo descrittore smetterà di essere il più recente, il suo stato passerà da PUBLISHED a DEPRECATED
-    Examples:
-      | initialDescriptorState | finalDescriptorState |
-      | PUBLISHED              | ARCHIVING            |
-      | SUSPENDED              | ARCHIVING_SUSPENDED  |
 
   @happy-path
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_1.7] Un ente erogatore di un e-service con 4 descrittori può avviare il processo di archiviazione manuale per i 3 descrittori meno recenti
@@ -134,6 +128,19 @@ Feature: Archiviazione manuale di un descrittore
       | admin        |
       | api          |
       | api,security |
+
+  @sad-path
+  Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_1.9] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale di un suo descrittore se quest'ultimo è già in stato di archiviazione e sospeso allo stesso tempo
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già sospeso quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    When l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    Then si ottiene response status code 400
+    And la vecchia versione dell'e-service è in stato "ARCHIVING_SUSPENDED"
+    And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
   @sad-path
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_2.1] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale di un suo descrittore se quest'ultimo è il più recente
