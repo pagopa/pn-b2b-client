@@ -173,40 +173,86 @@ Feature: Archiviazione manuale di un e-service
     Then si ottiene response status code 400
     And la richiesta di fruizione assume lo stato "ACTIVE"
 
-  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_SUSPENSION_1.1] Un ente erogatore di un e-service in stato ARCHIVING è in grado di sospendere l'e-service in questione
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_SUSPENSION_1.1] Un ente erogatore di un e-service in stato ARCHIVING è in grado di sospendere l'e-service in questione e le richieste di fruizione attive non possono generare nuovi voucher
     Given l'utente è un "<role>" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    And "PA2" ha già creato 1 client "CONSUMER"
+    And "PA2" ha già inserito l'utente con ruolo "admin" come membro di quel client
+    And "PA2" ha già associato la finalità a quel client
+    And un "admin" di "PA2" ha caricato una chiave pubblica nel client
     And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     When l'utente sospende quel descrittore in corso di archiviazione
-    Then si ottiene response status code <statusCode>
-    And la versione più recente dell'e-service è in stato "<finalDescriptorState>"
+    Then si ottiene response status code 204
+    And la versione più recente dell'e-service è in stato "ARCHIVING_SUSPENDED"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And la richiesta di fruizione assume lo stato "ACTIVE"
+    When l'utente è un "admin" di "PA2"
+    And l'utente richiede la generazione del voucher
+    Then la richiesta di generazione del Voucher non va a buon fine
 
     Examples:
-      | role         | finalDescriptorState | statusCode |
-      | admin        | ARCHIVING_SUSPENDED  | 204        |
-      | api          | ARCHIVING_SUSPENDED  | 204        |
-      | api,security | ARCHIVING_SUSPENDED  | 204        |
-      | support      | ARCHIVING            | 403        |
-      | security     | ARCHIVING            | 403        |
+      | role         |
+      | admin        |
+      | api          |
+      | api,security |
 
-  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_SUSPENSION_1.2] Un ente erogatore di un e-service in stato ARCHIVING_SUSPENDED è in grado di riattivare l'e-service in questione
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_SUSPENSION_1.2] Un utente con ruolo non autorizzato NON può sospendere un e-service in stato ARCHIVING
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    When l'utente è un "<role>" di "PA1"
+    And l'utente sospende quel descrittore in corso di archiviazione
+    Then si ottiene response status code 403
+    And la versione più recente dell'e-service è in stato "ARCHIVING"
+
+    Examples:
+      | role     |
+      | support  |
+      | security |
+
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_SUSPENSION_1.3] Un ente erogatore di un e-service in stato ARCHIVING_SUSPENDED è in grado di riattivare l'e-service in questione e le richieste di fruizione attive possono generare nuovi voucher
     Given l'utente è un "<role>" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    And "PA2" ha già creato 1 client "CONSUMER"
+    And "PA2" ha già inserito l'utente con ruolo "admin" come membro di quel client
+    And "PA2" ha già associato la finalità a quel client
+    And un "admin" di "PA2" ha caricato una chiave pubblica nel client
     And "PA1" ha già sospeso quell'e-service
     And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     When l'utente attiva il descrittore di quell'e-service
-    Then si ottiene response status code <statusCode>
-    And la versione più recente dell'e-service è in stato "<finalDescriptorState>"
+    Then si ottiene response status code 204
+    And la versione più recente dell'e-service è in stato "ARCHIVING"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And la richiesta di fruizione assume lo stato "ACTIVE"
+    When l'utente è un "admin" di "PA2"
+    And l'utente richiede la generazione del voucher
+    Then si ottiene la corretta generazione del voucher
+
+    Examples:
+      | role         |
+      | admin        |
+      | api          |
+      | api,security |
+
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_SUSPENSION_1.4] Un utente con ruolo non autorizzato NON può riattivare un e-service in stato ARCHIVING_SUSPENDED
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA1" ha già sospeso quell'e-service
+    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    Given l'utente è un "<role>" di "PA1"
+    When l'utente attiva il descrittore di quell'e-service
+    Then si ottiene response status code 403
+    And la versione più recente dell'e-service è in stato "ARCHIVING_SUSPENDED"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
     Examples:
-      | role         | finalDescriptorState | statusCode |
-      | admin        | ARCHIVING            | 204        |
-      | api          | ARCHIVING            | 204        |
-      | api,security | ARCHIVING            | 204        |
-      | support      | ARCHIVING_SUSPENDED  | 403        |
-      | security     | ARCHIVING_SUSPENDED  | 403        |
+      | role     |
+      | support  |
+      | security |
 
   Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_CANCELLATION_1.1] L'ente erogatore di un e-service in stato PUBLISHED può annullare il processo di archiviazione manuale di un e-service in corso
     Given l'utente è un "<role>" di "PA1"
