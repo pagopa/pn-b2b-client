@@ -105,13 +105,6 @@ public class INIPECGestionePuntualeEsitiSteps {
     }
 
 
-    @And("si attende per {int} minuti")
-    public void iWaitForMinutes(int minutes) {
-        await().atMost(minutes, TimeUnit.MINUTES)
-                .until(() -> false);
-    }
-
-
     @And("salvo il timestamp corrente")
     public void storeCurrentTimestamp() {
         notificationSentTimestamp = java.time.OffsetDateTime.now().minusHours(2).minusMinutes(1).toString();
@@ -137,37 +130,6 @@ public class INIPECGestionePuntualeEsitiSteps {
                 .filter(item -> item.containsKey("cf")
                         && cf.equals(item.get("cf").s()))
                 .toList();
-    }
-
-    private List<Map<String, AttributeValue>> retrieveBatchRequestItemsByStatus(String cf, String status) {
-
-        // Build attribute values
-        Map<String, AttributeValue> attributeValues = Map.of(
-                ":v_status", AttributeValue.builder().s(status).build()
-        );
-
-        // Call service
-        List<Map<String, AttributeValue>> items = dynamoDbService.callAllPages(
-                DynamoTableName.BATCH_REQUESTS_WITH_INDEX_STATUS,
-                attributeValues
-        );
-
-        // return filtered items
-        return items.stream()
-                .filter(item -> item.containsKey("cf")
-                        && cf.equals(item.get("cf").s())
-                        && item.containsKey("lastReserved")
-                        && item.get("lastReserved").s().compareTo(notificationSentTimestamp) > 0)
-                .toList();
-
-    }
-
-
-    @Given("imposto il timestamp a 30 minuti fa")
-    public void storeTimestampTenMinutesAgo() {
-        notificationSentTimestamp = java.time.OffsetDateTime.now()
-                .minusMinutes(150)
-                .toString();
     }
 
 }

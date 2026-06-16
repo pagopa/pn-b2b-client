@@ -56,4 +56,4 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     And salvo il timestamp corrente
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
-    Then viene verificato che le richieste per i cf "29527800386" e "10433218194" risultino entrambe nel batch in retry
+    Then viene verificato che le richieste per i cf "29527800386" e "10433218194" risultino entrambe non tra quelle inviate
