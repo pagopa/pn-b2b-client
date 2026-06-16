@@ -22,6 +22,6 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         value = "same_thread"
 )
 @ExcludeTags({"ignore"})
-@IncludeTags({"censimentoStimeMittenti"})
+@IncludeTags({"censimentoStimeMittenti1"})
 public class CensimentoStimeMittentiTest {
 }
