@@ -5,7 +5,7 @@ import it.pagopa.interop.authorization.domain.TenantType;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind;
 
 public class AttributeParameterTypes {
-    @ParameterType("CERTIFIED|DECLARED|VERIFIED")
+    @ParameterType("CERTIFIED_DISCRETE|CERTIFIED|DECLARED|VERIFIED")
     public AttributeKind attributeKind(String kind) {
         return AttributeKind.fromValue(kind);
     }
