@@ -250,8 +250,8 @@ Feature: Aggiornamento di un descrittore in bozza
     And la soglia differenziata per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo è uguale a "10"
 
   @certifiedDiscreteAttribute
-  Scenario: [CERT_DISCRETE_ATTR_ESERVICE_ADD] L'erogatore di un e-service può assegnare all'e-service un attributo certificato
-  discreto impostando una soglia numerica.
+  Scenario: [CERT_DISCRETE_ATTR_ESERVICE_ADD_1] L'erogatore di un e-service può assegnare all'e-service in stato DRAFT un
+  attributo certificato discreto impostando una soglia numerica.
 
     Given l'utente è un "admin" di "PA2"
     And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
@@ -266,8 +266,37 @@ Feature: Aggiornamento di un descrittore in bozza
       | DECLARED           | 0     |            |         |                       |
     And si ottiene response status code 200
     Then l'e-service ha questa configurazione:
-      | dailyCallsPerConsumer | 10 |
+      | dailyCallsPerConsumer | 10   |
       | dailyCallsTotal       | 1000 |
     And la soglia differenziata per l'attributo CERTIFIED_DISCRETE 0-esimo creato nel gruppo 0-esimo è uguale a "100", mentre il discrete comparator è "GTE" e il discrete threshhold è uguale a 1000000
     And la soglia differenziata per l'attributo CERTIFIED 1-esimo creato nel gruppo 0-esimo è uguale a "200"
     And la soglia differenziata per l'attributo CERTIFIED_DISCRETE 1-esimo creato nel gruppo 1-esimo è uguale a "%null", mentre il discrete comparator è "GTE" e il discrete threshhold è uguale a 500000
+
+  @certifiedDiscreteAttribute
+  Scenario: [CERT_DISCRETE_ATTR_ESERVICE_ADD_2] L'erogatore di un e-service in stato DRAFT può modificare un e-service
+  assegnando un attributo certificato discreto con una soglia numerica.
+
+    Given l'utente è un "admin" di "PA2"
+    And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
+    And l'utente "PA1" possiede almeno un attributo certificato discreto
+    When "PA2" ha già creato un e-service in stato "DRAFT" con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000 e con i seguenti attributi:
+      | kind               | group | comparator | value   | dailyCallsPerConsumer |
+      | CERTIFIED_DISCRETE | 0     | GTE        | 1000000 | 100                   |
+      | CERTIFIED          | 0     |            |         | 200                   |
+      | CERTIFIED          | 1     |            |         |                       |
+      | CERTIFIED_DISCRETE | 1     | GTE        | 500000  |                       |
+      | CERTIFIED          | 1     |            |         |                       |
+      | DECLARED           | 0     |            |         |                       |
+    And si ottiene response status code 200
+    When l'utente aggiorna il descrittore dell'e-service con i seguenti attributi:
+      | kind               | group | comparator | value   | dailyCallsPerConsumer |
+      | CERTIFIED_DISCRETE | 0     | GTE        | 2500000 | 150                   |
+      | CERTIFIED          | 0     |            |         | 190                   |
+      | CERTIFIED          | 1     |            |         |                       |
+      | CERTIFIED_DISCRETE | 1     | LTE        | 900000  |                       |
+      | CERTIFIED          | 1     |            |         |                       |
+      | DECLARED           | 0     |            |         |                       |
+    And si ottiene response status code 200
+    Then la soglia differenziata per l'attributo CERTIFIED_DISCRETE 0-esimo creato nel gruppo 0-esimo è uguale a "150", mentre il discrete comparator è "GTE" e il discrete threshhold è uguale a 2500000
+    And la soglia differenziata per l'attributo CERTIFIED 1-esimo creato nel gruppo 0-esimo è uguale a "190"
+    And la soglia differenziata per l'attributo CERTIFIED_DISCRETE 1-esimo creato nel gruppo 1-esimo è uguale a "%null", mentre il discrete comparator è "LTE" e il discrete threshhold è uguale a 900000
