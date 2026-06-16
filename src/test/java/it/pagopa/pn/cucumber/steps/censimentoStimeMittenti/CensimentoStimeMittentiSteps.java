@@ -243,7 +243,7 @@ public class CensimentoStimeMittentiSteps {
     public void verifyWeeklyProvincialEstimates(String deliveryDate, String product, String province, Map<String, String> dataTable) {
         // Aspetta due secondi prima di recuperare le stime, per dare il tempo al sistema di elaborarle dopo il caricamento del file zip
         try {
-            TimeUnit.SECONDS.sleep(2);
+            TimeUnit.MINUTES.sleep(1);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
