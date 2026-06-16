@@ -223,8 +223,9 @@ Feature: Archiviazione manuale di un descrittore
   @happy-path
   Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_ELIMINATION_1.5] L'ente erogatore di un e-service può annullare l'archiviazione manuale in corso di un descrittore precedentemente in stato SUSPENDED
     Given l'utente è un "<role>" di "PA1"
-    And "PA1" ha già creato un e-service con un descrittore in stato "SUSPENDED"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già sospeso quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
     When l'utente annulla il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
