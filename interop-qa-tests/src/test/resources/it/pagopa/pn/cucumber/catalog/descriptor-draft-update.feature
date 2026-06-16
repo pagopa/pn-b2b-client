@@ -250,10 +250,9 @@ Feature: Aggiornamento di un descrittore in bozza
     And la soglia differenziata per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo è uguale a "10"
 
   @certifiedDiscreteAttribute
-  Scenario: l'erogatore di un e-service può assegnare all'e-service un attributo certificato discreto impostando una
-  soglia numerica.
+  Scenario: [CERT_DISCRETE_ATTR_ESERVICE_ADD] L'erogatore di un e-service può assegnare all'e-service un attributo certificato
+  discreto impostando una soglia numerica.
 
-    # PA2 non ha nessun attributo certificato discreto
     Given l'utente è un "admin" di "PA2"
     And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
     And l'utente "PA1" possiede almeno un attributo certificato discreto
@@ -269,6 +268,6 @@ Feature: Aggiornamento di un descrittore in bozza
     Then l'e-service ha questa configurazione:
       | dailyCallsPerConsumer | 10 |
       | dailyCallsTotal       | 1000 |
-    And la soglia differenziata per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo è uguale a "100", mentre il discrete comparator è "GTE" e il discrete threshhold è uguale a 1000000
+    And la soglia differenziata per l'attributo CERTIFIED_DISCRETE 0-esimo creato nel gruppo 0-esimo è uguale a "100", mentre il discrete comparator è "GTE" e il discrete threshhold è uguale a 1000000
     And la soglia differenziata per l'attributo CERTIFIED 1-esimo creato nel gruppo 0-esimo è uguale a "200"
-    And la soglia differenziata per l'attributo CERTIFIED 1-esimo creato nel gruppo 1-esimo è uguale a "%null", mentre il discrete comparator è "GTE" e il discrete threshhold è uguale a 500000
+    And la soglia differenziata per l'attributo CERTIFIED_DISCRETE 1-esimo creato nel gruppo 1-esimo è uguale a "%null", mentre il discrete comparator è "GTE" e il discrete threshhold è uguale a 500000
