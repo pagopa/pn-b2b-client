@@ -413,7 +413,7 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
                         return false;
                     }
                 },
-                "Not Found notification: \"" + finalMessage + "\" with DeepLink " + deepLink,
+                "Not Found expected notification: \"" + finalMessage + "\" with DeepLink " + deepLink,
                 3,
                 3000
         );
@@ -431,9 +431,9 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
             Assertions.fail("Found not expected notification");
         } catch (Exception e) {
             Assertions.assertTrue(
-                    e.getMessage().contains("Expected notification not found"),
-                    "In-app notification failed, but not for the reason: Found not expected notification." +
-                    "Actual reason: " + e.getMessage()
+                    e.getMessage().contains("Not Found expected notification"),
+                    "In-app notification failed, but not for the reason: Not Found expected notification." +
+                    " Actual reason: " + e.getMessage()
             );
         }
     }
