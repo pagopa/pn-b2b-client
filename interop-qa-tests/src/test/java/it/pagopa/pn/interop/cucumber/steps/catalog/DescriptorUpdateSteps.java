@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.catalog;
 
 import io.cucumber.java.en.When;
+import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.eservice.service.IM2MV3EserviceDescriptorClient;
 import it.pagopa.interop.eservice.service.IM2MV3EserviceDescriptorClient.EServiceDescriptorAttributePatchRequest;
@@ -50,6 +51,18 @@ public class DescriptorUpdateSteps {
                         sharedStepsContext.getEServicesCommonContext().getEserviceId(),
                         sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
                         seed
+                )
+        );
+    }
+
+    @When("l'utente aggiorna alcuni parametri di quel descrittore con:")
+    public void updateSomeDescriptorParams(UpdateEServiceDescriptorSeed updateEServiceDescriptorSeed) throws InterruptedException {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        httpCallExecutor.performCall(
+                () -> clientTokenConfigurator.getEServiceClient().updateDraftDescriptor(
+                        sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                        sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
+                        updateEServiceDescriptorSeed
                 )
         );
     }

@@ -26,6 +26,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffConsent;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffTosPrivacyActionBody;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.generate.model.externalregistry.selfcare.privateapi.FilteredPaIdsResponse;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
@@ -34,6 +35,7 @@ import it.pagopa.pn.client.b2b.pa.service.IPnTosPrivacyClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
+import it.pagopa.pn.client.b2b.pa.service.impl.AooUoIdsClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
@@ -75,6 +77,7 @@ import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_2;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_MULTI;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_ROOT;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_SON;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_SON_2;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.CRISTOFORO_COLOMBO;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.CUCUMBER_SPA;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DINO_SAURO;
@@ -97,6 +100,7 @@ public class RicezioneNotificheWebSteps {
     private final ApplicationContext context;
     private IPnWebRecipientClient webRecipientClient;
     private IPnWebUserAttributesClient iPnWebUserAttributesClient;
+    private AooUoIdsClientImpl aooUoIdsClient;
     private final PnExternalServiceClientImpl externalClient;
     private final SharedSteps sharedSteps;
     private final IPnWebPaClient webPaClient;
@@ -111,6 +115,7 @@ public class RicezioneNotificheWebSteps {
 
     private static final String TOS_VERSION = "8";
     private static final String ACCEPT_TOS = "ACCETTA";
+    private FilteredPaIdsResponse filteredPaIdsResponse;
 
     @Value("${pn.external.senderId}")
     private String senderId;
@@ -120,6 +125,8 @@ public class RicezioneNotificheWebSteps {
     private String senderIdGA;
     @Value("${pn.external.senderId-SON}")
     private String senderIdSON;
+    @Value("${pn.external.senderId-SON-2}")
+    private String senderIdSON2;
     @Value("${pn.external.senderId-ROOT}")
     private String senderIdROOT;
 
@@ -146,7 +153,8 @@ public class RicezioneNotificheWebSteps {
 
     @Autowired
     public RicezioneNotificheWebSteps(ApplicationContext context, SharedSteps sharedSteps, PnWebUserAttributesExternalClientImpl iPnWebUserAttributesClient,
-                                      IPnBFFRecipientNotificationClient bffRecipientNotificationClient, IPnTosPrivacyClient iPnTosPrivacyClient, PnB2bClientTimingConfigs timingConfigs) {
+                                      IPnBFFRecipientNotificationClient bffRecipientNotificationClient, IPnTosPrivacyClient iPnTosPrivacyClient, PnB2bClientTimingConfigs timingConfigs,
+                                      AooUoIdsClientImpl aooUoIdsClient) {
         this.context = context;
         this.sharedSteps = sharedSteps;
         this.webRecipientClient = sharedSteps.getWebRecipientClient();
@@ -156,6 +164,7 @@ public class RicezioneNotificheWebSteps {
         this.bffRecipientNotificationClient = bffRecipientNotificationClient;
         this.iPnTosPrivacyClient = sharedSteps.getIPnTosPrivacyClientImpl();
         this.timingConfigs = timingConfigs;
+        this.aooUoIdsClient = aooUoIdsClient;
     }
 
     @Then("la notifica può essere correttamente recuperata da {string}")
@@ -733,6 +742,41 @@ public class RicezioneNotificheWebSteps {
         postRecipientCourtesyAddress(senderIdPa, email, LegalCourtesyAddressWrapper.ChannelType.EMAIL, "00000", false);
     }
 
+    @When("viene invocata l'api di filtro pa di tipo Root passando le seguenti PA:")
+    public void vieneInvocataLApiDiFiltroRootPassandoLeSeguentiPA(List<String> paList) {
+        try {
+            List<String> paIds = paList.stream()
+                    .map(pa -> getSenderIdPa(pa.replace("\"", "").trim()))
+                    .collect(Collectors.toList());
+            this.filteredPaIdsResponse = this.aooUoIdsClient.getFilteredAooUoIdV2Private(paIds);
+        } catch (HttpStatusCodeException httpStatusCodeException) {
+            sharedSteps.setNotificationError(httpStatusCodeException);
+        }
+    }
+
+    @Then("si verifica che la risposta contenga gli id relativi alle seguenti PA:")
+    public void siVerificaCheLaRispostaContengaGliIdRelativiAlleSeguentiPA(List<String> paList) {
+        Assertions.assertNotNull(filteredPaIdsResponse);
+        Assertions.assertNotNull(filteredPaIdsResponse.getIds());
+
+        List<String> expectedIds = paList.stream()
+                .map(pa -> getSenderIdPa(pa.replace("\"", "").trim()))
+                .collect(Collectors.toList());
+
+        // Verifica esclusiva: la risposta deve contenere esattamente gli id attesi
+        assertThat(filteredPaIdsResponse.getIds())
+                .containsExactlyInAnyOrderElementsOf(expectedIds);
+    }
+
+    @Then("si verifica che la risposta non contenga id")
+    public void siVerificaCheLaRispostaNonContengaId() {
+        Assertions.assertTrue(
+                filteredPaIdsResponse == null ||
+                        filteredPaIdsResponse.getIds() == null ||
+                        filteredPaIdsResponse.getIds().isEmpty()
+        );
+    }
+
     @And("viene inserita l'email di cortesia {string} per il comune {string}")
     public void vieneInseritaEmailDiCortesiaDalComune(String email, String pa) {
         String senderIdPa = getSenderIdPa(pa);
@@ -796,6 +840,7 @@ public class RicezioneNotificheWebSteps {
             case COMUNE_2 -> senderId2;
             case COMUNE_MULTI -> senderIdGA;
             case COMUNE_SON -> senderIdSON;
+            case COMUNE_SON_2 -> senderIdSON2;
             case COMUNE_ROOT -> senderIdROOT;
             default -> "default";
         };

@@ -100,10 +100,15 @@ public class ProducerKeychainSteps extends AbstractCommonSteps<ProducerKeychain,
     @And("l'utente {string} di {string} aggiunge una chiave al portachiavi erogatore")
     public void createProducerKey(String ruolo, String tenant) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenant, ruolo));
-        KeySeed keySeed = buildKeySeed();
+
+        String keyType = "RSA";
+        KeyPairDecorator keyPair = KeyPairDecorator.of(keyType, 2048);
+
+        KeySeed keySeed = buildKeySeed(keyPair, keyType);
         UUID producerKeychainId = getContext().getProducerKeychainCommonContext()
             .getFirstProducerKeychainId();
         producerKeychainClient.createProducerKey(producerKeychainId, keySeed);
+        getContext().getProducerKeychainCommonContext().addProducerKeyPair(keyPair);
         clientTokenConfigurator.setBearerToken(getContext().getUserToken());
         delayService.delay();
     }
@@ -125,15 +130,13 @@ public class ProducerKeychainSteps extends AbstractCommonSteps<ProducerKeychain,
     public void successfullyRemoveUserFromKeychain(String ruolo, String tenant, String roleToRemove) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenant, ruolo));
         UUID producerKeychainId = getContext().getProducerKeychainCommonContext()
-            .getFirstProducerKeychainId();
+                .getFirstProducerKeychainId();
         UUID userIdToRemove = identityService.getUserId(tenant, roleToRemove);
         producerKeychainClient.removeUserFromKeychain(producerKeychainId, userIdToRemove);
         clientTokenConfigurator.setBearerToken(getContext().getUserToken());
     }
 
-    private static KeySeed buildKeySeed() {
-        String keyType = "RSA";
-        KeyPairDecorator keyPair = KeyPairDecorator.of(keyType, 2048);
+    private static KeySeed buildKeySeed(KeyPairDecorator keyPair, String keyType) {
         String encodedPublicKey = keyPair.getDelimitedPublicKeyBase64();
         return KeyPairGeneratorUtil.createKeySeed(encodedPublicKey, KeyType.parse(keyType)).get(0);
     }

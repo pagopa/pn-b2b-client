@@ -26,4 +26,5 @@ public class TaxIdConfig {
     private String comuneSon;
     private String comuneRoot;
     private String userIndirizzoNonValidoD01;
+    private String userIndirizzoValidoAnpr;
 }
