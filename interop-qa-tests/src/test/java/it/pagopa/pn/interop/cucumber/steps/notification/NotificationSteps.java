@@ -457,8 +457,9 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
                 case "eServiceId": value = sharedStepsContext.getEServicesCommonContext().getEserviceId().toString(); break;
                 case "descriptorId": value = sharedStepsContext.getEServicesCommonContext().getDescriptorId().toString(); break;
                 case "producerName": value = sharedStepsContext.getEServicesCommonContext().getProducerName(); break;
+                case "TODAY": value = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")); break;
                 case "TODAY+GRACE_PERIOD":
-                    value = LocalDate.now().plusDays(2).format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                    value = LocalDate.now().plusDays(2).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")); break;
             }
             text.append(value);
             // Controlla se c'è un prossimo placeholder
