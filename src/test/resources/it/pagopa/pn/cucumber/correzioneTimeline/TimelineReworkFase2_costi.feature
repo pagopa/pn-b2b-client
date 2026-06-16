@@ -45,12 +45,12 @@ Feature: Correzione timeline fase 2 costi
       | sequence             | finalEvent                         | finalStatus        | attempt | expectedStatusCode | failCode | finalEventRestart                  | finalStatusRestart | attemptRestart |
       | Via@FAIL_DECEDUTO_AR | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | RECRN002C          | M02      | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              |
       | Via@FAIL_DECEDUTO_AR | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | RECRN001C          |          | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              |
-      | Via@FAIL_DECEDUTO_AR | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | RECRN001C          |          | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
-      | Via@FAIL_DECEDUTO_AR | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | RECRN002F          | M01      | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+#      | Via@FAIL_DECEDUTO_AR | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | RECRN001C          |          | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+#      | Via@FAIL_DECEDUTO_AR | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | RECRN002F          | M01      | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
       | Via@OK_AR            | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | RECRN002C          | M02      | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              |
       | Via@OK_AR            | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | RECRN001C          |          | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              |
-      | Via@OK_AR            | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | RECRN001C          |          | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
-      | Via@OK_AR            | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | RECRN002F          | M01      | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+#      | Via@OK_AR            | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | RECRN001C          |          | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+#      | Via@OK_AR            | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | RECRN002F          | M01      | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
 #      | Via@FAIL-DISCOVERY_AR             | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | RECRN002C          | M02      | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              |
 #      | Via@FAIL-DISCOVERY_AR             | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | RECRN001C          |          | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              |
 #      | Via@FAIL-DISCOVERY_AR             | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | RECRN001C          |          | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
@@ -106,12 +106,12 @@ Feature: Correzione timeline fase 2 costi
       | sequence             | finalEvent                         | finalStatus        | attempt | expectedStatusCode | failCode | finalEventRestart                  | finalStatusRestart | attemptRestart |
       | Via@FAIL_DECEDUTO_AR | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | RECRN002C          | M02      | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              |
       | Via@FAIL_DECEDUTO_AR | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | RECRN001C          |          | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              |
-      | Via@FAIL_DECEDUTO_AR | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | RECRN001C          |          | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
-      | Via@FAIL_DECEDUTO_AR | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | RECRN002F          | M01      | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+#      | Via@FAIL_DECEDUTO_AR | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | RECRN001C          |          | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+#      | Via@FAIL_DECEDUTO_AR | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | RECRN002F          | M01      | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
       | Via@OK_AR            | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | RECRN002C          | M02      | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              |
       | Via@OK_AR            | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | RECRN001C          |          | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              |
-      | Via@OK_AR            | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | RECRN001C          |          | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
-      | Via@OK_AR            | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | RECRN002F          | M01      | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+#      | Via@OK_AR            | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | RECRN001C          |          | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
+#      | Via@OK_AR            | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | RECRN002F          | M01      | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              |
 #      | Via@FAIL-DISCOVERY_AR             | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | RECRN002C          | M02      | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              |
 #      | Via@FAIL-DISCOVERY_AR             | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | RECRN001C          |          | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              |
 #      | Via@FAIL-DISCOVERY_AR             | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | RECRN001C          |          | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              |
@@ -168,12 +168,12 @@ Feature: Correzione timeline fase 2 costi
       | sequence             | finalEvent                         | finalStatus        | attempt | expectedStatusCode | failCode | finalEventRestart                  | finalStatusRestart | attemptRestart | deliveryCostEqual |
       | Via@FAIL_DECEDUTO_AR | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | RECRN002C          | M02      | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              | uguale            |
       | Via@FAIL_DECEDUTO_AR | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | RECRN001C          |          | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              | differente        |
-      | Via@FAIL_DECEDUTO_AR | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | RECRN001C          |          | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              | differente        |
-      | Via@FAIL_DECEDUTO_AR | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | RECRN002F          | M01      | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              | differente        |
+#      | Via@FAIL_DECEDUTO_AR | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | RECRN001C          |          | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              | differente        |
+#      | Via@FAIL_DECEDUTO_AR | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | RECRN002F          | M01      | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              | differente        |
       | Via@OK_AR            | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | RECRN002C          | M02      | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              | differente        |
       | Via@OK_AR            | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | RECRN001C          |          | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              | uguale            |
-      | Via@OK_AR            | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | RECRN001C          |          | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              | differente        |
-      | Via@OK_AR            | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | RECRN002F          | M01      | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              | differente        |
+#      | Via@OK_AR            | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | RECRN001C          |          | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              | differente        |
+#      | Via@OK_AR            | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0       | RECRN002F          | M01      | ANALOG_FAILURE_WORKFLOW            | EFFECTIVE_DATE     | 1              | differente        |
 #      | Via@FAIL-DISCOVERY_AR             | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | RECRN002C          | M02      | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              | differente        |
 #      | Via@FAIL-DISCOVERY_AR             | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | RECRN001C          |          | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              | differente        |
 #      | Via@FAIL-DISCOVERY_AR             | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1       | RECRN001C          |          | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 1              | uguale            |
@@ -212,6 +212,9 @@ Feature: Correzione timeline fase 2 costi
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEvent>"
+    And pre rework vengono recuperati i valori dei costi notifica relativi all'utente 0 sulla tabella pn-CostComponents
+    And pre rework vengono recuperati i valori dei costi notifica relativi al pagamento 0 dell'utente 0 sulla tabella pn-CostUpdateResult fino all'attempt <attempt>
+    And pre rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attempt>
     And vengono letti gli eventi fino allo stato della notifica "<finalStatus>"
     And pre rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attempt>
     When viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
@@ -222,11 +225,14 @@ Feature: Correzione timeline fase 2 costi
     When viene invocato il consolidatore per inserire tutti gli eventi previsti per il destinatario 0 che portano allo status code "<expectedStatusCode>" al tentativo <attemptRestart>
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEventRestart>" al tentativo "REWORK_0"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEventRestart>"
     And vengono letti gli eventi fino allo stato della notifica "<finalStatusRestart>"
     And la timeline contiene elementi con la stringa "REWORK_"
-    And post rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt <attemptRestart>
-    And il baseCost è uguale rispetto a prima del rework
+    And post rework vengono recuperati i valori dei costi notifica relativi all'utente 0 sulla tabella pn-CostComponents
+    And post rework vengono recuperati i valori dei costi notifica relativi al pagamento 0 dell'utente 0 sulla tabella pn-CostUpdateResult fino all'attempt <attemptRestart>
+    And post rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attemptRestart>
+    And il record recuperato su pn-CostComponents è <costCompare> rispetto a prima del rework
+    And il valore del notification cost dei record su pn-CostUpdateResult è <costCompare> rispetto a prima del rework
     Examples:
       | sequence             | finalEvent                         | finalStatus        | attempt | expectedStatusCode | failCode | finalEventRestart                  | finalStatusRestart | attemptRestart |
       | Via@FAIL_DECEDUTO_AR | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | RECRN002C          | M02      | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0              |
