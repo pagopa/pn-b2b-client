@@ -79,6 +79,7 @@ public class DescriptorArchivingSteps {
         }
 
         pollDescriptorState(resolvedEServiceId, resolvedDescriptorId, expectedState);
+        archivingScheduleVerifier.pollDescriptorArchivingSchedule(resolvedEServiceId, resolvedDescriptorId, "DESCRIPTOR");
     }
 
     private void scheduleArchiveDescriptor(UUID eServiceId, UUID descriptorId) {
