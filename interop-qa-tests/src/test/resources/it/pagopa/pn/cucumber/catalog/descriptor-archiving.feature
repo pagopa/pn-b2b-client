@@ -153,25 +153,22 @@ Feature: Archiviazione manuale di un descrittore
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
   @happy-path
-  Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_ELIMINATION_1.1] L'ente erogatore di un e-service può annullare il processo di archiviazione manuale del primo e meno recente descrittore se l'archiviazione è in corso
+  Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_ELIMINATION_1.1] L'ente erogatore di un e-service può annullare l'archiviazione manuale in corso di un descrittore precedentemente in stato DEPRECATED
     Given l'utente è un "<role>" di "PA1"
-    And "PA1" ha già creato un e-service con un descrittore in stato "<initialDescriptorState>"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
     When l'utente annulla il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
     Then si ottiene response status code 204
-    And la vecchia versione dell'e-service è in stato "<finalDescriptorState>"
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And l'archiviazione manuale del singolo descrittore è stata annullata con successo
 
     Examples:
-      | role         | initialDescriptorState | finalDescriptorState |
-      | admin        | PUBLISHED              | DEPRECATED           |
-      | api          | PUBLISHED              | DEPRECATED           |
-      | api,security | PUBLISHED              | DEPRECATED           |
-      | admin        | SUSPENDED              | SUSPENDED            |
-      | api          | SUSPENDED              | SUSPENDED            |
-      | api,security | SUSPENDED              | SUSPENDED            |
+      | role         |
+      | admin        |
+      | api          |
+      | api,security |
 
   @sad-path
   Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_ELIMINATION_1.2] Un utente con ruolo non autorizzato NON può annullare il processo di archiviazione manuale del descrittore
@@ -223,6 +220,24 @@ Feature: Archiviazione manuale di un descrittore
       | %random      | %actual    | 404        |
       | %actual      | %random    | 404        |
       | %random      | %random    | 404        |
+
+  @happy-path
+  Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_ELIMINATION_1.5] L'ente erogatore di un e-service può annullare l'archiviazione manuale in corso di un descrittore precedentemente in stato SUSPENDED
+    Given l'utente è un "<role>" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "SUSPENDED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    When l'utente annulla il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
+    Then si ottiene response status code 204
+    And la vecchia versione dell'e-service è in stato "SUSPENDED"
+    And l'archiviazione manuale del singolo descrittore è stata annullata con successo
+
+    Examples:
+      | role         |
+      | admin        |
+      | api          |
+      | api,security |
 
   @sad-path
   Scenario: [DIFFERENT_TENANT_ARCHIVING_DESCRIPTOR_1.1] Il processo di archiviazione dello specifico descrittore NON può essere eseguito da un ente differente dall'erogatore dell'e-service
