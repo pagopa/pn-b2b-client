@@ -49,7 +49,7 @@ Feature: Archiviazione manuale di un e-service
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     Then si ottiene response status code 403
-    And la versione più recente dell'e-service è in stato "ARCHIVING"
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
     Examples:
