@@ -85,7 +85,7 @@ Feature: Archiviazione manuale di un descrittore
     When l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
     Then si ottiene response status code 400
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
-    And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
   @happy-path
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_1.7] Un ente erogatore di un e-service con 4 descrittori può avviare il processo di archiviazione manuale per i 3 descrittori meno recenti
