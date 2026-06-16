@@ -78,7 +78,7 @@ public class INIPECGestionePuntualeEsitiSteps {
                 });
     }
 
-    @Then("viene verificato che le richieste per i cf {string} e {string} risultino entrambe nel batch in retry")
+    @Then("viene verificato che le richieste per i cf {string} e {string} risultino entrambe non tra quelle inviate")
     public void verifyCfsNotPresentWithSentOrNotSent(String cf1, String cf2) {
 
         // Trattandosi di un'asserzione di "assenza", richiediamo che la condizione resti stabile
