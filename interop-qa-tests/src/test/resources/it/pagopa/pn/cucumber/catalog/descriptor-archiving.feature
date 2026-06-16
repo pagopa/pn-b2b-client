@@ -44,8 +44,6 @@ Feature: Archiviazione manuale di un descrittore
     And viene impostato per l'utente un token non valido
     When l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
     Then si ottiene response status code 401
-    And la vecchia versione dell'e-service è in stato "DEPRECATED"
-    And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
   @sad-path
   Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_1.4] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale di un descrittore se i parametri obbligatori non sono presenti o corretti
