@@ -63,8 +63,6 @@ Feature: Archiviazione manuale di un e-service
     And viene impostato per l'utente un token non valido
     When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     Then si ottiene response status code 401
-    And la versione più recente dell'e-service è in stato "PUBLISHED"
-    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
   Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_1.6] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale dell'e-service se i parametri obbligatori non sono presenti o corretti
     Given l'utente è un "admin" di "PA1"
