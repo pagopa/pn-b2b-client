@@ -295,8 +295,8 @@ Feature: Archiviazione manuale di un descrittore
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And l'annullamento dell'archiviazione manuale del vecchio descrittore è fallita
 
-  @happy-path
-  Scenario: [DIFFERENT_TENANT_ARCHIVING_DESCRIPTOR_2.1] Il processo di archiviazione dello specifico descrittore può essere effettuato dall'ente erogatore senza dover prima revocare la delega in erogazione attiva verso il delegato dell'e-service in questione
+  @sad-path
+  Scenario: [DIFFERENT_TENANT_ARCHIVING_DESCRIPTOR_2.1] Il processo di archiviazione dello specifico descrittore NON può essere effettuato dall'ente erogatore se l'e-service è in delega in erogazione
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
@@ -306,9 +306,9 @@ Feature: Archiviazione manuale di un descrittore
     And l'utente accetta la delega
     And l'utente è un "admin" di "PA1"
     When l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
-    Then si ottiene response status code 204
-    And la vecchia versione dell'e-service è in stato "ARCHIVING"
-    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
+    Then si ottiene response status code 409
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
+    And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
   @happy-path
   Scenario Outline: [ARCHIVING_DESCRIPTOR_BY_JOB_1.1] Raggiunta la data finale del tempo di preavviso per l'archiviazione di un descrittore, questo risulterà correttamente archiviato
