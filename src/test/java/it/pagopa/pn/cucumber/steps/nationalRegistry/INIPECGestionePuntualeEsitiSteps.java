@@ -60,7 +60,7 @@ public class INIPECGestionePuntualeEsitiSteps {
                         .isNotZero());
     }
 
-    @Then("viene verificato che le richieste per i cf {string} e {string} risultino entrambe nel batch in retry")
+    @Then("viene verificato che le richieste per i cf {string} e {string} risultino entrambe non tra quelle inviate")
     public void verifyCfsNotPresentWithSentOrNotSent(String cf1, String cf2) {
 
         List<Map<String, AttributeValue>> cf1NotSent = retrieveBatchRequestItemsBySendStatus(cf1, "NOT_SENT");
