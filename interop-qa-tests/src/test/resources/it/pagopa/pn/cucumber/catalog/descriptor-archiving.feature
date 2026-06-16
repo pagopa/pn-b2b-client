@@ -66,13 +66,13 @@ Feature: Archiviazione manuale di un descrittore
       | %random      | %random    | 404        |
 
   @sad-path
-  Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_1.5] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale di un suo descrittore se quest'ultimo è già in stato di archiviazione
+  Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_1.5] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale di un suo descrittore se quest'ultimo è già stato già archiviato
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
-    Then si ottiene response status code 409
-    And la vecchia versione dell'e-service è in stato "ARCHIVING"
+    Then si ottiene response status code 400
+    And la vecchia versione dell'e-service è in stato "ARCHIVED"
     And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
   @sad-path
