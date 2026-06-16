@@ -2,6 +2,7 @@ package it.pagopa.pn.cucumber.steps.pa;
 
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
+import it.pagopa.pn.cucumber.steps.utilitySteps.DestinatarioRegistry;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.HttpClientErrorException;
@@ -12,10 +13,12 @@ import static it.pagopa.pn.cucumber.utils.NotificationValue.generateRandomNumber
 
 public class RaddAltThrottleSteps {
     private final RaddAltSteps raddAltSteps;
+    private final DestinatarioRegistry destinatarioRegistry;
 
     @Autowired
-    public RaddAltThrottleSteps(RaddAltSteps raddAltSteps) {
+    public RaddAltThrottleSteps(RaddAltSteps raddAltSteps, DestinatarioRegistry destinatarioRegistry) {
         this.raddAltSteps = raddAltSteps;
+        this.destinatarioRegistry = destinatarioRegistry;
     }
 
     /**
@@ -56,7 +59,7 @@ public class RaddAltThrottleSteps {
      */
     @Then("Viene visualizzata la presenza di notifiche un numero di volte superiore al limite definito")
     public void vieneVisualizzataLaPresenzaDiNotifichePiuVolteDelLimite() {
-        Assertions.assertThrows(HttpClientErrorException.class, () -> vieneVisualizzataLaPresenzaDiNotifichePiuVolte(Destinatario.DESTINATARIO_SIGNOR_CASUALE, 300, "UPLOADER"));
+        Assertions.assertThrows(HttpClientErrorException.class, () -> vieneVisualizzataLaPresenzaDiNotifichePiuVolte(destinatarioRegistry.DESTINATARIO_SIGNOR_CASUALE, 300, "UPLOADER"));
     }
 
     @Then("Viene visualizzata la presenza di notifiche per la persona fisica {destinatario} {int} volte dal operatore radd {string}")

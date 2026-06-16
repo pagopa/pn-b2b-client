@@ -13,9 +13,12 @@ import it.pagopa.interop.authorization.service.utils.DpopProofService;
 import it.pagopa.interop.authorization.service.utils.voucher.DPoPVoucherService;
 import it.pagopa.interop.authorization.service.utils.voucher.VoucherService;
 import it.pagopa.interop.conf.InteropClientConfigs;
+import it.pagopa.interop.generated.openapi.clients.auth.ApiClient;
+import it.pagopa.interop.generated.openapi.clients.auth.api.AsyncAuthApi;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -104,6 +107,17 @@ public class JwtTokenServiceConfiguration {
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public DpopProofService dpopProofService() {
         return new DpopProofService();
+    }
+
+    @Bean
+    public AsyncAuthApi asyncAuthApi(
+            RestTemplate restTemplate,
+            @Value("${authorization.server.token-async.creation.url}")
+            String basePath
+    ) {
+        ApiClient apiClient = new ApiClient(restTemplate);
+        apiClient.setBasePath(basePath);
+        return new AsyncAuthApi(apiClient);
     }
 
     @Bean

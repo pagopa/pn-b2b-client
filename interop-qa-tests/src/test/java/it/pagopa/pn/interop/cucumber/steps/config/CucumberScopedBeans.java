@@ -5,6 +5,7 @@ import it.pagopa.interop.conf.api_profile.ApiProfile;
 import it.pagopa.interop.notification.cache.NotificationCacheImpl;
 import it.pagopa.interop.conf.api_profile.ApiProfileConfig;
 import it.pagopa.interop.conf.api_profile.ApiProfileContext;
+import it.pagopa.pn.interop.cucumber.steps.authorization.model.VoucherContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.event.model.EventContext;
 import it.pagopa.pn.interop.cucumber.steps.producer_keychains.model.ProducerKeychainsContext;
 import it.pagopa.pn.interop.cucumber.steps.selfcare.model.TenantContext;
@@ -48,5 +49,11 @@ public class CucumberScopedBeans {
     @ScenarioScope
     public EventContext eventContext() {
         return new EventContext();
+    }
+
+    @Bean
+    @ScenarioScope
+    public VoucherContext voucherContext() {
+        return new VoucherContext();
     }
 }

@@ -93,9 +93,11 @@ public class EServiceTemplateDocumentDeleteSteps {
         UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
         UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId();
         UUID documentId = sharedStepsContext.getEServiceTemplateStepContext().getLastAddedDocument().id();
-        Predicate<EServiceTemplateVersionDetails> noDocument = kind == EServiceTemplateDocumentKind.DOCUMENT
-            ? version -> version.getDocs().stream().noneMatch(d -> d.getId().equals(documentId))
-            : version -> isNull(version.getInterface()) || isNull(version.getInterface().getId());
+        Predicate<EServiceTemplateVersionDetails> noDocument = switch (kind) {
+            case DOCUMENT -> version -> version.getDocs().stream().noneMatch(d -> d.getId().equals(documentId));
+            case INTERFACE -> version -> isNull(version.getInterface()) || isNull(version.getInterface().getId());
+            case ASYNC_EXCHANGE_CALLBACK_INTERFACE -> version -> isNull(version.getAsyncExchangeCallbackInterface()) || isNull(version.getAsyncExchangeCallbackInterface().getId());
+        };
         try {
             pollingService.makePolling(
                 () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(

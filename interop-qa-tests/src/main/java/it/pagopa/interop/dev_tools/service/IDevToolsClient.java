@@ -5,5 +5,5 @@ import it.pagopa.interop.common.SettableHttpCallExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.TokenGenerationValidationResult;
 
 public interface IDevToolsClient extends SettableBearerToken, SettableHttpCallExecutor {
-    TokenGenerationValidationResult validateTokenGeneration(String clientAssertion, String clientAssertionType, String grantType, String clientId, String dpopProof);
+    TokenGenerationValidationResult validateTokenGeneration(String clientAssertion, String clientAssertionType, String grantType, String clientId, Boolean isAsync, String dpopProof);
 }
