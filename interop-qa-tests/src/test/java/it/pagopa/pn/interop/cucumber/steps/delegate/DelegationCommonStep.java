@@ -6,7 +6,9 @@ import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.TenantFeature;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -116,7 +118,8 @@ public class DelegationCommonStep {
             CatalogCommonSteps.createEServiceWithDescriptor(
                 "DRAFT",
                 dataPreparationService,
-                sharedStepsContext.getEServicesCommonContext());
+                sharedStepsContext.getEServicesCommonContext(),
+                new EServiceSeed(), new UpdateEServiceDescriptorSeed());
         }
 
         // Il associa un'interfaccia all'e-service

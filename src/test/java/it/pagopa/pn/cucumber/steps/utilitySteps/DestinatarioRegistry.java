@@ -28,6 +28,7 @@ public class DestinatarioRegistry {
     public final Destinatario DESTINATARIO_SIGNOR_GENERATO;
     public final Destinatario DESTINATARIO_NESSUNO;
     public final Destinatario DESTINATARIO_ERRORE_D01;
+    public final Destinatario DESTINATARIO_INDIRIZZO_VALIDO_ANPR;
 
     private final List<Destinatario> all;
     private final RecipientConfig taxIds;
@@ -103,6 +104,8 @@ public class DestinatarioRegistry {
         DESTINATARIO_ERRORE_D01 = new Destinatario(
                 UTENZA_CON_INDIRIZZO_NON_VALIDO, recipients.getUserIndirizzoNonValidoD01().getTaxId(),
                 recipients.getUserIndirizzoNonValidoD01().getUid(), PF, PEC);
+        DESTINATARIO_INDIRIZZO_VALIDO_ANPR = new Destinatario(UTENZA_CON_INDIRIZZO_VALIDO_ANPR, recipients.getUserIndirizzoValidoAnpr().getTaxId(),
+                recipients.getUserIndirizzoValidoAnpr().getUid(), PF, PEC);
 
         all = List.of(
                 DESTINATARIO_MARIO_GHERKIN, DESTINATARIO_MARIO_CUCUMBER, DESTINATARIO_SIGNOR_CASUALE,
@@ -110,7 +113,7 @@ public class DestinatarioRegistry {
                 DESTINATARIO_GALILEO_GALILEI, DESTINATARIO_GHERKIN_SPA, DESTINATARIO_CUCUMBER_SPA,
                 DESTINATARIO_GHERKIN_SRL, DESTINATARIO_CUCUMBER_SRL, DESTINATARIO_GHERKIN_ANALOGIC,
                 DESTINATARIO_CUCUMBER_ANALOGIC, DESTINATARIO_GHERKIN_IRREPERIBILE, DESTINATARIO_CUCUMBER_SOCIETY,
-                DESTINATARIO_SIGNOR_GENERATO, DESTINATARIO_NESSUNO, DESTINATARIO_ERRORE_D01
+                DESTINATARIO_SIGNOR_GENERATO, DESTINATARIO_NESSUNO, DESTINATARIO_ERRORE_D01, DESTINATARIO_INDIRIZZO_VALIDO_ANPR
         );
     }
 
@@ -142,7 +145,8 @@ public class DestinatarioRegistry {
             SIGNOR_GENERATO + "|" +
             GALILEO_GALILEI + "|" +
             NESSUNO + "|" +
-            UTENZA_CON_INDIRIZZO_NON_VALIDO
+            UTENZA_CON_INDIRIZZO_NON_VALIDO + "|" +
+            UTENZA_CON_INDIRIZZO_VALIDO_ANPR
     )
     public Destinatario destinatario(String name) {
         return all.stream()

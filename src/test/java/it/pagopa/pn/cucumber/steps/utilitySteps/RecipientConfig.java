@@ -21,6 +21,7 @@ public class RecipientConfig {
     private RecipientData leonardoDaVinci = new RecipientData();
     private RecipientData galileoGalilei = new RecipientData();
     private RecipientData userIndirizzoNonValidoD01 = new RecipientData();
+    private RecipientData userIndirizzoValidoAnpr = new RecipientData();
 
     // mittenti (PA) — solo taxId, uid non applicabile
     private RecipientData comune1    = new RecipientData();

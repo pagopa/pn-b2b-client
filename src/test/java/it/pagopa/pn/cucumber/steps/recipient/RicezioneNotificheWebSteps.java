@@ -25,9 +25,9 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffConsent;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffTosPrivacyActionBody;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.generate.model.externalregistry.selfcare.privateapi.FilteredPaIdsResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.CxLanguage;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
-import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.AddressVerification;
@@ -39,6 +39,7 @@ import it.pagopa.pn.client.b2b.pa.service.IPnTosPrivacyClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
+import it.pagopa.pn.client.b2b.pa.service.impl.AooUoIdsClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
@@ -55,12 +56,8 @@ import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Scope;
 import org.springframework.web.client.HttpStatusCodeException;
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 import java.io.ByteArrayInputStream;
 import java.time.LocalDate;
@@ -74,6 +71,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.AAR_GENERATION;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.ALDA_MERINI;
@@ -82,6 +80,7 @@ import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_2;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_MULTI;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_ROOT;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_SON;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_SON_2;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.CRISTOFORO_COLOMBO;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.CUCUMBER_SPA;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DINO_SAURO;
@@ -100,11 +99,11 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.awaitility.Awaitility.await;
 
 @Slf4j
-@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class RicezioneNotificheWebSteps {
     private final ApplicationContext context;
     private IPnWebRecipientClient webRecipientClient;
     private IPnWebUserAttributesClient iPnWebUserAttributesClient;
+    private AooUoIdsClientImpl aooUoIdsClient;
     private final PnExternalServiceClientImpl externalClient;
     private final SharedSteps sharedSteps;
     private final IPnWebPaClient webPaClient;
@@ -122,6 +121,7 @@ public class RicezioneNotificheWebSteps {
 
     private static final String TOS_VERSION = "8";
     private static final String ACCEPT_TOS = "ACCETTA";
+    private FilteredPaIdsResponse filteredPaIdsResponse;
 
     @Value("${pn.external.senderId}")
     private String senderId;
@@ -131,6 +131,8 @@ public class RicezioneNotificheWebSteps {
     private String senderIdGA;
     @Value("${pn.external.senderId-SON}")
     private String senderIdSON;
+    @Value("${pn.external.senderId-SON-2}")
+    private String senderIdSON2;
     @Value("${pn.external.senderId-ROOT}")
     private String senderIdROOT;
 
@@ -158,7 +160,7 @@ public class RicezioneNotificheWebSteps {
     @Autowired
     public RicezioneNotificheWebSteps(ApplicationContext context, SharedSteps sharedSteps, PnWebUserAttributesInternalClientImpl iPnWebUserAttributesClient,
                                       IPnBFFRecipientNotificationClient bffRecipientNotificationClient, IPnTosPrivacyClient iPnTosPrivacyClient, PnB2bClientTimingConfigs timingConfigs, DynamoDbService dynamoDbService,
-                                      OtpCodeService otpCodeService) {
+                                      OtpCodeService otpCodeService, AooUoIdsClientImpl aooUoIdsClient) {
         this.context = context;
         this.sharedSteps = sharedSteps;
         this.webRecipientClient = sharedSteps.getWebRecipientClient();
@@ -168,6 +170,7 @@ public class RicezioneNotificheWebSteps {
         this.bffRecipientNotificationClient = bffRecipientNotificationClient;
         this.iPnTosPrivacyClient = sharedSteps.getIPnTosPrivacyClientImpl();
         this.timingConfigs = timingConfigs;
+        this.aooUoIdsClient = aooUoIdsClient;
         this.dynamoDbService = dynamoDbService;
         this.otpCodeService = otpCodeService;
     }
@@ -725,22 +728,6 @@ public class RicezioneNotificheWebSteps {
 
     @When("viene richiesto l'inserimento della pec {string}, e passo la lingua selezionata dal destinatario {string}")
     public void perLUtenteVieneSettatoLaPecELang(String pec, String language) {
-        try {
-            CxLanguage lang = CxLanguage.fromValue(language);
-        }catch (IllegalArgumentException e) {
-            // Gestisci il caso in cui la lingua non è censita/vuota/spazi a livello locale.
-            // Se il tuo 'Then' si aspetta RIGIDAMENTE una HttpStatusCodeException nello sharedSteps,
-            // puoi simularne una (es. un 400 Bad Request) per non rompere la logica del test:
-            org.springframework.web.client.HttpClientErrorException badRequestException =
-                    org.springframework.web.client.HttpClientErrorException.create(
-                            org.springframework.http.HttpStatus.BAD_REQUEST,
-                            "Bad Request - Invalid Language: " + e.getMessage(),
-                            org.springframework.http.HttpHeaders.EMPTY,
-                            null,
-                            null
-                    );
-            sharedSteps.setNotificationError(badRequestException);
-        }
         postRecipientLegalAddress("default", pec, "00000", true, CxLanguage.fromValue(language));
     }
 
@@ -751,22 +738,6 @@ public class RicezioneNotificheWebSteps {
 
     @When("viene richiesto l'inserimento del numero di telefono {string}, e passo la lingua selezionata dal destinatario {string}")
     public void vieneRichiestoLInserimentoDelNumeroDiTelefonoELang(String phone, String language) {
-        try {
-            CxLanguage lang = CxLanguage.fromValue(language);
-        }catch (IllegalArgumentException e) {
-            // Gestisci il caso in cui la lingua non è censita/vuota/spazi a livello locale.
-            // Se il tuo 'Then' si aspetta RIGIDAMENTE una HttpStatusCodeException nello sharedSteps,
-            // puoi simularne una (es. un 400 Bad Request) per non rompere la logica del test:
-            org.springframework.web.client.HttpClientErrorException badRequestException =
-                    org.springframework.web.client.HttpClientErrorException.create(
-                            org.springframework.http.HttpStatus.BAD_REQUEST,
-                            "Bad Request - Invalid Language: " + e.getMessage(),
-                            org.springframework.http.HttpHeaders.EMPTY,
-                            null,
-                            null
-                    );
-            sharedSteps.setNotificationError(badRequestException);
-        }
         postRecipientCourtesyAddress("default", phone, LegalCourtesyAddressWrapper.ChannelType.SMS, "00000", true, CxLanguage.fromValue(language));
     }
 
@@ -777,22 +748,6 @@ public class RicezioneNotificheWebSteps {
 
     @When("viene richiesto l'inserimento del email di cortesia {string}, e passo la lingua selezionata dal destinatario {string}")
     public void vieneRichiestoLInserimentoDelEmailDiCortesiaeLang(String email, String language) {
-        try {
-            CxLanguage lang = CxLanguage.fromValue(language);
-        }catch (IllegalArgumentException e) {
-            // Gestisci il caso in cui la lingua non è censita/vuota/spazi a livello locale.
-            // Se il tuo 'Then' si aspetta RIGIDAMENTE una HttpStatusCodeException nello sharedSteps,
-            // puoi simularne una (es. un 400 Bad Request) per non rompere la logica del test:
-            org.springframework.web.client.HttpClientErrorException badRequestException =
-                    org.springframework.web.client.HttpClientErrorException.create(
-                            org.springframework.http.HttpStatus.BAD_REQUEST,
-                            "Bad Request - Invalid Language: " + e.getMessage(),
-                            org.springframework.http.HttpHeaders.EMPTY,
-                            null,
-                            null
-                    );
-            sharedSteps.setNotificationError(badRequestException);
-        }
         postRecipientCourtesyAddress("default", email, LegalCourtesyAddressWrapper.ChannelType.EMAIL, "00000", true, CxLanguage.fromValue(language));
     }
 
@@ -818,6 +773,41 @@ public class RicezioneNotificheWebSteps {
     public void vieneRichiestoLInserimentoDelEmailDiCortesiaDalComune(String email, String pa) {
         String senderIdPa = getSenderIdPa(pa);
         postRecipientCourtesyAddress(senderIdPa, email, LegalCourtesyAddressWrapper.ChannelType.EMAIL, "00000", false, CxLanguage.IT);
+    }
+
+    @When("viene invocata l'api di filtro pa di tipo Root passando le seguenti PA:")
+    public void vieneInvocataLApiDiFiltroRootPassandoLeSeguentiPA(List<String> paList) {
+        try {
+            List<String> paIds = paList.stream()
+                    .map(pa -> getSenderIdPa(pa.replace("\"", "").trim()))
+                    .collect(Collectors.toList());
+            this.filteredPaIdsResponse = this.aooUoIdsClient.getFilteredAooUoIdV2Private(paIds);
+        } catch (HttpStatusCodeException httpStatusCodeException) {
+            sharedSteps.setNotificationError(httpStatusCodeException);
+        }
+    }
+
+    @Then("si verifica che la risposta contenga gli id relativi alle seguenti PA:")
+    public void siVerificaCheLaRispostaContengaGliIdRelativiAlleSeguentiPA(List<String> paList) {
+        Assertions.assertNotNull(filteredPaIdsResponse);
+        Assertions.assertNotNull(filteredPaIdsResponse.getIds());
+
+        List<String> expectedIds = paList.stream()
+                .map(pa -> getSenderIdPa(pa.replace("\"", "").trim()))
+                .collect(Collectors.toList());
+
+        // Verifica esclusiva: la risposta deve contenere esattamente gli id attesi
+        assertThat(filteredPaIdsResponse.getIds())
+                .containsExactlyInAnyOrderElementsOf(expectedIds);
+    }
+
+    @Then("si verifica che la risposta non contenga id")
+    public void siVerificaCheLaRispostaNonContengaId() {
+        Assertions.assertTrue(
+                filteredPaIdsResponse == null ||
+                        filteredPaIdsResponse.getIds() == null ||
+                        filteredPaIdsResponse.getIds().isEmpty()
+        );
     }
 
     @And("viene inserita l'email di cortesia {string} per il comune {string}")
@@ -887,6 +877,7 @@ public class RicezioneNotificheWebSteps {
             case COMUNE_2 -> senderId2;
             case COMUNE_MULTI -> senderIdGA;
             case COMUNE_SON -> senderIdSON;
+            case COMUNE_SON_2 -> senderIdSON2;
             case COMUNE_ROOT -> senderIdROOT;
             default -> "default";
         };
@@ -1290,14 +1281,6 @@ public class RicezioneNotificheWebSteps {
             Assertions.assertEquals(ConsentType.TOS_SERCQ, data.getConsentType());
             Assertions.assertEquals(data.getAccepted(), tosStatus.equalsIgnoreCase("positiva"));
         });
-    }
-
-    public String checkOtpCodeOnDynamoDB(Destinatario destinatario) {
-        String pk = String.format("VC#%s-%s", destinatario.getRecipientType(), destinatario.getUid());
-        QueryResponse queryResponse = dynamoDbService.call(DynamoTableName.PN_USER_ATTRIBUTES, Map.of(
-                ":v_pk", AttributeValue.builder().s(pk).build()));
-        log.info("OTP RESPONSE: {}", queryResponse);
-        return queryResponse.items().get(0).get("verificationCode").s();
     }
 
     private <T> T deepCopy(Object obj, Class<T> toClass) {

@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.e_service_template.crud;
 
 import static java.util.Objects.nonNull;
 
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
@@ -94,6 +95,19 @@ public class EServiceTemplateCreateSteps {
         testAssistant.mutateLastVersionState(desiredState);
     }
 
+    @When("l'utente effettua la creazione di un e-service template {isAsynchronous} in modalità {eServiceMode} con tecnologia {string} in stato di {eServiceTemplateVersionState}")
+    public void createEServiceTemplate(Boolean isAsync, EServiceMode eServiceMode, String technology, EServiceTemplateVersionState desiredState) {
+        EServiceTemplateSeed templateSeed = this.getEServiceTemplateSeed(eServiceMode);
+        templateSeed.asyncExchange(isAsync).technology(EServiceTechnology.fromValue(technology));
+        this.createEServiceTemplate(templateSeed);
+        EServiceTemplateInfo lastTemplateManaged = sharedStepsContext.getEServiceTemplateStepContext()
+            .getLastTemplateManaged();
+        if (eServiceMode == EServiceMode.RECEIVE && nonNull(lastTemplateManaged)) {
+            testAssistant.addRiskAnalysisToEServiceTemplateSuccessfully(); // perché ogni template in RECEIVE deve avere una risk analysis
+        }
+        testAssistant.mutateLastVersionState(desiredState);
+    }
+
     @Given("l'utente effettua la creazione di un e-service template in modalità {eServiceMode} in stato di {eServiceTemplateVersionState} con nome {string}")
     public void createEServiceTemplateWithName(EServiceMode eServiceMode, EServiceTemplateVersionState desiredState, String name) {
         createEServiceTemplateWithName(eServiceMode, desiredState, name, null);
@@ -157,6 +171,21 @@ public class EServiceTemplateCreateSteps {
 
         Assertions.assertNotNull(description);
         Assertions.assertEquals(descriptionLength, description.length());
+    }
+
+    @When("l'e-service template creato è configurato come {isAsynchronous}")
+    public void checkEServiceTemplateIsConfiguredAsAsynchronous(Boolean isAsync) {
+        EServiceTemplateInfo lastTemplateManaged = sharedStepsContext.getEServiceTemplateStepContext()
+                .getLastTemplateManaged();
+        pollingService.makePolling(
+                () -> httpCallExecutor.performCall(
+                        () -> eServiceTemplateClient.getEServiceTemplate(lastTemplateManaged.getId())
+                ),
+                res -> res != HttpStatus.NOT_FOUND,
+                "There was an error while retrieving the e-service template"
+        );
+
+        Assertions.assertEquals(isAsync, ((EServiceTemplateDetails) httpCallExecutor.getResponse()).getAsyncExchange());
     }
 
     @When("{string} porta la versione dell'e-service template in stato {eServiceTemplateVersionState}")
