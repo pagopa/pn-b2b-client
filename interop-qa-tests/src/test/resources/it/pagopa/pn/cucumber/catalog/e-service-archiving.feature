@@ -628,8 +628,6 @@ Feature: Archiviazione manuale di un e-service
       | 122d73ef-bd9a-4669-91aa-405bb958eb62 | 00aa97e1-6571-4ed2-9d84-dbe099ecd015 | ac8e1db2-ff25-437c-b2fc-c99ddb56b999 | ARCHIVING            | ARCHIVING_SUSPENDED   | 7d4b8cf9-8aa9-4e16-ab56-e3a44ff48d48 |
 #      firstDescriptorId=descrittore in Archiving_Suspended . secondDescriptorId=descrittore in Archiving
       | a629374c-a20d-4e19-b4f8-0e56a39a6e18 | fb6db58d-a4cc-4b84-b157-e2cdd1bf4a1b | 929c62d0-57a0-41e7-94b3-56c9d34277d5 | ARCHIVING_SUSPENDED  | ARCHIVING             | 857ecb8f-1a0a-46d8-95ac-1fc0873fdc84 |
-#      firstDescriptorId=descrittore in Archived . secondDescriptorId=descrittore in Archiving
-      | 50bc283a-4a63-445b-a042-2b545501c988 | 9900424b-c0da-49d8-92ef-6661a65d8898 | aaaff1d2-d964-41f8-b8ef-dcbd35ea6f4e | ARCHIVED             | ARCHIVING             | 8d145f6d-862d-44bf-afb8-17e22bdac866 |
 
   @happy-path
   Scenario Outline: [ARCHIVING_ESERVICE_BY_JOB_1.3] Dopo il periodo di preavviso, un e-service con primo descrittore archiviato automaticamente e secondo descrittore in archiviazione manuale dell'intero e-service risulta archiviato
@@ -640,9 +638,23 @@ Feature: Archiviazione manuale di un e-service
     #versione meno recente
     And il descrittore con id "<firstDescriptorId>" dell'e-service con id "<eserviceId>" è in stato "ARCHIVED"
     And il descrittore con id "<firstDescriptorId>" dell'e-service avente id "<eserviceId>" NON è stato archiviato tramite archiviazione manuale
-    And la richiesta di fruizione con id "<agreementId>" assume lo stato "ACTIVE"
 
     Examples:
-      | firstDescriptorId                    | secondDescriptorId                   | eserviceId                           | agreementId                          |
+      | firstDescriptorId                    | secondDescriptorId                   | eserviceId                           |
 #      firstDescriptorId=descrittore in Archived . secondDescriptorId=descrittore in Archiving
-      | c59ecfe2-a4c5-488d-a5b9-a7d3602671a4 | 6d40805a-3c65-4363-8f4e-ba3b18b7c7b5 | febf05bc-2a8d-4012-ba69-73e90292f185 | 3983bf4e-77f1-4dbc-be29-fa2db0337080 |
+      | c59ecfe2-a4c5-488d-a5b9-a7d3602671a4 | 6d40805a-3c65-4363-8f4e-ba3b18b7c7b5 | febf05bc-2a8d-4012-ba69-73e90292f185 |
+
+  @happy-path
+  Scenario Outline: [ARCHIVING_ESERVICE_BY_JOB_1.4] Prima della fine del periodo di preavviso, un e-service con primo descrittore archiviato automaticamente e secondo descrittore in archiviazione manuale dell'intero e-service non risulta archiviato
+    Then l'utente è un "admin" di "PA1"
+    #versione più recente
+    And il descrittore con id "<secondDescriptorId>" dell'e-service con id "<eserviceId>" è in stato "<secondDescriptorState>"
+    And il descrittore con id "<secondDescriptorId>" dell'e-service avente id "<eserviceId>" è in fase di archiviazione tramite l'archiviazione manuale dell'intero e-service
+    #versione meno recente
+    And il descrittore con id "<firstDescriptorId>" dell'e-service con id "<eserviceId>" è in stato "<firstDescriptorState>"
+    And il descrittore con id "<firstDescriptorId>" dell'e-service avente id "<eserviceId>" NON è stato archiviato tramite archiviazione manuale
+
+    Examples:
+      | firstDescriptorId                    | secondDescriptorId                   | eserviceId                           | firstDescriptorState | secondDescriptorState |
+#      firstDescriptorId=descrittore in Archived . secondDescriptorId=descrittore in Archiving
+      | 50bc283a-4a63-445b-a042-2b545501c988 | 9900424b-c0da-49d8-92ef-6661a65d8898 | aaaff1d2-d964-41f8-b8ef-dcbd35ea6f4e | ARCHIVED             | ARCHIVING             |
