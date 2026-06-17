@@ -373,11 +373,11 @@ public class DelayerPaperDeliveryUtils {
         }
 
         Comparator<DelayerPaperDelivery> byPrepare = Comparator.comparing(d -> parseDate(d.getPrepareRequestDate()));
-        Comparator<DelayerPaperDelivery> byNotification = Comparator.comparing(d -> parseDate(d.getNotificationSentAt()));
+        Comparator<DelayerPaperDelivery> bySenderPriorityAndNotification = Comparator.comparing(d -> parseDate(d.getEffectiveNotificationSentAt()));
 
         rs.sort(byPrepare);
         secondi.sort(byPrepare);
-        altri.sort(byNotification);
+        altri.sort(bySenderPriorityAndNotification);
 
         List<DelayerPaperDelivery> ordinati = new ArrayList<>();
         ordinati.addAll(rs);
@@ -432,7 +432,7 @@ public class DelayerPaperDeliveryUtils {
                 return String.join("~", province, date, requestId);
             }
 
-            case EVALUATE_DRIVER_CAPACITY, EVALUATE_RESIDUAL_CAPACITY -> {
+            case EVALUATE_SENDER_PRIORITY, EVALUATE_DRIVER_CAPACITY, EVALUATE_RESIDUAL_CAPACITY -> {
                 String driver = n.getUnifiedDeliveryDriver();
                 String province = n.getProvince();
                 String priority = calculatePriority(n);
@@ -525,6 +525,10 @@ public class DelayerPaperDeliveryUtils {
     }
 
     private String resolveReferenceDate(DelayerPaperDelivery n) {
+        if (!Objects.isNull(n.getVirtualNotificationSentAt()) && !n.getVirtualNotificationSentAt().isBlank()) {
+            return n.getVirtualNotificationSentAt();
+        }
+
         boolean isRsOrSecondAttempt = n.isRS() || n.isSecondAttempt();
         return isRsOrSecondAttempt ? n.getNotificationSentAt() : n.getPrepareRequestDate();
     }
