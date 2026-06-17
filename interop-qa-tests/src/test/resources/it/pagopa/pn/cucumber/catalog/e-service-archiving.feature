@@ -130,7 +130,7 @@ Feature: Archiviazione manuale di un e-service
     And "PA1" ha già sospeso quell'e-service
     When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     Then si ottiene response status code 204
-    And la vecchia versione dell'e-service è in stato "ARCHIVING_SUSPENDED "
+    And la vecchia versione dell'e-service è in stato "ARCHIVING_SUSPENDED"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
     And la versione più recente dell'e-service è in stato "ARCHIVING_SUSPENDED"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
@@ -138,7 +138,7 @@ Feature: Archiviazione manuale di un e-service
   Scenario: [MANUAL_ARCHIVING_ESERVICE_2.1] L'avvio del processo di archiviazione dell'e-service, causa l'eliminazione dell'ultimo descrittore in stato DRAFT, se presente
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
-    And "PA1" ha già creato una versione in "DRAFT" per quell'e-service
+    And "PA1" tenta la creazione di una versione in DRAFT per quell'e-service
     When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     Then si ottiene response status code 204
     And l'ultimo descrittore in stato DRAFT è stato cancellato

@@ -103,9 +103,9 @@ public class EServiceArchivingSteps {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
-        UUID oldDescriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
 
-        archivingScheduleVerifier.pollDescriptorArchivingSchedule(eServiceId, oldDescriptorId, "ESERVICE");
+        archivingScheduleVerifier.pollDescriptorArchivingSchedule(eServiceId, descriptorId, "ESERVICE");
     }
 
     @Then("il descrittore con id {string} dell'e-service avente id {string} è stato correttamente archiviato tramite l'archiviazione manuale dell'intero e-service")

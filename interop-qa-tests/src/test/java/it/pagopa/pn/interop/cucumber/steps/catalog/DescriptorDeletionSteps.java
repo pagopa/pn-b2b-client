@@ -61,6 +61,8 @@ public class DescriptorDeletionSteps {
                 res -> res == HttpStatus.NOT_FOUND,
                 "There was an error while retrieving the e-service descriptor"
         );
+        sharedStepsContext.getEServicesCommonContext()
+                .setDescriptorId(sharedStepsContext.getEServicesCommonContext().getOldDescriptorId());
     }
 
     @Then("quell'e-service non è stato cancellato")
