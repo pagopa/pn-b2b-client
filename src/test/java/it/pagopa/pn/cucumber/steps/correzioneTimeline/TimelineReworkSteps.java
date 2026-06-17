@@ -13,6 +13,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.generate.model.external
 import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryInvalidatedElement;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusV26;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.client.b2b.pa.service.IPnExternalRegistryPrivateUserApi;
@@ -30,6 +31,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -772,6 +774,39 @@ public class TimelineReworkSteps {
             notificationCostClient.invalidatePaperCost(iun, request);
         } catch (HttpStatusCodeException exception) {
             httpStatusCode = exception.getStatusCode();
+        }
+    }
+
+    @Then("si controlla che il timestamp dell'elemento NOTIFICATION_TIMELINE_REWORKED coincida con quello presente su DynamoDb, basato sulla SEND_ANALOG_DOMICILE all'attempt {int}")
+    public void checkNotificationTimelineReworkTimestamp(int attempt) {
+        try {
+            FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
+            TimelineElementV28 notificationTimelineReworked = fsn.getTimeline().stream().filter(
+                    e -> e.getCategory().getValue().equals(NOTIFICATION_TIMELINE_REWORKED)).findFirst().orElse(null);
+            assertThat(notificationTimelineReworked).as("Element NOTIFICATION_TIMELINE_REWORKED can't be null").isNotNull();
+            NotificationStatusHistoryInvalidatedElement invalidatedDeliveringElements = notificationTimelineReworked.getDetails().getInvalidatedTimelineAndStatusHistory().stream().filter(
+                    inv -> inv.getStatus().equals(NotificationStatusV26.DELIVERING)).findFirst().orElse(null);
+            TimelineElementV28 sendAnalogDomicileAttemptX = invalidatedDeliveringElements.getRelatedTimelineElements().stream().filter(
+                    e -> e.getCategory().getValue().equals(SEND_ANALOG_DOMICILE) && e.getElementId().contains("ATTEMPT_" + attempt)).findFirst().orElse(null);
+            assertThat(notificationTimelineReworked).as("Element SEND_ANALOG_DOMICILE with attempt %s can't be null", attempt).isNotNull();
+            assertThat(notificationTimelineReworked.getEventTimestamp())
+                    .as("The event timestamp of NOTIFICATION_TIMELINE_REWORKED does not match with the one of the invalidated SEND_ANALOG_DOMICILE at attempt %", attempt)
+                    .isEqualTo(sendAnalogDomicileAttemptX.getEventTimestamp());
+
+            QueryResponse queryResponse = dynamoDbService.call(DynamoTableName.TIMELINE, Map.of(
+                    ":v_iun", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build(),
+                    ":v_category", AttributeValue.builder().s(NOTIFICATION_TIMELINE_REWORKED).build()
+            ));
+            assertThat(queryResponse.items().size()).as("Query on pn-timelines did not find any NOTIFICATION_TIMELINE_REWORKED element").isGreaterThan(0);
+            Map<String, AttributeValue> dynamoNotificationTimelineReworked = queryResponse.items().get(0);
+            assertThat(dynamoNotificationTimelineReworked.containsKey("businessTimestamp")).isTrue();
+            assertThat(dynamoNotificationTimelineReworked.get("businessTimestamp").s()).isNotNull();
+            OffsetDateTime dynamoEventTimestamp = OffsetDateTime.parse(dynamoNotificationTimelineReworked.get("businessTimestamp").s());
+            assertThat(notificationTimelineReworked.getEventTimestamp())
+                    .as("The event timestamp of NOTIFICATION_TIMELINE_REWORKED returned by fullSentNotification does not match with the one on DynamoDb")
+                    .isEqualTo(dynamoEventTimestamp);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 }

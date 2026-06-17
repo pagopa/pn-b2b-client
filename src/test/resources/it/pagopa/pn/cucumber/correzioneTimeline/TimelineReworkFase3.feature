@@ -577,3 +577,35 @@ Feature: Correzione timeline fase 3
     Then si verifica che la chiamata sia andata in errore con il seguente status code: 400
     When invoco l'api di notification-cost per l'invalidazione dei costi con "costPhases null"
     Then si verifica che la chiamata sia andata in errore con il seguente status code: 400
+
+  @timelineReworkF3 @checkRestart
+  Scenario Outline: [TR3_CHECK_REWORK_TIMESTAMP_BUG_20292_RESTART]
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+      | pagoPaIntMode         | SYNC                        |
+      | feePolicy             | DELIVERY_MODE               |
+      | paFee                 | 17                          |
+      | vat                   | 10                          |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | <sequence>         |
+      | digitalDomicile         | NULL               |
+      | payment_creditorTaxId   | 77777777777        |
+      | payment_pagoPaForm      | SI                 |
+      | payment_f24             | NULL               |
+      | title_payment           | PagoPa_testRestart |
+      | apply_cost_pagopa       | SI                 |
+      | payment_multy_number    | 1                  |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    Then si controlla che il timestamp dell'elemento NOTIFICATION_TIMELINE_REWORKED coincida con quello presente su DynamoDb, basato sulla SEND_ANALOG_DOMICILE all'attempt <attempt>
+    Examples:
+      | sequence                         | attempt |
+      | Via@FAIL_DISC_RESTART_CONS_AR    | 0       |
+      | Via@FAIL_DISC_RESTART_1_IRREP_AR | 1       |
