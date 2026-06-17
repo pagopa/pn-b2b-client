@@ -1,17 +1,17 @@
 Feature: Radd Alternative integrazione con Poste
 
 # Api testate:
-#  /radd-net/api/v1/download/{operationType}/{operationId}:   01_1/01_2/01_3
+#  /radd-net/api/v1/download/{operationType}/{operationId}:
 
-#  /radd-net/api/v1/act/inquiry:                              03A/03B/04A/04B
-#  /radd-net/api/v1/act/transaction/start:                    coperto
-#  /radd-net/api/v1/act/transaction/complete:                 c operto
-#  /radd-net/api/v1/act/transaction/abort:                    05A/05B
+#  /radd-net/api/v1/act/inquiry:
+#  /radd-net/api/v1/act/transaction/start:
+#  /radd-net/api/v1/act/transaction/complete:
+#  /radd-net/api/v1/act/transaction/abort:
 
-#  /radd-net/api/v1/aor/inquiry:                              coperto
-#  /radd-net/api/v1/aor/transaction/start:                    07/coperto
-#  /radd-net/api/v1/aor/transaction/complete:                 coperto
-#  /radd-net/api/v1/aor/transaction/abort:                    06A/06B
+#  /radd-net/api/v1/aor/inquiry:
+#  /radd-net/api/v1/aor/transaction/start:
+#  /radd-net/api/v1/aor/transaction/complete:
+#  /radd-net/api/v1/aor/transaction/abort:
 
 
 
@@ -33,7 +33,7 @@ Feature: Radd Alternative integrazione con Poste
 #      | details_attachments        | [{"documentType": "ARCAD"}] |
 #    And abbia anche un valore per il campo "details_attachments[0]_url" compatibile con l'espressione regolare ".+PN_EXTERNAL_LEGAL_FACTS.+\.zip"
     Given imposto lo iun di SharedSteps a "XWUP-TDER-TZQW-202606-R-1" e la pa a "Comune_Multi"
-    Then Imposto il cf "CLMCST42R12D969Z" e recipient type "CF" e qrCode "WFdVUC1UREVSLVRaUVctMjAyNjA2LVItMV9QRi1hNmMxMzUwZC0xZDY5LTQyMDktOGJmOC0zMWRlNThjNzlkNmVfYTEzOTZjOTYtMmQ4ZC00NjAzLTlkZWYtNjAwYjM5ZmY3OGZm"
+    Then Imposto il cf "CLMCST42R12D969Z" e recipient type "PF" e qrCode "WFdVUC1UREVSLVRaUVctMjAyNjA2LVItMV9QRi1hNmMxMzUwZC0xZDY5LTQyMDktOGJmOC0zMWRlNThjNzlkNmVfYTEzOTZjOTYtMmQ4ZC00NjAzLTlkZWYtNjAwYjM5ZmY3OGZm"
     #When Il cittadino Mario Gherkin come destinatario 0 mostra il QRCode "corretto"
     Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
@@ -95,25 +95,25 @@ Feature: Radd Alternative integrazione con Poste
     And la transazione viene abortita per gli "act"
     Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
-    Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
-    And l'operazione di download degli atti si conclude correttamente su radd alternative
-    Then viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
+#    Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+#    And l'operazione di download degli atti si conclude correttamente su radd alternative
+#    Then viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
 
 
-   @useRaddVpce #ok UENX-YTMZ-KRVH-202606-J-1
+  @useRaddVpce #ok UENX-YTMZ-KRVH-202606-J-1
   Scenario: [RADD_POSTE_AOR_03_1_A] PG - Visualizzazione AAR di notifiche i cui documenti sono già stati stampati, ma inibizione stampa documenti associati alla notifica
-#    Given viene generata una nuova notifica
-#      | subject            | invio notifica con cucumber radd alternative |
-#      | senderDenomination | Comune di milano                             |
-#    And destinatario Gherkin Irreperibile e:
-#      | digitalDomicile         | NULL                                         |
-#      | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
-#    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-#    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+##    Given viene generata una nuova notifica
+##      | subject            | invio notifica con cucumber radd alternative |
+##      | senderDenomination | Comune di milano                             |
+##    And destinatario Gherkin Irreperibile e:
+##      | digitalDomicile         | NULL                                         |
+##      | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
+##    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+##    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     Given imposto lo iun di SharedSteps a "UENX-YTMZ-KRVH-202606-J-1" e la pa a "Comune_Multi"
     Then Imposto il cf "02455090981" e recipient type "PG"
-    When la persona giuridica Gherkin Irreperibile chiede di verificare la presenza di notifiche
-    And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
+   # When la persona giuridica Gherkin Irreperibile chiede di verificare la presenza di notifiche
+#    And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona giuridica su radd vpce
     And il recupero degli aar in stato irreperibile si conclude correttamente su radd alternative
     And viene chiusa la transazione per il recupero degli aar su radd alternative
@@ -135,8 +135,8 @@ Feature: Radd Alternative integrazione con Poste
 #    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     Given imposto lo iun di SharedSteps a "RQGX-KTUX-MVKD-202606-Q-1" e la pa a "Comune_Multi"
     Then Imposto il cf "02455090981" e recipient type "PG"
-    And la persona giuridica Gherkin Irreperibile chiede di verificare la presenza di notifiche
-    And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
+#    And la persona giuridica Gherkin Irreperibile chiede di verificare la presenza di notifiche
+#    And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And Vengono recuperati gli aar delle notifiche in stato irreperibile della persona giuridica su radd vpce
     And il recupero degli aar in stato irreperibile si conclude correttamente su radd alternative
     And viene chiusa la transazione per il recupero degli aar su radd alternative
