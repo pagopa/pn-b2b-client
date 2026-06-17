@@ -117,8 +117,8 @@ Feature: Radd Alternative integrazione con Poste
     #Given carico i dati della notifica con chiave "[RADD_POSTE_AOR_03_1_A]"
     Given imposto lo iun di SharedSteps a "AGPU-JWPV-XGXE-202606-A-1" e la pa a "Comune_Multi"
     Then Imposto il cf "02455090981" e recipient type "PG"
-   # When la persona giuridica Gherkin Irreperibile chiede di verificare la presenza di notifiche
-#    And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
+    When la persona giuridica Gherkin Irreperibile chiede di verificare la presenza di notifiche
+    And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona giuridica su radd vpce
     And il recupero degli aar in stato irreperibile si conclude correttamente su radd alternative
     And viene chiusa la transazione per il recupero degli aar su radd alternative
