@@ -146,18 +146,6 @@ Feature: Attributi utente
       | DE   |
       | FR   |
 
-#  @userAttributes @addressBook4
-#  Scenario Outline: [USER-ATTR_13] inserimento email di cortesia e recupero header lang
-#    Given si predispone addressbook per l'utente "Mario Cucumber"
-#    Given vengono rimossi eventuali recapiti presenti per l'utente
-#    When viene richiesto l'inserimento del email di cortesia "test@gmail.com", e passo la lingua selezionata dal destinatario "<lang>"
-#    Then l'inserimento ha prodotto un errore con status code "400"
-#    Examples:
-#      | lang |
-#      | ES   |
-#      | ""   |
-#      | "  " |
-
   @userAttributes @useB2B @addressBook3
   Scenario Outline: [USER-ATTR_10B] inserimento telefono e recupero header lang
     Given si predispone addressbook per l'utente "CucumberSpa"
@@ -199,15 +187,3 @@ Feature: Attributi utente
       | SL   |
       | DE   |
       | FR   |
-
-#  @userAttributes @useB2B @addressBook3
-#  Scenario Outline: [USER-ATTR_13B] inserimento email di cortesia e recupero header lang
-#    Given si predispone addressbook per l'utente "Mario Gherkin"
-#    Given vengono rimossi eventuali recapiti presenti per l'utente
-#    When viene richiesto l'inserimento del email di cortesia "test@gmail.com", e passo la lingua selezionata dal destinatario "<lang>"
-#    Then l'inserimento ha prodotto un errore con status code "400"
-#    Examples:
-#      | lang |
-#      | ES   |
-#      | ""   |
-#      | "  " |
