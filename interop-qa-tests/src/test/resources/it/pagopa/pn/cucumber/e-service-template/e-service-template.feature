@@ -3142,3 +3142,30 @@ Feature: Test API of e-service template
     And si ottiene response status code 200
     When l'utente aggiorna la descrizione dell'e-service template in stato PUBLISHED con una descrizione di 401 caratteri
     Then si ottiene response status code 400
+
+  @certifiedDiscreteAttribute
+  Scenario: [CERT_DISCRETE_ATTR_ESERVICE_TEMPL_1] Configurazione e associazione con successo di attributi certificati discreti
+  a un template e-service in stato DRAFT
+
+    Given l'utente è un "admin" di "PA1"
+    And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
+    And l'utente "PA1" possiede almeno un attributo certificato discreto
+    When l'utente è un "admin" di "PA2"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente tenta di aggiungere i seguenti attributi alla versione dell'e-service template:
+      | kind               | group | comparator | value   |
+      | CERTIFIED_DISCRETE | 0     | GTE        | 1000000 |
+      | CERTIFIED          | 0     |            |         |
+      | CERTIFIED          | 1     |            |         |
+      | CERTIFIED_DISCRETE | 1     | GTE        | 500000  |
+      | CERTIFIED          | 1     |            |         |
+      | DECLARED           | 0     |            |         |
+    And si ottiene response status code 200
+    Then gli attributi del template e-service hanno la seguente configurazione:
+      | kind               | group | comparator | value   |
+      | CERTIFIED_DISCRETE | 0     | GTE        | 1000000 |
+      | CERTIFIED          | 0     |            |         |
+      | CERTIFIED          | 1     |            |         |
+      | CERTIFIED_DISCRETE | 1     | GTE        | 500000  |
+      | CERTIFIED          | 1     |            |         |
+      | DECLARED           | 0     |            |         |
