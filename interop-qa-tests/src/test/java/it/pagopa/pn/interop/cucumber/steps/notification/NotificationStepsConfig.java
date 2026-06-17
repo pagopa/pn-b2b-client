@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.notification;
 
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
+import io.cucumber.java.en.Given;
 import it.pagopa.interop.authorization.domain.Tenant;
 import it.pagopa.interop.authorization.service.utils.ConfigFileReader;
 import it.pagopa.interop.authorization.service.utils.PollingService;
@@ -40,7 +41,7 @@ public class NotificationStepsConfig {
         private UserNotificationConfigUpdateSeed userConfig;
     }
 
-    enum ConfigStrategy {PER_ROLE, NO_CONFIG}
+    enum ConfigStrategy {PER_ROLE, NO_CONFIG, ALL_BUT_ESERVICE_STATE_CHANGED}
 
     private final NotificationClientImpl notificationClient;
     private final NotificationConfigClient notificationConfigClient;
@@ -51,6 +52,7 @@ public class NotificationStepsConfig {
 
     private static final Map<String, GlobalNotificationConfig> rolesNotificationConfig;
     private static final GlobalNotificationConfig noNotificationConfig;
+    private static final GlobalNotificationConfig adminConfigAllButEserviceStateChanged;
 
     // TODO 13/01/2026 sostituibile con file di configurazione esterno
     static {
@@ -499,6 +501,80 @@ public class NotificationStepsConfig {
                         ))
                 .build();
 
+        adminConfigAllButEserviceStateChanged = GlobalNotificationConfig.builder()
+                .tenantConfig(new TenantNotificationConfigUpdateSeed().enabled(true))
+                .userConfig(new UserNotificationConfigUpdateSeed()
+                        .emailNotificationPreference(false)
+                        .inAppNotificationPreference(true)
+                        .emailDigestPreference(true)
+                        .emailConfig(new NotificationConfig()
+                                // Producer
+                                .agreementManagementToProducer(false)
+                                .agreementSuspendedUnsuspendedToProducer(false)
+                                .clientAddedRemovedToProducer(false)
+                                .purposeStatusChangedToProducer(false)
+                                .templateStatusChangedToProducer(false)
+                                .purposeQuotaAdjustmentRequestToProducer(false)
+                                .eserviceStateChangedToProducer(false)
+
+                                // Consumer
+                                .agreementSuspendedUnsuspendedToConsumer(false)
+                                .eserviceStateChangedToConsumer(false)
+                                .agreementActivatedRejectedToConsumer(false)
+                                .purposeActivatedRejectedToConsumer(false)
+                                .purposeSuspendedUnsuspendedToConsumer(false)
+                                .purposeOverQuotaStateToConsumer(false)
+
+                                // Instantiator
+                                .newEserviceTemplateVersionToInstantiator(false)
+                                .eserviceTemplateNameChangedToInstantiator(false)
+                                .eserviceTemplateStatusChangedToInstantiator(false)
+
+                                // Delegator/Delegate
+                                .delegationApprovedRejectedToDelegator(false)
+                                .eserviceNewVersionSubmittedToDelegator(false)
+                                .eserviceNewVersionApprovedRejectedToDelegate(false)
+                                .delegationSubmittedRevokedToDelegate(false)
+
+                                // Altri
+                                .certifiedVerifiedAttributeAssignedRevokedToAssignee(false)
+                                .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(false)
+                        )
+                        .inAppConfig(new NotificationConfig()
+                                // Producer
+                                .agreementManagementToProducer(true)
+                                .agreementSuspendedUnsuspendedToProducer(true)
+                                .clientAddedRemovedToProducer(true)
+                                .purposeStatusChangedToProducer(true)
+                                .templateStatusChangedToProducer(true)
+                                .purposeQuotaAdjustmentRequestToProducer(true)
+                                .eserviceStateChangedToProducer(false)
+
+                                // Consumer
+                                .agreementSuspendedUnsuspendedToConsumer(true)
+                                .eserviceStateChangedToConsumer(true)
+                                .agreementActivatedRejectedToConsumer(true)
+                                .purposeActivatedRejectedToConsumer(true)
+                                .purposeSuspendedUnsuspendedToConsumer(true)
+                                .purposeOverQuotaStateToConsumer(true)
+
+                                // Instantiator
+                                .newEserviceTemplateVersionToInstantiator(true)
+                                .eserviceTemplateNameChangedToInstantiator(true)
+                                .eserviceTemplateStatusChangedToInstantiator(true)
+
+                                // Delegator/Delegate
+                                .delegationApprovedRejectedToDelegator(true)
+                                .eserviceNewVersionSubmittedToDelegator(true)
+                                .eserviceNewVersionApprovedRejectedToDelegate(true)
+                                .delegationSubmittedRevokedToDelegate(true)
+
+                                // Altri
+                                .certifiedVerifiedAttributeAssignedRevokedToAssignee(true)
+                                .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(true)
+                        ))
+                .build();
+
         rolesNotificationConfig = Map.of(
                 "admin", adminConfig,
                 "support", supportConfig,
@@ -603,6 +679,37 @@ public class NotificationStepsConfig {
         }));
     }
 
+    private void configureNotificationsToUser(List<String> excludedRoles, ConfigStrategy configStrategy) throws Exception {
+        PollingService pollingService = this.sharedStepsContext.getPollingService();
+        IHttpExecutor configExecutor = this.notificationConfigClient.getHttpCallExecutor();
+        applyTaskForEveryUser(excludedRoles, role -> {
+            GlobalNotificationConfig config = switch (configStrategy) {
+                case NO_CONFIG -> noNotificationConfig;
+                case ALL_BUT_ESERVICE_STATE_CHANGED -> adminConfigAllButEserviceStateChanged;
+                default -> rolesNotificationConfig.get(role);
+            };
+            if (config.getUserConfig() != null) {
+                pollingService.makePolling(
+                        () -> {
+                            this.notificationConfigClient.updateUserNotificationConfig(
+                                    config.getUserConfig());
+                            return null;
+                        },
+                        res -> configExecutor.getResponseStatus().is2xxSuccessful(),
+                        "Configurazione notifiche user fallita");
+            }
+            if (config.getTenantConfig() != null) {
+                pollingService.makePolling(
+                        () -> {
+                            this.notificationConfigClient.updateTenantNotificationConfig(config.getTenantConfig());
+                            return null;
+                        },
+                        res -> configExecutor.getResponseStatus().is2xxSuccessful(),
+                        "Configurazione notifiche tenant fallita");
+            }
+        });
+    }
+
     // TODO generalizzabile in utility separata
     private void applyTaskForEveryUser(List<String> excludedRoles, ThrowingConsumer<String> taskPerRole) throws Exception {
         List<Tenant> tenantList = this.configFileReader.getTenantList();
@@ -622,5 +729,13 @@ public class NotificationStepsConfig {
                 }
             }
         }
+    }
+
+    @Given("l'utente attiva le notifiche tranne il cambio di stato dell'e-service per l'erogatore")
+    public void userTurnOnNotificationButEserviceStateChanged() throws Exception {
+        List<String> excludedRoles = rolesNotificationConfig.keySet().stream()
+                .filter(role -> !List.of("admin").contains(role))
+                .toList();
+        this.configureNotificationsToUser(excludedRoles, ConfigStrategy.ALL_BUT_ESERVICE_STATE_CHANGED);
     }
 }
