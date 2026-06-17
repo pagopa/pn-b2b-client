@@ -42,7 +42,7 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
+    Then l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
     La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è in fase di archiviazione ma è ancora attiva.
     L'archiviazione avverrà il giorno $DA_CONTESTO(TODAY+GRACE_PERIOD). È disponibile una nuova versione.
@@ -61,14 +61,14 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     """
 
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_NOTIFICATION_1.4] L'utente erogatore riceve una notifica nel momento in cui un suo descrittore viene archiviato a causa della scadenza del periodo di preavviso
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
+    Then l'utente "admin" di "PA3" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
     """
     La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è stata archiviata il giorno $DA_CONTESTO(TODAY).
     Da ora non è più attiva e i fruitori non potranno più scambiare dati.
     """
 
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_NOTIFICATION_1.5] L'utente fruitore riceve una notifica nel momento in cui viene archiviato un descrittore per cui ha una richiesta di fruizione attiva
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
+    Then l'utente "admin" di "PA3" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
     La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è stata archiviata il giorno $DA_CONTESTO(TODAY).
     Per continuare a scambiare dati con l’e-service, passa alla nuova versione.
@@ -93,9 +93,10 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
     When l'utente annulla il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
+    Then l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
-    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) non è più in fase di archiviazione.
+    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) non è più in fase di archiviazione. Se vuoi, è disponibile
+    una nuova versione.
     """
 
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_SUSPENSION_NOTIFICATION_1.1] L'utente erogatore riceve una notifica nel momento in cui il suo descrittore in stato di archiviazione viene sospeso
@@ -118,7 +119,7 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
     When l'utente sospende il vecchio descrittore in corso di archiviazione
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
+    Then l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
     La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è al momento sospesa. L'archiviazione avverrà il giorno
     $DA_CONTESTO(TODAY+GRACE_PERIOD). È disponibile una nuova versione.
@@ -146,7 +147,7 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
     When l'utente attiva il vecchio descrittore in corso di archiviazione di quell'e-service
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
+    Then l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
     La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è di nuovo attiva. L'archiviazione avverrà il giorno
     $DA_CONTESTO(TODAY+GRACE_PERIOD). È disponibile una nuova versione.
