@@ -241,9 +241,7 @@ public class EServiceTemplateVersionUpdateSteps {
             }
         }
 
-        for (int i = 0; i < attributeKinds.size(); i++) {
-            AttributeKind attributeKind = attributeKinds.get(i);
-
+        for (AttributeKind attributeKind : attributeKinds) {
             List<Integer> groupPerKind = attributeSpecs.stream()
                     .filter(a -> {
                         if (attributeKind.equals(AttributeKind.CERTIFIED)) {
@@ -256,9 +254,7 @@ public class EServiceTemplateVersionUpdateSteps {
                     .distinct()
                     .toList();
 
-            for (int j = 0; j < groupPerKind.size(); j++) {
-                int groupIndex = groupPerKind.get(j);
-
+            for (int groupIndex : groupPerKind) {
                 // Certified discrete attributes are managed as certified attributes
                 List<EServiceAttributeSpec> attributeSpecsByKindInGroup = attributeSpecs.stream()
                         .filter(a -> {
@@ -274,14 +270,16 @@ public class EServiceTemplateVersionUpdateSteps {
                     EServiceAttributeSpec attributeSpec = attributeSpecsByKindInGroup.get(x);
 
                     List<List<UUID>> contextAttributes = switch (attributeKind) {
-                        case CERTIFIED, CERTIFIED_DISCRETE -> sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes();
+                        case CERTIFIED, CERTIFIED_DISCRETE ->
+                                sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes();
                         case DECLARED -> sharedStepsContext.getAttributeCommonContext().getRequiredDeclaredAttributes();
                         case VERIFIED -> sharedStepsContext.getAttributeCommonContext().getRequiredVerifiedAttributes();
                     };
 
                     UUID attributeId = contextAttributes.get(attributeSpec.getGroup()).get(x);
                     DescriptorAttribute attr = switch (attributeKind) {
-                        case CERTIFIED, CERTIFIED_DISCRETE -> retrievedTemplateVersion.getAttributes().getCertified().get(groupIndex).get(x);
+                        case CERTIFIED, CERTIFIED_DISCRETE ->
+                                retrievedTemplateVersion.getAttributes().getCertified().get(groupIndex).get(x);
                         case DECLARED -> retrievedTemplateVersion.getAttributes().getDeclared().get(groupIndex).get(x);
                         case VERIFIED -> retrievedTemplateVersion.getAttributes().getVerified().get(groupIndex).get(x);
                     };
