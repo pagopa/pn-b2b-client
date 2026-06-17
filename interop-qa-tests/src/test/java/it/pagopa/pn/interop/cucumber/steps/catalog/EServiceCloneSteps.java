@@ -43,6 +43,7 @@ public class EServiceCloneSteps {
     public void tenantTryToCreateVersionWithState(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
 
+        eServicesCommonContext.setOldDescriptorId(eServicesCommonContext.getDescriptorId());
         UUID descriptorId = dataPreparationService.createNextDraftDescriptor(eServicesCommonContext.getEserviceId());
         eServicesCommonContext.setDescriptorId(descriptorId);
     }

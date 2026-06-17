@@ -79,6 +79,7 @@ public class DescriptorArchivingSteps {
         }
 
         pollDescriptorState(resolvedEServiceId, resolvedDescriptorId, expectedState);
+        archivingScheduleVerifier.pollDescriptorArchivingSchedule(resolvedEServiceId, resolvedDescriptorId, "DESCRIPTOR");
     }
 
     private void scheduleArchiveDescriptor(UUID eServiceId, UUID descriptorId) {
@@ -130,7 +131,7 @@ public class DescriptorArchivingSteps {
         archivingScheduleVerifier.pollDescriptorPopulatedArchivingSchedule(eServiceUUID, descriptorUUID, "DESCRIPTOR");
     }
 
-    @Then("il descrittore con id {string} dell'e-service avente id {string} NON è stato archiviato")
+    @Then("il descrittore con id {string} dell'e-service avente id {string} NON è stato archiviato tramite archiviazione manuale")
     public void descriptorHasNotBeenManuallyArchived(String descriptorId, String eServiceId) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
