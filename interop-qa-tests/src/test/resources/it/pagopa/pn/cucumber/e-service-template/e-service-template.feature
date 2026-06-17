@@ -3145,7 +3145,7 @@ Feature: Test API of e-service template
 
   @certifiedDiscreteAttribute
   Scenario: [CERT_DISCRETE_ATTR_ESERVICE_TEMPL_1] Configurazione e associazione con successo di attributi certificati discreti
-  a un template e-service in stato DRAFT
+  a un template e-service in stato DRAFT (logiche OR e AND incluse)
 
     Given l'utente è un "admin" di "PA1"
     And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili

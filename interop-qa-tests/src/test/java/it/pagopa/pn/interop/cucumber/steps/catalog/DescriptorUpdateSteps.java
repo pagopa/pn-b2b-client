@@ -91,8 +91,8 @@ public class DescriptorUpdateSteps {
         );
     }
 
-    @When("l'utente aggiorna il descrittore dell'e-service pubblicato con i seguenti attributi:")
-    public void updatePublishedDescriptorWithAttributes(List<EServiceAttributeSpec> attributesSpec) {
+    @When("l'utente pubblica il descrittore dell'e-service con i seguenti attributi:")
+    public void publishDescriptorWithAttributes(List<EServiceAttributeSpec> attributesSpec) {
         DescriptorAttributesSeed descriptorAttributesSeed = createDescriptorAttributesSeedAndUpdateContext(
                 sharedStepsContext, dataPreparationService, attributesSpec
         );
@@ -108,6 +108,29 @@ public class DescriptorUpdateSteps {
                         seed
                 )
         );
+    }
+
+    @When("l'utente tenta di aggiornare l'attributo certificato discreto {int}-esimo del gruppo {int}-esimo con discrete comparator {string} e il discrete threshhold {int}")
+    public void updatePublishedDescriptorWithAttributes(int attributeIndex, int groupIndex, String comparator, int threshold) {
+
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+
+        ProducerEServiceDescriptor eServiceDescriptor = clientTokenConfigurator.getProducerClient().getProducerEServiceDescriptor(eServiceId, descriptorId);
+
+        List<List<DescriptorAttributeSeed>> certifiedAttributesSeed = sharedStepsContext.getAttributeCommonContext().mapAttributes(eServiceDescriptor.getAttributes().getCertified());
+        List<List<DescriptorAttributeSeed>> declaredAttributesSeed = sharedStepsContext.getAttributeCommonContext().mapAttributes(eServiceDescriptor.getAttributes().getDeclared());
+        List<List<DescriptorAttributeSeed>> verifiedAttributesSeed = sharedStepsContext.getAttributeCommonContext().mapAttributes(eServiceDescriptor.getAttributes().getVerified());
+
+        certifiedAttributesSeed.get(groupIndex).get(attributeIndex).getDiscreteConfig().setComparator(AttributeCertifiedDiscreteComparator.valueOf(comparator));
+        certifiedAttributesSeed.get(groupIndex).get(attributeIndex).getDiscreteConfig().setThreshold(threshold);
+
+        DescriptorAttributesSeed attributesSeed = new DescriptorAttributesSeed()
+            .certified(certifiedAttributesSeed)
+            .declared(declaredAttributesSeed)
+            .verified(verifiedAttributesSeed);
+
+        eServiceDescriptorUtils.updateEServiceDescriptor(eServiceDescriptor, attributesSeed);
     }
 
     @When("l'utente aggiorna la durata del voucher e le soglie di carico di quel descrittore")
