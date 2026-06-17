@@ -91,6 +91,25 @@ public class DescriptorUpdateSteps {
         );
     }
 
+    @When("l'utente aggiorna il descrittore dell'e-service pubblicato con i seguenti attributi:")
+    public void updatePublishedDescriptorWithAttributes(List<EServiceAttributeSpec> attributesSpec) {
+        DescriptorAttributesSeed descriptorAttributesSeed = createDescriptorAttributesSeedAndUpdateContext(
+                sharedStepsContext, dataPreparationService, attributesSpec
+        );
+        UpdateEServiceDescriptorQuotas seed = new UpdateEServiceDescriptorQuotas()
+                .attributes(descriptorAttributesSeed)
+                .voucherLifespan(60)
+                .dailyCallsPerConsumer(50)
+                .dailyCallsTotal(2000);
+        httpCallExecutor.performCall(
+                () -> clientTokenConfigurator.getEServiceClient().updateDescriptor(
+                        sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                        sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
+                        seed
+                )
+        );
+    }
+
     @When("l'utente aggiorna la durata del voucher e le soglie di carico di quel descrittore")
     public void updateVoucherLifespanAndCallsLimit() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
@@ -210,6 +229,22 @@ public class DescriptorUpdateSteps {
             BFFDataPreparationService dataPreparationService,
             List<EServiceAttributeSpec> attributesSpec
     ) {
+        return new UpdateEServiceDescriptorSeed()
+                .voucherLifespan(3600)
+                .attributes(
+                        createDescriptorAttributesSeedAndUpdateContext(sharedStepsContext, dataPreparationService, attributesSpec)
+                )
+                .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC)
+                .dailyCallsPerConsumer(100)
+                .dailyCallsTotal(1000);
+    }
+
+
+    public static DescriptorAttributesSeed createDescriptorAttributesSeedAndUpdateContext(
+            SharedStepsContext sharedStepsContext,
+            BFFDataPreparationService dataPreparationService,
+            List<EServiceAttributeSpec> attributesSpec
+    ) {
 
         DescriptorAttributesSeed descriptorAttributesSeed = new DescriptorAttributesSeed();
 
@@ -237,7 +272,6 @@ public class DescriptorUpdateSteps {
                     .explicitAttributeVerification(true)
                     .id(attribute.getId());
 
-
             int group = attributeSpec.getGroup();
 
             switch (attributeSpec.getKind()) {
@@ -264,12 +298,7 @@ public class DescriptorUpdateSteps {
             }
         }
 
-        return new UpdateEServiceDescriptorSeed()
-                .voucherLifespan(3600)
-                .attributes(descriptorAttributesSeed)
-                .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC)
-                .dailyCallsPerConsumer(100)
-                .dailyCallsTotal(1000);
+        return descriptorAttributesSeed;
     }
 
     private static void addAttributeSeedToGroup(List<List<DescriptorAttributeSeed>> groups, int groupIndex, DescriptorAttributeSeed seed) {
