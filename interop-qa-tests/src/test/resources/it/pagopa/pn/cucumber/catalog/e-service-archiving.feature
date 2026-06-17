@@ -371,20 +371,15 @@ Feature: Archiviazione manuale di un e-service
       | api          |
       | api,security |
 
-  Scenario Outline: [AUTOMATIC_ARCHIVING_ESERVICE_1.1] Con archiviazione del primo e meno recente descrittore in corso. Se l'unica richiesta di fruizione attiva verso quel descrittore viene archiviata, questo sarà archiviato in automatico
+  Scenario: [AUTOMATIC_ARCHIVING_ESERVICE_1.1] Con archiviazione del primo e meno recente descrittore in corso in stato ARCHIVING. Se l'unica richiesta di fruizione attiva verso quel descrittore viene archiviata, questo sarà archiviato in automatico
     Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service con un descrittore in stato "<initialFirstDescriptorState>"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
     When "PA2" ha già archiviato quella richiesta di fruizione
     Then la vecchia versione dell'e-service è in stato "ARCHIVED"
     And la versione più recente dell'e-service è in stato "PUBLISHED"
-
-    Examples:
-      | initialFirstDescriptorState |
-      | PUBLISHED                   |
-      | PUBLISHED                   |
 
   Scenario Outline: [AUTOMATIC_ARCHIVING_ESERVICE_1.2] Con archiviazione dell'intero e-service in corso. Se l'unica richiesta di fruizione attiva verso il primo e meno recente descrittore viene archiviata, tale descrittore sarà archiviato in automatico
     Given l'utente è un "admin" di "PA1"
@@ -402,7 +397,7 @@ Feature: Archiviazione manuale di un e-service
       | PUBLISHED                   |
       | PUBLISHED                   |
 
-  Scenario Outline: [AUTOMATIC_ARCHIVING_ESERVICE_1.3] Con archiviazione manuale dell'intero e-service e parallelamente del primo e meno recente descrittore in corso. Se l'unica richiesta di fruizione attiva verso il primo descrittore viene archiviata, tale descrittore sarà archiviato in automatico
+  Scenario Outline: [AUTOMATIC_ARCHIVING_ESERVICE_1.3] Con archiviazione manuale dell'intero e-service e parallelamente del primo e meno recente descrittore tramite archiviazione del descrittore singolo in corso. Se l'unica richiesta di fruizione attiva verso il primo descrittore viene archiviata, tale descrittore sarà archiviato in automatico
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "<initialFirstDescriptorState>"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -417,6 +412,17 @@ Feature: Archiviazione manuale di un e-service
       | initialFirstDescriptorState |
       | PUBLISHED                   |
       | PUBLISHED                   |
+
+  Scenario: [AUTOMATIC_ARCHIVING_ESERVICE_1.4] Con archiviazione del primo e meno recente descrittore in corso in stato ARCHIVING_SUSPENDED. Se l'unica richiesta di fruizione attiva verso quel descrittore viene archiviata, questo sarà archiviato in automatico
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già sospeso quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    When "PA2" ha già archiviato quella richiesta di fruizione
+    Then la vecchia versione dell'e-service è in stato "ARCHIVED"
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
 
   Scenario: [AUTOMATIC_ARCHIVING_ESERVICE_2.1] Avendo un e-service con un solo descrittore in stato PUBLISHED. Dopo la pubblicazione di un nuovo descrittore, il descrittore precedente, se non ha richieste di fruizione attive, passerà automaticamente allo stato ARCHIVED
     Given l'utente è un "admin" di "PA1"
