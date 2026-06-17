@@ -4,8 +4,12 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.*;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.ReworkItem;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.ReworkItemsResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.ReworkRequest;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.ReworkResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.UpdateReworkRequest;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryInvalidatedElement;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
 import it.pagopa.pn.client.b2b.pa.service.impl.ReworkTimelineClientImpl;
@@ -20,7 +24,13 @@ import org.springframework.web.client.HttpStatusCodeException;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -263,7 +273,7 @@ public class TimelineReworkSteps {
 
     @Then("raccolgo gli elementId della timeline contenenti {string}")
     public void collectAttempt1ElementIdsFromTimeline(String element) {
-        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         List<TimelineElementV28> timeline = fullSentNotification.getTimeline();
         attempt1ElementIds.clear();
         attempt1ElementIds = timeline.stream()
@@ -307,7 +317,7 @@ public class TimelineReworkSteps {
     }
 
     private List<NotificationStatusHistoryInvalidatedElement> getInvalidatedHistoryFailFast() {
-        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         List<TimelineElementV28> timeline = fullSentNotification.getTimeline();
         TimelineElementV28 reworkedElement = timeline.stream()
                 .filter(e -> e.getCategory() != null)
