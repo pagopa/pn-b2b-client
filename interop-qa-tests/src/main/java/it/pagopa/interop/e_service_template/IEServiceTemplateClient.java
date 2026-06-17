@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public interface IEServiceTemplateClient extends SettableBearerToken {
     enum EServiceTemplateDocumentKind {
-        INTERFACE, DOCUMENT
+        INTERFACE, DOCUMENT, ASYNC_EXCHANGE_CALLBACK_INTERFACE
     }
 
     CreatedEServiceTemplateVersion createEServiceTemplate(EServiceTemplateSeed eserviceSeed);

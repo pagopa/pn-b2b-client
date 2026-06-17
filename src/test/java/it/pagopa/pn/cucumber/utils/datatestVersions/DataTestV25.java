@@ -42,6 +42,7 @@ public class DataTestV25 extends AbstractDataTest {
         String notificationCost = getValue(data, DETAILS_NOTIFICATION_COST.key);
         String parametriCalcoloCostoNotifica = getValue(data, PARAMETRI_CALCOLO_COSTO_NOTIFICA.key);
         String registry = getValue(data, DETAILS_REGISTRY.key);
+        String foundAddress = getValue(data, DETAILS_FOUND_ADDRESS.key);
 
         if (data.size() == 1 && data.get("NULL") != null) {
             return null;
@@ -65,6 +66,7 @@ public class DataTestV25 extends AbstractDataTest {
                             .isAvailable(isAvailable != null ? Boolean.valueOf(getValue(data, DETAILS_IS_AVAILABLE.key)) : null)
                             .deliveryDetailCode(getValue(data, DETAILS_DELIVERY_DETAIL_CODE.key))
                             .deliveryFailureCause(getValue(data, DETAILS_DELIVERY_FAILURE_CAUSE.key))
+                            .foundAddress(foundAddress != null ? getObjValue(PhysicalAddress.class, data, DETAILS_FOUND_ADDRESS.key) : null)
                             .failureCause(getValue(data, DETAILS_FAILURE_CAUSE.key))
                             .attachments(getListValue(AttachmentDetails.class, data, DETAILS_ATTACHMENTS.key))
                             .physicalAddress(getObjValue(PhysicalAddress.class, data, DETAILS_PHYSICALADDRESS.key))
@@ -297,6 +299,7 @@ public class DataTestV25 extends AbstractDataTest {
             case PREPARE_ANALOG_DOMICILE_FAILURE -> {
                 if (expected != null) {
                     assertThat(actual.getRecIndex()).as(error + EQUALITY_REC_INDEX).isEqualTo(expected.getRecIndex());
+                    assertThat(actual.getFoundAddress()).as(error + "foundAddress").isEqualTo(expected.getFoundAddress());
                     B2bUtils.compareActualAndExpected(error + EQUALITY_PHYSICAL_ADDRESS, actual.getPhysicalAddress(), expected.getPhysicalAddress());
                     if (expected.getDeliveryFailureCause() != null) {
                         List<String> failureCauses = Arrays.asList(expected.getDeliveryFailureCause().split(" "));
