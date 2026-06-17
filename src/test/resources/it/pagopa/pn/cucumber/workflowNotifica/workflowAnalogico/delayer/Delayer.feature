@@ -1001,6 +1001,7 @@
         | unifiedDeliveryDriverId      | comparative | limit |
         | driverRanking2nd_890~P1      | esattamente | 5     |
         | driverRanking2nd_890~CAP1_P1 | esattamente | 5     |
+      And viene impostato il limite massimo di 5 spedizioni in SENT_TO_PREPARE_PHASE_2 per ogni esecuzione di DelayerToPaperChannelStateMachine
       And si presuppone che la capacità di stampa giornaliera sia esattamente 5
       And il CSV "tcSenderPriorityFrozenW1.csv" è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
       And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
