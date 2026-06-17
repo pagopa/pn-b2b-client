@@ -302,9 +302,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico AR
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario
-      | denomination            | PF non censito   |
-      | taxId                   | STTSGT90A01H501J |
+    And destinatario Utenza con Indirizzo Valido da ANPR e:
       | digitalDomicile         | NULL             |
       | physicalAddress_State   | MESSICO          |
       | physicalAddress_zip     | ZONE_2           |

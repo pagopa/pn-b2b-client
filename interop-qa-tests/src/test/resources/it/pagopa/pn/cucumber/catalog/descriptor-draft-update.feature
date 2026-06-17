@@ -244,7 +244,7 @@ Feature: Aggiornamento di un descrittore in bozza
     When "PA1" ha già creato un e-service in stato "DRAFT" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 10
     And si ottiene status code 200
     And l'utente tenta di aggiungere una soglia differenziata di 10 per l'attributo CERTIFIED 0-esimo creato
-    Then l'-eservice ha questa configurazione:
+    Then l'e-service ha questa configurazione:
       | dailyCallsPerConsumer | 10 |
       | dailyCallsTotal       | 10 |
     And la soglia differenziata per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo è uguale a "10"

@@ -496,6 +496,49 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | NULL | NULL |
     #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.60s-RECAG012.5s-RECAG011B[DOC:ARCAD;DOC:23L].60s-RECAG007A.5s-RECAG007B[DOC:Plico].5s-RECAG007C"
 
+  @giacenza890Simplified  @esposizioneCadArcad
+  Scenario: [B2B_GIACENZA_890_WI1.1_82] Invio notifica analogica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK e secondo controllo per recepire campo foreignState tramite recupero indirizzo da Registro Imprese.
+    Given viene generata una nuova notifica
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+    And destinatario
+      | denomination            | Vita Nova Sas                |
+      | taxId                   | 12666810299                  |
+      | digitalDomicile         | NULL                         |
+      | physicalAddress_address | via@FAIL-Giacenza-gt10_890   |
+      | recipientType           | PG                           |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | CON080   |
+      | details_sentAttemptMade    | 0        |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | CON020   |
+      | details_sentAttemptMade    | 0        |
+    And abbia anche un valore per il campo "details_attachments[0]_url" compatibile con l'espressione regolare ".+PN_PRINTED.+\.pdf"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL |
+      | details_recIndex           | 0        |
+      | details_deliveryDetailCode | RECAG010 |
+      | details_sentAttemptMade    | 0        |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
+      | details_deliveryDetailCode | RECAG011A |
+      | details_sentAttemptMade    | 0         |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | details                    | NOT_NULL                                                                                                                                                                                                        |
+      | details_recIndex           | 0                                                                                                                                                                                                               |
+      | details_deliveryDetailCode | RECAG012                                                                                                                                                                                                        |
+      | details_sentAttemptMade    | 0                                                                                                                                                                                                               |
+      | details_physicalAddress    | {"at": "Presso", "address": "VIA@FAIL-GIACENZA-GT10_890", "addressDetails": "SCALA B", "zip": "87100", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "province": "CS", "foreignState": "ITALIA"} |
+      | details_responseStatus     | OK                                                                                                                                                                                                              |
+    And viene verificato che nell'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE" siano configurati i campi municipalityDetails e foreignState
+
   @giacenza890Simplified
   Scenario: [B2B_GIACENZA_890_WI1.1_9] Mancata Consegna in Giacenza dopo i 10 giorni. In questo scenario viene simulato il perfezionamento dell’atto al 10° giorno.
     Given viene generata una nuova notifica
