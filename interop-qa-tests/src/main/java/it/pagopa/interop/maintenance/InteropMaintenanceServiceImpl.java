@@ -96,16 +96,6 @@ public class InteropMaintenanceServiceImpl implements InteropMaintenanceService 
                 "Error during maintenance tenant update"
         ).getBody();
         log.debug("Modified tenant kind of {}: {}",  tenantAlias, modifiedTenant.getKind());
-
-        // FIXME utile solo ai fini di debug, il ripristino del corretto tenant kind dovrà essere fatto altrove
-        /*mapped.getTenant().setKind(kindIniziale);
-        mapped.setCurrentVersion(Integer.parseInt(processTenantPostKindUpdate.getHeaders().get("X-Metadata-Version").get(0)));
-        processMaintTenantApi.maintenanceTenantUpdate(xCorrelationId, organizationId, mapped);
-        sleep();
-        processTenantPostKindUpdate = processBffTenantApi.getTenantWithHttpInfo(
-                xCorrelationId,
-                organizationId);
-        System.out.println("Dopo il ripristino, il tenant kind risulta ora essere: " + processTenantPostKindUpdate.getBody().getKind());*/
     }
 
     private static String randomUUID() {
@@ -123,7 +113,7 @@ public class InteropMaintenanceServiceImpl implements InteropMaintenanceService 
         }
     }
 
-    /* Verifica che il tenant kind indicato in piattaforma è coerente con quello passato in input, ed in caso contrario
+    /* Verifica che il tenant kind indicato in piattaforma è coerente con quello passato in input, e in caso contrario
     * lo corregge. */
     @Override
     public void alignTenantKind(it.pagopa.interop.authorization.domain.Tenant tenant) {
@@ -145,9 +135,11 @@ public class InteropMaintenanceServiceImpl implements InteropMaintenanceService 
     * suddette api siano utilizzabili. */
     @Override
     public boolean isExecutable() {
-        /* 29/05/2026 La variabile d'ambiente qui usata è presente solo su workflow Github, ed ha senso solo lì; se
-        * è assente o vuota - perché l'esecuzione non sta avvenendo su Github o perché l'ambiente Github non è
-        * correttamente configurato - allora il servizio non è servibile. */
+        /* 29/05/2026 La variabile d'ambiente qui usata è presente solo su workflow Github, ed ha senso solo lì; è
+        * condizione necessaria affinché le API interne di Interop siano raggiungibili, e quindi affinché i test
+        * di Adeguamento analisi del rischio siano fattibili. Se è assente o vuota - perché l'esecuzione non sta
+        * avvenendo su Github o perché l'ambiente Github non è correttamente configurato - allora il servizio
+        * non è servibile. */
         return StringUtils.isNotBlank(System.getenv(TenantsProcessApiClientImpl.TENANT_PROCESS_HOST));
     }
 

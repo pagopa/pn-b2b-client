@@ -80,7 +80,7 @@ Feature: Lettura singola finalità
   # Ticket aperto: https://pagopa.atlassian.net/browse/PIN-10265
   @adeguamento-analisi-rischio
   # TODO in tutte le descrizioni degli scenari di questa feature si sta descrivendo quello che si tenta di fare senza parlare dei risultati attesi. Correggere.
-  # TODO 04/06/2026: al momento l'analisi del rischio viene restituita anche per ruolo API. Chiesto conferma https://pagopaspa.slack.com/archives/C069AP16WG7/p1780565330577099, eventualmente modificare test.
+  # NOTE 04/06/2026: al momento l'analisi del rischio viene restituita anche per ruolo API. Chiesto conferma https://pagopaspa.slack.com/archives/C069AP16WG7/p1780565330577099
   Scenario Outline: [LETTURA_FINALITA_TK_1] A seguito del cambiamento di tenant kind si tenta di reperire una finalità attiva
     Given "PA2" ha già creato e pubblicato 1 e-service
     And "<ente>" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service

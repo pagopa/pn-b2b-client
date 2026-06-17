@@ -53,7 +53,7 @@ public class IdentityServiceSelfcareImpl implements IdentityService {
         try {
             return sessionTokenFactory.getMaintenanceToken();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Errore durante il reperimento del token di maintenance", e);
         }
     }
 

@@ -81,30 +81,6 @@ Feature: Pubblicazione di un descrittore
       | GSP2    | GSP           | PA          |
       | Privato | PRIVATE       | PA          |
 
-  # FIXME 05/06/2026: il test mostra di non essere fattibile. Non è stato tenuto conto che PRIMA della pubblicazione
-  # avviene una fase di pre-convalida della RA, che in questo caso agisce bloccando il proseguo dei test tutte
-  # le volte, perché ogni volta la versione della RA - costruita in funzione del target tenant kind - risulta non
-  # coerente con quella del kind attuale. Rimuovere il test sia da qui che dal PST.
-  #@debug
-  #@adeguamento-analisi-rischio
-  #Scenario Outline: [DESCRIPTOR_TK_PUBBLICATION_1_B] A seguito del cambiamento di tenant kind si tenta di pubblicare un proprio e-service in bozza ad erogazione inversa, con analisi del rischio coerente con il kind finale
-  #  Given l'utente è un "admin" di "<ente>"
-  #  And "<ente>" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "DRAFT"
-  #  And "<ente>" ha già caricato un'interfaccia per quel descrittore
-  #  And l'utente aggiunge con successo un'analisi del rischio coerente con il tenant kind "<kind_target>"
-  #  And il tenant kind dell'ente "<ente>" viene impostato a "<kind_target>"
-  #  When l'utente pubblica quel descrittore
-  #  Then si ottiene status code 200
-  #  And il descrittore risulta in stato "PUBLISHED"
-  #  Examples:
-  #    | ente    | kind_target |
-  #    | PA4     | PRIVATE     |
-  #    | PA4     | GSP         |
-  #    | GSP2    | PA          |
-  #    | Privato | PA          |
-
-  # TODO 05/06/2026: a differenza di [DESCRIPTOR_TK_PUBBLICATION_1_B] qui si effettua il cambiamento di tenant kind
-  #   PRIMA di aggiungere l'analisi del rischio. Aggiungere scenario in PST.
   @adeguamento-analisi-rischio
   Scenario Outline: [DESCRIPTOR_TK_PUBBLICATION_1_B2] A seguito del cambiamento di tenant kind si tenta di pubblicare un proprio e-service in bozza ad erogazione inversa, con analisi del rischio coerente con il kind finale
     Given l'utente è un "admin" di "<ente>"

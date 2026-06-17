@@ -74,7 +74,7 @@ public class TenantsProcessApiClientImpl implements ITenantsProcessApi {
     }
 
     // Set del token per le apis che seguono autenticazione BFF (quelle di maintenance non seguono le stesse logiche,
-    // il token è fisso, indipendente sia da ente che da ruolo)
+    // il token è fisso, ed è indipendente sia da ente che da ruolo)
     @Override
     public void setBearerToken(String bearerToken) {
         this.processBffTenantApi.setApiClient(createApiClient(bearerToken));

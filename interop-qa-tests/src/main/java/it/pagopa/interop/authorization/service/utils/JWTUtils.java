@@ -61,6 +61,10 @@ public final class JWTUtils {
     }
 
     public static boolean isNotExpired(String token) {
+        return isNotExpired(token, 0);
+    }
+
+    public static boolean isNotExpired(String token, long safetyMarginMillis) {
         long now = Instant.now().getEpochSecond();
         Object oExp = Objects.requireNonNull(
                 JWTUtils.decodeJwt(token).getPayload().get("exp"),
@@ -79,8 +83,9 @@ public final class JWTUtils {
             );
         }
 
-        // Il token è considerato scaduto se: exp <= (adesso + 2 secondi di sicurezza)
-        return exp > (now + 2);
+        long safetyMarginSeconds = safetyMarginMillis / 1000;
+        // Il token è considerato scaduto se: exp <= (adesso + margine di sicurezza)
+        return exp > (now + safetyMarginSeconds);
     }
 
     private static String encodeJwtPart(Map<String, Object> part) {

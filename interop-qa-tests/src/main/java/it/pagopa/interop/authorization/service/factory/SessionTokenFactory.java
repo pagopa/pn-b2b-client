@@ -151,7 +151,7 @@ public abstract class SessionTokenFactory {
     }
 
     public String getMaintenanceToken() throws Exception {
-        if(nonNull(lastMaintenanceToken) && isNotExpired(lastMaintenanceToken)) {
+        if(nonNull(lastMaintenanceToken) && isNotExpired(lastMaintenanceToken, 10000)) {
             return lastMaintenanceToken;
         }
 
