@@ -12,6 +12,6 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.cucumber.steps")
 @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent")
 @ExcludeTags({"ignore"})
-@IncludeTags({"timelineReworkF2_costi"})
-public class TimelineReworkF2CostiTest {
+@IncludeTags({"timelineReworkF2_costi_async"})
+public class TimelineReworkF2CostiAsyncTest {
 }
