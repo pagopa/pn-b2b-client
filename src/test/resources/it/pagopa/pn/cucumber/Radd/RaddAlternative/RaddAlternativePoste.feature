@@ -110,7 +110,7 @@ Feature: Radd Alternative integrazione con Poste
 ##      | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
 ##    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
 ##    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    Given imposto lo iun di SharedSteps a "UENX-YTMZ-KRVH-202606-J-1" e la pa a "Comune_Multi"
+    Given imposto lo iun di SharedSteps a "AGPU-JWPV-XGXE-202606-A-1" e la pa a "Comune_Multi"
     Then Imposto il cf "02455090981" e recipient type "PG"
    # When la persona giuridica Gherkin Irreperibile chiede di verificare la presenza di notifiche
 #    And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
@@ -133,10 +133,10 @@ Feature: Radd Alternative integrazione con Poste
 #      | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
 #    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
 #    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    Given imposto lo iun di SharedSteps a "RQGX-KTUX-MVKD-202606-Q-1" e la pa a "Comune_Multi"
+    Given imposto lo iun di SharedSteps a "QAVA-YJQN-TRPE-202606-U-1" e la pa a "Comune_Multi"
     Then Imposto il cf "02455090981" e recipient type "PG"
-#    And la persona giuridica Gherkin Irreperibile chiede di verificare la presenza di notifiche
-#    And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
+    And la persona giuridica Gherkin Irreperibile chiede di verificare la presenza di notifiche
+    And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And Vengono recuperati gli aar delle notifiche in stato irreperibile della persona giuridica su radd vpce
     And il recupero degli aar in stato irreperibile si conclude correttamente su radd alternative
     And viene chiusa la transazione per il recupero degli aar su radd alternative
@@ -186,6 +186,134 @@ Feature: Radd Alternative integrazione con Poste
     And la scansione si conclude correttamente su radd alternative
     And non viene concesso l'upload documento via VPCE
     #ERRORE 500 todo t radd
+
+
+
+
+
+
+
+ # **** DATA PREP ************
+
+  @useRaddVpceDataPreparation
+  Scenario: [DP_RADD_POSTE_01_3] Verifica allegato ARCAD per secondo evento di timeline SEND_ANALOG_PROGRESS con deliveryDetailCode = RECAG011B
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL                         |
+      | physicalAddress_address | via@OK-Giacenza-gt10_890_ZIP |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                    |
+      | details_recIndex           | 0                           |
+      | details_deliveryDetailCode | RECAG011B                   |
+      | details_sentAttemptMade    | 0                           |
+      | details_attachments        | [{"documentType": "ARCAD"}] |
+    And abbia anche un valore per il campo "details_attachments[0]_url" compatibile con l'espressione regolare ".+PN_EXTERNAL_LEGAL_FACTS.+\.zip"
+
+ #   ACT
+  @useRaddVpceDataPreparation
+  Scenario: [DP_RADD_POSTE_02_1_A] PF - Scansione QR code esistente associato al CF corretto, per una notifica con allegati di pagamento (Avviso PagoPA e F24)
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+      | feePolicy          | DELIVERY_MODE                                |
+      | paFee              | 0                                            |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL                          |
+      | physicalAddress_address | Via @ok_890                   |
+      | payment_pagoPaForm      | SI                            |
+      | payment_f24             | PAYMENT_F24_STANDARD          |
+      | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
+      | apply_cost_pagopa       | SI                            |
+      | apply_cost_f24          | SI                            |
+      | payment_multy_number    | 1                             |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+
+  @useRaddVpceDataPreparation
+  Scenario: [DP_RADD_POSTE_02_1_G] PF - Interruzione processo recupero atti e avvio nuovo processo su stessa notifica
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And "Mario Cucumber" legge la notifica
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
+
+  @useRaddVpceDataPreparation
+  Scenario: [DP_RADD_POSTE_AOR_03_1_A] PG - Visualizzazione AAR di notifiche i cui documenti sono già stati stampati, ma inibizione stampa documenti associati alla notifica
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di milano                             |
+    And destinatario Gherkin Irreperibile e:
+      | digitalDomicile         | NULL                                         |
+      | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+
+  @useRaddVpceDataPreparation
+  Scenario: [DP_RADD_POSTE_AOR_03_1_B] PG - Visualizzazione link AAR disponibili con consegna documenti alla PG successivi alla stampa documenti per notifiche associate al CF corretto (irreperibile totale)
+    Given viene generata una nuova notifica
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
+    And destinatario Gherkin Irreperibile e:
+      | digitalDomicile         | NULL                                         |
+      | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+
+  @useRaddVpceDataPreparation
+  Scenario: [DP_RADD_POSTE_02_1_C] PG - Scansione QR code esistente, associato al CF corretto, per una notifica con allegato di pagamento (solo F24)
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+      | feePolicy          | DELIVERY_MODE                                |
+      | paFee              | 0                                            |
+    And destinatario CucumberSpa e:
+      | payment_pagoPaForm   | NULL                 |
+      | payment_f24          | PAYMENT_F24_STANDARD |
+      | title_payment        | F24_STANDARD_PG      |
+      | apply_cost_pagopa    | NO                   |
+      | apply_cost_f24       | SI                   |
+      | payment_multy_number | 1                    |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   #  Scenario: [RADD_POSTE_AOR_03_1_D] PG - Restituzione errore - nessuna Notifica disponibile in stato Irreperibile associata al CF corretto
 #    Given viene generata una nuova notifica
