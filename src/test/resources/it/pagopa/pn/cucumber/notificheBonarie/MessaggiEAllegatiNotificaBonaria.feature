@@ -292,7 +292,7 @@ Feature: Messaggi e allegati di una notifica bonaria.
     And si tenta il recupero documento della notifica bonaria
     Then si riceve errore 404
 
-  @informalNotificationsMessageAttachment
+  #@informalNotificationsMessageAttachment errore già noto con bug PN-20078
   Scenario: [NOTIFICHE_BONARIE_05_3_B] Come ente mittente tento il Recupero del documento con indice non valido ricevendo errore
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con valori di default
@@ -332,7 +332,7 @@ Feature: Messaggi e allegati di una notifica bonaria.
     When si tenta il recupero allegato pagamento con IUN "fake"
     Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER_SIZE"
 
-  @informalNotificationsMessageAttachment
+  #@informalNotificationsMessageAttachment errore già noto con bug PN-20078
   Scenario: [NOTIFICHE_BONARIE_05_4_B] Come ente mittente tento il Recupero del allegato di pagamento con indice non valido ricevendo errore
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con valori di default

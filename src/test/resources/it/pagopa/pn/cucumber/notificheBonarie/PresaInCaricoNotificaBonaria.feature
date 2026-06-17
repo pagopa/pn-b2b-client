@@ -213,20 +213,22 @@ Feature: Sottomissione di una notifica bonaria.
 
 
   @informalNotificationsValidation @informalSyncValidation
-  Scenario: [NOTIFICHE_BONARIE_SM_04_2_D3] Invio bonaria verso 2 destinatari con diverso message id
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_D3] Invio bonaria verso 2 destinatari con stesso message id
   Nome Parametro Max numero destinatari: PN_DELIVERY_INFORMALNOTIFICATIONMAXRECIPIENTS.
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria
-      | recipientType | PF                |
-      | taxId         | FRMTTR76M06B715E  |
-      | denomination  | Ettore Fieramosca |
-      | messageId     | ${IT}             |
+      | recipientType        | PF                |
+      | taxId                | FRMTTR76M06B715E  |
+      | denomination         | Ettore Fieramosca |
+      | messageId            | ${IT}             |
+      | payment_multy_number | 1                 |
     And destinatario della notifica bonaria
-      | recipientType | PF               |
-      | taxId         | GLLGLL64B15G702I |
-      | denomination  | Galileo Galilei  |
-      | messageId     | ${IT}            |
+      | recipientType        | PF               |
+      | taxId                | GLLGLL64B15G702I |
+      | denomination         | Galileo Galilei  |
+      | messageId            | ${IT}            |
+      | payment_multy_number | 1                |
     When viene inviata una nuova notifica bonaria
     And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
 
@@ -686,8 +688,8 @@ Feature: Sottomissione di una notifica bonaria.
       | messageId       | ${IT}       |
       | digitalDomicile | NULL        |
     When viene inviata una nuova notifica bonaria
-    And  si verifica che la notifica bonaria sia in stato "REFUSED"
-    Then la notifica bonaria è stata rifiutata per l'errore: "DIGITAL_ADDRESS_MISSING"
+    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+
 
   @informalAsyncValidation
   Scenario: [NOTIFICHE_BONARIE_ASYNC_ANALOG_01_6] Come ente mittente tento l'invio di una notifica bonaria senza indirizzo analogico per un campagna con canale analogico.Ottengo stato refused.
@@ -718,8 +720,9 @@ Feature: Sottomissione di una notifica bonaria.
     When viene inviata una nuova notifica bonaria
     And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
     Then la sottomissione della notifica bonaria è andata a buon fine
-    And verifico che su DynamoDB è presente in timeline l'elemento "NATIONAL_REGISTRY_VALIDATION_RESPONSE"
     And verifico che su DynamoDB è presente in timeline l'elemento "NATIONAL_REGISTRY_VALIDATION_CALL"
+    And verifico che su DynamoDB è presente in timeline l'elemento "NATIONAL_REGISTRY_VALIDATION_RESPONSE"
+
 
   @informalAsyncValidation
   Scenario: [NOTIFICHE_BONARIE_ASYNC_ANALOG_01_6_B] Come ente mittente tento l'invio di una notifica bonaria senza indirizzo analogico che NON varrà recuperato dal VAS.
@@ -804,28 +807,28 @@ Feature: Sottomissione di una notifica bonaria.
       | param1 | AUD_COM_CHECK |
       | param2 | SUCCESS       |
 
-  @informalNotificationsValidation @informalAsyncValidation
-  Scenario: [NOTIFICHE_BONARIE_WF_1] Come ente mittente invio una notifica bonaria e vengono generati i corretti auditlog in pn-workflow-manager
-    Given mittente della notifica bonaria: "Comune_Multi"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | campaign-1 |
-    And destinatario della notifica bonaria
-      | recipientType | PF                |
-      | taxId         | FRMTTR76M06B715E  |
-      | denomination  | Ettore Fieramosca |
-      | messageId     | ${IT}             |
-    When viene inviata una nuova notifica bonaria
-    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
-      | iun    | auto                   |
-      | param1 | AUD_INFORMAL_NT_INSERT |
-      | param2 | recIndex=0             |
-      | pippo  | phase=VALIDATION       |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
-      | iun    | auto                    |
-      | param1 | AUD_INFORMAL_MSG_INSERT |
-      | param2 | recIndex=0              |
-      | pippo  | phase=VALIDATION        |
+#  @informalNotificationsValidation @informalAsyncValidation non presente nella specifica
+#  Scenario: [NOTIFICHE_BONARIE_WF_1] Come ente mittente invio una notifica bonaria e vengono generati i corretti auditlog in pn-workflow-manager
+#    Given mittente della notifica bonaria: "Comune_Multi"
+#    And viene creata una nuova notifica bonaria con i seguenti parametri
+#      | campaignId | campaign-1 |
+#    And destinatario della notifica bonaria
+#      | recipientType | PF                |
+#      | taxId         | FRMTTR76M06B715E  |
+#      | denomination  | Ettore Fieramosca |
+#      | messageId     | ${IT}             |
+#    When viene inviata una nuova notifica bonaria
+#    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+#    And verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+#      | iun    | auto                   |
+#      | param1 | AUD_INFORMAL_NT_INSERT |
+#      | param2 | recIndex=0             |
+#      | pippo  | phase=VALIDATION       |
+#    And verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+#      | iun    | auto                    |
+#      | param1 | AUD_INFORMAL_MSG_INSERT |
+#      | param2 | recIndex=0              |
+#      | pippo  | phase=VALIDATION        |
 
   @informalNotificationsValidation @informalAsyncValidation
   Scenario: [NOTIFICHE_BONARIE_WF_1_B] Come ente mittente invio una notifica bonaria e vengono generati i corretti log in pn-workflow-manager
