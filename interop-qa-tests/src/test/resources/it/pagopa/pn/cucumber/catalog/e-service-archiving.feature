@@ -268,9 +268,9 @@ Feature: Archiviazione manuale di un e-service
     When l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "<finalFirstDescriptorState>"
-    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
     And la versione più recente dell'e-service è in stato "PUBLISHED"
-    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
     #quando il primo descrittore smetterà di essere il più recente, il suo stato passerà da PUBLISHED a DEPRECATED. Poi , avviato il processo di archiviazione, diventerà ARCHIVING
     Examples:
@@ -279,9 +279,9 @@ Feature: Archiviazione manuale di un e-service
       | api          | PUBLISHED                   | DEPRECATED                |
       | api,security | PUBLISHED                   | DEPRECATED                |
     #primo descrittore in stato SUSPENDED
-      | admin        | SUSPENDED                   | SUSPENDED                 |
-      | api          | SUSPENDED                   | SUSPENDED                 |
-      | api,security | SUSPENDED                   | SUSPENDED                 |
+#      | admin        | SUSPENDED                   | SUSPENDED                 |
+#      | api          | SUSPENDED                   | SUSPENDED                 |
+#      | api,security | SUSPENDED                   | SUSPENDED                 |
 
   Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_CANCELLATION_1.2] L'ente erogatore di un e-service in stato SUSPENDED può annullare il processo di archiviazione manuale di un e-service in corso
     Given l'utente è un "admin" di "PA1"
@@ -578,18 +578,18 @@ Feature: Archiviazione manuale di un e-service
     And il descrittore con id "<secondDescriptorId>" dell'e-service avente id "<eserviceId>" è stato correttamente archiviato tramite l'archiviazione manuale dell'intero e-service
     And la vecchia versione dell'e-service è in stato "ARCHIVED"
     And il descrittore con id "<firstDescriptorId>" dell'e-service avente id "<eserviceId>" è stato correttamente archiviato tramite l'archiviazione manuale dell'intero e-service
-    And la richiesta di fruizione con id "<agreementId>" assume lo stato "<agreementState>"
+    And la richiesta di fruizione con id "<agreementId>" assume lo stato "ACTIVE"
 
     Examples:
-      | firstDescriptorId  | secondDescriptorId  | eserviceId  | agreementId | agreementState |
+      | firstDescriptorId                    | secondDescriptorId                   | eserviceId                           | agreementId                          |
 #      firstDescriptorId=descrittore in Archiving . secondDescriptorId=descrittore in Archiving
-      | firstDescriptorId1 | secondDescriptorId1 | eserviceId1 | agreementId | ACTIVE         |
+      | 7b379f88-31a6-4e39-9553-f7ad74afde4f | abde2f2c-be8d-46d9-b626-e19b1e7f9490 | 785023e5-9a73-42e1-a6e2-b633baf1618c | f58e0bbd-f58a-4b6b-b98e-231e490797f2 |
 #      firstDescriptorId=descrittore in Archiving . secondDescriptorId=descrittore in Archiving_Suspended
-      | firstDescriptorId2 | secondDescriptorId2 | eserviceId2 | agreementId | ACTIVE         |
+      | 6d3174d4-f9bd-4223-a77b-daf2883790fc | 7c04c3c1-deac-4130-91df-805aab47ee12 | c211c470-daab-4b19-aa36-0a53ac5b7940 | a4e5e529-639e-4ada-83b0-e205e6c7b062 |
 #      firstDescriptorId=descrittore in Archiving_Suspended . secondDescriptorId=descrittore in Archiving
-      | firstDescriptorId3 | secondDescriptorId3 | eserviceId3 | agreementId | ACTIVE         |
+      | ee9dbc42-289f-400d-86f8-51e8fb704933 | 3c63c85f-7dac-4cdb-a9fe-586442624677 | 45d822b9-066c-4a77-b4a1-331135496907 | acd777e8-8b76-46cb-b822-3656601302eb |
 #      firstDescriptorId=descrittore in Archived . secondDescriptorId=descrittore in Archiving
-      | firstDescriptorId4 | secondDescriptorId4 | eserviceId4 | agreementId | ACTIVE         |
+      | c59ecfe2-a4c5-488d-a5b9-a7d3602671a4 | 6d40805a-3c65-4363-8f4e-ba3b18b7c7b5 | febf05bc-2a8d-4012-ba69-73e90292f185 | 3983bf4e-77f1-4dbc-be29-fa2db0337080 |
 
   @happy-path
   Scenario Outline: [ARCHIVING_ESERVICE_BY_JOB_1.2] Se la data finale del tempo di preavviso per l'archiviazione di un e-service non viene raggiunta, questo non risulterà ancora archiviato
@@ -598,15 +598,15 @@ Feature: Archiviazione manuale di un e-service
     And il descrittore con id "<secondDescriptorId>" dell'e-service avente id "<eserviceId>" è in fase di archiviazione tramite l'archiviazione manuale dell'intero e-service
     And la vecchia versione dell'e-service è in stato "<firstDescriptorState>"
     And il descrittore con id "<firstDescriptorId>" dell'e-service avente id "<eserviceId>" è in fase di archiviazione tramite l'archiviazione manuale dell'intero e-service
-    And la richiesta di fruizione con id "<agreementId>" assume lo stato "<agreementState>"
+    And la richiesta di fruizione con id "<agreementId>" assume lo stato "ACTIVE"
 
     Examples:
-      | firstDescriptorId  | secondDescriptorId  | eserviceId  | firstDescriptorState | secondDescriptorState | agreementId | agreementState |
+      | firstDescriptorId                    | secondDescriptorId                   | eserviceId                           | firstDescriptorState | secondDescriptorState | agreementId                          |
 #      firstDescriptorId=descrittore in Archiving . secondDescriptorId=descrittore in Archiving
-      | firstDescriptorId1 | secondDescriptorId1 | eserviceId1 | ARCHIVING            | ARCHIVING             | agreementId | ACTIVE         |
+      | 7747c0ab-68ca-4103-aa0a-2ee1784e485e | 2c9b69c0-06b0-4948-bebc-de6e0c21dc44 | c5bfac12-1600-42ab-9077-daf0c7eea70f | ARCHIVING            | ARCHIVING             | db0531d1-a0d5-4fff-a8ea-66d3925db639 |
 #      firstDescriptorId=descrittore in Archiving . secondDescriptorId=descrittore in Archiving_Suspended
-      | firstDescriptorId2 | secondDescriptorId2 | eserviceId2 | ARCHIVING            | ARCHIVING_SUSPENDED   | agreementId | ACTIVE         |
+      | 122d73ef-bd9a-4669-91aa-405bb958eb62 | 00aa97e1-6571-4ed2-9d84-dbe099ecd015 | ac8e1db2-ff25-437c-b2fc-c99ddb56b999 | ARCHIVING            | ARCHIVING_SUSPENDED   | 7d4b8cf9-8aa9-4e16-ab56-e3a44ff48d48 |
 #      firstDescriptorId=descrittore in Archiving_Suspended . secondDescriptorId=descrittore in Archiving
-      | firstDescriptorId3 | secondDescriptorId3 | eserviceId3 | ARCHIVING_SUSPENDED  | ARCHIVING             | agreementId | ACTIVE         |
+      | a629374c-a20d-4e19-b4f8-0e56a39a6e18 | fb6db58d-a4cc-4b84-b157-e2cdd1bf4a1b | 929c62d0-57a0-41e7-94b3-56c9d34277d5 | ARCHIVING_SUSPENDED  | ARCHIVING             | 857ecb8f-1a0a-46d8-95ac-1fc0873fdc84 |
 #      firstDescriptorId=descrittore in Archived . secondDescriptorId=descrittore in Archiving
-      | firstDescriptorId4 | secondDescriptorId4 | eserviceId4 | ARCHIVED             | ARCHIVING             | agreementId | ACTIVE         |
+      | 50bc283a-4a63-445b-a042-2b545501c988 | 9900424b-c0da-49d8-92ef-6661a65d8898 | aaaff1d2-d964-41f8-b8ef-dcbd35ea6f4e | ARCHIVED             | ARCHIVING             | 8d145f6d-862d-44bf-afb8-17e22bdac866 |

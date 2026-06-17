@@ -317,14 +317,14 @@ Feature: Archiviazione manuale di un descrittore
     And il descrittore con id "<secondDescriptorId>" dell'e-service avente id "<eserviceId>" NON è stato archiviato
     And la vecchia versione dell'e-service è in stato "ARCHIVED"
     And il descrittore con id "<firstDescriptorId>" dell'e-service avente id "<eserviceId>" è stato correttamente archiviato tramite l'archiviazione manuale del singolo descrittore
-    And la richiesta di fruizione con id "<agreementId>" assume lo stato "<agreementState>"
+    And la richiesta di fruizione con id "<agreementId>" assume lo stato "ACTIVE"
 
     Examples:
-      | firstDescriptorId  | secondDescriptorId  | eserviceId  | agreementId | agreementState |
+      | firstDescriptorId                    | secondDescriptorId                   | eserviceId                           | agreementId                          |
 #      firstDescriptorId=descrittore in Archiving . secondDescriptorId=descrittore in Published
-      | firstDescriptorId1 | secondDescriptorId1 | eserviceId1 | agreementId | ACTIVE         |
+      | 4814138f-e28f-4c29-a0a0-255bf0f9ccdc | 737419b7-b8d5-4290-8d52-a0018adccc34 | ff738cf4-c8da-4b16-8b30-a988cdae5d6a | aae3c04a-f6f0-4e3b-b4aa-b25ed9030652 |
 #      firstDescriptorId=descrittore in Archiving_Suspended . secondDescriptorId=descrittore in Published
-      | firstDescriptorId2 | secondDescriptorId2 | eserviceId2 | agreementId | ACTIVE         |
+      | e21fe7eb-e288-4280-a876-7eb8f8dc444a | 4b5f5dc0-d1e0-47f4-85fa-dcb6dbca63db | ef7d1661-caf6-4d8f-a9e0-234bdb0a80e7 | ef49786e-59ec-4ddf-81a1-2b789ea600e1 |
 
   @happy-path
   Scenario Outline: [ARCHIVING_DESCRIPTOR_BY_JOB_1.2] Se la data finale del tempo di preavviso per l'archiviazione di un descrittore non viene raggiunta, questo non risulterà ancora archiviato
@@ -334,11 +334,11 @@ Feature: Archiviazione manuale di un descrittore
     And la vecchia versione dell'e-service è in stato "<secondDescriptorState>"
 #    utilizziamo questo step anche nel caso di archiviazione in corso poichè viene controllata la presenza del campo archivingSchedule
     And il descrittore con id "<firstDescriptorId>" dell'e-service avente id "<eserviceId>" è stato correttamente archiviato tramite l'archiviazione manuale del singolo descrittore
-    And la richiesta di fruizione con id "<agreementId>" assume lo stato "<agreementState>"
+    And la richiesta di fruizione con id "<agreementId>" assume lo stato "ACTIVE"
 
     Examples:
-      | firstDescriptorId  | secondDescriptorId  | eserviceId  | secondDescriptorState | agreementId | agreementState |
+      | firstDescriptorId                    | secondDescriptorId                   | eserviceId                           | secondDescriptorState | agreementId                          |
 #      firstDescriptorId=descrittore in Archiving . secondDescriptorId=descrittore in Published
-      | firstDescriptorId1 | secondDescriptorId1 | eserviceId1 | ARCHIVING             | agreementId | ACTIVE         |
+      | 39db89b0-7791-4e18-b5b0-8022947bceb1 | 6408e689-f901-44e1-836b-716f31668950 | e71d472d-0fdc-499e-a7fe-671ac453686c | ARCHIVING             | 9c12a5d1-15fa-4317-8710-20ae7cf6858c |
 #      firstDescriptorId=descrittore in Archiving_Suspended . secondDescriptorId=descrittore in Published
-      | firstDescriptorId2 | secondDescriptorId2 | eserviceId2 | ARCHIVING_SUSPENDED   | agreementId | ACTIVE         |
+      | 0fef54c8-611f-4787-b6ab-16c9955a6e64 | 0a2d71a3-7962-4ee2-a94f-c1166358406d | a35969dc-efa6-452b-8a2e-f3434d520fed | ARCHIVING_SUSPENDED   | 100ed036-3e48-498e-8263-83d40fcec0af |
