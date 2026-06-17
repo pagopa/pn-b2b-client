@@ -246,7 +246,7 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
     public void postRecipientLegalAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType, AddressVerification addressVerification) throws RestClientException {
         BffAddressVerificationRequest bffAddressVerificationRequest = new BffAddressVerificationRequest().requestId(addressVerification.getRequestId())
                 .verificationCode(addressVerification.getVerificationCode()).value(addressVerification.getValue());
-        addressesApi.createOrUpdateAddressV1(BffAddressType.LEGAL, senderId, BffChannelType.fromValue(channelType.getValue()), bffAddressVerificationRequest);
+        addressesApi.createOrUpdateAddressV1(BffAddressType.LEGAL, senderId, BffChannelType.fromValue(channelType.getValue()), bffAddressVerificationRequest, null);
     }
 
     public void deleteRecipientCourtesyAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType) throws RestClientException {
@@ -263,7 +263,7 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
     public void postRecipientCourtesyAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType, AddressVerification addressVerification) throws RestClientException {
         BffAddressVerificationRequest bffAddressVerificationRequest = new BffAddressVerificationRequest().requestId(addressVerification.getRequestId())
                 .verificationCode(addressVerification.getVerificationCode()).value(addressVerification.getValue());
-        addressesApi.createOrUpdateAddressV1(BffAddressType.COURTESY, senderId, BffChannelType.fromValue(channelType.getValue()), bffAddressVerificationRequest);
+        addressesApi.createOrUpdateAddressV1(BffAddressType.COURTESY, senderId, BffChannelType.fromValue(channelType.getValue()), bffAddressVerificationRequest, null);
     }
 
     private <T> T deepCopy(Object obj, Class<T> toClass) {
