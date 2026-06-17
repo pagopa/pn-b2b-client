@@ -150,7 +150,7 @@ Feature: Archiviazione manuale di un e-service
     And l'ente delegato "PA2"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
-    And "PA1" ha già creato una versione in "DRAFT" per quell'e-service
+    And "PA1" tenta la creazione di una versione in DRAFT per quell'e-service
     And l'utente è un "admin" di "PA1"
     And l'utente aggiorna alcuni parametri di quel descrittore
     And "PA1" ha già caricato un'interfaccia per quel descrittore
@@ -161,10 +161,11 @@ Feature: Archiviazione manuale di un e-service
     And l'e-service è in stato "WAITING_FOR_APPROVAL"
     When l'utente è un "admin" di "PA1"
     And l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
-    Then si ottiene response status code 204
-    And l'ultimo descrittore in stato WAITING_FOR_APPROVAL è stato cancellato
-    And la vecchia versione dell'e-service è in stato "ARCHIVING"
-    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    Then si ottiene response status code 409
+    And la versione più recente dell'e-service è in stato "WAITING_FOR_APPROVAL"
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And la vecchia versione dell'e-service è in stato "PUBLISHED"
+    And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
   Scenario: [MANUAL_ARCHIVING_ESERVICE_3.1] L'aggiornamento di un agreement nei confronti della versione più recente di un e-service NON va a buon fine nel caso quest'ultimo sia in archiviazione
     Given l'utente è un "admin" di "PA1"
