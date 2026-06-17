@@ -91,6 +91,7 @@ import static it.pagopa.pn.cucumber.utils.NotificationValue.PHYSICAL_ADDRESS_MUN
 import static it.pagopa.pn.cucumber.utils.NotificationValue.PHYSICAL_ADDRESS_PROVINCE;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.PHYSICAL_ADDRESS_STATE;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.PHYSICAL_ADDRESS_ZIP;
+import static it.pagopa.pn.cucumber.utils.NotificationValue.PHYSICAL_COMMUNICATION_PRIORITY;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.PHYSICAL_COMMUNICATION_TYPE;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.RECIPIENT_TYPE;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.SENDER_DENOMINATION;
@@ -136,6 +137,8 @@ public class NotificationUtilsV26 extends B2bUtils {
                         null : (getValue(data, PHYSICAL_COMMUNICATION_TYPE.key).equalsIgnoreCase("REGISTERED_LETTER_890") ?
                         NewNotificationRequestV26.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 :
                         NewNotificationRequestV26.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER)))
+                .physicalCommunicationPriority(getValue(data, PHYSICAL_COMMUNICATION_PRIORITY.key) == null ?
+                        null : Integer.parseInt(getValue(data, PHYSICAL_COMMUNICATION_PRIORITY.key)))
                 .paFee(getValue(data, PA_FEE.key) == null ? null : Integer.parseInt(getValue(data, PA_FEE.key)))
                 .vat(getValue(data, VAT.key) == null ? null : Integer.parseInt(getValue(data, VAT.key)))
                 .additionalLanguages(getValue(data, ADDITIONAL_LANGUAGES.key) == null ?

@@ -175,10 +175,10 @@ public class NotificationStepsV26 implements NotificationStepsInterface {
         switch (condition.toUpperCase()) {
             case "SAME_IUV_AS_RECIPIENT_INDEX" -> {
                 Assertions.assertDoesNotThrow(() -> Objects.requireNonNull(notificationRequest.getRecipients().get(otherRecipientIndex - 1).getPayments()).get(0));
-                String previousIUV = notificationRequest.getRecipients().get(otherRecipientIndex).getPayments().get(0).getPagoPa().getNoticeCode();
+                String previousIUV = notificationRequest.getRecipients().get(otherRecipientIndex - 1).getPayments().get(0).getPagoPa().getNoticeCode();
                 int currentRecipientNumber = notificationRequest.getRecipients().size();
                 addRecipientToNotification(destinatario, data);
-                NotificationRecipientV24 recipientAdded = notificationRequest.getRecipients().get(currentRecipientNumber + 1);
+                NotificationRecipientV24 recipientAdded = notificationRequest.getRecipients().get(currentRecipientNumber);
                 recipientAdded.getPayments().get(0).getPagoPa().setNoticeCode(previousIUV);
             }
         }
