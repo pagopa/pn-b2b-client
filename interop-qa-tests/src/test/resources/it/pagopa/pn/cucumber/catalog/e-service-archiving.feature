@@ -592,9 +592,11 @@ Feature: Archiviazione manuale di un e-service
   @happy-path
   Scenario Outline: [ARCHIVING_ESERVICE_BY_JOB_1.1] Raggiunta la data finale del tempo di preavviso per l'archiviazione di un e-service, questo risulterà correttamente archiviato
     Then l'utente è un "admin" di "PA1"
-    And la versione più recente dell'e-service è in stato "ARCHIVED"
+    #versione più recente
+    And il descrittore con id "<secondDescriptorId>" dell'e-service con id "<eserviceId>" è in stato "ARCHIVED"
     And il descrittore con id "<secondDescriptorId>" dell'e-service avente id "<eserviceId>" è stato correttamente archiviato tramite l'archiviazione manuale dell'intero e-service
-    And la vecchia versione dell'e-service è in stato "ARCHIVED"
+    #versione meno recente
+    And il descrittore con id "<firstDescriptorId>" dell'e-service con id "<eserviceId>" è in stato "ARCHIVED"
     And il descrittore con id "<firstDescriptorId>" dell'e-service avente id "<eserviceId>" è stato correttamente archiviato tramite l'archiviazione manuale dell'intero e-service
     And la richiesta di fruizione con id "<agreementId>" assume lo stato "ACTIVE"
 
@@ -606,15 +608,15 @@ Feature: Archiviazione manuale di un e-service
       | 6d3174d4-f9bd-4223-a77b-daf2883790fc | 7c04c3c1-deac-4130-91df-805aab47ee12 | c211c470-daab-4b19-aa36-0a53ac5b7940 | a4e5e529-639e-4ada-83b0-e205e6c7b062 |
 #      firstDescriptorId=descrittore in Archiving_Suspended . secondDescriptorId=descrittore in Archiving
       | ee9dbc42-289f-400d-86f8-51e8fb704933 | 3c63c85f-7dac-4cdb-a9fe-586442624677 | 45d822b9-066c-4a77-b4a1-331135496907 | acd777e8-8b76-46cb-b822-3656601302eb |
-#      firstDescriptorId=descrittore in Archived . secondDescriptorId=descrittore in Archiving
-      | c59ecfe2-a4c5-488d-a5b9-a7d3602671a4 | 6d40805a-3c65-4363-8f4e-ba3b18b7c7b5 | febf05bc-2a8d-4012-ba69-73e90292f185 | 3983bf4e-77f1-4dbc-be29-fa2db0337080 |
 
   @happy-path
   Scenario Outline: [ARCHIVING_ESERVICE_BY_JOB_1.2] Se la data finale del tempo di preavviso per l'archiviazione di un e-service non viene raggiunta, questo non risulterà ancora archiviato
     Then l'utente è un "admin" di "PA1"
-    And la versione più recente dell'e-service è in stato "<secondDescriptorState>"
+    #versione più recente
+    And il descrittore con id "<secondDescriptorId>" dell'e-service con id "<eserviceId>" è in stato "<secondDescriptorState>"
     And il descrittore con id "<secondDescriptorId>" dell'e-service avente id "<eserviceId>" è in fase di archiviazione tramite l'archiviazione manuale dell'intero e-service
-    And la vecchia versione dell'e-service è in stato "<firstDescriptorState>"
+    #versione meno recente
+    And il descrittore con id "<firstDescriptorId>" dell'e-service con id "<eserviceId>" è in stato "<firstDescriptorState>"
     And il descrittore con id "<firstDescriptorId>" dell'e-service avente id "<eserviceId>" è in fase di archiviazione tramite l'archiviazione manuale dell'intero e-service
     And la richiesta di fruizione con id "<agreementId>" assume lo stato "ACTIVE"
 
@@ -628,3 +630,19 @@ Feature: Archiviazione manuale di un e-service
       | a629374c-a20d-4e19-b4f8-0e56a39a6e18 | fb6db58d-a4cc-4b84-b157-e2cdd1bf4a1b | 929c62d0-57a0-41e7-94b3-56c9d34277d5 | ARCHIVING_SUSPENDED  | ARCHIVING             | 857ecb8f-1a0a-46d8-95ac-1fc0873fdc84 |
 #      firstDescriptorId=descrittore in Archived . secondDescriptorId=descrittore in Archiving
       | 50bc283a-4a63-445b-a042-2b545501c988 | 9900424b-c0da-49d8-92ef-6661a65d8898 | aaaff1d2-d964-41f8-b8ef-dcbd35ea6f4e | ARCHIVED             | ARCHIVING             | 8d145f6d-862d-44bf-afb8-17e22bdac866 |
+
+  @happy-path
+  Scenario Outline: [ARCHIVING_ESERVICE_BY_JOB_1.3] Dopo il periodo di preavviso, un e-service con primo descrittore archiviato automaticamente e secondo descrittore in archiviazione manuale dell'intero e-service risulta archiviato
+    Then l'utente è un "admin" di "PA1"
+    #versione più recente
+    And il descrittore con id "<secondDescriptorId>" dell'e-service con id "<eserviceId>" è in stato "ARCHIVED"
+    And il descrittore con id "<secondDescriptorId>" dell'e-service avente id "<eserviceId>" è stato correttamente archiviato tramite l'archiviazione manuale dell'intero e-service
+    #versione meno recente
+    And il descrittore con id "<firstDescriptorId>" dell'e-service con id "<eserviceId>" è in stato "ARCHIVED"
+    And il descrittore con id "<firstDescriptorId>" dell'e-service avente id "<eserviceId>" NON è stato archiviato tramite archiviazione manuale
+    And la richiesta di fruizione con id "<agreementId>" assume lo stato "ACTIVE"
+
+    Examples:
+      | firstDescriptorId                    | secondDescriptorId                   | eserviceId                           | agreementId                          |
+#      firstDescriptorId=descrittore in Archived . secondDescriptorId=descrittore in Archiving
+      | c59ecfe2-a4c5-488d-a5b9-a7d3602671a4 | 6d40805a-3c65-4363-8f4e-ba3b18b7c7b5 | febf05bc-2a8d-4012-ba69-73e90292f185 | 3983bf4e-77f1-4dbc-be29-fa2db0337080 |

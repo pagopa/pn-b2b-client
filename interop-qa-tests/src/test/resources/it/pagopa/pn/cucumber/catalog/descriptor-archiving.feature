@@ -313,9 +313,11 @@ Feature: Archiviazione manuale di un descrittore
   @happy-path
   Scenario Outline: [ARCHIVING_DESCRIPTOR_BY_JOB_1.1] Raggiunta la data finale del tempo di preavviso per l'archiviazione di un descrittore, questo risulterà correttamente archiviato
     Then l'utente è un "admin" di "PA1"
-    And la versione più recente dell'e-service è in stato "PUBLISHED"
-    And il descrittore con id "<secondDescriptorId>" dell'e-service avente id "<eserviceId>" NON è stato archiviato
-    And la vecchia versione dell'e-service è in stato "ARCHIVED"
+    #versione più recente
+    And il descrittore con id "<secondDescriptorId>" dell'e-service con id "<eserviceId>" è in stato "PUBLISHED"
+    And il descrittore con id "<secondDescriptorId>" dell'e-service avente id "<eserviceId>" NON è stato archiviato tramite archiviazione manuale
+    #versione meno recente
+    And il descrittore con id "<firstDescriptorId>" dell'e-service con id "<eserviceId>" è in stato "ARCHIVED"
     And il descrittore con id "<firstDescriptorId>" dell'e-service avente id "<eserviceId>" è stato correttamente archiviato tramite l'archiviazione manuale del singolo descrittore
     And la richiesta di fruizione con id "<agreementId>" assume lo stato "ACTIVE"
 
@@ -329,9 +331,11 @@ Feature: Archiviazione manuale di un descrittore
   @happy-path
   Scenario Outline: [ARCHIVING_DESCRIPTOR_BY_JOB_1.2] Se la data finale del tempo di preavviso per l'archiviazione di un descrittore non viene raggiunta, questo non risulterà ancora archiviato
     Then l'utente è un "admin" di "PA1"
-    And la versione più recente dell'e-service è in stato "PUBLISHED"
-    And il descrittore con id "<secondDescriptorId>" dell'e-service avente id "<eserviceId>" NON è stato archiviato
-    And la vecchia versione dell'e-service è in stato "<secondDescriptorState>"
+    #versione più recente
+    And il descrittore con id "<secondDescriptorId>" dell'e-service con id "<eserviceId>" è in stato "PUBLISHED"
+    And il descrittore con id "<secondDescriptorId>" dell'e-service avente id "<eserviceId>" NON è stato archiviato tramite archiviazione manuale
+    #versione meno recente
+    And il descrittore con id "<firstDescriptorId>" dell'e-service con id "<eserviceId>" è in stato "<secondDescriptorState>"
 #    utilizziamo questo step anche nel caso di archiviazione in corso poichè viene controllata la presenza del campo archivingSchedule
     And il descrittore con id "<firstDescriptorId>" dell'e-service avente id "<eserviceId>" è stato correttamente archiviato tramite l'archiviazione manuale del singolo descrittore
     And la richiesta di fruizione con id "<agreementId>" assume lo stato "ACTIVE"
