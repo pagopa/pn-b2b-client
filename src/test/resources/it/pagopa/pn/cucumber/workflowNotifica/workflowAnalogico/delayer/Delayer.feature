@@ -987,9 +987,9 @@
     Scenario: [DELAYER-TC16] Verifica che priorità 100 della settimana successiva preceda priorità 80 congelata dalla settimana precedente
       Given vengono puliti i dati dalle tabelle target
 
-      Given il CSV "tcSenderPriorityFrozenW1.csv" contiene 6 notifiche distribuite tra i seguenti test case:
+      Given il CSV "tcSenderPriorityFrozenW1.csv" contiene 8 notifiche distribuite tra i seguenti test case:
         | seed                      | quantita |
-        | tcSenderPriorityFrozenW1_ | 6        |
+        | tcSenderPriorityFrozenW1_ | 8        |
       And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
         | senderId              | comparative | limit |
         | ranking2nd_890~890~P1 | esattamente | 5     |
@@ -1001,8 +1001,7 @@
         | unifiedDeliveryDriverId      | comparative | limit |
         | driverRanking2nd_890~P1      | esattamente | 5     |
         | driverRanking2nd_890~CAP1_P1 | esattamente | 5     |
-      And viene impostato il limite massimo di 5 spedizioni in SENT_TO_PREPARE_PHASE_2 per ogni esecuzione di DelayerToPaperChannelStateMachine
-      And si presuppone che la capacità di stampa giornaliera sia esattamente 5
+      And si presuppone che la capacità di stampa giornaliera sia esattamente 1
       And il CSV "tcSenderPriorityFrozenW1.csv" è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
       And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
       When viene avviata la step function BatchWorkflowStateMachine
