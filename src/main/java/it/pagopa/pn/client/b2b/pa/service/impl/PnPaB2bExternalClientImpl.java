@@ -353,6 +353,25 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         return senderReadB2BApi.retrieveNotificationRequestStatusV25(notificationRequestId, protocolNumber, idempotenceToken);
     }
 
+    //V26
+    @Override
+    public NewNotificationResponse sendNewNotificationV26(NewNotificationRequestV26 newNotificationRequest) {
+        refreshAndSetTokenInteropClient();
+        return newNotificationApi.sendNewNotificationV26(newNotificationRequest);
+    }
+
+    @Override
+    public NewNotificationRequestStatusResponseV26 getNotificationRequestStatusV26(String notificationRequestId) {
+        refreshAndSetTokenInteropClient();
+        return senderReadB2BApi.retrieveNotificationRequestStatusV26(notificationRequestId, null, null);
+    }
+
+    @Override
+    public NewNotificationRequestStatusResponseV26 getNotificationRequestStatusAllParamV26(String notificationRequestId, String protocolNumber, String idempotenceToken) {
+        refreshAndSetTokenInteropClient();
+        return senderReadB2BApi.retrieveNotificationRequestStatusV26(notificationRequestId, protocolNumber, idempotenceToken);
+    }
+
 
     //FullSentNotifications
     @Override
@@ -407,6 +426,12 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     public FullSentNotificationV28 getSentNotificationV28(String iun) {
         refreshAndSetTokenInteropClient();
         return senderReadB2BApi.retrieveSentNotificationV28(iun);
+    }
+
+    @Override
+    public FullSentNotificationV29 getSentNotificationV29(String iun) {
+        refreshAndSetTokenInteropClient();
+        return senderReadB2BApi.retrieveSentNotificationV29(iun);
     }
 
     @Override

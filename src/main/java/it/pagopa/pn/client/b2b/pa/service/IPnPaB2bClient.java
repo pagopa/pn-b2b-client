@@ -71,6 +71,16 @@ public interface IPnPaB2bClient extends SettableApiKey {
     NewNotificationRequestStatusResponseV25 getNotificationRequestStatusAllParamV25(String notificationRequestId, String protocolNumber, String idempotenceToken);
 
     /**
+     * V26
+     */
+    NewNotificationResponse sendNewNotificationV26(NewNotificationRequestV26 newNotificationRequest);
+
+    NewNotificationRequestStatusResponseV26 getNotificationRequestStatusV26(String notificationRequestId);
+
+    NewNotificationRequestStatusResponseV26 getNotificationRequestStatusAllParamV26(String notificationRequestId, String protocolNumber, String idempotenceToken);
+
+
+    /**
      * FullSentNotifications
      */
     FullSentNotification getSentNotificationV1(String iun);
@@ -90,6 +100,8 @@ public interface IPnPaB2bClient extends SettableApiKey {
     FullSentNotificationV27 getSentNotificationV27(String iun);
 
     FullSentNotificationV28 getSentNotificationV28(String iun);
+
+    FullSentNotificationV29 getSentNotificationV29(String iun);
 
 
     NotificationAttachmentDownloadMetadataResponse getSentNotificationDocument(String iun, Integer docIndex);
