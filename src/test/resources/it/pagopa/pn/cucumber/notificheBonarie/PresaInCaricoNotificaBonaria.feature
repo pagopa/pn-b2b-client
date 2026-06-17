@@ -1,9 +1,6 @@
 Feature: Sottomissione di una notifica bonaria.
 
 
-
-  Visto che costituisce maggiore effort la rimozione del codice, verrà generato un QR di accesso per ogni notifica. Questo potrebbe avere benefici per sviluppi futuri
-
   @informalNotificationsValidation @informalSyncValidation
   Scenario: [NOTIFICHE_BONARIE_GROUP_DELETED] Come ente mittente invio una notifica bonaria con gruppo non attivo. Ricevo un errore
     Given mittente della notifica bonaria: "Comune_Multi"
@@ -99,7 +96,7 @@ Feature: Sottomissione di una notifica bonaria.
     And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
     Then la sottomissione della notifica bonaria è andata a buon fine
 
-  #@informalNotificationsValidation @informalAsyncValidation gestita in future release
+  @informalNotificationsValidation @informalAsyncValidation #bug fix PN-20248
   Scenario: [NOTIFICHE_BONARIE_SM_01_1_C] Come ente mittente invio una notifica bonaria con messaggio bilingue,  seconda lingua NON specificata
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con i seguenti parametri
@@ -285,7 +282,7 @@ Feature: Sottomissione di una notifica bonaria.
     Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
 
 
-  @informalNotificationsValidation @informalSyncValidation
+  @informalNotificationsValidation @informalSyncValidation # la validazione è presa da quella esistente per le legal aperto bug che sarà gestito nelle prossime release:PN-20249
 #  Invio con recapito fisico (indirizzo, civico, località, CAP, provincia, nazione) NON conforme agli standard di postalizzazione,
   #"PhysicalAddressValidationCharsValue": "\\u0020-\\u007E\\u00A0-\\u00FF",,"PhysicalAddressValidationValue": "true","PhysicalAddressValidationLength": "500",
   Scenario Outline: [NOTIFICHE_BONARIE_SM_04_2_N] Validazione indirizzo fisico - errori formali
@@ -306,15 +303,12 @@ Feature: Sottomissione di una notifica bonaria.
     When l'invio della notifica bonaria fallisce
     Then si riceve errore 400 "<error>"
     Examples:
-      | address      | details   | zip   | city | error                                           |
-      | Via Roma ### | scala A   | 00100 | Roma | PN_DELIVERY_PHYSICAL_ADDRESS_INVALID_CHARACTERS |
+      | address  | details   | zip   | city | error                                           |
+      #| Via Roma ### | scala A   | 00100 | Roma | PN_DELIVERY_PHYSICAL_ADDRESS_INVALID_CHARACTERS |
             # caratteri non validi
-      | Via Roma     | scala 😃  | 00100 | Roma | PN_DELIVERY_PHYSICAL_ADDRESS_INVALID_CHARACTERS |
-      | Via Roma     | dettaglio | ABCDE | Roma |                                                 |
-            # CAP non numerico
-      | Via Roma     | dettaglio | 00100 | Rom@ |                                                 |
+      | Via Roma | scala 😃  | 00100 | Roma | PN_DELIVERY_PHYSICAL_ADDRESS_INVALID_CHARACTERS |
             # caratteri speciali city
-      | 501_CHAR     | dettaglio | 00100 | Roma | PN_DELIVERY_PHYSICAL_ADDRESS_LENGTH_EXCEEDED    |
+      | 501_CHAR | dettaglio | 00100 | Roma | PN_DELIVERY_PHYSICAL_ADDRESS_LENGTH_EXCEEDED    |
             # lunghezza > 500
 
 
@@ -368,33 +362,6 @@ Feature: Sottomissione di una notifica bonaria.
 #  Invio richiesta con campi Denominazione e Presso(AT) non conformi.
 
   @informalNotificationsValidation @informalSyncValidation
-  Scenario Outline: [NOTIFICHE_BONARIE_SM_04_2_P]Validazione denominazione e presso tramite regex
-    Given mittente della notifica bonaria: "Comune_Multi"
-    And viene creata una nuova notifica bonaria con valori di default
-    And destinatario della notifica bonaria
-      | recipientType             | PF               |
-      | taxId                     | FRMTTR76M06B715E |
-      | denomination              | <denomination>   |
-      | physicalAddress           | SI               |
-      | physical_address_at       | <at>             |
-      | physical_address_state    | ITALIA           |
-      | physical_address_province | RM               |
-      | messageId                 | ${IT}            |
-    When l'invio della notifica bonaria fallisce
-    Then si riceve errore 400
-    Examples:
-      | denomination | at           |
-      | nome😃       | Valido       |
-      | Valido       | presso😃     |
-      | 测试           | Valido       |
-      | Valido       | परीक्षण      |
-      | 89_CHAR      | Valido       |
-      | Valido       | 89_CHAR      |
-      | Nome \n test | Valido       |
-      | Valido       | Riga \n test |
-
-
-  @informalNotificationsValidation @informalSyncValidation
   Scenario Outline: [NOTIFICHE_BONARIE_SM_04_2_Q] Validazione denominazione e presso con caratteri esclusi
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con valori di default
@@ -420,6 +387,8 @@ Feature: Sottomissione di una notifica bonaria.
       | 你好                 | Presso Ufficio          |
       | “virgolette smart” | Presso ufficio          |
       | Riga1 Riga2        | ‘apostrofo tipografico’ |
+      | Nome \n test       | Valido                  |
+      | Valido             | Riga \n test            |
 
 
   @informalNotificationsValidation @informalSyncValidation

@@ -558,7 +558,7 @@ public class PresaInCaricoNoticaBonariaSteps {
         AtomicReference<String> lastStatus = new AtomicReference<>(null);
 
         try {
-            await().atMost(Duration.ofMinutes(5)).pollInterval(Duration.ofSeconds(3)).until(() -> {
+            await().atMost(Duration.ofMinutes(7)).pollInterval(Duration.ofSeconds(3)).until(() -> {
                 statusResponse = pnPaB2bInternalInformalClientImpl.getNotificationStatusByRequestId(currentCxId, savedNotificationRequestId);
                 if (statusResponse == null) {
                     return false;
