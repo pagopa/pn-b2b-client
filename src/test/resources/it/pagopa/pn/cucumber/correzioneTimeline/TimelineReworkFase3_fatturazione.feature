@@ -555,40 +555,40 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-#    And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
-#    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-#    When viene invocata una richiesta di restart per la notifica appena creata
-#    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
-#    And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
-#    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
-#    And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
-#    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
-#      | iun             | auto                                                                    |
-#      | tag             | AUD_NT_UPDATE_COST                                                      |
-#      | recIndex        | recIndex=0                                                              |
-#      | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
-#      | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-#    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
-#      | iun             | auto                                                                     |
-#      | tag             | AUD_NT_UPDATE_COST                                                       |
-#      | recIndex        | recIndex=0                                                               |
-#      | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1                                     |
-#      | invalidatedCost | SecondAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-#    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0.REWORK_0"
-#    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1.REWORK_0"
-#    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-#    And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
-#    And si verifica che la richiesta di restart effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
-#    And la timeline contiene elementi con la stringa "REWORK_"
-#    And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
-#    Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
-#      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0 |
-#      | element2 | SEND_ANALOG_DOMICILE;ATTEMPT_1;RECINDEX_0 |
-#      | element3 | REFINEMENT;RECINDEX_0                     |
-#    And controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato NEW
-#      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0 |
-#      | element2 | SEND_ANALOG_DOMICILE;ATTEMPT_1;RECINDEX_0 |
-#      | element3 | REFINEMENT;RECINDEX_0                     |
+    And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    When viene invocata una richiesta di restart per la notifica appena creata
+    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
+      | iun             | auto                                                                    |
+      | tag             | AUD_NT_UPDATE_COST                                                      |
+      | recIndex        | recIndex=0                                                              |
+      | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
+      | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
+    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
+      | iun             | auto                                                                     |
+      | tag             | AUD_NT_UPDATE_COST                                                       |
+      | recIndex        | recIndex=0                                                               |
+      | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1                                     |
+      | invalidatedCost | SecondAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0.REWORK_0"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1.REWORK_0"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
+    And si verifica che la richiesta di restart effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
+    And la timeline contiene elementi con la stringa "REWORK_"
+    And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
+    Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
+      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0 |
+      | element2 | SEND_ANALOG_DOMICILE;ATTEMPT_1;RECINDEX_0 |
+      | element3 | REFINEMENT;RECINDEX_0                     |
+    And controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato NEW
+      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0 |
+      | element2 | SEND_ANALOG_DOMICILE;ATTEMPT_1;RECINDEX_0 |
+      | element3 | REFINEMENT;RECINDEX_0                     |
 
   @timelineReworkF3 @checkRestart
   Scenario: [TR3_RESTART_10] Restart di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (al restart va in OK all'attempt 0)
