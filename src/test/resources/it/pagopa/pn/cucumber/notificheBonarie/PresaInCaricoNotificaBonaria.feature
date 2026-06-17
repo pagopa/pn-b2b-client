@@ -212,25 +212,25 @@ Feature: Sottomissione di una notifica bonaria.
 
 
 
-  @informalNotificationsValidation @informalSyncValidation
-  Scenario: [NOTIFICHE_BONARIE_SM_04_2_D3] Invio bonaria verso 2 destinatari con stesso message id
-  Nome Parametro Max numero destinatari: PN_DELIVERY_INFORMALNOTIFICATIONMAXRECIPIENTS.
-    Given mittente della notifica bonaria: "Comune_Multi"
-    And viene creata una nuova notifica bonaria con valori di default
-    And destinatario della notifica bonaria
-      | recipientType        | PF                |
-      | taxId                | FRMTTR76M06B715E  |
-      | denomination         | Ettore Fieramosca |
-      | messageId            | ${IT}             |
-      | payment_multy_number | 1                 |
-    And destinatario della notifica bonaria
-      | recipientType        | PF               |
-      | taxId                | GLLGLL64B15G702I |
-      | denomination         | Galileo Galilei  |
-      | messageId            | ${IT}            |
-      | payment_multy_number | 1                |
-    When viene inviata una nuova notifica bonaria
-    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+#  @informalNotificationsValidation @informalSyncValidation coperto da [NOTIFICHE_BONARIE_SM_01_1_D]
+#  Scenario: [NOTIFICHE_BONARIE_SM_04_2_D3] Invio bonaria verso 2 destinatari con stesso message id
+#  Nome Parametro Max numero destinatari: PN_DELIVERY_INFORMALNOTIFICATIONMAXRECIPIENTS.
+#    Given mittente della notifica bonaria: "Comune_Multi"
+#    And viene creata una nuova notifica bonaria con valori di default
+#    And destinatario della notifica bonaria
+#      | recipientType        | PF                |
+#      | taxId                | FRMTTR76M06B715E  |
+#      | denomination         | Ettore Fieramosca |
+#      | messageId            | ${IT}             |
+#      | payment_multy_number | 1                 |
+#    And destinatario della notifica bonaria
+#      | recipientType        | PF               |
+#      | taxId                | GLLGLL64B15G702I |
+#      | denomination         | Galileo Galilei  |
+#      | messageId            | ${IT}            |
+#      | payment_multy_number | 1                |
+#    When viene inviata una nuova notifica bonaria
+#    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
 
   @informalNotificationsValidation @informalSyncValidation
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_E] Invio bonaria con lingua secondaria non supportata 1
