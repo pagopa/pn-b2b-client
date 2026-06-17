@@ -169,10 +169,11 @@ Feature: Archiviazione manuale di un e-service
 
   Scenario: [MANUAL_ARCHIVING_ESERVICE_3.1] L'aggiornamento di un agreement nei confronti della versione più recente di un e-service NON va a buon fine nel caso quest'ultimo sia in archiviazione
     Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service con un descrittore in stato "<initialFirstDescriptorState>"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    Given l'utente è un "admin" di "PA2"
     When l'utente richiede un'operazione di upgrade di quella richiesta di fruizione
     Then si ottiene response status code 400
     And la richiesta di fruizione assume lo stato "ACTIVE"
