@@ -78,6 +78,9 @@ public class AttributeCommonContext {
                         .id(attr.getId())
                         .explicitAttributeVerification(attr.getExplicitAttributeVerification())
                         .dailyCallsPerConsumer(attr.getDailyCallsPerConsumer());
+                if (attr.getDiscreteConfig() != null) {
+                    seed.setDiscreteConfig(attr.getDiscreteConfig());
+                }
                 groupSeed.add(seed);
             }
             seeds.add(groupSeed);
