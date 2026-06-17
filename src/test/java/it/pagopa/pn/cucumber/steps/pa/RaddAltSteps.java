@@ -114,61 +114,49 @@ public class RaddAltSteps {
     }
 
 
-//    @Given("carico i dati della notifica con indice {int}")
-//    public void caricoDatiConIndice(int index) throws IOException {
-//
+//    @Given("carico i dati della notifica con chiave {string}")
+//    public void caricoDatiConChiave(String key) throws IOException {
 //        Path path = Paths.get("target/data-preparation.json");
+//
 //        if (!Files.exists(path)) {
 //            throw new RuntimeException("File non trovato");
 //        }
 //        ObjectMapper mapper = new ObjectMapper();
-//        List<Map<String, String>> dataList = mapper.readValue(
-//                path.toFile(),
-//                new TypeReference<List<Map<String, String>>>() {}
-//        );
-//        Map<String, String> data = dataList.stream()
-//                .filter(d -> String.valueOf(index).equals(d.get("index")))
-//                .findFirst()
-//                .orElseThrow(() -> new RuntimeException("Record con index " + index + " non trovato"));
+//        Map<String, Map<String, String>> allData = mapper.readValue(path.toFile(), new TypeReference<>() {});
+//        Map<String, String> data = allData.get(key);
 //
+//        if (data == null) {
+//            throw new RuntimeException("Chiave non trovata: " + key);
+//        }
 //        this.iun = data.get("iun");
 //        this.recipientType = data.get("recipientType");
 //        this.pa = data.get("pa");
 //        this.qrCode = data.get("qrCode");
 //        this.cf = data.get("cf");
-//
-//        log.info("Caricati dati per index {}", index);
+//        log.info("Caricati dati per chiave {}", key);
 //    }
-
-//    @And("salvo i dati della notifica con indice {int}")
-//    public void salvaDatiConIndice(int index) throws IOException {
 //
-//        Map<String, String> data = new LinkedHashMap<>();
-//        data.put("index", String.valueOf(index));
+//
+//    @And("salvo i dati della notifica con chiave {string}")
+//    public void salvaDatiConChiave(String key) throws IOException {
+//
+//        ObjectMapper mapper = new ObjectMapper();
+//        Path path = Paths.get("target/data-preparation.json");
+//        Map<String, Map<String, String>> allData = new HashMap<>();
+//
+//        if (Files.exists(path)) {
+//            allData = mapper.readValue(path.toFile(), new TypeReference<>() {
+//            });
+//        }
+//        Map<String, String> data = new HashMap<>();
 //        data.put("iun", this.iun);
 //        data.put("recipientType", this.recipientType);
 //        data.put("pa", this.pa);
 //        data.put("qrCode", this.qrCode);
 //        data.put("cf", this.cf);
-//
-//        ObjectMapper mapper = new ObjectMapper();
-//        Path path = Paths.get("target/data-preparation.json");
-//
-//        List<Map<String, String>> existing = new ArrayList<>();
-//
-//        if (Files.exists(path)) {
-//            existing = mapper.readValue(path.toFile(),
-//                    new TypeReference<List<Map<String, String>>>() {
-//                    });
-//        }
-//        existing.removeIf(d -> String.valueOf(index).equals(d.get("index")));
-//        existing.add(data);
-//        mapper.writeValue(path.toFile(), existing);
-//        log.info("Salvato record con index {}", index);
 //    }
 
-
-    @When("L'operatore scansione il qrCode per recuperare gli atti di {destinatario}")
+        @When("L'operatore scansione il qrCode per recuperare gli atti di {destinatario}")
     public void lOperatoreScansioneIlQrCodePerRecuperareGliAttiAlternative(Destinatario destinatario) {
         selectUserRaddAlternative(destinatario);
         ActInquiryResponse actInquiryResponse = raddClient.actInquiry(uid, this.currentUserCf, this.recipientType, qrCode, null);
