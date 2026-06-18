@@ -610,44 +610,46 @@ public class NotificationStepsConfig {
         this.configNotificationTests(excludedRoles, this.notificationTestsManager::before, ConfigStrategy.PER_ROLE);
     }
 
-    @After("@bff-notification and not @disable-notifications-hooks")
-    public void switchOffInAppNotification() throws Exception {
-        // TODO 13 01 2026 si intende ridurre la lista durante i test attraverso sperimentazione,
-        //  fino a che ogni ruolo permesso avrà la sua configurazione e non ci sarà più bisogno di escluderne qualcuno
-        List<String> excludedRoles = rolesNotificationConfig.keySet().stream()
-                .filter(role -> !List.of("admin").contains(role))
-                .toList();
-        this.configNotificationTests(excludedRoles, this.notificationTestsManager::after, ConfigStrategy.NO_CONFIG);
-    }
-
-    // NOTE 13 01 2026 Potrebbero presentarsi problemi di race conditions (non andrebbero cancellate le notifiche se un altro test è in corso)
-    @After("@bff-notification and not @disable-notifications-hooks")
-    public void deleteAllNotifications() throws Exception {
-        PollingService pollingService = this.sharedStepsContext.getPollingService();
-        IHttpExecutor notificationExecutor = this.notificationClient.getHttpCallExecutor();
-        IHttpExecutor executor = this.sharedStepsContext.getHttpCallExecutor();
-        applyTaskForEveryUser(List.of("support"), role -> {
-            List<Notification> notifications = pollingService.makePolling(
-                    this.notificationClient::getAll,
-                    res -> notificationExecutor.getResponseStatus().is2xxSuccessful(),
-                    "Reperimento notifiche fallito");
-
-            while (!notifications.isEmpty()) {
-                List<UUID> notificationsIds = notifications.stream().map(Notification::getId).toList();
-
-                /* TODO 12/01/2026 per bypassare nel breve termine una problematica di sviluppo sono
-                 * utilizzati due executors distinti. Correggere usandone uno solo appena possibile. */
-                pollingService.makePolling(
-                        () -> executor.performCall(() -> this.notificationClient.deleteAll(notificationsIds)),
-                        HttpStatus::is2xxSuccessful,
-                        "Eliminazione notifiche fallita");
-                notifications = pollingService.makePolling(
-                        this.notificationClient::getAll,
-                        res -> notificationExecutor.getResponseStatus().is2xxSuccessful(),
-                        "Reperimento notifiche fallito");
-            }
-        });
-    }
+// Spegnere ed eliminare le notifiche da pochi o tutti gli utenti può determinare un disturbo di altri test in QA
+//
+//    @After("@bff-notification and not @disable-notifications-hooks")
+//    public void switchOffInAppNotification() throws Exception {
+//        // TODO 13 01 2026 si intende ridurre la lista durante i test attraverso sperimentazione,
+//        //  fino a che ogni ruolo permesso avrà la sua configurazione e non ci sarà più bisogno di escluderne qualcuno
+//        List<String> excludedRoles = rolesNotificationConfig.keySet().stream()
+//                .filter(role -> !List.of("admin").contains(role))
+//                .toList();
+//        this.configNotificationTests(excludedRoles, this.notificationTestsManager::after, ConfigStrategy.NO_CONFIG);
+//    }
+//
+//    // NOTE 13 01 2026 Potrebbero presentarsi problemi di race conditions (non andrebbero cancellate le notifiche se un altro test è in corso)
+//    @After("@bff-notification and not @disable-notifications-hooks")
+//    public void deleteAllNotifications() throws Exception {
+//        PollingService pollingService = this.sharedStepsContext.getPollingService();
+//        IHttpExecutor notificationExecutor = this.notificationClient.getHttpCallExecutor();
+//        IHttpExecutor executor = this.sharedStepsContext.getHttpCallExecutor();
+//        applyTaskForEveryUser(List.of("support"), role -> {
+//            List<Notification> notifications = pollingService.makePolling(
+//                    this.notificationClient::getAll,
+//                    res -> notificationExecutor.getResponseStatus().is2xxSuccessful(),
+//                    "Reperimento notifiche fallito");
+//
+//            while (!notifications.isEmpty()) {
+//                List<UUID> notificationsIds = notifications.stream().map(Notification::getId).toList();
+//
+//                /* TODO 12/01/2026 per bypassare nel breve termine una problematica di sviluppo sono
+//                 * utilizzati due executors distinti. Correggere usandone uno solo appena possibile. */
+//                pollingService.makePolling(
+//                        () -> executor.performCall(() -> this.notificationClient.deleteAll(notificationsIds)),
+//                        HttpStatus::is2xxSuccessful,
+//                        "Eliminazione notifiche fallita");
+//                notifications = pollingService.makePolling(
+//                        this.notificationClient::getAll,
+//                        res -> notificationExecutor.getResponseStatus().is2xxSuccessful(),
+//                        "Reperimento notifiche fallito");
+//            }
+//        });
+//    }
 
     private void configNotificationTests(List<String> excludedRoles,
                                          ThrowingConsumer<Task> hook, ConfigStrategy configStrategy
