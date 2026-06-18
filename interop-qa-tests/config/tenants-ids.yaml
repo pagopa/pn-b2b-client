@@ -13,6 +13,8 @@ userRoles:
   security: [ "e0477bcc-3baf-4755-aa31-375c051acb44" ]
   "api,security": [ "e490f02e-9429-4b38-bb11-ddb8a561fb62" ]
   support: [ "e0477bcc-3baf-4755-aa31-375c051acb44" ]
+  reviewer: [ "f8cda410-622d-47a6-9365-506b361258cf" ]
+  viewer: [ "46af2a8a-6c77-4b95-83a1-9748b4c64cc4" ]
 tenantName:
   dev: "PagoPA S.p.A."
   refactorDev: "PagoPA S.p.A."
@@ -34,6 +36,8 @@ userRoles:
   security: [ "e0477bcc-3baf-4755-aa31-375c051acb44" ]
   "api,security": [ "e490f02e-9429-4b38-bb11-ddb8a561fb62" ]
   support: [ "e0477bcc-3baf-4755-aa31-375c051acb44" ]
+  reviewer: [ "f8cda410-622d-47a6-9365-506b361258cf" ]
+  viewer: [ "46af2a8a-6c77-4b95-83a1-9748b4c64cc4" ]
 tenantName:
   dev: "KYMA MOBILITA' S.P.A."
   refactorDev: "KYMA MOBILITA' S.P.A."
@@ -76,6 +80,8 @@ userRoles:
   security: [ "78b9aa62-a472-4c87-8173-3f73bb2e04b5" ]
   "api,security": [ "e490f02e-9429-4b38-bb11-ddb8a561fb62" ]
   support: [ "78b9aa62-a472-4c87-8173-3f73bb2e04b5" ]
+  reviewer: [ "f8cda410-622d-47a6-9365-506b361258cf" ]
+  viewer: [ "46af2a8a-6c77-4b95-83a1-9748b4c64cc4" ]
 tenantName:
   dev: "Agenzia per L'Italia Digitale"
   refactorDev: "Agenzia per L'Italia Digitale"
@@ -97,6 +103,8 @@ userRoles:
   security: [ "e490f02e-9429-4b38-bb11-ddb8a561fb62" ]
   "api,security": [ "17a84b7b-dce6-4b8f-a1ae-85926c55f02e" ]
   support: [ "e490f02e-9429-4b38-bb11-ddb8a561fb62" ]
+  reviewer: [ "c1c8ec42-82b2-4ea3-8088-f18846668d23" ]
+  viewer: [ "29d47f36-85d2-42a2-aa49-f520e16d9e00" ]
 tenantName:
   dev: "SOGECAP"
   refactorDev: "SOGECAP"
@@ -118,6 +126,8 @@ userRoles:
   security: [ "1d3d77d0-c1bd-420a-b748-998e373f7c81" ]
   "api,security": [ "b97b6897-9aa1-41ca-9390-86e8c430fdc9" ]
   support: [ "1d3d77d0-c1bd-420a-b748-998e373f7c81" ]
+  reviewer: [ "f8cda410-622d-47a6-9365-506b361258cf" ]
+  viewer: [ "46af2a8a-6c77-4b95-83a1-9748b4c64cc4" ]
 tenantName:
   dev: "Comune di Pozzallo"
   refactorDev: "Comune di Pozzallo"
@@ -139,6 +149,8 @@ userRoles:
   security: [ "1d3d77d0-c1bd-420a-b748-998e373f7c81" ]
   "api,security": [ "b97b6897-9aa1-41ca-9390-86e8c430fdc9" ]
   support: [ "1d3d77d0-c1bd-420a-b748-998e373f7c81" ]
+  reviewer: [ "f8cda410-622d-47a6-9365-506b361258cf" ]
+  viewer: [ "46af2a8a-6c77-4b95-83a1-9748b4c64cc4" ]
 tenantName:
   dev: "Comune di Comun Nuovo"
   refactorDev: "Comune di Comun Nuovo"
