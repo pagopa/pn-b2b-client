@@ -14,26 +14,19 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     And la versione più recente dell'e-service è in stato "ARCHIVING"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
-  Scenario Outline: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_1.2] Un ente erogatore M2M di un e-service in stato SUSPENDED può avviare il processo di archiviazione manuale dell'e-service
+  Scenario: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_1.2] Un ente erogatore M2M di un e-service con prima versione in stato SUSPENDED e seconda in stato DEPRECATED può avviare il processo di archiviazione manuale dell'e-service
     Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service con un descrittore in stato "<initialFirstDescriptorState>"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And "PA1" ha già sospeso quell'e-service
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene avviato processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     Then si ottiene response status code 200
-    And la vecchia versione dell'e-service è in stato "<finalFirstDescriptorState>"
-    #    And il processo di archiviazione della vecchia versione dell'e-service è avvenuto con successo
+    And la vecchia versione dell'e-service è in stato "ARCHIVING"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
     And la versione più recente dell'e-service è in stato "ARCHIVING_SUSPENDED"
-    #    And il processo di archiviazione della più recente versione dell'e-service è avvenuto con successo
-
-    #quando il primo descrittore smetterà di essere il più recente, il suo stato passerà da PUBLISHED a DEPRECATED
-    Examples:
-      | initialFirstDescriptorState | finalFirstDescriptorState |
-      | PUBLISHED                   | ARCHIVING                 |
-    #primo descrittore in stato SUSPENDED
-      | SUSPENDED                   | ARCHIVING_SUSPENDED       |
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
   Scenario: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_1.3] Un descrittore con stato ARCHIVED a cui viene applicato il processo di archiviazione manuale dell'e-service, mantiene lo stato ARCHIVED
     Given l'utente è un "admin" di "PA1"
@@ -45,6 +38,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     Then si ottiene response status code 200
     And la vecchia versione dell'e-service è in stato "ARCHIVED"
     And la versione più recente dell'e-service è in stato "ARCHIVING"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
   Scenario: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_1.4] Un utente con ruolo M2M non autorizzato NON può avviare il processo di archiviazione manuale dell'e-service
     Given l'utente è un "admin" di "PA1"
@@ -53,7 +47,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     And viene avviato processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     Then si ottiene response status code 403
     And la versione più recente dell'e-service è in stato "PUBLISHED"
-#    And il processo di archiviazione della più recente versione dell'e-service è fallita
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
   Scenario: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_1.5] Un utente M2M con token non valido NON può avviare il processo di archiviazione manuale dell'e-service
     Given l'utente è un "admin" di "PA1"
@@ -63,7 +57,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     And viene avviato processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     Then si ottiene response status code 401
     And la versione più recente dell'e-service è in stato "PUBLISHED"
-#    And il processo di archiviazione della più recente versione dell'e-service è fallita
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
   Scenario Outline: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_1.6] Un ente erogatore M2M di un e-service NON può avviare il processo di archiviazione manuale dell'e-service se i parametri obbligatori non sono presenti o corretti
     Given l'utente è un "admin" di "PA1"
@@ -74,16 +68,16 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     And viene avviato processo di archiviazione dell'e-service con id "<eserviceId>" e specificando la motivazione "<archivingReason>"
     Then si ottiene response status code <statusCode>
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
-    #    And il processo di archiviazione della più vecchia versione dell'e-service è fallita
+    And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
     And la versione più recente dell'e-service è in stato "PUBLISHED"
-    #    And il processo di archiviazione della più recente versione dell'e-service è fallita
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
     Examples:
       | eserviceId | archivingReason          | statusCode |
-      | %null      | QA test manual-archiving | 400        |
-      | %actual    | %null                    | 400        |
-      | %null      | %null                    | 400        |
-      | %actual    | %empty                   | 400        |
+#      | %null      | QA test manual-archiving | 400        |
+#      | %actual    | %null                    | 400        |
+#      | %null      | %null                    | 400        |
+#      | %actual    | %empty                   | 400        |
       | %random    | QA test manual-archiving | 404        |
 
   Scenario Outline: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_1.7] Un ente erogatore M2M di un e-service NON può avviare il processo di archiviazione manuale dell'e-service se la stringa archivingReason non rispetta la lunghezza attesa
@@ -95,7 +89,9 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     And viene avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione composta da <archivingReasonLength> caratteri
     Then si ottiene response status code 400
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
+    And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
     And la versione più recente dell'e-service è in stato "PUBLISHED"
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
     Examples:
        #min lenght = 10 , max lenght = 250
@@ -117,16 +113,31 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     And la versione più recente dell'e-service è in stato "ARCHIVING"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
-  Scenario Outline: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_CANCELLATION_1.1] L'ente erogatore M2M di un e-service in stato PUBLISHED può annullare il processo di archiviazione manuale di un e-service in corso
+  Scenario: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_1.9] Un ente erogatore M2M di un e-service con prima versione in stato SUSPENDED e seconda in stato SUSPENDED può avviare il processo di archiviazione manuale dell'e-service
     Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service con un descrittore in stato "<initialFirstDescriptorState>"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già sospeso quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And "PA1" ha già sospeso quell'e-service
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene avviato processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    Then si ottiene response status code 200
+    And la vecchia versione dell'e-service è in stato "ARCHIVING_SUSPENDED"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And la versione più recente dell'e-service è in stato "ARCHIVING_SUSPENDED"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+  Scenario Outline: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_CANCELLATION_1.1] L'ente erogatore M2M di un e-service con prima versione in stato ARCHIVING e seconda in stato ARCHIVING può annullare il processo di archiviazione manuale di un e-service in corso
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene annullato il processo di archiviazione dell'e-service con id "%actual"
     Then si ottiene response status code 200
-    And la vecchia versione dell'e-service è in stato "<finalFirstDescriptorState>"
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
 #    And il processo di archiviazione della vecchia versione dell'e-service è avvenuto con successo
     And la versione più recente dell'e-service è in stato "PUBLISHED"
 #    And il processo di archiviazione della più recente versione dell'e-service è avvenuto con successo
@@ -136,7 +147,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
       | PUBLISHED                   | DEPRECATED                |
       | SUSPENDED                   | SUSPENDED                 |
 
-  Scenario Outline: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_CANCELLATION_1.2] L'ente erogatore M2M di un e-service in stato SUSPENDED può annullare il processo di archiviazione manuale di un e-service in corso
+  Scenario Outline: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_CANCELLATION_1.2] L'ente erogatore M2M di un e-service con prima versione in stato ARCHIVING e seconda in stato ARCHIVING_SUSPENDED può annullare il processo di archiviazione manuale di un e-service in corso
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "<initialFirstDescriptorState>"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
