@@ -32,6 +32,7 @@ import org.springframework.http.HttpStatus;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -170,6 +171,9 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     }
 
     private void scheduleArchiveEService(UUID eServiceId, String archivingReason) {
+        sharedStepsContext.getEServicesCommonContext()
+            .setDescriptorArchivingRequestTimestamp(OffsetDateTime.now(ZoneOffset.UTC));
+
         EServiceArchivingRequest request = EServiceArchivingRequest.builder()
                 .archivingReason(archivingReason)
                 .build();
