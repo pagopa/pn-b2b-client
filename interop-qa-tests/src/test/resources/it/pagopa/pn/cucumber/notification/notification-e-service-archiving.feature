@@ -55,6 +55,12 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
     e non può più essere utilizzato.
     """
 
+  Scenario: [MANUAL_ARCHIVING_ESERVICE_NOTIFICATION_1.6] L'utente erogatore riceve una notifica di promemoria che l'e-service verrà archiviato fra N giorni
+    Then l'utente "admin" di "PA3" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
+    """
+    Il tuo e-service $DA_CONTESTO(eServiceName) sarà archiviato il giorno $DA_CONTESTO(TODAY).
+    """
+
   Scenario: [MANUAL_ARCHIVING_ESERVICE_SUSPENSION_NOTIFICATION_1.1] L'utente erogatore riceve una notifica nel momento in cui il suo e-service in stato di archiviazione viene sospeso
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"

@@ -75,6 +75,12 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     Per continuare a scambiare dati con l’e-service, passa alla nuova versione.
     """
 
+  Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_NOTIFICATION_1.6] L'utente erogatore riceve una notifica di promemoria che la versione dell'e-service verrà archiviata fra N giorni
+    Then l'utente "admin" di "PA3" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
+    """
+    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) sarà archiviata il giorno $DA_CONTESTO(TODAY).
+    """
+
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_CANCELLATION_NOTIFICATION_1.1] L'utente erogatore riceve una notifica quando annulla l'archiviazione in corso di un proprio descrittore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
