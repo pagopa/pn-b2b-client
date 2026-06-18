@@ -377,7 +377,12 @@ public class AttributeCommonSteps {
                 .anyMatch(attr -> attr.getId().equals(discreteAttr.getId()));
         Assertions.assertTrue(isAttributeAvailable, "L'attributo certificato discreto associato al tenant non è un attributo certificato discreto disponibile");
 
-        log.info("Il tenant {} ha un attributo certificato discreto con ID {}", tenantId, discreteAttr.getId());
+        log.info("Il tenant {} ha l'attributo certificato discreto {} con ID {} e threshold {}",
+                tenantId,
+                discreteAttr.getName(),
+                discreteAttr.getId(),
+                discreteAttr.getDiscreteValue()
+        );
 
         sharedStepsContext.getAttributeCommonContext().setOwnerCertifiedDiscreteAttribute(tenantType);
         sharedStepsContext.getAttributeCommonContext().getOwnedCertifiedDiscreteAttributes().add(discreteAttr);
