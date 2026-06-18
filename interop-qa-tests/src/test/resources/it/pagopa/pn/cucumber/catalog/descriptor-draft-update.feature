@@ -336,7 +336,7 @@ Feature: Aggiornamento di un descrittore in bozza
     Then si ottiene response status code 400
 
   @certifiedDiscreteAttribute
-  Scenario: [CERT_DISCRETE_ATTR_ESERVICE_NO_DUPLICATED] Un e-service in stato PUBLISHED non può avere lo stesso attributo certificato
+  Scenario: [CERT_DISCRETE_ATTR_ESERVICE_NO_DUPLICATED] Un e-service in stato DRAFT non può avere lo stesso attributo certificato
   discreto nello stesso gruppo (logiche OR non consentite).
 
     Given l'utente è un "admin" di "PA2"
