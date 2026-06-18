@@ -156,8 +156,8 @@ public class DelayerPlanner {
         List<DelayerPaperDelivery> notPassedSenderLimit = new ArrayList<>();
 
         // 1. Inserisco le notifiche che verranno elaborate in questo step
-        // groupedByStep.get(WorkflowSteps.EVALUATE_SENDER_LIMIT.name())
-        //        .addAll(utils.deepCopyAndUpdateKeys(notifications, WorkflowSteps.EVALUATE_SENDER_LIMIT, context.expectedDeliveryDate));
+        groupedByStep.get(WorkflowSteps.EVALUATE_SENDER_LIMIT.name())
+                .addAll(utils.deepCopyAndUpdateKeys(notifications, WorkflowSteps.EVALUATE_SENDER_LIMIT, context.expectedDeliveryDate));
 
         // 2. Separa RS e secondi tentativi
         List<DelayerPaperDelivery> rsOrSecondAttempt = notifications.stream()

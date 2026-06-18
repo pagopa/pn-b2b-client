@@ -986,21 +986,21 @@
     @delayer16
     Scenario: [DELAYER-TC16] Verifica che priorità 100 della settimana successiva preceda priorità 80 congelata dalla settimana precedente
       Given vengono puliti i dati dalle tabelle target
-
+      # simulo una notifica posticipata con priorità 80
       Given il CSV "tcSenderPriorityFrozenW1.csv" contiene 8 notifiche distribuite tra i seguenti test case:
-        | seed                      | quantita |
-        | tcSenderPriorityFrozenW1_ | 8        |
+        | seed                    | quantita |
+        | tcSenderPriorityFrozen_ | 8        |
       And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
         | senderId              | comparative | limit |
         | ranking2nd_890~890~P1 | esattamente | 7     |
       And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
         | unifiedDeliveryDriverId      | comparative | limit |
-        | driverRanking2nd_890~P1      | esattamente | 10     |
-        | driverRanking2nd_890~CAP1_P1 | esattamente | 10     |
+        | driverRanking2nd_890~P1      | esattamente | 10    |
+        | driverRanking2nd_890~CAP1_P1 | esattamente | 10    |
       And si verifica che la capacità disponibile settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
         | unifiedDeliveryDriverId      | comparative | limit |
-        | driverRanking2nd_890~P1      | esattamente | 10     |
-        | driverRanking2nd_890~CAP1_P1 | esattamente | 10     |
+        | driverRanking2nd_890~P1      | esattamente | 10    |
+        | driverRanking2nd_890~CAP1_P1 | esattamente | 10    |
       And si presuppone che la capacità di stampa giornaliera sia esattamente 1
       And il CSV "tcSenderPriorityFrozenW1.csv" è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
       And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
@@ -1014,22 +1014,23 @@
       And vengono avviate le 1 esecuzioni della step function DelayerToPaperChannelStateMachine
       And verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
 
+      # la notifica posticipata viene inserita nel csv nella settimana successiva
+      And sposto la simulazione in avanti di 1 settimane
       Given il CSV "tcSenderPriorityFrozenW2.csv" contiene 4 notifiche distribuite tra i seguenti test case:
-        | seed                      | quantita | deliveryWeek |
-        | tcSenderPriorityFrozenW2_ | 4        | NEXT_MONDAY  |
+        | seed                    | quantita | deliveryWeek |
+        | tcSenderPriorityFrozen_ | 5        | NEXT_MONDAY  |
       And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
         | senderId              | comparative | limit |
         | ranking2nd_890~890~P1 | esattamente | 7     |
       And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
         | unifiedDeliveryDriverId      | comparative | limit |
-        | driverRanking2nd_890~P1      | esattamente | 10     |
-        | driverRanking2nd_890~CAP1_P1 | esattamente | 10     |
+        | driverRanking2nd_890~P1      | esattamente | 10    |
+        | driverRanking2nd_890~CAP1_P1 | esattamente | 10    |
       And si presuppone che la capacità di stampa giornaliera sia esattamente 1
       And il CSV "tcSenderPriorityFrozenW2.csv" è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
       And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
-      When viene avviata la step function BatchWorkflowStateMachine
+      When viene avviata la step function BatchWorkflowStateMachine con deliveryDate in avanti di 1 settimane
       And vengono recuperate le notifiche al workflow step "EVALUATE_SENDER_LIMIT"
       And verifica che il processo fino al workflow step "EVALUATE_SENDER_LIMIT" abbia rispettato i criteri di ranking per almeno un test case:
-        | seed                      |
-        | tcSenderPriorityFrozenW1_ |
-        | tcSenderPriorityFrozenW2_ |
+        | seed                    |
+        | tcSenderPriorityFrozen_ |

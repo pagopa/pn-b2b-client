@@ -373,7 +373,8 @@ public class DelayerPaperDeliveryUtils {
         }
 
         Comparator<DelayerPaperDelivery> byPrepare = Comparator.comparing(d -> parseDate(d.getPrepareRequestDate()));
-        Comparator<DelayerPaperDelivery> bySenderPriorityAndNotification = Comparator.comparing(d -> parseDate(d.getEffectiveNotificationSentAt()));
+        Comparator<DelayerPaperDelivery> bySenderPriorityAndNotification =  Comparator.comparing(DelayerPaperDelivery::getSenderPriority)
+                                                                                        .thenComparing(d -> parseDate(d.getNotificationSentAt()));
 
         rs.sort(byPrepare);
         secondi.sort(byPrepare);

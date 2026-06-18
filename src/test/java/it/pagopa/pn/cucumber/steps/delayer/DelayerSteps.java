@@ -164,6 +164,7 @@ public class DelayerSteps {
 
             int actual = service.getAvailableCapacity(entityId, context.expectedDeliveryDate);
             availableCapacityByDriver.put(entityId, actual);
+            // TODO verficare perché nella prima fase del test la capacità non è disponibile e viene mockata con quella passata dal test stesso
             if (actual == -1) actual = rawLimit;
 
             switch (comparative.toLowerCase()) {
@@ -366,6 +367,14 @@ public class DelayerSteps {
         context.expectedDeliveryDate = getNextMonday(nWeeks);
     }
 
+    @And("sposto la simulazione in avanti di {int} settimane")
+    public void moveForward(int nWeeks) {
+        var frozen = new ArrayList<>(context.expectedPianification.values().stream().findAny().map(m->m.get("FROZEN")).orElse(Collections.emptyList()));
+        context.resetContext();
+        context.expectedDeliveryDate = getNextMonday(nWeeks);
+        context.actualCsv.addAll(frozen);
+    }
+
     @Then("non devono esistere record in pn-DelayerPaperDelivery per la deliveryDate {string}")
     public void verifyNoPaperDeliveryForDate(String deliveryDate) {
         SoftAssertions softly = new SoftAssertions();
@@ -452,11 +461,6 @@ public class DelayerSteps {
         Assertions.assertThat(expectedSenderLimit).as("Confronto di actual ed expected del limite del mittente").isEqualTo(actualSenderLimit);
 
     }
-
-
-
-
-
 
 
 }
