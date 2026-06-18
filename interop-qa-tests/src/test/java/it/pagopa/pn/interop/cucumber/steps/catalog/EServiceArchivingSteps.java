@@ -74,6 +74,7 @@ public class EServiceArchivingSteps {
 
         UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
         String resolvedArchivingReason = catalogResolver.resolveArchivingReason(archivingReason);
+
         Map<UUID, EServiceDescriptorState> expectedStates = getExpectedArchivingStates(resolvedEServiceId);
 
         scheduleArchiveEService(resolvedEServiceId, resolvedArchivingReason);
@@ -82,7 +83,7 @@ public class EServiceArchivingSteps {
         }
 
         expectedStates.forEach((descriptorId, expectedState) ->
-                pollDescriptorState(resolvedEServiceId, descriptorId, expectedState)
+            pollDescriptorStateAndArchivingSchedule(resolvedEServiceId, descriptorId, expectedState)
         );
     }
 
@@ -133,17 +134,21 @@ public class EServiceArchivingSteps {
 
     private Map<UUID, EServiceDescriptorState> getExpectedArchivingStates(UUID eServiceId) {
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+
         ProducerEServiceDescriptor producerEServiceDescriptor = clientTokenConfigurator.getEServiceClient()
                 .getEServiceDescriptor(eServiceId, descriptorId);
         List<CompactDescriptor> descriptors = producerEServiceDescriptor.getEservice().getDescriptors();
 
         Map<UUID, EServiceDescriptorState> expectedStates = new LinkedHashMap<>();
-        descriptors.forEach(descriptor ->
-                expectedStates.put(descriptor.getId(), expectedArchivingState(descriptor.getState()))
-        );
+        descriptors.forEach(descriptor -> {
+            EServiceDescriptorState expectedState = expectedArchivingState(descriptor.getState());
+            expectedStates.put(descriptor.getId(), expectedState);
+        });
+
+        EServiceDescriptorState currentDescriptorExpectedState = expectedArchivingState(producerEServiceDescriptor.getState());
         expectedStates.putIfAbsent(
                 producerEServiceDescriptor.getId(),
-                expectedArchivingState(producerEServiceDescriptor.getState())
+            currentDescriptorExpectedState
         );
         return expectedStates;
     }
@@ -154,6 +159,13 @@ public class EServiceArchivingSteps {
                 descriptor -> descriptor != null && expectedState.equals(descriptor.getState()),
                 "Il descriptor " + descriptorId + " dell'e-service non risulta in stato " + expectedState
         );
+    }
+
+    private void pollDescriptorStateAndArchivingSchedule(UUID eServiceId, UUID descriptorId, EServiceDescriptorState expectedState) {
+        pollDescriptorState(eServiceId, descriptorId, expectedState);
+        if (!EServiceDescriptorState.ARCHIVED.equals(expectedState)) {
+            archivingScheduleVerifier.pollDescriptorArchivingSchedule(eServiceId, descriptorId, "ESERVICE");
+        }
     }
 
     private void cancelArchiveEService(UUID eServiceId) {
