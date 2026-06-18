@@ -27,7 +27,6 @@ public class TenantSteps {
      * eseguiti test che ne hanno modificato il valore.
      * DEV NOTE 29/05/2026: si prevede di eseguire i test della feature "adeguamento analisi del rischio" in isolamento,
      * cioè nella stessa run con gli altri test, per evitare che il cambio di tenant kind possa interferire */
-
     @Before
     public void resetTenantKind() {
         if(!maintenanceService.isExecutable()) {
@@ -66,7 +65,7 @@ public class TenantSteps {
 
         /* 29/05/2026 Se è in esecuzione la suite di test di "Adeguamento analisi del rischio" (che si prevede
         * di eseguire in isolamento, non nella stessa esecuzione di altri test) allora l'allineamento deve essere
-        * effettuato AD OGNI test, perché ogni test cambia lo stato dei tenant kind */
+        * effettuato A OGNI test, perché ogni test cambia lo stato dei tenant kind */
         if("true".equals(System.getProperty("suite.AdeguamentoAnalisiRischioTest"))) {
             log.info("Aligning tenant kinds...");
             maintenanceService.alignTenantKinds();
