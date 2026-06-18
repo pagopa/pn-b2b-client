@@ -1,17 +1,10 @@
 package it.pagopa.interop.purpose.service.impl;
 
-import static it.pagopa.interop.utils.BlobFileCreationUtils.createTempFile;
-
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.PurposesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
-import java.io.File;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.List;
-import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.Resource;
@@ -21,6 +14,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.List;
+import java.util.UUID;
+
+import static it.pagopa.interop.utils.BlobFileCreationUtils.createTempFile;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -162,6 +163,11 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
     @Override
     public RemainingDailyCallsResponse getRemainingDailyCalls(UUID purposeId) {
         return  purposesApi.getRemainingDailyCalls(purposeId);
+    }
+
+    @Override
+    public void assignRiskAnalysis(UUID purposeId, RiskAnalysisAssignmentSeed payload) throws RestClientException {
+        purposesApi.assignRiskAnalysisReviewer(purposeId, payload);
     }
 
     @Override
