@@ -23,7 +23,7 @@ Feature: Archiviazione manuale di un descrittore
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
-  Scenario: [M2M_V3_MANUAL_ARCHIVING_DESCRIPTOR_1.3] Un utente M2M con token non valido NON può avviare il processo di archiviazione manuale del descrittore
+  Scenario: [M2M_V3_MANUAL_ARCHIVING_DESCRIPTOR_1.3] Un utente con token non valido NON può avviare il processo di archiviazione manuale del descrittore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -35,7 +35,7 @@ Feature: Archiviazione manuale di un descrittore
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
-  Scenario Outline: [M2M_V3_MANUAL_ARCHIVING_DESCRIPTOR_1.4] Un ente erogatore M2M di un e-service NON può avviare il processo di archiviazione manuale di un descrittore se i parametri obbligatori non sono presenti o corretti
+  Scenario Outline: [M2M_V3_MANUAL_ARCHIVING_DESCRIPTOR_1.4] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale di un descrittore se i parametri obbligatori non sono presenti o corretti
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -68,7 +68,7 @@ Feature: Archiviazione manuale di un descrittore
     And la vecchia versione dell'e-service è in stato "ARCHIVING_SUSPENDED"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
-  Scenario: [M2M_V3_MANUAL_ARCHIVING_DESCRIPTOR_2.1] Un ente erogatore M2M di un e-service NON può avviare il processo di archiviazione manuale di un suo descrittore se quest'ultimo è il più recente
+  Scenario: [M2M_V3_MANUAL_ARCHIVING_DESCRIPTOR_2.1] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale di un suo descrittore se quest'ultimo è il più recente
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
@@ -78,7 +78,7 @@ Feature: Archiviazione manuale di un descrittore
     And la versione più recente dell'e-service è in stato "PUBLISHED"
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
-  Scenario: [M2M_V3_MANUAL_ARCHIVING_DESCRIPTOR_CANCELLATION_1.1] L'ente erogatore M2M di un e-service può annullare il processo di archiviazione manuale del primo e meno recente descrittore in stato ARCHIVING se l'archiviazione è in corso
+  Scenario: [M2M_V3_MANUAL_ARCHIVING_DESCRIPTOR_CANCELLATION_1.1] L'ente erogatore di un e-service può annullare il processo di archiviazione manuale del primo e meno recente descrittore in stato ARCHIVING se l'archiviazione è in corso
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -87,7 +87,7 @@ Feature: Archiviazione manuale di un descrittore
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente tenta di annullare il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
     Then si ottiene response status code 200
-    And la vecchia versione dell'e-service è in stato "PUBLISHED"
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And l'archiviazione manuale del singolo descrittore è stata annullata con successo
 
   Scenario: [M2M_V3_MANUAL_ARCHIVING_DESCRIPTOR_CANCELLATION_1.2] Un utente con ruolo M2M NON può annullare il processo di archiviazione manuale del descrittore
@@ -102,7 +102,7 @@ Feature: Archiviazione manuale di un descrittore
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And l'annullamento dell'archiviazione manuale del vecchio descrittore è fallita
 
-  Scenario: [M2M_V3_MANUAL_ARCHIVING_DESCRIPTOR_CANCELLATION_1.3]  Un utente M2M con token non valido NON può annullare il processo di archiviazione manuale del descrittore
+  Scenario: [M2M_V3_MANUAL_ARCHIVING_DESCRIPTOR_CANCELLATION_1.3] Un utente con token non valido NON può annullare il processo di archiviazione manuale del descrittore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -115,7 +115,7 @@ Feature: Archiviazione manuale di un descrittore
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And l'annullamento dell'archiviazione manuale del vecchio descrittore è fallita
 
-  Scenario Outline: [M2M_V3_MANUAL_ARCHIVING_DESCRIPTOR_CANCELLATION_1.4] Un ente M2M erogatore di un e-service NON può annullare il processo di archiviazione manuale di un descrittore se i parametri obbligatori non sono presenti o corretti
+  Scenario Outline: [M2M_V3_MANUAL_ARCHIVING_DESCRIPTOR_CANCELLATION_1.4] Un ente erogatore di un e-service NON può annullare il processo di archiviazione manuale di un descrittore se i parametri obbligatori non sono presenti o corretti
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -136,7 +136,7 @@ Feature: Archiviazione manuale di un descrittore
       | %actual      | %random    | 404        |
       | %random      | %random    | 404        |
 
-  Scenario: [M2M_V3_MANUAL_ARCHIVING_DESCRIPTOR_CANCELLATION_1.5] L'ente erogatore M2M di un e-service può annullare il processo di archiviazione manuale del primo e meno recente descrittore in stato ARCHIVING_SUSPENDED se l'archiviazione è in corso
+  Scenario: [M2M_V3_MANUAL_ARCHIVING_DESCRIPTOR_CANCELLATION_1.5] L'ente erogatore di un e-service può annullare il processo di archiviazione manuale del primo e meno recente descrittore in stato ARCHIVING_SUSPENDED se l'archiviazione è in corso
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
