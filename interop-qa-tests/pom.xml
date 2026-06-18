@@ -682,19 +682,19 @@
                                      <value>JsonTypeInfo.Id.NONE</value>
                                  </replacement>
                                  <replacement>
-                                    <token>ESERVICE_TEMPLATE\(String\.valueOf\("ESERVICE_TEMPLATE"\)\);</token>
-                                    <value><![CDATA[ESERVICE_TEMPLATE(String.valueOf("ESERVICE_TEMPLATE")),
+                                     <token>ESERVICE_TEMPLATE\(String\.valueOf\("ESERVICE_TEMPLATE"\)\);</token>
+                                     <value><![CDATA[ESERVICE_TEMPLATE(String.valueOf("ESERVICE_TEMPLATE")),
     ESERVICE(String.valueOf("ESERVICE"));]]></value>
                                  </replacement>
                                  <replacement>
                                      <token>@JsonInclude\(value = JsonInclude.Include.ALWAYS\)[\s\n\r]+public UUID getEservice</token>
                                      <value>@JsonInclude(value = JsonInclude.Include.NON_NULL)
-    public UUID getEservice</value>
+                                         public UUID getEservice</value>
                                  </replacement>
                                  <replacement>
                                      <token>@JsonInclude\(value = JsonInclude.Include.ALWAYS\)[\s\n\r]+public void setEservice</token>
                                      <value>@JsonInclude(value = JsonInclude.Include.NON_NULL)
-    public void setEservice</value>
+                                         public void setEservice</value>
                                  </replacement>
                              </replacements>
                          </configuration>
@@ -745,17 +745,109 @@
                                  <replacement>
                                      <token>@JsonInclude\(value = JsonInclude.Include.ALWAYS\)[\s\n\r]+public UUID getEservice</token>
                                      <value>@JsonInclude(value = JsonInclude.Include.NON_NULL)
-    public UUID getEservice</value>
+                                         public UUID getEservice</value>
                                  </replacement>
                                  <replacement>
                                      <token>@JsonInclude\(value = JsonInclude.Include.ALWAYS\)[\s\n\r]+public void setEservice</token>
                                      <value>@JsonInclude(value = JsonInclude.Include.NON_NULL)
-    public void setEservice</value>
+                                         public void setEservice</value>
                                  </replacement>
                              </replacements>
                          </configuration>
                      </execution>
 
+                     <!-- TODO: le patch al codice generato sono necessarie per far sì che il modello StandardCertifiedTenantAttribute estenda CertifiedTenantAttribute, in modo da poter essere trattati in maniera polimorfica.-->
+
+                     <execution>
+                         <id>patch-StandardCertifiedTenantAttribute</id>
+                         <phase>process-resources</phase>
+                         <goals>
+                             <goal>replace</goal>
+                         </goals>
+                         <configuration>
+                             <file>
+                                 ${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/StandardCertifiedTenantAttribute.java
+                             </file>
+                             <regex>true</regex>
+                             <replacements>
+                                 <replacement>
+                                     <token>public class StandardCertifiedTenantAttribute \{</token>
+                                     <value>public class StandardCertifiedTenantAttribute extends CertifiedTenantAttribute {
+                                     </value>
+                                 </replacement>
+                                 <replacement>
+                                     <token>/\*\*\s*\*\s*Get kind[\s\S]*?public\s+KindEnum\s+getKind\(\)\s*\{[\s\S]*?\}\s*\n?</token>
+                                     <value></value>
+                                 </replacement>
+
+                                 <replacement>
+                                     <token>\s*public static final String JSON_PROPERTY_KIND = "kind";\s*@javax.annotation.Nonnull\s*private KindEnum kind;</token>
+                                     <value></value>
+                                 </replacement>
+
+                                 <replacement>
+                                     <token>public\s+enum\s+KindEnum\s*\{[\s\S]*?(?=public\s+static\s+final\s+String\s+JSON_PROPERTY_ID\s*=\s*"id";)</token>
+                                     <value></value>
+                                 </replacement>
+                             </replacements>
+                         </configuration>
+                     </execution>
+
+                     <execution>
+                         <id>patch-certified-discrete-tenant-attribute</id>
+                         <phase>process-resources</phase>
+                         <goals>
+                             <goal>replace</goal>
+                         </goals>
+                         <configuration>
+                             <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/CertifiedDiscreteTenantAttribute.java</file>
+                             <regex>true</regex>
+                             <replacements>
+                                 <replacement>
+                                     <token>public class CertifiedDiscreteTenantAttribute \{</token>
+                                     <value>public class CertifiedDiscreteTenantAttribute extends CertifiedTenantAttribute {</value>
+                                 </replacement>
+
+                                 <replacement>
+                                     <token>/\*\*\s*\*\s*Get kind[\s\S]*?public\s+KindEnum\s+getKind\(\)\s*\{[\s\S]*?\}\s*\n?</token>
+                                     <value></value>
+                                 </replacement>
+
+                                 <replacement>
+                                     <token>\s*public static final String JSON_PROPERTY_KIND = "kind";\s*@javax.annotation.Nonnull\s*private KindEnum kind;</token>
+                                     <value></value>
+                                 </replacement>
+
+                                 <replacement>
+                                     <token>public\s+enum\s+KindEnum\s*\{[\s\S]*?(?=public\s+static\s+final\s+String\s+JSON_PROPERTY_ID\s*=\s*"id";)</token>
+                                     <value></value>
+                                 </replacement>
+                             </replacements>
+                         </configuration>
+                     </execution>
+
+                     <execution>
+                         <id>patch-tenant-attribute</id>
+                         <phase>process-resources</phase>
+                         <goals>
+                             <goal>replace</goal>
+                         </goals>
+                         <configuration>
+                             <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/CertifiedTenantAttribute.java</file>
+                             <regex>true</regex>
+                             <replacements>
+                                 <replacement>
+                                     <token>CERTIFIED_DISCRETE\(String\.valueOf\("CERTIFIED_DISCRETE"\)\);</token>
+                                     <value><![CDATA[CERTIFIED_DISCRETE(String.valueOf("CERTIFIED_DISCRETE")),
+    CERTIFIED(String.valueOf("CERTIFIED"));]]></value>
+                                 </replacement>
+                                 <replacement>
+                                     <token>private KindEnum kind;</token>
+                                     <value>protected KindEnum kind;</value>
+                                 </replacement>
+                             </replacements>
+                         </configuration>
+                     </execution>
                  </executions>
              </plugin>
 
