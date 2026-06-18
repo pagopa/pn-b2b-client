@@ -15,6 +15,12 @@ Feature: Radd Alternative integrazione con Poste
 
 
 
+  @useRaddVpce
+  Scenario: [RADD_POSTE_01_3] Verifica allegato ARCAD per secondo evento di timeline SEND_ANALOG_PROGRESS con deliveryDetailCode = RECAG011B
+    Given Poste chiama l'endpoint document upload via VPCE
+    Then la risposta deve essere 403 Forbidden
+
+
   @useRaddVpce #XWUP-TDER-TZQW-202606-R-1
   Scenario: [RADD_POSTE_01_3] Verifica allegato ARCAD per secondo evento di timeline SEND_ANALOG_PROGRESS con deliveryDetailCode = RECAG011B
 #    Given viene generata una nuova notifica
