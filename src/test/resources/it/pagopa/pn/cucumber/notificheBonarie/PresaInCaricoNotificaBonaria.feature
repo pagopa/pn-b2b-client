@@ -291,17 +291,17 @@ Feature: Sottomissione di una notifica bonaria.
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con valori di default
     And destinatario della notifica bonaria
-      | recipientType             | PF                |
-      | taxId                     | FRMTTR76M06B715E  |
-      | denomination              | Ettore Fieramosca |
-      | physicalAddress           | SI                |
-      | physical_address_address  | <address>         |
-      | physical_address_details  | <details>         |
-      | physical_address_zip      | <zip>             |
-      | physical_address_city     | <city>            |
-      | physical_address_province | RM                |
-      | physical_address_state    | ITALIA            |
-      | messageId                 | ${IT}             |
+      | recipientType                 | PF                |
+      | taxId                         | FRMTTR76M06B715E  |
+      | denomination                  | Ettore Fieramosca |
+      | physicalAddress               | SI                |
+      | physical_address_address      | <address>         |
+      | physical_address_details      | <details>         |
+      | physical_address_zip          | <zip>             |
+      | physical_address_municipality | <city>            |
+      | physical_address_province     | RM                |
+      | physical_address_state        | ITALIA            |
+      | messageId                     | ${IT}             |
     When l'invio della notifica bonaria fallisce
     Then si riceve errore 400 "<error>"
     Examples:
@@ -692,20 +692,6 @@ Feature: Sottomissione di una notifica bonaria.
 
 
   @informalAsyncValidation
-  Scenario: [NOTIFICHE_BONARIE_ASYNC_ANALOG_01_6] Come ente mittente tento l'invio di una notifica bonaria senza indirizzo analogico per un campagna con canale analogico.Ottengo stato refused.
-    Given mittente della notifica bonaria: "Comune_Multi"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | campaign-analog-workflow |
-    And destinatario della notifica bonaria
-      | recipientType    | PF                       |
-      | taxId            | FRMTTR76M06B715E         |
-      | denomination     | Ettore Fieramosca        |
-      | physical_address | ${PHYSICAL_ADDRESS_NULL} |
-      | messageId        | ${IT}                    |
-    When viene inviata una nuova notifica bonaria
-    And  si verifica che la notifica bonaria sia in stato "REFUSED"
-
-  @informalAsyncValidation
   Scenario: [NOTIFICHE_BONARIE_VAS_SM_01_1_F] Come ente mittente tento l'invio di una notifica bonaria senza indirizzo analogico che varrà recuperato dal VAS.
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con i seguenti parametri
@@ -720,8 +706,9 @@ Feature: Sottomissione di una notifica bonaria.
     When viene inviata una nuova notifica bonaria
     And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
     Then la sottomissione della notifica bonaria è andata a buon fine
-    And verifico che su DynamoDB è presente in timeline l'elemento "NATIONAL_REGISTRY_VALIDATION_CALL"
-    And verifico che su DynamoDB è presente in timeline l'elemento "NATIONAL_REGISTRY_VALIDATION_RESPONSE"
+    And verifico che su DynamoDB è presente in timeline l'elemento "PUBLIC_REGISTRY_VALIDATION_CALL"
+    And verifico che su DynamoDB è presente in timeline l'elemento "PUBLIC_REGISTRY_VALIDATION_RESPONSE"
+    And verifico che su DynamoDB è presente in timeline l'elemento "VALIDATE_NORMALIZE_ADDRESSES_REQUEST"
 
 
   @informalAsyncValidation
@@ -742,22 +729,6 @@ Feature: Sottomissione di una notifica bonaria.
     Then la notifica bonaria è stata rifiutata per l'errore: "ADDRESS_NOT_FOUND"
 
   @informalAsyncValidation
-  Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6_A] Come ente mittente invio una notifica bonaria con indirizzo analogico non normaliozzabile, la notifca viene rifiutata
-    Given mittente della notifica bonaria: "Comune_Multi"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | campaign-analog-workflow |
-    And destinatario della notifica bonaria
-      | denomination                  | Leonardo Da Vinci no vas |
-      | taxId                         | DVNLRD52D15M059P         |
-      | physical_address_zip          | 80100                    |
-      | physical_address_municipality | Bologna                  |
-      | physical_address_province     | RM                       |
-      | messageId                     | ${IT}                    |
-    When viene inviata una nuova notifica bonaria
-    And  si verifica che la notifica bonaria sia in stato "REFUSED"
-    Then la notifica bonaria è stata rifiutata per l'errore: "NOT_VALID_ADDRESS"
-
-  @informalAsyncValidation
   Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6_C] Come ente mittente invio una notifica bonaria senza indirizzo analogico e quello dei RN non postalizabile, la notifca viene rifiutata.
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con i seguenti parametri
@@ -769,6 +740,39 @@ Feature: Sottomissione di una notifica bonaria.
       | digitalDomicile  | NULL                     |
       | physical_address | ${PHYSICAL_ADDRESS_NULL} |
       | messageId        | ${IT}                    |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "REFUSED"
+    Then la notifica bonaria è stata rifiutata per l'errore: "NOT_VALID_ADDRESS"
+
+  @informalAsyncValidation
+  Scenario: [NOTIFICHE_BONARIE_ASYNC_ANALOG_01_6] Come ente mittente tento l'invio di una notifica bonaria senza indirizzo analogico per un campagna con canale analogico.Ottengo stato refused.
+    Given mittente della notifica bonaria: "Comune_Multi"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-analog-workflow |
+    And destinatario della notifica bonaria
+      | recipientType    | PF                       |
+      | taxId            | XVRSFN76E31L781N         |
+      | denomination     | xavier                   |
+      | physical_address | ${PHYSICAL_ADDRESS_NULL} |
+      | messageId        | ${IT}                    |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "REFUSED"
+
+  @informalAsyncValidation
+  Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6_A] Come ente mittente invio una notifica bonaria con indirizzo analogico non normaliozzabile, la notifca viene rifiutata
+    Given mittente della notifica bonaria: "Comune_Multi"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-analog-workflow |
+    And destinatario della notifica bonaria
+      | denomination                  | Leonardo Da Vinci no vas |
+      | taxId                         | DVNLRD52D15M059P         |
+      | physical_address_zip          | 80100                    |
+      | physical_address_municipality | Bologn                   |
+      | physical_address_province     | RM                       |
+      | physical_address_state        | Becok                    |
+      | physical_address_address      | Q1                       |
+      | physical_address_details      | NULL                     |
+      | messageId                     | ${IT}                    |
     When viene inviata una nuova notifica bonaria
     And  si verifica che la notifica bonaria sia in stato "REFUSED"
     Then la notifica bonaria è stata rifiutata per l'errore: "NOT_VALID_ADDRESS"
@@ -1093,7 +1097,7 @@ Feature: Sottomissione di una notifica bonaria.
     Then la notifica bonaria è stata rifiutata per l'errore: "CAMPAIGN_NOT_FOUND"
 
   @informalNotificationsValidation @informalAsyncValidation
-  Scenario: [NOTIFICHE_BONARIE_SM_04_2_G3] Come mittente non associato alla campagna tento l'invio di una notifica bonaria.
+  Scenario: [NOTIFICHE_BONARIE_SM_04_2_G3] Come mittente associato alla campagna tento l'invio di una notifica bonaria.
     Given mittente della notifica bonaria: "Comune_1"
     And viene creata una nuova notifica bonaria con i seguenti parametri
       | campaignId | campaign-4 |

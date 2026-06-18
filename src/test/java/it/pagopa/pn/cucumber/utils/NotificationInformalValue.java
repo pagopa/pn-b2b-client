@@ -67,7 +67,7 @@ public enum NotificationInformalValue {
     PHYSICAL_ADDRESS_ADDRESS("physical_address_address", "via Roma", false),
     PHYSICAL_ADDRESS_DETAILS("physical_address_details", "Strega", false),
     PHYSICAL_ADDRESS_ZIP("physical_address_zip", "82100", false),
-    PHYSICAL_ADDRESS_CITY("physical_address_city", "Benevento", false),
+    PHYSICAL_ADDRESS_MUNICIPALITY("physical_address_municipality", "Benevento", false),
     PHYSICAL_ADDRESS_PROVINCE("physical_address_province", "BN", false),
     PHYSICAL_ADDRESS_AT("physical_address_at", "presso", false),
     PHYSICAL_ADDRESS_MUNICIPALITY_DETAILS("physical_address_municipality_details", null, false),
@@ -112,6 +112,7 @@ public enum NotificationInformalValue {
         }
     }
 
+
     public static String getCharSeq(String request) {
         StringBuilder result = new StringBuilder();
         int number = Integer.parseInt(request.substring(0, request.indexOf("_")));
@@ -141,87 +142,4 @@ public enum NotificationInformalValue {
         }
         return finalNumber;
     }
-
-//    private NotificationPaymentAttachment buildPaymentAttachment(
-//            Map<String, String> data) {
-//
-//        // Digests
-//        NotificationAttachmentDigests digests =
-//                new NotificationAttachmentDigests();
-//        digests.setSha256(
-//                getValue(data, "attachment_sha256")
-//        );
-//
-//        // Ref
-//        NotificationAttachmentBodyRef ref =
-//                new NotificationAttachmentBodyRef();
-//        ref.setKey(
-//                getValue(data, "attachment_key")
-//        );
-//        ref.setVersionToken(
-//                getValue(data, "attachment_version_token")
-//        );
-//
-//        // Attachment
-//        NotificationPaymentAttachment attachment =
-//                new NotificationPaymentAttachment();
-//        attachment.setDigests(digests);
-//        attachment.setContentType("application/pdf");
-//        attachment.setRef(ref);
-//
-//        return attachment;
-//    }
-
-//    private InformalNotificationPaymentItem buildPaymentItem(
-//            Map<String, String> data) {
-//
-//
-//        PagoPaPaymentBase pagoPa = new
-//                PagoPaPaymentBase()
-//                .noticeCode(
-//                        getValue(data, PAGOPA_NOTICE_CODE.key)
-//                )
-//                .creditorTaxId(
-//                        getValue(data, PAGOPA_CREDITOR_TAX_ID.key)
-//                )
-//                //.applyCost(false)
-//                .attachment(
-//                        buildPaymentAttachment(data)
-//                );
-//
-//        InformalNotificationPaymentItem item =
-//                new InformalNotificationPaymentItem();
-//        item.setPagoPa(pagoPa);
-//
-//        return item;
-//    }
-//
-//    private NotificationDocument buildDocument(Map<String, String> data) {
-//
-//        NotificationAttachmentDigests digests =
-//                new NotificationAttachmentDigests();
-//        digests.setSha256(
-//                getValue(data, "document_sha256")
-//        );
-//
-//        NotificationAttachmentBodyRef ref =
-//                new NotificationAttachmentBodyRef();
-//        ref.setKey(
-//                getValue(data, "document_key")
-//        );
-//        ref.setVersionToken(
-//                getValue(data, "document_version_token")
-//        );
-//
-//        NotificationDocument document =
-//                new NotificationDocument();
-//        document.setDigests(digests);
-//        document.setContentType("application/pdf");
-//        document.setRef(ref);
-//
-//        document.setTitle(getValue(data, DOCUMENT_TITLE.key));
-//        document.setDocIdx(getValue(data, DOCUMENT_DOCIDX.key));
-//
-//        return document;
-//    }
 }

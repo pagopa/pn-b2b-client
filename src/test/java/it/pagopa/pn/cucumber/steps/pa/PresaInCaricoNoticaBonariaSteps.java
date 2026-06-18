@@ -190,7 +190,7 @@ public class PresaInCaricoNoticaBonariaSteps {
             physicalAddress.setAddress(getValue(data, PHYSICAL_ADDRESS_ADDRESS.key));
             physicalAddress.setAddressDetails(getValue(data, PHYSICAL_ADDRESS_DETAILS.key));
             physicalAddress.setZip(getValue(data, PHYSICAL_ADDRESS_ZIP.key));
-            physicalAddress.setMunicipality(getValue(data, PHYSICAL_ADDRESS_CITY.key));
+            physicalAddress.setMunicipality(getValue(data, PHYSICAL_ADDRESS_MUNICIPALITY.key));
             physicalAddress.setProvince(getValue(data, PHYSICAL_ADDRESS_PROVINCE.key));
             physicalAddress.setForeignState(getValue(data, PHYSICAL_ADDRESS_STATE.key));
             physicalAddress.setAt(getValue(data, PHYSICAL_ADDRESS_AT.key));
@@ -254,7 +254,7 @@ public class PresaInCaricoNoticaBonariaSteps {
             newInformalNotificationResponse = pnPaB2bInternalInformalClientImpl.sendNewInformalNotificationV1(currentCxId, informalNotificationRequestV1);
             //savedNotificationRequestId = newInformalNotificationResponse.getNotificationRequestId();
             //savedIun = status.getIun();
-            fail("Atteso errore ma la richiesta è andata a buon fine "+newInformalNotificationResponse+"***"+informalNotificationRequestV1+"***"+paName);
+            fail("Atteso errore ma la richiesta è andata a buon fine " + newInformalNotificationResponse + "***" + informalNotificationRequestV1 + "***" + paName);
             //lastException = null;
 
         } catch (Exception e) {
@@ -266,7 +266,6 @@ public class PresaInCaricoNoticaBonariaSteps {
 
     @Then("viene inviata una nuova notifica bonaria")
     public void sendInformal() throws IOException {
-
         informalNotificationRequestV1 = notificationInformalUtilsV1.preloadAndPrepare(informalNotificationRequestV1);
         newInformalNotificationResponse = pnPaB2bInternalInformalClientImpl.sendNewInformalNotificationV1(currentCxId, informalNotificationRequestV1);
         savedNotificationRequestId = newInformalNotificationResponse.getNotificationRequestId();
@@ -353,7 +352,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     @When("si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie")
     public void createNewInformalMessage(NewMessageRequest newMessageRequest) {
         try {
-            this.messageResponse = pnPaB2bInternalInformalClientImpl.createMessage(currentCxId,newMessageRequest);
+            this.messageResponse = pnPaB2bInternalInformalClientImpl.createMessage(currentCxId, newMessageRequest);
             assertNotNull(this.messageResponse.getMessageId(), "messageId non valorizzato: creazione messaggio fallita");
             this.messageId = this.messageResponse.getMessageId();
             this.lastException = null;
@@ -570,7 +569,7 @@ public class PresaInCaricoNoticaBonariaSteps {
             });
 
         } catch (Exception e) {
-            throw new AssertionError("Stato finale non valido.\n" + "Atteso: " + expectedStatus + "\n" + "Ultimo stato ricevuto: " + lastStatus.get()+ "\n" + "Response: "+ statusResponse, e);
+            throw new AssertionError("Stato finale non valido.\n" + "Atteso: " + expectedStatus + "\n" + "Ultimo stato ricevuto: " + lastStatus.get() + "\n" + "Response: " + statusResponse, e);
 
         } finally {
             log.info("=== RESPONSE FINALE NOTIFICA ===");
