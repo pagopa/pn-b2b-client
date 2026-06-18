@@ -267,7 +267,6 @@ Feature: Correzione timeline fase 3 costi
     And post restart verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attemptRestart>
     And il record recuperato su pn-CostComponents è <costCompare> rispetto a prima del rework
     And il valore del notification cost dei record su pn-CostUpdateResult è <costCompare> rispetto a prima del rework
-#    And il baseCost è differente rispetto a prima del rework
     Examples:
       | sequence                               | finalEvent                         | finalStatus        | attempt | finalEventRestart                  | finalStatusRestart | attemptRestart | costCompare |
       | Via@OK_DEC_RESTART_CONS_AR             | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              | uguale      |
