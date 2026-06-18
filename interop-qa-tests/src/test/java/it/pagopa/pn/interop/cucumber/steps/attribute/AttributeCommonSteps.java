@@ -379,6 +379,7 @@ public class AttributeCommonSteps {
 
         log.info("Il tenant {} ha un attributo certificato discreto con ID {}", tenantId, discreteAttr.getId());
 
+        sharedStepsContext.getAttributeCommonContext().setOwnerCertifiedDiscreteAttribute(tenantType);
         sharedStepsContext.getAttributeCommonContext().getOwnedCertifiedDiscreteAttributes().add(discreteAttr);
     }
 

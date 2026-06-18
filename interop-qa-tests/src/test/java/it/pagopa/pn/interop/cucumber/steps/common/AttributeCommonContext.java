@@ -29,6 +29,7 @@ public class AttributeCommonContext {
 
     List<Attribute> createdAttributes = new ArrayList<>();
     List<CompactAttribute> availableCertifiedDiscreteAttributes = new ArrayList<>();
+    String ownerCertifiedDiscreteAttribute;
     List<CertifiedDiscreteTenantAttribute> ownedCertifiedDiscreteAttributes = new ArrayList<>();
 
     public Attribute getLastCreatedAttribute() {
