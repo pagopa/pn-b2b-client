@@ -99,8 +99,8 @@ public class EServiceApiClientImpl implements IEServiceClient {
     }
 
     @Override
-    public void suspendDescriptor(UUID eServiceId, UUID descriptorId) {
-        eservicesApi.suspendDescriptor(eServiceId, descriptorId);
+    public ResponseEntity<Void> suspendDescriptor(UUID eServiceId, UUID descriptorId) {
+        return eservicesApi.suspendDescriptorWithHttpInfo(eServiceId, descriptorId);
     }
 
     @Override
