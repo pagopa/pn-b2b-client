@@ -119,6 +119,7 @@ public class DescriptorUpdateSteps {
             case CERTIFIED -> requiredCertifiedAttributes.get(groupIndex).get(attributeIndex);
             case DECLARED -> requiredDeclaredAttributes.get(groupIndex).get(attributeIndex);
             case VERIFIED -> requiredVerifiedAttributes.get(groupIndex).get(attributeIndex);
+            case CERTIFIED_DISCRETE -> throw new UnsupportedOperationException("Unsupported attribute kind: %s".formatted(attributeType));
         };
 
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
@@ -157,6 +158,7 @@ public class DescriptorUpdateSteps {
             case CERTIFIED -> requiredCertifiedAttributes.get(groupIndex).get(attributeIndex);
             case DECLARED -> requiredDeclaredAttributes.get(groupIndex).get(attributeIndex);
             case VERIFIED -> requiredVerifiedAttributes.get(groupIndex).get(attributeIndex);
+            case CERTIFIED_DISCRETE -> throw new UnsupportedOperationException("Unsupported attribute kind: %s".formatted(attributeType));
         };
 
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
