@@ -29,7 +29,7 @@ public class DelayerLambdaClientV2 {
         var params = paramsOf(
                 DelayerTable.DelayerPaperDelivery,
                 DelayerTable.PaperDeliveryCounters, // da codice esistente
-                DelayerTable.PaperDeliveryDriverCapacities, // da documentazione
+                // DelayerTable.PaperDeliveryDriverCapacities, // da documentazione
                 mandatory("filename", filename),
                 deliveryWeek
         );
