@@ -31,7 +31,6 @@ import org.springframework.web.client.HttpStatusCodeException;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
-import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -461,14 +460,6 @@ public class TimelineReworkSteps {
         invokeConsolidatorCustomFromMap(inputData);
     }
 
-    @When("viene invocato il consolidatore per inserire tutti gli eventi previsti per il destinatario {int} che portano allo status code {string} al tentativo {int}")
-    public void invokeConsolidatorForAllEvents(int recIndex, String expectedStatusCode, int attempt) {
-        List<Map<String, String>> mapsList = buildDataTableListForMultipleConsolidatorCalls(recIndex, expectedStatusCode, attempt);
-        for (Map<String, String> map : mapsList) {
-            invokeConsolidatorCustomFromMap(map);
-        }
-    }
-
     private void invokeConsolidatorCustomFromMap(Map<String, String> map) {
         Map<String, Object> mapInfo = populateConsolidatoreMapCustom(map);
         String body = Assertions.assertDoesNotThrow(
@@ -487,104 +478,6 @@ public class TimelineReworkSteps {
                         body
                 )
         );
-    }
-
-    private List<Map<String, String>> buildDataTableListForMultipleConsolidatorCalls(int recIndex, String expectedStatusCode, int attempt) {
-        List<Map<String, String>> mapsList = new ArrayList<>();
-
-        Map<String, String> defaultMap = new HashMap<>();
-        defaultMap.put("productType", "AR");
-        defaultMap.put("attemptId", "ATTEMPT_0");
-        defaultMap.put("pcRetry", "PCRETRY_0");
-        defaultMap.put("recIndex", recIndex == 0 ? "RECINDEX_0" : "RECINDEX_1");
-
-        switch (expectedStatusCode) {
-            case "RECRN002C" -> {
-                Map<String, String> map1 = new HashMap<>(defaultMap);
-                map1.put("statusCode", "RECRN002A");
-                map1.put("deliveryFailureCause", "M02");
-                mapsList.add(map1);
-                Map<String, String> map2 = new HashMap<>(defaultMap);
-                map2.put("statusCode", "RECRN002B");
-                map2.put("deliveryFailureCause", "M02");
-                map2.put("attachment_1", "Plico");
-                mapsList.add(map2);
-                Map<String, String> map3 = new HashMap<>(defaultMap);
-                map3.put("statusCode", "RECRN002C");
-                mapsList.add(map3);
-            }
-            case "RECRN001C" -> {
-                if (attempt == 0) {
-                    Map<String, String> map1 = new HashMap<>(defaultMap);
-                    map1.put("statusCode", "RECRN001A");
-                    mapsList.add(map1);
-                    Map<String, String> map2 = new HashMap<>(defaultMap);
-                    map2.put("statusCode", "RECRN001B");
-                    map2.put("attachment_1", "AR");
-                    mapsList.add(map2);
-                    Map<String, String> map3 = new HashMap<>(defaultMap);
-                    map3.put("statusCode", "RECRN001C");
-                    mapsList.add(map3);
-                } else {
-                    Map<String, String> map1 = new HashMap<>(defaultMap);
-                    map1.put("statusCode", "RECRN002D");
-                    map1.put("deliveryFailureCause", "M04");
-                    mapsList.add(map1);
-                    Map<String, String> map2 = new HashMap<>(defaultMap);
-                    map2.put("statusCode", "RECRN002E");
-                    map2.put("attachment_1", "Plico");
-                    map2.put("attachment_2", "Indagine");
-                    mapsList.add(map2);
-                    Map<String, String> map3 = new HashMap<>(defaultMap);
-                    map3.put("statusCode", "RECRN002F");
-                    mapsList.add(map3);
-                    Map<String, String> map4 = new HashMap<>(defaultMap);
-                    map4.put("attemptId", "ATTEMPT_1");
-                    map4.put("statusCode", "RECRN001A");
-                    mapsList.add(map4);
-                    Map<String, String> map5 = new HashMap<>(defaultMap);
-                    map5.put("attemptId", "ATTEMPT_1");
-                    map5.put("statusCode", "RECRN001B");
-                    map5.put("attachment_1", "AR");
-                    mapsList.add(map5);
-                    Map<String, String> map6 = new HashMap<>(defaultMap);
-                    map6.put("attemptId", "ATTEMPT_1");
-                    map6.put("statusCode", "RECRN001C");
-                    mapsList.add(map6);
-                }
-            }
-            case "RECRN002F" -> {
-                Map<String, String> map1 = new HashMap<>(defaultMap);
-                map1.put("statusCode", "RECRN002D");
-                map1.put("deliveryFailureCause", "M01");
-                mapsList.add(map1);
-                Map<String, String> map2 = new HashMap<>(defaultMap);
-                map2.put("statusCode", "RECRN002E");
-                map2.put("attachment_1", "Plico");
-                map2.put("attachment_2", "Indagine");
-                mapsList.add(map2);
-                Map<String, String> map3 = new HashMap<>(defaultMap);
-                map3.put("statusCode", "RECRN002F");
-                mapsList.add(map3);
-                Map<String, String> map4 = new HashMap<>(defaultMap);
-                map4.put("attemptId", "ATTEMPT_1");
-                map4.put("statusCode", "RECRN002D");
-                map4.put("deliveryFailureCause", "M01");
-                mapsList.add(map4);
-                Map<String, String> map5 = new HashMap<>(defaultMap);
-                map5.put("attemptId", "ATTEMPT_1");
-                map5.put("statusCode", "RECRN002E");
-                map5.put("attachment_1", "Plico");
-                map5.put("attachment_2", "Indagine");
-                mapsList.add(map5);
-                Map<String, String> map6 = new HashMap<>(defaultMap);
-                map6.put("attemptId", "ATTEMPT_1");
-                map6.put("statusCode", "RECRN002F");
-                mapsList.add(map6);
-            }
-            default -> throw new IllegalArgumentException("Unexpected expectedStatusCode value: " + expectedStatusCode);
-        }
-        return mapsList;
     }
 
     private String getOrInitNow() {
