@@ -1024,10 +1024,6 @@
         | unifiedDeliveryDriverId      | comparative | limit |
         | driverRanking2nd_890~P1      | esattamente | 10     |
         | driverRanking2nd_890~CAP1_P1 | esattamente | 10     |
-      And si verifica che la capacità disponibile settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
-        | unifiedDeliveryDriverId      | comparative | limit |
-        | driverRanking2nd_890~P1      | esattamente | 10     |
-        | driverRanking2nd_890~CAP1_P1 | esattamente | 10     |
       And si presuppone che la capacità di stampa giornaliera sia esattamente 1
       And il CSV "tcSenderPriorityFrozenW2.csv" è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
       And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
@@ -1037,4 +1033,3 @@
         | seed                      |
         | tcSenderPriorityFrozenW1_ |
         | tcSenderPriorityFrozenW2_ |
-      And verifica la corretta pianificazione di ogni test case
