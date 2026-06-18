@@ -214,6 +214,27 @@ public class EServiceTemplateVersionUpdateSteps {
         );
     }
 
+    @When("l'utente modifica il primo attributo certificato discreto nel primo gruppo degli attributi certificati con discrete threshold {int} e discrete comparator a {string}")
+    public void updateCertifiedDiscreteAttribute(int threshold, String comparator) {
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId();
+
+        DescriptorAttributeSeed attributeSeed = new DescriptorAttributeSeed()
+                .id(sharedStepsContext.getAttributeCommonContext().getOwnedCertifiedDiscreteAttributes().get(0).getId())
+                .explicitAttributeVerification(true)
+                .discreteConfig(
+                        new EServiceAttributeCertifiedDiscreteConfig()
+                                .comparator(AttributeCertifiedDiscreteComparator.valueOf(comparator)).threshold(threshold)
+                                .threshold(threshold)
+                );
+        DescriptorAttributesSeed seed = new DescriptorAttributesSeed();
+        seed.addCertifiedItem(List.of(attributeSeed));
+
+        eServiceTemplateClient.updateEServiceTemplateVersionAttributes(
+                eServiceTemplateId, eServiceTemplateVersionId, seed
+        );
+    }
+
     @When("gli attributi del template e-service hanno la seguente configurazione:")
     public void checkAssignedAttributesToEServiceTemplateVersion(List<EServiceAttributeSpec> attributeSpecs) {
 

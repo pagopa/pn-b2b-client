@@ -3169,3 +3169,44 @@ Feature: Test API of e-service template
       | CERTIFIED_DISCRETE | 1     | GTE        | 500000  |
       | CERTIFIED          | 1     |            |         |
       | DECLARED           | 0     |            |         |
+
+  @certifiedDiscreteAttribute
+  Scenario: [CERT_DISCRETE_ATTR_ESERVICE_TEMPL_2] Modifica con successo della soglia e del comparatore di un attributo
+  certificato discreto su un template e-service già pubblicato.
+
+    Given l'utente è un "admin" di "PA1"
+    And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
+    And l'utente "PA1" possiede almeno un attributo certificato discreto
+    And l'utente è un "admin" di "PA2"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente tenta di aggiungere i seguenti attributi alla versione dell'e-service template:
+      | kind               | group | comparator | value   |
+      | CERTIFIED_DISCRETE | 0     | GTE        | 1000000 |
+    And si ottiene response status code 200
+    And gli attributi del template e-service hanno la seguente configurazione:
+      | kind               | group | comparator | value   |
+      | CERTIFIED_DISCRETE | 0     | GTE        | 1000000 |
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+    And l'utente effettua la pubblicazione dell'e-service template
+    And l'e-service template è in stato di PUBLISHED
+    When l'utente modifica il primo attributo certificato discreto nel primo gruppo degli attributi certificati con discrete threshold 10 e discrete comparator a "LT"
+    And gli attributi del template e-service hanno la seguente configurazione:
+      | kind               | group | comparator | value |
+      | CERTIFIED_DISCRETE | 0     | LT         | 10    |
+    Then si ottiene response status code 200
+
+  @certifiedDiscreteAttribute
+  Scenario: [CERT_DISCRETE_ATTR_ESERVICE_TEMPL_NO_DUPLICATED] Un e-service template in stato DRAFT non può avere lo stesso
+  attributo certificato discreto nello stesso gruppo (logiche OR non consentite).
+
+    Given l'utente è un "admin" di "PA1"
+    And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
+    And l'utente "PA1" possiede almeno un attributo certificato discreto
+    When l'utente è un "admin" di "PA2"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    When l'utente tenta di aggiungere i seguenti attributi alla versione dell'e-service template:
+      | kind               | group | comparator | value   |
+      | CERTIFIED_DISCRETE | 0     | GTE        | 1000000 |
+      | CERTIFIED_DISCRETE | 0     | LTE        | 2000000 |
+    Then si ottiene response status code 400
+  
