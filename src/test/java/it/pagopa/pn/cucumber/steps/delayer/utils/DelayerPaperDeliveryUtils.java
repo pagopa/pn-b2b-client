@@ -518,6 +518,7 @@ public class DelayerPaperDeliveryUtils {
                     map.put("cap", n.getCap());
                     map.put("attempt", n.getAttempt());
                     map.put("iun", n.getIun());
+                    map.put("virtualNotificationSentAt", n.getVirtualNotificationSentAt());
                     if (step.getIndex() > 0 && !n.getUnifiedDeliveryDriver().equals(UNIFIED_DRIVER_SCONOSCIUTO))
                         map.put("unifiedDeliveryDriver", n.getUnifiedDeliveryDriver());
 

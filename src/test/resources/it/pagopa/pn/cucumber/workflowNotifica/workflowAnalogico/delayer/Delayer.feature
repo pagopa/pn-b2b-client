@@ -966,15 +966,22 @@
         | tcSenderPriority_ | 10       |
       And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
         | senderId              | comparative | limit |
-        | ranking2nd_890~890~P1 | esattamente | 5     |
-        | rankingRS_2nd~890~P2  | esattamente | 5     |
+        | ranking2nd_890~890~P1 | esattamente | 7     |
+        | rankingRS_2nd~890~P2  | esattamente | 0     |
       And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
         | unifiedDeliveryDriverId      | comparative | limit |
-        | driverRanking2nd_890~P1      | esattamente | 5     |
-        | driverRanking2nd_890~CAP1_P1 | esattamente | 5     |
-        | driverRankingRS_2nd~P2       | esattamente | 5     |
-        | driverRankingRS_2nd~CAP1_P2  | esattamente | 5     |
-      And si presuppone che la capacità di stampa giornaliera sia esattamente 10
+        | driverRanking2nd_890~P1      | esattamente | 10    |
+        | driverRanking2nd_890~CAP1_P1 | esattamente | 10    |
+        | driverRankingRS_2nd~P2       | esattamente | 10    |
+        | driverRankingRS_2nd~CAP1_P2  | esattamente | 10    |
+      And si verifica che la capacità disponibile settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
+        | unifiedDeliveryDriverId      | comparative | limit |
+        | driverRanking2nd_890~P1      | esattamente | 10    |
+        | driverRanking2nd_890~CAP1_P1 | esattamente | 10    |
+        | driverRankingRS_2nd~P2       | esattamente | 10    |
+        | driverRankingRS_2nd~CAP1_P2  | esattamente | 10    |
+      And viene impostato il limite massimo di 20 spedizioni in SENT_TO_PREPARE_PHASE_2 per ogni esecuzione di DelayerToPaperChannelStateMachine
+#      And si presuppone che la capacità di stampa giornaliera sia esattamente 10
       And il CSV "tcSenderPriority.csv" è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
       And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
       When viene avviata la step function BatchWorkflowStateMachine

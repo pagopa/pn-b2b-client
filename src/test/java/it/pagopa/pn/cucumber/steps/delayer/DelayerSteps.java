@@ -320,6 +320,19 @@ public class DelayerSteps {
         Set<String> requestIds = expected.stream().map(DelayerPaperDelivery::getRequestId).collect(Collectors.toSet());
         List<DelayerPaperDelivery> actual = service.findByWorkflowStep(requestIds, step.name(), context.expectedDeliveryDate, 1);
 
+        expected.forEach(expectedDelivery ->
+                actual.stream()
+                        .filter(actualDelivery -> actualDelivery.getRequestId().equals(expectedDelivery.getRequestId()))
+                        .findFirst()
+                        .ifPresent(actualDelivery ->
+                                expectedDelivery.setVirtualNotificationSentAt(actualDelivery.getVirtualNotificationSentAt()))
+        );
+
+        expected.forEach(expectedDelivery ->
+                expectedDelivery.setSk(utils.calculateSk(WorkflowSteps.valueOf(ws), expectedDelivery))
+        );
+
+
         actual.forEach(dpd -> {
             String seed = extractSeed(dpd);
             context.actualPianification.get(seed).get(step.name()).add(dpd);
