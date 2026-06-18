@@ -5,7 +5,7 @@ Feature: Correzione timeline fase 2 costi
   #FLAT_RATE_SYNC
 
   @timelineReworkF2_costi_sync
-  #OK, rework porta di nuovo a OK ad attempt0
+  #OK, rework porta di nuovo a OK all'attempt0
   Scenario: [TR3_PAYMENTS_REWORK_FLATRATE_SYNC_OK_AR_1] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene generata una nuova notifica
       | subject               | test costi rework    |
@@ -57,7 +57,7 @@ Feature: Correzione timeline fase 2 costi
     Then il baseCost è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_sync
-  #OK, rework porta a deceduto ad attempt0
+  #OK, rework porta a deceduto all'attempt0
   Scenario: [TR3_PAYMENTS_REWORK_FLATRATE_SYNC_OK_AR_2] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene generata una nuova notifica
       | subject               | test costi rework    |
@@ -108,7 +108,7 @@ Feature: Correzione timeline fase 2 costi
     Then il baseCost è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_sync
-  #OK, rework porta a KO ad attempt0
+  #OK, rework porta a KO all'attempt0 e OK all'attempt1
   Scenario: [TR3_PAYMENTS_REWORK_FLATRATE_SYNC_OK_AR_3] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene generata una nuova notifica
       | subject               | test costi rework    |
@@ -152,15 +152,15 @@ Feature: Correzione timeline fase 2 costi
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECRN002F"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "REWORK_0"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
     And la timeline contiene elementi con la stringa "REWORK_"
-    When post rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt 0
-    Then il baseCost è uguale rispetto a prima del rework
+    When post rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt 1
+    Then il baseCost è differente rispetto a prima del rework
 
   @timelineReworkF2_costi_sync
-  #deceduto, rework porta di nuovo a deceduto ad attempt0
+  #deceduto, rework porta di nuovo a deceduto all'attempt0
   Scenario: [TR3_PAYMENTS_REWORK_FLATRATE_SYNC_FAIL_DECEDUTO_AR_1] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene generata una nuova notifica
       | subject               | test costi rework    |
@@ -210,7 +210,7 @@ Feature: Correzione timeline fase 2 costi
     Then il baseCost è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_sync
-  #deceduto, rework porta a OK ad attempt0
+  #deceduto, rework porta a OK all'attempt0
   Scenario: [TR3_PAYMENTS_REWORK_FLATRATE_SYNC_FAIL_DECEDUTO_AR_2] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene generata una nuova notifica
       | subject               | test costi rework    |
@@ -261,7 +261,7 @@ Feature: Correzione timeline fase 2 costi
     Then il baseCost è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_sync
-  #deceduto, rework porta a KO ad attempt0
+  #deceduto, rework porta a KO all'attempt0
   Scenario: [TR3_PAYMENTS_REWORK_FLATRATE_SYNC_FAIL_DECEDUTO_AR_3] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene generata una nuova notifica
       | subject               | test costi rework    |
@@ -304,15 +304,15 @@ Feature: Correzione timeline fase 2 costi
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECRN002F"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
     And la timeline contiene elementi con la stringa "REWORK_"
-    When post rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt 0
-    Then il baseCost è uguale rispetto a prima del rework
+    When post rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt 1
+    Then il baseCost è differente rispetto a prima del rework
 
   @timelineReworkF2_costi_sync
-  #KO-OK, rework dell'attempt1 porta di nuovo a OK ad attempt1
+  #KO-OK, rework dell'attempt1 porta di nuovo a OK all'attempt1
   Scenario: [TR3_PAYMENTS_REWORK_FLATRATE_SYNC_FAIL_DISCOVERY_AR_1] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene generata una nuova notifica
       | subject               | test costi rework    |
@@ -365,7 +365,7 @@ Feature: Correzione timeline fase 2 costi
     Then il baseCost è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_sync
-  #KO-OK, rework dell'attempt1 porta a KO ad attempt1
+  #KO-OK, rework dell'attempt1 porta a KO all'attempt1
   Scenario: [TR3_PAYMENTS_REWORK_FLATRATE_SYNC_FAIL_DISCOVERY_AR_2] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene generata una nuova notifica
       | subject               | test costi rework    |
@@ -418,7 +418,7 @@ Feature: Correzione timeline fase 2 costi
     Then il baseCost è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_sync
-  #KO-OK, rework dell'attempt0 porta a OK ad attempt0
+  #KO-OK, rework dell'attempt0 porta a OK all'attempt0
   Scenario: [TR3_PAYMENTS_REWORK_FLATRATE_SYNC_FAIL_DISCOVERY_AR_3] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene generata una nuova notifica
       | subject               | test costi rework    |
@@ -471,7 +471,7 @@ Feature: Correzione timeline fase 2 costi
     Then il baseCost è differente rispetto a prima del rework
 
   @timelineReworkF2_costi_sync
-  #KO-KO, rework dell'attempt1 porta di nuovo a KO ad attempt1
+  #KO-KO, rework dell'attempt1 porta di nuovo a KO all'attempt1
   Scenario: [TR3_PAYMENTS_REWORK_FLATRATE_SYNC_FAIL_DISCOVERY_IRREPERIBILE_AR_1] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene generata una nuova notifica
       | subject               | test costi rework    |
@@ -524,7 +524,7 @@ Feature: Correzione timeline fase 2 costi
     Then il baseCost è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_sync
-  #KO-KO, rework dell'attempt1 porta a OK ad attempt1
+  #KO-KO, rework dell'attempt1 porta a OK all'attempt1
   Scenario: [TR3_PAYMENTS_REWORK_FLATRATE_SYNC_FAIL_DISCOVERY_IRREPERIBILE_AR_1] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene generata una nuova notifica
       | subject               | test costi rework    |
@@ -577,7 +577,7 @@ Feature: Correzione timeline fase 2 costi
     Then il baseCost è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_sync
-  #KO-KO, rework dell'attempt0 porta a OK ad attempt0
+  #KO-KO, rework dell'attempt0 porta a OK all'attempt0
   Scenario: [TR3_PAYMENTS_REWORK_FLATRATE_SYNC_FAIL_DISCOVERY_IRREPERIBILE_AR_3] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene generata una nuova notifica
       | subject               | test costi rework    |
@@ -632,7 +632,7 @@ Feature: Correzione timeline fase 2 costi
   #DELIVERY_MODE SYNC
 
   @timelineReworkF2_costi_sync
-  #OK, rework porta di nuovo a OK ad attempt0
+  #OK, rework porta di nuovo a OK all'attempt0
   Scenario: [TR3_PAYMENTS_REWORK_DELIVERY_MODE_SYNC_OK_AR_1] Invio di una notifica mono-destinatario con pagamento/i PagoPA(delivery mode sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene generata una nuova notifica
       | subject               | test costi rework    |
@@ -687,7 +687,7 @@ Feature: Correzione timeline fase 2 costi
     And il baseCost è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_sync
-  #OK, rework porta a deceduto attempt0
+  #OK, rework porta a deceduto all' attempt0
   Scenario: [TR3_PAYMENTS_REWORK_DELIVERY_MODE_SYNC_OK_AR_2] Invio di una notifica mono-destinatario con pagamento/i PagoPA(delivery mode sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene generata una nuova notifica
       | subject               | test costi rework    |
@@ -741,7 +741,7 @@ Feature: Correzione timeline fase 2 costi
     And il baseCost è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_sync
-  #OK, rework porta a KO attempt0
+  #OK, rework porta a KO all'attempt0 e OK all'attempt1
   Scenario: [TR3_PAYMENTS_REWORK_DELIVERY_MODE_SYNC_OK_AR_3] Invio di una notifica mono-destinatario con pagamento/i PagoPA(delivery mode sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene generata una nuova notifica
       | subject               | test costi rework    |
@@ -787,16 +787,17 @@ Feature: Correzione timeline fase 2 costi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "REWORK_0"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
     And la timeline contiene elementi con la stringa "REWORK_"
     When post rework vengono recuperati i costi dall'api di delivery per il destinatario 0
-    Then il valore dei costi restituiti dall'api di delivery è uguale rispetto a prima del rework
-    And post rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt 0
-    And il baseCost è uguale rispetto a prima del rework
+    Then il valore dei costi restituiti dall'api di delivery è differente rispetto a prima del rework
+    And post rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt 1
+    And il baseCost è differente rispetto a prima del rework
 
   @timelineReworkF2_costi_sync
-  #deceduto, rework porta di nuovo a deceduto ad attempt0
+  #deceduto, rework porta di nuovo a deceduto all'attempt0
   Scenario: [TR3_PAYMENTS_REWORK_DELIVERY_MODE_SYNC_FAIL_DECEDUTO_AR_1] Invio di una notifica mono-destinatario con pagamento/i PagoPA(delivery mode sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene generata una nuova notifica
       | subject               | test costi rework    |
@@ -849,7 +850,7 @@ Feature: Correzione timeline fase 2 costi
     Then il baseCost è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_sync
-  #deceduto, rework porta a OK ad attempt0
+  #deceduto, rework porta a OK all'attempt0
   Scenario: [TR3_PAYMENTS_REWORK_DELIVERY_MODE_SYNC_FAIL_DECEDUTO_AR_2] Invio di una notifica mono-destinatario con pagamento/i PagoPA(delivery mode sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene generata una nuova notifica
       | subject               | test costi rework    |
@@ -903,7 +904,7 @@ Feature: Correzione timeline fase 2 costi
     Then il baseCost è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_sync
-  #deceduto, rework porta a KO ad attempt0
+  #deceduto, rework porta a KO all'attempt0 e OK all'attempt1
   Scenario: [TR3_PAYMENTS_REWORK_DELIVERY_MODE_SYNC_FAIL_DECEDUTO_AR_3] Invio di una notifica mono-destinatario con pagamento/i PagoPA(delivery mode sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene generata una nuova notifica
       | subject               | test costi rework    |
@@ -947,17 +948,17 @@ Feature: Correzione timeline fase 2 costi
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECRN002F"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
     And la timeline contiene elementi con la stringa "REWORK_"
     When post rework vengono recuperati i costi dall'api di delivery per il destinatario 0
-    Then il valore dei costi restituiti dall'api di delivery è uguale rispetto a prima del rework
-    When post rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt 0
-    Then il baseCost è uguale rispetto a prima del rework
+    Then il valore dei costi restituiti dall'api di delivery è differente rispetto a prima del rework
+    When post rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt 1
+    Then il baseCost è differente rispetto a prima del rework
 
   @timelineReworkF2_costi_sync
-  #KO-OK, rework dell'attempt1 porta di nuovo a KO ad attempt1
+  #KO-OK, rework dell'attempt1 porta di nuovo a KO all'attempt1
   Scenario: [TR3_PAYMENTS_REWORK_DELIVERY_MODE_SYNC_FAIL_DISCOVERY_AR_1] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene generata una nuova notifica
       | subject               | test costi rework    |
@@ -1013,7 +1014,7 @@ Feature: Correzione timeline fase 2 costi
     Then il baseCost è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_sync
-  #KO-OK, rework dell'attempt1 porta a KO ad attempt1
+  #KO-OK, rework dell'attempt1 porta a KO all'attempt1
   Scenario: [TR3_PAYMENTS_REWORK_DELIVERY_MODE_SYNC_FAIL_DISCOVERY_AR_2] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene generata una nuova notifica
       | subject               | test costi rework    |
@@ -1069,7 +1070,7 @@ Feature: Correzione timeline fase 2 costi
     Then il baseCost è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_sync
-  #KO-OK, rework dell'attempt0 porta a OK ad attempt0
+  #KO-OK, rework dell'attempt0 porta a OK all'attempt0
   Scenario: [TR3_PAYMENTS_REWORK_DELIVERY_MODE_SYNC_FAIL_DISCOVERY_AR_3] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene generata una nuova notifica
       | subject               | test costi rework    |
@@ -1125,7 +1126,7 @@ Feature: Correzione timeline fase 2 costi
     Then il baseCost è differente rispetto a prima del rework
 
   @timelineReworkF2_costi_sync
-  #KO-KO, rework dell'attempt1 porta di nuovo a KO ad attempt1
+  #KO-KO, rework dell'attempt1 porta di nuovo a KO all'attempt1
   Scenario: [TR3_PAYMENTS_REWORK_DELIVERY_MODE_SYNC_FAIL_DISCOVERY_IRREPERIBILE_AR_1] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene generata una nuova notifica
       | subject               | test costi rework    |
@@ -1181,7 +1182,7 @@ Feature: Correzione timeline fase 2 costi
     Then il baseCost è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_sync
-  #KO-KO, rework dell'attempt1 porta a OK ad attempt1
+  #KO-KO, rework dell'attempt1 porta a OK all'attempt1
   Scenario: [TR3_PAYMENTS_REWORK_DELIVERY_MODE_SYNC_FAIL_DISCOVERY_IRREPERIBILE_AR_2] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene generata una nuova notifica
       | subject               | test costi rework    |
@@ -1237,7 +1238,7 @@ Feature: Correzione timeline fase 2 costi
     Then il baseCost è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_sync
-  #KO-KO, rework dell'attempt0 porta a OK ad attempt0
+  #KO-KO, rework dell'attempt0 porta a OK all'attempt0
   Scenario: [TR3_PAYMENTS_REWORK_DELIVERY_MODE_SYNC_FAIL_DISCOVERY_IRREPERIBILE_AR_3] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene generata una nuova notifica
       | subject               | test costi rework    |

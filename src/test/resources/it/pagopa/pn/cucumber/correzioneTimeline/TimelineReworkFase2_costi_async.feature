@@ -5,7 +5,7 @@ Feature: Correzione timeline fase 2 costi
   #FLAT_RATE ASYNC
 
   @timelineReworkF2_costi_async
-  #OK, rework porta di nuovo a OK ad attempt0
+  #OK, rework porta di nuovo a OK all'attempt0
   Scenario: [TR3_PAYMENTS_REWORK_FLATRATE_ASYNC_OK_AR_1] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
@@ -59,7 +59,7 @@ Feature: Correzione timeline fase 2 costi
     Then il baseCost è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_async
-  #OK, rework porta a deceduto ad attempt0
+  #OK, rework porta a deceduto all'attempt0
   Scenario: [TR3_PAYMENTS_REWORK_FLATRATE_ASYNC_OK_AR_2] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
@@ -112,7 +112,7 @@ Feature: Correzione timeline fase 2 costi
     Then il baseCost è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_async
-  #OK, rework porta a KO ad attempt0
+  #OK, rework porta a KO all'attempt0 e OK all'attempt1
   Scenario: [TR3_PAYMENTS_REWORK_FLATRATE_ASYNC_OK_AR_3] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
@@ -158,15 +158,15 @@ Feature: Correzione timeline fase 2 costi
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECRN002F"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "REWORK_0"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
     And la timeline contiene elementi con la stringa "REWORK_"
-    When post rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt 0
-    Then il baseCost è uguale rispetto a prima del rework
+    When post rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt 1
+    Then il baseCost è differente rispetto a prima del rework
 
   @timelineReworkF2_costi_async
-  #deceduto, rework porta di nuovo a deceduto ad attempt0
+  #deceduto, rework porta di nuovo a deceduto all'attempt0
   Scenario: [TR3_PAYMENTS_REWORK_FLATRATE_ASYNC_FAIL_DECEDUTO_AR_1] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
@@ -218,7 +218,7 @@ Feature: Correzione timeline fase 2 costi
     Then il baseCost è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_async
-  #deceduto, rework porta a OK ad attempt0
+  #deceduto, rework porta a OK all'attempt0
   Scenario: [TR3_PAYMENTS_REWORK_FLATRATE_ASYNC_FAIL_DECEDUTO_AR_2] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
@@ -271,7 +271,7 @@ Feature: Correzione timeline fase 2 costi
     Then il baseCost è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_async
-  #deceduto, rework porta a KO ad attempt0
+  #deceduto, rework porta a KO all'attempt0 e OK all'attempt1
   Scenario: [TR3_PAYMENTS_REWORK_FLATRATE_ASYNC_FAIL_DECEDUTO_AR_3] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
@@ -316,15 +316,15 @@ Feature: Correzione timeline fase 2 costi
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECRN002F"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
     And la timeline contiene elementi con la stringa "REWORK_"
-    When post rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt 0
-    Then il baseCost è uguale rispetto a prima del rework
+    When post rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt 1
+    Then il baseCost è differente rispetto a prima del rework
 
   @timelineReworkF2_costi_async
-  #KO-OK, rework dell'attempt1 porta di nuovo a OK ad attempt1
+  #KO-OK, rework dell'attempt1 porta di nuovo a OK all'attempt1
   Scenario: [TR3_PAYMENTS_REWORK_FLATRATE_ASYNC_FAIL_DISCOVERY_AR_1] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
@@ -379,7 +379,7 @@ Feature: Correzione timeline fase 2 costi
     Then il baseCost è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_async
-  #KO-OK, rework dell'attempt1 porta a KO ad attempt1
+  #KO-OK, rework dell'attempt1 porta a KO all'attempt1
   Scenario: [TR3_PAYMENTS_REWORK_FLATRATE_ASYNC_FAIL_DISCOVERY_AR_2] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
@@ -434,7 +434,7 @@ Feature: Correzione timeline fase 2 costi
     Then il baseCost è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_async
-  #KO-OK, rework dell'attempt0 porta a OK ad attempt0
+  #KO-OK, rework dell'attempt0 porta a OK all'attempt0
   Scenario: [TR3_PAYMENTS_REWORK_FLATRATE_ASYNC_FAIL_DISCOVERY_AR_3] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
@@ -489,7 +489,7 @@ Feature: Correzione timeline fase 2 costi
     Then il baseCost è differente rispetto a prima del rework
 
   @timelineReworkF2_costi_async
-  #KO-KO, rework dell'attempt1 porta di nuovo a KO ad attempt1
+  #KO-KO, rework dell'attempt1 porta di nuovo a KO all'attempt1
   Scenario: [TR3_PAYMENTS_REWORK_FLATRATE_ASYNC_FAIL_DISCOVERY_IRREPERIBILE_AR_1] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
@@ -544,7 +544,7 @@ Feature: Correzione timeline fase 2 costi
     Then il baseCost è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_async
-  #KO-KO, rework dell'attempt1 porta a OK ad attempt1
+  #KO-KO, rework dell'attempt1 porta a OK all'attempt1
   Scenario: [TR3_PAYMENTS_REWORK_FLATRATE_ASYNC_FAIL_DISCOVERY_IRREPERIBILE_AR_2] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
@@ -599,7 +599,7 @@ Feature: Correzione timeline fase 2 costi
     Then il baseCost è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_async
-  #KO-KO, rework dell'attempt0 porta a OK ad attempt0
+  #KO-KO, rework dell'attempt0 porta a OK all'attempt0
   Scenario: [TR3_PAYMENTS_REWORK_FLATRATE_ASYNC_FAIL_DISCOVERY_IRREPERIBILE_AR_3] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
@@ -656,7 +656,7 @@ Feature: Correzione timeline fase 2 costi
   #DELIVERY_MODE ASYNC
 
   @timelineReworkF2_costi_async
-  #OK, rework porta di nuovo a OK ad attempt0
+  #OK, rework porta di nuovo a OK all'attempt0
   Scenario: [TR3_PAYMENTS_REWORK_DELIVERY_MODE_ASYNC_OK_AR_1] Invio di una notifica mono-destinatario con pagamento/i PagoPA(delivery mode sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
@@ -773,7 +773,7 @@ Feature: Correzione timeline fase 2 costi
     And il valore del notification cost dei record su pn-CostUpdateResult è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_async
-  #OK, rework porta a KO attempt0
+  #OK, rework porta a KO all'attempt0 e OK all'attempt1
   Scenario: [TR3_PAYMENTS_REWORK_DELIVERY_MODE_ASYNC_OK_AR_3] Invio di una notifica mono-destinatario con pagamento/i PagoPA(delivery mode sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
@@ -821,18 +821,18 @@ Feature: Correzione timeline fase 2 costi
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECRN002F"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "REWORK_0"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
     And la timeline contiene elementi con la stringa "REWORK_"
     And post rework vengono recuperati i valori dei costi notifica relativi all'utente 0 sulla tabella pn-CostComponents
-    And post rework vengono recuperati i valori dei costi notifica relativi al pagamento 0 dell'utente 0 sulla tabella pn-CostUpdateResult fino all'attempt 0
-    And post rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt 0
-    And il record recuperato su pn-CostComponents è uguale rispetto a prima del rework
-    And il valore del notification cost dei record su pn-CostUpdateResult è uguale rispetto a prima del rework
+    And post rework vengono recuperati i valori dei costi notifica relativi al pagamento 0 dell'utente 0 sulla tabella pn-CostUpdateResult fino all'attempt 1
+    And post rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt 1
+    And il record recuperato su pn-CostComponents è differente rispetto a prima del rework
+    And il valore del notification cost dei record su pn-CostUpdateResult è differente rispetto a prima del rework
 
   @timelineReworkF2_costi_async
-  #deceduto, rework porta di nuovo a deceduto ad attempt0
+  #deceduto, rework porta di nuovo a deceduto all'attempt0
   Scenario: [TR3_PAYMENTS_REWORK_DELIVERY_MODE_ASYNC_FAIL_DECEDUTO_AR_1] Invio di una notifica mono-destinatario con pagamento/i PagoPA(delivery mode sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
@@ -889,7 +889,7 @@ Feature: Correzione timeline fase 2 costi
     And il valore del notification cost dei record su pn-CostUpdateResult è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_async
-  #deceduto, rework porta a OK ad attempt0
+  #deceduto, rework porta a OK all'attempt0
   Scenario: [TR3_PAYMENTS_REWORK_DELIVERY_MODE_ASYNC_FAIL_DECEDUTO_AR_2] Invio di una notifica mono-destinatario con pagamento/i PagoPA(delivery mode sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
@@ -947,7 +947,7 @@ Feature: Correzione timeline fase 2 costi
     And il valore del notification cost dei record su pn-CostUpdateResult è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_async
-  #deceduto, rework porta a KO ad attempt0
+  #deceduto, rework porta a KO all' attempt0 e OK all'attempt1
   Scenario: [TR3_PAYMENTS_REWORK_DELIVERY_MODE_ASYNC_FAIL_DECEDUTO_AR_3] Invio di una notifica mono-destinatario con pagamento/i PagoPA(delivery mode sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
@@ -994,18 +994,18 @@ Feature: Correzione timeline fase 2 costi
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECRN002F"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
     And la timeline contiene elementi con la stringa "REWORK_"
     And post rework vengono recuperati i valori dei costi notifica relativi all'utente 0 sulla tabella pn-CostComponents
-    And post rework vengono recuperati i valori dei costi notifica relativi al pagamento 0 dell'utente 0 sulla tabella pn-CostUpdateResult fino all'attempt 0
-    And post rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt 0
-    And il record recuperato su pn-CostComponents è uguale rispetto a prima del rework
-    And il valore del notification cost dei record su pn-CostUpdateResult è uguale rispetto a prima del rework
+    And post rework vengono recuperati i valori dei costi notifica relativi al pagamento 0 dell'utente 0 sulla tabella pn-CostUpdateResult fino all'attempt 1
+    And post rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt 1
+    And il record recuperato su pn-CostComponents è differente rispetto a prima del rework
+    And il valore del notification cost dei record su pn-CostUpdateResult è differente rispetto a prima del rework
 
   @timelineReworkF2_costi_async
-  #KO-OK, rework dell'attempt1 porta di nuovo a KO ad attempt1
+  #KO-OK, rework dell'attempt1 porta di nuovo a KO all'attempt1
   Scenario: [TR3_PAYMENTS_REWORK_DELIVERY_MODE_ASYNC_FAIL_DISCOVERY_AR_1] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
@@ -1065,7 +1065,7 @@ Feature: Correzione timeline fase 2 costi
     And il valore del notification cost dei record su pn-CostUpdateResult è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_async
-  #KO-OK, rework dell'attempt1 porta a KO ad attempt1
+  #KO-OK, rework dell'attempt1 porta a KO all'attempt1
   Scenario: [TR3_PAYMENTS_REWORK_DELIVERY_MODE_ASYNC_FAIL_DISCOVERY_AR_2] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
@@ -1125,7 +1125,7 @@ Feature: Correzione timeline fase 2 costi
     And il valore del notification cost dei record su pn-CostUpdateResult è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_async
-  #KO-OK, rework dell'attempt1 porta a OK ad attempt0
+  #KO-OK, rework dell'attempt1 porta a OK all'attempt0
   Scenario: [TR3_PAYMENTS_REWORK_DELIVERY_MODE_ASYNC_FAIL_DISCOVERY_AR_3] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
@@ -1185,7 +1185,7 @@ Feature: Correzione timeline fase 2 costi
     And il valore del notification cost dei record su pn-CostUpdateResult è differente rispetto a prima del rework
 
   @timelineReworkF2_costi_async
-  #KO-KO, rework dell'attempt1 porta di nuovo a KO ad attempt1
+  #KO-KO, rework dell'attempt1 porta di nuovo a KO all'attempt1
   Scenario: [TR3_PAYMENTS_REWORK_DELIVERY_MODE_ASYNC_FAIL_DISCOVERY_IRREPERIBILE_AR_1] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
@@ -1245,7 +1245,7 @@ Feature: Correzione timeline fase 2 costi
     And il valore del notification cost dei record su pn-CostUpdateResult è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_async
-  #KO-KO, rework dell'attempt1 porta a OK ad attempt1
+  #KO-KO, rework dell'attempt1 porta a OK all'attempt1
   Scenario: [TR3_PAYMENTS_REWORK_DELIVERY_MODE_ASYNC_FAIL_DISCOVERY_IRREPERIBILE_AR_2] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
@@ -1305,7 +1305,7 @@ Feature: Correzione timeline fase 2 costi
     And il valore del notification cost dei record su pn-CostUpdateResult è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_async
-  #KO-KO, rework dell'attempt1 porta a OK ad attempt0 #BUG VALIDATION 18756
+  #KO-KO, rework dell'attempt1 porta a OK all'attempt0 #BUG VALIDATION 18756
   Scenario: [TR3_PAYMENTS_REWORK_DELIVERY_MODE_ASYNC_FAIL_DISCOVERY_IRREPERIBILE_AR_3] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene generata una nuova notifica
