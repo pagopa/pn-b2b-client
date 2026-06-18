@@ -78,22 +78,17 @@ Feature: Archiviazione manuale di un descrittore
     And la versione più recente dell'e-service è in stato "PUBLISHED"
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
-  Scenario Outline: [M2M_V3_MANUAL_ARCHIVING_DESCRIPTOR_CANCELLATION_1.1] L'ente erogatore M2M di un e-service può annullare il processo di archiviazione manuale del primo e meno recente descrittore se l'archiviazione è in corso
+  Scenario: [M2M_V3_MANUAL_ARCHIVING_DESCRIPTOR_CANCELLATION_1.1] L'ente erogatore M2M di un e-service può annullare il processo di archiviazione manuale del primo e meno recente descrittore in stato ARCHIVING se l'archiviazione è in corso
     Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service con un descrittore in stato "<initialDescriptorState>"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente tenta di annullare il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
     Then si ottiene response status code 200
-    And la vecchia versione dell'e-service è in stato "<finalDescriptorState>"
+    And la vecchia versione dell'e-service è in stato "PUBLISHED"
     And l'archiviazione manuale del singolo descrittore è stata annullata con successo
-
-    Examples:
-      | initialDescriptorState | finalDescriptorState |
-      | PUBLISHED              | PUBLISHED            |
-      | SUSPENDED              | SUSPENDED            |
 
   Scenario: [M2M_V3_MANUAL_ARCHIVING_DESCRIPTOR_CANCELLATION_1.2] Un utente con ruolo M2M NON può annullare il processo di archiviazione manuale del descrittore
     Given l'utente è un "admin" di "PA1"
@@ -140,3 +135,16 @@ Feature: Archiviazione manuale di un descrittore
       | %random      | %actual    | 404        |
       | %actual      | %random    | 404        |
       | %random      | %random    | 404        |
+
+  Scenario: [M2M_V3_MANUAL_ARCHIVING_DESCRIPTOR_CANCELLATION_1.5] L'ente erogatore M2M di un e-service può annullare il processo di archiviazione manuale del primo e meno recente descrittore in stato ARCHIVING_SUSPENDED se l'archiviazione è in corso
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già sospeso quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente tenta di annullare il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
+    Then si ottiene response status code 200
+    And la vecchia versione dell'e-service è in stato "SUSPENDED"
+    And l'archiviazione manuale del singolo descrittore è stata annullata con successo
