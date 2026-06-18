@@ -862,7 +862,7 @@ public class BFFDataPreparationService {
     }
 
     public RiskAnalysis getRiskAnalysis(String tenantType, boolean completed) {
-        String templateType = (tenantType.equals("PA1") || tenantType.equals("PA2")) ? "PA" : "Privato/GSP";
+        String templateType = tenantType.startsWith("PA") ? "PA" : "Privato/GSP";
         RiskAnalysisDataFromJson.RiskAnalysisTemplate riskAnalysisTemplate = riskAnalysisDataInitializer.getRiskAnalysisData().get(templateType);
         RiskAnalysisDataFromJson.RiskAnalysisAttributes riskAnalysisAttributes = (completed) ? riskAnalysisTemplate.getCompleted() : riskAnalysisTemplate.getUncompleted();
         httpCallExecutor.performCall(purposeApiClient::retrieveLatestRiskAnalysisConfiguration);
