@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.catalog.utils;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.ArchivingSchedule;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ArchivingScope;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -39,7 +40,7 @@ public class DescriptorArchivingScheduleVerifier {
         );
     }
 
-    public void pollDescriptorArchivingSchedule(UUID eServiceId, UUID descriptorId, String expectedScope) {
+    public void pollDescriptorArchivingSchedule(UUID eServiceId, UUID descriptorId, ArchivingScope expectedScope) {
         sharedStepsContext.getPollingService().makePolling(
                 () -> clientTokenConfigurator.getEServiceClient().getEServiceDescriptor(eServiceId, descriptorId),
                 descriptor -> hasExpectedArchivingSchedule(descriptor, expectedScope),
@@ -48,7 +49,7 @@ public class DescriptorArchivingScheduleVerifier {
         );
     }
 
-    public void pollDescriptorPopulatedArchivingSchedule(UUID eServiceId, UUID descriptorId, String expectedScope) {
+    public void pollDescriptorPopulatedArchivingSchedule(UUID eServiceId, UUID descriptorId, ArchivingScope expectedScope) {
         sharedStepsContext.getPollingService().makePolling(
                 () -> clientTokenConfigurator.getEServiceClient().getEServiceDescriptor(eServiceId, descriptorId),
                 descriptor -> hasPopulatedArchivingSchedule(descriptor, expectedScope),
@@ -57,26 +58,24 @@ public class DescriptorArchivingScheduleVerifier {
         );
     }
 
-    private boolean hasExpectedArchivingSchedule(ProducerEServiceDescriptor descriptor, String expectedScope) {
+    private boolean hasExpectedArchivingSchedule(ProducerEServiceDescriptor descriptor, ArchivingScope expectedScope) {
         if (descriptor == null || descriptor.getArchivingSchedule() == null) {
             return false;
         }
 
         ArchivingSchedule archivingSchedule = descriptor.getArchivingSchedule();
-        return archivingSchedule.getScope() != null
-                && expectedScope.equals(archivingSchedule.getScope().getValue())
+        return expectedScope.equals(archivingSchedule.getScope())
                 && isStartedAtWithinTolerance(archivingSchedule.getStartedAt())
                 && hasExpectedArchivableOn(archivingSchedule.getArchivableOn());
     }
 
-    private boolean hasPopulatedArchivingSchedule(ProducerEServiceDescriptor descriptor, String expectedScope) {
+    private boolean hasPopulatedArchivingSchedule(ProducerEServiceDescriptor descriptor, ArchivingScope expectedScope) {
         if (descriptor == null || descriptor.getArchivingSchedule() == null) {
             return false;
         }
 
         ArchivingSchedule archivingSchedule = descriptor.getArchivingSchedule();
-        return archivingSchedule.getScope() != null
-                && expectedScope.equals(archivingSchedule.getScope().getValue())
+        return expectedScope.equals(archivingSchedule.getScope())
                 && isPopulated(archivingSchedule.getStartedAt())
                 && isPopulated(archivingSchedule.getArchivableOn());
     }

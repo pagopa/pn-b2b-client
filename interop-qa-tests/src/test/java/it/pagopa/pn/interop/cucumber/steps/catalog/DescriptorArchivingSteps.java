@@ -5,6 +5,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ArchivingScope;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -79,7 +80,7 @@ public class DescriptorArchivingSteps {
         }
 
         pollDescriptorState(resolvedEServiceId, resolvedDescriptorId, expectedState);
-        archivingScheduleVerifier.pollDescriptorArchivingSchedule(resolvedEServiceId, resolvedDescriptorId, "DESCRIPTOR");
+        archivingScheduleVerifier.pollDescriptorArchivingSchedule(resolvedEServiceId, resolvedDescriptorId, ArchivingScope.DESCRIPTOR);
     }
 
     private void scheduleArchiveDescriptor(UUID eServiceId, UUID descriptorId) {
@@ -118,7 +119,7 @@ public class DescriptorArchivingSteps {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID oldDescriptorId = sharedStepsContext.getEServicesCommonContext().getOldDescriptorId();
 
-        archivingScheduleVerifier.pollDescriptorArchivingSchedule(eServiceId, oldDescriptorId, "DESCRIPTOR");
+        archivingScheduleVerifier.pollDescriptorArchivingSchedule(eServiceId, oldDescriptorId, ArchivingScope.DESCRIPTOR);
     }
 
     @Then("il descrittore con id {string} dell'e-service avente id {string} è stato correttamente archiviato tramite l'archiviazione manuale del singolo descrittore")
@@ -128,7 +129,7 @@ public class DescriptorArchivingSteps {
         UUID eServiceUUID = UUID.fromString(eServiceId);
         UUID descriptorUUID = UUID.fromString(descriptorId);
 
-        archivingScheduleVerifier.pollDescriptorPopulatedArchivingSchedule(eServiceUUID, descriptorUUID, "DESCRIPTOR");
+        archivingScheduleVerifier.pollDescriptorPopulatedArchivingSchedule(eServiceUUID, descriptorUUID, ArchivingScope.DESCRIPTOR);
     }
 
     @Then("il descrittore con id {string} dell'e-service avente id {string} NON è stato archiviato tramite archiviazione manuale")

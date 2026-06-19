@@ -4,6 +4,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ArchivingScope;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceArchivingReasonSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
@@ -95,7 +96,7 @@ public class EServiceArchivingSteps {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID oldDescriptorId = sharedStepsContext.getEServicesCommonContext().getOldDescriptorId();
 
-        archivingScheduleVerifier.pollDescriptorArchivingSchedule(eServiceId, oldDescriptorId, "ESERVICE");
+        archivingScheduleVerifier.pollDescriptorArchivingSchedule(eServiceId, oldDescriptorId, ArchivingScope.ESERVICE);
     }
 
     @Then("il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service")
@@ -106,7 +107,7 @@ public class EServiceArchivingSteps {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
 
-        archivingScheduleVerifier.pollDescriptorArchivingSchedule(eServiceId, descriptorId, "ESERVICE");
+        archivingScheduleVerifier.pollDescriptorArchivingSchedule(eServiceId, descriptorId, ArchivingScope.ESERVICE);
     }
 
     @Then("il descrittore con id {string} dell'e-service avente id {string} è stato correttamente archiviato tramite l'archiviazione manuale dell'intero e-service")
@@ -117,7 +118,7 @@ public class EServiceArchivingSteps {
         UUID eServiceUUID = UUID.fromString(eServiceId);
         UUID descriptorUUID = UUID.fromString(descriptorId);
 
-        archivingScheduleVerifier.pollDescriptorPopulatedArchivingSchedule(eServiceUUID, descriptorUUID, "ESERVICE");
+        archivingScheduleVerifier.pollDescriptorPopulatedArchivingSchedule(eServiceUUID, descriptorUUID, ArchivingScope.ESERVICE);
     }
 
     private void scheduleArchiveEService(UUID eServiceId, String archivingReason) {
@@ -164,7 +165,7 @@ public class EServiceArchivingSteps {
     private void pollDescriptorStateAndArchivingSchedule(UUID eServiceId, UUID descriptorId, EServiceDescriptorState expectedState) {
         pollDescriptorState(eServiceId, descriptorId, expectedState);
         if (!EServiceDescriptorState.ARCHIVED.equals(expectedState)) {
-            archivingScheduleVerifier.pollDescriptorArchivingSchedule(eServiceId, descriptorId, "ESERVICE");
+            archivingScheduleVerifier.pollDescriptorArchivingSchedule(eServiceId, descriptorId, ArchivingScope.ESERVICE);
         }
     }
 
