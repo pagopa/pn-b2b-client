@@ -308,8 +308,6 @@
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/develop/packages/api-clients/open-api/bffApi.yml</inputSpec>
-                            <!-- <inputSpec>${project.basedir}/src/main/resources/api.yaml</inputSpec> -->
-                            <!--<inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.19.0-RC4/packages/api-clients/open-api/bffApi.yml</inputSpec>-->
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -344,7 +342,7 @@
                              <typeMappings>
                                  <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                              </typeMappings>
-                             <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.19.0-RC4/packages/api-clients/open-api/authorizationServerApi.yml</inputSpec>
+                             <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/develop/packages/api-clients/open-api/authorizationServerApi.yml</inputSpec>
                              <generatorName>java</generatorName>
                              <library>resttemplate</library>
                              <generateApiTests>false</generateApiTests>
