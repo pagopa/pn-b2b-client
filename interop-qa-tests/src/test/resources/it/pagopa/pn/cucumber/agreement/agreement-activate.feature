@@ -202,19 +202,13 @@ Feature: Attivazione richiesta di fruizione
     When "PA1" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     Then si ottiene response status code 200
     Examples:
-      | comparator | value                             |
-      # la soglia indicata <= soglia numerica di sbarramento fruitore
-      | LTE        | $ATTR_CERT_DISCR_THRESHOLD(PA1,0) |
-      # soglia numerica di sbarramento fruitore = rispetto alla soglia indicata
-      | EQ         | $ATTR_CERT_DISCR_THRESHOLD(PA1,0) |
-      # soglia numerica di sbarramento fruitore < rispetto alla soglia indicata
-      | GTE        | $ATTR_CERT_DISCR_THRESHOLD(PA1,0) |
-      # soglia numerica di sbarramento fruitore >= rispetto alla soglia indicata
-      | <          | $ATTR_CERT_DISCR_THRESHOLD(PA1,0) |
-      # soglia numerica di sbarramento fruitore <= rispetto alla soglia indicata
-      | GT         | $ATTR_CERT_DISCR_THRESHOLD(PA1,0) |
-      # soglia numerica di sbarramento fruitore  != rispetto alla soglia indicata
-      | NE         | $ATTR_CERT_DISCR_THRESHOLD(PA1,1) |
+      | comparator | value                              |
+      | GT         | $ATTR_CERT_DISCR_THRESHOLD(PA1,-1) |
+      | EQ         | $ATTR_CERT_DISCR_THRESHOLD(PA1,0)  |
+      | LT         | $ATTR_CERT_DISCR_THRESHOLD(PA1,1)  |
+      | GTE        | $ATTR_CERT_DISCR_THRESHOLD(PA1,0)  |
+      | LTE        | $ATTR_CERT_DISCR_THRESHOLD(PA1,0)  |
+      | NE         | $ATTR_CERT_DISCR_THRESHOLD(PA1,1)  |
 
   Scenario: [CERT_DISCRETE_ATTR_AGREEMENT_2] Fallimento della creazione di una nuova finalità per un e-service pubblicato
   se non vengono soddisfatti i requisiti degli attributi certificati discreti.
@@ -227,6 +221,20 @@ Feature: Attivazione richiesta di fruizione
     And si ottiene response status code 200
     And l'e-service è in stato "PUBLISHED"
     And l'utente è un "admin" di "PA1"
-    And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati
+    When l'utente crea una richiesta di fruizione
+    Then si ottiene response status code 400
+
+  Scenario: [CERT_DISCRETE_ATTR_AGREEMENT_3] Fallimento della creazione di una nuova finalità per un e-service pubblicato
+  se il fruitore non possiede l'attributo certificato discreto richiesto.
+    Given l'utente è un "admin" di "PA3"
+    And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
+    And l'utente "PA1" possiede almeno un attributo certificato discreto
+    And "PA3" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000 e con i seguenti attributi:
+      | kind               | group | comparator | value                                | dailyCallsPerConsumer |
+      | CERTIFIED_DISCRETE | 0     | LTE        | $ATTR_CERT_DISCR_THRESHOLD(PA1,-100) |                       |
+    And si ottiene response status code 200
+    And l'e-service è in stato "PUBLISHED"
+    And l'utente è un "admin" di "PA2"
+    And l'utente "PA2" non possiede nessun attributo certificato discreto
+    When l'utente crea una richiesta di fruizione
     Then si ottiene response status code 400
