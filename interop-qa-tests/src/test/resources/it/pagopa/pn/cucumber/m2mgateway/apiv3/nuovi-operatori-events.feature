@@ -39,5 +39,18 @@ Feature: Eventi Nuovi Operatori
       | field     | value      |
       | purposeId | :purposeId |
 
+  # PST: Scenario 16 - Caso 16.2
+  Scenario: [AWRS_ASSEGNAZIONE_16_2_EVENTO] Assegnazione reviewer in modalita AdminWritesReviewerSigns con emissione evento PurposeRiskAnalysisWorkflowCreatedV2
+    Given "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+    When l'utente è un "admin" di "PA2"
+    And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns"
+    Then si ottiene status code 200
+    And lo stato della compilazione dell'analisi del rischio è "DRAFT"
+    And "PA2" visualizza l'evento PurposeRiskAnalysisWorkflowCreatedV2 con:
+      | field     | value      |
+      | purposeId | :purposeId |
+
 
 

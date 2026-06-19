@@ -72,6 +72,9 @@ public class PurposeRiskAnalysisAssignSteps {
         );
     }
 
+    // NOTA: al momento questo step non e' riusabile in esecuzione ordinaria,
+    // perche' la piattaforma espone una sola utenza reviewer disponibile.
+    // Mantenerlo solo per readiness futura quando saranno disponibili >= 2 reviewer.
     @When("l'utente assegna i reviewer previsti alla finalità in modalità {string}")
     public void userAssignsExpectedReviewersWithMode(String mode) {
         String tenantType = sharedStepsContext.getTenantType();
