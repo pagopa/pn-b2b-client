@@ -10,11 +10,13 @@ import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplateDraftUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplates;
+import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
 import it.pagopa.interop.purpose.service.impl.PurposeTemplateClientImpl;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose_template.assistant.PurposeTemplatePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.purposetemplate.ParameterTypesInterop.ResourceState;
 import it.pagopa.pn.interop.cucumber.steps.purposetemplate.model.PurposeTemplateContext;
@@ -30,7 +32,6 @@ import org.springframework.http.HttpStatus;
 
 import javax.annotation.Nonnull;
 import java.io.File;
-import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Stream;
@@ -58,6 +59,8 @@ public class PurposeTemplateSteps {
     private final PollingService pollingService;
 
     private final PurposeTemplatePatchOperationsAssistant patchAssistant;
+
+    private final BFFDataPreparationService dataPreparationService;
 
     private PurposeTemplateSeed purposeTemplateCreationRequest;
 
@@ -96,7 +99,8 @@ public class PurposeTemplateSteps {
     public PurposeTemplateSteps(SharedStepsContext sharedStepsContext,
                                 ClientTokenConfigurator clientTokenConfigurator,
                                 BlobFileCreator blobFileCreator,
-                                PurposeTemplatePatchOperationsAssistant patchAssistant) {
+                                PurposeTemplatePatchOperationsAssistant patchAssistant,
+                                BFFDataPreparationService dataPreparationService) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.blobFileCreator = blobFileCreator;
@@ -108,6 +112,7 @@ public class PurposeTemplateSteps {
         this.purposeTemplateContext = new PurposeTemplateContext();
         this.resolver = new PurposeTemplateResolver(sharedStepsContext, purposeTemplateContext, sharedStepsContext.getIdentityService());
         this.patchAssistant = patchAssistant;
+        this.dataPreparationService = dataPreparationService;
     }
 
     @AllArgsConstructor
@@ -126,6 +131,13 @@ public class PurposeTemplateSteps {
     @When("viene creato un nuovo purpose template")
     public void createPurposeTemplate() {
         prepareCreationRequest(false);
+        invokeCreatePurposeTemplate();
+    }
+
+    @When("viene creato un nuovo purpose template coerente con la tipologia dell'ente")
+    public void createPurposeTemplateWithTenantKindCoherentWithTenantType() {
+        TargetTenantKind targetTenantKind = resolveTargetTenantKindFromContextTenantType();
+        prepareCreationRequest(false, targetTenantKind);
         invokeCreatePurposeTemplate();
     }
 
@@ -170,11 +182,30 @@ public class PurposeTemplateSteps {
     }
 
     private PurposeTemplateSeed prepareCreationRequest(Boolean handlePersonalDataValue) {
+        return prepareCreationRequest(handlePersonalDataValue, TargetTenantKind.PA);
+    }
+
+    private TargetTenantKind resolveTargetTenantKindFromContextTenantType() {
+        String tenantType = sharedStepsContext.getTenantType();
+        if (isNull(tenantType)) {
+            throw new IllegalStateException("Tenant type assente nello SharedStepsContext");
+        }
+
+        String tenantKind = sharedStepsContext.getIdentityService().getKind(tenantType);
+        try {
+            return "PA".equals(tenantKind) ? TargetTenantKind.PA : TargetTenantKind.PRIVATE;
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalStateException("Tenant kind '%s' non supportato per tenantType '%s'"
+                    .formatted(tenantKind, tenantType), ex);
+        }
+    }
+
+    private PurposeTemplateSeed prepareCreationRequest(Boolean handlePersonalDataValue, TargetTenantKind targetTenantKind) {
         purposeTemplateCreationRequest = new PurposeTemplateSeed();
         purposeTemplateCreationRequest.setPurposeTitle("purposeTitle" + DateTime.now());
         purposeTemplateCreationRequest.setPurposeDescription("purposeDescription_CREATE");
         purposeTemplateCreationRequest.setTargetDescription("targetDescription_CREATE");
-        purposeTemplateCreationRequest.setTargetTenantKind(TargetTenantKind.PA);
+        purposeTemplateCreationRequest.setTargetTenantKind(targetTenantKind);
         purposeTemplateCreationRequest.setPurposeIsFreeOfCharge(true);
         purposeTemplateCreationRequest.setPurposeDailyCalls(10);
 
@@ -183,11 +214,20 @@ public class PurposeTemplateSteps {
 
         if (handlePersonalDataValue != null) {
             RiskAnalysisFormTemplateSeed riskAnalysisForm = new RiskAnalysisFormTemplateSeed()
-                    .version("3.1")
+                    .version(getPurposeTemplateVersion())
                     .answers(getRiskAnalysysTemplateFormAnswerMap(purposeTemplateCreationRequest.getHandlesPersonalData()));
             purposeTemplateCreationRequest.setPurposeRiskAnalysisForm(riskAnalysisForm);
         }
         return purposeTemplateCreationRequest;
+    }
+
+    @Nonnull
+    private String getPurposeTemplateVersion() {
+        // L'inclusione dei valori null è volta a favorire retrocompatibilità con il comportamento antecedente
+        // a questa aggiunta, che considerava "3.1" come versione hardcoded.
+        String tenant = sharedStepsContext.getTenantType();
+        String tenantKind = isNull(tenant) ? null : sharedStepsContext.getIdentityService().getKind(tenant);
+        return isNull(tenantKind) || "PA".equals(tenantKind) ? "3.1" : "2.0";
     }
 
     private void invokeCreatePurposeTemplate() {
@@ -216,7 +256,14 @@ public class PurposeTemplateSteps {
         answersMap.put("purpose", answerPurpose);
         answersMap.put("institutionalPurpose", answerInstitutionalPurpose);
         answersMap.put("usesPersonalData", answerPersonalData);
-        answersMap.put("isRequestOnBehalfOfThirdParties", answerThirdParties);
+
+        String tenant = sharedStepsContext.getTenantType();
+        String tenantKind = sharedStepsContext.getIdentityService().getKind(tenant);
+
+        if ("PA".equals(tenantKind)) {
+            answersMap.put("isRequestOnBehalfOfThirdParties", answerThirdParties);
+        }
+
         answersMap.put("usesThirdPartyPersonalData", answerThirdPartiesPersonalData);
 
         if (handlePersonalData) {
@@ -861,7 +908,7 @@ public class PurposeTemplateSteps {
 
     private RiskAnalysisFormSeed getRiskAnalysisForTemplateFromPurposeTemplate() {
         RiskAnalysisFormSeed riskAnalysisFormSeed = new RiskAnalysisFormSeed()
-                .version("3.1")
+                .version(getPurposeTemplateVersion())
                 .answers(Map.of("institutionalPurpose", List.of("Answer1")));
         return riskAnalysisFormSeed;
     }
@@ -895,6 +942,12 @@ public class PurposeTemplateSteps {
                 assertThat(purposeWithTitleToBeCopied).isNotNull();
                 patch.setTitle(purposeWithTitleToBeCopied.getTitle());
             }
+            case "NUOVA RA" -> {
+                patch.setTitle(purpose.getTitle() + "_updated");
+                patch.setDailyCalls(20);
+                RiskAnalysis riskAnalysis1 = dataPreparationService.getRiskAnalysis(sharedStepsContext.getTenantType(), true);
+                patch.setRiskAnalysisForm(riskAnalysis1.getRiskAnalysisForm());
+            }
             default -> {
                 patch.setTitle(purpose.getTitle() + "_updated");
                 patch.setDailyCalls(20);
@@ -917,7 +970,7 @@ public class PurposeTemplateSteps {
             throw new RuntimeException("Eccezione in fase di get dellà finalità creata a partire dal purpose template");
         }
         switch (state) {
-            case DRAFT -> log.info("Created Purpose: " + purpose);
+            case DRAFT -> log.info("Created Purpose: {}", purpose);
             case ACTIVE -> {
                 httpCallExecutor.performCall(() -> purposeApiClient.activatePurposeVersion(purpose.getId(), purpose.getCurrentVersion().getId()));
                 if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {

@@ -1,6 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.attribute;
 
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -10,17 +9,18 @@ import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.AttributeCommonContext;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.purposes.resolver.PurposeResolver;
-import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.AbstractResolver;
 import it.pagopa.pn.interop.cucumber.utility.EServiceDescriptorUtils;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 
 import java.util.*;
+
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 // TODO riformulare così da rimuovere gli inutilizzati parametri "tenantType"
 @Slf4j
@@ -63,7 +63,7 @@ public class AttributeCommonSteps {
             case CERTIFIED -> attributeCommonContext.getRequiredCertifiedAttributes().isEmpty() ? 0 : attributeCommonContext.getRequiredCertifiedAttributes().get(0).size();
             case DECLARED -> attributeCommonContext.getRequiredDeclaredAttributes().isEmpty() ? 0 : attributeCommonContext.getRequiredDeclaredAttributes().get(0).size();
             case VERIFIED -> attributeCommonContext.getRequiredVerifiedAttributes().isEmpty() ? 0 : attributeCommonContext.getRequiredVerifiedAttributes().get(0).size();
-            case CERTIFIED_DISCRETE -> throw new IllegalStateException("L'attributo di tipo CERTIFIED_DISCRETE non è supportato per la creazione automatica");
+            default -> throw new UnsupportedOperationException("Unsupported attribute kind: %s".formatted(attributeKind));
         };
 
         List<Attribute> createdAttributes = new ArrayList<>();
@@ -181,7 +181,7 @@ public class AttributeCommonSteps {
                             .anyMatch(attr -> attr.getId()
                                     .equals(attributeCommonContext.getRequiredDeclaredAttributes().get(0).get(attributeIndex))
                             );
-                        case CERTIFIED_DISCRETE -> throw new IllegalStateException("L'attributo di tipo CERTIFIED_DISCRETE non è supportato per l'associazione all'e-service");
+                        default -> throw new UnsupportedOperationException("Unsupported attribute kind: %s".formatted(attributeType));
                     };
                 }
 
@@ -238,7 +238,7 @@ public class AttributeCommonSteps {
             case CERTIFIED -> eServiceDescriptor.getAttributes().getCertified();
             case DECLARED -> eServiceDescriptor.getAttributes().getDeclared();
             case VERIFIED -> eServiceDescriptor.getAttributes().getVerified();
-            case CERTIFIED_DISCRETE -> throw new IllegalStateException("L'attributo di tipo CERTIFIED_DISCRETE non è supportato per l'associazione all'e-service");
+            default -> throw new UnsupportedOperationException("Unsupported attribute kind: %s".formatted(attributeKind));
         };
 
         if ((existingAttributeGroups.isEmpty()) || (existingAttributeGroups.get(srcGroupIndex).isEmpty())) {
@@ -286,7 +286,7 @@ public class AttributeCommonSteps {
             case CERTIFIED -> eServiceDescriptor.getAttributes().getCertified();
             case DECLARED -> eServiceDescriptor.getAttributes().getDeclared();
             case VERIFIED -> eServiceDescriptor.getAttributes().getVerified();
-            case CERTIFIED_DISCRETE -> throw new IllegalStateException("L'attributo di tipo CERTIFIED_DISCRETE non è supportato per l'associazione all'e-service");
+            default -> throw new UnsupportedOperationException("Unsupported attribute kind: %s".formatted(attributeKind));
         };
 
         UUID attributeId = getAttributeIdFromRequiredAttributes(attributeKind, groupIndex, attributeIndex);
@@ -360,7 +360,7 @@ public class AttributeCommonSteps {
             case CERTIFIED -> sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes().get(groupIndex).get(attributeIndex);
             case DECLARED -> sharedStepsContext.getAttributeCommonContext().getRequiredDeclaredAttributes().get(groupIndex).get(attributeIndex);
             case VERIFIED -> sharedStepsContext.getAttributeCommonContext().getRequiredVerifiedAttributes().get(groupIndex).get(attributeIndex);
-            case CERTIFIED_DISCRETE -> throw new IllegalStateException("L'attributo di tipo CERTIFIED_DISCRETE non è supportato per l'associazione all'e-service");
+            default -> throw new UnsupportedOperationException("Unsupported attribute kind: %s".formatted(attributeKind));
         };
     }
 }
