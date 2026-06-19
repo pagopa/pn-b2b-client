@@ -171,6 +171,11 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
     }
 
     @Override
+    public void compileRiskAnalysisForm(UUID purposeId, RiskAnalysisFormSeed payload) throws RestClientException {
+        purposesApi.editRiskAnalysisForm(purposeId, payload);
+    }
+
+    @Override
     public void setBearerToken(String bearerToken) {
         this.purposesApi.setApiClient(createApiClient(bearerToken));
     }
