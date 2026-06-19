@@ -146,5 +146,33 @@ public class PurposeRiskAnalysisCompilationSteps {
             clientTokenConfigurator.setBearerToken(previousToken);
         }
     }
+
+    @When("il valutatore assegnato convalida l'analisi del rischio della finalità")
+    public void assignedReviewerSignsRiskAnalysis() {
+        String previousToken = sharedStepsContext.getUserToken();
+        List<AssignedReviewerActorRef> assignedReviewerActors = sharedStepsContext.getRiskAnalysisCommonContext().getAssignedReviewerActors();
+        if (assignedReviewerActors == null || assignedReviewerActors.isEmpty()) {
+            throw new IllegalStateException("Nessun valutatore assegnato presente in contesto");
+        }
+        AssignedReviewerActorRef assignedReviewerActor = assignedReviewerActors.get(assignedReviewerActors.size() - 1);
+        String reviewerToken = resolveAssignedReviewerToken(assignedReviewerActor);
+
+        try {
+            clientTokenConfigurator.setBearerToken(reviewerToken);
+
+            UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+            httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().signRiskAnalysis(purposeId));
+        } finally {
+            clientTokenConfigurator.setBearerToken(previousToken);
+        }
+    }
+
+    @When("l'utente convalida l'analisi del rischio della finalità")
+    public void userSignsRiskAnalysis() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+        httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().signRiskAnalysis(purposeId));
+    }
 }
 
