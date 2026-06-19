@@ -357,6 +357,15 @@ public class AttributeCommonSteps {
 
     @Given("l'utente {string} possiede almeno un attributo certificato discreto")
     public void hasCertifiedDiscreteAttribute(String tenantType) {
+        hasCertifiedDiscreteAttribute(tenantType, true);
+    }
+
+    @Given("l'utente {string} non possiede nessun attributo certificato discreto")
+    public void hasntCertifiedDiscreteAttribute(String tenantType) {
+        hasCertifiedDiscreteAttribute(tenantType, false);
+    }
+
+    private void hasCertifiedDiscreteAttribute(String tenantType, boolean hasAttribute) {
 
         UUID tenantId = identityService.getOrganizationId(tenantType);
         Tenant tenant = clientTokenConfigurator.getTenantsApi().getTenant(tenantId);
@@ -368,21 +377,25 @@ public class AttributeCommonSteps {
 
         CertifiedDiscreteTenantAttribute discreteAttr = (CertifiedDiscreteTenantAttribute) discreteAttrOptional.orElse(null);
 
-        Assertions.assertNotNull(discreteAttr, "Il tenant non ha nessun attributo certificato discreto");
-        Assertions.assertNull(discreteAttr.getRevocationTimestamp(), "L'attributo certificato discreto non deve essere revocato");
+        if (hasAttribute) {
+            Assertions.assertNotNull(discreteAttr, "Il tenant non ha nessun attributo certificato discreto");
+            Assertions.assertNull(discreteAttr.getRevocationTimestamp(), "L'attributo certificato discreto non deve essere revocato");
 
-        boolean isAttributeAvailable = sharedStepsContext.getAttributeCommonContext()
-                .getAvailableCertifiedDiscreteAttributes()
-                .stream()
-                .anyMatch(attr -> attr.getId().equals(discreteAttr.getId()));
-        Assertions.assertTrue(isAttributeAvailable, "L'attributo certificato discreto associato al tenant non è un attributo certificato discreto disponibile");
-
-        log.info("Il tenant {} ha l'attributo certificato discreto {} con ID {} e threshold {}",
-                tenantId,
-                discreteAttr.getName(),
-                discreteAttr.getId(),
-                discreteAttr.getDiscreteValue()
-        );
+            boolean isAttributeAvailable = sharedStepsContext.getAttributeCommonContext()
+                    .getAvailableCertifiedDiscreteAttributes()
+                    .stream()
+                    .anyMatch(attr -> attr.getId().equals(discreteAttr.getId()));
+            Assertions.assertTrue(isAttributeAvailable, "L'attributo certificato discreto associato al tenant non è un attributo certificato discreto disponibile");
+            log.info("Il tenant {} ha l'attributo certificato discreto {} con ID {} e threshold {}",
+                    tenantId,
+                    discreteAttr.getName(),
+                    discreteAttr.getId(),
+                    discreteAttr.getDiscreteValue()
+            );
+        } else {
+            Assertions.assertNull(discreteAttr, "Il tenant ha un attributo certificato discreto");
+            log.info("Il tenant {} non ha nessun attributo certificato discreto", tenantId);
+        }
 
         sharedStepsContext.getAttributeCommonContext().setOwnerCertifiedDiscreteAttribute(tenantType);
         sharedStepsContext.getAttributeCommonContext().getOwnedCertifiedDiscreteAttributes().add(discreteAttr);
