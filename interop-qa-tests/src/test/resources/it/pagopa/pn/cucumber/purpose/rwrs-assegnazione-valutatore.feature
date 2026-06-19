@@ -102,14 +102,24 @@ Feature: Assegnazione valutatore in modalità ReviewerWritesReviewerSigns
     And compila l'analisi del rischio della finalità
     Then si ottiene status code 400
 
-  # PST: Scenario 12 - Caso 12.1
-  Scenario: [RWRS_COMPILAZIONE_12_1_ENDPOINT_GENERICO] Compilazione analisi del rischio tramite endpoint generico (negativo)
-    Given "PA1" ha già creato e pubblicato 1 e-service
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
-    And l'utente è un "admin" di "PA2"
-    And l'utente assegna un valutatore alla finalità in modalità "ReviewerWritesReviewerSigns" con successo
-    When l'utente è un "admin" di "PA2"
-    And compila l'analisi del rischio tramite endpoint generico
-    Then si ottiene status code 400
+   # PST: Scenario 12 - Caso 12.1
+   Scenario: [RWRS_COMPILAZIONE_12_1_ENDPOINT_GENERICO] Compilazione analisi del rischio tramite endpoint generico (negativo)
+     Given "PA1" ha già creato e pubblicato 1 e-service
+     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+     And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+     And l'utente è un "admin" di "PA2"
+     And l'utente assegna un valutatore alla finalità in modalità "ReviewerWritesReviewerSigns" con successo
+     When l'utente è un "admin" di "PA2"
+     And compila l'analisi del rischio tramite endpoint generico
+     Then si ottiene status code 400
+
+   # PST: Scenario 12 - Caso 12.3
+   @sad-path
+   Scenario: [RWRS_COMPILAZIONE_12_3_SENZA_ASSEGNAZIONE] Tentativo compilazione senza valutatore assegnato (negativo)
+     Given "PA1" ha già creato e pubblicato 1 e-service
+     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+     And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+     When l'utente è un "reviewer" di "PA2"
+     And compila l'analisi del rischio della finalità
+     Then si ottiene status code 404
 
