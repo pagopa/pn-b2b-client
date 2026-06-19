@@ -6,6 +6,8 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -15,4 +17,8 @@ import java.util.UUID;
 public class RiskAnalysisCommonContext {
     UUID riskAnalysisId;
     Integer dailyCalls = 1;
+    List<AssignedReviewerActorRef> assignedReviewerActors = new ArrayList<>();
+
+    public record AssignedReviewerActorRef(String tenantType, String role, int index) {
+    }
 }

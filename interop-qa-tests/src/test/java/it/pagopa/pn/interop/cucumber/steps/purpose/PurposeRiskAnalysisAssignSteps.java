@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.purpose;
 
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.common.IHttpExecutor;
@@ -8,6 +9,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisReviewM
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.common.RiskAnalysisCommonContext.AssignedReviewerActorRef;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.List;
@@ -33,24 +35,53 @@ public class PurposeRiskAnalysisAssignSteps {
     @When("l'utente assegna un valutatore alla finalità in modalità {string}")
     public void userAssignsReviewerWithMode(String mode) {
         String tenantType = sharedStepsContext.getTenantType();
-        UUID reviewerId = identityService.getUserId(tenantType, "admin", 0);
+        AssignedReviewerActorRef reviewerActor = new AssignedReviewerActorRef(tenantType, "reviewer", 0);
+        UUID reviewerId = identityService.getUserId(reviewerActor.tenantType(), reviewerActor.role(), reviewerActor.index());
 
         RiskAnalysisAssignmentSeed payload = new RiskAnalysisAssignmentSeed()
                 .reviewMode(toRiskAnalysisReviewMode(mode))
                 .reviewerIds(List.of(reviewerId));
 
-        assignReviewer(payload);
+        assignReviewer(payload, List.of(reviewerActor));
+    }
+
+    @When("l'utente assegna un valutatore alla finalità in modalità {string} specificando un utente con ruolo {string}")
+    public void userAssignsReviewerWithModeAndRole(String mode, String role) {
+        String tenantType = sharedStepsContext.getTenantType();
+        AssignedReviewerActorRef reviewerActor = new AssignedReviewerActorRef(tenantType, role, 0);
+        UUID reviewerId = identityService.getUserId(reviewerActor.tenantType(), reviewerActor.role(), reviewerActor.index());
+
+        RiskAnalysisAssignmentSeed payload = new RiskAnalysisAssignmentSeed()
+                .reviewMode(toRiskAnalysisReviewMode(mode))
+                .reviewerIds(List.of(reviewerId));
+
+        assignReviewer(payload, List.of(reviewerActor));
+    }
+
+    @Given("l'utente assegna un valutatore alla finalità in modalità {string} con successo")
+    public void userAssignsReviewerWithModeSuccessfully(String mode) {
+        userAssignsReviewerWithMode(mode);
+
+        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+        IPurposeApiClient purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
+
+        sharedStepsContext.getPollingService().makePolling(
+                () -> purposeApiClient.getPurpose(purposeId),
+                purpose -> purpose.getReviewerWorkflow() != null,
+                String.format("Reviewer workflow non creato per la finalita %s", purposeId)
+        );
     }
 
     @When("l'utente assegna un valutatore alla finalità senza specificare la modalità")
     public void userAssignsReviewerWithoutMode() {
         String tenantType = sharedStepsContext.getTenantType();
-        UUID reviewerId = identityService.getUserId(tenantType, "admin", 0);
+        AssignedReviewerActorRef reviewerActor = new AssignedReviewerActorRef(tenantType, "reviewer", 0);
+        UUID reviewerId = identityService.getUserId(reviewerActor.tenantType(), reviewerActor.role(), reviewerActor.index());
 
         RiskAnalysisAssignmentSeed payload = new RiskAnalysisAssignmentSeed()
                 .reviewerIds(List.of(reviewerId));
 
-        assignReviewer(payload);
+        assignReviewer(payload, List.of(reviewerActor));
     }
 
     @When("l'utente assegna un valutatore alla finalità in modalità {string} senza specificare utenti valutatori")
@@ -59,25 +90,31 @@ public class PurposeRiskAnalysisAssignSteps {
                 .reviewMode(toRiskAnalysisReviewMode(mode))
                 .reviewerIds(List.of());
 
-        assignReviewer(payload);
+        assignReviewer(payload, List.of());
     }
 
     @When("l'utente assegna un valutatore alla finalità in modalità {string} specificando più di un utente valutatore")
     public void userAssignsReviewerWithMultipleUsers(String mode) {
         String tenantType = sharedStepsContext.getTenantType();
-        UUID reviewerId1 = identityService.getUserId(tenantType, "admin", 0);
-        UUID reviewerId2 = identityService.getUserId(tenantType, "admin", 1);
+        AssignedReviewerActorRef reviewerActor1 = new AssignedReviewerActorRef(tenantType, "admin", 0);
+        AssignedReviewerActorRef reviewerActor2 = new AssignedReviewerActorRef(tenantType, "admin", 1);
+        UUID reviewerId1 = identityService.getUserId(reviewerActor1.tenantType(), reviewerActor1.role(), reviewerActor1.index());
+        UUID reviewerId2 = identityService.getUserId(reviewerActor2.tenantType(), reviewerActor2.role(), reviewerActor2.index());
 
         RiskAnalysisAssignmentSeed payload = new RiskAnalysisAssignmentSeed()
                 .reviewMode(toRiskAnalysisReviewMode(mode))
                 .reviewerIds(List.of(reviewerId1, reviewerId2));
 
-        assignReviewer(payload);
+        assignReviewer(payload, List.of(reviewerActor1, reviewerActor2));
     }
 
-    private void assignReviewer(RiskAnalysisAssignmentSeed payload) {
+    private void assignReviewer(RiskAnalysisAssignmentSeed payload, List<AssignedReviewerActorRef> assignedReviewerActors) {
         UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
         IPurposeApiClient purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
+
+        if (assignedReviewerActors != null && !assignedReviewerActors.isEmpty()) {
+            sharedStepsContext.getRiskAnalysisCommonContext().setAssignedReviewerActors(List.copyOf(assignedReviewerActors));
+        }
 
         httpCallExecutor.performCall(() -> purposeApiClient.assignRiskAnalysis(purposeId, payload));
     }
