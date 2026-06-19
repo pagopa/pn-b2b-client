@@ -81,7 +81,7 @@ Feature: Archiviazione manuale di un e-service
       | %null      | QA test manual-archiving | 400        |
       | %actual    | %null                    | 400        |
       | %null      | %null                    | 400        |
-      | %actual    | %blank                   | 400        |
+      | %actual    |                          | 400        |
       | %random    | QA test manual-archiving | 404        |
 
   Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_1.7] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale dell'e-service se la stringa archivingReason non rispetta la lunghezza attesa
@@ -272,7 +272,6 @@ Feature: Archiviazione manuale di un e-service
     And la versione più recente dell'e-service è in stato "PUBLISHED"
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
-    #quando il primo descrittore smetterà di essere il più recente, il suo stato passerà da PUBLISHED a DEPRECATED. Poi , avviato il processo di archiviazione, diventerà ARCHIVING
     Examples:
       | role         |
       | admin        |
@@ -396,7 +395,9 @@ Feature: Archiviazione manuale di un e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And la versione più recente dell'e-service è in stato "ARCHIVING"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
     When "PA2" ha già archiviato quella richiesta di fruizione
     Then la vecchia versione dell'e-service è in stato "ARCHIVED"
     And la versione più recente dell'e-service è in stato "ARCHIVING"
