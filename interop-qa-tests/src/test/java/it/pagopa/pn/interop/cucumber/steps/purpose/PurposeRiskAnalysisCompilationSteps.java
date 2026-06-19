@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.purpose;
 
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.common.IHttpExecutor;
@@ -58,6 +59,12 @@ public class PurposeRiskAnalysisCompilationSteps {
         } finally {
             clientTokenConfigurator.setBearerToken(previousToken);
         }
+    }
+
+    @Given("il valutatore assegnato compila l'analisi del rischio della finalità con successo")
+    public void assignedReviewerCompilesRiskAnalysisSuccessfully() {
+        assignedReviewerCompilesRiskAnalysis();
+        verifyRiskAnalysisSigningState("ASSIGNED");
     }
 
     @When("uno dei reviewer assegnati compila l'analisi del rischio della finalità")
@@ -160,6 +167,12 @@ public class PurposeRiskAnalysisCompilationSteps {
         );
         AssignedReviewerActorRef assignedReviewerActor = assignedReviewerActors.get(assignedReviewerActors.size() - 1);
         signRiskAnalysisAsReviewer(assignedReviewerActor);
+    }
+
+    @Given("il valutatore assegnato convalida l'analisi del rischio della finalità con successo")
+    public void assignedReviewerSignsRiskAnalysisSuccessfully() {
+        assignedReviewerSignsRiskAnalysis();
+        verifyRiskAnalysisSigningState("SIGNED");
     }
 
     @When("l'utente convalida l'analisi del rischio della finalità")
