@@ -136,6 +136,14 @@ public class PurposeRiskAnalysisCompilationSteps {
         httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().updatePurpose(purposeId, updateContent));
     }
 
+    @When("l'utente invia il submit dell'analisi del rischio della finalità")
+    public void userSubmitsRiskAnalysis() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+        httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().submitRiskAnalysis(purposeId));
+    }
+
     @When("il valutatore assegnato rifiuta la propria compilazione dell'analisi del rischio")
     public void assignedReviewerRejectsOwnRiskAnalysisCompilation() {
         String previousToken = sharedStepsContext.getUserToken();
@@ -157,6 +165,11 @@ public class PurposeRiskAnalysisCompilationSteps {
         } finally {
             clientTokenConfigurator.setBearerToken(previousToken);
         }
+    }
+
+    @When("un reviewer assegnato rifiuta l'analisi del rischio")
+    public void assignedReviewerRejectsRiskAnalysis() {
+        assignedReviewerRejectsOwnRiskAnalysisCompilation();
     }
 
     @When("il valutatore assegnato convalida l'analisi del rischio della finalità")
