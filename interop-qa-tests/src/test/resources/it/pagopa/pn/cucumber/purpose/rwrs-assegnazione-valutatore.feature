@@ -191,3 +191,31 @@ Feature: Assegnazione valutatore in modalità ReviewerWritesReviewerSigns
       Then si ottiene status code 200
       And lo stato della compilazione dell'analisi del rischio è "SIGNED"
 
+    # PST: Scenario 15 - Caso 15.1
+    Scenario: [RWRS_ATTIVAZIONE_15_1_ADMIN] Attivazione finalità da parte di utente amministratore dopo convalida reviewer (positivo)
+      Given "PA1" ha già creato e pubblicato 1 e-service
+      And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+      And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+      And l'utente è un "admin" di "PA2"
+      And l'utente assegna un valutatore alla finalità in modalità "ReviewerWritesReviewerSigns" con successo
+      And il valutatore assegnato compila l'analisi del rischio della finalità
+      And il valutatore assegnato convalida l'analisi del rischio della finalità
+      When l'utente è un "admin" di "PA2"
+      And l'utente attiva la finalità in stato "DRAFT" per quell'e-service
+      Then si ottiene status code 200 e la finalità in stato "ACTIVE"
+      And lo stato della compilazione dell'analisi del rischio è "SIGNED"
+
+    # PST: Scenario 15 - Caso 15.1
+    @sad-path
+    Scenario: [RWRS_ATTIVAZIONE_15_1_REVIEWER] Attivazione finalità da parte di utente reviewer (negativo)
+      Given "PA1" ha già creato e pubblicato 1 e-service
+      And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+      And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+      And l'utente è un "admin" di "PA2"
+      And l'utente assegna un valutatore alla finalità in modalità "ReviewerWritesReviewerSigns" con successo
+      And il valutatore assegnato compila l'analisi del rischio della finalità
+      And il valutatore assegnato convalida l'analisi del rischio della finalità
+      When l'utente è un "reviewer" di "PA2"
+      And l'utente attiva la finalità in stato "DRAFT" per quell'e-service
+      Then si ottiene status code 403
+
