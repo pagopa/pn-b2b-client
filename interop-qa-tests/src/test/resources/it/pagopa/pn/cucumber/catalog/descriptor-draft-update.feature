@@ -302,7 +302,7 @@ Feature: Aggiornamento di un descrittore in bozza
     And la soglia differenziata per l'attributo CERTIFIED_DISCRETE 1-esimo creato nel gruppo 1-esimo è uguale a "%null", mentre il discrete comparator è "LTE" e il discrete threshhold è uguale a 900000
 
   @certifiedDiscreteAttribute
-  Scenario: [CERT_DISCRETE_ATTR_ESERVICE_UPD_1] L'erogatore di un e-service in stato DRAFT può modificare diversi attributi
+  Scenario: [CERT_DISCRETE_ATTR_ESERVICE_UPD_1] L'erogatore di un e-service in stato PUBLISHED può modificare diversi attributi
   certificati discreti, impostando le relative soglie e comparatori (sono incluse le logiche OR e AND).
 
     Given l'utente è un "admin" di "PA2"
@@ -326,7 +326,7 @@ Feature: Aggiornamento di un descrittore in bozza
     Given l'utente è un "admin" di "PA2"
     And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
     And l'utente "PA1" possiede almeno un attributo certificato discreto
-    And "PA2" ha già creato un e-service in stato "DRAFT" con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000 e con i seguenti attributi:
+    And "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000 e con i seguenti attributi:
       | kind               | group | comparator | value   | dailyCallsPerConsumer |
       | CERTIFIED_DISCRETE | 0     | GTE        | 1000000 | 100                   |
     And si ottiene response status code 200
