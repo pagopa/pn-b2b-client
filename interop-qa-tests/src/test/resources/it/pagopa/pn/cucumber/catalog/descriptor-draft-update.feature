@@ -336,6 +336,23 @@ Feature: Aggiornamento di un descrittore in bozza
     Then si ottiene response status code 400
 
   @certifiedDiscreteAttribute
+  Scenario: [CERT_DISCRETE_ATTR_ESERVICE_UPD_3] L'erogatore di un e-service in stato DRAFT può modificare la configurazione
+  di un attributo certificato discreto.
+
+    Given l'utente è un "admin" di "PA2"
+    And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
+    And l'utente "PA1" possiede almeno un attributo certificato discreto
+    And "PA2" ha già creato un e-service in stato "DRAFT" con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000 e con i seguenti attributi:
+      | kind               | group | comparator | value   | dailyCallsPerConsumer |
+      | CERTIFIED_DISCRETE | 0     | GTE        | 1000000 | 100                   |
+    And si ottiene response status code 200
+    And l'utente pubblica l'e-service
+    And la soglia differenziata per l'attributo CERTIFIED_DISCRETE 0-esimo creato nel gruppo 0-esimo è uguale a "100", mentre il discrete comparator è "GTE" e il discrete threshhold è uguale a 1000000
+    When l'utente tenta di aggiornare l'attributo certificato discreto 0-esimo del gruppo 0-esimo con discrete comparator "GT" e il discrete threshhold 25000
+    Then si ottiene response status code 200
+    And la soglia differenziata per l'attributo CERTIFIED_DISCRETE 0-esimo creato nel gruppo 0-esimo è uguale a "100", mentre il discrete comparator è "GT" e il discrete threshhold è uguale a 25000
+
+  @certifiedDiscreteAttribute
   Scenario: [CERT_DISCRETE_ATTR_ESERVICE_NO_DUPLICATED] Un e-service in stato DRAFT non può avere lo stesso attributo certificato
   discreto nello stesso gruppo (logiche OR non consentite).
 
@@ -347,3 +364,57 @@ Feature: Aggiornamento di un descrittore in bozza
       | CERTIFIED_DISCRETE | 0     | GTE        | 1000000 | 100                   |
       | CERTIFIED_DISCRETE | 0     | GTE        | 500000  |                       |
     Then si ottiene response status code 400
+
+  @certifiedDiscreteAttribute
+  Scenario: [CERT_DISCRETE_ATTR_ESERVICE_THRESHOLD_1] Per un e-service in stato DRAFT non è possibile indicare una dailyCallsPerConsumer
+  nell'attributo certificato discreto superiore al limite di chiamate totali giornaliero
+    Given l'utente è un "admin" di "PA2"
+    And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
+    And l'utente "PA1" possiede almeno un attributo certificato discreto
+    When "PA2" ha già creato un e-service in stato "DRAFT" con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000 e con i seguenti attributi:
+      | kind               | group | comparator | value   | dailyCallsPerConsumer |
+      | CERTIFIED_DISCRETE | 0     | GTE        | 1000000 | 10000                 |
+    Then si ottiene response status code 400
+
+  @certifiedDiscreteAttribute
+  Scenario: [CERT_DISCRETE_ATTR_ESERVICE_THRESHOLD_2] Per un e-service in stato DRAFT è possibile indicare più attributi certificati
+    discreti la cui somma delle dailyCallsPerConsumer è superiore al limite di chiamate totali giornaliero dell'e-service.
+    Given l'utente è un "admin" di "PA2"
+    And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
+    And l'utente "PA1" possiede almeno un attributo certificato discreto
+    When "PA2" ha già creato un e-service in stato "DRAFT" con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000 e con i seguenti attributi:
+      | kind               | group | comparator | value   | dailyCallsPerConsumer |
+      | CERTIFIED_DISCRETE | 0     | GTE        | 1000000 | 600                   |
+      | CERTIFIED_DISCRETE | 1     | GTE        | 125000  | 700                   |
+      | CERTIFIED          | 1     | GTE        | 95000   | 900                   |
+    And si ottiene response status code 200
+    Then la soglia differenziata per l'attributo CERTIFIED_DISCRETE 0-esimo creato nel gruppo 0-esimo è uguale a "600", mentre il discrete comparator è "GTE" e il discrete threshhold è uguale a 1000000
+    And la soglia differenziata per l'attributo CERTIFIED_DISCRETE 0-esimo creato nel gruppo 1-esimo è uguale a "700", mentre il discrete comparator è "GTE" e il discrete threshhold è uguale a 125000
+
+
+  @certifiedDiscreteAttribute
+  Scenario: [CERT_DISCRETE_ATTR_ESERVICE_THRESHOLD_3] Per un e-service in stato PUBLISHED non è possibile indicare una dailyCallsPerConsumer
+  nell'attributo certificato discreto superiore al limite di chiamate totali giornaliero
+    Given l'utente è un "admin" di "PA2"
+    And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
+    And l'utente "PA1" possiede almeno un attributo certificato discreto
+    When "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000 e con i seguenti attributi:
+      | kind               | group | comparator | value   | dailyCallsPerConsumer |
+      | CERTIFIED_DISCRETE | 0     | GTE        | 1000000 | 10000                 |
+    Then si ottiene response status code 400
+
+  @certifiedDiscreteAttribute
+  Scenario: [CERT_DISCRETE_ATTR_ESERVICE_THRESHOLD_4] Per un e-service in stato PUBLISHED è possibile indicare più attributi certificati
+  discreti la cui somma delle dailyCallsPerConsumer è superiore al limite di chiamate totali giornaliero dell'e-service.
+    Given l'utente è un "admin" di "PA2"
+    And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
+    And l'utente "PA1" possiede almeno un attributo certificato discreto
+    When "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000 e con i seguenti attributi:
+      | kind               | group | comparator | value   | dailyCallsPerConsumer |
+      | CERTIFIED_DISCRETE | 0     | GTE        | 1000000 | 600                   |
+      | CERTIFIED_DISCRETE | 1     | GTE        | 125000  | 700                   |
+      | CERTIFIED          | 1     | GTE        | 95000   | 900                   |
+    And si ottiene response status code 200
+    And l'e-service è in stato "PUBLISHED"
+    Then la soglia differenziata per l'attributo CERTIFIED_DISCRETE 0-esimo creato nel gruppo 0-esimo è uguale a "600", mentre il discrete comparator è "GTE" e il discrete threshhold è uguale a 1000000
+    And la soglia differenziata per l'attributo CERTIFIED_DISCRETE 0-esimo creato nel gruppo 1-esimo è uguale a "700", mentre il discrete comparator è "GTE" e il discrete threshhold è uguale a 125000
