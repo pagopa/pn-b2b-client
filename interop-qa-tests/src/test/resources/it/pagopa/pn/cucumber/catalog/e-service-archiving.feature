@@ -564,9 +564,8 @@ Feature: Archiviazione manuale di un e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
     And l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
-
-    And la vecchia versione dell'e-service è in stato "ARCHIVING"
-
+    And la versione più recente dell'e-service è in stato "ARCHIVING"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
     When l'utente annulla il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
@@ -584,9 +583,8 @@ Feature: Archiviazione manuale di un e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
     And l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
-
-    And la vecchia versione dell'e-service è in stato "ARCHIVING_SUSPENDED"
-
+    And la versione più recente dell'e-service è in stato "ARCHIVING"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
     When l'utente annulla il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "ARCHIVING_SUSPENDED"
@@ -594,24 +592,42 @@ Feature: Archiviazione manuale di un e-service
     And la versione più recente dell'e-service è in stato "ARCHIVING"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
-  Scenario Outline: [COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_3.1] Un ente erogatore può annullare il processo di archiviazione dell'intero e-service in corso anche se è parallelamente in esecuzione l'archiviazione di uno specifico descrittore
+  Scenario: [COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_3.1] Un ente erogatore può annullare il processo di archiviazione dell'intero e-service in corso anche se è parallelamente in esecuzione l'archiviazione di uno specifico descrittore in stato ARCHIVING
   E' in corso un processo di archiviazione combinata. Ovvero archiviazione dell'intero e-service e del primo e meno recente descrittore contemporaneamente
   L'ente può annullare il processo di archiviazione dell'intero e-service
     Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service con un descrittore in stato "<initialFirstDescriptorState>"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And la versione più recente dell'e-service è in stato "ARCHIVING"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
     When l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
     Then si ottiene response status code 204
-    And la vecchia versione dell'e-service è in stato "<finalFirstDescriptorState>"
+    And la vecchia versione dell'e-service è in stato "ARCHIVING"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
     And la versione più recente dell'e-service è in stato "PUBLISHED"
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
-    Examples:
-      | initialFirstDescriptorState | finalFirstDescriptorState |
-      | PUBLISHED                   | ARCHIVING                 |
-      | SUSPENDED                   | ARCHIVING_SUSPENDED       |
+  Scenario: [COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_3.2] Un ente erogatore può annullare il processo di archiviazione dell'intero e-service in corso anche se è parallelamente in esecuzione l'archiviazione di uno specifico descrittore in stato ARCHIVING_SUSPENDED
+  E' in corso un processo di archiviazione combinata. Ovvero archiviazione dell'intero e-service e del primo e meno recente descrittore contemporaneamente
+  L'ente può annullare il processo di archiviazione dell'intero e-service
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già sospeso quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    And l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And la versione più recente dell'e-service è in stato "ARCHIVING"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    When l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
+    Then si ottiene response status code 204
+    And la vecchia versione dell'e-service è in stato "ARCHIVING_SUSPENDED"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
   Scenario: [COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_4.1] Un ente erogatore NON può avviare il processo di archiviazione dello specifico descrittore se l'archiviazione dell'intero e-service è già in corso
     Given l'utente è un "admin" di "PA1"
