@@ -187,6 +187,7 @@ Feature: Attivazione richiesta di fruizione
       | enteFruitore | enteCertificatore | enteErogatore |
       | PA1          | PA2               | GSP           |
 
+  @certifiedDiscreteAttribute
   Scenario Outline: [CERT_DISCRETE_ATTR_AGREEMENT_1] Verifica della corretta associazione di una finalità su un e-service
   pubblicato con attributi certificati discreti.
     Given l'utente è un "admin" di "PA2"
@@ -209,6 +210,7 @@ Feature: Attivazione richiesta di fruizione
       | LTE        | $ATTR_CERT_DISCR_THRESHOLD(PA1,0)  |
       | NE         | $ATTR_CERT_DISCR_THRESHOLD(PA1,1)  |
 
+  @certifiedDiscreteAttribute
   Scenario: [CERT_DISCRETE_ATTR_AGREEMENT_2] Fallimento della creazione di una nuova finalità per un e-service pubblicato
   se non vengono soddisfatti i requisiti degli attributi certificati discreti.
     Given l'utente è un "admin" di "PA2"
@@ -223,6 +225,7 @@ Feature: Attivazione richiesta di fruizione
     When l'utente crea una richiesta di fruizione
     Then si ottiene response status code 400
 
+  @certifiedDiscreteAttribute
   Scenario: [CERT_DISCRETE_ATTR_AGREEMENT_3] Fallimento della creazione di una nuova finalità per un e-service pubblicato
   se il fruitore non possiede l'attributo certificato discreto richiesto.
     Given l'utente è un "admin" di "PA3"
@@ -238,6 +241,7 @@ Feature: Attivazione richiesta di fruizione
     When l'utente crea una richiesta di fruizione
     Then si ottiene response status code 400
 
+  @certifiedDiscreteAttribute
   Scenario Outline: [CERT_DISCRETE_ATTR_AGREEMENT_4] Validazione logiche in AND per gli attributi certificati discreti nella richiesta di fruizione
     Given l'utente è un "admin" di "PA2"
     And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
@@ -262,6 +266,7 @@ Feature: Attivazione richiesta di fruizione
       # Nessuno dei due soddisfatto
       | GT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,100)  | LT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,-100) | 400            |
 
+  @certifiedDiscreteAttribute
   Scenario: [CERT_DISCRETE_ATTR_AGREEMENT_5a] Validazione logiche in OR per gli attributi certificati discreti nella richiesta
   di fruizione: solo l'attributo certificato valida la richiesta di fruizione.
     Given l'utente è un "admin" di "PA2"
@@ -278,6 +283,7 @@ Feature: Attivazione richiesta di fruizione
     When l'utente crea una richiesta di fruizione
     Then si ottiene response status code 200
 
+  @certifiedDiscreteAttribute
   Scenario: [CERT_DISCRETE_ATTR_AGREEMENT_5b] Validazione logiche in OR per gli attributi certificati discreti nella richiesta
   di fruizione: solo l'attributo certificato discreto valida la richiesta di fruizione.
     Given l'utente è un "admin" di "PA2"
@@ -293,6 +299,7 @@ Feature: Attivazione richiesta di fruizione
     When l'utente crea una richiesta di fruizione
     Then si ottiene response status code 200
 
+  @certifiedDiscreteAttribute
   Scenario: [CERT_DISCRETE_ATTR_AGREEMENT_5c] Validazione logiche in OR per gli attributi certificati discreti nella richiesta
   di fruizione: entrambi gli attributi validano la richiesta di fruizione
     Given l'utente è un "admin" di "PA2"
@@ -309,6 +316,7 @@ Feature: Attivazione richiesta di fruizione
     When l'utente crea una richiesta di fruizione
     Then si ottiene response status code 200
 
+  @certifiedDiscreteAttribute
   Scenario: [CERT_DISCRETE_ATTR_AGREEMENT_5d] Validazione logiche in OR per gli attributi certificati discreti nella richiesta
   di fruizione: nessun attributo valida la richiesta di fruizione.
     Given l'utente è un "admin" di "PA2"
