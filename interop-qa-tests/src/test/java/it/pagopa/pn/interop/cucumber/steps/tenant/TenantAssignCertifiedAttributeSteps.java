@@ -33,6 +33,12 @@ public class TenantAssignCertifiedAttributeSteps {
                         new CertifiedTenantAttributeSeed().id(lastAttributeId)
                 )
         );
+
+        sharedStepsContext.getPollingService().makePolling(
+                () -> clientTokenConfigurator.getTenantsApi().getCertifiedAttributes(tenantId),
+                res -> res.getAttributes().stream().anyMatch(attr -> attr.getId().equals(lastAttributeId)),
+                "There was an error while retrieving the attributes"
+        );
     }
 
     @When("l'utente assegna a {string} gli attributi certificati precedentemente creati")
