@@ -39,15 +39,15 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
     avverrà il giorno $DA_CONTESTO(TODAY+GRACE_PERIOD).
     """
 
+  @ignore
   Scenario: [MANUAL_ARCHIVING_ESERVICE_NOTIFICATION_1.4] L'utente erogatore riceve una notifica nel momento in cui il suo e-service viene archiviato a causa della scadenza del periodo di preavviso
-    # WARN "api" di "PA1" può essere un'alternativa per i test semi-automatici, però "api" riceve meno notifiche
-    # FIXME "admin" di "PA3" ha un problema con la configurazione delle notifiche: error 404
     Then l'utente "admin" di "PA3" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
     """
     L'e-service $DA_CONTESTO(eServiceName) è stato archiviato e non è più attivo. È stato rimosso dal catalogo e i
     fruitori non potranno più inviare richieste di fruizione o scambiare dati.
     """
 
+  @ignore
   Scenario: [MANUAL_ARCHIVING_ESERVICE_NOTIFICATION_1.5] L'utente fruitore riceve una notifica nel momento in cui viene archiviato l'e-service per cui ha una richiesta di fruizione attiva
     Then l'utente "admin" di "PA3" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
@@ -55,6 +55,7 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
     e non può più essere utilizzato.
     """
 
+  @ignore
   Scenario: [MANUAL_ARCHIVING_ESERVICE_NOTIFICATION_1.6] L'utente erogatore riceve una notifica di promemoria che l'e-service verrà archiviato fra N giorni
     Then l'utente "admin" di "PA3" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """

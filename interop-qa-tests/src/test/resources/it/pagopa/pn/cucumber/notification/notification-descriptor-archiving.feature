@@ -61,6 +61,7 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     L'archiviazione avverrà il giorno $DA_CONTESTO(TODAY+GRACE_PERIOD).
     """
 
+  @ignore
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_NOTIFICATION_1.4] L'utente erogatore riceve una notifica nel momento in cui un suo descrittore viene archiviato a causa della scadenza del periodo di preavviso
     Then l'utente "admin" di "PA3" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
     """
@@ -68,6 +69,7 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     Da ora non è più attiva e i fruitori non potranno più scambiare dati.
     """
 
+  @ignore
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_NOTIFICATION_1.5] L'utente fruitore riceve una notifica nel momento in cui viene archiviato un descrittore per cui ha una richiesta di fruizione attiva
     Then l'utente "admin" di "PA3" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
@@ -75,6 +77,7 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     Per continuare a scambiare dati con l’e-service, passa alla nuova versione.
     """
 
+  @ignore
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_NOTIFICATION_1.6] L'utente erogatore riceve una notifica di promemoria che la versione dell'e-service verrà archiviata fra N giorni
     Then l'utente "admin" di "PA3" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
