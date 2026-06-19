@@ -6,6 +6,7 @@ import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeUpdateContent;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisRejectionSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisSigningState;
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
@@ -121,6 +122,29 @@ public class PurposeRiskAnalysisCompilationSteps {
                 .isFreeOfCharge(true)
                 .riskAnalysisForm(riskAnalysis.getRiskAnalysisForm());
         httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().updatePurpose(purposeId, updateContent));
+    }
+
+    @When("il valutatore assegnato rifiuta la propria compilazione dell'analisi del rischio")
+    public void assignedReviewerRejectsOwnRiskAnalysisCompilation() {
+        String previousToken = sharedStepsContext.getUserToken();
+        List<AssignedReviewerActorRef> assignedReviewerActors = sharedStepsContext.getRiskAnalysisCommonContext().getAssignedReviewerActors();
+        if (assignedReviewerActors == null || assignedReviewerActors.isEmpty()) {
+            throw new IllegalStateException("Nessun valutatore assegnato presente in contesto");
+        }
+        AssignedReviewerActorRef assignedReviewerActor = assignedReviewerActors.get(assignedReviewerActors.size() - 1);
+        String reviewerToken = resolveAssignedReviewerToken(assignedReviewerActor);
+
+        try {
+            clientTokenConfigurator.setBearerToken(reviewerToken);
+
+            UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+            RiskAnalysisRejectionSeed payload = new RiskAnalysisRejectionSeed()
+                    .rejectionReason("Rifiuto della propria compilazione");
+
+            httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().rejectRiskAnalysis(purposeId, payload));
+        } finally {
+            clientTokenConfigurator.setBearerToken(previousToken);
+        }
     }
 }
 

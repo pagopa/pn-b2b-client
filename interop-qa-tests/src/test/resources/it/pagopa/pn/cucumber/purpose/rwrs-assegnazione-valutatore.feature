@@ -123,3 +123,16 @@ Feature: Assegnazione valutatore in modalità ReviewerWritesReviewerSigns
      And compila l'analisi del rischio della finalità
      Then si ottiene status code 404
 
+   # PST: Scenario 13 - Caso 13.1
+   @sad-path
+   Scenario: [RWRS_RIFIUTO_13_1_PROPRIA_COMPILAZIONE] Il reviewer assegnato non può rifiutare la propria compilazione (negativo)
+     Given "PA1" ha già creato e pubblicato 1 e-service
+     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+     And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+     And l'utente è un "admin" di "PA2"
+     And l'utente assegna un valutatore alla finalità in modalità "ReviewerWritesReviewerSigns" con successo
+     And il valutatore assegnato compila l'analisi del rischio della finalità
+     When il valutatore assegnato rifiuta la propria compilazione dell'analisi del rischio
+     Then si ottiene status code 409
+     And lo stato della compilazione dell'analisi del rischio è "ASSIGNED"
+

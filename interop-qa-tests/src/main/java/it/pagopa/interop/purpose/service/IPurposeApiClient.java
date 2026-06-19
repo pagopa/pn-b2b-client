@@ -34,4 +34,5 @@ public interface IPurposeApiClient extends SettableBearerToken {
     RemainingDailyCallsResponse getRemainingDailyCalls(UUID purposeId);
     void assignRiskAnalysis(UUID purposeId, RiskAnalysisAssignmentSeed payload) throws RestClientException;
     void compileRiskAnalysisForm(UUID purposeId, RiskAnalysisFormSeed payload) throws RestClientException;
+    void rejectRiskAnalysis(UUID purposeId, RiskAnalysisRejectionSeed payload) throws RestClientException;
 }
