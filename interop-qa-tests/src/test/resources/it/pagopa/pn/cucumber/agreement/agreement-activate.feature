@@ -237,3 +237,27 @@ Feature: Attivazione richiesta di fruizione
     And l'utente "PA2" non possiede nessun attributo certificato discreto
     When l'utente crea una richiesta di fruizione
     Then si ottiene response status code 400
+
+  Scenario Outline: [CERT_DISCRETE_ATTR_AGREEMENT_4] Validazione logiche in AND per gli attributi certificati discreti nella richiesta di fruizione
+    Given l'utente è un "admin" di "PA2"
+    And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
+    And l'utente "PA1" possiede almeno un attributo certificato discreto
+    And "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000 e con i seguenti attributi:
+      | kind               | group | comparator    | value     | dailyCallsPerConsumer |
+      | CERTIFIED_DISCRETE | 0     | <comparator1> | <value1>) |                       |
+      | CERTIFIED_DISCRETE | 1     | <comparator2> | <value2>) |                       |
+    And si ottiene response status code 200
+    And l'e-service è in stato "PUBLISHED"
+    And l'utente è un "admin" di "PA1"
+    When l'utente crea una richiesta di fruizione
+    Then si ottiene response status code <expectedResult>
+    Examples:
+      | comparator1 | value1                               | comparator2 | value2                               | expectedResult |
+      # Both satisfied
+      | GT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,-100) | LT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,100)  | 200            |
+      # Second not satisfied
+      | GT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,-100) | LT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,-100) | 400            |
+      # First not satisfied
+      | GT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,100)  | LT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,100)  | 400            |
+      # No one satisfied
+      | GT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,100)  | LT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,-100) | 400            |
