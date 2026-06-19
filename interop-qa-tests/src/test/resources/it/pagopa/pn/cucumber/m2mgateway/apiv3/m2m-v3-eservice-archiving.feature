@@ -77,7 +77,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
       | %null      | QA test manual-archiving | 400        |
       | %actual    | %null                    | 400        |
       | %null      | %null                    | 400        |
-      | %actual    | %empty                   | 400        |
+      | %actual    | %blank                   | 400        |
       | %random    | QA test manual-archiving | 404        |
 
   Scenario Outline: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_1.7] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale dell'e-service se la stringa archivingReason non rispetta la lunghezza attesa
