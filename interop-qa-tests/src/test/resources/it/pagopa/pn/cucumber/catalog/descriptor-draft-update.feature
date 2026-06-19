@@ -390,7 +390,7 @@ Feature: Aggiornamento di un descrittore in bozza
     And si ottiene response status code 200
     Then la soglia differenziata per l'attributo CERTIFIED_DISCRETE 0-esimo creato nel gruppo 0-esimo è uguale a "600", mentre il discrete comparator è "GTE" e il discrete threshhold è uguale a 1000000
     And la soglia differenziata per l'attributo CERTIFIED_DISCRETE 0-esimo creato nel gruppo 1-esimo è uguale a "700", mentre il discrete comparator è "GTE" e il discrete threshhold è uguale a 125000
-
+    And la soglia differenziata per l'attributo CERTIFIED 1-esimo creato nel gruppo 1-esimo è uguale a "900"
 
   @certifiedDiscreteAttribute
   Scenario: [CERT_DISCRETE_ATTR_ESERVICE_THRESHOLD_3] Per un e-service in stato PUBLISHED non è possibile indicare una dailyCallsPerConsumer
@@ -418,3 +418,4 @@ Feature: Aggiornamento di un descrittore in bozza
     And l'e-service è in stato "PUBLISHED"
     Then la soglia differenziata per l'attributo CERTIFIED_DISCRETE 0-esimo creato nel gruppo 0-esimo è uguale a "600", mentre il discrete comparator è "GTE" e il discrete threshhold è uguale a 1000000
     And la soglia differenziata per l'attributo CERTIFIED_DISCRETE 0-esimo creato nel gruppo 1-esimo è uguale a "700", mentre il discrete comparator è "GTE" e il discrete threshhold è uguale a 125000
+    And la soglia differenziata per l'attributo CERTIFIED 1-esimo creato nel gruppo 1-esimo è uguale a "900"
