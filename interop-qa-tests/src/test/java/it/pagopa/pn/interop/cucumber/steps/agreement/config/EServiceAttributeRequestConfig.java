@@ -28,7 +28,7 @@ public class EServiceAttributeRequestConfig {
 
         Integer value = null;
 
-        if (row.get("value").startsWith("$ATTR_CERT_DISCR_THRESHOLD")) {
+        if (row.get("value") != null && row.get("value").startsWith("$ATTR_CERT_DISCR_THRESHOLD")) {
             // Example formula: $ATTR_CERT_DISCR_THRESHOLD(PA1,-100)
             String formula = row.get("value");
             String param1 = formula.substring(formula.indexOf("(") + 1, formula.indexOf(","));
