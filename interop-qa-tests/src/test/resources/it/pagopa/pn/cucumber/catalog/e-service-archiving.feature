@@ -145,7 +145,8 @@ Feature: Archiviazione manuale di un e-service
     And la versione più recente dell'e-service è in stato "ARCHIVING"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
-  Scenario: [MANUAL_ARCHIVING_ESERVICE_2.2] L'avvio del processo di archiviazione dell'e-service, causa l'eliminazione dell'ultimo descrittore in stato WAITING_FOR_APPROVAL, se presente
+  Scenario: [MANUAL_ARCHIVING_ESERVICE_2.2] Avviare il processo di archiviazione di un e-service in WAITING_FOR_APPROVAL non è possibile
+  Non è possibile avviare il processo di archiviazione di un e-service nel caso in cui sia attiva una delega in erogazione sull'e-service in questione
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe
