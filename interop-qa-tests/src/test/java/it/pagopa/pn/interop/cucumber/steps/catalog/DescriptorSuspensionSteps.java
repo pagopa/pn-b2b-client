@@ -8,6 +8,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorS
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 
 @Slf4j
 public class DescriptorSuspensionSteps {
@@ -55,7 +56,8 @@ public class DescriptorSuspensionSteps {
                 () -> clientTokenConfigurator.getEServiceClient().suspendDescriptor(
                         sharedStepsContext.getEServicesCommonContext().getEserviceId(),
                         sharedStepsContext.getEServicesCommonContext().getDescriptorId()
-                )
+                ),
+                ResponseEntity::getStatusCode
         );
     }
 
@@ -66,7 +68,8 @@ public class DescriptorSuspensionSteps {
                 () -> clientTokenConfigurator.getEServiceClient().suspendDescriptor(
                         sharedStepsContext.getEServicesCommonContext().getEserviceId(),
                         sharedStepsContext.getEServicesCommonContext().getOldDescriptorId()
-                )
+                ),
+                ResponseEntity::getStatusCode
         );
     }
 
