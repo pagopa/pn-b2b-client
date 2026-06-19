@@ -72,6 +72,35 @@ public class PurposeRiskAnalysisAssignSteps {
         );
     }
 
+    @When("l'utente assegna i reviewer previsti alla finalità in modalità {string}")
+    public void userAssignsExpectedReviewersWithMode(String mode) {
+        String tenantType = sharedStepsContext.getTenantType();
+        AssignedReviewerActorRef reviewerActor1 = new AssignedReviewerActorRef(tenantType, "reviewer", 0);
+        AssignedReviewerActorRef reviewerActor2 = new AssignedReviewerActorRef(tenantType, "reviewer", 1);
+        UUID reviewerId1 = identityService.getUserId(reviewerActor1.tenantType(), reviewerActor1.role(), reviewerActor1.index());
+        UUID reviewerId2 = identityService.getUserId(reviewerActor2.tenantType(), reviewerActor2.role(), reviewerActor2.index());
+
+        RiskAnalysisAssignmentSeed payload = new RiskAnalysisAssignmentSeed()
+                .reviewMode(toRiskAnalysisReviewMode(mode))
+                .reviewerIds(List.of(reviewerId1, reviewerId2));
+
+        assignReviewer(payload, List.of(reviewerActor1, reviewerActor2));
+    }
+
+    @Given("l'utente assegna i reviewer previsti alla finalità in modalità {string} con successo")
+    public void userAssignsExpectedReviewersWithModeSuccessfully(String mode) {
+        userAssignsExpectedReviewersWithMode(mode);
+
+        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+        IPurposeApiClient purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
+
+        sharedStepsContext.getPollingService().makePolling(
+                () -> purposeApiClient.getPurpose(purposeId),
+                purpose -> purpose.getReviewerWorkflow() != null,
+                String.format("Reviewer workflow non creato per la finalita %s", purposeId)
+        );
+    }
+
     @When("l'utente assegna un valutatore alla finalità senza specificare la modalità")
     public void userAssignsReviewerWithoutMode() {
         String tenantType = sharedStepsContext.getTenantType();

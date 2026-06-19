@@ -177,3 +177,17 @@ Feature: Assegnazione valutatore in modalità ReviewerWritesReviewerSigns
       And l'utente convalida l'analisi del rischio della finalità
       Then si ottiene status code 400
 
+    # PST: Scenario 14 - Caso 14.2
+    # 19/06/2026 Al momento impossibile da eseguire poiché si ha a disposizione una sola utenza reviewer
+    @wait_for_fix
+    Scenario: [RWRS_CONVALIDA_14_2_ALTRO_REVIEWER_ASSEGNATO] Convalida analisi del rischio da parte di altro reviewer assegnato (positivo)
+      Given "PA1" ha già creato e pubblicato 1 e-service
+      And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+      And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+      And l'utente è un "admin" di "PA2"
+      And l'utente assegna i reviewer previsti alla finalità in modalità "ReviewerWritesReviewerSigns" con successo
+      And uno dei reviewer assegnati compila l'analisi del rischio della finalità
+      When un altro reviewer assegnato convalida l'analisi del rischio della finalità
+      Then si ottiene status code 200
+      And lo stato della compilazione dell'analisi del rischio è "SIGNED"
+
