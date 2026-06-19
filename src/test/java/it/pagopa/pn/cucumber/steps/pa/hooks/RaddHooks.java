@@ -14,12 +14,10 @@ public class RaddHooks {
     private final RaddAltSteps raddAltSteps;
 
     @Autowired
-    public RaddHooks(ApplicationContext context,
-                     RaddAltSteps raddAltSteps) {
+    public RaddHooks(ApplicationContext context, RaddAltSteps raddAltSteps) {
         this.context = context;
         this.raddAltSteps = raddAltSteps;
     }
-
 
     @Before("@useRaddVpce")
     public void useRaddVpce() {

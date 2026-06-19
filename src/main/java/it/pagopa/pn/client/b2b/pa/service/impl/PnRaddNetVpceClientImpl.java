@@ -39,14 +39,11 @@ public class PnRaddNetVpceClientImpl {
     private final DocumentOperationsApi docApi;
 
     public PnRaddNetVpceClientImpl(
-
             @Value("${pn.radd-vpc.base-url}") String basePath) throws Exception {
 
-        RestTemplate unsafeRestTemplate = buildUnsafeRestTemplate(); //
-
+        RestTemplate unsafeRestTemplate = buildUnsafeRestTemplate();
         ApiClient apiClient = new ApiClient(unsafeRestTemplate);
         apiClient.setBasePath(basePath);
-
 
         this.actApi = new ActOperationsApi(apiClient);
         this.aorApi = new AorOperationsApi(apiClient);
@@ -73,27 +70,18 @@ public class PnRaddNetVpceClientImpl {
     private RestTemplate buildUnsafeRestTemplate() throws Exception {
 
         TrustStrategy acceptingTrustStrategy = (chain, authType) -> true;
-
         SSLContext sslContext = SSLContexts.custom().loadTrustMaterial(null, acceptingTrustStrategy).build();
-
         SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
-
         CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(csf).build();
-
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
-
         RestTemplate restTemplate = new RestTemplate(requestFactory);
-
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule()).disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS).configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter(mapper);
-
         restTemplate.getMessageConverters().removeIf(c -> c instanceof MappingJackson2HttpMessageConverter);
         restTemplate.getMessageConverters().add(converter);
 
         return restTemplate;
     }
-
 
     public it.pagopa.pn.client.b2b.radd.generated.openapi.clients.vpce.model_RaddNetVpce.StartTransactionResponse startActTransaction(String uid, it.pagopa.pn.client.b2b.radd.generated.openapi.clients.vpce.model_RaddNetVpce.ActStartTransactionRequest request) {
         log.info(">>> CALLING VPCE CLIENT - startActTransaction");
@@ -130,17 +118,6 @@ public class PnRaddNetVpceClientImpl {
 
         return actApi.abortActTransaction(uid, request);
     }
-
-    public Object documentUploadRaw(String uid, Object request) {
-        log.info(">>> CALLING VPCE CLIENT - RAW UPLOAD");
-
-        try {
-            return docApi.documentDownload("UPLOAD", "dummy", null);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
 }
 
 

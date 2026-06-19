@@ -1,6 +1,5 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -26,17 +25,11 @@ import org.springframework.web.client.RestClientException;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnRaddVpceAdapter implements IPnRaddAlternativeClient {
 
-
     private final PnRaddNetVpceClientImpl vpceClient;
-
-
     private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule()).disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-
-
     public PnRaddVpceAdapter(PnRaddNetVpceClientImpl vpceClient) {
         this.vpceClient = vpceClient;
     }
-
 
     @Override
     public ActInquiryResponse actInquiry(String uid, String recipientTaxId, String recipientType, String qrCode, String iun) {
@@ -50,7 +43,6 @@ public class PnRaddVpceAdapter implements IPnRaddAlternativeClient {
             throw new RuntimeException("Error mapping VPCE -> ALT ActInquiryResponse", e);
         }
     }
-
 
     @Override
     public byte[] documentDownload(String operationType, String operationId, String attachmentId) {
@@ -98,10 +90,8 @@ public class PnRaddVpceAdapter implements IPnRaddAlternativeClient {
 
         var vpceRequest = objectMapper.convertValue(request, it.pagopa.pn.client.b2b.radd.generated.openapi.clients.vpce.model_RaddNetVpce.AbortTransactionRequest.class);
         var vpceResponse = vpceClient.abortActTransaction(uid, vpceRequest);
-
         return objectMapper.convertValue(vpceResponse, it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model.AbortTransactionResponse.class);
     }
-
 
     @Override
     public CompleteTransactionResponse completeActTransaction(String uid, CompleteTransactionRequest request) {
@@ -109,10 +99,8 @@ public class PnRaddVpceAdapter implements IPnRaddAlternativeClient {
 
         var vpceRequest = objectMapper.convertValue(request, it.pagopa.pn.client.b2b.radd.generated.openapi.clients.vpce.model_RaddNetVpce.CompleteTransactionRequest.class);
         var vpceResponse = vpceClient.completeActTransaction(uid, vpceRequest);
-
         return objectMapper.convertValue(vpceResponse, it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model.CompleteTransactionResponse.class);
     }
-
 
     @Override
     public StartTransactionResponse startActTransaction(String uid, ActStartTransactionRequest request) {
@@ -120,20 +108,16 @@ public class PnRaddVpceAdapter implements IPnRaddAlternativeClient {
 
         var vpceRequest = objectMapper.convertValue(request, it.pagopa.pn.client.b2b.radd.generated.openapi.clients.vpce.model_RaddNetVpce.ActStartTransactionRequest.class);
         var vpceResponse = vpceClient.startActTransaction(uid, vpceRequest);
-
         return objectMapper.convertValue(vpceResponse, it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model.StartTransactionResponse.class);
     }
-
 
     @Override
     public AORInquiryResponse aorInquiry(String uid, String recipientTaxId, String recipientType) {
         log.info(">>> USING VPCE ADAPTER - aorInquiry");
 
         var vpceResponse = vpceClient.aorInquiry(uid, recipientTaxId, recipientType);
-
         return objectMapper.convertValue(vpceResponse, it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model.AORInquiryResponse.class);
     }
-
 
     @Override
     public it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model.StartTransactionResponse startAorTransaction(String uid, AorStartTransactionRequest request) throws RestClientException {
@@ -141,7 +125,6 @@ public class PnRaddVpceAdapter implements IPnRaddAlternativeClient {
 
         var vpceRequest = objectMapper.convertValue(request, it.pagopa.pn.client.b2b.radd.generated.openapi.clients.vpce.model_RaddNetVpce.AorStartTransactionRequest.class);
         var vpceResponse = vpceClient.startAorTransaction(uid, vpceRequest);
-
         return objectMapper.convertValue(vpceResponse, it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model.StartTransactionResponse.class);
     }
 
@@ -151,7 +134,6 @@ public class PnRaddVpceAdapter implements IPnRaddAlternativeClient {
 
         var vpceRequest = objectMapper.convertValue(request, it.pagopa.pn.client.b2b.radd.generated.openapi.clients.vpce.model_RaddNetVpce.CompleteTransactionRequest.class);
         var vpceResponse = vpceClient.completeAorTransaction(uid, vpceRequest);
-
         return objectMapper.convertValue(vpceResponse, it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model.CompleteTransactionResponse.class);
     }
 
@@ -161,7 +143,6 @@ public class PnRaddVpceAdapter implements IPnRaddAlternativeClient {
 
         var vpceRequest = objectMapper.convertValue(request, it.pagopa.pn.client.b2b.radd.generated.openapi.clients.vpce.model_RaddNetVpce.AbortTransactionRequest.class);
         var vpceResponse = vpceClient.abortAorTransaction(uid, vpceRequest);
-
         return objectMapper.convertValue(vpceResponse, it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model.AbortTransactionResponse.class);
     }
 

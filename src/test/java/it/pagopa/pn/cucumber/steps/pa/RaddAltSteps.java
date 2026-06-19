@@ -1,5 +1,6 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.After;
 import io.cucumber.java.en.And;
@@ -21,12 +22,7 @@ import it.pagopa.pn.cucumber.utils.FiscalCodeGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.HttpClient;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.ssl.SSLContexts;
-import org.apache.http.ssl.TrustStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,15 +44,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URI;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
@@ -66,7 +63,7 @@ import static it.pagopa.pn.cucumber.utils.NotificationValue.generateRandomNumber
 
 @Slf4j
 public class RaddAltSteps {
-    //private final PnRaddAlternativeClientImpl raddAltClient;todo t radd
+    //private final PnRaddAlternativeClientImpl raddAltClient;
     private IPnRaddAlternativeClient raddClient;
     private final PnExternalServiceClientImpl externalServiceClient;
     private final SharedSteps sharedSteps;
@@ -79,17 +76,14 @@ public class RaddAltSteps {
     private String iunFieramosca120gg;
     @Value("${pn.iun.120gg.lucio}")
     private String iunLucio120gg;
-
-    @Value("${pn.radd-vpc.base-url}")
-    private String baseUrl;
-
-
     @Value("${pn.iun.120gg.gherkin}")
     private String iunGherkin120gg;
     @Value("${pn.external.bearer-token-radd-1}")
     private String raddista1;
     @Value("${pn.radd.alt.external.max-print-request}")
     private int maxPrintRequest;
+    @Value("${pn.radd-vpc.base-url}")
+    private String baseUrl;
     private String operationId;
     private String versionToken = null;
     private String fileKey = null;
@@ -105,6 +99,9 @@ public class RaddAltSteps {
     private HttpStatusCodeException expectedStartTransactionException;
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
+    private HttpStatus lastStatus;
+    private String lastErrorBody;
+    private static final Object FILE_LOCK = new Object();
 
     @Autowired
     public RaddAltSteps(PnRaddAlternativeClientImpl raddAltClient, PnExternalServiceClientImpl externalServiceClient, SharedSteps sharedSteps) {
@@ -113,14 +110,10 @@ public class RaddAltSteps {
         this.sharedSteps = sharedSteps;
     }
 
-
     public void setRaddClient(IPnRaddAlternativeClient raddClient) {
         this.raddClient = raddClient;
     }
 
-
-    private HttpStatus lastStatus;
-    private String lastErrorBody;
 
     @When("Poste chiama l'endpoint document upload via VPCE")
     public void chiamaDocumentUploadVpce() {
@@ -153,11 +146,8 @@ public class RaddAltSteps {
 
     @Then("la risposta deve essere 403 Forbidden")
     public void verifica403() {
-
         Assertions.assertNotNull(lastStatus, "Nessuna risposta ricevuta");
-
-        Assertions.assertEquals(HttpStatus.FORBIDDEN, lastStatus,
-                "Status atteso 403 ma ricevuto " + lastStatus);
+        Assertions.assertEquals(HttpStatus.FORBIDDEN, lastStatus, "Status atteso 403 ma ricevuto " + lastStatus);
 
         log.info("Verificato 403 Forbidden");
     }
@@ -165,30 +155,24 @@ public class RaddAltSteps {
     private RestTemplate buildUnsafeRestTemplate() {
 
         try {
-            TrustManager[] trustAllCerts = new TrustManager[]{
-                    new X509TrustManager() {
-                        public X509Certificate[] getAcceptedIssuers() {
-                            return null;
-                        }
+            TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+                public X509Certificate[] getAcceptedIssuers() {
+                    return null;
+                }
 
-                        public void checkClientTrusted(X509Certificate[] certs, String authType) {
-                        }
+                public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                }
 
-                        public void checkServerTrusted(X509Certificate[] certs, String authType) {
-                        }
-                    }
-            };
+                public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                }
+            }};
 
             SSLContext sslContext = SSLContext.getInstance("TLS");
             sslContext.init(null, trustAllCerts, new SecureRandom());
 
-            HttpClient httpClient = HttpClientBuilder.create()
-                    .setSSLContext(sslContext)
-                    .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE)
-                    .build();
+            HttpClient httpClient = HttpClientBuilder.create().setSSLContext(sslContext).setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE).build();
 
-            HttpComponentsClientHttpRequestFactory requestFactory =
-                    new HttpComponentsClientHttpRequestFactory(httpClient);
+            HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
 
             return new RestTemplate(requestFactory);
 
@@ -198,47 +182,71 @@ public class RaddAltSteps {
     }
 
 
-//    @Given("carico i dati della notifica con chiave {string}")
-//    public void caricoDatiConChiave(String key) throws IOException {
-//        Path path = Paths.get("target/data-preparation.json");
-//
-//        if (!Files.exists(path)) {
-//            throw new RuntimeException("File non trovato");
-//        }
-//        ObjectMapper mapper = new ObjectMapper();
-//        Map<String, Map<String, String>> allData = mapper.readValue(path.toFile(), new TypeReference<>() {});
-//        Map<String, String> data = allData.get(key);
-//
-//        if (data == null) {
-//            throw new RuntimeException("Chiave non trovata: " + key);
-//        }
-//        this.iun = data.get("iun");
-//        this.recipientType = data.get("recipientType");
-//        this.pa = data.get("pa");
-//        this.qrCode = data.get("qrCode");
-//        this.cf = data.get("cf");
-//        log.info("Caricati dati per chiave {}", key);
-//    }
-//
-//
-//    @And("salvo i dati della notifica con chiave {string}")
-//    public void salvaDatiConChiave(String key) throws IOException {
-//
-//        ObjectMapper mapper = new ObjectMapper();
-//        Path path = Paths.get("target/data-preparation.json");
-//        Map<String, Map<String, String>> allData = new HashMap<>();
-//
-//        if (Files.exists(path)) {
-//            allData = mapper.readValue(path.toFile(), new TypeReference<>() {
-//            });
-//        }
-//        Map<String, String> data = new HashMap<>();
-//        data.put("iun", this.iun);
-//        data.put("recipientType", this.recipientType);
-//        data.put("pa", this.pa);
-//        data.put("qrCode", this.qrCode);
-//        data.put("cf", this.cf);
-//    }
+    @Given("carico i dati della notifica con chiave {string}")
+    public void caricoDatiConChiave(String key) throws IOException {
+
+        Path path = Paths.get("src/main/resources/output/data-preparation.json");
+        if (!Files.exists(path)) {
+            throw new RuntimeException("File non trovato: " + path.toAbsolutePath());
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Map<String, String>> allData =
+                mapper.readValue(path.toFile(), new TypeReference<>() {});
+
+        Map<String, String> data = allData.get(key);
+        if (data == null) {
+            throw new RuntimeException("Chiave non trovata: " + key);
+        }
+        sharedSteps.impostoIunAndPaForTestPurposes(
+                data.get("iun"),
+                data.get("pa")
+        );
+        this.recipientType = data.get("recipientType");
+        this.currentUserCf = data.get("cf");
+        this.qrCode = Optional.ofNullable(data.get("qrCode"))
+                .filter(s -> !s.isBlank())
+                .orElse(null);
+
+        log.info("Caricati dati per chiave {} -> {}", key, data);
+    }
+
+    /**
+     * Salva i dati principali della notifica corrente su file, associandoli a una chiave.
+     * il file è salvato in C:\Users\tranieri\IdeaProjects\pn-b2b-client\target\output\
+     * Questo step serve per "memorizzare" i dati prodotti in uno scenario (IUN, CF, RecipientType, qrCode)
+     * per poterli riutilizzare successivamente in altri scenari.
+     * - La chiave deve essere univoca (tipicamente il nome dello scenario o un identificativo)
+     * - Il campo qrCode viene salvato solo se presente
+     * - Il file è condiviso tra più test, quindi è gestito per evitare conflitti in esecuzione parallela
+     * il file va poi spostato in "src/main/resources/output/data-preparation.json" per essere utilizzato
+     */
+    @And("salvo i dati della notifica con chiave {string}")
+    public void salvaDatiConChiave(String key) throws IOException {
+        synchronized (FILE_LOCK) {
+            ObjectMapper mapper = new ObjectMapper();
+            Path path = Paths.get("target/output/data-preparation.json");
+            log.info("Scrittura file in: {}", path.toAbsolutePath());
+            Files.createDirectories(path.getParent());
+            Map<String, Map<String, String>> allData = new HashMap<>();
+            if (Files.exists(path)) {
+                allData = mapper.readValue(path.toFile(), new TypeReference<>() {
+                });
+            }
+            Map<String, String> data = new HashMap<>();
+            data.put("iun", sharedSteps.getNotificationIun());
+            data.put("recipientType", this.recipientType);
+            data.put("pa", "Comune_Multi");
+            data.put("cf", this.currentUserCf);
+
+            if (this.qrCode != null && !this.qrCode.isBlank()) {
+                data.put("qrCode", this.qrCode);
+            }
+            allData.put(key, data);
+            Files.createDirectories(path.getParent());
+            mapper.writerWithDefaultPrettyPrinter().writeValue(path.toFile(), allData);
+            log.info("Salvati dati chiave={} -> {}", key, data);
+        }
+    }
 
     @When("L'operatore scansione il qrCode per recuperare gli atti di {destinatario}")
     public void lOperatoreScansioneIlQrCodePerRecuperareGliAttiAlternative(Destinatario destinatario) {
@@ -247,7 +255,6 @@ public class RaddAltSteps {
         log.info("actInquiryResponse: {}", actInquiryResponse);
         this.actInquiryResponse = actInquiryResponse;
     }
-
 
     @When("L'operatore usa lo IUN {string} per recuperare gli atti di {destinatario}")
     public void lOperatoreUsoIUNPerRecuperareGliAtti(String tipologiaIun, Destinatario destinatario) {
@@ -397,83 +404,6 @@ public class RaddAltSteps {
             throw new RuntimeException(e);
         }
     }
-
-    //todo t radd
-//    private void uploadDocumentRaddAlternative(boolean usePresignedUrl) {
-//        try {
-//            creazioneZip();
-//
-//            B2bUtils.Pair<String, String> uploadResponse;
-//
-//            if (raddClient instanceof PnRaddNetVpceClientImpl vpceClient) {
-//
-//                uploadResponse = B2bUtils.preloadRaddVpceDocument(
-//                        sharedSteps.getContext(),
-//                        vpceClient,
-//                        null,
-//                        "classpath:/" + this.fileZip,
-//                        usePresignedUrl,
-//                        this.operationId
-//                );
-//
-//            } else {
-//
-//                uploadResponse = B2bUtils.preloadRaddAlternativeDocument(
-//                        sharedSteps.getContext(),
-//                        (PnRaddAlternativeClientImpl) raddClient,
-//                        null,
-//                        "classpath:/" + this.fileZip,
-//                        usePresignedUrl,
-//                        this.operationId
-//                );
-//            }
-//
-//            Assertions.assertNotNull(uploadResponse);
-//            this.documentUploadResponse = uploadResponse;
-//            log.info("documentUploadResponse: {}", documentUploadResponse);
-//
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
-
-
-//    private void uploadDocumentRaddOperatorAlternative(boolean usePresignedUrl, RaddOperator raddOperator) {
-//        try {
-//            creazioneZip();
-//
-//            Pair<String, String> uploadResponse;
-//
-//            if (raddClient instanceof PnRaddVpceClientImpl vpceClient) {
-//
-//                uploadResponse = B2bUtils.preloadRaddVpceDocument(
-//                        sharedSteps.getContext(),
-//                        vpceClient,
-//                        raddOperator,
-//                        "classpath:/" + this.fileZip,
-//                        usePresignedUrl,
-//                        this.operationId
-//                );
-//
-//            } else {
-//
-//                uploadResponse = B2bUtils.preloadRaddAlternativeDocument(
-//                        sharedSteps.getContext(),
-//                        (PnRaddAlternativeClientImpl) raddClient,
-//                        raddOperator,
-//                        "classpath:/" + this.fileZip,
-//                        usePresignedUrl,
-//                        this.operationId
-//                );
-//            }
-//
-//            Assertions.assertNotNull(uploadResponse);
-//            this.documentUploadResponse = uploadResponse;
-//
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
 
     private void uploadDocumentRaddOperatorAlternative(boolean usePresignedUrl, RaddOperator raddOperator) {
         try {
@@ -1083,53 +1013,6 @@ public class RaddAltSteps {
                     raddClient.setAuthTokenRadd(SettableAuthTokenRadd.AuthTokenRaddType.HEADER_ERRATO);
             case "issuer_over_50kb" -> raddClient.setAuthTokenRadd(SettableAuthTokenRadd.AuthTokenRaddType.OVER_50KB);
             default -> throw new IllegalArgumentException();
-        }
-    }
-
-    @And("non viene concesso l'upload documento via VPCE")
-    public void uploadDocumentoVpceRestituisce500() {
-
-        try {
-            TrustStrategy trustAll = (chain, authType) -> true;
-
-            SSLContext sslContext = SSLContexts.custom().loadTrustMaterial(null, trustAll).build();
-
-            SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
-
-            CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(csf).build();
-
-            RestTemplate restTemplate = new RestTemplate(new HttpComponentsClientHttpRequestFactory(httpClient));
-
-            String url = baseUrl + "/radd-net/api/v1/document/upload";
-
-            Map<String, Object> body = new HashMap<>();
-            body.put("dummy", "test");
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.add("uid", this.uid);
-
-            HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
-
-            log.info(">>> CALL VPCE UPLOAD: {}", url);
-
-            restTemplate.postForEntity(url, request, String.class);
-
-            Assertions.fail("Expected error from VPCE");
-
-        } catch (HttpStatusCodeException ex) {
-
-            int status = ex.getStatusCode().value();
-
-            log.info(">>> VPCE RESPONSE STATUS: {}", status);
-
-            Assertions.assertTrue(status == 500 || status == 502);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        } catch (KeyStoreException e) {
-            throw new RuntimeException(e);
-        } catch (KeyManagementException e) {
-            throw new RuntimeException(e);
         }
     }
 
