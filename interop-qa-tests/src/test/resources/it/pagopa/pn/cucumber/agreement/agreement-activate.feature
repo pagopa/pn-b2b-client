@@ -193,13 +193,12 @@ Feature: Attivazione richiesta di fruizione
     And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
     And l'utente "PA1" possiede almeno un attributo certificato discreto
     And "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000 e con i seguenti attributi:
-      | kind               | group | comparator   | value    | dailyCallsPerConsumer |
-      | CERTIFIED_DISCRETE | 0     | <comparator> | <value>) |                       |
+      | kind               | group | comparator   | value   | dailyCallsPerConsumer |
+      | CERTIFIED_DISCRETE | 0     | <comparator> | <value> |                       |
     And si ottiene response status code 200
     And l'e-service è in stato "PUBLISHED"
     And l'utente è un "admin" di "PA1"
-    And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    When "PA1" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    When l'utente crea una richiesta di fruizione
     Then si ottiene response status code 200
     Examples:
       | comparator | value                              |
