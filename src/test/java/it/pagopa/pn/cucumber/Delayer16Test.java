@@ -22,6 +22,6 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         value = "same_thread"
 )
 @ExcludeTags({"ignore"})
-@IncludeTags({"delayer16", "delayer4", "delayer3"})
+@IncludeTags({"delayer16"})
 public class Delayer16Test {
 }
