@@ -27,6 +27,7 @@ public enum InteropEvent {
     NEW_PURPOSE_VERSION_ACTIVATED("NewPurposeVersionActivated", Family.PURPOSE),
     PURPOSE_VERSION_ACTIVATED("PurposeVersionActivated", Family.PURPOSE),
     PURPOSE_RISK_ANALYSIS_ASSIGNED_V2("PurposeRiskAnalysisAssignedV2", Family.PURPOSE),
+    PURPOSE_RISK_ANALYSIS_FORM_EDITED_V2("PurposeRiskAnalysisFormEditedV2", Family.PURPOSE),
     PRODUCER_DELEGATION_APPROVED("ProducerDelegationApproved", Family.PRODUCER_DELEGATION),
     CONSUMER_DELEGATION_APPROVED("ConsumerDelegationApproved", Family.CONSUMER_DELEGATION),
     PRODUCER_DELEGATION_REVOKED("ProducerDelegationRevoked", Family.PRODUCER_DELEGATION),
