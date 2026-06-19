@@ -90,7 +90,7 @@ public class EServiceArchivingSteps {
 
     @Then("il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service")
     @Then("l'annullamento dell'archiviazione manuale dell'intero e-service sul vecchio descrittore, è fallita")
-    public void oldDescriptorIsCorrectlyArchivedByManualEServiceArchiving() {
+    public void oldDescriptorHasArchivingScheduleWithEServiceScope() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
@@ -101,7 +101,7 @@ public class EServiceArchivingSteps {
 
     @Then("il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service")
     @Then("l'annullamento dell'archiviazione manuale dell'intero e-service sul descrittore più recente, è fallita")
-    public void latestDescriptorIsCorrectlyArchivedByManualEServiceArchiving() {
+    public void latestDescriptorHasArchivingScheduleWithEServiceScope() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
@@ -112,7 +112,7 @@ public class EServiceArchivingSteps {
 
     @Then("il descrittore con id {string} dell'e-service avente id {string} è stato correttamente archiviato tramite l'archiviazione manuale dell'intero e-service")
     @Then("il descrittore con id {string} dell'e-service avente id {string} è in fase di archiviazione tramite l'archiviazione manuale dell'intero e-service")
-    public void eserviceAttributeArchivingScheduleIsPresent(String descriptorId, String eServiceId) {
+    public void descriptorHasPopulatedArchivingScheduleWithEServiceScope(String descriptorId, String eServiceId) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
         UUID eServiceUUID = UUID.fromString(eServiceId);
