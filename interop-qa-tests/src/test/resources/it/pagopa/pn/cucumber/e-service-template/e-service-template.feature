@@ -3171,8 +3171,8 @@ Feature: Test API of e-service template
       | DECLARED           | 0     |            |         |
 
   @certifiedDiscreteAttribute
-  Scenario: [CERT_DISCRETE_ATTR_ESERVICE_TEMPL_2] Modifica con successo della soglia e del comparatore di un attributo
-  certificato discreto su un template e-service già pubblicato.
+  Scenario: [CERT_DISCRETE_ATTR_ESERVICE_TEMPL_2] La modifica della soglia e del comparatore di un attributo certificato discreto
+  su un template e-service già pubblicato non va a buon fine.
 
     Given l'utente è un "admin" di "PA1"
     And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
@@ -3190,10 +3190,7 @@ Feature: Test API of e-service template
     And l'utente effettua la pubblicazione dell'e-service template
     And l'e-service template è in stato di PUBLISHED
     When l'utente modifica il primo attributo certificato discreto nel primo gruppo degli attributi certificati con discrete threshold 10 e discrete comparator a "LT"
-    And gli attributi del template e-service hanno la seguente configurazione:
-      | kind               | group | comparator | value |
-      | CERTIFIED_DISCRETE | 0     | LT         | 10    |
-    Then si ottiene response status code 200
+    Then si ottiene response status code 400
 
   @certifiedDiscreteAttribute
   Scenario: [CERT_DISCRETE_ATTR_ESERVICE_TEMPL_NO_DUPLICATED] Un e-service template in stato DRAFT non può avere lo stesso
