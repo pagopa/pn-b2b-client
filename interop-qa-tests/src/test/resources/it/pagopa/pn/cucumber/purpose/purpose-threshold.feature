@@ -273,7 +273,7 @@ Feature: Verifica soglie differenziate
       | %random   | 404        |
       | %null     | 400        |
 
-  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttribute @certifiedDiscreteAttributeFlagOn
   Scenario: [CERT_DISCRETE_ATTR_PURPOSE_THRESHOLD_1A] Attivazione con successo di una finalità e verifica della corretta decurtazione
   delle chiamate giornaliere residue in base alle soglie differenziate.
     Given l'utente è un "admin" di "PA2"
@@ -294,7 +294,7 @@ Feature: Verifica soglie differenziate
       | remainingDailyCallsPerConsumer | 88 |
       | remainingDailyCallsTotal       | 89 |
 
-  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttribute @certifiedDiscreteAttributeFlagOn
   Scenario: [CERT_DISCRETE_ATTR_PURPOSE_THRESHOLD_2A] Attivazione con successo di una finalità, il fruitore non soddisfa l'attributo
   certificato discreto e la sua soglia di fruizione è uguale a quella di default
     Given l'utente è un "admin" di "PA2"
@@ -317,7 +317,7 @@ Feature: Verifica soglie differenziate
       | remainingDailyCallsPerConsumer | 10  |
       | remainingDailyCallsTotal       | 100 |
 
-  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttribute @certifiedDiscreteAttributeFlagOn
   Scenario: [CERT_DISCRETE_ATTR_PURPOSE_THRESHOLD_3] Attivazione di una finalità con verifica dei consumi residui calcolati sulla
   soglia differenziata minima tra un attributo certificato standard e uno discreto.
     Given l'utente è un "admin" di "PA2"
@@ -340,7 +340,7 @@ Feature: Verifica soglie differenziate
       | remainingDailyCallsPerConsumer | 70 |
       | remainingDailyCallsTotal       | 80 |
 
-  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttribute @certifiedDiscreteAttributeFlagOn
   Scenario: [CERT_DISCRETE_ATTR_PURPOSE_THRESHOLD_4] Attivazione di una finalità con verifica dei consumi residui calcolati sulla
   soglia differenziata massima tra più gruppi di attributi certificati discreti soddisfatti.
     Given l'utente è un "admin" di "PA2"

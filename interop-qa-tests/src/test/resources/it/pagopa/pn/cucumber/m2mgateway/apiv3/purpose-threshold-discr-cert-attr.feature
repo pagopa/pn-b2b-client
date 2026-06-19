@@ -1,4 +1,4 @@
-@m2m-apiv3-purposes-threshold-discr-cert-attr
+@m2m-apiv3-purposes-threshold-discr-cert-attr @certifiedDiscreteAttributeFlagOn
 Feature: Soglie differenziate in attributi certificati discreti con API M2M V3
 
   Scenario: [CERT_DISCRETE_ATTR_PURPOSE_THRESHOLD_1B] Attivazione con successo di una finalità e verifica della corretta decurtazione
