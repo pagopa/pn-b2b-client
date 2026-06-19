@@ -163,7 +163,7 @@ Feature: Correzione timeline fase 2 costi
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
     And la timeline contiene elementi con la stringa "REWORK_"
     When post rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt 1
-    Then il baseCost è differente rispetto a prima del rework
+    Then il baseCost è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_async
   #deceduto, rework porta di nuovo a deceduto all'attempt0
@@ -321,7 +321,7 @@ Feature: Correzione timeline fase 2 costi
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
     And la timeline contiene elementi con la stringa "REWORK_"
     When post rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt 1
-    Then il baseCost è differente rispetto a prima del rework
+    Then il baseCost è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_async
   #KO-OK, rework dell'attempt1 porta di nuovo a OK all'attempt1
@@ -481,12 +481,12 @@ Feature: Correzione timeline fase 2 costi
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECRN001C"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
     And la timeline contiene elementi con la stringa "REWORK_"
     When post rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt 0
-    Then il baseCost è differente rispetto a prima del rework
+    Then il baseCost è uguale rispetto a prima del rework
 
   @timelineReworkF2_costi_async
   #KO-KO, rework dell'attempt1 porta di nuovo a KO all'attempt1
@@ -651,7 +651,7 @@ Feature: Correzione timeline fase 2 costi
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
     And la timeline contiene elementi con la stringa "REWORK_"
     When post rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt 0
-    Then il baseCost è differente rispetto a prima del rework
+    Then il baseCost è uguale rispetto a prima del rework
 
   #DELIVERY_MODE ASYNC
 
