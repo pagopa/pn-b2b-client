@@ -134,6 +134,20 @@ public class PurposeRiskAnalysisCompilationSteps {
         );
     }
 
+    @Then("non sussiste alcun workflow di revisione in corso")
+    public void verifyNoReviewerWorkflowInProgress() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+        IPurposeApiClient purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
+
+        sharedStepsContext.getPollingService().makePolling(
+                () -> purposeApiClient.getPurpose(purposeId),
+                purpose -> purpose.getReviewerWorkflow() == null,
+                "Reviewer workflow presente ma non atteso"
+        );
+    }
+
     @When("compila l'analisi del rischio della finalità")
     public void compilesRiskAnalysis() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
