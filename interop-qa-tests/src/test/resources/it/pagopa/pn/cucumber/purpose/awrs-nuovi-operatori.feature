@@ -178,6 +178,20 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
     When un reviewer assegnato tenta di rifiutare l'analisi del rischio senza motivazione
     Then si ottiene status code 400
 
+  # PST: Scenario 20 - Caso 20.1
+  @happy-path
+  Scenario: [AWRS_FIRMA_20_1_REVIEWER_ASSEGNATO] Firma dell'analisi del rischio da parte del reviewer assegnato (positivo)
+    Given "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+    And l'utente è un "admin" di "PA2"
+    And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
+    And compila l'analisi del rischio tramite endpoint generico
+    And l'utente invia il submit dell'analisi del rischio della finalità
+    When il valutatore assegnato convalida l'analisi del rischio della finalità
+    Then si ottiene status code 200
+    And lo stato della compilazione dell'analisi del rischio è "SIGNED"
+
 
 
 
