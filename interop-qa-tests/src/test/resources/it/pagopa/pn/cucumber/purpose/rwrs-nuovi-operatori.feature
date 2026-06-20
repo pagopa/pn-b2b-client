@@ -1,6 +1,5 @@
 @purpose @nuovi-operatori
-Feature: Assegnazione valutatore in modalità ReviewerWritesReviewerSigns
-  Un amministratore assegna il valutatore per l'analisi del rischio associata a una finalità.
+Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi Operatori.
 
   # PST: Scenario 11 - Caso 11.1
   @happy-path
