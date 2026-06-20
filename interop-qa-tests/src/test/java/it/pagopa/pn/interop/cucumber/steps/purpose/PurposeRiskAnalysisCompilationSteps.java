@@ -211,6 +211,12 @@ public class PurposeRiskAnalysisCompilationSteps {
         httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().submitRiskAnalysis(purposeId));
     }
 
+    @When("l'utente invia il submit dell'analisi del rischio della finalità con successo")
+    public void userSubmitsRiskAnalysisSuccessfully() {
+        userSubmitsRiskAnalysis();
+        verifyRiskAnalysisSigningState("SUBMITTED");
+    }
+
     @When("l'utente invia il submit dell'analisi del rischio della finalità introducendo una variazione")
     public void userSubmitsRiskAnalysisWithVariation() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
