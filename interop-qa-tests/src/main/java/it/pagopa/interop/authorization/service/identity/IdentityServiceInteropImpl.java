@@ -55,6 +55,11 @@ public class IdentityServiceInteropImpl implements IdentityService {
     }
 
     @Override
+    public List<UUID> getUserIds(String tenantType, String role) {
+        return defaultIdentityService.getUserIds(tenantType, role);
+    }
+
+    @Override
     public UUID getOrganizationId(String tenantType) {
         return defaultIdentityService.getOrganizationId(tenantType);
     }

@@ -62,6 +62,7 @@ public class IdentityServiceSelfcareImpl implements IdentityService {
         return getUserId(tenantType, role, 0);
     }
 
+    // TODO: refattorizzare così da utilizzare il metodo List<UUID> getUserIds(String tenantType, String role)
     @Override
     public UUID getUserId(String tenantType, String role, int userIndex) {
         return tenantList.stream()
@@ -72,6 +73,24 @@ public class IdentityServiceSelfcareImpl implements IdentityService {
                 .findFirst()
                 .map(UUID::fromString)
                 .orElseThrow(() -> new IllegalArgumentException("TenantID or Role not defined in the config file!"));
+    }
+
+    @Override
+    public List<UUID> getUserIds(String tenantType, String role) {
+        List<UUID> userIds = tenantList.stream()
+                .filter(tenant -> tenantType.equals(tenant.getName()))
+                .map(Tenant::getUserRoles)
+                .map(userRole -> userRole.get(role))
+                .filter(Objects::nonNull)
+                .flatMap(List::stream)
+                .map(UUID::fromString)
+                .toList();
+
+        if (userIds.isEmpty()) {
+            throw new IllegalArgumentException("TenantID or Role not defined in the config file!");
+        }
+
+        return userIds;
     }
 
     @Override

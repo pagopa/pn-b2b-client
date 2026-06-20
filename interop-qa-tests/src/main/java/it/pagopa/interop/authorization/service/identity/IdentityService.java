@@ -16,6 +16,8 @@ public interface IdentityService {
 
     UUID getUserId(String tenantType, String role, int userIndex);
 
+    List<UUID> getUserIds(String tenantType, String role);
+
     UUID getOrganizationId(String tenantType);
 
     String getTenantName(String tenantType);

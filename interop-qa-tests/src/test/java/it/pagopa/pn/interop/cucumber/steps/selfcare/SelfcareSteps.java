@@ -16,6 +16,8 @@ import org.springframework.web.client.HttpStatusCodeException;
 import java.util.List;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class SelfcareSteps {
     private final ISelfcareClient selfcareClient;
     private final IdentityService identityService;
@@ -30,9 +32,18 @@ public class SelfcareSteps {
 
     @When("viene invocata l'API di recupero utenze per l'istituzione: {string}")
     public void callInstitutionAPI(String tenantType) {
+        callInstitutionAPIWithRoles(tenantType, null);
+    }
+
+    @When("viene invocata l'API di recupero utenze per l'istituzione: {string} filtrando per ruolo: {string}")
+    public void callInstitutionAPIFilteredByRole(String tenantType, String role) {
+        callInstitutionAPIWithRoles(tenantType, List.of(role));
+    }
+
+    private void callInstitutionAPIWithRoles(String tenantType, List<String> roles) {
         UUID tenantId = identityService.getOrganizationId(tenantType);
         try {
-            ResponseEntity<List<User>> institutionsSelfcareResponse = selfcareClient.getInstitutionUsers(tenantId, null, null, null);
+            ResponseEntity<List<User>> institutionsSelfcareResponse = selfcareClient.getInstitutionUsers(tenantId, null, roles, null);
             httpStatus = institutionsSelfcareResponse.getStatusCode();
             tenantContext.setSelfcareUsers(institutionsSelfcareResponse.getBody());
         } catch (HttpStatusCodeException e) {
@@ -44,4 +55,20 @@ public class SelfcareSteps {
     public void verifySelfcareResponse(int expectedStatusCode) {
         Assertions.assertEquals(expectedStatusCode, httpStatus.value());
     }
+
+    @Then("si verifica che la risposta contenga esattamente {int} utente con ruolo {string} dell'istituzione: {string}")
+    public void verifySelfcareResponseContainsExactUsersByRole(int expectedUsers, String role, String tenantType) {
+        List<User> users = tenantContext.getSelfcareUsers();
+        Assertions.assertNotNull(users);
+        Assertions.assertEquals(expectedUsers, users.size());
+
+        List<UUID> expectedUserIds = identityService.getUserIds(tenantType, role);
+        Assertions.assertFalse(expectedUserIds.isEmpty());
+
+        assertThat(users)
+                .extracting(User::getUserId)
+                .isSubsetOf(expectedUserIds.toArray(new UUID[0]));
+    }
+
+
 }
