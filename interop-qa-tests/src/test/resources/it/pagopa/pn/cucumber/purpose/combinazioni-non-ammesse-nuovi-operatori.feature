@@ -196,3 +196,57 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	And lo stato della compilazione dell'analisi del rischio è "REJECTED"
 	When il valutatore assegnato convalida l'analisi del rischio della finalità
 	Then si ottiene status code 409
+
+  # PST: Scenario 27 - Caso 27.1
+  @sad-path
+  Scenario: [COMB_NON_AMMESSE_27_1_DRAFT] Tentativo attivazione admin con workflow in stato DRAFT (negativo)
+	Given "PA1" ha già creato e pubblicato 1 e-service
+	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+	And l'utente è un "admin" di "PA2"
+	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
+	And lo stato della compilazione dell'analisi del rischio è "DRAFT"
+	When l'utente attiva la finalità in stato "DRAFT" per quell'e-service
+	Then si ottiene status code 409
+
+  # PST: Scenario 27 - Caso 27.1
+  @sad-path
+  Scenario: [COMB_NON_AMMESSE_27_1_ASSIGNED] Tentativo attivazione admin con workflow in stato ASSIGNED (negativo)
+	Given "PA1" ha già creato e pubblicato 1 e-service
+	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+	And l'utente è un "admin" di "PA2"
+	And l'utente assegna un valutatore alla finalità in modalità "ReviewerWritesReviewerSigns" con successo
+	And lo stato della compilazione dell'analisi del rischio è "ASSIGNED"
+	When l'utente attiva la finalità in stato "DRAFT" per quell'e-service
+	Then si ottiene status code 409
+
+  # PST: Scenario 27 - Caso 27.1
+  @sad-path
+  Scenario: [COMB_NON_AMMESSE_27_1_SUBMITTED] Tentativo attivazione admin con workflow in stato SUBMITTED (negativo)
+	Given "PA1" ha già creato e pubblicato 1 e-service
+	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+	And l'utente è un "admin" di "PA2"
+	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
+	And compila l'analisi del rischio tramite endpoint generico
+	And l'utente invia il submit dell'analisi del rischio della finalità
+	And lo stato della compilazione dell'analisi del rischio è "SUBMITTED"
+	When l'utente attiva la finalità in stato "DRAFT" per quell'e-service
+	Then si ottiene status code 409
+
+  # PST: Scenario 27 - Caso 27.1
+  @sad-path
+  Scenario: [COMB_NON_AMMESSE_27_1_REJECTED] Tentativo attivazione admin con workflow in stato REJECTED (negativo)
+	Given "PA1" ha già creato e pubblicato 1 e-service
+	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+	And l'utente è un "admin" di "PA2"
+	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
+	And compila l'analisi del rischio tramite endpoint generico
+	And l'utente invia il submit dell'analisi del rischio della finalità
+	And un reviewer assegnato rifiuta l'analisi del rischio
+	And lo stato della compilazione dell'analisi del rischio è "REJECTED"
+	When l'utente attiva la finalità in stato "DRAFT" per quell'e-service
+	Then si ottiene status code 409
+

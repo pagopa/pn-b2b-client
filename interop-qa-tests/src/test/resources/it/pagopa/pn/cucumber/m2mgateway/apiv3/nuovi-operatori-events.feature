@@ -81,6 +81,3 @@ Feature: Eventi Nuovi Operatori
     And "PA2" visualizza l'evento PurposeRiskAnalysisRejectedV2 con:
       | field     | value      |
       | purposeId | :purposeId |
-
-
-
