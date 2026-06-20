@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.common;
 
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -18,6 +19,7 @@ public class RiskAnalysisCommonContext {
     UUID riskAnalysisId;
     Integer dailyCalls = 1;
     List<AssignedReviewerActorRef> assignedReviewerActors = new ArrayList<>();
+    RiskAnalysisFormSeed riskAnalysisVariation;
 
     public record AssignedReviewerActorRef(String tenantType, String role, int index) {
     }

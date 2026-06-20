@@ -52,5 +52,35 @@ Feature: Eventi Nuovi Operatori
       | field     | value      |
       | purposeId | :purposeId |
 
+  # PST: Scenario 18 - Caso 18.4
+  Scenario: [AWRS_SUBMIT_18_4_EVENTO] Submit analisi del rischio con emissione evento PurposeRiskAnalysisSubmittedV2
+    Given "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+    And l'utente è un "admin" di "PA2"
+    And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
+    And compila l'analisi del rischio tramite endpoint generico
+    When l'utente invia il submit dell'analisi del rischio della finalità
+    Then si ottiene status code 200
+    And "PA2" visualizza l'evento PurposeRiskAnalysisSubmittedV2 con:
+      | field     | value      |
+      | purposeId | :purposeId |
+
+  # PST: Scenario 19 - Caso 19.2
+  Scenario: [AWRS_RIFIUTO_19_2_EVENTO] Rifiuto analisi del rischio con emissione evento PurposeRiskAnalysisRejectedV2
+    Given "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+    And l'utente è un "admin" di "PA2"
+    And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
+    And compila l'analisi del rischio tramite endpoint generico
+    And l'utente invia il submit dell'analisi del rischio della finalità
+    When un reviewer assegnato rifiuta l'analisi del rischio
+    Then si ottiene status code 200
+    And lo stato della compilazione dell'analisi del rischio è "REJECTED"
+    And "PA2" visualizza l'evento PurposeRiskAnalysisRejectedV2 con:
+      | field     | value      |
+      | purposeId | :purposeId |
+
 
 

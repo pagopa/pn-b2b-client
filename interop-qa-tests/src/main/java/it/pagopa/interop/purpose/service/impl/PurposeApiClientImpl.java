@@ -181,6 +181,11 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
     }
 
     @Override
+    public void submitRiskAnalysis(UUID purposeId, RiskAnalysisSubmissionSeed payload) throws RestClientException {
+        purposesApi.submitRiskAnalysis(purposeId, payload);
+    }
+
+    @Override
     public void rejectRiskAnalysis(UUID purposeId, RiskAnalysisRejectionSeed payload) throws RestClientException {
         purposesApi.rejectRiskAnalysis(purposeId, payload);
     }

@@ -35,6 +35,7 @@ public interface IPurposeApiClient extends SettableBearerToken {
     void assignRiskAnalysis(UUID purposeId, RiskAnalysisAssignmentSeed payload) throws RestClientException;
     void compileRiskAnalysisForm(UUID purposeId, RiskAnalysisFormSeed payload) throws RestClientException;
     void submitRiskAnalysis(UUID purposeId) throws RestClientException;
+    void submitRiskAnalysis(UUID purposeId, RiskAnalysisSubmissionSeed payload) throws RestClientException;
     void rejectRiskAnalysis(UUID purposeId, RiskAnalysisRejectionSeed payload) throws RestClientException;
     void signRiskAnalysis(UUID purposeId) throws RestClientException;
 }

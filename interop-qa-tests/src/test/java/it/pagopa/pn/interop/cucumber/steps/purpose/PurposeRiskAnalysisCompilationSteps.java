@@ -3,11 +3,13 @@ package it.pagopa.pn.interop.cucumber.steps.purpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
+import io.cucumber.java.en.Then;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeUpdateContent;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisRejectionSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisSubmissionSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisSigningState;
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
@@ -38,27 +40,15 @@ public class PurposeRiskAnalysisCompilationSteps {
 
     @When("il valutatore assegnato compila l'analisi del rischio della finalità")
     public void assignedReviewerCompilesRiskAnalysis() {
-        String previousToken = sharedStepsContext.getUserToken();
-        List<AssignedReviewerActorRef> assignedReviewerActors = sharedStepsContext.getRiskAnalysisCommonContext().getAssignedReviewerActors();
-        if (assignedReviewerActors == null || assignedReviewerActors.isEmpty()) {
-            throw new IllegalStateException("Nessun valutatore assegnato presente in contesto");
-        }
-        AssignedReviewerActorRef assignedReviewerActor = assignedReviewerActors.get(assignedReviewerActors.size() - 1);
-        String reviewerToken = resolveAssignedReviewerToken(assignedReviewerActor);
-
-        try {
-            clientTokenConfigurator.setBearerToken(reviewerToken);
-
+        AssignedReviewerActorRef actor = getLastAssignedReviewerActor();
+        withReviewerToken(actor, () -> {
             RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(sharedStepsContext.getTenantType(), true);
             RiskAnalysisFormSeed riskAnalysisForm = new RiskAnalysisFormSeed()
                     .version(riskAnalysis.getRiskAnalysisForm().getVersion())
                     .answers(riskAnalysis.getRiskAnalysisForm().getAnswers());
-
             UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
             httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().compileRiskAnalysisForm(purposeId, riskAnalysisForm));
-        } finally {
-            clientTokenConfigurator.setBearerToken(previousToken);
-        }
+        });
     }
 
     @Given("il valutatore assegnato compila l'analisi del rischio della finalità con successo")
@@ -88,6 +78,43 @@ public class PurposeRiskAnalysisCompilationSteps {
                     assignedReviewerActor.index()
             ), ex);
         }
+    }
+
+    /**
+     * Salva il token corrente, imposta il token del reviewer indicato, esegue l'azione,
+     * e ripristina il token originale in un blocco try/finally.
+     */
+    private void withReviewerToken(AssignedReviewerActorRef actor, Runnable action) {
+        String previousToken = sharedStepsContext.getUserToken();
+        String reviewerToken = resolveAssignedReviewerToken(actor);
+        try {
+            clientTokenConfigurator.setBearerToken(reviewerToken);
+            action.run();
+        } finally {
+            clientTokenConfigurator.setBearerToken(previousToken);
+        }
+    }
+
+    /**
+     * Restituisce l'ultimo reviewer assegnato in contesto, o lancia eccezione se assente.
+     */
+    private AssignedReviewerActorRef getLastAssignedReviewerActor() {
+        List<AssignedReviewerActorRef> actors = getAssignedReviewerActorsOrThrow(
+                1, "Nessun valutatore assegnato presente in contesto"
+        );
+        return actors.get(actors.size() - 1);
+    }
+
+    /**
+     * Esegue il rifiuto dell'analisi del rischio come ultimo reviewer assegnato,
+     * usando il payload fornito.
+     */
+    private void rejectAsLastAssignedReviewer(RiskAnalysisRejectionSeed payload) {
+        AssignedReviewerActorRef actor = getLastAssignedReviewerActor();
+        withReviewerToken(actor, () -> {
+            UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+            httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().rejectRiskAnalysis(purposeId, payload));
+        });
     }
 
     @And("lo stato della compilazione dell'analisi del rischio è {string}")
@@ -136,6 +163,32 @@ public class PurposeRiskAnalysisCompilationSteps {
         httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().updatePurpose(purposeId, updateContent));
     }
 
+    @Then("la variazione nell'analisi del rischio è stata persistita")
+    public void verifyRiskAnalysisVariationPersisted() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+        IPurposeApiClient purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
+
+        RiskAnalysisFormSeed expectedVariation = sharedStepsContext.getRiskAnalysisCommonContext().getRiskAnalysisVariation();
+        if (expectedVariation == null) {
+            throw new IllegalStateException("Nessuna variazione registrata nel contesto");
+        }
+
+        sharedStepsContext.getPollingService().makePolling(
+                () -> purposeApiClient.getPurpose(purposeId),
+                purpose -> {
+                    if (purpose.getRiskAnalysisForm() == null) {
+                        return false;
+                    }
+                    var persistedAnswers = purpose.getRiskAnalysisForm().getAnswers();
+                    var expectedAnswers = expectedVariation.getAnswers();
+                    return expectedAnswers.equals(persistedAnswers);
+                },
+                "The risk analysis variation is not persisted"
+        );
+    }
+
     @When("l'utente invia il submit dell'analisi del rischio della finalità")
     public void userSubmitsRiskAnalysis() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
@@ -144,27 +197,25 @@ public class PurposeRiskAnalysisCompilationSteps {
         httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().submitRiskAnalysis(purposeId));
     }
 
+    @When("l'utente invia il submit dell'analisi del rischio della finalità introducendo una variazione")
+    public void userSubmitsRiskAnalysisWithVariation() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+        RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(sharedStepsContext.getTenantType(), true);
+        // Variazione minima richiesta dal CDT: aggiorno institutionalPurpose nel payload di submit.
+        riskAnalysis.getRiskAnalysisForm().getAnswers().put("institutionalPurpose", List.of("variazione introdotta per il test"));
+        RiskAnalysisSubmissionSeed payload = new RiskAnalysisSubmissionSeed()
+                .riskAnalysisForm(riskAnalysis.getRiskAnalysisForm());
+
+        sharedStepsContext.getRiskAnalysisCommonContext().setRiskAnalysisVariation(riskAnalysis.getRiskAnalysisForm());
+        httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient()
+                .submitRiskAnalysis(purposeId, payload));
+    }
+
     @When("il valutatore assegnato rifiuta la propria compilazione dell'analisi del rischio")
     public void assignedReviewerRejectsOwnRiskAnalysisCompilation() {
-        String previousToken = sharedStepsContext.getUserToken();
-        List<AssignedReviewerActorRef> assignedReviewerActors = sharedStepsContext.getRiskAnalysisCommonContext().getAssignedReviewerActors();
-        if (assignedReviewerActors == null || assignedReviewerActors.isEmpty()) {
-            throw new IllegalStateException("Nessun valutatore assegnato presente in contesto");
-        }
-        AssignedReviewerActorRef assignedReviewerActor = assignedReviewerActors.get(assignedReviewerActors.size() - 1);
-        String reviewerToken = resolveAssignedReviewerToken(assignedReviewerActor);
-
-        try {
-            clientTokenConfigurator.setBearerToken(reviewerToken);
-
-            UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
-            RiskAnalysisRejectionSeed payload = new RiskAnalysisRejectionSeed()
-                    .rejectionReason("Rifiuto della propria compilazione");
-
-            httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().rejectRiskAnalysis(purposeId, payload));
-        } finally {
-            clientTokenConfigurator.setBearerToken(previousToken);
-        }
+        rejectAsLastAssignedReviewer(new RiskAnalysisRejectionSeed().rejectionReason("Rifiuto della propria compilazione"));
     }
 
     @When("un reviewer assegnato rifiuta l'analisi del rischio")
@@ -174,12 +225,7 @@ public class PurposeRiskAnalysisCompilationSteps {
 
     @When("il valutatore assegnato convalida l'analisi del rischio della finalità")
     public void assignedReviewerSignsRiskAnalysis() {
-        List<AssignedReviewerActorRef> assignedReviewerActors = getAssignedReviewerActorsOrThrow(
-                1,
-                "Nessun valutatore assegnato presente in contesto"
-        );
-        AssignedReviewerActorRef assignedReviewerActor = assignedReviewerActors.get(assignedReviewerActors.size() - 1);
-        signRiskAnalysisAsReviewer(assignedReviewerActor);
+        signRiskAnalysisAsReviewer(getLastAssignedReviewerActor());
     }
 
     @Given("il valutatore assegnato convalida l'analisi del rischio della finalità con successo")
@@ -215,17 +261,14 @@ public class PurposeRiskAnalysisCompilationSteps {
     }
 
     private void signRiskAnalysisAsReviewer(AssignedReviewerActorRef reviewerActor) {
-        String previousToken = sharedStepsContext.getUserToken();
-        String reviewerToken = resolveAssignedReviewerToken(reviewerActor);
-
-        try {
-            clientTokenConfigurator.setBearerToken(reviewerToken);
-
+        withReviewerToken(reviewerActor, () -> {
             UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
             httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().signRiskAnalysis(purposeId));
-        } finally {
-            clientTokenConfigurator.setBearerToken(previousToken);
-        }
+        });
+    }
+
+    @When("un reviewer assegnato tenta di rifiutare l'analisi del rischio senza motivazione")
+    public void assignedReviewerAttemptsRejectRiskAnalysisWithoutReason() {
+        rejectAsLastAssignedReviewer(new RiskAnalysisRejectionSeed());
     }
 }
-

@@ -29,6 +29,8 @@ public enum InteropEvent {
     PURPOSE_RISK_ANALYSIS_ASSIGNED_V2("PurposeRiskAnalysisAssignedV2", Family.PURPOSE),
     PURPOSE_RISK_ANALYSIS_WORKFLOW_CREATED_V2("PurposeRiskAnalysisWorkflowCreatedV2", Family.PURPOSE),
     PURPOSE_RISK_ANALYSIS_FORM_EDITED_V2("PurposeRiskAnalysisFormEditedV2", Family.PURPOSE),
+    PURPOSE_RISK_ANALYSIS_SUBMITTED_V2("PurposeRiskAnalysisSubmittedV2", Family.PURPOSE),
+    PURPOSE_RISK_ANALYSIS_REJECTED_V2("PurposeRiskAnalysisRejectedV2", Family.PURPOSE),
     PURPOSE_RISK_ANALYSIS_SIGNED_V2("PurposeRiskAnalysisSignedV2", Family.PURPOSE),
     PRODUCER_DELEGATION_APPROVED("ProducerDelegationApproved", Family.PRODUCER_DELEGATION),
     CONSUMER_DELEGATION_APPROVED("ConsumerDelegationApproved", Family.CONSUMER_DELEGATION),
