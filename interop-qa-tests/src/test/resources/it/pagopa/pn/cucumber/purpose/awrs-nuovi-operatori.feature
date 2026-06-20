@@ -192,6 +192,21 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
     Then si ottiene status code 200
     And lo stato della compilazione dell'analisi del rischio è "SIGNED"
 
+  # PST: Scenario 21 - Caso 21.1
+  @happy-path
+  Scenario: [AWRS_ATTIVAZIONE_21_1_ADMIN] Attivazione finalità da parte dell'amministratore dopo firma reviewer (positivo)
+    Given "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+    And l'utente è un "admin" di "PA2"
+    And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
+    And compila l'analisi del rischio tramite endpoint generico
+    And l'utente invia il submit dell'analisi del rischio della finalità
+    And il valutatore assegnato convalida l'analisi del rischio della finalità con successo
+    When l'utente è un "admin" di "PA2"
+    And l'utente attiva la finalità in stato "DRAFT" per quell'e-service
+    Then si ottiene status code 200 e la finalità in stato "ACTIVE"
+
 
 
 
