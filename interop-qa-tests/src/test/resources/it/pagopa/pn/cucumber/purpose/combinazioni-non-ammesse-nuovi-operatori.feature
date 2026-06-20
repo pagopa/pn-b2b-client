@@ -250,3 +250,44 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	When l'utente attiva la finalità in stato "DRAFT" per quell'e-service
 	Then si ottiene status code 409
 
+  # PST: Scenario 28 - Caso 28.1
+  @sad-path
+  Scenario: [COMB_NON_AMMESSE_28_1_ASSIGNED] Tentativo compilazione admin con workflow in stato ASSIGNED (negativo)
+	Given "PA1" ha già creato e pubblicato 1 e-service
+	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+	And l'utente è un "admin" di "PA2"
+	And l'utente assegna un valutatore alla finalità in modalità "ReviewerWritesReviewerSigns" con successo
+	And lo stato della compilazione dell'analisi del rischio è "ASSIGNED"
+	When compila l'analisi del rischio tramite endpoint generico
+	Then si ottiene status code 409
+
+  # PST: Scenario 28 - Caso 28.1
+  @sad-path
+  Scenario: [COMB_NON_AMMESSE_28_1_SUBMITTED] Tentativo compilazione admin con workflow in stato SUBMITTED (negativo)
+	Given "PA1" ha già creato e pubblicato 1 e-service
+	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+	And l'utente è un "admin" di "PA2"
+	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
+	And compila l'analisi del rischio tramite endpoint generico
+	And l'utente invia il submit dell'analisi del rischio della finalità
+	And lo stato della compilazione dell'analisi del rischio è "SUBMITTED"
+	When compila l'analisi del rischio tramite endpoint generico
+	Then si ottiene status code 409
+
+  # PST: Scenario 28 - Caso 28.1
+  @sad-path
+  Scenario: [COMB_NON_AMMESSE_28_1_SIGNED] Tentativo compilazione admin con workflow in stato SIGNED (negativo)
+	Given "PA1" ha già creato e pubblicato 1 e-service
+	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+	And l'utente è un "admin" di "PA2"
+	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
+	And compila l'analisi del rischio tramite endpoint generico
+	And l'utente invia il submit dell'analisi del rischio della finalità
+	And il valutatore assegnato convalida l'analisi del rischio della finalità con successo
+	And lo stato della compilazione dell'analisi del rischio è "SIGNED"
+	When compila l'analisi del rischio tramite endpoint generico
+	Then si ottiene status code 409
+
