@@ -4,6 +4,7 @@ Feature: Attivazione di un descrittore
 
   @nrt-minimal
   @descriptor_activation1
+  @nuovi-operatori-update
   Scenario Outline: [DESCRIPTOR_ACTIVATION_1] Per un e-service che ha un solo descrittore, il quale è in stato SUSPENDED, all'attivazione del descrittore, torna allo stato PUBLISHED
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato un e-service con un descrittore in stato "SUSPENDED"
@@ -25,8 +26,12 @@ Feature: Attivazione di un descrittore
       | ente | ruolo        | risultato |
       | GSP  | security     |       403 |
       | GSP  | support      |       403 |
+      | GSP  | reviewer     |       403 |
+      | GSP  | viewer     |       403 |
       | PA1  | security     |       403 |
       | PA1  | support      |       403 |
+      | PA2  | reviewer     |       403 |
+      | PA2  | viewer     |       403 |
 
   @sad-path
   @nrt-minimal

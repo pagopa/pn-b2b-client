@@ -4,6 +4,7 @@ Feature: Cancellazione di un documento
 
   @nrt-minimal
   @document_delete1
+  @nuovi-operatori-update
   Scenario Outline: [DESCRIPTOR_DELETE_1] Per un e-service che ha un solo descrittore, il quale è in uno dei sequenti stati: (PUBLISHED, DRAFT, DEPRECATED, SUSPENDED), alla richiesta di cancellazione di un documento precedentemente caricato, l'operazione va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato un e-service con un descrittore in stato "<statoDescrittore>" e un documento già caricato
@@ -25,8 +26,12 @@ Feature: Cancellazione di un documento
       | ente | ruolo        | statoDescrittore | risultato |
       | GSP  | security     | DRAFT            |       403 |
       | GSP  | support      | DRAFT            |       403 |
+      | GSP  | reviewer     | DRAFT            |       403 |
+      | GSP  | viewer       | DRAFT            |       403 |
       | PA1  | security     | DRAFT            |       403 |
       | PA1  | support      | DRAFT            |       403 |
+      | PA2  | reviewer     | DRAFT            |       403 |
+      | PA2  | viewer       | DRAFT            |       403 |
 
     @happy-path
     Examples: # Test sugli stati

@@ -4,6 +4,7 @@ Feature: Pubblicazione di un descrittore
 
   @nrt-minimal
   @descriptor_publication1
+  @nuovi-operatori-update
   Scenario Outline: [DESCRIPTOR_PUBBLICATION_1] Per un e-service creato in modalità "DELIVER" che ha un solo descrittore, il quale è in stato DRAFT, con tutti i parametri richiesti inseriti e formattati correttamente, alla richiesta di pubblicazione, la bozza viene pubblicata correttamente
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato un e-service con un descrittore in stato "DRAFT"
@@ -26,8 +27,12 @@ Feature: Pubblicazione di un descrittore
       | ente | ruolo        | risultato |
       | GSP  | security     |       403 |
       | GSP  | support      |       403 |
+      | GSP  | reviewer     |       403 |
+      | GSP  | viewer       |       403 |
       | PA1  | security     |       403 |
       | PA1  | support      |       403 |
+      | PA2  | reviewer     |       403 |
+      | PA2  | viewer       |       403 |
 
   @sad-path
   @nrt-minimal

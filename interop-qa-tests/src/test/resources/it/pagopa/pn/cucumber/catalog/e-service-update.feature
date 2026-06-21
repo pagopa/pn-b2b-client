@@ -4,6 +4,7 @@ Feature: Aggiornamento di un e-service non pubblicato
 
   @nrt-minimal
   @eservice_updating1
+  @nuovi-operatori-update
   Scenario Outline: [ESERVICE_UPDATING_01] Per un e-service precedentemente creato, il quale non ha descrittori, l'aggiornamento dei campi dell'e-service avviene correttamente
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato un e-service con un descrittore in DRAFT
@@ -25,8 +26,12 @@ Feature: Aggiornamento di un e-service non pubblicato
       | ente | ruolo    | risultato |
       | GSP  | security | 403       |
       | GSP  | support  | 403       |
+      | GSP  | reviewer | 403       |
+      | GSP  | viewer   | 403       |
       | PA1  | security | 403       |
       | PA1  | support  | 403       |
+      | PA2  | reviewer | 403       |
+      | PA2  | viewer   | 403       |
 
   @happy-path
   @nrt-minimal
