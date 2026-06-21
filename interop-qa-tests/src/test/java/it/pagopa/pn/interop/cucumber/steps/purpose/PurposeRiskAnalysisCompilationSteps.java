@@ -243,6 +243,13 @@ public class PurposeRiskAnalysisCompilationSteps {
         assignedReviewerRejectsOwnRiskAnalysisCompilation();
     }
 
+    @When("l'utente rifiuta l'analisi del rischio della finalità")
+    public void userRejectsRiskAnalysis() {
+        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+        RiskAnalysisRejectionSeed payload = new RiskAnalysisRejectionSeed().rejectionReason("Rifiuto del valutatore");
+        httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().rejectRiskAnalysis(purposeId, payload));
+    }
+
     @When("il valutatore assegnato convalida l'analisi del rischio della finalità")
     public void assignedReviewerSignsRiskAnalysis() {
         signRiskAnalysisAsReviewer(getLastAssignedReviewerActor());

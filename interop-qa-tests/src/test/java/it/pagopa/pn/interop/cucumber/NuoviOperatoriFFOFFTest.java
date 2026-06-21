@@ -17,8 +17,8 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.interop.cucumber.steps"),
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "same_thread"),
 })
-@ExcludeTags({"wait_for_fix", "nuovi-operatori-off"})
-@IncludeTags({"nuovi-operatori"})
-public class NuoviOperatoriTest {
+@ExcludeTags({"wait_for_fix"})
+@IncludeTags({"nuovi-operatori-off"})
+public class NuoviOperatoriFFOFFTest {
 }
 
