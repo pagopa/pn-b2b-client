@@ -27,17 +27,20 @@ Feature: finalità agevolata, purpose template ANNOTATION
 
   #69 (KO)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswer
+  @nuovi-operatori-update
   Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_NO_ADMIN] Creazione di una risposta di analisi del rischio da associare a una finalità agevolata da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "<ente>"
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
     Then si ottiene lo status code 403
     Examples:
-      | ruolo    |
-      | api      |
-      | support  |
-      | security |
+      | ente | ruolo    |
+      | PA1  | api      |
+      | PA1  | support  |
+      | PA1  | security |
+      | PA2  | reviewer |
+      | PA2  | viewer   |
 
   #70 (KO)
   # 27 01 2026: In osservanza a https://pagopa.atlassian.net/browse/PIN-8190 il codice restituito è stato mutato 403 -> 404
@@ -109,18 +112,21 @@ Feature: finalità agevolata, purpose template ANNOTATION
 
   #77 (KO)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotation
+  @nuovi-operatori-update
   Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_UPDATE_ANNOTATION_NO_ADMIN] Modifica di un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "<ente>"
     When viene aggiunta un'annotazione con testo entro i 2000 caratteri ad una risposta esistente del purpose template
     Then si ottiene lo status code 403
     Examples:
-      | ruolo    |
-      | api      |
-      | support  |
-      | security |
+      | ente | ruolo    |
+      | PA1  | api      |
+      | PA1  | support  |
+      | PA1  | security |
+      | PA2  | reviewer |
+      | PA2  | viewer   |
 
   #78 (KO)
   # 27 01 2026: In osservanza a https://pagopa.atlassian.net/browse/PIN-8190 il codice restituito è stato mutato 403 -> 404

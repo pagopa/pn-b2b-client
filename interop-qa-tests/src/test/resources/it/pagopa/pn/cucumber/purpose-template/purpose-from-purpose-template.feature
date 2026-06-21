@@ -69,20 +69,23 @@ Feature: finalità agevolata, purpose from purpose template
 
   #112 (KO)
   @purposeTemplate @purposeFromPurposeTemplate
+  @nuovi-operatori-update
   Scenario Outline: [PURPOSE_TEMPLATE_CREATE_PURPOSE_FROM_TEMPLATE_NO_ADMIN] Creazione di una finalità a partire da un template di finalità agevolata da parte di un utente NON admin (error 403)
     Given "PA2" ha già creato e pubblicato 1 e-service
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And il purpose template creato viene spostato in stato PUBLISHED
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "<ente>"
     And si crea una finalità a partire dal purpose template esistente
     Then si ottiene response status code 403
     Examples:
-      | ruolo    |
-      | api      |
-      | support  |
-      | security |
+      | ente | ruolo    |
+      | PA1  | api      |
+      | PA1  | support  |
+      | PA1  | security |
+      | PA2  | reviewer |
+      | PA2  | viewer   |
 
   #113 (KO)
   @purposeTemplate @purposeFromPurposeTemplate
@@ -157,6 +160,7 @@ Feature: finalità agevolata, purpose from purpose template
 
   #118 (KO)
   @purposeTemplate @purposeFromPurposeTemplate
+  @nuovi-operatori-update
   Scenario Outline: [PURPOSE_TEMPLATE_CREATE_PURPOSE_FROM_TEMPLATE_PATCH_NO_ADMIN] Modifica di una finalità creata a partire da un template di finalità agevolata da parte di un utente NON admin (error 403)
     Given "PA2" ha già creato e pubblicato 1 e-service
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -164,14 +168,16 @@ Feature: finalità agevolata, purpose from purpose template
     And viene creato un nuovo purpose template
     And il purpose template creato viene spostato in stato PUBLISHED
     And si crea una finalità a partire dal purpose template esistente
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "<ente>"
     And si modifica la finalità creata
     Then si ottiene response status code 403
     Examples:
-      | ruolo    |
-      | api      |
-      | support  |
-      | security |
+      | ente | ruolo    |
+      | PA1  | api      |
+      | PA1  | support  |
+      | PA1  | security |
+      | PA2  | reviewer |
+      | PA2  | viewer   |
 
   #119 (KO)
   @purposeTemplate @purposeFromPurposeTemplate

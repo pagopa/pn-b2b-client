@@ -69,19 +69,22 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE ES
 
   #28(KO)
   @purposeTemplate @purposeTemplateEservice
+  @nuovi-operatori-update
   Scenario Outline: [PURPOSE_TEMPLATE_ASSOCIATE_ES_NO_ADMIN] Associazione di un eService a una finalità agevolata da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
     And l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "<ente>"
     And il purpose template creato viene associato all'e-service
     Then si ottiene lo status code 403
     Examples:
-      | ruolo    |
-      | api      |
-      | support  |
-      | security |
+      | ente | ruolo    |
+      | PA1  | api      |
+      | PA1  | support  |
+      | PA1  | security |
+      | PA2  | reviewer |
+      | PA2  | viewer   |
 
   #29(KO)
   # 27 01 2026: In osservanza a https://pagopa.atlassian.net/browse/PIN-8190 il codice restituito è stato mutato 403 -> 404
@@ -164,20 +167,23 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE ES
 
   #35(KO)
   @purposeTemplate @purposeTemplateEservice
+  @nuovi-operatori-update
   Scenario Outline: [PURPOSE_TEMPLATE_DISASSOCIATE_ES_NO_ADMIN] Disassociazione di un eService da una finalità agevolata da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And il purpose template creato viene associato all'e-service
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "<ente>"
     And il purpose template creato viene disassociato dall'e-service
     Then si ottiene lo status code 403
     Examples:
-      | ruolo    |
-      | api      |
-      | support  |
-      | security |
+      | ente | ruolo    |
+      | PA1  | api      |
+      | PA1  | support  |
+      | PA1  | security |
+      | PA2  | reviewer |
+      | PA2  | viewer   |
 
   #36(KO)
   # 27 01 2026: In osservanza a https://pagopa.atlassian.net/browse/PIN-8190 il codice restituito è stato mutato 403 -> 404
