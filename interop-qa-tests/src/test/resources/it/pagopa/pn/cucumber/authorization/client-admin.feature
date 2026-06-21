@@ -19,6 +19,7 @@ Feature: Associazione di un admin ad un client
 
   @sad-path
   @client_admin_create
+  @nuovi-operatori-update
   Scenario Outline: [ADMIN_CLIENT_3] Un utente non admin non può impostare se stesso come amministratore di un client API
     Given l'utente è un "<ruolo>" di "PA1"
     And "PA1" ha già creato 1 client "API"
@@ -27,6 +28,8 @@ Feature: Associazione di un admin ad un client
     Examples:
       | ruolo     |
       | api       |
+      | reviewer  |
+      | viewer    |
       | support   |
       | security  |
 
@@ -40,11 +43,17 @@ Feature: Associazione di un admin ad un client
 
   @sad-path
   @client_admin_create
-  Scenario: [ADMIN_CLIENT_5] Un utente admin non può impostare un altro utente non-admin come amministratore di un client API
-    Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato 1 client "API"
-    When l'utente tenta di impostare "PA2" con ruolo "api" come amministratore del client
+  @nuovi-operatori-update
+  Scenario Outline: [ADMIN_CLIENT_5] Un utente admin non può impostare un altro utente non-admin come amministratore di un client API
+    Given l'utente è un "admin" di "PA2"
+    And "PA2" ha già creato 1 client "API"
+    When l'utente tenta di impostare "PA2" con ruolo "<ruolo>" come amministratore del client
     Then si ottiene status code 403
+    Examples:
+      | ruolo    |
+      | api      |
+      | reviewer |
+      | viewer   |
 
   @sad-path
   @client_admin_create
@@ -109,16 +118,19 @@ Feature: Associazione di un admin ad un client
 
   @sad-path
   @client_admin_delete
+  @nuovi-operatori-update
   Scenario Outline: [ADMIN_CLIENT_13] Un utente non-admin non può rimuovere un utente dal ruolo di amministratore di un client API
-    Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato 1 client "API"
+    Given l'utente è un "admin" di "PA2"
+    And "PA2" ha già creato 1 client "API"
     And l'utente effettua la modifica dell'amministratore del client indicando se stesso con successo
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "PA2"
     And l'utente tenta la rimozione dell'amministratore del client
     Then si ottiene status code 403
     Examples:
       | ruolo     |
       | api       |
+      | reviewer  |
+      | viewer    |
       | support   |
       | security  |
 
@@ -133,13 +145,20 @@ Feature: Associazione di un admin ad un client
 
   @sad-path
   @client_admin_delete
-  Scenario: [ADMIN_CLIENT_15] Un utente admin non può rimuovere un utente dal ruolo di amministratore di un client API se fa capo ad un ente diverso da quello creatore del client
-    Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato 1 client "API"
+  @nuovi-operatori-update
+  Scenario Outline: [ADMIN_CLIENT_15] Un utente admin non può rimuovere un utente dal ruolo di amministratore di un client API se fa capo ad un ente diverso da quello creatore del client
+    Given l'utente è un "admin" di "PA2"
+    And "PA2" ha già creato 1 client "API"
     And l'utente effettua la modifica dell'amministratore del client indicando se stesso con successo
-    When l'utente è un "admin" di "PA2"
+    When l'utente è un "<ruolo>" di "GSP"
     And l'utente tenta la rimozione dell'amministratore del client
     Then si ottiene status code 403
+    Examples:
+      | ruolo    |
+      | admin    |
+      | api      |
+      | reviewer |
+      | viewer   |
 
   # NOTA 16/05/2025: "figlio" dello scenario [ADMIN_CLIENT_7], poiché non potendo impostare
   # un altro admin come amministratore del client, non si può nemmeno rimuovere. Per cui

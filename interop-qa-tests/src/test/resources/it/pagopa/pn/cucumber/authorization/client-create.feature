@@ -3,6 +3,7 @@ Feature: Creazione di un client
   Tutti gli admin possono creare un client
 
   @nrt-minimal
+  @nuovi-operatori-update
   Scenario Outline: [CREATE_CLIENT_1] Un utente con sufficienti permessi (admin); inserisce nome e descrizione, e crea un nuovo client di tipo CONSUMER. L'operazione va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     When l'utente richiede la creazione di un client "CONSUMER"
@@ -18,6 +19,8 @@ Feature: Creazione di un client
     Examples:
       | ente | ruolo        | statusCode |
       | GSP  | api          |        403 |
+      | GSP  | reviewer     |        403 |
+      | GSP  | viewer       |        403 |
       | GSP  | security     |        403 |
       | GSP  | support      |        403 |
       | GSP  | api,security |        403 |
@@ -25,8 +28,11 @@ Feature: Creazione di un client
       | PA1  | security     |        403 |
       | PA1  | support      |        403 |
       | PA1  | api,security |        403 |
+      | PA2  | reviewer     |        403 |
+      | PA2  | viewer       |        403 |
 
   @nrt-minimal
+  @nuovi-operatori-update
   Scenario Outline: [CREATE_CLIENT_2] Un utente con sufficienti permessi (admin); inserisce nome e descrizione, e crea un nuovo client di tipo API. L'operazione va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     When l'utente richiede la creazione di un client "API"
@@ -42,6 +48,8 @@ Feature: Creazione di un client
     Examples:
       | ente | ruolo        | statusCode |
       | GSP  | api          |        403 |
+      | GSP  | reviewer     |        403 |
+      | GSP  | viewer       |        403 |
       | GSP  | security     |        403 |
       | GSP  | support      |        403 |
       | GSP  | api,security |        403 |
@@ -49,3 +57,5 @@ Feature: Creazione di un client
       | PA1  | security     |        403 |
       | PA1  | support      |        403 |
       | PA1  | api,security |        403 |
+      | PA2  | reviewer     |        403 |
+      | PA2  | viewer       |        403 |

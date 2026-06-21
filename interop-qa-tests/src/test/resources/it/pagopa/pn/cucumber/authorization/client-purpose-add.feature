@@ -4,6 +4,7 @@ Feature: Associazione finalità al client
 
   @nrt-minimal
   @associa-finalita-client
+  @nuovi-operatori-update
   Scenario Outline: [CLIENT_PURPOSE_ADD_2] Un utente con sufficienti permessi (admin) dell'ente che ha creato il client di tipo CONSUMER e attivato una finalità che si trova in stato ACTIVE o SUSPENDED, richiede l’associazione del client alla finalità. L'operazione va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "PA2" ha già creato e pubblicato 1 e-service
@@ -24,6 +25,8 @@ Feature: Associazione finalità al client
     Examples:
       | ente | ruolo        | statoFinalita | statusCode |
       | GSP  | api          | ACTIVE        |        403 |
+      | GSP  | reviewer     | ACTIVE        |        403 |
+      | GSP  | viewer       | ACTIVE        |        403 |
       | GSP  | security     | ACTIVE        |        403 |
       | GSP  | support      | ACTIVE        |        403 |
       | GSP  | api,security | ACTIVE        |        403 |
@@ -31,6 +34,8 @@ Feature: Associazione finalità al client
       | PA1  | security     | ACTIVE        |        403 |
       | PA1  | support      | ACTIVE        |        403 |
       | PA1  | api,security | ACTIVE        |        403 |
+      | PA2  | reviewer     | ACTIVE        |        403 |
+      | PA2  | viewer       | ACTIVE        |        403 |
 
     @sad-path
     Examples:
@@ -68,11 +73,17 @@ Feature: Associazione finalità al client
   @nrt-minimal
   @wait_for_fix
   @associa-finalita-client
-  Scenario: [CLIENT_PURPOSE_ADD_5] Un utente con sufficienti permessi (admin) dell'ente che ha creato il client di tipo API e attivato una finalità che si trova in stato ACTIVE, richiede l’associazione del client alla finalità. Ottiene un errore. Chiarimento: non è possibile associare client destinati al consumo dell'API Interop ad una finalità
-    Given l'utente è un "admin" di "PA1"
+  @nuovi-operatori-update
+  Scenario Outline: [CLIENT_PURPOSE_ADD_5] Un utente con sufficienti permessi (admin) dell'ente che ha creato il client di tipo API e attivato una finalità che si trova in stato ACTIVE, richiede l’associazione del client alla finalità. Ottiene un errore. Chiarimento: non è possibile associare client destinati al consumo dell'API Interop ad una finalità
+    Given l'utente è un "<ruolo>" di "PA2"
     Given "PA2" ha già creato e pubblicato 1 e-service
-    Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    Given "PA1" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    Given "PA1" ha già creato 1 client "API"
+    Given "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    Given "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    Given "PA2" ha già creato 1 client "API"
     When l'utente richiede l'associazione della finalità al client
     Then si ottiene status code 403
+    Examples:
+      | ruolo    |
+      | admin    |
+      | reviewer |
+      | viewer   |

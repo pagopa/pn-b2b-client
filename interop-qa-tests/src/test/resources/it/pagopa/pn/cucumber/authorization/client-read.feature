@@ -3,6 +3,7 @@ Feature: Lettura client singolo
   Tutti gli utenti autenticati possono leggere un singolo client
 
   @nrt-minimal
+  @nuovi-operatori-update
   Scenario Outline: [CLIENT_READ_1] Tutti gli utenti possono leggere un client appartenente al proprio ente. La richiesta va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato 1 client "CONSUMER"
@@ -29,8 +30,14 @@ Feature: Lettura client singolo
     Examples:
       | ente    | ruolo        | statusCode |
       | GSP     | api          |        403 |
+      | GSP     | reviewer     |        403 |
+      | GSP     | viewer       |        403 |
       | PA1     | api          |        403 |
+      | PA2     | reviewer     |        403 |
+      | PA2     | viewer       |        403 |
       | Privato | api          |        403 |
+      | Privato | reviewer     |        403 |
+      | Privato | viewer       |        403 |
 
   @happy-path @nrt-minimal
   Scenario: [CLIENT_READ_2] Un utente admin legge un client appartenente al proprio ente. La richiesta va a buon fine
@@ -67,11 +74,17 @@ Feature: Lettura client singolo
 
   @sad-path
   @nrt-minimal
-  Scenario: [CLIENT_READ_6] Un utente api legge un client dell'ente al quale è associato. Ottiene un errore
-    Given l'utente è un "api" di "PA1"
-    Given "PA1" ha già creato 1 client "CONSUMER"
+  @nuovi-operatori-update
+  Scenario Outline: [CLIENT_READ_6] Un utente api legge un client dell'ente al quale è associato. Ottiene un errore
+    Given l'utente è un "<ruolo>" di "PA2"
+    Given "PA2" ha già creato 1 client "CONSUMER"
     When l'utente richiede una operazione di lettura di quel client
     Then si ottiene status code 403
+    Examples:
+      | ruolo    |
+      | api      |
+      | reviewer |
+      | viewer   |
 
   @nrtC-waitForFix
   @happy-path

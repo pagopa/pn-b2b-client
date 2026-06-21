@@ -3,6 +3,7 @@ Feature: Caricamento di una chiave pubblica contenuta in un client
   Tutti gli utenti autorizzati o security possono caricare una chiave pubblica di tipo RSA lunghezza 2048
 
   @nrt-minimal
+  @nuovi-operatori-update
   Scenario Outline: [CLIENT_KEY_UPLOAD_1] Un utente admin o security; appartenente all'ente che ha creato il client; il quale utente è membro del client; richiede il caricamento di una chiave pubblica di tipo RSA, lunghezza 2048. L'operazione va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato 1 client "CONSUMER"
@@ -24,7 +25,11 @@ Feature: Caricamento di una chiave pubblica contenuta in un client
     Examples:
       | ente | ruolo        | statusCode |
       | GSP  | support      |        403 |
+      | GSP  | reviewer     |        403 |
+      | GSP  | viewer       |        403 |
       | PA1  | support      |        403 |
+      | PA2  | reviewer     |        403 |
+      | PA2  | viewer       |        403 |
 
   @nrt-minimal
   @sad-path

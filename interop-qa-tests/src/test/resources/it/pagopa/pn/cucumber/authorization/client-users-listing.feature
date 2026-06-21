@@ -4,8 +4,9 @@ Feature: Listing utenti client
 
   @sad-path
   @nrt-minimal
+  @nuovi-operatori-update
   Scenario Outline: [CLIENT_USER_LISTING_1] Un utente API richiede la lista dei membri del client. Ritorna errore 403.
-    Given l'utente è un "api" di "<ente>"
+    Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato 1 client "CONSUMER"
     Given "<ente>" ha già inserito l'utente con ruolo "admin" come membro di quel client
     Given "<ente>" ha già inserito l'utente con ruolo "security" come membro di quel client
@@ -14,10 +15,16 @@ Feature: Listing utenti client
     Then si ottiene status code 403
 
     Examples:
-      | ente    |
-      | GSP     |
-      | PA1     |
-      | Privato |
+      | ente    | ruolo    |
+      | GSP     | api      |
+      | GSP     | reviewer |
+      | GSP     | viewer   |
+      | PA1     | api      |
+      | PA2     | reviewer |
+      | PA2     | viewer   |
+      | Privato | api      |
+      | Privato | reviewer |
+      | Privato | viewer   |
 
   @happy-path
   @nrt-minimal
