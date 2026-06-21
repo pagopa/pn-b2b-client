@@ -4,6 +4,7 @@ Feature: Rifiuto di una richiesta di fruizione
 
   @nrt-minimal
   @agreement_rejection1
+  @nuovi-operatori-update
   Scenario Outline: [AGREEMENT_REJECTION_01] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato PENDING, alla richiesta di rifiuto con messaggio da parte di un utente con sufficienti permessi (admin) dell’ente erogatore, va a buon fine
 
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -22,6 +23,8 @@ Feature: Rifiuto di una richiesta di fruizione
     Examples:
       | ente | ruolo        | risultato |
       | GSP  | api          |       403 |
+      | GSP  | reviewer     |       403 |
+      | GSP  | viewer       |       403 |
       | GSP  | security     |       403 |
       | GSP  | support      |       403 |
       | GSP  | api,security |       403 |

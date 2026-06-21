@@ -29,6 +29,7 @@ Feature: Lettura richiesta di fruizione
   @sad-path
   @nrt-minimal
   @agreement_read1a
+  @nuovi-operatori-update
   Scenario Outline: [AGREEMENT_READ_01A] Per una richiesta di fruizione, la quale è in stato REJECTED, precedentemente creata da un ente diverso da quello richiedente la lettura, non va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
@@ -41,6 +42,8 @@ Feature: Lettura richiesta di fruizione
       | ente    | ruolo        |
       | Privato | admin        |
       | Privato | api          |
+      | Privato | reviewer     |
+      | Privato | viewer       |
       | Privato | security     |
       | Privato | api,security |
 
