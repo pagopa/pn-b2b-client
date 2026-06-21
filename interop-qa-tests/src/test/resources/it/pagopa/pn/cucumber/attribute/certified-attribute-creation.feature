@@ -4,6 +4,7 @@ Feature: Creazione attributo certificato
 
   @nrt-minimal
   @certified_attribute_creation1
+  @nuovi-operatori-update
   Scenario Outline: [ATTRIBUTE_CREATION_1] Un utente admin di un ente certificatore può creare un attributo certificato
     Given l'utente è un "<ruolo>" di "<ente>"
     When l'utente crea un attributo certificato
@@ -24,11 +25,15 @@ Feature: Creazione attributo certificato
       | PA1     | api,security |       403 |
       | PA1     | support      |       403 |
       | PA2     | api          |       403 |
+      | PA2     | reviewer     |       403 |
+      | PA2     | viewer       |       403 |
       | PA2     | security     |       403 |
       | PA2     | api,security |       403 |
       | PA2     | support      |       403 |
       | Privato | admin        |       403 |
       | Privato | api          |       403 |
+      | Privato | reviewer     |       403 |
+      | Privato | viewer       |       403 |
       | Privato | security     |       403 |
       | Privato | api,security |       403 |
       | Privato | support      |       403 |
