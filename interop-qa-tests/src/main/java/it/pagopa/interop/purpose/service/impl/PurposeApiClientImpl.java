@@ -196,6 +196,11 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
     }
 
     @Override
+    public Purposes getRiskAnalysisAssignments(Integer offset, Integer limit, List<UUID> eservicesIds, List<RiskAnalysisSigningState> states) {
+        return purposesApi.getRiskAnalysisAssignments(offset, limit, eservicesIds, states);
+    }
+
+    @Override
     public void setBearerToken(String bearerToken) {
         this.purposesApi.setApiClient(createApiClient(bearerToken));
     }
