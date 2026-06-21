@@ -4,6 +4,7 @@ Feature: Revoca di un attributo verificato posseduto da uno specifico aderente
 
   @nrt-minimal
   @tenant_revoke_verified_attribute1 @no-parallel
+  @nuovi-operatori-update
   Scenario Outline: [TENANT_REVOKE_VERIFIED_ATTRIBUTE_01] Per un attributo precedentemente verificato da un primo aderente ad un secondo aderente, alla richiesta di revoca da parte di un utente con sufficienti permessi (admin) appartenente al primo aderente, va a buon fine
     Given l'utente è un "<ruolo>" di "PA2"
     Given "PA2" ha già creato un attributo verificato
@@ -20,6 +21,8 @@ Feature: Revoca di un attributo verificato posseduto da uno specifico aderente
       | security     |        403 |
       | support      |        403 |
       | api,security |        403 |
+      | reviewer     |        403 |
+      | viewer       |        403 |
 
   @nrt-minimal
   @tenant_revoke_verified_attribute2 @no-parallel

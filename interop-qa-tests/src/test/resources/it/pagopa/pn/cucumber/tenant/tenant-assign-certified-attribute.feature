@@ -4,6 +4,7 @@ Feature: Assegnazione di un attributo certificato ad un aderente
 
   @nrt-minimal
   @tenant_assign_certified_attribute1
+  @nuovi-operatori-update
   Scenario Outline: [TENANT_ASSIGN_CERTIFIED_ATTRIBUTE_1] Per un attributo certificato precedentemente creato da un aderente, il quale ha la qualifica di ente certificatore (certifier), alla richiesta di assegnazione dell’attributo ad un altro ente da parte di un utente con sufficienti permessi (admin), va a buon fine
     Given l'utente è un "<ruolo>" di "PA2"
     Given PA2 ha già creato 1 attributo CERTIFIED
@@ -17,6 +18,8 @@ Feature: Assegnazione di un attributo certificato ad un aderente
       | security     |        403 |
       | support      |        403 |
       | api,security |        403 |
+      | reviewer     |        403 |
+      | viewer       |        403 |
 
   @nrt-minimal
   @tenant_assign_certified_attribute2 @wait_for_fix @PIN-5037
