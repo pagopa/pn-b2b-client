@@ -26,6 +26,7 @@ Feature: Creazione di una nuova versione di finalità
   @sad-path
   @nrt-minimal
   @purpose_version_create1b
+  @nuovi-operatori-update
   Scenario Outline: [CREAZIONE_VERSIONE_FINALITA_2] Un utente senza sufficienti permessi; il cui ente ha già una finalità in stato ACTIVE o SUSPENDED e non ha versioni in stato WAITING_FOR_APPROVAL per una versione di e-service, aggiorna la stima di carico di una finalità. Ottiene un errore.
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "PA2" ha già creato e pubblicato 1 e-service
@@ -48,6 +49,12 @@ Feature: Creazione di una nuova versione di finalità
       | Privato | security     |
       | Privato | api,security |
       | Privato | support      |
+      | PA2     | reviewer     |
+      | PA2     | viewer       |
+      | GSP     | reviewer     |
+      | GSP     | viewer       |
+      | Privato | reviewer     |
+      | Privato | viewer       |
 
   @sad-path
   @nrt-minimal

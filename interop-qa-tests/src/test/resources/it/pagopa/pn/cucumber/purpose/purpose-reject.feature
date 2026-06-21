@@ -4,6 +4,7 @@ Feature: Rifiuto di una versione di una finalità
 
   @nrt-minimal
   @purpose_reject1
+  @nuovi-operatori-update
   Scenario Outline: [PURPOSE_REJECT_1] Per una finalità precedentemente creata e presentata da un fruitore sopra una delle soglie dell’e-service dell’erogatore, la quale prima versione è quindi in stato WAITING_FOR_APPROVAL, alla richiesta di rifiuto con motivazione da parte di un utente con sufficienti permessi (admin) dell’ente erogatore, va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato e pubblicato 1 e-service
@@ -29,6 +30,10 @@ Feature: Rifiuto di una versione di una finalità
       | GSP  | security     |       403 |
       | GSP  | api,security |       403 |
       | GSP  | support      |       403 |
+      | PA2  | reviewer     |       403 |
+      | PA2  | viewer       |       403 |
+      | GSP  | reviewer     |       403 |
+      | GSP  | viewer       |       403 |
 
   @happy-path
   @nrt-minimal
