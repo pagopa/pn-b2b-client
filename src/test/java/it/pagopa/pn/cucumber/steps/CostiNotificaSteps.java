@@ -334,7 +334,7 @@ public class CostiNotificaSteps {
             List<String> costsPostRework = new ArrayList<>(costsToConsider);
 
             Map<String, AttributeValue> record = searchNotificationDeliveryCostRecord(recIndex);
-            FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV29 fsn = sharedSteps.getSentNotificationLastVersion();
             //verifica che tutte le colonne siano valorizzate in modo coerente
             assertSoftly(softly -> {
                 softly.assertThat(record.get("senderTaxId").s()).as("Il senderTaxId del record non coincide con quello della fullSentNotification").isEqualTo(fsn.getSenderTaxId());
@@ -363,7 +363,7 @@ public class CostiNotificaSteps {
 
     @And("{isBefore} {timelineInvalidation} vengono recuperati i costi dall'api di delivery per il destinatario {int}")
     public void checkDeliveryCosts(boolean isBeforeRework, String requestType, int recIndex) {
-        FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV29 fsn = sharedSteps.getSentNotificationLastVersion();
         PagoPaPayment singlePayment = fsn.getRecipients().get(recIndex).getPayments().get(0).getPagoPa();
         NotificationPriceResponseV23 priceResponse = paB2bClient.getNotificationPriceV23(singlePayment.getCreditorTaxId(), singlePayment.getNoticeCode());
         if (isBeforeRework) {
@@ -443,7 +443,7 @@ public class CostiNotificaSteps {
 
     @And("{isBefore} {timelineInvalidation} vengono recuperati i valori dei costi notifica relativi al pagamento {int} dell'utente {int} sulla tabella pn-CostUpdateResult fino all'attempt {int}")
     public void checkPnCostUpdateResultDynamo(boolean isBeforeRework, String requestType, int paymentIndex, int recIndex, int attempt) {
-        FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV29 fsn = sharedSteps.getSentNotificationLastVersion();
         String creditorTaxId = fsn.getRecipients().get(recIndex).getPayments().get(paymentIndex).getPagoPa().getCreditorTaxId();
         String noticeCode = fsn.getRecipients().get(recIndex).getPayments().get(paymentIndex).getPagoPa().getNoticeCode();
         String pk = creditorTaxId + "##" + noticeCode;
