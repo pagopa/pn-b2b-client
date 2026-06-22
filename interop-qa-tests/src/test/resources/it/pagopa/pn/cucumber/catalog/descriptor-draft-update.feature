@@ -305,8 +305,8 @@ Feature: Aggiornamento di un descrittore in bozza
 
   @certifiedDiscreteAttribute
   @certifiedDiscreteAttributeFlagOn
-  Scenario: [CERT_DISCRETE_ATTR_ESERVICE_UPD_1] L'erogatore di un e-service in stato PUBLISHED può modificare diversi attributi
-  certificati discreti, impostando le relative soglie e comparatori (sono incluse le logiche OR e AND).
+  Scenario: [CERT_DISCRETE_ATTR_ESERVICE_UPD_1] L'erogatore di un e-service in stato PUBLISHED non può modificare attributi
+  certificati discreti.
 
     Given l'utente è un "admin" di "PA2"
     And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
@@ -319,8 +319,7 @@ Feature: Aggiornamento di un descrittore in bozza
     When l'utente pubblica il descrittore dell'e-service con i seguenti attributi:
       | kind               | group | comparator | value   | dailyCallsPerConsumer |
       | CERTIFIED_DISCRETE | 0     | GTE        | 2500000 | 150                   |
-    And si ottiene response status code 200
-    Then la soglia differenziata per l'attributo CERTIFIED_DISCRETE 0-esimo creato nel gruppo 0-esimo è uguale a "150", mentre il discrete comparator è "GTE" e il discrete threshhold è uguale a 2500000
+    Then si ottiene response status code 400
 
   @certifiedDiscreteAttribute
   @certifiedDiscreteAttributeFlagOn
