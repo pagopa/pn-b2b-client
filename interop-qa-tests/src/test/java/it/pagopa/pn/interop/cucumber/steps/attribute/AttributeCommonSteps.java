@@ -181,7 +181,7 @@ public class AttributeCommonSteps {
                             .anyMatch(attr -> attr.getId()
                                     .equals(attributeCommonContext.getRequiredDeclaredAttributes().get(0).get(attributeIndex))
                             );
-                        case CERTIFIED_DISCRETE -> throw new UnsupportedOperationException();
+                        default -> throw new UnsupportedOperationException("Unsupported attribute kind: %s".formatted(attributeType));
                     };
                 }
 
@@ -238,7 +238,6 @@ public class AttributeCommonSteps {
             case CERTIFIED -> eServiceDescriptor.getAttributes().getCertified();
             case DECLARED -> eServiceDescriptor.getAttributes().getDeclared();
             case VERIFIED -> eServiceDescriptor.getAttributes().getVerified();
-            case CERTIFIED_DISCRETE -> throw new UnsupportedOperationException();
         };
 
         if ((existingAttributeGroups.isEmpty()) || (existingAttributeGroups.get(srcGroupIndex).isEmpty())) {
@@ -286,7 +285,6 @@ public class AttributeCommonSteps {
             case CERTIFIED -> eServiceDescriptor.getAttributes().getCertified();
             case DECLARED -> eServiceDescriptor.getAttributes().getDeclared();
             case VERIFIED -> eServiceDescriptor.getAttributes().getVerified();
-            case CERTIFIED_DISCRETE -> throw new UnsupportedOperationException();
         };
 
         UUID attributeId = getAttributeIdFromRequiredAttributes(attributeKind, groupIndex, attributeIndex);
@@ -406,7 +404,7 @@ public class AttributeCommonSteps {
             case CERTIFIED -> sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes().get(groupIndex).get(attributeIndex);
             case DECLARED -> sharedStepsContext.getAttributeCommonContext().getRequiredDeclaredAttributes().get(groupIndex).get(attributeIndex);
             case VERIFIED -> sharedStepsContext.getAttributeCommonContext().getRequiredVerifiedAttributes().get(groupIndex).get(attributeIndex);
-            case CERTIFIED_DISCRETE -> throw new UnsupportedOperationException();
+            default -> throw new UnsupportedOperationException("Unsupported attribute kind: %s".formatted(attributeKind));
         };
     }
 }

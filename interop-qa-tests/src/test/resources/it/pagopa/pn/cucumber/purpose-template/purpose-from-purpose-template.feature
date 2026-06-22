@@ -198,3 +198,21 @@ Feature: finalità agevolata, purpose from purpose template
     And "PA1" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     When si modifica la finalità creata passando "TITLE ESISTENTE"
     Then si ottiene response status code 409
+
+  @adeguamento-analisi-rischio
+  Scenario Outline: [PURPOSE_TEMPLATE_PATCH_TK_1] A seguito del cambiamento di tenant kind si tenta di modificare una finalità
+    Given "PA2" ha già creato e pubblicato 1 e-service
+    And "<ente>" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "<ente>"
+    And viene creato un nuovo purpose template coerente con la tipologia dell'ente
+    And il purpose template creato viene spostato in stato PUBLISHED
+    And si crea una finalità a partire dal purpose template esistente
+    And il tenant kind dell'ente "<ente>" viene impostato a "<kind>"
+    When si modifica la finalità creata
+    Then si ottiene response status code 200
+    Examples:
+      | ente    | kind        |
+      | PA4     | PRIVATE     |
+      | PA4     | GSP         |
+      | GSP2    | PA          |
+      | Privato | PA          |

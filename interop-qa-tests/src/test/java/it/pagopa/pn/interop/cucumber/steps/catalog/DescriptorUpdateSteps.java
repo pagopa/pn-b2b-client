@@ -1,7 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.catalog;
 
 import io.cucumber.java.en.When;
-import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.eservice.service.IM2MV3EserviceDescriptorClient;
 import it.pagopa.interop.eservice.service.IM2MV3EserviceDescriptorClient.EServiceDescriptorAttributePatchRequest;
@@ -185,7 +184,7 @@ public class DescriptorUpdateSteps {
             case CERTIFIED -> requiredCertifiedAttributes.get(groupIndex).get(attributeIndex);
             case DECLARED -> requiredDeclaredAttributes.get(groupIndex).get(attributeIndex);
             case VERIFIED -> requiredVerifiedAttributes.get(groupIndex).get(attributeIndex);
-            case CERTIFIED_DISCRETE -> throw new UnsupportedOperationException("Certified discrete attributes are not supported yet");
+            default -> throw new UnsupportedOperationException("Unsupported attribute kind: %s".formatted(attributeType));
         };
 
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
@@ -229,6 +228,7 @@ public class DescriptorUpdateSteps {
             case CERTIFIED, CERTIFIED_DISCRETE -> requiredCertifiedAttributes.get(groupIndex).get(attributeIndex);
             case DECLARED -> requiredDeclaredAttributes.get(groupIndex).get(attributeIndex);
             case VERIFIED -> requiredVerifiedAttributes.get(groupIndex).get(attributeIndex);
+            default -> throw new UnsupportedOperationException("Unsupported attribute kind: %s".formatted(attributeType));
         };
 
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();

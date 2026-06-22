@@ -1,10 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.shared;
 
-import static java.util.Objects.nonNull;
-import static java.util.Objects.requireNonNull;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-import static org.assertj.core.api.Assertions.fail;
-
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
@@ -13,29 +8,13 @@ import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient.EServiceTemplateDocumentKind;
 import it.pagopa.interop.e_service_template.mapper.DescriptorAttributesMapper;
 import it.pagopa.interop.e_service_template.mapper.RiskAnalysisMapper;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributes;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateAttributesSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateRiskAnalysis;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateRiskAnalysisSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionAttributeSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.TenantKind;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateDocumentInfo;
 import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.UUID;
-import java.util.function.BiConsumer;
-import java.util.function.Predicate;
 import lombok.Data;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -46,6 +25,18 @@ import org.springframework.core.io.PathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.UUID;
+import java.util.function.BiConsumer;
+import java.util.function.Predicate;
+
+import static java.util.Objects.nonNull;
+import static java.util.Objects.requireNonNull;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.assertj.core.api.Assertions.fail;
 
 /** It contains general utility functions used across all other classes.  */
 @Data
@@ -323,8 +314,12 @@ public class EServiceTemplateTestAssistant {
     }
 
     public EServiceTemplateRiskAnalysisSeed getEServiceRiskAnalysisSeed(boolean completed) {
-        IdentityService identityService = sharedStepsContext.getIdentityService();
         String tenantType = sharedStepsContext.getTenantType();
+        return getEServiceRiskAnalysisSeedWithType(tenantType, true);
+    }
+
+    public EServiceTemplateRiskAnalysisSeed getEServiceRiskAnalysisSeedWithType(String tenantType, boolean completed) {
+        IdentityService identityService = sharedStepsContext.getIdentityService();
         RiskAnalysis riskAnalysis = this.dataPreparationService.getRiskAnalysis(tenantType, completed);
         return this.riskAnalysisMapper.mapToSeed(riskAnalysis, TenantKind.fromValue(identityService.getKind(tenantType)));
     }

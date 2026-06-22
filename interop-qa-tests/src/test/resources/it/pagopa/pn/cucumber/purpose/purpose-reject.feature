@@ -71,3 +71,21 @@ Feature: Rifiuto di una versione di una finalità
     Given "PA2" ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice
     When l'utente rifiuta la finalità senza una motivazione
     Then si ottiene status code 400
+
+  @adeguamento-analisi-rischio
+  Scenario Outline: [PURPOSE_REJECT_TK_1] A seguito del cambiamento di tenant kind si tenta di respingere una finalità in attesa di approvazione
+    Given "PA2" ha già creato e pubblicato 1 e-service
+    And "<ente>" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "<ente>" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    And "<ente>" ha già richiesto l'aggiornamento della stima di carico superando i limiti di quell'e-service
+    And il tenant kind dell'ente "<ente>" viene impostato a "<kind>"
+    When l'utente è un "admin" di "PA2"
+    And l'utente rifiuta la finalità aggiungendo una motivazione
+    Then si ottiene status code 204
+    And la versione precedente della finalità rimane nello stato in cui si trovava prima del rifiuto
+    Examples:
+      | ente    | kind    |
+      | PA4     | PRIVATE |
+      | PA4     | GSP     |
+      | GSP2    | PA      |
+      | Privato | PA      |

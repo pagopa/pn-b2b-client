@@ -10,13 +10,15 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysi
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 
 import java.util.List;
+import java.util.UUID;
+
+import static org.apache.commons.collections4.IterableUtils.isEmpty;
 
 public class EServiceRiskAnalysisAdditionSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
@@ -50,8 +52,33 @@ public class EServiceRiskAnalysisAdditionSteps {
 
     @When("l'utente aggiunge un'analisi del rischio")
     public void addRiskAnalysis() {
+        addRiskAnalysisByTenantKind(sharedStepsContext.getTenantType());
+    }
+
+    @When("l'utente aggiunge con successo un'analisi del rischio coerente con il tenant kind {string}")
+    public void successfullyAddRiskAnalysisByTenantKind(String tenantKind) {
+        addRiskAnalysisByTenantKind(tenantKind);
+        if(httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+            UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+            sharedStepsContext.getPollingService().makePolling(
+                    () -> clientTokenConfigurator.getEServiceClient().getEServiceDescriptor(eServiceId, descriptorId),
+                    desc -> !isEmpty(desc.getEservice().getRiskAnalysis()),
+                    "Nessuna analisi del rischio rilevata"
+            );
+        }
+    }
+
+    @When("l'utente aggiunge un'analisi del rischio coerente con il tenant kind {string}")
+    public void addRiskAnalysisByTenantKind(String tenantKind) {
+        List<String> tenantTypes = identityService.getTenantTypesByKind(tenantKind);
+        if (isEmpty(tenantTypes)) {
+            throw new IllegalArgumentException("Nessun tenant type trovato per il tenant kind: " + tenantKind);
+        }
+
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantTypes.get(0), null));
+        RiskAnalysis eServiceRiskAnalysisSeed = dataPreparationService.getRiskAnalysis(tenantKind, true);
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-        RiskAnalysis eServiceRiskAnalysisSeed = dataPreparationService.getRiskAnalysis(sharedStepsContext.getTenantType(), true);
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getEServiceClient().addRiskAnalysisToEService(
                         eServicesCommonContext.getEserviceId(),

@@ -105,8 +105,8 @@ public class InvioNotificheB2bSteps {
 
     @And("la notifica può essere correttamente recuperata dal sistema tramite codice IUN")
     public void notificationCanBeRetrievedWithIUN() {
-        AtomicReference<FullSentNotificationV28> notificationByIun = new AtomicReference<>();
-        notificationCanBeRetrievedWithIUN(notificationByIun, b2bClient::getSentNotificationV28);
+        AtomicReference<FullSentNotificationV29> notificationByIun = new AtomicReference<>();
+        notificationCanBeRetrievedWithIUN(notificationByIun, b2bClient::getSentNotificationV29);
     }
 
     @And("la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V1")
@@ -188,9 +188,9 @@ public class InvioNotificheB2bSteps {
     public void retrieveNotification120DaysOldByIunWebPaSide(String paName) {
         sharedSteps.setPA(paName);
         List<NotificationSearchRow> searchedNotifications = searchNotificationWebFromADate(OffsetDateTime.now().minusDays(120));
-        FullSentNotificationV28 notifica120 = null;
+        FullSentNotificationV29 notifica120 = null;
         for (NotificationSearchRow notifica : searchedNotifications) {
-            FullSentNotificationV28 result = b2bClient.getSentNotificationV28(notifica.getIun());
+            FullSentNotificationV29 result = b2bClient.getSentNotificationV29(notifica.getIun());
             if (result.getRecipients().get(0).getPayments() != null
                     && result.getRecipients().get(0).getPayments().get(0).getPagoPa() != null
                     && result.getRecipients().get(0).getPayments().get(0).getPagoPa().getNoticeCode() != null) {
@@ -228,11 +228,11 @@ public class InvioNotificheB2bSteps {
         OffsetDateTime offsetDateTime = date.atStartOfDay(ZoneOffset.UTC).toOffsetDateTime();
 
         List<NotificationSearchRow> searchedNotifications = searchNotificationWebFromADate(offsetDateTime);
-        FullSentNotificationV28 notifica = null;
+        FullSentNotificationV29 notifica = null;
 
         for (NotificationSearchRow notifiche : searchedNotifications) {
 
-            notifica = b2bClient.getSentNotificationV28(notifiche.getIun());
+            notifica = b2bClient.getSentNotificationV29(notifiche.getIun());
 
             if (!notifica.getRecipients().get(0).getPayments().isEmpty()
                     && notifica.getRecipients().get(0).getPayments() != null
@@ -396,7 +396,7 @@ public class InvioNotificheB2bSteps {
 
     @And("viene effettuato un controllo sulla durata della retention di {string}")
     public void retentionCheckLoad(String documentType) {
-        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         String key = switch (documentType) {
             case "ATTO OPPONIBILE" -> fullSentNotification.getDocuments().get(0).getRef().getKey();
             case "PAGOPA" ->
@@ -413,7 +413,7 @@ public class InvioNotificheB2bSteps {
     @And("viene effettuato un controllo sulla durata della retention di {string} per l'elemento di timeline {string}")
     public void retentionCheckLoadForTimelineElement(String documentType, String timelineEventCategory, @Transpose DataTest dataFromTest) throws RuntimeException {
         TimelineElementV28 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
-        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         if (documentType.equals("ATTACHMENTS")) {
             for (int i = 0; i < fullSentNotification.getDocuments().size(); i++) {
                 String key = fullSentNotification.getDocuments().get(i).getRef().getKey();
@@ -432,7 +432,7 @@ public class InvioNotificheB2bSteps {
     public void retentionCheckLoadForTimelineElementF24(String documentType, String timelineEventCategory, @Transpose DataTest dataFromTest) throws RuntimeException {
         TimelineElementV28 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         if (documentType.equals("ATTACHMENTS")) {
-            FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             for (int i = 0; i < fullSentNotification.getRecipients().get(0).getPayments().size(); i++) {
                 String key = fullSentNotification.getRecipients().get(0).getPayments().get(i).getF24().getMetadataAttachment().getRef().getKey();
 
@@ -474,7 +474,7 @@ public class InvioNotificheB2bSteps {
     public void retentionCheckLoadForTimelineElementPAGOPA(String documentType, String timelineEventCategory, @Transpose DataTest dataFromTest) throws RuntimeException {
         TimelineElementV28 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         if (documentType.equals("ATTACHMENTS")) {
-            FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             for (int i = 0; i < fullSentNotification.getRecipients().get(0).getPayments().size(); i++) {
                 String key = fullSentNotification.getRecipients().get(0).getPayments().get(i).getPagoPa().getAttachment().getRef().getKey();
 
@@ -739,7 +739,7 @@ public class InvioNotificheB2bSteps {
 
     @And("l'avviso pagopa viene pagato correttamente su checkout")
     public void laNotificaVienePagatasuCheckout() {
-        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         NotificationPriceResponseV23 notificationPrice = this.b2bClient.getNotificationPriceV23(
                 Objects.requireNonNull(Objects.requireNonNull(fullSentNotification.getRecipients().get(0).getPayments()).get(0).getPagoPa()).getCreditorTaxId(),
                 Objects.requireNonNull(Objects.requireNonNull(fullSentNotification.getRecipients().get(0).getPayments()).get(0).getPagoPa()).getNoticeCode());
@@ -908,7 +908,7 @@ public class InvioNotificheB2bSteps {
         String regex = "[{}-~¡-ÿ^]";
         String regexCaratteriA = "[æ]";
 
-        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
 
         TimelineElementV28 timelineNormalizer = fullSentNotification.getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV23.NORMALIZED_ADDRESS)).findAny().orElse(null);
         PhysicalAddress oldAddress = timelineNormalizer.getDetails().getOldAddress();
@@ -1030,7 +1030,7 @@ public class InvioNotificheB2bSteps {
     @And("si verifica lo SHA degli attachment inseriti nella pec del destinatario {int} di tipo {string}")
     public void verificaSHAAllegatiPecDelDestinatario(Integer destinatario, String tipoAttachment) {
         try {
-            FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             //caricamento in Mappa di tutti i documenti della notifica
             for (NotificationDocument documentNotifica : fullSentNotification.getDocuments()) {
                 sharedSteps.getMapAllegatiNotificaSha256().put(documentNotifica.getRef().getKey(), documentNotifica.getDigests().getSha256());
@@ -1206,7 +1206,7 @@ public class InvioNotificheB2bSteps {
     }
 
     public BffPaymentRequest creationPaymentRequest(Map<String, String> dataCheckout) {
-        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         BffPaymentRequest requestCheckout = new BffPaymentRequest()
                 .paymentNotice(new PaymentNotice()
                         .noticeNumber(dataCheckout.get("noticeCode") != null ? dataCheckout.get("noticeCode") :
