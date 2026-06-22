@@ -21,6 +21,8 @@ import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPrepara
 import java.util.List;
 import java.util.UUID;
 
+import static java.util.Objects.nonNull;
+
 public class PurposeRiskAnalysisCompilationSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
@@ -213,10 +215,12 @@ public class PurposeRiskAnalysisCompilationSteps {
     @When("l'utente invia il submit dell'analisi del rischio della finalità")
     public void userSubmitsRiskAnalysis() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-
         UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
         RiskAnalysisSubmissionSeed submissionSeed = new RiskAnalysisSubmissionSeed()
-                .riskAnalysisForm(this.compiledRiskAnalysis.getRiskAnalysisForm());
+                .riskAnalysisForm(
+                        nonNull(this.compiledRiskAnalysis)
+                                ? this.compiledRiskAnalysis.getRiskAnalysisForm()
+                                : dataPreparationService.getRiskAnalysis(sharedStepsContext.getTenantType(), true).getRiskAnalysisForm());
         httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().submitRiskAnalysis(purposeId, submissionSeed));
     }
 

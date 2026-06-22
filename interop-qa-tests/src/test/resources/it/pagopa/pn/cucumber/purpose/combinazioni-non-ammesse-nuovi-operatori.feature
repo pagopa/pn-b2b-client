@@ -48,8 +48,8 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
 	And l'utente è un "admin" di "PA2"
 	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
-	And compila l'analisi del rischio tramite endpoint generico
-	And l'utente invia il submit dell'analisi del rischio della finalità
+	And compila l'analisi del rischio tramite endpoint generico con successo
+	And l'utente invia il submit dell'analisi del rischio della finalità con successo
 	And il valutatore assegnato convalida l'analisi del rischio della finalità con successo
 	When l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns"
 	Then si ottiene status code 409
@@ -65,7 +65,6 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	And compila l'analisi del rischio tramite endpoint generico con successo
 	And l'utente invia il submit dell'analisi del rischio della finalità con successo
 	And un reviewer assegnato rifiuta l'analisi del rischio con successo
-	And lo stato della compilazione dell'analisi del rischio è "REJECTED"
 	When l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns"
 	Then si ottiene status code 409
 
@@ -79,7 +78,6 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
 	And compila l'analisi del rischio tramite endpoint generico con successo
 	And l'utente invia il submit dell'analisi del rischio della finalità con successo
-	And lo stato della compilazione dell'analisi del rischio è "SUBMITTED"
 	When il valutatore assegnato compila l'analisi del rischio della finalità
 	Then si ottiene status code 409
 
@@ -94,7 +92,6 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	And compila l'analisi del rischio tramite endpoint generico con successo
 	And l'utente invia il submit dell'analisi del rischio della finalità con successo
 	And il valutatore assegnato convalida l'analisi del rischio della finalità con successo
-	And lo stato della compilazione dell'analisi del rischio è "SIGNED"
 	When il valutatore assegnato compila l'analisi del rischio della finalità
 	Then si ottiene status code 409
 
@@ -109,7 +106,6 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	And compila l'analisi del rischio tramite endpoint generico con successo
 	And l'utente invia il submit dell'analisi del rischio della finalità con successo
 	And un reviewer assegnato rifiuta l'analisi del rischio con successo
-	And lo stato della compilazione dell'analisi del rischio è "REJECTED"
 	When il valutatore assegnato compila l'analisi del rischio della finalità
 	Then si ottiene status code 409
 
@@ -121,7 +117,6 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
 	And l'utente è un "admin" di "PA2"
 	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
-	And lo stato della compilazione dell'analisi del rischio è "DRAFT"
 	When un reviewer assegnato rifiuta l'analisi del rischio
 	Then si ottiene status code 409
 
@@ -136,7 +131,6 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	And compila l'analisi del rischio tramite endpoint generico con successo
 	And l'utente invia il submit dell'analisi del rischio della finalità con successo
 	And il valutatore assegnato convalida l'analisi del rischio della finalità con successo
-	And lo stato della compilazione dell'analisi del rischio è "SIGNED"
 	When un reviewer assegnato rifiuta l'analisi del rischio
 	Then si ottiene status code 409
 
@@ -148,10 +142,9 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
 	And l'utente è un "admin" di "PA2"
 	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
-	And compila l'analisi del rischio tramite endpoint generico
-	And l'utente invia il submit dell'analisi del rischio della finalità
-	And un reviewer assegnato rifiuta l'analisi del rischio
-	And lo stato della compilazione dell'analisi del rischio è "REJECTED"
+	And compila l'analisi del rischio tramite endpoint generico con successo
+	And l'utente invia il submit dell'analisi del rischio della finalità con successo
+	And un reviewer assegnato rifiuta l'analisi del rischio con successo
 	When un reviewer assegnato rifiuta l'analisi del rischio
 	Then si ottiene status code 409
 
@@ -163,7 +156,6 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
 	And l'utente è un "admin" di "PA2"
 	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
-	And lo stato della compilazione dell'analisi del rischio è "DRAFT"
 	When il valutatore assegnato convalida l'analisi del rischio della finalità
 	Then si ottiene status code 409
 
@@ -178,7 +170,6 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	And compila l'analisi del rischio tramite endpoint generico con successo
 	And l'utente invia il submit dell'analisi del rischio della finalità con successo
 	And il valutatore assegnato convalida l'analisi del rischio della finalità con successo
-	And lo stato della compilazione dell'analisi del rischio è "SIGNED"
 	When il valutatore assegnato convalida l'analisi del rischio della finalità
 	Then si ottiene status code 409
 
@@ -190,10 +181,9 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
 	And l'utente è un "admin" di "PA2"
 	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
-	And compila l'analisi del rischio tramite endpoint generico
-	And l'utente invia il submit dell'analisi del rischio della finalità
-	And un reviewer assegnato rifiuta l'analisi del rischio
-	And lo stato della compilazione dell'analisi del rischio è "REJECTED"
+	And compila l'analisi del rischio tramite endpoint generico con successo
+	And l'utente invia il submit dell'analisi del rischio della finalità con successo
+	And un reviewer assegnato rifiuta l'analisi del rischio con successo
 	When il valutatore assegnato convalida l'analisi del rischio della finalità
 	Then si ottiene status code 409
 
@@ -205,7 +195,6 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
 	And l'utente è un "admin" di "PA2"
 	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
-	And lo stato della compilazione dell'analisi del rischio è "DRAFT"
 	When l'utente attiva la finalità in stato "DRAFT" per quell'e-service
 	Then si ottiene status code 409
 
@@ -217,7 +206,6 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
 	And l'utente è un "admin" di "PA2"
 	And l'utente assegna un valutatore alla finalità in modalità "ReviewerWritesReviewerSigns" con successo
-	And lo stato della compilazione dell'analisi del rischio è "ASSIGNED"
 	When l'utente attiva la finalità in stato "DRAFT" per quell'e-service
 	Then si ottiene status code 409
 
@@ -231,7 +219,6 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
 	And compila l'analisi del rischio tramite endpoint generico con successo
 	And l'utente invia il submit dell'analisi del rischio della finalità con successo
-	And lo stato della compilazione dell'analisi del rischio è "SUBMITTED"
 	When l'utente attiva la finalità in stato "DRAFT" per quell'e-service
 	Then si ottiene status code 409
 
@@ -246,7 +233,6 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	And compila l'analisi del rischio tramite endpoint generico con successo
 	And l'utente invia il submit dell'analisi del rischio della finalità con successo
 	And un reviewer assegnato rifiuta l'analisi del rischio con successo
-	And lo stato della compilazione dell'analisi del rischio è "REJECTED"
 	When l'utente attiva la finalità in stato "DRAFT" per quell'e-service
 	Then si ottiene status code 409
 
@@ -258,7 +244,6 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
 	And l'utente è un "admin" di "PA2"
 	And l'utente assegna un valutatore alla finalità in modalità "ReviewerWritesReviewerSigns" con successo
-	And lo stato della compilazione dell'analisi del rischio è "ASSIGNED"
 	When compila l'analisi del rischio tramite endpoint generico
 	Then si ottiene status code 409
 
@@ -272,7 +257,6 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
 	And compila l'analisi del rischio tramite endpoint generico con successo
 	And l'utente invia il submit dell'analisi del rischio della finalità con successo
-	And lo stato della compilazione dell'analisi del rischio è "SUBMITTED"
 	When compila l'analisi del rischio tramite endpoint generico
 	Then si ottiene status code 409
 
@@ -287,7 +271,6 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	And compila l'analisi del rischio tramite endpoint generico con successo
 	And l'utente invia il submit dell'analisi del rischio della finalità con successo
 	And il valutatore assegnato convalida l'analisi del rischio della finalità con successo
-	And lo stato della compilazione dell'analisi del rischio è "SIGNED"
 	When compila l'analisi del rischio tramite endpoint generico
 	Then si ottiene status code 409
 
@@ -299,7 +282,6 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
 	And l'utente è un "admin" di "PA2"
 	And l'utente assegna un valutatore alla finalità in modalità "ReviewerWritesReviewerSigns" con successo
-	And lo stato della compilazione dell'analisi del rischio è "ASSIGNED"
 	When l'utente invia il submit dell'analisi del rischio della finalità
 	Then si ottiene status code 409
 
@@ -313,7 +295,6 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
 	And compila l'analisi del rischio tramite endpoint generico con successo
 	And l'utente invia il submit dell'analisi del rischio della finalità con successo
-	And lo stato della compilazione dell'analisi del rischio è "SUBMITTED"
 	When l'utente invia il submit dell'analisi del rischio della finalità
 	Then si ottiene status code 409
 
@@ -328,7 +309,6 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	And compila l'analisi del rischio tramite endpoint generico con successo
 	And l'utente invia il submit dell'analisi del rischio della finalità con successo
 	And il valutatore assegnato convalida l'analisi del rischio della finalità con successo
-	And lo stato della compilazione dell'analisi del rischio è "SIGNED"
 	When l'utente invia il submit dell'analisi del rischio della finalità
 	Then si ottiene status code 409
 

@@ -155,8 +155,8 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
     And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
     And l'utente è un "admin" di "PA2"
     And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
-    And compila l'analisi del rischio tramite endpoint generico
-    And l'utente invia il submit dell'analisi del rischio della finalità
+    And compila l'analisi del rischio tramite endpoint generico con successo
+    And l'utente invia il submit dell'analisi del rischio della finalità con successo
     When un reviewer assegnato rifiuta l'analisi del rischio
     Then si ottiene status code 200
     And lo stato della compilazione dell'analisi del rischio è "REJECTED"
@@ -169,8 +169,8 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
     And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
     And l'utente è un "admin" di "PA2"
     And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
-    And compila l'analisi del rischio tramite endpoint generico
-    And l'utente invia il submit dell'analisi del rischio della finalità
+    And compila l'analisi del rischio tramite endpoint generico con successo
+    And l'utente invia il submit dell'analisi del rischio della finalità con successo
     When un reviewer assegnato tenta di rifiutare l'analisi del rischio senza motivazione
     Then si ottiene status code 400
 
@@ -182,8 +182,8 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
     And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
     And l'utente è un "admin" di "PA2"
     And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
-    And compila l'analisi del rischio tramite endpoint generico
-    And l'utente invia il submit dell'analisi del rischio della finalità
+    And compila l'analisi del rischio tramite endpoint generico con successo
+    And l'utente invia il submit dell'analisi del rischio della finalità con successo
     When il valutatore assegnato convalida l'analisi del rischio della finalità
     Then si ottiene status code 200
     And lo stato della compilazione dell'analisi del rischio è "SIGNED"
