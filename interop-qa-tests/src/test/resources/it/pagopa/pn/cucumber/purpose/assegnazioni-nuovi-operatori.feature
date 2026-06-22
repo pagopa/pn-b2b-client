@@ -26,8 +26,8 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
 	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
 	And l'utente è un "admin" di "PA2"
 	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
-	And compila l'analisi del rischio tramite endpoint generico
-	And l'utente invia il submit dell'analisi del rischio della finalità
+	And compila l'analisi del rischio tramite endpoint generico con successo
+	And l'utente invia il submit dell'analisi del rischio della finalità con successo
 	And il valutatore assegnato convalida l'analisi del rischio della finalità con successo
 	When l'utente è un "admin" di "PA2"
 	And l'utente aggiorna il titolo della finalità
@@ -48,13 +48,13 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
 	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
 	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
 	And l'utente è un "admin" di "PA2"
-	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
-	And compila l'analisi del rischio tramite endpoint generico
-	And l'utente invia il submit dell'analisi del rischio della finalità con successo
-	When l'utente è un "reviewer" di "PA2"
-	And tenta di interrogare l'endpoint delle assegnazioni del valutatore senza filtri
-	Then si ottiene status code 200
-	And vengono restituite 2 finalità attese nelle assegnazioni
+ 	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
+ 	And compila l'analisi del rischio tramite endpoint generico con successo
+ 	And l'utente invia il submit dell'analisi del rischio della finalità con successo
+ 	When l'utente è un "reviewer" di "PA2"
+ 	And tenta di interrogare l'endpoint delle assegnazioni del valutatore senza filtri
+ 	Then si ottiene status code 200
+ 	And vengono restituite 2 finalità attese nelle assegnazioni
 
   # PST: Scenario 32 - Caso 32.1 (con filtro stato)
   @happy-path
@@ -69,13 +69,13 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
 	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
 	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
 	And l'utente è un "admin" di "PA2"
-	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
-	And compila l'analisi del rischio tramite endpoint generico
-	And l'utente invia il submit dell'analisi del rischio della finalità con successo
-	When l'utente è un "reviewer" di "PA2"
-	And interroga l'endpoint delle assegnazioni del valutatore con filtro stato "ASSIGNED"
-	Then si ottiene status code 200
-	And viene restituita una sola finalità in stato "ASSIGNED" nelle assegnazioni
+ 	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
+ 	And compila l'analisi del rischio tramite endpoint generico con successo
+ 	And l'utente invia il submit dell'analisi del rischio della finalità con successo
+ 	When l'utente è un "reviewer" di "PA2"
+ 	And interroga l'endpoint delle assegnazioni del valutatore con filtro stato "ASSIGNED"
+ 	Then si ottiene status code 200
+ 	And viene restituita una sola finalità in stato "ASSIGNED" nelle assegnazioni
 
   # PST: Scenario 32 - Caso 32.1 (con parametro offset)
   @happy-path
@@ -90,13 +90,13 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
 	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
 	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
 	And l'utente è un "admin" di "PA2"
-	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
-	And compila l'analisi del rischio tramite endpoint generico
-	And l'utente invia il submit dell'analisi del rischio della finalità con successo
-	When l'utente è un "reviewer" di "PA2"
-	And interroga l'endpoint delle assegnazioni del valutatore con parametro offset 1
-	Then si ottiene status code 200
-	And viene restituita una sola finalità nelle assegnazioni
+ 	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
+ 	And compila l'analisi del rischio tramite endpoint generico con successo
+ 	And l'utente invia il submit dell'analisi del rischio della finalità con successo
+ 	When l'utente è un "reviewer" di "PA2"
+ 	And interroga l'endpoint delle assegnazioni del valutatore con parametro offset 1
+ 	Then si ottiene status code 200
+ 	And viene restituita una sola finalità nelle assegnazioni
 
   # PST: Scenario 32 - Caso 32.1 (con parametro limit)
   @happy-path
@@ -111,13 +111,13 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
 	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
 	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
 	And l'utente è un "admin" di "PA2"
-	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
-	And compila l'analisi del rischio tramite endpoint generico
-	And l'utente invia il submit dell'analisi del rischio della finalità con successo
-	When l'utente è un "reviewer" di "PA2"
-	And interroga l'endpoint delle assegnazioni del valutatore con parametro limit 1
-	Then si ottiene status code 200
-	And viene restituita una sola finalità nelle assegnazioni
+ 	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
+ 	And compila l'analisi del rischio tramite endpoint generico con successo
+ 	And l'utente invia il submit dell'analisi del rischio della finalità con successo
+ 	When l'utente è un "reviewer" di "PA2"
+ 	And interroga l'endpoint delle assegnazioni del valutatore con parametro limit 1
+ 	Then si ottiene status code 200
+ 	And viene restituita una sola finalità nelle assegnazioni
 
   # PST: Scenario 32 - Caso 32.1 (con filtro e-service)
   @happy-path
@@ -132,13 +132,13 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
 	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
 	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
 	And l'utente è un "admin" di "PA2"
-	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
-	And compila l'analisi del rischio tramite endpoint generico
-	And l'utente invia il submit dell'analisi del rischio della finalità con successo
-	When l'utente è un "reviewer" di "PA2"
-	And interroga l'endpoint delle assegnazioni del valutatore filtrando per il primo e-service creato
-	Then si ottiene status code 200
-	And viene restituita una sola finalità associata al primo e-service creato nelle assegnazioni
+ 	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
+ 	And compila l'analisi del rischio tramite endpoint generico con successo
+ 	And l'utente invia il submit dell'analisi del rischio della finalità con successo
+ 	When l'utente è un "reviewer" di "PA2"
+ 	And interroga l'endpoint delle assegnazioni del valutatore filtrando per il primo e-service creato
+ 	Then si ottiene status code 200
+ 	And viene restituita una sola finalità associata al primo e-service creato nelle assegnazioni
 
   # PST: Scenario 32 - Caso 32.2
   @happy-path

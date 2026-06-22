@@ -178,6 +178,12 @@ public class PurposeRiskAnalysisCompilationSteps {
         httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().updatePurpose(purposeId, updateContent));
     }
 
+    @Given("compila l'analisi del rischio tramite endpoint generico con successo")
+    public void compilesRiskAnalysisViaGenericEndpointSuccessfully() {
+        compilesRiskAnalysisViaGenericEndpoint();
+        verifyRiskAnalysisSigningState("DRAFT");
+    }
+
     @Then("la variazione nell'analisi del rischio è stata persistita")
     public void verifyRiskAnalysisVariationPersisted() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
@@ -244,6 +250,12 @@ public class PurposeRiskAnalysisCompilationSteps {
     @When("un reviewer assegnato rifiuta l'analisi del rischio")
     public void assignedReviewerRejectsRiskAnalysis() {
         assignedReviewerRejectsOwnRiskAnalysisCompilation();
+    }
+
+    @Given("un reviewer assegnato rifiuta l'analisi del rischio con successo")
+    public void assignedReviewerRejectsRiskAnalysisSuccessfully() {
+        assignedReviewerRejectsRiskAnalysis();
+        verifyRiskAnalysisSigningState("REJECTED");
     }
 
     @When("l'utente rifiuta l'analisi del rischio della finalità")

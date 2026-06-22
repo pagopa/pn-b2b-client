@@ -1,6 +1,7 @@
 @purpose @nuovi-operatori
 Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi Operatori.
 
+  # OK
   # PST: Scenario 11 - Caso 11.1
   @happy-path
   Scenario: [RWRS_ASSEGNAZIONE_11_1_RUOLO] Assegnazione valutatore con utente admin (positivo)
@@ -12,6 +13,7 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
     Then si ottiene status code 200
     And lo stato della compilazione dell'analisi del rischio è "ASSIGNED"
 
+  # OK
   # PST: Scenario 11 - Caso 11.1
   @sad-path
   Scenario: [RWRS_ASSEGNAZIONE_11_1_RUOLO_NON_AUTORIZZATO] Assegnazione valutatore con utente non amministratore (negativo)
@@ -22,7 +24,9 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
     And l'utente assegna un valutatore alla finalità in modalità "ReviewerWritesReviewerSigns"
     Then si ottiene status code 403
 
+  # KO ticket aperto https://pagopa.atlassian.net/issues?jql=textfields%20~%20%22%5BRWRS_ASSEGNAZIONE_11_1_RUOLO_DIVERSO_DA_VALUTATORE%5D%22&selectedIssue=PIN-10404
   # PST: Scenario 11 - Caso 11.1
+  @nuovi-operatori-ko
   @sad-path
   Scenario Outline: [RWRS_ASSEGNAZIONE_11_1_RUOLO_DIVERSO_DA_VALUTATORE] Negativo: solo un utente con ruolo Valutatore può essere assegnato alla revisione
     Given "PA1" ha già creato e pubblicato 1 e-service
@@ -36,6 +40,7 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
       | admin  |
       | api    |
 
+  # OK
   # PST: Scenario 11 - Caso 11.1
   Scenario: [RWRS_ASSEGNAZIONE_11_1_MODALITA_MANCANTE] Assegnazione valutatore senza modalità
     Given "PA1" ha già creato e pubblicato 1 e-service
@@ -45,6 +50,7 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
     And l'utente assegna un valutatore alla finalità senza specificare la modalità
     Then si ottiene status code 400
 
+  # OK
   # PST: Scenario 11 - Caso 11.1
   Scenario: [RWRS_ASSEGNAZIONE_11_1_VALUTATORE_MANCANTE] Assegnazione valutatore senza utenti valutatori
     Given "PA1" ha già creato e pubblicato 1 e-service
@@ -65,6 +71,7 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
     And l'utente assegna un valutatore alla finalità in modalità "ReviewerWritesReviewerSigns" specificando più di un utente valutatore
     Then si ottiene status code 400
 
+  # OK
   # PST: Scenario 12 - Caso 12.1
   Scenario: [RWRS_COMPILAZIONE_12_1_REVISORE] Compilazione analisi del rischio da parte del valutatore assegnato (positivo)
     Given "PA1" ha già creato e pubblicato 1 e-service
@@ -77,6 +84,7 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
     Then si ottiene status code 200
     And lo stato della compilazione dell'analisi del rischio è "ASSIGNED"
 
+  # OK
   # PST: Scenario 12 - Caso 12.1
   Scenario: [RWRS_COMPILAZIONE_12_1_NON_REVIEWER] Compilazione analisi del rischio da parte di utente non reviewer (negativo)
     Given "PA1" ha già creato e pubblicato 1 e-service
