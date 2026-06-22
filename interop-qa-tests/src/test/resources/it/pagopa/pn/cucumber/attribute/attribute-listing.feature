@@ -102,14 +102,16 @@ Feature: Listing attributi
     When l'utente richiede una operazione di listing degli attributi filtrando per keyword "unknown" all'interno del nome
     Then si ottiene status code 200 e la lista di 0 attributi
 
-  @certifiedDiscreteAttribute @certifiedDiscreteAttributeFlagOff
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOff
   Scenario: [CERT_DISCRETE_ATTR_NOT_AVAILABLE] Gli attributi certificati discreti non sono disponibili quando il feature flag è false.
     Given l'utente è un "admin" di "PA1"
     When l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
     Then l'utente "PA1" non possiede nessun attributo certificato discreto
     And si ottiene status code 200 e la lista di 0 attributi
 
-  @certifiedDiscreteAttribute @certifiedDiscreteAttributeFlagOn
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
   Scenario: [CERT_DISCRETE_ATTR_AVAILABLE] Gli attributi certificati discreti sono disponibili quando il feature flag è true.
     Given l'utente è un "admin" di "PA1"
     When l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
