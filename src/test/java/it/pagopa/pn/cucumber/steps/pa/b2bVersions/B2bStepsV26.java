@@ -1,7 +1,7 @@
 package it.pagopa.pn.cucumber.steps.pa.b2bVersions;
 
 import io.cucumber.datatable.DataTable;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationPaymentItem;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationPriceResponse;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationPriceResponseV23;
@@ -23,9 +23,8 @@ import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v25.NotificationHistoryResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheB2bSteps;
-import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
-import it.pagopa.pn.cucumber.steps.pa.utilityVersions.NotificationUtilsV25;
+import it.pagopa.pn.cucumber.steps.pa.utilityVersions.NotificationUtilsV26;
 import it.pagopa.pn.cucumber.steps.utilitySteps.PollingType;
 import it.pagopa.pn.cucumber.steps.utilitySteps.WaitForEventPredicateFilters;
 import it.pagopa.pn.cucumber.steps.utilitySteps.checkTimelineElement.TimelineElementCheck;
@@ -91,7 +90,6 @@ public class B2bStepsV26 implements B2bStepsInterface {
     private final AvanzamentoNotificheB2bSteps b2bSteps;
     private final SharedSteps sharedSteps;
     private final IPnPaB2bClient b2bClient;
-    private final NotificationVersion version = NotificationVersion.V25;
 
     public B2bStepsV26(AvanzamentoNotificheB2bSteps b2bSteps) {
         this.b2bSteps = b2bSteps;
@@ -101,11 +99,11 @@ public class B2bStepsV26 implements B2bStepsInterface {
 
     @Override
     public Object getFullSentNotification() {
-        return b2bClient.getSentNotificationV28(sharedSteps.getNotificationIun());
+        return b2bClient.getSentNotificationV29(sharedSteps.getNotificationIun());
     }
 
-    private FullSentNotificationV28 getFullSentNotificationVersioned() {
-        return (FullSentNotificationV28) getFullSentNotification();
+    private FullSentNotificationV29 getFullSentNotificationVersioned() {
+        return (FullSentNotificationV29) getFullSentNotification();
     }
 
     @Override
@@ -125,7 +123,7 @@ public class B2bStepsV26 implements B2bStepsInterface {
 
     @Override
     public void checkFullSentNotificationWithVersion(boolean isPresent, String timelineEventCategory) {
-        FullSentNotificationV28 fullSentNotification = getFullSentNotificationVersioned();
+        FullSentNotificationV29 fullSentNotification = getFullSentNotificationVersioned();
         TimelineElementV28 timelineElement = fullSentNotification.getTimeline().stream().filter(
                 te -> te.getCategory().getValue().equals(timelineEventCategory)).findAny().orElse(null);
         if (isPresent) {
@@ -141,7 +139,7 @@ public class B2bStepsV26 implements B2bStepsInterface {
 
     @Override
     public void checkFullSentNotificationRelatedElementWithVersion(String relatedTimelineElement) {
-        FullSentNotificationV28 fullSentNotification = getFullSentNotificationVersioned();
+        FullSentNotificationV29 fullSentNotification = getFullSentNotificationVersioned();
 
         boolean found = fullSentNotification.getNotificationStatusHistory().stream()
                 .filter(history -> history.getRelatedTimelineElements() != null)
@@ -285,7 +283,7 @@ public class B2bStepsV26 implements B2bStepsInterface {
     @Override
     public void checkPriceForRecipient(int recipientIndex, String price) {
         String iun = sharedSteps.getNotificationIun();
-        FullSentNotificationV28 fullSentNotification = getFullSentNotificationVersioned();
+        FullSentNotificationV29 fullSentNotification = getFullSentNotificationVersioned();
         List<NotificationPaymentItem> listNotificationPaymentItem = fullSentNotification.getRecipients().get(recipientIndex).getPayments();
         if (listNotificationPaymentItem != null) {
             for (NotificationPaymentItem notificationPaymentItem : listNotificationPaymentItem) {
@@ -309,7 +307,7 @@ public class B2bStepsV26 implements B2bStepsInterface {
 
     @Override
     public void payAvvisoPagoPa(Integer recipientIndex, Integer paymentIndex) {
-        FullSentNotificationV28 fullSentNotification = getFullSentNotificationVersioned();
+        FullSentNotificationV29 fullSentNotification = getFullSentNotificationVersioned();
         if (paymentIndex == null) {
             for (int i = 0; i < fullSentNotification.getRecipients().get(recipientIndex).getPayments().size(); i++) {
                 payAvvisoPagoPa(recipientIndex, i);
@@ -402,7 +400,7 @@ public class B2bStepsV26 implements B2bStepsInterface {
         if (timelineEventCategory.equals(SEND_ANALOG_FEEDBACK)) {
             pollingStrategy = TIMELINE_SLOW;
         }
-        String strategy = NotificationUtilsV25.getPollingStrategy(pollingStrategy);
+        String strategy = NotificationUtilsV26.getPollingStrategy(pollingStrategy);
         IPnPollingService<?> pollingService = sharedSteps.getPollingFactory().getPollingService(strategy);
         PnPollingPredicate pollingPredicate = getPnPollingPredicateForTimeline(timelineEventCategory, filters);
         pollingResponse = (PnPollingResponseV29) pollingService.waitForEvent(
@@ -825,7 +823,7 @@ public class B2bStepsV26 implements B2bStepsInterface {
                         timelineElement, Objects.requireNonNull(timelineElement).getDetails(), Objects.requireNonNull(timelineElement.getDetails()).getSchedulingDate());
                 long delayMillis = 0;
                 OffsetDateTime digitalDeliveryCreationRequestDate = null;
-                FullSentNotificationV28 fullSentNotification = getFullSentNotificationVersioned();
+                FullSentNotificationV29 fullSentNotification = getFullSentNotificationVersioned();
                 for (TimelineElementV28 element : fullSentNotification.getTimeline()) {
                     if (Objects.requireNonNull(element.getCategory()).getValue().equals("DIGITAL_DELIVERY_CREATION_REQUEST")
                             && Objects.requireNonNull(element.getDetails()).getRecIndex().equals(filterParams.getRecipientIndex())
@@ -991,7 +989,7 @@ public class B2bStepsV26 implements B2bStepsInterface {
 
         DataTestV25 dataTest = DataTestV25.convertMap(dataMap);
         String iun = sharedSteps.getNotificationIun();
-        FullSentNotificationV28 fullSentNotification = getFullSentNotificationVersioned();
+        FullSentNotificationV29 fullSentNotification = getFullSentNotificationVersioned();
         List<TimelineElementV28> timelineElementList = fullSentNotification.getTimeline();
         String timelineEventId = dataTest.getTimelineEventId(timelineEventCategory, iun);
         TimelineElementDetailsV28 timelineElementDetails = dataTest.getTimelineElement().getDetails();
@@ -1033,7 +1031,7 @@ public class B2bStepsV26 implements B2bStepsInterface {
 
     @Override
     public void checkOrdineEventiUnivoci(String category1, Boolean isSuccessivo, String category2) {
-        FullSentNotificationV28 fullSentNotification = getFullSentNotificationVersioned();
+        FullSentNotificationV29 fullSentNotification = getFullSentNotificationVersioned();
         TimelineElementV28 t1 = fullSentNotification.getTimeline().stream().filter(t -> t.getCategory() != null && t.getCategory().getValue().equals(category1)).findFirst().orElse(null);
         TimelineElementV28 t2 = fullSentNotification.getTimeline().stream().filter(t -> t.getCategory() != null && t.getCategory().getValue().equals(category2)).findFirst().orElse(null);
 
@@ -1116,7 +1114,7 @@ public class B2bStepsV26 implements B2bStepsInterface {
 
     @Override
     public void checkScartoTemporaleTraDueDeliveryDetailCode(String code1, String code2, Boolean isSuperiore, int timeQuantity, ChronoUnit unitaTemporale) {
-        FullSentNotificationV28 fullSentNotification = getFullSentNotificationVersioned();
+        FullSentNotificationV29 fullSentNotification = getFullSentNotificationVersioned();
         TimelineElementV28 t1 = fullSentNotification.getTimeline().stream().filter(t ->
                         t.getDetails() != null
                                 && t.getDetails().getDeliveryDetailCode() != null
@@ -1136,8 +1134,8 @@ public class B2bStepsV26 implements B2bStepsInterface {
         OffsetDateTime expectedDate =
                 unitaTemporale == DAYS ? date1.plusDays(timeQuantity) :
                         unitaTemporale == HOURS ? date1.plusHours(timeQuantity) :
-                                unitaTemporale == MINUTES ? date1.plusMinutes(timeQuantity) :
-                                        date1.plusSeconds(timeQuantity);
+                        unitaTemporale == MINUTES ? date1.plusMinutes(timeQuantity) :
+                                date1.plusSeconds(timeQuantity);
         if (isSuperiore == null) {
             assertThat(date2)
                     .as("La data di " + code2 + " non è pari a quella di " + code1)
@@ -1157,7 +1155,7 @@ public class B2bStepsV26 implements B2bStepsInterface {
 
     @Override
     public void checkReworkTimelineWithVersion() {
-        FullSentNotificationV28 fullSentNotification = getFullSentNotificationVersioned();
+        FullSentNotificationV29 fullSentNotification = getFullSentNotificationVersioned();
         List<TimelineElementV28> timeline = fullSentNotification.getTimeline();
 
         TimelineElementV28 reworkedElement = timeline.stream().filter(te -> te.getElementId().contains("REWORK_")).findFirst().orElse(null);

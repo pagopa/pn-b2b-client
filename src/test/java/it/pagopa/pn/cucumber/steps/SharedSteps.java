@@ -19,15 +19,16 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.digitaladdresses.BffUserAddress;
 import it.pagopa.pn.client.b2b.pa.cache.CacheManager;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
-import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
+import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.DigitalAddress;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.DigitalAddressSource;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.RequestStatus;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV28;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
+import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
@@ -44,7 +45,6 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnWebRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
-import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
 import it.pagopa.pn.client.b2b.pa.wrapper.RecipientWrapper;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyDigitalAddress;
@@ -357,8 +357,8 @@ public class SharedSteps {
      * Restituisce lo FullSentNotification aggiornata all'ultima versione (quella maggiormente utilizzata a codice)
      */
     //TODO: all'introduzione di una nuova versione, ri-fattorizzare il tipo di oggetto ritornato e cambiare i punti di codice che richiamano questo metodo
-    public FullSentNotificationV28 getSentNotificationLastVersion() {
-        return b2bClient.getSentNotificationV28(notificationIun);
+    public FullSentNotificationV29 getSentNotificationLastVersion() {
+        return b2bClient.getSentNotificationV29(notificationIun);
     }
 
     /**
@@ -367,8 +367,8 @@ public class SharedSteps {
      * Usato in un solo punto del codice
      */
     //TODO: all'introduzione di una nuova versione, ri-fattorizzare il tipo di oggetto ritornato e cambiare i punti di codice che richiamano questo metodo
-    public FullSentNotificationV28 getSentNotificationLastVersionByIun(String iun) {
-        return b2bClient.getSentNotificationV28(iun);
+    public FullSentNotificationV29 getSentNotificationLastVersionByIun(String iun) {
+        return b2bClient.getSentNotificationV29(iun);
     }
 
     public NotificationVersion getNotificationVersion(String version) {
@@ -636,7 +636,7 @@ public class SharedSteps {
     @Then("^verifico la (presenza|non presenza) di elementi di timeline con stringa \"([^\"]*)\"$")
     public void verifyPresenceOfTimelineElementsWithString(String presence, String searchString) {
 
-        FullSentNotificationV28 fullSentNotification = getSentNotificationLastVersion();
+        FullSentNotificationV29 fullSentNotification = getSentNotificationLastVersion();
         List<TimelineElementV28> timeline = fullSentNotification.getTimeline();
 
         List<TimelineElementV28> matchingElements = timeline.stream()
@@ -1350,7 +1350,7 @@ public class SharedSteps {
      * @return a list of timeline elements that match the given event category and data from test
      */
     public List<TimelineElementV28> getTimelineElementsByEventId(String timelineEventCategory, DataTest dataFromTest) {
-        FullSentNotificationV28 fullSentNotification = getSentNotificationLastVersion();
+        FullSentNotificationV29 fullSentNotification = getSentNotificationLastVersion();
         List<TimelineElementV28> timelineElementList = fullSentNotification.getTimeline();
         if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
             // get timeline event id
@@ -1478,7 +1478,7 @@ public class SharedSteps {
                         n -> n.getRecipients().size() == 1 && n.getRecipients().contains(recipientTaxId))
                 .findFirst().orElse(null);
         AssertionsForClassTypes.assertThat(result).as("Nessuna notifica trovato con il solo destinatario " + recipientTaxId).isNotNull();
-        FullSentNotificationV28 oldNotification = getSentNotificationLastVersionByIun(result.getIun());
+        FullSentNotificationV29 oldNotification = getSentNotificationLastVersionByIun(result.getIun());
         notificationIun = oldNotification.getIun();
         notificationIunList.add(oldNotification.getIun());
         log.info("RECIPIENTS OLDER {} GG: {}", lowerLimit, oldNotification.getRecipients().stream().map(r -> r.getTaxId()).toList());

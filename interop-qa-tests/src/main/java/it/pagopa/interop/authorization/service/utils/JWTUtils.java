@@ -7,8 +7,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Base64;
 import java.util.Map;
+import java.util.Objects;
+
+import static java.util.Objects.nonNull;
 
 public final class JWTUtils {
     @Data
@@ -41,20 +45,47 @@ public final class JWTUtils {
         return JWTPojo.of(
                 decodeJwtPart(parts[0]),
                 decodeJwtPart(parts[1]),
-                parts[2]
+                parts.length == 3 ? parts[2] : null
         );
     }
 
-    /* TODO 08/07/2025: codifica non ancora funzionante. Il risultato atteso è che "encodeJwt" sia
+    /* TODO 08/07/2025: codifica non ancora del tutto funzionante. Il risultato atteso è che "encodeJwt" sia
      *   l'operazione inversa di "decodeJwt"; tuttavia, dato in input un token JWT, la sequenza
      *   decodifica con decodeJwt --> ricodifica con encodeJwt non produce ancora un risultato
      *   identico all'input.*/
-    //public static String encodeJwt(JWTPojo jwt) {
-    private static String encodeJwt(JWTPojo jwt) {
-        return String.format("%s.%s.%s",
+    public static String encodeJwt(JWTPojo jwt) {
+        String unsignedJwt = String.format("%s.%s",
                 encodeJwtPart(jwt.getHeader()),
-                encodeJwtPart(jwt.getPayload()),
-                jwt.getSignature());
+                encodeJwtPart(jwt.getPayload()));
+        return nonNull(jwt.getSignature()) ? unsignedJwt + "." + jwt.getSignature() : unsignedJwt;
+    }
+
+    public static boolean isNotExpired(String token) {
+        return isNotExpired(token, 0);
+    }
+
+    public static boolean isNotExpired(String token, long safetyMarginMillis) {
+        long now = Instant.now().getEpochSecond();
+        Object oExp = Objects.requireNonNull(
+                JWTUtils.decodeJwt(token).getPayload().get("exp"),
+                "Il campo 'exp' non è presente nel token '%s'".formatted(token)
+        );
+
+        long exp;
+        // DEV.NOTE al momento si usa Java 17, dunque pattern matching non supportato
+        if (oExp instanceof Integer iExp) {
+            exp = iExp.longValue();
+        } else if (oExp instanceof Long lExp) {
+            exp = lExp;
+        } else {
+            throw new IllegalArgumentException(
+                    "Il campo 'exp' deve essere di tipo Integer o Long, trovato invece: " + oExp.getClass().getName()
+            );
+        }
+
+        long safetyMarginSeconds = safetyMarginMillis / 1000;
+        // Il token è considerato scaduto se: exp <= (adesso + margine di sicurezza)
+        return exp > (now + safetyMarginSeconds);
     }
 
     private static String encodeJwtPart(Map<String, Object> part) {
