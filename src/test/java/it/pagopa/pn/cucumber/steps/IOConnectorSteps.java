@@ -13,6 +13,7 @@ import it.pagopa.pn.client.b2b.pa.service.IPnIOConnectorClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
@@ -39,7 +40,8 @@ public class IOConnectorSteps {
 
     //scenario 5 va richiesta data-preparation. si deve richiedere un requestId e un recipientTaxId
     //di un messaggio censito e dotato di allegati. il recipientTaxId viene passato allo step parametrico dal file feature
-    public static final String REQUEST_ID_FOR_PREEXISTING_MESSAGE = "ATTACHMENTS_REQ-20260615_3";
+    @Value("${pn.IOConnector.request-id-for-preexisting-message}")
+    public String REQUEST_ID_FOR_PREEXISTING_MESSAGE;
 
 
     private MessageRequest messageRequest;
