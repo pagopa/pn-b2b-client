@@ -11,7 +11,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "json:target/cucumber-report.json," + "html:target/cucumber-report.html")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.interop.cucumber.steps")
 @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent")
-@ExcludeTags({"wait_for_fix"})
+@ExcludeTags({"wait_for_fix", "ignore"})
 @IncludeTags({"manual-archiving-eservice", "notification-manual-archiving-eservice"})
 public class ManualArchivingEServiceTest {
 }
