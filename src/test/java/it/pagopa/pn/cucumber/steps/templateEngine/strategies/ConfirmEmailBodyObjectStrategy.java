@@ -21,6 +21,23 @@ public class ConfirmEmailBodyObjectStrategy implements ITemplateEngineStrategy{
 
     @Override
     public String getTextToCheckLanguage(String language, String recipientType) {
-        return "SEND - Conferma la tua e-mail";
+        return switch (language.toUpperCase()) {
+            case  "ITALIANA" -> {
+                yield "SEND - Conferma la tua email";
+            }
+            case "TEDESCA" -> {
+                yield "SEND - Bestätige deine E-Mail-Adresse";
+            }
+            case "SLOVENA" -> {
+                yield "SEND - Potrdi svoj e-poštni naslov";
+            }
+            case "FRANCESE" -> {
+                yield "SEND - Confirme ton adresse e-mail";
+            }
+            case  "INGLESE" -> {
+                yield "SEND - Confirm your email";
+            }
+            default -> throw new IllegalArgumentException("NO VALID LANGUANGE");
+        };
     }
 }
