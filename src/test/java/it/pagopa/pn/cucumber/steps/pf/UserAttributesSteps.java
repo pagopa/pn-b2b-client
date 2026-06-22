@@ -13,19 +13,13 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 public class UserAttributesSteps {
 
-    //    private final IPnWebUserAttributesClient webUserAttributesClient;//INTERFACCIA NON VA
-
     private final IPnWebUserAttributesClient webUserAttributesClient;//B2B
-//    private final PnWebUserAttributesExternalClientImpl webUserAttributesClient;//WEB
-
     private Consent consent;
     private HttpStatusCodeException consentError;
 
 
     @Autowired
-//    public UserAttributesSteps(IPnWebUserAttributesClient webUserAttributesClient) {
     public UserAttributesSteps(PnWebUserAttributesInternalClientImpl webUserAttributesClient) {
-//    public UserAttributesSteps(PnWebUserAttributesExternalClientImpl webUserAttributesClient) {
         this.webUserAttributesClient = webUserAttributesClient;
     }
 
@@ -59,10 +53,5 @@ public class UserAttributesSteps {
     @And("Il consenso è accettato")
     public void ilConsensoAccettato() {
         Assertions.assertEquals(Boolean.TRUE, consent.getAccepted());
-    }
-
-    @Given("viene testato l'otp")
-    public void vieneTestatoLOtp() {
-        //TODO: implementare
     }
 }
