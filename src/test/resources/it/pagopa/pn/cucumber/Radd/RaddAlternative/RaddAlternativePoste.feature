@@ -20,13 +20,9 @@ Feature: Radd Alternative integrazione con Poste
     Given Poste chiama l'endpoint document upload via VPCE
     Then la risposta deve essere 403 Forbidden
 
-
-  @useRaddVpce #XWUP-TDER-TZQW-202606-R-1
+  @useRaddVpce
   Scenario: [RADD_POSTE_01_3] Verifica allegato ARCAD per secondo evento di timeline SEND_ANALOG_PROGRESS con deliveryDetailCode = RECAG011B
-    #Given carico i dati della notifica con chiave "[RADD_POSTE_01_3]"
-    Given imposto lo iun di SharedSteps a "XWUP-TDER-TZQW-202606-R-1" e la pa a "Comune_Multi"
-    Then Imposto il cf "CLMCST42R12D969Z" e recipient type "PF" e qrCode "WFdVUC1UREVSLVRaUVctMjAyNjA2LVItMV9QRi1hNmMxMzUwZC0xZDY5LTQyMDktOGJmOC0zMWRlNThjNzlkNmVfYTEzOTZjOTYtMmQ4ZC00NjAzLTlkZWYtNjAwYjM5ZmY3OGZm"
-    #When Il cittadino Mario Gherkin come destinatario 0 mostra il QRCode "corretto"
+    Given carico i dati della notifica con chiave "[RADD_POSTE_01_3]"
     Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
@@ -34,15 +30,9 @@ Feature: Radd Alternative integrazione con Poste
     And L'operatore esegue il download del frontespizio del operazione "act"
     Then viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
 
-
- #   ACT
-
-  @useRaddVpce #XVZM-TJME-KGWV-202606-V-1 ok
+  @useRaddVpce
   Scenario: [RADD_POSTE_02_1_A] PF - Scansione QR code esistente associato al CF corretto, per una notifica con allegati di pagamento (Avviso PagoPA e F24)
-    #Given carico i dati della notifica con chiave "[RADD_POSTE_02_1_A]"
-    Given imposto lo iun di SharedSteps a "XVZM-TJME-KGWV-202606-V-1" e la pa a "Comune_Multi"
-    And Imposto il cf "CLMCST42R12D969Z" e recipient type "PF" e qrCode "WFZaTS1USk1FLUtHV1YtMjAyNjA2LVYtMV9QRi1hNmMxMzUwZC0xZDY5LTQyMDktOGJmOC0zMWRlNThjNzlkNmVfZjcwZjgzMmYtZDkzYy00ZGYxLWI0MDktMTg5ZGVmYmY4NTkz"
-    #And Il cittadino Mario Gherkin come destinatario 0 mostra il QRCode "corretto"
+    Given carico i dati della notifica con chiave "[RADD_POSTE_02_1_A]"
     When L'operatore scansione il qrCode per recuperare gli atti di Mario Gherkin
     Then la scansione si conclude correttamente su radd alternative
     And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
@@ -50,13 +40,9 @@ Feature: Radd Alternative integrazione con Poste
     And l'operazione di download restituisce 7 documenti
 
 
-  @useRaddVpce #ok JYAY-GYDM-LWVL-202606-H-1
+  @useRaddVpce
   Scenario: [RADD_POSTE_02_1_G] PF - Interruzione processo recupero atti e avvio nuovo processo su stessa notifica
-    #Given carico i dati della notifica con chiave "[RADD_POSTE_02_1_G]"
-    Given imposto lo iun di SharedSteps a "JYAY-GYDM-LWVL-202606-H-1" e la pa a "Comune_Multi"
-    #Then Imposto il cf "FRMTTR76M06B715E" e recipient type "PF"
-    Then Imposto il cf "FRMTTR76M06B715E" e recipient type "PF" e qrCode "SllBWS1HWURNLUxXVkwtMjAyNjA2LUgtMV9QRi00ZmM3NWRmMy0wOTEzLTQwN2UtYmRhYS1lNTAzMjk3MDhiN2RfMjRmZGRhYmItNTg2Yy00YjRiLWJlNjEtNjU3N2QxNzU0ZTE4"
-    #Then Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
+    Given carico i dati della notifica con chiave "[RADD_POSTE_02_1_G]"
     And L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
@@ -64,13 +50,9 @@ Feature: Radd Alternative integrazione con Poste
     Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
 
-
-
-  @useRaddVpce #ok UENX-YTMZ-KRVH-202606-J-1
+  @useRaddVpce
   Scenario: [RADD_POSTE_AOR_03_1_A] PG - Visualizzazione AAR di notifiche i cui documenti sono già stati stampati, ma inibizione stampa documenti associati alla notifica
-    #Given carico i dati della notifica con chiave "[RADD_POSTE_AOR_03_1_A]"
-    Given imposto lo iun di SharedSteps a "AGPU-JWPV-XGXE-202606-A-1" e la pa a "Comune_Multi"
-    Then Imposto il cf "02455090981" e recipient type "PG"
+    Given carico i dati della notifica con chiave "[RADD_POSTE_AOR_03_1_A]"
     When la persona giuridica Gherkin Irreperibile chiede di verificare la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona giuridica su radd vpce
@@ -80,12 +62,9 @@ Feature: Radd Alternative integrazione con Poste
     And la transazione viene abortita per gli "aor"
     And l'operazione di abort genera un errore "La transazione risulta già completa" con codice 2 su radd alternative
 
-
   @useRaddVpce
   Scenario: [RADD_POSTE_AOR_03_1_B] PG - Visualizzazione link AAR disponibili con consegna documenti alla PG successivi alla stampa documenti per notifiche associate al CF corretto (irreperibile totale)
-    #Given carico i dati della notifica con chiave "[RADD_POSTE_AOR_03_1_B]"
-    Given imposto lo iun di SharedSteps a "QAVA-YJQN-TRPE-202606-U-1" e la pa a "Comune_Multi"
-    Then Imposto il cf "02455090981" e recipient type "PG"
+    Given carico i dati della notifica con chiave "[RADD_POSTE_AOR_03_1_B]"
     And la persona giuridica Gherkin Irreperibile chiede di verificare la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And Vengono recuperati gli aar delle notifiche in stato irreperibile della persona giuridica su radd vpce
@@ -93,12 +72,9 @@ Feature: Radd Alternative integrazione con Poste
     And viene chiusa la transazione per il recupero degli aar su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
-  @useRaddVpce #LTMP-WEQR-NGZK-202606-H-1
+  @useRaddVpce
   Scenario: [RADD_POSTE_02_1_C] PG - Scansione QR code esistente, associato al CF corretto, per una notifica con allegato di pagamento (solo F24)
-    #Given carico i dati della notifica con chiave "[RADD_POSTE_02_1_C]"
-    Given imposto lo iun di SharedSteps a "LTMP-WEQR-NGZK-202606-H-1" e la pa a "Comune_Multi"
-    Then Imposto il cf "20517490320" e recipient type "PG" e qrCode "TFRNUC1XRVFSLU5HWkstMjAyNjA2LUgtMV9QRy1iMDVkZTc3Ny04MGM2LTQ1NDktYTA1NC1kOGRmZGExMzljNjJfNzk4ZmZjOTgtODhmNC00MTU5LWI2ODAtNGFkOWQ4NTg1ODdh"
-    #And Il cittadino CucumberSpa come destinatario 0 mostra il QRCode "corretto"
+    Given carico i dati della notifica con chiave "[RADD_POSTE_02_1_C]"
     When L'operatore scansione il qrCode per recuperare gli atti di CucumberSpa
     And la scansione si conclude correttamente su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
