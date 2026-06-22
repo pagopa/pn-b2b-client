@@ -19,7 +19,7 @@ Feature: Soglie differenziate in attributi certificati discreti con API M2M V3
     Then si ottiene status code 200 e la finalità in stato "ACTIVE"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And i residui relativi alle dailyCalls associati alla finalità sono pari a per m2m:
-      | remainingDailyCallsPerConsumer | 88   |
+      | remainingDailyCallsPerConsumer | 88 |
       | remainingDailyCallsTotal       | 89 |
 
   Scenario: [CERT_DISCRETE_ATTR_PURPOSE_THRESHOLD_2B] Attivazione con successo di una finalità, il fruitore non soddisfa l'attributo
