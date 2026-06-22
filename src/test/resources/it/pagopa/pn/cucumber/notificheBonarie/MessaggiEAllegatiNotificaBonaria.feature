@@ -216,10 +216,6 @@ Feature: Messaggi e allegati di una notifica bonaria.
 
 
 
-#  CASO DI TEST 3.2 Errore nel recupero di un messaggio. Campi obbligatiro - soggetti a firma nel client
-
-
-
 # ************************************************
 #  *****SCENARIO 5  - Download dei documenti.
 # ***********************************************
