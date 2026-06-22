@@ -84,10 +84,6 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
     Then si ottiene status code 200
     And lo stato della compilazione dell'analisi del rischio è "REJECTED"
 
-  @purpose @nuovi-operatori
-  Feature: Submit e Rifiuto in modalita AdminWritesReviewerSigns
-  Un amministratore invia il submit dell'analisi del rischio e un reviewer la rifiuta.
-
   # PST: Scenario 18 - Caso 18.1
   @happy-path
   Scenario: [AWRS_SUBMIT_18_1_ADMIN] Submit dell'amministratore (positivo)
@@ -206,7 +202,3 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
     When l'utente è un "admin" di "PA2"
     And l'utente attiva la finalità in stato "DRAFT" per quell'e-service
     Then si ottiene status code 200 e la finalità in stato "ACTIVE"
-
-
-
-

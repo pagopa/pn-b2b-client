@@ -26,6 +26,7 @@ public class PurposeRiskAnalysisCompilationSteps {
     private final SharedStepsContext sharedStepsContext;
     private final BFFDataPreparationService dataPreparationService;
     private final IHttpExecutor httpCallExecutor;
+    private RiskAnalysis compiledRiskAnalysis;
 
     public PurposeRiskAnalysisCompilationSteps(
             ClientTokenConfigurator clientTokenConfigurator,
@@ -152,10 +153,10 @@ public class PurposeRiskAnalysisCompilationSteps {
     public void compilesRiskAnalysis() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
-        RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(sharedStepsContext.getTenantType(), true);
+        compiledRiskAnalysis = dataPreparationService.getRiskAnalysis(sharedStepsContext.getTenantType(), true);
 
         UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
-        httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().compileRiskAnalysisForm(purposeId, riskAnalysis.getRiskAnalysisForm()));
+        httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().compileRiskAnalysisForm(purposeId, compiledRiskAnalysis.getRiskAnalysisForm()));
     }
 
     @When("compila l'analisi del rischio tramite endpoint generico")
@@ -164,8 +165,8 @@ public class PurposeRiskAnalysisCompilationSteps {
 
         UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
 
-        RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(sharedStepsContext.getTenantType(), true);
-        riskAnalysis.getRiskAnalysisForm().getAnswers().put("institutionalPurpose", List.of("a caso"));
+        compiledRiskAnalysis = dataPreparationService.getRiskAnalysis(sharedStepsContext.getTenantType(), true);
+        compiledRiskAnalysis.getRiskAnalysisForm().getAnswers().put("institutionalPurpose", List.of("a caso"));
 
         // Use generic purpose update endpoint instead of dedicated risk analysis form endpoint
         PurposeUpdateContent updateContent = new PurposeUpdateContent()
@@ -173,7 +174,7 @@ public class PurposeRiskAnalysisCompilationSteps {
                 .description("Updated description")
                 .dailyCalls(1)
                 .isFreeOfCharge(true)
-                .riskAnalysisForm(riskAnalysis.getRiskAnalysisForm());
+                .riskAnalysisForm(compiledRiskAnalysis.getRiskAnalysisForm());
         httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().updatePurpose(purposeId, updateContent));
     }
 
@@ -208,7 +209,9 @@ public class PurposeRiskAnalysisCompilationSteps {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
         UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
-        httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().submitRiskAnalysis(purposeId));
+        RiskAnalysisSubmissionSeed submissionSeed = new RiskAnalysisSubmissionSeed()
+                .riskAnalysisForm(this.compiledRiskAnalysis.getRiskAnalysisForm());
+        httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().submitRiskAnalysis(purposeId, submissionSeed));
     }
 
     @When("l'utente invia il submit dell'analisi del rischio della finalità con successo")
