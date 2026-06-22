@@ -2436,7 +2436,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-user-attributes/41fd146d797f13297af57d683defae9e1a342686/docs/openapi/pn-address-book-b2b-pg-external.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-user-attributes/${open.api.version.user.attributes}/docs/openapi/pn-address-book-b2b-pg-external.yaml</inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
