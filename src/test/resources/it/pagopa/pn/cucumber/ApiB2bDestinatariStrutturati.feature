@@ -310,6 +310,7 @@ Feature: Api b2b per destinatari strutturati
   @addressBook2 @useB2B @b2bDestinatariStrutturati @ignoreHotfixTemp #temp
   Scenario: [B2B-DEST-USER-ATTR_10] invio messaggio di cortesia - invio notifica per email per ente padre per PG
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
+    And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserito un recapito legale "example@pecSuccess.it"
     And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_Root"
     And viene inserito un recapito legale "example3@pecSuccess.it"
@@ -318,7 +319,7 @@ Feature: Api b2b per destinatari strutturati
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
     And viene inserita l'email di cortesia "provaemail2@test.it" per il comune "default"
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "Comune_Root"
-    And viene inserita l'email di cortesia "provaemail2@test.it" per il comune "Comune_Root"
+    And viene inserita l'email di cortesia "provaemail3@test.it" per il comune "Comune_Root"
     And viene verificata la presenza di 2 recapiti di cortesia inseriti per l'utente "Lucio Anneo Seneca"
     And viene cancellata l'email di cortesia per il comune "Comune_Root"
 
