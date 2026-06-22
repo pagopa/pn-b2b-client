@@ -5,7 +5,9 @@ import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-import software.amazon.awssdk.services.dynamodb.model.*;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
+import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 import java.util.Map;
 
@@ -24,6 +26,7 @@ public class DynamoDbService {
             case REWORKED_TIMELINES_FOR_INVOICING -> buildReworkedTimelinesForInvoicingRequest(attributeValues);
             case COST_COMPONENTS -> buildCostComponentsRequest(attributeValues);
             case COST_UPDATE_RESULT -> buildCostUpdateResultRequest(attributeValues);
+            case PN_USER_ATTRIBUTES -> buildUserAttributesInfoRequest(attributeValues);
         };
         return dynamoDbClient.query(queryRequest);
     }
@@ -37,6 +40,12 @@ public class DynamoDbService {
 
     private static QueryRequest buildPaymentInfoRequest(Map<String, AttributeValue> attributeValues) {
         return DynamoQueryBuilder.withoutFilter(DynamoTableName.PAYMENT_INFO.getValue(),
+                "pk = :v_pk",
+                attributeValues);
+    }
+
+    private static QueryRequest buildUserAttributesInfoRequest(Map<String, AttributeValue> attributeValues) {
+        return DynamoQueryBuilder.withoutFilter(DynamoTableName.PN_USER_ATTRIBUTES.getValue(),
                 "pk = :v_pk",
                 attributeValues);
     }

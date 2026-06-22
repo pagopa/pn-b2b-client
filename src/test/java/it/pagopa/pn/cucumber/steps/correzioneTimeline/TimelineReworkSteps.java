@@ -5,6 +5,12 @@ import io.cucumber.java.Before;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.ReworkItem;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.ReworkItemsResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.ReworkRequest;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.ReworkResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.UpdateReworkRequest;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.*;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.generate.model.externalregistry.privateapi.AnalogUpdateCostPhase;
@@ -34,7 +40,14 @@ import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -348,7 +361,7 @@ public class TimelineReworkSteps {
 
     @Then("raccolgo gli elementId della timeline contenenti {string}")
     public void collectAttempt1ElementIdsFromTimeline(String element) {
-        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         List<TimelineElementV28> timeline = fullSentNotification.getTimeline();
         attempt1ElementIds.clear();
         attempt1ElementIds = timeline.stream()
@@ -391,7 +404,7 @@ public class TimelineReworkSteps {
     }
 
     private List<NotificationStatusHistoryInvalidatedElement> getInvalidatedHistoryFailFast() {
-        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         List<TimelineElementV28> timeline = fullSentNotification.getTimeline();
         TimelineElementV28 reworkedElement = timeline.stream()
                 .filter(e -> e.getCategory() != null)
@@ -561,7 +574,7 @@ public class TimelineReworkSteps {
 
     @Then("controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato {invoicingType}")
     public void checkReworkedTimelinesForInvoicing(String invoicingType, Map<String, String> expectedElements) {
-        FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV29 fsn = sharedSteps.getSentNotificationLastVersion();
         boolean isViewed = fsn.getNotificationStatus().getValue().equals(NOTIFICATION_STATUS_VIEWED);
         String paId = fsn.getSenderPaId();
         String sentAt = fsn.getSentAt().toLocalDate().toString();
@@ -616,7 +629,7 @@ public class TimelineReworkSteps {
 
     @When("invoco l'api di external-registry per l'invalidazione dei costi con {string}")
     public void testExternalRegistryApi(String inputParams) {
-        FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV29 fsn = sharedSteps.getSentNotificationLastVersion();
         String iun = fsn.getIun();
         String creditorTaxId = fsn.getRecipients().get(0).getPayments().get(0).getPagoPa().getCreditorTaxId();
         String noticeCode = fsn.getRecipients().get(0).getPayments().get(0).getPagoPa().getNoticeCode();
@@ -673,7 +686,7 @@ public class TimelineReworkSteps {
     @Then("si controlla che il timestamp dell'elemento NOTIFICATION_TIMELINE_REWORKED coincida con quello presente su DynamoDb, basato sulla SEND_ANALOG_DOMICILE all'attempt {int}")
     public void checkNotificationTimelineReworkTimestamp(int attempt) {
         try {
-            FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV29 fsn = sharedSteps.getSentNotificationLastVersion();
             TimelineElementV28 notificationTimelineReworked = fsn.getTimeline().stream().filter(
                     e -> e.getCategory().getValue().equals(NOTIFICATION_TIMELINE_REWORKED)).findFirst().orElse(null);
             assertThat(notificationTimelineReworked).as("Element NOTIFICATION_TIMELINE_REWORKED can't be null").isNotNull();

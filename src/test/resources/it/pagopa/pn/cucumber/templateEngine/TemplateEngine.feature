@@ -266,7 +266,7 @@ Feature: Template engine
     Then verifico che tutte le chiamate siano andate in "400" error e che nessuna abbia ricevuto una risposta
 
   @templateEngine #54 55 56 57 /templates-engine-private/v1/templates/notification-aar-radd-alt
-  Scenario Outline: [TEMPLATE-ENGINE_15] Richiamare l’API per il recupero del template di avviso di avvenuta ricezione RADD - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
+  Scenario Outline: [TEMPLATE-ENGINE_15] Richiamare l’API per il recupero del template di avviso di avvenuta ricezione RADD
     When recupero il template per "avviso di avvenuta ricezione RADD" in lingua "<language>"
     Then verifico che il template è in formato ".pdf"
     And controllo che per il template "avviso di avvenuta ricezione RADD" il file "pdf" sia in lingua "<language>"
@@ -304,6 +304,7 @@ Feature: Template engine
       | tedesca  |
       | slovena  |
       | francese |
+      | inglese  |
 
   @templateEngine #63 /templates-engine-private/v1/templates/notificationAARForEMAIL
   Scenario: [TEMPLATE-ENGINE_18] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - lingua errata
@@ -549,12 +550,6 @@ Feature: Template engine
       | francese |
       | inglese  |
 
-  @templateEngine #104 /templates-engine-private/v1/templates/pecsubjectconfirm
-  Scenario: [TEMPLATE-ENGINE_36_1] Richiamare l’API per il recupero dell’oggetto relativo alla PEC valida - lingua errata
-    When recupero l'oggetto per "PEC valida object" in lingua "francese"
-    Then verifico che il template è in formato "text"
-    And controllo che per il template "PEC valida object" il file "text" sia in lingua "italiana"
-
   @templateEngine #85 /templates-engine-private/v1/templates/pecsubjectreject
   Scenario Outline: [TEMPLATE-ENGINE_37] Richiamare l’API per il recupero dell’oggetto relativo alla PEC non valida
     When recupero l'oggetto per "PEC non valida object" in lingua "<language>"
@@ -675,7 +670,7 @@ Feature: Template engine
   | inglese | PG |
 
   @templateEngine
-  Scenario Outline: [TEMPLATE-ENGINE_43] Verifica dell'intero template AAR-RADD per PF e PG per le lingue IT,DE,FR,SL
+  Scenario Outline: [TEMPLATE-ENGINE_43B] Verifica dell'intero template AAR-RADD per PF e PG per le lingue IT,DE,FR,SL,EN
   When recupero il template per "avviso di avvenuta ricezione RADD" in lingua "<language>" con recipient Type "<recipientType>"
   Then verifico che il template è in formato ".pdf"
   And controllo che per il template "avviso di avvenuta ricezione RADD" il file "pdf" sia in lingua "<language>"
@@ -689,6 +684,8 @@ Feature: Template engine
     | tedesca | PG |
     | slovena | PF |
     | slovena | PG |
+    | inglese | PF |
+    | inglese | PG |
 
 
 

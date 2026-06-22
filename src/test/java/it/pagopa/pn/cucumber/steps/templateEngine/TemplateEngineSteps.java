@@ -15,6 +15,7 @@ import org.apache.pdfbox.pdfparser.PDFParser;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Assertions;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.web.client.HttpClientErrorException;
@@ -44,6 +45,9 @@ public class TemplateEngineSteps {
     private HttpServerErrorException templateServerException;
     private List<HttpStatusCodeException> templateFileExceptions = new ArrayList<>();
     private String recipientType = "PF";
+
+    @Value("${spring.profiles.active}")
+    private String runProfile;
 
     public TemplateEngineSteps(Map<TemplateType, ITemplateEngineStrategy> templateEngineStrategy,
                                TemplateEngineContextFactory contextFactory, Map<TemplateType, List<String>> templateEngineObjectFields) {
@@ -163,7 +167,8 @@ public class TemplateEngineSteps {
     }
 
     private String getTextToRetrieve(String language, TemplateType templateType, String recipientType) {
-        return templateEngineStrategy.get(templateType).getTextToCheckLanguage(language, recipientType);
+        String retrievedText = templateEngineStrategy.get(templateType).getTextToCheckLanguage(language, recipientType);
+        return retrievedText.replace("{%profile}", runProfile);
     }
 
     @And("controllo che nel file {string} contenga il (campo)(testo) {string} valorizzato (a)(con) {string}")

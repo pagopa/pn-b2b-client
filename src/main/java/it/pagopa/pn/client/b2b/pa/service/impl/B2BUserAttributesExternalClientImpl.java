@@ -11,17 +11,15 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.CxLanguage;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.LegalChannelType;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaluserconsents.model.CxTypeAuthFleet;
-import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
-import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
-import it.pagopa.pn.client.b2b.pa.wrapper.RecipientWrapper;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.AddressVerification;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.CourtesyDigitalAddress;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.UserAddresses;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaluserconsents.api.ConsentsApi;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaluserconsents.model.Consent;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaluserconsents.model.ConsentAction;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaluserconsents.model.ConsentType;
+import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
+import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
+import it.pagopa.pn.client.b2b.pa.wrapper.RecipientWrapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -160,21 +158,8 @@ public class B2BUserAttributesExternalClientImpl implements IPnWebUserAttributes
         return this.bearerTokenSetted;
     }
 
-    public void consentAction(ConsentType consentType, ConsentAction consentAction, String version) throws RestClientException {
-        this.consentsApi.consentAction("pn-test", CxTypeAuthFleet.PG, consentType, version, consentAction);
-    }
-
     public Consent getConsentByType(ConsentType consentType, String version) throws RestClientException {
-        return this.consentsApi.getConsentByType("pn-test", CxTypeAuthFleet.PG, consentType, version);
-    }
-
-    @Override
-    public List<Consent> getConsents() throws RestClientException {
-        return null;
-    }
-
-    public List<Consent> getConsents(String xPagopaPnUid, CxTypeAuthFleet xPagopaPnCxType) throws RestClientException {
-        return this.consentsApi.getConsents(xPagopaPnUid, xPagopaPnCxType);
+        throw new UnsupportedOperationException();
     }
 
     public RecipientWrapper getAddressesByRecipient() throws RestClientException {

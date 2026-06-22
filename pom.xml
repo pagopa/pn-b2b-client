@@ -53,7 +53,7 @@
         <open.api.version.delivery>refs/heads/develop</open.api.version.delivery>
         <open.api.version.delivery.push>v2.24.0</open.api.version.delivery.push>
 
-        <open.api.version.user.attributes>v2.8.0</open.api.version.user.attributes>
+        <open.api.version.user.attributes>v2.19.0</open.api.version.user.attributes>
         <open.api.version.mandate>v2.5.0</open.api.version.mandate>
         <open.api.version.mandate-io>refs/heads/develop</open.api.version.mandate-io>
         <open.api.version.apikey.manager>v2.2.0</open.api.version.apikey.manager>
@@ -1159,7 +1159,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-user-attributes/41fd146d797f13297af57d683defae9e1a342686/docs/openapi/pn-user-consents-api-internal.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-user-attributes/${open.api.version.user.attributes}/docs/openapi/pn-user-consents-api-internal.yaml</inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
@@ -1342,7 +1342,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-user-attributes/41fd146d797f13297af57d683defae9e1a342686/docs/openapi/pn-address-book-api-internal.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-user-attributes/${open.api.version.user.attributes}/docs/openapi/pn-address-book-api-internal.yaml</inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
@@ -2506,7 +2506,7 @@
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                                 <typeMapping>file=org.springframework.core.io.Resource</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-templates-engine/refs/tags/v1.9.0/docs/openapi/pn-internal-templates-v1.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-templates-engine/refs/tags/v1.14.0/docs/openapi/pn-internal-templates-v1.yaml</inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>

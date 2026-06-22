@@ -62,7 +62,7 @@ public class EServiceTemplateVersionAttributeUpdateSteps {
 
         for(Attribute attribute : sharedStepsContext.getAttributeCommonContext().getCreatedAttributes()) {
             List<DescriptorAttributeSeed> seedList = switch (attribute.getKind()) {
-                case CERTIFIED -> certified;
+                case CERTIFIED, CERTIFIED_DISCRETE -> certified;
                 case DECLARED -> declared;
                 case VERIFIED -> verified;
             };

@@ -11,7 +11,8 @@ public enum DynamoTableName {
     NOTIFICATION_REWORKS("pn-NotificationReworks"),
     REWORKED_TIMELINES_FOR_INVOICING("pn-ReworkedTimelinesForInvoicing"),
     COST_COMPONENTS("pn-CostComponents"),
-    COST_UPDATE_RESULT("pn-CostUpdateResult");
+    COST_UPDATE_RESULT("pn-CostUpdateResult"),
+    PN_USER_ATTRIBUTES("pn-UserAttributes");
 
     private final String value;
 
