@@ -40,7 +40,7 @@ Feature: Archiviazione manuale di un e-service
     When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "ARCHIVED"
-    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
     And la versione più recente dell'e-service è in stato "ARCHIVING"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
