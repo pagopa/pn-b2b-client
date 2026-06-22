@@ -1,6 +1,6 @@
 package it.pagopa.pn.client.b2b.pa.wrapper;
 
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalAddressType;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.LegalAddressType;
 import lombok.Data;
 import lombok.Getter;
 

@@ -39,6 +39,9 @@ public class NotificationViewedLegalFactStrategy  implements ITemplateEngineStra
             case "FRANCESE" -> {
                 yield "Attestazione opponibile a terzi: avvenuto accesso Conformément à l’art. 26, paragraphe 11, du décret-loi italien 76/2020 tel que modifié et complété, la société PagoPA , en sa qualité d’opérateur ex lege de la Plateforme Notifications Numériques visée audit article 26 (également S.p.A. connue sous le nom de SEND - Servizio Notifiche Digitali), avec plein effet juridique quant à l’opposabilité aux tiers, CERTIFIE QUE:";
             }
+            case  "INGLESE" -> {
+                yield "Attestazione opponibile a terzi: avvenuto accesso Pursuant to Art. 26, paragraph 11, of Decree-Law 76/2020 as amended, PagoPA S.p.A. in its capacity as the statutory manager of the Piattaforma Notifiche Digitali referred to in the same Art. 26 (also known as SEND - Servizio Notifiche Digitali), with full legal value for enforceability against third parties, HEREBY CERTIFIES THAT";
+            }
             default -> throw new IllegalArgumentException("NO VALID LANGUANGE");
         };
     }

@@ -23,6 +23,7 @@ public class DynamoDbService {
             case NOTIFICATION_DELIVERY_COST -> buildNotificationDeliveryCostRequest(attributeValues);
             case ONBOARD_INSTITUTIONS -> buildOnboardInstitutionsRequest(attributeValues);
             case IO_CONNECTOR_REQUESTS -> buildIOConnectorRequestsRequest(attributeValues);
+            case PN_USER_ATTRIBUTES -> buildUserAttributesInfoRequest(attributeValues);
         };
         return dynamoDbClient.query(queryRequest);
     }
@@ -36,6 +37,12 @@ public class DynamoDbService {
 
     private static QueryRequest buildPaymentInfoRequest(Map<String, AttributeValue> attributeValues) {
         return DynamoQueryBuilder.withoutFilter(DynamoTableName.PAYMENT_INFO.getValue(),
+                "pk = :v_pk",
+                attributeValues);
+    }
+
+    private static QueryRequest buildUserAttributesInfoRequest(Map<String, AttributeValue> attributeValues) {
+        return DynamoQueryBuilder.withoutFilter(DynamoTableName.PN_USER_ATTRIBUTES.getValue(),
                 "pk = :v_pk",
                 attributeValues);
     }

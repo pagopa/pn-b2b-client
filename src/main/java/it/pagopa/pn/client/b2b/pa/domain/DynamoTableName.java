@@ -8,6 +8,7 @@ public enum DynamoTableName {
     PAYMENT_INFO("pn-PaymentInfo"),
     NOTIFICATION_DELIVERY_COST("pn-NotificationDeliveryCost"),
     ONBOARD_INSTITUTIONS("pn-OnboardInstitutions"),
+    PN_USER_ATTRIBUTES("pn-UserAttributes"),
     IO_CONNECTOR_REQUESTS("pn-IOConnectorRequests");
 
     private final String value;
