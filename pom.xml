@@ -49,9 +49,9 @@
         <open.api.version.delivery.push_v26>9e486010b7103547b0da6bf9136d14f87da43fd6</open.api.version.delivery.push_v26>
         <!-- Le due property sottostanti (relative all'ultima versione) coincidono con le due di sopra.
         Questa duplicità è dovuta al fatto che al rilascio di una nuova versione, alcune execution dovranno usare le versioni più
-         recenti di delivery e deliveryPush, altre dovranno continuare a usare specificamente la versione v25 -->
-        <open.api.version.delivery>v2.22.0-RC.4</open.api.version.delivery>
-        <open.api.version.delivery.push>v2.22.0-RC.1</open.api.version.delivery.push>
+         recenti di delivery e deliveryPush, altre dovranno continuare a usare specificamente la versione precedente -->
+        <open.api.version.delivery>refs/heads/develop</open.api.version.delivery>
+        <open.api.version.delivery.push>v2.24.0</open.api.version.delivery.push>
 
         <open.api.version.user.attributes>v2.19.0</open.api.version.user.attributes>
         <open.api.version.mandate>v2.5.0</open.api.version.mandate>
@@ -940,7 +940,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery}/docs/openapi/api-external-web-recipient.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery}/docs/openapi/api-internal-web-recipient.yaml</inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
@@ -1190,7 +1190,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery}/docs/openapi/api-external-web-pa.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery}/docs/openapi/api-internal-web-pa.yaml</inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
