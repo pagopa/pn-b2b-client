@@ -89,28 +89,24 @@ public class TemplateConfiguration {
     @Bean
     public List<String> notificationAARFields() {
         return List.of("context_recipient", "recipient_taxId", "recipient_recipientType", "context_notification", "notification_iun", "notification_subject", "notification_sender",
-                "notification_sender_paDenomination", "context_qrCodeQuickAccessLink", "context_piattaformaNotificheURLLabel", "context_piattaformaNotificheURL",
-                "context_perfezionamentoURLLabel", "context_perfezionamentoURL");
+                "notification_sender_paDenomination", "context_qrCodeQuickAccessLink");
     }
 
     @Bean
     public List<String> notificationAARRADDaltFields() {
         return List.of("context_recipient", "recipient_taxId", "recipient_recipientType", "recipient_denomination", "context_notification", "notification_iun", "notification_subject", "notification_sender",
-                "notification_sender_paDenomination", "context_qrCodeQuickAccessLink", "context_piattaformaNotificheURLLabel", "context_piattaformaNotificheURL",
-                "context_perfezionamentoURLLabel", "context_perfezionamentoURL", "context_sendURL", "context_sendURLLAbel", "context_raddPhoneNumber");
+                "notification_sender_paDenomination", "context_qrCodeQuickAccessLink");
     }
 
     @Bean
     public List<String> notificationAARForEMAILFields() {
-        return List.of("context_notification", "notification_iun", "notification_sender", "notification_sender_paDenomination", "context_qrCodeQuickAccessLink",
-                "context_piattaformaNotificheURL", "context_perfezionamentoURL", "context_pnFaqSendURL");
+        return List.of("context_notification", "notification_iun", "notification_sender", "notification_sender_paDenomination", "context_qrCodeQuickAccessLink");
     }
 
     @Bean
     public List<String> notificationAARForPECFields() {
         return List.of("context_notification", "context_recipient", "notification_iun", "notification_subject", "notification_sender",
-                "notification_sender_paDenomination", "context_qrCodeQuickAccessLink", "context_recipientType",
-                "context_piattaformaNotificheURL", "context_perfezionamentoURL", "context_pnFaqSendURL", "recipient_taxId");
+                "notification_sender_paDenomination", "context_qrCodeQuickAccessLink", "context_recipientType", "recipient_taxId");
     }
 
     @Bean
