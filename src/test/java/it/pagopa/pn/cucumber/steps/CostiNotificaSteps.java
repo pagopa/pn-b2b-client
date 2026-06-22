@@ -2,7 +2,8 @@ package it.pagopa.pn.cucumber.steps;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
+import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PagoPaPayment;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.NewNotificationCostRequest;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.NotificationCostPaymentResponse;
@@ -13,7 +14,6 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostserv
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.RecipientCostData;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.client.b2b.pa.service.IPnNotificationCostClient;
-import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v26.NotificationProcessCostResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +46,7 @@ public class CostiNotificaSteps {
     public void checkNotificationDeliveryCostRecord(int recIndex, Map<String, String> expectedData) {
         try {
             Map<String, AttributeValue> record = searchNotificationDeliveryCostRecord(recIndex);
-            FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV29 fsn = sharedSteps.getSentNotificationLastVersion();
             //verifica che tutte le colonne siano valorizzate in modo coerente
             assertSoftly(softly -> {
                 softly.assertThat(record.get("senderTaxId").s()).as("Il senderTaxId del record non coincide con quello della fullSentNotification").isEqualTo(fsn.getSenderTaxId());
@@ -118,7 +118,7 @@ public class CostiNotificaSteps {
     @And("verifico che per l'utente {int} il popolamento dei dati su Pn-PaymentInfo sia avvenuto correttamente")
     public void checkPaymentInfoRecord(Integer recIndex) {
         try {
-            FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV29 fsn = sharedSteps.getSentNotificationLastVersion();
             fsn.getRecipients().get(recIndex).getPayments().forEach(payment -> {
                 if (payment.getPagoPa() != null) {
                     String creditorTaxId = payment.getPagoPa().getCreditorTaxId();
@@ -168,7 +168,7 @@ public class CostiNotificaSteps {
     public void checkRobustezzaApiRecuperoCosti(String inputParameterType) {
         AtomicBoolean apiInvocationHasFailed = new AtomicBoolean(false);
         try {
-            FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV29 fsn = sharedSteps.getSentNotificationLastVersion();
             fsn.getRecipients().forEach(rec -> rec.getPayments().forEach(payment -> {
                 if (payment.getPagoPa() != null) {
                     String creditorTaxId = payment.getPagoPa().getCreditorTaxId();
@@ -207,7 +207,7 @@ public class CostiNotificaSteps {
 
     @Then("verifico il comportamento dell'API di inserimento costi passando in input {string}")
     public void checkRobustezzaApiInserimentoCosti(String inputParamsType) {
-        FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV29 fsn = sharedSteps.getSentNotificationLastVersion();
         String iun = fsn.getIun();
         NewNotificationCostRequest request = initiNewNotificationCostRequest(fsn);
 
@@ -235,7 +235,7 @@ public class CostiNotificaSteps {
         }
     }
 
-    private NewNotificationCostRequest initiNewNotificationCostRequest(FullSentNotificationV28 fsn) {
+    private NewNotificationCostRequest initiNewNotificationCostRequest(FullSentNotificationV29 fsn) {
         NewNotificationCostRequest request = new NewNotificationCostRequest();
         request.setVat(fsn.getVat());
         request.setPaFee(fsn.getPaFee());
