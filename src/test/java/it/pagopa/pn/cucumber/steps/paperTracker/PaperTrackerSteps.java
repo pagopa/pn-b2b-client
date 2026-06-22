@@ -15,7 +15,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.model.Trac
 import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.model.TrackingsRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.model.TrackingsResponse;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.AttachmentDetails;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV28;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaperTrackerClient;
@@ -93,7 +93,7 @@ public class PaperTrackerSteps {
         this.paperTrackerSchemaValidatorProxy = paperTrackerSchemaValidatorProxy;
     }
 
-    private List<NotificationEvent> provideAnalogProgressAndFeedbackElement(FullSentNotificationV28 fullSentNotification, int attempt) {
+    private List<NotificationEvent> provideAnalogProgressAndFeedbackElement(FullSentNotificationV29 fullSentNotification, int attempt) {
         Predicate<TimelineElementV28> predicate;
         if (trackingKeys.get(0).contains(PREPARE_SIMPLE_REGISTERED_LETTER)) {
             predicate = te -> te.getElementId().contains(SEND_SIMPLE_REGISTERED_LETTER_PROGRESS);
@@ -158,7 +158,7 @@ public class PaperTrackerSteps {
     @And("genera la key da utilizzare per invocare l'API per il prodotto: {string}")
     public void generateTrackingIdForProduct(String productType) {
         String key = productType.equals("RS") ? PREPARE_SIMPLE_REGISTERED_LETTER : PREPARE_ANALOG_DOMICILE;
-        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersionByIun(sharedSteps.getNotificationIun());
+        FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersionByIun(sharedSteps.getNotificationIun());
         trackingKeys = fullSentNotification.getTimeline().stream()
                 .map(TimelineElementV28::getElementId)
                 .filter(e -> e.contains(key))
@@ -172,7 +172,7 @@ public class PaperTrackerSteps {
         request.setTrackingIds(trackingKeys);
         PaperTrackerOutputsResponse responseOutput = paperTrackerClient.retrieveTrackerOutputs(request);
 
-        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         assertThat(fullSentNotification).isNotNull();
 
         //recupera tutte gli elementi prepare che sono presenti in timeline
@@ -198,7 +198,7 @@ public class PaperTrackerSteps {
      * @param analogEventIds
      * @return
      */
-    private Map<Integer, List<NotificationEvent>> buildTimelineEventsMap(FullSentNotificationV28 notification, List<String> analogEventIds) {
+    private Map<Integer, List<NotificationEvent>> buildTimelineEventsMap(FullSentNotificationV29 notification, List<String> analogEventIds) {
         Map<Integer, List<NotificationEvent>> map = new HashMap<>();
         for (int i = 0; i < analogEventIds.size(); i++) {
             map.put(i, provideAnalogProgressAndFeedbackElement(notification, i));
@@ -378,7 +378,7 @@ public class PaperTrackerSteps {
 
     @Then("si controlla che non ci siano eventi duplicati")
     public void verifyNotDuplicatedEventArePresent() {
-        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         List<TimelineElementV28> timelineElements = fullSentNotification.getTimeline();
         long result = 0;
         for (TimelineElementV28 timelineElement : timelineElements) {

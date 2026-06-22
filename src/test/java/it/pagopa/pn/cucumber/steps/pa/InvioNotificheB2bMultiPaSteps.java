@@ -2,7 +2,7 @@ package it.pagopa.pn.cucumber.steps.pa;
 
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationsResponse;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +33,7 @@ public class InvioNotificheB2bMultiPaSteps {
     public void notificationCanBeRetrievedWithIUNByPA(String paName) {
         sharedSteps.setPA(paName);
         try {
-            AtomicReference<FullSentNotificationV28> fullSentNotification = new AtomicReference<>();
+            AtomicReference<FullSentNotificationV29> fullSentNotification = new AtomicReference<>();
             assertThatCode(() -> fullSentNotification.set(sharedSteps.getSentNotificationLastVersion()))
                     .as("L'invocazione del metodo per il recupero della fullSentNotification non deve lanciare eccezioni")
                     .doesNotThrowAnyException();
