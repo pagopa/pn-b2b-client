@@ -56,7 +56,7 @@ Feature: Archiviazione manuale di un descrittore
       | %random      | %random    | 404        |
 
   @happy-path
-  Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_1.5] Un ente erogatore di un e-service può avviare via M2M v3 il processo di archiviazione manuale del primo e meno recente descrittore in stato SUSPENDED
+  Scenario: [M2M_V3_MANUAL_ARCHIVING_DESCRIPTOR_1.5] Un ente erogatore di un e-service può avviare via M2M v3 il processo di archiviazione manuale del primo e meno recente descrittore in stato SUSPENDED
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
