@@ -230,8 +230,10 @@ public class EServiceTemplateVersionUpdateSteps {
         DescriptorAttributesSeed seed = new DescriptorAttributesSeed();
         seed.addCertifiedItem(List.of(attributeSeed));
 
-        eServiceTemplateClient.updateEServiceTemplateVersionAttributes(
-                eServiceTemplateId, eServiceTemplateVersionId, seed
+        httpCallExecutor.performCall(
+                () -> eServiceTemplateClient.updateEServiceTemplateVersionAttributes(
+                        eServiceTemplateId, eServiceTemplateVersionId, seed
+                )
         );
     }
 
