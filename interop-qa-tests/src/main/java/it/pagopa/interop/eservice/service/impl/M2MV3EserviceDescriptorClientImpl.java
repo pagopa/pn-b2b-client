@@ -14,6 +14,7 @@ import it.pagopa.interop.eservice.service.mapper.EserviceDescriptorDomainMapper;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Documents;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.EservicesApi;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptorAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptorDraftUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptorQuotasUpdateSeed;
 import it.pagopa.interop.utils.ApiClientUtils;
@@ -186,6 +187,18 @@ public class M2MV3EserviceDescriptorClientImpl extends AbstractDPoPClient implem
                 .dailyCallsTotal(body.getDailyCallsTotal())
                 .dailyCallsPerConsumer(body.getDailyCallsPerConsumer())
         ));
+    }
+
+    public void patchEServiceDescriptorCertifiedAttribute(UUID eServiceId, UUID descriptorId, Integer groupIndex,
+        UUID attributeId, EServiceDescriptorAttributePatchRequest body) {
+        eservicesApi.updateEServiceDescriptorCertifiedAttributeInGroup(
+            eServiceId,
+            descriptorId,
+            groupIndex,
+            attributeId,
+            new EServiceDescriptorAttributeSeed()
+                .dailyCallsPerConsumer(body.getDailyCallsPerConsumer())
+        );
     }
 
     @Override

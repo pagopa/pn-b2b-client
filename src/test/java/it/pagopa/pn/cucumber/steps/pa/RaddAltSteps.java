@@ -6,7 +6,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddAlternativeClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.RaddOperator;
@@ -40,8 +40,6 @@ import java.util.Map;
 import java.util.stream.IntStream;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario.DESTINATARIO_SIGNOR_CASUALE;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario.DESTINATARIO_SIGNOR_GENERATO;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.generateRandomNumber;
 
 @Slf4j
@@ -691,14 +689,14 @@ public class RaddAltSteps {
     }
 
     protected void selectUserRaddAlternative(Destinatario destinatario) {
-        this.currentUserCf = destinatario.equals(DESTINATARIO_SIGNOR_CASUALE) ? getRecipientZeroTaxId() :
-                destinatario.equals(DESTINATARIO_SIGNOR_GENERATO) ? FiscalCodeGenerator.generateCF(System.nanoTime()) : destinatario.getTaxId();
+        this.currentUserCf = destinatario.isSignorCasuale() ? getRecipientZeroTaxId() :
+                destinatario.isSignorGenerato() ? FiscalCodeGenerator.generateCF(System.nanoTime()) : destinatario.getTaxId();
         this.recipientType = destinatario.getRecipientType();
     }
 
     //TODO, c'è un metodo ad hoc per il taxId in SharedSteps
     private String getRecipientZeroTaxId() {
-        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         return fullSentNotification.getRecipients().get(0).getTaxId();
     }
 
@@ -725,11 +723,11 @@ public class RaddAltSteps {
             }
             case "corretto" -> vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getNotificationIun(), recipientIndex);
             case "dopo 120gg" -> {
-                if (this.currentUserCf.equalsIgnoreCase(MARIO_CUCUMBER_TAX_ID)) {
+                if (this.currentUserCf.equalsIgnoreCase(sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_CUCUMBER.getTaxId())) {
                     vieneRichiestoIlCodiceQRPerLoIUN(this.iunFieramosca120gg, recipientIndex);
-                } else if (this.currentUserCf.equalsIgnoreCase(MARIO_GHERKIN_TAX_ID)) {
+                } else if (this.currentUserCf.equalsIgnoreCase(sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_GHERKIN.getTaxId())) {
                     vieneRichiestoIlCodiceQRPerLoIUN(this.iunGherkin120gg, recipientIndex);
-                } else if (this.currentUserCf.equalsIgnoreCase(CUCUMBER_SPA_TAX_ID)) {
+                } else if (this.currentUserCf.equalsIgnoreCase(sharedSteps.getDestinatarioRegistry().DESTINATARIO_CUCUMBER_SPA.getTaxId())) {
                     vieneRichiestoIlCodiceQRPerLoIUN(this.iunLucio120gg, recipientIndex);
                 } else {
                     throw new IllegalArgumentException();

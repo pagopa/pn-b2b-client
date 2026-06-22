@@ -1,7 +1,6 @@
 package it.pagopa.pn.cucumber.steps.nationalRegistry;
 
 import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
@@ -12,20 +11,13 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
 
 @Slf4j
 public class INIPECGestionePuntualeEsitiSteps {
-
-    public INIPECGestionePuntualeEsitiSteps(DynamoDbService dynamoDbService) {
-        this.dynamoDbService = dynamoDbService;
-    }
-
     private final DynamoDbService dynamoDbService;
     private String notificationSentTimestamp;
-
     /** Tempo massimo di attesa che il dato venga scritto/aggiornato sul DB. */
     private static final Duration DB_POLL_TIMEOUT = Duration.ofMinutes(2);
     /** Intervallo fra un tentativo di lettura e il successivo. */
@@ -33,10 +25,12 @@ public class INIPECGestionePuntualeEsitiSteps {
     /** Finestra in cui la condizione di assenza deve restare stabile (per evitare check "troppo presto"). */
     private static final Duration DB_ABSENCE_STABILITY = Duration.ofSeconds(30);
 
+    public INIPECGestionePuntualeEsitiSteps(DynamoDbService dynamoDbService) {
+        this.dynamoDbService = dynamoDbService;
+    }
 
     @Then("viene verificato che la richiesta per il cf {string} non risulti in retry")
     public void verifyRetriesAreZero(String cf) {
-
         // Ripete query + assert finché il dato non è presente su DB con retry = 0, oppure scade il timeout
         await().atMost(DB_POLL_TIMEOUT)
                 .pollInterval(DB_POLL_INTERVAL)
@@ -58,7 +52,6 @@ public class INIPECGestionePuntualeEsitiSteps {
 
     @Then("viene verificato che la richiesta per il cf {string} risulti in retry")
     public void verifySentToDLQAndRetriesAreGreaterThanZero(String cf) {
-
         // Ripete query + assert finché il dato non è presente su DB con retry > 0, oppure scade il timeout
         await().atMost(DB_POLL_TIMEOUT)
                 .pollInterval(DB_POLL_INTERVAL)

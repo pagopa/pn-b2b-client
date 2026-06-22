@@ -3,6 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps.e_service_template.version.crud;
 import static java.util.Objects.nonNull;
 import static org.assertj.core.api.Assertions.fail;
 
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -151,6 +152,15 @@ public class EServiceTemplateVersionUpdateSteps {
             this.sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId(),
             new UpdateEServiceTemplateVersionSeed());
     }
+
+    @When("l'utente modifica la versione dell'e-service template con:")
+    public void updateEServiceTemplateVersionWithSpec(UpdateEServiceTemplateVersionSeed eServiceTemplateVersionSeed) {
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId();
+
+        this.updateEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, eServiceTemplateVersionSeed);
+    }
+
 
     @Then("le modifiche alla versione sono state applicate correttamente")
     public void checkEServiceTemplateVersionUpdate() {

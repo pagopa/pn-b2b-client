@@ -2,8 +2,9 @@ package it.pagopa.pn.cucumber.steps;
 
 import io.cucumber.spring.CucumberContextConfiguration;
 import it.pagopa.common.config.AwsConfig;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.generate.api.externalregistry.selfcare.privateapi.AooUoIdsApi;
+import it.pagopa.pn.client.b2b.pa.cache.CacheConfig;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
-import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
 import it.pagopa.pn.client.b2b.pa.config.TemplateEngineConfigBean;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.ApiKeysConfiguration;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.BearerTokenConfiguration;
@@ -105,9 +106,11 @@ import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceValidationSta
 import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceValidationStatusNoAcceptedV29;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceValidationStatusV29;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceWebhookV29;
+import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.client.b2b.pa.service.IBffMandateServiceApi;
 import it.pagopa.pn.client.b2b.pa.service.IMandateReverseServiceClient;
+import it.pagopa.pn.client.b2b.pa.service.impl.AooUoIdsClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BDeliveryPushServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
@@ -147,7 +150,7 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnSafeStoragePrivateClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnServiceDeskClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebMandateExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebRecipientExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesInternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebhookB2bExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.ReworkTimelineClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.TemplateEngineClientImpl;
@@ -156,9 +159,11 @@ import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRaddCognito;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.cucumber.steps.paperTracker.parser.EventTimelineParser;
 import it.pagopa.pn.cucumber.steps.paperTracker.proxy.PaperTrackerSchemaValidatorProxy;
+import it.pagopa.pn.cucumber.steps.recipient.OtpCodeService;
 import it.pagopa.pn.cucumber.steps.templateEngine.TemplateConfiguration;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextFactory;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
+import it.pagopa.pn.cucumber.steps.utilitySteps.TaxIdConfiguration;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import it.pagopa.pn.cucumber.utils.validator.SchemaValidator;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -177,7 +182,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnWebMandateExternalClientImpl.class,
         B2bMandateServiceClientImpl.class,
         PnExternalServiceClientImpl.class,
-        PnWebUserAttributesExternalClientImpl.class,
+        PnWebUserAttributesInternalClientImpl.class,
         PnAppIOB2bExternalClientImpl.class,
         PnApiKeyManagerExternalClientImpl.class,
         PnDowntimeLogsExternalClientImpl.class,
@@ -198,6 +203,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnB2bClientTimingConfigs.class,
         PnPollingFactory.class,
         CieGeneratorTool.class,
+        TaxIdConfiguration.class,
 
         PnPollingServiceTimelineRapidV1.class,
         PnPollingServiceStatusRapidV1.class,
@@ -337,7 +343,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnNotificationCostClientImpl.class,
         DynamoDbService.class,
         AwsConfig.class,
-        SenderInfoProvider.class
+        SenderInfoProvider.class,
+        CacheConfig.class,
+        AooUoIdsClientImpl.class,
+        AooUoIdsApi.class,
+        OtpCodeService.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

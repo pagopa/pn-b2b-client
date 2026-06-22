@@ -169,7 +169,7 @@ public class ApikeyManagerSteps {
         setBearerToken(paName);
         requestNewApiKey = new BffRequestNewApiKey().name("CUCUMBER GROUP TEST");
 
-        responseNewApiKeyTaxId = getSenderTaxIdFromProperties(paName);
+        responseNewApiKeyTaxId = sharedSteps.getDestinatarioRegistry().getSenderTaxIdFromProperties(paName);
         firstGroupUsed = this.sharedSteps.getGroupIdByPa(paName, GroupPosition.FIRST);
         requestNewApiKey.setGroups(List.of(firstGroupUsed));
         Assertions.assertDoesNotThrow(() -> responseNewApiKey = this.apiKeyManagerClient.newApiKey(requestNewApiKey));
@@ -184,7 +184,7 @@ public class ApikeyManagerSteps {
         setBearerToken(paName);
         requestNewApiKey = new BffRequestNewApiKey().name("CUCUMBER GROUP TEST");
 
-        responseNewApiKeyTaxId = getSenderTaxIdFromProperties(paName);
+        responseNewApiKeyTaxId = sharedSteps.getDestinatarioRegistry().getSenderTaxIdFromProperties(paName);
         firstGroupUsed = this.sharedSteps.getGroupIdByPa(paName, GroupPosition.FIRST);
         String lastGroupUsed = this.sharedSteps.getGroupIdByPa(paName, GroupPosition.LAST);
 
@@ -201,7 +201,7 @@ public class ApikeyManagerSteps {
         setBearerToken(paName);
 
         requestNewApiKey = new BffRequestNewApiKey().name("CUCUMBER GROUP TEST");
-        responseNewApiKeyTaxId = getSenderTaxIdFromProperties(paName);
+        responseNewApiKeyTaxId = sharedSteps.getDestinatarioRegistry().getSenderTaxIdFromProperties(paName);
         Assertions.assertDoesNotThrow(() -> responseNewApiKey = this.apiKeyManagerClient.newApiKey(requestNewApiKey));
         Assertions.assertNotNull(responseNewApiKey);
         sharedSteps.setRequestNewApiKey(requestNewApiKey);
@@ -262,7 +262,7 @@ public class ApikeyManagerSteps {
         Assertions.assertNotEquals(firstGroupUsed, group);
 
         requestNewApiKey = new BffRequestNewApiKey().name("CUCUMBER GROUP TEST");
-        responseNewApiKeyTaxId = getSenderTaxIdFromProperties(paName);
+        responseNewApiKeyTaxId = sharedSteps.getDestinatarioRegistry().getSenderTaxIdFromProperties(paName);
 
         requestNewApiKey.setGroups(List.of(group));
         Assertions.assertDoesNotThrow(() -> responseNewApiKey = this.apiKeyManagerClient.newApiKey(requestNewApiKey));
@@ -281,7 +281,7 @@ public class ApikeyManagerSteps {
         Assertions.assertEquals(firstGroupUsed, group);
 
         requestNewApiKey = new BffRequestNewApiKey().name("CUCUMBER GROUP TEST");
-        responseNewApiKeyTaxId = getSenderTaxIdFromProperties(paName);
+        responseNewApiKeyTaxId = sharedSteps.getDestinatarioRegistry().getSenderTaxIdFromProperties(paName);
 
         requestNewApiKey.setGroups(List.of(group));
         Assertions.assertDoesNotThrow(() -> responseNewApiKey = this.apiKeyManagerClient.newApiKey(requestNewApiKey));

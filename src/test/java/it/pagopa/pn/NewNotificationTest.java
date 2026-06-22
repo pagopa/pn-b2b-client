@@ -45,7 +45,7 @@ import static org.awaitility.Awaitility.await;
         PnWebhookB2bExternalClientImpl.class,
         PnWebMandateExternalClientImpl.class,
         PnExternalServiceClientImpl.class,
-        PnWebUserAttributesExternalClientImpl.class,
+        PnWebUserAttributesInternalClientImpl.class,
         PnAppIOB2bExternalClientImpl.class,
         PnApiKeyManagerExternalClientImpl.class,
         PnDowntimeLogsExternalClientImpl.class,
