@@ -1270,7 +1270,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | subject | invio notifica con cucumber |
     And destinatario
       | payment_creditorTaxId | 77777777777        |
-      | payment_noticeCode    | 302000100000019421 |
+      | payment_noticeCode    | 302191689948151964 |
     Then verifica stato pagamento di una notifica con status "REQUIRED"
 
   @pagamentiMultipli @ignore @mockCheckout

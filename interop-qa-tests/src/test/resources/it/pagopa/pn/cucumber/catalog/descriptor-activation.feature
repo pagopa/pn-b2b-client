@@ -37,9 +37,26 @@ Feature: Attivazione di un descrittore
     When l'utente attiva il descrittore di quell'e-service
     Then si ottiene status code 409
 
-    Examples: 
+    Examples:
       | statoDescrittore |
       | ARCHIVED         |
       | DRAFT            |
       | DEPRECATED       |
       | PUBLISHED        |
+
+  @debug
+  @adeguamento-analisi-rischio
+  Scenario Outline: [DESCRIPTOR_TK_ACTIVATION_1] A seguito del cambiamento di tenant kind si tenta di ri-attivare un proprio e-service sospeso
+    Given l'utente è un "admin" di "<ente>"
+    And "<ente>" ha già creato un e-service con un descrittore in stato "SUSPENDED"
+    And il tenant kind dell'ente "<ente>" viene impostato a "<kind>"
+    When l'utente attiva il descrittore di quell'e-service
+    Then si ottiene status code 200
+    And il descrittore risulta in stato "PUBLISHED"
+    Examples:
+      | ente    | kind        |
+      | PA4     | PRIVATE     |
+      | PA4     | GSP         |
+      | GSP2    | PA          |
+      | Privato | PA          |
+

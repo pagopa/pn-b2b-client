@@ -125,9 +125,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico AR
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario
-      | denomination            | Leonardo Da Vinci        |
-      | taxId                   | FNTLCU80T25F205R         |
+    And destinatario Signor Casuale e:
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     And destinatario Mario Cucumber e:
@@ -304,9 +302,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico AR
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario
-      | denomination            | PF non censito   |
-      | taxId                   | STTSGT90A01H501J |
+    And destinatario Utenza con Indirizzo Valido da ANPR e:
       | digitalDomicile         | NULL             |
       | physicalAddress_State   | MESSICO          |
       | physicalAddress_zip     | ZONE_2           |

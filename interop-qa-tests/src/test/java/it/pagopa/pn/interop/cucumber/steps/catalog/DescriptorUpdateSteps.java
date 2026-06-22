@@ -54,6 +54,18 @@ public class DescriptorUpdateSteps {
         );
     }
 
+    @When("l'utente aggiorna alcuni parametri di quel descrittore con:")
+    public void updateSomeDescriptorParams(UpdateEServiceDescriptorSeed updateEServiceDescriptorSeed) throws InterruptedException {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        httpCallExecutor.performCall(
+                () -> clientTokenConfigurator.getEServiceClient().updateDraftDescriptor(
+                        sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                        sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
+                        updateEServiceDescriptorSeed
+                )
+        );
+    }
+
     @When("l'utente aggiorna la durata del voucher e le soglie di carico di quel descrittore")
     public void updateVoucherLifespanAndCallsLimit() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
@@ -106,6 +118,7 @@ public class DescriptorUpdateSteps {
             case CERTIFIED -> requiredCertifiedAttributes.get(groupIndex).get(attributeIndex);
             case DECLARED -> requiredDeclaredAttributes.get(groupIndex).get(attributeIndex);
             case VERIFIED -> requiredVerifiedAttributes.get(groupIndex).get(attributeIndex);
+            default -> throw new UnsupportedOperationException("Unsupported attribute kind: %s".formatted(attributeType));
         };
 
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
@@ -144,6 +157,7 @@ public class DescriptorUpdateSteps {
             case CERTIFIED -> requiredCertifiedAttributes.get(groupIndex).get(attributeIndex);
             case DECLARED -> requiredDeclaredAttributes.get(groupIndex).get(attributeIndex);
             case VERIFIED -> requiredVerifiedAttributes.get(groupIndex).get(attributeIndex);
+            default -> throw new UnsupportedOperationException("Unsupported attribute kind: %s".formatted(attributeType));
         };
 
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
