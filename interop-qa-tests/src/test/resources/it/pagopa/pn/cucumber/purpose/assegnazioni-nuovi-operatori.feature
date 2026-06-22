@@ -42,7 +42,7 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
 	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
 	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
 	And l'utente è un "admin" di "PA2"
-	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
+	And l'utente assegna un valutatore alla finalità in modalità "ReviewerWritesReviewerSigns" con successo
 	# Seconda finalità: nuovo e-service + nuovo agreement + workflow SUBMITTED
 	And "PA1" ha già creato e pubblicato 1 e-service
 	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -63,7 +63,7 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
 	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
 	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
 	And l'utente è un "admin" di "PA2"
-	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
+	And l'utente assegna un valutatore alla finalità in modalità "ReviewerWritesReviewerSigns" con successo
 	# Seconda finalità: nuovo e-service + nuovo agreement + workflow SUBMITTED
 	And "PA1" ha già creato e pubblicato 1 e-service
 	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -84,7 +84,7 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
 	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
 	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
 	And l'utente è un "admin" di "PA2"
-	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
+	And l'utente assegna un valutatore alla finalità in modalità "ReviewerWritesReviewerSigns" con successo
 	# Seconda finalità: nuovo e-service + nuovo agreement + workflow SUBMITTED
 	And "PA1" ha già creato e pubblicato 1 e-service
 	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -105,7 +105,7 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
 	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
 	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
 	And l'utente è un "admin" di "PA2"
-	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
+	And l'utente assegna un valutatore alla finalità in modalità "ReviewerWritesReviewerSigns" con successo
 	# Seconda finalità: nuovo e-service + nuovo agreement + workflow SUBMITTED
 	And "PA1" ha già creato e pubblicato 1 e-service
 	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -126,7 +126,7 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
 	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
 	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
 	And l'utente è un "admin" di "PA2"
-	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
+	And l'utente assegna un valutatore alla finalità in modalità "ReviewerWritesReviewerSigns" con successo
 	# Seconda finalità: nuovo e-service + nuovo agreement + workflow SUBMITTED
 	And "PA1" ha già creato e pubblicato 1 e-service
 	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -141,16 +141,26 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
  	And viene restituita una sola finalità associata al primo e-service creato nelle assegnazioni
 
   # PST: Scenario 32 - Caso 32.2
+  # NOTA 22/06/2026: test difficile da automatizzare in quanto richiede un utente valutatore non assegnato
+  # a nessuna finalità, il che è fuori dal controllo della suite di TA (un precedente test può avere lasciato
+  # delle assegnazioni, oppure potrebbe averlo fatto un test UI).
+  # Si minimizza il problema utilizzando un ente poco utilizzato (PA4).
   @happy-path
   Scenario: [AWRS_LETTURA_32_2_NESSUNA_ASSEGNAZIONE] Lettura assegnazioni quando valutatore non è assegnato a nessuna finalità
-	When l'utente è un "reviewer" di "PA2"
+	When l'utente è un "reviewer" di "PA4"
 	And tenta di interrogare l'endpoint delle assegnazioni del valutatore senza filtri
 	Then si ottiene status code 200
 	And la risposta contiene 0 risultati nelle assegnazioni
 
   # PST: Scenario 32 - Caso 32.3
   @sad-path
-  Scenario: [AWRS_LETTURA_32_3_ACCESSO_NEGATO] Accesso negato per utente non valutatore all'endpoint delle assegnazioni
-	When l'utente è un "api" di "PA2"
+  Scenario Outline: [AWRS_LETTURA_32_3_ACCESSO_NEGATO] Accesso negato per utenti non valutatori all'endpoint delle assegnazioni
+	When l'utente è un "<ruolo>" di "PA2"
 	And tenta di interrogare l'endpoint delle assegnazioni del valutatore senza filtri
 	Then si ottiene status code 403
+	Examples:
+	  | ruolo    |
+	  | api      |
+	  | admin    |
+	  | support  |
+	  | security |

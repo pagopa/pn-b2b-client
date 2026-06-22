@@ -16,6 +16,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class PurposeRiskAnalysisAssignmentsReadSteps {
@@ -146,11 +148,17 @@ public class PurposeRiskAnalysisAssignmentsReadSteps {
     }
 
     private void queryAssignments(Integer offset, Integer limit, List<UUID> eservicesIds, List<RiskAnalysisSigningState> states) {
+        Integer finalOffset = isNull(offset) ? 0 : offset;
+        Integer finalLimit = isNull(limit) ? 50 : limit;
+        List<UUID> finalEservices = nonNull(eservicesIds) ? eservicesIds : sharedStepsContext.getEServicesCommonContext().getTotalPublishedEServicesIds()
+                .stream()
+                .map(EServiceDescriptor::getEServiceId)
+                .toList();
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().getRiskAnalysisAssignments(
-                offset,
-                limit,
-                eservicesIds,
+                finalOffset,
+                finalLimit,
+                finalEservices,
                 states
         ));
 
