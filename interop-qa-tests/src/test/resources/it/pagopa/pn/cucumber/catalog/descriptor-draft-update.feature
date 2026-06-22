@@ -249,7 +249,8 @@ Feature: Aggiornamento di un descrittore in bozza
       | dailyCallsTotal       | 10 |
     And la soglia differenziata per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo è uguale a "10"
 
-  @certifiedDiscreteAttribute @certifiedDiscreteAttributeFlagOn
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
   Scenario: [CERT_DISCRETE_ATTR_ESERVICE_ADD_1] L'erogatore di un e-service in stato DRAFT può assegnare diversi attributi
   certificati discreti, impostando le relative soglie e i comparatori (sono incluse le logiche OR e AND).
 
@@ -272,7 +273,8 @@ Feature: Aggiornamento di un descrittore in bozza
     And la soglia differenziata per l'attributo CERTIFIED 1-esimo creato nel gruppo 0-esimo è uguale a "200"
     And la soglia differenziata per l'attributo CERTIFIED_DISCRETE 1-esimo creato nel gruppo 1-esimo è uguale a "%null", mentre il discrete comparator è "GTE" e il discrete threshhold è uguale a 500000
 
-  @certifiedDiscreteAttribute @certifiedDiscreteAttributeFlagOn
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
   Scenario: [CERT_DISCRETE_ATTR_ESERVICE_ADD_2] L'erogatore di un e-service in stato DRAFT può modificare diversi attributi
   certificati discreti, impostando le relative soglie e comparatori (sono incluse le logiche OR e AND).
 
@@ -301,7 +303,8 @@ Feature: Aggiornamento di un descrittore in bozza
     And la soglia differenziata per l'attributo CERTIFIED 1-esimo creato nel gruppo 0-esimo è uguale a "190"
     And la soglia differenziata per l'attributo CERTIFIED_DISCRETE 1-esimo creato nel gruppo 1-esimo è uguale a "%null", mentre il discrete comparator è "LTE" e il discrete threshhold è uguale a 900000
 
-  @certifiedDiscreteAttribute @certifiedDiscreteAttributeFlagOn
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
   Scenario: [CERT_DISCRETE_ATTR_ESERVICE_UPD_1] L'erogatore di un e-service in stato PUBLISHED può modificare diversi attributi
   certificati discreti, impostando le relative soglie e comparatori (sono incluse le logiche OR e AND).
 
@@ -319,7 +322,8 @@ Feature: Aggiornamento di un descrittore in bozza
     And si ottiene response status code 200
     Then la soglia differenziata per l'attributo CERTIFIED_DISCRETE 0-esimo creato nel gruppo 0-esimo è uguale a "150", mentre il discrete comparator è "GTE" e il discrete threshhold è uguale a 2500000
 
-  @certifiedDiscreteAttribute @certifiedDiscreteAttributeFlagOn
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
   Scenario: [CERT_DISCRETE_ATTR_ESERVICE_UPD_2] L'erogatore di un e-service in stato PUBLISHED non può modificare la configurazione
   di un attributo certificato discreto.
 
@@ -335,7 +339,8 @@ Feature: Aggiornamento di un descrittore in bozza
     When l'utente tenta di aggiornare l'attributo certificato discreto 0-esimo del gruppo 0-esimo con discrete comparator "GT" e il discrete threshhold 25000
     Then si ottiene response status code 400
 
-  @certifiedDiscreteAttribute @certifiedDiscreteAttributeFlagOn
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
   Scenario: [CERT_DISCRETE_ATTR_ESERVICE_UPD_3] L'erogatore di un e-service in stato DRAFT può modificare la configurazione
   di un attributo certificato discreto.
 
@@ -352,7 +357,8 @@ Feature: Aggiornamento di un descrittore in bozza
     Then si ottiene response status code 200
     And la soglia differenziata per l'attributo CERTIFIED_DISCRETE 0-esimo creato nel gruppo 0-esimo è uguale a "100", mentre il discrete comparator è "GT" e il discrete threshhold è uguale a 25000
 
-  @certifiedDiscreteAttribute @certifiedDiscreteAttributeFlagOn
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
   Scenario: [CERT_DISCRETE_ATTR_ESERVICE_NO_DUPLICATED] Un e-service in stato DRAFT non può avere lo stesso attributo certificato
   discreto nello stesso gruppo (logiche OR non consentite).
 
@@ -365,7 +371,8 @@ Feature: Aggiornamento di un descrittore in bozza
       | CERTIFIED_DISCRETE | 0     | GTE        | 500000  |                       |
     Then si ottiene response status code 400
 
-  @certifiedDiscreteAttribute @certifiedDiscreteAttributeFlagOn
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
   Scenario: [CERT_DISCRETE_ATTR_ESERVICE_THRESHOLD_1] Per un e-service in stato DRAFT non è possibile indicare una dailyCallsPerConsumer
   nell'attributo certificato discreto superiore al limite di chiamate totali giornaliero
     Given l'utente è un "admin" di "PA2"
@@ -376,7 +383,8 @@ Feature: Aggiornamento di un descrittore in bozza
       | CERTIFIED_DISCRETE | 0     | GTE        | 1000000 | 10000                 |
     Then si ottiene response status code 400
 
-  @certifiedDiscreteAttribute @certifiedDiscreteAttributeFlagOn
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
   Scenario: [CERT_DISCRETE_ATTR_ESERVICE_THRESHOLD_2] Per un e-service in stato DRAFT è possibile indicare più attributi certificati
     discreti la cui somma delle dailyCallsPerConsumer è superiore al limite di chiamate totali giornaliero dell'e-service.
     Given l'utente è un "admin" di "PA2"
@@ -392,7 +400,8 @@ Feature: Aggiornamento di un descrittore in bozza
     And la soglia differenziata per l'attributo CERTIFIED_DISCRETE 0-esimo creato nel gruppo 1-esimo è uguale a "700", mentre il discrete comparator è "GTE" e il discrete threshhold è uguale a 125000
     And la soglia differenziata per l'attributo CERTIFIED 1-esimo creato nel gruppo 1-esimo è uguale a "900"
 
-  @certifiedDiscreteAttribute @certifiedDiscreteAttributeFlagOn
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
   Scenario: [CERT_DISCRETE_ATTR_ESERVICE_THRESHOLD_3] Per un e-service in stato PUBLISHED non è possibile indicare una dailyCallsPerConsumer
   nell'attributo certificato discreto superiore al limite di chiamate totali giornaliero
     Given l'utente è un "admin" di "PA2"
@@ -403,7 +412,8 @@ Feature: Aggiornamento di un descrittore in bozza
       | CERTIFIED_DISCRETE | 0     | GTE        | 1000000 | 10000                 |
     Then si ottiene response status code 400
 
-  @certifiedDiscreteAttribute @certifiedDiscreteAttributeFlagOn
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
   Scenario: [CERT_DISCRETE_ATTR_ESERVICE_THRESHOLD_4] Per un e-service in stato PUBLISHED è possibile indicare più attributi certificati
   discreti la cui somma delle dailyCallsPerConsumer è superiore al limite di chiamate totali giornaliero dell'e-service.
     Given l'utente è un "admin" di "PA2"

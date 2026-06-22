@@ -3143,7 +3143,8 @@ Feature: Test API of e-service template
     When l'utente aggiorna la descrizione dell'e-service template in stato PUBLISHED con una descrizione di 401 caratteri
     Then si ottiene response status code 400
 
-  @certifiedDiscreteAttribute @certifiedDiscreteAttributeFlagOn
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
   Scenario: [CERT_DISCRETE_ATTR_ESERVICE_TEMPL_1] Configurazione e associazione con successo di attributi certificati discreti
   a un template e-service in stato DRAFT (logiche OR e AND incluse)
 
@@ -3170,7 +3171,8 @@ Feature: Test API of e-service template
       | CERTIFIED          | 1     |            |         |
       | DECLARED           | 0     |            |         |
 
-  @certifiedDiscreteAttribute @certifiedDiscreteAttributeFlagOn
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
   Scenario: [CERT_DISCRETE_ATTR_ESERVICE_TEMPL_2] La modifica della soglia e del comparatore di un attributo certificato discreto
   su un template e-service già pubblicato non va a buon fine.
 
@@ -3192,7 +3194,8 @@ Feature: Test API of e-service template
     When l'utente modifica il primo attributo certificato discreto nel primo gruppo degli attributi certificati con discrete threshold 10 e discrete comparator a "LT"
     Then si ottiene response status code 400
 
-  @certifiedDiscreteAttribute @certifiedDiscreteAttributeFlagOn
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
   Scenario: [CERT_DISCRETE_ATTR_ESERVICE_TEMPL_NO_DUPLICATED] Un e-service template in stato DRAFT non può avere lo stesso
   attributo certificato discreto nello stesso gruppo (logiche OR non consentite).
 
