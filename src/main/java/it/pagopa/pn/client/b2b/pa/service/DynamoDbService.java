@@ -26,7 +26,7 @@ public class DynamoDbService {
             case REWORKED_TIMELINES_FOR_INVOICING -> buildReworkedTimelinesForInvoicingRequest(attributeValues);
             case COST_COMPONENTS -> buildCostComponentsRequest(attributeValues);
             case COST_UPDATE_RESULT -> buildCostUpdateResultRequest(attributeValues);
-            case PN_USER_ATTRIBUTES -> buildUserAttributesInfoRequest(attributeValues);
+            case USER_ATTRIBUTES -> buildUserAttributesInfoRequest(attributeValues);
         };
         return dynamoDbClient.query(queryRequest);
     }
@@ -45,7 +45,7 @@ public class DynamoDbService {
     }
 
     private static QueryRequest buildUserAttributesInfoRequest(Map<String, AttributeValue> attributeValues) {
-        return DynamoQueryBuilder.withoutFilter(DynamoTableName.PN_USER_ATTRIBUTES.getValue(),
+        return DynamoQueryBuilder.withoutFilter(DynamoTableName.USER_ATTRIBUTES.getValue(),
                 "pk = :v_pk",
                 attributeValues);
     }
