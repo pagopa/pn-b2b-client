@@ -22,14 +22,18 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffNotificationDetailDocument;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffNotificationDetailTimeline;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.NotificationStatusV26;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.digitaladdresses.BffUserAddress;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffConsent;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffTosPrivacyActionBody;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.generate.model.externalregistry.selfcare.privateapi.FilteredPaIdsResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.CxLanguage;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.AddressVerification;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.CourtesyDigitalAddress;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.LegalChannelType;
+import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.client.b2b.pa.service.IPnBFFRecipientNotificationClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnTosPrivacyClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
@@ -39,14 +43,13 @@ import it.pagopa.pn.client.b2b.pa.service.impl.AooUoIdsClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesInternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotification;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.AddressVerification;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
+import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
 import it.pagopa.pn.cucumber.utils.DataTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -111,6 +114,9 @@ public class RicezioneNotificheWebSteps {
     private HttpStatusCodeException notificationError;
     private BundleFullReceivedNotification fullReceivedNotification;
     private BffFullNotificationV1 bffFullNotificationV1Recipient;
+    private OtpCodeService otpCodeService;
+
+    private final DynamoDbService dynamoDbService;
     private it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffFullNotificationV1 bffFullNotificationV1Sender;
 
     private static final String TOS_VERSION = "8";
@@ -152,9 +158,9 @@ public class RicezioneNotificheWebSteps {
     }
 
     @Autowired
-    public RicezioneNotificheWebSteps(ApplicationContext context, SharedSteps sharedSteps, PnWebUserAttributesExternalClientImpl iPnWebUserAttributesClient,
-                                      IPnBFFRecipientNotificationClient bffRecipientNotificationClient, IPnTosPrivacyClient iPnTosPrivacyClient, PnB2bClientTimingConfigs timingConfigs,
-                                      AooUoIdsClientImpl aooUoIdsClient) {
+    public RicezioneNotificheWebSteps(ApplicationContext context, SharedSteps sharedSteps, PnWebUserAttributesInternalClientImpl iPnWebUserAttributesClient,
+                                      IPnBFFRecipientNotificationClient bffRecipientNotificationClient, IPnTosPrivacyClient iPnTosPrivacyClient, PnB2bClientTimingConfigs timingConfigs, DynamoDbService dynamoDbService,
+                                      OtpCodeService otpCodeService, AooUoIdsClientImpl aooUoIdsClient) {
         this.context = context;
         this.sharedSteps = sharedSteps;
         this.webRecipientClient = sharedSteps.getWebRecipientClient();
@@ -165,6 +171,8 @@ public class RicezioneNotificheWebSteps {
         this.iPnTosPrivacyClient = sharedSteps.getIPnTosPrivacyClientImpl();
         this.timingConfigs = timingConfigs;
         this.aooUoIdsClient = aooUoIdsClient;
+        this.dynamoDbService = dynamoDbService;
+        this.otpCodeService = otpCodeService;
     }
 
     @Then("la notifica può essere correttamente recuperata da {string}")
@@ -680,16 +688,26 @@ public class RicezioneNotificheWebSteps {
     @When("si predispone addressbook per l'utente {string}")
     public void siPredisponeAddressbook(String user) {
         switch (user) {
-            case MARIO_CUCUMBER ->
-                    this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
-            case MARIO_GHERKIN ->
-                    this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
-            case GALILEO_GALILEI ->
-                    this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_4);
-            case LUCIO_ANNEO_SENECA, CUCUMBER_SPA ->
-                    this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
-            case GHERKIN_SRL ->
-                    this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
+            case MARIO_CUCUMBER -> {
+                this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
+                sharedSteps.setDestinatariList(List.of(sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_CUCUMBER));
+            }
+            case MARIO_GHERKIN -> {
+                this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
+                sharedSteps.setDestinatariList(List.of(sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_GHERKIN));
+            }
+            case GALILEO_GALILEI -> {
+                this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_4);
+                sharedSteps.setDestinatariList(List.of(sharedSteps.getDestinatarioRegistry().DESTINATARIO_GALILEO_GALILEI));
+            }
+            case LUCIO_ANNEO_SENECA, CUCUMBER_SPA -> {
+                this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+                sharedSteps.setDestinatariList(List.of(sharedSteps.getDestinatarioRegistry().DESTINATARIO_CUCUMBER_SPA));
+            }
+            case GHERKIN_SRL -> {
+                this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
+                sharedSteps.setDestinatariList(List.of(sharedSteps.getDestinatarioRegistry().DESTINATARIO_GHERKIN_SRL));
+            }
             case ALDA_MERINI ->
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_3);
             case DINO_SAURO ->
@@ -700,46 +718,61 @@ public class RicezioneNotificheWebSteps {
 
     @And("viene inserito un recapito legale {string} con verification code errato {string}")
     public void nuovoRecapitoLegale(String pec, String verificationCode) {
-        postRecipientLegalAddressWrongCode("default", pec, verificationCode);
+        postRecipientLegalAddressWrongCode("default", pec, verificationCode, CxLanguage.IT);
     }
 
     @When("viene richiesto l'inserimento della pec {string}")
     public void perLUtenteVieneSettatoLaPec(String pec) {
-        postRecipientLegalAddress("default", pec, "00000", false);
+        postRecipientLegalAddress("default", pec, "00000", false, CxLanguage.IT);
+    }
+
+    @When("viene richiesto l'inserimento della pec {string}, e passo la lingua selezionata dal destinatario {string}")
+    public void perLUtenteVieneSettatoLaPecELang(String pec, String language) {
+        postRecipientLegalAddress("default", pec, "00000", true, CxLanguage.fromValue(language));
     }
 
     @When("viene richiesto l'inserimento del numero di telefono {string}")
     public void vieneRichiestoLInserimentoDelNumeroDiTelefono(String phone) {
-        postRecipientCourtesyAddress("default", phone, LegalCourtesyAddressWrapper.ChannelType.SMS, "00000", false);
+        postRecipientCourtesyAddress("default", phone, LegalCourtesyAddressWrapper.ChannelType.SMS, "00000", false, CxLanguage.IT);
+    }
+
+    @When("viene richiesto l'inserimento del numero di telefono {string}, e passo la lingua selezionata dal destinatario {string}")
+    public void vieneRichiestoLInserimentoDelNumeroDiTelefonoELang(String phone, String language) {
+        postRecipientCourtesyAddress("default", phone, LegalCourtesyAddressWrapper.ChannelType.SMS, "00000", true, CxLanguage.fromValue(language));
     }
 
     @When("viene richiesto l'inserimento del email di cortesia {string}")
     public void vieneRichiestoLInserimentoDelEmailDiCortesia(String email) {
-        postRecipientCourtesyAddress("default", email, LegalCourtesyAddressWrapper.ChannelType.EMAIL, "00000", false);
+        postRecipientCourtesyAddress("default", email, LegalCourtesyAddressWrapper.ChannelType.EMAIL, "00000", false, CxLanguage.IT);
+    }
+
+    @When("viene richiesto l'inserimento del email di cortesia {string}, e passo la lingua selezionata dal destinatario {string}")
+    public void vieneRichiestoLInserimentoDelEmailDiCortesiaeLang(String email, String language) {
+        postRecipientCourtesyAddress("default", email, LegalCourtesyAddressWrapper.ChannelType.EMAIL, "00000", true, CxLanguage.fromValue(language));
     }
 
     @And("viene inserito un recapito legale {string} per il comune {string}")
     public void nuovoRecapitoLegaleDalComune(String pec, String pa) {
         String senderIdPa = getSenderIdPa(pa);
-        postRecipientLegalAddress(senderIdPa, pec, null, true);
+        postRecipientLegalAddress(senderIdPa, pec, null, true, CxLanguage.IT);
     }
 
     @And("viene inserito un recapito legale {string} per il comune {string} con verification code errato {string}")
     public void nuovoRecapitoLegaleDalComuneConVerificationCodeErrato(String pec, String pa, String verificationCode) {
         String senderIdPa = getSenderIdPa(pa);
-        postRecipientLegalAddressWrongCode(senderIdPa, pec, verificationCode);
+        postRecipientLegalAddressWrongCode(senderIdPa, pec, verificationCode, CxLanguage.IT);
     }
 
     @When("viene richiesto l'inserimento della pec {string} per il comune {string}")
     public void perLUtenteVieneSettatoLaPecPerIlComune(String pec, String pa) {
         String senderIdPa = getSenderIdPa(pa);
-        postRecipientLegalAddress(senderIdPa, pec, "00000", false);
+        postRecipientLegalAddress(senderIdPa, pec, "00000", false, CxLanguage.IT);
     }
 
     @And("viene richiesto l'inserimento del email di cortesia {string} per il comune {string}")
     public void vieneRichiestoLInserimentoDelEmailDiCortesiaDalComune(String email, String pa) {
         String senderIdPa = getSenderIdPa(pa);
-        postRecipientCourtesyAddress(senderIdPa, email, LegalCourtesyAddressWrapper.ChannelType.EMAIL, "00000", false);
+        postRecipientCourtesyAddress(senderIdPa, email, LegalCourtesyAddressWrapper.ChannelType.EMAIL, "00000", false, CxLanguage.IT);
     }
 
     @When("viene invocata l'api di filtro pa di tipo Root passando le seguenti PA:")
@@ -780,47 +813,51 @@ public class RicezioneNotificheWebSteps {
     @And("viene inserita l'email di cortesia {string} per il comune {string}")
     public void vieneInseritaEmailDiCortesiaDalComune(String email, String pa) {
         String senderIdPa = getSenderIdPa(pa);
-        postRecipientCourtesyAddress(senderIdPa, email, LegalCourtesyAddressWrapper.ChannelType.EMAIL, null, true);
+        postRecipientCourtesyAddress(senderIdPa, email, LegalCourtesyAddressWrapper.ChannelType.EMAIL, null, true, CxLanguage.IT);
     }
 
     @When("viene richiesto l'inserimento del numero di telefono {string} per il comune {string}")
     public void vieneRichiestoLInserimentoDelNumeroDiTelefono(String phone, String pa) {
         String senderIdPa = getSenderIdPa(pa);
-        postRecipientCourtesyAddress(senderIdPa, phone, LegalCourtesyAddressWrapper.ChannelType.SMS, "00000", false);
+        postRecipientCourtesyAddress(senderIdPa, phone, LegalCourtesyAddressWrapper.ChannelType.SMS, "00000", false, CxLanguage.IT);
     }
 
-    private void postRecipientCourtesyAddress(String senderId, String addressVerification, LegalCourtesyAddressWrapper.ChannelType type, String verificationCode, boolean inserimento) {
+    private void postRecipientCourtesyAddress(String senderId, String addressVerification, LegalCourtesyAddressWrapper.ChannelType type, String verificationCode, boolean inserimento, CxLanguage xPagopaPnLanguageCxLanguage) {
         try {
             if (inserimento) {
-                this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, LegalCourtesyAddressWrapper.ChannelType.EMAIL, (new AddressVerification().value(addressVerification)));
-                verificationCode = this.externalClient.getVerificationCode(addressVerification);
+                Destinatario destinatario = sharedSteps.getDestinatariList().get(0);
+                // il service tiene traccia dell'ultimo OTP già restituito per questa pk+canale
+                // e attende su Dynamo finché non ne compare uno nuovo dopo la POST
+                this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, type, (new AddressVerification().value(addressVerification)), xPagopaPnLanguageCxLanguage);
+                verificationCode = otpCodeService.getNewOtp(destinatario, type);
             }
-            this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, type, (new AddressVerification().value(addressVerification).verificationCode(verificationCode)));
+            this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, type, (new AddressVerification().value(addressVerification).verificationCode(verificationCode)), xPagopaPnLanguageCxLanguage);
         } catch (HttpStatusCodeException httpStatusCodeException) {
             sharedSteps.setNotificationError(httpStatusCodeException);
         }
     }
 
-    private void postRecipientLegalAddress(String senderIdPa, String addressVerification, String verificationCode, boolean inserimento) {
+    private void postRecipientLegalAddress(String senderIdPa, String addressVerification, String verificationCode, boolean inserimento, CxLanguage xPagopaPnLanguage) {
         try {
             if (inserimento) {
-                this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalCourtesyAddressWrapper.ChannelType.PEC, (new AddressVerification().value(addressVerification)));
-                verificationCode = this.externalClient.getVerificationCode(addressVerification);
+                Destinatario destinatario = sharedSteps.getDestinatariList().get(0);
+                this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalCourtesyAddressWrapper.ChannelType.PEC, (new AddressVerification().value(addressVerification)), xPagopaPnLanguage);
+                verificationCode = otpCodeService.getNewOtp(destinatario, LegalCourtesyAddressWrapper.ChannelType.PEC);
             }
-            this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalCourtesyAddressWrapper.ChannelType.PEC, (new AddressVerification().value(addressVerification).verificationCode(verificationCode)));
+            this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalCourtesyAddressWrapper.ChannelType.PEC, (new AddressVerification().value(addressVerification).verificationCode(verificationCode)),xPagopaPnLanguage);
         } catch (HttpStatusCodeException httpStatusCodeException) {
             sharedSteps.setNotificationError(httpStatusCodeException);
         }
     }
 
-    private void postRecipientLegalAddressWrongCode(String senderIdPa, String addressVerification, String verificationCode) {
+    private void postRecipientLegalAddressWrongCode(String senderIdPa, String addressVerification, String verificationCode, CxLanguage xPagopaPnLanguage) {
         String[] code = {verificationCode};
         AddressVerification verification = new AddressVerification()
                 .value(addressVerification)
                 .verificationCode(code[0]);
 
         Assertions.assertThrows(HttpStatusCodeException.class,
-                () -> this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalCourtesyAddressWrapper.ChannelType.PEC, verification));
+                () -> this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalCourtesyAddressWrapper.ChannelType.PEC, verification, xPagopaPnLanguage));
     }
 
     @And("viene cancellata l'email di cortesia per il comune {string}")
@@ -851,6 +888,12 @@ public class RicezioneNotificheWebSteps {
         HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
         Assertions.assertTrue((httpStatusCodeException != null) &&
                 (httpStatusCodeException.getStatusCode().toString().substring(0, 3).equals(statusCode)));
+    }
+
+    @Then("l'inserimento va a buon fine e NON ha prodotto un errore")
+    public void lInserimentoNonHaProdottoErrore() {
+        HttpStatusCodeException codeException = sharedSteps.consumeNotificationError();
+        Assertions.assertNull(codeException);
     }
 
     @And("verifico che l'atto opponibile a terzi di {string} sia lo stesso")
@@ -940,18 +983,18 @@ public class RicezioneNotificheWebSteps {
         }
     }
 
-    private void postRecipientLegalAddressSercq(String senderIdPa, String address) {
+    private void postRecipientLegalAddressSercq(String senderIdPa, String address, CxLanguage xPagopaPnLanguage) {
         Assertions.assertDoesNotThrow(() -> this.iPnWebUserAttributesClient.postRecipientLegalAddress(
-                senderIdPa, LegalCourtesyAddressWrapper.ChannelType.SERCQ_SEND, (new AddressVerification().value(address))));
+                senderIdPa, LegalCourtesyAddressWrapper.ChannelType.SERCQ_SEND, (new AddressVerification().value(address)), xPagopaPnLanguage));
     }
 
-    private void postRecipientLegalAddressSercqError(String senderIdPa, String address) {
+    private void postRecipientLegalAddressSercqError(String senderIdPa, String address, CxLanguage xPagopaPnLanguage) {
         Assertions.assertDoesNotThrow(() -> {
             try {
                 this.iPnWebUserAttributesClient.postRecipientLegalAddress(
                         senderIdPa,
                         LegalCourtesyAddressWrapper.ChannelType.SERCQ_SEND,
-                        (new AddressVerification().value(address))
+                        (new AddressVerification().value(address)), xPagopaPnLanguage
                 );
                 log.info("Chiamata SERCQ SEND completata con successo. Grazie.");
             } catch (HttpStatusCodeException e) {
@@ -1060,12 +1103,12 @@ public class RicezioneNotificheWebSteps {
             log.info("SERCQ già abilitato per la PA selezionata!");
             return;
         }
-        postRecipientLegalAddressSercq("default", "x-pagopa-pn-sercq:send-self:notification-already-delivered");
+        postRecipientLegalAddressSercq("default", "x-pagopa-pn-sercq:send-self:notification-already-delivered", CxLanguage.IT);
     }
 
     @And("viene attivato il servizio SERCQ SEND per recapito {string} con errore")
     public void attivazioneSercqSendWithError(String pa) {
-        postRecipientLegalAddressSercqError(pa, "x-pagopa-pn-sercq:send-self:notification-already-delivered");
+        postRecipientLegalAddressSercqError(pa, "x-pagopa-pn-sercq:send-self:notification-already-delivered", CxLanguage.IT);
     }
 
     //Come da SRS Abilitazione Domicilio Digitale, address è una stringa fissa "x-pagopa-pn-sercq:send-self:notification-already-delivered"
@@ -1078,12 +1121,12 @@ public class RicezioneNotificheWebSteps {
             return;
         }
         String senderIdPa = getSenderIdPa(pa);
-        postRecipientLegalAddressSercq(senderIdPa, "x-pagopa-pn-sercq:send-self:notification-already-delivered");
+        postRecipientLegalAddressSercq(senderIdPa, "x-pagopa-pn-sercq:send-self:notification-already-delivered", CxLanguage.IT);
     }
 
     @And("viene inserito un recapito legale {string}")
     public void nuovoRecapitoLegale(String pec) {
-        postRecipientLegalAddress("default", pec, null, true);
+        postRecipientLegalAddress("default", pec, null, true, CxLanguage.IT);
     }
 
     @And("viene controllato che siano presenti pec verificate inserite per il comune {string}")
@@ -1119,41 +1162,53 @@ public class RicezioneNotificheWebSteps {
 
     @And("vengono rimossi eventuali recapiti presenti per l'utente")
     public void cleanLegalAddressForUser() {
+        // Rimuovo tutti gli indirizzi legali presenti per l'utente
         try {
-            List<BffUserAddress> legalAddressByRecipient =
-                    this.iPnWebUserAttributesClient
-                            .getAddressesByRecipient()
-                            .getBffUserAddress()
-                            .stream()
-                            .filter(x -> "LEGAL".equals(x.getAddressType()))
-                            .collect(Collectors.toList());
-
-
-            if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
-                legalAddressByRecipient
-                        .forEach(address -> {
-                            this.iPnWebUserAttributesClient.deleteRecipientLegalAddress(address.getSenderId(), LegalCourtesyAddressWrapper.ChannelType.valueOf(address.getChannelType().getValue()));
-                            log.info("Cancellato indirizzo di tipo " + address.getChannelType() + " per il comune " + address.getSenderId());
-                        });
-            }
-            List<BffUserAddress> courtesyDigitalAddresses =
-                    this.iPnWebUserAttributesClient
-                            .getAddressesByRecipient()
-                            .getBffUserAddress()
-                            .stream()
-                            .filter(x -> "COURTESY".equals(x.getAddressType()))
-                            .collect(Collectors.toList());
-
-            if (courtesyDigitalAddresses != null && !courtesyDigitalAddresses.isEmpty()) {
-                courtesyDigitalAddresses
-                        .forEach(address -> {
-                            this.iPnWebUserAttributesClient.deleteRecipientCourtesyAddress(address.getSenderId(), LegalCourtesyAddressWrapper.ChannelType.valueOf(address.getChannelType().getValue()));
-                            log.info("Cancellato indirizzo di cortesia di tipo " + address.getChannelType() + " per il comune " + address.getSenderId());
-                        });
+            List<LegalCourtesyAddressWrapper> legalAddresses = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
+            if (legalAddresses != null && !legalAddresses.isEmpty()) {
+                legalAddresses.forEach(address -> {
+                    try {
+                        this.iPnWebUserAttributesClient.deleteRecipientLegalAddress(
+                                address.getSenderId(),
+                                LegalCourtesyAddressWrapper.ChannelType.valueOf(address.getChannelType().getValue())
+                        );
+                        log.info("Cancellato indirizzo di tipo {} per il comune {}", address.getChannelType(), address.getSenderId());
+                    } catch (Exception e) {
+                        log.error("Errore nella rimozione indirizzo legale tipo={} senderId={}: {}",
+                                address.getChannelType(), address.getSenderId(), e.getMessage());
+                    }
+                });
             }
         } catch (Exception e) {
-            log.error("RIMOZIONE RECAPITI FALLITA: " + e.getStackTrace());
+            log.error("Errore nel recupero degli indirizzi legali: {}", e.getMessage());
         }
+
+        // Rimuovo tutti gli indirizzi di cortesia presenti per l'utente
+        try {
+            List<CourtesyDigitalAddress> courtesyDigitalAddresses = this.iPnWebUserAttributesClient.getCourtesyAddressByRecipient();
+            if (courtesyDigitalAddresses != null && !courtesyDigitalAddresses.isEmpty()) {
+                courtesyDigitalAddresses.forEach(address -> {
+                    try {
+                        this.iPnWebUserAttributesClient.deleteRecipientCourtesyAddress(
+                                address.getSenderId(),
+                                LegalCourtesyAddressWrapper.ChannelType.valueOf(address.getChannelType().getValue())
+                        );
+                        log.info("Cancellato indirizzo di cortesia di tipo {} per il comune {}", address.getChannelType(), address.getSenderId());
+                    } catch (Exception e) {
+                        log.error("Errore nella rimozione indirizzo di cortesia tipo={} senderId={}: {}",
+                                address.getChannelType(), address.getSenderId(), e.getMessage());
+                    }
+                });
+            }
+        } catch (Exception e) {
+            log.error("Errore nel recupero degli indirizzi di cortesia: {}", e.getMessage());
+        }
+
+        // warm-up: gli OTP eventualmente già presenti su Dynamo (residui di run/iterazioni
+        // precedenti) vengono marcati come "già visti", così il primo getNewOtp dello
+        // scenario attenderà un codice effettivamente nuovo dopo la POST
+        Destinatario destinatario = sharedSteps.getDestinatariList().get(0);
+        otpCodeService.markExistingOtpAsSeen(destinatario);
     }
 
 

@@ -42,6 +42,9 @@ public class NotificationCancelledLegalFactStrategy implements ITemplateEngineSt
             case "FRANCESE" -> {
                 yield "Dichiarazione annullamento notifica sulla piattaforma SEND Il est déclaré par la présente, mise à la disposition du destinataire exclusivement sur la plate-forme SEND, que la notification comportant IUN , exécutée à l'encontre de:";
             }
+            case  "INGLESE" -> {
+                yield "Dichiarazione annullamento notifica sulla piattaforma SEND With this document, made available to the recipient exclusively on the SEND Platform, it is declared that the notification with IUN , performed against:";
+            }
             default -> throw new IllegalArgumentException("NO VALID LANGUANGE");
         };
     }

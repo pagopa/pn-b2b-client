@@ -150,7 +150,7 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnSafeStoragePrivateClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnServiceDeskClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebMandateExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebRecipientExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesInternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebhookB2bExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.ReworkTimelineClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.TemplateEngineClientImpl;
@@ -159,6 +159,7 @@ import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRaddCognito;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.cucumber.steps.paperTracker.parser.EventTimelineParser;
 import it.pagopa.pn.cucumber.steps.paperTracker.proxy.PaperTrackerSchemaValidatorProxy;
+import it.pagopa.pn.cucumber.steps.recipient.OtpCodeService;
 import it.pagopa.pn.cucumber.steps.templateEngine.TemplateConfiguration;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextFactory;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
@@ -181,7 +182,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnWebMandateExternalClientImpl.class,
         B2bMandateServiceClientImpl.class,
         PnExternalServiceClientImpl.class,
-        PnWebUserAttributesExternalClientImpl.class,
+        PnWebUserAttributesInternalClientImpl.class,
         PnAppIOB2bExternalClientImpl.class,
         PnApiKeyManagerExternalClientImpl.class,
         PnDowntimeLogsExternalClientImpl.class,
@@ -345,7 +346,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         SenderInfoProvider.class,
         CacheConfig.class,
         AooUoIdsClientImpl.class,
-        AooUoIdsApi.class
+        AooUoIdsApi.class,
+        OtpCodeService.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
