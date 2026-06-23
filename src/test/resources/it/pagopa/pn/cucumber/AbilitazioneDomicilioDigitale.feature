@@ -246,10 +246,8 @@ Feature: Abilitazione domicilio digitale
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
-
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Alda Merini"
-
     And viene attivato il servizio SERCQ SEND per la PA "Comune_Root"
     And viene verificato che Sercq sia "abilitato" per la PA "Comune_Root"
 
@@ -314,7 +312,7 @@ Feature: Abilitazione domicilio digitale
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Alda Merini"
-    And viene inserito un recapito legale "example3@pecSuccess.it"
+    And viene inserito un recapito legale "example4@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_1"
     And viene controllato che siano presenti pec verificate inserite per il comune "Comune_1"
@@ -483,7 +481,7 @@ Feature: Abilitazione domicilio digitale
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     And viene attivato il servizio SERCQ SEND per la PA "default"
     And viene verificato che Sercq sia "abilitato" per la PA "default"
-    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    And viene inserita l'email di cortesia "provaemail2@test.it" per il comune "default"
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
 
   @sercq @addressBook2
@@ -496,7 +494,7 @@ Feature: Abilitazione domicilio digitale
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
     And viene attivato il servizio SERCQ SEND per la PA "default"
     And viene verificato che Sercq sia "abilitato" per la PA "default"
-    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    And viene inserita l'email di cortesia "provaemail1@test.it" per il comune "default"
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
 
 #  @sercq @addressBook1
@@ -735,7 +733,7 @@ Feature: Abilitazione domicilio digitale
     And viene verificato che Sercq sia "abilitato" per la PA "default"
 #    And viene inserita l'email di cortesia "provaemail2@test.it" per il comune "default"
 #    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
-    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "Comune_1"
+    And viene inserita l'email di cortesia "provaemail1@test.it" per il comune "Comune_1"
     And viene verificata la presenza di 2 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     Given viene generata una nuova notifica
       | subject | invio notifica a Galileo Galilei |

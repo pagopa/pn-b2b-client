@@ -52,6 +52,7 @@ import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
 import it.pagopa.pn.cucumber.utils.DataTest;
 import lombok.extern.slf4j.Slf4j;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -708,10 +709,14 @@ public class RicezioneNotificheWebSteps {
                 this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
                 sharedSteps.setDestinatariList(List.of(sharedSteps.getDestinatarioRegistry().DESTINATARIO_GHERKIN_SRL));
             }
-            case ALDA_MERINI ->
+            case ALDA_MERINI -> {
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_3);
-            case DINO_SAURO ->
+                    sharedSteps.setDestinatariList(List.of(sharedSteps.getDestinatarioRegistry().DESTINATARIO_ALDA_MERINI));
+            }
+            case DINO_SAURO -> {
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_5);
+                    sharedSteps.setDestinatariList(List.of(sharedSteps.getDestinatarioRegistry().DESTINATARIO_ALDA_MERINI));
+            }
             default -> throw new IllegalArgumentException();
         }
     }
@@ -1083,15 +1088,19 @@ public class RicezioneNotificheWebSteps {
     @And("viene verificata l'assenza di indirizzi Pec per il comune {string}")
     public void viewedPecPerUtentePerEnte(String pa) {
         String senderId = getSenderIdPa(pa);
-
-        List<LegalCourtesyAddressWrapper> legalAddressByRecipient = Assertions.assertDoesNotThrow(() -> this.iPnWebUserAttributesClient.getLegalAddressByRecipient());
-        boolean exists = false;
-        if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
-            exists = legalAddressByRecipient.stream()
-                    .anyMatch(address -> LegalChannelType.PEC.getValue().equals(address.getChannelType().getValue()) && senderId.equals(address.getSenderId()) && address.getCodeValid());
-        }
-        Assertions.assertFalse(exists, "PEC FOUND");
-
+        Awaitility.await()
+                .atMost(2, TimeUnit.MINUTES)
+                .pollInterval(5, TimeUnit.SECONDS)
+                .ignoreExceptions()
+                .untilAsserted(() -> {
+                    List<LegalCourtesyAddressWrapper> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
+                    boolean exists = false;
+                    if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
+                        exists = legalAddressByRecipient.stream()
+                                .anyMatch(address -> LegalChannelType.PEC.getValue().equals(address.getChannelType().getValue()) && senderId.equals(address.getSenderId()) && address.getCodeValid());
+                    }
+                    Assertions.assertFalse(exists, "PEC FOUND");
+                });
     }
 
     //Come da SRS Abilitazione Domicilio Digitale, address è una stringa fissa "x-pagopa-pn-sercq:send-self:notification-already-delivered"
@@ -1133,22 +1142,24 @@ public class RicezioneNotificheWebSteps {
     public void waitedAndViewedPecDiPiattaformaDi(String pa) {
         String senderId = getSenderIdPa(pa);
 
-        try {
-            Thread.sleep(80000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new RuntimeException("Sleep was interrupted", e);
-        }
-        boolean exists = false;
-        List<LegalCourtesyAddressWrapper> legalAddressByRecipient = Assertions.assertDoesNotThrow(() -> this.iPnWebUserAttributesClient.getLegalAddressByRecipient());
-        if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
-            exists = legalAddressByRecipient.stream()
-                    .anyMatch(address -> LegalChannelType.PEC.getValue().equals(address.getChannelType().getValue()) && senderId.equals(address.getSenderId()));
+        Awaitility.await()
+                .atMost(2, TimeUnit.MINUTES)
+                .pollInterval(5, TimeUnit.SECONDS)
+                .ignoreExceptions()
+                .untilAsserted(() -> {
+                    List<LegalCourtesyAddressWrapper> legalAddresses =
+                            this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
 
-
-        }
-        Assertions.assertTrue(exists, "PEC NOT FOUND");
-
+                    Assertions.assertNotNull(legalAddresses, "Lista indirizzi nulla");
+                    Assertions.assertTrue(
+                            legalAddresses.stream()
+                                    .anyMatch(address ->
+                                            LegalChannelType.PEC.getValue().equals(address.getChannelType().getValue()) &&
+                                                    senderId.equals(address.getSenderId()) &&
+                                            address.getPecValid()),
+                            "PEC NOT FOUND"
+                    );
+                });
     }
 
     @And("viene rimossa se presente la pec per il comune {string}")

@@ -17,6 +17,8 @@ public class DestinatarioRegistry {
     public final Destinatario DESTINATARIO_ETTORE_FIERAMOSCA;
     public final Destinatario DESTINATARIO_LEONARDO_DA_VINCI;
     public final Destinatario DESTINATARIO_GALILEO_GALILEI;
+    public final Destinatario DESTINATARIO_ALDA_MERINI;
+    public final Destinatario DESTINATARIO_DINO_SAURO;
     public final Destinatario DESTINATARIO_GHERKIN_SPA;
     public final Destinatario DESTINATARIO_CUCUMBER_SPA;
     public final Destinatario DESTINATARIO_GHERKIN_SRL;
@@ -61,6 +63,14 @@ public class DestinatarioRegistry {
 
         DESTINATARIO_GALILEO_GALILEI = new Destinatario(
                 GALILEO_GALILEI, recipients.getGalileoGalilei().getTaxId(),
+                recipients.getGalileoGalilei().getUid(), PF, PEC);
+
+        DESTINATARIO_ALDA_MERINI = new Destinatario(
+                ALDA_MERINI, recipients.getAldaMerini().getTaxId(),
+                recipients.getAldaMerini().getUid(), PG, PEC);
+
+        DESTINATARIO_DINO_SAURO = new Destinatario(
+                DINO_SAURO, recipients.getGalileoGalilei().getTaxId(),
                 recipients.getGalileoGalilei().getUid(), PF, PEC);
 
         DESTINATARIO_GHERKIN_SPA = new Destinatario(
