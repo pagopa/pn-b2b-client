@@ -188,6 +188,8 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	Then si ottiene status code 409
 
   # PST: Scenario 27 - Caso 27.1
+  # KO ticket aperto https://pagopa.atlassian.net/browse/PIN-10441
+  @nuovi-operatori-ko
   @sad-path
   Scenario: [COMB_NON_AMMESSE_27_1_DRAFT] Tentativo attivazione admin con workflow in stato DRAFT (negativo)
 	Given "PA1" ha già creato e pubblicato 1 e-service
@@ -199,6 +201,8 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	Then si ottiene status code 409
 
   # PST: Scenario 27 - Caso 27.1
+  # KO ticket aperto https://pagopa.atlassian.net/browse/PIN-10441
+  @nuovi-operatori-ko
   @sad-path
   Scenario: [COMB_NON_AMMESSE_27_1_ASSIGNED] Tentativo attivazione admin con workflow in stato ASSIGNED (negativo)
 	Given "PA1" ha già creato e pubblicato 1 e-service
@@ -210,6 +214,8 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	Then si ottiene status code 409
 
   # PST: Scenario 27 - Caso 27.1
+  # KO ticket aperto https://pagopa.atlassian.net/browse/PIN-10441
+  @nuovi-operatori-ko
   @sad-path
   Scenario: [COMB_NON_AMMESSE_27_1_SUBMITTED] Tentativo attivazione admin con workflow in stato SUBMITTED (negativo)
 	Given "PA1" ha già creato e pubblicato 1 e-service
@@ -223,6 +229,8 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	Then si ottiene status code 409
 
   # PST: Scenario 27 - Caso 27.1
+  # KO ticket aperto https://pagopa.atlassian.net/browse/PIN-10441
+  @nuovi-operatori-ko
   @sad-path
   Scenario: [COMB_NON_AMMESSE_27_1_REJECTED] Tentativo attivazione admin con workflow in stato REJECTED (negativo)
 	Given "PA1" ha già creato e pubblicato 1 e-service
@@ -248,6 +256,8 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	Then si ottiene status code 409
 
   # PST: Scenario 28 - Caso 28.1
+  # KO ticket aperto https://pagopa.atlassian.net/browse/PIN-10435
+  @nuovi-operatori-ko
   @sad-path
   Scenario: [COMB_NON_AMMESSE_28_1_SUBMITTED] Tentativo compilazione admin con workflow in stato SUBMITTED (negativo)
 	Given "PA1" ha già creato e pubblicato 1 e-service
@@ -261,6 +271,8 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	Then si ottiene status code 409
 
   # PST: Scenario 28 - Caso 28.1
+  # KO ticket aperto https://pagopa.atlassian.net/browse/PIN-10438
+  @nuovi-operatori-ko
   @sad-path
   Scenario: [COMB_NON_AMMESSE_28_1_SIGNED] Tentativo compilazione admin con workflow in stato SIGNED (negativo)
 	Given "PA1" ha già creato e pubblicato 1 e-service

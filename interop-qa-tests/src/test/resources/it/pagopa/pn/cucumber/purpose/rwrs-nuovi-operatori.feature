@@ -110,6 +110,7 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
     Then si ottiene status code 400
 
    # PST: Scenario 12 - Caso 12.1
+   # OK ticket chiuso https://pagopa.atlassian.net/browse/PIN-10405
    Scenario: [RWRS_COMPILAZIONE_12_1_ENDPOINT_GENERICO] Compilazione analisi del rischio tramite endpoint generico (negativo)
      Given "PA1" ha già creato e pubblicato 1 e-service
      And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -118,7 +119,7 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
      And l'utente assegna un valutatore alla finalità in modalità "ReviewerWritesReviewerSigns" con successo
      When l'utente è un "admin" di "PA2"
      And compila l'analisi del rischio tramite endpoint generico
-     Then si ottiene status code 400
+     Then si ottiene status code 409
 
    # PST: Scenario 12 - Caso 12.3
    @sad-path
