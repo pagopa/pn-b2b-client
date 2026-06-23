@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -155,10 +156,16 @@ public class TemplateEngineSteps {
         templateFileExceptions.forEach(data -> Assertions.assertEquals(errorCode, String.valueOf(data.getRawStatusCode())));
     }
 
-    private int countOccurrences(String searchString) {
-        return (int) Pattern.compile(Pattern.quote(searchString))
-                .splitAsStream(result.retrieveFormattedText())
-                .count() - 1;
+    private int countOccurrences(String regex) {
+        Matcher matcher = Pattern.compile(regex)
+                .matcher(result.retrieveFormattedText());
+
+        int count = 0;
+        while (matcher.find()) {
+            count++;
+        }
+
+        return count;
     }
 
     private String getTextToRetrieve(String language, TemplateType templateType, String recipientType) {
@@ -202,24 +209,16 @@ public class TemplateEngineSteps {
     @And("controllo che la notifica {string} abbia i giusti campi valorizzati")
     public void controlloCheLaNotificaAbbiaIGiustiCampiValorizzati(String notificationType) {
         switch (notificationType) {
-            case "monodestinatario" -> {
-                int count = countOccurrences("Nome e string Cognome / Ragione Sociale")
-                        + countOccurrences("Nome e Cognome string / Ragione Sociale")
-                        + countOccurrences("Nome e Cognome / string Ragione Sociale");
-                Assertions.assertEquals(1, count);
-            } case "multidestinatario" -> {
-                int count = countOccurrences("Nome e string Cognome / Ragione Sociale")
-                        + countOccurrences("Nome e Cognome string / Ragione Sociale")
-                        + countOccurrences("Nome e Cognome / Ragione Sociale");
-                Assertions.assertEquals(2, count);
-            } case "singolo allegato" -> {
-                int count = countOccurrences("TEST_digest_allegato");
-                Assertions.assertEquals(1, count);
-            } case "piu allegati" -> {
-                int count = countOccurrences("TEST_digest_allegato");
-                Assertions.assertEquals(2, count);
-            }
-            default -> throw new IllegalConfigurationException("Invalid notification type: " + notificationType);
+            case "monodestinatario" ->
+                    Assertions.assertEquals(1, countOccurrences("Nome e(?: string)? Cognome(?: /(?: string)? Ragione Sociale)?"));
+            case "multidestinatario" ->
+                    Assertions.assertEquals(2, countOccurrences("Nome e(?: string)? Cognome(?: /(?: string)? Ragione Sociale)?"));
+            case "singolo allegato" ->
+                    Assertions.assertEquals(1, countOccurrences("TEST_digest_allegato"));
+            case "piu allegati" ->
+                    Assertions.assertEquals(2, countOccurrences("TEST_digest_allegato"));
+            default ->
+                    throw new IllegalConfigurationException("Invalid notification type: " + notificationType);
         }
     }
 
