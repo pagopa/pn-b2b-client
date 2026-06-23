@@ -24,7 +24,7 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
     And l'utente assegna un valutatore alla finalità in modalità "ReviewerWritesReviewerSigns"
     Then si ottiene status code 403
 
-  # KO ticket aperto https://pagopa.atlassian.net/issues?jql=textfields%20~%20%22%5BRWRS_ASSEGNAZIONE_11_1_RUOLO_DIVERSO_DA_VALUTATORE%5D%22&selectedIssue=PIN-10404
+  # KO ticket aperto https://pagopa.atlassian.net/browse/PIN-10404
   # PST: Scenario 11 - Caso 11.1
   @nuovi-operatori-ko
   @sad-path
