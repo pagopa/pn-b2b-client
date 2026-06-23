@@ -1,8 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.common;
 
-import it.pagopa.interop.generated.openapi.clients.bff.model.Attribute;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttribute;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DeclaredAttribute;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.VerifiedAttribute;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAttribute;
@@ -30,22 +28,25 @@ public class AttributeCommonContext {
     String attributeConsumerTenant;
 
     List<Attribute> createdAttributes = new ArrayList<>();
+    List<CompactAttribute> availableCertifiedDiscreteAttributes = new ArrayList<>();
+    String ownerCertifiedDiscreteAttribute;
+    List<CertifiedDiscreteTenantAttribute> ownedCertifiedDiscreteAttributes = new ArrayList<>();
 
     public Attribute getLastCreatedAttribute() {
         return lastOf(createdAttributes);
     }
 
-    public void addCreatedAttribute(Attribute attribute) {
+    public <T extends Attribute> void addCreatedAttribute(T attribute) {
         this.attributeId = attribute.getId();
         this.createdAttributes.add(attribute);
     }
 
-    public void addDeclaredAttribute(Attribute attribute) {
+    public <T extends Attribute> void addDeclaredAttribute(T attribute) {
         this.attributeId = attribute.getId();
         this.createdAttributes.add(attribute);
     }
 
-    public void addVerifiedAttribute(Attribute attribute) {
+    public <T extends Attribute> void addVerifiedAttribute(T attribute) {
         this.attributeId = attribute.getId();
         this.createdAttributes.add(attribute);
     }
@@ -78,6 +79,9 @@ public class AttributeCommonContext {
                         .id(attr.getId())
                         .explicitAttributeVerification(attr.getExplicitAttributeVerification())
                         .dailyCallsPerConsumer(attr.getDailyCallsPerConsumer());
+                if (attr.getDiscreteConfig() != null) {
+                    seed.setDiscreteConfig(attr.getDiscreteConfig());
+                }
                 groupSeed.add(seed);
             }
             seeds.add(groupSeed);
