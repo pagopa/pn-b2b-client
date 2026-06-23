@@ -21,6 +21,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -130,15 +131,16 @@ public class TemplateEngineSteps {
     }
 
     public boolean isValidPdf(Resource resource) {
-        try {
-            try (PDDocument document = Loader.loadPDF(resource.getInputStream().readAllBytes())) {
+        try (InputStream is = resource.getInputStream()) {
+            byte[] pdfBytes = is.readAllBytes();
+            try (PDDocument document = Loader.loadPDF(pdfBytes)) {
                 PDFTextStripper textStripper = new PDFTextStripper();
                 textStripper.setSortByPosition(true);
                 String retrievedText = textStripper.getText(document);
                 result.setFileTextRetrieved(retrievedText);
                 return !retrievedText.isBlank();
             }
-        } catch (IOException e) {
+        } catch (IOException | RuntimeException e) {
             return false;
         }
     }
