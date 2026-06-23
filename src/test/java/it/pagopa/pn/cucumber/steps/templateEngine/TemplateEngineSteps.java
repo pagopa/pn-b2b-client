@@ -10,13 +10,11 @@ import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateRequestContext;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateType;
 import it.pagopa.pn.cucumber.steps.templateEngine.strategies.ITemplateEngineStrategy;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.pdfbox.io.RandomAccessReadBuffer;
-import org.apache.pdfbox.pdfparser.PDFParser;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
@@ -132,17 +130,14 @@ public class TemplateEngineSteps {
 
     public boolean isValidPdf(Resource resource) {
         try {
-            byte[] input = ((ByteArrayResource) resource).getByteArray();
-            RandomAccessReadBuffer buffer = new RandomAccessReadBuffer(input);
-            PDFParser parser = new PDFParser(buffer);
-            PDDocument doc = parser.parse();
-            try (PDDocument document = new PDDocument(doc.getDocument())) {
+            try (PDDocument document = Loader.loadPDF(resource.getInputStream().readAllBytes())) {
                 PDFTextStripper textStripper = new PDFTextStripper();
+                textStripper.setSortByPosition(true);
                 String retrievedText = textStripper.getText(document);
                 result.setFileTextRetrieved(retrievedText);
-                return retrievedText != null;
+                return !retrievedText.isBlank();
             }
-        } catch (IOException | ClassCastException e) {
+        } catch (IOException e) {
             return false;
         }
     }
@@ -176,7 +171,7 @@ public class TemplateEngineSteps {
         if (fileType.equals("pdf")) {
             Assertions.assertNotNull(result.getFileTextRetrieved());
             if (field.equals("finale")) {
-                Assertions.assertTrue(result.retrieveFormattedText().endsWith(fieldValue));
+                Assertions.assertTrue(result.retrieveFormattedText().endsWith(fieldValue + " PagoPA S.p.A. società per azioni con socio unico capitale sociale di euro 1000000 interamente versato sede legale in Roma, Piazza Colonna 370, CAP 00187 n. di iscrizione a Registro Imprese di Roma, CF e P.IVA 15376371009"));
             } else if (field.equals("delegato")) {
                 Assertions.assertTrue(result.retrieveFormattedText().contains("il " + fieldValue + " ha avuto accesso ai documenti informatici oggetto di notifica"));
             } else {
@@ -208,10 +203,14 @@ public class TemplateEngineSteps {
     public void controlloCheLaNotificaAbbiaIGiustiCampiValorizzati(String notificationType) {
         switch (notificationType) {
             case "monodestinatario" -> {
-                int count = countOccurrences("Nome e Cognome / Ragione Sociale");
+                int count = countOccurrences("Nome e string Cognome / Ragione Sociale")
+                        + countOccurrences("Nome e Cognome string / Ragione Sociale")
+                        + countOccurrences("Nome e Cognome / string Ragione Sociale");
                 Assertions.assertEquals(1, count);
             } case "multidestinatario" -> {
-                int count = countOccurrences("Nome e Cognome / Ragione Sociale");
+                int count = countOccurrences("Nome e string Cognome / Ragione Sociale")
+                        + countOccurrences("Nome e Cognome string / Ragione Sociale")
+                        + countOccurrences("Nome e Cognome / Ragione Sociale");
                 Assertions.assertEquals(2, count);
             } case "singolo allegato" -> {
                 int count = countOccurrences("TEST_digest_allegato");
