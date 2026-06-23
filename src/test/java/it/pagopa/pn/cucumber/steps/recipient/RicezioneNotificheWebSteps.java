@@ -715,7 +715,7 @@ public class RicezioneNotificheWebSteps {
             }
             case DINO_SAURO -> {
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_5);
-                    sharedSteps.setDestinatariList(List.of(sharedSteps.getDestinatarioRegistry().DESTINATARIO_ALDA_MERINI));
+                    sharedSteps.setDestinatariList(List.of(sharedSteps.getDestinatarioRegistry().DESTINATARIO_DINO_SAURO));
             }
             default -> throw new IllegalArgumentException();
         }

@@ -70,8 +70,8 @@ public class DestinatarioRegistry {
                 recipients.getAldaMerini().getUid(), PG, PEC);
 
         DESTINATARIO_DINO_SAURO = new Destinatario(
-                DINO_SAURO, recipients.getGalileoGalilei().getTaxId(),
-                recipients.getGalileoGalilei().getUid(), PF, PEC);
+                DINO_SAURO, recipients.getDinoSauro().getTaxId(),
+                recipients.getDinoSauro().getUid(), PF, PEC);
 
         DESTINATARIO_GHERKIN_SPA = new Destinatario(
                 GHERKIN_SPA, recipients.getGherkinSpa().getTaxId(),
