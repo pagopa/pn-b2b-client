@@ -17,6 +17,7 @@ import it.pagopa.pn.client.b2b.pa.service.utils.RaddOperator;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv.RegistryUploadResponse;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.DocumentUploadRequest;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.DocumentUploadResponse;
+import it.pagopa.pn.cucumber.steps.utilitySteps.Environment;
 import it.pagopa.pn.cucumber.utils.EventId;
 import it.pagopa.pn.cucumber.utils.TimelineEventId;
 import it.pagopa.pn.cucumber.utils.datatestVersions.AbstractDataTest;
@@ -581,10 +582,10 @@ public abstract class B2bUtils {
         return rawJson;
     }
 
-    public static String getEnvironment(ApplicationContext context) {
+    public static Environment getEnvironment(ApplicationContext context) {
         String env = context.getEnvironment().getActiveProfiles()[0];
         log.info("Environment in use is: {}", env);
-        return env;
+        return Environment.valueOf(env);
     }
 
     /**

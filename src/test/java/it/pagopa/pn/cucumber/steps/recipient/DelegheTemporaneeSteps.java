@@ -23,6 +23,7 @@ import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
+import it.pagopa.pn.cucumber.steps.utilitySteps.Environment;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -131,7 +132,8 @@ public class DelegheTemporaneeSteps {
         switch (inputParamsType.toUpperCase()) {
             case "TAXID NULL" -> taxId = null;
             case "EMPTY REQUEST BODY" -> mandateCreationRequest = null;
-            case "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI" -> taxId = sharedSteps.getDestinatarioRegistry().DESTINATARIO_GALILEO_GALILEI.getTaxId();
+            case "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI" ->
+                    taxId = sharedSteps.getDestinatarioRegistry().DESTINATARIO_GALILEO_GALILEI.getTaxId();
         }
         try {
             mandateCreationResponse = mandateAppIoClient.createIOMandate(
@@ -145,14 +147,13 @@ public class DelegheTemporaneeSteps {
     }
 
     private void setQrCode(String inputParamsType) {
-        String environment = B2bUtils.getEnvironment(sharedSteps.getContext());
-        String environmentPath;
-        switch (environment) {
-            case "dev" -> environmentPath = "http://cittadini.dev.notifichedigitali.it/io";
-            case "test" -> environmentPath = "http://cittadini.test.notifichedigitali.it/io";
-            case "uat" -> environmentPath = "https://cittadini.uat.notifichedigitali.it/io/";
-            case "hotfix" -> environmentPath = "https://cittadini.hotfix.notifichedigitali.it/io/";
-            default -> throw new IllegalArgumentException("Invalid environment name: " + environment);
+        Environment env = B2bUtils.getEnvironment(sharedSteps.getContext());
+        String environmentPath = "";
+        switch (env) {
+            case DEV -> environmentPath = "http://cittadini.dev.notifichedigitali.it/io";
+            case TEST -> environmentPath = "http://cittadini.test.notifichedigitali.it/io";
+            case UAT -> environmentPath = "https://cittadini.uat.notifichedigitali.it/io/";
+            case HOTFIX -> environmentPath = "https://cittadini.hotfix.notifichedigitali.it/io/";
         }
         environmentPath += "?aar=";
         switch (inputParamsType.toUpperCase()) {
@@ -209,7 +210,8 @@ public class DelegheTemporaneeSteps {
                 mrtdDataDg1 = replacement + mrtdDataDg1.substring(1);
                 cieValidationData.getNisData().setPubKey(mrtdDataDg1);
             }
-            case "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI" -> lollipopUserId = sharedSteps.getDestinatarioRegistry().DESTINATARIO_GALILEO_GALILEI.getTaxId();
+            case "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI" ->
+                    lollipopUserId = sharedSteps.getDestinatarioRegistry().DESTINATARIO_GALILEO_GALILEI.getTaxId();
         }
         try {
             mandateAppIoClient.acceptIOMandate(
@@ -252,7 +254,8 @@ public class DelegheTemporaneeSteps {
         String cieOwnerTaxId = delegatorTaxId;
         switch (inputParamsType.toUpperCase()) {
             case "DATI DI UNA CIE SCADUTA" -> expirationDate = LocalDate.now().minusYears(1L);
-            case "DATI CIE DI UTENTE DIVERSO DAL DESTINATARIO" -> cieOwnerTaxId = sharedSteps.getDestinatarioRegistry().DESTINATARIO_GALILEO_GALILEI.getTaxId();
+            case "DATI CIE DI UTENTE DIVERSO DAL DESTINATARIO" ->
+                    cieOwnerTaxId = sharedSteps.getDestinatarioRegistry().DESTINATARIO_GALILEO_GALILEI.getTaxId();
             case "SIGNED NONCE ERRATO" -> nonce = "00000";
         }
         return cieGeneratorTool.generateCieValidationData(path, delegatorTaxId, cieOwnerTaxId, expirationDate, nonce);

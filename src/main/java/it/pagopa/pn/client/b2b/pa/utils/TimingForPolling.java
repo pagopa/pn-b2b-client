@@ -125,7 +125,7 @@ public class TimingForPolling {
         DELIVERING(2, 4),
         DELIVERED(8, 4),
         VIEWED(5, 1),
-        EFFECTIVE_DATE(11, 1),
+        EFFECTIVE_DATE(16, 1),
         PAID(5, 1),
         UNREACHABLE(11, 1),
         CANCELLED(11, 1),
@@ -147,7 +147,7 @@ public class TimingForPolling {
         PUBLIC_REGISTRY_VALIDATION_CALL(2, 1),
         PUBLIC_REGISTRY_VALIDATION_RESPONSE(2, 1),
 
-        //v29 todo t v29
+        //v29
         NOTIFICATION_TIMELINE_REWORKED(15, 1);
 
         private final int numCheck;
