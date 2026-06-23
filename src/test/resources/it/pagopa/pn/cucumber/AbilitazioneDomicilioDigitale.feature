@@ -39,7 +39,7 @@ Feature: Abilitazione domicilio digitale
     Given si predispone addressbook per l'utente "CucumberSpa"
 #    Then l'utente "CucumberSpa" "ACCETTA" i tos per sercq
     And viene disabilitato il servizio SERCQ SEND per la PA "default"
-    # da rivedere
+    And vengono rimossi eventuali recapiti presenti per l'utente
 
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
@@ -140,7 +140,7 @@ Feature: Abilitazione domicilio digitale
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_3] Disattivazione del servizio SERCQ SEND per recapito principale
     Given si predispone addressbook per l'utente "Alda Merini"
     Then l'utente "Alda Merini" "ACCETTA" i tos per sercq
-
+    And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Alda Merini"
 
@@ -212,10 +212,9 @@ Feature: Abilitazione domicilio digitale
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_6] Inserimento indirizzo PEC come recapito principale, dopo attivazione del servizio SERCQ, con OTP errato
     Given si predispone addressbook per l'utente "Alda Merini"
     Then l'utente "Alda Merini" "ACCETTA" i tos per sercq
-
+    And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Alda Merini"
-
     Then viene attivato il servizio SERCQ SEND per recapito principale
     And viene verificato che Sercq sia "abilitato" per la PA "default"
     And viene inserito un recapito legale "example3@pecSuccess.it" con verification code errato "*$%&+/"
