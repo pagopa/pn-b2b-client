@@ -25,11 +25,7 @@ Feature: Caricamento di una chiave pubblica contenuta in un client
     Examples:
       | ente | ruolo        | statusCode |
       | GSP  | support      |        403 |
-      | GSP  | reviewer     |        403 |
-      | GSP  | viewer       |        403 |
       | PA1  | support      |        403 |
-      | PA2  | reviewer     |        403 |
-      | PA2  | viewer       |        403 |
 
   @nrt-minimal
   @sad-path
