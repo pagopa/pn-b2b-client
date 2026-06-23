@@ -168,6 +168,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     And viene annullato il processo di archiviazione dell'e-service con id "%actual"
     Then si ottiene response status code 200
     And la vecchia versione dell'e-service è in stato "ARCHIVED"
+    And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
     And la versione più recente dell'e-service è in stato "PUBLISHED"
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
@@ -211,7 +212,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
       | %null      | 400        |
       | %random    | 404        |
 
-  Scenario Outline: [M2M_MANUAL_ARCHIVING_ESERVICE_SUSPENSION_1.1] Un ente erogatore di un e-service in stato ARCHIVING è in grado di sospendere l'e-service in questione
+  Scenario Outline: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_SUSPENSION_1.1] Un ente erogatore di un e-service in stato ARCHIVING è in grado di sospendere l'e-service in questione
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"

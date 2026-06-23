@@ -343,7 +343,9 @@ Feature: Archiviazione manuale di un e-service
     When l'utente annulla il processo di archiviazione dell'e-service con id "<eserviceId>"
     Then si ottiene response status code <statusCode>
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
     And la versione più recente dell'e-service è in stato "ARCHIVING"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
     Examples:
       | eserviceId | statusCode |
@@ -388,6 +390,7 @@ Feature: Archiviazione manuale di un e-service
     And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     When "PA2" ha già archiviato quella richiesta di fruizione
     Then la vecchia versione dell'e-service è in stato "ARCHIVED"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
     And la versione più recente dell'e-service è in stato "ARCHIVING"
 
   Scenario: [AUTOMATIC_ARCHIVING_ESERVICE_1.3] Con archiviazione manuale dell'intero e-service e parallelamente del primo e meno recente descrittore tramite archiviazione del descrittore singolo in corso. Se l'unica richiesta di fruizione attiva verso il primo descrittore viene archiviata, tale descrittore sarà archiviato in automatico
@@ -412,6 +415,7 @@ Feature: Archiviazione manuale di un e-service
     And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
     When "PA2" ha già archiviato quella richiesta di fruizione
     Then la vecchia versione dell'e-service è in stato "ARCHIVED"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
     And la versione più recente dell'e-service è in stato "PUBLISHED"
 
   Scenario: [AUTOMATIC_ARCHIVING_ESERVICE_1.5] Con archiviazione dell'intero e-service in corso. Se l'unica richiesta di fruizione attiva verso il primo e meno recente descrittore viene archiviata, tale descrittore in stato ARCHIVING_SUSPENDED sarà archiviato in automatico
