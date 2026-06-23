@@ -12,8 +12,8 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         "html:target/cucumber-report.html")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.cucumber.steps")
 @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent")
-@ExcludeTags({"informalIgnoreUAT"})
+@ExcludeTags({"informalUAT"})
 @IncludeTags({"informalAsyncValidation"})
-public class InformalNotificationAsyncValidationTest {
+public class InformalNotificationAsyncValidationTest_uat {
 
 }
