@@ -21,17 +21,17 @@ Feature: Associazione di un admin ad un client
   @client_admin_create
   @nuovi-operatori-update
   Scenario Outline: [ADMIN_CLIENT_3] Un utente non admin non può impostare se stesso come amministratore di un client API
-    Given l'utente è un "<ruolo>" di "PA1"
-    And "PA1" ha già creato 1 client "API"
+    Given l'utente è un "<ruolo>" di "<ente>"
+    And "<ente>" ha già creato 1 client "API"
     When l'utente tenta la modifica dell'amministratore del client indicando se stesso
     Then si ottiene status code 403
     Examples:
-      | ruolo     |
-      | api       |
-      | reviewer  |
-      | viewer    |
-      | support   |
-      | security  |
+      | ruolo     | ente |
+      | api       | PA1  |
+      | reviewer  | PA2  |
+      | viewer    | PA2  |
+      | support   | PA1  |
+      | security  | PA1  |
 
   @sad-path
   @client_admin_create

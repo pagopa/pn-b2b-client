@@ -84,8 +84,10 @@ Feature: finalità agevolata, purpose from purpose template
       | PA1  | api      |
       | PA1  | support  |
       | PA1  | security |
-      | PA2  | reviewer |
       | PA2  | viewer   |
+
+      # Non applicabile a "reviewer" perché il reviewer non può nemmeno fare il get dell'agreement, il quale è un'azione preliminare dello step "And si crea una finalità a partire dal purpose template esistente"
+      # | PA2  | reviewer |
 
   #113 (KO)
   @purposeTemplate @purposeFromPurposeTemplate

@@ -37,7 +37,7 @@ public class ClientUserAddStep {
     @When("l'utente richiede l'aggiunta di un admin di {string} al client")
     public void addUsersToClient(String tenantType) {
         String role = "admin";
-        addUsersToClient(tenantType, role);
+        addUsersToClient(role, tenantType);
     }
 
     @When("l'utente richiede l'aggiunta di un {string} di {string} al client")

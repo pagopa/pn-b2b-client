@@ -17,15 +17,16 @@ Feature: Lettura di un documento allegato alla richiesta di fruizione
       | ente | ruolo        | risultato |
       | GSP  | admin        |       200 |
       | GSP  | support      |       200 |
+      | GSP  | viewer       |       200 |
       | PA1  | admin        |       200 |
       | PA1  | support      |       200 |
+      | PA2  | viewer       |       200 |
 
     @sad-path
     Examples:
       | ente | ruolo        | risultato |
       | GSP  | api          |       403 |
       | GSP  | reviewer     |       403 |
-      | GSP  | viewer       |       403 |
       | GSP  | security     |       403 |
       | GSP  | api,security |       403 |
       | PA1  | api          |       403 |
