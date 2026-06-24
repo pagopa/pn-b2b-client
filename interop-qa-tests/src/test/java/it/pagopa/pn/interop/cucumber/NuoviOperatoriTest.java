@@ -18,7 +18,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "same_thread"),
 })
 @ExcludeTags({"wait_for_fix", "nuovi-operatori-off"})
-@IncludeTags({"nuovi-operatori"})
+@IncludeTags({"nuovi-operatori", "nuovi-operatori-update"})
 public class NuoviOperatoriTest {
 }
 
