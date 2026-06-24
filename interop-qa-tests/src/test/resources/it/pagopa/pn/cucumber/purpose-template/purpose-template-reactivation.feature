@@ -22,7 +22,6 @@ Feature: finalità agevolata, purpose template REACTIVATION
 
   #53(OK)
   @purposeTemplate @purposeTemplateReactivation
-  @nuovi-operatori-update
   Scenario Outline: [PURPOSE_TEMPLATE_REACTIVATION_NO_ADMIN] Riattivazione di una finalità agevolata sospesa da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato SUSPENDED
@@ -34,6 +33,10 @@ Feature: finalità agevolata, purpose template REACTIVATION
       | PA1  | api      |
       | PA1  | support  |
       | PA1  | security |
+
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo    |
       | PA2  | reviewer |
       | PA2  | viewer   |
 

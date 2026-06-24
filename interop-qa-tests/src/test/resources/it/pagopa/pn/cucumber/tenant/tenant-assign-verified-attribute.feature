@@ -4,7 +4,6 @@ Feature: Assegnazione di un attributo verificato ad un aderente
 
   @nrt-minimal
   @tenant_assign_verified_attribute1
-  @nuovi-operatori-update
   Scenario Outline: [TENANT_ASSIGN_VERIFIED_ATTRIBUTE_01] Per un attributo verificato precedentemente creato da un primo aderente, alla richiesta di assegnazione dell’attributo senza data di scadenza ad un secondo aderente da parte di un utente con sufficienti permessi (admin) appartenente al primo aderente, va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato un attributo verificato
@@ -25,6 +24,10 @@ Feature: Assegnazione di un attributo verificato ad un aderente
       | GSP  | security     |        403 |
       | GSP  | support      |        403 |
       | GSP  | api,security |        403 |
+
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo        | statusCode |
       | GSP  | reviewer     |        403 |
       | GSP  | viewer       |        403 |
 

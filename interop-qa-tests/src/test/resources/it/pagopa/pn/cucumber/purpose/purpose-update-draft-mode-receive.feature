@@ -4,7 +4,6 @@ Feature: Aggiornamento bozza nuova finalità in erogazione inversa
 
   @nrt-minimal
   @purpose_update_draft_mode_receive1
-  @nuovi-operatori-update
   Scenario Outline: [PURPOSE_UPDATE_DRAFT_MODE_RECEIVE_1] Un utente con sufficienti permessi (admin); il cui ente ha già una finalità in stato DRAFT per una versione di e-service, il quale ha mode = RECEIVE, aggiorna una finalità con tutti i campi richiesti correttamente formattati. La richiesta va a buon fine.
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "PA1" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "DRAFT"
@@ -38,6 +37,11 @@ Feature: Aggiornamento bozza nuova finalità in erogazione inversa
       | Privato | security     |       403 |
       | Privato | api,security |       403 |
       | Privato | support      |       403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente    | ruolo        | risultato |
       | PA2     | reviewer     |       403 |
       | PA2     | viewer       |       403 |
       | GSP     | reviewer     |       403 |

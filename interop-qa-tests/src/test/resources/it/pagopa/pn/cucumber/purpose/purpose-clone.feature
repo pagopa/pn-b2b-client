@@ -4,7 +4,6 @@ Feature: Clonazione di una finalità
 
   @nrt-minimal
   @purpose_clone1
-  @nuovi-operatori-update
   Scenario Outline: [CLONAZIONE_FINALITA_1] Un utente con sufficienti permessi (admin); il cui ente ha già una finalità in stato ACTIVE, per una versione di e-service, il quale ha mode = RECEIVE, clona una finalità. La richiesta va a buon fine.
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "PA2" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "DRAFT"
@@ -38,6 +37,11 @@ Feature: Clonazione di una finalità
       | Privato | security     | ACTIVE        |       403 |
       | Privato | api,security | ACTIVE        |       403 |
       | Privato | support      | ACTIVE        |       403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples: # Test sui ruoli
+      | ente    | ruolo        | statoFinalità | risultato |
       | PA2     | reviewer     | ACTIVE        |       403 |
       | PA2     | viewer       | ACTIVE        |       403 |
       | GSP     | reviewer     | ACTIVE        |       403 |

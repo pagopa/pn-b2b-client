@@ -4,7 +4,6 @@ Feature: Attivazione e riattivazione di una finalità
 
   @nrt-minimal
   @purpose_activation1a
-  @nuovi-operatori-update
   Scenario Outline: [PURPOSE_ACTIVATION_1A] Per una finalità precedentemente creata da un fruitore e attivata da un erogatore, la quale è stata successivamente portata in stato SUSPENDED, alla richiesta di riattivazione da parte di un utente con sufficienti permessi (admin) dell’ente che ha sospeso la finalità (fruitore), va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "PA2" ha già creato e pubblicato 1 e-service
@@ -35,6 +34,11 @@ Feature: Attivazione e riattivazione di una finalità
       | Privato | security     |       403 |
       | Privato | api,security |       403 |
       | Privato | support      |       403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente    | ruolo        | risultato |
       | PA2     | reviewer     |       403 |
       | PA2     | viewer       |       403 |
       | GSP     | reviewer     |       403 |

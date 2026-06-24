@@ -3,7 +3,6 @@ Feature: Revoca di un attributo certificato posseduto da uno specifico aderente
   Tutti gli utenti autorizzati degli enti certificatori possono revocare uno degli attributi certificati che hanno assegnato precedentemente
 
   @nrt-minimal @tenant_revoke_certified_attribute1 @no-parallel @certifiedAttribute
-  @nuovi-operatori-update
   Scenario Outline: [TENANT_REVOKE_CERTIFIED_ATTRIBUTE_01] Per un attributo certificato precedentemente creato da un aderente, il quale ha la qualifica di ente certificatore (certifier), che lo assegna ad un altro ente, alla richiesta di revoca da parte di un utente con sufficienti permessi (admin), va a buon fine, altrimenti ottiene un errore
     Given l'utente è un "<ruolo>" di "PA2"
     Given "PA2" ha creato un attributo certificato e lo ha assegnato a "PA1"
@@ -17,6 +16,10 @@ Feature: Revoca di un attributo certificato posseduto da uno specifico aderente
 #      | security     |        403 |
 #      | support      |        403 |
       | api,security |        403 |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo        | statusCode |
       | reviewer     |        403 |
       | viewer       |        403 |
 

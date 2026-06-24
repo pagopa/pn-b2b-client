@@ -69,7 +69,6 @@ Feature: finalità agevolata, purpose from purpose template
 
   #112 (KO)
   @purposeTemplate @purposeFromPurposeTemplate
-  @nuovi-operatori-update
   Scenario Outline: [PURPOSE_TEMPLATE_CREATE_PURPOSE_FROM_TEMPLATE_NO_ADMIN] Creazione di una finalità a partire da un template di finalità agevolata da parte di un utente NON admin (error 403)
     Given "PA2" ha già creato e pubblicato 1 e-service
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -84,6 +83,10 @@ Feature: finalità agevolata, purpose from purpose template
       | PA1  | api      |
       | PA1  | support  |
       | PA1  | security |
+
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo    |
       | PA2  | viewer   |
 
       # Non applicabile a "reviewer" perché il reviewer non può nemmeno fare il get dell'agreement, il quale è un'azione preliminare dello step "And si crea una finalità a partire dal purpose template esistente"
@@ -162,7 +165,6 @@ Feature: finalità agevolata, purpose from purpose template
 
   #118 (KO)
   @purposeTemplate @purposeFromPurposeTemplate
-  @nuovi-operatori-update
   Scenario Outline: [PURPOSE_TEMPLATE_CREATE_PURPOSE_FROM_TEMPLATE_PATCH_NO_ADMIN] Modifica di una finalità creata a partire da un template di finalità agevolata da parte di un utente NON admin (error 403)
     Given "PA2" ha già creato e pubblicato 1 e-service
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -178,6 +180,10 @@ Feature: finalità agevolata, purpose from purpose template
       | PA1  | api      |
       | PA1  | support  |
       | PA1  | security |
+
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo    |
       | PA2  | reviewer |
       | PA2  | viewer   |
 

@@ -4,7 +4,6 @@ Feature: Cancellazione richiesta di fruizione
 
   @nrt-minimal
   @agreement_delete1a
-  @nuovi-operatori-update
   Scenario Outline: [AGREEMENT_DELETE_01A] Per una richiesta di fruizione precedentemente creata dall’ente, la quale è in stato DRAFT, alla richiesta di cancellazione da parte di un utente con sufficienti permessi, va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
@@ -23,8 +22,6 @@ Feature: Cancellazione richiesta di fruizione
     Examples:
       | ente    | ruolo        | risultato |
       | GSP     | api          |       403 |
-      | GSP     | reviewer     |       403 |
-      | GSP     | viewer       |       403 |
       | GSP     | security     |       403 |
       | GSP     | support      |       403 |
       | GSP     | api,security |       403 |
@@ -33,11 +30,18 @@ Feature: Cancellazione richiesta di fruizione
       | PA1     | support      |       403 |
       | PA1     | api,security |       403 |
       | Privato | api          |       403 |
-      | Privato | reviewer     |       403 |
-      | Privato | viewer       |       403 |
       | Privato | security     |       403 |
       | Privato | support      |       403 |
       | Privato | api,security |       403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente    | ruolo        | risultato |
+      | GSP     | reviewer     |       403 |
+      | GSP     | viewer       |       403 |
+      | Privato | reviewer     |       403 |
+      | Privato | viewer       |       403 |
 
   @happy-path @nrt-minimal
   @agreement_delete1b @certifiedAttribute

@@ -4,7 +4,6 @@ Feature: Creazione nuova richiesta di fruizione
 
   @nrt-minimal
   @agreement_creation1 @no-parallel @certifiedAttribute
-  @nuovi-operatori-update
   Scenario Outline: [AGREEMENT_CREATION_01] Un utente con sufficienti permessi (admin), il cui ente rispetta i requisiti (attributi certificati), senza altre richieste di fruizione per un e-service, crea una nuova richiesta di fruizione in bozza per l’ultima versione disponibile di quell'e-service, la quale è in stato PUBLISHED. La richiesta va a buon fine
     Given l'utente è un "<ruolo>" di "<enteFruitore>"
     Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
@@ -23,8 +22,6 @@ Feature: Creazione nuova richiesta di fruizione
     Examples:
       | enteFruitore | enteCertificatore | enteErogatore | ruolo        | risultato |
       | GSP          | PA2               | PA1           | api          |       403 |
-      | GSP          | PA2               | PA1           | reviewer     |       403 |
-      | GSP          | PA2               | PA1           | viewer       |       403 |
       | GSP          | PA2               | PA1           | security     |       403 |
       | GSP          | PA2               | PA1           | support      |       403 |
       | GSP          | PA2               | PA1           | api,security |       403 |
@@ -33,11 +30,18 @@ Feature: Creazione nuova richiesta di fruizione
       | PA1          | PA2               | GSP           | support      |       403 |
       | PA1          | PA2               | GSP           | api,security |       403 |
       | Privato      | PA2               | GSP           | api          |       403 |
-      | Privato      | PA2               | GSP           | reviewer     |       403 |
-      | Privato      | PA2               | GSP           | viewer       |       403 |
       | Privato      | PA2               | GSP           | security     |       403 |
       | Privato      | PA2               | GSP           | support      |       403 |
       | Privato      | PA2               | GSP           | api,security |       403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | enteFruitore | enteCertificatore | enteErogatore | ruolo        | risultato |
+      | GSP          | PA2               | PA1           | reviewer     |       403 |
+      | GSP          | PA2               | PA1           | viewer       |       403 |
+      | Privato      | PA2               | GSP           | reviewer     |       403 |
+      | Privato      | PA2               | GSP           | viewer       |       403 |
 
   @happy-path @nrt-minimal
   @agreement_creation2a @certifiedAttribute

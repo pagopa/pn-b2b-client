@@ -4,7 +4,6 @@ Feature: Cancellazione di un'analisi del rischio ad un e-service
 
   @nrt-minimal
   @eservice_risk_analysis_delete1
-  @nuovi-operatori-update
   Scenario Outline: [ESERVICE_RISK_ANALYSIS_DELETE_01] Per un e-service creato in modalità "RECEIVE", con un descrittore in DRAFT, è possibile cancellare un'analisi del rischio precedentemente creata. L'analisi del rischio deve essere ben formattata ma non necessariamente completamente compilata. La richiesta va a buon fine se effettuata da un utente autorizzato
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato un e-service in modalità "RECEIVE" con un descrittore in DRAFT
@@ -27,10 +26,15 @@ Feature: Cancellazione di un'analisi del rischio ad un e-service
       | ente | ruolo        | risultato |
       | GSP  | security     |       403 |
       | GSP  | support      |       403 |
-      | GSP  | reviewer     |       403 |
-      | GSP  | viewer       |       403 |
       | PA1  | security     |       403 |
       | PA1  | support      |       403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo        | risultato |
+      | GSP  | reviewer     |       403 |
+      | GSP  | viewer       |       403 |
       | PA2  | reviewer     |       403 |
       | PA2  | viewer       |       403 |
 

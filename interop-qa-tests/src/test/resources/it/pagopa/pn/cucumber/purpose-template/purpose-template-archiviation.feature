@@ -22,7 +22,6 @@ Feature: finalità agevolata, purpose template ARCHIVIATION
 
   #59(KO)
   @purposeTemplate @purposeTemplateArchiviation
-  @nuovi-operatori-update
   Scenario Outline: [PURPOSE_TEMPLATE_ARCHIVIATION_NO_ADMIN] Archiviazione di una finalità agevolata da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato SUSPENDED
@@ -34,6 +33,10 @@ Feature: finalità agevolata, purpose template ARCHIVIATION
       | PA1  | api      |
       | PA1  | support  |
       | PA1  | security |
+
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo    |
       | PA2  | reviewer |
       | PA2  | viewer   |
 

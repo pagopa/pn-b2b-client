@@ -21,7 +21,6 @@ Feature: Soglie differenziate con API M2M V3
       | remainingDailyCallsPerConsumer | 5   |
       | remainingDailyCallsTotal       | 995 |
 
-  @nuovi-operatori-update
   Scenario Outline: [PURPOSE_THRESHOLD_9b] Una richiesta con API M2M V3 per recuperare le soglie rimanenti effettuata con un ruolo non autorizzato fallisce
     Given l'utente è un "admin" di "PA1"
     And PA1 ha già creato 1 attributo CERTIFIED
@@ -57,6 +56,11 @@ Feature: Soglie differenziate con API M2M V3
       | security     | m2m       | %actual   | 403        |
       | support      | m2m       | %actual   | 403        |
       | api,security | m2m       | %actual   | 403        |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | role         | m2mRole   | purposeId | statusCode |
       | reviewer     | m2m-admin | %actual   | 403        |
 
   Scenario Outline: [PURPOSE_THRESHOLD_10b] Una richiesta con API M2M V3 per recuperare le soglie rimanenti specificando una finalità non valida o inesistente fallisce

@@ -232,7 +232,6 @@ Feature: Verifica soglie differenziate
     And si ottiene status code 200
 
   @dailyCallsThreshold
-  @nuovi-operatori-update
   Scenario Outline: [PURPOSE_THRESHOLD_9] Una richiesta con API BFF per recuperare le soglie rimanenti effettuata con un ruolo non autorizzato fallisce
     Given l'utente è un "admin" di "PA1"
     And PA1 ha già creato 1 attributo CERTIFIED
@@ -263,6 +262,11 @@ Feature: Verifica soglie differenziate
       | security     | %actual   | 403        |
       | support      | %actual   | 403        |
       | api,security | %actual   | 403        |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ruolo        | purposeId | statusCode |
       | reviewer     | %actual   | 403        |
       | viewer       | %actual   | 403        |
 

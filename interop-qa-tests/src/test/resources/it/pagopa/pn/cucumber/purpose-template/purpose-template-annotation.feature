@@ -27,7 +27,6 @@ Feature: finalità agevolata, purpose template ANNOTATION
 
   #69 (KO)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswer
-  @nuovi-operatori-update
   Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_NO_ADMIN] Creazione di una risposta di analisi del rischio da associare a una finalità agevolata da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -39,6 +38,10 @@ Feature: finalità agevolata, purpose template ANNOTATION
       | PA1  | api      |
       | PA1  | support  |
       | PA1  | security |
+
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo    |
       | PA2  | reviewer |
       | PA2  | viewer   |
 
@@ -112,7 +115,6 @@ Feature: finalità agevolata, purpose template ANNOTATION
 
   #77 (KO)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotation
-  @nuovi-operatori-update
   Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_UPDATE_ANNOTATION_NO_ADMIN] Modifica di un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -125,6 +127,10 @@ Feature: finalità agevolata, purpose template ANNOTATION
       | PA1  | api      |
       | PA1  | support  |
       | PA1  | security |
+
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo    |
       | PA2  | reviewer |
       | PA2  | viewer   |
 

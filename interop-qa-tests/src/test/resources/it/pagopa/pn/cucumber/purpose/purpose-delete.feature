@@ -4,7 +4,6 @@ Feature: Cancellazione finalità
 
   @nrt-minimal
   @purpose_delete1
-  @nuovi-operatori-update
   Scenario Outline: [PURPOSE_DELETE_1] Per una finalità precedentemente creata dall’ente, la quale prima versione è in stato DRAFT, alla richiesta di cancellazione da parte di un utente con sufficienti permessi (admin), va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "PA2" ha già creato e pubblicato 1 e-service
@@ -35,6 +34,11 @@ Feature: Cancellazione finalità
       | Privato | security     |       403 |
       | Privato | api,security |       403 |
       | Privato | support      |       403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente    | ruolo        | risultato |
       | PA2     | reviewer     |       403 |
       | PA2     | viewer       |       403 |
       | GSP     | reviewer     |       403 |

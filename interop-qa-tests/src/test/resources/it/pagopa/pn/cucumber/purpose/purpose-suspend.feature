@@ -4,7 +4,6 @@ Feature: Sospensione di una finalità
 
   @nrt-minimal
   @purpose_suspend1
-  @nuovi-operatori-update
   Scenario Outline: [PURPOSE_SUSPEND_1] Per una finalità precedentemente creata da un fruitore e attivata da un erogatore, la quale è in stato ACTIVE, alla richiesta di sospensione da parte di un utente con sufficienti permessi dell’ente fruitore, che non coincide con l’ente erogatore, va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "PA2" ha già creato e pubblicato 1 e-service
@@ -35,6 +34,11 @@ Feature: Sospensione di una finalità
       | Privato | security     |       403 |
       | Privato | api,security |       403 |
       | Privato | support      |       403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente    | ruolo        | risultato |
       | PA2     | reviewer     |       403 |
       | PA2     | viewer       |       403 |
       | GSP     | reviewer     |       403 |

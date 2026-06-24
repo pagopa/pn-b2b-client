@@ -8,7 +8,6 @@ Feature: Creazione di una delega in erogazione
   #TC-5: Un utente con ruolo diverso da admin NON può creare una delega
   #TC-31: Una delega può essere creata dal delegante se delegato da la disponibilità a ricevere la delega
   @deleghe2
-  @nuovi-operatori-update
   Scenario Outline: [TC_CAPOFILA_4_5] Il richiamo dell’API di creazione di una delega possa essere compiuto da un utente di livello operatore amministrativo (admin)
     Given l'utente è un "<ruolo>" di "<delegante>"
     And "<delegante>" ha già creato e pubblicato 1 e-service
@@ -25,14 +24,18 @@ Feature: Creazione di una delega in erogazione
     Examples:
       | ruolo        | delegante | delegato | statusCode |
       | api          | PA1       | PA2      |        403 |
-      | reviewer     | PA2       | PA3      |        403 |
-      | viewer       | PA2       | PA3      |        403 |
       | security     | PA1       | PA2      |        403 |
       | api,security | PA1       | PA2      |        403 |
       | support      | PA1       | PA2      |        403 |
 
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ruolo        | delegante | delegato | statusCode |
+      | reviewer     | PA2       | PA3      |        403 |
+      | viewer       | PA2       | PA3      |        403 |
+
   @deleghe2
-  @nuovi-operatori-update
   Scenario Outline: [TC_CAPOFILA_RIFIUTO_PENDING] Il rifiuto di una delega in stato di pending possa essere compiuto solo da un utente con ruolo admin
     Given l'ente delegante "<delegante>"
     And l'ente delegato "<delegato>"
@@ -93,7 +96,7 @@ Feature: Creazione di una delega in erogazione
       # Esito: si ottiene 403 "Unauthorized"
       | support      | delegante | PA1       | PA2      | 403         |
 
-  @sad-path @deleghe2 @nuovi-operatori-update
+  @sad-path @deleghe2
   Scenario Outline: [TC_CAPOFILA_RIFIUTO_DELEGA_ACCETTATA] Il rifiuto di una delega già accettata non possa essere compiuto da nessun utente indipendentemente dal ruolo
     Given l'ente delegante "<delegante>"
     And l'ente delegato "<delegato>"
@@ -161,7 +164,6 @@ Feature: Creazione di una delega in erogazione
   #TC-13: L'accettazione di una delega può essere fatta da un utente con ruolo ADMIN
   #TC-14: La revoca di una delega può essere fatta da un utente con ruolo ADMIN
   @deleghe2
-  @nuovi-operatori-update
   Scenario Outline: [TC_CAPOFILA_ACCETTA_REVOCA_DELEGA] L'accettazione e la revoca di una delega non può essere effettuata da un utente diverso da admin
     Given l'utente è un "<ruolo>" di "<delegato>"
     And "<delegante>" ha già creato e pubblicato 1 e-service
@@ -181,14 +183,19 @@ Feature: Creazione di una delega in erogazione
     Examples:
       | ruolo        | delegante | delegato | statusCode |
       | api          | PA1       | PA2      |        403 |
-      | reviewer     | PA2       | PA3      |        403 |
-      | viewer       | PA2       | PA3      |        403 |
       | security     | PA1       | PA2      |        403 |
       | api,security | PA1       | PA2      |        403 |
       | support      | PA1       | PA2      |        403 |
 
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ruolo        | delegante | delegato | statusCode |
+      | reviewer     | PA2       | PA3      |        403 |
+      | viewer       | PA2       | PA3      |        403 |
+
   #TC-21: Delegato con ruolo admin non può revocare la delega
-  @sad-path @deleghe2 @nuovi-operatori-update
+  @sad-path @deleghe2
   Scenario Outline: [TC_CAPOFILA_DELEGATO_REVOCA] La revoca di una delega in stato PENDING non può essere effettuata da un delegato con ruolo admin
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
@@ -202,6 +209,10 @@ Feature: Creazione di una delega in erogazione
       | ruolo    |
       | admin    |
       | api      |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo    |
       | reviewer |
       | viewer   |
 
@@ -216,7 +227,6 @@ Feature: Creazione di una delega in erogazione
 
   #TC-11: La disponibilità di una delega può essere fatta soltanto da un utente con ruolo ADMIN
   @deleghe2
-  @nuovi-operatori-update
   Scenario Outline: [TC_CAPOFILA_DISPONIBILITA_DELEGHE] L'accettazione e la revoca di una delega non può essere effettuata da un utente diverso da admin
     Given l'utente è un "<ruolo>" di "PA2"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -232,11 +242,16 @@ Feature: Creazione di una delega in erogazione
     Examples:
       | ruolo        | statusCode |
       | api          |        403 |
-      | reviewer     |        403 |
-      | viewer       |        403 |
       | security     |        403 |
       | api,security |        403 |
       | support      |        403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ruolo        | statusCode |
+      | reviewer     |        403 |
+      | viewer       |        403 |
 
   @sad-path @deleghe2
   Scenario: [TC_CAPOFILA_35] Un delegante può delegare un solo ente per volta per un e-service

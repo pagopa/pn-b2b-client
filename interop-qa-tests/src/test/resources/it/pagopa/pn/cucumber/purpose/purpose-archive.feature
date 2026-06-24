@@ -4,7 +4,6 @@ Feature: Archiviazione di una finalità
 
   @nrt-minimal
   @purpose_archive1
-  @nuovi-operatori-update
   Scenario Outline: [PURPOSE_ARCHIVE_1] Per una finalità precedentemente creata da un fruitore, la quale è in stato ACTIVE o SUSPENDED, alla richiesta di archiviazione da parte di un utente con sufficienti permessi dell’ente fruitore, va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "PA2" ha già creato e pubblicato 1 e-service
@@ -35,6 +34,11 @@ Feature: Archiviazione di una finalità
       | Privato | security     |       403 |
       | Privato | api,security |       403 |
       | Privato | support      |       403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples: # Test sui ruoli
+      | ente    | ruolo        | risultato |
       | PA2     | reviewer     |       403 |
       | PA2     | viewer       |       403 |
       | GSP     | reviewer     |       403 |

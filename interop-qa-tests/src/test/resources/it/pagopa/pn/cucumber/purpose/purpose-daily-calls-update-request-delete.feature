@@ -4,7 +4,6 @@ Feature: Cancellazione di una richiesta di aggiornamento di una stima di carico
 
   @nrt-minimal
   @daily_calls_update_request_delete1
-  @nuovi-operatori-update
   Scenario Outline: [CANCELLAZIONE_STIMA_CARICO_1] Per una finalità precedentemente creata da un fruitore e attivata da un erogatore, la quale è in stato ACTIVE o SUSPENDED, e la cui stima di carico è stata successivamente aggiornata dal fruitore ad un valore che supera una soglia dell'erogatore portando quella versione in WAITING_FOR_APPROVAL, alla richiesta di cancellazione di aggiornamento stima di carico da parte di un utente con sufficienti permessi (admin) dell’ente fruitore, va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "PA2" ha già creato e pubblicato 1 e-service
@@ -36,6 +35,11 @@ Feature: Cancellazione di una richiesta di aggiornamento di una stima di carico
       | Privato | security     | ACTIVE        |       403 |
       | Privato | api,security | ACTIVE        |       403 |
       | Privato | support      | ACTIVE        |       403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples: # Test sui ruoli
+      | ente    | ruolo        | statoFinalità | risultato |
       | PA2     | reviewer     | ACTIVE        |       403 |
       | PA2     | viewer       | ACTIVE        |       403 |
       | GSP     | reviewer     | ACTIVE        |       403 |

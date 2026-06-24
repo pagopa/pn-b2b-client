@@ -3,7 +3,6 @@ Feature: Rimozione di un membro da un client
   Tutti gli admin possono rimuovere un membro da un client
 
   @nrt-minimal
-  @nuovi-operatori-update
   Scenario Outline: [CLIENT_USER_REMOVE_1] Un utente con sufficienti permessi (admin); appartenente all'ente che ha creato il client; il quale utente è già censito tra i membri del client (anche se l’utente da rimuovere è l’utente stesso). L’operazione va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato 1 client "CONSUMER"
@@ -21,8 +20,6 @@ Feature: Rimozione di un membro da un client
     Examples:
       | ente | ruolo        | statusCode |
       | GSP  | api          |        403 |
-      | GSP  | reviewer     |        403 |
-      | GSP  | viewer       |        403 |
       | GSP  | security     |        403 |
       | GSP  | support      |        403 |
       | GSP  | api,security |        403 |
@@ -30,5 +27,12 @@ Feature: Rimozione di un membro da un client
       | PA1  | security     |        403 |
       | PA1  | support      |        403 |
       | PA1  | api,security |        403 |
+
+    @happy-path
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo        | statusCode |
+      | GSP  | reviewer     |        403 |
+      | GSP  | viewer       |        403 |
       | PA2  | reviewer     |        403 |
       | PA2  | viewer       |        403 |

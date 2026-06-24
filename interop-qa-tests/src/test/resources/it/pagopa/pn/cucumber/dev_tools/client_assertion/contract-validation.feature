@@ -10,7 +10,6 @@ Feature: : Debugger Client Assertion Sync Bearer
 
   # https://pagopaspa.slack.com/archives/C0A7AMD53MM/p1778754777127059
   @devToolsClientAssertion
-  @nuovi-operatori-update
   Scenario Outline: [CLIENT_ASSERTION_CONTRACT_VALIDATION_AUTHORIZED_ROLES_1] la richiesta di validazione della client assertion da parte di un utente
     va a buon fine soltanto se ha ruolo admin, support oppure se ha ruolo security ed è l'owner della chiave.
     Se il ruolo dell'utente è api la richiesta non va a buon fine.
@@ -27,13 +26,17 @@ Feature: : Debugger Client Assertion Sync Bearer
       | PA1  | api,security | 403       |
       | PA1  | security     | 403       |
       | PA1  | support      | 200       |
-      | PA2  | reviewer     | 403       |
-      | PA2  | viewer       | 403       |
       | GSP  | admin        | 200       |
       | GSP  | api          | 403       |
       | GSP  | api,security | 403       |
       | GSP  | security     | 403       |
       | GSP  | support      | 200       |
+
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo        | risultato |
+      | PA2  | reviewer     | 403       |
+      | PA2  | viewer       | 403       |
       | GSP  | reviewer     | 403       |
       | GSP  | viewer       | 403       |
 

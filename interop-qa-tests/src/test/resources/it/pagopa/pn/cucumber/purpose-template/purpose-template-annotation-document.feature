@@ -37,7 +37,6 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
 
   #88 (KO)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
-  @nuovi-operatori-update
   Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_UPLOAD_DOCS_NO_ADMIN] Upload di documenti legati ad un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -52,6 +51,10 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
       | PA1  | api      |
       | PA1  | support  |
       | PA1  | security |
+
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo    |
       | PA2  | reviewer |
       | PA2  | viewer   |
 
@@ -111,7 +114,6 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
 
   #93 (KO)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
-  @nuovi-operatori-update
   Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_NO_ADMIN] Eliminazione di un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -127,6 +129,10 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
       | PA1  | api      |
       | PA1  | support  |
       | PA1  | security |
+
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo    |
       | PA2  | reviewer |
       | PA2  | viewer   |
 
@@ -202,7 +208,6 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
 
   #99 (KO)
   @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
-  @nuovi-operatori-update
   Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_DOCUMENT_NO_ADMIN] Eliminazione di un documento associato a un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -218,6 +223,10 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
       | PA1  | api      |
       | PA1  | support  |
       | PA1  | security |
+
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo    |
       | PA2  | reviewer |
       | PA2  | viewer   |
 

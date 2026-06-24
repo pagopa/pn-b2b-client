@@ -19,7 +19,6 @@ Feature: Associazione di un admin ad un client
 
   @sad-path
   @client_admin_create
-  @nuovi-operatori-update
   Scenario Outline: [ADMIN_CLIENT_3] Un utente non admin non può impostare se stesso come amministratore di un client API
     Given l'utente è un "<ruolo>" di "<ente>"
     And "<ente>" ha già creato 1 client "API"
@@ -28,10 +27,14 @@ Feature: Associazione di un admin ad un client
     Examples:
       | ruolo     | ente |
       | api       | PA1  |
-      | reviewer  | PA2  |
-      | viewer    | PA2  |
       | support   | PA1  |
       | security  | PA1  |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo     | ente |
+      | reviewer  | PA2  |
+      | viewer    | PA2  |
 
   @sad-path
   @client_admin_create
@@ -43,7 +46,6 @@ Feature: Associazione di un admin ad un client
 
   @sad-path
   @client_admin_create
-  @nuovi-operatori-update
   Scenario Outline: [ADMIN_CLIENT_5] Un utente admin non può impostare un altro utente non-admin come amministratore di un client API
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato 1 client "API"
@@ -52,6 +54,10 @@ Feature: Associazione di un admin ad un client
     Examples:
       | ruolo    |
       | api      |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo    |
       | reviewer |
       | viewer   |
 
@@ -118,7 +124,6 @@ Feature: Associazione di un admin ad un client
 
   @sad-path
   @client_admin_delete
-  @nuovi-operatori-update
   Scenario Outline: [ADMIN_CLIENT_13] Un utente non-admin non può rimuovere un utente dal ruolo di amministratore di un client API
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato 1 client "API"
@@ -129,10 +134,14 @@ Feature: Associazione di un admin ad un client
     Examples:
       | ruolo     |
       | api       |
-      | reviewer  |
-      | viewer    |
       | support   |
       | security  |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo     |
+      | reviewer  |
+      | viewer    |
 
   @sad-path
   @client_admin_delete
@@ -145,7 +154,6 @@ Feature: Associazione di un admin ad un client
 
   @sad-path
   @client_admin_delete
-  @nuovi-operatori-update
   Scenario Outline: [ADMIN_CLIENT_15] Un utente admin non può rimuovere un utente dal ruolo di amministratore di un client API se fa capo ad un ente diverso da quello creatore del client
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato 1 client "API"
@@ -157,6 +165,10 @@ Feature: Associazione di un admin ad un client
       | ruolo    |
       | admin    |
       | api      |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo    |
       | reviewer |
       | viewer   |
 

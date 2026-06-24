@@ -4,7 +4,6 @@ Feature: Lettura di un documento allegato alla richiesta di fruizione
 
   @nrt-minimal
   @agreement_document_read1
-  @nuovi-operatori-update
   Scenario Outline: [AGREEMENT_DOCUMENT_READ_01] Un utente con sufficienti permessi, per una richiesta di fruizione precedentemente creata, la quale è in stato DRAFT, relativa a un e-service pubblicato dallo stesso ente, alla richiesta di lettura di un documento allegato, la richiesta va a buon fine.
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato e pubblicato 1 e-service
@@ -17,21 +16,31 @@ Feature: Lettura di un documento allegato alla richiesta di fruizione
       | ente | ruolo        | risultato |
       | GSP  | admin        |       200 |
       | GSP  | support      |       200 |
-      | GSP  | viewer       |       200 |
       | PA1  | admin        |       200 |
       | PA1  | support      |       200 |
+
+    @happy-path
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo        | risultato |
+      | GSP  | viewer       |       200 |
       | PA2  | viewer       |       200 |
 
     @sad-path
     Examples:
       | ente | ruolo        | risultato |
       | GSP  | api          |       403 |
-      | GSP  | reviewer     |       403 |
       | GSP  | security     |       403 |
       | GSP  | api,security |       403 |
       | PA1  | api          |       403 |
       | PA1  | security     |       403 |
       | PA1  | api,security |       403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo        | risultato |
+      | GSP  | reviewer     |       403 |
 
   @happy-path
   @nrt-minimal

@@ -74,7 +74,6 @@ Feature: Test modificabilità campo "agreementApprovalPolicy"
     Then si ottiene lo status code 403
 
   @app-edit-ff-on
-  @nuovi-operatori-update
   Scenario Outline: [MOD_APP_ON_6] Il campo "agreementApprovalPolicy" di un e-service non può essere modificato da un ente con ruolo diverso da ADMIN o API
     Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     When l'utente è un "<ruolo>" di "PA2"
@@ -84,6 +83,10 @@ Feature: Test modificabilità campo "agreementApprovalPolicy"
       | ruolo     |
       | security  |
       | support   |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo     |
       | reviewer  |
       | viewer    |
 

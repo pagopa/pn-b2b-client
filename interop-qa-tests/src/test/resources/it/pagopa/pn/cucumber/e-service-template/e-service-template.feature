@@ -3,23 +3,31 @@ Feature: Test API of e-service template
 
   @sad-path
   @e-service-template-create
-  @nuovi-operatori-update
   Scenario Outline: [INTEROP-EST-001] La creazione di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "<ruolo>" di "PA2"
     When l'utente effettua la creazione di un e-service template in modalità <modo> in stato di DRAFT
     Then si ottiene response status code 403
     Examples:
-      | ruolo | modo |
-      | security | erogazione |
-      | support | erogazione |
-      | reviewer | erogazione |
-      | viewer | erogazione |
+      | ruolo     | modo        |
+      | security  | erogazione |
+      | support   | erogazione |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo     | modo       |
+      | reviewer  | erogazione |
+      | viewer    | erogazione |
 
     @e-service-template-receive-bff
     Examples:
       | ruolo | modo |
       | security | ricezione |
       | support | ricezione |
+
+    @e-service-template-receive-bff
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | modo |
       | reviewer | ricezione |
       | viewer | ricezione |
 
@@ -57,7 +65,6 @@ Feature: Test API of e-service template
 
   @sad-path
   @e-service-template-version-suspend
-  @nuovi-operatori-update
   Scenario Outline: [INTEROP-EST-006] La sospensione di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
@@ -68,6 +75,10 @@ Feature: Test API of e-service template
       | ruolo |
       | security |
       | support |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo |
       | reviewer |
       | viewer |
 
@@ -87,7 +98,6 @@ Feature: Test API of e-service template
 
   @sad-path
   @e-service-template-version-activate
-  @nuovi-operatori-update
   Scenario Outline: [INTEROP-EST-008] La riattivazione di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di SUSPENDED
@@ -98,6 +108,10 @@ Feature: Test API of e-service template
       | ruolo |
       | security |
       | support |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo |
       | reviewer |
       | viewer |
 
@@ -124,7 +138,6 @@ Feature: Test API of e-service template
 
   @sad-path
   @e-service-template-update
-  @nuovi-operatori-update
   Scenario Outline: [INTEROP-EST-010] La modifica di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
@@ -139,6 +152,10 @@ Feature: Test API of e-service template
       | support | PUBLISHED |
       | security | SUSPENDED |
       | support | SUSPENDED |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato |
       | reviewer | DRAFT |
       | reviewer | PUBLISHED |
       | reviewer | SUSPENDED |
@@ -212,7 +229,6 @@ Feature: Test API of e-service template
 
   @sad-path
   @e-service-template-version-update
-  @nuovi-operatori-update
   Scenario Outline: [INTEROP-EST-016] La modifica di una versione di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
@@ -227,6 +243,10 @@ Feature: Test API of e-service template
       | support | PUBLISHED |
       | security | SUSPENDED |
       | support | SUSPENDED |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato |
       | reviewer | DRAFT |
       | reviewer | PUBLISHED |
       | reviewer | SUSPENDED |
@@ -301,7 +321,6 @@ Feature: Test API of e-service template
   @sad-path
   @e-service-template-receive-bff
   @e-service-template-riskAnalysis-add
-  @nuovi-operatori-update
   Scenario Outline: [INTEROP-EST-021] L'aggiunta di una risk analysis a un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
@@ -316,6 +335,10 @@ Feature: Test API of e-service template
       | support | PUBLISHED |
       | security | SUSPENDED |
       | support | SUSPENDED |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato |
       | reviewer | DRAFT |
       | reviewer | PUBLISHED |
       | reviewer | SUSPENDED |
@@ -398,7 +421,6 @@ Feature: Test API of e-service template
   @sad-path
   @e-service-template-receive-bff
   @e-service-template-riskAnalysis-delete
-  @nuovi-operatori-update
   Scenario Outline: [INTEROP-EST-028] La cancellazione di una risk analysis di un e-service template in stato DRAFT NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
@@ -410,6 +432,10 @@ Feature: Test API of e-service template
       | ruolo | stato |
       | security | DRAFT |
       | support | DRAFT |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato |
       | reviewer | DRAFT |
       | viewer | DRAFT |
 
@@ -463,7 +489,6 @@ Feature: Test API of e-service template
   @sad-path
   @e-service-template-receive-bff
   @e-service-template-riskAnalysis-update
-  @nuovi-operatori-update
   Scenario Outline: [INTEROP-EST-033] La modifica di una risk analysis di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
@@ -478,6 +503,10 @@ Feature: Test API of e-service template
       | support | PUBLISHED |
       | security | SUSPENDED |
       | support | SUSPENDED |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato |
       | reviewer | DRAFT |
       | reviewer | PUBLISHED |
       | reviewer | SUSPENDED |
@@ -535,7 +564,6 @@ Feature: Test API of e-service template
   # il flusso e-service, oltre e-service template. Non si prospetta una risoluzione nel breve termine.
   @sad-path
   @e-service-template-version-document-create
-  @nuovi-operatori-update
   Scenario Outline: [INTEROP-EST-038] L'aggiunta di un documento/interfaccia a una versione di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
@@ -556,6 +584,10 @@ Feature: Test API of e-service template
       | support | PUBLISHED | INTERFACE |
       | security | SUSPENDED | INTERFACE |
       | support | SUSPENDED | INTERFACE |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato | kind |
       | reviewer | DRAFT | DOCUMENT |
       | viewer | DRAFT | DOCUMENT |
 
@@ -653,7 +685,6 @@ Feature: Test API of e-service template
     # https://pagopaspa.slack.com/archives/C085C3D1U84/p1743516899961919
   @sad-path
   @e-service-template-version-document-read
-  @nuovi-operatori-update
   Scenario Outline: [INTEROP-EST-046-A] Il reperimento di un documento/interfaccia di un e-service template NON può essere fatto da un ente NON in veste di ADMIN, API o SUPPORT
     Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
@@ -667,6 +698,10 @@ Feature: Test API of e-service template
       | security | PUBLISHED | DOCUMENT |
       | security | SUSPENDED | DOCUMENT |
       | security | DRAFT | INTERFACE |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato | kind |
       | reviewer | DRAFT | DOCUMENT |
       | reviewer | PUBLISHED | DOCUMENT |
       | reviewer | SUSPENDED | DOCUMENT |
@@ -680,7 +715,6 @@ Feature: Test API of e-service template
     # https://pagopaspa.slack.com/archives/C085C3D1U84/p1743516899961919
   @sad-path
   @e-service-template-version-document-read
-  @nuovi-operatori-update
   Scenario Outline: [INTEROP-EST-046-B] Il reperimento di un documento/interfaccia di un e-service template NON può essere fatto da un ente NON in veste di ADMIN, API o SUPPORT
     Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
@@ -691,6 +725,10 @@ Feature: Test API of e-service template
       | ruolo | stato |
       | security | PUBLISHED |
       | security | SUSPENDED |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato |
       | reviewer | PUBLISHED |
       | reviewer | SUSPENDED |
 
@@ -794,7 +832,6 @@ Feature: Test API of e-service template
 
   @sad-path
   @e-service-template-version-document-update
-  @nuovi-operatori-update
   Scenario Outline: [INTEROP-EST-051-A] La modifica di un documento/interfaccia di un e-service template in qualsiasi stato NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
@@ -812,6 +849,10 @@ Feature: Test API of e-service template
       | support | SUSPENDED | DOCUMENT |
       | security | DRAFT | INTERFACE |
       | support | DRAFT | INTERFACE |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato | kind |
       | reviewer | DRAFT | DOCUMENT |
       | reviewer | DRAFT | INTERFACE |
       | viewer | DRAFT | DOCUMENT |
@@ -823,7 +864,6 @@ Feature: Test API of e-service template
     # se <stato> è PUBLISHED o SUSPENDED
   @sad-path
   @e-service-template-version-document-update
-  @nuovi-operatori-update
   Scenario Outline: [INTEROP-EST-051-B] La modifica di un documento/interfaccia di un e-service template in qualsiasi stato NON può essere fatta da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
@@ -836,6 +876,10 @@ Feature: Test API of e-service template
       | support | PUBLISHED |
       | security | SUSPENDED |
       | support | SUSPENDED |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato |
       | reviewer | PUBLISHED |
       | viewer | PUBLISHED |
 
@@ -941,7 +985,6 @@ Feature: Test API of e-service template
 
   @sad-path
   @e-service-template-version-document-delete
-  @nuovi-operatori-update
   Scenario Outline: [INTEROP-EST-058-A] La cancellazione di un documento/interfaccia di un e-service template NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
@@ -959,6 +1002,10 @@ Feature: Test API of e-service template
       | support | SUSPENDED | DOCUMENT |
       | security | DRAFT | INTERFACE |
       | support | DRAFT | INTERFACE |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato | kind |
       | reviewer | DRAFT | DOCUMENT |
       | reviewer | DRAFT | INTERFACE |
       | viewer | DRAFT | DOCUMENT |
@@ -970,7 +1017,6 @@ Feature: Test API of e-service template
     # se <stato> è PUBLISHED o SUSPENDED
   @sad-path
   @e-service-template-version-document-delete
-  @nuovi-operatori-update
   Scenario Outline: [INTEROP-EST-058-B] La cancellazione di un documento/interfaccia di un e-service template NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
@@ -983,6 +1029,10 @@ Feature: Test API of e-service template
       | support | PUBLISHED |
       | security | SUSPENDED |
       | support | SUSPENDED |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato |
       | reviewer | PUBLISHED |
       | reviewer | SUSPENDED |
       | viewer | PUBLISHED |
@@ -1099,7 +1149,6 @@ Feature: Test API of e-service template
 
   @sad-path
   @e-service-template-version-publish
-  @nuovi-operatori-update
   Scenario Outline: [INTEROP-EST-066] La pubblicazione di una versione di un e-service template in stato DRAFT, in modalità erogazione e con annesso un documento di interfaccia NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
@@ -1111,6 +1160,10 @@ Feature: Test API of e-service template
       | ruolo |
       | security |
       | support |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo |
       | reviewer |
       | viewer |
 
@@ -1134,7 +1187,6 @@ Feature: Test API of e-service template
   @sad-path
   @e-service-template-receive-bff
   @e-service-template-version-publish
-  @nuovi-operatori-update
   Scenario Outline: [INTEROP-EST-068] La pubblicazione di una versione di un e-service template in stato DRAFT, in modalità ricezione, con annesso un documento di interfaccia e di una risk analysis NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
@@ -1146,6 +1198,10 @@ Feature: Test API of e-service template
       | ruolo |
       | security |
       | support |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo |
       | reviewer |
       | viewer |
 
@@ -1270,7 +1326,6 @@ Feature: Test API of e-service template
 
   @sad-path
   @e-service-template-version-delete
-  @nuovi-operatori-update
   Scenario Outline: [INTEROP-EST-079] La cancellazione di una versione di un e-service template in stato PUBLISHED non può essere effettuata da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
@@ -1284,6 +1339,10 @@ Feature: Test API of e-service template
       | ruolo |
       | security |
       | support |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo |
       | reviewer |
       | viewer |
 
@@ -1362,7 +1421,6 @@ Feature: Test API of e-service template
 
   @sad-path
   @e-service-template-version-suspend
-  @nuovi-operatori-update
   Scenario Outline: [INTEROP-EST-087] La sospensione di una versione di un e-service template in stato PUBLISHED NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
@@ -1373,6 +1431,10 @@ Feature: Test API of e-service template
       | ruolo |
       | security |
       | support |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo |
       | reviewer |
       | viewer |
 
@@ -1429,7 +1491,6 @@ Feature: Test API of e-service template
 
   @sad-path
   @e-service-template-version-activate
-  @nuovi-operatori-update
   Scenario Outline: [INTEROP-EST-093] La riattivazione di una versione di un e-service template in stato SUSPENDED NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di SUSPENDED
@@ -1440,6 +1501,10 @@ Feature: Test API of e-service template
       | ruolo |
       | security |
       | support |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo |
       | reviewer |
       | viewer |
 
@@ -1487,7 +1552,6 @@ Feature: Test API of e-service template
 
   @sad-path
   @e-service-template-name-update
-  @nuovi-operatori-update
   Scenario Outline: [INTEROP-EST-098] La modifica del nome di un e-service template in stato PUBLISHED o SUSPENDED NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
@@ -1500,6 +1564,10 @@ Feature: Test API of e-service template
       | support | PUBLISHED |
       | security | SUSPENDED |
       | support | SUSPENDED |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato |
       | reviewer | PUBLISHED |
       | reviewer | SUSPENDED |
       | viewer | PUBLISHED |
@@ -1616,7 +1684,6 @@ Feature: Test API of e-service template
 
   @sad-path
   @e-service-template-intendedTarget-update
-  @nuovi-operatori-update
   Scenario Outline: [INTEROP-EST-106] La modifica della descrizione dello scopo di un e-service template in stato PUBLISHED o SUSPENDED NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
@@ -1629,6 +1696,10 @@ Feature: Test API of e-service template
       | support | PUBLISHED |
       | security | SUSPENDED |
       | support | SUSPENDED |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato |
       | reviewer | PUBLISHED |
       | reviewer | SUSPENDED |
       | viewer | PUBLISHED |
@@ -1717,7 +1788,6 @@ Feature: Test API of e-service template
 
   @sad-path
   @e-service-template-description-update
-  @nuovi-operatori-update
   Scenario Outline: [INTEROP-EST-114] La modifica della descrizione di un e-service template in stato PUBLISHED o SUSPENDED NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
@@ -1730,6 +1800,10 @@ Feature: Test API of e-service template
       | support | PUBLISHED |
       | security | SUSPENDED |
       | support | SUSPENDED |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato |
       | reviewer | PUBLISHED |
       | reviewer | SUSPENDED |
       | viewer | PUBLISHED |
@@ -1934,7 +2008,6 @@ Feature: Test API of e-service template
 
   @sad-path
   @e-service-template-version-attributes-update @certifiedAttribute
-  @nuovi-operatori-update
   Scenario Outline: [INTEROP-EST-129-PUB] La modifica degli attributi di una versione di un e-service template in stato PUBLISHED NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA2"
     And l'utente è un "admin" di "PA2"
@@ -1950,12 +2023,15 @@ Feature: Test API of e-service template
       | ruolo |
       | security |
       | support |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo |
       | reviewer |
       | viewer |
 
   @sad-path
   @e-service-template-version-attributes-update @certifiedAttribute
-  @nuovi-operatori-update
   Scenario Outline: [INTEROP-EST-129-SUS] La modifica degli attributi di una versione di un e-service template in stato SUSPENDED NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA2"
     And l'utente è un "admin" di "PA2"
@@ -1972,6 +2048,10 @@ Feature: Test API of e-service template
       | ruolo |
       | security |
       | support |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo |
       | reviewer |
       | viewer |
 
@@ -2079,7 +2159,6 @@ Feature: Test API of e-service template
 
   @sad-path
   @e-service-template-version-create
-  @nuovi-operatori-update
   Scenario Outline: [INTEROP-EST-136] La creazione di una nuova versione di un e-service template NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
@@ -2092,6 +2171,10 @@ Feature: Test API of e-service template
       | support | PUBLISHED |
       | security | SUSPENDED |
       | support | SUSPENDED |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato |
       | reviewer | PUBLISHED |
       | reviewer | SUSPENDED |
       | viewer | PUBLISHED |
@@ -2347,7 +2430,6 @@ Feature: Test API of e-service template
 
   @sad-path
   @e-service-template-instance-create
-  @nuovi-operatori-update
   Scenario Outline: [INTEROP-EST-156] La creazione di un nuovo e-service a partire da un template attivo NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità <modo> in stato di PUBLISHED
@@ -2358,6 +2440,10 @@ Feature: Test API of e-service template
       | ruolo | modo |
       | security | erogazione |
       | support | erogazione |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | modo |
       | reviewer | erogazione |
       | viewer | erogazione |
 
@@ -2366,6 +2452,11 @@ Feature: Test API of e-service template
       | ruolo | modo |
       | security | ricezione |
       | support | ricezione |
+
+    @e-service-template-receive-bff
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | modo |
       | reviewer | ricezione |
       | viewer | ricezione |
 
@@ -2783,7 +2874,6 @@ Feature: Test API of e-service template
 
   @sad-path
   @e-service-template-instance-update
-  @nuovi-operatori-update
   Scenario Outline: [INTEROP-EST-188] La modifica dei campi di un'istanza di un e-service template NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità <modo> in stato di PUBLISHED
@@ -2795,6 +2885,10 @@ Feature: Test API of e-service template
       | ruolo | modo |
       | security | erogazione |
       | support | erogazione |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | modo |
       | reviewer | erogazione |
       | viewer | erogazione |
 
@@ -2803,6 +2897,11 @@ Feature: Test API of e-service template
       | ruolo | modo |
       | security | ricezione |
       | support | ricezione |
+
+    @e-service-template-receive-bff
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | modo |
       | reviewer | ricezione |
       | viewer | ricezione |
 
@@ -2913,7 +3012,6 @@ Feature: Test API of e-service template
 
   @sad-path
   @e-service-template-instance-descriptor-update
-  @nuovi-operatori-update
   Scenario Outline: [INTEROP-EST-195] La modifica del descriptor in stato DRAFT di un'istanza di un e-service template NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità <modo> in stato di PUBLISHED
@@ -2925,6 +3023,10 @@ Feature: Test API of e-service template
       | ruolo | modo |
       | security | erogazione |
       | support | erogazione |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | modo |
       | reviewer | erogazione |
       | viewer | erogazione |
 
@@ -2933,6 +3035,11 @@ Feature: Test API of e-service template
       | ruolo | modo |
       | security | ricezione |
       | support | ricezione |
+
+    @e-service-template-receive-bff
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | modo |
       | reviewer | ricezione |
       | viewer | ricezione |
 
@@ -3044,7 +3151,6 @@ Feature: Test API of e-service template
 
   @sad-path
   @e-service-template-instance-descriptor-update
-  @nuovi-operatori-update
   Scenario Outline: [INTEROP-EST-202] La modifica del descriptor di un'istanza di un e-service template NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità <modo> in stato di PUBLISHED
@@ -3060,6 +3166,10 @@ Feature: Test API of e-service template
       | support | SUSPENDED | erogazione |
       | security | DEPRECATED | erogazione |
       | support | DEPRECATED | erogazione |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato | modo |
       | reviewer | PUBLISHED | erogazione |
       | viewer | PUBLISHED | erogazione |
 
@@ -3072,6 +3182,11 @@ Feature: Test API of e-service template
       | support | SUSPENDED | ricezione |
       | security | DEPRECATED | ricezione |
       | support | DEPRECATED | ricezione |
+
+    @e-service-template-receive-bff
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato | modo |
       | reviewer | PUBLISHED | ricezione |
       | viewer | PUBLISHED | ricezione |
 

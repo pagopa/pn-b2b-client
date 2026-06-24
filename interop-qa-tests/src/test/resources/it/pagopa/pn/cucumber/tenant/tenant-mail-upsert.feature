@@ -4,7 +4,6 @@ Feature: Aggiunta o aggiornamento di una mail di contatto
 
   @nrt-minimal
   @tenant_mail_upsert1 @wait_for_fix @PIN-5105
-  @nuovi-operatori-update
   Scenario Outline: [TENANT_MAIL_UPSERT_01] Per un utente con sufficienti permessi (admin), alla richiesta di aggiunta di una mail di contatto compilando tutti i parametri (kind, address e description), va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     When l'utente richiede una operazione di aggiunta di una mail di contatto con description
@@ -18,8 +17,6 @@ Feature: Aggiunta o aggiornamento di una mail di contatto
       | GSP     | security     |        403 |
       | GSP     | api,security |        403 |
       | GSP     | support      |        403 |
-      | GSP     | reviewer     |        403 |
-      | GSP     | viewer       |        403 |
       | PA1     | admin        |        204 |
       | PA1     | api          |        403 |
       | PA1     | security     |        403 |
@@ -30,6 +27,12 @@ Feature: Aggiunta o aggiornamento di una mail di contatto
       | Privato | security     |        403 |
       | Privato | support      |        403 |
       | Privato | api,security |        403 |
+
+    @nuovi-operatori-update
+    Examples:
+      | ente    | ruolo        | statusCode |
+      | GSP     | reviewer     |        403 |
+      | GSP     | viewer       |        403 |
       | Privato | reviewer     |        403 |
       | Privato | viewer       |        403 |
 

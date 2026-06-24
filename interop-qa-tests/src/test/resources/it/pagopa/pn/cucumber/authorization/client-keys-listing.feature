@@ -43,7 +43,6 @@ Feature: Listing chiavi client
   @sad-path
   @nrt-minimal
   @wait_for_fix
-  @nuovi-operatori-update
   Scenario Outline: [CLIENT_KEYS_LISTING_3] Un utente api, security o api/security; appartenente all'ente che ha creato il client; il quale utente non è membro del client; richiede l’elenco delle chiavi caricate per il client. L’operazione non va a buon fine
     Given l'utente è un "<ruolo>" di "PA2"
     Given "PA2" ha già creato 1 client "CONSUMER"
@@ -57,10 +56,14 @@ Feature: Listing chiavi client
     Examples:
       | ruolo        |
       | api          |
-      | reviewer     |
-      | viewer       |
       | security     |
       | api,security |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo        |
+      | reviewer     |
+      | viewer       |
 
   @happy-path
   @nrt-minimal

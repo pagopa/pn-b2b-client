@@ -39,7 +39,6 @@ Feature: finalità agevolata, purpose template ACTIVATION
 
   #41(KO)
   @purposeTemplate @purposeTemplateActivation
-  @nuovi-operatori-update
   Scenario Outline: [PURPOSE_TEMPLATE_ACTIVATION_NO_ADMIN] Attivazione di una finalità agevolata da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -51,6 +50,10 @@ Feature: finalità agevolata, purpose template ACTIVATION
       | PA1  | api      |
       | PA1  | support  |
       | PA1  | security |
+
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo    |
       | PA2  | reviewer |
       | PA2  | viewer   |
 

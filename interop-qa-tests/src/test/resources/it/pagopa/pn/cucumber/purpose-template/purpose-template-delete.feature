@@ -31,7 +31,6 @@ Feature: finalità agevolata, purpose template DELETE
 
   #20(KO)
   @purposeTemplate @purposeTemplateDelete
-  @nuovi-operatori-update
   Scenario Outline: [DELETE_PURPOSE_TEMPLATE_NO_ADMIN] Eliminazione di una finalità agevolata da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -43,6 +42,10 @@ Feature: finalità agevolata, purpose template DELETE
       | PA1  | api      |
       | PA1  | support  |
       | PA1  | security |
+
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo    |
       | PA2  | reviewer |
       | PA2  | viewer   |
 

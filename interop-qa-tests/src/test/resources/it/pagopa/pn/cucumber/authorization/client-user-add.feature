@@ -3,7 +3,6 @@ Feature: Aggiunta di un membro ad un client
   Tutti gli admin possono associare un membro ad un client
 
   @nrt-minimal
-  @nuovi-operatori-update
   Scenario Outline: [CLIENT_USER_ADD_1] Un utente  admin, api, security, o support; appartenente all'ente che ha creato il client; il quale utente è già censito tra gli appartenenti all’ente ma non appartiene al client (anche se l’utente da aggiungere è l’utente stesso); associa un membro ad un client. L’operazione va a buon fine solo per il ruolo admin.
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato 1 client "CONSUMER"
@@ -20,8 +19,6 @@ Feature: Aggiunta di un membro ad un client
     Examples:
       | ente | ruolo        | statusCode |
       | GSP  | api          |        403 |
-      | GSP  | reviewer     |        403 |
-      | GSP  | viewer       |        403 |
       | GSP  | security     |        403 |
       | GSP  | support      |        403 |
       | GSP  | api,security |        403 |
@@ -29,6 +26,13 @@ Feature: Aggiunta di un membro ad un client
       | PA1  | security     |        403 |
       | PA1  | support      |        403 |
       | PA1  | api,security |        403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo        | statusCode |
+      | GSP  | reviewer     |        403 |
+      | GSP  | viewer       |        403 |
       | PA2  | reviewer     |        403 |
       | PA2  | viewer       |        403 |
 
@@ -41,7 +45,6 @@ Feature: Aggiunta di un membro ad un client
     Then si ottiene status code 403
 
   @nrt-minimal
-  @nuovi-operatori-update
   Scenario Outline: [CLIENT_USER_ROLE_ADD_1] Un utente  admin, api, security, o support; appartenente all'ente che ha creato il client; il quale utente è già censito tra gli appartenenti all’ente ma non appartiene al client (anche se l’utente da aggiungere è l’utente stesso); associa un membro ad un client. L’operazione va a buon fine solo per il ruolo admin.
     Given l'utente è un "admin" di "<ente>"
     Given "<ente>" ha già creato 1 client "CONSUMER"
@@ -64,8 +67,13 @@ Feature: Aggiunta di un membro ad un client
     Examples:
       | ente | ruolo        | statusCode |
       | GSP  | api          |        403 |
+      | PA1  | api          |        403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo        | statusCode |
       | GSP  | reviewer     |        403 |
       | GSP  | viewer       |        403 |
-      | PA1  | api          |        403 |
       | PA2  | reviewer     |        403 |
       | PA2  | viewer       |        403 |

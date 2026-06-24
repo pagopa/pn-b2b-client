@@ -5,7 +5,6 @@ Feature: Listing attributi certificati assegnati dall'ente certificatore
 
   @nrt-minimal
   @tenant_requester_certified_attributes_listing1 @wait_for_fix @PIN-5070
-  @nuovi-operatori-update
   Scenario Outline: [TENANT_REQUESTER_CERTIFIED_ATTRIBUTES_LISTING_01] A fronte di una richiesta di listing di attributi certificati, la richiesta va buon fine solo se il richiedente è un ente certificatore
     Given l'utente è un "<ruolo>" di "<ente>"
     When l'utente richiede una operazione di listing degli attributi certificati assegnati
@@ -23,18 +22,22 @@ Feature: Listing attributi certificati assegnati dall'ente certificatore
       | PA2     | security     |        403 |
       | PA2     | support      |        200 |
       | PA2     | api,security |        403 |
-      | PA2     | reviewer     |        403 |
       | Privato | admin        |        403 |
       | Privato | api          |        403 |
       | Privato | security     |        403 |
       | Privato | support      |        403 |
       | Privato | api,security |        403 |
-      | Privato | reviewer     |        403 |
       | GSP     | admin        |        200 |
       | GSP     | api          |        403 |
       | GSP     | security     |        403 |
       | GSP     | support      |        200 |
       | GSP     | api,security |        403 |
+
+    @nuovi-operatori-update
+    Examples: # PA2 è certificatore
+      | ente    | ruolo        | statusCode |
+      | PA2     | reviewer     |        403 |
+      | Privato | reviewer     |        403 |
       | GSP     | reviewer     |        403 |
 
   @nrt-minimal @tenant_requester_certified_attributes_listing2 @certifiedAttribute

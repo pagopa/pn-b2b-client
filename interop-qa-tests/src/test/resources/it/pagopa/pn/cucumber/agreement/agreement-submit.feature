@@ -4,7 +4,6 @@ Tutti gli utenti autorizzati possono inoltrare una richiesta di fruizione
 
   @nrt-minimal
   @agreement_submit1
-  @nuovi-operatori-update
   Scenario Outline: [AGREEMENT_SUBMIT_1] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato DRAFT, associata ad un e-service nella sua ultima versione pubblicata, la quale è in stato PUBLISHED, all'inoltro della richiesta di fruizione da parte di un utente con sufficienti permessi dell’ente fruitore, va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
@@ -23,8 +22,6 @@ Tutti gli utenti autorizzati possono inoltrare una richiesta di fruizione
     Examples:
       | ente    | ruolo        | risultato |
       | GSP     | api          |       403 |
-      | GSP     | reviewer     |       403 |
-      | GSP     | viewer       |       403 |
       | GSP     | security     |       403 |
       | GSP     | support      |       403 |
       | GSP     | api,security |       403 |
@@ -33,11 +30,18 @@ Tutti gli utenti autorizzati possono inoltrare una richiesta di fruizione
       | PA1     | support      |       403 |
       | PA1     | api,security |       403 |
       | Privato | api          |       403 |
-      | Privato | reviewer     |       403 |
-      | Privato | viewer       |       403 |
       | Privato | security     |       403 |
       | Privato | support      |       403 |
       | Privato | api,security |       403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente    | ruolo        | risultato |
+      | GSP     | reviewer     |       403 |
+      | GSP     | viewer       |       403 |
+      | Privato | reviewer     |       403 |
+      | Privato | viewer       |       403 |
 
   @sad-path
   @nrt-minimal

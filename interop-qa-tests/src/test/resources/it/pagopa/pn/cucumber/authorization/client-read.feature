@@ -3,7 +3,6 @@ Feature: Lettura client singolo
   Tutti gli utenti autenticati possono leggere un singolo client
 
   @nrt-minimal
-  @nuovi-operatori-update
   Scenario Outline: [CLIENT_READ_1] Tutti gli utenti possono leggere un client appartenente al proprio ente. La richiesta va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato 1 client "CONSUMER"
@@ -30,12 +29,17 @@ Feature: Lettura client singolo
     Examples:
       | ente    | ruolo        | statusCode |
       | GSP     | api          |        403 |
+      | PA1     | api          |        403 |
+      | Privato | api          |        403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente    | ruolo        | statusCode |
       | GSP     | reviewer     |        403 |
       | GSP     | viewer       |        403 |
-      | PA1     | api          |        403 |
       | PA2     | reviewer     |        403 |
       | PA2     | viewer       |        403 |
-      | Privato | api          |        403 |
       | Privato | reviewer     |        403 |
       | Privato | viewer       |        403 |
 
@@ -74,7 +78,6 @@ Feature: Lettura client singolo
 
   @sad-path
   @nrt-minimal
-  @nuovi-operatori-update
   Scenario Outline: [CLIENT_READ_6] Un utente api legge un client dell'ente al quale è associato. Ottiene un errore
     Given l'utente è un "<ruolo>" di "PA2"
     Given "PA2" ha già creato 1 client "CONSUMER"
@@ -83,6 +86,10 @@ Feature: Lettura client singolo
     Examples:
       | ruolo    |
       | api      |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo    |
       | reviewer |
       | viewer   |
 

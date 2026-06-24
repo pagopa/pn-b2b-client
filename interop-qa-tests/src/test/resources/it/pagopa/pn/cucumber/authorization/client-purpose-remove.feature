@@ -3,7 +3,6 @@ Feature: Rimozione purpose dal client
   Tutti gli utenti autenticati possono disassociare una finalità da un client 
 
   @nrt-minimal
-  @nuovi-operatori-update
   Scenario Outline: [CLIENT_PURPOSE_REMOVE_1] Un utente con sufficienti permessi (admin) dell'ente che ha creato il client di tipo CONSUMER ed associato il client ad una finalità che si trova in stato ACTIVE, SUSPENDED o WAITING_FOR_APPROVAL, richiede la disassociazione del client dalla finalità. L'operazione va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "PA2" ha già creato e pubblicato 1 e-service
@@ -26,8 +25,6 @@ Feature: Rimozione purpose dal client
     Examples:
       | ente | ruolo        | statoFinalità | statusCode |
       | GSP  | api          | ACTIVE        |        403 |
-      | GSP  | reviewer     | ACTIVE        |        403 |
-      | GSP  | viewer       | ACTIVE        |        403 |
       | GSP  | security     | ACTIVE        |        403 |
       | GSP  | support      | ACTIVE        |        403 |
       | GSP  | api,security | ACTIVE        |        403 |
@@ -35,6 +32,13 @@ Feature: Rimozione purpose dal client
       | PA1  | security     | ACTIVE        |        403 |
       | PA1  | support      | ACTIVE        |        403 |
       | PA1  | api,security | ACTIVE        |        403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo        | statoFinalità | statusCode |
+      | GSP  | reviewer     | ACTIVE        |        403 |
+      | GSP  | viewer       | ACTIVE        |        403 |
       | PA2  | reviewer     | ACTIVE        |        403 |
       | PA2  | viewer       | ACTIVE        |        403 |
 

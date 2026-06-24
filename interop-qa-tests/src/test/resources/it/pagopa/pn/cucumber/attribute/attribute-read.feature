@@ -6,7 +6,6 @@ Feature: Lettura singolo attributo
   @happy-path
   @nrt-minimal
   @attribute_read1
-  @nuovi-operatori-update
   Scenario Outline: [ATTRIBUTE_READ_1] Alla richiesta di un attributo presente in DB, restituisce il risultato
     Given l'utente è un "<ruolo>" di "<ente>"
     Given PA1 ha già creato 1 attributo DECLARED
@@ -19,7 +18,6 @@ Feature: Lettura singolo attributo
       | GSP     | security     |
       | GSP     | support      |
       | GSP     | api,security |
-      | GSP     | viewer       |
       | PA1     | admin        |
       | PA1     | api          |
       | PA1     | security     |
@@ -30,6 +28,11 @@ Feature: Lettura singolo attributo
       | Privato | security     |
       | Privato | support      |
       | Privato | api,security |
+
+    @nuovi-operatori-update
+    Examples:
+      | ente    | ruolo        |
+      | GSP     | viewer       |
       | Privato | viewer       |
 
   # NOTE 16/04/2025 adattamento dello scenario così che risultati funzionante nell'attuale

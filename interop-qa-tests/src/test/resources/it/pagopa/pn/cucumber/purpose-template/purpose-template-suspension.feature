@@ -22,7 +22,6 @@ Feature: finalità agevolata, purpose template SUSPENSION
 
   #47(KO)
   @purposeTemplate @purposeTemplateSuspension
-  @nuovi-operatori-update
   Scenario Outline: [PURPOSE_TEMPLATE_SUSPENSION_NO_ADMIN] Sospensione di una finalità agevolata da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato PUBLISHED
@@ -34,6 +33,10 @@ Feature: finalità agevolata, purpose template SUSPENSION
       | PA1  | api      |
       | PA1  | support  |
       | PA1  | security |
+
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo    |
       | PA2  | reviewer |
       | PA2  | viewer   |
 

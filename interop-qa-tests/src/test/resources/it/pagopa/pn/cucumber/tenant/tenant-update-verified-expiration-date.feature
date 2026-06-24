@@ -4,7 +4,6 @@ Feature: Aggiornamento della data di scadenza di un attributo verificato ad un a
 
   @nrt-minimal
   @tenant_update_verified_expiration_date1 @no-parallel
-  @nuovi-operatori-update
   Scenario Outline: [TENANT_UPDATE_VERIFIED_EXPIRATION_DATE_01] Per un attributo verificato precedentemente creato e assegnato da un primo aderente ad un secondo aderente, alla richiesta di aggiornamento di un attributo che non ha data di scadenza ad una data nel futuro da parte di un utente con sufficienti permessi (admin) appartenente al primo aderente, va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato un attributo verificato
@@ -26,6 +25,10 @@ Feature: Aggiornamento della data di scadenza di un attributo verificato ad un a
       | GSP  | security     |        403 |
       | GSP  | support      |        403 |
       | GSP  | api,security |        403 |
+
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo        | statusCode |
       | GSP  | reviewer     |        403 |
       | GSP  | viewer       |        403 |
 

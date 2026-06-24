@@ -4,7 +4,6 @@ Feature: Sospensione di un descrittore
 
   @nrt-minimal
   @descriptor_suspension1
-  @nuovi-operatori-update
   Scenario Outline: [DESCRIPTOR_SUSPENSION_1] Per un e-service che ha un descrittore in stato PUBLISHED o DEPRECATED, alla richiesta di sospensione da parte di un utente autorizzato, la sospensione va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato un e-service con un descrittore in stato "<statoVersione>"
@@ -24,10 +23,15 @@ Feature: Sospensione di un descrittore
       | ente | ruolo        | statoVersione | risultato |
       | GSP  | security     | PUBLISHED     |       403 |
       | GSP  | support      | PUBLISHED     |       403 |
-      | GSP  | reviewer     | PUBLISHED     |       403 |
-      | GSP  | viewer       | PUBLISHED     |       403 |
       | PA1  | security     | PUBLISHED     |       403 |
       | PA1  | support      | PUBLISHED     |       403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples: # Test sui ruoli
+      | ente | ruolo        | statoVersione | risultato |
+      | GSP  | reviewer     | PUBLISHED     |       403 |
+      | GSP  | viewer       | PUBLISHED     |       403 |
       | PA2  | reviewer     | PUBLISHED     |       403 |
       | PA2  | viewer       | PUBLISHED     |       403 |
 

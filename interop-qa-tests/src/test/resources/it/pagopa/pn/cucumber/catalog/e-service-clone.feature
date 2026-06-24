@@ -6,7 +6,6 @@ Feature: Clonazione di un e-service
   @eservice_cloning1
   @nrt-minimal
   @eservice_cloning1
-  @nuovi-operatori-update
   Scenario Outline: [ESERVICE_CLONING_1] Per un e-service che ha 2 descrittori, l'ultimo dei quali è in stato PUBLISHED/SUSPENDED, alla richiesta di clonazione, viene creato un nuovo e-service che ha un solo descrittore in stato DRAFT. Sia il nuovo e-service che il suo descrittore hanno esattamente le stesse caratteristiche dell'e-service e descrittore di partenza (ad eccezione del nome dell'e-service al quale viene aggiunto un " - clone" alla fine;
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -29,10 +28,15 @@ Feature: Clonazione di un e-service
       | ente | ruolo    | statoDescrittore | risultato |
       | GSP  | security | PUBLISHED        | 403       |
       | GSP  | support  | PUBLISHED        | 403       |
-      | GSP  | reviewer | PUBLISHED        | 403       |
-      | GSP  | viewer   | PUBLISHED        | 403       |
       | PA1  | security | PUBLISHED        | 403       |
       | PA1  | support  | PUBLISHED        | 403       |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples: # Test sui ruoli
+      | ente | ruolo    | statoDescrittore | risultato |
+      | GSP  | reviewer | PUBLISHED        | 403       |
+      | GSP  | viewer   | PUBLISHED        | 403       |
       | PA2  | reviewer | PUBLISHED        | 403       |
       | PA2  | viewer   | PUBLISHED        | 403       |
 

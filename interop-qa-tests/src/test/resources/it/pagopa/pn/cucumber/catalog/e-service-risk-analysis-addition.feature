@@ -4,7 +4,6 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
 
   @nrt-minimal
   @eservice_risk_analysis_addition1
-  @nuovi-operatori-update
   Scenario Outline: [ESERVICE_RISK_ANALYSIS_ADDITION_01] Per un e-service creato in modalità "RECEIVE", il quale ha un descrittore in DRAFT, è possibile inserire una nuova analisi del rischio. L'analisi del rischio deve essere ben formattata ma non necessariamente completamente compilata. La richiesta va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato un e-service in modalità "RECEIVE" con un descrittore in DRAFT
@@ -26,10 +25,15 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
       | ente | ruolo        | risultato |
       | GSP  | security     |       403 |
       | GSP  | support      |       403 |
-      | GSP  | reviewer     |       403 |
-      | GSP  | viewer       |       403 |
       | PA1  | security     |       403 |
       | PA1  | support      |       403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo        | risultato |
+      | GSP  | reviewer     |       403 |
+      | GSP  | viewer       |       403 |
       | PA2  | reviewer     |       403 |
       | PA2  | viewer       |       403 |
 

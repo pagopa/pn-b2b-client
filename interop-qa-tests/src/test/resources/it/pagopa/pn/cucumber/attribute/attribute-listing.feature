@@ -6,7 +6,6 @@ Feature: Listing attributi
   @happy-path
   @nrt-minimal
   @attribute_listing1
-  @nuovi-operatori-update
   Scenario Outline: [ATTRIBUTE_LISTING_1] Restituisce gli attributi disponibili
     Given l'utente è un "<ruolo>" di "<ente>"
     Given PA1 ha già creato 5 attributi DECLARED
@@ -19,7 +18,6 @@ Feature: Listing attributi
       | GSP     | security     |
       | GSP     | support      |
       | GSP     | api,security |
-      | GSP     | viewer       |
       | PA1     | admin        |
       | PA1     | api          |
       | PA1     | security     |
@@ -30,6 +28,11 @@ Feature: Listing attributi
       | Privato | security     |
       | Privato | support      |
       | Privato | api,security |
+
+    @nuovi-operatori-update
+    Examples:
+      | ente    | ruolo        |
+      | GSP     | viewer       |
       | Privato | viewer       |
 
   # NOTE 16/04/2025 adattamento dello scenario così che risultati funzionante nell'attuale

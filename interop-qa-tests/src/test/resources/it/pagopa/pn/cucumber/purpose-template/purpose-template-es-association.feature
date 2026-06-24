@@ -69,7 +69,6 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE ES
 
   #28(KO)
   @purposeTemplate @purposeTemplateEservice
-  @nuovi-operatori-update
   Scenario Outline: [PURPOSE_TEMPLATE_ASSOCIATE_ES_NO_ADMIN] Associazione di un eService a una finalità agevolata da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
@@ -83,6 +82,10 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE ES
       | PA1  | api      |
       | PA1  | support  |
       | PA1  | security |
+
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo    |
       | PA2  | reviewer |
       | PA2  | viewer   |
 
@@ -167,7 +170,6 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE ES
 
   #35(KO)
   @purposeTemplate @purposeTemplateEservice
-  @nuovi-operatori-update
   Scenario Outline: [PURPOSE_TEMPLATE_DISASSOCIATE_ES_NO_ADMIN] Disassociazione di un eService da una finalità agevolata da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA2"
     And "PA2" ha già creato e pubblicato 1 e-service
@@ -182,6 +184,10 @@ Feature: finalità agevolata, purpose template ASSOCIAZIONE ES
       | PA1  | api      |
       | PA1  | support  |
       | PA1  | security |
+
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo    |
       | PA2  | reviewer |
       | PA2  | viewer   |
 

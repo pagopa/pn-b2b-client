@@ -57,7 +57,6 @@ Feature: finalità agevolata, purpose template GET
 
   #5(KO)
   @purposeTemplate @purposeTemplateCreate
-  @nuovi-operatori-update
   Scenario Outline: [PURPOSE_TEMPLATE_CREATE_NO_ADMIN] Creazione di una finalità agevolata da parte di un utente NON admin (error 403)
     Given l'utente è un "<ruolo>" di "<ente>"
     And viene creato un nuovo purpose template
@@ -67,6 +66,10 @@ Feature: finalità agevolata, purpose template GET
       | PA1  | api      |
       | PA1  | support  |
       | PA1  | security |
+
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo    |
       | PA2  | reviewer |
       | PA2  | viewer   |
 

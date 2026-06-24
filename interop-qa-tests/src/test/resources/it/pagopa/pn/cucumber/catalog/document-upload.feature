@@ -4,7 +4,6 @@ Feature: Caricamento di un documento di interfaccia
 
   @nrt-minimal
   @document_upload1
-  @nuovi-operatori-update
   Scenario Outline: [DESCRIPTOR_UPLOAD_1] Per un e-service che eroga con una determinata tecnologia e che ha un solo descrittore, il quale è in uno dei sequenti stati: (PUBLISHED, DRAFT, DEPRECATED, SUSPENDED), alla richiesta di caricamento di un documento di interfaccia coerente con la tecnologia, da parte di un utente autorizzato, l'operazione avrà successo solo per lo stato DRAFT, altrimenti restituirà errore.
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato un e-service con un descrittore in stato "<statoDescrittore>" e tecnologia "REST"
@@ -26,10 +25,15 @@ Feature: Caricamento di un documento di interfaccia
       | ente | ruolo        | statoDescrittore | risultato |
       | GSP  | security     | DRAFT            |       403 |
       | GSP  | support      | DRAFT            |       403 |
-      | GSP  | reviewer     | DRAFT            |       403 |
-      | GSP  | viewer       | DRAFT            |       403 |
       | PA1  | security     | DRAFT            |       403 |
       | PA1  | support      | DRAFT            |       403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo        | statoDescrittore | risultato |
+      | GSP  | reviewer     | DRAFT            |       403 |
+      | GSP  | viewer       | DRAFT            |       403 |
       | PA2  | reviewer     | DRAFT            |       403 |
       | PA2  | viewer       | DRAFT            |       403 |
 
