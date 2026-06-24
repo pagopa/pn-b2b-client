@@ -256,8 +256,7 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	Then si ottiene status code 409
 
   # PST: Scenario 28 - Caso 28.1
-  # KO ticket aperto https://pagopa.atlassian.net/browse/PIN-10435
-  @nuovi-operatori-ko
+  # OK ticket chiuso https://pagopa.atlassian.net/browse/PIN-10435
   @sad-path
   Scenario: [COMB_NON_AMMESSE_28_1_SUBMITTED] Tentativo compilazione admin con workflow in stato SUBMITTED (negativo)
 	Given "PA1" ha già creato e pubblicato 1 e-service
@@ -267,12 +266,11 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
 	And compila l'analisi del rischio tramite endpoint generico con successo
 	And l'utente invia il submit dell'analisi del rischio della finalità con successo
-	When compila l'analisi del rischio tramite endpoint generico
+	When compila l'analisi del rischio tramite endpoint generico introducendo una variazione
 	Then si ottiene status code 409
 
   # PST: Scenario 28 - Caso 28.1
-  # KO ticket aperto https://pagopa.atlassian.net/browse/PIN-10438
-  @nuovi-operatori-ko
+  # OK ticket chiuso https://pagopa.atlassian.net/browse/PIN-10438
   @sad-path
   Scenario: [COMB_NON_AMMESSE_28_1_SIGNED] Tentativo compilazione admin con workflow in stato SIGNED (negativo)
 	Given "PA1" ha già creato e pubblicato 1 e-service
@@ -283,7 +281,7 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	And compila l'analisi del rischio tramite endpoint generico con successo
 	And l'utente invia il submit dell'analisi del rischio della finalità con successo
 	And il valutatore assegnato convalida l'analisi del rischio della finalità con successo
-	When compila l'analisi del rischio tramite endpoint generico
+	When compila l'analisi del rischio tramite endpoint generico introducendo una variazione
 	Then si ottiene status code 409
 
   # PST: Scenario 29 - Caso 29.1

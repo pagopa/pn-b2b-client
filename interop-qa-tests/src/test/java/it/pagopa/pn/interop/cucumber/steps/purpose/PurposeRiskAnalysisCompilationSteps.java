@@ -2,15 +2,11 @@ package it.pagopa.pn.interop.cucumber.steps.purpose;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
-import io.cucumber.java.en.When;
 import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeUpdateContent;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisRejectionSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisSubmissionSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisSigningState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -20,6 +16,7 @@ import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPrepara
 
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static java.util.Objects.nonNull;
 
@@ -163,12 +160,23 @@ public class PurposeRiskAnalysisCompilationSteps {
 
     @When("compila l'analisi del rischio tramite endpoint generico")
     public void compilesRiskAnalysisViaGenericEndpoint() {
+        compilesRiskAnalysisViaGenericEndpoint(a -> {});
+    }
+
+    @When("compila l'analisi del rischio tramite endpoint generico introducendo una variazione")
+    public void compilesRiskAnalysisViaGenericEndpointIntroducingVariation() {
+        Consumer<RiskAnalysis> institutionalPurposeVariation = riskAnalysis ->
+                riskAnalysis.getRiskAnalysisForm().getAnswers().put("institutionalPurpose", List.of("purpose variata"));
+        compilesRiskAnalysisViaGenericEndpoint(institutionalPurposeVariation);
+    }
+
+    private void compilesRiskAnalysisViaGenericEndpoint(Consumer<RiskAnalysis> riskAnalysisModifier) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
         UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
 
         compiledRiskAnalysis = dataPreparationService.getRiskAnalysis(sharedStepsContext.getTenantType(), true);
-        compiledRiskAnalysis.getRiskAnalysisForm().getAnswers().put("institutionalPurpose", List.of("a caso"));
+        riskAnalysisModifier.accept(compiledRiskAnalysis);
 
         // Use generic purpose update endpoint instead of dedicated risk analysis form endpoint
         PurposeUpdateContent updateContent = new PurposeUpdateContent()
