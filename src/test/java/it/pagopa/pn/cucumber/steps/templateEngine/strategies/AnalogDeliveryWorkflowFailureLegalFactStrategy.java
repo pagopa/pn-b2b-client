@@ -30,19 +30,19 @@ public class AnalogDeliveryWorkflowFailureLegalFactStrategy implements ITemplate
     public String getTextToCheckLanguage(String language, String recipientType) {
         return switch (language.toUpperCase()) {
             case  "ITALIANA" -> {
-                yield "Deposito avviso di avvenuta ricezione Con riferimento alla notifica avente IUN , ai sensi dell’art. 26, comma 7, del D.L. 76/2020, essendo risultato il string destinatario string CF";
+                yield "Deposito avviso di avvenuta ricezione Con riferimento alla notifica avente IUN string, ai sensi dell’art. 26, comma 7, del D.L. 76/2020, essendo risultato il destinatario string CF";
             }
             case "TEDESCA" -> {
                 yield "Deposito avviso di avvenuta ricezione Im Sinne des Art. 26, Absatz 7, des G.D. 76/2020, betreffend die Zustellung";
             }
             case "SLOVENA" -> {
-                yield "Deposito avviso di avvenuta ricezione V zvezi z obvestilom, ki vsebuje IUN , v skladu s členom 26, sedmi odstavek, zakonodajnega odloka št. 76/2020, je string prejemnik string DŠ";
+                yield "Vložitev obvestila o prejemu Deposito avviso di avvenuta ricezione V zvezi z obvestilom, ki vsebuje IUN string, v skladu s členom 26, sedmi odstavek, zakonodajnega odloka št. 76/2020, je prejemnik string DŠ";
             }
             case "FRANCESE" -> {
-                yield "Deposito avviso di avvenuta ricezione En ce qui concerne la notification comportant IUN , conformément à l'article 26, alinéa 7, du décret législatif 76string /2020, le destinataire étant string Code fiscale";
+                yield "Dépôt de l’avis de réception Deposito avviso di avvenuta ricezione En ce qui concerne la notification comportant IUN string, conformément à l'article 26, alinéa 7, du décret législatif 76 /2020, le destinataire étant string Code fiscale";
             }
             case "INGLESE" -> {
-                yield "Deposito avviso di avvenuta ricezione With reference to the notification with IUN , pursuant to Art. 26, paragraph 7 of D.L. 76/2020, as the recipient string string Fiscal Code";
+                yield "Filing of notice of receipt Deposito avviso di avvenuta ricezione With reference to the notification with IUN string, pursuant to Art. 26, paragraph 7 of D.L. 76/2020, as the recipient string Fiscal Code";
             }
             default -> throw new IllegalArgumentException("NO VALID LANGUANGE");
         };

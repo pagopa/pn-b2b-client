@@ -95,7 +95,7 @@ Feature: Template engine
       | context_endWorkflowStatus    | SUCCESS            |
       | context_endWorkflowDate      | <endWorkflowDate>  |
     Then verifico che il template è in formato ".pdf"
-    And controllo che nel file "pdf" contenga il testo "finale" valorizzato con "il relativo avviso di avvenuta ricezione in formato elettronico è stato consegnato in data al domicilio digitale string indicato immediatamente sopra la presente data. Firmato digitalmente da PagoPA S.p.A."
+    And controllo che nel file "pdf" contenga il testo "finale" valorizzato con "il relativo avviso di avvenuta ricezione in formato elettronico è stato consegnato in data string al domicilio digitale indicato immediatamente sopra la presente data. Firmato digitalmente da PagoPA S.p.A."
     Examples:
       | endWorkflowDate  |
       | null             |
@@ -108,7 +108,7 @@ Feature: Template engine
       | delivery_type    | <type>    |
     Then verifico che il template è in formato ".pdf"
     And controllo che nel file "pdf" contenga il campo "Domicilio digitale" valorizzato a "non presente"
-    And controllo che nel file "pdf" contenga il testo "finale" valorizzato con "In data il gestore della piattaforma ha reso disponibile l’avviso di mancato recapito del messaggio ai sensi dell’string art. 26, comma 6 del D.L. 76 del 16 luglio 2020. Firmato digitalmente da PagoPA S.p.A."
+    And controllo che nel file "pdf" contenga il testo "finale" valorizzato con "In data string il gestore della piattaforma ha reso disponibile l’avviso di mancato recapito del messaggio ai sensi dell’ art. 26, comma 6 del D.L. 76 del 16 luglio 2020. Firmato digitalmente da PagoPA S.p.A."
     Examples:
       | type          |
       | null          |
