@@ -1,7 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.maintenance;
 
 import io.cucumber.java.After;
-import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.maintenance.InteropMaintenanceService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -27,7 +26,9 @@ public class TenantSteps {
      * eseguiti test che ne hanno modificato il valore.
      * DEV NOTE 29/05/2026: si prevede di eseguire i test della feature "adeguamento analisi del rischio" in isolamento,
      * cioè nella stessa run con gli altri test, per evitare che il cambio di tenant kind possa interferire */
-    @Before
+    /* DEV NOTE 24/06/2026: disabilitato poiché si sta provando a sganciare Adeguamento Analisi del rischio dalla NRT
+    * per risolvere problemi di testing riscontrati con la release 2.20 (rif https://pagopaspa.slack.com/archives/C069AP16WG7/p1782292760197389?thread_ts=1782290422.043309&cid=C069AP16WG7 ) */
+    //@Before
     public void resetTenantKind() {
         if(!maintenanceService.isExecutable()) {
             log.info("Impossible to use maintenance service in current environment. Skipping.");
@@ -70,6 +71,8 @@ public class TenantSteps {
             log.info("Aligning tenant kinds...");
             maintenanceService.alignTenantKinds();
             log.info("Tenant kinds aligned");
+        } else {
+            log.info("Not a AdeguamentoAnalisiRischio test. Skipping.");
         }
     }
     /* ********************************************************************************************************/
