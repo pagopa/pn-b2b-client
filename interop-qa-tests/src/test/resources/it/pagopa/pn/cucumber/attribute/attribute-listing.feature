@@ -107,3 +107,20 @@ Feature: Listing attributi
     Given PA1 ha già creato 3 attributi DECLARED
     When l'utente richiede una operazione di listing degli attributi filtrando per keyword "unknown" all'interno del nome
     Then si ottiene status code 200 e la lista di 0 attributi
+
+  # https://pagopaspa.slack.com/archives/C0AQVEPGQ8L/p1782135024169989
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOff
+  Scenario: [CERT_DISCRETE_ATTR_NOT_AVAILABLE] Gli attributi certificati discreti non sono disponibili quando il feature flag è false.
+    Given l'utente è un "admin" di "PA1"
+    When l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
+    Then l'utente "PA1" non possiede nessun attributo certificato discreto
+    And si ottiene status code 200 e la lista di 0 attributi
+
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
+  Scenario: [CERT_DISCRETE_ATTR_AVAILABLE] Gli attributi certificati discreti sono disponibili quando il feature flag è true.
+    Given l'utente è un "admin" di "PA1"
+    When l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
+    Then l'utente "PA1" possiede almeno un attributo certificato discreto
+    And si ottiene response status code 200

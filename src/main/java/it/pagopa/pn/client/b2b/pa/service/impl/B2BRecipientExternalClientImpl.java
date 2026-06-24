@@ -84,7 +84,7 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
 
     @Override
     public BundleFullReceivedNotification getFullReceivedNotification(String iun, String mandateId) throws RestClientException {
-        return deepCopy(recipientReadB2BApi.getReceivedNotificationV27(iun, mandateId), BundleFullReceivedNotification.class);
+        return deepCopy(recipientReadB2BApi.getReceivedNotificationV28(iun, mandateId), BundleFullReceivedNotification.class);
     }
 
     @Override
