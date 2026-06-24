@@ -252,7 +252,7 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
 	And l'utente è un "admin" di "PA2"
 	And l'utente assegna un valutatore alla finalità in modalità "ReviewerWritesReviewerSigns" con successo
-	When compila l'analisi del rischio tramite endpoint generico
+	When compila l'analisi del rischio tramite endpoint generico introducendo una variazione
 	Then si ottiene status code 409
 
   # PST: Scenario 28 - Caso 28.1

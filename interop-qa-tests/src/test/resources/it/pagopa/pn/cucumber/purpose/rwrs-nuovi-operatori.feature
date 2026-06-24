@@ -118,7 +118,7 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
      And l'utente è un "admin" di "PA2"
      And l'utente assegna un valutatore alla finalità in modalità "ReviewerWritesReviewerSigns" con successo
      When l'utente è un "admin" di "PA2"
-     And compila l'analisi del rischio tramite endpoint generico
+     And compila l'analisi del rischio tramite endpoint generico introducendo una variazione
      Then si ottiene status code 409
 
    # PST: Scenario 12 - Caso 12.3
