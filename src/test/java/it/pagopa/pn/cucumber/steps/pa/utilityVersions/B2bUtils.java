@@ -585,7 +585,7 @@ public abstract class B2bUtils {
     public static Environment getEnvironment(ApplicationContext context) {
         String env = context.getEnvironment().getActiveProfiles()[0];
         log.info("Environment in use is: {}", env);
-        return Environment.valueOf(env);
+        return Environment.valueOf(env.toUpperCase());
     }
 
     /**
