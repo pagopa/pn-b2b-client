@@ -24,7 +24,7 @@ public class TenantSteps {
      * DEV NOTE 29/05/2026: si prevede di eseguire i test della feature "adeguamento analisi del rischio" in isolamento,
      * cioè nella stessa run con gli altri test, per evitare che il cambio di tenant kind possa interferire */
     @Before
-    public void resetTenantKind() {
+    public void resetTenantKind() throws InterruptedException {
         if(!maintenanceService.isExecutable()) {
             log.info("Impossible to use maintenance service in current environment. Skipping.");
             return;
@@ -38,6 +38,10 @@ public class TenantSteps {
             setupState.getLock().lock();
             try {
                 if (setupState.isSetupNotPerformed()) {
+                    int sleepSeconds = 60;
+                    log.debug("Sleeping {} seconds...", sleepSeconds);
+                    Thread.sleep(sleepSeconds * 1000L);
+
                     log.info("Aligning tenant kinds...");
                     maintenanceService.alignTenantKinds();
                     log.info("Tenant kinds aligned");
