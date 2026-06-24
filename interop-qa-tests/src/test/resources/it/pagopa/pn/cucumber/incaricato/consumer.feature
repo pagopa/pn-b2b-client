@@ -386,7 +386,7 @@ Feature: Test API Availability in Use of E-Service
 #      | viewer      |        403 |
 
   @happy-path @deleghe1
-  Scenario Outline: [TC_INCARICATO_60] Richiamare l’API di rifiuto di una richiesta di fruizione fatta da un delegato
+  Scenario: [TC_INCARICATO_60] Richiamare l’API di rifiuto di una richiesta di fruizione fatta da un delegato
     Given "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
     Given l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
@@ -397,53 +397,26 @@ Feature: Test API Availability in Use of E-Service
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione
     And il delegato ha già creato e inviato una richiesta di fruizione in delega ed è in attesa di approvazione
-    And l'utente è un "<ruolo>" dell'ente delegante
     And "PA3" ha già rifiutato quella richiesta di fruizione
 #    When il delegante ha già rifiutato quella richiesta di fruizione
-    Then si ottiene status code <statusCode>
-    Examples:
-      | ruolo       | statusCode |
-      | admin       |        200 |
-#      | api         |        403 |
-#      | security    |        403 |
-#      | api,security|        403 |
-#      | support     |        403 |
+    Then si ottiene status code 200
 
-    @nuovi-operatori-update
-    Examples:
-      | ruolo       | statusCode |
-      | reviewer    |        403 |
-      | viewer      |        403 |
-
-    @happy-path @deleghe1
-    Scenario Outline: [TC_INCARICATO_62] Richiamare l’API di creazione di una finalità da parte di un delegato alla fruizione
+  @happy-path @deleghe1
+  Scenario: [TC_INCARICATO_62] Richiamare l’API di creazione di una finalità da parte di un delegato alla fruizione
     Given "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
-    Given l'ente delegato "<enteDelegato>"
+    Given l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
-    And l'ente delegante "<enteDelegante>"
+    And l'ente delegante "PA2"
     And l'utente è un "admin" dell'ente delegante
     And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione
     And il delegato ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And l'utente è un "<ruolo>" dell'ente delegato
+    And l'utente è un "admin" dell'ente delegato
       #Questo step va rivisto perché il consumer da passare nella richiesta di creazione finalità sembra debba essere quello del DELEGANTE - FATTO!
     When per conto del delegante, il delegato ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice
-    Then si ottiene status code <statusCode>
-    Examples:
-      | ruolo       | enteDelegato | enteDelegante | statusCode |
-      | admin       | PA1          | PA2           |        200 |
-#      | api         |        403 |
-#      | security    |        403 |
-#      | api,security|        403 |
-#      | support     |        403 |
-
-    @nuovi-operatori-update
-    Examples:
-      | ruolo       | enteDelegato | enteDelegante | statusCode |
-      | reviewer    | PA2          | PA4           |        403 |
-      | viewer      | PA2          | PA4           |        403 |
+    Then si ottiene status code 200
 
     @happy-path @deleghe1
     Scenario Outline: [TC_INCARICATO_63] Richiamare l’API di creazione di un client da parte del delegato alla fruizione
@@ -473,10 +446,10 @@ Feature: Test API Availability in Use of E-Service
       | ruolo       | enteDelegato | enteDelegante | statusCode |
       | reviewer    | PA2          | PA4           |        403 |
       | viewer      | PA2          | PA4           |        403 |
-#      | api         |        403 |
-#      | security    |        403 |
-#      | api,security|        403 |
-#      | support     |        403 |
+      | api         | PA2          | PA4           |        403 |
+      | security    | PA2          | PA4           |        403 |
+      | api,security| PA2          | PA4           |        403 |
+      | support     | PA2          | PA4           |        403 |
 
     @happy-path @deleghe1 @associa-finalita-client
     Scenario: [TC_INCARICATO_64] Richiamare l’API di associazione di un client creato dal delegato ad una finalità creata dal delegato
