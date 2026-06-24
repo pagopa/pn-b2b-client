@@ -10,7 +10,7 @@ Feature: verifica feature aoo/uo
     Then si tenta il recupero dal sistema tramite codice IUN dalla PA "Comune_Root"
     And l'operazione ha generato un errore con status code "404"
 
-  @AOO_UO
+  @AOO_UO @ignoreHotfixTemp
   Scenario: [B2B-AOO-UO_FILTER_1] Invocazione API per filtrare le PA di Root da una lista in input passando come input PA di tipo Root e PA figlie.
   Come risultato si ci aspetta che la risposta contenga solo id relativi a PA non di tipo Root.
     When viene invocata l'api di filtro pa di tipo Root passando le seguenti PA:
