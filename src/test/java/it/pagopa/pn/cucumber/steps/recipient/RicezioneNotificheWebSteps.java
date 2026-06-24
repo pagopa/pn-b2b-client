@@ -1097,7 +1097,7 @@ public class RicezioneNotificheWebSteps {
                     boolean exists = false;
                     if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
                         exists = legalAddressByRecipient.stream()
-                                .anyMatch(address -> LegalChannelType.PEC.getValue().equals(address.getChannelType().getValue()) && senderId.equals(address.getSenderId()) && address.getCodeValid());
+                                .anyMatch(address -> LegalChannelType.PEC.getValue().equals(address.getChannelType().getValue()) && senderId.equals(address.getSenderId()) && Boolean.TRUE.equals(address.getCodeValid()));
                     }
                     Assertions.assertFalse(exists, "PEC FOUND");
                 });
@@ -1156,7 +1156,7 @@ public class RicezioneNotificheWebSteps {
                                     .anyMatch(address ->
                                             LegalChannelType.PEC.getValue().equals(address.getChannelType().getValue()) &&
                                                     senderId.equals(address.getSenderId()) &&
-                                            address.getPecValid()),
+                                                    Boolean.TRUE.equals(address.getPecValid())),
                             "PEC NOT FOUND"
                     );
                 });
