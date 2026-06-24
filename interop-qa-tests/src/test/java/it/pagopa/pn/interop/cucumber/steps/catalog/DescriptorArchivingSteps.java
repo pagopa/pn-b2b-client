@@ -122,6 +122,7 @@ public class DescriptorArchivingSteps {
         archivingScheduleVerifier.pollDescriptorArchivingSchedule(eServiceId, oldDescriptorId, ArchivingScope.DESCRIPTOR);
     }
 
+    //Step specifico per i test relativi al cron job di archiviazione
     @Then("il descrittore con id {string} dell'e-service avente id {string} è stato correttamente archiviato tramite l'archiviazione manuale del singolo descrittore")
     public void descriptorHasPopulatedArchivingScheduleWithDescriptorScope(String descriptorId, String eServiceId) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
@@ -129,9 +130,11 @@ public class DescriptorArchivingSteps {
         UUID eServiceUUID = UUID.fromString(eServiceId);
         UUID descriptorUUID = UUID.fromString(descriptorId);
 
+        // verifichiamo che l'attributo archivingSchedule sia valorizzato in tutti i suoi campi; sul solo campo scope controlliamo anche che il valore coincida con quello atteso
         archivingScheduleVerifier.pollDescriptorPopulatedArchivingSchedule(eServiceUUID, descriptorUUID, ArchivingScope.DESCRIPTOR);
     }
 
+    //Step specifico per i test relativi al cron job di archiviazione
     @Then("il descrittore con id {string} dell'e-service avente id {string} NON è stato archiviato tramite archiviazione manuale")
     public void descriptorHasNoArchivingSchedule(String descriptorId, String eServiceId) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
