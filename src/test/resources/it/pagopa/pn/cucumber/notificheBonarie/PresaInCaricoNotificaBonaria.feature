@@ -653,7 +653,7 @@ Feature: Sottomissione di una notifica bonaria.
       | campaignId | campaign-analog-workflow |
     And destinatario della notifica bonaria
       | denomination     | PF censito vas           |
-      | recipientType    | PG                       |
+      | recipientType    | PF                       |
       | taxId            | DVNLRD52D15M059P              |
       | digitalDomicile  | NULL                     |
       | physical_address | ${PHYSICAL_ADDRESS_NULL} |
