@@ -84,7 +84,7 @@ public class EServiceArchivingSteps {
         }
 
         expectedStates.forEach((descriptorId, expectedState) ->
-            pollDescriptorStateAndArchivingSchedule(resolvedEServiceId, descriptorId, expectedState)
+                pollDescriptorStateAndArchivingSchedule(resolvedEServiceId, descriptorId, expectedState)
         );
     }
 
@@ -110,6 +110,7 @@ public class EServiceArchivingSteps {
         archivingScheduleVerifier.pollDescriptorArchivingSchedule(eServiceId, descriptorId, ArchivingScope.ESERVICE);
     }
 
+    //Step specifico per i test relativi al cron job di archiviazione
     @Then("il descrittore con id {string} dell'e-service avente id {string} è stato correttamente archiviato tramite l'archiviazione manuale dell'intero e-service")
     @Then("il descrittore con id {string} dell'e-service avente id {string} è in fase di archiviazione tramite l'archiviazione manuale dell'intero e-service")
     public void descriptorHasPopulatedArchivingScheduleWithEServiceScope(String descriptorId, String eServiceId) {
@@ -118,6 +119,7 @@ public class EServiceArchivingSteps {
         UUID eServiceUUID = UUID.fromString(eServiceId);
         UUID descriptorUUID = UUID.fromString(descriptorId);
 
+        // verifichiamo che l'attributo archivingSchedule sia valorizzato in tutti i suoi campi; sul solo campo scope controlliamo anche che il valore coincida con quello atteso
         archivingScheduleVerifier.pollDescriptorPopulatedArchivingSchedule(eServiceUUID, descriptorUUID, ArchivingScope.ESERVICE);
     }
 
@@ -149,7 +151,7 @@ public class EServiceArchivingSteps {
         EServiceDescriptorState currentDescriptorExpectedState = expectedArchivingState(producerEServiceDescriptor.getState());
         expectedStates.putIfAbsent(
                 producerEServiceDescriptor.getId(),
-            currentDescriptorExpectedState
+                currentDescriptorExpectedState
         );
         return expectedStates;
     }
