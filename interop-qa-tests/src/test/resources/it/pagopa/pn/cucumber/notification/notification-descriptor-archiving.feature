@@ -2,17 +2,7 @@
 @notification-manual-archiving-eservice
 Feature: Notifiche relative all'archiviazione manuale di uno specifico descrittore
 
-  Scenario: [AUTOMATIC_ARCHIVING_DESCRIPTOR_NOTIFICATION_1.1] L'utente erogatore riceve una notifica nel momento in cui un descrittore viene archiviato a causa della pubblicazione di un nuovo descrittore e della mancanza di richieste di fruizioni attive nei suoi confronti
-    Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
-    When "PA1" ha già pubblicato una nuova versione per quell'e-service
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
-    """
-    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è stata archiviata il giorno
-    $DA_CONTESTO(TODAY+GRACE_PERIOD) perché senza fruitori. Da ora non è più attiva.
-    """
-
-  Scenario: [AUTOMATIC_ARCHIVING_DESCRIPTOR_NOTIFICATION_1.2] L'utente erogatore riceve una notifica nel momento in cui un descrittore viene archiviato poiché non è il descrittore più recente dell'e-service e poiché l'ultima richiesta di fruizione attiva nei suoi confronti viene archiviata
+  Scenario: [AUTOMATIC_ARCHIVING_DESCRIPTOR_NOTIFICATION_1.1] L'utente erogatore riceve una notifica nel momento in cui un descrittore viene archiviato poiché non è il descrittore più recente dell'e-service e poiché l'ultima richiesta di fruizione attiva nei suoi confronti viene archiviata
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
