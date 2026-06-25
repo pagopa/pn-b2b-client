@@ -146,6 +146,15 @@ public class VerifiedAttributeSteps extends AbstractCommonSteps<VerifiedAttribut
         recuperaRevokers(organizationId, verifiedAttributeId);
     }
 
+    @When("l'utente tenta di recuperare la lista di enti che hanno revocato l'attributo all'ente {string}")
+    public void recuperaRevokers(String tenant) {
+        delayService.delay();
+        UUID organizationId = sharedStepsContext.getIdentityService().getOrganizationId(tenant);
+        UUID verifiedAttributeId = sharedStepsContext.getAttributeCommonContext().getAttributeId();
+
+        recuperaRevokers(organizationId, verifiedAttributeId);
+    }
+
     @When("l'utente tenta di recuperare la lista di enti che hanno revocato l'attributo indicando un ente inesistente")
     public void recuperaRevokersEnteInesistente() {
         UUID organizationId = UUID.randomUUID();

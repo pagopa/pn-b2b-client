@@ -231,31 +231,19 @@ Feature: Gestione degli attributes attraverso APIs M2M V2
     And l'utente tenta di recuperare la lista di enti che hanno verificato l'attributo indicando un ente inesistente
     Then si ottiene lo status code 404
 
-  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7419
+  # Ticket chiuso https://pagopa.atlassian.net/browse/PIN-7419
   @m2m-parte2-agosto-rilascio1
-  Scenario: [M2MG_VERIFIEDATTRIBUTES_12] Un utente con ruolo M2M-ADMIN NON può recuperare la lista degli enti che hanno verificato un attributo associato ad un altro ente.
+  Scenario: [M2MG_VERIFIEDATTRIBUTES_12] Un utente con ruolo M2M-ADMIN può recuperare la lista degli enti che hanno verificato un attributo associato ad un ente proprio o terzo.
     Given "GSP" ha già creato un attributo verificato
     And "PA2" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
     And "PA1" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
     And "PA2" ha già verificato l'attributo verificato a "PA1"
-    When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    And l'utente tenta di recuperare la lista di enti che hanno verificato l'attributo all'ente "PA1"
-    Then si ottiene lo status code 403
-
-  #FIXME scritto per aiutarsi nel debug del test M2MG_VERIFIEDATTRIBUTES_12 , rimuovere
-  @m2m-parte2-agosto-rilascio1
-  Scenario: [M2MG_VERIFIEDATTRIBUTES_12_B] Un utente con ruolo M2M-ADMIN NON può recuperare la lista degli enti che hanno verificato un attributo associato ad un altro ente.
-    Given "GSP" ha già creato un attributo verificato
-    And "PA2" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
-    And "PA1" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
-    And "PA2" ha già verificato l'attributo verificato a "PA1"
-
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente tenta di recuperare la lista di enti che hanno verificato l'attributo all'ente "PA1"
-    When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    Then si ottiene lo status code 200
+    When l'utente è un "admin" di "GSP2" con ruolo M2M m2m-admin
     And l'utente tenta di recuperare la lista di enti che hanno verificato l'attributo all'ente "PA1"
-    When l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
-    And l'utente tenta di recuperare la lista di enti che hanno verificato l'attributo all'ente "PA1"
+    Then si ottiene lo status code 200
 
   @m2m-parte2-agosto-rilascio1
   Scenario: [M2MG_VERIFIEDATTRIBUTES_10] Accesso negato alla lista degli enti revocatori di un attributo con token non valido
@@ -272,14 +260,17 @@ Feature: Gestione degli attributes attraverso APIs M2M V2
     And l'utente tenta di recuperare la lista di enti che hanno revocato l'attributo indicando un ente inesistente
     Then si ottiene lo status code 404
 
-  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7420
+  # Ticket chiuso https://pagopa.atlassian.net/browse/PIN-7420
   @m2m-parte2-agosto-rilascio1
-  Scenario: [M2MG_VERIFIEDATTRIBUTES_13] Un utente con ruolo M2M-ADMIN NON può recuperare la lista degli enti che hanno revocato un attributo associato ad un altro ente.
+  Scenario: [M2MG_VERIFIEDATTRIBUTES_13] Un utente con ruolo M2M-ADMIN può recuperare la lista degli enti che hanno revocato un attributo associato ad un ente proprio o terzo.
     Given "PA2" ha già creato un attributo verificato
     And "PA2" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
     And "PA1" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
     And "PA2" ha già verificato l'attributo verificato a "PA1"
     And "PA2" revoca l'attributo precedentemente verificato
-    When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    And l'utente tenta di recuperare la lista di enti che hanno revocato l'attributo
-    Then si ottiene lo status code 403
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente tenta di recuperare la lista di enti che hanno revocato l'attributo all'ente "PA1"
+    Then si ottiene lo status code 200
+    When l'utente è un "admin" di "GSP2" con ruolo M2M m2m-admin
+    And l'utente tenta di recuperare la lista di enti che hanno revocato l'attributo all'ente "PA1"
+    Then si ottiene lo status code 200
