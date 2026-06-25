@@ -39,6 +39,15 @@ public class EServiceCloneSteps {
         this.producerClient = clientTokenConfigurator.getProducerClient();
     }
 
+    @Given("{string} tenta la creazione di una versione in DRAFT per quell'e-service")
+    public void tenantTryToCreateVersionWithState(String tenantType) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+
+        eServicesCommonContext.setOldDescriptorId(eServicesCommonContext.getDescriptorId());
+        UUID descriptorId = dataPreparationService.createNextDraftDescriptor(eServicesCommonContext.getEserviceId());
+        eServicesCommonContext.setDescriptorId(descriptorId);
+    }
+
     @Given("{string} ha già creato una versione in {string} per quell'e-service")
     public void tenantHasAlreadyCreatedVersionWithState(String tenantType, String descriptorState) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
@@ -50,12 +59,28 @@ public class EServiceCloneSteps {
                 EServiceDescriptorState.fromValue(descriptorState), false);
     }
 
+    @When("l'utente tenta di clonare quell'e-service")
+    public void tryCloneEservice() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getEServiceClient().cloneEServiceByDescriptor(eServicesCommonContext.getEserviceId(), eServicesCommonContext.getDescriptorId())
+        );
+    }
+
     @When("l'utente clona quell'e-service")
     public void cloneEservice() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().cloneEServiceByDescriptor(eServicesCommonContext.getEserviceId(), eServicesCommonContext.getDescriptorId())
         );
+
+        if (!sharedStepsContext.getHttpCallExecutor().getResponseStatus().is2xxSuccessful()) {
+            eServicesCommonContext.setName(null);
+            eServicesCommonContext.setEserviceId(null);
+            eServicesCommonContext.setDescriptorId(null);
+            return;
+        }
+
         UUID eserviceId = ((CreatedEServiceDescriptor) sharedStepsContext.getHttpCallExecutor().getResponse()).getId();
         UUID descriptorId = ((CreatedEServiceDescriptor) sharedStepsContext.getHttpCallExecutor().getResponse()).getDescriptorId();
 

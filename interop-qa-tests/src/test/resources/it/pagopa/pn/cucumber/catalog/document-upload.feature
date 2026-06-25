@@ -95,3 +95,17 @@ Feature: Caricamento di un documento di interfaccia
     Given "PA1" ha già caricato un documento con nome "test" in quel descrittore
     When l'utente carica un documento con nome "test" in quel descrittore
     Then si ottiene status code 409
+
+  @invalid-yaml
+  Scenario: [DESCRIPTOR_UPLOAD_6] Per un e-service che ha un solo descrittore, il quale è in stato DRAFT, e per il quale viene caricato un documento di interfaccia senza versione, l’operazione restituirà errore.
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    When l'utente carica un documento di interfaccia di tipo YAML "senza versione"
+    Then si ottiene status code 400
+
+  @invalid-yaml
+  Scenario: [DESCRIPTOR_UPLOAD_7] Per un e-service che ha un solo descrittore, il quale è in stato DRAFT, e per il quale viene caricato un documento di interfaccia senza versione, l’operazione restituirà errore.
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    When l'utente carica un documento di interfaccia di tipo YAML "con versione obsoleta"
+    Then si ottiene status code 400

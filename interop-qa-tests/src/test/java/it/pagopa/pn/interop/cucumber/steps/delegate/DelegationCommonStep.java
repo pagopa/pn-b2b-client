@@ -6,7 +6,9 @@ import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.TenantFeature;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -52,11 +54,11 @@ public class DelegationCommonStep {
         try {
             tenantsApi.updateTenantDelegatedFeatures(false, false);
             pollingService.makePolling(
-                () -> tenantsApi.getTenant(identityService.getOrganizationId(tenantType)),
-                res -> res.getFeatures()
-                    .stream()
-                    .allMatch(feature -> allNull(feature.getDelegatedConsumer(), feature.getDelegatedProducer())),
-                "L'ente non dovrebbe risultare disponibile a ricevere deleghe, ma risulta altrimenti. Visionare logs per maggiori dettagli.");
+                    () -> tenantsApi.getTenant(identityService.getOrganizationId(tenantType)),
+                    res -> res.getFeatures()
+                            .stream()
+                            .allMatch(feature -> allNull(feature.getDelegatedConsumer(), feature.getDelegatedProducer())),
+                    "L'ente non dovrebbe risultare disponibile a ricevere deleghe, ma risulta altrimenti. Visionare logs per maggiori dettagli.");
         } catch (HttpClientErrorException.Conflict e) {
             log.info("No delegation availability defined for the given tenant!");
         } catch (Exception e) {
@@ -71,11 +73,11 @@ public class DelegationCommonStep {
         try {
             tenantsApi.updateTenantDelegatedFeatures(false, false);
             pollingService.makePolling(
-                () -> tenantsApi.getTenant(tenantId),
-        result -> result.getFeatures().stream()
-                    .map(TenantFeature::getDelegatedConsumer)
-                    .allMatch(Objects::isNull),
-                "An error occured when trying to remove consumer delegation for tenant %s".formatted(tenantType)
+                    () -> tenantsApi.getTenant(tenantId),
+                    result -> result.getFeatures().stream()
+                            .map(TenantFeature::getDelegatedConsumer)
+                            .allMatch(Objects::isNull),
+                    "An error occured when trying to remove consumer delegation for tenant %s".formatted(tenantType)
             );
         } catch (HttpClientErrorException.Conflict e) {
             log.info("No delegation availability defined for the given tenant!");
@@ -102,6 +104,7 @@ public class DelegationCommonStep {
             delegate,
             producerStrategyUsing(tenantsApi),
             true,
+            true,
             false,
             identityService,
             httpCallExecutor,
@@ -115,7 +118,8 @@ public class DelegationCommonStep {
             CatalogCommonSteps.createEServiceWithDescriptor(
                 "DRAFT",
                 dataPreparationService,
-                sharedStepsContext.getEServicesCommonContext());
+                sharedStepsContext.getEServicesCommonContext(),
+                new EServiceSeed(), new UpdateEServiceDescriptorSeed());
         }
 
         // Il associa un'interfaccia all'e-service

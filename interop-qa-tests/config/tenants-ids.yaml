@@ -102,3 +102,45 @@ tenantName:
   refactorDev: "SOGECAP"
   qa: "SOGECAP"
 kind: "PRIVATE"
+---
+name: "PA3"
+externalId:
+  origin: "IPA"
+  value: "c_g953"
+selfcareId: "0294041f-e0f8-451e-a21e-bc4aa4f6a8ca"
+organizationId:
+  dev: "80bc8c2a-0f36-47b5-9b7f-7b74c73d2b20"
+  refactorDev: "80bc8c2a-0f36-47b5-9b7f-7b74c73d2b20"
+  qa: "80bc8c2a-0f36-47b5-9b7f-7b74c73d2b20"
+userRoles:
+  admin: [ "5d717b97-5308-49a5-8682-187663278f24" ]
+  api: [ "e3f51f86-3814-4f7f-96f6-552e086bae8d" ]
+  security: [ "1d3d77d0-c1bd-420a-b748-998e373f7c81" ]
+  "api,security": [ "b97b6897-9aa1-41ca-9390-86e8c430fdc9" ]
+  support: [ "1d3d77d0-c1bd-420a-b748-998e373f7c81" ]
+tenantName:
+  dev: "Comune di Pozzallo"
+  refactorDev: "Comune di Pozzallo"
+  qa: "Comune di Pozzallo"
+kind: "PA"
+---
+name: "PA4"
+externalId:
+  origin: "IPA"
+  value: "c_c937"
+selfcareId: "88547b14-b004-473c-a4ee-5a732cd92dbb"
+organizationId:
+  dev: "951cc51a-1dba-42e0-a7d8-41f80bd045b9"
+  refactorDev: "951cc51a-1dba-42e0-a7d8-41f80bd045b9"
+  qa: "951cc51a-1dba-42e0-a7d8-41f80bd045b9"
+userRoles:
+  admin: [ "5d717b97-5308-49a5-8682-187663278f24" ]
+  api: [ "e3f51f86-3814-4f7f-96f6-552e086bae8d" ]
+  security: [ "1d3d77d0-c1bd-420a-b748-998e373f7c81" ]
+  "api,security": [ "b97b6897-9aa1-41ca-9390-86e8c430fdc9" ]
+  support: [ "1d3d77d0-c1bd-420a-b748-998e373f7c81" ]
+tenantName:
+  dev: "Comune di Comun Nuovo"
+  refactorDev: "Comune di Comun Nuovo"
+  qa: "Comune di Comun Nuovo"
+kind: "PA"

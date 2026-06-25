@@ -19,13 +19,23 @@ public interface IEServiceClient extends SettableBearerToken {
 
     CreatedResource updateDraftDescriptor(UUID eServiceId, UUID descriptorId, UpdateEServiceDescriptorSeed updateEServiceDescriptorSeed);
 
+    void updateDescriptorAttributes(UUID eServiceId, UUID descriptorId, DescriptorAttributesSeed descriptorAttributesSeed);
+
     CreatedResource updateDescriptor(UUID eServiceId, UUID descriptorId, UpdateEServiceDescriptorQuotas updateEServiceDescriptorQuotas);
 
     CreatedResource createEServiceDocument(UUID eServiceId, UUID descriptorId, String kind, String prettyName, org.springframework.core.io.Resource doc);
 
     void publishDescriptor(UUID eServiceId, UUID descriptorId);
 
-    void suspendDescriptor(UUID eServiceId, UUID descriptorId);
+    ResponseEntity<Void> suspendDescriptor(UUID eServiceId, UUID descriptorId);
+
+    ResponseEntity<Void> scheduleArchiveDescriptor(UUID eServiceId, UUID descriptorId);
+
+    ResponseEntity<Void> scheduleArchiveEService(UUID eServiceId, EServiceArchivingReasonSeed eserviceArchivingReasonSeed);
+
+    ResponseEntity<Void> cancelDescriptorArchiving(UUID eServiceId, UUID descriptorId);
+
+    ResponseEntity<Void> cancelEServiceArchiving(UUID eServiceId);
 
     CreatedResource createDescriptor(UUID eServiceId);
 
@@ -48,6 +58,8 @@ public interface IEServiceClient extends SettableBearerToken {
     EServiceDoc updateEServiceDocumentById(UUID eServiceId, UUID descriptorId, UUID documentId, UpdateEServiceDescriptorDocumentSeed updateEServiceDescriptorDocumentSeed);
 
     CreatedResource updateEServiceById(UUID eServiceId, UpdateEServiceSeed updateEServiceSeed);
+
+    CreatedResource updateEServiceDelegationFlags(UUID eServiceId, EServiceDelegationFlagsUpdateSeed eserviceDelegationFlagsUpdateSeed);
 
     CreatedResource updateEServiceDescription(UUID eServiceId, EServiceDescriptionUpdateSeed eserviceDescriptionUpdateSeed);
 

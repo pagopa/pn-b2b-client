@@ -14,7 +14,7 @@ Feature: Deleghe Temporanee 15755
   Background:
     Given vengono settati i parametri per il tool CIE
 
-  @delegheTemporanee
+  @delegheTemporanee @deleghe1
   #1-12-23-33-34(temp) ++ 11-30(perm)
   Scenario: [MANDATE_TEMP_HAPPY_PATH_1] Creazione e accettazione di una delega temporanea e visualizzazione notifica (scenario positivo)
     Given Mario Gherkin rifiuta l'eventuale delega permanente da parte di Mario Cucumber
@@ -46,7 +46,7 @@ Feature: Deleghe Temporanee 15755
     Then la lista di deleghe del delegato "Mario Gherkin" non contiene la delega temporanea creata
     And la lista di deleghe del delegante "Mario Cucumber" non contiene la delega temporanea creata
 
-  @delegheTemporanee
+  @delegheTemporanee @deleghe1
   #2-13-24-32-33-34
   Scenario: [MANDATE_TEMP_HAPPY_PATH_2] Creazione e accettazione di una delega temporanea e visualizzazione notifica pur in presenza di delega permanente (scenario positivo)
     Given Mario Gherkin rifiuta l'eventuale delega permanente da parte di Mario Cucumber
@@ -338,7 +338,7 @@ Feature: Deleghe Temporanee 15755
   #37
   @delegheTemporanee
   Scenario: [MANDATE_TEMP_ACCEPTATION_120_GIORNI] Accettazione senza successo di una delega temporanea che permette la visualizzazione di una notifica più vecchia di 120 giorni
-    Given "Comune_Multi" recupera lato web PA una notifica inviata tra 130 e 120 giorni fa con destinatario Mario Cucumber
+    Given "Comune_Multi" recupera lato web PA una notifica inviata tra 200 e 120 giorni fa con destinatario Mario Cucumber
     When Mario Gherkin viene temporaneamente delegato da Mario Cucumber passando "DATI VALIDI"
     And la delega temporanea è stata correttamente creata
     And la delega temporanea di Mario Cucumber viene accettata da Mario Gherkin passando "DATI VALIDI"

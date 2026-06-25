@@ -8,28 +8,21 @@ import it.pagopa.interop.authorization.domain.Role;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.pn.interop.cucumber.steps.common.AgreementCommonContext;
-import it.pagopa.pn.interop.cucumber.steps.common.AttributeCommonContext;
-import it.pagopa.pn.interop.cucumber.steps.common.ClientCommonContext;
-import it.pagopa.pn.interop.cucumber.steps.common.DelegationCommonContext;
-import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
-import it.pagopa.pn.interop.cucumber.steps.common.ProducerKeychainCommonContext;
-import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
-import it.pagopa.pn.interop.cucumber.steps.common.PurposeTemplateCommonContext;
-import it.pagopa.pn.interop.cucumber.steps.common.RiskAnalysisCommonContext;
+import it.pagopa.pn.interop.cucumber.steps.common.*;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import it.pagopa.pn.interop.cucumber.steps.notification.model.NotificationCommonContext;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
-import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Getter
 @Setter
@@ -58,6 +51,7 @@ public class SharedStepsContext {
     private PurposeTemplateCommonContext purposeTemplateContext;
     private NotificationCommonContext notificationCommonContext = new NotificationCommonContext();
     private ProducerKeychainCommonContext producerKeychainCommonContext;
+    private TenantCommonContext tenantCommonContext;
 
     public SharedStepsContext(
             IHttpExecutor httpCallExecutor,
@@ -83,6 +77,7 @@ public class SharedStepsContext {
         eServiceTemplateStepContext = new EServiceTemplateStepContext();
         purposeTemplateContext = new PurposeTemplateCommonContext();
         producerKeychainCommonContext = new ProducerKeychainCommonContext();
+        tenantCommonContext = new TenantCommonContext();
     }
 
     @Before(order = Integer.MIN_VALUE)

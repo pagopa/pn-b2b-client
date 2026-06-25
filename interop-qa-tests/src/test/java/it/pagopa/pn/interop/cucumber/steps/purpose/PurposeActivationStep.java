@@ -64,6 +64,17 @@ public class PurposeActivationStep {
         dataPreparationService.publishDescriptor(eServicesCommonContext.getEserviceId(), eServicesCommonContext.getDescriptorId());
     }
 
+    @When("l'utente tenta di attivare la finalità")
+    public void userTriesToActivatePurpose() {
+        DelegationRef delegationRef = new DelegationRef().delegationId(sharedStepsContext.getDelegationCommonContext().getDelegationId());
+        httpCallExecutor.performCall(
+                () -> purposeApiClient.activatePurposeVersion(
+                    UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()),
+                    UUID.fromString(sharedStepsContext.getPurposeCommonContext().getVersionId()),
+                    delegationRef)
+        );
+    }
+
     @When("l'utente (ri)attiva la finalità in stato {string} per quell'e-service")
     public void userActivatesPurposeInStateForThatEService(String state) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
@@ -96,9 +107,11 @@ public class PurposeActivationStep {
     }
 
     private void activatePurposeInStateForThatEServiceWithDelegate(String state, DelegationRef delegationRef) {
-        String versionId = "WAITING_FOR_APPROVAL".equals(state) || "REJECTED".equals(state)
-                ? sharedStepsContext.getPurposeCommonContext().getWaitingForApprovalVersionId()
-                : sharedStepsContext.getPurposeCommonContext().getVersionId();
+        String versionId = switch (state) {
+            case "WAITING_FOR_APPROVAL", "REJECTED" -> sharedStepsContext.getPurposeCommonContext().getWaitingForApprovalVersionId();
+            default -> sharedStepsContext.getPurposeCommonContext().getVersionId();
+        };
+
         if (versionId == null) throw new IllegalArgumentException("No versionId found!");
         httpCallExecutor.performCall(() -> purposeApiClient.activatePurposeVersion(
                 UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()), UUID.fromString(versionId), delegationRef));
@@ -112,7 +125,11 @@ public class PurposeActivationStep {
         String purposeId = sharedStepsContext.getPurposeCommonContext().getPurposesIds().get(0);
         String waitingForApprovalVersionId = sharedStepsContext.getPurposeCommonContext().getWaitingForApprovalVersionIds().get(0);
         String currentVersionId = sharedStepsContext.getPurposeCommonContext().getCurrentVersionIds().get(0);
-        String versionId = List.of("WAITING_FOR_APPROVAL", "REJECTED").contains(state) ? waitingForApprovalVersionId : currentVersionId;
+
+        String versionId = switch (state) {
+            case "WAITING_FOR_APPROVAL", "REJECTED" -> waitingForApprovalVersionId;
+            default -> currentVersionId;
+        };
 
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getPurposeApiClient().activatePurposeVersion(UUID.fromString(purposeId), UUID.fromString(versionId))
@@ -121,6 +138,7 @@ public class PurposeActivationStep {
 
     @Then("si ottiene status code {int} e la finalità in stato {string}")
     public void verifyStatusCodeAndPurposeState(int statusCode, String desiredState) {
+        Assertions.assertEquals(statusCode, httpCallExecutor.getResponseStatus().value());
         PurposeVersionState purposeVersionState = PurposeVersionState.fromValue(desiredState);
         sharedStepsContext.getPollingService().makePolling(
                 () -> httpCallExecutor.performCall(
@@ -128,14 +146,17 @@ public class PurposeActivationStep {
                 ),
                 res -> {
                     Purpose purpose = (Purpose) httpCallExecutor.getResponse();
-                    return "WAITING_FOR_APPROVAL".equals(desiredState)
-                            ? purpose.getWaitingForApprovalVersion().getState() == purposeVersionState
-                            : purposeVersionState == PurposeVersionState.REJECTED
-                                ? purpose.getRejectedVersion().getState() == purposeVersionState
-                                : purpose.getCurrentVersion().getState() == purposeVersionState;
+                    if (purpose == null) return false;
+                    return switch (desiredState) {
+                        case "WAITING_FOR_APPROVAL" -> purpose.getWaitingForApprovalVersion() != null &&
+                                purpose.getWaitingForApprovalVersion().getState() == purposeVersionState;
+                        case "REJECTED" -> purpose.getRejectedVersion() != null &&
+                                purpose.getRejectedVersion().getState() == purposeVersionState;
+                        default -> purpose.getCurrentVersion() != null &&
+                                purpose.getCurrentVersion().getState() == purposeVersionState;
+                    };
                 },
                 "Purpose with desired state not found!"
         );
-        Assertions.assertEquals(statusCode, httpCallExecutor.getResponseStatus().value());
     }
 }

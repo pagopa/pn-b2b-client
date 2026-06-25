@@ -2,6 +2,7 @@ package it.pagopa.interop.config.springconfig;
 
 
 import it.pagopa.interop.M2MVersionsMapper;
+import it.pagopa.interop.authorization.domain.dpop.AgidJwtProperties;
 import it.pagopa.interop.authorization.service.DPoPTokenService;
 import it.pagopa.interop.common.interceptor.dpop.utils.DPoPAccessTokenSupplier;
 import it.pagopa.interop.common.rest_template.DpopRestTemplate;
@@ -73,11 +74,17 @@ public class InteropRestTemplateConfiguration {
     }
 
     @Bean
+    public AgidJwtProperties agidJwtProperties() {
+        return new AgidJwtProperties();
+    }
+
+    @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public DpopRestTemplate dpopRestTemplate(
             DPoPTokenService dpoPTokenService,
             DPoPAccessTokenSupplier dpopAccessTokenSupplier,
-            RestTemplate customRestTemplate // prende il @Primary
+            RestTemplate customRestTemplate, // prende il @Primary
+            AgidJwtProperties agidJwtProperties
     ) {
         // RequestFactory "raw" per evitare chain annidata
         HttpComponentsClientHttpRequestFactory rf = new HttpComponentsClientHttpRequestFactory();
@@ -104,7 +111,8 @@ public class InteropRestTemplateConfiguration {
                 dpoPTokenService,
                 dpopAccessTokenSupplier,
                 new ArrayList<>(base),
-                null
+                null,
+                agidJwtProperties
         );
     }
 

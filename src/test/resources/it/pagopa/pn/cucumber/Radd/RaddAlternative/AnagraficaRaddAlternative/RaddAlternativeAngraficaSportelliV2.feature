@@ -68,6 +68,23 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | +39800123456   |
       | +390212345678  |
       | +3933312345678 |
+      | +390212345678,+39800123456   |
+      | 330370611      |
+      | +393331234567 |
+
+  @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs 1
+  Scenario: [RADD_ANAGRAFICA_CRUD_V2_27] Creazione nuova sede RADD con endValidity nel passato
+    Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
+    When viene generato uno sportello Radd V2 con restituzione errore con dati:
+      | address_radd_row      | via roma    |
+      | address_radd_cap      | 80133       |
+      | address_radd_province | NA          |
+      | address_radd_city     | NAPOLI      |
+      | radd_description      | descrizione |
+      | radd_phoneNumbers     | 8001234567  |
+      | radd_externalCodes    | EXT01QA     |
+      | radd_end_validity     | 2025-05-05  |
+    Then l'operazione Radd V2 ha prodotto un errore con status code "400"
 
   @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs nd
   Scenario Outline: [RADD_ANAGRAFICA_CRUD_V2_26] Creazione nuova sede RADD con descrizione maggiore di 200 caratteri
@@ -181,7 +198,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | via fiume29 | 20161  | MI        | MILANO | ITALIA | Test        | 00112345678    | NULL              | NULL          | NULL        | EXT04QA26    | NULL                 | NULL         | NULL        |
       | via fiume30 | 20161  | MI        | MILANO | ITALIA | Test        | 00401234567    | NULL              | NULL          | NULL        | EXT04QA27    | NULL                 | NULL         | NULL        |
       | via fiume32 | 20161  | MI        | MILANO | ITALIA | Test        | 1234567890     | NULL              | NULL          | NULL        | EXT04QA29    | NULL                 | NULL         | NULL        |
-      | via fiume34 | 20161  | MI        | MILANO | ITALIA | Test        | 333123456      | NULL              | NULL          | NULL        | EXT04QA31    | NULL                 | NULL         | NULL        |
+      | via fiume34 | 20161  | MI        | MILANO | ITALIA | Test        | 33312345       | NULL              | NULL          | NULL        | EXT04QA31    | NULL                 | NULL         | NULL        |
       | via fiume31 | 20161  | MI        | MILANO | ITALIA | Test        | 3331234567890  | NULL              | NULL          | NULL        | EXT04QA32    | NULL                 | NULL         | NULL        |
       | via fiume35 | 20161  | MI        | MILANO | ITALIA | Test        | 999333123456   | NULL              | NULL          | NULL        | EXT04QA33    | NULL                 | NULL         | NULL        |
       | via fiume36 | 20161  | MI        | MILANO | ITALIA | Test        | 00390012345678 | NULL              | NULL          | NULL        | EXT04QA34    | NULL                 | NULL         | NULL        |
@@ -390,7 +407,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | NULL        | NULL        | NULL                                | NULL                     | !!"$%&/ASgSG(£%%£%'?^\s# | NULL          | NULL                 | NULL        |
       | NULL        | NULL        | ""                                  | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
       | NULL        | NULL        | 1234567890                          | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
-      | NULL        | NULL        | +390123456789,333123456             | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
+      | NULL        | NULL        | +390123456789,+3933312345           | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
       | NULL        | NULL        | 080123456789                        | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
       | NULL        | NULL        | +390123456789,+394441234567         | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
       | NULL        | NULL        | +390123456789,+39333123ABCD         | NULL                     | NULL                     | NULL          | NULL                 | NULL        |
@@ -756,6 +773,8 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | 56 | website             | <script>alert(1)</script>                    | 403              |
       | 57 | website             | javascript:alert(1)                          | 403              |
       | 58 | website             | <img src=x onerror=alert(1)>                 | 403              |
+      | 59 | phoneNumbers        | +3933312345678,+393339999999,330370611       | 400              |
+      | 60 | phoneNumbers        | +3933312345678,330370611                     | 200              |
 
   @raddAnagraficaV2 @putSelectiveRadd @deleteNewSite @cognito3
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_25] - PUT Selective – Chiamata API effettuata da utente con permessi di sola lettura

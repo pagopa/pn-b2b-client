@@ -12,6 +12,15 @@ public class ParameterTypes {
     public enum ApiVersion { V1, V2, V3 }
     public record ApiSpec(ApiProfile.ApiSet set, ApiVersion version) {}
 
+    @ParameterType("positivo|negativo")
+    public static boolean booleanResponse(String response) {
+        return switch (response)  {
+            case "positivo" -> true;
+            case "negativo" -> false;
+            default -> throw new IllegalStateException("Unexpected value: " + response);
+        };
+    }
+
     /* Converte un indice espresso in forma (1,2,3...) in (0,1,2...) */
     @ParameterType("[0-9]+")
     public static int collectionIndex(String value) {

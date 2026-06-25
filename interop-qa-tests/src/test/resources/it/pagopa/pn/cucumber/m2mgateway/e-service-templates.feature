@@ -11,13 +11,13 @@ Feature: Test API M2M of e-service template
     Then si ottiene status code 200
     And la versione corrente dell'e-service template è in stato PUBLISHED
     Examples:
-      | mode        |
-      | erogazione  |
+      | mode       |
+      | erogazione |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode        |
-      | ricezione   |
+      | mode      |
+      | ricezione |
 
   @m2m-parte2-settembre
   @e-service-template-m2m-unsuspend
@@ -29,13 +29,13 @@ Feature: Test API M2M of e-service template
     Then si ottiene status code 403
     And la versione corrente dell'e-service template è in stato SUSPENDED
     Examples:
-      | mode        |
-      | erogazione  |
+      | mode       |
+      | erogazione |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode        |
-      | ricezione   |
+      | mode      |
+      | ricezione |
 
   @m2m-parte2-settembre
   @e-service-template-m2m-unsuspend
@@ -52,13 +52,13 @@ Feature: Test API M2M of e-service template
     Then si ottiene status code 404
     And la versione corrente dell'e-service template è in stato SUSPENDED
     Examples:
-      | mode        |
-      | erogazione  |
+      | mode       |
+      | erogazione |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode        |
-      | ricezione   |
+      | mode      |
+      | ricezione |
 
   @m2m-parte2-settembre
   @e-service-template-m2m-unsuspend
@@ -74,13 +74,13 @@ Feature: Test API M2M of e-service template
     Then la versione corrente dell'e-service template è in stato SUSPENDED
 
     Examples:
-      | mode        |
-      | erogazione  |
+      | mode       |
+      | erogazione |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode        |
-      | ricezione   |
+      | mode      |
+      | ricezione |
 
   @m2m-parte2-settembre
   @e-service-template-m2m-unsuspend
@@ -92,17 +92,17 @@ Feature: Test API M2M of e-service template
     Then si ottiene status code <code>
     And la versione corrente dell'e-service template è in stato <state>
     Examples:
-      | mode        | state       | code  |
-      | erogazione  | DRAFT       | 409   |
-      | erogazione  | PUBLISHED   | 409   |
-      | erogazione  | DEPRECATED  | 409   |
+      | mode       | state      | code |
+      | erogazione | DRAFT      | 409  |
+      | erogazione | PUBLISHED  | 409  |
+      | erogazione | DEPRECATED | 409  |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode        | state       | code  |
-      | ricezione   | DRAFT       | 409   |
-      | ricezione   | PUBLISHED   | 409   |
-      | ricezione   | DEPRECATED  | 409   |
+      | mode      | state      | code |
+      | ricezione | DRAFT      | 409  |
+      | ricezione | PUBLISHED  | 409  |
+      | ricezione | DEPRECATED | 409  |
 
   @m2m-parte2-settembre
   @e-service-template-m2m-unsuspend
@@ -115,13 +115,13 @@ Feature: Test API M2M of e-service template
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     Then la versione corrente dell'e-service template è in stato SUSPENDED
     Examples:
-      | mode        |
-      | erogazione  |
+      | mode       |
+      | erogazione |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode        |
-      | ricezione   |
+      | mode      |
+      | ricezione |
 
   @m2m-patch
   @m2m-parte2-settembre
@@ -139,13 +139,13 @@ Feature: Test API M2M of e-service template
     And l'e-service template restituito è coerente con le modifiche effettuate
     And l'e-service template è stato parzialmente modificato correttamente
     Examples:
-      | mode        |
-      | erogazione  |
+      | mode       |
+      | erogazione |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode        |
-      | ricezione   |
+      | mode      |
+      | ricezione |
 
   @m2m-patch
   @m2m-parte2-settembre
@@ -158,13 +158,13 @@ Feature: Test API M2M of e-service template
     Then si ottiene lo status code 403
     And l'e-service template non ha subito modifiche
     Examples:
-      | mode        |
-      | erogazione  |
+      | mode       |
+      | erogazione |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode        |
-      | ricezione   |
+      | mode      |
+      | ricezione |
 
   @m2m-parte2-settembre
   @e-service-template-m2m-patch
@@ -185,13 +185,13 @@ Feature: Test API M2M of e-service template
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     Then l'e-service template non ha subito modifiche
     Examples:
-      | mode        |
-      | erogazione  |
-    
+      | mode       |
+      | erogazione |
+
     @e-service-template-receive-m2m
     Examples:
-      | mode        |
-      | ricezione   |
+      | mode      |
+      | ricezione |
 
   @m2m-patch
   @m2m-parte2-settembre
@@ -204,17 +204,17 @@ Feature: Test API M2M of e-service template
     Then si ottiene lo status code 400
     And l'e-service template non ha subito modifiche
     Examples:
-      | stato       | mode        |
-      | PUBLISHED   | erogazione  |
-      | DEPRECATED  | erogazione  |
-      | SUSPENDED   | erogazione  |
+      | stato      | mode       |
+      | PUBLISHED  | erogazione |
+      | DEPRECATED | erogazione |
+      | SUSPENDED  | erogazione |
 
     @e-service-template-receive-m2m
     Examples:
-      | stato        | mode        |
-      | PUBLISHED   | ricezione   |
-      | DEPRECATED  | ricezione   |
-      | SUSPENDED   | ricezione   |
+      | stato      | mode      |
+      | PUBLISHED  | ricezione |
+      | DEPRECATED | ricezione |
+      | SUSPENDED  | ricezione |
 
   @m2m-patch
   @m2m-parte2-settembre
@@ -228,13 +228,13 @@ Feature: Test API M2M of e-service template
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     Then l'e-service template non ha subito modifiche
     Examples:
-      | mode        |
-      | erogazione  |
+      | mode       |
+      | erogazione |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode        |
-      | ricezione   |
+      | mode      |
+      | ricezione |
 
   @m2m-patch
   @m2m-parte2-settembre
@@ -252,13 +252,13 @@ Feature: Test API M2M of e-service template
     And l'ultima versione dell'e-service template restituita è coerente con le modifiche effettuate
     And l'ultima versione dell'e-service template è stata parzialmente modificata correttamente
     Examples:
-      | mode        |
-      | erogazione  |
+      | mode       |
+      | erogazione |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode        |
-      | ricezione   |
+      | mode      |
+      | ricezione |
 
   @m2m-patch
   @m2m-parte2-settembre
@@ -271,13 +271,13 @@ Feature: Test API M2M of e-service template
     Then si ottiene lo status code 403
     And l'ultima versione dell'e-service template non ha subito modifiche
     Examples:
-      | mode        |
-      | erogazione  |
+      | mode       |
+      | erogazione |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode        |
-      | ricezione   |
+      | mode      |
+      | ricezione |
 
   @m2m-parte2-settembre
   @e-service-template-version-m2m-patch
@@ -298,13 +298,13 @@ Feature: Test API M2M of e-service template
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     Then l'ultima versione dell'e-service template non ha subito modifiche
     Examples:
-      | mode        |
-      | erogazione  |
+      | mode       |
+      | erogazione |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode        |
-      | ricezione   |
+      | mode      |
+      | ricezione |
 
   @m2m-patch
   @m2m-parte2-settembre
@@ -317,17 +317,17 @@ Feature: Test API M2M of e-service template
     Then si ottiene lo status code 400
     And l'ultima versione dell'e-service template non ha subito modifiche
     Examples:
-      | stato       | mode        |
-      | PUBLISHED   | erogazione  |
-      | DEPRECATED  | erogazione  |
-      | SUSPENDED   | erogazione  |
+      | stato      | mode       |
+      | PUBLISHED  | erogazione |
+      | DEPRECATED | erogazione |
+      | SUSPENDED  | erogazione |
 
     @e-service-template-receive-m2m
     Examples:
-      | stato        | mode        |
-      | PUBLISHED   | ricezione   |
-      | DEPRECATED  | ricezione   |
-      | SUSPENDED   | ricezione   |
+      | stato      | mode      |
+      | PUBLISHED  | ricezione |
+      | DEPRECATED | ricezione |
+      | SUSPENDED  | ricezione |
 
   @m2m-patch
   @m2m-parte2-settembre
@@ -357,15 +357,15 @@ Feature: Test API M2M of e-service template
     And l'ultima versione dell'e-service template restituita è coerente con le modifiche effettuate
     And l'ultima versione dell'e-service template è stata parzialmente modificata correttamente
     Examples:
-      | mode        | state     |
-      | erogazione  | PUBLISHED |
-      | erogazione  | SUSPENDED |
+      | mode       | state     |
+      | erogazione | PUBLISHED |
+      | erogazione | SUSPENDED |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode        | state     |
-      | ricezione   | PUBLISHED |
-      | ricezione   | SUSPENDED |
+      | mode      | state     |
+      | ricezione | PUBLISHED |
+      | ricezione | SUSPENDED |
 
   @m2m-patch
   @m2m-parte2-settembre
@@ -378,15 +378,15 @@ Feature: Test API M2M of e-service template
     Then si ottiene lo status code 403
     And l'ultima versione dell'e-service template non ha subito modifiche
     Examples:
-      | mode        | state     |
-      | erogazione  | PUBLISHED |
-      | erogazione  | SUSPENDED |
+      | mode       | state     |
+      | erogazione | PUBLISHED |
+      | erogazione | SUSPENDED |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode        | state     |
-      | ricezione   | PUBLISHED |
-      | ricezione   | SUSPENDED |
+      | mode      | state     |
+      | ricezione | PUBLISHED |
+      | ricezione | SUSPENDED |
 
   @m2m-parte2-settembre
   @e-service-template-version-quota-m2m-patch
@@ -407,15 +407,15 @@ Feature: Test API M2M of e-service template
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     Then l'ultima versione dell'e-service template non ha subito modifiche
     Examples:
-      | mode        | state     |
-      | erogazione  | PUBLISHED |
-      | erogazione  | SUSPENDED |
+      | mode       | state     |
+      | erogazione | PUBLISHED |
+      | erogazione | SUSPENDED |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode        | state     |
-      | ricezione   | PUBLISHED |
-      | ricezione   | SUSPENDED |
+      | mode      | state     |
+      | ricezione | PUBLISHED |
+      | ricezione | SUSPENDED |
 
   @m2m-patch
   @m2m-parte2-settembre
@@ -428,15 +428,15 @@ Feature: Test API M2M of e-service template
     Then si ottiene lo status code 400
     And l'ultima versione dell'e-service template non ha subito modifiche
     Examples:
-      | stato       | mode        |
-      | DRAFT       | erogazione  |
-      | DEPRECATED  | erogazione  |
+      | stato      | mode       |
+      | DRAFT      | erogazione |
+      | DEPRECATED | erogazione |
 
     @e-service-template-receive-m2m
     Examples:
-      | stato        | mode        |
-      | DRAFT       | ricezione   |
-      | DEPRECATED  | ricezione   |
+      | stato      | mode      |
+      | DRAFT      | ricezione |
+      | DEPRECATED | ricezione |
 
   @m2m-patch
   @m2m-parte2-settembre
@@ -466,13 +466,13 @@ Feature: Test API M2M of e-service template
     Then si ottiene lo status code 404
 
     Examples:
-      | mode        |
-      | erogazione  |
+      | mode       |
+      | erogazione |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode        |
-      | ricezione   |
+      | mode      |
+      | ricezione |
 
   @m2m-parte2-ottobre
   @e-service-template-m2m-delete
@@ -484,13 +484,13 @@ Feature: Test API M2M of e-service template
     Then si ottiene lo status code 403
     And l'e-service template esiste ancora
     Examples:
-      | mode        |
-      | erogazione  |
+      | mode       |
+      | erogazione |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode        |
-      | ricezione   |
+      | mode      |
+      | ricezione |
 
   @m2m-parte2-ottobre
   @e-service-template-m2m-delete
@@ -530,10 +530,10 @@ Feature: Test API M2M of e-service template
     # non si torna all'utente PA1 perché PA2 DEVE poter visualizzare il template di PA1
     And l'e-service template esiste ancora
     Examples:
-      | mode        | state       |
-      | erogazione  | PUBLISHED   |
-      | erogazione  | SUSPENDED   |
-      | erogazione  | DEPRECATED  |
+      | mode       | state      |
+      | erogazione | PUBLISHED  |
+      | erogazione | SUSPENDED  |
+      | erogazione | DEPRECATED |
 
   @m2m-parte2-ottobre
   @e-service-template-m2m-delete
@@ -545,17 +545,17 @@ Feature: Test API M2M of e-service template
     Then si ottiene lo status code 409
     And l'e-service template esiste ancora
     Examples:
-      | mode        | state       |
-      | erogazione  | PUBLISHED   |
-      | erogazione  | SUSPENDED   |
-      | erogazione  | DEPRECATED  |
+      | mode       | state      |
+      | erogazione | PUBLISHED  |
+      | erogazione | SUSPENDED  |
+      | erogazione | DEPRECATED |
 
     @e-service-template-receive-m2m
     Examples:
-      | mode        | state       |
-      | ricezione   | PUBLISHED   |
-      | ricezione   | SUSPENDED   |
-      | ricezione   | DEPRECATED  |
+      | mode      | state      |
+      | ricezione | PUBLISHED  |
+      | ricezione | SUSPENDED  |
+      | ricezione | DEPRECATED |
 
   @m2m-parte2-ottobre
   @e-service-template-m2m-version-create
@@ -572,9 +572,9 @@ Feature: Test API M2M of e-service template
     And la versione 1 dell'e-service template non ha subito modifiche
     And le versioni dell'e-service template sono un totale di 2
     Examples:
-      | stato       |
-      | PUBLISHED   |
-      | SUSPENDED   |
+      | stato     |
+      | PUBLISHED |
+      | SUSPENDED |
 
   @m2m-parte2-ottobre
   @e-service-template-m2m-version-create
@@ -681,3 +681,213 @@ Feature: Test API M2M of e-service template
     When viene impostato per l'utente un token m2m non valido
     When l'utente tenta di recuperare le versioni dell'e-service template indicando un template id inesistente
     Then si ottiene lo status code 401
+
+  @eservice_published_delegation
+  @eservice_published_delegation_m2m_v3
+  @happy-path
+  Scenario Outline: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_1] Un utente con ruolo M2M-ADMIN può effettuare una modifica parziale della delega di un e-service template instance precedentemente creato in uno degli stati permessi
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato <eServiceDescriptorState> partire dal template e impostando delega amministrativa a "false" e delega tecnica a "false"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "<isConsumerDelegable>" e quella tecnica a "<isClientAccessDelegable>"
+    Then si ottiene lo status code 200
+    And l'e-service restituito è coerente con le modifiche effettuate
+    And l'e-service è stato parzialmente modificato correttamente
+    Examples:
+      | eServiceDescriptorState | isConsumerDelegable | isClientAccessDelegable |
+      | PUBLISHED               | true                | true                    |
+      | PUBLISHED               | false               | false                   |
+      | PUBLISHED               | true                | false                   |
+      | PUBLISHED               | true                | %null                   |
+      | PUBLISHED               | false               | %null                   |
+      | PUBLISHED               | %null               | false                   |
+
+      | SUSPENDED               | true                | true                    |
+      | SUSPENDED               | false               | false                   |
+      | SUSPENDED               | true                | false                   |
+      | SUSPENDED               | true                | %null                   |
+      | SUSPENDED               | false               | %null                   |
+      | SUSPENDED               | %null               | false                   |
+
+      | DEPRECATED              | true                | true                    |
+      | DEPRECATED              | false               | false                   |
+      | DEPRECATED              | true                | false                   |
+      | DEPRECATED              | true                | %null                   |
+      | DEPRECATED              | false               | %null                   |
+      | DEPRECATED              | %null               | false                   |
+
+  @eservice_published_delegation
+  @eservice_published_delegation_m2m_v3
+  @sad-path
+  Scenario Outline: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_2] Un utente con ruolo M2M-ADMIN NON può modificare le flag di delega tecnica di un e-service template instance precedentemente creato ottenendo uno stato non permesso
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato <eServiceDescriptorState> partire dal template e impostando delega amministrativa a "false" e delega tecnica a "false"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "<isConsumerDelegable>" e quella tecnica a "<isClientAccessDelegable>"
+    Then si ottiene lo status code 400
+    And l'e-service non ha subito modifiche
+    Examples:
+      | eServiceDescriptorState | isConsumerDelegable | isClientAccessDelegable |
+      | PUBLISHED               | false               | true                    |
+      | SUSPENDED               | false               | true                    |
+      | DEPRECATED              | false               | true                    |
+      #considerando che lo stato delle flag alla creazione dell'e-service è isConsumerDelegable=false e isClientAccessDelegable=false
+      | PUBLISHED               | %null               | true                    |
+      | SUSPENDED               | %null               | true                    |
+      | DEPRECATED              | %null               | true                    |
+
+  @eservice_published_delegation
+  @eservice_published_delegation_m2m_v3
+  @sad-path
+  Scenario Outline: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_3] Un utente con ruolo M2M-ADMIN NON può modificare le flag di delega amministrativa di un e-service template instance precedentemente creato ottenendo uno stato non permesso
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato <eServiceDescriptorState> partire dal template e impostando delega amministrativa a "true" e delega tecnica a "true"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "false" e quella tecnica a "%null"
+    Then si ottiene lo status code 400
+    And l'e-service non ha subito modifiche
+    Examples:
+      | eServiceDescriptorState |
+      #considerando che lo stato delle flag alla creazione dell'e-service è isConsumerDelegable=true e isClientAccessDelegable=true
+      | PUBLISHED               |
+      | SUSPENDED               |
+      | DEPRECATED              |
+
+  @eservice_published_delegation
+  @eservice_published_delegation_m2m_v3
+  @sad-path
+  Scenario Outline: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_4] Un utente con ruolo M2M-ADMIN NON può modificare le flag di delega di un e-service template instance precedentemente creato avendo un token non valido
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato <eServiceDescriptorState> partire dal template e impostando delega amministrativa a "false" e delega tecnica a "false"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale della delega dell'e-service con token non valido
+    Then si ottiene lo status code 401
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    Then l'e-service non ha subito modifiche
+    Examples:
+      | eServiceDescriptorState |
+      | PUBLISHED               |
+      | SUSPENDED               |
+      | DEPRECATED              |
+
+  @eservice_published_delegation
+  @eservice_published_delegation_m2m_v3
+  @sad-path
+  Scenario Outline: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_5] Un utente con ruolo M2M NON può modificare le flag di delega di un e-service template instance precedentemente creato
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato <eServiceDescriptorState> partire dal template e impostando delega amministrativa a "false" e delega tecnica a "false"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
+    When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "true" e quella tecnica a "true"
+    Then si ottiene lo status code 403
+    And l'e-service non ha subito modifiche
+    Examples:
+      | eServiceDescriptorState |
+      | PUBLISHED               |
+      | SUSPENDED               |
+      | DEPRECATED              |
+
+  @eservice_published_delegation
+  @eservice_published_delegation_m2m_v3
+  @sad-path
+  Scenario Outline: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_6] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service template instance precedentemente creato se non gli appartiene e per cui non possiede la delega in erogazione
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato <eServiceDescriptorState> partire dal template e impostando delega amministrativa a "false" e delega tecnica a "false"
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "true" e quella tecnica a "true"
+    Then si ottiene lo status code 403
+    And l'e-service non ha subito modifiche
+    Examples:
+      | eServiceDescriptorState |
+      | PUBLISHED               |
+      | SUSPENDED               |
+      | DEPRECATED              |
+
+  @eservice_published_delegation
+  @eservice_published_delegation_m2m_v3
+  @sad-path
+  Scenario: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_7] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service template instance precedentemente creato che si trova in stato DRAFT
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato DRAFT partire dal template e impostando delega amministrativa a "false" e delega tecnica a "false"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare la modifica parziale della delega dell'e-service impostando la delega amministrativa a "true" e quella tecnica a "true"
+    Then si ottiene lo status code 409
+    And l'e-service non ha subito modifiche
+
+  @eservice_description_max_length
+  @happy-path
+  Scenario: [ESERVICE_TEMPLATE_CREATE_DESCRIPTION_MAX_LENGTH_5] La creazione di un e-service template va a buon fine utilizzando la dimensione massima consentita per la descrizione
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta la creazione del template e-service con la seguente configurazione:
+      | description-length | 400 |
+    And si ottiene status code 200
+    Then l'utente è un "admin" di "PA1"
+    And l'e-service template creato ha una descrizione di 400 caratteri
+
+  @eservice_description_max_length
+  @sad-path
+  Scenario: [ESERVICE_TEMPLATE_CREATE_DESCRIPTION_MAX_LENGTH_6] La creazione di un e-service template non va a buon fine se viene superata la dimensione massima consentita per la descrizione
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta la creazione del template e-service con la seguente configurazione:
+      | description-length | 401 |
+    Then si ottiene status code 400
+
+  @eservice_description_max_length
+  @happy-path
+  Scenario: [ESERVICE_TEMPLATE_UPDATE_DESCRIPTION_MAXLENGTH_10] Un utente aggiorna un e-service template in stato DRAFT utilizzando la descrizione della lunghezza massima possibile
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente tenta la creazione dell'e-service template con la configurazione predefinita
+    When l'utente tenta la modifica della descrizione dell'e-service template in stato DRAFT con una descrizione di 400 caratteri
+    And si ottiene status code 200
+    Then l'utente è un "admin" di "PA1"
+    And l'e-service template creato ha una descrizione di 400 caratteri
+
+  @eservice_description_max_length
+  @sad-path
+  Scenario: [ESERVICE_TEMPLATE_UPDATE_DESCRIPTION_MAXLENGTH_11] L'aggiornamento dell'e-service template in stato DRAFT non va a buon fine se viene superata la dimensione massima consentita per la descrizione
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente tenta la creazione dell'e-service template con la configurazione predefinita
+    When l'utente tenta la modifica della descrizione dell'e-service template in stato DRAFT con una descrizione di 401 caratteri
+    Then si ottiene status code 400
+
+  @eservice_description_max_length
+  @happy-path
+  Scenario: [ESERVICE_TEMPLATE_UPDATE_DESCRIPTION_MAXLENGTH_12] Un utente aggiorna un e-service template in stato PUBLISHED utilizzando la descrizione della lunghezza massima possibile
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta la modifica della descrizione dell'e-service template in stato PUBLISHED con una descrizione di 400 caratteri
+    And si ottiene status code 200
+    Then l'utente è un "admin" di "PA1"
+    And l'e-service template creato ha una descrizione di 400 caratteri
+
+  @eservice_description_max_length
+  @sad-path
+  Scenario: [ESERVICE_TEMPLATE_UPDATE_DESCRIPTION_MAXLENGTH_13] L'aggiornamento di un e-service in stato PUBLISHED non va a buon fine se viene superata la dimensione massima consentita per la descrizione
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta la modifica della descrizione dell'e-service template in stato PUBLISHED con una descrizione di 401 caratteri
+    Then si ottiene status code 400
+
+  # PIN-10005
+  @eservice_description_max_length
+  @sad-path
+  Scenario: [ESERVICE_TEMPLATE_UPDATE_DESCRIPTION_MAXLENGTH_14] L'aggiornamento della descrizione della versione di un e-service template in stato DRAFT non va a buon fine se si utilizza la lunghezza massima consentita
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    When l'utente tenta delle modifiche alla versione dell'e-service template con una descrizione di lunghezza 400
+    Then si ottiene status code 400
+
+  @eservice_description_max_length
+  Scenario: [ESERVICE_TEMPLATE_UPDATE_DESCRIPTION_MAXLENGTH_15] L'aggiornamento di una versione e-service in stato DRAFT non va a buon fine se viene superata la dimensione massima consentita per la descrizione
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    When l'utente tenta delle modifiche alla versione dell'e-service template con una descrizione di lunghezza 401
+    Then si ottiene status code 400

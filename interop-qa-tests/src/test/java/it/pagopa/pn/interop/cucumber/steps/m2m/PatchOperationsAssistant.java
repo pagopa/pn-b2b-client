@@ -54,7 +54,7 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
     }
 
     public void patchResource(PATCH_REQUEST patchRequest, String patchTenant, M2MRole role) {
-        Runnable authProcedure = () ->  {
+        Runnable authProcedure = () -> {
             if (patchTenant != null && role != null) m2mAuthSteps.authenticateM2MUser("admin", patchTenant, role);
         };
         this.patchResource(patchRequest, authProcedure);
@@ -94,6 +94,12 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
      * "l'utente tenta di effettuare la modifica parziale di un ... inesistente" */
     public void patchNonExistentResource() {
         RESOURCE_ID resourceId = this.randomResourceId();
+        PATCH_REQUEST patchRequest = buildDefaultPatchRequest();
+        httpExecutor.performCall(() -> this.patchResource(resourceId, patchRequest));
+    }
+
+    public void patchNonSpecifiedResource() {
+        RESOURCE_ID resourceId = this.emptyResourceId();
         PATCH_REQUEST patchRequest = buildDefaultPatchRequest();
         httpExecutor.performCall(() -> this.patchResource(resourceId, patchRequest));
     }
@@ -157,4 +163,8 @@ public abstract class PatchOperationsAssistant<PATCH_REQUEST, RESOURCE, RESOURCE
     protected abstract RESOURCE patchResource(RESOURCE_ID resourceId, PATCH_REQUEST patchRequest);
 
     protected abstract RESOURCE_ID randomResourceId();
+
+    protected RESOURCE_ID emptyResourceId() {
+        return null;
+    }
 }

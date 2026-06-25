@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils;
 
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.utility.enums.ResolvableToken;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
@@ -25,24 +26,47 @@ public class TokenResolver {
 
     private static final Map<String, Function<SharedStepsContext, String>> DYNAMIC_TOKENS =
             Map.ofEntries(
-                    Map.entry(":clientId", ctx -> ctx.getClientCommonContext().getLastClient().toString()),
-                    Map.entry(":userId", ctx -> ctx.getIdentityService().getUserId(ctx.getTenantType(), ctx.getRole().getValue()).toString()),
-                    Map.entry(":kid", ctx -> ctx.getClientCommonContext().getKeyId()),
-                    Map.entry(":agreementId", ctx -> ctx.getAgreementId().toString()),
-                    Map.entry(":consumerDelegationId", ctx -> ctx.getDelegationCommonContext().getDelegationId().toString()),
-                    Map.entry(":producerDelegationId", ctx -> ctx.getDelegationCommonContext().getDelegationId().toString()),
-                    Map.entry(":purposeId", ctx -> ctx.getPurposeCommonContext().getLastPurposeId().toString()),
-                    Map.entry(":purposeVersionId", ctx -> ctx.getPurposeCommonContext().getCurrentVersionId()),
-                    Map.entry(":riskAnalysisId", ctx -> ctx.getRiskAnalysisCommonContext().getRiskAnalysisId().toString()),
-                    Map.entry(":riskAnalysisDailyCalls", ctx -> ctx.getRiskAnalysisCommonContext().getDailyCalls().toString()),
-                    Map.entry(":eServiceName", ctx -> ctx.getEServicesCommonContext().getName())
-            );
+                    Map.entry(":clientId", ctx -> safe(c -> c.getClientCommonContext().getLastClient(), ctx)),
+                    Map.entry(":userId", ctx -> safe(c -> c.getIdentityService().getUserId(c.getTenantType(), c.getRole().getValue()), ctx)),
+                    Map.entry(":kid", ctx -> safe(c -> c.getClientCommonContext().getKeyId(), ctx)),
+                    Map.entry(":agreementId", ctx -> safe(SharedStepsContext::getAgreementId, ctx)),
+                    Map.entry(":consumerDelegationId", ctx -> safe(c -> c.getDelegationCommonContext().getDelegationId(), ctx)),
+                    Map.entry(":producerDelegationId", ctx -> safe(c -> c.getDelegationCommonContext().getDelegationId(), ctx)),
+                    Map.entry(":purposeId", ctx -> safe(c -> c.getPurposeCommonContext().getLastPurposeId(), ctx)),
+                    Map.entry(":purposeVersionId", ctx -> safe(c -> c.getPurposeCommonContext().getCurrentVersionId(), ctx)),
+                    Map.entry(":riskAnalysisId", ctx -> safe(c -> c.getRiskAnalysisCommonContext().getRiskAnalysisId(), ctx)),
+                    Map.entry(":riskAnalysisDailyCalls", ctx -> safe(c -> c.getRiskAnalysisCommonContext().getDailyCalls(), ctx)),
+                    Map.entry(":eServiceName", ctx -> safe(c -> c.getEServicesCommonContext().getName(), ctx)),
+                    Map.entry(":eserviceId", ctx -> safe(c -> c.getEServicesCommonContext().getEserviceId(), ctx)),
+                    Map.entry(":purposeTemplateId", ctx -> safe(c -> c.getPurposeTemplateContext().getPurposeTemplateId(), ctx)),
+                    Map.entry(":descriptorId", ctx -> safe(c -> c.getEServicesCommonContext().getDescriptorId(), ctx)),
+                    Map.entry(":eserviceTemplateId", ctx -> safe(c -> c.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), ctx)),
+                    Map.entry(":eserviceTemplateVersionId", ctx -> safe(c -> c.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId(), ctx))
+                    );
+
+    private static String safe(Function<SharedStepsContext, Object> extractor, SharedStepsContext ctx) {
+        try {
+            Object value = extractor.apply(ctx);
+            return value != null ? value.toString() : null;
+        } catch (NullPointerException e) {
+            return null;
+        }
+    }
 
 
     private final SharedStepsContext sharedContext;
 
     public String resolve(String value) {
         if (value == null) return null;
+
+        var resolvable = ResolvableToken.from(value);
+        if (resolvable != null) {
+            return switch (resolvable) {
+                case BLANK -> "";
+                case NULL -> null;
+                default -> throw new IllegalArgumentException("Token non gestito: " + resolvable);
+            };
+        }
 
         // Caso 1: key=:token
         if (value.contains("=")) {
@@ -80,10 +104,13 @@ public class TokenResolver {
             throw new IllegalArgumentException("Token sconosciuto: " + token);
         }
 
+        return resolver.apply(sharedContext);
+        /*
         return Objects.requireNonNull(
                 resolver.apply(sharedContext),
                 "Valore nullo per token: " + token
         );
+         */
     }
 
     private boolean isToken(String value) {

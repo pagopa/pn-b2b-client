@@ -11,6 +11,7 @@ import it.pagopa.interop.conf.api_profile.ApiProfile;
 import it.pagopa.interop.conf.api_profile.ApiProfile.ApiM2MVersion;
 import it.pagopa.interop.conf.api_profile.ApiProfile.ApiMode;
 import it.pagopa.interop.delegate.service.*;
+import it.pagopa.interop.dev_tools.service.IDevToolsClient;
 import it.pagopa.interop.e_service_template.*;
 import it.pagopa.interop.eservice.service.*;
 import it.pagopa.interop.event.service.IM2MEventClient;
@@ -22,6 +23,7 @@ import it.pagopa.interop.producerkeychain.ProducerKeychainClient;
 import it.pagopa.interop.purpose.service.*;
 import it.pagopa.interop.selfcare.service.ISelfcareClient;
 import it.pagopa.interop.tenant.service.ITenantsApi;
+import it.pagopa.interop.tenant.service.ITenantsProcessApi;
 import it.pagopa.interop.users.IM2MV3UsersClient;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +54,7 @@ public class ClientTokenConfigurator {
     private final IAgreementClient agreementClient;
     private final IAttributeApiClient attributeApiClient;
     private final ITenantsApi tenantsApi;
+    private final ITenantsProcessApi tenantsProcessApi;
     private final IEServiceClient eServiceClient;
     private final IEServiceTemplateClient eServiceTemplateClient;
     private final IProducerClient producerClient;
@@ -79,6 +82,7 @@ public class ClientTokenConfigurator {
     private final INotificationClient notificationClient;
     private final INotificationConfigClient notificationConfigClient;
     private final ProducerKeychainClient producerKeychainClient;
+    private final IDevToolsClient devToolsClient;
 
     // Clients M2M API v3
     private final IM2MV3AgreementClient m2mV3AgreementClient;
@@ -192,6 +196,7 @@ public class ClientTokenConfigurator {
         agreementClient.setBearerToken(token);
         attributeApiClient.setBearerToken(token);
         tenantsApi.setBearerToken(token);
+        tenantsProcessApi.setBearerToken(token);
         eServiceClient.setBearerToken(token);
         eServiceTemplateClient.setBearerToken(token);
         producerClient.setBearerToken(token);
@@ -219,6 +224,7 @@ public class ClientTokenConfigurator {
         notificationClient.setBearerToken(token);
         notificationConfigClient.setBearerToken(token);
         producerKeychainClient.setBearerToken(token);
+        devToolsClient.setBearerToken(token);
     }
 
     public void setAuth(Auth auth) {

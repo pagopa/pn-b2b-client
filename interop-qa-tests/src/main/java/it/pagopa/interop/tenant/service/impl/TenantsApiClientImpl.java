@@ -136,6 +136,11 @@ public class TenantsApiClientImpl implements ITenantsApi {
     }
 
     @Override
+    public Boolean isTenantAllowedToDelegation(UUID tenantId) {
+        return tenantsApi.isTenantAllowedToDelegation(tenantId).getIsAllowed();
+    }
+
+    @Override
     public void setBearerToken(String bearerToken) {
         this.tenantsApi.setApiClient(createApiClient(bearerToken));
     }

@@ -4,8 +4,12 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.*;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.ReworkItem;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.ReworkItemsResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.ReworkRequest;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.ReworkResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.UpdateReworkRequest;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryInvalidatedElement;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
 import it.pagopa.pn.client.b2b.pa.service.impl.ReworkTimelineClientImpl;
@@ -20,7 +24,13 @@ import org.springframework.web.client.HttpStatusCodeException;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -263,7 +273,7 @@ public class TimelineReworkSteps {
 
     @Then("raccolgo gli elementId della timeline contenenti {string}")
     public void collectAttempt1ElementIdsFromTimeline(String element) {
-        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         List<TimelineElementV28> timeline = fullSentNotification.getTimeline();
         attempt1ElementIds.clear();
         attempt1ElementIds = timeline.stream()
@@ -307,7 +317,7 @@ public class TimelineReworkSteps {
     }
 
     private List<NotificationStatusHistoryInvalidatedElement> getInvalidatedHistoryFailFast() {
-        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         List<TimelineElementV28> timeline = fullSentNotification.getTimeline();
         TimelineElementV28 reworkedElement = timeline.stream()
                 .filter(e -> e.getCategory() != null)
@@ -401,6 +411,7 @@ public class TimelineReworkSteps {
         Map<String, Object> mapInfo = new HashMap<>();
         mapInfo.put("requestId", buildRequestId(
                 iun,
+                inputData.get("productType"),
                 inputData.get("recIndex"),
                 inputData.get("attemptId"),
                 inputData.get("pcRetry")
@@ -435,13 +446,16 @@ public class TimelineReworkSteps {
             case "dev" -> "safestorage://PN_EXTERNAL_LEGAL_FACTS-970c9a266a3e44fa88ff66f4c3f4e5ae.pdf";
             case "test" -> "safestorage://PN_EXTERNAL_LEGAL_FACTS-243648ce692946f987b86fb72b33d98a.pdf";
             case "uat" -> "safestorage://PN_EXTERNAL_LEGAL_FACTS-dd7dc6811b024202ac66044671f3e2ad.pdf";
+            case "hotfix" -> "safestorage://PN_EXTERNAL_LEGAL_FACTS-31ea166ced054f63952e736f04647f0a.pdf";
             default -> throw new IllegalArgumentException("Invalid environment name: " + environment);
         };
     }
 
-    private String buildRequestId(String iun, String recindex, String attempt, String pcRetry) {
-        return String.format(
-                "PREPARE_ANALOG_DOMICILE.IUN_%s.%s.%s.%s",
+    private String buildRequestId(String iun, String productType, String recindex, String attempt, String pcRetry) {
+        if (productType.equals("RS") || productType.equals("RIS"))
+            return String.format("PREPARE_SIMPLE_REGISTERED_LETTER.IUN_%s.%s.%s", iun, recindex, pcRetry);
+        else
+            return String.format("PREPARE_ANALOG_DOMICILE.IUN_%s.%s.%s.%s",
                 iun, recindex, attempt, pcRetry
         );
     }

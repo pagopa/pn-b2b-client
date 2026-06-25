@@ -57,7 +57,7 @@ Feature: annullamento notifiche b2b
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
       | denomination            | Test AR Fail 2           |
-      | taxId                   | DVNLRD52D15M059P         |
+      | taxId                   | FNTLCU80T25F205R         |
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -251,6 +251,7 @@ Feature: annullamento notifiche b2b
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS    |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW" e successivamente annullata
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -279,7 +280,7 @@ Feature: annullamento notifiche b2b
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
       | denomination            | Test AR Fail 2           |
-      | taxId                   | DVNLRD52D15M059P         |
+      | taxId                   | FNTLCU80T25F205R         |
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"

@@ -44,11 +44,11 @@ public class NotificationAARStrategy implements ITemplateEngineStrategy {
         return new NotificationAar()
                 .recipient(createRecipient(context))
                 .notification(createNotification(context))
-                .qrCodeQuickAccessLink(context.getQrCodeQuickAccessLink())
-                .piattaformaNotificheURL(context.getPiattaformaNotificheURL())
-                .piattaformaNotificheURLLabel(context.getPiattaformaNotificheURLLabel())
-                .perfezionamentoURL(context.getPerfezionamentoURL())
-                .perfezionamentoURLLabel(context.getPerfezionamentoURLLabel());
+                .qrCodeQuickAccessLink(context.getQrCodeQuickAccessLink());
+                //.piattaformaNotificheURL(context.getPiattaformaNotificheURL())
+                //.piattaformaNotificheURLLabel(context.getPiattaformaNotificheURLLabel())
+                //.perfezionamentoURL(context.getPerfezionamentoURL())
+                //.perfezionamentoURLLabel(context.getPerfezionamentoURLLabel());
     }
 
     private AarRecipient createRecipient(TemplateRequestContext context) {
@@ -87,6 +87,7 @@ public class NotificationAARStrategy implements ITemplateEngineStrategy {
             case "TEDESCA" -> localizedText.getDe();
             case "FRANCESE" -> localizedText.getFr();
             case "SLOVENA" -> localizedText.getSl();
+            case "INGLESE" -> localizedText.getEn();
             default -> throw new IllegalArgumentException("Lingua non valida: " + language);
         };
     }

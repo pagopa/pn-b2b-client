@@ -99,7 +99,7 @@ Feature: Listing finalità lato erogatore
   @happy-path
   @nrt-minimal
   @purpose_listing_producer7
-  Scenario: [PURPOSE_LISTING_PRODUCER_7] Restituisce le finalità che contengono la keyword "test" all'interno del nome, con ricerca case insensitive (scopo del test è verificare che funzioni il filtro q)
+  Scenario: [PURPOSE_LISTING_PRODUCER_7] Restituisce le finalità che contengono la keyword test all'interno del nome, con ricerca case insensitive (scopo del test è verificare che funzioni il filtro q)
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato e pubblicato 1 e-service
     Given "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service

@@ -79,6 +79,11 @@ public class EServiceApiClientImpl implements IEServiceClient {
     }
 
     @Override
+    public void updateDescriptorAttributes(UUID eServiceId, UUID descriptorId, DescriptorAttributesSeed descriptorAttributesSeed) {
+        eservicesApi.updateDescriptorAttributes(eServiceId, descriptorId, descriptorAttributesSeed);
+    }
+
+    @Override
     public CreatedResource updateDescriptor(UUID eServiceId, UUID descriptorId, UpdateEServiceDescriptorQuotas updateEServiceDescriptorQuotas) {
         return eservicesApi.updateDescriptor(eServiceId, descriptorId, updateEServiceDescriptorQuotas);
     }
@@ -94,8 +99,28 @@ public class EServiceApiClientImpl implements IEServiceClient {
     }
 
     @Override
-    public void suspendDescriptor(UUID eServiceId, UUID descriptorId) {
-        eservicesApi.suspendDescriptor(eServiceId, descriptorId);
+    public ResponseEntity<Void> suspendDescriptor(UUID eServiceId, UUID descriptorId) {
+        return eservicesApi.suspendDescriptorWithHttpInfo(eServiceId, descriptorId);
+    }
+
+    @Override
+    public ResponseEntity<Void> scheduleArchiveDescriptor(UUID eServiceId, UUID descriptorId) {
+        return eservicesApi.scheduleArchiveEserviceDescriptorWithHttpInfo(eServiceId, descriptorId);
+    }
+
+    @Override
+    public ResponseEntity<Void> scheduleArchiveEService(UUID eServiceId, EServiceArchivingReasonSeed eserviceArchivingReasonSeed) {
+        return eservicesApi.scheduleArchiveEserviceWithHttpInfo(eServiceId, eserviceArchivingReasonSeed);
+    }
+
+    @Override
+    public ResponseEntity<Void> cancelDescriptorArchiving(UUID eServiceId, UUID descriptorId) {
+        return eservicesApi.cancelEServiceDescriptorArchivingWithHttpInfo(eServiceId, descriptorId);
+    }
+
+    @Override
+    public ResponseEntity<Void> cancelEServiceArchiving(UUID eServiceId) {
+        return eservicesApi.cancelScheduleArchiveEserviceWithHttpInfo(eServiceId);
     }
 
     @Override
@@ -151,6 +176,10 @@ public class EServiceApiClientImpl implements IEServiceClient {
 
     public CreatedResource updateEServiceById(UUID eServiceId, UpdateEServiceSeed updateEServiceSeed) {
         return eservicesApi.updateEServiceById(eServiceId, updateEServiceSeed);
+    }
+
+    public CreatedResource updateEServiceDelegationFlags(UUID eServiceId, EServiceDelegationFlagsUpdateSeed eserviceDelegationFlagsUpdateSeed) {
+         return eservicesApi.updateEServiceDelegationFlags(eServiceId, eserviceDelegationFlagsUpdateSeed);
     }
 
     public CreatedResource updateEServiceDescription(UUID eServiceId, EServiceDescriptionUpdateSeed eserviceDescriptionUpdateSeed) {

@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.producer_keychains;
 
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
@@ -18,8 +19,9 @@ import org.assertj.core.api.Assertions;
 import org.springframework.http.HttpStatus;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 
 @Slf4j
@@ -207,15 +209,6 @@ public class ProducerKeychainsSteps {
         }
     }
 
-    private void sleepSeconds(long seconds) {
-        try {
-            TimeUnit.SECONDS.sleep(seconds);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new IllegalStateException("Thread interrotto durante l'attesa", e);
-        }
-    }
-
     @When("si verifica che le utenze recuperate siano presenti nella lista di utenti appartenenti al tenant del chiamante")
     public void verifyUsersPresence() {
         List<User> m2mUsers = tenantContext.getM2mUsers();
@@ -299,6 +292,79 @@ public class ProducerKeychainsSteps {
 
         } catch (IllegalStateException e) {
             log.warn(e.getMessage());
+        }
+    }
+
+    @When("l'utente tenta di creare un portachiavi erogatore per il tenant {string} con:")
+    public void createProducerKeychains(String tenant, DataTable dataTable) {
+        List<Map<String, String>> rows = dataTable.asMaps(String.class, String.class);
+
+        if (rows.isEmpty()) {
+            throw new IllegalArgumentException("La DataTable è vuota");
+        }
+
+        Map<String, String> producerKeychainSeedMap = rows.get(0);
+
+        final String resolvedName = resolver.resolveProducerKeychainName(producerKeychainSeedMap.get("name"));
+        final String resolvedDescription = resolver.resolveDescription(producerKeychainSeedMap.get("description"));
+        final List<UUID> resolvedMembers = resolver.resolveMembers(producerKeychainSeedMap.get("members"), tenant);
+
+        ProducerKeychainSeed seed = new ProducerKeychainSeed();
+        seed.setName(resolvedName);
+        seed.setDescription(resolvedDescription);
+        seed.setMembers(resolvedMembers);
+
+        try {
+            ProducerKeychain keychain = producerKeychainsClient.createProducerKeychain(seed);
+
+            producerKeychainsContext.setExpectedName(resolvedName);
+            producerKeychainsContext.setExpectedDescription(resolvedDescription);
+            producerKeychainsContext.setExpectedMembers(resolvedMembers);
+
+            producerKeychainsContext.setActualName(keychain.getName());
+            producerKeychainsContext.setActualDescription(keychain.getDescription());
+            producerKeychainsContext.setProducerKeychainId(keychain.getId());
+        } catch (IllegalStateException e) {
+            log.warn(httpCallExecutor.getErrorMessage());
+        }
+    }
+
+    @And("l'oggetto ProducerKeychain restituito rispetta quanto atteso")
+    public void assertCreatedKeychain() {
+        // I membri del portachiavi non sono restituiti con l'oggetto ProducerKeychain e dovrà essere effettuata un ulteriore chiamata per la verifica
+        assertSoftly(softly -> {
+            softly.assertThat(producerKeychainsContext.getProducerKeychainId()).isNotNull();
+            softly.assertThat(producerKeychainsContext.getActualName()).isEqualTo(producerKeychainsContext.getExpectedName());
+            softly.assertThat(producerKeychainsContext.getActualDescription()).isEqualTo(producerKeychainsContext.getExpectedDescription());
+        });
+    }
+
+    @Then("l'utente tenta l'eliminazione del portachiavi erogatore con id {string}")
+    public void deleteProducerKeychain(String rawKeychainId) {
+        final UUID resolvedKeychainId = resolver.resolveKeychain(rawKeychainId);
+
+        try{
+            producerKeychainsClient.deleteProducerKeychain(resolvedKeychainId);
+            httpCallExecutor.snapshot();
+
+            PollingService.makePolling(
+                    () -> {
+                        try{
+                            producerKeychainsClient.getProducerKeychains(resolvedKeychainId);
+                        } catch (IllegalStateException e){
+                            log.warn(httpCallExecutor.getErrorMessage());
+                        }
+                        return httpCallExecutor.getResponseStatus();
+                    },
+                    res -> res.equals(HttpStatus.NOT_FOUND),
+                    "Producer keychain non eliminato!",
+                    5,
+                    1000
+            );
+
+            httpCallExecutor.resetFormSnapshot();
+        } catch (IllegalStateException e) {
+            log.warn(httpCallExecutor.getErrorMessage());
         }
     }
 }

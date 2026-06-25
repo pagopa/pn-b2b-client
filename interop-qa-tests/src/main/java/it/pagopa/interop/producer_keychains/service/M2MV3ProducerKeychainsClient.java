@@ -6,10 +6,7 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.KeysApi;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.ProducerKeychainsApi;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.KeySeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.LinkUser;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.ProducerKey;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Users;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.*;
 import it.pagopa.interop.producer_keychains.IM2MV3ProducerKeychainsClient;
 import it.pagopa.interop.utils.HttpCallExecutor;
 
@@ -49,6 +46,38 @@ public class M2MV3ProducerKeychainsClient extends AbstractDPoPClient implements 
         ApiClient apiClient = super.getApiClient();
         apiClient.setBasePath(basePath);
         return apiClient;
+    }
+
+    @Override
+    public ProducerKeychain createProducerKeychain(ProducerKeychainSeed producerKeychainSeed) {
+        return performOperation(
+                    () -> producerKeychainsApi
+                            .createProducerKeychainWithHttpInfo(producerKeychainSeed)
+                 )
+                .orElseThrow(
+                        () -> new IllegalStateException("Errore nella creazione del portachiavi erogatore (response non 2xx o body nullo)")
+                );
+    }
+
+    @Override
+    public void deleteProducerKeychain(UUID producerKeychainId) {
+        performOperation(
+                () -> producerKeychainsApi
+                        .deleteProducerKeychainWithHttpInfo(producerKeychainId)
+        );
+        if(httpCallExecutor.getResponseStatus().isError())
+            throw new IllegalStateException("Errore nell'eliminazione del portachiavi erogatore (response non 2xx o body nullo)");
+    }
+
+    @Override
+    public ProducerKeychain getProducerKeychains(UUID producerKeychainId) {
+        return performOperation(
+                () -> producerKeychainsApi
+                        .getProducerKeychainWithHttpInfo(producerKeychainId)
+        )
+                .orElseThrow(
+                        () -> new IllegalStateException("Errore nel recupero del portachiavi erogatore (response non 2xx o body nullo)")
+                );
     }
 
     public ProducerKey createProducerKeychainKey(UUID keychainId, KeySeed keySeed) {

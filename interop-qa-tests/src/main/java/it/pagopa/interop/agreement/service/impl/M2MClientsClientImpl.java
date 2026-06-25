@@ -5,6 +5,7 @@ import it.pagopa.interop.common.client.AbstractClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.ClientsApi;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Client;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionState;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
 import lombok.EqualsAndHashCode;
@@ -41,6 +42,14 @@ public class M2MClientsClientImpl extends AbstractClient implements IM2MClientsC
         apiClient.setBearerToken(bearerToken);
 
         return apiClient;
+    }
+
+    @Override
+    public Client getClient(UUID clientId) {
+        return performOperation(() -> clientsApi.getClientWithHttpInfo(clientId)
+        ).orElseThrow(() -> new IllegalStateException(
+                "Errore nel recupero dei client (response non 2xx o body nullo)"
+        ));
     }
 
     @Override

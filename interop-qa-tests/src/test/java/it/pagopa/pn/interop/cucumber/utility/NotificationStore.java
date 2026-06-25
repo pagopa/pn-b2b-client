@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiConsumer;
+
 import lombok.AllArgsConstructor;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
@@ -71,7 +72,8 @@ public class NotificationStore {
         }
     }
 
-    private void initializeNotifications() {
+    private void initializeNotifications(NotificationUser user) {
+        String tenantName = (user == null) ? null : user.getTenant();
         this.applyTaskForEveryUser(
             List.of("security", "api", "support", "api,security"), // 14 01 2026 causa problemi tecnici lato backend si può testare solo per ADMIN https://pagopaspa.slack.com/archives/C08RZ0ATBJ6/p1768317958663119
             (role, tenant) -> {
@@ -88,7 +90,11 @@ public class NotificationStore {
 
                     offset+=limit;
                 } while (!currentNotif.isEmpty());
-            });
+            }, tenantName);
+    }
+
+    private void initializeNotifications() {
+        initializeNotifications(null);
     }
 
     public void put(NotificationUser key, Notification value) {
@@ -98,6 +104,10 @@ public class NotificationStore {
     }
 
     public Set<Notification> get(NotificationUser user) {
+        // TODO Ora che i test sono automatici, le notifiche non possono essere recuperate solo 1 volta
+        // Ma ogni volta che si esegue il Then e dunque il get delle notifiche, si deve aggiornare
+        // Qui viene ri-inizializzato NotificationStore ma si deve trovare una soluzione meno impattante
+        initializeNotifications(user);
         Set<Notification> notificationsSet = this.notifications.get(user);
         if (notificationsSet == null) {
             notificationsSet = new HashSet<>();
@@ -120,10 +130,16 @@ public class NotificationStore {
     }
 
     // TODO generalizzabile in utility separata
-    private void applyTaskForEveryUser(List<String> excludedRoles,
-        BiConsumer<String, Tenant> taskPerRole) {
+    private void applyTaskForEveryUser(
+            List<String> excludedRoles,
+            BiConsumer<String, Tenant> taskPerRole,
+            String userRestriction
+    ) {
         List<Tenant> tenantList = this.configFileReader.getTenantList();
         for (Tenant tenant : tenantList) {
+            if (userRestriction != null) {
+                if (!tenant.getName().equals(userRestriction)) continue;
+            }
             Map<String, List<String>> rolesCopy = new HashMap<>(tenant.getUserRoles());
             Set<Entry<String, List<String>>> roles = rolesCopy.entrySet();
             for (Entry<String, List<String>> roleEntry : roles) {
@@ -136,5 +152,12 @@ public class NotificationStore {
                 }
             }
         }
+    }
+
+    private void applyTaskForEveryUser(
+            List<String> excludedRoles,
+            BiConsumer<String, Tenant> taskPerRole
+    ) {
+        applyTaskForEveryUser(excludedRoles, taskPerRole, null);
     }
 }
