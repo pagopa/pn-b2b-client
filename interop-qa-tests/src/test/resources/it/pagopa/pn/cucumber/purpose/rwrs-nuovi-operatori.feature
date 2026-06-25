@@ -24,9 +24,8 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
     And l'utente assegna un valutatore alla finalità in modalità "ReviewerWritesReviewerSigns"
     Then si ottiene status code 403
 
-  # KO ticket aperto https://pagopa.atlassian.net/browse/PIN-10404
+  # OK ticket chiuso https://pagopa.atlassian.net/browse/PIN-10404
   # PST: Scenario 11 - Caso 11.1
-  @nuovi-operatori-ko
   @sad-path
   Scenario Outline: [RWRS_ASSEGNAZIONE_11_1_RUOLO_DIVERSO_DA_VALUTATORE] Negativo: solo un utente con ruolo Valutatore può essere assegnato alla revisione
     Given "PA1" ha già creato e pubblicato 1 e-service
