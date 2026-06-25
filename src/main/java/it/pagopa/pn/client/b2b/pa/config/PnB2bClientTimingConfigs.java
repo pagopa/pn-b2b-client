@@ -45,7 +45,7 @@ public class PnB2bClientTimingConfigs {
     }
 
 
-    public enum DefaultsElementTimeValue {
+    public enum DefaultElementTimeValue {
         SENDER_ACK_CREATION_REQUEST(2, 1),
         VALIDATE_NORMALIZE_ADDRESSES_REQUEST(2, 1),
         NORMALIZED_ADDRESS(2, 1),
@@ -129,23 +129,22 @@ public class PnB2bClientTimingConfigs {
         private final int defaultNumCheck;
         private final int defaultWaitingMultiplier;
 
-        DefaultsElementTimeValue(int checkNum, int waitingMultiplier) {
+        DefaultElementTimeValue(int checkNum, int waitingMultiplier) {
             defaultNumCheck = checkNum;
             defaultWaitingMultiplier = waitingMultiplier;
-
         }
     }
 
     public int calculateNumCheckValue(String el) {
         var override = overrides.get(el);
-        DefaultsElementTimeValue timingValue = DefaultsElementTimeValue.valueOf(el);
-        return override == null ? timingValue.defaultNumCheck : override.getNumCheck();
+        DefaultElementTimeValue timingValue = DefaultElementTimeValue.valueOf(el);
+        return override.getNumCheck() == null ? timingValue.defaultNumCheck : override.getNumCheck();
     }
 
     public int calculateWaitingMultiplierValue(String el) {
         var override = overrides.get(el);
-        DefaultsElementTimeValue timingValue = DefaultsElementTimeValue.valueOf(el);
-        return override==null ? timingValue.defaultWaitingMultiplier : override.getWaitingMultiplier();
+        DefaultElementTimeValue timingValue = DefaultElementTimeValue.valueOf(el);
+        return override.getWaitingMultiplier() == null ? timingValue.defaultWaitingMultiplier : override.getWaitingMultiplier();
     }
 
 

@@ -54,9 +54,9 @@ public class TimingForPolling {
         element = element.trim().toUpperCase();
         int waiting = timingConfigs.getWorkflowWaitAcceptedMillis();
 
-        if (element.equalsIgnoreCase(PnB2bClientTimingConfigs.DefaultsElementTimeValue.ACCEPTED_SHORT_VALIDATION.toString())) {
+        if (element.equalsIgnoreCase(PnB2bClientTimingConfigs.DefaultElementTimeValue.ACCEPTED_SHORT_VALIDATION.toString())) {
             waiting = timingConfigs.getWaitMillisShort();
-        } else if (element.equalsIgnoreCase(PnB2bClientTimingConfigs.DefaultsElementTimeValue.ACCEPTED_EXTRA_RAPID_VALIDATION.toString())) {
+        } else if (element.equalsIgnoreCase(PnB2bClientTimingConfigs.DefaultElementTimeValue.ACCEPTED_EXTRA_RAPID_VALIDATION.toString())) {
             waiting = timingConfigs.getWaitMillisExtraRapid();
         }
 
