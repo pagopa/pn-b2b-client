@@ -293,19 +293,19 @@ public class EServiceTemplateVersionUpdateSteps {
                     EServiceAttributeSpec attributeSpec = attributeSpecsByKindInGroup.get(x);
 
                     List<List<UUID>> contextAttributes = switch (attributeKind) {
-                        case CERTIFIED, CERTIFIED_DISCRETE ->
-                                sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes();
+                        case CERTIFIED, CERTIFIED_DISCRETE -> sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes();
                         case DECLARED -> sharedStepsContext.getAttributeCommonContext().getRequiredDeclaredAttributes();
                         case VERIFIED -> sharedStepsContext.getAttributeCommonContext().getRequiredVerifiedAttributes();
                     };
 
                     UUID attributeId = contextAttributes.get(attributeSpec.getGroup()).get(x);
-                    DescriptorAttribute attr = switch (attributeKind) {
-                        case CERTIFIED, CERTIFIED_DISCRETE ->
-                                retrievedTemplateVersion.getAttributes().getCertified().get(groupIndex).get(x);
-                        case DECLARED -> retrievedTemplateVersion.getAttributes().getDeclared().get(groupIndex).get(x);
-                        case VERIFIED -> retrievedTemplateVersion.getAttributes().getVerified().get(groupIndex).get(x);
+                    // L'ordine degli attributi non deve essere necessariamente rispettato
+                    List<DescriptorAttribute> templateAttrs = switch (attributeKind) {
+                        case CERTIFIED, CERTIFIED_DISCRETE -> retrievedTemplateVersion.getAttributes().getCertified().get(groupIndex);
+                        case DECLARED -> retrievedTemplateVersion.getAttributes().getDeclared().get(groupIndex);
+                        case VERIFIED -> retrievedTemplateVersion.getAttributes().getVerified().get(groupIndex);
                     };
+                    DescriptorAttribute attr = templateAttrs.stream().filter(a -> a.getId().equals(attributeId)).findFirst().orElse(null);
 
                     Assertions.assertNotNull(attr);
                     Assertions.assertEquals(attr.getId(), attributeId);
