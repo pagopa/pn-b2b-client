@@ -20,6 +20,8 @@ public class RecipientConfig {
     private RecipientData gherkinIrreperibile = new RecipientData();
     private RecipientData leonardoDaVinci = new RecipientData();
     private RecipientData galileoGalilei = new RecipientData();
+    private RecipientData aldaMerini = new RecipientData();
+    private RecipientData dinoSauro = new RecipientData();
     private RecipientData userIndirizzoNonValidoD01 = new RecipientData();
     private RecipientData userIndirizzoValidoAnpr = new RecipientData();
 

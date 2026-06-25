@@ -17,6 +17,8 @@ public class DestinatarioRegistry {
     public final Destinatario DESTINATARIO_ETTORE_FIERAMOSCA;
     public final Destinatario DESTINATARIO_LEONARDO_DA_VINCI;
     public final Destinatario DESTINATARIO_GALILEO_GALILEI;
+    public final Destinatario DESTINATARIO_ALDA_MERINI;
+    public final Destinatario DESTINATARIO_DINO_SAURO;
     public final Destinatario DESTINATARIO_GHERKIN_SPA;
     public final Destinatario DESTINATARIO_CUCUMBER_SPA;
     public final Destinatario DESTINATARIO_GHERKIN_SRL;
@@ -62,6 +64,14 @@ public class DestinatarioRegistry {
         DESTINATARIO_GALILEO_GALILEI = new Destinatario(
                 GALILEO_GALILEI, recipients.getGalileoGalilei().getTaxId(),
                 recipients.getGalileoGalilei().getUid(), PF, PEC);
+
+        DESTINATARIO_ALDA_MERINI = new Destinatario(
+                ALDA_MERINI, recipients.getAldaMerini().getTaxId(),
+                recipients.getAldaMerini().getUid(), PG, PEC);
+
+        DESTINATARIO_DINO_SAURO = new Destinatario(
+                DINO_SAURO, recipients.getDinoSauro().getTaxId(),
+                recipients.getDinoSauro().getUid(), PF, PEC);
 
         DESTINATARIO_GHERKIN_SPA = new Destinatario(
                 GHERKIN_SPA, recipients.getGherkinSpa().getTaxId(),
@@ -113,7 +123,8 @@ public class DestinatarioRegistry {
                 DESTINATARIO_GALILEO_GALILEI, DESTINATARIO_GHERKIN_SPA, DESTINATARIO_CUCUMBER_SPA,
                 DESTINATARIO_GHERKIN_SRL, DESTINATARIO_CUCUMBER_SRL, DESTINATARIO_GHERKIN_ANALOGIC,
                 DESTINATARIO_CUCUMBER_ANALOGIC, DESTINATARIO_GHERKIN_IRREPERIBILE, DESTINATARIO_CUCUMBER_SOCIETY,
-                DESTINATARIO_SIGNOR_GENERATO, DESTINATARIO_NESSUNO, DESTINATARIO_ERRORE_D01, DESTINATARIO_INDIRIZZO_VALIDO_ANPR
+                DESTINATARIO_SIGNOR_GENERATO, DESTINATARIO_NESSUNO, DESTINATARIO_ERRORE_D01, DESTINATARIO_INDIRIZZO_VALIDO_ANPR,
+                DESTINATARIO_ALDA_MERINI, DESTINATARIO_DINO_SAURO
         );
     }
 
@@ -146,7 +157,9 @@ public class DestinatarioRegistry {
             GALILEO_GALILEI + "|" +
             NESSUNO + "|" +
             UTENZA_CON_INDIRIZZO_NON_VALIDO + "|" +
-            UTENZA_CON_INDIRIZZO_VALIDO_ANPR
+            UTENZA_CON_INDIRIZZO_VALIDO_ANPR + "|" +
+            ALDA_MERINI + "|" +
+            DINO_SAURO
     )
     public Destinatario destinatario(String name) {
         return all.stream()
