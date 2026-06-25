@@ -256,10 +256,10 @@
 
         <!-- Easy Random -->
         <dependency>
-             <groupId>io.github.dvgaba</groupId>
-             <artifactId>easy-random-core</artifactId>
-             <version>7.1.1</version>
-             <scope>test</scope>
+            <groupId>io.github.dvgaba</groupId>
+            <artifactId>easy-random-core</artifactId>
+            <version>7.1.1</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- MapStruct -->
@@ -275,40 +275,40 @@
             <artifactId>commons-fileupload</artifactId>
             <version>1.5</version>
         </dependency>
-     </dependencies>
+    </dependencies>
 
-     <build>
-         <plugins>
-             <plugin>
-                 <groupId>org.apache.maven.plugins</groupId>
-                 <artifactId>maven-surefire-plugin</artifactId>
-                 <version>3.2.5</version>
-                 <configuration>
-                     <properties>
-                         <configurationParameters>
-                             cucumber.junit-platform.naming-strategy=long
-                         </configurationParameters>
-                     </properties>
-                 </configuration>
-             </plugin>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <properties>
+                        <configurationParameters>
+                            cucumber.junit-platform.naming-strategy=long
+                        </configurationParameters>
+                    </properties>
+                </configuration>
+            </plugin>
 
-             <plugin>
-                 <groupId>org.openapitools</groupId>
-                 <artifactId>openapi-generator-maven-plugin</artifactId>
-                 <version>7.19.0</version>
-                 <executions>
-                     <execution>
-                         <id>generate-bff-client</id>
-                         <goals>
-                             <goal>generate</goal>
-                         </goals>
-                         <phase>process-resources</phase>
-                         <configuration>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>7.19.0</version>
+                <executions>
+                    <execution>
+                        <id>generate-bff-client</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                             <!-- <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/develop/packages/api-clients/open-api/bffApi.yml</inputSpec> -->
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.20.0-RC2/packages/api-clients/open-api/bffApi.yml</inputSpec>
+                            <!-- <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/develop/packages/api-clients/open-api/bffApi.yml</inputSpec> -->
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.20.0-RC3/packages/api-clients/open-api/bffApi.yml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -343,7 +343,7 @@
                              <typeMappings>
                                  <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                              </typeMappings>
-                             <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.20.0-RC2/packages/api-clients/open-api/authorizationServerApi.yml</inputSpec>
+                             <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.20.0-RC1/packages/api-clients/open-api/authorizationServerApi.yml</inputSpec>
                              <generatorName>java</generatorName>
                              <library>resttemplate</library>
                              <generateApiTests>false</generateApiTests>
@@ -511,7 +511,8 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.20.0-RC2/packages/api-clients/open-api/m2mGatewayApi.yml</inputSpec>
+                            <!-- inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/develop/packages/api-clients/open-api/m2mGatewayApi.yml</inputSpec -->
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.20.0-RC3/packages/api-clients/open-api/m2mGatewayApi.yml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -548,7 +549,7 @@
                                  <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                              </typeMappings>
                              <!--<inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/release/2.10.0/packages/api-clients/open-api/m2mGatewayApi.yml</inputSpec> -->
-                             <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.20.0-RC2/packages/api-clients/open-api/m2mGatewayApiV3.yml</inputSpec>
+                             <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.20.0-RC3/packages/api-clients/open-api/m2mGatewayApiV3.yml</inputSpec>
                              <generatorName>java</generatorName>
                              <library>resttemplate</library>
                              <generateApiTests>false</generateApiTests>
@@ -610,58 +611,58 @@
                      </execution>
 
                 </executions>
-             </plugin>
+            </plugin>
 
-             <!-- TODO: le patch al codice generato sono necessarie per far sì che i modelli LinkableEService e LinkableEServiceTemplate estendano LinkableResource, in modo da poter essere trattati in maniera polimorfica. Altri file sono modificati per avere coerenza con ResourceKindEnum. In futuro, quando sarà possibile aggiornare la versione di openapi-generator, è auspicabile che queste patch non siano più necessarie. -->
-             <plugin>
-                 <groupId>com.google.code.maven-replacer-plugin</groupId>
-                 <artifactId>replacer</artifactId>
-                 <version>1.5.3</version>
-                 <executions>
+            <!-- TODO: le patch al codice generato sono necessarie per far sì che i modelli LinkableEService e LinkableEServiceTemplate estendano LinkableResource, in modo da poter essere trattati in maniera polimorfica. Altri file sono modificati per avere coerenza con ResourceKindEnum. In futuro, quando sarà possibile aggiornare la versione di openapi-generator, è auspicabile che queste patch non siano più necessarie. -->
+            <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>1.5.3</version>
+                <executions>
 
-                     <execution>
-                         <id>patch-linkable-eservice</id>
-                         <phase>process-resources</phase>
-                         <goals>
-                             <goal>replace</goal>
-                         </goals>
-                         <configuration>
-                             <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/LinkableEService.java</file>
-                             <regex>true</regex>
-                             <replacements>
-                                 <replacement>
-                                     <token>public class LinkableEService \{</token>
-                                     <value>public class LinkableEService extends LinkableResource {</value>
-                                 </replacement>
-                                 <replacement>
-                                     <token>/\*\*\s*\*\s*Get resourceKind[\s\S]*?public\s+ResourceKindEnum\s+getResourceKind\(\)\s*\{[\s\S]*?\}</token>
-                                     <value></value>
-                                 </replacement>
-                             </replacements>
-                         </configuration>
-                     </execution>
+                    <execution>
+                        <id>patch-linkable-eservice</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/LinkableEService.java</file>
+                            <regex>true</regex>
+                            <replacements>
+                                <replacement>
+                                    <token>public class LinkableEService \{</token>
+                                    <value>public class LinkableEService extends LinkableResource {</value>
+                                </replacement>
+                                <replacement>
+                                    <token>/\*\*\s*\*\s*Get resourceKind[\s\S]*?public\s+ResourceKindEnum\s+getResourceKind\(\)\s*\{[\s\S]*?\}</token>
+                                    <value></value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </execution>
 
-                     <execution>
-                         <id>patch-linkable-eservice-template</id>
-                         <phase>process-resources</phase>
-                         <goals>
-                             <goal>replace</goal>
-                         </goals>
-                         <configuration>
-                             <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/LinkableEServiceTemplate.java</file>
-                             <regex>true</regex>
-                             <replacements>
-                                 <replacement>
-                                     <token>public class LinkableEServiceTemplate \{</token>
-                                     <value>public class LinkableEServiceTemplate extends LinkableResource {</value>
-                                 </replacement>
-                                 <replacement>
-                                     <token>/\*\*\s*\*\s*Get resourceKind[\s\S]*?public\s+ResourceKindEnum\s+getResourceKind\(\)\s*\{[\s\S]*?\}</token>
-                                     <value></value>
-                                 </replacement>
-                             </replacements>
-                         </configuration>
-                     </execution>
+                    <execution>
+                        <id>patch-linkable-eservice-template</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/LinkableEServiceTemplate.java</file>
+                            <regex>true</regex>
+                            <replacements>
+                                <replacement>
+                                    <token>public class LinkableEServiceTemplate \{</token>
+                                    <value>public class LinkableEServiceTemplate extends LinkableResource {</value>
+                                </replacement>
+                                <replacement>
+                                    <token>/\*\*\s*\*\s*Get resourceKind[\s\S]*?public\s+ResourceKindEnum\s+getResourceKind\(\)\s*\{[\s\S]*?\}</token>
+                                    <value></value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </execution>
 
                      <execution>
                          <id>patch-linked-resource</id>
@@ -700,46 +701,46 @@
                          </configuration>
                      </execution>
 
-                     <execution>
-                         <id>patch-linkable-resource</id>
-                         <phase>process-resources</phase>
-                         <goals>
-                             <goal>replace</goal>
-                         </goals>
-                         <configuration>
-                             <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/LinkableResource.java</file>
-                             <regex>true</regex>
-                             <replacements>
-                                 <replacement>
-                                     <token>ESERVICE_TEMPLATE\(String\.valueOf\("ESERVICE_TEMPLATE"\)\);</token>
-                                     <value><![CDATA[ESERVICE_TEMPLATE(String.valueOf("ESERVICE_TEMPLATE")),
+                    <execution>
+                        <id>patch-linkable-resource</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/LinkableResource.java</file>
+                            <regex>true</regex>
+                            <replacements>
+                                <replacement>
+                                    <token>ESERVICE_TEMPLATE\(String\.valueOf\("ESERVICE_TEMPLATE"\)\);</token>
+                                    <value><![CDATA[ESERVICE_TEMPLATE(String.valueOf("ESERVICE_TEMPLATE")),
     ESERVICE(String.valueOf("ESERVICE"));]]></value>
-                                 </replacement>
-                             </replacements>
-                         </configuration>
-                     </execution>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </execution>
 
-                     <execution>
-                         <id>patch-linkable-resource-request</id>
-                         <phase>process-resources</phase>
-                         <goals>
-                             <goal>replace</goal>
-                         </goals>
-                         <configuration>
-                             <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/LinkableResourceRequest.java</file>
-                             <regex>true</regex>
-                             <replacements>
-                                 <replacement>
-                                     <token>@JsonIgnoreProperties\([\s\S]*?value\s*=\s*"resourceKind"[\s\S]*?\)\s*\n?</token>
-                                     <value></value>
-                                 </replacement>
-                                 <replacement>
-                                     <token>JsonTypeInfo\.Id\.NAME</token>
-                                     <value>JsonTypeInfo.Id.NONE</value>
-                                 </replacement>
-                                 <replacement>
-                                     <token>ESERVICE_TEMPLATE\(String\.valueOf\("ESERVICE_TEMPLATE"\)\);</token>
-                                     <value><![CDATA[ESERVICE_TEMPLATE(String.valueOf("ESERVICE_TEMPLATE")),
+                    <execution>
+                        <id>patch-linkable-resource-request</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/LinkableResourceRequest.java</file>
+                            <regex>true</regex>
+                            <replacements>
+                                <replacement>
+                                    <token>@JsonIgnoreProperties\([\s\S]*?value\s*=\s*"resourceKind"[\s\S]*?\)\s*\n?</token>
+                                    <value></value>
+                                </replacement>
+                                <replacement>
+                                    <token>JsonTypeInfo\.Id\.NAME</token>
+                                    <value>JsonTypeInfo.Id.NONE</value>
+                                </replacement>
+                                <replacement>
+                                    <token>ESERVICE_TEMPLATE\(String\.valueOf\("ESERVICE_TEMPLATE"\)\);</token>
+                                    <value><![CDATA[ESERVICE_TEMPLATE(String.valueOf("ESERVICE_TEMPLATE")),
     ESERVICE(String.valueOf("ESERVICE"));]]></value>
                                  </replacement>
                                  <replacement>
@@ -851,32 +852,32 @@
                  </executions>
              </plugin>
 
-             <plugin>
-                 <groupId>org.apache.maven.plugins</groupId>
-                 <artifactId>maven-compiler-plugin</artifactId>
-                 <version>3.8.1</version>
-                 <configuration>
-                     <source>17</source>
-                     <target>17</target>
-                     <annotationProcessorPaths>
-                         <path>
-                             <groupId>org.mapstruct</groupId>
-                             <artifactId>mapstruct-processor</artifactId>
-                             <version>${org.mapstruct.version}</version>
-                         </path>
-                         <path>
-                             <groupId>org.projectlombok</groupId>
-                             <artifactId>lombok</artifactId>
-                             <version>${lombok.version}</version>
-                         </path>
-                         <path>
-                             <groupId>org.projectlombok</groupId>
-                             <artifactId>lombok-mapstruct-binding</artifactId>
-                             <version>0.2.0</version>
-                         </path>
-                     </annotationProcessorPaths>
-                 </configuration>
-             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${org.mapstruct.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok-mapstruct-binding</artifactId>
+                            <version>0.2.0</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

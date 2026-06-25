@@ -366,9 +366,21 @@ public class EServiceTemplateTestAssistant {
 
     public EServiceTemplateAttributesSeed nextAttributesSeed() {
         return new EServiceTemplateAttributesSeed()
-            .addCertifiedItem(easyRandom.objects(EServiceTemplateVersionAttributeSeed.class, 3).toList())
-            .addDeclaredItem(easyRandom.objects(EServiceTemplateVersionAttributeSeed.class, 3).toList())
-            .addVerifiedItem(easyRandom.objects(EServiceTemplateVersionAttributeSeed.class, 3).toList());
+                .addCertifiedItem(
+                        easyRandom.objects(EServiceTemplateVersionAttributeSeed.class, 3)
+                                .peek(seed -> seed.setDiscreteConfig(null))
+                                .toList()
+                )
+                .addDeclaredItem(
+                        easyRandom.objects(EServiceTemplateVersionAttributeSeed.class, 3)
+                                .peek(seed -> seed.setDiscreteConfig(null))
+                                .toList()
+                )
+                .addVerifiedItem(
+                        easyRandom.objects(EServiceTemplateVersionAttributeSeed.class, 3)
+                                .peek(seed -> seed.setDiscreteConfig(null))
+                                .toList()
+                );
     }
 
     public boolean areConsistent(EServiceTemplateRiskAnalysisSeed lastRiskAnalysis, EServiceTemplateRiskAnalysis retrievedAnalysis) {
