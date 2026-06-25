@@ -82,6 +82,7 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.mapper.ReversePurposeMapp
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose_template.assistant.PurposeTemplatePatchContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose_template.assistant.PurposeTemplatePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose_template.mapper.PurposeTemplateMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.maintenance.TenantSetupState;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import it.pagopa.pn.interop.cucumber.utility.NotificationStore;
@@ -223,7 +224,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         InteropMaintenanceServiceImpl.class,
         EnvDebugLogger.class,
         TenantMapperImpl.class,
-        TenantsProcessApiClientImpl.class
+        TenantsProcessApiClientImpl.class,
+        TenantSetupState.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
