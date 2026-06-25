@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.eservice;
 
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -15,23 +16,25 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.DocumentMetadata;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.catalog.utils.CatalogResolver;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.AbstractCommonSteps;
-import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceDelegationPatchOperationsAssistant;
-import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceDescriptionPatchOperationsAssistant;
-import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceNamePatchOperationsAssistant;
-import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServicePatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.*;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.helpers.EServiceSeedFactory;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.DocumentMapper;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.assertj.core.api.Assertions;
+import org.jeasy.random.randomizers.text.StringRandomizer;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -49,12 +52,14 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     private final IM2MEserviceDescriptorClient descriptorClient;
     private final BlobFileCreator blobFileCreator;
     private final DelayService delayService;
+    private final CatalogResolver catalogResolver;
 
     private final EServicePatchOperationsAssistant eServicePatchAssistant;
     private final EServiceDelegationPatchOperationsAssistant eServiceDelegationPatchAssistant;
     private final EServiceNamePatchOperationsAssistant eServiceNamePatchAssistant;
     private final EServiceDescriptionPatchOperationsAssistant eServiceDescriptionPatchAssistant;
 
+    private final EServiceSeedFactory eServiceSeedFactory;
     private final DocumentMapper documentMapper;
 
     public EserviceSteps(
@@ -65,6 +70,7 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
             EServiceDelegationPatchOperationsAssistant eServiceDelegationPatchAssistant,
             EServiceNamePatchOperationsAssistant eServiceNamePatchAssistant,
             EServiceDescriptionPatchOperationsAssistant eServiceDescriptionPatchAssistant,
+            EServiceSeedFactory eServiceSeedFactory,
             DocumentMapper documentMapper,
             DelayService delayService
     ) {
@@ -80,8 +86,48 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         this.eServiceDelegationPatchAssistant = eServiceDelegationPatchAssistant;
         this.eServiceNamePatchAssistant = eServiceNamePatchAssistant;
         this.eServiceDescriptionPatchAssistant = eServiceDescriptionPatchAssistant;
+        this.eServiceSeedFactory = eServiceSeedFactory;
         this.documentMapper = documentMapper;
         this.delayService = delayService;
+        this.catalogResolver = new CatalogResolver(sharedStepsContext);
+    }
+
+    @Given("l'utente tenta la creazione dell'e-service con la configurazione predefinita")
+    public void createEService() {
+        EServiceSeed seed = this.eServiceSeedFactory.defaultEServiceSeed();
+
+        EServiceCreateRequest request = EServiceCreateRequest.fromSeed(seed);
+
+        httpExecutor.performCall(() -> this.client.createEService(request));
+
+        if (httpExecutor.getResponseStatus() == HttpStatus.CREATED || httpExecutor.getResponseStatus() == HttpStatus.OK) {
+            sharedStepsContext.getEServicesCommonContext().setEserviceId(
+                    ((EService) httpExecutor.getResponse()).getId()
+            );
+        }
+    }
+
+    @Given("l'utente tenta la creazione dell'e-service con la seguente configurazione:")
+    public void createEService(DataTable dataTable) {
+
+        EServiceSeed seed = this.eServiceSeedFactory.defaultEServiceSeed();
+
+        Map<String, String> data = dataTable.asMap(String.class, String.class);
+
+        if (data.containsKey("description-length")) {
+            int descriptionLength = Integer.parseInt(data.get("description-length"));
+            seed.description((new StringRandomizer(descriptionLength, descriptionLength, System.currentTimeMillis())).getRandomValue());
+        }
+
+        EServiceCreateRequest request = EServiceCreateRequest.fromSeed(seed);
+
+        httpExecutor.performCall(() -> this.client.createEService(request));
+
+        if (httpExecutor.getResponseStatus() == HttpStatus.CREATED || httpExecutor.getResponseStatus() == HttpStatus.OK) {
+            sharedStepsContext.getEServicesCommonContext().setEserviceId(
+                    ((EService) httpExecutor.getResponse()).getId()
+            );
+        }
     }
 
     @Given("l'utente effettua la cancellazione dell'e-service con successo")
@@ -106,6 +152,48 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     public void deleteEService() {
         UUID eserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         httpExecutor.performCall(() -> this.client.delete(eserviceId));
+    }
+
+    @When("viene avviato processo di archiviazione dell'e-service con id {string} e specificando la motivazione {string}")
+    public void scheduleEServiceArchiving(String eServiceId, String archivingReason) {
+        UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
+        String resolvedArchivingReason = catalogResolver.resolveArchivingReason(archivingReason);
+
+        scheduleArchiveEService(resolvedEServiceId, resolvedArchivingReason);
+    }
+
+    @When("viene avviato il processo di archiviazione dell'e-service con id {string} e specificando la motivazione composta da {int} caratteri")
+    public void scheduleEServiceArchivingWithReasonLength(String eServiceId, int archivingReasonLength) {
+        UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
+        String archivingReason = RandomStringUtils.insecure().nextAlphanumeric(archivingReasonLength);
+
+        scheduleArchiveEService(resolvedEServiceId, archivingReason);
+    }
+
+    private void scheduleArchiveEService(UUID eServiceId, String archivingReason) {
+        sharedStepsContext.getEServicesCommonContext()
+            .setDescriptorArchivingRequestTimestamp(OffsetDateTime.now(ZoneOffset.UTC));
+
+        EServiceArchivingRequest request = EServiceArchivingRequest.builder()
+                .archivingReason(archivingReason)
+                .build();
+
+        httpExecutor.performCall(() -> client.scheduleArchiveEService(eServiceId, request));
+    }
+
+    @When("viene annullato il processo di archiviazione dell'e-service con id {string}")
+    public void cancelEServiceArchiving(String eServiceId) {
+        UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
+
+        httpExecutor.performCall(() -> client.cancelScheduleArchiveEService(resolvedEServiceId));
+    }
+
+    @When("l'utente tenta di sospende quel descrittore")
+    public void suspendDescriptor() {
+        UUID eserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+
+        httpExecutor.performCall(() -> descriptorClient.suspendDescriptor(eserviceId, descriptorId));
     }
 
     @When("l'utente tenta di effettuare la riattivazione dell'e-service")
@@ -245,6 +333,21 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         uploadInterface(interfaceName, eServiceId, descriptorId);
     }
 
+    @When("l'utente tenta di effettuare il caricamento di un'interfaccia di tipo YAML {string}")
+    public void uploadInterfaceWithNoVersion(String versionState) {
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+        String interfaceName = buildInterfaceName(eServiceId, descriptorId);
+
+        String filename = switch (versionState) {
+            case "senza versione" -> "missing-version-interface.yaml";
+            case "con versione obsoleta" -> "invalid-version-interface.yaml";
+            default -> throw new IllegalStateException("Unexpected value: " + versionState);
+        };
+
+        uploadInterface(interfaceName, eServiceId, descriptorId, filename);
+    }
+
     @When("l'utente tenta di effettuare la cancellazione di un'interfaccia di un e-service inesistente")
     public void deleteNonExistentEServiceInterface() {
         UUID eServiceId = UUID.randomUUID();
@@ -253,8 +356,11 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     }
 
     private void uploadInterface(String interfaceName, UUID eServiceId, UUID descriptorId) {
+        uploadInterface(interfaceName, eServiceId, descriptorId, String.format("interface.%s", "yaml"));
+    }
+
+    private void uploadInterface(String interfaceName, UUID eServiceId, UUID descriptorId, String fileName) {
         delayService.delay();
-        String fileName = String.format("interface.%s", "yaml");
         String filePath = String.format("src/main/resources/%s", fileName);
         Resource resource = blobFileCreator.createBlobFile(filePath, fileName);
         sharedStepsContext.getEServicesCommonContext().setInterfaceName(interfaceName);
@@ -291,6 +397,15 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
                 .name("some patched name - " + id)
                 .description("some patched description - " + id)
                 .technology(EServiceTechnology.REST)
+                .build();
+        eServicePatchAssistant.patchResource(request);
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale dell'e-service in stato DRAFT specificando una descrizione di lunghezza pari a {int} caratteri")
+    public void patchEServiceWithDescriptionLength(int length) {
+        String description = (new StringRandomizer(length, length, System.currentTimeMillis())).getRandomValue();
+        EServicePatchRequest request = EServicePatchRequest.builder()
+                .description(description)
                 .build();
         eServicePatchAssistant.patchResource(request);
     }
@@ -400,6 +515,15 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     public void patchEServiceDescription() {
         EServiceDescriptionPatchRequest request = EServiceDescriptionPatchRequest.builder()
                 .description("patched description - " + UUID.randomUUID())
+                .build();
+        eServiceDescriptionPatchAssistant.patchResource(request);
+    }
+
+    @When("l'utente tenta di effettuare la modifica della descrizione dell'e-service specificando una descrizione di lunghezza pari a {int} caratteri")
+    public void patchEServiceDescription(int length) {
+        String description = (new StringRandomizer(length, length, System.currentTimeMillis())).getRandomValue();
+        EServiceDescriptionPatchRequest request = EServiceDescriptionPatchRequest.builder()
+                .description(description)
                 .build();
         eServiceDescriptionPatchAssistant.patchResource(request);
     }

@@ -3,6 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps.e_service_template.instance;
 import static java.util.Objects.nonNull;
 import static org.assertj.core.api.Assertions.fail;
 
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.service.IEServiceClient;
@@ -10,10 +11,7 @@ import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorTemplateInstanceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateInstanceDescriptorQuotas;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import java.util.UUID;
@@ -80,6 +78,15 @@ public class EServiceTemplateInstanceDescriptorUpdateSteps {
         UUID eServiceDescriptorId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorIdCreatedFromTemplate();
         UpdateEServiceDescriptorTemplateInstanceSeed emptySeed = new UpdateEServiceDescriptorTemplateInstanceSeed();
         editEServiceTemplateInstanceDescriptor(eServiceId, eServiceDescriptorId, emptySeed);
+    }
+
+    @When("l'utente aggiorna la descrizione dell'e-service template con le seguenti specifiche tecniche relative agli scambi asincroni:")
+    public void updateEServiceTemplateWithAsyncTechSpec(AsyncExchangePropertiesInstanceSeed asyncExchangePropertiesInstanceSeed) {
+        UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
+        UUID eServiceDescriptorId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorIdCreatedFromTemplate();
+        UpdateEServiceDescriptorTemplateInstanceSeed seed = new UpdateEServiceDescriptorTemplateInstanceSeed();
+        seed.asyncExchangeProperties(asyncExchangePropertiesInstanceSeed);
+        editEServiceTemplateInstanceDescriptor(eServiceId, eServiceDescriptorId, seed);
     }
 
     @Then("il descriptor dell'istanza in stato DRAFT dell'e-service template è stato modificato correttamente")

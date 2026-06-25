@@ -1,12 +1,8 @@
 package it.pagopa.interop.eservice.service;
 
 import it.pagopa.interop.common.client.IClient;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Document;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EService;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceMode;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTechnology;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServices;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
+
 import java.util.List;
 import java.util.UUID;
 import lombok.Builder;
@@ -61,6 +57,47 @@ public interface IM2MEserviceClient extends IClient<EService, UUID> {
 
     @Data
     @Builder
+    class EServiceCreateRequest {
+        private String name;
+        private String description;
+        private EServiceTechnology technology;
+        private EServiceMode mode;
+        private DescriptorSeedForEServiceCreation descriptor;
+        private Boolean isSignalHubEnabled;
+        private Boolean isConsumerDelegable;
+        private Boolean isClientAccessDelegable;
+        private Boolean personalData;
+
+        public static EServiceCreateRequest fromSeed(EServiceSeed seed) {
+            return EServiceCreateRequest.builder()
+                .name(seed.getName())
+                .description(seed.getDescription())
+                .descriptor(seed.getDescriptor())
+                .technology(seed.getTechnology())
+                .mode(seed.getMode())
+                .isSignalHubEnabled(seed.getIsSignalHubEnabled())
+                .isConsumerDelegable(seed.getIsConsumerDelegable())
+                .isClientAccessDelegable(seed.getIsClientAccessDelegable())
+                .personalData(seed.getPersonalData())
+                .build();
+        }
+
+        public EServiceSeed toSeed() {
+            return new EServiceSeed()
+                    .name(this.getName())
+                    .description(this.getDescription())
+                    .descriptor(this.getDescriptor())
+                    .technology(this.getTechnology())
+                    .mode(this.getMode())
+                    .isSignalHubEnabled(this.getIsSignalHubEnabled())
+                    .isConsumerDelegable(this.getIsConsumerDelegable())
+                    .isClientAccessDelegable(this.getIsClientAccessDelegable())
+                    .personalData(this.getPersonalData());
+        }
+    }
+
+    @Data
+    @Builder
     class EServicePatchRequest {
         private EServiceTechnology technology;
         private Boolean isSignalHubEnabled;
@@ -90,6 +127,12 @@ public interface IM2MEserviceClient extends IClient<EService, UUID> {
         private String description;
     }
 
+    @Data
+    @Builder
+    class EServiceArchivingRequest {
+        private String archivingReason;
+    }
+
     EServices getAll(EserviceListRequest payload);
 
     void delete(UUID id);
@@ -98,6 +141,8 @@ public interface IM2MEserviceClient extends IClient<EService, UUID> {
 
     Document uploadInterface(EServiceInterfaceUploadRequest body);
 
+    EService createEService(EServiceCreateRequest body);
+
     EService patchEService(UUID eServiceId, EServicePatchRequest body);
 
     EService patchEServiceName(UUID eServiceId, EServiceNamePatchRequest body);
@@ -105,6 +150,10 @@ public interface IM2MEserviceClient extends IClient<EService, UUID> {
     EService patchEServiceDelegation(UUID eServiceId, EServiceDelegationPatchRequest body);
 
     EService patchEServiceDescription(UUID eServiceId, EServiceDescriptionPatchRequest body);
+
+    EService scheduleArchiveEService(UUID eServiceId, EServiceArchivingRequest body);
+
+    EService cancelScheduleArchiveEService(UUID eServiceId);
 
     FileDownloadMultipart getDescriptorInterface(UUID eServiceId, UUID descriptorId);
 }

@@ -67,4 +67,19 @@ Feature: Cancellazione finalità
     Given "GSP" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
     When l'utente richiede la cancellazione della finalità
     Then si ottiene status code 403
-  
+
+  @adeguamento-analisi-rischio
+  Scenario Outline: [PURPOSE_DELETE_TK_1] A seguito del cambiamento di tenant kind si tenta di eliminare una finalità
+    Given "PA2" ha già creato e pubblicato 1 e-service
+    And "<ente>" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "<ente>" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+    And il tenant kind dell'ente "<ente>" viene impostato a "<kind>"
+    When l'utente è un "admin" di "<ente>"
+    And l'utente richiede la cancellazione della finalità
+    Then si ottiene status code 200
+    Examples:
+      | ente    | kind        |
+      | PA4     | PRIVATE     |
+      | PA4     | GSP         |
+      | GSP2    | PA          |
+      | Privato | PA          |

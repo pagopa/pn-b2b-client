@@ -39,6 +39,9 @@ public class NotificationAARSubjectStrategy implements ITemplateEngineStrategy{
             case "FRANCESE" -> {
                 yield "SEND - Nouvelle notification de • Nuova notifica da string - string";
             }
+            case "INGLESE" -> {
+                yield "SEND - New notification from • Nuova notifica da string - string";
+            }
             default -> throw new IllegalArgumentException("NO VALID LANGUANGE");
         };
     }

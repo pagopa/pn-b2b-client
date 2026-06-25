@@ -39,7 +39,6 @@ Feature: Eventi M2M di Purpose Template
   Scenario: [M2M_PURPOSE_TEMPLATE_EVENTS_04] L'evento di generazione del template della Risk Analysis di un purpose template deve essere visibile a tutti
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato PUBLISHED
-    And il purpose template creato viene riattivato
     And si ottiene status code 200
     And "PA1" visualizza l'evento PurposeTemplatePublished con:
       | field             | value              |

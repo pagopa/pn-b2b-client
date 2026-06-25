@@ -231,19 +231,32 @@ public abstract class B2bUtils {
     }
 
     public static void loadToPresigned(ApplicationContext context, String url, String secret, String sha256, String resource, String contentType) {
-        loadToPresignedWithDepth(context, url, secret, sha256, resource, contentType, 0);
+        HttpEntity httpEntity = new HttpEntity(context.getResource(resource), getHeadersMapForUploadToPresigned(contentType, sha256, secret));
+        loadToPresignedWithDepth(url, httpEntity, 0);
     }
 
-    private static void loadToPresignedWithDepth(ApplicationContext context, String url, String secret, String sha256, String resource, String contentType, int depth) {
+    /**
+     * Consente di fare l'upload di un file passando un byte[] anziché la risorsa (utile in caso si voglia simulare l'upload di un file malevolo, ad esempio un virus EICAR,
+     * che non è possibile salvare nelle risorse, ma dev'essere invece creato a runtime).
+     */
+    public static void loadToPresignedFromByteArray(String url, String secret, String sha256, byte[] byteArray, String contentType) {
+        HttpEntity httpEntity = new HttpEntity(byteArray, getHeadersMapForUploadToPresigned(contentType, sha256, secret));
+        loadToPresignedWithDepth(url, httpEntity, 0);
+    }
+
+    private static MultiValueMap<String, String> getHeadersMapForUploadToPresigned(String contentType, String sha256, String secret) {
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-type", contentType);
+        headers.add("x-amz-checksum-sha256", sha256);
+        headers.add("x-amz-meta-secret", secret);
+        log.info("headers: {}", headers);
+        return headers;
+    }
+
+    private static void loadToPresignedWithDepth(String url, HttpEntity httpEntity, int depth) {
         try {
-            MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-            headers.add("Content-type", contentType);
-            headers.add("x-amz-checksum-sha256", sha256);
-            headers.add("x-amz-meta-secret", secret);
-            log.info("headers: {}", headers);
-            HttpEntity<Resource> req = new HttpEntity<>(context.getResource(resource), headers);
             RestTemplate restTemplate = getDefaultRestTemplate();
-            restTemplate.exchange(URI.create(url), HttpMethod.PUT, req, Object.class);
+            restTemplate.exchange(URI.create(url), HttpMethod.PUT, httpEntity, Object.class);
         } catch (Exception e) {
             if (depth >= 5) {
                 throw e;
@@ -251,12 +264,12 @@ public abstract class B2bUtils {
             log.info("Upload in catch, retry");
             try {
                 Thread.sleep(2000);
-                log.error("[THREAD IN SLEEP PRELOAD] id: {} , attempt: {} , url: {}, sha256: {}, contentType: {}", Thread.currentThread().getId(), depth, url, sha256, contentType);
+                log.error("[THREAD IN SLEEP PRELOAD] id: {} , attempt: {} , url: {}", Thread.currentThread().getId(), depth, url);
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
                 throw new PnB2bException(ex.getMessage());
             }
-            loadToPresignedWithDepth(context, url, secret, sha256, resource, contentType, depth + 1);
+            loadToPresignedWithDepth(url, httpEntity, depth + 1);
         }
     }
 

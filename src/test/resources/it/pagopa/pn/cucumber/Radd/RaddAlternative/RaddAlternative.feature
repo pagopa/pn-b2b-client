@@ -185,15 +185,6 @@ Feature: Radd Alternative
 # FLUSSO ACT su PF con QrCode - error cases
 
   @raddAlt
-  Scenario: [RADD-ALT_ACT-2] PF - Scansione QR code esistente associato al CF corretto, ma relativo a una notifica con perfezionamento > 120 giorni
-    When Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "dopo 120gg"
-    Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
-    And la scansione si conclude correttamente su radd alternative
-    And vengono caricati i documento di identità del cittadino su radd alternative
-    And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
-    And l'operazione di download degli atti genera un errore "documenti non disponibili" con codice 4 su radd alternative
-
-  @raddAlt
   Scenario: [RADD-ALT_ACT-3] PF - Scansione QR code inesistente
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
@@ -249,7 +240,7 @@ Feature: Radd Alternative
     And la scansione si conclude correttamente su radd alternative
     And si inizia il processo di caricamento dei documento di identità del cittadino ma non si porta a conclusione su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
-    And l'operazione di download degli atti genera un errore "documenti non disponibili" con codice 4 su radd alternative
+    And l'operazione di download degli atti restituisce 3 documenti e si conclude con errore "documenti non disponibili" e codice 4 su radd alternative
 
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-88] PF - Interruzione processo recupero atti e avvio nuovo processo su stessa notifica
@@ -402,7 +393,7 @@ Feature: Radd Alternative
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
-    And l'operazione di download degli atti genera un errore "documenti non disponibili" con codice 4 su radd alternative
+    And l'operazione di download degli atti restituisce 3 documenti e si conclude con errore "documenti non disponibili" e codice 4 su radd alternative
 
   @raddAlt
   Scenario: [RADD-ALT_ACT-14] PG - Scansione QR code inesistente
@@ -444,7 +435,7 @@ Feature: Radd Alternative
     And la scansione si conclude correttamente su radd alternative
     And si inizia il processo di caricamento dei documento di identità del cittadino ma non si porta a conclusione su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
-    And l'operazione di download degli atti genera un errore "documenti non disponibili" con codice 4 su radd alternative
+    And l'operazione di download degli atti restituisce 3 documenti e si conclude con errore "documenti non disponibili" e codice 4 su radd alternative
 
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-89] PG - Interruzione processo recupero atti e avvio nuovo processo su stessa notifica
@@ -1409,7 +1400,21 @@ Feature: Radd Alternative
       | CITIZEN        | CF               |
       | Mario Cucumber | FRMTTR76M06B715E |
 
+  @raddAlt
+  Scenario: [RADD-ALT_ACT-20A] PF - Scansione QR code esistente associato al CF corretto, ma relativo a una notifica con perfezionamento > 120 giorni
+    When Il cittadino Mario Gherkin come destinatario 0 mostra il QRCode "dopo 120gg"
+    Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
+    And la scansione si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+    And l'operazione di download non restituisce atti, generando un errore "documenti non disponibili" con codice 4 su radd alternative
 
-
-
-
+  @raddAlt
+  Scenario: [RADD-ALT_ACT-20B] PF - Scansione QR code esistente associato al CF corretto, ma relativo a una notifica con perfezionamento > 120 giorni
+    When Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "dopo 120gg"
+    Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
+    And la scansione si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+    And l'operazione di download degli atti restituisce 3 documenti e si conclude con errore "documenti non disponibili" e codice 4 su radd alternative
+    

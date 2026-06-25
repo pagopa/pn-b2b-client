@@ -24,6 +24,9 @@ public class IdentityServiceSelfcareImpl implements IdentityService {
     @Value("${spring.profiles.active}")
     private String runProfile;
 
+    @Value("${session.tokens.duration.seconds}")
+    private int sessionTokenDurationSeconds;
+
     public IdentityServiceSelfcareImpl(SessionTokenFactory sessionTokenFactory,
                                        ConfigFileReader configFileReader) {
         this.sessionTokenFactory = sessionTokenFactory;
@@ -43,6 +46,15 @@ public class IdentityServiceSelfcareImpl implements IdentityService {
                 .map(m -> m.get(userIndex))
                 .filter(Objects::nonNull)
                 .orElseThrow(() -> new IllegalArgumentException("Token not found for tenant: " + tenantType + " and role: " + role));
+    }
+
+    @Override
+    public String getMaintenanceToken() {
+        try {
+            return sessionTokenFactory.getMaintenanceToken();
+        } catch (Exception e) {
+            throw new RuntimeException("Errore durante il reperimento del token di maintenance", e);
+        }
     }
 
     @Override
@@ -101,6 +113,14 @@ public class IdentityServiceSelfcareImpl implements IdentityService {
                 .map(Tenant::getKind)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Kind of tenant '%s' not found".formatted(tenantType)));
+    }
+
+    @Override
+    public List<String> getTenantTypesByKind(String tenantKind) {
+        return tenantList.stream()
+                .filter(tenant -> tenantKind.equals(tenant.getKind()))
+                .map(Tenant::getName)
+                .toList();
     }
 
     @Override

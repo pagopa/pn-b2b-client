@@ -31,6 +31,8 @@ public interface NotificationStepsInterface {
 
     void setSenderTaxId(String senderTaxId);
 
+    String getSenderTaxId();
+
     String getNotificationRequestGroup();
 
     void setNotificationRequestGroup(String group);
@@ -57,6 +59,8 @@ public interface NotificationStepsInterface {
     void uploadNotificationAllegatiUgualiPagamento() throws IOException;
 
     void addIuvGpdToDestinatario(String denominazione, String iuvGpd, Integer paymentIndex);
+
+    void addIuvGpdToDestinatario(Integer recIndex, String iuvGpd, Integer recipientPaymentIndex);
 
     List<String> getDatiPagamento(Integer destinatario, Integer pagamento);
 
