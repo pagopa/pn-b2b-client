@@ -50,7 +50,7 @@ Feature: Gestione Feedback Analogici Duplicati
       | digitalDomicile         | NULL                           |
       | physicalAddress_address | Via@FAIL_duplicate_final_event |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
     Then viene verificato che per l'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED" non ci siano duplicati
 
   @workflowAnalogico

@@ -63,6 +63,7 @@ public class AttributeCommonSteps {
             case CERTIFIED -> attributeCommonContext.getRequiredCertifiedAttributes().isEmpty() ? 0 : attributeCommonContext.getRequiredCertifiedAttributes().get(0).size();
             case DECLARED -> attributeCommonContext.getRequiredDeclaredAttributes().isEmpty() ? 0 : attributeCommonContext.getRequiredDeclaredAttributes().get(0).size();
             case VERIFIED -> attributeCommonContext.getRequiredVerifiedAttributes().isEmpty() ? 0 : attributeCommonContext.getRequiredVerifiedAttributes().get(0).size();
+            case CERTIFIED_DISCRETE -> throw new UnsupportedOperationException();
         };
 
         List<Attribute> createdAttributes = new ArrayList<>();
@@ -180,6 +181,7 @@ public class AttributeCommonSteps {
                             .anyMatch(attr -> attr.getId()
                                     .equals(attributeCommonContext.getRequiredDeclaredAttributes().get(0).get(attributeIndex))
                             );
+                        default -> throw new UnsupportedOperationException("Unsupported attribute kind: %s".formatted(attributeType));
                     };
                 }
 
@@ -236,6 +238,7 @@ public class AttributeCommonSteps {
             case CERTIFIED -> eServiceDescriptor.getAttributes().getCertified();
             case DECLARED -> eServiceDescriptor.getAttributes().getDeclared();
             case VERIFIED -> eServiceDescriptor.getAttributes().getVerified();
+            default -> throw new UnsupportedOperationException("Unsupported attribute kind: %s".formatted(attributeKind));
         };
 
         if ((existingAttributeGroups.isEmpty()) || (existingAttributeGroups.get(srcGroupIndex).isEmpty())) {
@@ -283,6 +286,7 @@ public class AttributeCommonSteps {
             case CERTIFIED -> eServiceDescriptor.getAttributes().getCertified();
             case DECLARED -> eServiceDescriptor.getAttributes().getDeclared();
             case VERIFIED -> eServiceDescriptor.getAttributes().getVerified();
+            default -> throw new UnsupportedOperationException("Unsupported attribute kind: %s".formatted(attributeKind));
         };
 
         UUID attributeId = getAttributeIdFromRequiredAttributes(attributeKind, groupIndex, attributeIndex);
@@ -303,7 +307,7 @@ public class AttributeCommonSteps {
 
         eServiceDescriptorUtils.updateEServiceDescriptor(eServiceDescriptor, attributesSeed);
 
-        Optional<DescriptorAttribute> updatedAttr = eServiceDescriptorUtils.getDescriptorCertifiedAttribute(eServiceId, descriptorId, attr.getId());
+        Optional<DescriptorAttribute> updatedAttr = eServiceDescriptorUtils.getDescriptorCertifiedAttribute(eServiceId, descriptorId, attr.getId(), groupIndex);
 
         Assertions.assertTrue(updatedAttr.isPresent());
         Assertions.assertEquals(attr.getId(), updatedAttr.get().getId());
@@ -351,11 +355,58 @@ public class AttributeCommonSteps {
         );
     }
 
+    @Given("l'utente {string} possiede almeno un attributo certificato discreto")
+    public void hasCertifiedDiscreteAttribute(String tenantType) {
+        hasCertifiedDiscreteAttribute(tenantType, true);
+    }
+
+    @Given("l'utente {string} non possiede nessun attributo certificato discreto")
+    public void hasntCertifiedDiscreteAttribute(String tenantType) {
+        hasCertifiedDiscreteAttribute(tenantType, false);
+    }
+
+    private void hasCertifiedDiscreteAttribute(String tenantType, boolean hasAttribute) {
+
+        UUID tenantId = identityService.getOrganizationId(tenantType);
+        Tenant tenant = clientTokenConfigurator.getTenantsApi().getTenant(tenantId);
+
+        Optional<CertifiedTenantAttribute> discreteAttrOptional = tenant.getAttributes().getCertified()
+                .stream()
+                .filter(attr -> Objects.equals(attr.getKind().getValue(), AttributeKind.CERTIFIED_DISCRETE.getValue()))
+                .findFirst();
+
+        CertifiedDiscreteTenantAttribute discreteAttr = (CertifiedDiscreteTenantAttribute) discreteAttrOptional.orElse(null);
+
+        if (hasAttribute) {
+            Assertions.assertNotNull(discreteAttr, "Il tenant non ha nessun attributo certificato discreto");
+            Assertions.assertNull(discreteAttr.getRevocationTimestamp(), "L'attributo certificato discreto non deve essere revocato");
+
+            boolean isAttributeAvailable = sharedStepsContext.getAttributeCommonContext()
+                    .getAvailableCertifiedDiscreteAttributes()
+                    .stream()
+                    .anyMatch(attr -> attr.getId().equals(discreteAttr.getId()));
+            Assertions.assertTrue(isAttributeAvailable, "L'attributo certificato discreto associato al tenant non è un attributo certificato discreto disponibile");
+            log.info("Il tenant {} ha l'attributo certificato discreto {} con ID {} e threshold {}",
+                    tenantId,
+                    discreteAttr.getName(),
+                    discreteAttr.getId(),
+                    discreteAttr.getDiscreteValue()
+            );
+        } else {
+            Assertions.assertNull(discreteAttr, "Il tenant ha un attributo certificato discreto");
+            log.info("Il tenant {} non ha nessun attributo certificato discreto", tenantId);
+        }
+
+        sharedStepsContext.getAttributeCommonContext().setOwnerCertifiedDiscreteAttribute(tenantType);
+        sharedStepsContext.getAttributeCommonContext().getOwnedCertifiedDiscreteAttributes().add(discreteAttr);
+    }
+
     private UUID getAttributeIdFromRequiredAttributes(AttributeKind attributeKind, int groupIndex, int attributeIndex) {
         return switch (attributeKind) {
             case CERTIFIED -> sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes().get(groupIndex).get(attributeIndex);
             case DECLARED -> sharedStepsContext.getAttributeCommonContext().getRequiredDeclaredAttributes().get(groupIndex).get(attributeIndex);
             case VERIFIED -> sharedStepsContext.getAttributeCommonContext().getRequiredVerifiedAttributes().get(groupIndex).get(attributeIndex);
+            default -> throw new UnsupportedOperationException("Unsupported attribute kind: %s".formatted(attributeKind));
         };
     }
 }

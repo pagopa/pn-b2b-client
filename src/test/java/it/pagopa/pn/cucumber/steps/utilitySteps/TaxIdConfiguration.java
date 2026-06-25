@@ -6,6 +6,6 @@ import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @PropertySource("file:config/taxids-${spring.profiles.active}.properties")
-@EnableConfigurationProperties(TaxIdConfig.class)
+@EnableConfigurationProperties(RecipientConfig.class)
 public class TaxIdConfiguration {
 }

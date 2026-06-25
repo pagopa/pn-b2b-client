@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
 import java.util.UUID;
 
 import static it.pagopa.interop.authorization.enums.M2MRole.fromValue;
@@ -39,6 +40,11 @@ public class IdentityServiceInteropImpl implements IdentityService {
     }
 
     @Override
+    public String getMaintenanceToken() {
+        return defaultIdentityService.getMaintenanceToken();
+    }
+
+    @Override
     public UUID getUserId(String tenantType, String role) {
         return defaultIdentityService.getUserId(tenantType, role);
     }
@@ -66,6 +72,11 @@ public class IdentityServiceInteropImpl implements IdentityService {
     @Override
     public String getKind(String tenantType) {
         return defaultIdentityService.getKind(tenantType);
+    }
+
+    @Override
+    public List<String> getTenantTypesByKind(String tenantKind) {
+        return defaultIdentityService.getTenantTypesByKind(tenantKind);
     }
 
     @Override

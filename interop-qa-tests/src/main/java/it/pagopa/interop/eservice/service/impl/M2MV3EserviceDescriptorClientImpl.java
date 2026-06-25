@@ -161,6 +161,12 @@ public class M2MV3EserviceDescriptorClientImpl extends AbstractDPoPClient implem
     }
 
     @Override
+    public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor suspendDescriptor(
+        UUID eServiceId, UUID descriptorId) {
+        return vMapper.mapToV2(this.eservicesApi.suspendDescriptor(eServiceId, descriptorId));
+    }
+
+    @Override
     public void unsuspendEService(UUID eServiceId, UUID descriptorId) {
         this.eservicesApi.unsuspendDescriptor(eServiceId, descriptorId);
     }
@@ -174,6 +180,18 @@ public class M2MV3EserviceDescriptorClientImpl extends AbstractDPoPClient implem
     @Override
     public Documents getDocuments(UUID eserviceId, UUID descriptorId) {
         return vMapper.mapToV2(this.eservicesApi.getEServiceDescriptorDocuments(eserviceId, descriptorId, 0, 50));
+    }
+
+    @Override
+    public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor scheduleArchiveEServiceDescriptor(
+        UUID eserviceId, UUID descriptorId) {
+        return vMapper.mapToV2(eservicesApi.scheduleArchiveEserviceDescriptor(eserviceId, descriptorId));
+    }
+
+    @Override
+    public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor cancelEServiceDescriptorArchiving(
+        UUID eserviceId, UUID descriptorId) {
+        return vMapper.mapToV2(eservicesApi.cancelEServiceDescriptorArchiving(eserviceId, descriptorId));
     }
 
     @Override

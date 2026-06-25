@@ -222,9 +222,10 @@ Feature: Validazione delle Client Assertion ed emissione dei Token PDND per scam
     When il tenant fruitore "PA2" richiede un voucher asincrono per l'e-service
     Then si ottiene status code 400
 
-  Scenario: [ASYNC_DPOP_TOKEN_RETRIEVE_5] Errore richiesta token (confirmation fuori sequenza)
-    Verifica il rilascio dei voucher per start_interaction e callback_invocation e il fallimento se il fruitore richiede
-    lo scope confirmation prima di aver invocato get_resource.
+  Scenario: [ASYNC_DPOP_TOKEN_RETRIEVE_5] Richiesta token confirmation fuori sequenza
+  A seguito del rilascio di un voucher con scope start_interaction e di uno con scope callback_invocation,
+  se il fruitore richiede un voucher con scope confirmation senza aver prima richiesto uno con scope get_resource,
+  l'operazione va a buon fine.
 
     Given l'admin del fruitore "PA2" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And "PA1" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
@@ -267,7 +268,9 @@ Feature: Validazione delle Client Assertion ed emissione dei Token PDND per scam
       | scope       | confirmation |
     And "PA2" crea una DPoP proof per la client assertion
     When il tenant fruitore "PA2" richiede un voucher asincrono per l'e-service
-    Then si ottiene status code 400
+    Then si ottiene status code 200
+    And il voucher contiene i seguenti dati:
+      | scope       | confirmation |
 
   Scenario: [ASYNC_DPOP_TOKEN_RETRIEVE_6] Errore richiesta token per timeout (responseTime scaduto)
     Verifica il corretto rilascio del voucher per start_interaction e il fallimento della richiesta per lo scope

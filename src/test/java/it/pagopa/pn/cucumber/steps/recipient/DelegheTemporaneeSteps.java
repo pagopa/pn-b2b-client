@@ -10,14 +10,11 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.ThirdPartyMessage;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationsResponse;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationSearchRow;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateIo.model.CIEValidationData;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateIo.model.MandateCreationRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateIo.model.MandateCreationResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateIo.model.MandateDto;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
 import it.pagopa.pn.client.b2b.pa.service.IPnAppIOB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnMandateAppIoClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnMandateAppIoClientImpl;
@@ -25,7 +22,6 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.A
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
-import it.pagopa.pn.cucumber.steps.utilitySteps.Costanti;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -36,13 +32,10 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import java.nio.file.Path;
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-import static java.time.OffsetDateTime.now;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @Slf4j
@@ -158,6 +151,7 @@ public class DelegheTemporaneeSteps {
             case "dev" -> environmentPath = "http://cittadini.dev.notifichedigitali.it/io";
             case "test" -> environmentPath = "http://cittadini.test.notifichedigitali.it/io";
             case "uat" -> environmentPath = "https://cittadini.uat.notifichedigitali.it/io/";
+            case "hotfix" -> environmentPath = "https://cittadini.hotfix.notifichedigitali.it/io/";
             default -> throw new IllegalArgumentException("Invalid environment name: " + environment);
         }
         environmentPath += "?aar=";

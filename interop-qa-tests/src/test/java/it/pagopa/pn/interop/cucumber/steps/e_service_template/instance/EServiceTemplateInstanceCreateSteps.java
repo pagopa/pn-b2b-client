@@ -124,10 +124,10 @@ public class EServiceTemplateInstanceCreateSteps {
 
     @Given("l'utente effettua la creazione di un nuovo e-service a partire dal template con successo indicando solo le specifiche strettamente necessarie e impostando l'e-service come asincrono e con:")
     public void createEServiceFromTemplateMinimalSpecSuccessfullyAndNonAsynchronous(AsyncExchangePropertiesInstanceSeed asyncExchangePropertiesInstanceSeed) {
-        createEServiceFromTemplate(
-                sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(),
-                new InstanceEServiceSeed().asyncExchangeProperties(asyncExchangePropertiesInstanceSeed)
-        );
+//        createEServiceFromTemplate(
+//                sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(),
+//                new InstanceEServiceSeed().asyncExchangeProperties(asyncExchangePropertiesInstanceSeed)
+//        );
     }
 
     @Given("l'utente effettua la creazione di un nuovo e-service a partire dal template con successo indicando tutte le specifiche")

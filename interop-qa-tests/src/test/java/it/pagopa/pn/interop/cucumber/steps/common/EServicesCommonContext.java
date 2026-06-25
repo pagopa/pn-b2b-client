@@ -27,6 +27,7 @@ public class EServicesCommonContext {
     private UUID eserviceId;
     private UUID descriptorId;
     private int groupId; // id dell'ultimo gruppo di attributi creato
+    private String producerName;
 
     private List<UUID> certifiedAttributesIds = new ArrayList<>();
     private List<UUID> declaredAttributesIds = new ArrayList<>();
@@ -52,6 +53,7 @@ public class EServicesCommonContext {
     private OffsetDateTime creationTimestamp;
     private OffsetDateTime publicationTimestamp;
     private OffsetDateTime eServiceEditTimestamp;
+    private OffsetDateTime descriptorArchivingRequestTimestamp;
 
     public void addCertifiedAttributes(List<UUID> attributesIds) {
         this.certifiedAttributesIds.addAll(attributesIds);

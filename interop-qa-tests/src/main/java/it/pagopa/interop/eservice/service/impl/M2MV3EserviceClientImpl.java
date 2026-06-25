@@ -159,6 +159,19 @@ public class M2MV3EserviceClientImpl extends AbstractDPoPClient implements IM2MV
     }
 
     @Override
+    public EService scheduleArchiveEService(UUID eServiceId, EServiceArchivingRequest body) {
+        EServiceArchivingReasonSeed seed = body == null
+            ? null
+            : new EServiceArchivingReasonSeed().archivingReason(body.getArchivingReason());
+        return vMapper.mapToV2(eservicesApi.scheduleArchiveEservice(eServiceId, seed));
+    }
+
+    @Override
+    public EService cancelScheduleArchiveEService(UUID eServiceId) {
+        return vMapper.mapToV2(eservicesApi.cancelScheduleArchiveEservice(eServiceId));
+    }
+
+    @Override
     public FileDownloadMultipart getDescriptorInterface(UUID eServiceId, UUID descriptorId) {
         return vMapper.mapToV2(eservicesApi.downloadEServiceDescriptorInterface(eServiceId, descriptorId));
     }

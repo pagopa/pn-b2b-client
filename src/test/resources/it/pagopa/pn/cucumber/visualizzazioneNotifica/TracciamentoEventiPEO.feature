@@ -19,3 +19,9 @@ Feature: irrobustimento tracciamento eventi PEO PostaElettronicaOrdinaria (SRS: 
       | pn-delivery | suppressionlist@simulator.amazonses.com | null       | M003-sent                |
       | pn-delivery | complaint@simulator.amazonses.com       | null       | M003-sent                |
       | pn-delivery | matteo.sperati@dgsspa.com               | virus      | M003-sent                |
+
+  @TracciamentoEventiPEO
+  Scenario: [CHECK_DUPLICATE_REQUEST] La seconda chiamata con stessi parametri e requestId restituisce 204
+    Given viene impostato il client "pn-test"
+    When viene inviata una mail tramite PEO all'indirizzo "matteo.sperati@dgsspa.com" con allegato "null"
+    And viene inviata nuovamente la stessa mail tramite PEO e si ottiene status code 204

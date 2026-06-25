@@ -11,6 +11,25 @@ Feature: verifica feature aoo/uo
     And l'operazione ha generato un errore con status code "404"
 
   @AOO_UO
+  Scenario: [B2B-AOO-UO_FILTER_1] Invocazione API per filtrare le PA di Root da una lista in input passando come input PA di tipo Root e PA figlie.
+  Come risultato si ci aspetta che la risposta contenga solo id relativi a PA non di tipo Root.
+    When viene invocata l'api di filtro pa di tipo Root passando le seguenti PA:
+      | "Comune_Son"   |
+      | "Comune_Root"  |
+      | "Comune_Son_2" |
+    Then si verifica che la risposta contenga gli id relativi alle seguenti PA:
+      | "Comune_Son"   |
+      | "Comune_Son_2" |
+
+  @AOO_UO
+  Scenario: [B2B-AOO-UO_FILTER_2] Invocazione API per filtrare le PA di Root da una lista in input passando come input soltanto PA di tipo Root.
+  Come risultato si ci aspetta che la risposta non contenga id.
+    When viene invocata l'api di filtro pa di tipo Root passando le seguenti PA:
+      | "Comune_Root" |
+      | "Comune_Multi" |
+    Then si verifica che la risposta non contenga id
+
+  @AOO_UO
   Scenario: [B2B-AOO-UO_2] Invio notifica digitale_scenario da PA padre e non riesce a recuperare la notifica  PA figlio
     Given viene generata una nuova notifica
       | subject            | invio notifica multi cucumber |
@@ -53,6 +72,7 @@ Feature: verifica feature aoo/uo
   @AOO_UO @addressBook2
   Scenario: [B2B-AOO-UO_4] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
+    And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it" per il comune "Comune_Root"
     And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -82,6 +102,7 @@ Feature: verifica feature aoo/uo
   @AOO_UO @addressBook1 @ignoreHotfixTemp #temp
   Scenario: [B2B-AOO-UO_5] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
     Given si predispone addressbook per l'utente "Galileo Galilei"
+    And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it" per il comune "Comune_Root"
     And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -109,6 +130,7 @@ Feature: verifica feature aoo/uo
   @AOO_UO @addressBook2
   Scenario: [B2B-AOO-UO_6] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
+    And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it" per il comune "Comune_Root"
     And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -138,6 +160,7 @@ Feature: verifica feature aoo/uo
   @AOO_UO @addressBook2
   Scenario: [B2B-AOO-UO_7] invio messaggio di cortesia - invio notifica per email per ente padre per PG
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
+    And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserito un recapito legale "example@pecSuccess.it"
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "Comune_Root"
@@ -161,6 +184,7 @@ Feature: verifica feature aoo/uo
   @AOO_UO @addressBook1 @ignoreHotfixTemp #temp
   Scenario: [B2B-AOO-UO_8] invio messaggio di cortesia - invio notifica per email per ente padre
     Given si predispone addressbook per l'utente "Galileo Galilei"
+    And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserito un recapito legale "example@pecSuccess.it"
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "Comune_Root"
     And viene generata una nuova notifica
@@ -180,6 +204,7 @@ Feature: verifica feature aoo/uo
   @AOO_UO @addressBook2
   Scenario: [B2B-AOO-UO_9] invio messaggio di cortesia - invio notifica per email per ente figlio per PG
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
+    And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserito un recapito legale "example@pecSuccess.it"
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "Comune_Root"
@@ -203,6 +228,7 @@ Feature: verifica feature aoo/uo
   @AOO_UO @addressBook1 @ignoreHotfixTemp #temp
   Scenario: [B2B-AOO-UO_10] invio messaggio di cortesia - invio notifica per email per ente figlio
     Given si predispone addressbook per l'utente "Galileo Galilei"
+    And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserito un recapito legale "example@pecSuccess.it"
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "Comune_Root"
     And viene generata una nuova notifica

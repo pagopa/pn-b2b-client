@@ -36,11 +36,13 @@ public class Costanti {
     public static final String MARIO_CREDENZIALI_SCADUTE = "Mario Credenziali Scadute";
     public static final String NESSUNO = "nessuno";
     public static final String UTENZA_CON_INDIRIZZO_NON_VALIDO = "Utenza con Errore D01";
+    public static final String UTENZA_CON_INDIRIZZO_VALIDO_ANPR = "Utenza con Indirizzo Valido da ANPR";
     // PA
     public static final String COMUNE_1 = "Comune_1";
     public static final String COMUNE_2 = "Comune_2";
     public static final String COMUNE_MULTI = "Comune_Multi";
     public static final String COMUNE_SON = "Comune_Son";
+    public static final String COMUNE_SON_2 = "Comune_Son_2";
     public static final String COMUNE_ROOT = "Comune_Root";
     public static final String DEFAULT_PA = COMUNE_1;
     // Tipologie destinatario
