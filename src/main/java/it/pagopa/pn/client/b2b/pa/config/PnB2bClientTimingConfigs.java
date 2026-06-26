@@ -4,7 +4,6 @@ package it.pagopa.pn.client.b2b.pa.config;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +35,7 @@ public class PnB2bClientTimingConfigs {
     private Integer workflowWaitAcceptedMillisShort;
     private Integer workflowWaitMillisShort;
 
-    private Map<String,OverrideConfig> overrides = new HashMap<>();
+    private Map<String, OverrideConfig> overrides = new HashMap<>();
 
     @Data
     private static class OverrideConfig {
@@ -137,14 +136,20 @@ public class PnB2bClientTimingConfigs {
 
     public int calculateNumCheckValue(String el) {
         var override = overrides.get(el);
-        DefaultElementTimeValue timingValue = DefaultElementTimeValue.valueOf(el);
-        return override.getNumCheck() == null ? timingValue.defaultNumCheck : override.getNumCheck();
+        DefaultElementTimeValue defaultTimingValue = DefaultElementTimeValue.valueOf(el);
+        if (override != null && override.getNumCheck() != null) {
+            return override.getNumCheck();
+        }
+        return defaultTimingValue.defaultNumCheck;
     }
 
     public int calculateWaitingMultiplierValue(String el) {
         var override = overrides.get(el);
-        DefaultElementTimeValue timingValue = DefaultElementTimeValue.valueOf(el);
-        return override.getWaitingMultiplier() == null ? timingValue.defaultWaitingMultiplier : override.getWaitingMultiplier();
+        DefaultElementTimeValue defaultTimingValue = DefaultElementTimeValue.valueOf(el);
+        if (override != null && override.getWaitingMultiplier() != null) {
+            return override.getWaitingMultiplier();
+        }
+        return defaultTimingValue.defaultWaitingMultiplier;
     }
 
 
