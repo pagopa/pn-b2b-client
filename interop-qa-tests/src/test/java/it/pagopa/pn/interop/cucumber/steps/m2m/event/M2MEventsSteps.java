@@ -39,7 +39,7 @@ public class M2MEventsSteps {
         m2mEventClient.setHttpCallExecutor(httpCallExecutor);
     }
 
-    @Before("@m2m-events")
+    @Before("@m2m-events or @m2m-purpose-template-events")
     public void initEventClient() {
         m2mEventClient.setReferenceTime(Instant.now());
     }

@@ -2,24 +2,30 @@ package it.pagopa.pn.cucumber.steps;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
+import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PagoPaPayment;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.NewNotificationCostRequest;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.NotificationCostPaymentResponse;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.NotificationCostRecipientResponse;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.NotificationFeePolicy;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.PagoPaIntMode;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.PaymentData;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.RecipientCostData;
+import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.client.b2b.pa.service.IPnNotificationCostClient;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v26.NotificationProcessCostResponse;
-import it.pagopa.pn.cucumber.steps.pa.utilityVersions.AwsUtils;
-import it.pagopa.pn.cucumber.steps.utilitySteps.AwsServiceSteps;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.client.HttpStatusCodeException;
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,26 +33,20 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @Slf4j
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@RequiredArgsConstructor
 public class CostiNotificaSteps {
-
     private final SharedSteps sharedSteps;
-    private final AwsServiceSteps awsServiceSteps;
+    private final DynamoDbService dynamoDbService;
     private final IPnNotificationCostClient notificationCostClient;
     private NotificationCostPaymentResponse notificationCostPaymentResponse;
     private NotificationCostRecipientResponse notificationCostRecipientResponse;
 
-    @Autowired
-    public CostiNotificaSteps(SharedSteps sharedSteps, AwsServiceSteps awsServiceSteps, IPnNotificationCostClient notificationCostClient) {
-        this.sharedSteps = sharedSteps;
-        this.awsServiceSteps = awsServiceSteps;
-        this.notificationCostClient = notificationCostClient;
-    }
 
     @And("verifico che per il destinatario {int} il record su Pn-NotificationDeliveryCost sia stato (inserito)(modificato) e correttamente valorizzato")
     public void checkNotificationDeliveryCostRecord(int recIndex, Map<String, String> expectedData) {
         try {
             Map<String, AttributeValue> record = searchNotificationDeliveryCostRecord(recIndex);
-            FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV29 fsn = sharedSteps.getSentNotificationLastVersion();
             //verifica che tutte le colonne siano valorizzate in modo coerente
             assertSoftly(softly -> {
                 softly.assertThat(record.get("senderTaxId").s()).as("Il senderTaxId del record non coincide con quello della fullSentNotification").isEqualTo(fsn.getSenderTaxId());
@@ -89,13 +89,10 @@ public class CostiNotificaSteps {
     }
 
     private Map<String, AttributeValue> searchNotificationDeliveryCostRecord(int recIndex) {
-        Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();
-        expressionAttributeValues.put(":v_pk", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build());
-        expressionAttributeValues.put(":v_sk", AttributeValue.builder().n(String.valueOf(recIndex)).build());
-
-        QueryRequest queryRequest = AwsUtils.buildPnNotificationDeliveryCostRequest(expressionAttributeValues);
-        QueryResponse queryResponse = awsServiceSteps.getDynamoDbClient().query(queryRequest);
-
+        QueryResponse queryResponse = dynamoDbService.call(DynamoTableName.NOTIFICATION_DELIVERY_COST, Map.of(
+                ":v_pk", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build(),
+                ":v_sk", AttributeValue.builder().n(String.valueOf(recIndex)).build()
+        ));
         try {
             assertThat(queryResponse.items().size())
                     .as("Pn-NotificationDeliveryCost deve contenere esattamente un record per iun %s e recIndex %s", sharedSteps.getNotificationIun(), recIndex)
@@ -121,7 +118,7 @@ public class CostiNotificaSteps {
     @And("verifico che per l'utente {int} il popolamento dei dati su Pn-PaymentInfo sia avvenuto correttamente")
     public void checkPaymentInfoRecord(Integer recIndex) {
         try {
-            FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV29 fsn = sharedSteps.getSentNotificationLastVersion();
             fsn.getRecipients().get(recIndex).getPayments().forEach(payment -> {
                 if (payment.getPagoPa() != null) {
                     String creditorTaxId = payment.getPagoPa().getCreditorTaxId();
@@ -143,13 +140,8 @@ public class CostiNotificaSteps {
     }
 
     private Map<String, AttributeValue> searchPaymentInfoRecord(String pk) {
-        Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();
-        expressionAttributeValues.put(":v_pk", AttributeValue.builder().s(pk).build());
-
-        DynamoDbClient dbClient = awsServiceSteps.getDynamoDbClient();
-        QueryRequest queryRequest = AwsUtils.buildPnPaymentInfoRequest(expressionAttributeValues);
-        QueryResponse queryResponse = dbClient.query(queryRequest);
-
+        QueryResponse queryResponse = dynamoDbService.call(DynamoTableName.PAYMENT_INFO, Map.of(
+                ":v_pk", AttributeValue.builder().s(pk).build()));
         try {
             assertThat(queryResponse.items().size())
                     .as("Pn-PaymentInfo deve contenere esattamente un record per iun %s", sharedSteps.getNotificationIun())
@@ -176,7 +168,7 @@ public class CostiNotificaSteps {
     public void checkRobustezzaApiRecuperoCosti(String inputParameterType) {
         AtomicBoolean apiInvocationHasFailed = new AtomicBoolean(false);
         try {
-            FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV29 fsn = sharedSteps.getSentNotificationLastVersion();
             fsn.getRecipients().forEach(rec -> rec.getPayments().forEach(payment -> {
                 if (payment.getPagoPa() != null) {
                     String creditorTaxId = payment.getPagoPa().getCreditorTaxId();
@@ -215,7 +207,7 @@ public class CostiNotificaSteps {
 
     @Then("verifico il comportamento dell'API di inserimento costi passando in input {string}")
     public void checkRobustezzaApiInserimentoCosti(String inputParamsType) {
-        FullSentNotificationV28 fsn = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV29 fsn = sharedSteps.getSentNotificationLastVersion();
         String iun = fsn.getIun();
         NewNotificationCostRequest request = initiNewNotificationCostRequest(fsn);
 
@@ -243,7 +235,7 @@ public class CostiNotificaSteps {
         }
     }
 
-    private NewNotificationCostRequest initiNewNotificationCostRequest(FullSentNotificationV28 fsn) {
+    private NewNotificationCostRequest initiNewNotificationCostRequest(FullSentNotificationV29 fsn) {
         NewNotificationCostRequest request = new NewNotificationCostRequest();
         request.setVat(fsn.getVat());
         request.setPaFee(fsn.getPaFee());

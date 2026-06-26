@@ -179,4 +179,19 @@ public class PurposeTemplateClientImpl extends AbstractClient implements IPurpos
     public PurposeTemplates getPurposeTemplates(Integer offset, Integer limit, String purposeTitle, List<UUID> creatorIds, List<UUID> eserviceIds, List<it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplateState> states, it.pagopa.interop.generated.openapi.clients.m2mGateway.model.TargetTenantKind targetTenantKind, Boolean handlesPersonalData) {
         return m2mPurposeTemplatesApi.getPurposeTemplates(offset, limit, purposeTitle, creatorIds, eserviceIds, states, targetTenantKind, handlesPersonalData);
     }
+
+    @Override
+    public LinkableResources getPurposeTemplateLinkableResources(UUID purposeTemplateId, Integer offset, Integer limit, String q, List<UUID> publisherIds) {
+        return purposesTemplateApi.getPurposeTemplateLinkableResources(purposeTemplateId, offset, limit, q, publisherIds);
+    }
+
+    @Override
+    public LinkedResource linkResourceToPurposeTemplate(UUID purposeTemplateId, LinkableResourceRequest linkableResourceRequest) {
+        return purposesTemplateApi.linkResourceToPurposeTemplate(purposeTemplateId, linkableResourceRequest);
+    }
+
+    @Override
+    public void unlinkResourceFromPurposeTemplate(UUID purposeTemplateId, LinkableResourceRequest linkableResourceRequest) {
+        purposesTemplateApi.unlinkResourceFromPurposeTemplate(purposeTemplateId, linkableResourceRequest);
+    }
 }
