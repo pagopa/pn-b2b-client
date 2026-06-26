@@ -141,6 +141,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnCfgClientImpl.class,
         TimingForPolling.class,
         PnB2bClientTimingConfigs.class,
+        PnIOConnectorClientImpl.class,
         PnPollingFactory.class,
         CieGeneratorTool.class,
         TaxIdConfiguration.class,
