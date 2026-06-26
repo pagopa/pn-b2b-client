@@ -750,7 +750,7 @@ public class RaddAltSteps {
     @Given("viene richiesto il codice QR per lo IUN {string} per il destinatario {int} su radd alternative")
     public void vieneRichiestoIlCodiceQRPerLoIUN(String iun, Integer destinatario) {
         this.qrCode = sharedSteps.vieneRichiestoIlCodiceQRPerLoIUN(iun, destinatario);
-        log.info("********  qrCode  *******/: {}", qrCode);
+        //log.info("********  qrCode  *******/: {}", qrCode);
     }
 
     @When("L'operatore scansione il qrCode per recuperare gli atti da radd alternative")
