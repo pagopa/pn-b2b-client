@@ -39,7 +39,9 @@ public class TokenResolver {
                     Map.entry(":eServiceName", ctx -> safe(c -> c.getEServicesCommonContext().getName(), ctx)),
                     Map.entry(":eserviceId", ctx -> safe(c -> c.getEServicesCommonContext().getEserviceId(), ctx)),
                     Map.entry(":purposeTemplateId", ctx -> safe(c -> c.getPurposeTemplateContext().getPurposeTemplateId(), ctx)),
-                    Map.entry(":descriptorId", ctx -> safe(c -> c.getEServicesCommonContext().getDescriptorId(), ctx))
+                    Map.entry(":descriptorId", ctx -> safe(c -> c.getEServicesCommonContext().getDescriptorId(), ctx)),
+                    Map.entry(":eserviceTemplateId", ctx -> safe(c -> c.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), ctx)),
+                    Map.entry(":eserviceTemplateVersionId", ctx -> safe(c -> c.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId(), ctx))
                     );
 
     private static String safe(Function<SharedStepsContext, Object> extractor, SharedStepsContext ctx) {

@@ -43,6 +43,7 @@ public class EServiceCloneSteps {
     public void tenantTryToCreateVersionWithState(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
 
+        eServicesCommonContext.setOldDescriptorId(eServicesCommonContext.getDescriptorId());
         UUID descriptorId = dataPreparationService.createNextDraftDescriptor(eServicesCommonContext.getEserviceId());
         eServicesCommonContext.setDescriptorId(descriptorId);
     }
@@ -72,6 +73,14 @@ public class EServiceCloneSteps {
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().cloneEServiceByDescriptor(eServicesCommonContext.getEserviceId(), eServicesCommonContext.getDescriptorId())
         );
+
+        if (!sharedStepsContext.getHttpCallExecutor().getResponseStatus().is2xxSuccessful()) {
+            eServicesCommonContext.setName(null);
+            eServicesCommonContext.setEserviceId(null);
+            eServicesCommonContext.setDescriptorId(null);
+            return;
+        }
+
         UUID eserviceId = ((CreatedEServiceDescriptor) sharedStepsContext.getHttpCallExecutor().getResponse()).getId();
         UUID descriptorId = ((CreatedEServiceDescriptor) sharedStepsContext.getHttpCallExecutor().getResponse()).getDescriptorId();
 
