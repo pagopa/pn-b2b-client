@@ -10,8 +10,8 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
     When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
     """
-    Il tuo e-service $DA_CONTESTO(eServiceName) è in fase di archiviazione, ma risulta ancora attivo. L'archiviazione
-    avverrà il giorno $DA_CONTESTO(TODAY+GRACE_PERIOD).
+    Il tuo e-service $DA_CONTESTO(eServiceName) è in fase di archiviazione, ma risulta ancora attivo. L'e-service sarà
+    archiviato il giorno $DA_CONTESTO(TODAY+GRACE_PERIOD).
     """
 
   Scenario: [MANUAL_ARCHIVING_ESERVICE_NOTIFICATION_1.2] L'utente fruitore riceve una notifica nel momento in cui viene avviato il processo di archiviazione dell'intero e-service per cui ha una richiesta di fruizione attiva
@@ -81,7 +81,7 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
     And l'utente sospende quel descrittore in corso di archiviazione
     Then l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
-    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è al momento sospesa. L'e-service sarà archiviato il giorno
+    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è al momento sospesa. L'archiviazione avverrà il giorno
     $DA_CONTESTO(TODAY+GRACE_PERIOD).
     """
 
