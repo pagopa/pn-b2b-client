@@ -221,10 +221,10 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
-      | denomination    | Matteo Rossi     |
-      | taxId           | XVRSFN76E31L781N |
-      | recipientType   | PF               |
-      | digitalDomicile | NULL             |
+      | denomination            | Matteo Rossi             |
+      | taxId                   | XVRSFN76E31L781N         |
+      | recipientType           | PF                       |
+      | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"

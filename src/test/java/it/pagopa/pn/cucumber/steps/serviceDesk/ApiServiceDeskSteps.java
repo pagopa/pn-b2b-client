@@ -7,6 +7,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationAttachmentBodyRef;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationAttachmentDigests;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationDocument;
@@ -878,7 +879,7 @@ public class ApiServiceDeskSteps {
     @Given("come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN {string} e taxId {string}  recipientType  {string}")
     public void comeOperatoreDevoEffettuareUnCheckSullaDisponibilitaValiditaEDimensioneDegliAllegatiConIUNRecipientType(String iun, String taxId, String recipientType) {
         try {
-            FullSentNotificationV28 fullSentNotification = sharedSteps.getNotificationIun() != null ? sharedSteps.getSentNotificationLastVersion() : null;
+            FullSentNotificationV29 fullSentNotification = sharedSteps.getNotificationIun() != null ? sharedSteps.getSentNotificationLastVersion() : null;
             documentsRequest = new DocumentsRequest();
             if (fullSentNotification != null) {
                 setRecipientType(fullSentNotification.getRecipients().get(0).getRecipientType().getValue());
@@ -1382,11 +1383,11 @@ public class ApiServiceDeskSteps {
     public String setTaxID(String taxId) {
         String result;
         result = switch (taxId) {
-            case MARIO_GHERKIN -> MARIO_GHERKIN_TAX_ID;
-            case MARIO_CUCUMBER -> MARIO_CUCUMBER_TAX_ID;
-            case CUCUMBER_SPA -> CUCUMBER_SPA_TAX_ID;
-            case GHERKIN_SRL -> GHERKIN_SRL_TAX_ID;
-            case GALILEO_GALILEI -> GALILEO_GALILEI_TAX_ID;
+            case MARIO_GHERKIN -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_GHERKIN.getTaxId();
+            case MARIO_CUCUMBER -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_CUCUMBER.getTaxId();
+            case CUCUMBER_SPA -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_CUCUMBER_SPA.getTaxId();
+            case GHERKIN_SRL -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_GHERKIN_SRL.getTaxId();
+            case GALILEO_GALILEI -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_GALILEO_GALILEI.getTaxId();
             default -> null;
         };
         return result;
@@ -1669,7 +1670,7 @@ public class ApiServiceDeskSteps {
         sharedSteps.prepareNotificationRequestWithVersion(MOST_RECENT, data);
 
         // destinatario Mario Gherkin e:
-        Destinatario destinatario = Destinatario.DESTINATARIO_MARIO_GHERKIN;
+        Destinatario destinatario = sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_GHERKIN;
         Map<String, String> recipentData = new HashMap<>();
         recipentData.put("digitalDomicile", "NULL");
         recipentData.put("physicalAddress_address", "Via@ok_890");

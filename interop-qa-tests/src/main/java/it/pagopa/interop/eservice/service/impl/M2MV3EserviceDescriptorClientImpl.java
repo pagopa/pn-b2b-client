@@ -14,6 +14,7 @@ import it.pagopa.interop.eservice.service.mapper.EserviceDescriptorDomainMapper;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Documents;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.EservicesApi;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptorAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptorDraftUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptorQuotasUpdateSeed;
 import it.pagopa.interop.utils.ApiClientUtils;
@@ -160,6 +161,12 @@ public class M2MV3EserviceDescriptorClientImpl extends AbstractDPoPClient implem
     }
 
     @Override
+    public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor suspendDescriptor(
+        UUID eServiceId, UUID descriptorId) {
+        return vMapper.mapToV2(this.eservicesApi.suspendDescriptor(eServiceId, descriptorId));
+    }
+
+    @Override
     public void unsuspendEService(UUID eServiceId, UUID descriptorId) {
         this.eservicesApi.unsuspendDescriptor(eServiceId, descriptorId);
     }
@@ -176,6 +183,18 @@ public class M2MV3EserviceDescriptorClientImpl extends AbstractDPoPClient implem
     }
 
     @Override
+    public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor scheduleArchiveEServiceDescriptor(
+        UUID eserviceId, UUID descriptorId) {
+        return vMapper.mapToV2(eservicesApi.scheduleArchiveEserviceDescriptor(eserviceId, descriptorId));
+    }
+
+    @Override
+    public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor cancelEServiceDescriptorArchiving(
+        UUID eserviceId, UUID descriptorId) {
+        return vMapper.mapToV2(eservicesApi.cancelEServiceDescriptorArchiving(eserviceId, descriptorId));
+    }
+
+    @Override
     public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor patchEServiceDescriptorQuotas(
         UUID eserviceId, UUID descriptorId, EServiceDescriptorQuotasPatchRequest body) {
         return vMapper.mapToV2(eservicesApi.updatePublishedEServiceDescriptorQuotas(
@@ -186,6 +205,18 @@ public class M2MV3EserviceDescriptorClientImpl extends AbstractDPoPClient implem
                 .dailyCallsTotal(body.getDailyCallsTotal())
                 .dailyCallsPerConsumer(body.getDailyCallsPerConsumer())
         ));
+    }
+
+    public void patchEServiceDescriptorCertifiedAttribute(UUID eServiceId, UUID descriptorId, Integer groupIndex,
+        UUID attributeId, EServiceDescriptorAttributePatchRequest body) {
+        eservicesApi.updateEServiceDescriptorCertifiedAttributeInGroup(
+            eServiceId,
+            descriptorId,
+            groupIndex,
+            attributeId,
+            new EServiceDescriptorAttributeSeed()
+                .dailyCallsPerConsumer(body.getDailyCallsPerConsumer())
+        );
     }
 
     @Override

@@ -96,31 +96,33 @@ public class ClientCommonSteps {
         sharedStepsContext.getClientCommonContext().setClientPublicKey(userPublicKey);
         sharedStepsContext.getClientCommonContext().setKeyType(keyType);
         String keyId = dataPreparationService.addPublicKeyToClient(sharedStepsContext.getClientCommonContext().getFirstClient(), KeyPairGeneratorUtil.createKeySeed(
-            userPublicKey, KeyType.parse(keyType)).get(0));
+                userPublicKey, KeyType.parse(keyType)).get(0));
         sharedStepsContext.getClientCommonContext().setKeyId(keyId);
     }
 
     @Then("si ottiene status code {int}")
     public void verifyStatusCode(int statusCode) {
-        if (List.of(200, 204).contains(statusCode)) Assertions.assertEquals(200, httpCallExecutor.getResponseStatus().value());
+        if (List.of(200, 204).contains(statusCode))
+            Assertions.assertTrue(httpCallExecutor.getResponseStatus().is2xxSuccessful());
         else Assertions.assertEquals(statusCode, httpCallExecutor.getResponseStatus().value());
     }
 
     /* 26 02 2026 introdotto per risolvere la problematica 204 -> 200 m2m v3
-    * https://pagopaspa.slack.com/archives/C09UKEZ2BSS/p1772121592444099?thread_ts=1772121586.566669&cid=C09UKEZ2BSS
-    * Altre idee sono state scartate, per il momento lo si sta mantenendo uguale allo step soprastante
-    * per mancanze di idee migliori, nell'ottica che lo si potrà migliorare in un secondo momento. */
+     * https://pagopaspa.slack.com/archives/C09UKEZ2BSS/p1772121592444099?thread_ts=1772121586.566669&cid=C09UKEZ2BSS
+     * Altre idee sono state scartate, per il momento lo si sta mantenendo uguale allo step soprastante
+     * per mancanze di idee migliori, nell'ottica che lo si potrà migliorare in un secondo momento. */
     @Then("si ottiene http status code {int}")
     public void verifyHttpStatusCode(int statusCode) {
-        if (List.of(200, 204).contains(statusCode)) Assertions.assertEquals(200, httpCallExecutor.getResponseStatus().value());
+        if (List.of(200, 204).contains(statusCode))
+            Assertions.assertEquals(200, httpCallExecutor.getResponseStatus().value());
         else Assertions.assertEquals(statusCode, httpCallExecutor.getResponseStatus().value());
     }
 
     /* 26 02 2026 idea scartata per risolvere la problematica m2m v3 204 -> 200
-    * https://pagopaspa.slack.com/archives/C09UKEZ2BSS/p1772121592444099?thread_ts=1772121586.566669&cid=C09UKEZ2BSS */
+     * https://pagopaspa.slack.com/archives/C09UKEZ2BSS/p1772121592444099?thread_ts=1772121586.566669&cid=C09UKEZ2BSS */
     @Then("si ottengono i seguenti response status codes: {apiStatuses}")
     public void verifyStatusCodes(Map<ParameterTypes.ApiSpec, Integer> statusCodeMap) {
-        if(apiProfile.getApiMode().equals(ApiProfile.ApiMode.BEST_FIT)) {
+        if (apiProfile.getApiMode().equals(ApiProfile.ApiMode.BEST_FIT)) {
             log.warn("Attenzione: essendo attivata la modalità {} non è garantito che l'ultima call effettuata appartenga al set indicato in configurazione", apiProfile.getApiMode());
         }
 
@@ -136,15 +138,15 @@ public class ClientCommonSteps {
     }
 
     /* DEV. NOTE 12/03/2025: si differenzia da verifyStatusCode(int statusCode) per la verifica
-    * accurata dello status anche in caso di esito positivo, bypassando quindi la normalizzazione
-    * su codice 200. Questo è reso possibile dalla recente aggiunta del metodo
-    * it.pagopa.interop.utils.HttpCallExecutor.performCall(java.util.function.Supplier<T>, java.util.function.Function<T,org.springframework.http.HttpStatus>)
-    * che dà modo di conservare lo status code originale. */
+     * accurata dello status anche in caso di esito positivo, bypassando quindi la normalizzazione
+     * su codice 200. Questo è reso possibile dalla recente aggiunta del metodo
+     * it.pagopa.interop.utils.HttpCallExecutor.performCall(java.util.function.Supplier<T>, java.util.function.Function<T,org.springframework.http.HttpStatus>)
+     * che dà modo di conservare lo status code originale. */
     @Then("si ottiene response status code {int}")
     public void accuratelyVerifyStatusCode(int statusCode) {
         assertThat(httpCallExecutor.getResponseStatus().value())
-            .as("Check HTTP response status risultante da ultima call effettuata attraverso %s", httpCallExecutor.getClass().getSimpleName())
-            .isEqualTo(statusCode);
+                .as("Check HTTP response status risultante da ultima call effettuata attraverso %s", httpCallExecutor.getClass().getSimpleName())
+                .isEqualTo(statusCode);
     }
 
     private ClientSeed createClientSeed(int index) {

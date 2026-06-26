@@ -9,13 +9,17 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplate;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplateDraftUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.PurposeTemplatesApi;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTemplates;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.PurposeTemplateLinkEServiceTemplate;
 import it.pagopa.interop.purpose.service.IM2MV3PurposeTemplateClient;
 import it.pagopa.interop.utils.ApiClientUtils;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.ResponseEntity;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
@@ -67,5 +71,20 @@ public class M2MV3PurposeTemplateClientImpl extends AbstractDPoPClient implement
     public void setHeaders(Map<String, String> headers) {
         this.purposesTemplateApi.setApiClient(
             ApiClientUtils.createApiClient(super.getRestTemplate(), basePath, headers));
+    }
+
+    @Override
+    public ResponseEntity<EServiceTemplates> getPurposeTemplateLinkableEServiceTemplate(UUID purposeTemplateId, int offset, int limit, List<UUID> creatorIds, String eserviceTemplateName) {
+        return purposesTemplateApi.getPurposeTemplateEServiceTemplatesWithHttpInfo(purposeTemplateId, offset, limit, creatorIds, eserviceTemplateName);
+    }
+
+    @Override
+    public ResponseEntity<Object> linkEServiceTemplateToPurposeTemplate(UUID purposeTemplateId, PurposeTemplateLinkEServiceTemplate purposeTemplateLinkEServiceTemplate) {
+        return purposesTemplateApi.addPurposeTemplateEServiceTemplateWithHttpInfo(purposeTemplateId, purposeTemplateLinkEServiceTemplate);
+    }
+
+    @Override
+    public ResponseEntity<Object> unlinkEServiceTemplateFromPurposeTemplate(UUID purposeTemplateId, UUID eServiceTemplateId) {
+        return purposesTemplateApi.removePurposeTemplateEServiceTemplateWithHttpInfo(purposeTemplateId, eServiceTemplateId);
     }
 }
