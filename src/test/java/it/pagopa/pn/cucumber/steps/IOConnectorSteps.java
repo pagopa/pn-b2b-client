@@ -117,9 +117,8 @@ public class IOConnectorSteps {
         try {
             MessageResponse resp = pnIOConnectorClient.sendIOMessage(CLIENT_ID,
                     messageRequest);
-            log.info("profile response: {}", resp);
+            log.info("message response: {}", resp);
             messageResponse = resp;
-
             // If no exception is thrown, assume 200 OK
             actualResponseHttpStatus = HttpStatus.OK;
             // If no exception is thrown, and body is null, assume 204 NO_CONTENT
