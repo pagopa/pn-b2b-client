@@ -321,8 +321,8 @@ public class RicezioneNotificheWebSteps {
                 .filter(Objects::nonNull)
                 .filter(data ->
                         data.getElementId().contains(category) && data.getDetails() != null &&
-                        data.getDetails().getDeliveryDetailCode() != null &&
-                        data.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode))
+                                data.getDetails().getDeliveryDetailCode() != null &&
+                                data.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode))
                 .findFirst();
         Assertions.assertTrue(timelineElement.isPresent(), "The searched category is not present in the timeline!");
     }
@@ -710,12 +710,12 @@ public class RicezioneNotificheWebSteps {
                 sharedSteps.setDestinatariList(List.of(sharedSteps.getDestinatarioRegistry().DESTINATARIO_GHERKIN_SRL));
             }
             case ALDA_MERINI -> {
-                    this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_3);
-                    sharedSteps.setDestinatariList(List.of(sharedSteps.getDestinatarioRegistry().DESTINATARIO_ALDA_MERINI));
+                this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_3);
+                sharedSteps.setDestinatariList(List.of(sharedSteps.getDestinatarioRegistry().DESTINATARIO_ALDA_MERINI));
             }
             case DINO_SAURO -> {
-                    this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_5);
-                    sharedSteps.setDestinatariList(List.of(sharedSteps.getDestinatarioRegistry().DESTINATARIO_DINO_SAURO));
+                this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_5);
+                sharedSteps.setDestinatariList(List.of(sharedSteps.getDestinatarioRegistry().DESTINATARIO_DINO_SAURO));
             }
             default -> throw new IllegalArgumentException();
         }
@@ -849,7 +849,7 @@ public class RicezioneNotificheWebSteps {
                 this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalCourtesyAddressWrapper.ChannelType.PEC, (new AddressVerification().value(addressVerification)), xPagopaPnLanguage);
                 verificationCode = otpCodeService.getNewOtp(destinatario, LegalCourtesyAddressWrapper.ChannelType.PEC);
             }
-            this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalCourtesyAddressWrapper.ChannelType.PEC, (new AddressVerification().value(addressVerification).verificationCode(verificationCode)),xPagopaPnLanguage);
+            this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalCourtesyAddressWrapper.ChannelType.PEC, (new AddressVerification().value(addressVerification).verificationCode(verificationCode)), xPagopaPnLanguage);
         } catch (HttpStatusCodeException httpStatusCodeException) {
             sharedSteps.setNotificationError(httpStatusCodeException);
         }
@@ -1225,15 +1225,17 @@ public class RicezioneNotificheWebSteps {
 
     @And("Viene verificato che non sia arrivato un evento di {string}")
     public void verificaAssenzaElementoTimeline(String categoryToFind) {
-        FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
-        boolean isPresent = fullSentNotification.getTimeline()
-                .stream()
-                .map(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28::getCategory)
-                .filter(Objects::nonNull)
-                .map(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV28::toString)
-                .anyMatch(category -> category.equals(categoryToFind));
-        if (isPresent) {
-            throw new AssertionFailedError("L'evento cercato è stato ritornato!");
+        try {
+            FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+            boolean isPresent = fullSentNotification.getTimeline()
+                    .stream()
+                    .map(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28::getCategory)
+                    .filter(Objects::nonNull)
+                    .map(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV28::toString)
+                    .anyMatch(category -> category.equals(categoryToFind));
+            assertThat(isPresent).as("La ricerca non doveva restituire nessun elemento %s", categoryToFind).isFalse();
+        } catch (AssertionError ae) {
+            sharedSteps.throwAssertionErrorWithIUN(ae);
         }
     }
 

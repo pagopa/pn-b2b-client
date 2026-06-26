@@ -147,7 +147,7 @@ public class TimingForPolling {
         PUBLIC_REGISTRY_VALIDATION_CALL(2, 1),
         PUBLIC_REGISTRY_VALIDATION_RESPONSE(2, 1),
 
-        //v29
+        //V29
         NOTIFICATION_TIMELINE_REWORKED(15, 1);
 
         private final int numCheck;
