@@ -18,7 +18,6 @@ public class RaddHooks {
         this.context = context;
         this.raddAltSteps = raddAltSteps;
     }
-
     @Before("@useRaddVpce")
     public void useRaddVpce() {
         log.info("Using RADD VPCE adapter");

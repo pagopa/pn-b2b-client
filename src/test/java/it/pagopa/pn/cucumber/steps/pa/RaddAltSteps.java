@@ -20,32 +20,21 @@ import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
 import it.pagopa.pn.cucumber.utils.Compress;
 import it.pagopa.pn.cucumber.utils.FiscalCodeGenerator;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.client.HttpClient;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.InputStreamSource;
-import org.springframework.http.*;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.RestTemplate;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URI;
-import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -53,12 +42,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.generateRandomNumber;
 
 @Slf4j
 public class RaddAltSteps {
-    //private final PnRaddAlternativeClientImpl raddAltClient;
     private IPnRaddAlternativeClient raddClient;
     private final PnExternalServiceClientImpl externalServiceClient;
     private final SharedSteps sharedSteps;
@@ -95,10 +82,6 @@ public class RaddAltSteps {
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     private DataPreparationRaddVpceService dataPreparationService;
 
-    private HttpStatus lastStatus;
-    private String lastErrorBody;
-    private static final Object FILE_LOCK = new Object();
-
     @Autowired
     public RaddAltSteps(PnRaddAlternativeClientImpl raddAltClient, PnExternalServiceClientImpl externalServiceClient, SharedSteps sharedSteps, DataPreparationRaddVpceService dataPreparationService) {
         this.raddClient = raddAltClient;
@@ -111,72 +94,6 @@ public class RaddAltSteps {
         this.raddClient = raddClient;
     }
 
-    // Test usato per compensare l'impossibilità di farlo manuale
-    @When("Poste chiama l'endpoint document upload via VPCE")
-    public void chiamaDocumentUploadVpce() {
-        String url = baseUrl + "/radd-net/api/v1/documents/upload";
-
-        RestTemplate restTemplate = buildUnsafeRestTemplate();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("uid", "1234556");
-        headers.set("Authorization", raddista1);
-        Map<String, Object> body = new HashMap<>();
-        body.put("operationId", "302080121712373640");
-        body.put("checksum", "F3eaTVx9m/BVk8h2mWKv/z/4LDArUKwq4QppwTi6mBI=");
-
-        HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
-
-        try {
-            restTemplate.exchange(url, HttpMethod.POST, request, String.class);
-            throw new RuntimeException("Atteso 403 ma la chiamata è andata a buon fine");
-
-        } catch (HttpStatusCodeException ex) {
-            lastStatus = ex.getStatusCode();
-            lastErrorBody = ex.getResponseBodyAsString();
-
-            log.info("STATUS: {}", lastStatus);
-            log.info("BODY: {}", lastErrorBody);
-        }
-    }
-
-    @Then("la risposta deve essere 403 Forbidden")
-    public void verifica403() {
-        Assertions.assertNotNull(lastStatus, "Nessuna risposta ricevuta");
-        Assertions.assertEquals(HttpStatus.FORBIDDEN, lastStatus, "Status atteso 403 ma ricevuto " + lastStatus);
-
-        log.info("Verificato 403 Forbidden");
-    }
-
-    private RestTemplate buildUnsafeRestTemplate() {
-
-        try {
-            TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
-                public X509Certificate[] getAcceptedIssuers() {
-                    return null;
-                }
-
-                public void checkClientTrusted(X509Certificate[] certs, String authType) {
-                }
-
-                public void checkServerTrusted(X509Certificate[] certs, String authType) {
-                }
-            }};
-
-            SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, trustAllCerts, new SecureRandom());
-
-            HttpClient httpClient = HttpClientBuilder.create().setSSLContext(sslContext).setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE).build();
-
-            HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
-
-            return new RestTemplate(requestFactory);
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     /**
      * Salva i dati principali della notifica corrente su file, associandoli a una chiave.

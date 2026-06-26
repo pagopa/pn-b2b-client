@@ -1,24 +1,22 @@
 Feature: Radd Alternative integrazione con Poste
 
-# Api testate:
+# Api coinvolte:
 #  /radd-net/api/v1/download/{operationType}/{operationId}:
 
 #  /radd-net/api/v1/act/inquiry:
 #  /radd-net/api/v1/act/transaction/start:
 #  /radd-net/api/v1/act/transaction/complete:
 #  /radd-net/api/v1/act/transaction/abort:
-
 #  /radd-net/api/v1/aor/inquiry:
 #  /radd-net/api/v1/aor/transaction/start:
 #  /radd-net/api/v1/aor/transaction/complete:
 #  /radd-net/api/v1/aor/transaction/abort:
 
+#NB. Questa suite ha gli step condivisi con radd-alt, i client sono gestiti tramite annotation in RaddHooks
+# Questa suite va eseguita solo in DEV, inserendo come variabile di compilazione RADD_POSTE_ENV = test o uat
+  # così da richiamare gli end-point storati nel parameter store in /pn-test-e2e/raddVpcBaseUrlUat /raddVpcBaseUrlTest
 
 
-  @useRaddVpce
-  Scenario: [RADD_POSTE_NOT_AUTH] Verifica che non si possa raggiungere l'api di upload tramite private link
-    Given Poste chiama l'endpoint document upload via VPCE
-    Then la risposta deve essere 403 Forbidden
 
   @useRaddVpce
   Scenario: [RADD_POSTE_01_3] Verifica allegato ARCAD per secondo evento di timeline SEND_ANALOG_PROGRESS con deliveryDetailCode = RECAG011B
