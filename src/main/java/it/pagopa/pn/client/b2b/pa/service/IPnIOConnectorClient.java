@@ -5,11 +5,10 @@ import org.springframework.web.client.RestClientException;
 
 public interface IPnIOConnectorClient {
 
-    public MessageResponse sendIOMessage(String xPagopaIoconCxId, MessageRequest messageRequest) throws RestClientException;
+    MessageResponse sendIOMessage(String xPagopaIoconCxId, MessageRequest messageRequest) throws RestClientException;
 
-    public GetProfileResponse getIOProfile(String xPagopaIoconCxId, GetProfileRequest getProfileRequest) throws RestClientException;
+    GetProfileResponse getIOProfile(String xPagopaIoconCxId, GetProfileRequest getProfileRequest) throws RestClientException;
 
-    public GetMessageResponse getMessage(String id, String recipientTaxid) throws RestClientException;
-
+    GetMessageResponse getMessage(String id, String recipientTaxId) throws RestClientException;
 
 }
