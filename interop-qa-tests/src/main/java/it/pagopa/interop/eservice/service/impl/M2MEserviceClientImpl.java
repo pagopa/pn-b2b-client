@@ -1,5 +1,6 @@
 package it.pagopa.interop.eservice.service.impl;
 
+import it.pagopa.interop.APIUnavailableException;
 import it.pagopa.interop.common.client.AbstractClient;
 import it.pagopa.interop.common.enums.EntityIdType;
 import it.pagopa.interop.common.operation.SimpleOperation;
@@ -145,6 +146,16 @@ public class M2MEserviceClientImpl extends AbstractClient implements IM2MEservic
     @Override
     public EService patchEServiceDescription(UUID eServiceId, EServiceDescriptionPatchRequest body) {
         return eservicesApi.updatePublishedEServiceDescription(eServiceId, new EServiceDescriptionUpdateSeed().description(body.getDescription()));
+    }
+
+    @Override
+    public EService scheduleArchiveEService(UUID eServiceId, EServiceArchivingRequest body) {
+        throw new APIUnavailableException("Endpoint disponibile solo per M2M v3");
+    }
+
+    @Override
+    public EService cancelScheduleArchiveEService(UUID eServiceId) {
+        throw new APIUnavailableException("Endpoint disponibile solo per M2M v3");
     }
 
     @Override

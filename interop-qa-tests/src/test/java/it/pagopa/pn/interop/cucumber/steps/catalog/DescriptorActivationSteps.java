@@ -3,6 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps.catalog;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import org.springframework.http.ResponseEntity;
 
 public class DescriptorActivationSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
@@ -18,7 +19,17 @@ public class DescriptorActivationSteps {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().activateDescriptor(
-                        sharedStepsContext.getEServicesCommonContext().getEserviceId(), sharedStepsContext.getEServicesCommonContext().getDescriptorId())
+                        sharedStepsContext.getEServicesCommonContext().getEserviceId(), sharedStepsContext.getEServicesCommonContext().getDescriptorId()),
+                ResponseEntity::getStatusCode
+        );
+    }
+
+    @When("l'utente attiva il vecchio descrittore in corso di archiviazione di quell'e-service")
+    public void activeOldDescriptorInArchiving() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getEServiceClient().activateDescriptor(
+                        sharedStepsContext.getEServicesCommonContext().getEserviceId(), sharedStepsContext.getEServicesCommonContext().getOldDescriptorId())
         );
     }
 
@@ -26,8 +37,8 @@ public class DescriptorActivationSteps {
     public void activeEServiceDescriptor(String role, String tenant) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getIdentityService().getToken(tenant, role));
         sharedStepsContext.getHttpCallExecutor().performCall(
-            () -> clientTokenConfigurator.getEServiceClient().activateDescriptor(
-                sharedStepsContext.getEServicesCommonContext().getEserviceId(), sharedStepsContext.getEServicesCommonContext().getDescriptorId())
+                () -> clientTokenConfigurator.getEServiceClient().activateDescriptor(
+                        sharedStepsContext.getEServicesCommonContext().getEserviceId(), sharedStepsContext.getEServicesCommonContext().getDescriptorId())
         );
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
     }
@@ -36,7 +47,7 @@ public class DescriptorActivationSteps {
     @When("l'utente {string} di {string} attiva il descrittore di quell'e-service con successo")
     public void successfullyActiveEServiceDescriptor(String role, String tenant) {
         activeEServiceDescriptor(role, tenant);
-        if(sharedStepsContext.getHttpCallExecutor().getResponseStatus().isError()) {
+        if (sharedStepsContext.getHttpCallExecutor().getResponseStatus().isError()) {
             throw new IllegalStateException("L'attivazione del descrittore dell'e-service non ha avuto successo");
         }
     }

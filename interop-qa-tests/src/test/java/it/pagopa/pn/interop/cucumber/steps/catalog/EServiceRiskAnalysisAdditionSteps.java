@@ -52,7 +52,16 @@ public class EServiceRiskAnalysisAdditionSteps {
 
     @When("l'utente aggiunge un'analisi del rischio")
     public void addRiskAnalysis() {
-        addRiskAnalysisByTenantKind(sharedStepsContext.getTenantType());
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        RiskAnalysis eServiceRiskAnalysisSeed = dataPreparationService.getRiskAnalysis(sharedStepsContext.getTenantType(), true);
+        httpCallExecutor.performCall(
+                () -> clientTokenConfigurator.getEServiceClient().addRiskAnalysisToEService(
+                        eServicesCommonContext.getEserviceId(),
+                        new EServiceRiskAnalysisSeed()
+                                .name(eServiceRiskAnalysisSeed.getName())
+                                .riskAnalysisForm(eServiceRiskAnalysisSeed.getRiskAnalysisForm())
+                )
+        );
     }
 
     @When("l'utente aggiunge con successo un'analisi del rischio coerente con il tenant kind {string}")

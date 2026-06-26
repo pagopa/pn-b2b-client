@@ -9,7 +9,9 @@ public enum DynamoTableName {
     NOTIFICATION_DELIVERY_COST("pn-NotificationDeliveryCost"),
     ONBOARD_INSTITUTIONS("pn-OnboardInstitutions"),
     PN_USER_ATTRIBUTES("pn-UserAttributes"),
-    IO_CONNECTOR_REQUESTS("pn-IOConnectorRequests");
+    IO_CONNECTOR_REQUESTS("pn-IOConnectorRequests"),
+    BATCH_REQUESTS_WITH_INDEX_SEND_STATUS("pn-batchRequests"),
+    BATCH_REQUESTS_WITH_INDEX_STATUS("pn-batchRequests");
 
     private final String value;
 
