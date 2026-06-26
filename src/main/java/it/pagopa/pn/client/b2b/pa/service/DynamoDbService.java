@@ -9,6 +9,7 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
+import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -17,7 +18,11 @@ public class DynamoDbService {
     private final DynamoDbClient dynamoDbClient;
 
     public QueryResponse call(DynamoTableName tableName, Map<String, AttributeValue> attributeValues) {
-        QueryRequest queryRequest = switch (tableName) {
+        return dynamoDbClient.query(buildRequest(tableName, attributeValues));
+    }
+
+    private static QueryRequest buildRequest(DynamoTableName tableName, Map<String, AttributeValue> attributeValues) {
+        return switch (tableName) {
             case TIMELINE -> buildTimelinesCategoryRequest(attributeValues);
             case PAYMENT_INFO -> buildPaymentInfoRequest(attributeValues);
             case NOTIFICATION_DELIVERY_COST -> buildNotificationDeliveryCostRequest(attributeValues);
@@ -27,8 +32,9 @@ public class DynamoDbService {
             case COST_COMPONENTS -> buildCostComponentsRequest(attributeValues);
             case COST_UPDATE_RESULT -> buildCostUpdateResultRequest(attributeValues);
             case USER_ATTRIBUTES -> buildUserAttributesInfoRequest(attributeValues);
+            case BATCH_REQUESTS_WITH_INDEX_SEND_STATUS -> buildBatchRequestsBySendStatusAndLastReservedAfter(attributeValues);
+            case BATCH_REQUESTS_WITH_INDEX_STATUS -> buildBatchRequestsByStatus(attributeValues);
         };
-        return dynamoDbClient.query(queryRequest);
     }
 
     private static QueryRequest buildTimelinesCategoryRequest(Map<String, AttributeValue> attributeValues) {
@@ -85,5 +91,43 @@ public class DynamoDbService {
         return DynamoQueryBuilder.withoutFilter(DynamoTableName.COST_UPDATE_RESULT.getValue(),
                 "pk = :v_pk",
                 attributeValues);
+    }
+
+    // added for cases when the result might be paginated:
+    // a DynamoDB query returns at most 1 MB per page, so the SDK paginator is used
+    // to transparently fetch and flatten all pages.
+    public List<Map<String, AttributeValue>> callAllPages(
+            DynamoTableName tableName,
+            Map<String, AttributeValue> attributeValues
+    ) {
+        QueryRequest baseRequest = buildRequest(tableName, attributeValues);
+        return dynamoDbClient.queryPaginator(baseRequest)
+                .items()
+                .stream()
+                .toList();
+    }
+
+    private static QueryRequest buildBatchRequestsBySendStatusAndLastReservedAfter(
+            Map<String, AttributeValue> attributeValues) {
+
+        return DynamoQueryBuilder.withIndex(
+                DynamoTableName.BATCH_REQUESTS_WITH_INDEX_SEND_STATUS.getValue(),
+                "sendStatus = :v_sendStatus",
+                "lastReserved > :v_lastReserved",
+                attributeValues,
+                "sendStatus-lastReserved-index"
+        );
+    }
+
+    private static QueryRequest buildBatchRequestsByStatus(
+            Map<String, AttributeValue> attributeValues) {
+
+        return DynamoQueryBuilder.withIndex(
+                DynamoTableName.BATCH_REQUESTS_WITH_INDEX_STATUS.getValue(),
+                "status = :v_status",
+                "lastReserved > :v_lastReserved",
+                attributeValues,
+                "status-index"
+        );
     }
 }

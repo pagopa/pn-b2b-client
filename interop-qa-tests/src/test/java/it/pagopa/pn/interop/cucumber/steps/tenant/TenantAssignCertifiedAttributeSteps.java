@@ -2,12 +2,15 @@ package it.pagopa.pn.interop.cucumber.steps.tenant;
 
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
+import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedTenantAttributeSeed;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.UUID;
 
+@Slf4j
 public class TenantAssignCertifiedAttributeSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
@@ -34,11 +37,13 @@ public class TenantAssignCertifiedAttributeSteps {
                 )
         );
 
-        sharedStepsContext.getPollingService().makePolling(
-                () -> clientTokenConfigurator.getTenantsApi().getCertifiedAttributes(tenantId),
-                res -> res.getAttributes().stream().anyMatch(attr -> attr.getId().equals(lastAttributeId)),
-                "There was an error while retrieving the attributes"
-        );
+        if(sharedStepsContext.getHttpCallExecutor().getResponseStatus().is2xxSuccessful()){
+            sharedStepsContext.getPollingService().makePolling(
+                    () -> clientTokenConfigurator.getTenantsApi().getCertifiedAttributes(tenantId),
+                    res -> res.getAttributes().stream().anyMatch(attr -> attr.getId().equals(lastAttributeId)),
+                    "There was an error while retrieving the attributes"
+            );
+        }
     }
 
     @When("l'utente assegna a {string} gli attributi certificati precedentemente creati")

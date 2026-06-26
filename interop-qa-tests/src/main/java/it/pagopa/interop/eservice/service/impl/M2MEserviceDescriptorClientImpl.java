@@ -1,5 +1,6 @@
 package it.pagopa.interop.eservice.service.impl;
 
+import it.pagopa.interop.APIUnavailableException;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.common.client.AbstractClient;
 import it.pagopa.interop.common.enums.EntityIdType;
@@ -162,6 +163,12 @@ public class M2MEserviceDescriptorClientImpl extends AbstractClient implements I
     }
 
     @Override
+    public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor suspendDescriptor(
+        UUID eServiceId, UUID descriptorId) {
+        return this.eservicesApi.suspendDescriptor(eServiceId, descriptorId);
+    }
+
+    @Override
     public void unsuspendEService(UUID eServiceId, UUID descriptorId) {
         this.eservicesApi.unsuspendDescriptor(eServiceId, descriptorId);
     }
@@ -175,6 +182,18 @@ public class M2MEserviceDescriptorClientImpl extends AbstractClient implements I
     @Override
     public Documents getDocuments(UUID eserviceId, UUID descriptorId) {
         return this.eservicesApi.getEServiceDescriptorDocuments(eserviceId, descriptorId, 0, 50);
+    }
+
+    @Override
+    public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor scheduleArchiveEServiceDescriptor(
+        UUID eserviceId, UUID descriptorId) {
+        throw new APIUnavailableException("Endpoint disponibile solo per M2M v3");
+    }
+
+    @Override
+    public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor cancelEServiceDescriptorArchiving(
+        UUID eserviceId, UUID descriptorId) {
+        throw new APIUnavailableException("Endpoint disponibile solo per M2M v3");
     }
 
     @Override

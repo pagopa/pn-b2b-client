@@ -12,7 +12,9 @@ public enum DynamoTableName {
     REWORKED_TIMELINES_FOR_INVOICING("pn-ReworkedTimelinesForInvoicing"),
     COST_COMPONENTS("pn-CostComponents"),
     COST_UPDATE_RESULT("pn-CostUpdateResult"),
-    USER_ATTRIBUTES("pn-UserAttributes");
+    USER_ATTRIBUTES("pn-UserAttributes"),
+    BATCH_REQUESTS_WITH_INDEX_SEND_STATUS("pn-batchRequests"),
+    BATCH_REQUESTS_WITH_INDEX_STATUS("pn-batchRequests");
 
     private final String value;
 
