@@ -1,6 +1,5 @@
 package it.pagopa.pn.cucumber.steps;
 
-import io.cucumber.java.PendingException;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -117,9 +116,8 @@ public class IOConnectorSteps {
         try {
             MessageResponse resp = pnIOConnectorClient.sendIOMessage(CLIENT_ID,
                     messageRequest);
-            log.info("profile response: {}", resp);
+            log.info("message response: {}", resp);
             messageResponse = resp;
-
             // If no exception is thrown, assume 200 OK
             actualResponseHttpStatus = HttpStatus.OK;
             // If no exception is thrown, and body is null, assume 204 NO_CONTENT
