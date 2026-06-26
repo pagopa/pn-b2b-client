@@ -22,7 +22,7 @@ import org.springframework.web.client.RestClientException;
 
 @Slf4j
 @Component
-@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class PnRaddVpceAdapter implements IPnRaddAlternativeClient {
 
     private final PnRaddNetVpceClientImpl vpceClient;
@@ -33,7 +33,7 @@ public class PnRaddVpceAdapter implements IPnRaddAlternativeClient {
 
     @Override
     public ActInquiryResponse actInquiry(String uid, String recipientTaxId, String recipientType, String qrCode, String iun) {
-        log.info(">>> USING VPCE ADAPTER - actInquiry");
+        log.info("USING VPCE ADAPTER - actInquiry");
 
         var vpce = vpceClient.actInquiry(uid, recipientTaxId, recipientType, qrCode, iun);
 
@@ -51,12 +51,12 @@ public class PnRaddVpceAdapter implements IPnRaddAlternativeClient {
 
     @Override
     public RequestResponse retrieveRequestItems(String uid, String requestId, Integer limit, String lastKey) throws RestClientException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public RegistryUploadResponse uploadRegistryRequests(String uid, RegistryUploadRequest registryUploadRequest) throws RestClientException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -66,7 +66,7 @@ public class PnRaddVpceAdapter implements IPnRaddAlternativeClient {
 
     @Override
     public CreateRegistryResponse addRegistry(String uid, CreateRegistryRequest createRegistryRequest) throws RestClientException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -76,7 +76,7 @@ public class PnRaddVpceAdapter implements IPnRaddAlternativeClient {
 
     @Override
     public RegistriesResponse retrieveRegistries(String uid, Integer limit, String lastKey, String cap, String city, String pr, String externalCode) throws RestClientException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -86,7 +86,7 @@ public class PnRaddVpceAdapter implements IPnRaddAlternativeClient {
 
     @Override
     public AbortTransactionResponse abortActTransaction(String uid, AbortTransactionRequest request) {
-        log.info(">>> USING VPCE ADAPTER - abortActTransaction");
+        log.info("USING VPCE ADAPTER - abortActTransaction");
 
         var vpceRequest = objectMapper.convertValue(request, it.pagopa.pn.client.b2b.radd.generated.openapi.clients.vpce.model_RaddNetVpce.AbortTransactionRequest.class);
         var vpceResponse = vpceClient.abortActTransaction(uid, vpceRequest);
@@ -95,7 +95,7 @@ public class PnRaddVpceAdapter implements IPnRaddAlternativeClient {
 
     @Override
     public CompleteTransactionResponse completeActTransaction(String uid, CompleteTransactionRequest request) {
-        log.info(">>> USING VPCE ADAPTER - completeActTransaction");
+        log.info("USING VPCE ADAPTER - completeActTransaction");
 
         var vpceRequest = objectMapper.convertValue(request, it.pagopa.pn.client.b2b.radd.generated.openapi.clients.vpce.model_RaddNetVpce.CompleteTransactionRequest.class);
         var vpceResponse = vpceClient.completeActTransaction(uid, vpceRequest);
@@ -104,7 +104,7 @@ public class PnRaddVpceAdapter implements IPnRaddAlternativeClient {
 
     @Override
     public StartTransactionResponse startActTransaction(String uid, ActStartTransactionRequest request) {
-        log.info(">>> USING VPCE ADAPTER - startActTransaction");
+        log.info("USING VPCE ADAPTER - startActTransaction");
 
         var vpceRequest = objectMapper.convertValue(request, it.pagopa.pn.client.b2b.radd.generated.openapi.clients.vpce.model_RaddNetVpce.ActStartTransactionRequest.class);
         var vpceResponse = vpceClient.startActTransaction(uid, vpceRequest);
@@ -113,7 +113,7 @@ public class PnRaddVpceAdapter implements IPnRaddAlternativeClient {
 
     @Override
     public AORInquiryResponse aorInquiry(String uid, String recipientTaxId, String recipientType) {
-        log.info(">>> USING VPCE ADAPTER - aorInquiry");
+        log.info("USING VPCE ADAPTER - aorInquiry");
 
         var vpceResponse = vpceClient.aorInquiry(uid, recipientTaxId, recipientType);
         return objectMapper.convertValue(vpceResponse, it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model.AORInquiryResponse.class);
@@ -121,7 +121,7 @@ public class PnRaddVpceAdapter implements IPnRaddAlternativeClient {
 
     @Override
     public it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model.StartTransactionResponse startAorTransaction(String uid, AorStartTransactionRequest request) throws RestClientException {
-        log.info(">>> USING VPCE ADAPTER - startAorTransaction");
+        log.info("USING VPCE ADAPTER - startAorTransaction");
 
         var vpceRequest = objectMapper.convertValue(request, it.pagopa.pn.client.b2b.radd.generated.openapi.clients.vpce.model_RaddNetVpce.AorStartTransactionRequest.class);
         var vpceResponse = vpceClient.startAorTransaction(uid, vpceRequest);
@@ -130,7 +130,7 @@ public class PnRaddVpceAdapter implements IPnRaddAlternativeClient {
 
     @Override
     public CompleteTransactionResponse completeAorTransaction(String uid, CompleteTransactionRequest request) throws RestClientException {
-        log.info(">>> USING VPCE ADAPTER - completeAorTransaction");
+        log.info("USING VPCE ADAPTER - completeAorTransaction");
 
         var vpceRequest = objectMapper.convertValue(request, it.pagopa.pn.client.b2b.radd.generated.openapi.clients.vpce.model_RaddNetVpce.CompleteTransactionRequest.class);
         var vpceResponse = vpceClient.completeAorTransaction(uid, vpceRequest);
@@ -139,7 +139,7 @@ public class PnRaddVpceAdapter implements IPnRaddAlternativeClient {
 
     @Override
     public AbortTransactionResponse abortAorTransaction(String uid, AbortTransactionRequest request) throws RestClientException {
-        log.info(">>> USING VPCE ADAPTER - abortAorTransaction");
+        log.info("USING VPCE ADAPTER - abortAorTransaction");
 
         var vpceRequest = objectMapper.convertValue(request, it.pagopa.pn.client.b2b.radd.generated.openapi.clients.vpce.model_RaddNetVpce.AbortTransactionRequest.class);
         var vpceResponse = vpceClient.abortAorTransaction(uid, vpceRequest);
@@ -148,47 +148,47 @@ public class PnRaddVpceAdapter implements IPnRaddAlternativeClient {
 
     @Override
     public DocumentUploadResponse documentUpload(String uid, DocumentUploadRequest documentUploadRequest) throws RestClientException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public OperationsActDetailsResponse getActPracticesByInternalId(String internalId, FilterRequest filterRequest) throws RestClientException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public OperationsResponse getActPracticesByIun(String iun) throws RestClientException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public OperationActResponse getActTransactionByOperationId(String transactionId) throws RestClientException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public OperationsAorDetailsResponse getAorPracticesByInternalId(String internalId, FilterRequest filterRequest) throws RestClientException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public OperationsResponse getAorPracticesByIun(String iun) throws RestClientException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public OperationAorResponse getAorTransactionByOperationId(String transactionId) throws RestClientException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean setAuthTokenRadd(AuthTokenRaddType bearerToken) {
-        return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public AuthTokenRaddType getAuthTokenRaddSetted() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 }
 

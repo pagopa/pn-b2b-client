@@ -97,7 +97,7 @@ public class RaddAltSteps {
 
     /**
      * Salva i dati principali della notifica corrente su file, associandoli a una chiave.
-     * il file è salvato in C:\Users\tranieri\IdeaProjects\pn-b2b-client\target\output\
+     * il file è salvato in locale sotto l'url "\IdeaProjects\pn-b2b-client\target\output\"
      * Questo step serve per "memorizzare" i dati prodotti in uno scenario (IUN, CF, RecipientType, qrCode)
      * per poterli riutilizzare successivamente in altri scenari.
      * - La chiave deve essere univoca (tipicamente il nome dello scenario o un identificativo)
@@ -503,11 +503,11 @@ public class RaddAltSteps {
         this.operationId = this.operationId == null ? generateRandomNumber() : this.operationId;
         AorStartTransactionRequest request = new AorStartTransactionRequest().operationId(this.operationId).recipientTaxId(this.currentUserCf).recipientType(this.recipientType.equalsIgnoreCase("PF") ? AorStartTransactionRequest.RecipientTypeEnum.PF : AorStartTransactionRequest.RecipientTypeEnum.PG).operationDate(dateTimeFormatter.format(OffsetDateTime.now()));
 
-        log.info(">>> AOR VPCE REQUEST: {}", request);
+        log.info("AOR VPCE REQUEST: {}", request);
 
         this.aorStartTransactionResponse = raddClient.startAorTransaction(this.uid, request);
 
-        log.info(">>> AOR VPCE RESPONSE: {}", aorStartTransactionResponse);
+        log.info("AOR VPCE RESPONSE: {}", aorStartTransactionResponse);
     }
 
     @Then("Vengono recuperati gli aar delle notifiche in stato irreperibile della persona (fisica)(giuridica) 2 volte su radd alternative")

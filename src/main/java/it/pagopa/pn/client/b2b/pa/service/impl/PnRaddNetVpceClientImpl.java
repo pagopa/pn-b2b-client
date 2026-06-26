@@ -31,7 +31,7 @@ import javax.net.ssl.SSLContext;
 
 @Slf4j
 @Component
-@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class PnRaddNetVpceClientImpl {
 
     private final ActOperationsApi actApi;
@@ -51,7 +51,7 @@ public class PnRaddNetVpceClientImpl {
     }
 
     public ActInquiryResponse actInquiry(String uid, String recipientTaxId, String recipientType, String qrCode, String iun) {
-        log.info(">>> CALLING VPCE CLIENT - actInquiry");
+        log.info("CALLING VPCE CLIENT - actInquiry");
         return actApi.actInquiry(uid, recipientTaxId, recipientType, qrCode, iun);
     }
 
@@ -84,37 +84,37 @@ public class PnRaddNetVpceClientImpl {
     }
 
     public it.pagopa.pn.client.b2b.radd.generated.openapi.clients.vpce.model_RaddNetVpce.StartTransactionResponse startActTransaction(String uid, it.pagopa.pn.client.b2b.radd.generated.openapi.clients.vpce.model_RaddNetVpce.ActStartTransactionRequest request) {
-        log.info(">>> CALLING VPCE CLIENT - startActTransaction");
+        log.info("CALLING VPCE CLIENT - startActTransaction");
 
         return actApi.startActTransaction(uid, request);
     }
 
     public it.pagopa.pn.client.b2b.radd.generated.openapi.clients.vpce.model_RaddNetVpce.CompleteTransactionResponse completeActTransaction(String uid, it.pagopa.pn.client.b2b.radd.generated.openapi.clients.vpce.model_RaddNetVpce.CompleteTransactionRequest request) {
-        log.info(">>> CALLING VPCE CLIENT - completeActTransaction");
+        log.info("CALLING VPCE CLIENT - completeActTransaction");
 
         return actApi.completeActTransaction(uid, request);
     }
 
     public it.pagopa.pn.client.b2b.radd.generated.openapi.clients.vpce.model_RaddNetVpce.StartTransactionResponse startAorTransaction(String uid, it.pagopa.pn.client.b2b.radd.generated.openapi.clients.vpce.model_RaddNetVpce.AorStartTransactionRequest request) {
-        log.info(">>> CALLING VPCE CLIENT - startAorTransaction");
+        log.info("CALLING VPCE CLIENT - startAorTransaction");
 
         return aorApi.startAorTransaction(uid, request);
     }
 
     public it.pagopa.pn.client.b2b.radd.generated.openapi.clients.vpce.model_RaddNetVpce.CompleteTransactionResponse completeAorTransaction(String uid, it.pagopa.pn.client.b2b.radd.generated.openapi.clients.vpce.model_RaddNetVpce.CompleteTransactionRequest request) {
-        log.info(">>> CALLING VPCE CLIENT - completeAorTransaction");
+        log.info("CALLING VPCE CLIENT - completeAorTransaction");
 
         return aorApi.completeAorTransaction(uid, request);
     }
 
     public it.pagopa.pn.client.b2b.radd.generated.openapi.clients.vpce.model_RaddNetVpce.AbortTransactionResponse abortAorTransaction(String uid, it.pagopa.pn.client.b2b.radd.generated.openapi.clients.vpce.model_RaddNetVpce.AbortTransactionRequest request) {
-        log.info(">>> CALLING VPCE CLIENT - abortAorTransaction");
+        log.info("CALLING VPCE CLIENT - abortAorTransaction");
 
         return aorApi.abortAorTransaction(uid, request);
     }
 
     public it.pagopa.pn.client.b2b.radd.generated.openapi.clients.vpce.model_RaddNetVpce.AbortTransactionResponse abortActTransaction(String uid, it.pagopa.pn.client.b2b.radd.generated.openapi.clients.vpce.model_RaddNetVpce.AbortTransactionRequest request) {
-        log.info(">>> CALLING VPCE CLIENT - abortActTransaction");
+        log.info("CALLING VPCE CLIENT - abortActTransaction");
 
         return actApi.abortActTransaction(uid, request);
     }
