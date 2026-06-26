@@ -3142,3 +3142,123 @@ Feature: Test API of e-service template
     And si ottiene response status code 200
     When l'utente aggiorna la descrizione dell'e-service template in stato PUBLISHED con una descrizione di 401 caratteri
     Then si ottiene response status code 400
+
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
+  Scenario: [CERT_DISCRETE_ATTR_ESERVICE_TEMPL_1] Configurazione e associazione con successo di attributi certificati discreti
+  a un template e-service in stato DRAFT (logiche OR e AND incluse)
+
+    Given l'utente è un "admin" di "PA1"
+    And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
+    And l'utente "PA1" possiede almeno un attributo certificato discreto
+    When l'utente è un "admin" di "PA2"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente tenta di aggiungere i seguenti attributi alla versione dell'e-service template:
+      | kind               | group | comparator | value   |
+      | CERTIFIED_DISCRETE | 0     | GTE        | 1000000 |
+      | CERTIFIED          | 0     |            |         |
+      | CERTIFIED          | 1     |            |         |
+      | CERTIFIED_DISCRETE | 1     | GTE        | 500000  |
+      | CERTIFIED          | 1     |            |         |
+      | DECLARED           | 0     |            |         |
+    And si ottiene response status code 200
+    Then gli attributi del template e-service hanno la seguente configurazione:
+      | kind               | group | comparator | value   |
+      | CERTIFIED_DISCRETE | 0     | GTE        | 1000000 |
+      | CERTIFIED          | 0     |            |         |
+      | CERTIFIED          | 1     |            |         |
+      | CERTIFIED_DISCRETE | 1     | GTE        | 500000  |
+      | CERTIFIED          | 1     |            |         |
+      | DECLARED           | 0     |            |         |
+
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
+  Scenario: [CERT_DISCRETE_ATTR_ESERVICE_TEMPL_2] La modifica della soglia e del comparatore di un attributo certificato discreto
+  su un template e-service già pubblicato non va a buon fine.
+
+    Given l'utente è un "admin" di "PA1"
+    And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
+    And l'utente "PA1" possiede almeno un attributo certificato discreto
+    And l'utente è un "admin" di "PA2"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente tenta di aggiungere i seguenti attributi alla versione dell'e-service template:
+      | kind               | group | comparator | value   |
+      | CERTIFIED_DISCRETE | 0     | GTE        | 1000000 |
+    And si ottiene response status code 200
+    And gli attributi del template e-service hanno la seguente configurazione:
+      | kind               | group | comparator | value   |
+      | CERTIFIED_DISCRETE | 0     | GTE        | 1000000 |
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+    And l'utente effettua la pubblicazione dell'e-service template
+    And l'e-service template è in stato di PUBLISHED
+    When l'utente modifica il primo attributo certificato discreto nel primo gruppo degli attributi certificati con discrete threshold 10 e discrete comparator a "LT"
+    Then si ottiene response status code 400
+
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
+  Scenario: [CERT_DISCRETE_ATTR_ESERVICE_TEMPL_NO_DUPLICATED] Un e-service template in stato DRAFT non può avere lo stesso
+  attributo certificato discreto nello stesso gruppo (logiche OR non consentite).
+
+    Given l'utente è un "admin" di "PA1"
+    And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
+    And l'utente "PA1" possiede almeno un attributo certificato discreto
+    When l'utente è un "admin" di "PA2"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    When l'utente tenta di aggiungere i seguenti attributi alla versione dell'e-service template:
+      | kind               | group | comparator | value   |
+      | CERTIFIED_DISCRETE | 0     | GTE        | 1000000 |
+      | CERTIFIED_DISCRETE | 0     | LTE        | 2000000 |
+    Then si ottiene response status code 400
+
+  @sad-path
+  @e-service-template-version-activate
+  @adeguamento-analisi-rischio
+  Scenario Outline: [INTEROP-EST-TK-01] A seguito del cambiamento di tenant kind si tenta di ri-attivare un e-service template
+    Given l'utente è un "admin" di "<ente>"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di SUSPENDED
+    And il tenant kind dell'ente "<ente>" viene impostato a "<kind>"
+    When l'utente tenta la riattivazione della versione dell'e-service template
+    Then si ottiene response status code 204
+    And la riattivazione della versione dell'e-service template è stata effettuata correttamente
+    Examples:
+      | ente    | kind        |
+      | PA4     | PRIVATE     |
+      | PA4     | GSP         |
+      | GSP2    | PA          |
+      | Privato | PA          |
+
+  @happy-path
+  @e-service-template-receive-bff
+  @e-service-template-riskAnalysis-update
+  @adeguamento-analisi-rischio
+  Scenario Outline: [INTEROP-EST-TK-02] A seguito del cambiamento di tenant kind si tenta modificare la risk analysis dell'e-service template
+    Given l'utente è un "admin" di "<ente>"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    And il tenant kind dell'ente "<ente>" viene impostato a "<kind>"
+    When l'utente tenta la modifica della risk analysis dell'e-service template indicandone una coerente con il tenant kind "<kind>"
+    Then si ottiene response status code 204
+    And la modifica della risk analysis dell'e-service è stata effettuata correttamente
+    Examples:
+      | ente    | kind        |
+      | PA4     | PRIVATE     |
+      | PA4     | GSP         |
+      | GSP2    | PA          |
+      | Privato | PA          |
+
+  @happy-path
+  @e-service-template-receive-bff
+  @e-service-template-riskAnalysis-update
+  @adeguamento-analisi-rischio
+  Scenario Outline: [INTEROP-EST-TK-03] A seguito del cambiamento di tenant kind si tenta di eliminare la risk analysis dell'e-service template
+    Given l'utente è un "admin" di "<ente>"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
+    And il tenant kind dell'ente "<ente>" viene impostato a "<kind>"
+    When l'utente tenta la cancellazione della risk analysis dell'e-service template
+    Then si ottiene response status code 200
+    And la cancellazione della risk analysis dell'e-service è stata effettuata correttamente
+    Examples:
+      | ente    | kind        |
+      | PA4     | PRIVATE     |
+      | PA4     | GSP         |
+      | GSP2    | PA          |
+      | Privato | PA          |

@@ -99,8 +99,28 @@ public class EServiceApiClientImpl implements IEServiceClient {
     }
 
     @Override
-    public void suspendDescriptor(UUID eServiceId, UUID descriptorId) {
-        eservicesApi.suspendDescriptor(eServiceId, descriptorId);
+    public ResponseEntity<Void> suspendDescriptor(UUID eServiceId, UUID descriptorId) {
+        return eservicesApi.suspendDescriptorWithHttpInfo(eServiceId, descriptorId);
+    }
+
+    @Override
+    public ResponseEntity<Void> scheduleArchiveDescriptor(UUID eServiceId, UUID descriptorId) {
+        return eservicesApi.scheduleArchiveEserviceDescriptorWithHttpInfo(eServiceId, descriptorId);
+    }
+
+    @Override
+    public ResponseEntity<Void> scheduleArchiveEService(UUID eServiceId, EServiceArchivingReasonSeed eserviceArchivingReasonSeed) {
+        return eservicesApi.scheduleArchiveEserviceWithHttpInfo(eServiceId, eserviceArchivingReasonSeed);
+    }
+
+    @Override
+    public ResponseEntity<Void> cancelDescriptorArchiving(UUID eServiceId, UUID descriptorId) {
+        return eservicesApi.cancelEServiceDescriptorArchivingWithHttpInfo(eServiceId, descriptorId);
+    }
+
+    @Override
+    public ResponseEntity<Void> cancelEServiceArchiving(UUID eServiceId) {
+        return eservicesApi.cancelScheduleArchiveEserviceWithHttpInfo(eServiceId);
     }
 
     @Override
