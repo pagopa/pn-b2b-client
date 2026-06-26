@@ -63,7 +63,7 @@
         <open.api.version.external.channels>develop</open.api.version.external.channels>
         <open.api.version.external.registries>v2.4.1</open.api.version.external.registries>
         <open.api.version.paper.channel>develop</open.api.version.paper.channel>
-        <open.api.version.external.bff>refs/heads/develop</open.api.version.external.bff>
+        <open.api.version.external.bff>v1.19.0</open.api.version.external.bff>
     </properties>
 
     <dependencies>
