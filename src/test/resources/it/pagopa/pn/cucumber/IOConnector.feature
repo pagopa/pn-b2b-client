@@ -67,18 +67,18 @@ Feature: connettore app IO per invio messaggi di cortesia per comunicazioni bona
   #----- SCENARIO 5 --------------------------------
 
   @comunicazione-orchestratore-io
-  Scenario: [IO_CONNECTOR_5.1.1] Recupero dettagli messaggio messaggio di cortesia per comunicazione bonaria da app IO OK
+  Scenario: [IO_CONNECTOR_5.1.1] Recupero dettagli messaggio di cortesia per comunicazione bonaria da app IO OK
     Given come app IO tento il recupero dettagli messaggio con requestID valido e CF destinatario: "PF-b7e52cf2-95d4-4dfc-ad47-5d6f7073d6e2"
     Then verifico che si ottenga una response di "OK"
     Then verifico che la lista dettagli allegati sia non vuota
 
   @comunicazione-orchestratore-io
-  Scenario: [IO_CONNECTOR_5.1.2] Recupero dettagli messaggio messaggio di cortesia da app IO con CF destinatario errato
+  Scenario: [IO_CONNECTOR_5.1.2] Recupero dettagli messaggio di cortesia da app IO con CF destinatario errato
     Given come app IO tento il recupero dettagli messaggio con requestID valido e CF destinatario: "non-valid-taxId"
     Then verifico che si ottenga una response di "NOT FOUND"
 
   @comunicazione-orchestratore-io
-  Scenario Outline: [IO_CONNECTOR_5.1.3] Recupero dettagli messaggio messaggio di cortesia da app IO con request malformata
+  Scenario Outline: [IO_CONNECTOR_5.1.3] Recupero dettagli messaggio di cortesia da app IO con request malformata
     Given come app IO tento il recupero dettagli messaggio con requestID: "<requestId>" e CF destinatario: "<recipientTaxId>"
     Then verifico che si ottenga una response di "BAD REQUEST"
     Examples:
