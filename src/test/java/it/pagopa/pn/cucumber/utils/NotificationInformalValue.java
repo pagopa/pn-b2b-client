@@ -73,8 +73,6 @@ public enum NotificationInformalValue {
     PHYSICAL_ADDRESS_MUNICIPALITY_DETAILS("physical_address_municipality_details", null, false),
     PHYSICAL_ADDRESS_STATE("physical_address_state", "ITALIA", false);
 
-
-
     private static final String NULL_VALUE = "NULL";
     private static final Integer NOTICE_CODE_LENGTH = 18;
 

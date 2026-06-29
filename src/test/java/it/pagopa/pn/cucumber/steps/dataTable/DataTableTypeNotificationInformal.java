@@ -16,6 +16,7 @@ public class DataTableTypeNotificationInformal {
     public NewMessageRequest newMessageRequest(Map<String, String> data) {
         return mapper.buildNewMessageRequest(data);
     }
+
     //NewInformalNotificationApi
     @DataTableType
     public InformalNotificationRequestV1 informalNotificationRequest(Map<String, String> data) {

@@ -18,20 +18,16 @@ import java.util.UUID;
 
 @Component()
 //@ConditionalOnProperty(name = IPnPaB2bClient.IMPLEMENTATION_TYPE_PROPERTY, havingValue = "internal")
+//@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)  todo t bonarie
 public class PnPaB2bInternalInformalClientImpl {
     private final String paId;
     private final String operatorId;
-
     private final MessagesApi messagesApi;
     private final SenderReadInformalNotificationB2BApi senderReadInformalNotificationB2BApi;
     private final NewInformalNotificationApi newInformalNotificationApi;
     private final InformalNotificationTerminationApi informalNotificationTerminationApi;
-
     private final InternalOnlyApi internalOnlyApi;
-
     private final List<String> groups;
-
-    //private String cxId;
 
     public PnPaB2bInternalInformalClientImpl(
             RestTemplate restTemplate,
@@ -41,17 +37,11 @@ public class PnPaB2bInternalInformalClientImpl {
         this.paId = paId;
         this.operatorId = "TestMv";
         this.groups = Collections.emptyList();
-
         this.messagesApi = new MessagesApi(newInformalApiClient(restTemplate, deliveryBasePath));
         this.senderReadInformalNotificationB2BApi = new SenderReadInformalNotificationB2BApi(newInformalApiClient(restTemplate, deliveryBasePath));
         this.newInformalNotificationApi = new NewInformalNotificationApi(newInformalApiClient(restTemplate, deliveryBasePath));
         this.informalNotificationTerminationApi = new InformalNotificationTerminationApi();
-
-        this.internalOnlyApi =
-                new InternalOnlyApi(newPrivateDeliveryApiClient(restTemplate, deliveryBasePath));
-
-
-
+        this.internalOnlyApi = new InternalOnlyApi(newPrivateDeliveryApiClient(restTemplate, deliveryBasePath));
     }
 
     private static it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.ApiClient newInformalApiClient(RestTemplate restTemplate, String basePath) {
@@ -59,7 +49,6 @@ public class PnPaB2bInternalInformalClientImpl {
         newApiClient.setBasePath(basePath);
         return newApiClient;
     }
-
     private static it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.ApiClient newPrivateDeliveryApiClient(RestTemplate restTemplate, String basePath) {
         it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.ApiClient client = new it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.ApiClient(restTemplate);
         client.setBasePath(basePath);
@@ -94,14 +83,7 @@ public class PnPaB2bInternalInformalClientImpl {
         return informalNotificationTerminationApi.terminateInformalWorkflow(operatorId, CxTypeAuthFleet.PA, cxId, iun, groups);
     }
 
-
     public InformalSentNotificationV1 getSentInformalNotification(String iun) {
         return internalOnlyApi.getSentInformalNotificationPrivateV1(iun);
     }
-
-
-    //public void setCxId(String cxId) {
-        //this.cxId = cxId;
-    //}
-
 }

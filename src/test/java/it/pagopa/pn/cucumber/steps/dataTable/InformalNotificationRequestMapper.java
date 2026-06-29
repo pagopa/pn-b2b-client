@@ -49,9 +49,7 @@ public class InformalNotificationRequestMapper {
         if (notifLang != null) {
             request.setAdditionalLanguages(List.of(notifLang));
         }
-
         request.setGroup(getValue(data, GROUP.key));
-
 
         //request.setRecipients(List.of(buildRecipient(data)));
 
@@ -98,51 +96,15 @@ public class InformalNotificationRequestMapper {
         return content;
     }
 
-//    private NotificationDocument buildDocument(Map<String, String> data) {
-//
-//        NotificationAttachmentDigests digests =
-//                new NotificationAttachmentDigests();
-//        digests.setSha256(
-//                getValue(data, DOCUMENT_SHA256.key)
-//        );
-//
-//        NotificationAttachmentBodyRef ref =
-//                new NotificationAttachmentBodyRef();
-//        ref.setKey(
-//                getValue(data, DOCUMENT_KEY.key)
-//        );
-//        ref.setVersionToken(
-//                getValue(data, DOCUMENT_VERSION_TOKEN.key)
-//        );
-//
-//        NotificationDocument document =
-//                new NotificationDocument();
-//        document.setDigests(digests);
-//
-//        document.setContentType(
-//                getValue(data, ATTACHMENT_CONTENT_TYPE.key)
-//        );
-//
-//        document.setRef(ref);
-//
-//        document.setTitle(getValue(data, DOCUMENT_TITLE.key));
-//        document.setDocIdx(getValue(data, DOCUMENT_DOCIDX.key));
-//
-//        return document;
-//    }
-
-
     private List<NotificationDocument> buildDocuments(Map<String, String> data) {
 
         String documentsToAdd = getValue(data, DOCUMENT.key);
-
         List<NotificationDocument> result = new ArrayList<>();
 
         if (documentsToAdd == null) {
             result.add(buildDefaultDocument(data));
             return result;
         }
-
         for (String doc : documentsToAdd.split(";")) {
 
             String path = getDocumentPath(doc);
@@ -153,7 +115,6 @@ public class InformalNotificationRequestMapper {
 
             result.add(document);
         }
-
         return result;
     }
 
@@ -164,9 +125,7 @@ public class InformalNotificationRequestMapper {
             case "DOC_2_PG" -> "classpath:/sample_2pg.pdf";
             case "DOC_3_PG" -> "classpath:/sample_3pg.pdf";
             case "DOC_4_PG" -> "classpath:/sample_4pg.pdf";
-            //case "DOC_110MB" -> "classpath:/allegato_110Mb.pdf";
-
-
+            case "DOC_30MB" -> "classpath:/allegato_30Mb.pdf";
             case "ALLEGATO_1_BN" -> "classpath:/Allegato1_BN.pdf";
             case "ALLEGATO_2_BN" -> "classpath:/Allegato2_BN.pdf";
 
@@ -197,71 +156,10 @@ public class InformalNotificationRequestMapper {
         attachment.setContentType(
                 getValue(data, ATTACHMENT_CONTENT_TYPE.key)
         );
-
         attachment.setRef(ref);
 
         return attachment;
     }
-
-
-    //TODO metodi commentati- offrivano dei valori di default, ora queste request sono popolate da step dedicati.
-
-//    private InformalNotificationRecipientV1 buildRecipient(Map<String, String> data) {
-//        InformalNotificationRecipientV1 informalNotificationRecipient = new InformalNotificationRecipientV1();
-//
-//        informalNotificationRecipient.setRecipientType(
-//                InformalNotificationRecipientV1.RecipientTypeEnum
-//                        .fromValue(getValue(data, RECIPIENT_TYPE.key))
-//        );
-//        informalNotificationRecipient.setTaxId(getValue(data, RECIPIENT_TAX_ID.key));
-//        informalNotificationRecipient.setDenomination(getValue(data, RECIPIENT_DENOMINATION.key));
-//
-//        String messageId = getValue(data, MESSAGE_ID.key);
-//        if (messageId != null) {
-//            informalNotificationRecipient.setMessageId(UUID.fromString(messageId));
-//        }
-//        if (getValue(data, PEC_ADDRESS.key) != null) {
-//            informalNotificationRecipient.setDigitalDomicile(new NotificationDigitalAddress()
-//                    .type(NotificationDigitalAddress.TypeEnum.PEC)
-//                    .address(getValue(data, PEC_ADDRESS.key))
-//            );
-//        }
-//        // Payments
-//        informalNotificationRecipient.setPayments(List.of(buildPaymentItem(data)));
-//
-//        int paymentCount = Integer.parseInt(
-//                getValue(data, PAYMENT_COUNT.key)
-//        );
-//        List<InformalNotificationPaymentItem> payments =
-//                new ArrayList<>();
-//
-//        for (int i = 0; i < paymentCount; i++) {
-//            payments.add(buildPaymentItem(data));
-//        }
-//        return informalNotificationRecipient;
-//    }
-
-//    private InformalNotificationPaymentItem buildPaymentItem(
-//            Map<String, String> data) {
-//
-//        PagoPaPaymentBase pagoPaBase = new PagoPaPaymentBase()
-//                .noticeCode(
-//                        getValue(data, PAGOPA_NOTICE_CODE.key)
-//                )
-//                .creditorTaxId(
-//                        getValue(data, PAGOPA_CREDITOR_TAX_ID.key)
-//                )
-//                //.applyCost(false)
-//                .attachment(
-//                        buildPaymentAttachment(data)
-//                );
-//
-//        InformalNotificationPaymentItem item =
-//                new InformalNotificationPaymentItem();
-//        item.setPagoPa(pagoPaBase);
-//
-//        return item;
-//    }
 }
 
 
