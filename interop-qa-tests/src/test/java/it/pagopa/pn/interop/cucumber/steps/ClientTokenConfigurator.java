@@ -23,7 +23,7 @@ import it.pagopa.interop.producerkeychain.ProducerKeychainClient;
 import it.pagopa.interop.purpose.service.*;
 import it.pagopa.interop.selfcare.service.ISelfcareClient;
 import it.pagopa.interop.tenant.service.ITenantsApi;
-import it.pagopa.interop.tracing.service.IInteropTracingClient;
+import it.pagopa.interop.tenant.service.ITenantsProcessApi;
 import it.pagopa.interop.users.IM2MV3UsersClient;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +54,7 @@ public class ClientTokenConfigurator {
     private final IAgreementClient agreementClient;
     private final IAttributeApiClient attributeApiClient;
     private final ITenantsApi tenantsApi;
+    private final ITenantsProcessApi tenantsProcessApi;
     private final IEServiceClient eServiceClient;
     private final IEServiceTemplateClient eServiceTemplateClient;
     private final IProducerClient producerClient;
@@ -195,6 +196,7 @@ public class ClientTokenConfigurator {
         agreementClient.setBearerToken(token);
         attributeApiClient.setBearerToken(token);
         tenantsApi.setBearerToken(token);
+        tenantsProcessApi.setBearerToken(token);
         eServiceClient.setBearerToken(token);
         eServiceTemplateClient.setBearerToken(token);
         producerClient.setBearerToken(token);

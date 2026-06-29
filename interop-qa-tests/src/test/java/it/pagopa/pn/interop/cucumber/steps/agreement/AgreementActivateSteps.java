@@ -8,6 +8,8 @@ import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
+import it.pagopa.pn.interop.cucumber.steps.agreement.model.EServiceAttributeSpec;
+import it.pagopa.pn.interop.cucumber.steps.catalog.DescriptorUpdateSteps;
 import it.pagopa.pn.interop.cucumber.steps.common.AttributeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -16,11 +18,11 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.agreement.utils.AgreementResolver
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+
+import java.util.*;
 import java.util.function.BiConsumer;
+
+import static java.util.Objects.nonNull;
 
 @Slf4j
 public class AgreementActivateSteps {
@@ -117,23 +119,70 @@ public class AgreementActivateSteps {
         }
     }
 
+    @When("{string} ha già creato un e-service in stato {string} con approvazione {string} con dailyCallsPerConsumer uguale a {int} e dailyCallsTotal uguale a {int} e con i seguenti attributi:")
+    public void tenantHasAlreadyCreateEservice(String tenantType, String descriptorState, String approvalAgreementPolicy, Integer dailyCallsPerConsumer, Integer dailyCallsTotal, List<EServiceAttributeSpec> attributesSpec) {
 
-    @Given("l'-eservice ha questa configurazione:")
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        UpdateEServiceDescriptorSeed updateSeed = DescriptorUpdateSteps.createUpdateEServiceDescriptorSeedAndUpdateContext(
+                sharedStepsContext, dataPreparationService, attributesSpec
+        );
+        updateSeed.agreementApprovalPolicy(AgreementApprovalPolicy.valueOf(approvalAgreementPolicy))
+                .dailyCallsPerConsumer(dailyCallsPerConsumer)
+                .dailyCallsTotal(dailyCallsTotal);
+
+        try {
+            EServiceDescriptor result = dataPreparationService.createEServiceAndDraftDescriptor(new EServiceSeed(), updateSeed);
+            dataPreparationService.bringDescriptorToGivenState(result.getEServiceId(), result.getDescriptorId(), EServiceDescriptorState.valueOf(descriptorState), false);
+
+            sharedStepsContext.getEServicesCommonContext().setEserviceId(result.getEServiceId());
+            sharedStepsContext.getEServicesCommonContext().setDescriptorId(result.getDescriptorId());
+        } catch(AssertionFailedError e) {
+            log.warn("Errore durante la creazione dell'e-service: {}", e.getMessage());
+        }
+    }
+
+    @Given("l'e-service ha questa configurazione:")
     public void eServiceHasThisConfiguration(DataTable dataTable) {
 
-        ProducerEServiceDescriptor eServiceDescriptor = this.clientTokenConfigurator.getEServiceClient().getEServiceDescriptor(
-                sharedStepsContext.getEServicesCommonContext().getEserviceId(),
-                sharedStepsContext.getEServicesCommonContext().getDescriptorId()
-        );
-
         Map<String, String> attributes = dataTable.asMap();
+
+        boolean waitForAsyncProps = attributes.keySet().stream()
+            .anyMatch(key -> key.startsWith("asyncExchangeProperties."));
+
+        ProducerEServiceDescriptor eServiceDescriptor = sharedStepsContext.getPollingService().makePolling(
+                () -> this.clientTokenConfigurator.getEServiceClient().getEServiceDescriptor(
+                        sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                        sharedStepsContext.getEServicesCommonContext().getDescriptorId()
+                ),
+                res -> (!waitForAsyncProps) || nonNull(res.getAsyncExchangeProperties()),
+                res -> "Le async property del descrittore risultano non impostate"
+        );
 
         if (attributes.containsKey("dailyCallsPerConsumer")) {
             Assertions.assertEquals(Integer.parseInt(attributes.get("dailyCallsPerConsumer")), eServiceDescriptor.getDailyCallsPerConsumer());
         }
-
         if (attributes.containsKey("dailyCallsTotal")) {
             Assertions.assertEquals(Integer.parseInt(attributes.get("dailyCallsTotal")), eServiceDescriptor.getDailyCallsTotal());
+        }
+        if (attributes.containsKey("asyncExchangeProperties.responseTime")) {
+            Assertions.assertNotNull(eServiceDescriptor.getAsyncExchangeProperties());
+            Assertions.assertEquals(Integer.parseInt(attributes.get("asyncExchangeProperties.responseTime")), eServiceDescriptor.getAsyncExchangeProperties().getResponseTime());
+        }
+        if (attributes.containsKey("asyncExchangeProperties.resourceAvailableTime")) {
+            Assertions.assertNotNull(eServiceDescriptor.getAsyncExchangeProperties());
+            Assertions.assertEquals(Integer.parseInt(attributes.get("asyncExchangeProperties.resourceAvailableTime")), eServiceDescriptor.getAsyncExchangeProperties().getResourceAvailableTime());
+        }
+        if (attributes.containsKey("asyncExchangeProperties.confirmation")) {
+            Assertions.assertNotNull(eServiceDescriptor.getAsyncExchangeProperties());
+            Assertions.assertEquals(Boolean.parseBoolean(attributes.get("asyncExchangeProperties.confirmation")), eServiceDescriptor.getAsyncExchangeProperties().getConfirmation());
+        }
+        if (attributes.containsKey("asyncExchangeProperties.bulk")) {
+            Assertions.assertNotNull(eServiceDescriptor.getAsyncExchangeProperties());
+            Assertions.assertEquals(Boolean.parseBoolean(attributes.get("asyncExchangeProperties.bulk")), eServiceDescriptor.getAsyncExchangeProperties().getBulk());
+        }
+        if (attributes.containsKey("asyncExchangeProperties.maxResultSet")) {
+            Assertions.assertNotNull(eServiceDescriptor.getAsyncExchangeProperties());
+            Assertions.assertEquals(Integer.parseInt(attributes.get("asyncExchangeProperties.maxResultSet")), eServiceDescriptor.getAsyncExchangeProperties().getMaxResultSet());
         }
     }
 

@@ -34,13 +34,16 @@ public class NotificationAARForEMAILStrategy implements ITemplateEngineStrategy 
                 yield "Se accedi alla comunicazione entro 5 giorni dall&#39;invio di questa email, eviterai una raccomandata cartacea e gli eventuali costi.";
             }
             case "TEDESCA" -> {
-                yield "Solltest du keine PEC-Adresse haben und die Dokumente innerhalb von 5 Tagen (120 Stunden) nach Versand der Nachricht einsehen, erh&#228;ltst du keine Zustellung mittels Einschreibebrief.";
+                yield "Wenn Sie innerhalb von 5 Tagen nach dem Versand dieser E-Mail auf die Mitteilung zugreifen, vermeiden Sie ein Papier-Einschreiben und die entsprechenden Kosten.";
             }
             case "SLOVENA" -> {
-                yield "e nimate certificiranega elektronskega naslova PEC in si dokumente ogledate v roku 5 dni (120 ur) od po&#353;iljanja sporo&#269;ila, ne boste prejeli obvestila po priporo";
+                yield "e do sporo&#269;ila dostopate v 5 dneh od po&#353;iljanja tega e-po&#353;tnega sporo&#269;ila, se boste izognili priporo&#269;eni po&#353;ti v papirni obliki in morebitnim stro&#353;kom";
             }
             case "FRANCESE" -> {
-                yield "avez pas d&#39;adresse de courrier &eacute;lectronique certifi&eacute; (PEC) et que vous consultez les documents dans les 5 jours (120 heures) suivant l&#39;envoi du message, vous ne recevrez pas la notification par courrier recommand&eacute";
+                yield "Vous avez re&#xE7;u sur SEND - Servizio Notifiche Digitali une notification de la part de <strong>string</strong> avec le Code IUN string";
+            }
+            case "INGLESE" -> {
+                yield "If you access the communication within 5 days from the sending of this email, you will avoid a registered mail and any related costs";
             }
             default -> throw new IllegalArgumentException("NO VALID LANGUANGE");
         };
@@ -54,10 +57,10 @@ public class NotificationAARForEMAILStrategy implements ITemplateEngineStrategy 
 
         return new NotificationAarForEmailAnalog()
                 .notification(createAarForEmailNotificationAnalog(context))
-                .pnFaqSendURL(context.getPnFaqSendURL())
+                //.pnFaqSendURL(context.getPnFaqSendURL())
                 .quickAccessLink(context.getQrCodeQuickAccessLink())
-                .piattaformaNotificheURL(context.getPiattaformaNotificheURL())
-                .perfezionamentoURL(context.getPerfezionamentoURL())
+                //.piattaformaNotificheURL(context.getPiattaformaNotificheURL())
+               // .perfezionamentoURL(context.getPerfezionamentoURL())
                 .recipient(new AarForEmailRecipientAnalog().recipientType(context.getRecipientType()));
     }
 

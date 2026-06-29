@@ -194,7 +194,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
       | senderDenomination | Comune di palermo               |
     And destinatario
       | denomination            | Test AR Fail 2            |
-      | taxId                   | DVNLRD52D15M059P          |
+      | taxId                   | FNTLCU80T25F205R          |
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@FAIL-Irreperibile_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -207,7 +207,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
       | senderDenomination | Comune di palermo               |
     And destinatario
       | denomination            | Test 890 Fail 2                              |
-      | taxId                   | DVNLRD52D15M059P                             |
+      | taxId                   | FNTLCU80T25F205R                             |
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries@FAIL-Irreperibile_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -367,7 +367,6 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
-
   @workflowAnalogico
   Scenario: [B2B_TIMELINE_ANALOG_890_16] Attesa elemento di timeline REFINEMENT con physicalAddress OK-REC008_890 - PN-9929
     Given viene generata una nuova notifica
@@ -390,10 +389,10 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
       | details_deliveryDetailCode | RECAG011A |
       | details_sentAttemptMade    | 0         |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL                  |
-      | details_recIndex           | 0                         |
-      | details_deliveryDetailCode | RECAG008B                 |
-      | details_sentAttemptMade    | 0                         |
+      | details                    | NOT_NULL                    |
+      | details_recIndex           | 0                           |
+      | details_deliveryDetailCode | RECAG008B                   |
+      | details_sentAttemptMade    | 0                           |
       | details_attachments        | [{"documentType": "ARCAD"}] |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL  |
@@ -450,3 +449,53 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
       | details_deliveryDetailCode | RECAG001B                 |
       | details_sentAttemptMade    | 1                         |
       | details_attachments        | [{"documentType": "23L"}] |
+
+  # Viene utilizzato un taxId per cui NR restituisce Città e Località null, in modo da verificare che in questi casi non venga valorizzato
+  # il campo "details_foundAddress" nell'elemento di timeline "PREPARE_ANALOG_DOMICILE_FAILURE"
+  # e che venga invece valorizzato il campo "details_failureCause" con il codice D01 (Indirizzo Irreperibile)
+  # L'Annotazione @qa14580 è da rimuovere una volta che le modifiche della GA26Q2.B sono arrivate su tutti gli ambienti
+  @workflowAnalogico @qa14580
+  Scenario: [B2B_TIMELINE_ANALOG_FOUND_ADDRESS_1] Verifica della NON presenza dell'indirizzo nell'elemento di timeline PREPARE_ANALOG_DOMICILE
+  in caso di physicalAddress con Città e Località ritornati null da NR - PN-19480
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario
+      | taxId                   | MRGVPC67R10H501Y          |
+      | recipientType           | PF                        |
+      | digitalDomicile         | NULL                      |
+      | physicalAddress_address | Via@FAIL-Irreperibile_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
+    And viene verificato che l'elemento di timeline "PREPARE_ANALOG_DOMICILE_FAILURE" esista
+      | loadTimelime            | true     |
+      | details                 | NOT_NULL |
+      | details_recIndex        | 0        |
+      | details_sentAttemptMade | 1        |
+      | details_foundAddress    | NULL     |
+
+
+  # Viene utilizzato un taxId per cui NR restituisce Città e Località come stringa vuota, in modo da verificare che in questi casi non venga valorizzato
+  # il campo "details_foundAddress" nell'elemento di timeline "PREPARE_ANALOG_DOMICILE_FAILURE"
+  # e che venga invece valorizzato il campo "details_failureCause" con il codice D01 (Indirizzo Irreperibile)
+  # L'Annotazione @qa14580 è da rimuovere una volta che le modifiche della GA26Q2.B sono arrivate su tutti gli ambienti
+  @workflowAnalogico @qa14580
+  Scenario: [B2B_TIMELINE_ANALOG_FOUND_ADDRESS_2] Verifica della NON presenza dell'indirizzo nell'elemento di timeline PREPARE_ANALOG_DOMICILE
+  in caso di physicalAddress con Città e Località ritornati come stringa vuota da NR - PN-19480
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario
+      | taxId                   | XVRSFN76E31L781N          |
+      | recipientType           | PF                        |
+      | digitalDomicile         | NULL                      |
+      | physicalAddress_address | Via@FAIL-Irreperibile_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
+    And viene verificato che l'elemento di timeline "PREPARE_ANALOG_DOMICILE_FAILURE" esista
+      | loadTimelime            | true     |
+      | details                 | NOT_NULL |
+      | details_recIndex        | 0        |
+      | details_foundAddress    | NULL     |
+      | details_failureCause    | D01      |
+      | details_sentAttemptMade | 1        |
