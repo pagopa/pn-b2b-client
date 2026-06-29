@@ -75,14 +75,22 @@ Feature: finalità agevolata, purpose from purpose template
     And l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And il purpose template creato viene spostato in stato PUBLISHED
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "<ente>"
     And si crea una finalità a partire dal purpose template esistente
     Then si ottiene response status code 403
     Examples:
-      | ruolo    |
-      | api      |
-      | support  |
-      | security |
+      | ente | ruolo    |
+      | PA1  | api      |
+      | PA1  | support  |
+      | PA1  | security |
+
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo    |
+      | PA2  | viewer   |
+
+      # Non applicabile a "reviewer" perché il reviewer non può nemmeno fare il get dell'agreement, il quale è un'azione preliminare dello step "And si crea una finalità a partire dal purpose template esistente"
+      # | PA2  | reviewer |
 
   #113 (KO)
   @purposeTemplate @purposeFromPurposeTemplate
@@ -164,14 +172,20 @@ Feature: finalità agevolata, purpose from purpose template
     And viene creato un nuovo purpose template
     And il purpose template creato viene spostato in stato PUBLISHED
     And si crea una finalità a partire dal purpose template esistente
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "<ente>"
     And si modifica la finalità creata
     Then si ottiene response status code 403
     Examples:
-      | ruolo    |
-      | api      |
-      | support  |
-      | security |
+      | ente | ruolo    |
+      | PA1  | api      |
+      | PA1  | support  |
+      | PA1  | security |
+
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo    |
+      | PA2  | reviewer |
+      | PA2  | viewer   |
 
   #119 (KO)
   @purposeTemplate @purposeFromPurposeTemplate

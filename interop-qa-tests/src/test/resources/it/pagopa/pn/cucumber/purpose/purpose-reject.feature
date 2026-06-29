@@ -30,6 +30,15 @@ Feature: Rifiuto di una versione di una finalità
       | GSP  | api,security |       403 |
       | GSP  | support      |       403 |
 
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo        | risultato |
+      | PA2  | reviewer     |       403 |
+      | PA2  | viewer       |       403 |
+      | GSP  | reviewer     |       403 |
+      | GSP  | viewer       |       403 |
+
   @happy-path
   @nrt-minimal
   @purpose_reject2

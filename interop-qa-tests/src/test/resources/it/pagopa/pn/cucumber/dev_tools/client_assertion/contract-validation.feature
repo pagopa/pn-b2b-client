@@ -32,6 +32,14 @@ Feature: : Debugger Client Assertion Sync Bearer
       | GSP  | security     | 403       |
       | GSP  | support      | 200       |
 
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo        | risultato |
+      | PA2  | reviewer     | 403       |
+      | PA2  | viewer       | 403       |
+      | GSP  | reviewer     | 403       |
+      | GSP  | viewer       | 403       |
+
   @devToolsClientAssertion
   Scenario Outline: [CLIENT_ASSERTION_CONTRACT_VALIDATION_AUTHORIZED_ROLES_2] la richiesta di validazione della client assertion da parte di un utente che appartiene ad un ruolo autorizzato
     ed è l'owner della chiave va a buon fine

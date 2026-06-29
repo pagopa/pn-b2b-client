@@ -30,6 +30,15 @@ Feature: Lettura di una chiave pubblica contenuta in un client
       | PA1  | api,security |        403 |
       | PA1  | security     |        403 |
 
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo        | statusCode |
+      | GSP  | reviewer     |        403 |
+      | GSP  | viewer       |        403 |
+      | PA2  | reviewer     |        403 |
+      | PA2  | viewer       |        403 |
+
   @nrtC-waitForFix
   @nrt-minimal
   Scenario Outline: [CLIENT_KEY_READ_06] Un utente con permessi di security; il quale è appartenente all'ente al quale è associato un client; il quale utente è membro del client; per il quale client c'è una chiave, caricata da un altro utente; richiede la lettura delle informazioni della chiave pubblica. L'operazione va a buon fine.
@@ -59,3 +68,12 @@ Feature: Lettura di una chiave pubblica contenuta in un client
       | ente | ruolo        | statusCode |
       | GSP  | api          |        403 |
       | PA1  | api          |        403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo        | statusCode |
+      | GSP  | reviewer     |        403 |
+      | GSP  | viewer       |        403 |
+      | PA2  | reviewer     |        403 |
+      | PA2  | viewer       |        403 |

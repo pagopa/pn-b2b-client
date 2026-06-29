@@ -208,6 +208,7 @@ public class AgreementCommonSteps {
             EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
             eServicesCommonContext.setName(eServiceNames.get(0));
             eServicesCommonContext.setPublishedEservicesIds(eServiceDescriptorList);
+            eServicesCommonContext.getTotalPublishedEServicesIds().addAll(eServiceDescriptorList);
             EServiceDescriptor firstDescriptor = eServiceDescriptorList.get(0);
             eServicesCommonContext.setEserviceId(firstDescriptor.getEServiceId());
             eServicesCommonContext.setDescriptorId(firstDescriptor.getDescriptorId());
