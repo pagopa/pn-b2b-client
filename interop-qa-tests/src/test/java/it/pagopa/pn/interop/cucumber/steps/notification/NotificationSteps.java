@@ -438,6 +438,8 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
                 3,
                 3000
         );
+        // TODO il messaggio di errore deve far capire se è fallito solo il deeplink e includere le notifiche trovate
+        // se sono troppe quelle trovate, serve un criterio per mostrarne solo un po' (es. stesso nome e-service)
     }
 
     @Then("l'utente {string} di {string} ha ricevuto la notifica in-app")
