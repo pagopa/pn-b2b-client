@@ -479,6 +479,7 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
                 case "descriptorId": value = sharedStepsContext.getEServicesCommonContext().getDescriptorId().toString(); break;
                 case "oldDescriptorId": value = sharedStepsContext.getEServicesCommonContext().getOldDescriptorId().toString(); break;
                 case "producerName": value = sharedStepsContext.getEServicesCommonContext().getProducerName(); break;
+                case "consumerName": value = sharedStepsContext.getTenantCommonContext().getConsumerTenantName(); break;
                 case "TODAY": value = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")); break;
                 case "TODAY+GRACE_PERIOD":
                     value = LocalDate.now().plusDays(2).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")); break;
