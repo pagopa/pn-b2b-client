@@ -1,4 +1,5 @@
 Feature: Interop Tracing
+  # I test da INTEROP-TRACING-13-x in avanti, richiedono di settare i token per l'ambiente Extra QA su AWS credentials
 
   @interopTracingCsv
   Scenario: [INTEROP-TRACING-01] Inserimento di un nuovo file CSV di tracing giornaliero
