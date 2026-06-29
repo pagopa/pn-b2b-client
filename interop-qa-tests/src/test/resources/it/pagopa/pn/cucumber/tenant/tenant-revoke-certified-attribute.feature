@@ -17,6 +17,12 @@ Feature: Revoca di un attributo certificato posseduto da uno specifico aderente
 #      | support      |        403 |
       | api,security |        403 |
 
+    @nuovi-operatori-update
+    Examples:
+      | ruolo        | statusCode |
+      | reviewer     |        403 |
+      | viewer       |        403 |
+
   @nrt-minimal
   @tenant_revoke_certified_attribute2 @certifiedAttribute
   Scenario: [TENANT_REVOKE_CERTIFIED_ATTRIBUTE_02] Per un attributo certificato precedentemente creato da un primo aderente, il quale ha la qualifica di ente certificatore (certifier), che lo assegna ad un secondo ente, alla richiesta di revoca da parte di un utente con sufficienti permessi (admin) appartenente ad un terzo ente certificatore, ottiene un errore

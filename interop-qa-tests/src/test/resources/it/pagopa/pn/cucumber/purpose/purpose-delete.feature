@@ -35,6 +35,17 @@ Feature: Cancellazione finalità
       | Privato | api,security |       403 |
       | Privato | support      |       403 |
 
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente    | ruolo        | risultato |
+      | PA2     | reviewer     |       403 |
+      | PA2     | viewer       |       403 |
+      | GSP     | reviewer     |       403 |
+      | GSP     | viewer       |       403 |
+      | Privato | reviewer     |       403 |
+      | Privato | viewer       |       403 |
+
   @nrt-minimal
   @purpose_delete2
   Scenario Outline: [PURPOSE_DELETE_2] Per una finalità precedentemente creata dall’ente, la quale prima versione è in stato ACTIVE, SUSPENDED, WAITING_FOR_APPROVAL o ARCHIVED, alla richiesta di cancellazione da parte di un utente con sufficienti permessi (admin), ottiene un errore
