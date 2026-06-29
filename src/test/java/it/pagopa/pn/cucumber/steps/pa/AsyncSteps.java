@@ -5,7 +5,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.payment.BffPaymentInfoItem;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.payment.PaymentInfoRequest;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnGPDClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
@@ -22,7 +22,11 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -284,7 +288,7 @@ public class AsyncSteps {
     // Se rifiutata amount_gpd
     @Then("viene verificato il costo finale della notifica amount_gpd + costo_base + pafee + analog_cost per ogni elemento di timeline")
     public void vieneVerificatoIlCostoFinaleDellaNotificaAmount_gpdCosto_basePafeeAnalog_costPerOgniElementoDiTimeline() {
-        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         Integer costoTotale = getCostoTotale(fullSentNotification);
 
         String creditorTaxId = Assertions.assertDoesNotThrow(() -> Objects.requireNonNull(Objects.requireNonNull(fullSentNotification.getRecipients().get(0).getPayments()).get(0).getPagoPa()).getCreditorTaxId());
@@ -306,7 +310,7 @@ public class AsyncSteps {
     @And("viene aggiunto il costo della notifica totale del utente {int}")
     public void vieneAggiuntoIlCostoDellaNotificaTotaleAlUtente(Integer user) {
         try {
-            FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             for (int i = 0; i < amountNotifica.size(); i++) {
                 Assertions.assertDoesNotThrow(() -> {
                     int amount = Objects.requireNonNull(Objects.requireNonNull(fullSentNotification).getAmount());
@@ -325,7 +329,7 @@ public class AsyncSteps {
     @And("viene aggiunto il costo della notifica totale")
     public void vieneAggiuntoIlCostoDellaNotificaTotale() {
         try {
-            FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             for (int i = 0; i < amountNotifica.size(); i++) {
                 int paFee = Objects.requireNonNull(Objects.requireNonNull(fullSentNotification).getPaFee());
                 int costoTotale = costoBaseNotifica + paFee;
@@ -351,7 +355,7 @@ public class AsyncSteps {
         }
     }
 
-    private Integer getCostoTotale(FullSentNotificationV28 sentNotification) {
+    private Integer getCostoTotale(FullSentNotificationV29 sentNotification) {
         Integer analogCost = 0;
         for (TimelineElementV28 timelineElem : sentNotification.getTimeline()) {
             Integer currentCost = timelineElem.getDetails() == null ? Integer.valueOf(0) : timelineElem.getDetails().getAnalogCost();

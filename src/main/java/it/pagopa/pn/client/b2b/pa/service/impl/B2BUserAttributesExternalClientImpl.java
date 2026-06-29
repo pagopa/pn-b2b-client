@@ -7,18 +7,19 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.api.AllApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.api.CourtesyApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.api.LegalApi;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.AddressVerificationResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.CxLanguage;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.LegalChannelType;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.AddressVerification;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.CourtesyDigitalAddress;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.UserAddresses;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaluserconsents.api.ConsentsApi;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaluserconsents.model.Consent;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaluserconsents.model.ConsentType;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
 import it.pagopa.pn.client.b2b.pa.wrapper.RecipientWrapper;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.AddressVerification;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyDigitalAddress;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.UserAddresses;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.api.ConsentsApi;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.Consent;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.ConsentAction;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.ConsentType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -75,11 +76,11 @@ public class B2BUserAttributesExternalClientImpl implements IPnWebUserAttributes
         this.courtesyApiAddressBook = new CourtesyApi(newAddressBookApiClient(restTemplate, basePath, marioCucumberBearerToken));
     }
 
-    private static it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.ApiClient newConsentsApiClient(RestTemplate restTemplate, String basePath, String bearerToken) {
-        it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.ApiClient newApiClient =
-                new it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.ApiClient(restTemplate);
+    private static it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaluserconsents.ApiClient newConsentsApiClient(RestTemplate restTemplate, String basePath, String bearerToken) {
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaluserconsents.ApiClient newApiClient =
+                new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaluserconsents.ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
-        newApiClient.setBearerToken(bearerToken);
+        //newApiClient.setBearerToken(bearerToken);
         return newApiClient;
     }
 
@@ -157,17 +158,8 @@ public class B2BUserAttributesExternalClientImpl implements IPnWebUserAttributes
         return this.bearerTokenSetted;
     }
 
-    public void consentAction(ConsentType consentType, ConsentAction consentAction, String version) throws RestClientException {
-        this.consentsApi.consentAction(consentType, version, consentAction);
-    }
-
     public Consent getConsentByType(ConsentType consentType, String version) throws RestClientException {
-        return this.consentsApi.getConsentByType(consentType, version);
-    }
-
-
-    public List<Consent> getConsents() throws RestClientException {
-        return this.consentsApi.getConsents();
+        throw new UnsupportedOperationException();
     }
 
     public RecipientWrapper getAddressesByRecipient() throws RestClientException {
@@ -195,10 +187,10 @@ public class B2BUserAttributesExternalClientImpl implements IPnWebUserAttributes
                 .toList();
     }
 
-    public void postRecipientLegalAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType, AddressVerification addressVerification) throws RestClientException {
+    public void postRecipientLegalAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType, AddressVerification addressVerification, CxLanguage xPagopaPnLanguage) throws RestClientException {
         it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.LegalChannelType legalChannelType = deepCopy(channelType, it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.LegalChannelType.class);
         it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.AddressVerification address = deepCopy(addressVerification, it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.AddressVerification.class);
-        legalApi.postRecipientLegalAddress(senderId, legalChannelType, address);
+        legalApi.postRecipientLegalAddress(senderId, legalChannelType, address, xPagopaPnLanguage);
     }
 
     public void deleteRecipientCourtesyAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType) throws RestClientException {
@@ -212,10 +204,10 @@ public class B2BUserAttributesExternalClientImpl implements IPnWebUserAttributes
                 .toList();
     }
 
-    public void postRecipientCourtesyAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType, AddressVerification addressVerification) throws RestClientException {
+    public void postRecipientCourtesyAddress(String senderId, LegalCourtesyAddressWrapper.ChannelType channelType, AddressVerification addressVerification, CxLanguage xPagopaPnLanguage) throws RestClientException {
         it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.CourtesyChannelType courtesyChannelType = deepCopy(channelType, it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.CourtesyChannelType.class);
         it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.AddressVerification address = deepCopy(addressVerification, it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.AddressVerification.class);
-        courtesyApiAddressBook.postRecipientCourtesyAddress(senderId, courtesyChannelType, address);
+        AddressVerificationResponse response = courtesyApiAddressBook.postRecipientCourtesyAddress(senderId, courtesyChannelType, address, xPagopaPnLanguage);
     }
 
     private <T> T deepCopy(Object obj, Class<T> toClass) {

@@ -30,4 +30,14 @@ public class TenantRevokeCertifiedAttributeSteps {
                         sharedStepsContext.getAttributeCommonContext().getAttributeId())
         );
     }
+
+    @When("l'utente revoca l'attributo certificato {int}-esimo nel gruppo {int}-esimo precedentemente creato e assegnato a {string}")
+    public void revokeCertifiedAttribute(int attributeIndex, int groupIndex, String consumerTenant) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        httpCallExecutor.performCall(
+                () -> clientTokenConfigurator.getTenantsApi().revokeCertifiedAttribute(
+                        identityService.getOrganizationId(consumerTenant),
+                        sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes().get(groupIndex).get(attributeIndex))
+        );
+    }
 }

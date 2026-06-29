@@ -17,21 +17,21 @@ Feature: Attivazione richiesta di fruizione
 
     @happy-path
     Examples:
-      | enteFruitore | enteCertificatore | enteErogatore | ruolo        | risultato |
-      | PA1          | PA2               | GSP           | admin        |       200 |
-      | GSP          | PA2               | PA1           | admin        |       200 |
+      | enteFruitore | enteCertificatore | enteErogatore | ruolo | risultato |
+      | PA1          | PA2               | GSP           | admin | 200       |
+      | GSP          | PA2               | PA1           | admin | 200       |
 
     @sad-path
     Examples:
       | enteFruitore | enteCertificatore | enteErogatore | ruolo        | risultato |
-      | PA1          | PA2               | GSP           | api          |       403 |
-      | PA1          | PA2               | GSP           | security     |       403 |
-      | PA1          | PA2               | GSP           | support      |       403 |
-      | PA1          | PA2               | GSP           | api,security |       403 |
-      | GSP          | PA2               | PA1           | api          |       403 |
-      | GSP          | PA2               | PA1           | security     |       403 |
-      | GSP          | PA2               | PA1           | support      |       403 |
-      | GSP          | PA2               | PA1           | api,security |       403 |
+      | PA1          | PA2               | GSP           | api          | 403       |
+      | PA1          | PA2               | GSP           | security     | 403       |
+      | PA1          | PA2               | GSP           | support      | 403       |
+      | PA1          | PA2               | GSP           | api,security | 403       |
+      | GSP          | PA2               | PA1           | api          | 403       |
+      | GSP          | PA2               | PA1           | security     | 403       |
+      | GSP          | PA2               | PA1           | support      | 403       |
+      | GSP          | PA2               | PA1           | api,security | 403       |
 
   @happy-path @nrt-minimal
   @agreement_activate2 @no-parallel @certifiedAttribute
@@ -186,3 +186,156 @@ Feature: Attivazione richiesta di fruizione
     Examples:
       | enteFruitore | enteCertificatore | enteErogatore |
       | PA1          | PA2               | GSP           |
+
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
+  Scenario Outline: [CERT_DISCRETE_ATTR_AGREEMENT_1] Verifica della corretta associazione di una finalità su un e-service
+  pubblicato con attributi certificati discreti.
+    Given l'utente è un "admin" di "PA2"
+    And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
+    And l'utente "PA1" possiede almeno un attributo certificato discreto
+    And "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000 e con i seguenti attributi:
+      | kind               | group | comparator   | value   | dailyCallsPerConsumer |
+      | CERTIFIED_DISCRETE | 0     | <comparator> | <value> |                       |
+    And si ottiene response status code 200
+    And l'e-service è in stato "PUBLISHED"
+    And l'utente è un "admin" di "PA1"
+    When l'utente crea una richiesta di fruizione
+    Then si ottiene response status code 200
+    Examples:
+      | comparator | value                              |
+      | GT         | $ATTR_CERT_DISCR_THRESHOLD(PA1,-1) |
+      | EQ         | $ATTR_CERT_DISCR_THRESHOLD(PA1,0)  |
+      | LT         | $ATTR_CERT_DISCR_THRESHOLD(PA1,1)  |
+      | GTE        | $ATTR_CERT_DISCR_THRESHOLD(PA1,0)  |
+      | LTE        | $ATTR_CERT_DISCR_THRESHOLD(PA1,0)  |
+      | NE         | $ATTR_CERT_DISCR_THRESHOLD(PA1,1)  |
+
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
+  Scenario: [CERT_DISCRETE_ATTR_AGREEMENT_2] Fallimento della creazione di una nuova finalità per un e-service pubblicato
+  se non vengono soddisfatti i requisiti degli attributi certificati discreti.
+    Given l'utente è un "admin" di "PA2"
+    And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
+    And l'utente "PA1" possiede almeno un attributo certificato discreto
+    And "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000 e con i seguenti attributi:
+      | kind               | group | comparator | value                                | dailyCallsPerConsumer |
+      | CERTIFIED_DISCRETE | 0     | LTE        | $ATTR_CERT_DISCR_THRESHOLD(PA1,-100) |                       |
+    And si ottiene response status code 200
+    And l'e-service è in stato "PUBLISHED"
+    And l'utente è un "admin" di "PA1"
+    When l'utente crea una richiesta di fruizione
+    Then si ottiene response status code 400
+
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
+  Scenario: [CERT_DISCRETE_ATTR_AGREEMENT_3] Fallimento della creazione di una nuova finalità per un e-service pubblicato
+  se il fruitore non possiede l'attributo certificato discreto richiesto.
+    Given l'utente è un "admin" di "PA3"
+    And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
+    And l'utente "PA1" possiede almeno un attributo certificato discreto
+    And "PA3" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000 e con i seguenti attributi:
+      | kind               | group | comparator | value                                | dailyCallsPerConsumer |
+      | CERTIFIED_DISCRETE | 0     | LTE        | $ATTR_CERT_DISCR_THRESHOLD(PA1,-100) |                       |
+    And si ottiene response status code 200
+    And l'e-service è in stato "PUBLISHED"
+    And l'utente è un "admin" di "PA2"
+    And l'utente "PA2" non possiede nessun attributo certificato discreto
+    When l'utente crea una richiesta di fruizione
+    Then si ottiene response status code 400
+
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
+  Scenario Outline: [CERT_DISCRETE_ATTR_AGREEMENT_4] Validazione logiche in AND per gli attributi certificati discreti nella richiesta di fruizione
+    Given l'utente è un "admin" di "PA2"
+    And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
+    And l'utente "PA1" possiede almeno un attributo certificato discreto
+    And "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000 e con i seguenti attributi:
+      | kind               | group | comparator    | value    | dailyCallsPerConsumer |
+      | CERTIFIED_DISCRETE | 0     | <comparator1> | <value1> |                       |
+      | CERTIFIED_DISCRETE | 1     | <comparator2> | <value2> |                       |
+    And si ottiene response status code 200
+    And l'e-service è in stato "PUBLISHED"
+    And l'utente è un "admin" di "PA1"
+    When l'utente crea una richiesta di fruizione
+    Then si ottiene response status code <expectedResult>
+    Examples:
+      | comparator1 | value1                               | comparator2 | value2                               | expectedResult |
+      # Entrambi soddisfatti
+      | GT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,-100) | LT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,100)  | 200            |
+      # Secondo non soddisfatto
+      | GT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,-100) | LT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,-100) | 400            |
+      # Primo non soddisfatto
+      | GT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,100)  | LT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,100)  | 400            |
+      # Nessuno dei due soddisfatto
+      | GT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,100)  | LT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,-100) | 400            |
+
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
+  Scenario: [CERT_DISCRETE_ATTR_AGREEMENT_5a] Validazione logiche in OR per gli attributi certificati discreti nella richiesta
+  di fruizione: solo l'attributo certificato valida la richiesta di fruizione.
+    Given l'utente è un "admin" di "PA2"
+    And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
+    And l'utente "PA1" possiede almeno un attributo certificato discreto
+    And "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000 e con i seguenti attributi:
+      | kind               | group | comparator | value                             | dailyCallsPerConsumer |
+      | CERTIFIED_DISCRETE | 0     | EQ         | $ATTR_CERT_DISCR_THRESHOLD(PA1,1) |                       |
+      | CERTIFIED          | 0     |            |                                   | 200                   |
+    And si ottiene response status code 200
+    And l'e-service è in stato "PUBLISHED"
+    And l'utente assegna a "PA1" l'attributo certificato precedentemente creato
+    And l'utente è un "admin" di "PA1"
+    When l'utente crea una richiesta di fruizione
+    Then si ottiene response status code 200
+
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
+  Scenario: [CERT_DISCRETE_ATTR_AGREEMENT_5b] Validazione logiche in OR per gli attributi certificati discreti nella richiesta
+  di fruizione: solo l'attributo certificato discreto valida la richiesta di fruizione.
+    Given l'utente è un "admin" di "PA2"
+    And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
+    And l'utente "PA1" possiede almeno un attributo certificato discreto
+    And "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000 e con i seguenti attributi:
+      | kind               | group | comparator | value                                | dailyCallsPerConsumer |
+      | CERTIFIED_DISCRETE | 0     | GT         | $ATTR_CERT_DISCR_THRESHOLD(PA1,-100) |                       |
+      | CERTIFIED          | 0     |            |                                      | 200                   |
+    And si ottiene response status code 200
+    And l'e-service è in stato "PUBLISHED"
+    And l'utente è un "admin" di "PA1"
+    When l'utente crea una richiesta di fruizione
+    Then si ottiene response status code 200
+
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
+  Scenario: [CERT_DISCRETE_ATTR_AGREEMENT_5c] Validazione logiche in OR per gli attributi certificati discreti nella richiesta
+  di fruizione: entrambi gli attributi validano la richiesta di fruizione
+    Given l'utente è un "admin" di "PA2"
+    And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
+    And l'utente "PA1" possiede almeno un attributo certificato discreto
+    And "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000 e con i seguenti attributi:
+      | kind               | group | comparator | value                                | dailyCallsPerConsumer |
+      | CERTIFIED_DISCRETE | 0     | GT         | $ATTR_CERT_DISCR_THRESHOLD(PA1,-100) |                       |
+      | CERTIFIED          | 0     |            |                                      | 200                   |
+    And si ottiene response status code 200
+    And l'e-service è in stato "PUBLISHED"
+    And l'utente assegna a "PA1" l'attributo certificato precedentemente creato
+    And l'utente è un "admin" di "PA1"
+    When l'utente crea una richiesta di fruizione
+    Then si ottiene response status code 200
+
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
+  Scenario: [CERT_DISCRETE_ATTR_AGREEMENT_5d] Validazione logiche in OR per gli attributi certificati discreti nella richiesta
+  di fruizione: nessun attributo valida la richiesta di fruizione.
+    Given l'utente è un "admin" di "PA2"
+    And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
+    And l'utente "PA1" possiede almeno un attributo certificato discreto
+    And "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000 e con i seguenti attributi:
+      | kind               | group | comparator | value                                | dailyCallsPerConsumer |
+      | CERTIFIED_DISCRETE | 0     | GT         | $ATTR_CERT_DISCR_THRESHOLD(PA1,100)  |                       |
+      | CERTIFIED          | 0     |            |                                      | 200                   |
+    And si ottiene response status code 200
+    And l'e-service è in stato "PUBLISHED"
+    And l'utente è un "admin" di "PA1"
+    When l'utente crea una richiesta di fruizione
+    Then si ottiene response status code 400

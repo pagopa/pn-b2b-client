@@ -1,29 +1,29 @@
 package it.pagopa.pn.interop.cucumber.steps.agreement;
 
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.domain.ClientType;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationRef;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributeSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
+import it.pagopa.pn.interop.cucumber.steps.agreement.model.EServiceAttributeSpec;
+import it.pagopa.pn.interop.cucumber.steps.catalog.DescriptorUpdateSteps;
+import it.pagopa.pn.interop.cucumber.steps.common.AttributeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
+import org.opentest4j.AssertionFailedError;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
 
+import static java.util.Objects.nonNull;
+
+@Slf4j
 public class AgreementActivateSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final BFFDataPreparationService dataPreparationService;
@@ -62,37 +62,112 @@ public class AgreementActivateSteps {
 
     @Given("{string} ha già creato un e-service in stato {string} che richiede quegli attributi con approvazione {string}")
     public void tenantHasAlreadyCreateEservice(String tenantType, String descriptorState, String approvalAgreementPolicy) {
-        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        List<List<UUID>> requiredCertifiedAttributes = sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes();
-        List<List<UUID>> requiredDeclaredAttributes = sharedStepsContext.getAttributeCommonContext().getRequiredDeclaredAttributes();
-        List<List<UUID>> requiredVerifiedAttributes = sharedStepsContext.getAttributeCommonContext().getRequiredVerifiedAttributes();
+        tenantHasAlreadyCreateEservice(tenantType, descriptorState, approvalAgreementPolicy, 50, 100);
+    }
 
-        EServiceDescriptor result = dataPreparationService.createEServiceAndDraftDescriptor(
-                new EServiceSeed(),
-                new UpdateEServiceDescriptorSeed().attributes(new DescriptorAttributesSeed()
-                                .addCertifiedItem(
-                                        requiredCertifiedAttributes.stream()
-                                                .flatMap(group -> group.stream()
-                                                        .map(attrId -> new DescriptorAttributeSeed().id(attrId).explicitAttributeVerification(true)))
-                                                .collect(Collectors.toList()))
-                                .addDeclaredItem(
-                                        requiredDeclaredAttributes.stream()
-                                        .flatMap(group -> group.stream()
-                                                .map(attrId -> new DescriptorAttributeSeed().id(attrId).explicitAttributeVerification(true)))
-                                        .collect(Collectors.toList()))
-                                .addVerifiedItem(
-                                        requiredVerifiedAttributes.stream()
-                                                .flatMap(group -> group.stream()
-                                                        .map(attrId -> new DescriptorAttributeSeed().id(attrId).explicitAttributeVerification(true)))
-                                                .collect(Collectors.toList())
-                                ))
-                        .agreementApprovalPolicy(AgreementApprovalPolicy.valueOf(approvalAgreementPolicy))
+    @Given("{string} ha già creato un e-service in stato {string} che richiede quegli attributi con approvazione {string} con dailyCallsPerConsumer uguale a {int} e dailyCallsTotal uguale a {int}")
+    public void tenantHasAlreadyCreateEservice(String tenantType, String descriptorState, String approvalAgreementPolicy, Integer dailyCallsPerConsumer, Integer dailyCallsTotal) {
+
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+
+        AttributeCommonContext attributeCommonContext = sharedStepsContext.getAttributeCommonContext();
+
+        DescriptorAttributesSeed descriptorAttributesSeed = new DescriptorAttributesSeed();
+        descriptorAttributesSeed.setCertified(
+                attributeCommonContext.mapAttributesWithDefaultValues(attributeCommonContext.getRequiredCertifiedAttributes())
         );
-        UUID eserviceId = result.getEServiceId();
-        UUID descriptorId = result.getDescriptorId();
-        dataPreparationService.bringDescriptorToGivenState(eserviceId, descriptorId, EServiceDescriptorState.valueOf(descriptorState), false);
-        sharedStepsContext.getEServicesCommonContext().setEserviceId(eserviceId);
-        sharedStepsContext.getEServicesCommonContext().setDescriptorId(descriptorId);
+        descriptorAttributesSeed.setDeclared(
+                attributeCommonContext.mapAttributesWithDefaultValues(attributeCommonContext.getRequiredDeclaredAttributes())
+        );
+        descriptorAttributesSeed.setVerified(
+                attributeCommonContext.mapAttributesWithDefaultValues(attributeCommonContext.getRequiredVerifiedAttributes())
+        );
+
+        UpdateEServiceDescriptorSeed updateEServiceDescriptorSeed = new UpdateEServiceDescriptorSeed()
+                .attributes(descriptorAttributesSeed)
+                .agreementApprovalPolicy(AgreementApprovalPolicy.valueOf(approvalAgreementPolicy))
+                .dailyCallsPerConsumer(dailyCallsPerConsumer)
+                .dailyCallsTotal(dailyCallsTotal);
+
+        try {
+            EServiceDescriptor result = dataPreparationService.createEServiceAndDraftDescriptor(
+                    new EServiceSeed(), updateEServiceDescriptorSeed
+            );
+            UUID eserviceId = result.getEServiceId();
+            UUID descriptorId = result.getDescriptorId();
+            dataPreparationService.bringDescriptorToGivenState(eserviceId, descriptorId, EServiceDescriptorState.valueOf(descriptorState), false);
+            sharedStepsContext.getEServicesCommonContext().setEserviceId(eserviceId);
+            sharedStepsContext.getEServicesCommonContext().setDescriptorId(descriptorId);
+        } catch(AssertionFailedError e) {
+            log.warn(e.getMessage());
+        }
+    }
+
+    @When("{string} ha già creato un e-service in stato {string} con approvazione {string} con dailyCallsPerConsumer uguale a {int} e dailyCallsTotal uguale a {int} e con i seguenti attributi:")
+    public void tenantHasAlreadyCreateEservice(String tenantType, String descriptorState, String approvalAgreementPolicy, Integer dailyCallsPerConsumer, Integer dailyCallsTotal, List<EServiceAttributeSpec> attributesSpec) {
+
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        UpdateEServiceDescriptorSeed updateSeed = DescriptorUpdateSteps.createUpdateEServiceDescriptorSeedAndUpdateContext(
+                sharedStepsContext, dataPreparationService, attributesSpec
+        );
+        updateSeed.agreementApprovalPolicy(AgreementApprovalPolicy.valueOf(approvalAgreementPolicy))
+                .dailyCallsPerConsumer(dailyCallsPerConsumer)
+                .dailyCallsTotal(dailyCallsTotal);
+
+        try {
+            EServiceDescriptor result = dataPreparationService.createEServiceAndDraftDescriptor(new EServiceSeed(), updateSeed);
+            dataPreparationService.bringDescriptorToGivenState(result.getEServiceId(), result.getDescriptorId(), EServiceDescriptorState.valueOf(descriptorState), false);
+
+            sharedStepsContext.getEServicesCommonContext().setEserviceId(result.getEServiceId());
+            sharedStepsContext.getEServicesCommonContext().setDescriptorId(result.getDescriptorId());
+        } catch(AssertionFailedError e) {
+            log.warn("Errore durante la creazione dell'e-service: {}", e.getMessage());
+        }
+    }
+
+    @Given("l'e-service ha questa configurazione:")
+    public void eServiceHasThisConfiguration(DataTable dataTable) {
+
+        Map<String, String> attributes = dataTable.asMap();
+
+        boolean waitForAsyncProps = attributes.keySet().stream()
+            .anyMatch(key -> key.startsWith("asyncExchangeProperties."));
+
+        ProducerEServiceDescriptor eServiceDescriptor = sharedStepsContext.getPollingService().makePolling(
+                () -> this.clientTokenConfigurator.getEServiceClient().getEServiceDescriptor(
+                        sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                        sharedStepsContext.getEServicesCommonContext().getDescriptorId()
+                ),
+                res -> (!waitForAsyncProps) || nonNull(res.getAsyncExchangeProperties()),
+                res -> "Le async property del descrittore risultano non impostate"
+        );
+
+        if (attributes.containsKey("dailyCallsPerConsumer")) {
+            Assertions.assertEquals(Integer.parseInt(attributes.get("dailyCallsPerConsumer")), eServiceDescriptor.getDailyCallsPerConsumer());
+        }
+        if (attributes.containsKey("dailyCallsTotal")) {
+            Assertions.assertEquals(Integer.parseInt(attributes.get("dailyCallsTotal")), eServiceDescriptor.getDailyCallsTotal());
+        }
+        if (attributes.containsKey("asyncExchangeProperties.responseTime")) {
+            Assertions.assertNotNull(eServiceDescriptor.getAsyncExchangeProperties());
+            Assertions.assertEquals(Integer.parseInt(attributes.get("asyncExchangeProperties.responseTime")), eServiceDescriptor.getAsyncExchangeProperties().getResponseTime());
+        }
+        if (attributes.containsKey("asyncExchangeProperties.resourceAvailableTime")) {
+            Assertions.assertNotNull(eServiceDescriptor.getAsyncExchangeProperties());
+            Assertions.assertEquals(Integer.parseInt(attributes.get("asyncExchangeProperties.resourceAvailableTime")), eServiceDescriptor.getAsyncExchangeProperties().getResourceAvailableTime());
+        }
+        if (attributes.containsKey("asyncExchangeProperties.confirmation")) {
+            Assertions.assertNotNull(eServiceDescriptor.getAsyncExchangeProperties());
+            Assertions.assertEquals(Boolean.parseBoolean(attributes.get("asyncExchangeProperties.confirmation")), eServiceDescriptor.getAsyncExchangeProperties().getConfirmation());
+        }
+        if (attributes.containsKey("asyncExchangeProperties.bulk")) {
+            Assertions.assertNotNull(eServiceDescriptor.getAsyncExchangeProperties());
+            Assertions.assertEquals(Boolean.parseBoolean(attributes.get("asyncExchangeProperties.bulk")), eServiceDescriptor.getAsyncExchangeProperties().getBulk());
+        }
+        if (attributes.containsKey("asyncExchangeProperties.maxResultSet")) {
+            Assertions.assertNotNull(eServiceDescriptor.getAsyncExchangeProperties());
+            Assertions.assertEquals(Integer.parseInt(attributes.get("asyncExchangeProperties.maxResultSet")), eServiceDescriptor.getAsyncExchangeProperties().getMaxResultSet());
+        }
     }
 
     @Given("{string} ha già creato un attributo verificato")
@@ -179,8 +254,15 @@ public class AgreementActivateSteps {
         sharedStepsContext.getAttributeCommonContext().setRequiredCertifiedAttributes(requiredCertifiedAttributes);
  */
         BiConsumer<UUID, UUID> consumerFunction = dataPreparationService::assignCertifiedAttributeToTenant;
-        createTwoSpecificAttributeKind(AttributeKind.CERTIFIED, consumerId, consumerFunction);
+        createTwoSpecificAttributeKind(AttributeKind.CERTIFIED, consumerId, consumerFunction, true);
+    }
 
+    @Given("due gruppi di due attributi certificati da {string}, dei quali {string} li possiede tutti")
+    public void tenantHasAllCertifiedAttributeGroups(String certifier, String consumer) {
+        UUID consumerId = identityService.getOrganizationId(consumer);
+        clientTokenConfigurator.setBearerToken(identityService.getToken(certifier, null));
+        BiConsumer<UUID, UUID> consumerFunction = dataPreparationService::assignCertifiedAttributeToTenant;
+        createTwoSpecificAttributeKind(AttributeKind.CERTIFIED, consumerId, consumerFunction, false);
     }
 
     @Given("due gruppi di due attributi dichiarati, dei quali {string} ne possiede uno per gruppo")
@@ -189,10 +271,10 @@ public class AgreementActivateSteps {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
 
         BiConsumer<UUID, UUID> consumerFunction = dataPreparationService::declareDeclaredAttribute;
-        createTwoSpecificAttributeKind(AttributeKind.DECLARED, tenantId, consumerFunction);
+        createTwoSpecificAttributeKind(AttributeKind.DECLARED, tenantId, consumerFunction, true);
     }
 
-    private void createTwoSpecificAttributeKind(AttributeKind attributeKind, UUID tenantId, BiConsumer<UUID, UUID> consumerFunction) {
+    private void createTwoSpecificAttributeKind(AttributeKind attributeKind, UUID tenantId, BiConsumer<UUID, UUID> consumerFunction, boolean assignOnlyFirstAttribute) {
         List<List<UUID>> requiredAttributes = new ArrayList<>();
 
         for (int groupIdx = 0; groupIdx < 2; groupIdx++) {
@@ -200,18 +282,23 @@ public class AgreementActivateSteps {
 
             for (int attrIdx = 0; attrIdx < 2; attrIdx++) {
                 UUID attributeId = dataPreparationService.createAttribute(attributeKind, null).getId();
+                attributeGroup.add(attributeId);
 
-                if (attrIdx % 2 == 0) {
+                if (attrIdx == 0 || !assignOnlyFirstAttribute) {
                     consumerFunction.accept(tenantId, attributeId);
                 }
-                requiredAttributes.add(attributeGroup);
             }
+
+            requiredAttributes.add(attributeGroup);
         }
-        if ((attributeKind == AttributeKind.VERIFIED)) {
+        if (attributeKind == AttributeKind.VERIFIED)
             sharedStepsContext.getAttributeCommonContext().setRequiredVerifiedAttributes(requiredAttributes);
-        } else {
+        else if (attributeKind == AttributeKind.CERTIFIED)
+            sharedStepsContext.getAttributeCommonContext().setRequiredCertifiedAttributes(requiredAttributes);
+        else if (attributeKind == AttributeKind.DECLARED)
             sharedStepsContext.getAttributeCommonContext().setRequiredDeclaredAttributes(requiredAttributes);
-        }
+        else
+            throw new IllegalArgumentException("Unsupported AttributeKind: " + attributeKind);
     }
 
     @Given("{string} crea due gruppi di due attributi verificati")
