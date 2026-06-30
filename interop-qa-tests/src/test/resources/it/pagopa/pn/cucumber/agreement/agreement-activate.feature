@@ -36,9 +36,9 @@ Feature: Attivazione richiesta di fruizione
     @sad-path
     @nuovi-operatori-update
     Examples:
-      | enteFruitore | enteCertificatore | enteErogatore | ruolo    | risultato |
-      | PA1          | PA2               | GSP           | reviewer | 403       |
-      | PA1          | PA2               | GSP           | viewer   | 403       |
+      | enteFruitore | enteCertificatore | enteErogatore | ruolo    | statusCode |
+      | PA1          | PA2               | GSP           | reviewer | 403        |
+      | PA1          | PA2               | GSP           | viewer   | 403        |
 
   @happy-path @nrt-minimal
   @agreement_activate2 @no-parallel @certifiedAttribute @agreement-activate-refactor
@@ -305,40 +305,40 @@ Feature: Attivazione richiesta di fruizione
   Scenario Outline: [AGREEMENTS_UNSUSPEND_5] Una richiesta di fruizione sospesa dal producer o dal consumer può essere riattivata e tornare ACTIVE
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "<enteSospensore>" ha già sospeso quella richiesta di fruizione come <suspendedBy>
-    And l'utente è un "admin" di "<enteRiattivatore>"
+    And "<suspendingTenant>" ha già sospeso quella richiesta di fruizione come <suspendedBy>
+    And l'utente è un "admin" di "<reactivatingTenant>"
     When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 200
     And la richiesta di fruizione è in stato "ACTIVE"
 
     Examples:
-      | enteSospensore | suspendedBy | enteRiattivatore |
-      | PA1            | PRODUCER    | PA1              |
-      | PA2            | CONSUMER    | PA2              |
+      | suspendingTenant | suspendedBy | reactivatingTenant |
+      | PA1              | PRODUCER    | PA1                |
+      | PA2              | CONSUMER    | PA2                |
 
   @sad-path
   @agreement-activate-refactor
   Scenario Outline: [AGREEMENTS_UNSUSPEND_6] La riattivazione di una richiesta di fruizione da parte di un utente non autorizzato restituisce errore
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "<enteSospensore>" ha già sospeso quella richiesta di fruizione come <suspendedBy>
+    And "<suspendingTenant>" ha già sospeso quella richiesta di fruizione come <suspendedBy>
     And l'utente è un "<ruolo>" di "<ente>"
     When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 403
     And la richiesta di fruizione è in stato "SUSPENDED"
 
     Examples:
-      | enteSospensore | suspendedBy | ente | ruolo        |
-      | PA1            | PRODUCER    | PA1  | api          |
-      | PA1            | PRODUCER    | PA1  | security     |
-      | PA1            | PRODUCER    | PA1  | support      |
-      | PA1            | PRODUCER    | PA1  | api,security |
-      | PA1            | PRODUCER    | PA2  | admin        |
-      | PA2            | CONSUMER    | PA2  | api          |
-      | PA2            | CONSUMER    | PA2  | security     |
-      | PA2            | CONSUMER    | PA2  | support      |
-      | PA2            | CONSUMER    | PA2  | api,security |
-      | PA2            | CONSUMER    | PA1  | admin        |
+      | suspendingTenant | suspendedBy | ente | ruolo        |
+      | PA1              | PRODUCER    | PA1  | api          |
+      | PA1              | PRODUCER    | PA1  | security     |
+      | PA1              | PRODUCER    | PA1  | support      |
+      | PA1              | PRODUCER    | PA1  | api,security |
+      | PA1              | PRODUCER    | PA2  | admin        |
+      | PA2              | CONSUMER    | PA2  | api          |
+      | PA2              | CONSUMER    | PA2  | security     |
+      | PA2              | CONSUMER    | PA2  | support      |
+      | PA2              | CONSUMER    | PA2  | api,security |
+      | PA2              | CONSUMER    | PA1  | admin        |
 
   @agreement-activate-refactor
   Scenario: [AGREEMENTS_UNSUSPEND_7] Un delegato all'erogazione riattiva una richiesta di fruizione in stato SUSPENDED per conto dell'erogatore
