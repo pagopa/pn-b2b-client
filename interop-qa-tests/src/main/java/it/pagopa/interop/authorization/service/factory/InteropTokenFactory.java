@@ -23,15 +23,6 @@ public class InteropTokenFactory extends SessionTokenFactory {
         ) {
         super(interopClientConfigs, configFileReader, kmsClient);
         getSessionTokenPayloadTemplate().put("aud", "{{ENVIRONMENT}}.interop.pagopa.it/ui");
-        try {
-           if (cachedTokens == null) cachedTokens = generateSessionToken();
-        } catch (Exception ex) {
-            if (ex.getMessage().contains("arn:aws:kms:eu-south-1:537124933279:")) {
-                log.warn("AWS credentials configured for Extra QA environment: no session token generation available.");
-            } else {
-                throw new IllegalArgumentException("There was an error while creating the session token: " + ex.getMessage(), ex);
-            }
-        }
     }
 
     public synchronized Map<String, Map<String, List<String>>> loadToken() {

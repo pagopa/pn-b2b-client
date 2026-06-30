@@ -53,13 +53,8 @@ public class IdentityServiceSelfcareImpl implements IdentityService {
     public String getMaintenanceToken() {
         try {
             return sessionTokenFactory.getMaintenanceToken();
-
-        } catch (NotFoundException e) {
-            log.warn(e.getMessage());
-            log.warn("Maintenance token skipped");
-            return "";
-
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new RuntimeException("Errore durante il reperimento del token di maintenance", e);
         }
     }
