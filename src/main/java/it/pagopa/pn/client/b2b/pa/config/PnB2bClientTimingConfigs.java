@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.time.Duration;
 
-@ConfigurationProperties( prefix = "pn.configuration", ignoreUnknownFields = false)
+@ConfigurationProperties(prefix = "pn.configuration", ignoreUnknownFields = false)
 @Data
 public class PnB2bClientTimingConfigs {
 
@@ -28,10 +28,6 @@ public class PnB2bClientTimingConfigs {
     private Integer waitMillisShort;
     private Integer waitMillisExtraRapid;
     private Integer waitMillisForSendAnalogEvents;
-
-
     private Integer workflowWaitAcceptedMillisShort;
     private Integer workflowWaitMillisShort;
-
-
 }

@@ -34,6 +34,15 @@ Feature: Cancellazione di un documento allegato alla richiesta di fruizione
       | Privato | support      |       403 |
       | Privato | api,security |       403 |
 
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente    | ruolo        | risultato |
+      | GSP     | reviewer     |       403 |
+      | GSP     | viewer       |       403 |
+      | Privato | reviewer     |       403 |
+      | Privato | viewer       |       403 |
+
   @sad-path
   @nrt-minimal
   @agreement_document_delete2a @wait_for_fix @IMN-310

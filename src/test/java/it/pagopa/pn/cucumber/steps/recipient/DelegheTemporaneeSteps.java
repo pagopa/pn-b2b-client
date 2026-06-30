@@ -10,14 +10,11 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.ThirdPartyMessage;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationsResponse;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationSearchRow;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateIo.model.CIEValidationData;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateIo.model.MandateCreationRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateIo.model.MandateCreationResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateIo.model.MandateDto;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
 import it.pagopa.pn.client.b2b.pa.service.IPnAppIOB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnMandateAppIoClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnMandateAppIoClientImpl;
@@ -25,8 +22,8 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.A
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
-import it.pagopa.pn.cucumber.steps.utilitySteps.Costanti;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
+import it.pagopa.pn.cucumber.steps.utilitySteps.Environment;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -36,13 +33,10 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import java.nio.file.Path;
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-import static java.time.OffsetDateTime.now;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @Slf4j
@@ -138,7 +132,8 @@ public class DelegheTemporaneeSteps {
         switch (inputParamsType.toUpperCase()) {
             case "TAXID NULL" -> taxId = null;
             case "EMPTY REQUEST BODY" -> mandateCreationRequest = null;
-            case "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI" -> taxId = sharedSteps.getDestinatarioRegistry().DESTINATARIO_GALILEO_GALILEI.getTaxId();
+            case "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI" ->
+                    taxId = sharedSteps.getDestinatarioRegistry().DESTINATARIO_GALILEO_GALILEI.getTaxId();
         }
         try {
             mandateCreationResponse = mandateAppIoClient.createIOMandate(
@@ -152,13 +147,13 @@ public class DelegheTemporaneeSteps {
     }
 
     private void setQrCode(String inputParamsType) {
-        String environment = B2bUtils.getEnvironment(sharedSteps.getContext());
-        String environmentPath;
-        switch (environment) {
-            case "dev" -> environmentPath = "http://cittadini.dev.notifichedigitali.it/io";
-            case "test" -> environmentPath = "http://cittadini.test.notifichedigitali.it/io";
-            case "uat" -> environmentPath = "https://cittadini.uat.notifichedigitali.it/io/";
-            default -> throw new IllegalArgumentException("Invalid environment name: " + environment);
+        Environment env = B2bUtils.getEnvironment(sharedSteps.getContext());
+        String environmentPath = "";
+        switch (env) {
+            case DEV -> environmentPath = "http://cittadini.dev.notifichedigitali.it/io";
+            case TEST -> environmentPath = "http://cittadini.test.notifichedigitali.it/io";
+            case UAT -> environmentPath = "https://cittadini.uat.notifichedigitali.it/io/";
+            case HOTFIX -> environmentPath = "https://cittadini.hotfix.notifichedigitali.it/io/";
         }
         environmentPath += "?aar=";
         switch (inputParamsType.toUpperCase()) {
@@ -215,7 +210,8 @@ public class DelegheTemporaneeSteps {
                 mrtdDataDg1 = replacement + mrtdDataDg1.substring(1);
                 cieValidationData.getNisData().setPubKey(mrtdDataDg1);
             }
-            case "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI" -> lollipopUserId = sharedSteps.getDestinatarioRegistry().DESTINATARIO_GALILEO_GALILEI.getTaxId();
+            case "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI" ->
+                    lollipopUserId = sharedSteps.getDestinatarioRegistry().DESTINATARIO_GALILEO_GALILEI.getTaxId();
         }
         try {
             mandateAppIoClient.acceptIOMandate(
@@ -258,7 +254,8 @@ public class DelegheTemporaneeSteps {
         String cieOwnerTaxId = delegatorTaxId;
         switch (inputParamsType.toUpperCase()) {
             case "DATI DI UNA CIE SCADUTA" -> expirationDate = LocalDate.now().minusYears(1L);
-            case "DATI CIE DI UTENTE DIVERSO DAL DESTINATARIO" -> cieOwnerTaxId = sharedSteps.getDestinatarioRegistry().DESTINATARIO_GALILEO_GALILEI.getTaxId();
+            case "DATI CIE DI UTENTE DIVERSO DAL DESTINATARIO" ->
+                    cieOwnerTaxId = sharedSteps.getDestinatarioRegistry().DESTINATARIO_GALILEO_GALILEI.getTaxId();
             case "SIGNED NONCE ERRATO" -> nonce = "00000";
         }
         return cieGeneratorTool.generateCieValidationData(path, delegatorTaxId, cieOwnerTaxId, expirationDate, nonce);

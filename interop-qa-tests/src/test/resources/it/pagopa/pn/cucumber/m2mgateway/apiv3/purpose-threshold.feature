@@ -57,6 +57,12 @@ Feature: Soglie differenziate con API M2M V3
       | support      | m2m       | %actual   | 403        |
       | api,security | m2m       | %actual   | 403        |
 
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | role         | m2mRole   | purposeId | statusCode |
+      | reviewer     | m2m-admin | %actual   | 403        |
+
   Scenario Outline: [PURPOSE_THRESHOLD_10b] Una richiesta con API M2M V3 per recuperare le soglie rimanenti specificando una finalità non valida o inesistente fallisce
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente cerca di recuperare le soglie rimanenti per la finalità con ID "<purposeId>" per m2m e si ottiene uno status code <statusCode>
@@ -66,7 +72,6 @@ Feature: Soglie differenziate con API M2M V3
       | %random   | 404        |
       | %null     | 400        |
 
-  @dailyCallsThreshold
   Scenario: [DESCRIPTOR_PUBLISHED_UPDATE_THRESHOLD_17] Per un e-service in stato PUBLISHED è possibile modificare dailyCallsPerConsumer all'interno degli attributi certificati utilizzando le API M2M v3
     Given l'utente è un "admin" di "PA1"
     And PA1 ha già creato 1 attributo CERTIFIED

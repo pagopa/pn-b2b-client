@@ -24,7 +24,7 @@ public class EServiceTemplateParameterTypes {
         };
     }
 
-    @ParameterType("DRAFT|PUBLISHED|DEPRECATED|SUSPENDED|ARCHIVED|WAITING_FOR_APPROVAL")
+    @ParameterType("DRAFT|PUBLISHED|DEPRECATED|SUSPENDED|ARCHIVED|WAITING_FOR_APPROVAL|ARCHIVING|ARCHIVING_SUSPENDED")
     public EServiceDescriptorState eServiceDescriptorState(String state) {
         return switch (state) {
             case "DRAFT"                -> EServiceDescriptorState.DRAFT;
@@ -33,6 +33,8 @@ public class EServiceTemplateParameterTypes {
             case "SUSPENDED"            -> EServiceDescriptorState.SUSPENDED;
             case "ARCHIVED"             -> EServiceDescriptorState.ARCHIVED;
             case "WAITING_FOR_APPROVAL" -> EServiceDescriptorState.WAITING_FOR_APPROVAL;
+            case "ARCHIVING"            -> EServiceDescriptorState.ARCHIVING;
+            case "ARCHIVING_SUSPENDED"  -> EServiceDescriptorState.ARCHIVING_SUSPENDED;
             default                     -> throw new IllegalArgumentException("Unsupported %s value: %s".formatted(
                 EServiceDescriptorState.class.getSimpleName(),
                 state));
@@ -52,11 +54,12 @@ public class EServiceTemplateParameterTypes {
         };
     }
 
-    @ParameterType("DOCUMENT|INTERFACE")
+    @ParameterType("DOCUMENT|INTERFACE|ASYNC_EXCHANGE_CALLBACK_INTERFACE")
     public EServiceTemplateDocumentKind eServiceTemplateDocumentKind(String kind) {
         return switch (kind) {
             case "DOCUMENT"     -> DOCUMENT;
             case "INTERFACE"    -> EServiceTemplateDocumentKind.INTERFACE;
+            case "ASYNC_EXCHANGE_CALLBACK_INTERFACE" -> EServiceTemplateDocumentKind.ASYNC_EXCHANGE_CALLBACK_INTERFACE;
             default             -> throw new IllegalArgumentException("Unsupported %s value: %s".formatted(
                 EServiceTemplateDocumentKind.class.getSimpleName(),
                 kind));

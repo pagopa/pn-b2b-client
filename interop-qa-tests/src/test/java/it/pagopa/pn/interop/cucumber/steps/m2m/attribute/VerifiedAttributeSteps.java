@@ -1,10 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.attribute;
 
-import static java.time.temporal.ChronoUnit.SECONDS;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.within;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -12,20 +7,21 @@ import it.pagopa.interop.agreement.service.IM2MTenantClient;
 import it.pagopa.interop.attribute.service.IM2MVerifiedAttributeClient;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.TenantVerifiedAttributeRevoker;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.TenantVerifiedAttributeRevokers;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.TenantVerifiedAttributeVerifier;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.TenantVerifiedAttributeVerifiers;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.VerifiedAttribute;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.VerifiedAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.AbstractCommonSteps;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
+
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import static java.time.temporal.ChronoUnit.SECONDS;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.within;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 public class VerifiedAttributeSteps extends AbstractCommonSteps<VerifiedAttribute, UUID> {
 
@@ -98,6 +94,15 @@ public class VerifiedAttributeSteps extends AbstractCommonSteps<VerifiedAttribut
         recuperaVerifiers(organizationId, verifiedAttributeId);
     }
 
+    @When("l'utente tenta di recuperare la lista di enti che hanno verificato l'attributo all'ente {string}")
+    public void recuperaVerifiers(String tenant) {
+        delayService.delay();
+        UUID organizationId = sharedStepsContext.getIdentityService().getOrganizationId(tenant);
+        UUID verifiedAttributeId = sharedStepsContext.getAttributeCommonContext().getAttributeId();
+
+        recuperaVerifiers(organizationId, verifiedAttributeId);
+    }
+
     @When("l'utente tenta di recuperare la lista di enti che hanno verificato l'attributo indicando un ente inesistente")
     public void recuperaVerifiersEnteInesistente() {
         UUID organizationId = UUID.randomUUID();
@@ -135,6 +140,15 @@ public class VerifiedAttributeSteps extends AbstractCommonSteps<VerifiedAttribut
     public void recuperaRevokers() {
         delayService.delay();
         String tenant = sharedStepsContext.getTenantType();
+        UUID organizationId = sharedStepsContext.getIdentityService().getOrganizationId(tenant);
+        UUID verifiedAttributeId = sharedStepsContext.getAttributeCommonContext().getAttributeId();
+
+        recuperaRevokers(organizationId, verifiedAttributeId);
+    }
+
+    @When("l'utente tenta di recuperare la lista di enti che hanno revocato l'attributo all'ente {string}")
+    public void recuperaRevokers(String tenant) {
+        delayService.delay();
         UUID organizationId = sharedStepsContext.getIdentityService().getOrganizationId(tenant);
         UUID verifiedAttributeId = sharedStepsContext.getAttributeCommonContext().getAttributeId();
 
