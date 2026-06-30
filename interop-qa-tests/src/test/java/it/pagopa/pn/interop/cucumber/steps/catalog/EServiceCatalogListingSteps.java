@@ -63,7 +63,7 @@ public class EServiceCatalogListingSteps {
 
     private List<EServiceDescriptor> createAndStoreEServices(int totalEServices, EServiceState state) {
         List<EServiceDescriptor> eServiceDescriptors = new ArrayList<>();
-        for (int i = 0; i< totalEServices; i++) {
+        for (int i = 0; i < totalEServices; i++) {
             EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceInState(
                     new EServiceSeed().name(String.format("eservice-%s-%d-%d", state, i, sharedStepsContext.getTestSeed())),
                     new UpdateEServiceDescriptorSeed(),
@@ -84,7 +84,7 @@ public class EServiceCatalogListingSteps {
 
         List<EServiceDescriptor> eServiceDescriptors = new ArrayList<>();
         // 1. Create the draft e-services with draft descriptors
-        for (int i=0; i<totalEServices; i++) {
+        for (int i = 0; i < totalEServices; i++) {
             EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
                     new EServiceSeed().name(String.format("eservice-%d-%d", i, sharedStepsContext.getTestSeed())).personalData(personalData),
                     new UpdateEServiceDescriptorSeed());
@@ -205,15 +205,27 @@ public class EServiceCatalogListingSteps {
         dataPreparationService.publishDescriptor(eServiceDescriptor.getEServiceId(), eServiceDescriptor.getDescriptorId());
     }
 
+    @Then("la versione più recente dell'e-service è in stato {string}")
     @Then("l'e-service è in stato {string}")
     public void checkEServiceState(String eServiceState) {
         pollingService.makePolling(() -> httpExecutor.performCall(() -> eServiceClient.getProducerEServiceDescriptorWithHttpInfo(
-                sharedStepsContext.getEServicesCommonContext().getEserviceId(),
-                sharedStepsContext.getEServicesCommonContext().getDescriptorId())),
-            HttpStatus::is2xxSuccessful,
-            "L'e-service non è stato trovato. Visionare log per maggiori dettagli.");
+                        sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                        sharedStepsContext.getEServicesCommonContext().getDescriptorId())),
+                HttpStatus::is2xxSuccessful,
+                "L'e-service non è stato trovato. Visionare log per maggiori dettagli.");
         ResponseEntity<ProducerEServiceDescriptor> descriptor = (ResponseEntity<ProducerEServiceDescriptor>) httpExecutor.getResponse();
         assertThat(descriptor.getBody().getState()).isEqualTo(EServiceDescriptorState.fromValue(eServiceState));
     }
-    
+
+    @Then("il descrittore con id {string} dell'e-service con id {string} è in stato {string}")
+    public void checkDescriptorStateByIds(String descriptorId, String eServiceId, String descriptorState) {
+        pollingService.makePolling(() -> httpExecutor.performCall(() -> eServiceClient.getProducerEServiceDescriptorWithHttpInfo(
+                        UUID.fromString(eServiceId),
+                        UUID.fromString(descriptorId))),
+                HttpStatus::is2xxSuccessful,
+                "Il descrittore dell'e-service non è stato trovato. Visionare log per maggiori dettagli.");
+        ResponseEntity<ProducerEServiceDescriptor> descriptor = (ResponseEntity<ProducerEServiceDescriptor>) httpExecutor.getResponse();
+        assertThat(descriptor.getBody().getState()).isEqualTo(EServiceDescriptorState.fromValue(descriptorState));
+    }
+
 }

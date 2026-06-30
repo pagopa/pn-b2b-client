@@ -69,7 +69,7 @@ public class VoucherService {
         this.restTemplate = restTemplate;
     }
 
-    public String calculateKidFromPublicKey(PublicKey publicKey) {
+    public static String calculateKidFromPublicKey(PublicKey publicKey) {
         try {
             PublicJwk<PublicKey> publicJwk = Jwks.builder().key(publicKey).build();
 

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.interfaces.SenderLimitCondition;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDelivery;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPrintCapacityCounter;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimit;
 import it.pagopa.pn.cucumber.steps.delayer.model.ExecutionStatusResponse;
 import it.pagopa.pn.cucumber.steps.delayer.model.FirstStepFunctionResponseWrapper;
@@ -13,6 +12,8 @@ import it.pagopa.pn.cucumber.steps.delayer.model.SecondStepFunctionResponseWrapp
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +27,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
+@Component
 public class DelayerLambdaClient {
 
     private final LambdaInvoker lambdaInvoker;
@@ -38,7 +40,7 @@ public class DelayerLambdaClient {
         private final String lastEvaluatedKey;
     }
 
-    public DelayerLambdaClient(LambdaInvoker lambdaInvoker, String lambdaName) {
+    public DelayerLambdaClient(LambdaInvoker lambdaInvoker,@Value("${pn.delayer.lambda.arn}") String lambdaName) {
         this.lambdaInvoker = lambdaInvoker;
         this.lambdaName = lambdaName;
     }
@@ -53,6 +55,13 @@ public class DelayerLambdaClient {
     public String invoke(String operationType, Map<String, String> parameters) throws Exception {
         String payload = buildPayload(operationType, parameters);
         String rawResult = lambdaInvoker.invokeMyLambda(lambdaName, payload);
+        checkLambdaResponse(rawResult, operationType);
+        return rawResult;
+    }
+
+    public String invokePortfatLambda(String operationType, String portfatLambdaName, String downloadUrl) throws Exception {
+        String payload = buildFileReadyEventJson(downloadUrl);
+        String rawResult = lambdaInvoker.invokeMyLambda(portfatLambdaName, payload);
         checkLambdaResponse(rawResult, operationType);
         return rawResult;
     }
@@ -81,45 +90,6 @@ public class DelayerLambdaClient {
         return declared - used;
     }
 
-    public FirstStepFunctionResponseWrapper.Payload runBatchWorkflowStateMachine(int printCapacity, String deliveryWeek) throws Exception {
-        String rawResponse = invoke("RUN_ALGORITHM", "pn-DelayerPaperDelivery", "pn-PaperDeliveryDriverCapacities", "pn-PaperDeliveryDriverUsedCapacities",
-                "pn-PaperDeliverySenderLimit", "pn-PaperDeliveryUsedSenderLimit", "pn-PaperDeliveryCounters", String.valueOf(printCapacity), deliveryWeek);
-
-        try {
-            // ===== LEVEL 1 =====
-            FirstStepFunctionResponseWrapper outer =
-                    objectMapper.readValue(rawResponse, FirstStepFunctionResponseWrapper.class);
-
-            // ===== LEVEL 2 =====
-            FirstStepFunctionResponseWrapper.Inner inner =
-                    objectMapper.readValue(outer.getBody(), FirstStepFunctionResponseWrapper.Inner.class);
-
-            // ===== LEVEL 3 ===== (payload finale)
-            return objectMapper.readValue(inner.getBody(), FirstStepFunctionResponseWrapper.Payload.class);
-
-        } catch (Exception e) {
-            throw new RuntimeException("Errore durante RUN_ALGORITHM", e);
-        }
-    }
-
-    public SecondStepFunctionResponseWrapper.Payload runDelayerToPaperChannel() throws Exception {
-        String rawResponse = invoke("DELAYER_TO_PAPER_CHANNEL", "pn-DelayerPaperDelivery", "pn-PaperDeliveryCounters");
-
-        try {
-            SecondStepFunctionResponseWrapper wrapper =
-                    objectMapper.readValue(rawResponse, SecondStepFunctionResponseWrapper.class);
-
-            SecondStepFunctionResponseWrapper.Payload payload =
-                    objectMapper.readValue(wrapper.getBody(), SecondStepFunctionResponseWrapper.Payload.class);
-
-            return payload;
-
-        } catch (Exception e) {
-            throw new RuntimeException("Errore durante RUN_ALGORITHM", e);
-        }
-    }
-
-
     public ExecutionStatusResponse getExecutionStatus(String executionArn) {
         try {
             String response = invoke("GET_STATUS_EXECUTION", executionArn);
@@ -134,32 +104,6 @@ public class DelayerLambdaClient {
 
         } catch (Exception e) {
             throw new RuntimeException("Errore durante GET_STATUS_EXECUTION per executionArn %s".formatted(executionArn), e);
-        }
-    }
-
-    public DelayerPrintCapacityCounter getPrintCapacityCounter(String deliveryDate) {
-        try {
-            Map<String, String> paramsMap = Map.of(
-                    "counterType", "PRINT",
-                    "table", "pn-PaperDeliveryCounters",
-                    "deliveryDate", deliveryDate
-            );
-            String response = invoke("GET_COUNTERS", paramsMap);
-            JsonNode body = extractBody(response);
-
-            if (body.isMissingNode() || body.isNull()) {
-                log.warn("Nessun contatore trovato per deliveryDate {}", deliveryDate);
-                return null;
-            }
-
-            return objectMapper.treeToValue(body.get("items").get(0), DelayerPrintCapacityCounter.class);
-
-        } catch (Exception e) {
-            throw new RuntimeException(
-                    "Errore durante GET_PRINT_CAPACITY_COUNTER per deliveryDate %s"
-                            .formatted(deliveryDate),
-                    e
-            );
         }
     }
 
@@ -256,11 +200,16 @@ public class DelayerLambdaClient {
 
     public SenderLimitResult getSenderLimit(String deliveryDate, String province, String lastEvaluatedKey) {
         try {
-            String[] params = (lastEvaluatedKey != null && !lastEvaluatedKey.isBlank())
-                    ? new String[]{deliveryDate, province, lastEvaluatedKey}
-                    : new String[]{deliveryDate, province};
+//            String[] params = (lastEvaluatedKey != null && !lastEvaluatedKey.isBlank())
+//                    ? new String[]{deliveryDate, province, lastEvaluatedKey}
+//                    : new String[]{deliveryDate, province};
 
-            String response = invoke("GET_SENDER_LIMIT", params);
+            Map<String, String> paramsMap = Map.of(
+                    "deliveryDate", deliveryDate,
+                    "province", province
+            );
+
+            String response = invoke("GET_SENDER_LIMIT", paramsMap);
             JsonNode body = extractBody(response);
 
             List<DelayerSenderLimit> items = new ArrayList<>();
@@ -333,6 +282,28 @@ public class DelayerLambdaClient {
         sb.append("] }");
         return sb.toString();
     }
+
+    private String buildFileReadyEventJson(String downloadUrl) {
+        try {
+            // body node
+            ObjectNode bodyNode = objectMapper.createObjectNode();
+            bodyNode.put("downloadUrl", downloadUrl);
+            bodyNode.put("fileVersion", "1.0.0");
+
+            // root node
+            ObjectNode rootNode = objectMapper.createObjectNode();
+            rootNode.put("httpMethod", "POST");
+            rootNode.put("resource", "/file-ready-event");
+
+            // body must be a STRING containing JSON
+            rootNode.put("body", bodyNode.toString());
+
+            return rootNode.toString();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to build file-ready-event JSON", e);
+        }
+    }
+
 
     private String buildPayload(String operationType, Map<String, String> parameters) {
         try {

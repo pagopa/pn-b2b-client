@@ -3,6 +3,8 @@ package it.pagopa.pn.cucumber.steps.delayer.utils;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDelivery;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -13,14 +15,12 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Service
+@RequiredArgsConstructor
 public class DelayerPaperDeliveryUtils {
 
     private static final String UNIFIED_DRIVER_SCONOSCIUTO = "driverSconosciuto";
     private final DelayerContext context;
-
-    public DelayerPaperDeliveryUtils(DelayerContext context) {
-        this.context = context;
-    }
 
     public static String getUnifiedDeliveryDriverKey(DelayerPaperDelivery n) {
         String driver = n.getUnifiedDeliveryDriver();
@@ -169,44 +169,67 @@ public class DelayerPaperDeliveryUtils {
 
         List<String> problems = new ArrayList<>();
 
-        // indicizza gli expected per requestId (segnala duplicati)
-        Map<String, Map<String, String>> expectedByReqId = new LinkedHashMap<>();
-        Set<String> expectedDupes = new LinkedHashSet<>();
+        // Raggruppa per requestId per gestire eventuali duplicati senza perdere informazione
+        Map<String, List<Map<String, String>>> expectedByReqId = new LinkedHashMap<>();
         for (Map<String, String> m : expectedList) {
             String id = m.get("requestId");
-            if (id == null) {
+            if (id == null || id.isBlank()) {
                 problems.add("Expected senza requestId: " + m);
                 continue;
             }
-            if (expectedByReqId.putIfAbsent(id, m) != null) expectedDupes.add(id);
+            expectedByReqId.computeIfAbsent(id, k -> new ArrayList<>()).add(m);
         }
-        expectedDupes.forEach(d -> problems.add("Duplicato in expected per requestId=" + d));
 
-        // indicizza gli actual per requestId (segnala duplicati)
-        Map<String, Map<String, String>> actualByReqId = new LinkedHashMap<>();
-        Set<String> actualDupes = new LinkedHashSet<>();
+        Map<String, List<Map<String, String>>> actualByReqId = new LinkedHashMap<>();
         for (Map<String, String> m : actualList) {
             String id = m.get("requestId");
-            if (id == null) {
+            if (id == null || id.isBlank()) {
                 problems.add("Actual senza requestId: " + m);
                 continue;
             }
-            if (actualByReqId.putIfAbsent(id, m) != null) actualDupes.add(id);
+            actualByReqId.computeIfAbsent(id, k -> new ArrayList<>()).add(m);
         }
-        actualDupes.forEach(d -> problems.add("Duplicato in actual per requestId=" + d));
 
-        // per ogni actual: verifica che sia atteso e che i campi combacino
-        for (Map.Entry<String, Map<String, String>> e : actualByReqId.entrySet()) {
+        // Segnala duplicati "veri": stesso requestId con contenuti diversi
+        expectedByReqId.forEach((reqId, items) -> {
+            if (items.size() > 1) {
+                Set<Map<String, String>> distinct = new LinkedHashSet<>(items);
+                if (distinct.size() > 1) {
+                    problems.add("Duplicato in expected per requestId=" + reqId + " con payload differenti");
+                }
+            }
+        });
+
+        actualByReqId.forEach((reqId, items) -> {
+            if (items.size() > 1) {
+                Set<Map<String, String>> distinct = new LinkedHashSet<>(items);
+                if (distinct.size() > 1) {
+                    problems.add("Duplicato in actual per requestId=" + reqId + " con payload differenti");
+                }
+            }
+        });
+
+        // Confronto actual vs expected per requestId
+        for (Map.Entry<String, List<Map<String, String>>> e : actualByReqId.entrySet()) {
             String reqId = e.getKey();
-            Map<String, String> aMap = e.getValue();
+            List<Map<String, String>> aCandidates = e.getValue();
+            List<Map<String, String>> eCandidates = expectedByReqId.get(reqId);
 
-            Map<String, String> eMap = expectedByReqId.get(reqId);
-            if (eMap == null) {
+            if (eCandidates == null || eCandidates.isEmpty()) {
                 problems.add("Actual non atteso (requestId=" + reqId + ")");
                 continue;
             }
 
-            // confronto campo per campo (union chiavi)
+            // Se esiste almeno una coppia identica, quel requestId è ok
+            boolean anyExactMatch = aCandidates.stream().anyMatch(eCandidates::contains);
+            if (anyExactMatch) {
+                continue;
+            }
+
+            // Altrimenti dettaglia differenze usando il primo elemento come riferimento
+            Map<String, String> aMap = aCandidates.get(0);
+            Map<String, String> eMap = eCandidates.get(0);
+
             Set<String> keys = new LinkedHashSet<>();
             keys.addAll(eMap.keySet());
             keys.addAll(aMap.keySet());
@@ -219,19 +242,20 @@ public class DelayerPaperDeliveryUtils {
                     diffs.add(k + " [expected=" + ev + ", actual=" + av + "]");
                 }
             }
+
             if (!diffs.isEmpty()) {
                 problems.add("Differenze per requestId=" + reqId + " -> " + diffs);
             }
         }
 
-        // per ogni expected: verifica che esista in actual (mancanze in actual)
+        // Missing in actual
         for (String reqId : expectedByReqId.keySet()) {
             if (!actualByReqId.containsKey(reqId)) {
                 problems.add("Atteso ma non presente in actual (requestId=" + reqId + ")");
             }
         }
 
-        return problems; // vuota == tutto ok (stesse occorrenze e campi identici)
+        return problems;
     }
 
     public static String getSenderKey(DelayerPaperDelivery n) {
@@ -259,7 +283,7 @@ public class DelayerPaperDeliveryUtils {
         }
 
         for (DelayerPaperDelivery n : notifications) {
-            String senderKey   = getUnifiedDeliveryDriverKey(n);
+            String senderKey = getUnifiedDeliveryDriverKey(n);
             WorkflowSteps step = extractWorkflowStep(n);
             String deliveryDate = extractDeliveryDate(n);
 
@@ -335,7 +359,7 @@ public class DelayerPaperDeliveryUtils {
         return !paId.equalsIgnoreCase("unknow");
     }
 
-    public boolean isDriverCensito(String driverKey){
+    public boolean isDriverCensito(String driverKey) {
 
         if (driverKey == null || driverKey.isBlank()) {
             throw new IllegalStateException("SenderKey mancante o vuoto: " + driverKey);
@@ -376,11 +400,14 @@ public class DelayerPaperDeliveryUtils {
         }
 
         Comparator<DelayerPaperDelivery> byPrepare = Comparator.comparing(d -> parseDate(d.getPrepareRequestDate()));
-        Comparator<DelayerPaperDelivery> byNotification = Comparator.comparing(d -> parseDate(d.getNotificationSentAt()));
+        Comparator<DelayerPaperDelivery> bySenderPriorityAndNotification =
+                Comparator.comparingInt((DelayerPaperDelivery d) -> Integer.parseInt(d.getSenderPriority()))
+                        .reversed()
+                        .thenComparing(d -> parseDate(d.getNotificationSentAt()));
 
         rs.sort(byPrepare);
         secondi.sort(byPrepare);
-        altri.sort(byNotification);
+        altri.sort(bySenderPriorityAndNotification);
         comunicazioniBonarie.sort(byPrepare);
 
         List<DelayerPaperDelivery> ordinati = new ArrayList<>();
@@ -402,6 +429,16 @@ public class DelayerPaperDeliveryUtils {
     public static String getNextMonday(int weeksToAdd) {
         LocalDate nextMonday = LocalDate.now().with(DayOfWeek.MONDAY).plusWeeks(weeksToAdd);
         return nextMonday.format(DateTimeFormatter.ISO_LOCAL_DATE);
+    }
+
+    public static String getNextMondayFromDate(String date, int weeksToAdd) {
+        LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE).plusWeeks(weeksToAdd);
+        return localDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
+    }
+
+    public static String getPreviousMondayFromDate(String date, int weeksToRemove) {
+        LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE).minusWeeks(weeksToRemove);
+        return localDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
     }
 
     public static String getCurrentMonday() {
@@ -427,7 +464,7 @@ public class DelayerPaperDeliveryUtils {
                 return String.join("~", province, date, requestId);
             }
 
-            case EVALUATE_DRIVER_CAPACITY, EVALUATE_RESIDUAL_CAPACITY -> {
+            case EVALUATE_SENDER_PRIORITY, EVALUATE_DRIVER_CAPACITY, EVALUATE_RESIDUAL_CAPACITY -> {
                 String driver = n.getUnifiedDeliveryDriver();
                 String province = n.getProvince();
                 String priority = calculatePriority(n);
@@ -435,7 +472,13 @@ public class DelayerPaperDeliveryUtils {
                 return String.join("~", driver, province, priority, refIso, requestId);
             }
 
-            case EVALUATE_PRINT_CAPACITY, SENT_TO_PREPARE_PHASE_2 -> {
+            case EVALUATE_PRINT_CAPACITY -> {
+                String priority = calculatePriority(n);
+                String date = n.getVirtualNotificationSentAt() != null ? n.getVirtualNotificationSentAt() : n.getPrepareRequestDate();
+                return String.join("~", priority, date, requestId);
+            }
+
+            case  SENT_TO_PREPARE_PHASE_2 -> {
                 String priority = calculatePriority(n);
                 String date = n.getPrepareRequestDate();
                 return String.join("~", priority, date, requestId);
@@ -521,6 +564,10 @@ public class DelayerPaperDeliveryUtils {
     }
 
     private String resolveReferenceDate(DelayerPaperDelivery n) {
+        if (!Objects.isNull(n.getVirtualNotificationSentAt()) && !n.getVirtualNotificationSentAt().isBlank()) {
+            return n.getVirtualNotificationSentAt();
+        }
+
         boolean isRsOrSecondAttempt = n.isRS() || n.isSecondAttempt();
         return isRsOrSecondAttempt ? n.getNotificationSentAt() : n.getPrepareRequestDate();
     }

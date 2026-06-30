@@ -9,16 +9,15 @@ import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDetails;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
 import java.util.UUID;
 import lombok.Data;
+import org.jeasy.random.randomizers.text.StringRandomizer;
 import org.springframework.http.ResponseEntity;
 
 /** Cucumber steps involving creation, editing, viewing or deletion
@@ -99,6 +98,36 @@ public class EServiceTemplateUpdateSteps {
     @When("l'utente tenta di modificare l'e-service template indicando una specifica vuota")
     public void updateEServiceTemplateWithEmptySpec() {
         updateEServiceTemplate(sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), new UpdateEServiceTemplateSeed());
+    }
+
+    @When("l'utente aggiorna la descrizione dell'e-service template in stato {eServiceTemplateVersionState} con una descrizione di {int} caratteri")
+    public void updateEServiceTemplateDescription(EServiceTemplateVersionState eServiceTemplateVersionState, Integer descriptionLength) {
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        String description = (new StringRandomizer(descriptionLength, descriptionLength, System.currentTimeMillis())).getRandomValue();
+
+        if (eServiceTemplateVersionState.equals(EServiceTemplateVersionState.PUBLISHED)) {
+            EServiceTemplateDescriptionUpdateSeed seed = new EServiceTemplateDescriptionUpdateSeed()
+                    .description(description);
+            getHttpCallExecutor().performCall(
+                    () -> eServiceTemplateClient.updateEServiceTemplateDescription(eServiceTemplateId, seed)
+            );
+        } else if(eServiceTemplateVersionState.equals(EServiceTemplateVersionState.DRAFT)) {
+            EServiceTemplateInfo lastTemplateManaged = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
+            UpdateEServiceTemplateSeed seed = new UpdateEServiceTemplateSeed()
+                    .description(description)
+                    .name(lastTemplateManaged.getName())
+                    .technology(lastTemplateManaged.getTechnology())
+                    .mode(lastTemplateManaged.getMode())
+                    .intendedTarget(lastTemplateManaged.getIntendedTarget())
+                    .personalData(lastTemplateManaged.getPersonalData());
+            updateEServiceTemplate(eServiceTemplateId, seed);
+        } else {
+            fail("unhandled case: %s".formatted(eServiceTemplateVersionState));
+        }
+
+        if (getHttpCallExecutor().getResponseStatus().is2xxSuccessful()) {
+            sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().setEServiceDescription(description);
+        }
     }
 
     @Then("le modifiche al template sono state applicate correttamente")

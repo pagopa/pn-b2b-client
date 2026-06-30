@@ -72,6 +72,20 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | 330370611      |
       | +393331234567 |
 
+  @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs 1
+  Scenario: [RADD_ANAGRAFICA_CRUD_V2_27] Creazione nuova sede RADD con endValidity nel passato
+    Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
+    When viene generato uno sportello Radd V2 con restituzione errore con dati:
+      | address_radd_row      | via roma    |
+      | address_radd_cap      | 80133       |
+      | address_radd_province | NA          |
+      | address_radd_city     | NAPOLI      |
+      | radd_description      | descrizione |
+      | radd_phoneNumbers     | 8001234567  |
+      | radd_externalCodes    | EXT01QA     |
+      | radd_end_validity     | 2025-05-05  |
+    Then l'operazione Radd V2 ha prodotto un errore con status code "400"
+
   @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs nd
   Scenario Outline: [RADD_ANAGRAFICA_CRUD_V2_26] Creazione nuova sede RADD con descrizione maggiore di 200 caratteri
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"

@@ -22,8 +22,6 @@ import java.util.*;
 import static it.pagopa.pn.cucumber.steps.SharedSteps.threadWait;
 import static it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils.*;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario.DESTINATARIO_NESSUNO;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario.DESTINATARIO_SIGNOR_CASUALE;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -108,7 +106,7 @@ public class NotificationStepsV25 implements NotificationStepsInterface {
 
     @Override
     public void addRecipientToNotification(Destinatario destinatario, Map<String, String> data) {
-        if (destinatario != null && destinatario.equals(DESTINATARIO_NESSUNO)) return;
+        if (destinatario != null && destinatario.isNessuno()) return;
         NotificationRecipientV24 notificationRecipient = utils.convertNotificationRecipient(data);
         if (notificationRequest.getNotificationFeePolicy() == NotificationFeePolicy.DELIVERY_MODE
                 && NotificationValue.getValue(data, NotificationValue.PAYMENT.key) != null) {
@@ -121,7 +119,7 @@ public class NotificationStepsV25 implements NotificationStepsInterface {
         }
         if (destinatario != null) {
             notificationRecipient.setDenomination(destinatario.getDenomination());
-            notificationRecipient.setTaxId(destinatario.equals(DESTINATARIO_SIGNOR_CASUALE) ?
+            notificationRecipient.setTaxId(destinatario.isSignorCasuale() ?
                     FiscalCodeGenerator.generateCF(System.nanoTime()) : destinatario.getTaxId());
             notificationRecipient.setRecipientType(NotificationRecipientV24.RecipientTypeEnum.valueOf(destinatario.getRecipientType()));
             /* Nei vecchi metodi @And("Destinatario xxx") denomination e taxId venivano sempre settati
@@ -311,6 +309,12 @@ public class NotificationStepsV25 implements NotificationStepsInterface {
     }
 
     @Override
+    public void addIuvGpdToDestinatario(Integer recIndex, String iuvGpd, Integer recipientPaymentIndex) {
+        NotificationRecipientV24 recipient = notificationRequest.getRecipients().get(recIndex);
+        Objects.requireNonNull(Objects.requireNonNull(recipient.getPayments()).get(recipientPaymentIndex).getPagoPa()).setNoticeCode(iuvGpd);
+    }
+
+    @Override
     public List<String> getDatiPagamento(Integer destinatario, Integer pagamento) {
         FullSentNotificationV28 fullSentNotification = getFullSentNotificationVersioned();
         return Arrays.asList(
@@ -476,5 +480,10 @@ public class NotificationStepsV25 implements NotificationStepsInterface {
     @Override
     public String getNoticeCode(int recipientIndex) {
         return notificationRequest.getRecipients().get(recipientIndex).getPayments().get(0).getPagoPa().getNoticeCode();
+    }
+
+    @Override
+    public void setApplyCostFalse(int recipientIndex, int paymentIndex) {
+        notificationRequest.getRecipients().get(recipientIndex).getPayments().get(paymentIndex).getPagoPa().setApplyCost(false);
     }
 }

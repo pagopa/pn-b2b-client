@@ -49,6 +49,16 @@ Feature: Creazione di una nuova versione di finalità
       | Privato | api,security |
       | Privato | support      |
 
+    @nuovi-operatori-update
+    Examples:
+      | ente    | ruolo        |
+      | PA2     | reviewer     |
+      | PA2     | viewer       |
+      | GSP     | reviewer     |
+      | GSP     | viewer       |
+      | Privato | reviewer     |
+      | Privato | viewer       |
+
   @sad-path
   @nrt-minimal
   @purpose_version_create2
@@ -93,3 +103,20 @@ Feature: Creazione di una nuova versione di finalità
     Given "PA1" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     When l'utente aggiorna la stima di carico per quella finalità superando la soglia
     Then si ottiene status code 200 e la nuova versione della finalità è stata creata in stato "WAITING_FOR_APPROVAL" con la nuova stima di carico
+
+  # Ticket aperto: https://pagopa.atlassian.net/browse/PIN-10265
+  @adeguamento-analisi-rischio
+  Scenario Outline: [CREAZIONE_VERSIONE_FINALITA_TK_1] A seguito del cambiamento di tenant kind si tenta di aggiungere una versione ad una finalità pubblicata
+    Given l'utente è un "admin" di "<ente>"
+    And "PA2" ha già creato e pubblicato 1 e-service
+    And "<ente>" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "<ente>" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    And il tenant kind dell'ente "<ente>" viene impostato a "<kind>"
+    When l'utente aggiorna la stima di carico per quella finalità restando entro la soglia
+    Then si ottiene status code 200 e la nuova versione della finalità è stata creata in stato "ACTIVE" con la nuova stima di carico
+    Examples:
+      | ente    | kind        |
+      | PA4     | PRIVATE     |
+      | PA4     | GSP         |
+      | GSP2    | PA          |
+      | Privato | PA          |

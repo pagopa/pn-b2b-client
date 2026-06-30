@@ -32,6 +32,17 @@ Feature: Creazione e-service
       | PA1     | security     |       403 |
       | PA1     | support      |       403 |
 
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente    | ruolo        | risultato |
+      | GSP     | reviewer     |       403 |
+      | GSP     | viewer       |       403 |
+      | Privato | reviewer     |       403 |
+      | Privato | viewer       |       403 |
+      | PA2     | reviewer     |       403 |
+      | PA2     | viewer       |       403 |
+
   @sad-path
   @nrt-minimal
   @eservice_creation2
@@ -40,3 +51,18 @@ Feature: Creazione e-service
     Given l'utente ha già creato un e-service contenente anche il primo descrittore
     When l'utente crea un e-service con lo stesso nome
     Then si ottiene status code 409
+
+  @happy-path
+  @eservice_description_max_length
+  Scenario: [ESERVICE_CREATION_DESCRIPTION_MAX_LENGTH_1] Un utente crea un e-service utilizzando la descrizione della lunghezza massima possibile
+    Given l'utente è un "admin" di "PA1"
+    When l'utente crea un e-service con una descrizione di 400 caratteri
+    Then si ottiene status code 200
+    And l'e-service creato ha una descrizione di 400 caratteri
+
+  @sad-path
+  @eservice_description_max_length
+  Scenario: [ESERVICE_CREATION_DESCRIPTION_MAX_LENGTH_2] La creazione dell'e-service non va a buon fine se viene superata la dimensione massima consentita per la descrizione
+    Given l'utente è un "admin" di "PA1"
+    When l'utente crea un e-service con una descrizione di 401 caratteri
+    Then si ottiene status code 400
