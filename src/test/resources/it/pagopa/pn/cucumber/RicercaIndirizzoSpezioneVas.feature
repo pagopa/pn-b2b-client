@@ -842,7 +842,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
 
   #PA ABILITATA, PF CENSITA, CLIENT ABILITATO
-  @ricercaIndirizzoVas  #rif srs 3-5-15-24-43-48-11
+  @ricercaIndirizzoVas @ignoreUat  #rif srs 3-5-15-24-43-48-11
   Scenario: [RICERCA_INDIRIZZO_MONO_PF_OK_UAT] Invio notifica AR monodestinatario verso PF con campo address vuoto e recupero indirizzo da ANPR - Vas attivo
     Given il test è effettuabile con API versione "V25" o superiore
     Given viene generata una nuova notifica
@@ -885,7 +885,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
 
      #PA ABILITATA, PF CENSITA + PG CENSITA, CLIENT ABILITATO
-  @ricercaIndirizzoVas  #rif srs 53-57
+  @ricercaIndirizzoVas @ignoreUat  #rif srs 53-57
   Scenario: [RICERCA_INDIRIZZO_MULTI_PF_PG_OK_UAT] Invio notifica multidestinatario AR verso PF-PG con campo address vuoto e recupero indirizzo dai registri nazionali - Vas attivo
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
