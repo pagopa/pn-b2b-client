@@ -7,24 +7,13 @@ import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.interfaces.SenderLimi
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDelivery;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimit;
 import it.pagopa.pn.cucumber.steps.delayer.model.ExecutionStatusResponse;
-import it.pagopa.pn.cucumber.steps.delayer.model.FirstStepFunctionResponseWrapper;
-import it.pagopa.pn.cucumber.steps.delayer.model.SecondStepFunctionResponseWrapper;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -320,6 +309,7 @@ public class DelayerLambdaClient {
             throw new RuntimeException("Failed to build JSON payload", e);
         }
     }
+
 
     private void checkLambdaResponse(String rawJson, String operationType) throws Exception {
         if (rawJson == null) {
