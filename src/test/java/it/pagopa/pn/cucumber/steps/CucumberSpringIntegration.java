@@ -279,6 +279,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         IPnLegalPersonVirtualKeyServiceClientImpl.class,
         IPnTosPrivacyClientImpl.class,
         TemplateEngineClientImpl.class,
+        PnPaperChannelClientImpl.class,
         TemplateConfiguration.class,
         TemplateEngineContextFactory.class,
         EmdIntegrationApiImpl.class,
