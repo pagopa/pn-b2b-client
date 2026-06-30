@@ -52,16 +52,16 @@ public class DelayerLambdaClient {
         return rawResult;
     }
 
-    public String invoke(String operationType, Map<String, String> parameters) throws Exception {
-        String payload = buildPayload(operationType, parameters);
-        String rawResult = lambdaInvoker.invokeMyLambda(lambdaName, payload);
+    public String invokePortfatLambda(String operationType, String portfatLambdaName, String downloadUrl) throws Exception {
+        String payload = buildFileReadyEventJson(downloadUrl);
+        String rawResult = lambdaInvoker.invokeMyLambda(portfatLambdaName, payload);
         checkLambdaResponse(rawResult, operationType);
         return rawResult;
     }
 
-    public String invokePortfatLambda(String operationType, String portfatLambdaName, String downloadUrl) throws Exception {
-        String payload = buildFileReadyEventJson(downloadUrl);
-        String rawResult = lambdaInvoker.invokeMyLambda(portfatLambdaName, payload);
+    public String invoke(String operationType, Map<String, String> parameters) throws Exception {
+        String payload = buildPayload(operationType, parameters);
+        String rawResult = lambdaInvoker.invokeMyLambda(lambdaName, payload);
         checkLambdaResponse(rawResult, operationType);
         return rawResult;
     }
