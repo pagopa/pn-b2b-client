@@ -1134,8 +1134,8 @@ public class B2bStepsV26 implements B2bStepsInterface {
         OffsetDateTime expectedDate =
                 unitaTemporale == DAYS ? date1.plusDays(timeQuantity) :
                         unitaTemporale == HOURS ? date1.plusHours(timeQuantity) :
-                                unitaTemporale == MINUTES ? date1.plusMinutes(timeQuantity) :
-                                        date1.plusSeconds(timeQuantity);
+                        unitaTemporale == MINUTES ? date1.plusMinutes(timeQuantity) :
+                                date1.plusSeconds(timeQuantity);
         if (isSuperiore == null) {
             assertThat(date2)
                     .as("La data di " + code2 + " non è pari a quella di " + code1)

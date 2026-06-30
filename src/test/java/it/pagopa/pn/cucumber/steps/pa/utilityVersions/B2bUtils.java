@@ -247,9 +247,9 @@ public abstract class B2bUtils {
 
     private static MultiValueMap<String, String> getHeadersMapForUploadToPresigned(String contentType, String sha256, String secret) {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("Content-type", contentType);
-        headers.add("x-amz-checksum-sha256", sha256);
-        headers.add("x-amz-meta-secret", secret);
+        if (contentType != null) headers.add("Content-type", contentType);
+        if (sha256 != null) headers.add("x-amz-checksum-sha256", sha256);
+        if (secret != null) headers.add("x-amz-meta-secret", secret);
         log.info("headers: {}", headers);
         return headers;
     }

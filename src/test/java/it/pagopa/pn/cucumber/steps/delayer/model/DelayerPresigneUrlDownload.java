@@ -5,10 +5,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class SecondStepFunctionResponseWrapper {
+public class DelayerPresigneUrlDownload extends DelayerPresigedUrl {
 
-    private int statusCode;
-    private DelayerPayload body;
+    private String downloadUrl;
 
 }
-
