@@ -33,6 +33,13 @@ Feature: Attivazione richiesta di fruizione
       | GSP          | PA2               | PA1           | support      | 403        |
       | GSP          | PA2               | PA1           | api,security | 403        |
 
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | enteFruitore | enteCertificatore | enteErogatore | ruolo        | risultato |
+      | PA1          | PA2               | GSP           | reviewer     |       403 |
+      | PA1          | PA2               | GSP           | viewer       |       403 |
+
   @happy-path @nrt-minimal
   @agreement_activate2 @no-parallel @certifiedAttribute @agreement_activate_refactor
   Scenario Outline: [AGREEMENT_ACTIVATE_02] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato SUSPENDED (riattivazione), con tutti gli attributi richiesti certificati, tutti gli attributi richiesti dichiarati dal fruitore, e tutti gli attributi richiesti verificati dall’erogatore, alla richiesta di attivazione da parte di un utente con sufficienti permessi dell’ente erogatore, va a buon fine.
