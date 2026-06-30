@@ -3,7 +3,7 @@ Feature: Attivazione richiesta di fruizione
   Tutti gli utenti autorizzati di enti PA e GSP possono attivare una richiesta di fruizione
 
   @nrt-minimal
-  @agreement_activate1 @resource_intensive @certifiedAttribute @agreement_activate_refactor
+  @agreement_activate1 @resource_intensive @certifiedAttribute @agreement-activate-refactor
   Scenario Outline: [AGREEMENT_ACTIVATE_01] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato PENDING (prima attivazione), con tutti gli attributi richiesti certificati, tutti gli attributi richiesti dichiarati dal fruitore, e tutti gli attributi richiesti verificati dall’erogatore, alla richiesta di attivazione da parte di un utente con sufficienti permessi dell’ente erogatore, va a buon fine
     Given l'utente è un "<ruolo>" di "<enteErogatore>"
     Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
@@ -36,12 +36,12 @@ Feature: Attivazione richiesta di fruizione
     @sad-path
     @nuovi-operatori-update
     Examples:
-      | enteFruitore | enteCertificatore | enteErogatore | ruolo        | risultato |
-      | PA1          | PA2               | GSP           | reviewer     |       403 |
-      | PA1          | PA2               | GSP           | viewer       |       403 |
+      | enteFruitore | enteCertificatore | enteErogatore | ruolo    | risultato |
+      | PA1          | PA2               | GSP           | reviewer | 403       |
+      | PA1          | PA2               | GSP           | viewer   | 403       |
 
   @happy-path @nrt-minimal
-  @agreement_activate2 @no-parallel @certifiedAttribute @agreement_activate_refactor
+  @agreement_activate2 @no-parallel @certifiedAttribute @agreement-activate-refactor
   Scenario Outline: [AGREEMENT_ACTIVATE_02] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato SUSPENDED (riattivazione), con tutti gli attributi richiesti certificati, tutti gli attributi richiesti dichiarati dal fruitore, e tutti gli attributi richiesti verificati dall’erogatore, alla richiesta di attivazione da parte di un utente con sufficienti permessi dell’ente erogatore, va a buon fine.
     Given l'utente è un "<ruolo>" di "<enteErogatore>"
     Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
@@ -70,7 +70,7 @@ Feature: Attivazione richiesta di fruizione
       | PA1          | PA2               | GSP           | api,security | 403        |
 
   @happy-path @nrt-minimal
-  @agreement_activate3 @no-parallel @agreement_activate_refactor
+  @agreement_activate3 @no-parallel @agreement-activate-refactor
   Scenario Outline: [AGREEMENT_ACTIVATE_03] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato PENDING o SUSPENDED; con tutti gli attributi richiesti certificati, i quali sono due gruppi di due, dei quali il fruitore ne possiede uno per gruppo; tutti gli attributi richiesti dichiarati dal fruitore, i quali sono due gruppi di due, dei quali il fruitore ne possiede uno per gruppo; tutti gli attributi richiesti verificati dall’erogatore, i quali sono due gruppi di due, dei quali il fruitore ne possiede uno per gruppo; alla richiesta di attivazione da parte di un utente con sufficienti permessi dell’ente erogatore, va a buon fine.
     Given l'utente è un "admin" di "<enteErogatore>"
     Given due gruppi di due attributi certificati da "<enteCertificatore>", dei quali "<enteFruitore>" ne possiede uno per gruppo
@@ -89,7 +89,7 @@ Feature: Attivazione richiesta di fruizione
 
   @sad-path
   @nrt-minimal
-  @agreement_activate4a @agreement_activate_refactor
+  @agreement_activate4a @agreement-activate-refactor
   Scenario Outline: [AGREEMENT_ACTIVATE_04A] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato ACTIVE, ARCHIVED o SUSPENDED, alla richiesta di attivazione da parte di un utente con sufficienti permessi dell’ente erogatore, ottiene un errore
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
@@ -105,7 +105,7 @@ Feature: Attivazione richiesta di fruizione
       | SUSPENDED      |
 
   @deleghe1
-  @agreement_activate_refactor
+  @agreement-activate-refactor
   Scenario: Un delegato alla fruizione sospende ed riattiva una finalità/richiesta di fruizione agendo come delegato e passando il delegationId
     Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
     Given l'ente delegato "PA1"
@@ -130,7 +130,7 @@ Feature: Attivazione richiesta di fruizione
     And l'ente delegato ha già riattivato quella richiesta di fruizione come CONSUMER
 
   @deleghe1
-  @agreement_activate_refactor
+  @agreement-activate-refactor
   Scenario: Un delegato sia all'erogazione che alla fruizione sospende ed approva una richiesta di fruizione passando il Delegation-id come discriminante per capire se agisce come delegato all'erogazione o alla fruizione - Delegato all'erogazione
     Given "PA2" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione automatica
     Given l'utente è un "admin" di "PA1"
@@ -154,7 +154,7 @@ Feature: Attivazione richiesta di fruizione
 
 
   @sad-path @nrt-minimal
-  @agreement_activate4b @no-parallel @certifiedAttribute @agreement_activate_refactor
+  @agreement_activate4b @no-parallel @certifiedAttribute @agreement-activate-refactor
     #BUG: https://pagopa.atlassian.net/browse/PIN-7747
   Scenario Outline: [AGREEMENT_ACTIVATE_04B] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, alla richiesta di attivazione da parte di un utente con sufficienti permessi dell’ente erogatore, ottiene un errore
     Given l'utente è un "admin" di "<enteErogatore>"
@@ -173,7 +173,7 @@ Feature: Attivazione richiesta di fruizione
 
   @sad-path
   @nrt-minimal
-  @agreement_activate4c @agreement_activate_refactor
+  @agreement_activate4c @agreement-activate-refactor
   Scenario: [AGREEMENT_ACTIVATE_04C] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato REJECTED, alla richiesta di attivazione da parte di un utente con sufficienti permessi dell’ente erogatore, ottiene un errore
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
@@ -185,7 +185,7 @@ Feature: Attivazione richiesta di fruizione
 
   @sad-path
   @nrt-minimal
-  @agreement_activate5 @agreement_activate_refactor
+  @agreement_activate5 @agreement-activate-refactor
   Scenario: [AGREEMENT_ACTIVATE_05] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato PENDING, alla richiesta di attivazione da parte di un utente con sufficienti permessi dell’ente fruitore, ottiene un errore
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
@@ -195,7 +195,7 @@ Feature: Attivazione richiesta di fruizione
     And la richiesta di fruizione è in stato "PENDING"
 
   @happy-path @nrt-minimal
-  @agreement_activate6 @no-parallel @certifiedAttribute @agreement_activate_refactor
+  @agreement_activate6 @no-parallel @certifiedAttribute @agreement-activate-refactor
     #BUG: https://pagopa.atlassian.net/browse/PIN-7750
   Scenario Outline: [AGREEMENT_ACTIVATE_06] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato SUSPENDED (riattivazione), con uno o più attributi richiesti non posseduti dal fruitore, alla richiesta di attivazione da parte di un utente con sufficienti permessi dell’ente erogatore, va a buon fine ma la richiesta di fruizione resta in stato "SUSPENDED"
     Given l'utente è un "admin" di "<enteErogatore>"
@@ -213,7 +213,7 @@ Feature: Attivazione richiesta di fruizione
       | PA1          | PA2               | GSP           |
 
   @sad-path
-  @agreement_activate_refactor
+  @agreement-activate-refactor
   Scenario Outline: [AGREEMENTS_APPROVE_1] L'approvazione di una richiesta di fruizione con id non valido restituisce errore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
@@ -227,7 +227,7 @@ Feature: Attivazione richiesta di fruizione
       | %null       | 400        |
       | %random     | 404        |
 
-  @agreement_activate_refactor
+  @agreement-activate-refactor
   Scenario: [AGREEMENTS_APPROVE_2] Un delegato all'erogazione attiva una richiesta di fruizione in stato PENDING per conto dell'erogatore
     Given "PA2" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
     And l'ente delegato "PA1"
@@ -241,7 +241,7 @@ Feature: Attivazione richiesta di fruizione
     And la richiesta di fruizione è in stato "ACTIVE"
 
   @sad-path
-  @agreement_activate_refactor
+  @agreement-activate-refactor
   Scenario Outline: [AGREEMENTS_UNSUSPEND_1] La riattivazione di una richiesta di fruizione con id non valido restituisce errore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
@@ -257,7 +257,7 @@ Feature: Attivazione richiesta di fruizione
       | %random     | 404        |
 
   @sad-path
-  @agreement_activate_refactor
+  @agreement-activate-refactor
   Scenario Outline: [AGREEMENTS_UNSUSPEND_2] La riattivazione di una richiesta di fruizione in stato differente da SUSPENDED restituisce errore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
@@ -273,7 +273,7 @@ Feature: Attivazione richiesta di fruizione
       | PENDING        |
 
   @sad-path
-  @agreement_activate_refactor
+  @agreement-activate-refactor
   Scenario: [AGREEMENTS_UNSUSPEND_3] La riattivazione di una richiesta di fruizione in stato REJECTED restituisce errore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
@@ -284,7 +284,7 @@ Feature: Attivazione richiesta di fruizione
     And la richiesta di fruizione è in stato "REJECTED"
 
   @sad-path
-  @agreement_activate_refactor
+  @agreement-activate-refactor
   Scenario Outline: [AGREEMENTS_UNSUSPEND_4] La riattivazione di una richiesta di fruizione in stato MISSING_CERTIFIED_ATTRIBUTES restituisce errore
     Given l'utente è un "admin" di "<enteErogatore>"
     Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
@@ -301,7 +301,7 @@ Feature: Attivazione richiesta di fruizione
       | PA1          | PA2               | GSP           |
 
   @happy-path
-  @agreement_activate_refactor
+  @agreement-activate-refactor
   Scenario Outline: [AGREEMENTS_UNSUSPEND_5] Una richiesta di fruizione sospesa dal producer o dal consumer può essere riattivata e tornare ACTIVE
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -317,7 +317,7 @@ Feature: Attivazione richiesta di fruizione
       | PA2            | CONSUMER    | PA2              |
 
   @sad-path
-  @agreement_activate_refactor
+  @agreement-activate-refactor
   Scenario Outline: [AGREEMENTS_UNSUSPEND_6] La riattivazione di una richiesta di fruizione da parte di un utente non autorizzato restituisce errore
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -340,7 +340,7 @@ Feature: Attivazione richiesta di fruizione
       | PA2            | CONSUMER    | PA2  | api,security |
       | PA2            | CONSUMER    | PA1  | admin        |
 
-  @agreement_activate_refactor
+  @agreement-activate-refactor
   Scenario: [AGREEMENTS_UNSUSPEND_7] Un delegato all'erogazione riattiva una richiesta di fruizione in stato SUSPENDED per conto dell'erogatore
     Given "PA2" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione automatica
     And l'ente delegato "PA1"
@@ -353,6 +353,7 @@ Feature: Attivazione richiesta di fruizione
     When l'ente delegato richiede una operazione di riattivazione di quella richiesta di fruizione
     Then si ottiene status code 200
     And la richiesta di fruizione è in stato "ACTIVE"
+
   @certifiedDiscreteAttribute
   @certifiedDiscreteAttributeFlagOn
   Scenario Outline: [CERT_DISCRETE_ATTR_AGREEMENT_1] Verifica della corretta associazione di una finalità su un e-service
@@ -497,9 +498,9 @@ Feature: Attivazione richiesta di fruizione
     And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
     And l'utente "PA1" possiede almeno un attributo certificato discreto
     And "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000 e con i seguenti attributi:
-      | kind               | group | comparator | value                                | dailyCallsPerConsumer |
-      | CERTIFIED_DISCRETE | 0     | GT         | $ATTR_CERT_DISCR_THRESHOLD(PA1,100)  |                       |
-      | CERTIFIED          | 0     |            |                                      | 200                   |
+      | kind               | group | comparator | value                               | dailyCallsPerConsumer |
+      | CERTIFIED_DISCRETE | 0     | GT         | $ATTR_CERT_DISCR_THRESHOLD(PA1,100) |                       |
+      | CERTIFIED          | 0     |            |                                     | 200                   |
     And si ottiene response status code 200
     And l'e-service è in stato "PUBLISHED"
     And l'utente è un "admin" di "PA1"
