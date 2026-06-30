@@ -8,4 +8,6 @@ public interface ISharedContext {
     String getOldDescriptorId();
     String getProducerName();
     String getConsumerName();
+    String getPurposeId();
+    String getPurposeTitle();
 }
