@@ -42,6 +42,12 @@ public class EServiceUpdateSteps {
         userUpdateEServiceImpl();
     }
 
+    @When("{string} aggiorna quell'e-service con:")
+    public void userUpdateEService(String tenantType, UpdateEServiceSeed updateEServiceSeed) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        userUpdateEServiceImpl(updateEServiceSeed);
+    }
+
     //60 è il limite di caratteri da rispettare per il nome di un e-service
     @And("l'utente aggiorna il nome dell'e-service con un valore di lunghezza 60 caratteri")
     public void eServiceNameUpdate() {
@@ -136,15 +142,20 @@ public class EServiceUpdateSteps {
     }
 
     private void userUpdateEServiceImpl() {
+        this.userUpdateEServiceImpl(new UpdateEServiceSeed()
+                .name(String.format("e-service - %d", sharedStepsContext.getTestSeed()))
+                .description("Nuova descrizione")
+                .mode(EServiceMode.DELIVER)
+                .technology(EServiceTechnology.SOAP)
+        );
+    }
+
+    private void userUpdateEServiceImpl(UpdateEServiceSeed updateEServiceSeed) {
         IHttpExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getEServiceClient().updateEServiceById(
                         sharedStepsContext.getEServicesCommonContext().getEserviceId(),
-                        new UpdateEServiceSeed()
-                                .name(String.format("e-service - %d", sharedStepsContext.getTestSeed()))
-                                .description("Nuova descrizione")
-                                .mode(EServiceMode.DELIVER)
-                                .technology(EServiceTechnology.SOAP)
+                        updateEServiceSeed
                 )
         );
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {

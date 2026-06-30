@@ -2,14 +2,12 @@ package it.pagopa.pn.client.b2b.pa.service.impl;
 
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.ApiClient;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.api.NotificationReworkApi;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.ReworkItemsResponse;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.ReworkRequest;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.ReworkResponse;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.UpdateReworkRequest;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @Component
@@ -28,14 +26,19 @@ public class ReworkTimelineClientImpl {
         return apiClient;
     }
 
-    public ReworkResponse notificationRework(String iun, ReworkRequest reworkRequest) {
+    public ReworkResponse notificationRework(String iun, ReworkRequest reworkRequest) throws RestClientException {
         return reworkApi.notificationRework(iun, reworkRequest);
     }
 
-    public ReworkItemsResponse retrieveNotificationReworkById(String iun, String reworkId) {
+    public ReworkItemsResponse retrieveNotificationReworkById(String iun, String reworkId) throws RestClientException {
         return reworkApi.retrieveNotificationRework(iun, reworkId);
     }
-    public void updateNotificationRework(String iun, String reworkId, UpdateReworkRequest updateReworkRequest) {
-         reworkApi.updateNotificationRework(iun, reworkId, updateReworkRequest);
+
+    public void updateNotificationRework(String iun, String reworkId, UpdateReworkRequest updateReworkRequest) throws RestClientException {
+        reworkApi.updateNotificationRework(iun, reworkId, updateReworkRequest);
+    }
+
+    public RestartAttemptResponse restartAttempt(String iun, RestartAttemptRequest restartAttemptRequest) throws RestClientException {
+        return reworkApi.restartAttempt(iun, restartAttemptRequest);
     }
 }

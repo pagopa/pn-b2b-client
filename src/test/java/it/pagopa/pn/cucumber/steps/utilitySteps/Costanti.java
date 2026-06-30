@@ -35,11 +35,14 @@ public class Costanti {
     public static final String ALDA_MERINI = "Alda Merini";
     public static final String MARIO_CREDENZIALI_SCADUTE = "Mario Credenziali Scadute";
     public static final String NESSUNO = "nessuno";
+    public static final String UTENZA_CON_INDIRIZZO_NON_VALIDO = "Utenza con Errore D01";
+    public static final String UTENZA_CON_INDIRIZZO_VALIDO_ANPR = "Utenza con Indirizzo Valido da ANPR";
     // PA
     public static final String COMUNE_1 = "Comune_1";
     public static final String COMUNE_2 = "Comune_2";
     public static final String COMUNE_MULTI = "Comune_Multi";
     public static final String COMUNE_SON = "Comune_Son";
+    public static final String COMUNE_SON_2 = "Comune_Son_2";
     public static final String COMUNE_ROOT = "Comune_Root";
     public static final String DEFAULT_PA = COMUNE_1;
     // Tipologie destinatario
@@ -55,24 +58,9 @@ public class Costanti {
     // Stream Type
     public static final String STREAM_EVENT_TYPE_TIMELINE = "TIMELINE";
     public static final String STREAM_EVENT_TYPE_STATUS = "STATUS";
-    // Tax ID
-    public static String MARIO_CUCUMBER_TAX_ID = "FRMTTR76M06B715E";
-    public static String MARIO_GHERKIN_TAX_ID = "CLMCST42R12D969Z";
-    public static final String CUCUMBER_SRL_TAX_ID = "20517490320";
-    public static final String CUCUMBER_SPA_TAX_ID = "20517490320";
-    public static final String GHERKIN_SRL_TAX_ID = "12666810299";
-    public static final String GHERKIN_SPA_TAX_ID = "12666810299";
-    public static final String CUCUMBER_ANALOGIC_TAX_ID = "LBPHLS94A56C826R";
-    public static final String GHERKIN_ANALOGIC_TAX_ID = "80048790176";
-    public static final String CUCUMBER_SOCIETY_TAX_ID = "20517490320";
-    public static final String GHERKIN_IRREPERIBILE_TAX_ID = "02455090981";
-    public static final String LEONARDO_DA_VINCI_TAX_ID = "DVNLRD52D15M059P";
-    public static final String GALILEO_GALILEI_TAX_ID = "GLLGLL64B15G702I";
-    public static final String COMUNE_1_TAX_ID = "01199250158";
-    public static final String COMUNE_2_TAX_ID = "00215150236";
-    public static final String COMUNE_MULTI_TAX_ID = "80016350821";
-    public static final String COMUNE_SON_TAX_ID = "03509990788";
-    public static final String COMUNE_ROOT_TAX_ID = "03509990788";
+
+    public static final String INVALID_IUN = "INVALID-IUN";
+    public static final String INEXISTENT_IUN = "TEST-INEX-ISTE-123456-Z-1";
 
     /**
      * 07/05/2025
@@ -272,21 +260,10 @@ public class Costanti {
             );
 
 
-
     public static String getDigitalAddressValue() {
         if (DIGITAL_ADDRESS == null || DIGITAL_ADDRESS.equalsIgnoreCase("${pn.external.digitalDomicile.address}"))
             return DEFAULT_DIGITAL_ADDRESS;
         return DIGITAL_ADDRESS;
     }
 
-    public static String getSenderTaxIdFromProperties(String paName) {
-        return switch (paName) {
-            case COMUNE_1 -> COMUNE_1_TAX_ID;
-            case COMUNE_2 -> COMUNE_2_TAX_ID;
-            case COMUNE_MULTI -> COMUNE_MULTI_TAX_ID;
-            case COMUNE_SON -> COMUNE_SON_TAX_ID;
-            case COMUNE_ROOT -> COMUNE_ROOT_TAX_ID;
-            default -> throw new IllegalArgumentException();
-        };
-    }
 }

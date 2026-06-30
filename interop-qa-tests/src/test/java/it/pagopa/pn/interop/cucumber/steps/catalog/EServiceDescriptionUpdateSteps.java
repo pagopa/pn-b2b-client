@@ -10,6 +10,7 @@ import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.EServiceState;
 import org.jeasy.random.randomizers.text.StringRandomizer;
 
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
 public class EServiceDescriptionUpdateSteps {
@@ -26,14 +27,25 @@ public class EServiceDescriptionUpdateSteps {
 
     @When("l'utente aggiorna la descrizione di quell'e-service")
     public void userUpdateEServiceDescription() {
-        userUpdateEServiceDescriptionInState(null, null);
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getEServiceClient().updateEServiceDescription(
+                        eServicesCommonContext.getEserviceId(),
+                        new EServiceDescriptionUpdateSeed().description(buildSimpleDescription())
+                )
+        );
+    }
+
+    @Nonnull
+    private String buildSimpleDescription() {
+        return String.format("Nuova descrizione - %d", sharedStepsContext.getTestSeed());
     }
 
     @When("l'utente aggiorna la descrizione di quell'e-service in stato {string} con un valore di {int} caratteri")
     public void userUpdateEServiceDescriptionInState(String eServiceState, Integer descriptionLength) {
 
         String eServiceDescription = descriptionLength == null ?
-                String.format("Nuova descrizione - %d", sharedStepsContext.getTestSeed()) :
+                buildSimpleDescription() :
                 (new StringRandomizer(descriptionLength, descriptionLength, System.currentTimeMillis())).getRandomValue();
 
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
@@ -68,7 +80,7 @@ public class EServiceDescriptionUpdateSteps {
     @When("l'utente {string} di {string} aggiorna la descrizione di quell'e-service")
     public void userUpdateEServiceDescription(String role, String tenant) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getIdentityService().getToken(tenant, role));
-        String newDescription = String.format("Nuova descrizione - %d", sharedStepsContext.getTestSeed());
+        String newDescription = buildSimpleDescription();
         sharedStepsContext.getHttpCallExecutor().performCall(
             () -> clientTokenConfigurator.getEServiceClient().updateEServiceDescription(
                 eServicesCommonContext.getEserviceId(),

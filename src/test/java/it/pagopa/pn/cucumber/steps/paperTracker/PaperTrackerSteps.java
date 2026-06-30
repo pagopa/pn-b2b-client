@@ -15,7 +15,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.model.Trac
 import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.model.TrackingsRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.model.TrackingsResponse;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.AttachmentDetails;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV28;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaperTrackerClient;
@@ -26,6 +26,7 @@ import it.pagopa.pn.cucumber.steps.paperTracker.parser.EventTimelineParser;
 import it.pagopa.pn.cucumber.steps.paperTracker.proxy.PaperTrackerSchemaValidatorProxy;
 import it.pagopa.pn.cucumber.steps.paperTracker.validator.additionalDetails.AdditionalDetailsValidator;
 import it.pagopa.pn.cucumber.steps.paperTracker.validator.additionalDetails.AffectedEventsValidator;
+import it.pagopa.pn.cucumber.steps.paperTracker.validator.additionalDetails.FlatAdditionalDetailsValidator;
 import it.pagopa.pn.cucumber.steps.paperTracker.validator.additionalDetails.MissingAttachmentsValidator;
 import it.pagopa.pn.cucumber.steps.paperTracker.validator.additionalDetails.MissingStatusCodeValidator;
 import it.pagopa.pn.cucumber.steps.paperTracker.validator.additionalDetails.OcrDataResultPayloadValidator;
@@ -69,7 +70,8 @@ public class PaperTrackerSteps {
             "ocrDataResultPayload", new OcrDataResultPayloadValidator(),
             "affectedEvents", new AffectedEventsValidator(),
             "missingStatusCodes", new MissingStatusCodeValidator(),
-            "missingAttachments", new MissingAttachmentsValidator()
+            "missingAttachments", new MissingAttachmentsValidator(),
+            "flatAdditionalDetails", new FlatAdditionalDetailsValidator()
     );
 
     private final EventTimelineParser eventTimelineParser;
@@ -91,7 +93,7 @@ public class PaperTrackerSteps {
         this.paperTrackerSchemaValidatorProxy = paperTrackerSchemaValidatorProxy;
     }
 
-    private List<NotificationEvent> provideAnalogProgressAndFeedbackElement(FullSentNotificationV28 fullSentNotification, int attempt) {
+    private List<NotificationEvent> provideAnalogProgressAndFeedbackElement(FullSentNotificationV29 fullSentNotification, int attempt) {
         Predicate<TimelineElementV28> predicate;
         if (trackingKeys.get(0).contains(PREPARE_SIMPLE_REGISTERED_LETTER)) {
             predicate = te -> te.getElementId().contains(SEND_SIMPLE_REGISTERED_LETTER_PROGRESS);
@@ -156,7 +158,7 @@ public class PaperTrackerSteps {
     @And("genera la key da utilizzare per invocare l'API per il prodotto: {string}")
     public void generateTrackingIdForProduct(String productType) {
         String key = productType.equals("RS") ? PREPARE_SIMPLE_REGISTERED_LETTER : PREPARE_ANALOG_DOMICILE;
-        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersionByIun(sharedSteps.getNotificationIun());
+        FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersionByIun(sharedSteps.getNotificationIun());
         trackingKeys = fullSentNotification.getTimeline().stream()
                 .map(TimelineElementV28::getElementId)
                 .filter(e -> e.contains(key))
@@ -170,7 +172,7 @@ public class PaperTrackerSteps {
         request.setTrackingIds(trackingKeys);
         PaperTrackerOutputsResponse responseOutput = paperTrackerClient.retrieveTrackerOutputs(request);
 
-        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         assertThat(fullSentNotification).isNotNull();
 
         //recupera tutte gli elementi prepare che sono presenti in timeline
@@ -196,7 +198,7 @@ public class PaperTrackerSteps {
      * @param analogEventIds
      * @return
      */
-    private Map<Integer, List<NotificationEvent>> buildTimelineEventsMap(FullSentNotificationV28 notification, List<String> analogEventIds) {
+    private Map<Integer, List<NotificationEvent>> buildTimelineEventsMap(FullSentNotificationV29 notification, List<String> analogEventIds) {
         Map<Integer, List<NotificationEvent>> map = new HashMap<>();
         for (int i = 0; i < analogEventIds.size(); i++) {
             map.put(i, provideAnalogProgressAndFeedbackElement(notification, i));
@@ -341,14 +343,23 @@ public class PaperTrackerSteps {
             assertThat(expectedMessage).isEqualTo(actualMessage);
         }
 
-        //details.affectedEvents
         JsonNode expectedAdditionalDetails = expected.at("/details/additionalDetails");
         if (!expectedAdditionalDetails.isEmpty()) {
             JsonNode actualAdditionalDetails = actual.at("/details/additionalDetails");
-            AdditionalDetailsValidator validator = VALIDATORS.get(expectedAdditionalDetails.fieldNames().next());
-            assertThat(validator).as("Non è stato definito nessun validatore per questo node").isNotNull();
-            validator.validate(actualAdditionalDetails, expectedAdditionalDetails);
+            if (isAdditionalDetailsNested(expectedAdditionalDetails)) {
+                // Se additionalDetails è nested, prendi il primo field name e usa il validatore corrispondente
+                String validatorKey = expectedAdditionalDetails.fieldNames().next();
+                AdditionalDetailsValidator validator = VALIDATORS.get(validatorKey);
+                assertThat(validator).as("Non è stato definito nessun validatore per: " + validatorKey).isNotNull();
+                validator.validate(actualAdditionalDetails, expectedAdditionalDetails);
+            } else {
+                // Se additionalDetails è flat, usa il validatore flat per confrontare tutti i campi
+                AdditionalDetailsValidator flatValidator = VALIDATORS.get("flatAdditionalDetails");
+                assertThat(flatValidator).as("Validatore flat non trovato").isNotNull();
+                flatValidator.validate(actualAdditionalDetails, expectedAdditionalDetails);
+            }
         }
+
         if (expected.get("flowThrow") == null) assertThat(actual.get("flowThrow") == null).isTrue();
         else assertThat(expected.get("flowThrow").asText()).isEqualTo(actual.get("flowThrow").asText());
         assertThat(expected.get("eventThrow").asText()).isEqualTo(actual.get("eventThrow").asText());
@@ -357,9 +368,17 @@ public class PaperTrackerSteps {
         assertThat(expected.get("type").asText()).isEqualTo(actual.get("type").asText());
     }
 
+    private boolean isAdditionalDetailsNested(JsonNode additionalDetails) {
+        if (additionalDetails.isEmpty()) {
+            return false;
+        }
+        String firstFieldName = additionalDetails.fieldNames().next();
+        return VALIDATORS.containsKey(firstFieldName) && !firstFieldName.equals("flatAdditionalDetails");
+    }
+
     @Then("si controlla che non ci siano eventi duplicati")
     public void verifyNotDuplicatedEventArePresent() {
-        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         List<TimelineElementV28> timelineElements = fullSentNotification.getTimeline();
         long result = 0;
         for (TimelineElementV28 timelineElement : timelineElements) {

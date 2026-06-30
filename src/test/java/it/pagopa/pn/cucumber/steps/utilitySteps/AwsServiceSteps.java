@@ -3,22 +3,21 @@ package it.pagopa.pn.cucumber.steps.utilitySteps;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import it.pagopa.common.util.CloudWatchQueryBuilder;
+import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
+import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
-import it.pagopa.pn.cucumber.steps.pa.utilityVersions.AwsUtils;
-import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient;
 import software.amazon.awssdk.services.cloudwatchlogs.model.FilterLogEventsRequest;
 import software.amazon.awssdk.services.cloudwatchlogs.model.FilterLogEventsResponse;
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -27,36 +26,22 @@ import static org.awaitility.Awaitility.await;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
+@RequiredArgsConstructor
 public class AwsServiceSteps {
     private final SharedSteps sharedSteps;
-    @Getter
-    private final DynamoDbClient dynamoDbClient;
-    @Getter
     private final CloudWatchLogsClient cloudWatchLogsClient;
     private boolean checkAuditLogDisabled;
-
-    @Autowired
-    public AwsServiceSteps(
-            SharedSteps sharedSteps,
-            DynamoDbClient dynamoDbClient,
-            CloudWatchLogsClient cloudWatchLogsClient) {
-        this.sharedSteps = sharedSteps;
-        this.dynamoDbClient = dynamoDbClient;
-        this.cloudWatchLogsClient = cloudWatchLogsClient;
-    }
+    private final DynamoDbService dynamoDbService;
 
     /**
      * Ricerca uno specifico elemento su pn-timelines e verifica la sua presenza (o meno)
      */
     @Then("verifico che su DynamoDB {is} presente in timeline l'elemento {string}")
     public void checkTimelineFromDynamoDB(boolean isPresent, String timelineElement) {
-        Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();
-        expressionAttributeValues.put(":v_iun", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build());
-        expressionAttributeValues.put(":v_category", AttributeValue.builder().s(timelineElement).build());
-
-        QueryRequest queryRequest = AwsUtils.buildPnTimelinesCategoryRequest(expressionAttributeValues);
-        QueryResponse queryResponse = dynamoDbClient.query(queryRequest);
-
+        QueryResponse queryResponse = dynamoDbService.call(DynamoTableName.TIMELINE, Map.of(
+                ":v_iun", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build(),
+                ":v_category", AttributeValue.builder().s(timelineElement).build()
+        ));
         log.info("Elementi trovati con categoria {}: {}", timelineElement, queryResponse.count());
         try {
             if (isPresent) {
@@ -104,9 +89,9 @@ public class AwsServiceSteps {
                 String search = sb.toString().trim();
 
                 await().atMost(2, TimeUnit.MINUTES).pollInterval(10, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(() -> {
-                    FilterLogEventsRequest logRequest = AwsUtils.buildCloudWatchLogRequest(microservice, search, minutes);
+                    FilterLogEventsRequest logRequest = CloudWatchQueryBuilder.search(microservice, search, minutes);
                     FilterLogEventsResponse logResponse = cloudWatchLogsClient.filterLogEvents(logRequest);
-                    assertThat(logResponse.events().size()).as("Non è stato trovato nessun log che soddisfi la search %s", search).isGreaterThan(0);
+                    assertThat(logResponse.events().size()).as("Alle %s non è stato trovato nessun log che soddisfi la search %s", DateTime.now(), search).isGreaterThan(0);
                 });
             } catch (AssertionError assertionError) {
                 sharedSteps.throwAssertionErrorWithIUN(assertionError);

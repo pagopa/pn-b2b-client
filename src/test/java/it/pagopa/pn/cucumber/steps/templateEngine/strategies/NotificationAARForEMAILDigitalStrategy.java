@@ -42,6 +42,9 @@ public class NotificationAARForEMAILDigitalStrategy implements ITemplateEngineSt
             case "FRANCESE" -> {
                 yield "Vous disposez de 120 jours &agrave; compter du moment où la communication est consid&eacute;r&eacute;e d&eacute;livr&eacute;e pour consulter les documents en ligne.";
             }
+            case "INGLESE" -> {
+                yield "The deadline for payment, if applicable, and for any appeals is indicated in the documents.";
+            }
             default -> throw new IllegalArgumentException("NO VALID LANGUANGE");
         };
     }
@@ -52,10 +55,10 @@ public class NotificationAARForEMAILDigitalStrategy implements ITemplateEngineSt
 
         return new NotificationAarForEmailDigital()
                 .notification(createAarForEmailNotification(context))
-                .pnFaqSendURL(context.getPnFaqSendURL())
+                //.pnFaqSendURL(context.getPnFaqSendURL())
                 .quickAccessLink(context.getQrCodeQuickAccessLink())
-                .piattaformaNotificheURL(context.getPiattaformaNotificheURL())
-                .perfezionamentoURL(context.getPerfezionamentoURL())
+               // .piattaformaNotificheURL(context.getPiattaformaNotificheURL())
+               // .perfezionamentoURL(context.getPerfezionamentoURL())
                 .recipient(new AarForEmailRecipientDigital().recipientType(context.getRecipientType()));
     }
 

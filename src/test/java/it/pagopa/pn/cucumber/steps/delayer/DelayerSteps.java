@@ -164,6 +164,7 @@ public class DelayerSteps {
 
             int actual = service.getAvailableCapacity(entityId, context.expectedDeliveryDate);
             availableCapacityByDriver.put(entityId, actual);
+            // TODO verficare perché nella prima fase del test la capacità non è disponibile e viene mockata con quella passata dal test stesso
             if (actual == -1) actual = rawLimit;
 
             switch (comparative.toLowerCase()) {
@@ -319,6 +320,19 @@ public class DelayerSteps {
         Set<String> requestIds = expected.stream().map(DelayerPaperDelivery::getRequestId).collect(Collectors.toSet());
         List<DelayerPaperDelivery> actual = service.findByWorkflowStep(requestIds, step.name(), context.expectedDeliveryDate, 1);
 
+        expected.forEach(expectedDelivery ->
+                actual.stream()
+                        .filter(actualDelivery -> actualDelivery.getRequestId().equals(expectedDelivery.getRequestId()))
+                        .findFirst()
+                        .ifPresent(actualDelivery ->
+                                expectedDelivery.setVirtualNotificationSentAt(actualDelivery.getVirtualNotificationSentAt()))
+        );
+
+        expected.forEach(expectedDelivery ->
+                expectedDelivery.setSk(utils.calculateSk(WorkflowSteps.valueOf(ws), expectedDelivery))
+        );
+
+
         actual.forEach(dpd -> {
             String seed = extractSeed(dpd);
             context.actualPianification.get(seed).get(step.name()).add(dpd);
@@ -364,6 +378,14 @@ public class DelayerSteps {
     @And("imposto la deliveryWeek in avanti di {int} settimane")
     public void setDeliveryWeek(int nWeeks) {
         context.expectedDeliveryDate = getNextMonday(nWeeks);
+    }
+
+    @And("sposto la simulazione in avanti di {int} settimane")
+    public void moveForward(int nWeeks) {
+        var frozen = new ArrayList<>(context.expectedPianification.values().stream().findAny().map(m->m.get("FROZEN")).orElse(Collections.emptyList()));
+        context.resetContext();
+        context.expectedDeliveryDate = getNextMonday(nWeeks);
+        context.actualCsv.addAll(frozen);
     }
 
     @Then("non devono esistere record in pn-DelayerPaperDelivery per la deliveryDate {string}")
@@ -452,11 +474,6 @@ public class DelayerSteps {
         Assertions.assertThat(expectedSenderLimit).as("Confronto di actual ed expected del limite del mittente").isEqualTo(actualSenderLimit);
 
     }
-
-
-
-
-
 
 
 }

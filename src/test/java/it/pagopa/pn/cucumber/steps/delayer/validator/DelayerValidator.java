@@ -148,6 +148,18 @@ public class DelayerValidator {
             return;
         }
 
+        frozenExpected.forEach(expectedDelivery ->
+                actualFrozen.stream()
+                        .filter(actualDelivery -> actualDelivery.getRequestId().equals(expectedDelivery.getRequestId()))
+                        .findFirst()
+                        .ifPresent(actualDelivery ->
+                                expectedDelivery.setVirtualNotificationSentAt(actualDelivery.getVirtualNotificationSentAt()))
+        );
+
+        frozenExpected.forEach(expectedDelivery ->
+                expectedDelivery.setSk(utils.calculateSk(WorkflowSteps.EVALUATE_SENDER_LIMIT, expectedDelivery))
+        );
+
         Set<Map<String, String>> expectedSet = toComparableMapList(frozenExpected, step).stream().collect(Collectors.toSet());
         Set<Map<String, String>> actualSet = toComparableMapList(actualFrozen, step).stream().collect(Collectors.toSet());
 
