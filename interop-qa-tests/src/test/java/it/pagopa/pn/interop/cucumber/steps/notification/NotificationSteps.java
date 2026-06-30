@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.notification;
 
+import static it.pagopa.common.util.StringUtils.resolveDynamicValues;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.cucumber.java.en.Then;
@@ -19,8 +20,6 @@ import it.pagopa.pn.interop.cucumber.utility.FeatureLifecycleManager;
 import it.pagopa.pn.interop.cucumber.utility.NotificationStore;
 import it.pagopa.pn.interop.cucumber.utility.NotificationStore.NotificationUser;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -416,8 +415,8 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
     @Then("l'utente {string} di {string} ha ricevuto la notifica in-app contenente il link {deepLink}")
     public void checkInAppNotificationBody(String role, String tenant, DeepLinkType deepLinkType, String message) {
         message = message.replace("\n", " ");
-        String deepLink = resolveLabelsWithSharedContext(deepLinkType.getValue());
-        String finalMessage = resolveLabelsWithSharedContext(message);
+        String deepLink = resolveDynamicValues(deepLinkType.getValue(), sharedStepsContext);
+        String finalMessage = resolveDynamicValues(message, sharedStepsContext);
 
         PollingService.makePolling(
                 () -> (notificationStore.get(NotificationUser.of(role, tenant))),
@@ -427,7 +426,12 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
                                 .as("Check in-app body message and deep link")
                                 .anySatisfy(notif -> {
                                     assertThat(notif.getBody()).isEqualTo(finalMessage);
-                                    if (!deepLink.isEmpty()) assertThat(notif.getDeepLink()).isEqualTo(deepLink);
+                                    log.info("Found notification: \"" + finalMessage + "\"");
+                                    if (!deepLink.isEmpty()) {
+                                        log.info("Checking deep link...");
+                                        assertThat(notif.getDeepLink()).isEqualTo(deepLink);
+                                        log.info("Found deep link: " + deepLink);
+                                    }
                                 });
                         return true;
                     } catch (AssertionError e) {
@@ -438,8 +442,6 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
                 3,
                 3000
         );
-        // TODO il messaggio di errore deve far capire se è fallito solo il deeplink e includere le notifiche trovate
-        // se sono troppe quelle trovate, serve un criterio per mostrarne solo un po' (es. stesso nome e-service)
     }
 
     @Then("l'utente {string} di {string} ha ricevuto la notifica in-app")
@@ -459,42 +461,5 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
                     " Actual reason: " + e.getMessage()
             );
         }
-    }
-
-    private String resolveLabelsWithSharedContext(String textTemplate) {
-        StringBuilder text = new StringBuilder();
-        String functionName = "$DA_CONTESTO(";
-        int reachedIndex = 0;
-        int labelStartIndex = textTemplate.indexOf(functionName, reachedIndex);
-        int labelEndIndex;
-        while (labelStartIndex > -1) {
-            text.append(textTemplate.substring(reachedIndex, labelStartIndex));
-            labelStartIndex += functionName.length();
-            labelEndIndex = textTemplate.indexOf(')', labelStartIndex);
-            String label = textTemplate.substring(labelStartIndex, labelEndIndex);
-            // Il valore deve essere risolto dalla funzione comune // sharedStepsContext
-            String value = ".+";
-            switch (label) {
-                case "agreementId": value = sharedStepsContext.getAgreementId().toString(); break;
-                case "eServiceName": value = sharedStepsContext.getEServicesCommonContext().getName(); break;
-                case "eServiceId": value = sharedStepsContext.getEServicesCommonContext().getEserviceId().toString(); break;
-                case "descriptorId": value = sharedStepsContext.getEServicesCommonContext().getDescriptorId().toString(); break;
-                case "oldDescriptorId": value = sharedStepsContext.getEServicesCommonContext().getOldDescriptorId().toString(); break;
-                case "producerName": value = sharedStepsContext.getEServicesCommonContext().getProducerName(); break;
-                case "consumerName": value = sharedStepsContext.getTenantCommonContext().getConsumerTenantName(); break;
-                case "TODAY": value = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")); break;
-                case "TODAY+GRACE_PERIOD":
-                    value = LocalDate.now().plusDays(2).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")); break;
-            }
-            text.append(value);
-            // Controlla se c'è un prossimo placeholder
-            reachedIndex = labelEndIndex + 1;
-            labelStartIndex = textTemplate.indexOf(functionName, reachedIndex);
-            if (labelStartIndex == -1) {
-                text.append(textTemplate.substring(reachedIndex));
-            }
-        }
-        if (text.isEmpty()) text.append(textTemplate);
-        return text.toString();
     }
 }
