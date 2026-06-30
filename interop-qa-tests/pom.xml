@@ -37,6 +37,13 @@
     </properties>
 
     <dependencies>
+        <!-- Modulo common condiviso tra SEND e INTEROP -->
+        <dependency>
+            <groupId>it.pagopa.pn</groupId>
+            <artifactId>common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
         <!-- BOUNCY CASTLE: gestione di file firmati digitalmente (p7m) -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
