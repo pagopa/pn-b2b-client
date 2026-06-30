@@ -17,6 +17,8 @@ public class DestinatarioRegistry {
     public final Destinatario DESTINATARIO_ETTORE_FIERAMOSCA;
     public final Destinatario DESTINATARIO_LEONARDO_DA_VINCI;
     public final Destinatario DESTINATARIO_GALILEO_GALILEI;
+    public final Destinatario DESTINATARIO_ALDA_MERINI;
+    public final Destinatario DESTINATARIO_DINO_SAURO;
     public final Destinatario DESTINATARIO_GHERKIN_SPA;
     public final Destinatario DESTINATARIO_CUCUMBER_SPA;
     public final Destinatario DESTINATARIO_GHERKIN_SRL;
@@ -31,31 +33,89 @@ public class DestinatarioRegistry {
     public final Destinatario DESTINATARIO_INDIRIZZO_VALIDO_ANPR;
 
     private final List<Destinatario> all;
-    private final TaxIdConfig taxIds;
+    private final RecipientConfig taxIds;
 
     @Autowired
-    public DestinatarioRegistry(TaxIdConfig taxIds) {
-        this.taxIds = taxIds;
+    public DestinatarioRegistry(RecipientConfig recipients) {
+        this.taxIds = recipients;
 
-        DESTINATARIO_MARIO_GHERKIN = new Destinatario(MARIO_GHERKIN, taxIds.getMarioGherkin(), PF, PEC);
-        DESTINATARIO_MARIO_CUCUMBER = new Destinatario(MARIO_CUCUMBER, taxIds.getMarioCucumber(), PF, PEC);
-        DESTINATARIO_SIGNOR_CASUALE = new Destinatario(SIGNOR_CASUALE, null, PF, PEC);
-        DESTINATARIO_CRISTOFORO_COLOMBO = new Destinatario(CRISTOFORO_COLOMBO, taxIds.getMarioGherkin(), PF, PEC);
-        DESTINATARIO_ETTORE_FIERAMOSCA = new Destinatario(ETTORE_FIERAMOSCA, taxIds.getMarioCucumber(), PF, PEC);
-        DESTINATARIO_LEONARDO_DA_VINCI = new Destinatario(LEONARDO_DA_VINCI, taxIds.getLeonardoDaVinci(), PF, PEC);
-        DESTINATARIO_GALILEO_GALILEI = new Destinatario(GALILEO_GALILEI, taxIds.getGalileoGalilei(), PF, PEC);
-        DESTINATARIO_GHERKIN_SPA = new Destinatario(GHERKIN_SPA, taxIds.getGherkinSpa(), PG, PEC);
-        DESTINATARIO_CUCUMBER_SPA = new Destinatario(CUCUMBER_SPA, taxIds.getCucumberSpa(), PG, PEC);
-        DESTINATARIO_GHERKIN_SRL = new Destinatario(GHERKIN_SRL, taxIds.getGherkinSrl(), PG, PEC);
-        DESTINATARIO_CUCUMBER_SRL = new Destinatario(CUCUMBER_SRL, taxIds.getCucumberSpa(), PG, PEC);
-        DESTINATARIO_GHERKIN_ANALOGIC = new Destinatario(GHERKIN_ANALOGIC, taxIds.getGherkinAnalogic(), PG, PEC);
-        DESTINATARIO_CUCUMBER_ANALOGIC = new Destinatario(CUCUMBER_ANALOGIC, taxIds.getCucumberAnalogic(), PF, PEC);
-        DESTINATARIO_GHERKIN_IRREPERIBILE = new Destinatario(GHERKIN_IRREPERIBILE, taxIds.getGherkinIrreperibile(), PG, PEC);
-        DESTINATARIO_CUCUMBER_SOCIETY = new Destinatario(CUCUMBER_SOCIETY, taxIds.getCucumberSociety(), PG, PEC);
-        DESTINATARIO_SIGNOR_GENERATO = new Destinatario(SIGNOR_GENERATO, FiscalCodeGenerator.generateCF(System.nanoTime()), PF, PEC);
-        DESTINATARIO_NESSUNO = new Destinatario(NESSUNO, null, null, null);
-        DESTINATARIO_ERRORE_D01 = new Destinatario(UTENZA_CON_INDIRIZZO_NON_VALIDO, taxIds.getUserIndirizzoNonValidoD01(), PF, PEC);
-        DESTINATARIO_INDIRIZZO_VALIDO_ANPR = new Destinatario(UTENZA_CON_INDIRIZZO_VALIDO_ANPR, taxIds.getUserIndirizzoValidoAnpr(), PF, PEC);
+        DESTINATARIO_MARIO_GHERKIN = new Destinatario(
+                MARIO_GHERKIN, recipients.getMarioGherkin().getTaxId(),
+                recipients.getMarioGherkin().getUid(), PF, PEC);
+
+        DESTINATARIO_MARIO_CUCUMBER = new Destinatario(
+                MARIO_CUCUMBER, recipients.getMarioCucumber().getTaxId(),
+                recipients.getMarioCucumber().getUid(), PF, PEC);
+
+        DESTINATARIO_SIGNOR_CASUALE = new Destinatario(SIGNOR_CASUALE, null, null, PF, PEC);
+
+        DESTINATARIO_CRISTOFORO_COLOMBO = new Destinatario(
+                CRISTOFORO_COLOMBO, recipients.getMarioGherkin().getTaxId(),
+                recipients.getMarioGherkin().getUid(), PF, PEC);
+
+        DESTINATARIO_ETTORE_FIERAMOSCA = new Destinatario(
+                ETTORE_FIERAMOSCA, recipients.getMarioCucumber().getTaxId(),
+                recipients.getMarioCucumber().getUid(), PF, PEC);
+
+        DESTINATARIO_LEONARDO_DA_VINCI = new Destinatario(
+                LEONARDO_DA_VINCI, recipients.getLeonardoDaVinci().getTaxId(),
+                recipients.getLeonardoDaVinci().getUid(), PF, PEC);
+
+        DESTINATARIO_GALILEO_GALILEI = new Destinatario(
+                GALILEO_GALILEI, recipients.getGalileoGalilei().getTaxId(),
+                recipients.getGalileoGalilei().getUid(), PF, PEC);
+
+        DESTINATARIO_ALDA_MERINI = new Destinatario(
+                ALDA_MERINI, recipients.getAldaMerini().getTaxId(),
+                recipients.getAldaMerini().getUid(), PG, PEC);
+
+        DESTINATARIO_DINO_SAURO = new Destinatario(
+                DINO_SAURO, recipients.getDinoSauro().getTaxId(),
+                recipients.getDinoSauro().getUid(), PF, PEC);
+
+        DESTINATARIO_GHERKIN_SPA = new Destinatario(
+                GHERKIN_SPA, recipients.getGherkinSpa().getTaxId(),
+                recipients.getGherkinSpa().getUid(), PG, PEC);
+
+        DESTINATARIO_CUCUMBER_SPA = new Destinatario(
+                CUCUMBER_SPA, recipients.getCucumberSpa().getTaxId(),
+                recipients.getCucumberSpa().getUid(), PG, PEC);
+
+        DESTINATARIO_GHERKIN_SRL = new Destinatario(
+                GHERKIN_SRL, recipients.getGherkinSrl().getTaxId(),
+                recipients.getGherkinSrl().getUid(), PG, PEC);
+
+        DESTINATARIO_CUCUMBER_SRL = new Destinatario(
+                CUCUMBER_SRL, recipients.getCucumberSrl().getTaxId(),
+                recipients.getCucumberSrl().getUid(), PG, PEC);
+
+        DESTINATARIO_GHERKIN_ANALOGIC = new Destinatario(
+                GHERKIN_ANALOGIC, recipients.getGherkinAnalogic().getTaxId(),
+                recipients.getGherkinAnalogic().getUid(), PG, PEC);
+
+        DESTINATARIO_CUCUMBER_ANALOGIC = new Destinatario(
+                CUCUMBER_ANALOGIC, recipients.getCucumberAnalogic().getTaxId(),
+                recipients.getCucumberAnalogic().getUid(), PF, PEC);
+
+        DESTINATARIO_GHERKIN_IRREPERIBILE = new Destinatario(
+                GHERKIN_IRREPERIBILE, recipients.getGherkinIrreperibile().getTaxId(),
+                recipients.getGherkinIrreperibile().getUid(), PG, PEC);
+
+        DESTINATARIO_CUCUMBER_SOCIETY = new Destinatario(
+                CUCUMBER_SOCIETY, recipients.getCucumberSociety().getTaxId(),
+                recipients.getCucumberSociety().getUid(), PG, PEC);
+
+        DESTINATARIO_SIGNOR_GENERATO = new Destinatario(
+                SIGNOR_GENERATO, FiscalCodeGenerator.generateCF(System.nanoTime()),
+                null, PF, PEC);
+
+        DESTINATARIO_NESSUNO = new Destinatario(NESSUNO, null, null, null, null);
+
+        DESTINATARIO_ERRORE_D01 = new Destinatario(
+                UTENZA_CON_INDIRIZZO_NON_VALIDO, recipients.getUserIndirizzoNonValidoD01().getTaxId(),
+                recipients.getUserIndirizzoNonValidoD01().getUid(), PF, PEC);
+        DESTINATARIO_INDIRIZZO_VALIDO_ANPR = new Destinatario(UTENZA_CON_INDIRIZZO_VALIDO_ANPR, recipients.getUserIndirizzoValidoAnpr().getTaxId(),
+                recipients.getUserIndirizzoValidoAnpr().getUid(), PF, PEC);
 
         all = List.of(
                 DESTINATARIO_MARIO_GHERKIN, DESTINATARIO_MARIO_CUCUMBER, DESTINATARIO_SIGNOR_CASUALE,
@@ -63,17 +123,18 @@ public class DestinatarioRegistry {
                 DESTINATARIO_GALILEO_GALILEI, DESTINATARIO_GHERKIN_SPA, DESTINATARIO_CUCUMBER_SPA,
                 DESTINATARIO_GHERKIN_SRL, DESTINATARIO_CUCUMBER_SRL, DESTINATARIO_GHERKIN_ANALOGIC,
                 DESTINATARIO_CUCUMBER_ANALOGIC, DESTINATARIO_GHERKIN_IRREPERIBILE, DESTINATARIO_CUCUMBER_SOCIETY,
-                DESTINATARIO_SIGNOR_GENERATO, DESTINATARIO_NESSUNO, DESTINATARIO_ERRORE_D01, DESTINATARIO_INDIRIZZO_VALIDO_ANPR
+                DESTINATARIO_SIGNOR_GENERATO, DESTINATARIO_NESSUNO, DESTINATARIO_ERRORE_D01, DESTINATARIO_INDIRIZZO_VALIDO_ANPR,
+                DESTINATARIO_ALDA_MERINI, DESTINATARIO_DINO_SAURO
         );
     }
 
     public String getSenderTaxIdFromProperties(String paName) {
         return switch (paName) {
-            case COMUNE_1 -> taxIds.getComune1();
-            case COMUNE_2 -> taxIds.getComune2();
-            case COMUNE_MULTI -> taxIds.getComuneMulti();
-            case COMUNE_SON -> taxIds.getComuneSon();
-            case COMUNE_ROOT -> taxIds.getComuneRoot();
+            case COMUNE_1 -> taxIds.getComune1().getTaxId();
+            case COMUNE_2 -> taxIds.getComune2().getTaxId();
+            case COMUNE_MULTI -> taxIds.getComuneMulti().getTaxId();
+            case COMUNE_SON -> taxIds.getComuneSon().getTaxId();
+            case COMUNE_ROOT -> taxIds.getComuneRoot().getTaxId();
             default -> throw new IllegalArgumentException("PA non riconosciuta: " + paName);
         };
     }
@@ -96,7 +157,9 @@ public class DestinatarioRegistry {
             GALILEO_GALILEI + "|" +
             NESSUNO + "|" +
             UTENZA_CON_INDIRIZZO_NON_VALIDO + "|" +
-            UTENZA_CON_INDIRIZZO_VALIDO_ANPR
+            UTENZA_CON_INDIRIZZO_VALIDO_ANPR + "|" +
+            ALDA_MERINI + "|" +
+            DINO_SAURO
     )
     public Destinatario destinatario(String name) {
         return all.stream()

@@ -29,6 +29,15 @@ Feature: Cancellazione di un'analisi del rischio ad un e-service
       | PA1  | security     |       403 |
       | PA1  | support      |       403 |
 
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo        | risultato |
+      | GSP  | reviewer     |       403 |
+      | GSP  | viewer       |       403 |
+      | PA2  | reviewer     |       403 |
+      | PA2  | viewer       |       403 |
+
   @happy-path
   @nrt-minimal
   @eservice_risk_analysis_delete2
@@ -53,13 +62,3 @@ Feature: Cancellazione di un'analisi del rischio ad un e-service
       | PA4     | GSP         |
       | GSP2    | PA          |
       | Privato | PA          |
-
-  # FIXME utile solo a innescare re-allineamento dei tenant kinds, rimuovere
-  @tenant-kind-alignment
-  Scenario: allinea kinds
-    Given l'utente è un "admin" di "PA4"
-
-    # FIXME utile solo per debug locale, rimuovere
-  @debug-adeguamento-analisi-rischio
-  Scenario: Cambio kind manuale
-    And il tenant kind dell'ente "PA4" viene impostato a "PRIVATE"

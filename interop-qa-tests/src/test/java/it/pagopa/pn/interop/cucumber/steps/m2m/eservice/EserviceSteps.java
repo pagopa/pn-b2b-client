@@ -16,6 +16,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.DocumentMetadata;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.catalog.utils.CatalogResolver;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.AbstractCommonSteps;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.*;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.helpers.EServiceSeedFactory;
@@ -31,6 +32,7 @@ import org.springframework.http.HttpStatus;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -50,6 +52,7 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     private final IM2MEserviceDescriptorClient descriptorClient;
     private final BlobFileCreator blobFileCreator;
     private final DelayService delayService;
+    private final CatalogResolver catalogResolver;
 
     private final EServicePatchOperationsAssistant eServicePatchAssistant;
     private final EServiceDelegationPatchOperationsAssistant eServiceDelegationPatchAssistant;
@@ -86,6 +89,7 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         this.eServiceSeedFactory = eServiceSeedFactory;
         this.documentMapper = documentMapper;
         this.delayService = delayService;
+        this.catalogResolver = new CatalogResolver(sharedStepsContext);
     }
 
     @Given("l'utente tenta la creazione dell'e-service con la configurazione predefinita")
@@ -148,6 +152,48 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     public void deleteEService() {
         UUID eserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         httpExecutor.performCall(() -> this.client.delete(eserviceId));
+    }
+
+    @When("viene avviato processo di archiviazione dell'e-service con id {string} e specificando la motivazione {string}")
+    public void scheduleEServiceArchiving(String eServiceId, String archivingReason) {
+        UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
+        String resolvedArchivingReason = catalogResolver.resolveArchivingReason(archivingReason);
+
+        scheduleArchiveEService(resolvedEServiceId, resolvedArchivingReason);
+    }
+
+    @When("viene avviato il processo di archiviazione dell'e-service con id {string} e specificando la motivazione composta da {int} caratteri")
+    public void scheduleEServiceArchivingWithReasonLength(String eServiceId, int archivingReasonLength) {
+        UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
+        String archivingReason = RandomStringUtils.insecure().nextAlphanumeric(archivingReasonLength);
+
+        scheduleArchiveEService(resolvedEServiceId, archivingReason);
+    }
+
+    private void scheduleArchiveEService(UUID eServiceId, String archivingReason) {
+        sharedStepsContext.getEServicesCommonContext()
+            .setDescriptorArchivingRequestTimestamp(OffsetDateTime.now(ZoneOffset.UTC));
+
+        EServiceArchivingRequest request = EServiceArchivingRequest.builder()
+                .archivingReason(archivingReason)
+                .build();
+
+        httpExecutor.performCall(() -> client.scheduleArchiveEService(eServiceId, request));
+    }
+
+    @When("viene annullato il processo di archiviazione dell'e-service con id {string}")
+    public void cancelEServiceArchiving(String eServiceId) {
+        UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
+
+        httpExecutor.performCall(() -> client.cancelScheduleArchiveEService(resolvedEServiceId));
+    }
+
+    @When("l'utente tenta di sospende quel descrittore")
+    public void suspendDescriptor() {
+        UUID eserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+
+        httpExecutor.performCall(() -> descriptorClient.suspendDescriptor(eserviceId, descriptorId));
     }
 
     @When("l'utente tenta di effettuare la riattivazione dell'e-service")

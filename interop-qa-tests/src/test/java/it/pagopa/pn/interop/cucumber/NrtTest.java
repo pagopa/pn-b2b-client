@@ -28,7 +28,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         // abilita parallelismo Cucumber
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 })
-@ExcludeTags({"wait_for_fix", "ignore"})
+@ExcludeTags({"wait_for_fix", "ignore", "adeguamento-analisi-rischio", "certifiedDiscreteAttribute"})
 @IncludeTags({
         // BFF
         "agreement", "attribute", "descriptor", "document", "eservice", "purpose", "daily_calls_update_request",

@@ -7,20 +7,16 @@ import it.pagopa.interop.maintenance.InteropMaintenanceService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.concurrent.locks.ReentrantLock;
-
 @Slf4j
 public class TenantSteps {
     private final InteropMaintenanceService maintenanceService;
-
     private final SharedStepsContext sharedStepsContext;
+    private final TenantSetupState setupState;
 
-    private final ReentrantLock lock = new ReentrantLock();
-    private volatile boolean setupPerformed = false;
-
-    public TenantSteps(InteropMaintenanceService maintenanceService, SharedStepsContext sharedStepsContext) {
+    public TenantSteps(InteropMaintenanceService maintenanceService, SharedStepsContext sharedStepsContext, TenantSetupState setupState) {
         this.maintenanceService = maintenanceService;
         this.sharedStepsContext = sharedStepsContext;
+        this.setupState = setupState;
     }
 
     /* Resetta i tenant kind al loro valore "naturale", qualora in un'esecuzione precedente siano stati
@@ -28,7 +24,7 @@ public class TenantSteps {
      * DEV NOTE 29/05/2026: si prevede di eseguire i test della feature "adeguamento analisi del rischio" in isolamento,
      * cioè nella stessa run con gli altri test, per evitare che il cambio di tenant kind possa interferire */
     @Before
-    public void resetTenantKind() {
+    public void resetTenantKind() throws InterruptedException {
         if(!maintenanceService.isExecutable()) {
             log.info("Impossible to use maintenance service in current environment. Skipping.");
             return;
@@ -37,21 +33,25 @@ public class TenantSteps {
         /* 29/05/2026 si effettua l'allineamento solo la prima volta, per correggere l'eventuale caso sfortuito
          * tale per cui un'esecuzione precedente della suite di "Adeguamento analisi del rischio" abbia
          * lasciato una condizione incoerente nei tenant kind. */
-        // Double-Checked Locking
-        if (!setupPerformed) {
-            lock.lock();
+        // Double-Checked Locking su stato condiviso tra tutte le istanze degli step
+        if (setupState.isSetupNotPerformed()) {
+            setupState.getLock().lock();
             try {
-                if (!setupPerformed) {
+                if (setupState.isSetupNotPerformed()) {
+                    int sleepSeconds = 60;
+                    log.debug("Sleeping {} seconds...", sleepSeconds);
+                    Thread.sleep(sleepSeconds * 1000L);
+
                     log.info("Aligning tenant kinds...");
                     maintenanceService.alignTenantKinds();
                     log.info("Tenant kinds aligned");
-                    setupPerformed = true;
+                    setupState.setSetupPerformed(true);
                 }
             } catch (Exception e) {
-                setupPerformed = false;
+                setupState.setSetupPerformed(false);
                 throw e;
             } finally {
-                lock.unlock();
+                setupState.getLock().unlock();
             }
         }
     }
@@ -70,6 +70,8 @@ public class TenantSteps {
             log.info("Aligning tenant kinds...");
             maintenanceService.alignTenantKinds();
             log.info("Tenant kinds aligned");
+        } else {
+            log.info("Not a AdeguamentoAnalisiRischio test. Skipping.");
         }
     }
     /* ********************************************************************************************************/

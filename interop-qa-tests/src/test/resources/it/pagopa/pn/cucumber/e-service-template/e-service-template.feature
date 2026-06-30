@@ -4,19 +4,32 @@ Feature: Test API of e-service template
   @sad-path
   @e-service-template-create
   Scenario Outline: [INTEROP-EST-001] La creazione di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
-    Given l'utente è un "<ruolo>" di "PA1"
+    Given l'utente è un "<ruolo>" di "PA2"
     When l'utente effettua la creazione di un e-service template in modalità <modo> in stato di DRAFT
     Then si ottiene response status code 403
     Examples:
-      | ruolo    | modo       |
-      | security | erogazione |
-      | support  | erogazione |
+      | ruolo     | modo        |
+      | security  | erogazione |
+      | support   | erogazione |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo     | modo       |
+      | reviewer  | erogazione |
+      | viewer    | erogazione |
 
     @e-service-template-receive-bff
     Examples:
-      | ruolo    | modo      |
+      | ruolo | modo |
       | security | ricezione |
-      | support  | ricezione |
+      | support | ricezione |
+
+    @e-service-template-receive-bff
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | modo |
+      | reviewer | ricezione |
+      | viewer | ricezione |
 
   @happy-path
   @e-service-template-create
@@ -53,15 +66,21 @@ Feature: Test API of e-service template
   @sad-path
   @e-service-template-version-suspend
   Scenario Outline: [INTEROP-EST-006] La sospensione di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "PA2"
     And l'utente effettua la sospensione dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo    |
+      | ruolo |
       | security |
-      | support  |
+      | support |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo |
+      | reviewer |
+      | viewer |
 
   @happy-path
   @e-service-template-version-suspend
@@ -80,15 +99,21 @@ Feature: Test API of e-service template
   @sad-path
   @e-service-template-version-activate
   Scenario Outline: [INTEROP-EST-008] La riattivazione di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di SUSPENDED
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "PA2"
     And l'utente effettua la riattivazione dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo    |
+      | ruolo |
       | security |
-      | support  |
+      | support |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo |
+      | reviewer |
+      | viewer |
 
   @happy-path
   @e-service-template-version-activate
@@ -114,19 +139,29 @@ Feature: Test API of e-service template
   @sad-path
   @e-service-template-update
   Scenario Outline: [INTEROP-EST-010] La modifica di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "PA2"
     And l'utente tenta delle modifiche all'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo    | stato     |
-      | security | DRAFT     |
-      | support  | DRAFT     |
+      | ruolo | stato |
+      | security | DRAFT |
+      | support | DRAFT |
       | security | PUBLISHED |
-      | support  | PUBLISHED |
+      | support | PUBLISHED |
       | security | SUSPENDED |
-      | support  | SUSPENDED |
+      | support | SUSPENDED |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato |
+      | reviewer | DRAFT |
+      | reviewer | PUBLISHED |
+      | reviewer | SUSPENDED |
+      | viewer | DRAFT |
+      | viewer | PUBLISHED |
+      | viewer | SUSPENDED |
 
   @happy-path
   @e-service-template-update
@@ -195,19 +230,29 @@ Feature: Test API of e-service template
   @sad-path
   @e-service-template-version-update
   Scenario Outline: [INTEROP-EST-016] La modifica di una versione di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "PA2"
     And l'utente tenta delle modifiche alla versione dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo    | stato     |
-      | security | DRAFT     |
-      | support  | DRAFT     |
+      | ruolo | stato |
+      | security | DRAFT |
+      | support | DRAFT |
       | security | PUBLISHED |
-      | support  | PUBLISHED |
+      | support | PUBLISHED |
       | security | SUSPENDED |
-      | support  | SUSPENDED |
+      | support | SUSPENDED |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato |
+      | reviewer | DRAFT |
+      | reviewer | PUBLISHED |
+      | reviewer | SUSPENDED |
+      | viewer | DRAFT |
+      | viewer | PUBLISHED |
+      | viewer | SUSPENDED |
 
   @happy-path
   @e-service-template-version-update
@@ -277,19 +322,29 @@ Feature: Test API of e-service template
   @e-service-template-receive-bff
   @e-service-template-riskAnalysis-add
   Scenario Outline: [INTEROP-EST-021] L'aggiunta di una risk analysis a un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "PA2"
     And l'utente tenta l'aggiunta di una risk analysis all'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo    | stato     |
-      | security | DRAFT     |
-      | support  | DRAFT     |
+      | ruolo | stato |
+      | security | DRAFT |
+      | support | DRAFT |
       | security | PUBLISHED |
-      | support  | PUBLISHED |
+      | support | PUBLISHED |
       | security | SUSPENDED |
-      | support  | SUSPENDED |
+      | support | SUSPENDED |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato |
+      | reviewer | DRAFT |
+      | reviewer | PUBLISHED |
+      | reviewer | SUSPENDED |
+      | viewer | DRAFT |
+      | viewer | PUBLISHED |
+      | viewer | SUSPENDED |
 
   @happy-path
   @e-service-template-receive-bff
@@ -367,16 +422,22 @@ Feature: Test API of e-service template
   @e-service-template-receive-bff
   @e-service-template-riskAnalysis-delete
   Scenario Outline: [INTEROP-EST-028] La cancellazione di una risk analysis di un e-service template in stato DRAFT NON può essere fatta da un ente NON in veste di ADMIN o API
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
     And l'utente effettua l'aggiunta di una risk analysis all'e-service template con successo
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "PA2"
     And l'utente tenta la cancellazione della risk analysis dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo    | stato |
+      | ruolo | stato |
       | security | DRAFT |
-      | support  | DRAFT |
+      | support | DRAFT |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato |
+      | reviewer | DRAFT |
+      | viewer | DRAFT |
 
   @happy-path
   @e-service-template-receive-bff
@@ -429,19 +490,29 @@ Feature: Test API of e-service template
   @e-service-template-receive-bff
   @e-service-template-riskAnalysis-update
   Scenario Outline: [INTEROP-EST-033] La modifica di una risk analysis di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di <stato>
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "PA2"
     And l'utente tenta la modifica della risk analysis dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo    | stato     |
-      | security | DRAFT     |
-      | support  | DRAFT     |
+      | ruolo | stato |
+      | security | DRAFT |
+      | support | DRAFT |
       | security | PUBLISHED |
-      | support  | PUBLISHED |
+      | support | PUBLISHED |
       | security | SUSPENDED |
-      | support  | SUSPENDED |
+      | support | SUSPENDED |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato |
+      | reviewer | DRAFT |
+      | reviewer | PUBLISHED |
+      | reviewer | SUSPENDED |
+      | viewer | DRAFT |
+      | viewer | PUBLISHED |
+      | viewer | SUSPENDED |
 
   @happy-path
   @e-service-template-receive-bff
@@ -494,25 +565,31 @@ Feature: Test API of e-service template
   @sad-path
   @e-service-template-version-document-create
   Scenario Outline: [INTEROP-EST-038] L'aggiunta di un documento/interfaccia a una versione di un e-service template NON può essere fatta da un ente NON in veste di ADMIN o API
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "PA2"
     And l'utente tenta l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo    | stato     | kind      |
-      | security | DRAFT     | DOCUMENT  |
-      | support  | DRAFT     | DOCUMENT  |
-      | security | PUBLISHED | DOCUMENT  |
-      | support  | PUBLISHED | DOCUMENT  |
-      | security | SUSPENDED | DOCUMENT  |
-      | support  | SUSPENDED | DOCUMENT  |
-      | security | DRAFT     | INTERFACE |
-      | support  | DRAFT     | INTERFACE |
+      | ruolo | stato | kind |
+      | security | DRAFT | DOCUMENT |
+      | support | DRAFT | DOCUMENT |
+      | security | PUBLISHED | DOCUMENT |
+      | support | PUBLISHED | DOCUMENT |
+      | security | SUSPENDED | DOCUMENT |
+      | support | SUSPENDED | DOCUMENT |
+      | security | DRAFT | INTERFACE |
+      | support | DRAFT | INTERFACE |
       | security | PUBLISHED | INTERFACE |
-      | support  | PUBLISHED | INTERFACE |
+      | support | PUBLISHED | INTERFACE |
       | security | SUSPENDED | INTERFACE |
-      | support  | SUSPENDED | INTERFACE |
+      | support | SUSPENDED | INTERFACE |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato | kind |
+      | reviewer | DRAFT | DOCUMENT |
+      | viewer | DRAFT | DOCUMENT |
 
   @happy-path
   @e-service-template-version-document-create
@@ -609,18 +686,26 @@ Feature: Test API of e-service template
   @sad-path
   @e-service-template-version-document-read
   Scenario Outline: [INTEROP-EST-046-A] Il reperimento di un documento/interfaccia di un e-service template NON può essere fatto da un ente NON in veste di ADMIN, API o SUPPORT
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
     And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "PA2"
     And l'utente tenta il reperimento del documento dalla versione dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo    | stato     | kind      |
-      | security | DRAFT     | DOCUMENT  |
-      | security | PUBLISHED | DOCUMENT  |
-      | security | SUSPENDED | DOCUMENT  |
-      | security | DRAFT     | INTERFACE |
+      | ruolo | stato | kind |
+      | security | DRAFT | DOCUMENT |
+      | security | PUBLISHED | DOCUMENT |
+      | security | SUSPENDED | DOCUMENT |
+      | security | DRAFT | INTERFACE |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato | kind |
+      | reviewer | DRAFT | DOCUMENT |
+      | reviewer | PUBLISHED | DOCUMENT |
+      | reviewer | SUSPENDED | DOCUMENT |
+      | reviewer | DRAFT | INTERFACE |
 
   # Si differenzia dallo scenario precedente perché tratta i casi di reperimento di interfacce per templates pubblicati o sospesi:
     # in questo caso non c'è bisogno dello steop 'l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo'
@@ -631,15 +716,21 @@ Feature: Test API of e-service template
   @sad-path
   @e-service-template-version-document-read
   Scenario Outline: [INTEROP-EST-046-B] Il reperimento di un documento/interfaccia di un e-service template NON può essere fatto da un ente NON in veste di ADMIN, API o SUPPORT
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "PA2"
     And l'utente tenta il reperimento del documento dalla versione dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo    | stato     |
+      | ruolo | stato |
       | security | PUBLISHED |
       | security | SUSPENDED |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato |
+      | reviewer | PUBLISHED |
+      | reviewer | SUSPENDED |
 
   # 01/04/2025: 'support' non più tra i ruoli preclusi, come affermato qui
     # https://pagopaspa.slack.com/archives/C085C3D1U84/p1743516899961919
@@ -742,22 +833,30 @@ Feature: Test API of e-service template
   @sad-path
   @e-service-template-version-document-update
   Scenario Outline: [INTEROP-EST-051-A] La modifica di un documento/interfaccia di un e-service template in qualsiasi stato NON può essere fatta da un ente NON in veste di ADMIN o API
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
     And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "PA2"
     And l'utente tenta la modifica del documento dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo    | stato     | kind      |
-      | security | DRAFT     | DOCUMENT  |
-      | support  | DRAFT     | DOCUMENT  |
-      | security | PUBLISHED | DOCUMENT  |
-      | support  | PUBLISHED | DOCUMENT  |
-      | security | SUSPENDED | DOCUMENT  |
-      | support  | SUSPENDED | DOCUMENT  |
-      | security | DRAFT     | INTERFACE |
-      | support  | DRAFT     | INTERFACE |
+      | ruolo | stato | kind |
+      | security | DRAFT | DOCUMENT |
+      | support | DRAFT | DOCUMENT |
+      | security | PUBLISHED | DOCUMENT |
+      | support | PUBLISHED | DOCUMENT |
+      | security | SUSPENDED | DOCUMENT |
+      | support | SUSPENDED | DOCUMENT |
+      | security | DRAFT | INTERFACE |
+      | support | DRAFT | INTERFACE |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato | kind |
+      | reviewer | DRAFT | DOCUMENT |
+      | reviewer | DRAFT | INTERFACE |
+      | viewer | DRAFT | DOCUMENT |
+      | viewer | DRAFT | INTERFACE |
 
   # Si differenzia dallo scenario precedente perché tratta i casi di modifica di interfacce per templates pubblicati o sospesi:
     # in questo caso non c'è bisogno dello step 'l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo'
@@ -766,17 +865,23 @@ Feature: Test API of e-service template
   @sad-path
   @e-service-template-version-document-update
   Scenario Outline: [INTEROP-EST-051-B] La modifica di un documento/interfaccia di un e-service template in qualsiasi stato NON può essere fatta da un ente NON in veste di ADMIN o API
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "PA2"
     And l'utente tenta la modifica del documento dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo    | stato     |
+      | ruolo | stato |
       | security | PUBLISHED |
-      | support  | PUBLISHED |
+      | support | PUBLISHED |
       | security | SUSPENDED |
-      | support  | SUSPENDED |
+      | support | SUSPENDED |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato |
+      | reviewer | PUBLISHED |
+      | viewer | PUBLISHED |
 
   # DEV. NOTE 20/03/2025: la modifica che viene effettuata è solo quella del nome del documento,
   # in quanto è al momento l'unico parametro a disposizione
@@ -881,22 +986,30 @@ Feature: Test API of e-service template
   @sad-path
   @e-service-template-version-document-delete
   Scenario Outline: [INTEROP-EST-058-A] La cancellazione di un documento/interfaccia di un e-service template NON può essere effettuata da un ente NON in veste di ADMIN o API
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
     And l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "PA2"
     And l'utente tenta la cancellazione del documento dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo    | stato     | kind      |
-      | security | DRAFT     | DOCUMENT  |
-      | support  | DRAFT     | DOCUMENT  |
-      | security | PUBLISHED | DOCUMENT  |
-      | support  | PUBLISHED | DOCUMENT  |
-      | security | SUSPENDED | DOCUMENT  |
-      | support  | SUSPENDED | DOCUMENT  |
-      | security | DRAFT     | INTERFACE |
-      | support  | DRAFT     | INTERFACE |
+      | ruolo | stato | kind |
+      | security | DRAFT | DOCUMENT |
+      | support | DRAFT | DOCUMENT |
+      | security | PUBLISHED | DOCUMENT |
+      | support | PUBLISHED | DOCUMENT |
+      | security | SUSPENDED | DOCUMENT |
+      | support | SUSPENDED | DOCUMENT |
+      | security | DRAFT | INTERFACE |
+      | support | DRAFT | INTERFACE |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato | kind |
+      | reviewer | DRAFT | DOCUMENT |
+      | reviewer | DRAFT | INTERFACE |
+      | viewer | DRAFT | DOCUMENT |
+      | viewer | DRAFT | INTERFACE |
 
   # Si differenzia dallo scenario precedente perché tratta i casi di cancellazione di interfacce per templates pubblicati o sospesi:
     # in questo caso non c'è bisogno dello step 'l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo'
@@ -905,17 +1018,25 @@ Feature: Test API of e-service template
   @sad-path
   @e-service-template-version-document-delete
   Scenario Outline: [INTEROP-EST-058-B] La cancellazione di un documento/interfaccia di un e-service template NON può essere effettuata da un ente NON in veste di ADMIN o API
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "PA2"
     And l'utente tenta la cancellazione del documento dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo    | stato     |
+      | ruolo | stato |
       | security | PUBLISHED |
-      | support  | PUBLISHED |
+      | support | PUBLISHED |
       | security | SUSPENDED |
-      | support  | SUSPENDED |
+      | support | SUSPENDED |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato |
+      | reviewer | PUBLISHED |
+      | reviewer | SUSPENDED |
+      | viewer | PUBLISHED |
+      | viewer | SUSPENDED |
 
   @happy-path
   @e-service-template-version-document-delete
@@ -1029,16 +1150,22 @@ Feature: Test API of e-service template
   @sad-path
   @e-service-template-version-publish
   Scenario Outline: [INTEROP-EST-066] La pubblicazione di una versione di un e-service template in stato DRAFT, in modalità erogazione e con annesso un documento di interfaccia NON può essere effettuata da un ente NON in veste di ADMIN o API
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
     And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "PA2"
     And l'utente tenta la pubblicazione della versione dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo    |
+      | ruolo |
       | security |
-      | support  |
+      | support |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo |
+      | reviewer |
+      | viewer |
 
   # TODO 21/03/2025 somiglianza con alcuni scenari precedenti, verificare ed eventualmente rimuovere test identici
   @happy-path
@@ -1061,16 +1188,22 @@ Feature: Test API of e-service template
   @e-service-template-receive-bff
   @e-service-template-version-publish
   Scenario Outline: [INTEROP-EST-068] La pubblicazione di una versione di un e-service template in stato DRAFT, in modalità ricezione, con annesso un documento di interfaccia e di una risk analysis NON può essere effettuata da un ente NON in veste di ADMIN o API
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT
     And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "PA2"
     And l'utente tenta la pubblicazione della versione dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo    |
+      | ruolo |
       | security |
-      | support  |
+      | support |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo |
+      | reviewer |
+      | viewer |
 
   @happy-path
   @e-service-template-receive-bff
@@ -1194,18 +1327,24 @@ Feature: Test API of e-service template
   @sad-path
   @e-service-template-version-delete
   Scenario Outline: [INTEROP-EST-079] La cancellazione di una versione di un e-service template in stato PUBLISHED non può essere effettuata da un ente NON in veste di ADMIN o API
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     And l'utente effettua la creazione di una ulteriore versione nell'e-service template con successo
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "PA2"
     And l'utente tenta la cancellazione della versione dell'e-service template
     Then si ottiene response status code 403
       # TODO in realtà sarebbe sensata anche la verifica di casi negativi come questo, del tipo: And la cancellazione della versione dell'e-service template non è stata effettuata
 
     Examples:
-      | ruolo    |
+      | ruolo |
       | security |
-      | support  |
+      | support |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo |
+      | reviewer |
+      | viewer |
 
   # Ticket aperto: https://pagopa.atlassian.net/browse/PIN-8052
   @sad-path
@@ -1283,15 +1422,21 @@ Feature: Test API of e-service template
   @sad-path
   @e-service-template-version-suspend
   Scenario Outline: [INTEROP-EST-087] La sospensione di una versione di un e-service template in stato PUBLISHED NON può essere effettuata da un ente NON in veste di ADMIN o API
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "PA2"
     And l'utente tenta la sospensione della versione dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo    |
+      | ruolo |
       | security |
-      | support  |
+      | support |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo |
+      | reviewer |
+      | viewer |
 
   @sad-path
   @e-service-template-version-suspend
@@ -1347,15 +1492,21 @@ Feature: Test API of e-service template
   @sad-path
   @e-service-template-version-activate
   Scenario Outline: [INTEROP-EST-093] La riattivazione di una versione di un e-service template in stato SUSPENDED NON può essere effettuata da un ente NON in veste di ADMIN o API
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di SUSPENDED
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "PA2"
     And l'utente tenta la riattivazione della versione dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo    |
+      | ruolo |
       | security |
-      | support  |
+      | support |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo |
+      | reviewer |
+      | viewer |
 
   @sad-path
   @e-service-template-version-activate
@@ -1402,17 +1553,25 @@ Feature: Test API of e-service template
   @sad-path
   @e-service-template-name-update
   Scenario Outline: [INTEROP-EST-098] La modifica del nome di un e-service template in stato PUBLISHED o SUSPENDED NON può essere effettuata da un ente NON in veste di ADMIN o API
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "PA2"
     And l'utente tenta la modifica del nome dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo    | stato     |
+      | ruolo | stato |
       | security | PUBLISHED |
-      | support  | PUBLISHED |
+      | support | PUBLISHED |
       | security | SUSPENDED |
-      | support  | SUSPENDED |
+      | support | SUSPENDED |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato |
+      | reviewer | PUBLISHED |
+      | reviewer | SUSPENDED |
+      | viewer | PUBLISHED |
+      | viewer | SUSPENDED |
 
   # TODO: a volte per incoerenze di stato restituisce 400, altre volte - come in questo caso - 409.
     # Bisogna identificare con precisione incoerenze di questo tipo.
@@ -1526,17 +1685,25 @@ Feature: Test API of e-service template
   @sad-path
   @e-service-template-intendedTarget-update
   Scenario Outline: [INTEROP-EST-106] La modifica della descrizione dello scopo di un e-service template in stato PUBLISHED o SUSPENDED NON può essere effettuata da un ente NON in veste di ADMIN o API
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "PA2"
     And l'utente tenta la modifica della descrizione dello scopo dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo    | stato     |
+      | ruolo | stato |
       | security | PUBLISHED |
-      | support  | PUBLISHED |
+      | support | PUBLISHED |
       | security | SUSPENDED |
-      | support  | SUSPENDED |
+      | support | SUSPENDED |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato |
+      | reviewer | PUBLISHED |
+      | reviewer | SUSPENDED |
+      | viewer | PUBLISHED |
+      | viewer | SUSPENDED |
 
   @sad-path
   @e-service-template-intendedTarget-update
@@ -1622,17 +1789,25 @@ Feature: Test API of e-service template
   @sad-path
   @e-service-template-description-update
   Scenario Outline: [INTEROP-EST-114] La modifica della descrizione di un e-service template in stato PUBLISHED o SUSPENDED NON può essere effettuata da un ente NON in veste di ADMIN o API
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "PA2"
     And l'utente tenta la modifica della descrizione dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo    | stato     |
+      | ruolo | stato |
       | security | PUBLISHED |
-      | support  | PUBLISHED |
+      | support | PUBLISHED |
       | security | SUSPENDED |
-      | support  | SUSPENDED |
+      | support | SUSPENDED |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato |
+      | reviewer | PUBLISHED |
+      | reviewer | SUSPENDED |
+      | viewer | PUBLISHED |
+      | viewer | SUSPENDED |
 
   @sad-path
   @e-service-template-description-update
@@ -1717,15 +1892,24 @@ Feature: Test API of e-service template
 
   @sad-path
   @e-service-template-version-quotas-update
+  @nuovi-operatori-update
   Scenario Outline: [INTEROP-EST-122] La modifica delle quote di una versione di un e-service template in stato PUBLISHED o SUSPENDED NON può essere effettuata da un ente NON in veste di ADMIN o API
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
 
-    When l'utente è un "security" di "PA1"
+    When l'utente è un "security" di "PA2"
     And l'utente tenta la modifica delle quote della versione dell'e-service template
     Then si ottiene response status code 403
 
-    When l'utente è un "support" di "PA1"
+    When l'utente è un "support" di "PA2"
+    And l'utente tenta la modifica delle quote della versione dell'e-service template
+    Then si ottiene response status code 403
+
+    When l'utente è un "reviewer" di "PA2"
+    And l'utente tenta la modifica delle quote della versione dell'e-service template
+    Then si ottiene response status code 403
+
+    When l'utente è un "viewer" di "PA2"
     And l'utente tenta la modifica delle quote della versione dell'e-service template
     Then si ottiene response status code 403
     Examples:
@@ -1825,39 +2009,51 @@ Feature: Test API of e-service template
   @sad-path
   @e-service-template-version-attributes-update @certifiedAttribute
   Scenario Outline: [INTEROP-EST-129-PUB] La modifica degli attributi di una versione di un e-service template in stato PUBLISHED NON può essere effettuata da un ente NON in veste di ADMIN o API
-    Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
-    And l'utente è un "admin" di "PA1"
+    Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA2"
+    And l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
     And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
     And l'utente effettua l'aggiunta dell'attributo creato alla versione dell'e-service template con successo
     And l'utente effettua la pubblicazione della versione dell'e-service template con successo
-    And "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
-    When l'utente è un "<ruolo>" di "PA1"
+    And "GSP" ha creato un attributo certificato e lo ha assegnato a "PA2"
+    When l'utente è un "<ruolo>" di "PA2"
     And l'utente tenta di aggiungere l'attributo creato alla versione dell'e-service template usando l'API specifica
     Then si ottiene response status code 403
     Examples:
-      | ruolo    |
+      | ruolo |
       | security |
-      | support  |
+      | support |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo |
+      | reviewer |
+      | viewer |
 
   @sad-path
   @e-service-template-version-attributes-update @certifiedAttribute
   Scenario Outline: [INTEROP-EST-129-SUS] La modifica degli attributi di una versione di un e-service template in stato SUSPENDED NON può essere effettuata da un ente NON in veste di ADMIN o API
-    Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
-    And l'utente è un "admin" di "PA1"
+    Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA2"
+    And l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
     And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
     And l'utente effettua l'aggiunta dell'attributo creato alla versione dell'e-service template con successo
     And l'utente effettua la pubblicazione della versione dell'e-service template con successo
     And l'utente effettua la sospensione della versione dell'e-service template con successo
-    And "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
-    When l'utente è un "<ruolo>" di "PA1"
+    And "GSP" ha creato un attributo certificato e lo ha assegnato a "PA2"
+    When l'utente è un "<ruolo>" di "PA2"
     And l'utente tenta di aggiungere l'attributo creato alla versione dell'e-service template usando l'API specifica
     Then si ottiene response status code 403
     Examples:
-      | ruolo    |
+      | ruolo |
       | security |
-      | support  |
+      | support |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo |
+      | reviewer |
+      | viewer |
 
   @sad-path
   @e-service-template-version-attributes-update @certifiedAttribute
@@ -1964,17 +2160,25 @@ Feature: Test API of e-service template
   @sad-path
   @e-service-template-version-create
   Scenario Outline: [INTEROP-EST-136] La creazione di una nuova versione di un e-service template NON può essere effettuata da un ente NON in veste di ADMIN o API
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "PA2"
     And l'utente tenta la creazione di una ulteriore versione nell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo    | stato     |
+      | ruolo | stato |
       | security | PUBLISHED |
-      | support  | PUBLISHED |
+      | support | PUBLISHED |
       | security | SUSPENDED |
-      | support  | SUSPENDED |
+      | support | SUSPENDED |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato |
+      | reviewer | PUBLISHED |
+      | reviewer | SUSPENDED |
+      | viewer | PUBLISHED |
+      | viewer | SUSPENDED |
 
   @sad-path
   @e-service-template-version-create
@@ -2227,21 +2431,34 @@ Feature: Test API of e-service template
   @sad-path
   @e-service-template-instance-create
   Scenario Outline: [INTEROP-EST-156] La creazione di un nuovo e-service a partire da un template attivo NON può essere effettuata da un ente NON in veste di ADMIN o API
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità <modo> in stato di PUBLISHED
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "PA2"
     And l'utente tenta la creazione di un nuovo e-service a partire dal template indicando solo le specifiche strettamente necessarie
     Then si ottiene response status code 403
     Examples:
-      | ruolo    | modo       |
+      | ruolo | modo |
       | security | erogazione |
-      | support  | erogazione |
+      | support | erogazione |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | modo |
+      | reviewer | erogazione |
+      | viewer | erogazione |
 
     @e-service-template-receive-bff
     Examples:
-      | ruolo    | modo      |
+      | ruolo | modo |
       | security | ricezione |
-      | support  | ricezione |
+      | support | ricezione |
+
+    @e-service-template-receive-bff
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | modo |
+      | reviewer | ricezione |
+      | viewer | ricezione |
 
   # NOTA 16/04/2025: non mappato in SRS https://pagopa.atlassian.net/wiki/spaces/PDNDI/pages/1429864566/SRS+Template+e-service
   @happy-path
@@ -2335,17 +2552,26 @@ Feature: Test API of e-service template
 
   @sad-path
   @e-service-template-instance-upgrade
+  @nuovi-operatori-update
   Scenario Outline: [INTEROP-EST-161] L'aggiornamento di un'istanza di un template all'ultima versione dell'e-service template NON può essere effettuata da un ente NON in veste di ADMIN o API
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità <modo> in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service a partire dal template con successo indicando solo le specifiche strettamente necessarie
     And l'utente effettua la creazione di una ulteriore versione nell'e-service template con successo
 
-    When l'utente è un "security" di "PA1"
+    When l'utente è un "security" di "PA2"
     And l'utente tenta l'aggiornamento dell'istanza dell'e-service template all'ultima versione
     Then si ottiene response status code 403
 
-    When l'utente è un "support" di "PA1"
+    When l'utente è un "support" di "PA2"
+    And l'utente tenta l'aggiornamento dell'istanza dell'e-service template all'ultima versione
+    Then si ottiene response status code 403
+
+    When l'utente è un "reviewer" di "PA2"
+    And l'utente tenta l'aggiornamento dell'istanza dell'e-service template all'ultima versione
+    Then si ottiene response status code 403
+
+    When l'utente è un "viewer" di "PA2"
     And l'utente tenta l'aggiornamento dell'istanza dell'e-service template all'ultima versione
     Then si ottiene response status code 403
     Examples:
@@ -2649,22 +2875,35 @@ Feature: Test API of e-service template
   @sad-path
   @e-service-template-instance-update
   Scenario Outline: [INTEROP-EST-188] La modifica dei campi di un'istanza di un e-service template NON può essere effettuata da un ente NON in veste di ADMIN o API
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità <modo> in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato DRAFT a partire dal template con successo indicando solo le specifiche strettamente necessarie
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "PA2"
     And l'utente tenta la modifica dei campi dell'istanza dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo    | modo       |
+      | ruolo | modo |
       | security | erogazione |
-      | support  | erogazione |
+      | support | erogazione |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | modo |
+      | reviewer | erogazione |
+      | viewer | erogazione |
 
     @e-service-template-receive-bff
     Examples:
-      | ruolo    | modo      |
+      | ruolo | modo |
       | security | ricezione |
-      | support  | ricezione |
+      | support | ricezione |
+
+    @e-service-template-receive-bff
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | modo |
+      | reviewer | ricezione |
+      | viewer | ricezione |
 
   @sad-path
   @e-service-template-instance-update
@@ -2774,22 +3013,35 @@ Feature: Test API of e-service template
   @sad-path
   @e-service-template-instance-descriptor-update
   Scenario Outline: [INTEROP-EST-195] La modifica del descriptor in stato DRAFT di un'istanza di un e-service template NON può essere effettuata da un ente NON in veste di ADMIN o API
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità <modo> in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato DRAFT a partire dal template con successo indicando solo le specifiche strettamente necessarie
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "PA2"
     And l'utente tenta la modifica del descriptor in stato DRAFT dell'istanza dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo    | modo       |
+      | ruolo | modo |
       | security | erogazione |
-      | support  | erogazione |
+      | support | erogazione |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | modo |
+      | reviewer | erogazione |
+      | viewer | erogazione |
 
     @e-service-template-receive-bff
     Examples:
-      | ruolo    | modo      |
+      | ruolo | modo |
       | security | ricezione |
-      | support  | ricezione |
+      | support | ricezione |
+
+    @e-service-template-receive-bff
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | modo |
+      | reviewer | ricezione |
+      | viewer | ricezione |
 
   @sad-path
   @e-service-template-instance-descriptor-update
@@ -2900,30 +3152,43 @@ Feature: Test API of e-service template
   @sad-path
   @e-service-template-instance-descriptor-update
   Scenario Outline: [INTEROP-EST-202] La modifica del descriptor di un'istanza di un e-service template NON può essere effettuata da un ente NON in veste di ADMIN o API
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità <modo> in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato <stato> a partire dal template con successo indicando solo le specifiche strettamente necessarie
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "PA2"
     And l'utente tenta la modifica del descriptor dell'istanza dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo    | stato      | modo       |
-      | security | PUBLISHED  | erogazione |
-      | support  | PUBLISHED  | erogazione |
-      | security | SUSPENDED  | erogazione |
-      | support  | SUSPENDED  | erogazione |
+      | ruolo | stato | modo |
+      | security | PUBLISHED | erogazione |
+      | support | PUBLISHED | erogazione |
+      | security | SUSPENDED | erogazione |
+      | support | SUSPENDED | erogazione |
       | security | DEPRECATED | erogazione |
-      | support  | DEPRECATED | erogazione |
+      | support | DEPRECATED | erogazione |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato | modo |
+      | reviewer | PUBLISHED | erogazione |
+      | viewer | PUBLISHED | erogazione |
 
     @e-service-template-receive-bff
     Examples:
-      | ruolo    | stato      | modo      |
-      | security | PUBLISHED  | ricezione |
-      | support  | PUBLISHED  | ricezione |
-      | security | SUSPENDED  | ricezione |
-      | support  | SUSPENDED  | ricezione |
+      | ruolo | stato | modo |
+      | security | PUBLISHED | ricezione |
+      | support | PUBLISHED | ricezione |
+      | security | SUSPENDED | ricezione |
+      | support | SUSPENDED | ricezione |
       | security | DEPRECATED | ricezione |
-      | support  | DEPRECATED | ricezione |
+      | support | DEPRECATED | ricezione |
+
+    @e-service-template-receive-bff
+    @nuovi-operatori-update
+    Examples:
+      | ruolo | stato | modo |
+      | reviewer | PUBLISHED | ricezione |
+      | viewer | PUBLISHED | ricezione |
 
   @sad-path
   @e-service-template-instance-descriptor-update
@@ -3141,6 +3406,73 @@ Feature: Test API of e-service template
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "max-descr" e descrizione di 20 caratteri
     And si ottiene response status code 200
     When l'utente aggiorna la descrizione dell'e-service template in stato PUBLISHED con una descrizione di 401 caratteri
+    Then si ottiene response status code 400
+
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
+  Scenario: [CERT_DISCRETE_ATTR_ESERVICE_TEMPL_1] Configurazione e associazione con successo di attributi certificati discreti
+  a un template e-service in stato DRAFT (logiche OR e AND incluse)
+
+    Given l'utente è un "admin" di "PA1"
+    And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
+    And l'utente "PA1" possiede almeno un attributo certificato discreto
+    When l'utente è un "admin" di "PA2"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente tenta di aggiungere i seguenti attributi alla versione dell'e-service template:
+      | kind               | group | comparator | value   |
+      | CERTIFIED_DISCRETE | 0     | GTE        | 1000000 |
+      | CERTIFIED          | 0     |            |         |
+      | CERTIFIED          | 1     |            |         |
+      | CERTIFIED_DISCRETE | 1     | GTE        | 500000  |
+      | CERTIFIED          | 1     |            |         |
+      | DECLARED           | 0     |            |         |
+    And si ottiene response status code 200
+    Then gli attributi del template e-service hanno la seguente configurazione:
+      | kind               | group | comparator | value   |
+      | CERTIFIED_DISCRETE | 0     | GTE        | 1000000 |
+      | CERTIFIED          | 0     |            |         |
+      | CERTIFIED          | 1     |            |         |
+      | CERTIFIED_DISCRETE | 1     | GTE        | 500000  |
+      | CERTIFIED          | 1     |            |         |
+      | DECLARED           | 0     |            |         |
+
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
+  Scenario: [CERT_DISCRETE_ATTR_ESERVICE_TEMPL_2] La modifica della soglia e del comparatore di un attributo certificato discreto
+  su un template e-service già pubblicato non va a buon fine.
+
+    Given l'utente è un "admin" di "PA1"
+    And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
+    And l'utente "PA1" possiede almeno un attributo certificato discreto
+    And l'utente è un "admin" di "PA2"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    And l'utente tenta di aggiungere i seguenti attributi alla versione dell'e-service template:
+      | kind               | group | comparator | value   |
+      | CERTIFIED_DISCRETE | 0     | GTE        | 1000000 |
+    And si ottiene response status code 200
+    And gli attributi del template e-service hanno la seguente configurazione:
+      | kind               | group | comparator | value   |
+      | CERTIFIED_DISCRETE | 0     | GTE        | 1000000 |
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+    And l'utente effettua la pubblicazione dell'e-service template
+    And l'e-service template è in stato di PUBLISHED
+    When l'utente modifica il primo attributo certificato discreto nel primo gruppo degli attributi certificati con discrete threshold 10 e discrete comparator a "LT"
+    Then si ottiene response status code 400
+
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
+  Scenario: [CERT_DISCRETE_ATTR_ESERVICE_TEMPL_NO_DUPLICATED] Un e-service template in stato DRAFT non può avere lo stesso
+  attributo certificato discreto nello stesso gruppo (logiche OR non consentite).
+
+    Given l'utente è un "admin" di "PA1"
+    And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
+    And l'utente "PA1" possiede almeno un attributo certificato discreto
+    When l'utente è un "admin" di "PA2"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    When l'utente tenta di aggiungere i seguenti attributi alla versione dell'e-service template:
+      | kind               | group | comparator | value   |
+      | CERTIFIED_DISCRETE | 0     | GTE        | 1000000 |
+      | CERTIFIED_DISCRETE | 0     | LTE        | 2000000 |
     Then si ottiene response status code 400
 
   @sad-path

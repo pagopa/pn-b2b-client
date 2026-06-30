@@ -8,6 +8,8 @@ import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
+import it.pagopa.pn.interop.cucumber.steps.agreement.model.EServiceAttributeSpec;
+import it.pagopa.pn.interop.cucumber.steps.catalog.DescriptorUpdateSteps;
 import it.pagopa.pn.interop.cucumber.steps.common.AttributeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -15,10 +17,8 @@ import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+
+import java.util.*;
 import java.util.function.BiConsumer;
 
 import static java.util.Objects.nonNull;
@@ -103,6 +103,27 @@ public class AgreementActivateSteps {
         }
     }
 
+    @When("{string} ha già creato un e-service in stato {string} con approvazione {string} con dailyCallsPerConsumer uguale a {int} e dailyCallsTotal uguale a {int} e con i seguenti attributi:")
+    public void tenantHasAlreadyCreateEservice(String tenantType, String descriptorState, String approvalAgreementPolicy, Integer dailyCallsPerConsumer, Integer dailyCallsTotal, List<EServiceAttributeSpec> attributesSpec) {
+
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        UpdateEServiceDescriptorSeed updateSeed = DescriptorUpdateSteps.createUpdateEServiceDescriptorSeedAndUpdateContext(
+                sharedStepsContext, dataPreparationService, attributesSpec
+        );
+        updateSeed.agreementApprovalPolicy(AgreementApprovalPolicy.valueOf(approvalAgreementPolicy))
+                .dailyCallsPerConsumer(dailyCallsPerConsumer)
+                .dailyCallsTotal(dailyCallsTotal);
+
+        try {
+            EServiceDescriptor result = dataPreparationService.createEServiceAndDraftDescriptor(new EServiceSeed(), updateSeed);
+            dataPreparationService.bringDescriptorToGivenState(result.getEServiceId(), result.getDescriptorId(), EServiceDescriptorState.valueOf(descriptorState), false);
+
+            sharedStepsContext.getEServicesCommonContext().setEserviceId(result.getEServiceId());
+            sharedStepsContext.getEServicesCommonContext().setDescriptorId(result.getDescriptorId());
+        } catch(AssertionFailedError e) {
+            log.warn("Errore durante la creazione dell'e-service: {}", e.getMessage());
+        }
+    }
 
     @Given("l'e-service ha questa configurazione:")
     public void eServiceHasThisConfiguration(DataTable dataTable) {
