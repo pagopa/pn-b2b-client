@@ -20,7 +20,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,7 +39,6 @@ public class SharedStepsContext implements ISharedContext {
     private Role role;
     private String userToken;
     private Auth auth;
-    private UUID agreementId;
     private ClientCommonContext clientCommonContext;
     private PurposeCommonContext purposeCommonContext;
     private EServicesCommonContext eServicesCommonContext;

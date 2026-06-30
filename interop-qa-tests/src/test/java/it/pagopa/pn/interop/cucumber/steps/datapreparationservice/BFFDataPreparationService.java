@@ -1145,7 +1145,7 @@ public class BFFDataPreparationService {
             ERROR_RETRIEVING_AGREEMENT
         );
 
-        sharedStepsContext.setAgreementId(newAgreementId);
+        sharedStepsContext.getAgreementCommonContext().setAgreementId(newAgreementId);
     }
 
     public void deleteClientKeyById(UUID clientId, String keyId) {

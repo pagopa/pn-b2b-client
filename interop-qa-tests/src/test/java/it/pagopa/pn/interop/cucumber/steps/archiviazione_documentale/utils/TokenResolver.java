@@ -29,7 +29,7 @@ public class TokenResolver {
                     Map.entry(":clientId", ctx -> safe(c -> c.getClientCommonContext().getLastClient(), ctx)),
                     Map.entry(":userId", ctx -> safe(c -> c.getIdentityService().getUserId(c.getTenantType(), c.getRole().getValue()), ctx)),
                     Map.entry(":kid", ctx -> safe(c -> c.getClientCommonContext().getKeyId(), ctx)),
-                    Map.entry(":agreementId", ctx -> safe(SharedStepsContext::getAgreementId, ctx)),
+                    Map.entry(":agreementId", ctx -> safe(c -> c.getAgreementCommonContext().getAgreementId(), ctx)),
                     Map.entry(":consumerDelegationId", ctx -> safe(c -> c.getDelegationCommonContext().getDelegationId(), ctx)),
                     Map.entry(":producerDelegationId", ctx -> safe(c -> c.getDelegationCommonContext().getDelegationId(), ctx)),
                     Map.entry(":purposeId", ctx -> safe(c -> c.getPurposeCommonContext().getLastPurposeId(), ctx)),

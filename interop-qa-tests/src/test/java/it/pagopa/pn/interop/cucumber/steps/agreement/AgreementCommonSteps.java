@@ -89,7 +89,7 @@ public class AgreementCommonSteps {
                 sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
                 delegationId,
                 null);
-        sharedStepsContext.setAgreementId(agreementId);
+        sharedStepsContext.getAgreementCommonContext().setAgreementId(agreementId);
         sharedStepsContext.getAgreementCommonContext().setAgreementCreationTime(now());
     }
 
@@ -238,7 +238,7 @@ public class AgreementCommonSteps {
         String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         pollingService.makePolling(
-                () -> agreementClient.getAgreementById(sharedStepsContext.getAgreementId()),
+                () -> agreementClient.getAgreementById(sharedStepsContext.getAgreementCommonContext().getAgreementId()),
                 res -> res.getState().equals(AgreementState.ARCHIVED),
                 "The agreement was not archived"
         );
@@ -260,7 +260,7 @@ public class AgreementCommonSteps {
         Map<String, UUID> result = dataPreparationService.createAgreementWithGivenStateAndDocument(
                 AgreementState.fromValue(agreementState), sharedStepsContext.getEServicesCommonContext().getEserviceId(),
                 sharedStepsContext.getEServicesCommonContext().getDescriptorId());
-        sharedStepsContext.setAgreementId(result.get("agreementId"));
+        sharedStepsContext.getAgreementCommonContext().setAgreementId(result.get("agreementId"));
         sharedStepsContext.getAgreementCommonContext().setDocumentId(result.get("documentId"));
     }
 

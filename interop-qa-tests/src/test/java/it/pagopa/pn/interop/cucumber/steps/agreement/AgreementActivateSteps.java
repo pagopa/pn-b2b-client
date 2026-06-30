@@ -42,13 +42,13 @@ public class AgreementActivateSteps {
     @Given("{string} ha già sospeso quella richiesta di fruizione come {clientType}")
     public void tenantHasAlreadySuspendedThatRequest(String tenantType, ClientType status) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        dataPreparationService.suspendAgreement(sharedStepsContext.getAgreementId(), status);
+        dataPreparationService.suspendAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId(), status);
     }
 
     @Given("{string} ha già approvato quella richiesta di fruizione")
     public void tenantHasAlreadyAcceptedThatRequest(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        dataPreparationService.activateAgreement(sharedStepsContext.getAgreementId(), null, null);
+        dataPreparationService.activateAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId(), null, null);
     }
 
     @Given("l'ente {delegationRole} ha già approvato quella richiesta di fruizione")
@@ -57,7 +57,7 @@ public class AgreementActivateSteps {
         String tenant = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
         String token = identityService.getToken(tenant, null);
         clientTokenConfigurator.setBearerToken(token);
-        dataPreparationService.activateAgreement(sharedStepsContext.getAgreementId(), null, new DelegationRef().delegationId(sharedStepsContext.getDelegationCommonContext().getDelegationId()));
+        dataPreparationService.activateAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId(), null, new DelegationRef().delegationId(sharedStepsContext.getDelegationCommonContext().getDelegationId()));
     }
 
     @Given("{string} ha già creato un e-service in stato {string} che richiede quegli attributi con approvazione {string}")
@@ -188,7 +188,7 @@ public class AgreementActivateSteps {
 
         dataPreparationService.assignVerifiedAttributeToTenant(consumerId, verifierId,
                 sharedStepsContext.getAttributeCommonContext().getAttributeId(),
-                sharedStepsContext.getAgreementId(), null);
+                sharedStepsContext.getAgreementCommonContext().getAgreementId(), null);
     }
 
     @When("l'utente richiede una operazione di attivazione di quella richiesta di fruizione")
@@ -196,7 +196,7 @@ public class AgreementActivateSteps {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient()
-                        .activateAgreement(sharedStepsContext.getAgreementId()));
+                        .activateAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId()));
     }
 
     @When("l'utente {string} di {string} richiede una operazione di attivazione di quella richiesta di fruizione")
@@ -204,7 +204,7 @@ public class AgreementActivateSteps {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getIdentityService().getToken(tenant, role));
         sharedStepsContext.getHttpCallExecutor().performCall(
             () -> clientTokenConfigurator.getAgreementClient()
-                .activateAgreement(sharedStepsContext.getAgreementId()));
+                .activateAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId()));
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
     }
 
@@ -213,7 +213,7 @@ public class AgreementActivateSteps {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getIdentityService().getToken(tenant, role));
         sharedStepsContext.getHttpCallExecutor().performCall(
             () -> clientTokenConfigurator.getAgreementClient()
-                .activateAgreement(sharedStepsContext.getAgreementId()));
+                .activateAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId()));
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
         if(sharedStepsContext.getHttpCallExecutor().getResponseStatus().isError()) {
@@ -228,7 +228,7 @@ public class AgreementActivateSteps {
         clientTokenConfigurator.setBearerToken(token);
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient()
-                        .activateAgreement(sharedStepsContext.getAgreementId(), new DelegationRef().delegationId(sharedStepsContext.getDelegationCommonContext().getDelegationId())));
+                        .activateAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId(), new DelegationRef().delegationId(sharedStepsContext.getDelegationCommonContext().getDelegationId())));
     }
 
     @Given("due gruppi di due attributi certificati da {string}, dei quali {string} ne possiede uno per gruppo")
@@ -328,7 +328,7 @@ public class AgreementActivateSteps {
                 .map(group -> group.get(0))
                 .toList();
         for (UUID attributeId : attributeIdsToVerify) {
-            dataPreparationService.assignVerifiedAttributeToTenant(consumerId, verifierId, attributeId, sharedStepsContext.getAgreementId(), null);
+            dataPreparationService.assignVerifiedAttributeToTenant(consumerId, verifierId, attributeId, sharedStepsContext.getAgreementCommonContext().getAgreementId(), null);
         }
     }
 }
