@@ -32,3 +32,12 @@ Feature: Creazione attributo certificato
       | Privato | security     |       403 |
       | Privato | api,security |       403 |
       | Privato | support      |       403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente    | ruolo        | risultato |
+      | PA2     | reviewer     |       403 |
+      | PA2     | viewer       |       403 |
+      | Privato | reviewer     |       403 |
+      | Privato | viewer       |       403 |

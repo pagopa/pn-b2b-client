@@ -13,6 +13,7 @@ public enum DynamoTableName {
     COST_COMPONENTS("pn-CostComponents"),
     COST_UPDATE_RESULT("pn-CostUpdateResult"),
     USER_ATTRIBUTES("pn-UserAttributes"),
+    IO_CONNECTOR_REQUESTS("pn-IOConnectorRequests"),
     BATCH_REQUESTS_WITH_INDEX_SEND_STATUS("pn-batchRequests"),
     BATCH_REQUESTS_WITH_INDEX_STATUS("pn-batchRequests");
 

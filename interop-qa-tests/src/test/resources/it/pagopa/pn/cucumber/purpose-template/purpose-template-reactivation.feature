@@ -25,14 +25,20 @@ Feature: finalità agevolata, purpose template REACTIVATION
   Scenario Outline: [PURPOSE_TEMPLATE_REACTIVATION_NO_ADMIN] Riattivazione di una finalità agevolata sospesa da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato SUSPENDED
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "<ente>"
     And il purpose template creato viene riattivato
     Then si ottiene lo status code 403
     Examples:
-      | ruolo    |
-      | api      |
-      | support  |
-      | security |
+      | ente | ruolo    |
+      | PA1  | api      |
+      | PA1  | support  |
+      | PA1  | security |
+
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo    |
+      | PA2  | reviewer |
+      | PA2  | viewer   |
 
   #54(KO)
   @purposeTemplate @purposeTemplateReactivation

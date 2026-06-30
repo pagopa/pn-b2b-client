@@ -4,6 +4,7 @@ import io.cucumber.spring.CucumberContextConfiguration;
 import it.pagopa.common.config.AwsConfig;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.generate.api.externalregistry.selfcare.privateapi.AooUoIdsApi;
 import it.pagopa.pn.client.b2b.pa.cache.CacheConfig;
+import it.pagopa.common.config.AwsConfig;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.config.TemplateEngineConfigBean;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.ApiKeysConfiguration;
@@ -17,35 +18,16 @@ import it.pagopa.pn.client.b2b.pa.parsing.config.PnLegalFactTokens;
 import it.pagopa.pn.client.b2b.pa.parsing.parser.impl.PnParser;
 import it.pagopa.pn.client.b2b.pa.parsing.service.impl.PnParserService;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
-import it.pagopa.pn.client.b2b.pa.polling.impl.v1.PnPollingServiceStatusRapidV1;
-import it.pagopa.pn.client.b2b.pa.polling.impl.v1.PnPollingServiceStatusSlowV1;
-import it.pagopa.pn.client.b2b.pa.polling.impl.v1.PnPollingServiceTimelineRapidV1;
-import it.pagopa.pn.client.b2b.pa.polling.impl.v1.PnPollingServiceTimelineSlowV1;
-import it.pagopa.pn.client.b2b.pa.polling.impl.v1.PnPollingServiceValidationStatusV1;
-import it.pagopa.pn.client.b2b.pa.polling.impl.v20.PnPollingServiceStatusRapidV20;
-import it.pagopa.pn.client.b2b.pa.polling.impl.v20.PnPollingServiceStatusSlowV20;
-import it.pagopa.pn.client.b2b.pa.polling.impl.v20.PnPollingServiceTimelineRapidV20;
-import it.pagopa.pn.client.b2b.pa.polling.impl.v20.PnPollingServiceTimelineSlowV20;
-import it.pagopa.pn.client.b2b.pa.polling.impl.v20.PnPollingServiceValidationStatusV20;
-import it.pagopa.pn.client.b2b.pa.polling.impl.v20.PnPollingServiceWebhookV20;
-import it.pagopa.pn.client.b2b.pa.polling.impl.v21.PnPollingServiceStatusRapidV21;
-import it.pagopa.pn.client.b2b.pa.polling.impl.v21.PnPollingServiceStatusSlowV21;
-import it.pagopa.pn.client.b2b.pa.polling.impl.v21.PnPollingServiceTimelineRapidV21;
-import it.pagopa.pn.client.b2b.pa.polling.impl.v21.PnPollingServiceTimelineSlowV21;
-import it.pagopa.pn.client.b2b.pa.polling.impl.v21.PnPollingServiceValidationStatusV21;
-import it.pagopa.pn.client.b2b.pa.polling.impl.v23.PnPollingServiceStatusExtraRapidV23;
-import it.pagopa.pn.client.b2b.pa.polling.impl.v23.PnPollingServiceStatusRapidV23;
-import it.pagopa.pn.client.b2b.pa.polling.impl.v23.PnPollingServiceStatusSlowV23;
-import it.pagopa.pn.client.b2b.pa.polling.impl.v23.PnPollingServiceTimelineExtraRapidV23;
-import it.pagopa.pn.client.b2b.pa.polling.impl.v23.PnPollingServiceTimelineRapidV23;
-import it.pagopa.pn.client.b2b.pa.polling.impl.v23.PnPollingServiceTimelineSlowE2eV23;
-import it.pagopa.pn.client.b2b.pa.polling.impl.v23.PnPollingServiceTimelineSlowV23;
-import it.pagopa.pn.client.b2b.pa.polling.impl.v23.PnPollingServiceValidationStatusAcceptedExtraRapidV23;
-import it.pagopa.pn.client.b2b.pa.polling.impl.v23.PnPollingServiceValidationStatusAcceptedShortV23;
-import it.pagopa.pn.client.b2b.pa.polling.impl.v23.PnPollingServiceValidationStatusNoAcceptedV23;
-import it.pagopa.pn.client.b2b.pa.polling.impl.v23.PnPollingServiceValidationStatusV23;
-import it.pagopa.pn.client.b2b.pa.polling.impl.v23.PnPollingServiceWebhookV23;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v1.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v20.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v21.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v23.*;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v24.PnPollingServiceWebhookV24;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v25.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v26.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v27.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v28.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v29.*;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v25.PnPollingServiceStatusExtraRapidV25;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v25.PnPollingServiceStatusRapidV25;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v25.PnPollingServiceStatusSlowV25;
@@ -110,52 +92,10 @@ import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.client.b2b.pa.service.IBffMandateServiceApi;
 import it.pagopa.pn.client.b2b.pa.service.IMandateReverseServiceClient;
-import it.pagopa.pn.client.b2b.pa.service.impl.AooUoIdsClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.B2BDeliveryPushServiceClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.B2bMandateServiceClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.BffMandateServiceClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.EmdIntegrationApiImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.IPnInteropProbingClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.IPnLegalPersonAuthClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.IPnLegalPersonVirtualKeyServiceClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.IPnTosPrivacyClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.MandateReverseServiceClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PaperCalculatorClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnApiKeyManagerExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnAppIOB2bExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnBFFRecipientNotificationClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnBffPaClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnCfgClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnDowntimeLogsExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnEcInternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalChannelsInternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalChannelsServiceClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalRegistryPrivateUserApiImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnGPDClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnIoUserAttributerExternaClient;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnMandateAppIoClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnNotificationCostClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnPaperTrackerClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnPrivateDeliveryPushExternalClient;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddAlternativeClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddAlternativeV2ClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddCapCoverageClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddFsuClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnSafeStoragePrivateClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnServiceDeskClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnWebMandateExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnWebRecipientExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesInternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnWebhookB2bExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.ReworkTimelineClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.TemplateEngineClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRaddCognito;
+import it.pagopa.pn.client.b2b.pa.utils.DataPreparationRaddVpceService;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.cucumber.steps.paperTracker.parser.EventTimelineParser;
 import it.pagopa.pn.cucumber.steps.paperTracker.proxy.PaperTrackerSchemaValidatorProxy;
@@ -201,6 +141,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnCfgClientImpl.class,
         TimingForPolling.class,
         PnB2bClientTimingConfigs.class,
+        PnIOConnectorClientImpl.class,
         PnPollingFactory.class,
         CieGeneratorTool.class,
         TaxIdConfiguration.class,
@@ -347,7 +288,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         CacheConfig.class,
         AooUoIdsClientImpl.class,
         AooUoIdsApi.class,
-        OtpCodeService.class
+        OtpCodeService.class,
+        PnRaddVpceAdapter.class,
+        PnRaddNetVpceClientImpl.class,
+        DataPreparationRaddVpceService.class,
+        PnNotificationCostClientImpl.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

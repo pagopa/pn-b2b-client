@@ -4,7 +4,7 @@ Feature: Aggiornamento di un descrittore in bozza
 
   @nrt-minimal
   @descriptor_draft_update1
-  Scenario Outline: [DESCRIPTOR_DRAFT_UPDATE_1] Per un e-service che ha un solo descrittore, il quale è in stato DRAFT, all’aggiornamento da parte di un utente autorizzato di alcuni parametri del descrittore, ben formattati, la bozza viene aggiornata correttamente
+  Scenario Outline: [DESCRIPTOR_DRAFT_UPDATE_1] Per un e-service che ha un solo descrittore, il quale è in stato DRAFT, all'aggiornamento da parte di un utente autorizzato di alcuni parametri del descrittore, ben formattati, la bozza viene aggiornata correttamente
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato un e-service con un descrittore in stato "DRAFT"
     When l'utente aggiorna alcuni parametri di quel descrittore
@@ -27,6 +27,15 @@ Feature: Aggiornamento di un descrittore in bozza
       | GSP  | support  | 403       |
       | PA1  | security | 403       |
       | PA1  | support  | 403       |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo    | risultato |
+      | GSP  | reviewer | 403       |
+      | GSP  | viewer   | 403       |
+      | PA2  | reviewer | 403       |
+      | PA2  | viewer   | 403       |
 
   @sad-path
   @nrt-minimal

@@ -32,6 +32,7 @@ public class DynamoDbService {
             case COST_COMPONENTS -> buildCostComponentsRequest(attributeValues);
             case COST_UPDATE_RESULT -> buildCostUpdateResultRequest(attributeValues);
             case USER_ATTRIBUTES -> buildUserAttributesInfoRequest(attributeValues);
+            case IO_CONNECTOR_REQUESTS -> buildIOConnectorRequestsRequest(attributeValues);
             case BATCH_REQUESTS_WITH_INDEX_SEND_STATUS -> buildBatchRequestsBySendStatusAndLastReservedAfter(attributeValues);
             case BATCH_REQUESTS_WITH_INDEX_STATUS -> buildBatchRequestsByStatus(attributeValues);
         };
@@ -90,6 +91,12 @@ public class DynamoDbService {
     private static QueryRequest buildCostUpdateResultRequest(Map<String, AttributeValue> attributeValues) {
         return DynamoQueryBuilder.withoutFilter(DynamoTableName.COST_UPDATE_RESULT.getValue(),
                 "pk = :v_pk",
+                attributeValues);
+    }
+
+    private static QueryRequest buildIOConnectorRequestsRequest(Map<String, AttributeValue> attributeValues) {
+        return DynamoQueryBuilder.withoutFilter(DynamoTableName.IO_CONNECTOR_REQUESTS.getValue(),
+                "requestId = :v_requestId",
                 attributeValues);
     }
 
