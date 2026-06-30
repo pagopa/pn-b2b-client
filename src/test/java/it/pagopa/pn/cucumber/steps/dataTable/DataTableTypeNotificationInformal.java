@@ -22,6 +22,4 @@ public class DataTableTypeNotificationInformal {
     public InformalNotificationRequestV1 informalNotificationRequest(Map<String, String> data) {
         return mapper.buildInformalNotificationRequest(data);
     }
-
-
 }

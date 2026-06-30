@@ -37,7 +37,6 @@ import static it.pagopa.pn.cucumber.utils.NotificationInformalValue.*;
                         InformalNotificationRecipientV1.RecipientTypeEnum.fromValue(recipientType)
                 );
             }
-
             recipient.setMessageId(resolveMessageId(data, currentCxId));
             recipient.setTaxId(getValue(data, RECIPIENT_TAX_ID.key));
             recipient.setDenomination(getValue(data, RECIPIENT_DENOMINATION.key));
@@ -66,7 +65,6 @@ import static it.pagopa.pn.cucumber.utils.NotificationInformalValue.*;
             // PAYMENTS
             // =========================
             recipient.setPayments(buildPayments(data));
-
             return recipient;
         }
 
@@ -77,13 +75,11 @@ import static it.pagopa.pn.cucumber.utils.NotificationInformalValue.*;
 
             String physicalAddressValue = data.get("physical_address");
 
-            boolean isNull =
-                    "${PHYSICAL_ADDRESS_NULL}".equalsIgnoreCase(physicalAddressValue);
+            boolean isNull = "${PHYSICAL_ADDRESS_NULL}".equalsIgnoreCase(physicalAddressValue);
 
             if (isNull) {
                 return null;
             }
-
             NotificationPhysicalAddress pa = new NotificationPhysicalAddress();
 
             pa.setAddress(getValue(data, PHYSICAL_ADDRESS_ADDRESS.key));
@@ -103,13 +99,11 @@ import static it.pagopa.pn.cucumber.utils.NotificationInformalValue.*;
         private List<InformalNotificationPaymentItem> buildPayments(Map<String, String> data) {
 
             int paymentNumber = Integer.parseInt(getValue(data, PAYMENT_MULTY_NUMBER.key));
-
             List<InformalNotificationPaymentItem> payments = new ArrayList<>();
 
             for (int i = 0; i < paymentNumber; i++) {
 
-                NotificationPaymentAttachment attachment =
-                        mapper.buildPaymentAttachment(data);
+                NotificationPaymentAttachment attachment = mapper.buildPaymentAttachment(data);
 
                 PagoPaPaymentBase pagoPa = new PagoPaPaymentBase()
                         .noticeCode(generateNoticeCode(getValue(data, PAYMENT_NOTICE_CODE.key), i))
@@ -118,10 +112,8 @@ import static it.pagopa.pn.cucumber.utils.NotificationInformalValue.*;
 
                 InformalNotificationPaymentItem item = new InformalNotificationPaymentItem();
                 item.setPagoPa(pagoPa);
-
                 payments.add(item);
             }
-
             return payments;
         }
 
@@ -135,7 +127,6 @@ import static it.pagopa.pn.cucumber.utils.NotificationInformalValue.*;
             if (value == null) {
                 return null;
             }
-
             return switch (value) {
                 case "${IT}" ->
                         UUID.fromString(messageProvider.getMessageIT(currentCxId));
@@ -156,23 +147,19 @@ import static it.pagopa.pn.cucumber.utils.NotificationInformalValue.*;
             if (base == null) {
                 return NotificationInformalValue.generateRandomNumber();
             }
-
             String cleaned = base.trim().replaceAll("\\D", "");
 
             if (cleaned.isEmpty()) {
                 return NotificationInformalValue.generateRandomNumber();
             }
-
             if (cleaned.length() >= 18) {
                 String prefix = cleaned.substring(0, 16);
                 String suffix = String.format("%02d", index % 100);
                 return prefix + suffix;
             }
-
             if (cleaned.length() < 18) {
                 return cleaned + "0".repeat(18 - cleaned.length());
             }
-
             return NotificationInformalValue.generateRandomNumber();
         }
     }

@@ -152,12 +152,9 @@ public class InformalNotificationRequestMapper {
         ref.setKey(getValue(data, ATTACHMENT_KEY.key));
 
         NotificationPaymentAttachment attachment = new NotificationPaymentAttachment();
-
-        attachment.setContentType(
-                getValue(data, ATTACHMENT_CONTENT_TYPE.key)
+        attachment.setContentType(getValue(data, ATTACHMENT_CONTENT_TYPE.key)
         );
         attachment.setRef(ref);
-
         return attachment;
     }
 }
