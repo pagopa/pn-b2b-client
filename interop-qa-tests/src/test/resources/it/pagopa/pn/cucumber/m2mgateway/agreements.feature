@@ -24,7 +24,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     Then si ottiene lo status code 401
 
   @happy-path
-  @agreement_activate_refactor
+  @m2m-agreement-activate-refactor
   Scenario: [M2M_AGREEMENTS_APPROVE_1] Una richiesta di fruizione in stato PENDING può essere approvata da un utente con ruolo M2M-ADMIN dell'ente erogatore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
@@ -35,7 +35,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     And la richiesta di fruizione m2m è stata approvata correttamente
 
   @happy-path
-  @agreement_activate_refactor
+  @m2m-agreement-activate-refactor
   Scenario: [M2M_AGREEMENTS_UNSUSPEND_1] Una richiesta di fruizione sospesa dal producer può essere riattivata da un utente con ruolo M2M-ADMIN dell'ente erogatore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
@@ -47,7 +47,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     And la richiesta di fruizione m2m è stata riattivata correttamente
 
   @sad-path
-  @agreement_activate_refactor
+  @m2m-agreement-activate-refactor
   Scenario Outline: [M2M_AGREEMENTS_APPROVE_2] L'approvazione di una richiesta di fruizione con id non valido restituisce errore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
@@ -63,7 +63,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
       | %random     | 404        |
 
   @sad-path
-  @agreement_activate_refactor
+  @m2m-agreement-activate-refactor
   Scenario Outline: [M2M_AGREEMENTS_UNSUSPEND_2] La riattivazione di una richiesta di fruizione con id non valido restituisce errore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
@@ -80,7 +80,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
       | %random     | 404        |
 
   @sad-path
-  @agreement_activate_refactor
+  @m2m-agreement-activate-refactor
   Scenario Outline: [M2M_AGREEMENTS_APPROVE_3] L'approvazione di una richiesta di fruizione in stato differente da PENDING restituisce errore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
@@ -99,7 +99,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
       | "MISSING_CERTIFIED_ATTRIBUTES" |
 
   @sad-path
-  @agreement_activate_refactor
+  @m2m-agreement-activate-refactor
   Scenario Outline: [M2M_AGREEMENTS_UNSUSPEND_3] La riattivazione di una richiesta di fruizione in stato differente da SUSPENDED restituisce errore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
@@ -118,7 +118,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
       | "MISSING_CERTIFIED_ATTRIBUTES" |
 
   @happy-path
-  @agreement_activate_refactor
+  @m2m-agreement-activate-refactor
   Scenario: [M2M_AGREEMENTS_APPROVE_4] Una richiesta di fruizione in stato PENDING può essere approvata da un utente M2M-ADMIN dell'ente delegato in erogazione
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
@@ -134,7 +134,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     And la richiesta di fruizione m2m è stata approvata correttamente
 
   @happy-path
-  @agreement_activate_refactor
+  @m2m-agreement-activate-refactor
   Scenario: [M2M_AGREEMENTS_UNSUSPEND_4] Una richiesta di fruizione sospesa dal producer può essere riattivata da un utente M2M-ADMIN dell'ente delegato in erogazione
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
@@ -151,7 +151,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     And la richiesta di fruizione m2m è stata riattivata correttamente
 
   @sad-path
-  @agreement_activate_refactor
+  @m2m-agreement-activate-refactor
   Scenario: [M2M_AGREEMENTS_APPROVE_5] L'approvazione di una richiesta di fruizione con ruolo M2M restituisce errore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
@@ -162,7 +162,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     And la richiesta di fruizione m2m è rimasta in stato "PENDING"
 
   @sad-path
-  @agreement_activate_refactor
+  @m2m-agreement-activate-refactor
   Scenario: [M2M_AGREEMENTS_UNSUSPEND_5] La riattivazione di una richiesta di fruizione con ruolo M2M restituisce errore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
