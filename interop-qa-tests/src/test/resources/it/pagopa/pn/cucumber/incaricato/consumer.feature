@@ -791,10 +791,10 @@ Feature: Test API Availability in Use of E-Service
     When l'ente delegante visualizza l'elenco delle deleghe conferite
     Then si ottiene status code 200
 
+#invocazione endpoint negata per ruolo "api" a seguito della risoluzione del ticket https://pagopa.atlassian.net/browse/PIN-9962
     Examples:
       | ruolo        |
       | admin        |
-      | api          |
       | security     |
       | api,security |
       | support      |
@@ -814,7 +814,6 @@ Feature: Test API Availability in Use of E-Service
     Examples:
       | ruolo        |
       | admin        |
-      | api          |
       | security     |
       | api,security |
       | support      |
@@ -960,3 +959,15 @@ Feature: Test API Availability in Use of E-Service
       | Privato       | PA2            | 200          |
       | PA3           | PA2            | 200          |
       | PA3           | PA2            | 200          |
+
+  @sad-path @access-control
+  Scenario: [INCARICATO_ACCESS_CONTROL_1] Un utente delegante con ruolo api non può visualizzare l'elenco delle deleghe conferite
+    Given "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
+    And l'ente delegato "PA2"
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
+    And l'ente delegante "PA1"
+    And l'utente è un "api" dell'ente delegante
+    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+    When l'ente delegante visualizza l'elenco delle deleghe conferite
+    Then si ottiene status code 403
