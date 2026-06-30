@@ -117,7 +117,7 @@ public class EServiceCatalogListingSteps {
         UUID agreementId = dataPreparationService.createAgreement(eServiceDescriptor.getEServiceId(), eServiceDescriptor.getDescriptorId(), null)
                 .orElseThrow(() -> new RuntimeException("Failed to create an agreement!"));
         dataPreparationService.submitAgreement(agreementId, AgreementState.ACTIVE);
-        sharedStepsContext.setAgreementId(agreementId);
+        sharedStepsContext.getAgreementCommonContext().setAgreementId(agreementId);
         sharedStepsContext.getAgreementCommonContext().setEserviceSubscribedId(eServiceDescriptor.getEServiceId());
         sharedStepsContext.getAgreementCommonContext().setDescriptorSubscribedId(eServiceDescriptor.getDescriptorId());
     }
