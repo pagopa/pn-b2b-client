@@ -21,8 +21,6 @@ import java.util.*;
 import static it.pagopa.pn.cucumber.steps.SharedSteps.threadWait;
 import static it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils.*;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario.DESTINATARIO_NESSUNO;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario.DESTINATARIO_SIGNOR_CASUALE;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.DOCUMENT;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.getDefaultValue;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -108,11 +106,11 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
 
     @Override
     public void addRecipientToNotification(Destinatario destinatario, Map<String, String> data) {
-        if (destinatario != null && destinatario.equals(DESTINATARIO_NESSUNO)) return;
+        if (destinatario != null && destinatario.isNessuno()) return;
         NotificationRecipient notificationRecipient = utils.convertNotificationRecipient(data);
         if (destinatario != null) {
             notificationRecipient.setDenomination(destinatario.getDenomination());
-            notificationRecipient.setTaxId(destinatario.equals(DESTINATARIO_SIGNOR_CASUALE) ?
+            notificationRecipient.setTaxId(destinatario.isSignorCasuale() ?
                     FiscalCodeGenerator.generateCF(System.nanoTime()) : destinatario.getTaxId());
             notificationRecipient.setRecipientType(NotificationRecipient.RecipientTypeEnum.valueOf(destinatario.getRecipientType()));
             /* Nei vecchi metodi @And("Destinatario xxx") denomination e taxId venivano sempre settati
@@ -151,7 +149,9 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
     }
 
     @Override
-    public String getSenderTaxId() { return notificationRequest.getSenderTaxId(); }
+    public String getSenderTaxId() {
+        return notificationRequest.getSenderTaxId();
+    }
 
     @Override
     public String getNotificationRequestGroup() {
@@ -402,5 +402,10 @@ public class NotificationStepsV1 implements NotificationStepsInterface {
     @Override
     public String getNoticeCode(int recipientIndex) {
         return notificationRequest.getRecipients().get(recipientIndex).getPayment().getNoticeCode();
+    }
+
+    @Override
+    public void setApplyCostFalse(int recipientIndex, int paymentIndex) {
+        throw new RuntimeException("Metodo non previsto per la versione V1");
     }
 }

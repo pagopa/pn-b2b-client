@@ -35,6 +35,17 @@ Feature: Attivazione e riattivazione di una finalità
       | Privato | api,security |       403 |
       | Privato | support      |       403 |
 
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente    | ruolo        | risultato |
+      | PA2     | reviewer     |       403 |
+      | PA2     | viewer       |       403 |
+      | GSP     | reviewer     |       403 |
+      | GSP     | viewer       |       403 |
+      | Privato | reviewer     |       403 |
+      | Privato | viewer       |       403 |
+
   @happy-path
   @nrt-minimal
   @purpose_activation1b
@@ -134,3 +145,35 @@ Feature: Attivazione e riattivazione di una finalità
     Given "PA2" ha già rifiutato l'aggiornamento della stima di carico per quella finalità
     When l'utente attiva la finalità in stato "REJECTED" per quell'e-service
     Then si ottiene status code 403
+
+  @adeguamento-analisi-rischio
+  Scenario Outline: [PURPOSE_ACTIVATION_TK_1] A seguito del cambiamento di tenant kind si tenta di attivare una finalità in bozza
+    Given l'utente è un "admin" di "<ente>"
+    And "PA2" ha già creato e pubblicato 1 e-service
+    And "<ente>" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "<ente>" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+    And il tenant kind dell'ente "<ente>" viene impostato a "<kind>"
+    When l'utente attiva la finalità in stato "DRAFT" per quell'e-service
+    Then si ottiene status code 400
+    Examples:
+      | ente    | kind        |
+      | PA4     | PRIVATE     |
+      | PA4     | GSP         |
+      | GSP2    | PA          |
+      | Privato | PA          |
+
+  @adeguamento-analisi-rischio
+  Scenario Outline: [PURPOSE_ACTIVATION_TK_2] A seguito del cambiamento di tenant kind si tenta di attivare una finalità sospesa
+    Given l'utente è un "admin" di "<ente>"
+    And "PA2" ha già creato e pubblicato 1 e-service
+    And "<ente>" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "<ente>" ha già creato 1 finalità in stato "SUSPENDED" per quell'eservice
+    And il tenant kind dell'ente "<ente>" viene impostato a "<kind>"
+    When l'utente attiva la finalità in stato "SUSPENDED" per quell'e-service
+    Then si ottiene status code 200
+    Examples:
+      | ente    | kind        |
+      | PA4     | PRIVATE     |
+      | PA4     | GSP         |
+      | GSP2    | PA          |
+      | Privato | PA          |

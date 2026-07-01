@@ -16,6 +16,7 @@ public class TemplateEngineMessageConfigs {
         private String de;
         private String fr;
         private String sl;
+        private String en;
     }
 }
 

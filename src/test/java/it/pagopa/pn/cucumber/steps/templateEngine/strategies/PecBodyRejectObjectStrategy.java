@@ -21,6 +21,23 @@ public class PecBodyRejectObjectStrategy implements ITemplateEngineStrategy {
 
     @Override
     public String getTextToCheckLanguage(String language, String recipientType) {
-        return "SEND - La PEC che hai inserito non è valida";
+        return switch (language.toUpperCase()) {
+            case  "ITALIANA" -> {
+                yield "SEND - La PEC che hai inserito non è valida";
+            }
+            case "TEDESCA" -> {
+                yield "SEND - Die von dir eingegebene PEC ist ungültig";
+            }
+            case "SLOVENA" -> {
+                yield "SEND - Naslov PEC, ki si ga vnesel, ni veljaven";
+            }
+            case "FRANCESE" -> {
+                yield "SEND - L'adresse PEC que tu as saisie n'est pas valide";
+            }
+            case  "INGLESE" -> {
+                yield "SEND - The PEC address you entered is invalid";
+            }
+            default -> throw new IllegalArgumentException("NO VALID LANGUANGE");
+        };
     }
 }

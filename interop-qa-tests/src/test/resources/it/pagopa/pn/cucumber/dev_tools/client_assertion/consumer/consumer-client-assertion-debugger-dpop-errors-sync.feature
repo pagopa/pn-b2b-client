@@ -7,7 +7,7 @@ Feature: Debugger Client Assertion Sync DPoP Errors
   Scenario Outline: [VALIDATION_NOT_FOUND_ERROR_CONSUMER_CLIENT_DPOP_PAYLOAD] Dato un client API valido, quando il claim <claimToRemove> non è presente nel payload allora la validazione formale fallisce con errore <expectedError>
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
-    When "PA1" crea una client assertion valida per un client di tipo CONSUMER
+    When il tenant fruitore "PA1" crea una client assertion valida per un client di tipo CONSUMER
     And "PA1" crea una DPoP proof per la client assertion con:
       | claim    | value           |
       | __remove | <claimToRemove> |
@@ -32,7 +32,7 @@ Feature: Debugger Client Assertion Sync DPoP Errors
   Scenario Outline: [VALIDATION_NOT_FOUND_ERROR_CONSUMER_CLIENT_DPOP_PAYLOAD] Dato un client CONSUMER valido, quando il claim <claimToRemove> non è presente nel payload allora la validazione formale fallisce con errore <expectedError>
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
-    And "PA1" crea una client assertion valida per un client di tipo CONSUMER
+    And il tenant fruitore "PA1" crea una client assertion valida per un client di tipo CONSUMER
     And "PA1" crea una DPoP proof per la client assertion con:
       | claim    | value           |
       | __remove | <claimToRemove> |
@@ -57,7 +57,7 @@ Feature: Debugger Client Assertion Sync DPoP Errors
   Scenario Outline: [VALIDATION_NOT_FOUND_ERROR_CONSUMER_CLIENT_DPOP_HEADER] Dato un client CONSUMER valido, quando il claim <claimToRemove> non è presente nell'header allora la validazione formale fallisce con errore <expectedError>
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
-    And "PA1" crea una client assertion valida per un client di tipo CONSUMER
+    And il tenant fruitore "PA1" crea una client assertion valida per un client di tipo CONSUMER
     And "PA1" crea una DPoP proof per la client assertion con:
       | claim          | value           |
       | __removeHeader | <claimToRemove> |
@@ -81,7 +81,7 @@ Feature: Debugger Client Assertion Sync DPoP Errors
   Scenario: [VALIDATION_INVALID_FORMAT_ERROR_CONSUMER_CLIENT_DPOP_HEADER] Dato un client CONSUMER valido, quando il payload non è valido allora la validazione formale fallisce con errore invalidDPoPProofFormat
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
-    And "PA1" crea una client assertion valida per un client di tipo CONSUMER
+    And il tenant fruitore "PA1" crea una client assertion valida per un client di tipo CONSUMER
     And "PA1" crea una DPoP proof per la client assertion con:
       | claim        | value           |
       | __rawPayload | invalid_payload |
@@ -99,7 +99,7 @@ Feature: Debugger Client Assertion Sync DPoP Errors
   Scenario: [VALIDATION_UNEXPECTED_DPOP_PROOF_ERROR_CONSUMER_CLIENT_DPOP_HEADER] Dato un client CONSUMER valido, quando l'header non è valido allora la validazione formale fallisce con errore unexpectedDPoPProofError
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
-    And "PA1" crea una client assertion valida per un client di tipo CONSUMER
+    And il tenant fruitore "PA1" crea una client assertion valida per un client di tipo CONSUMER
     And "PA1" crea una DPoP proof per la client assertion con:
       | claim       | value          |
       | __rawHeader | invalid_header |
@@ -117,7 +117,7 @@ Feature: Debugger Client Assertion Sync DPoP Errors
   Scenario: [VALIDATION_INVALID_TYP_ERROR_CONSUMER_CLIENT_DPOP_HEADER] Dato un client CONSUMER valido, quando l'header contiene un typ non valido allora la validazione formale fallisce con errore invalidDPoPTyp
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
-    And "PA1" crea una client assertion valida per un client di tipo CONSUMER
+    And il tenant fruitore "PA1" crea una client assertion valida per un client di tipo CONSUMER
     And "PA1" crea una DPoP proof per la client assertion con:
       | claim      | value       |
       | header.typ | invalid_typ |
@@ -135,7 +135,7 @@ Feature: Debugger Client Assertion Sync DPoP Errors
   Scenario: [VALIDATION_INVALID_HTM_ERROR_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il payload contiene un htm non valido allora la validazione formale fallisce con errore invalidDPoPHtm
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
-    And "PA1" crea una client assertion valida per un client di tipo CONSUMER
+    And il tenant fruitore "PA1" crea una client assertion valida per un client di tipo CONSUMER
     And "PA1" crea una DPoP proof per la client assertion con:
       | claim | value       |
       | htm   | invalid_htm |
@@ -153,7 +153,7 @@ Feature: Debugger Client Assertion Sync DPoP Errors
   Scenario: [VALIDATION_INVALID_HTU_ERROR_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il payload contiene un htu non valido allora la validazione formale fallisce con errore invalidDPoPHtu
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
-    And "PA1" crea una client assertion valida per un client di tipo CONSUMER
+    And il tenant fruitore "PA1" crea una client assertion valida per un client di tipo CONSUMER
     And "PA1" crea una DPoP proof per la client assertion con:
       | claim | value       |
       | htu   | invalid_htu |
@@ -171,7 +171,7 @@ Feature: Debugger Client Assertion Sync DPoP Errors
   Scenario: [VALIDATION_EXPIRED_DPOP_ERROR_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il payload contiene un claim iat scaduto allora la validazione formale fallisce con errore expiredDPoPProof
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
-    And "PA1" crea una client assertion valida per un client di tipo CONSUMER
+    And il tenant fruitore "PA1" crea una client assertion valida per un client di tipo CONSUMER
     And "PA1" crea una DPoP proof per la client assertion con:
       | claim | value    |
       | iat   | 20250101 |
@@ -189,7 +189,7 @@ Feature: Debugger Client Assertion Sync DPoP Errors
   Scenario: [VALIDATION_NOT_YET_VALID_DPOP_ERROR_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il payload contiene un claim iat scaduto allora la validazione formale fallisce con errore notYetValidDPoPProof
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
-    And "PA1" crea una client assertion valida per un client di tipo CONSUMER
+    And il tenant fruitore "PA1" crea una client assertion valida per un client di tipo CONSUMER
     And "PA1" crea una DPoP proof per la client assertion con:
       | claim | value    |
       | iat   | now+3600 |
@@ -207,7 +207,7 @@ Feature: Debugger Client Assertion Sync DPoP Errors
   Scenario: [VALIDATION_ALG_NOT_ALLOWED_ERROR_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando l'algoritmo non è valido allora la validazione formale fallisce con errore dpopAlgorithmNotAllowed
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
-    And "PA1" crea una client assertion valida per un client di tipo CONSUMER
+    And il tenant fruitore "PA1" crea una client assertion valida per un client di tipo CONSUMER
     And "PA1" crea una DPoP proof per la client assertion con:
       | claim      | value |
       | header.alg | ABC   |
@@ -225,7 +225,7 @@ Feature: Debugger Client Assertion Sync DPoP Errors
   Scenario: [VALIDATION_INVALID_CLAIM_ERROR_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il DPoPProof contiene un claim non valido allora la validazione formale fallisce con errore dpopProofInvalidClaims
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
-    And "PA1" crea una client assertion valida per un client di tipo CONSUMER
+    And il tenant fruitore "PA1" crea una client assertion valida per un client di tipo CONSUMER
     And "PA1" crea una DPoP proof per la client assertion con:
       | claim        | value         |
       | invalidClaim | invalid_claim |
@@ -243,7 +243,7 @@ Feature: Debugger Client Assertion Sync DPoP Errors
   Scenario: [VALIDATION_INVALID_SIGNATURE_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il DPoPProof è firmato in modo non valido la validazione formale fallisce con errore invalidDPoPSignature
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
-    And "PA1" crea una client assertion valida per un client di tipo CONSUMER
+    And il tenant fruitore "PA1" crea una client assertion valida per un client di tipo CONSUMER
     And "PA11" crea una DPoP proof con firma non valida
     When "PA1" richiede la validazione della client assertion e della DPoP Proof appena creata
     And si ottiene response status code 200

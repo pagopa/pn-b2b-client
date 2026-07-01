@@ -56,6 +56,7 @@ public class AgreementCommonSteps {
         private Boolean personalData;
         private Boolean clientAccessDelegable;
         private AgreementApprovalPolicy agreementApprovalPolicy;
+        private Boolean asyncExchange;
     }
 
     @Given("{string} ha una richiesta di fruizione in stato {string} per quell'e-service")
@@ -126,6 +127,14 @@ public class AgreementCommonSteps {
         tenantHasAlreadyCreatedAndPublishedEService(tenantType, totalEservices, Optional.of(build));
     }
 
+    @Given("{string} ha già creato e pubblicato {int} e-service con asyncExchange {bool}")
+    public void tenantHasAlreadyCreatedAndPublishedEServiceWithAsyncExchange(String tenantType, int totalEservices, Boolean asyncExchange) {
+        Optional<EServiceConfig> eServiceConfig = asyncExchange == null ?
+                Optional.empty() :
+                Optional.of(EServiceConfig.builder().asyncExchange(asyncExchange).build());
+        tenantHasAlreadyCreatedAndPublishedEService(tenantType, totalEservices, eServiceConfig);
+    }
+
     @Given("{string} ha già creato e pubblicato {int} e-service(s) delegabile(i) in fruizione con approvazione {agreementApprovalPolicy}")
     public void tenantHasAlreadyCreatedAndPublishedDelegableEService(String tenantType, int totalEservices, AgreementApprovalPolicy agreementApprovalPolicy) {
         EServiceConfig build = EServiceConfig.builder()
@@ -179,7 +188,8 @@ public class AgreementCommonSteps {
                     .name(eserviceName)
                     .personalData(eServiceConfig.map(EServiceConfig::getPersonalData).orElse(false))
                     .isConsumerDelegable(eServiceConfig.map(EServiceConfig::getDelegable).orElse(null))
-                    .isClientAccessDelegable(eServiceConfig.map(EServiceConfig::getClientAccessDelegable).orElse(null));
+                    .isClientAccessDelegable(eServiceConfig.map(EServiceConfig::getClientAccessDelegable).orElse(null))
+                    .asyncExchange(eServiceConfig.map(EServiceConfig::getAsyncExchange).orElse(null));
             EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
                     eserviceSeed, new UpdateEServiceDescriptorSeed()
                             .dailyCallsPerConsumer(50).dailyCallsTotal(1000)
@@ -198,6 +208,7 @@ public class AgreementCommonSteps {
             EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
             eServicesCommonContext.setName(eServiceNames.get(0));
             eServicesCommonContext.setPublishedEservicesIds(eServiceDescriptorList);
+            eServicesCommonContext.getTotalPublishedEServicesIds().addAll(eServiceDescriptorList);
             EServiceDescriptor firstDescriptor = eServiceDescriptorList.get(0);
             eServicesCommonContext.setEserviceId(firstDescriptor.getEServiceId());
             eServicesCommonContext.setDescriptorId(firstDescriptor.getDescriptorId());

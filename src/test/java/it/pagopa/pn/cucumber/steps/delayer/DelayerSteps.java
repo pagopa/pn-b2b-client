@@ -5,65 +5,41 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
 import it.pagopa.pn.cucumber.steps.delayer.loader.DelayerCsvLoader;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerCountersPrintItem;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDelivery;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPrintCapacityCounter;
-import it.pagopa.pn.cucumber.steps.delayer.model.ExecutionStatusResponse;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
 import it.pagopa.pn.cucumber.steps.delayer.planner.DelayerPlanner;
+import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSevice;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
 import it.pagopa.pn.cucumber.steps.delayer.validator.DelayerValidator;
-import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
+import org.assertj.core.api.SoftAssertions;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps.*;
 import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.*;
-import static java.lang.Thread.sleep;
 
-@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
 @RequiredArgsConstructor
 public class DelayerSteps {
 
-    public static final String[] CSV_FILES = new String[]{"tcRankingMerged.csv", "tcSenderUnknow.csv", "tcSplitSender.csv", "tcZeroDriver.csv", "tcProvCapNonCensite.csv",
-            "spedizioni_3000.csv", "tcWeeklyPrintCapacity.csv", "tcSenderUnknow_5010.csv",  "notificationCancelled.csv"};
-    public static final int POLLING_MAX_MINUTES = 90;
 
     private final DelayerContext context;
     private final DelayerCsvLoader csvLoader;
     private final DelayerPlanner planner;
-    private final DelayerLambdaClient lambdaClient;
+    private final DelayerSevice service;
     private final DelayerValidator validator;
     private final DelayerPaperDeliveryUtils utils;
-    private Map<String, Integer> availableCapacityByDriver = new HashMap<>();
+    private final Map<String, Integer> availableCapacityByDriver = new HashMap<>();
 
-    @Autowired
-    public DelayerSteps(LambdaInvoker lambdaInvoker, @Value("${pn.delayer.lambda.arn}") String lambdaName) {
-
-        this.context = new DelayerContext();
-        this.csvLoader = new DelayerCsvLoader(context);
-        this.planner = new DelayerPlanner(context);
-
-        this.lambdaClient = new DelayerLambdaClient(lambdaInvoker, lambdaName);
-        this.utils = new DelayerPaperDeliveryUtils(context);
-        this.validator = new DelayerValidator(context, lambdaClient, utils);
-    }
 
     @Given("il CSV {string} contiene {int} notifiche distribuite tra i seguenti test case:")
     public void initParams(String csv, Integer expectedNotificationCount, DataTable dataTable) {
@@ -74,21 +50,13 @@ public class DelayerSteps {
     }
 
     @Given("il CSV {string} è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test")
-    public void populateTargetTable(String csvName) throws Exception {
-        lambdaClient.invoke("IMPORT_DATA", "pn-DelayerPaperDelivery", "pn-PaperDeliveryCounters", csvName, context.expectedDeliveryDate);
+    public void populateTargetTable(String csvName) {
+        service.importData(csvName, context.expectedDeliveryDate);
     }
 
     @Then("vengono puliti i dati dalle tabelle target")
     public void deleteDataFormTargetTable() {
-        Arrays.stream(CSV_FILES).forEach(csv -> {
-            try {
-                lambdaClient.invoke("DELETE_DATA", "pn-DelayerPaperDelivery", "pn-PaperDeliveryDriverUsedCapacities",
-                        "pn-PaperDeliveryUsedSenderLimit", "pn-PaperDeliveryCounters", csv);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-
-        });
+        service.deleteDataAll();
     }
 
     @And("si presuppone che il limite mittente settimanale \\(paId-product_type-province) sia:")
@@ -194,8 +162,9 @@ public class DelayerSteps {
             String comparative = row.get("comparative");
             int rawLimit = Integer.parseInt(row.get("limit"));
 
-            int actual = lambdaClient.getAvailableCapacity(entityId.split("~")[0], entityId.split("~")[1], context.expectedDeliveryDate);
+            int actual = service.getAvailableCapacity(entityId, context.expectedDeliveryDate);
             availableCapacityByDriver.put(entityId, actual);
+            // TODO verficare perché nella prima fase del test la capacità non è disponibile e viene mockata con quella passata dal test stesso
             if (actual == -1) actual = rawLimit;
 
             switch (comparative.toLowerCase()) {
@@ -223,14 +192,14 @@ public class DelayerSteps {
     @And("viene verificata che la capacità disponibile per i seguenti driver sia decrementata di: {int}")
     public void assertCapacityDecremented(int difference, DataTable dataTable) {
         assertCapacity(dataTable,
-                (driver, province) -> lambdaClient.getAvailableCapacity(driver, province, context.expectedDeliveryDate),
+                (driver, province) -> service.getAvailableCapacity(driver, province, context.expectedDeliveryDate),
                 entityId -> availableCapacityByDriver.get(entityId) - difference);
     }
 
     @And("viene verificata che la capacità utilizzata per i seguenti driver sia uguale a: {int}")
     public void assertCapacityEqualsTo(int expected, DataTable dataTable) {
         assertCapacity(dataTable,
-                (driver, province) -> lambdaClient.getUsedCapacity(driver, province, context.expectedDeliveryDate),
+                (driver, province) -> service.getUsedCapacity(driver, province, context.expectedDeliveryDate),
                 entityId -> expected);
     }
 
@@ -281,29 +250,35 @@ public class DelayerSteps {
         planner.simulateAlgorithm2(context.expectedPianification);
     }
 
+    @When("viene avviata la step function BatchWorkflowStateMachine con deliveryDate: {string}")
+    public void runFirstStepFunctionWithFixedDeliveryDate(String deliveryWeek) throws Exception {
+        context.currentExecutionArn = service.runBatchWorkflowStateMachine(context.printCapacity, deliveryWeek);
+        service.waitUntilStepFunctionEnd(context);
+    }
+
     @When("viene avviata la step function BatchWorkflowStateMachine con deliveryDate in avanti di {int} settimane")
     public void runFirstStepFunctionWithDeliveryDate(int weeksToAdd) throws Exception {
-        context.currentExecutionArn = lambdaClient.runBatchWorkflowStateMachine(context.printCapacity, getNextMonday(weeksToAdd)).getExecutionArn();
-        waitUntilStepFunctionEnd();
+        context.currentExecutionArn = service.runBatchWorkflowStateMachine(context.printCapacity, getNextMonday(weeksToAdd));
+        service.waitUntilStepFunctionEnd(context);
     }
 
     @When("viene avviata la step function BatchWorkflowStateMachine")
     public void runFirstStepFunction() throws Exception {
-        context.currentExecutionArn = lambdaClient.runBatchWorkflowStateMachine(context.printCapacity, getCurrentMonday()).getExecutionArn();
-        waitUntilStepFunctionEnd();
+        context.currentExecutionArn = service.runBatchWorkflowStateMachine(context.printCapacity, getCurrentMonday());
+        service.waitUntilStepFunctionEnd(context);
     }
 
     @When("viene avviata la step function DelayerToPaperChannelStateMachine")
     public void runSecondStepFunction() throws Exception {
-        context.currentExecutionArn = lambdaClient.runDelayerToPaperChannel().getExecutionArn();
-        waitUntilStepFunctionEnd();
+        context.currentExecutionArn = service.runDelayerToPaperChannel().getExecutionArn();
+        service.waitUntilStepFunctionEnd(context);
         ++context.currentStepFunction2ExecutionIndex;
         checkPrintCapacityCounter();
     }
 
     @And("verifica che i parametri in PrintCapacityCounter siano conformi a quelli calcolati internamente")
-    public void checkPrintCapacityCounter(){
-        DelayerPrintCapacityCounter tupla = lambdaClient.getPrintCapacityCounter(context.expectedDeliveryDate);
+    public void checkPrintCapacityCounter() {
+        DelayerCountersPrintItem tupla = service.getPrintCapacityCounter(context.expectedDeliveryDate);
         Assertions.assertThat(tupla).isNotNull();
         boolean hasDeliveryInEvaluatePrint = !context.getExpectedByWorkflowStep(EVALUATE_PRINT_CAPACITY).isEmpty();
 
@@ -343,7 +318,20 @@ public class DelayerSteps {
         List<DelayerPaperDelivery> expected = context.getExpectedByWorkflowStep(step);
 
         Set<String> requestIds = expected.stream().map(DelayerPaperDelivery::getRequestId).collect(Collectors.toSet());
-        List<DelayerPaperDelivery> actual = lambdaClient.findByWorkflowStep(requestIds, step.name(), context.expectedDeliveryDate, 1);
+        List<DelayerPaperDelivery> actual = service.findByWorkflowStep(requestIds, step.name(), context.expectedDeliveryDate, 1);
+
+        expected.forEach(expectedDelivery ->
+                actual.stream()
+                        .filter(actualDelivery -> actualDelivery.getRequestId().equals(expectedDelivery.getRequestId()))
+                        .findFirst()
+                        .ifPresent(actualDelivery ->
+                                expectedDelivery.setVirtualNotificationSentAt(actualDelivery.getVirtualNotificationSentAt()))
+        );
+
+        expected.forEach(expectedDelivery ->
+                expectedDelivery.setSk(utils.calculateSk(WorkflowSteps.valueOf(ws), expectedDelivery))
+        );
+
 
         actual.forEach(dpd -> {
             String seed = extractSeed(dpd);
@@ -361,7 +349,7 @@ public class DelayerSteps {
         if (notExpected.isEmpty()) log.warn("Nessuna notifica esistente per il seed: " + seed);
 
         Set<String> requestIds = notExpected.stream().map(DelayerPaperDelivery::getRequestId).collect(Collectors.toSet());
-        List<DelayerPaperDelivery> actual = lambdaClient.findByWorkflowStep(requestIds, step.name(), context.expectedDeliveryDate, 1);
+        List<DelayerPaperDelivery> actual = service.findByWorkflowStep(requestIds, step.name(), context.expectedDeliveryDate, 1);
 
         validator.checkNotExistSilently(actual, seed, step);
     }
@@ -375,10 +363,10 @@ public class DelayerSteps {
     @Then("verifica che le opportune notifiche siano state congelate e ricaricate con workflow step {string} e deliveryDate alla settimana seguente per almeno un test case")
     public void checkFrozen(String ws) throws Exception {
         WorkflowSteps step = valueOf(ws);
-        List<DelayerPaperDelivery> frozenExpected = context.expectedPianification.values().stream()
+        context.frozenExpected = context.expectedPianification.values().stream()
                 .flatMap(m -> m.getOrDefault("FROZEN", List.of()).stream())
                 .toList();
-        validator.checkFrozen(step, frozenExpected);
+        validator.checkFrozen(step, context.frozenExpected);
     }
 
     @Then("verifica la corretta pianificazione di ogni test case")
@@ -386,79 +374,106 @@ public class DelayerSteps {
         validator.assertPianifications();
     }
 
-    private void waitUntilStepFunctionEnd() throws InterruptedException {
-        if (context.currentExecutionArn == null) return;
-
-        final String arn = context.currentExecutionArn;
-
-        final long startTime = System.currentTimeMillis();
-        final long maxWaitMillis = TimeUnit.MINUTES.toMillis(POLLING_MAX_MINUTES);
-        final long pollingIntervalMillis = TimeUnit.MINUTES.toMillis(1);
-
-        log.info("Inizio polling Step Function: {}", arn);
-
-        while (true) {
-
-            ExecutionStatusResponse status;
-
-            try {
-                status = lambdaClient.getExecutionStatus(arn);
-            } catch (Exception e) {
-                log.error(e.getCause().toString());
-                if (System.currentTimeMillis() - startTime > TimeUnit.MINUTES.toMillis(5))
-                    throw new RuntimeException("Timeout durante il recupero dello stato della Step Function: " + arn, e);
-
-                sleep(pollingIntervalMillis);
-                continue;
-            }
-
-            String state = status.getStatus();
-            log.info("Stato StepFunction {} → {}", arn, state);
-
-            // Stato non ricevuto
-            if (state == null) {
-                log.warn("Stato null dalla Step Function {}, riprovo...", arn);
-                sleep(pollingIntervalMillis);
-                continue;
-            }
-
-            switch (state) {
-                case "RUNNING":
-                    // continua polling
-                    break;
-
-                case "SUCCEEDED":
-                    log.info("Step Function {} completata con successo.", arn);
-                    return;
-
-                case "FAILED":
-                case "TIMED_OUT":
-                case "ABORTED":
-                    log.error("Step Function {} terminata con errore: {} - cause: {}",
-                            arn, status.getError(), status.getCause());
-                    throw new RuntimeException(
-                            "Step Function TERMINATED WITH ERROR: state=" + state +
-                                    ", error=" + status.getError() +
-                                    ", cause=" + status.getCause()
-                    );
-
-                default:
-                    log.warn("Stato Step Function {} sconosciuto: {}", arn, state);
-                    break;
-            }
-
-            // Controllo timeout
-            if (System.currentTimeMillis() - startTime > maxWaitMillis) {
-                throw new RuntimeException("Timeout: Step Function non è terminata entro 10 minuti: " + arn);
-            }
-
-            // Prossimo polling
-            sleep(pollingIntervalMillis);
-        }
-    }
 
     @And("imposto la deliveryWeek in avanti di {int} settimane")
     public void setDeliveryWeek(int nWeeks) {
         context.expectedDeliveryDate = getNextMonday(nWeeks);
     }
+
+    @And("sposto la simulazione in avanti di {int} settimane")
+    public void moveForward(int nWeeks) {
+        var frozen = new ArrayList<>(context.expectedPianification.values().stream().findAny().map(m->m.get("FROZEN")).orElse(Collections.emptyList()));
+        context.resetContext();
+        context.expectedDeliveryDate = getNextMonday(nWeeks);
+        context.actualCsv.addAll(frozen);
+    }
+
+    @Then("non devono esistere record in pn-DelayerPaperDelivery per la deliveryDate {string}")
+    public void verifyNoPaperDeliveryForDate(String deliveryDate) {
+        SoftAssertions softly = new SoftAssertions();
+        var steps = List.of(WorkflowSteps.EVALUATE_DRIVER_CAPACITY,
+                WorkflowSteps.EVALUATE_PRINT_CAPACITY,
+                WorkflowSteps.SENT_TO_PREPARE_PHASE_2,
+                WorkflowSteps.EVALUATE_RESIDUAL_CAPACITY
+        );
+
+        steps.forEach(ws -> {
+            var paperDeliveryItems = service.getPaperDeliveryItemsSize(deliveryDate, ws);
+
+            softly.assertThat(paperDeliveryItems)
+                    .as("workflowStep '%s' → trovati %d record per deliveryDate '%s'", ws, paperDeliveryItems, deliveryDate)
+                    .isEqualTo(0);
+        });
+
+        softly.assertAll();
+    }
+
+    @And("non deve esistere capacità usata alla deliveryDate {string}")
+    public void verifyNoUsedCapacity(String deliveryDate, DataTable dataTable) {
+        assertCapacity(dataTable,
+                (driver, province) -> service.getUsedCapacity(driver, province, deliveryDate),
+                entityId -> -1);
+    }
+
+    @And("non devono esistere contatori per la deliveryDate {string}")
+    public void verifyNoCounters(String deliveryDate) {
+        var counters = service.getCountersPrintSize(deliveryDate);
+        Assertions.assertThat(counters).isEqualTo(0);
+    }
+
+    @And("non devono esistere limiti mittente per la deliveryDate {string} e pk {string}")
+    public void verifyNoSenderLimits(String deliveryDate, String pk) {
+        var usedSenderLimit = service.getUsedSenderLimitSize(deliveryDate, pk);
+        Assertions.assertThat(usedSenderLimit).isEqualTo(0);
+    }
+
+    @And("verifica che le spedizioni spostate alla settimana successiva siano lo stesso valore")
+    public void verifyResidualPapers() {
+        SoftAssertions softly = new SoftAssertions();
+
+        var residualPapers = service.getResidualPapers(context.expectedDeliveryDate).map(DelayerPaperDelivery::getRequestId).toList();
+
+        context.frozenExpected.forEach(expected ->
+                softly.assertThat(residualPapers)
+                        .as("La spedizione con requestId '%s' non è presente nei residual papers", expected.getRequestId())
+                        .contains(expected.getRequestId())
+        );
+
+        softly.assertAll();
+    }
+
+
+    @Then("viene verificato il limite garantito per la pa: {string} relativo a provincia: {string}, prodotto: {string} e deliveryDate: {string}")
+    public void checkSenderLimitForPA(String paId, String province, String product, String deliveryDate) {
+
+        String pk = new StringBuilder(paId).append("~")
+                .append(product).append("~")
+                .append(province).toString();
+
+        int sumEstimate = service.getCountersSumEstimates(deliveryDate, province, product);
+        int weeklyEstimate = service.fetchWeeklyEstimateForPA(deliveryDate, pk);
+        Set<String> productsWithCapacity = new HashSet<>();
+        int sumDeclaredCapacity = service.getDeclaredCapacity(deliveryDate, province, product, productsWithCapacity);
+
+        int toBeExcluded = 0;
+        for (String productWithCapacity : productsWithCapacity) {
+            toBeExcluded += service.getCountersExclude(deliveryDate, province, productWithCapacity);
+        }
+
+        Assertions.assertThat(sumEstimate)
+                .as("SUM_ESTIMATES deve essere > 0 per calcolare il limite mittente. paId=%s, province=%s, product=%s, deliveryDate=%s, sumEstimate=%s",
+                        paId, province, product, deliveryDate, sumEstimate)
+                .isGreaterThan(0);
+
+        double senderLimitPercentage = Math.ceil(((double) weeklyEstimate / (sumEstimate)) * 1000) / 10;
+
+        double expectedSenderLimit = Math.ceil((sumDeclaredCapacity - toBeExcluded) * (senderLimitPercentage / 100.0));
+
+        int actualSenderLimit = service.getUsedSenderLimit(deliveryDate, pk);
+
+        Assertions.assertThat(expectedSenderLimit).as("Confronto di actual ed expected del limite del mittente").isEqualTo(actualSenderLimit);
+
+    }
+
+
 }

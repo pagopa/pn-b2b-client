@@ -31,3 +31,12 @@ Feature: Creazione attributo verificato
       | Privato | support      |       403 |
       | PA1     | security     |       403 |
       | PA1     | support      |       403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente    | ruolo        | risultato |
+      | GSP     | reviewer     |       403 |
+      | GSP     | viewer       |       403 |
+      | Privato | reviewer     |       403 |
+      | Privato | viewer       |       403 |

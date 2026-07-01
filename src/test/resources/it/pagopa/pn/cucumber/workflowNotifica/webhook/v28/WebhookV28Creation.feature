@@ -29,7 +29,7 @@ Feature: verifica creazione stream
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    When si creano i nuovi stream per il "Comune_Multi" con versione "V28"
+    When si creano i nuovi stream per il "Comune_Multi" con versione "V28" e filtro status "DEFAULT"
     Then lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V28"
     And si cancella lo stream creato per il "Comune_Multi" con versione "V28"
     And viene verificata la corretta cancellazione con versione "V28"
@@ -149,7 +149,7 @@ Feature: verifica creazione stream
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    When si creano i nuovi stream per il "Comune_Multi" con versione "V28"
+    When si creano i nuovi stream per il "Comune_Multi" con versione "V28" e filtro status "DEFAULT"
     Then lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V28"
     And si cancellano gli stream creati per il "Comune_Multi" con versione "V28"
     And viene verificata la corretta cancellazione con versione "V28"
@@ -361,7 +361,7 @@ Feature: verifica creazione stream
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    When si crea il nuovo stream per il "Comune_Multi" con versione "V28"
+    When si crea il nuovo stream per il "Comune_Multi" con versione "V28" e filtro status "DEFAULT"
     Then lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V28"
     And si cancella lo stream creato per il "Comune_Multi" con versione "V28"
     And viene verificata la corretta cancellazione con versione "V28"
@@ -400,7 +400,7 @@ Feature: verifica creazione stream
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    When si crea il nuovo stream per il "Comune_Multi" con versione "V28"
+    When si crea il nuovo stream per il "Comune_Multi" con versione "V28" e filtro status "DEFAULT"
     Then lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V28"
     And si cancella lo stream creato per il "Comune_Multi" con versione "V28"
     And viene verificata la corretta cancellazione con versione "V28"

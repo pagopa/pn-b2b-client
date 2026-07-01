@@ -81,7 +81,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico AR
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
       | denomination            | Test AR Fail 2           |
-      | taxId                   | DVNLRD52D15M059P         |
+      | taxId                   | FNTLCU80T25F205R         |
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     And destinatario Cucumber Society
@@ -125,9 +125,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico AR
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario
-      | denomination            | Leonardo Da Vinci        |
-      | taxId                   | DVNLRD52D15M059P         |
+    And destinatario Signor Casuale e:
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     And destinatario Mario Cucumber e:
@@ -304,11 +302,11 @@ Feature: avanzamento b2b notifica multi destinatario analogico AR
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL         |
-      | physicalAddress_State   | MESSICO      |
-      | physicalAddress_zip     | ZONE_2       |
-      | physicalAddress_address | Via@fail_RIR |
+    And destinatario Utenza con Indirizzo Valido da ANPR e:
+      | digitalDomicile         | NULL             |
+      | physicalAddress_State   | MESSICO          |
+      | physicalAddress_zip     | ZONE_2           |
+      | physicalAddress_address | Via@fail_RIR     |
     And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
