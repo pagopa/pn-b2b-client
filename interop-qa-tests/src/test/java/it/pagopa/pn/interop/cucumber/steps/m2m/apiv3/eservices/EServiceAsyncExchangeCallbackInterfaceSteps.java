@@ -101,9 +101,22 @@ public class EServiceAsyncExchangeCallbackInterfaceSteps {
 
     @When("l'utente tenta di effettuare la rimozione dell'interfaccia di callback di scambio asincrono dell'e-service")
     public void deleteCallbackInterface() {
-        this.deleteInterface(
+        this.deleteAsyncExchangeCallbackInterface(
                 sharedStepsContext.getEServicesCommonContext().getEserviceId(),
                 sharedStepsContext.getEServicesCommonContext().getDescriptorId()
+        );
+    }
+
+    @When("l'utente tenta di effettuare la rimozione di un'interfaccia di callback di scambio asincrono per un e-service inesistente")
+    public void deleteCallbackInterfaceToNonExistentEService() {
+        this.deleteAsyncExchangeCallbackInterface(UUID.randomUUID(), UUID.randomUUID());
+    }
+
+    @When("l'utente tenta di effettuare la rimozione di un'interfaccia di callback di scambio asincrono per un descrittore inesistente di un e-service")
+    public void deleteCallbackInterfaceToNonExistentDescriptor() {
+        this.deleteAsyncExchangeCallbackInterface(
+                sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                UUID.randomUUID()
         );
     }
 
@@ -119,7 +132,7 @@ public class EServiceAsyncExchangeCallbackInterfaceSteps {
         httpExecutor.performCall(() -> eServiceClient.uploadAsyncExchangeCallbackInterface(request));
     }
 
-    private void deleteInterface(UUID eServiceId, UUID descriptorId) {
+    private void deleteAsyncExchangeCallbackInterface(UUID eServiceId, UUID descriptorId) {
         httpExecutor.performCall(() -> eServiceClient.deleteEServiceDescriptorAsyncExchangeCallbackInterface(eServiceId, descriptorId));
     }
 }
