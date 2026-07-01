@@ -116,6 +116,11 @@ public class M2MEserviceClientImpl extends AbstractClient implements IM2MEservic
     }
 
     @Override
+    public Document uploadAsyncExchangeCallbackInterface(EServiceInterfaceUploadRequest body) {
+        throw new APIUnavailableException("Endpoint disponibile solo per M2M v3");
+    }
+
+    @Override
     public EService createEService(EServiceCreateRequest body) {
         return this.eservicesApi.createEService(body.toSeed());
     }
