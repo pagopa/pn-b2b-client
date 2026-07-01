@@ -223,3 +223,32 @@ Feature: Gestione della callback interface per gli e-service asincroni
       | REST       | json |
       | SOAP       | wsdl |
       | SOAP       | xml  |
+
+  Scenario: [ASYNC_ESERVICE_CALLBACK_INTERFACE_DELETE_SUCCESS] La rimozione dell'interfaccia di callback per un e-service
+  asincrono può essere fatta da un utente con ruolo m2m-admin.
+
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service asincrono in stato "DRAFT" con:
+      | technology | REST    |
+      | mode       | DELIVER |
+    And si ottiene response status code 200
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente carica un'interfaccia di callback di scambio asincrono per quel descrittore
+    And si ottiene response status code 200
+    When l'utente tenta di effettuare la rimozione dell'interfaccia di callback di scambio asincrono dell'e-service
+    Then si ottiene status code 200
+
+  Scenario: [ASYNC_ESERVICE_CALLBACK_INTERFACE_DELETE_UNAUTHORIZED] La rimozione dell'interfaccia di callback per un e-service
+  asincrono non può essere fatta da un utente con ruolo m2m.
+
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service asincrono in stato "DRAFT" con:
+      | technology | REST    |
+      | mode       | DELIVER |
+    And si ottiene response status code 200
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente carica un'interfaccia di callback di scambio asincrono per quel descrittore
+    And si ottiene response status code 200
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
+    When l'utente tenta di effettuare la rimozione dell'interfaccia di callback di scambio asincrono dell'e-service
+    Then si ottiene response status code 403

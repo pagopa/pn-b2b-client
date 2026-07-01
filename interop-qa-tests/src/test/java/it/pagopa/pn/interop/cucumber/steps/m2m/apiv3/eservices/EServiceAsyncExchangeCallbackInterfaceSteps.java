@@ -99,6 +99,14 @@ public class EServiceAsyncExchangeCallbackInterfaceSteps {
         );
     }
 
+    @When("l'utente tenta di effettuare la rimozione dell'interfaccia di callback di scambio asincrono dell'e-service")
+    public void deleteCallbackInterface() {
+        this.deleteInterface(
+                sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                sharedStepsContext.getEServicesCommonContext().getDescriptorId()
+        );
+    }
+
     private void uploadAsyncExchangeCallbackInterface(String asyncExchangeCallbackInterfaceName, UUID eServiceId, UUID descriptorId, String fileName) {
         String filePath = String.format("src/main/resources/%s", fileName);
         Resource resource = blobFileCreator.createBlobFile(filePath, fileName);
@@ -109,5 +117,9 @@ public class EServiceAsyncExchangeCallbackInterfaceSteps {
             .eServiceId(eServiceId)
             .descriptorId(descriptorId);
         httpExecutor.performCall(() -> eServiceClient.uploadAsyncExchangeCallbackInterface(request));
+    }
+
+    private void deleteInterface(UUID eServiceId, UUID descriptorId) {
+        httpExecutor.performCall(() -> eServiceClient.deleteEServiceDescriptorAsyncExchangeCallbackInterface(eServiceId, descriptorId));
     }
 }
