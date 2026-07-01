@@ -267,3 +267,28 @@ Feature: Gestione della callback interface per gli e-service asincroni
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la rimozione di un'interfaccia di callback di scambio asincrono per un descrittore inesistente di un e-service
     Then si ottiene response status code 404
+
+  Scenario: [ASYNC_ESERVICE_CALLBACK_INTERFACE_DELETE_ALREADY_DELETED] La rimozione dell'interfaccia di callback fallisce
+  se l'interfaccia di callback asincrona è stata precedentemente rimossa dal descriptor dell'e-service asincrono.
+
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service asincrono in stato "DRAFT" con:
+      | technology | REST    |
+      | mode       | DELIVER |
+    And si ottiene response status code 200
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente tenta di effettuare la rimozione dell'interfaccia di callback di scambio asincrono dell'e-service
+    When l'utente tenta di effettuare la rimozione dell'interfaccia di callback di scambio asincrono dell'e-service
+    Then si ottiene response status code 404
+
+  Scenario: [ASYNC_ESERVICE_CALLBACK_INTERFACE_DELETE_NO_OWNERSHIP] La rimozione dell'interfaccia di callback fallisce se l'utente
+  non è il proprietario dell'e-service asincrono.
+
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service asincrono in stato "DRAFT" con:
+      | technology | REST    |
+      | mode       | DELIVER |
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And l'utente carica un'interfaccia di callback di scambio asincrono per quel descrittore
+    When l'utente tenta di effettuare la rimozione dell'interfaccia di callback di scambio asincrono dell'e-service
+    Then si ottiene lo status code 404
