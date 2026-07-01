@@ -41,6 +41,15 @@ public class EServiceAsyncExchangeCallbackInterfaceSteps {
         );
     }
 
+    @When("l'utente tenta di effettuare il caricamento di un'interfaccia di callback di scambio asincrono per un e-service inesistente")
+    public void uploadCallbackInterfaceToNonExistentEService() {
+        this.uploadAsyncExchangeCallbackInterface(
+                "asyncExchangeCallbackInterface.yaml",
+                UUID.randomUUID(), UUID.randomUUID(),
+                "origin-interface.yaml"
+        );
+    }
+
     @When("l'utente tenta di effettuare il caricamento di un'interfaccia di callback di scambio asincrono di tipo YAML {string}")
     public void uploadInvalidCallbackInterface(String versionState) {
         String filename = switch (versionState) {
