@@ -240,6 +240,15 @@ Feature: Attivazione richiesta di fruizione
     Then si ottiene status code 200
     And la richiesta di fruizione è in stato "ACTIVE"
 
+  @agreement-activate-refactor
+  Scenario: [AGREEMENTS_APPROVE_3] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato PENDING, alla richiesta di attivazione da parte di un utente di un tenant non autoirizzato, si ottiene un errore
+    Given l'utente è un "admin" di "PA3"
+    Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
+    Given "PA1" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    When l'utente richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 403
+    And la richiesta di fruizione è in stato "PENDING"
+
   @sad-path
   @agreement-activate-refactor
   Scenario Outline: [AGREEMENTS_UNSUSPEND_1] La riattivazione di una richiesta di fruizione con id non valido restituisce errore
