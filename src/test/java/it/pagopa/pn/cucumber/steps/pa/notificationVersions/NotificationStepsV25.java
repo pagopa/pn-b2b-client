@@ -481,4 +481,9 @@ public class NotificationStepsV25 implements NotificationStepsInterface {
     public String getNoticeCode(int recipientIndex) {
         return notificationRequest.getRecipients().get(recipientIndex).getPayments().get(0).getPagoPa().getNoticeCode();
     }
+
+    @Override
+    public void setApplyCostFalse(int recipientIndex, int paymentIndex) {
+        notificationRequest.getRecipients().get(recipientIndex).getPayments().get(paymentIndex).getPagoPa().setApplyCost(false);
+    }
 }

@@ -28,9 +28,19 @@ Feature: Attivazione di un descrittore
       | PA1  | security     |       403 |
       | PA1  | support      |       403 |
 
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo        | risultato |
+      | GSP  | reviewer     |       403 |
+      | GSP  | viewer       |       403 |
+      | PA2  | reviewer     |       403 |
+      | PA2  | viewer       |       403 |
+
   @sad-path
   @nrt-minimal
   @descriptor_activation2
+  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-9006
   Scenario Outline: [DESCRIPTOR_ACTIVATION_2] Per un e-service che ha un solo descrittore, il quale non si trova in stato SUSPENDED, alla riattivazione del descrittore, si ottiene un errore
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service con un descrittore in stato "<statoDescrittore>"

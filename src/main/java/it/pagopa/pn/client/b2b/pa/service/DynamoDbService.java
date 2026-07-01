@@ -27,7 +27,12 @@ public class DynamoDbService {
             case PAYMENT_INFO -> buildPaymentInfoRequest(attributeValues);
             case NOTIFICATION_DELIVERY_COST -> buildNotificationDeliveryCostRequest(attributeValues);
             case ONBOARD_INSTITUTIONS -> buildOnboardInstitutionsRequest(attributeValues);
-            case PN_USER_ATTRIBUTES -> buildUserAttributesInfoRequest(attributeValues);
+            case NOTIFICATION_REWORKS -> buildNotificationReworksRequest(attributeValues);
+            case REWORKED_TIMELINES_FOR_INVOICING -> buildReworkedTimelinesForInvoicingRequest(attributeValues);
+            case COST_COMPONENTS -> buildCostComponentsRequest(attributeValues);
+            case COST_UPDATE_RESULT -> buildCostUpdateResultRequest(attributeValues);
+            case USER_ATTRIBUTES -> buildUserAttributesInfoRequest(attributeValues);
+            case IO_CONNECTOR_REQUESTS -> buildIOConnectorRequestsRequest(attributeValues);
             case BATCH_REQUESTS_WITH_INDEX_SEND_STATUS -> buildBatchRequestsBySendStatusAndLastReservedAfter(attributeValues);
             case BATCH_REQUESTS_WITH_INDEX_STATUS -> buildBatchRequestsByStatus(attributeValues);
         };
@@ -47,7 +52,7 @@ public class DynamoDbService {
     }
 
     private static QueryRequest buildUserAttributesInfoRequest(Map<String, AttributeValue> attributeValues) {
-        return DynamoQueryBuilder.withoutFilter(DynamoTableName.PN_USER_ATTRIBUTES.getValue(),
+        return DynamoQueryBuilder.withoutFilter(DynamoTableName.USER_ATTRIBUTES.getValue(),
                 "pk = :v_pk",
                 attributeValues);
     }
@@ -58,9 +63,40 @@ public class DynamoDbService {
                 attributeValues);
     }
 
-    public static QueryRequest buildOnboardInstitutionsRequest(Map<String, AttributeValue> attributeValues) {
+    private static QueryRequest buildOnboardInstitutionsRequest(Map<String, AttributeValue> attributeValues) {
         return DynamoQueryBuilder.withoutFilter(DynamoTableName.ONBOARD_INSTITUTIONS.getValue(),
                 "id = :v_id",
+                attributeValues);
+    }
+
+    private static QueryRequest buildNotificationReworksRequest(Map<String, AttributeValue> attributeValues) {
+        return DynamoQueryBuilder.withoutFilter(DynamoTableName.NOTIFICATION_REWORKS.getValue(),
+                "iun = :v_iun",
+                attributeValues);
+    }
+
+    private static QueryRequest buildReworkedTimelinesForInvoicingRequest(Map<String, AttributeValue> attributeValues) {
+        return DynamoQueryBuilder.withFilter(DynamoTableName.REWORKED_TIMELINES_FOR_INVOICING.getValue(),
+                "paId_invoicingDay = :pk",
+                "iun = :v_iun",
+                attributeValues);
+    }
+
+    private static QueryRequest buildCostComponentsRequest(Map<String, AttributeValue> attributeValues) {
+        return DynamoQueryBuilder.withoutFilter(DynamoTableName.COST_COMPONENTS.getValue(),
+                "pk = :v_pk",
+                attributeValues);
+    }
+
+    private static QueryRequest buildCostUpdateResultRequest(Map<String, AttributeValue> attributeValues) {
+        return DynamoQueryBuilder.withoutFilter(DynamoTableName.COST_UPDATE_RESULT.getValue(),
+                "pk = :v_pk",
+                attributeValues);
+    }
+
+    private static QueryRequest buildIOConnectorRequestsRequest(Map<String, AttributeValue> attributeValues) {
+        return DynamoQueryBuilder.withoutFilter(DynamoTableName.IO_CONNECTOR_REQUESTS.getValue(),
+                "requestId = :v_requestId",
                 attributeValues);
     }
 

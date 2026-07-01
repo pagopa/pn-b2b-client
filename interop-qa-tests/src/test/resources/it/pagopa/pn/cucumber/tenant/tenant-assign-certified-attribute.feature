@@ -18,6 +18,12 @@ Feature: Assegnazione di un attributo certificato ad un aderente
       | support      |        403 |
       | api,security |        403 |
 
+    @nuovi-operatori-update
+    Examples:
+      | ruolo        | statusCode |
+      | reviewer     |        403 |
+      | viewer       |        403 |
+
   @nrt-minimal
   @tenant_assign_certified_attribute2 @wait_for_fix @PIN-5037
   Scenario: [TENANT_ASSIGN_CERTIFIED_ATTRIBUTE_2] Per un attributo certificato precedentemente creato da un aderente, il quale ha la qualifica di ente certificatore (certifier), alla richiesta di assegnazione dell’attributo all’ente stesso da parte di un utente con sufficienti permessi (admin), ottiene un errore.

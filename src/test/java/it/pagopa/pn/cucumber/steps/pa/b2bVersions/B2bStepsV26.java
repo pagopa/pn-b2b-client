@@ -943,7 +943,7 @@ public class B2bStepsV26 implements B2bStepsInterface {
                         && (timelineEventCategory == null || Objects.requireNonNull(timelineElement.getCategory().getValue()).equals(timelineEventCategory))
                         && (filters.getRecipientIndex() == null || Objects.requireNonNull(Objects.requireNonNull(timelineElement.getDetails()).getRecIndex()).equals(filters.getRecipientIndex()))
                         && (filters.getDeliveryDetailCode() == null || Objects.equals(Objects.requireNonNull(timelineElement.getDetails()).getDeliveryDetailCode(), filters.getDeliveryDetailCode()))
-                        && (filters.getAttempt() == null || Objects.requireNonNull(timelineElement.getElementId()).contains(filters.getAttempt()))
+                        && (filters.getWithElementIdSuffix() == null || Objects.requireNonNull(timelineElement.getElementId()).contains(filters.getWithElementIdSuffix()))
                         && (filters.getDocumentType() == null || Objects.equals(Objects.requireNonNull(Objects.requireNonNull(timelineElement.getDetails()).getAttachments()).get(0).getDocumentType(), filters.getDocumentType()))
                         && (filters.getResponseStatus() == null || Objects.requireNonNull(Objects.requireNonNull(timelineElement.getDetails()).getResponseStatus().getValue()).equals(filters.getResponseStatus()))
                         && (!filters.isF24() || Objects.requireNonNull(timelineElement.getDetails()).getIdF24() != null)
@@ -1134,8 +1134,8 @@ public class B2bStepsV26 implements B2bStepsInterface {
         OffsetDateTime expectedDate =
                 unitaTemporale == DAYS ? date1.plusDays(timeQuantity) :
                         unitaTemporale == HOURS ? date1.plusHours(timeQuantity) :
-                                unitaTemporale == MINUTES ? date1.plusMinutes(timeQuantity) :
-                                        date1.plusSeconds(timeQuantity);
+                        unitaTemporale == MINUTES ? date1.plusMinutes(timeQuantity) :
+                                date1.plusSeconds(timeQuantity);
         if (isSuperiore == null) {
             assertThat(date2)
                     .as("La data di " + code2 + " non è pari a quella di " + code1)
