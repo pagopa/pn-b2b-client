@@ -252,3 +252,17 @@ Feature: Gestione della callback interface per gli e-service asincroni
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m
     When l'utente tenta di effettuare la rimozione dell'interfaccia di callback di scambio asincrono dell'e-service
     Then si ottiene response status code 403
+
+  Scenario: [ASYNC_ESERVICE_CALLBACK_INTERFACE_DELETE_INVALID_AUTH] La rimozione dell'interfaccia di callback per un e-service
+  asincrono fallisce se l'utente non ha un token valido.
+
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service asincrono in stato "DRAFT" con:
+      | technology | REST    |
+      | mode       | DELIVER |
+    And si ottiene response status code 200
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente carica un'interfaccia di callback di scambio asincrono per quel descrittore
+    And viene impostato per l'utente un token m2m non valido
+    When l'utente tenta di effettuare la rimozione dell'interfaccia di callback di scambio asincrono dell'e-service
+    Then si ottiene response status code 401
