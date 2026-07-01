@@ -145,7 +145,7 @@ Feature: Censimento stime mittenti
       | "tcRankingMerged.csv" | 110 |
 
 
-  @censimentoStimeMittenti1
+  @censimentoStimeMittenti
   Scenario: [TC_CENSIMENTO_SETTIMANA_CAVALLO] Verifica del calcolo delle stime settimanali a cavallo di due mesi e dell'aggiornamento delle stime a seguito di modifiche sui moduli commessa
     Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_aprile_26.zip"
     Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_maggio_26.zip"

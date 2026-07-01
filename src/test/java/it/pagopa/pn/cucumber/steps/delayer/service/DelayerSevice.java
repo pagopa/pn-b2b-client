@@ -52,9 +52,9 @@ public class DelayerSevice {
                     .stream()
                     .filter(item -> item.getSk().equals(String.format("SUM_ESTIMATES~%s~%s", product, province)))
                     .findFirst()
-                    .orElseThrow(() -> new RuntimeException("Nessun item trovato con deliveryDate %s nello sk".formatted(deliveryDate)));
-//            return extractLatestNumberOfShipments(counters.getItems());
-
+                    .orElseThrow(() -> new RuntimeException(
+                            "Nessun item trovato per deliveryDate %s con sk=SUM_ESTIMATES~%s~%s".formatted(deliveryDate, product, province)
+                    ));
         } catch (Exception e) {
             throw new RuntimeException(
                     "Errore durante GET_PRINT_CAPACITY_COUNTER per deliveryDate %s"
