@@ -26,6 +26,15 @@ Feature: Creazione di un client
       | PA1  | support      |        403 |
       | PA1  | api,security |        403 |
 
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo        | statusCode |
+      | GSP  | reviewer     |        403 |
+      | GSP  | viewer       |        403 |
+      | PA2  | reviewer     |        403 |
+      | PA2  | viewer       |        403 |
+
   @nrt-minimal
   Scenario Outline: [CREATE_CLIENT_2] Un utente con sufficienti permessi (admin); inserisce nome e descrizione, e crea un nuovo client di tipo API. L'operazione va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
@@ -49,3 +58,12 @@ Feature: Creazione di un client
       | PA1  | security     |        403 |
       | PA1  | support      |        403 |
       | PA1  | api,security |        403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo        | statusCode |
+      | GSP  | reviewer     |        403 |
+      | GSP  | viewer       |        403 |
+      | PA2  | reviewer     |        403 |
+      | PA2  | viewer       |        403 |

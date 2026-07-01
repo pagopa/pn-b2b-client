@@ -34,14 +34,20 @@ Feature: finalità agevolata, purpose template DELETE
   Scenario Outline: [DELETE_PURPOSE_TEMPLATE_NO_ADMIN] Eliminazione di una finalità agevolata da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "<ente>"
     And si cancella il purpose template creato
     Then si ottiene lo status code 403
     Examples:
-      | ruolo    |
-      | api      |
-      | support  |
-      | security |
+      | ente | ruolo    |
+      | PA1  | api      |
+      | PA1  | support  |
+      | PA1  | security |
+
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo    |
+      | PA2  | reviewer |
+      | PA2  | viewer   |
 
   #21(KO)
   # 27 01 2026: In osservanza a https://pagopa.atlassian.net/browse/PIN-8190 il codice restituito è stato mutato 403 -> 404

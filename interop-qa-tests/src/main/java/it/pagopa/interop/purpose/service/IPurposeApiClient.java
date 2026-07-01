@@ -32,4 +32,10 @@ public interface IPurposeApiClient extends SettableBearerToken {
     CreatedResource createPurposeFromTemplate(UUID purposeTemplateId, PurposeFromTemplateSeed purposeFromTemplateSeed) throws RestClientException;
     PurposeVersionResource patchUpdatePurposeFromTemplate(UUID purposeTemplateId, UUID purposeId, PatchPurposeUpdateFromTemplateContent patchPurposeUpdateFromTemplateContent) throws RestClientException;
     RemainingDailyCallsResponse getRemainingDailyCalls(UUID purposeId);
+    void assignRiskAnalysis(UUID purposeId, RiskAnalysisAssignmentSeed payload) throws RestClientException;
+    void compileRiskAnalysisForm(UUID purposeId, RiskAnalysisFormSeed payload) throws RestClientException;
+    void submitRiskAnalysis(UUID purposeId, RiskAnalysisSubmissionSeed payload) throws RestClientException;
+    void rejectRiskAnalysis(UUID purposeId, RiskAnalysisRejectionSeed payload) throws RestClientException;
+    void signRiskAnalysis(UUID purposeId) throws RestClientException;
+    Purposes getRiskAnalysisAssignments(Integer offset, Integer limit, List<UUID> eservicesIds, List<RiskAnalysisSigningState> states);
 }

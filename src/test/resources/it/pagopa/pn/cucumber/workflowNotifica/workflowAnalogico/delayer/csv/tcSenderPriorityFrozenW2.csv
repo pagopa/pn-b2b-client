@@ -1,0 +1,5 @@
+requestId;notificationSentAt;prepareRequestDate;productType;senderPaId;province;cap;attempt;iun;unifiedDeliveryDriver;senderPriority
+tcSenderPriorityFrozen_21;2026-01-05T00:01:00Z;2026-01-05T01:01:00Z;890;ranking2nd_890;P1;CAP1_P1;0;AUTJ-PUKM-KDAJ-290001-T-1;driverRanking2nd_890;100
+tcSenderPriorityFrozen_22;2026-01-05T00:02:00Z;2026-01-05T01:02:00Z;890;ranking2nd_890;P1;CAP1_P1;0;AUTJ-PUKM-KDAJ-290002-T-1;driverRanking2nd_890;100
+tcSenderPriorityFrozen_23;2026-01-05T00:03:00Z;2026-01-05T01:03:00Z;890;ranking2nd_890;P1;CAP1_P1;0;AUTJ-PUKM-KDAJ-290003-T-1;driverRanking2nd_890;100
+tcSenderPriorityFrozen_24;2026-01-05T00:04:00Z;2026-01-05T01:04:00Z;890;ranking2nd_890;P1;CAP1_P1;0;AUTJ-PUKM-KDAJ-290004-T-1;driverRanking2nd_890;100

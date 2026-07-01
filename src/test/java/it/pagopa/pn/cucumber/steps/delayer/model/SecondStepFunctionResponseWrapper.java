@@ -1,20 +1,14 @@
 package it.pagopa.pn.cucumber.steps.delayer.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.Map;
-
-@Data
+@Getter
+@Setter
 public class SecondStepFunctionResponseWrapper {
 
     private int statusCode;
-    private String body;
+    private DelayerPayload body;
 
-    @Data
-    public static class Payload {
-        private String message;
-        private String executionArn;
-        private String startDate;
-    }
 }
 
