@@ -88,6 +88,17 @@ public class EServiceAsyncExchangeCallbackInterfaceSteps {
         );
     }
 
+    @When("l'utente carica un'interfaccia di callback di scambio asincrono di tipo {string} che contiene il termine localhost")
+    public void uploadCallbackInterfaceWithLocalhost(String fileType) {
+        String fileName = String.format("localhost-interface.%s", fileType);
+        this.uploadAsyncExchangeCallbackInterface(
+                "asyncExchangeCallbackInterface.yaml",
+                sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
+                fileName
+        );
+    }
+
     private void uploadAsyncExchangeCallbackInterface(String asyncExchangeCallbackInterfaceName, UUID eServiceId, UUID descriptorId, String fileName) {
         String filePath = String.format("src/main/resources/%s", fileName);
         Resource resource = blobFileCreator.createBlobFile(filePath, fileName);

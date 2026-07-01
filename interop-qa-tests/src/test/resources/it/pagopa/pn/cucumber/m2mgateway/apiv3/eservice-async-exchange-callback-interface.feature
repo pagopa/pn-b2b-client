@@ -205,3 +205,21 @@ Feature: Gestione della callback interface per gli e-service asincroni
       | REST       | xml  | 400            |
       | SOAP       | yaml | 400            |
       | SOAP       | json | 400            |
+
+  Scenario Outline: [ASYNC_ESERVICE_CALLBACK_INTERFACE_INVALID_NAME] Il caricamento di un'interfaccia di callback per un e-service
+  asincrono fallisce se il nome del file contiene il termine "localhost"
+
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service asincrono in stato "DRAFT" con:
+      | technology | <technology> |
+      | mode       | DELIVER      |
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente carica un'interfaccia di callback di scambio asincrono di tipo "<type>" che contiene il termine localhost
+    Then si ottiene lo status code 403
+
+    Examples:
+      | technology | type |
+      | REST       | yaml |
+      | REST       | json |
+      | SOAP       | wsdl |
+      | SOAP       | xml  |
