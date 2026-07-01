@@ -583,7 +583,7 @@ public class TimelineReworkSteps {
         try {
             await().atMost(15, TimeUnit.MINUTES).pollInterval(30, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(() -> {
                 reworkedTimelinesForInvoicingResponse = dynamoDbService.call(DynamoTableName.REWORKED_TIMELINES_FOR_INVOICING, Map.of(
-                        ":pk", AttributeValue.builder().s(pk).build(),
+                        ":v_paId_invoicingDay", AttributeValue.builder().s(pk).build(),
                         ":v_iun", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build()
                 ));
                 log.info("REWORKED_TIMELINES_FOR_INVOICING RESPONSE -> {}", reworkedTimelinesForInvoicingResponse);
