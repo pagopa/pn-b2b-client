@@ -32,6 +32,17 @@ Feature: Cancellazione client
       | Privato | support      |        403 |
       | Privato | api,security |        403 |
 
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente    | ruolo        | statusCode |
+      | GSP     | reviewer     |        403 |
+      | GSP     | viewer       |        403 |
+      | PA2     | reviewer     |        403 |
+      | PA2     | viewer       |        403 |
+      | Privato | reviewer     |        403 |
+      | Privato | viewer       |        403 |
+
   @sad-path
   @nrt-minimal
   Scenario: [DELETE_CLIENT_2] Un utente con sufficienti permessi (admin) non associato all’ente che ha creato il client, richiede la cancellazione del client. Ottiene un errore

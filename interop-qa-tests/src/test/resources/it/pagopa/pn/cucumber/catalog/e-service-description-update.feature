@@ -4,7 +4,9 @@ Feature: Aggiornamento della descrizione di un e-service
 
   @nrt-minimal
   @eservice_description_update1
-  Scenario Outline: [ESERVICE_DESCRIPTION_UPDATE_1] A fronte di una richiesta aggiornamento della descrizione di un e-service da parte di un utente autorizzato dell’ente che lo eroga, va a buon fine solo per un e-service con descrittori in stato PUBLISHED, SUSPENDED e DEPRECATED
+  @nrt-minimal
+  @eservice_description_update1
+  Scenario Outline: [ESERVICE_DESCRIPTION_UPDATE_1] A fronte di una richiesta aggiornamento della descrizione di un e-service da parte di un utente autorizzato dell'ente che lo eroga, va a buon fine solo per un e-service con descrittori in stato PUBLISHED, SUSPENDED e DEPRECATED
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato un e-service con un descrittore in stato "<statoDescrittore>"
     When l'utente aggiorna la descrizione di quell'e-service
@@ -27,6 +29,15 @@ Feature: Aggiornamento della descrizione di un e-service
       | PA1  | support      | PUBLISHED        |       403 |
       | GSP  | security     | PUBLISHED        |       403 |
       | GSP  | support      | PUBLISHED        |       403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo        | statoDescrittore | risultato |
+      | GSP  | reviewer     | PUBLISHED        |       403 |
+      | GSP  | viewer       | PUBLISHED        |       403 |
+      | PA2  | reviewer     | PUBLISHED        |       403 |
+      | PA2  | viewer       | PUBLISHED        |       403 |
 
     @happy-path
     Examples: # ARCHIVED non viene testato in quanto non è possibile avere un eservice con un singolo descrittore in stato ARCHIVED
