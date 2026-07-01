@@ -65,8 +65,6 @@ public class EServiceAsyncExchangeCallbackInterfaceSteps {
         String filename = switch (versionState) {
             case "senza versione" -> "missing-version-interface.yaml";
             case "con versione obsoleta" -> "invalid-version-interface.yaml";
-            case "senza contenuto" -> "empty-interface.yaml";
-            case "di dimensione non consentita" -> "too-large-interface.yaml";
             default -> throw new IllegalStateException("Unexpected value: " + versionState);
         };
 
