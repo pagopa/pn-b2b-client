@@ -78,6 +78,18 @@ public class EServiceAsyncExchangeCallbackInterfaceSteps {
         );
     }
 
+    @When("l'utente carica un'interfaccia di callback di scambio asincrono di tipo {string}")
+    public void uploadCallbackInterfaceOfType(String fileType) {
+        String fileName = String.format("interface.%s", fileType);
+        String interfaceName = String.format("asyncExchangeCallbackInterface.%s", fileType);
+        this.uploadAsyncExchangeCallbackInterface(
+                interfaceName,
+                sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
+                fileName
+        );
+    }
+
     private void uploadAsyncExchangeCallbackInterface(String asyncExchangeCallbackInterfaceName, UUID eServiceId, UUID descriptorId, String fileName) {
         String filePath = String.format("src/main/resources/%s", fileName);
         Resource resource = blobFileCreator.createBlobFile(filePath, fileName);
