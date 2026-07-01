@@ -127,6 +127,11 @@ public class M2MV3EserviceClientImpl extends AbstractDPoPClient implements IM2MV
     }
 
     @Override
+    public void deleteEServiceDescriptorAsyncExchangeCallbackInterface(UUID eServiceId, UUID descriptorId) {
+        this.eservicesApi.deleteEServiceDescriptorAsyncExchangeCallbackInterface(eServiceId, descriptorId);
+    }
+
+    @Override
     public EService createEService(EServiceCreateRequest body) {
         return vMapper.mapToV2(eservicesApi.createEService(new EServiceSeed()
                 .name(body.getName())
