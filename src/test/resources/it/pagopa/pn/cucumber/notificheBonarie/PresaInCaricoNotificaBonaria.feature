@@ -417,6 +417,50 @@ Feature: Sottomissione di una notifica bonaria.
     When l'invio della notifica bonaria fallisce
     Then si riceve errore 400
 
+  @informalNotificationsValidation @informalSyncValidation
+  Scenario Outline: [NOTIFICHE_BONARIE_SM_06_B] Invio notifica bonaria con telefono non valido (<descrizione>)
+    Given mittente della notifica bonaria: "Comune_Multi"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType | PF                |
+      | taxId         | FRMTTR76M06B715E  |
+      | denomination  | Ettore Fieramosca |
+      | messageId     | ${IT}             |
+      | email         | test@test.it      |
+      | phone_number  | <phone>           |
+    When l'invio della notifica bonaria fallisce
+    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
+    Examples:
+      | descrizione                   | phone         |
+      | telefono senza prefisso       | 3396778788    |
+      | telefono con lettere          | +39ABC123456  |
+      | telefono con simboli invalidi | +39#3396778!! |
+
+
+  @informalNotificationsValidation @informalSyncValidation
+  Scenario Outline: [NOTIFICHE_BONARIE_SM_06_C] Invio notifica bonaria con email non valida
+    Given mittente della notifica bonaria: "Comune_Multi"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType | PF                |
+      | taxId         | FRMTTR76M06B715E  |
+      | denomination  | Ettore Fieramosca |
+      | messageId     | ${IT}             |
+      | email         | <email>           |
+    When l'invio della notifica bonaria fallisce
+    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
+    Examples:
+      | email            |
+      | test             |
+      | test@            |
+      | test@.it         |
+      | test             |
+      | test@@ciao.it    |
+      | test@test.it.com |
+      | test@.itt        |
+
 #  @informalNotificationsValidation @informalSyncValidation coperto da [NOTIFICHE_BONARIE_SM_01_1_D]
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_D3] Invio bonaria verso 2 destinatari con stesso message id
   Nome Parametro Max numero destinatari: PN_DELIVERY_INFORMALNOTIFICATIONMAXRECIPIENTS.
@@ -437,6 +481,47 @@ Feature: Sottomissione di una notifica bonaria.
     When viene inviata una nuova notifica bonaria
     And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
 
+  @informalNotificationsValidation @informalSyncValidation
+  Scenario Outline: [NOTIFICHE_BONARIE_SM_06_B] Invio notifica bonaria con telefono non valido (<descrizione>)
+    Given mittente della notifica bonaria: "Comune_Multi"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType | PF                |
+      | taxId         | FRMTTR76M06B715E  |
+      | denomination  | Ettore Fieramosca |
+      | messageId     | ${IT}             |
+      | email         | test@test.it      |
+      | phone_number  | <phone>           |
+    When l'invio della notifica bonaria fallisce
+    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
+    Examples:
+      | descrizione                   | phone         |
+      | telefono senza prefisso       | 3396778788    |
+      | telefono con lettere          | +39ABC123456  |
+      | telefono con simboli invalidi | +39#3396778!! |
+
+  @informalNotificationsValidation @informalSyncValidation
+  Scenario Outline: [NOTIFICHE_BONARIE_SM_06_C] Invio notifica bonaria con telefono valido (<descrizione>)
+    Given mittente della notifica bonaria: "Comune_Multi"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType | PF                |
+      | taxId         | FRMTTR76M06B715E  |
+      | denomination  | Ettore Fieramosca |
+      | messageId     | ${IT}             |
+      | email         | test@test.it      |
+      | phone_number  | <phone>           |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    Then la sottomissione della notifica bonaria è andata a buon fine
+    Examples:
+      | descrizione         | phone           |
+      | telefono valido +39 | +393396778788   |
+      | telefono valido 00  | 00393396778788  |
+      | telefono con spazi  | +39 339 6778788 |
+
 
 # ***********************************************
 # **** VALIDAZIONE ASYNCRONA
@@ -455,6 +540,23 @@ Feature: Sottomissione di una notifica bonaria.
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
       | messageId     | ${IT}             |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    Then la sottomissione della notifica bonaria è andata a buon fine
+
+
+  @informalNotificationsValidation @informalSyncValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_06_A] Come ente mittente invio una notifica bonaria con telefono corretto.
+    Given mittente della notifica bonaria: "Comune_Multi"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType | PF                |
+      | taxId         | FRMTTR76M06B715E  |
+      | denomination  | Ettore Fieramosca |
+      | messageId     | ${IT}             |
+      | email         | test@test.it      |
+      | phone_number  | +393396778788     |
     When viene inviata una nuova notifica bonaria
     And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
     Then la sottomissione della notifica bonaria è andata a buon fine
