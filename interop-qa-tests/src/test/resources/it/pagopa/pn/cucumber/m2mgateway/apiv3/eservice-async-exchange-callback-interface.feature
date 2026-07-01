@@ -26,8 +26,8 @@ Feature: Gestione della callback interface per gli e-service asincroni
     And l'utente pubblica l'e-service
     Then si ottiene response status code 200
 
-  Scenario: [ASYNC_ESERVICE_CALLBACK_INTERFACE_UPLOAD_UNAUTHORIZED] Il caricamento dell'interfaccia di callback non può
-  essere fatta da un utente con ruolo m2m.
+  Scenario: [ASYNC_ESERVICE_CALLBACK_INTERFACE_UPLOAD_UNAUTHORIZED] Il caricamento dell'interfaccia di callback per un e-service
+  asincrono non può essere fatta da un utente con ruolo m2m.
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service asincrono in stato "DRAFT" con:
       | technology | REST    |
@@ -50,8 +50,8 @@ Feature: Gestione della callback interface per gli e-service asincroni
     When l'utente carica un'interfaccia di callback di scambio asincrono per quel descrittore
     Then si ottiene response status code 403
 
-  Scenario: [ASYNC_ESERVICE_CALLBACK_INTERFACE_UPLOAD_INVALID_AUTH] Il caricamento dell'interfaccia di callback fallisce
-  se l'utente non ha un token valido.
+  Scenario: [ASYNC_ESERVICE_CALLBACK_INTERFACE_UPLOAD_INVALID_AUTH] Il caricamento dell'interfaccia di callback per un e-service
+  asincrono fallisce se l'utente non ha un token valido.
 
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service asincrono in stato "DRAFT" con:
@@ -76,8 +76,8 @@ Feature: Gestione della callback interface per gli e-service asincroni
     When l'utente carica un'interfaccia di callback di scambio asincrono per quel descrittore
     Then si ottiene response status code 401
 
-  Scenario: [ASYNC_ESERVICE_CALLBACK_INTERFACE_UPLOAD_INVALID_ESERVICE] Il caricamento dell'interfaccia di callback fallisce
-  se l'e-service non esiste.
+  Scenario: [ASYNC_ESERVICE_CALLBACK_INTERFACE_UPLOAD_INVALID_ESERVICE] Il caricamento dell'interfaccia di callback per un e-service
+  asincrono fallisce se l'e-service non esiste.
 
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service asincrono in stato "DRAFT" con:
@@ -101,8 +101,8 @@ Feature: Gestione della callback interface per gli e-service asincroni
     When l'utente tenta di effettuare il caricamento di un'interfaccia di callback di scambio asincrono per un e-service inesistente
     Then si ottiene response status code 404
 
-  Scenario: [ASYNC_ESERVICE_CALLBACK_INTERFACE_UPLOAD_INVALID_DESCRIPTOR] Il caricamento dell'interfaccia di callback fallisce
-  se il descrittore dell'e-service non esiste.
+  Scenario: [ASYNC_ESERVICE_CALLBACK_INTERFACE_UPLOAD_INVALID_DESCRIPTOR] Il caricamento dell'interfaccia di callback per un e-service
+  asincrono fallisce se il descrittore dell'e-service non esiste.
 
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service asincrono in stato "DRAFT" con:
