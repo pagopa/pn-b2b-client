@@ -32,7 +32,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente m2m richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 200
-    And la richiesta di fruizione m2m è stata approvata correttamente
+    And la richiesta di fruizione si trova in stato "ACTIVE"
 
   @happy-path
   @m2m-agreement-activate-refactor
@@ -44,7 +44,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente m2m richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 200
-    And la richiesta di fruizione m2m è stata riattivata correttamente
+    And la richiesta di fruizione si trova in stato "ACTIVE"
 
   @sad-path
   @m2m-agreement-activate-refactor
@@ -55,7 +55,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente m2m richiede una operazione di approvazione della richiesta di fruizione con id "<agreementId>"
     Then si ottiene status code <statusCode>
-    And la richiesta di fruizione m2m è rimasta in stato "PENDING"
+    And la richiesta di fruizione si trova in stato "PENDING"
 
     Examples:
       | agreementId | statusCode |
@@ -72,7 +72,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente m2m richiede una operazione di riattivazione della richiesta di fruizione con id "<agreementId>"
     Then si ottiene status code <statusCode>
-    And la richiesta di fruizione m2m è rimasta in stato "SUSPENDED"
+    And la richiesta di fruizione si trova in stato "SUSPENDED"
 
     Examples:
       | agreementId | statusCode |
@@ -88,7 +88,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente m2m richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 409
-    And la richiesta di fruizione m2m è rimasta in stato <agreementStatus>
+    And la richiesta di fruizione si trova in stato <agreementStatus>
 
     Examples:
       | agreementStatus                |
@@ -107,7 +107,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente m2m richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 409
-    And la richiesta di fruizione m2m è rimasta in stato <agreementStatus>
+    And la richiesta di fruizione si trova in stato <agreementStatus>
 
     Examples:
       | agreementStatus                |
@@ -131,11 +131,11 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente m2m richiede una operazione di approvazione della richiesta di fruizione con id "%actual" e delegationId "%actual"
     Then si ottiene status code 200
-    And la richiesta di fruizione m2m è stata approvata correttamente
+    And la richiesta di fruizione si trova in stato "ACTIVE"
 
   @happy-path
   @m2m-agreement-activate-refactor
-  Scenario: [M2M_AGREEMENTS_UNSUSPEND_4] Una richiesta di fruizione sospesa dal producer può essere riattivata da un utente M2M-ADMIN dell'ente delegato in erogazione
+  Scenario: [M2M_AGREEMENTS_UNSUSPEND_4] Una richiesta di fruizione sospesa dall'erogatore dell'e-service può essere riattivata da un utente M2M-ADMIN dell'ente delegato in erogazione
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And l'utente è un "admin" di "PA1"
@@ -144,11 +144,11 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
     And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA1" ha già sospeso quella richiesta di fruizione come PRODUCER
+    And l'ente delegato richiede una operazione di sospensione di quella richiesta di fruizione
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente m2m richiede una operazione di riattivazione della richiesta di fruizione con id "%actual" e delegationId "%actual"
     Then si ottiene status code 200
-    And la richiesta di fruizione m2m è stata riattivata correttamente
+    And la richiesta di fruizione si trova in stato "ACTIVE"
 
   @sad-path
   @m2m-agreement-activate-refactor
@@ -159,7 +159,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m
     When l'utente m2m richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 403
-    And la richiesta di fruizione m2m è rimasta in stato "PENDING"
+    And la richiesta di fruizione si trova in stato "PENDING"
 
   @sad-path
   @m2m-agreement-activate-refactor
@@ -171,7 +171,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m
     When l'utente m2m richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 403
-    And la richiesta di fruizione m2m è rimasta in stato "SUSPENDED"
+    And la richiesta di fruizione si trova in stato "SUSPENDED"
 
 
   # Da qui in poi test di "API V2 Parte 2" https://pagopa.atlassian.net/wiki/spaces/PDNDI/pages/1812562407/DRAFT+SRS+API+V2+Parte+2#Scenari-di-test
