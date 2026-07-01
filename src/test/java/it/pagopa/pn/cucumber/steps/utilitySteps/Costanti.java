@@ -202,7 +202,7 @@ public class Costanti {
     public static final String NOT_FOUND_ALLEGATO_JSON = "NOT_FOUND_ALLEGATO_JSON";
     public static final String NOT_EQUAL_SHA = "NOT_EQUAL_SHA";
     public static final String NOT_EQUAL_SHA_JSON = "NOT_EQUAL_SHA_JSON";
-    //Sync Validation
+    // Sync Validation
     public static final String INVALID_DOCUMENT_KEY_SYNC = "INVALID_DOCUMENT_KEY_SYNC";
     // Error causes
     public static final String ALLEGATO = "ALLEGATO";

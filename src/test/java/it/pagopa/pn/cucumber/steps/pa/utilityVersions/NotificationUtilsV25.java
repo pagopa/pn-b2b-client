@@ -542,7 +542,6 @@ public class NotificationUtilsV25 extends B2bUtils {
                     NotificationDocument doc = request.getDocuments().get(0);
                     doc.getRef().setKey("PN_NOTIFICATION_ATTACHMENT-c3bc9525a5ac4f45a4fb7e940b2b9815.pdf");
                 }
-
             }
         }
         return request;
