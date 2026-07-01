@@ -18,12 +18,15 @@ import it.pagopa.pn.cucumber.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
+import org.awaitility.Awaitility;
+import org.awaitility.core.ConditionTimeoutException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
@@ -34,7 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -241,23 +244,44 @@ public class CensimentoStimeMittentiSteps {
      */
     @And("per la settimana {string}, per il prodotto {string} per la provincia {string} si verifica che la somma delle commesse sia:")
     public void verifyWeeklyProvincialEstimates(String deliveryDate, String product, String province, Map<String, String> dataTable) {
-        // Aspetta due secondi prima di recuperare le stime, per dare il tempo al sistema di elaborarle dopo il caricamento del file zip
+        int expectedTotal = Integer.parseInt(dataTable.get("numberOfShipments"));
+        int expectedFirstWeek = Integer.parseInt(dataTable.get("firstWeekNumberOfShipments"));
+        int expectedSecondWeek = Integer.parseInt(dataTable.get("secondWeekNumberOfShipments"));
+
+        AtomicReference<DelayerCountersSumEstimatesItem> lastResult = new AtomicReference<>();
+
         try {
-            TimeUnit.MINUTES.sleep(1);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            Awaitility.await()
+                    .atMost(Duration.ofMinutes(3))
+                    .pollInterval(Duration.ofSeconds(20))
+                    .pollDelay(Duration.ZERO) // prova subito, poi ripete ogni 20s
+                    .until(() -> {
+                        DelayerCountersSumEstimatesItem item =
+                                delayerSevice.getCountersSumEstimates(deliveryDate, province, product);
+                        lastResult.set(item);
+                        return item != null
+                                && item.getNumberOfShipments() == expectedTotal
+                                && item.getFirstWeekNumberOfShipments() == expectedFirstWeek
+                                && item.getSecondWeekNumberOfShipments() == expectedSecondWeek;
+                    });
+        } catch (ConditionTimeoutException e) {
+            // Timeout scaduto: eseguo comunque gli assert "classici" per avere
+            // un messaggio di errore dettagliato su quale campo non coincide
+            DelayerCountersSumEstimatesItem estimatesItem = lastResult.get();
+            Assertions.assertThat(estimatesItem)
+                    .as("Nessuna stima disponibile dopo 3 minuti di attesa")
+                    .isNotNull();
+
+            Assertions.assertThat(estimatesItem.getNumberOfShipments())
+                    .as("La somma delle stime settimanali provinciali calcolate internamente non è coerente con quella attesa passata in input")
+                    .isEqualTo(expectedTotal);
+            Assertions.assertThat(estimatesItem.getFirstWeekNumberOfShipments())
+                    .as("La stima della prima parte della settimana a cavallo non è coerente con quella attesa")
+                    .isEqualTo(expectedFirstWeek);
+            Assertions.assertThat(estimatesItem.getSecondWeekNumberOfShipments())
+                    .as("La stima della seconda parte della settimana a cavallo non è coerente con quella attesa")
+                    .isEqualTo(expectedSecondWeek);
         }
-        DelayerCountersSumEstimatesItem estimatesItem = delayerSevice.getCountersSumEstimates(deliveryDate, province, product);
-        int total_sum_estimates = estimatesItem.getNumberOfShipments();
-        Assertions.assertThat(total_sum_estimates)
-                .as("La somma delle stime settimanali provinciali calcolate internamente non è coerente con quella attesa passata in input")
-                .isEqualTo(Integer.parseInt(dataTable.get("numberOfShipments")));
-        Assertions.assertThat(estimatesItem.getFirstWeekNumberOfShipments())
-                .as("La stima della prima parte della settimana a cavallo non è coerente con quella attesa")
-                .isEqualTo(Integer.parseInt(dataTable.get("firstWeekNumberOfShipments")));
-        Assertions.assertThat(estimatesItem.getSecondWeekNumberOfShipments())
-                .as("La stima della seconda parte della settimana a cavallo non è coerente con quella attesa")
-                .isEqualTo(Integer.parseInt(dataTable.get("secondWeekNumberOfShipments")));
     }
 
 }
