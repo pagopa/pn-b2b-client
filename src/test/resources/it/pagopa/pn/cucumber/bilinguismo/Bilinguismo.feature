@@ -73,5 +73,3 @@ Feature: Aggiunta lingua aggiuntiva notifiche
       | apply_cost_pagopa       | SI         |
     When la notifica viene inviata tramite api b2b
     Then l'invio della notifica ha sollevato un errore "400"
-
-

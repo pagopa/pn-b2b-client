@@ -393,8 +393,7 @@ public abstract class B2bUtils {
             responseOk = Integer.parseInt(parameters[2].split(":")[1]);
 
             costoBaseNotifica = Long.parseLong(getProperty(context, COSTO_BASE_NOTIFICA));
-            //String propertyValue = getProperty(context, TECHNICAL_REFUSAL_COST_MODE);
-            String propertyValue = "RECIPIENT_BASED;100";
+            String propertyValue = getProperty(context, TECHNICAL_REFUSAL_COST_MODE);
             String[] modeCost = (propertyValue != null) ? propertyValue.split(";") : null;
 
             if (modeCost == null || modeCost.length < 2 || responseKo == 0) {
