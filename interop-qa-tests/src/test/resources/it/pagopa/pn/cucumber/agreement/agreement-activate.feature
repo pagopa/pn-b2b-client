@@ -349,6 +349,7 @@ Feature: Attivazione richiesta di fruizione
       | PA2              | CONSUMER    | PA2  | api,security |
       | PA2              | CONSUMER    | PA1  | admin        |
 
+  @happy-path
   @agreement-activate-refactor
   Scenario: [AGREEMENTS_UNSUSPEND_7] Un delegato all'erogazione riattiva una richiesta di fruizione in stato SUSPENDED per conto dell'erogatore
     Given "PA2" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione automatica
@@ -360,6 +361,17 @@ Feature: Attivazione richiesta di fruizione
     And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'ente delegante richiede una operazione di sospensione di quella richiesta di fruizione
     When l'ente delegato richiede una operazione di riattivazione di quella richiesta di fruizione
+    Then si ottiene status code 200
+    And la richiesta di fruizione è in stato "ACTIVE"
+
+  @happy-path
+  @agreement-activate-refactor
+  Scenario: [AGREEMENTS_UNSUSPEND_8] La sospensione e riattivazione di una richista di fruizione eseguita dal fruitore va a buon fine
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già sospeso quella richiesta di fruizione come PRODUCER
+    And l'utente è un "admin" di "PA2"
+    When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 200
     And la richiesta di fruizione è in stato "ACTIVE"
 
