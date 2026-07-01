@@ -200,7 +200,7 @@
         | tcRanking_RS_        | 14       |
         | tcRanking_2nd_       | 14       |
         | tcRanking_890_       | 16       |
-        | tcRankingRS_2nd_890_ | 20       |
+        | tcRankingRS_2nd_890_ | 21       |
       And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
         | senderId                 | comparative | limit |
         | ranking2nd_890~RS~P1     | esattamente | 0     |
@@ -262,37 +262,40 @@
       When viene avviata la step function BatchWorkflowStateMachine
       And vengono recuperate le notifiche al workflow step "EVALUATE_SENDER_LIMIT"
       And verifica che il processo fino al workflow step "EVALUATE_SENDER_LIMIT" abbia rispettato i criteri di ranking per almeno un test case:
-        | categoria         | ordinamentoCampo   |
-        | RS                | prepareRequestDate |
-        | SECONDO_TENTATIVO | prepareRequestDate |
-        | ALTRO             | notificationSentAt |
+        | categoria             | ordinamentoCampo   |
+        | RS                    | prepareRequestDate |
+        | SECONDO_TENTATIVO     | prepareRequestDate |
+        | ALTRO                 | notificationSentAt |
+        | COMUNICAZIONE_BONARIE | prepareRequestDate |
       And vengono recuperate le notifiche al workflow step "EVALUATE_RESIDUAL_CAPACITY"
       And verifica che il processo fino al workflow step "EVALUATE_RESIDUAL_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
-        | categoria         | ordinamentoCampo   |
-        | RS                | prepareRequestDate |
-        | SECONDO_TENTATIVO | prepareRequestDate |
-        | ALTRO             | notificationSentAt |
+        | categoria             | ordinamentoCampo   |
+        | RS                    | prepareRequestDate |
+        | SECONDO_TENTATIVO     | prepareRequestDate |
+        | ALTRO                 | notificationSentAt |
+        | COMUNICAZIONE_BONARIE | prepareRequestDate |
       And vengono recuperate le notifiche al workflow step "EVALUATE_DRIVER_CAPACITY"
       And verifica che il processo fino al workflow step "EVALUATE_DRIVER_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
-        | categoria         | ordinamentoCampo   |
-        | RS                | prepareRequestDate |
-        | SECONDO_TENTATIVO | prepareRequestDate |
-        | ALTRO             | notificationSentAt |
+        | categoria             | ordinamentoCampo   |
+        | RS                    | prepareRequestDate |
+        | SECONDO_TENTATIVO     | prepareRequestDate |
+        | ALTRO                 | notificationSentAt |
+        | COMUNICAZIONE_BONARIE | prepareRequestDate |
       And vengono recuperate le notifiche al workflow step "EVALUATE_PRINT_CAPACITY"
       And verifica che il processo fino al workflow step "EVALUATE_PRINT_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
-        | categoria         | ordinamentoCampo   |
-        | RS                | prepareRequestDate |
-        | SECONDO_TENTATIVO | prepareRequestDate |
-        | ALTRO             | notificationSentAt |
+        | categoria             | ordinamentoCampo   |
+        | RS                    | prepareRequestDate |
+        | SECONDO_TENTATIVO     | prepareRequestDate |
+        | ALTRO                 | notificationSentAt |
+        | COMUNICAZIONE_BONARIE | prepareRequestDate |
       Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And vengono simulate internamente le operazioni di DelayerToPaperChannelStateMachine
       And vengono avviate le 2 esecuzioni della step function DelayerToPaperChannelStateMachine
       And verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
       And verifica la corretta pianificazione di ogni test case
-
       Examples:
         | csv                   | TOT |
-        | "tcRankingMerged.csv" | 110 |
+        | "tcRankingMerged.csv" | 111 |
 
     @delayer2
     Scenario Outline: [DELAYER-TC2] Verifica la gestione di un mittente non censito

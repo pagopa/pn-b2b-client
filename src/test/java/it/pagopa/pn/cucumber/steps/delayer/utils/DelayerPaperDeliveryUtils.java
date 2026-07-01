@@ -383,12 +383,15 @@ public class DelayerPaperDeliveryUtils {
         List<DelayerPaperDelivery> rs = new ArrayList<>();
         List<DelayerPaperDelivery> secondi = new ArrayList<>();
         List<DelayerPaperDelivery> altri = new ArrayList<>();
+        List<DelayerPaperDelivery> comunicazioniBonarie = new ArrayList<>();
 
         for (DelayerPaperDelivery n : notifiche) {
             String tipo = n.getProductType();
             int att = Integer.parseInt(n.getAttempt());
-            if ("RS".equalsIgnoreCase(tipo)) {
+            if ("RS".equalsIgnoreCase(tipo) && !n.isInformalCommunication()) {
                 rs.add(n);
+            } else if (n.isInformalCommunication()) {
+                comunicazioniBonarie.add(n);
             } else if (att == 1) {
                 secondi.add(n);
             } else {
@@ -405,11 +408,13 @@ public class DelayerPaperDeliveryUtils {
         rs.sort(byPrepare);
         secondi.sort(byPrepare);
         altri.sort(bySenderPriorityAndNotification);
+        comunicazioniBonarie.sort(byPrepare);
 
         List<DelayerPaperDelivery> ordinati = new ArrayList<>();
         ordinati.addAll(rs);
         ordinati.addAll(secondi);
         ordinati.addAll(altri);
+        ordinati.addAll(comunicazioniBonarie);
         return ordinati;
     }
 
@@ -484,7 +489,8 @@ public class DelayerPaperDeliveryUtils {
     }
 
     public String calculatePriority(DelayerPaperDelivery n) {
-        String key = String.format("PRODUCT_%s.ATTEMPT_%d", n.getProductType(), Integer.parseInt(n.getAttempt()));
+        String key = String.format("PRODUCT_%s.ATTEMPT_%d.%s", n.getProductType(), Integer.parseInt(n.getAttempt()),
+                n.isInformalCommunication() ? "INFORMAL" : "LEGAL");
 
         for (Map.Entry<String, List<String>> entry : context.priorityConfigMap.entrySet()) {
             if (entry.getValue().contains(key)) {

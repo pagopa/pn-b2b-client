@@ -35,6 +35,7 @@ public class DelayerPaperDelivery {
     private String unifiedDeliveryDriver;
     private String senderPriority;
     private String virtualNotificationSentAt;
+    private boolean isInformalCommunication;
 
     public DelayerPaperDelivery(List<String> header, List<String> csvLine) {
         if (header == null || csvLine == null || header.size() != csvLine.size()) {
@@ -61,6 +62,11 @@ public class DelayerPaperDelivery {
             this.senderPriority = "0";
         }
         this.virtualNotificationSentAt = getField(rowMap, "virtualNotificationSentAt");
+        String communicationType = rowMap.get("communicationType");
+        if (communicationType == null || communicationType.isBlank()) {
+            communicationType = "LEGAL";
+        }
+        this.isInformalCommunication = communicationType.equalsIgnoreCase("INFORMAL");
     }
 
     public DelayerPaperDelivery(JsonNode tableRecord) {
@@ -82,6 +88,11 @@ public class DelayerPaperDelivery {
             this.senderPriority = "0";
         }
         this.virtualNotificationSentAt = requireField(tableRecord, "virtualNotificationSentAt", true);
+        String communicationType = requireField(tableRecord, "communicationType", true);
+        if (communicationType == null || communicationType.isBlank()) {
+            communicationType = "LEGAL";
+        }
+        this.isInformalCommunication = communicationType.equalsIgnoreCase("INFORMAL");
     }
 
     public DelayerPaperDelivery(DelayerPaperDelivery source) {
@@ -100,6 +111,7 @@ public class DelayerPaperDelivery {
         this.priority = source.priority;
         this.senderPriority = source.senderPriority;
         this.virtualNotificationSentAt = source.virtualNotificationSentAt;
+        this.isInformalCommunication = source.isInformalCommunication;
     }
 
     private String requireField(JsonNode node, String fieldName, boolean nullable) {
