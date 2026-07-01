@@ -162,3 +162,19 @@ Feature: Gestione della callback interface per gli e-service asincroni
      And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
      When l'utente carica un'interfaccia di callback di scambio asincrono per quel descrittore
      Then si ottiene lo status code 404
+
+  Scenario Outline: [ASYNC_ESERVICE_CALLBACK_INTERFACE_INVALID] Il caricamento dell'interfaccia di callback per un e-serive
+  asincrono fallisce se il file YAML non è valido.
+
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service asincrono in stato "DRAFT" con:
+      | technology | REST    |
+      | mode       | DELIVER |
+    And si ottiene response status code 200
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di effettuare il caricamento di un'interfaccia di callback di scambio asincrono di tipo YAML "<versionState>"
+    Then si ottiene lo status code 400
+    Examples:
+      | versionState                 |
+      | senza versione               |
+      | con versione obsoleta        |
