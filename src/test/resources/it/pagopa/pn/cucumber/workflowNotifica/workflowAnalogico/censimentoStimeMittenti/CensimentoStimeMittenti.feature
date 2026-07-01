@@ -6,7 +6,7 @@ Feature: Censimento stime mittenti
       | classpath:/t0_tc_modulo_commessa_febbraio_25.json |
     And si verifica che la tabella pn-DelayerSenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
 
-  @censimentoStimeMittenti1
+  @censimentoStimeMittenti
   Scenario: [SM_01] Verifica la gestione del caricamento delle commesse per il calcolo delle stime mittenti
     Given viene caricato su SafeStorage il documento "classpath:/t0_tc_modulo_commessa_gennaio_25.json" con contentType "application/json" di tipo "PN_SERVICE_ORDER" e status "SAVED"
     And viene caricato su SafeStorage il documento "classpath:/t0_tc_modulo_commessa_febbraio_25.json" con contentType "application/json" di tipo "PN_SERVICE_ORDER" e status "SAVED"
@@ -145,4 +145,41 @@ Feature: Censimento stime mittenti
       | "tcRankingMerged.csv" | 110 |
 
 
+  @censimentoStimeMittenti
+  Scenario: [TC_CENSIMENTO_SETTIMANA_CAVALLO] Verifica del calcolo delle stime settimanali a cavallo di due mesi e dell'aggiornamento delle stime a seguito di modifiche sui moduli commessa
+    Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_aprile_26.zip"
+    Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_maggio_26.zip"
+    And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
+      | classpath:/modulo_commessa_ranking2nd_890.json |
+    Then si verifica che la tabella pn-DelayerSenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
+#    And si verifica se la settimana del: "2026-04-27" è interamente compresa all'interno del mese
+    And per la settimana "2026-04-27", per il prodotto "890" per la provincia "P1" si verifica che la somma delle commesse sia:
+      | numberOfShipments           | 7 |
+      | firstWeekNumberOfShipments  | 4 |
+      | secondWeekNumberOfShipments | 3 |
+    #Viene caricato nuovamente il modulo commesse di aprile per verificare che per la settimana a cavallo venga cambiata soltanto
+    #la stima della commessa relativa al mese di aprile e non quella di maggio
+    Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_aprile_26_modified.zip"
+    And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
+      | classpath:/modulo_commessa_P1_aprile_modified.json |
+    Then si verifica che la tabella pn-DelayerSenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
+    And per la settimana "2026-04-27", per il prodotto "890" per la provincia "P1" si verifica che la somma delle commesse sia:
+      | numberOfShipments           | 15 |
+      | firstWeekNumberOfShipments  | 12 |
+      # secondWeekNumberOfShipments rimane invariato in quanto la modifica è stata fatta solo sul modulo commessa di APRILE
+      | secondWeekNumberOfShipments | 3  |
+    #Viene caricato nuovamente il modulo commesse di maggio per verificare che per la settimana a cavallo venga cambiata soltanto
+    #la stima della commessa relativa al mese di maggio e non quella di aprile
+    Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_maggio_26_modified.zip"
+    And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
+      | classpath:/modulo_commessa_P1_maggio_modified.json |
+    Then si verifica che la tabella pn-DelayerSenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
+    And per la settimana "2026-04-27", per il prodotto "890" per la provincia "P1" si verifica che la somma delle commesse sia:
+      | numberOfShipments           | 21 |
+      # firstWeekNumberOfShipments rimane invariato in quanto la modifica è stata fatta solo sul modulo commessa di MAGGIO
+      | firstWeekNumberOfShipments  | 12 |
+      | secondWeekNumberOfShipments | 9  |
+    # Ripristino delle commesse originali
+    Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_aprile_26.zip"
+    Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_maggio_26.zip"
 
