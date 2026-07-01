@@ -37,10 +37,9 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
   @happy-path
   @m2m-agreement-activate-refactor
   Scenario: [M2M_AGREEMENTS_UNSUSPEND_1] Una richiesta di fruizione sospesa dal producer può essere riattivata da un utente con ruolo M2M-ADMIN dell'ente erogatore
-    Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA1" ha già sospeso quella richiesta di fruizione come PRODUCER
+    And l'utente "admin" di "PA1" richiede una operazione di sospensione di quella richiesta di fruizione con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente m2m richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 200
@@ -65,10 +64,9 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
   @sad-path
   @m2m-agreement-activate-refactor
   Scenario Outline: [M2M_AGREEMENTS_UNSUSPEND_2] La riattivazione di una richiesta di fruizione con id non valido restituisce errore
-    Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA1" ha già sospeso quella richiesta di fruizione come PRODUCER
+    And l'utente "admin" di "PA1" richiede una operazione di sospensione di quella richiesta di fruizione con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente m2m richiede una operazione di riattivazione della richiesta di fruizione con id "<agreementId>"
     Then si ottiene status code <statusCode>
@@ -101,8 +99,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
   @sad-path
   @m2m-agreement-activate-refactor
   Scenario Outline: [M2M_AGREEMENTS_UNSUSPEND_3] La riattivazione di una richiesta di fruizione in stato differente da SUSPENDED restituisce errore
-    Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     And "PA2" ha una richiesta di fruizione in stato <agreementStatus> per quell'e-service
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente m2m richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
@@ -153,8 +150,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
   @sad-path
   @m2m-agreement-activate-refactor
   Scenario: [M2M_AGREEMENTS_APPROVE_5] L'approvazione di una richiesta di fruizione con ruolo M2M restituisce errore
-    Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
     And "PA2" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m
     When l'utente m2m richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
@@ -164,10 +160,9 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
   @sad-path
   @m2m-agreement-activate-refactor
   Scenario: [M2M_AGREEMENTS_UNSUSPEND_5] La riattivazione di una richiesta di fruizione con ruolo M2M restituisce errore
-    Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA1" ha già sospeso quella richiesta di fruizione come PRODUCER
+    And l'utente "admin" di "PA1" richiede una operazione di sospensione di quella richiesta di fruizione con successo
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m
     When l'utente m2m richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 403
