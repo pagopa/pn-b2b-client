@@ -418,7 +418,7 @@ public class TracingSteps {
     }
 
     private String composeS3KeyWithTracing(Tracing tracing) {
-        String tenantType = ("TENANT2".equals(currentTenant)) ? "PA2" : "PA1";
+        String tenantType = ("TENANT2".equalsIgnoreCase(currentTenant)) ? "PA2" : "PA1";
         String key = String.format(
                 "tenantId=%s/date=%s/tracingId=%s/version=%s/correlationId=%s/%s.csv",
                 interopTracingClient.getIdentityService().getOrganizationId(tenantType),
