@@ -1,24 +1,7 @@
 package it.pagopa.pn.cucumber.steps.pa.utilityVersions;
 
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.F24Payment;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactDownloadMetadataResponse;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactsIdV20;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationRequestV26;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationResponse;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationAttachmentBodyRef;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationAttachmentDigests;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationAttachmentDownloadMetadataResponse;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationDigitalAddress;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationDocument;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationFeePolicy;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationMetadataAttachment;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationPaymentAttachment;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationPaymentItem;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationPhysicalAddress;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationRecipientV24;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PagoPaPayment;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.IPnPollingService;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
@@ -33,76 +16,12 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOTIFICATION_STATUS_REFUSED;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_EQUAL_SHA;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_EQUAL_SHA_JSON;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_FOUND_ALLEGATO_JSON;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_FOUND_NO_PRELOAD;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_FOUND_ON_SAFE_STORAGE;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.STATUS_EXTRA_RAPID;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.STATUS_RAPID;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.STATUS_SLOW;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.TIMELINE_EXTRA_RAPID;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.TIMELINE_RAPID;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.TIMELINE_SLOW;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.TIMELINE_SLOW_E2E;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.VALIDATION_STATUS;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.VALIDATION_STATUS_ACCEPTATION_SHORT;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.VALIDATION_STATUS_EXTRA_RAPID;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.VALIDATION_STATUS_NO_ACCEPTATION;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WEBHOOK;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.ABSTRACT;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.ADDITIONAL_LANGUAGES;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.AMOUNT;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.CANCELLED_IUN;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.DENOMINATION;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.DIGITAL_DOMICILE;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.DIGITAL_DOMICILE_ADDRESS;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.DIGITAL_DOMICILE_TYPE;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.DOCUMENT;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.GROUP;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.IDEMPOTENCE_TOKEN;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.NOTIFICATION_FEE_POLICY;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.PAGOPAINTMODE;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.PAYMENT;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.PAYMENT_APPLY_COST_F24;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.PAYMENT_APPLY_COST_PAGOPA;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.PAYMENT_CREDITOR_TAX_ID;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.PAYMENT_EXPIRATION_DATE;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.PAYMENT_F24;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.PAYMENT_F24_X;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.PAYMENT_MULTY_NUMBER;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.PAYMENT_NOTICE_CODE;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.PAYMENT_PAGOPA_FORM;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.PA_FEE;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.PA_PROTOCOL_NUMBER;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.PHYSICAL_ADDRES;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.PHYSICAL_ADDRESS_ADDRESS;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.PHYSICAL_ADDRESS_AT;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.PHYSICAL_ADDRESS_DETAILS;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.PHYSICAL_ADDRESS_MUNICIPALITY;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.PHYSICAL_ADDRESS_MUNICIPALITYDETAILS;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.PHYSICAL_ADDRESS_PROVINCE;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.PHYSICAL_ADDRESS_STATE;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.PHYSICAL_ADDRESS_ZIP;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.PHYSICAL_COMMUNICATION_PRIORITY;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.PHYSICAL_COMMUNICATION_TYPE;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.RECIPIENT_TYPE;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.SENDER_DENOMINATION;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.SENDER_TAX_ID;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.SUBJECT;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.TAXONOMY_CODE;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.TAX_ID;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.TITLE_PAYMENT;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.VAT;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.getDefaultValue;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.getValue;
+import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
 
 @Slf4j
 @Component
@@ -620,6 +539,10 @@ public class NotificationUtilsV26 extends B2bUtils {
                     String sha256 = computeSha256(context, "classpath:/multa.pdf");
                     NotificationMetadataAttachment metadataAttachment = request.getRecipients().get(0).getPayments().get(0).getF24().getMetadataAttachment();
                     metadataAttachment.getDigests().setSha256(sha256);
+                }
+                case INVALID_DOCUMENT_KEY_SYNC -> {
+                    NotificationDocument doc = request.getDocuments().get(0);
+                    doc.getRef().setKey("PN_NOTIFICATION_ATTACHMENT-c3bc9525a5ac4f45a4fb7e940b2b9815.pdf");
                 }
             }
         }
