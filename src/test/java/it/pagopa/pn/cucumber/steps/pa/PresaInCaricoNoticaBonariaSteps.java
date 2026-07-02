@@ -549,34 +549,31 @@ public class PresaInCaricoNoticaBonariaSteps {
         assertTrue(terminationStatus.getDetails().stream().anyMatch(d -> "NOTIFICATION_ALREADY_TERMINATED".equals(d.getCode())), "Codice NOTIFICATION_ALREADY_TERMINATED non presente");
     }
 
-    //*** CONTROLLI GENERICI
+    //*** CONTROLLI PresaInCaricoNoticaBonariaSteps.javaGENERICI
 
-    @And("si riceve errore {int}")
-    public void verifyError(int expectedStatus) {
-        assertNotNull(lastException, "Non è stato generato l'errore atteso");
-        if (lastException instanceof HttpClientErrorException ex) {
-            assertEquals(expectedStatus, ex.getStatusCode().value());
-        } else {
-            fail("Eccezione inattesa: " + lastException.getClass());
-        }
+@And("si riceve errore {int}")
+public void verifyError(int expectedStatus) {
+    assertNotNull(lastException, "Non è stato generato l'errore atteso");
+
+    if (lastException instanceof HttpClientErrorException ex) {
+        assertEquals(expectedStatus, ex.getStatusCode().value());
+    } else {
+        fail("Eccezione inattesa: " + lastException.getClass());
     }
+}
 
-    @And("si riceve errore {int} {string}")
-    public void verifyErrorAndMessage(int expectedStatus, String expectedErrorCode) {
+@And("si riceve errore {int} {string}")
+public void verifyErrorAndMessage(int expectedStatus, String expectedErrorCode) {
+    verifyError(expectedStatus);
 
-        assertNotNull(lastException, "Non è stato generato l'errore atteso");
+    HttpClientErrorException ex = (HttpClientErrorException) lastException;
+    String responseBody = ex.getResponseBodyAsString();
 
-        if (lastException instanceof HttpClientErrorException ex) {
-
-            assertEquals(expectedStatus, ex.getStatusCode().value());
-            String responseBody = ex.getResponseBodyAsString();
-            assertNotNull(responseBody, "Response body nullo");
-            assertTrue(responseBody.contains(expectedErrorCode), "Codice errore atteso non trovato: " + expectedErrorCode + "\nResponse body: " + responseBody);
-
-        } else {
-            fail("Eccezione inattesa: " + lastException.getClass());
-        }
-    }
+    assertNotNull(responseBody, "Response body nullo");
+    assertTrue(responseBody.contains(expectedErrorCode),
+        "Codice errore atteso non trovato: " + expectedErrorCode + "\nResponse body: " + responseBody
+    );
+}
 
     @When("il recupero del messaggio per le comunicazioni bonarie fallisce con errore {string}")
     public void getInformalMessageExpectError(String messageIdString) {

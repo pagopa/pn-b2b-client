@@ -172,7 +172,7 @@ Feature: Messaggi e allegati di una notifica bonaria.
 
                 #  CASO DI TEST 3.2 Errore nel recupero di un messaggio.
 
-  @informalNotificationsMessageAttachment
+  #@informalNotificationsMessageAttachment il client dell api accetta solo uuid quindi non si può passare malformato
   Scenario Outline: [NOTIFICHE_BONARIE_MESSAGGI_03_2_A] Come ente mittente ricevo un Errore nel recuperare un messaggio con un id non valido.
     Given mittente della notifica bonaria: "Comune_Multi"
     Then tento il recupero del messaggio per le comunicazioni bonarie con message id "<messageId>"
