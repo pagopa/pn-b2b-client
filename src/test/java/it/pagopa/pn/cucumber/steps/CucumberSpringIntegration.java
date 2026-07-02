@@ -7,12 +7,7 @@ import it.pagopa.pn.client.b2b.pa.cache.CacheConfig;
 import it.pagopa.common.config.AwsConfig;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.config.TemplateEngineConfigBean;
-import it.pagopa.pn.client.b2b.pa.config.springconfig.ApiKeysConfiguration;
-import it.pagopa.pn.client.b2b.pa.config.springconfig.BearerTokenConfiguration;
-import it.pagopa.pn.client.b2b.pa.config.springconfig.LegalFactTokenConfiguration;
-import it.pagopa.pn.client.b2b.pa.config.springconfig.MailSenderConfig;
-import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
-import it.pagopa.pn.client.b2b.pa.config.springconfig.TimingConfiguration;
+import it.pagopa.pn.client.b2b.pa.config.springconfig.*;
 import it.pagopa.pn.client.b2b.pa.parsing.config.PnLegalFactTokenProperty;
 import it.pagopa.pn.client.b2b.pa.parsing.config.PnLegalFactTokens;
 import it.pagopa.pn.client.b2b.pa.parsing.parser.impl.PnParser;
@@ -23,6 +18,11 @@ import it.pagopa.pn.client.b2b.pa.polling.impl.v20.*;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v21.*;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v23.*;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v24.PnPollingServiceWebhookV24;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v25.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v26.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v27.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v28.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v29.*;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v25.*;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v26.*;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v27.*;
@@ -97,6 +97,9 @@ import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRaddCognito;
 import it.pagopa.pn.client.b2b.pa.utils.DataPreparationRaddVpceService;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
+import it.pagopa.pn.cucumber.steps.informalNotification.builders.InformalRecipientBuilder;
+import it.pagopa.pn.cucumber.steps.informalNotification.mapper.InformalNotificationRequestMapper;
+import it.pagopa.pn.cucumber.steps.informalNotification.provider.InformalMessageProvider;
 import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.model.StimeMittentiContext;
 import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
 import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClientV2;
@@ -288,6 +291,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         EventTimelineParser.class,
         PnMandateAppIoClientImpl.class,
         ReworkTimelineClientImpl.class,
+        PnPaB2bInternalInformalClientImpl.class,
         LambdaInvoker.class,
         TemplateEngineConfigBean.class,
         SchemaValidator.class,
@@ -310,6 +314,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         CacheConfig.class,
         AooUoIdsClientImpl.class,
         AooUoIdsApi.class,
+        OtpCodeService.class,
+        PnNotificationCostClientImpl.class,
+        InformalRecipientBuilder.class,
+        InformalNotificationRequestMapper.class,
+        InformalMessageProvider.class
         OtpCodeService.class,
         PnRaddVpceAdapter.class,
         PnRaddNetVpceClientImpl.class,
