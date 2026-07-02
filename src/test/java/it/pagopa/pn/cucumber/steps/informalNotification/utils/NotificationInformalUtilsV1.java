@@ -1,4 +1,4 @@
-package it.pagopa.pn.cucumber.steps.pa.utilityInformalVersion;
+package it.pagopa.pn.cucumber.steps.informalNotification.utils;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;

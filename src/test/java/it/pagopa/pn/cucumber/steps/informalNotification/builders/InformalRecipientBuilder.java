@@ -1,10 +1,10 @@
-package it.pagopa.pn.cucumber.steps.pa.utilityInformalVersion;
+package it.pagopa.pn.cucumber.steps.informalNotification.builders;
 
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.*;
-import it.pagopa.pn.cucumber.steps.dataTable.InformalNotificationRequestMapper;
-import it.pagopa.pn.cucumber.utils.InformalMessageProvider;
-import it.pagopa.pn.cucumber.utils.NotificationInformalValue;
+import it.pagopa.pn.cucumber.steps.informalNotification.mapper.InformalNotificationRequestMapper;
+import it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue;
+import it.pagopa.pn.cucumber.steps.informalNotification.provider.InformalMessageProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static it.pagopa.pn.cucumber.utils.NotificationInformalValue.*;
+import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.*;
 
 @Component
 @RequiredArgsConstructor

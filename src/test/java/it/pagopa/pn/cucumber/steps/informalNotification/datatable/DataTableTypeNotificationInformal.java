@@ -1,8 +1,9 @@
-package it.pagopa.pn.cucumber.steps.dataTable;
+package it.pagopa.pn.cucumber.steps.informalNotification.datatable;
 
 import io.cucumber.java.DataTableType;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalNotificationRequestV1;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewMessageRequest;
+import it.pagopa.pn.cucumber.steps.informalNotification.mapper.InformalNotificationRequestMapper;
 
 import java.util.Map;
 

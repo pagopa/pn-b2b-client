@@ -1,4 +1,4 @@
-package it.pagopa.pn.cucumber.utils;
+package it.pagopa.pn.cucumber.steps.informalNotification.provider;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewMessageRequest;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewMessageRequestAdditionalMessage;

@@ -13,9 +13,9 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bInternalInformalClientImpl
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.model.InformalSentNotificationV1;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
-import it.pagopa.pn.cucumber.steps.dataTable.InformalNotificationRequestMapper;
-import it.pagopa.pn.cucumber.steps.pa.utilityInformalVersion.InformalRecipientBuilder;
-import it.pagopa.pn.cucumber.steps.pa.utilityInformalVersion.NotificationInformalUtilsV1;
+import it.pagopa.pn.cucumber.steps.informalNotification.builders.InformalRecipientBuilder;
+import it.pagopa.pn.cucumber.steps.informalNotification.mapper.InformalNotificationRequestMapper;
+import it.pagopa.pn.cucumber.steps.informalNotification.utils.NotificationInformalUtilsV1;
 import it.pagopa.pn.cucumber.utils.GroupPosition;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;

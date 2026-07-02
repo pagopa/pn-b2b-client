@@ -1,15 +1,15 @@
-package it.pagopa.pn.cucumber.steps.dataTable;
+package it.pagopa.pn.cucumber.steps.informalNotification.mapper;
 
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.*;
-import it.pagopa.pn.cucumber.utils.NotificationInformalValue;
+import it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static it.pagopa.pn.cucumber.utils.NotificationInformalValue.*;
+import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.*;
 
 @Component
 public class InformalNotificationRequestMapper {

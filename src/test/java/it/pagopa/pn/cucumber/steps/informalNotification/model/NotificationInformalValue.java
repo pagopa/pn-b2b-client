@@ -1,4 +1,4 @@
-package it.pagopa.pn.cucumber.utils;
+package it.pagopa.pn.cucumber.steps.informalNotification.model;
 
 import java.util.Arrays;
 import java.util.Map;
