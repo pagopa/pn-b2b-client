@@ -1,10 +1,8 @@
 package it.pagopa.pn.interop.cucumber.steps.notification;
 
 import io.cucumber.datatable.DataTable;
-import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
-import it.pagopa.common.model.ISharedContext;
 import it.pagopa.interop.authorization.domain.Tenant;
 import it.pagopa.interop.authorization.service.utils.ConfigFileReader;
 import it.pagopa.interop.authorization.service.utils.PollingService;
@@ -32,13 +30,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.util.ReflectionUtils;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
@@ -61,11 +59,10 @@ public class NotificationStepsConfig {
     private final SharedStepsContext sharedStepsContext;
     private final ConfigFileReader configFileReader;
 
-    // Il ruolo 'support' non permette alcuna configurazione delle notifiche
+    // I ruoli "support", "reviewer", "viewer" non permettono la configurazione delle notifiche
     private final List<String> excludedRoles = List.of("support", "reviewer", "viewer");
 
-    private static Map<String, GlobalNotificationConfig> rolesNotificationConfig = new HashMap<>();
-    private static GlobalNotificationConfig turnedOffNotificationConfig;
+    private static Map<String, List<String>> activatableNotificationsByRole = new HashMap<>();
 
     private static final List<String> fullNotificationList = List.of(
             "eserviceStateChangedToConsumer",
@@ -92,13 +89,40 @@ public class NotificationStepsConfig {
             "clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers"
     );
 
-    private static NotificationConfig configureNotificationWithOptInList(List<String> optInNotifications, boolean defaultState) {
+    /**
+     * Restituisce una configurazione per le notifiche (in-app o e-mail) attivandole o disattivandole di default in
+     * base al valore di defaultState.
+     *
+     * <p>
+     * Il metodo deve conoscere, tramite activatableNotificationsByRole, le notifiche che è ammesso attivare per
+     * ciascun ruolo. Se ci sono campi non ammessi vanno specificati nella request ma devono per forza essere a false
+     * a prescindere dal valore che vorremmo. I campi che fanno eccezione rispetto al valore di default si possono
+     * elencare in exceptionNotificationFields.
+     *
+     * @param defaultState true o false per attivare o disattivare il singolo campo relativo a un tipo di notifica
+     * @param activatableNotificationsByRole l'elenco dei campi attivabili che deve rispettare il ruolo da configurare
+     * @param exceptionNotificationFields l'elenco dei campi che devono avere il valore opposto a quello di default
+     * @return un oggetto {@link NotificationConfig} che può configurare sia le notifiche in-app che e-mail
+     */
+    private static NotificationConfig configureNotificationWithOptInLists(
+            boolean defaultState,
+            List<String> activatableNotificationsByRole,
+            List<String> exceptionNotificationFields
+    ) {
         NotificationConfig config = new NotificationConfig();
         for (String notification : fullNotificationList) {
             String methodName = "set" + notification.substring(0, 1).toUpperCase() + notification.substring(1);
             try {
                 Method notificationMethod = config.getClass().getMethod(methodName, Boolean.class);
-                notificationMethod.invoke(config, defaultState && optInNotifications.contains(notification));
+                boolean state = defaultState;
+                if (activatableNotificationsByRole.contains(notification)) {
+                    if (exceptionNotificationFields.contains(notification)) {
+                        state = !defaultState;
+                    }
+                } else {
+                    state = false;
+                }
+                notificationMethod.invoke(config, state);
 
             } catch (NoSuchMethodException e) {
                 throw new IllegalArgumentException(
@@ -112,19 +136,79 @@ public class NotificationStepsConfig {
         return config;
     }
 
-    private static GlobalNotificationConfig configureGlobalNotificationWithOptInList(List<String> optInNotifications, boolean defaultState) {
+    private static NotificationConfig configureNotificationWithOptInLists(
+            boolean defaultState,
+            List<String> activatableNotificationsByRole
+    ) {
+        return configureNotificationWithOptInLists(defaultState, activatableNotificationsByRole, List.of());
+    }
+
+    private static NotificationConfig configureNotificationWithOptInLists() {
+        // Per disattivare tutte le notifiche basta avere il default a false
+        // Le liste delle notifiche ammesse e delle eccezioni possono essere vuote
+        return configureNotificationWithOptInLists(false, List.of(), List.of());
+    }
+
+    /**
+     * Restituisce una configurazione globale per le notifiche (in-app ed e-mail) attivandole o disattivandole
+     * di default in base al valore di defaultState.
+     *
+     * <p>
+     * Il metodo deve conoscere, tramite activatableNotificationsByRole, le notifiche che è ammesso attivare per
+     * ciascun ruolo. Se ci sono campi non ammessi vanno specificati nella request ma devono per forza essere a false
+     * a prescindere dal valore che vorremmo. I campi che fanno eccezione rispetto al valore di default si possono
+     * elencare in exceptionNotificationFields.
+     *
+     * @param defaultState true o false per attivare o disattivare il singolo campo relativo a un tipo di notifica
+     * @param notificationType con i valori 'in-app' o 'e-mail' specifica il tipo di notifiche da attivare
+     * @param activatableNotificationsByRole l'elenco dei campi attivabili che deve rispettare il ruolo da configurare
+     * @param exceptionNotificationFields l'elenco dei campi che devono avere il valore opposto a quello di default
+     * @return un oggetto {@link GlobalNotificationConfig} che può configurare le notifiche di un utente
+     */
+    private static GlobalNotificationConfig configureGlobalNotificationWithOptInLists(
+            boolean defaultState,
+            String notificationType,
+            List<String> activatableNotificationsByRole,
+            List<String> exceptionNotificationFields
+    ) {
+        NotificationConfig inAppConfig = configureNotificationWithOptInLists(
+                defaultState, activatableNotificationsByRole, exceptionNotificationFields
+        );
+        NotificationConfig emailConfig = configureNotificationWithOptInLists();
+
+        if ("e-mail".equals(notificationType)) {
+            emailConfig = inAppConfig;
+            inAppConfig = configureNotificationWithOptInLists();
+        }
         return GlobalNotificationConfig.builder()
                 .userConfig(new UserNotificationConfigUpdateSeed()
                         .emailNotificationPreference(false)
                         .inAppNotificationPreference(true)
                         .emailDigestPreference(false)
-                        .emailConfig(configureNotificationWithOptInList(List.of(), defaultState))
-                        .inAppConfig(configureNotificationWithOptInList(optInNotifications, defaultState))
+                        .emailConfig(emailConfig)
+                        .inAppConfig(inAppConfig)
                 ).build();
     }
 
-    private static NotificationConfig configureNotificationWithOptInList(List<String> optInNotifications) {
-        return configureNotificationWithOptInList(optInNotifications, true);
+    private static GlobalNotificationConfig configureGlobalNotificationWithOptInLists(
+            boolean defaultState,
+            String notificationType,
+            List<String> activatableNotificationsByRole
+    ) {
+        return configureGlobalNotificationWithOptInLists(
+                defaultState, notificationType, activatableNotificationsByRole, List.of()
+        );
+    }
+
+    /**
+     * Restituisce una configurazione globale con tutte le notifiche spente sia in-app che e-mail.
+     *
+     * <p>
+     * Questo overload chiama il metodo generale senza passare alcuna lista opt-in, la conseguenza logica è che tutti
+     * i campi relativi alle notifiche verranno disabilitati.
+     */
+    private static GlobalNotificationConfig configureGlobalNotificationWithOptInLists() {
+        return configureGlobalNotificationWithOptInLists(false, "in-app", List.of(), List.of());
     }
 
     static {
@@ -136,31 +220,14 @@ public class NotificationStepsConfig {
             yaml.loadAll(reader).forEach(i -> notificationConfigList.add((OptInNotificationConfig) i));
 
         } catch (IOException exception) {
+            log.error("Something went wrong reading " + filePath);
             exception.printStackTrace();
         }
 
-        NotificationConfig allFieldsFalseConfig = configureNotificationWithOptInList(List.of(), false);
-        turnedOffNotificationConfig = GlobalNotificationConfig.builder()
-                .userConfig(new UserNotificationConfigUpdateSeed()
-                        .emailNotificationPreference(false)
-                        .inAppNotificationPreference(false)
-                        .emailDigestPreference(false)
-                        .emailConfig(allFieldsFalseConfig)
-                        .inAppConfig(allFieldsFalseConfig)
-                ).build();
-
         for (OptInNotificationConfig notificationConfig : notificationConfigList) {
-            GlobalNotificationConfig roleNotificationConfig = GlobalNotificationConfig.builder()
-                    .userConfig(new UserNotificationConfigUpdateSeed()
-                            .emailNotificationPreference(false)
-                            .inAppNotificationPreference(true)
-                            .emailDigestPreference(false)
-                            .emailConfig(allFieldsFalseConfig)
-                            .inAppConfig(
-                                    configureNotificationWithOptInList(notificationConfig.getNotifications())
-                            )
-                    ).build();
-            rolesNotificationConfig.put(notificationConfig.getRole(), roleNotificationConfig);
+            activatableNotificationsByRole.put(
+                    notificationConfig.getRole(), notificationConfig.getNotifications()
+            );
         }
     }
 
@@ -172,7 +239,7 @@ public class NotificationStepsConfig {
     ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
 
-        // necessario ricorrere all'impl. concreta per usare il suo HttpCallExecutor
+        // Necessario ricorrere all'implementazione concreta per usare il suo HttpCallExecutor
         this.notificationClient = (NotificationClientImpl) clientTokenConfigurator.getNotificationClient();
         this.notificationConfigClient = (NotificationConfigClient) clientTokenConfigurator.getNotificationConfigClient();
         this.notificationTestsManager = notificationTestsManager;
@@ -182,7 +249,11 @@ public class NotificationStepsConfig {
 
     @Before("@bff-notification and not @disable-notifications-hooks")
     public void switchOnInAppNotification() throws Exception {
-        this.configNotificationTests(excludedRoles, this.notificationTestsManager::before, ConfigStrategy.PER_ROLE);
+        // In relazione agli utenti con certi ruoli e su certi enti su cui si devono controllare le notifiche,
+        // vengono attivate solo quelle necessarie:
+        configureNotificationForUser(UserRole.ADMIN, "PA1", "attiva", "in-app");
+        configureNotificationForUser(UserRole.ADMIN, "PA2", "attiva", "in-app");
+        configureNotificationForUser(UserRole.ADMIN, "GSP", "attiva", "in-app");
     }
 
 // Spegnere ed eliminare le notifiche da pochi o tutti gli utenti può determinare un disturbo di altri test in QA
@@ -233,7 +304,14 @@ public class NotificationStepsConfig {
         PollingService pollingService = this.sharedStepsContext.getPollingService();
         IHttpExecutor configExecutor = this.notificationConfigClient.getHttpCallExecutor();
         hook.accept(() -> applyTaskForEveryUser(excludedRoles, role -> {
-            GlobalNotificationConfig config = configStrategy == ConfigStrategy.NO_CONFIG ? turnedOffNotificationConfig : rolesNotificationConfig.get(role);
+            GlobalNotificationConfig config = configStrategy == ConfigStrategy.NO_CONFIG ?
+                    configureGlobalNotificationWithOptInLists()
+                    : configureGlobalNotificationWithOptInLists(
+                            true,
+                            "in-app",
+                            activatableNotificationsByRole.get(role)
+                    );
+
             if (config.getUserConfig() != null) {
                 pollingService.makePolling(
                     () -> {
@@ -267,9 +345,18 @@ public class NotificationStepsConfig {
         IHttpExecutor configExecutor = this.notificationConfigClient.getHttpCallExecutor();
         applyTaskForEveryUser(excludedRoles, role -> {
             GlobalNotificationConfig config = switch (configStrategy) {
-                case NO_CONFIG -> turnedOffNotificationConfig;
-                case ALL_BUT_ESERVICE_STATE_CHANGED -> configureGlobalNotificationWithOptInList(List.of("eserviceStateChangedToProducer"), false);
-                default -> rolesNotificationConfig.get(role);
+                case NO_CONFIG -> configureGlobalNotificationWithOptInLists();
+                case ALL_BUT_ESERVICE_STATE_CHANGED -> configureGlobalNotificationWithOptInLists(
+                        false,
+                        "in-app",
+                        activatableNotificationsByRole.get(role),
+                        List.of("eserviceStateChangedToProducer")
+                );
+                default -> configureGlobalNotificationWithOptInLists(
+                        false,
+                        "in-app",
+                        activatableNotificationsByRole.get(role)
+                );
             };
             if (config.getUserConfig() != null) {
                 pollingService.makePolling(
@@ -318,7 +405,7 @@ public class NotificationStepsConfig {
 
     @Given("l'utente attiva le notifiche tranne il cambio di stato dell'e-service per l'erogatore")
     public void userTurnOnNotificationButEserviceStateChanged() throws Exception {
-        List<String> excludedRoles = rolesNotificationConfig.keySet().stream()
+        List<String> excludedRoles = activatableNotificationsByRole.keySet().stream()
                 .filter(role -> !List.of("admin").contains(role))
                 .toList();
         this.configureNotificationsToUser(excludedRoles, ConfigStrategy.ALL_BUT_ESERVICE_STATE_CHANGED);
@@ -328,18 +415,43 @@ public class NotificationStepsConfig {
     public void configureNotificationForUser(
             UserRole role,
             String tenantName,
+            String inclusionOperation,
             String notificationType,
-            String defaultInclusion,
             DataTable exceptionsTable)
     {
         PollingService pollingService = this.sharedStepsContext.getPollingService();
+        IHttpExecutor configExecutor = this.notificationConfigClient.getHttpCallExecutor();
+
         this.sharedStepsContext.setTenantType(tenantName);
         String token = this.sharedStepsContext.getIdentityService().getToken(tenantName, role.name().toLowerCase(), 0);
         this.clientTokenConfigurator.setBearerToken(token);
+
+        final AtomicReference<UserNotificationConfigUpdateSeed> seed =
+                new AtomicReference<>(configureGlobalNotificationWithOptInLists().getUserConfig());
+
+        if (inclusionOperation.equals("attiva")) {
+            if (exceptionsTable.height() == 0) {
+                // Attiva tutte le notifiche attivabili per un ruolo senza eccezioni
+                seed.set(configureGlobalNotificationWithOptInLists(
+                        true,
+                        "in-app",
+                        activatableNotificationsByRole.get(role.getValue())
+                ).getUserConfig());
+            } else {
+                // Attiva tutte le notifiche attivabili per un ruolo eccetto la lista in tabella
+                List<String> exceptionFields = exceptionsTable.asList(String.class);
+                seed.set(configureGlobalNotificationWithOptInLists(
+                        true,
+                        "in-app",
+                        activatableNotificationsByRole.get(role.getValue()),
+                        exceptionFields
+                ).getUserConfig());
+            }
+        }
+
         pollingService.makePolling(
                 () -> {
-                    this.notificationConfigClient.updateUserNotificationConfig(
-                            config.getUserConfig());
+                    this.notificationConfigClient.updateUserNotificationConfig(seed.get());
                     return null;
                 },
                 res -> configExecutor.getResponseStatus().is2xxSuccessful(),
@@ -350,9 +462,9 @@ public class NotificationStepsConfig {
     public void configureNotificationForUser(
             UserRole role,
             String tenant,
-            String notificationType,
-            String defaultInclusion)
+            String inclusionOperation,
+            String notificationType)
     {
-        configureNotificationForUser(role, tenant, notificationType, defaultInclusion, DataTable.emptyDataTable());
+        configureNotificationForUser(role, tenant, inclusionOperation, notificationType, DataTable.emptyDataTable());
     }
 }
