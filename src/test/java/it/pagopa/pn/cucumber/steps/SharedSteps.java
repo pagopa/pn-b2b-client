@@ -28,6 +28,8 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV28;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.CourtesyDigitalAddress;
+import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
@@ -44,6 +46,9 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnServiceDeskClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesInternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
+import it.pagopa.pn.client.b2b.pa.service.*;
+import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
@@ -84,74 +89,11 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.ADDRESS;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.ALDA_MERINI;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.ALLEGATO;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_1;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_2;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_MULTI;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_ROOT;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_SON;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.CRISTOFORO_COLOMBO;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.CUCUMBER_SPA;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DINO_SAURO;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_ANALOG_REFINEMENT_DEFAULT_FAILURE;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_ANALOG_REFINEMENT_DEFAULT_SUCCESS;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_DIGITAL_REFINEMENT_DEFAULT_FAILURE;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_DIGITAL_REFINEMENT_DEFAULT_SUCCESS;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_SECOND_NOTIFICATION_WORKFLOW_WAITING_TIME_DEFAULT;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_TIME_TO_ADD_IN_NON_VISIBILITY_TIME_CASE_DEFAULT;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_WAIT_READ_COURTESY_MESSAGE_DEFAULT;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.ETTORE_FIERAMOSCA;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.EXTENSION;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.FILE_NOTFOUND;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.FILE_PDF_INVALID_ERROR;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.FILE_SHA_ERROR;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.GALILEO_GALILEI;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.GHERKIN_SRL;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.INVALID_PARAMETER_MAX_ATTACHMENT;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.LEONARDO_DA_VINCI;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.LUCIO_ANNEO_SENECA;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MARIO_CREDENZIALI_SCADUTE;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MARIO_CUCUMBER;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MARIO_GHERKIN;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MOST_RECENT;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOTIFICATION_INJECTION_ALLEGATO;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOTIFICATION_STATUS_ACCEPTED;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOTIFICATION_STATUS_CANCELLED;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_EQUAL_SHA;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_EQUAL_SHA_JSON;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_FOUND_ALLEGATO_JSON;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_FOUND_NO_PRELOAD;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_FOUND_ON_SAFE_STORAGE;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_VALID_ADDRESS;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.OVERSIZE_ALLEGATO;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.OVER_15_ALLEGATO;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SCHEDULING_DELTA_DEFAULT;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SEND_ANALOG_PROGRESS;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SHA_256;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.TAXID_NOT_VALID;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.VALIDATION_STATUS;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.VALIDATION_STATUS_ACCEPTATION_SHORT;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.VALIDATION_STATUS_NO_ACCEPTATION;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WAITING_GPD;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WAIT_DEFAULT;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WAIT_EXTRA_RAPID;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WAIT_UPPER_BOUND;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WORKFLOW_WAIT_DEFAULT;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WORKFLOW_WAIT_UPPER_BOUND;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WRONG_EXTENSION;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static java.time.OffsetDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -763,6 +705,18 @@ public class SharedSteps {
     private void sendNotificationWithError() {
         try {
             getNotificationStepInterface().uploadNotification(null);
+        } catch (HttpStatusCodeException | IOException e) {
+            if (e instanceof HttpStatusCodeException httpError) {
+                this.notificationError = httpError;
+            }
+        }
+    }
+
+    @When("la notifica viene inviata dal {string} con errore {string}")
+    public void laNotificaVieneInviataDallaPAWithError(String paName, String errorType) {
+        setPaAndSenderTaxId(paName);
+        try {
+            getNotificationStepInterface().uploadNotification(errorType);
         } catch (HttpStatusCodeException | IOException e) {
             if (e instanceof HttpStatusCodeException httpError) {
                 this.notificationError = httpError;
