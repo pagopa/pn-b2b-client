@@ -20,9 +20,9 @@ public class CommonParameterType {
         };
     }
 
-    @ParameterType("admin|api|security|api_security|support|reviewer|viewer")
+    @ParameterType("admin|api|security|api,security|support|reviewer|viewer")
     public UserRole userRole(String role) {
-        return UserRole.valueOf(role.toUpperCase().replace("_", ","));
+        return UserRole.valueOf(role.toUpperCase());
     }
 
     @ParameterType("attiva|disattiva")

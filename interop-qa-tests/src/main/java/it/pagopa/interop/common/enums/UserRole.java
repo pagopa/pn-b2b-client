@@ -7,5 +7,9 @@ public enum UserRole {
     API_SECURITY,
     SUPPORT,
     REVIEWER,
-    VIEWER
+    VIEWER;
+
+    public String getValue() {
+        return this.name().toLowerCase().replace("_", ",");
+    }
 }
