@@ -292,3 +292,62 @@ Feature: Gestione della callback interface per gli e-service asincroni
     And l'utente carica un'interfaccia di callback di scambio asincrono per quel descrittore
     When l'utente tenta di effettuare la rimozione dell'interfaccia di callback di scambio asincrono dell'e-service
     Then si ottiene lo status code 404
+
+  Scenario Outline: [ASYNC_ESERVICE_CALLBACK_INTERFACE_DOWNLOAD_DRAFT] Il download dell'interfaccia di callback per un e-service
+  asincrono in stato draft può essere effettuato soltanto dall'utente erogatore.
+
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service asincrono in stato "DRAFT" con:
+      | technology | REST    |
+      | mode       | DELIVER |
+    And si ottiene response status code 200
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente carica un'interfaccia di callback di scambio asincrono per quel descrittore
+    And si ottiene response status code 200
+
+    When l'utente è un "admin" di "<tenant>" con ruolo M2M <m2mRole>
+    And l'utente effettua il download dell'interfaccia di callback di scambio asincrono per quel descrittore
+    Then si ottiene lo status code <expectedResult>
+
+    Examples:
+      | tenant | m2mRole   | expectedResult |
+      | PA1    | m2m-admin | 200            |
+      | PA1    | m2m       | 200            |
+      | PA2    | m2m-admin | 404            |
+      | PA2    | m2m       | 404            |
+
+  Scenario Outline: [ASYNC_ESERVICE_CALLBACK_INTERFACE_DOWNLOAD_SUCCESS_PUBLISHED] Il download dell'interfaccia di callback per un e-service
+  asincrono in stato pubblicato può essere effettuato anche da un utente non erogatore.
+
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service asincrono in stato "DRAFT" con:
+      | technology | REST    |
+      | mode       | DELIVER |
+    And si ottiene response status code 200
+    And l'utente aggiorna alcuni parametri di quel descrittore con:
+      | voucherLifespan                               | 60        |
+      | dailyCallsPerConsumer                         | 50        |
+      | dailyCallsTotal                               | 2000      |
+      | audience                                      | pagopa.it |
+      | agreementApprovalPolicy                       | AUTOMATIC |
+      | asyncExchangeProperties.responseTime          | 100       |
+      | asyncExchangeProperties.resourceAvailableTime | 100       |
+      | asyncExchangeProperties.confirmation          | true      |
+      | asyncExchangeProperties.bulk                  | true      |
+      | asyncExchangeProperties.maxResultSet          | 100       |
+    And si ottiene response status code 200
+    And "PA1" ha già caricato un'interfaccia per quel descrittore
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente carica un'interfaccia di callback di scambio asincrono per quel descrittore
+    And l'utente pubblica l'e-service
+    And si ottiene response status code 200
+    And l'utente è un "admin" di "<tenant>" con ruolo M2M <m2mRole>
+    When l'utente effettua il download dell'interfaccia di callback di scambio asincrono per quel descrittore
+    Then si ottiene lo status code <expectedResult>
+
+    Examples:
+      | tenant | m2mRole   | expectedResult |
+      | PA1    | m2m-admin | 200            |
+      | PA1    | m2m       | 200            |
+      | PA2    | m2m-admin | 200            |
+      | PA2    | m2m       | 200            |

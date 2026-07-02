@@ -4,13 +4,19 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.eservice.service.IM2MEserviceClient;
 import it.pagopa.interop.eservice.service.IM2MV3EserviceClient;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.UUID;
 
+@Slf4j
 public class EServiceAsyncExchangeCallbackInterfaceSteps {
 
     private final IHttpExecutor httpExecutor;
@@ -120,6 +126,14 @@ public class EServiceAsyncExchangeCallbackInterfaceSteps {
         );
     }
 
+    @When("l'utente effettua il download dell'interfaccia di callback di scambio asincrono per quel descrittore")
+    public void downloadCallbackInterface() {
+        this.downloadAsyncExchangeCallbackInterface(
+                sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                sharedStepsContext.getEServicesCommonContext().getDescriptorId()
+        );
+    }
+
     private void uploadAsyncExchangeCallbackInterface(String asyncExchangeCallbackInterfaceName, UUID eServiceId, UUID descriptorId, String fileName) {
         String filePath = String.format("src/main/resources/%s", fileName);
         Resource resource = blobFileCreator.createBlobFile(filePath, fileName);
@@ -134,5 +148,25 @@ public class EServiceAsyncExchangeCallbackInterfaceSteps {
 
     private void deleteAsyncExchangeCallbackInterface(UUID eServiceId, UUID descriptorId) {
         httpExecutor.performCall(() -> eServiceClient.deleteEServiceDescriptorAsyncExchangeCallbackInterface(eServiceId, descriptorId));
+    }
+
+    private String downloadAsyncExchangeCallbackInterface(UUID eServiceId, UUID descriptorId) {
+
+        httpExecutor.performCall(() -> eServiceClient.downloadEServiceDescriptorAsyncExchangeCallbackInterface(
+                eServiceId, descriptorId
+        ));
+
+        if (!httpExecutor.getResponseStatus().is2xxSuccessful()) {
+            return null;
+        }
+
+        try {
+            FileDownloadMultipart descriptorInterface = (FileDownloadMultipart) httpExecutor.getResponse();
+            byte[] actualInterface = Files.readAllBytes(descriptorInterface.getFile().toPath());
+            return new String(actualInterface, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            log.error("Errore durante il download dell'interfaccia di callback di scambio asincrono", e);
+            return null;
+        }
     }
 }
