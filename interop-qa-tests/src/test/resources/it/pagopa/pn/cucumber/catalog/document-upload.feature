@@ -118,3 +118,36 @@ Feature: Caricamento di un documento di interfaccia
     And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     When l'utente carica un documento di interfaccia di tipo YAML "con versione obsoleta"
     Then si ottiene status code 400
+
+  # PIN-9920 PST 2.1 - serverUrls description handling in interface documents
+  @pin-9920
+  @happy-path
+  Scenario: [PIN-9920 PST 2.1] Creazione e-service con interfaccia REST contenente serverUrls con description
+    Given l'utente è un "admin" di "PA1"
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT" e tecnologia "REST"
+    When l'utente carica un'interfaccia "REST" con serverUrls che contengono descrizione
+    Then si ottiene status code 200
+
+  @pin-9920
+  @happy-path
+  Scenario: [PIN-9920 PST 2.1] Creazione e-service con interfaccia REST contenente serverUrls senza description
+    Given l'utente è un "admin" di "PA1"
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT" e tecnologia "REST"
+    When l'utente carica un'interfaccia "REST" con serverUrls senza descrizione
+    Then si ottiene status code 200
+
+  @pin-9920
+  @sad-path
+  Scenario: [PIN-9920 PST 2.1] Creazione e-service con interfaccia REST con serverUrls array vuoto
+    Given l'utente è un "admin" di "PA1"
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT" e tecnologia "REST"
+    When l'utente carica un'interfaccia "REST" con serverUrls array vuoto
+    Then si ottiene status code 400
+
+  @pin-9920
+  @sad-path
+  Scenario: [PIN-9920 PST 2.1] Creazione e-service con interfaccia REST senza serverUrls
+    Given l'utente è un "admin" di "PA1"
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT" e tecnologia "REST"
+    When l'utente carica un'interfaccia "REST" senza serverUrls
+    Then si ottiene status code 400
