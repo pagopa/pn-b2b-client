@@ -790,10 +790,13 @@ public class BFFDataPreparationService {
     }
 
     public void interpolateInterfaceToDescriptor(UUID eServiceId, UUID descriptorId) {
+        ServerUrlWithDescription serverUrl =
+            new ServerUrlWithDescription().url(URI.create("http://www.some.url.it"));
+
         TemplateInstanceInterfaceRESTSeed seed = new TemplateInstanceInterfaceRESTSeed()
             .contactName("Some contact name")
             .contactEmail("some@contact-email.it")
-            .addServerUrlsItem(URI.create("http://www.some.url.it"));
+            .addServerUrlsItem(serverUrl);
         httpCallExecutor.performCall(() -> eServiceClient.addEServiceTemplateInstanceInterfaceRestWithHttpInfo(eServiceId, descriptorId, seed));
         assertValidResponse();
 

@@ -307,8 +307,10 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <!-- <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/develop/packages/api-clients/open-api/bffApi.yml</inputSpec> -->
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.20.0-RC3/packages/api-clients/open-api/bffApi.yml</inputSpec>
+
+                            <!-- https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/develop/packages/api-clients/open-api/bffApi.yml -->
+                            <!-- Spec locale PIN-9920: include campo description in serverUrls -->
+                            <inputSpec>src/main/resources/BFF OpenAPI develop 30062026 - with description.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
