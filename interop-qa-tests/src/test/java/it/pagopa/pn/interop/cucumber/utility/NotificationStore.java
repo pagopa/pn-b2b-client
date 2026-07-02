@@ -75,8 +75,8 @@ public class NotificationStore {
     private void initializeNotifications(NotificationUser user) {
         String tenantName = (user == null) ? null : user.getTenant();
         this.applyTaskForEveryUser(
-            List.of("support"), // FIXME 18 05 2026 mi risulta che solo support non riceve notifiche in-app
-            //List.of("security", "api", "support", "api,security"), // 14 01 2026 causa problemi tecnici lato backend si può testare solo per ADMIN https://pagopaspa.slack.com/archives/C08RZ0ATBJ6/p1768317958663119
+            //List.of("support", "viewer", "reviewer"), // Questi ruoli non ricevono notifiche in-app
+            List.of("api", "security", "api,security", "support", "reviewer", "viewer"), // Solo admin non escluso
             (role, tenant) -> {
                 int offset = 0;
                 List<Notification> currentNotif;
