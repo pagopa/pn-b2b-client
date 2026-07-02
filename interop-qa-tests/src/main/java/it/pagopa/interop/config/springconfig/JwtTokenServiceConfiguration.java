@@ -45,6 +45,7 @@ public class JwtTokenServiceConfiguration {
 
     @Bean
     @Primary
+    @Profile("!extra-qa")
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     public InteropTokenFactory interopTokenFactory(
         InteropClientConfigs interopClientConfigs,
