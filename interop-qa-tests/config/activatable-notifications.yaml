@@ -2,7 +2,7 @@
 # La configurazione delle notifiche non è autorizzata per i ruoli support, reviewer e viewer.
 
 role: "admin"
-inAppNotifications:
+notifications:
   # Fruizione dei dati
   - eserviceStateChangedToConsumer
   - agreementActivatedRejectedToConsumer
@@ -17,6 +17,7 @@ inAppNotifications:
   - purposeQuotaAdjustmentRequestToProducer
 
   # Richieste di fruizione (Erogazione)
+  - eserviceStateChangedToProducer
   - agreementManagementToProducer
   - agreementSuspendedUnsuspendedToProducer
 
@@ -47,7 +48,7 @@ inAppNotifications:
   - clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers
 ---
 role: "api"
-inAppNotifications:
+notifications:
   # Finalità (Erogazione)
   - purposeStatusChangedToProducer
 
@@ -58,7 +59,7 @@ inAppNotifications:
   - templateStatusChangedToProducer
 ---
 role: "security"
-inAppNotifications:
+notifications:
   # Fruizione dei dati
   - eserviceStateChangedToConsumer
   - agreementSuspendedUnsuspendedToConsumer
@@ -74,7 +75,7 @@ inAppNotifications:
   - clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers
 ---
 role: "api,security"
-inAppNotifications:
+notifications:
   # Fruizione dei dati
   - eserviceStateChangedToConsumer
   - agreementSuspendedUnsuspendedToConsumer
