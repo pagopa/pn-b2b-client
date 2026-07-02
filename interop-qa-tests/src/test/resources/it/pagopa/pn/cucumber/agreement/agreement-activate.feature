@@ -366,11 +366,22 @@ Feature: Attivazione richiesta di fruizione
 
   @happy-path
   @agreement-activate-refactor
-  Scenario: [AGREEMENTS_UNSUSPEND_8] La sospensione e riattivazione di una richista di fruizione eseguita dal fruitore va a buon fine
+  Scenario: [AGREEMENTS_UNSUSPEND_8] La sospensione e riattivazione di una richiesta di fruizione eseguita dal fruitore va a buon fine
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già sospeso quella richiesta di fruizione come PRODUCER
     And l'utente è un "admin" di "PA2"
+    When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 200
+    And la richiesta di fruizione è in stato "ACTIVE"
+
+  @happy-path
+  @agreement-activate-refactor
+  Scenario: [AGREEMENTS_UNSUSPEND_9] La sospensione e riattivazione di una richiesta di fruizione eseguita dall'erogatore dell'e-service va a buon fine
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già sospeso quella richiesta di fruizione come PRODUCER
+    And l'utente è un "admin" di "PA1"
     When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 200
     And la richiesta di fruizione è in stato "ACTIVE"
