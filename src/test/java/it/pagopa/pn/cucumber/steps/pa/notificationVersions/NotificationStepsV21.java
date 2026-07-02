@@ -158,7 +158,9 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
     }
 
     @Override
-    public String getSenderTaxId() { return notificationRequest.getSenderTaxId(); }
+    public String getSenderTaxId() {
+        return notificationRequest.getSenderTaxId();
+    }
 
     @Override
     public String getNotificationRequestGroup() {
@@ -460,5 +462,10 @@ public class NotificationStepsV21 implements NotificationStepsInterface {
     @Override
     public String getNoticeCode(int recipientIndex) {
         return notificationRequest.getRecipients().get(recipientIndex).getPayments().get(0).getPagoPa().getNoticeCode();
+    }
+
+    @Override
+    public void setApplyCostFalse(int recipientIndex, int paymentIndex) {
+        notificationRequest.getRecipients().get(recipientIndex).getPayments().get(paymentIndex).getPagoPa().setApplyCost(false);
     }
 }

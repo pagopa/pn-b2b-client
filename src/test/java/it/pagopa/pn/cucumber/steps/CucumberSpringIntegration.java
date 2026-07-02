@@ -4,6 +4,7 @@ import io.cucumber.spring.CucumberContextConfiguration;
 import it.pagopa.common.config.AwsConfig;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.generate.api.externalregistry.selfcare.privateapi.AooUoIdsApi;
 import it.pagopa.pn.client.b2b.pa.cache.CacheConfig;
+import it.pagopa.common.config.AwsConfig;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.config.TemplateEngineConfigBean;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.*;
@@ -22,6 +23,71 @@ import it.pagopa.pn.client.b2b.pa.polling.impl.v26.*;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v27.*;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v28.*;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v29.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v25.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v26.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v27.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v28.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v29.*;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v25.PnPollingServiceStatusExtraRapidV25;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v25.PnPollingServiceStatusRapidV25;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v25.PnPollingServiceStatusSlowV25;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v25.PnPollingServiceTimelineExtraRapidV25;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v25.PnPollingServiceTimelineRapidV25;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v25.PnPollingServiceTimelineSlowE2eV25;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v25.PnPollingServiceTimelineSlowV25;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v25.PnPollingServiceValidationStatusAcceptedExtraRapidV25;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v25.PnPollingServiceValidationStatusAcceptedShortV25;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v25.PnPollingServiceValidationStatusNoAcceptedV25;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v25.PnPollingServiceValidationStatusV25;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v25.PnPollingServiceWebhookV25;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v26.PnPollingServiceStatusExtraRapidV26;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v26.PnPollingServiceStatusRapidV26;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v26.PnPollingServiceStatusSlowV26;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v26.PnPollingServiceTimelineExtraRapidV26;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v26.PnPollingServiceTimelineRapidV26;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v26.PnPollingServiceTimelineSlowE2eV26;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v26.PnPollingServiceTimelineSlowV26;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v26.PnPollingServiceValidationStatusAcceptedExtraRapidV26;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v26.PnPollingServiceValidationStatusAcceptedShortV26;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v26.PnPollingServiceValidationStatusNoAcceptedV26;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v26.PnPollingServiceValidationStatusV26;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v26.PnPollingServiceWebhookV26;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v27.PnPollingServiceStatusExtraRapidV27;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v27.PnPollingServiceStatusRapidV27;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v27.PnPollingServiceStatusSlowV27;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v27.PnPollingServiceTimelineExtraRapidV27;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v27.PnPollingServiceTimelineRapidV27;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v27.PnPollingServiceTimelineSlowE2eV27;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v27.PnPollingServiceTimelineSlowV27;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v27.PnPollingServiceValidationStatusAcceptedExtraRapidV27;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v27.PnPollingServiceValidationStatusAcceptedShortV27;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v27.PnPollingServiceValidationStatusNoAcceptedV27;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v27.PnPollingServiceValidationStatusV27;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v27.PnPollingServiceWebhookV27;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v28.PnPollingServiceStatusExtraRapidV28;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v28.PnPollingServiceStatusRapidV28;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v28.PnPollingServiceStatusSlowV28;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v28.PnPollingServiceTimelineExtraRapidV28;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v28.PnPollingServiceTimelineRapidV28;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v28.PnPollingServiceTimelineSlowE2eV28;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v28.PnPollingServiceTimelineSlowV28;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v28.PnPollingServiceValidationStatusAcceptedExtraRapidV28;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v28.PnPollingServiceValidationStatusAcceptedShortV28;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v28.PnPollingServiceValidationStatusNoAcceptedV28;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v28.PnPollingServiceValidationStatusV28;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v28.PnPollingServiceWebhookV28;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceStatusExtraRapidV29;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceStatusRapidV29;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceStatusSlowV29;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceTimelineExtraRapidV29;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceTimelineRapidV29;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceTimelineSlowE2eV29;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceTimelineSlowV29;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceValidationStatusAcceptedExtraRapidV29;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceValidationStatusAcceptedShortV29;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceValidationStatusNoAcceptedV29;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceValidationStatusV29;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceWebhookV29;
 import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.client.b2b.pa.service.IBffMandateServiceApi;
@@ -29,10 +95,20 @@ import it.pagopa.pn.client.b2b.pa.service.IMandateReverseServiceClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRaddCognito;
+import it.pagopa.pn.client.b2b.pa.utils.DataPreparationRaddVpceService;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.cucumber.steps.informalNotification.builders.InformalRecipientBuilder;
 import it.pagopa.pn.cucumber.steps.informalNotification.mapper.InformalNotificationRequestMapper;
 import it.pagopa.pn.cucumber.steps.informalNotification.provider.InformalMessageProvider;
+import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.model.StimeMittentiContext;
+import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
+import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClientV2;
+import it.pagopa.pn.cucumber.steps.delayer.loader.DelayerCsvLoader;
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
+import it.pagopa.pn.cucumber.steps.delayer.planner.DelayerPlanner;
+import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSevice;
+import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
+import it.pagopa.pn.cucumber.steps.delayer.validator.DelayerValidator;
 import it.pagopa.pn.cucumber.steps.paperTracker.parser.EventTimelineParser;
 import it.pagopa.pn.cucumber.steps.paperTracker.proxy.PaperTrackerSchemaValidatorProxy;
 import it.pagopa.pn.cucumber.steps.recipient.OtpCodeService;
@@ -42,16 +118,19 @@ import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
 import it.pagopa.pn.cucumber.steps.utilitySteps.TaxIdConfiguration;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import it.pagopa.pn.cucumber.utils.validator.SchemaValidator;
+import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @CucumberContextConfiguration
 @SpringBootTest(classes = {
+        JacksonAutoConfiguration.class,
         ApiKeysConfiguration.class,
         BearerTokenConfiguration.class,
         TimingConfiguration.class,
         RestTemplateConfiguration.class,
+        AwsConfig.class,
         PnPaB2bExternalClientImpl.class,
         PnWebRecipientExternalClientImpl.class,
         PnWebhookB2bExternalClientImpl.class,
@@ -77,6 +156,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnCfgClientImpl.class,
         TimingForPolling.class,
         PnB2bClientTimingConfigs.class,
+        PnIOConnectorClientImpl.class,
         PnPollingFactory.class,
         CieGeneratorTool.class,
         TaxIdConfiguration.class,
@@ -203,6 +283,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         IPnLegalPersonVirtualKeyServiceClientImpl.class,
         IPnTosPrivacyClientImpl.class,
         TemplateEngineClientImpl.class,
+        PnPaperChannelClientImpl.class,
         TemplateConfiguration.class,
         TemplateEngineContextFactory.class,
         EmdIntegrationApiImpl.class,
@@ -214,6 +295,15 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         LambdaInvoker.class,
         TemplateEngineConfigBean.class,
         SchemaValidator.class,
+        PaperTrackerSchemaValidatorProxy.class,
+        DelayerLambdaClientV2.class,
+        DelayerSevice.class,
+        DelayerLambdaClient.class,
+        DelayerValidator.class,
+        DelayerContext.class,
+        DelayerPaperDeliveryUtils.class,
+        DelayerCsvLoader.class,
+        DelayerPlanner.class,
         PaperTrackerSchemaValidatorProxy.class,
         PnExternalChannelsInternalClientImpl.class,
         PnEcInternalClientImpl.class,
@@ -229,6 +319,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         InformalRecipientBuilder.class,
         InformalNotificationRequestMapper.class,
         InformalMessageProvider.class
+        OtpCodeService.class,
+        PnRaddVpceAdapter.class,
+        PnRaddNetVpceClientImpl.class,
+        DataPreparationRaddVpceService.class,
+        PnNotificationCostClientImpl.class,
+        StimeMittentiContext.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

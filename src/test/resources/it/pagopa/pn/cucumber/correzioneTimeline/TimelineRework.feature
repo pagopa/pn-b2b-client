@@ -259,8 +259,8 @@ Feature: Test relativi al SRS di correzione timeline
   @timelineRework
   Scenario: [TIMELINE_REWORK_23] Rework notifica multidestinatario passi allo stato ERROR qualora, giunta allo stato CREATED, la verifica asincrona rilevi uno IUN nello stato UNREACHABLE.
     Given viene generata una nuova notifica
-      | subject               | invio notifica con cucumber |
-      | senderDenomination    | Comune di Palermo           |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | Via@FAIL-DISCOVERYIRREPERIBILEBADCAP_890 |
       | digitalDomicile         | NULL                                     |
@@ -684,7 +684,7 @@ Feature: Test relativi al SRS di correzione timeline
       | details_sentAttemptMade      | 1         |
       | details_deliveryFailureCause | M04       |
       | details_responseStatus       | KO        |
-    Then verifico la presenza di elementi di timeline con stringa "REWORK_"
+    Then la timeline contiene elementi con la stringa "REWORK_"
     And vengono effettuati i controlli sugli elementi invalidati usando la lista "BASE"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
@@ -742,7 +742,7 @@ Feature: Test relativi al SRS di correzione timeline
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    Then verifico la presenza di elementi di timeline con stringa "REWORK_"
+    Then la timeline contiene elementi con la stringa "REWORK_"
     And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
 
   @timelineRework
@@ -816,7 +816,7 @@ Feature: Test relativi al SRS di correzione timeline
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECRN002F"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
-    Then verifico la presenza di elementi di timeline con stringa "REWORK_"
+    Then la timeline contiene elementi con la stringa "REWORK_"
     And vengono effettuati i controlli sugli elementi invalidati usando la lista "BASE"
 
   @timelineRework
@@ -871,7 +871,7 @@ Feature: Test relativi al SRS di correzione timeline
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-    Then verifico la presenza di elementi di timeline con stringa "REWORK_"
+    Then la timeline contiene elementi con la stringa "REWORK_"
     And vengono effettuati i controlli sugli elementi invalidati usando la lista "BASE"
 
   @timelineRework
@@ -913,7 +913,7 @@ Feature: Test relativi al SRS di correzione timeline
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-    Then verifico la presenza di elementi di timeline con stringa "REWORK_"
+    Then la timeline contiene elementi con la stringa "REWORK_"
     And vengono effettuati i controlli sugli elementi invalidati usando la lista "BASE"
 
   @timelineRework
@@ -950,7 +950,7 @@ Feature: Test relativi al SRS di correzione timeline
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     Then vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
-    Then verifico la presenza di elementi di timeline con stringa "REWORK_"
+    Then la timeline contiene elementi con la stringa "REWORK_"
     And vengono effettuati i controlli sugli elementi invalidati usando la lista "BASE"
 
   @timelineRework
