@@ -1,6 +1,8 @@
 package it.pagopa.common.util;
 
 import it.pagopa.common.model.ISharedContext;
+import org.springframework.util.ReflectionUtils;
+import org.yaml.snakeyaml.introspector.PropertyUtils;
 
 import java.lang.reflect.Method;
 import java.time.LocalDate;
@@ -148,15 +150,13 @@ public class StringUtils {
             // 1) Funzione di recupero di un valore dal contesto
             if (functionName.equals(CONTEXT_FUNCTION_NAME)) {
                 String methodName = "get" + argument.substring(0, 1).toUpperCase() + argument.substring(1);
-                try {
-                    Method getterMethod = ISharedContext.class.getMethod(methodName);
-                    value = (String)getterMethod.invoke(context);
-
-                } catch (NoSuchMethodException e) {
-
-                } catch (Exception e) {
-                    e.printStackTrace();
+                Method getterMethod = ReflectionUtils.findMethod(ISharedContext.class, methodName);
+                if (getterMethod == null) {
+                    throw new IllegalArgumentException(
+                            "La funzione $" + CONTEXT_FUNCTION_NAME + " non supporta " + argument
+                    );
                 }
+                value = (String)ReflectionUtils.invokeMethod(getterMethod, context);
 
             // 2) Funzione su DateUtils
             } else if (DateUtils.FUNCTIONS.containsKey(functionName)) {
