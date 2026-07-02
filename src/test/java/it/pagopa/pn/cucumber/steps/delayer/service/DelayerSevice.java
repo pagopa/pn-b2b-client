@@ -44,12 +44,17 @@ public class DelayerSevice {
         }
     }
 
-    public Integer getCountersSumEstimates(String deliveryDate, String province, String product) {
+    public DelayerCountersSumEstimatesItem getCountersSumEstimates(String deliveryDate, String province, String product) {
         try {
 
-            var counters = lambdaClient.getCountersSumEstimates(deliveryDate, province, product);
-            return extractLatestNumberOfShipments(counters.getItems());
-
+            return lambdaClient.getCountersSumEstimates(deliveryDate, province, product)
+                    .getItems()
+                    .stream()
+                    .filter(item -> item.getSk().equals(String.format("SUM_ESTIMATES~%s~%s", product, province)))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException(
+                            "Nessun item trovato per deliveryDate %s con sk=SUM_ESTIMATES~%s~%s".formatted(deliveryDate, product, province)
+                    ));
         } catch (Exception e) {
             throw new RuntimeException(
                     "Errore durante GET_PRINT_CAPACITY_COUNTER per deliveryDate %s"

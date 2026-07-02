@@ -162,16 +162,17 @@ public class DelayerPlanner {
         // 2. Separa RS e secondi tentativi
         List<DelayerPaperDelivery> rsOrSecondAttempt = notifications.stream()
                 .filter(n -> n.isRS() || n.isSecondAttempt())
+                .filter(n -> !n.isInformalCommunication())
                 .toList();
 
         List<DelayerPaperDelivery> toEvaluateNormally = notifications.stream()
-                .filter(n -> !(n.isRS() || n.isSecondAttempt()))
+                .filter(n -> !((n.isRS() && !n.isInformalCommunication()) || n.isSecondAttempt()))
                 .toList();
 
         // 3. RS e secondi tentativi vanno direttamente alla valutazione successiva
         passedSenderLimit.addAll(utils.deepCopyAndUpdateKeys(rsOrSecondAttempt, WorkflowSteps.EVALUATE_SENDER_PRIORITY, context.expectedDeliveryDate));
 
-        //4. Gli 890 vengono processati per mittente censito e non
+        //4. Gli 890 e gli RS INFORMAL (comunicazioni bonarie) vengono processati per mittente censito e non
         toEvaluateNormally = sortByPriority(toEvaluateNormally);
 
         for (DelayerPaperDelivery notification : toEvaluateNormally) {
