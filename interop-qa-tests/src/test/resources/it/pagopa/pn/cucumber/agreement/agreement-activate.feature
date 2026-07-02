@@ -424,6 +424,22 @@ Feature: Attivazione richiesta di fruizione
     Then si ottiene status code 200
     And la richiesta di fruizione è in stato "ACTIVE"
 
+  @sad-path
+  @agreement-activate-refactor
+  Scenario: [AGREEMENTS_UNSUSPEND_13] Un delegato all'erogazione con delega revocata NON può riattivare una richiesta di fruizione in stato SUSPENDED per conto dell'erogatore
+    Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione automatica
+    And l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe
+    And l'ente "PA1" richiede la creazione di una delega per l'ente "PA2"
+    And l'ente "PA2" accetta la delega
+    And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già sospeso quella richiesta di fruizione come PRODUCER
+    And l'ente "PA1" con ruolo "admin" revoca la delega
+    When l'ente delegato richiede una operazione di riattivazione di quella richiesta di fruizione
+    Then si ottiene status code 403
+    And la richiesta di fruizione è in stato "SUSPENDED"
+
   @certifiedDiscreteAttribute
   @certifiedDiscreteAttributeFlagOn
   Scenario Outline: [CERT_DISCRETE_ATTR_AGREEMENT_1] Verifica della corretta associazione di una finalità su un e-service
