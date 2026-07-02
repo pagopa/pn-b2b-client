@@ -397,6 +397,17 @@ Feature: Attivazione richiesta di fruizione
     Then si ottiene status code 200
     And la richiesta di fruizione è in stato "SUSPENDED"
 
+  @sad-path
+  @agreement-activate-refactor
+  Scenario: [AGREEMENTS_UNSUSPEND_11] Se una richiesta di fruizione viene sospesa dal fruitore e l'erogatore dell'e-service tenta di riattivarla, questa rimarrà in stato SUSPENDED
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già sospeso quella richiesta di fruizione come PRODUCER
+    And l'utente è un "admin" di "PA1"
+    When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 200
+    And la richiesta di fruizione è in stato "SUSPENDED"
+
   @certifiedDiscreteAttribute
   @certifiedDiscreteAttributeFlagOn
   Scenario Outline: [CERT_DISCRETE_ATTR_AGREEMENT_1] Verifica della corretta associazione di una finalità su un e-service
