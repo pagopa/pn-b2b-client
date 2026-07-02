@@ -16,21 +16,9 @@ public class InformalNotificationRequestMapper {
 
     // New message
     public NewMessageRequest buildNewMessageRequest(Map<String, String> data) {
-        NewMessageRequestPrimaryMessage primaryMessage = buildMessageContent(
-                getValue(data, NotificationInformalValue.PRIMARY_SUBJECT.key),
-                getValue(data, NotificationInformalValue.PRIMARY_LONG_BODY.key),
-                getValue(data, NotificationInformalValue.PRIMARY_SHORT_BODY.key),
-                getValue(data, NotificationInformalValue.PRIMARY_LANGUAGE.key)
-        );
-        NewMessageRequestAdditionalMessage additionalMessage = buildAdditionalMessageContent(
-                getValue(data, NotificationInformalValue.ADDITIONAL_SUBJECT.key),
-                getValue(data, NotificationInformalValue.ADDITIONAL_LONG_BODY.key),
-                getValue(data, NotificationInformalValue.ADDITIONAL_SHORT_BODY.key),
-                getValue(data, NotificationInformalValue.ADDITIONAL_LANGUAGE.key)
-        );
-        return new NewMessageRequest()
-                .primaryMessage(primaryMessage)
-                .additionalMessage(additionalMessage);
+        NewMessageRequestPrimaryMessage primaryMessage = buildMessageContent(getValue(data, NotificationInformalValue.PRIMARY_SUBJECT.key), getValue(data, NotificationInformalValue.PRIMARY_LONG_BODY.key), getValue(data, NotificationInformalValue.PRIMARY_SHORT_BODY.key), getValue(data, NotificationInformalValue.PRIMARY_LANGUAGE.key));
+        NewMessageRequestAdditionalMessage additionalMessage = buildAdditionalMessageContent(getValue(data, NotificationInformalValue.ADDITIONAL_SUBJECT.key), getValue(data, NotificationInformalValue.ADDITIONAL_LONG_BODY.key), getValue(data, NotificationInformalValue.ADDITIONAL_SHORT_BODY.key), getValue(data, NotificationInformalValue.ADDITIONAL_LANGUAGE.key));
+        return new NewMessageRequest().primaryMessage(primaryMessage).additionalMessage(additionalMessage);
     }
 
     // New Informal Notification
@@ -38,7 +26,6 @@ public class InformalNotificationRequestMapper {
         InformalNotificationRequestV1 request = new InformalNotificationRequestV1();
 
         request.setSenderDenomination(getValue(data, SENDER_DENOMINATION.key));
-        //request.setSenderTaxId(getValue(data, SENDER_TAX_ID.key));
         request.setPaProtocolNumber(getValue(data, PA_PROTOCOL_NUMBER.key));
         request.setIdempotenceToken(getValue(data, IDEMPOTENCE_TOKEN.key));
         request.setCampaignId(getValue(data, CAMPAIGN_ID.key));
@@ -50,23 +37,14 @@ public class InformalNotificationRequestMapper {
             request.setAdditionalLanguages(List.of(notifLang));
         }
         request.setGroup(getValue(data, GROUP.key));
-
-        //request.setRecipients(List.of(buildRecipient(data)));
-
         //  NESSUN DESTINATARIO DI DEFAULT
         request.setRecipients(new ArrayList<>());
-
-        // request.setDocuments(List.of(buildDocument(data)));
         request.setDocuments(buildDocuments(data));
         return request;
     }
 
     // builder
-    private NewMessageRequestPrimaryMessage buildMessageContent(
-            String subject,
-            String longBody,
-            String shortBody,
-            String language) {
+    private NewMessageRequestPrimaryMessage buildMessageContent(String subject, String longBody, String shortBody, String language) {
 
         if (subject == null && longBody == null && shortBody == null) {
             return null;
@@ -79,11 +57,7 @@ public class InformalNotificationRequestMapper {
         return content;
     }
 
-    private NewMessageRequestAdditionalMessage buildAdditionalMessageContent(
-            String subject,
-            String longBody,
-            String shortBody,
-            String language) {
+    private NewMessageRequestAdditionalMessage buildAdditionalMessageContent(String subject, String longBody, String shortBody, String language) {
 
         if (subject == null && longBody == null && shortBody == null) {
             return null;
@@ -108,11 +82,7 @@ public class InformalNotificationRequestMapper {
         for (String doc : documentsToAdd.split(";")) {
 
             String path = getDocumentPath(doc);
-
-            NotificationDocument document = new NotificationDocument()
-                    .contentType("application/pdf")
-                    .ref(new NotificationAttachmentBodyRef().key(path));
-
+            NotificationDocument document = new NotificationDocument().contentType("application/pdf").ref(new NotificationAttachmentBodyRef().key(path));
             result.add(document);
         }
         return result;
@@ -133,27 +103,22 @@ public class InformalNotificationRequestMapper {
         };
     }
 
-    // fallback ?
+    // fallback
     private NotificationDocument buildDefaultDocument(Map<String, String> data) {
-        return new NotificationDocument()
-                .contentType("application/pdf")
-                .ref(new NotificationAttachmentBodyRef()
-                        .key("classpath:/sample_1pg.pdf"));
+        return new NotificationDocument().contentType("application/pdf").ref(new NotificationAttachmentBodyRef().key("classpath:/sample_1pg.pdf"));
     }
 
     // =========================
     // ATTACHMENT PAGAMENTO
     // =========================
 
-    public NotificationPaymentAttachment buildPaymentAttachment(
-            Map<String, String> data) {
+    public NotificationPaymentAttachment buildPaymentAttachment(Map<String, String> data) {
 
         NotificationAttachmentBodyRef ref = new NotificationAttachmentBodyRef();
         ref.setKey(getValue(data, ATTACHMENT_KEY.key));
 
         NotificationPaymentAttachment attachment = new NotificationPaymentAttachment();
-        attachment.setContentType(getValue(data, ATTACHMENT_CONTENT_TYPE.key)
-        );
+        attachment.setContentType(getValue(data, ATTACHMENT_CONTENT_TYPE.key));
         attachment.setRef(ref);
         return attachment;
     }

@@ -26,12 +26,10 @@ public class NotificationInformalUtilsV1 extends B2bUtils {
         super(context, b2bClient, pollingFactory);
     }
 
-
     // =========================================================
     // ENTRY POINT
     // =========================================================
-    public InformalNotificationRequestV1 preloadAndPrepare(
-            InformalNotificationRequestV1 request) throws IOException {
+    public InformalNotificationRequestV1 preloadAndPrepare(InformalNotificationRequestV1 request) throws IOException {
 
         preloadDocuments(request);
         preloadPayments(request);
@@ -49,18 +47,12 @@ public class NotificationInformalUtilsV1 extends B2bUtils {
         for (NotificationDocument doc : request.getDocuments()) {
             newDocs.add(preloadDocument(doc));
         }
-
         request.setDocuments(newDocs);
     }
 
     public NotificationDocument preloadDocument(NotificationDocument doc) throws IOException {
 
-        Pair<String, String> preload = preloadGeneric(
-                context,
-                b2bClient,
-                doc.getRef().getKey(),
-                "application/pdf"
-        );
+        Pair<String, String> preload = preloadGeneric(context, b2bClient, doc.getRef().getKey(), "application/pdf");
 
         doc.getRef().setKey(preload.getValue1());
         doc.getRef().setVersionToken("v1");
@@ -81,25 +73,17 @@ public class NotificationInformalUtilsV1 extends B2bUtils {
             for (InformalNotificationPaymentItem payment : recipient.getPayments()) {
 
                 if (payment.getPagoPa() != null) {
-                    payment.getPagoPa().setAttachment(
-                            preloadAttachment(payment.getPagoPa().getAttachment())
-                    );
+                    payment.getPagoPa().setAttachment(preloadAttachment(payment.getPagoPa().getAttachment()));
                 }
             }
         }
     }
 
-    public NotificationPaymentAttachment preloadAttachment(
-            NotificationPaymentAttachment attachment) throws IOException {
+    public NotificationPaymentAttachment preloadAttachment(NotificationPaymentAttachment attachment) throws IOException {
 
         if (attachment == null) return null;
 
-        Pair<String, String> preload = preloadGeneric(
-                context,
-                b2bClient,
-                attachment.getRef().getKey(),
-                "application/pdf"
-        );
+        Pair<String, String> preload = preloadGeneric(context, b2bClient, attachment.getRef().getKey(), "application/pdf");
 
         attachment.getRef().setKey(preload.getValue1());
         attachment.getRef().setVersionToken("v1");

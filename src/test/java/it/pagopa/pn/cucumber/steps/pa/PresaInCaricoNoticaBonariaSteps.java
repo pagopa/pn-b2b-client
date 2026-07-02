@@ -17,7 +17,6 @@ import it.pagopa.pn.cucumber.steps.dataTable.InformalNotificationRequestMapper;
 import it.pagopa.pn.cucumber.steps.pa.utilityInformalVersion.InformalRecipientBuilder;
 import it.pagopa.pn.cucumber.steps.pa.utilityInformalVersion.NotificationInformalUtilsV1;
 import it.pagopa.pn.cucumber.utils.GroupPosition;
-import it.pagopa.pn.cucumber.utils.InformalMessageProvider;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,12 +80,11 @@ public class PresaInCaricoNoticaBonariaSteps {
     private InformalSentNotificationV1 informalNotificationResponse;
 
     private final InformalNotificationRequestMapper informalNotificationRequestMapper;
-    private InformalMessageProvider messageProvider;
     private final InformalRecipientBuilder recipientBuilder;
     private final NotificationInformalUtilsV1 notificationInformalUtilsV1;
 
     @Autowired
-    public PresaInCaricoNoticaBonariaSteps(InformalNotificationRequestMapper informalNotificationRequestMapper, InformalRecipientBuilder recipientBuilder, InformalMessageProvider messageProvider, PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl, SharedSteps sharedSteps, TimingForPolling timingForPolling, IPnPrivateDeliveryPushExternalClient pnPrivateDeliveryPushExternalClient) {
+    public PresaInCaricoNoticaBonariaSteps(InformalNotificationRequestMapper informalNotificationRequestMapper, InformalRecipientBuilder recipientBuilder, PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl, SharedSteps sharedSteps, TimingForPolling timingForPolling, IPnPrivateDeliveryPushExternalClient pnPrivateDeliveryPushExternalClient) {
         this.sharedSteps = sharedSteps;
         this.timingForPolling = timingForPolling;
         this.pnPrivateDeliveryPushExternalClient = pnPrivateDeliveryPushExternalClient;
@@ -96,9 +94,7 @@ public class PresaInCaricoNoticaBonariaSteps {
         this.pnPollingFactory = sharedSteps.getPollingFactory();
         this.informalNotificationRequestMapper = informalNotificationRequestMapper;
         notificationInformalUtilsV1 = new NotificationInformalUtilsV1(sharedSteps.getContext(), b2bClient, sharedSteps.getPollingFactory());
-        this.messageProvider = messageProvider;
         this.recipientBuilder = recipientBuilder;
-
     }
 
     // STEP CREAZIONE E INVIO NOTIFICA
@@ -146,65 +142,6 @@ public class PresaInCaricoNoticaBonariaSteps {
 
         log.info("Invio notifica bonaria - request: {}", informalNotificationRequestV1);
     }
-
-//    @And("destinatario della notifica bonaria")
-//    public void addInformalRecipient(Map<String, String> data) {
-//
-//        assertNotNull(informalNotificationRequestV1, "Creare prima la notifica bonaria");
-//
-//        InformalNotificationRecipientV1 recipient = new InformalNotificationRecipientV1();
-//
-//        String physicalAddressValue = data.get("physical_address");
-//        boolean isPhysicalAddressNull = "${PHYSICAL_ADDRESS_NULL}".equalsIgnoreCase(physicalAddressValue);
-//
-//        String recipientType = getValue(data, RECIPIENT_TYPE.key);
-//        if (recipientType != null) {
-//            recipient.setRecipientType(InformalNotificationRecipientV1.RecipientTypeEnum.fromValue(recipientType));
-//        }
-//
-//        String messageIdValue = getValue(data, NotificationInformalValue.MESSAGE_ID.key);
-//        recipient.setMessageId(resolveMessageId(messageIdValue));
-//        recipient.setTaxId(getValue(data, RECIPIENT_TAX_ID.key));
-//        recipient.setDenomination(getValue(data, RECIPIENT_DENOMINATION.key));
-//
-//        String digitalDomicile = getValue(data, DIGITAL_DOMICILE.key);
-//        if (digitalDomicile != null) {
-//            recipient.setDigitalDomicile(new NotificationDigitalAddress().type(NotificationDigitalAddress.TypeEnum.PEC).address(digitalDomicile));
-//        } else {
-//            recipient.setDigitalDomicile(null);
-//        }
-//        NotificationPhysicalAddress physicalAddress = new NotificationPhysicalAddress();
-//
-//        if (isPhysicalAddressNull) {
-//            recipient.setPhysicalAddress(null);
-//        } else {
-//            physicalAddress.setAddress(getValue(data, PHYSICAL_ADDRESS_ADDRESS.key));
-//            physicalAddress.setAddressDetails(getValue(data, PHYSICAL_ADDRESS_DETAILS.key));
-//            physicalAddress.setZip(getValue(data, PHYSICAL_ADDRESS_ZIP.key));
-//            physicalAddress.setMunicipality(getValue(data, PHYSICAL_ADDRESS_MUNICIPALITY.key));
-//            physicalAddress.setProvince(getValue(data, PHYSICAL_ADDRESS_PROVINCE.key));
-//            physicalAddress.setForeignState(getValue(data, PHYSICAL_ADDRESS_STATE.key));
-//            physicalAddress.setAt(getValue(data, PHYSICAL_ADDRESS_AT.key));
-//
-//            recipient.setPhysicalAddress(physicalAddress);
-//        }
-//
-//        informalNotificationRequestV1.getRecipients().add(recipient);
-//        int paymentNumber = Integer.parseInt(getValue(data, PAYMENT_MULTY_NUMBER.key));
-//        List<InformalNotificationPaymentItem> payments = new ArrayList<>();
-//
-//        for (int i = 0; i < paymentNumber; i++) {
-//
-//            NotificationPaymentAttachment attachment = informalNotificationRequestMapper.buildPaymentAttachment(data);
-//            PagoPaPaymentBase pagoPa = new PagoPaPaymentBase().noticeCode(generateNoticeCode(getValue(data, PAYMENT_NOTICE_CODE.key), i)).creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key)).attachment(attachment);
-//            InformalNotificationPaymentItem item = new InformalNotificationPaymentItem();
-//
-//            item.setPagoPa(pagoPa);
-//            payments.add(item);
-//        }
-//        recipient.setPayments(payments);
-//    }
-
 
     @And("destinatario della notifica bonaria")
     public void addInformalRecipientLight(Map<String, String> data) {
@@ -367,7 +304,7 @@ public class PresaInCaricoNoticaBonariaSteps {
         }
     }
 
-    @And("l'operazione sul messaggio utile per le bonarie è andata a buon fine")
+    @And("l'operazione è andata a buon fine")
     public void verifyMessageCreated() {
         assertNull(lastException, "Errore non atteso");
         assertNotNull(messageResponse, "Response messaggio nulla");
@@ -697,40 +634,4 @@ public class PresaInCaricoNoticaBonariaSteps {
             data.put("group", currentGroupId);
         }
     }
-
-//    private String generateNoticeCode(String base, int index) {
-//
-//        if (base == null) {
-//            return NotificationInformalValue.generateRandomNumber();
-//        }
-//        String cleaned = base.trim();
-//        cleaned = cleaned.replaceAll("\\D", "");
-//        if (cleaned.isEmpty()) {
-//            return NotificationInformalValue.generateRandomNumber();
-//        }
-//        if (cleaned.length() >= 18) {
-//            String prefix = cleaned.substring(0, 16);
-//            String suffix = String.format("%02d", index % 100);
-//            return prefix + suffix;
-//        }
-//        if (cleaned.length() < 18) {
-//            return cleaned + "0".repeat(18 - cleaned.length());
-//        }
-//        return NotificationInformalValue.generateRandomNumber();
-//    }
-
-
-
-//    private UUID resolveMessageId(String value) {
-//
-//        if (value == null) {
-//            return null;
-//        }
-//
-//        return switch (value) {
-//            case "${IT}" -> UUID.fromString(messageProvider.getMessageIT(currentCxId));
-//            case "${IT-FR}" -> UUID.fromString(messageProvider.getMessageITFR(currentCxId));
-//            default -> UUID.fromString(value);
-//        };
-//    }
 }

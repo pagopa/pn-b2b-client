@@ -35,9 +35,9 @@ Feature: Messaggi e allegati di una notifica bonaria.
     When si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
       | primary_subject                       |
       | Nuovo messaggio per notifiche bonarie |
-    And l'operazione sul messaggio utile per le bonarie è andata a buon fine
+    And l'operazione è andata a buon fine
     Then tento il recupero del messaggio precedentemente creato per le comunicazioni bonarie
-    And l'operazione sul messaggio utile per le bonarie è andata a buon fine
+    And l'operazione è andata a buon fine
 
   @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_MESSAGGI_02_1_B] Come ente mittente creo un nuovo messaggio con valori di default con seconda lingua non specificata
@@ -45,7 +45,7 @@ Feature: Messaggi e allegati di una notifica bonaria.
     Then si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
       | primary_subject   | additional_language |
       | Messaggio bonario | NULL                |
-    Then l'operazione sul messaggio utile per le bonarie è andata a buon fine
+    Then l'operazione è andata a buon fine
 
   @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_MESSAGGI_02_1_C] Come ente mittente creo un nuovo messaggio con valori di default con seconda lingua specificata
@@ -53,7 +53,7 @@ Feature: Messaggi e allegati di una notifica bonaria.
     Then si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
       | primary_subject   | additional_language |
       | Messaggio bonario | FR                  |
-    Then l'operazione sul messaggio utile per le bonarie è andata a buon fine
+    Then l'operazione è andata a buon fine
 
   @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_MESSAGGI_02_1_D] Come ente mittente creo un nuovo messaggio con valori di default con seconda lingua non specificata
@@ -62,7 +62,7 @@ Feature: Messaggi e allegati di una notifica bonaria.
       | primary_subject   | additional_language | additional_short_body | additional_long_body | additional_subject |
       | Messaggio bonario | FR                  | Testo short add       | testo long add       | subj add           |
     Then tento il recupero del messaggio precedentemente creato per le comunicazioni bonarie
-    Then l'operazione sul messaggio utile per le bonarie è andata a buon fine
+    Then l'operazione è andata a buon fine
 
   @informalNotificationsMessageAttachment
   Scenario Outline: [NOTIFICHE_BONARIE_MESSAGGI_02_1_D2] Come ente mittente creo un nuovo messaggio con campi addizionali a null, ricevo errore.
@@ -196,9 +196,9 @@ Feature: Messaggi e allegati di una notifica bonaria.
     When si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
       | primary_subject                       |
       | Nuovo messaggio per notifiche bonarie |
-    And l'operazione sul messaggio utile per le bonarie è andata a buon fine
+    And l'operazione è andata a buon fine
     Then tento il recupero del messaggio precedentemente creato per le comunicazioni bonarie
-    And l'operazione sul messaggio utile per le bonarie è andata a buon fine
+    And l'operazione è andata a buon fine
     Then mittente della notifica bonaria: "Comune_Root"
     And il recupero del messaggio per le comunicazioni bonarie fallisce con errore "403"
 
@@ -208,9 +208,9 @@ Feature: Messaggi e allegati di una notifica bonaria.
     When si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
       | primary_subject                       |
       | Nuovo messaggio per notifiche bonarie |
-    And l'operazione sul messaggio utile per le bonarie è andata a buon fine
+    And l'operazione è andata a buon fine
     Then tento il recupero del messaggio precedentemente creato per le comunicazioni bonarie
-    And l'operazione sul messaggio utile per le bonarie è andata a buon fine
+    And l'operazione è andata a buon fine
     Then mittente della notifica bonaria: "Comune_1"
     And il recupero del messaggio per le comunicazioni bonarie fallisce con errore "403"
 

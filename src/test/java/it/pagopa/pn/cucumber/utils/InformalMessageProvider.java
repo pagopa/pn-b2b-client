@@ -4,12 +4,10 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainforma
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewMessageRequestAdditionalMessage;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewMessageRequestPrimaryMessage;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bInternalInformalClientImpl;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 
 @Component
-@Scope("singleton")
 public class InformalMessageProvider {
 
     private volatile String messageIdIT;

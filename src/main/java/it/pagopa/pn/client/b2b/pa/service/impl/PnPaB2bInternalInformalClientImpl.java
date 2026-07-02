@@ -16,9 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-@Component()
-//@ConditionalOnProperty(name = IPnPaB2bClient.IMPLEMENTATION_TYPE_PROPERTY, havingValue = "internal")
-//@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)  todo t bonarie
+@Component
 public class PnPaB2bInternalInformalClientImpl {
     private final String paId;
     private final String operatorId;

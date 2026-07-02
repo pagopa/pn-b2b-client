@@ -22,9 +22,7 @@ public class InformalRecipientBuilder {
     private final InformalNotificationRequestMapper mapper;
     private final InformalMessageProvider messageProvider;
 
-    public InformalNotificationRecipientV1 build(
-            Map<String, String> data,
-            String currentCxId) {
+    public InformalNotificationRecipientV1 build(Map<String, String> data, String currentCxId) {
 
         InformalNotificationRecipientV1 recipient = new InformalNotificationRecipientV1();
 
@@ -33,9 +31,7 @@ public class InformalRecipientBuilder {
         // =========================
         String recipientType = getValue(data, RECIPIENT_TYPE.key);
         if (recipientType != null) {
-            recipient.setRecipientType(
-                    InformalNotificationRecipientV1.RecipientTypeEnum.fromValue(recipientType)
-            );
+            recipient.setRecipientType(InformalNotificationRecipientV1.RecipientTypeEnum.fromValue(recipientType));
         }
         recipient.setMessageId(resolveMessageId(data, currentCxId));
         recipient.setTaxId(getValue(data, RECIPIENT_TAX_ID.key));
@@ -47,11 +43,7 @@ public class InformalRecipientBuilder {
         String digitalDomicile = getValue(data, DIGITAL_DOMICILE.key);
 
         if (digitalDomicile != null) {
-            recipient.setDigitalDomicile(
-                    new NotificationDigitalAddress()
-                            .type(NotificationDigitalAddress.TypeEnum.PEC)
-                            .address(digitalDomicile)
-            );
+            recipient.setDigitalDomicile(new NotificationDigitalAddress().type(NotificationDigitalAddress.TypeEnum.PEC).address(digitalDomicile));
         } else {
             recipient.setDigitalDomicile(null);
         }
@@ -59,14 +51,8 @@ public class InformalRecipientBuilder {
         // =========================
         // CONTACTS
         // =========================
-        recipient.setPhoneNumber(
-                getValue(data, PHONE_NUMBER.key)
-        );
-
-        recipient.setEmail(
-                getValue(data, EMAIL.key)
-        );
-
+        recipient.setPhoneNumber(getValue(data, PHONE_NUMBER.key));
+        recipient.setEmail(getValue(data, EMAIL.key));
 
         // =========================
         // PHYSICAL ADDRESS
@@ -117,10 +103,7 @@ public class InformalRecipientBuilder {
 
             NotificationPaymentAttachment attachment = mapper.buildPaymentAttachment(data);
 
-            PagoPaPaymentBase pagoPa = new PagoPaPaymentBase()
-                    .noticeCode(generateNoticeCode(getValue(data, PAYMENT_NOTICE_CODE.key), i))
-                    .creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
-                    .attachment(attachment);
+            PagoPaPaymentBase pagoPa = new PagoPaPaymentBase().noticeCode(generateNoticeCode(getValue(data, PAYMENT_NOTICE_CODE.key), i)).creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key)).attachment(attachment);
 
             InformalNotificationPaymentItem item = new InformalNotificationPaymentItem();
             item.setPagoPa(pagoPa);
