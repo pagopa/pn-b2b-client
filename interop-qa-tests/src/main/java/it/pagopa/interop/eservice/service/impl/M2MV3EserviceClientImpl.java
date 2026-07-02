@@ -132,6 +132,11 @@ public class M2MV3EserviceClientImpl extends AbstractDPoPClient implements IM2MV
     }
 
     @Override
+    public FileDownloadMultipart downloadEServiceDescriptorAsyncExchangeCallbackInterface(UUID eServiceId, UUID descriptorId) {
+        return vMapper.mapToV2(eservicesApi.downloadEServiceDescriptorAsyncExchangeCallbackInterface(eServiceId, descriptorId));
+    }
+
+    @Override
     public EService createEService(EServiceCreateRequest body) {
         return vMapper.mapToV2(eservicesApi.createEService(new EServiceSeed()
                 .name(body.getName())

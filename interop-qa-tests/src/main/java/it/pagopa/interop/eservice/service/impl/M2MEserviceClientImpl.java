@@ -117,12 +117,17 @@ public class M2MEserviceClientImpl extends AbstractClient implements IM2MEservic
 
     @Override
     public Document uploadAsyncExchangeCallbackInterface(EServiceInterfaceUploadRequest body) {
-        throw new APIUnavailableException("Endpoint disponibile solo per M2M v3");
+        throw new APIUnavailableException("Endpoint available only for M2M v3");
     }
 
     @Override
     public void deleteEServiceDescriptorAsyncExchangeCallbackInterface(UUID eServiceId, UUID descriptorId) {
-        throw new APIUnavailableException("Endpoint disponibile solo per M2M v3");
+        throw new APIUnavailableException("Endpoint available only for M2M v3");
+    }
+
+    @Override
+    public FileDownloadMultipart downloadEServiceDescriptorAsyncExchangeCallbackInterface(UUID eServiceId, UUID descriptorId) {
+        throw new APIUnavailableException("Endpoint available only for M2M v3");
     }
 
     @Override
