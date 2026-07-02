@@ -67,7 +67,7 @@ public class JwtTokenServiceConfiguration {
     @Bean(name = "interopSelfcareIdentityService")
     @Profile("extra-qa")
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    public IdentityService interopSelfcareIdentityServiceQA(InteropTokenFactory tracingTokenFactory, ConfigFileReader configFileReader) {
+    public IdentityService interopSelfcareIdentityServiceQA(TracingTokenFactory tracingTokenFactory, ConfigFileReader configFileReader) {
         return new IdentityServiceSelfcareImpl(tracingTokenFactory, configFileReader);
     }
 
