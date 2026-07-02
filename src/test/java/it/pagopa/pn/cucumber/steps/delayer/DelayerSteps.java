@@ -450,7 +450,7 @@ public class DelayerSteps {
                 .append(product).append("~")
                 .append(province).toString();
 
-        int sumEstimate = service.getCountersSumEstimates(deliveryDate, province, product);
+        int sumEstimate = service.getCountersSumEstimates(deliveryDate, province, product).getNumberOfShipments();
         int weeklyEstimate = service.fetchWeeklyEstimateForPA(deliveryDate, pk);
         Set<String> productsWithCapacity = new HashSet<>();
         int sumDeclaredCapacity = service.getDeclaredCapacity(deliveryDate, province, product, productsWithCapacity);

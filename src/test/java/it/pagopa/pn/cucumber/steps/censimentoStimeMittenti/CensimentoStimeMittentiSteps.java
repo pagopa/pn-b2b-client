@@ -3,32 +3,41 @@ package it.pagopa.pn.cucumber.steps.censimentoStimeMittenti;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.datatable.DataTable;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.model.ModuloCommessa;
 import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.model.StimeMittentiContext;
 import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerCountersSumEstimatesItem;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimit;
+import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSevice;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerSenderLimitUtils;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.utils.FileUtils;
-import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.awaitility.Awaitility;
+import org.awaitility.core.ConditionTimeoutException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -40,18 +49,11 @@ public class CensimentoStimeMittentiSteps {
     @Value("${pn.delayer.portfat.lambda.name}")
     private String portfatLambdaName;
 
-
     private final DelayerLambdaClient lambdaClient;
     private final StimeMittentiContext context;
     private Map<LocalDate, Integer> expectedWeeklyEstimates;
-    private ApplicationContext applicationContext;
-
-    @Autowired
-    public CensimentoStimeMittentiSteps(ApplicationContext applicationContext, LambdaInvoker lambdaInvoker, @Value("${pn.delayer.lambda.arn}") String lambdaName) {
-        this.context = new StimeMittentiContext();
-        this.lambdaClient = new DelayerLambdaClient(lambdaInvoker, lambdaName);
-        this.applicationContext = applicationContext;
-    }
+    private final ApplicationContext applicationContext;
+    private final DelayerSevice delayerSevice;
 
     @When("si verifica che la tabella pn-DelayerSenderLimit contenga i nuovi limiti mittenti per la provincia {string}")
     public void fetchSenderLimitUntilCondition(String province) {
@@ -145,15 +147,6 @@ public class CensimentoStimeMittentiSteps {
     }
 
 
-
-
-
-    @Then("si verifica che la stima recupera corrisponda alla stima attesa")
-    public void verifyResultsAreConsistentWithExpected() {
-        calculateExpectedWeeklyProvincialEstimates();
-    }
-
-
     private Map<String, String> prepareParametersForGetPresignedUrl(
             String fileName,
             String checksumSha256B64,
@@ -236,5 +229,59 @@ public class CensimentoStimeMittentiSteps {
         }
     }
 
+    /**
+     * Verifica che la somma delle stime di tutte le PA per la coppia prodotto e provincia sia coerente con quella attesa passata in input.
+     * La stima attesa è calcolata internamente in base alla distribuzione dei giorni della settimana considerando anche i giorni a cavallo tra due mesi e al valore di commessa di ciascun mese.
+     * Formula:
+     * - numberOfShipments = (valore commessa primo mese / giorni totali primo mese) * giorni della settimana a cavallo del primo mese + (valore commessa secondo mese / giorni totali secondo mese) * giorni della settimana a cavallo del secondo mese
+     * @param deliveryDate la settimana di riferimento (formato yyyy-MM-dd, deve essere un lunedì)
+     * @param product il prodotto di riferimento
+     * @param province la provincia di riferimento
+     * @param dataTable la tabella con le stime attese, con le seguenti colonne:
+     *                  - numberOfShipments: la stima settimanale provinciale attesa
+     *                  - firstWeekNumberOfShipments: la stima della prima parte della settimana a cavallo attesa
+     *                  - secondWeekNumberOfShipments: la stima della seconda parte della settimana a cavallo attesa
+     */
+    @And("per la settimana {string}, per il prodotto {string} per la provincia {string} si verifica che la somma delle commesse sia:")
+    public void verifyWeeklyProvincialEstimates(String deliveryDate, String product, String province, Map<String, String> dataTable) {
+        int expectedTotal = Integer.parseInt(dataTable.get("numberOfShipments"));
+        int expectedFirstWeek = Integer.parseInt(dataTable.get("firstWeekNumberOfShipments"));
+        int expectedSecondWeek = Integer.parseInt(dataTable.get("secondWeekNumberOfShipments"));
+
+        AtomicReference<DelayerCountersSumEstimatesItem> lastResult = new AtomicReference<>();
+
+        try {
+            Awaitility.await()
+                    .atMost(Duration.ofMinutes(3))
+                    .pollInterval(Duration.ofSeconds(20))
+                    .pollDelay(Duration.ZERO) // prova subito, poi ripete ogni 20s
+                    .until(() -> {
+                        DelayerCountersSumEstimatesItem item =
+                                delayerSevice.getCountersSumEstimates(deliveryDate, province, product);
+                        lastResult.set(item);
+                        return item != null
+                                && item.getNumberOfShipments() == expectedTotal
+                                && item.getFirstWeekNumberOfShipments() == expectedFirstWeek
+                                && item.getSecondWeekNumberOfShipments() == expectedSecondWeek;
+                    });
+        } catch (ConditionTimeoutException e) {
+            // Timeout scaduto: eseguo comunque gli assert "classici" per avere
+            // un messaggio di errore dettagliato su quale campo non coincide
+            DelayerCountersSumEstimatesItem estimatesItem = lastResult.get();
+            Assertions.assertThat(estimatesItem)
+                    .as("Nessuna stima disponibile dopo 3 minuti di attesa")
+                    .isNotNull();
+
+            Assertions.assertThat(estimatesItem.getNumberOfShipments())
+                    .as("La somma delle stime settimanali provinciali calcolate internamente non è coerente con quella attesa passata in input")
+                    .isEqualTo(expectedTotal);
+            Assertions.assertThat(estimatesItem.getFirstWeekNumberOfShipments())
+                    .as("La stima della prima parte della settimana a cavallo non è coerente con quella attesa")
+                    .isEqualTo(expectedFirstWeek);
+            Assertions.assertThat(estimatesItem.getSecondWeekNumberOfShipments())
+                    .as("La stima della seconda parte della settimana a cavallo non è coerente con quella attesa")
+                    .isEqualTo(expectedSecondWeek);
+        }
+    }
 
 }

@@ -97,6 +97,7 @@ import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRaddCognito;
 import it.pagopa.pn.client.b2b.pa.utils.DataPreparationRaddVpceService;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
+import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.model.StimeMittentiContext;
 import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
 import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClientV2;
 import it.pagopa.pn.cucumber.steps.delayer.loader.DelayerCsvLoader;
@@ -313,7 +314,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnRaddVpceAdapter.class,
         PnRaddNetVpceClientImpl.class,
         DataPreparationRaddVpceService.class,
-        PnNotificationCostClientImpl.class
+        PnNotificationCostClientImpl.class,
+        StimeMittentiContext.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

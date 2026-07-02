@@ -9,8 +9,10 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -23,90 +25,83 @@ public class DynamoDbService {
 
     private static QueryRequest buildRequest(DynamoTableName tableName, Map<String, AttributeValue> attributeValues) {
         return switch (tableName) {
-            case TIMELINE -> buildTimelinesCategoryRequest(attributeValues);
-            case PAYMENT_INFO -> buildPaymentInfoRequest(attributeValues);
-            case NOTIFICATION_DELIVERY_COST -> buildNotificationDeliveryCostRequest(attributeValues);
-            case ONBOARD_INSTITUTIONS -> buildOnboardInstitutionsRequest(attributeValues);
-            case NOTIFICATION_REWORKS -> buildNotificationReworksRequest(attributeValues);
-            case REWORKED_TIMELINES_FOR_INVOICING -> buildReworkedTimelinesForInvoicingRequest(attributeValues);
-            case COST_COMPONENTS -> buildCostComponentsRequest(attributeValues);
-            case COST_UPDATE_RESULT -> buildCostUpdateResultRequest(attributeValues);
-            case USER_ATTRIBUTES -> buildUserAttributesInfoRequest(attributeValues);
-            case IO_CONNECTOR_REQUESTS -> buildIOConnectorRequestsRequest(attributeValues);
-            case BATCH_REQUESTS_WITH_INDEX_SEND_STATUS -> buildBatchRequestsBySendStatusAndLastReservedAfter(attributeValues);
+            //query WITH filters
+            case TIMELINE -> queryWithFilters(tableName, List.of("iun", "category"), attributeValues);
+            case REWORKED_TIMELINES_FOR_INVOICING ->
+                    queryWithFilters(tableName, List.of("paId_invoicingDay", "iun"), attributeValues);
+            //query WITHOUT filters
+            case PAYMENT_INFO, COST_COMPONENTS, COST_UPDATE_RESULT, USER_ATTRIBUTES ->
+                    queryWithoutFilters(tableName, "pk", attributeValues);
+            case ONBOARD_INSTITUTIONS -> queryWithoutFilters(tableName, "id", attributeValues);
+            case NOTIFICATION_REWORKS -> queryWithoutFilters(tableName, "iun", attributeValues);
+            case IO_CONNECTOR_REQUESTS -> queryWithoutFilters(tableName, "requestId", attributeValues);
+            case NOTIFICATION_DELIVERY_COST -> queryWithoutFilters(tableName, List.of("pk", "sk"), attributeValues);
+            //query WITH sorting
+            case BATCH_REQUESTS_WITH_INDEX_SEND_STATUS ->
+                    buildBatchRequestsBySendStatusAndLastReservedAfter(attributeValues);
             case BATCH_REQUESTS_WITH_INDEX_STATUS -> buildBatchRequestsByStatus(attributeValues);
         };
     }
 
-    private static QueryRequest buildTimelinesCategoryRequest(Map<String, AttributeValue> attributeValues) {
-        return DynamoQueryBuilder.withFilter(DynamoTableName.TIMELINE.getValue(),
-                "iun = :v_iun",
-                "category = :v_category",
+    private static QueryRequest queryWithoutFilters(DynamoTableName tableName, String column, Map<String, AttributeValue> attributeValues) {
+        return queryWithFilters(tableName, List.of(column), attributeValues);
+    }
+
+    /**
+     * Builds a query for DynamoDb only with the key condition (in case of multiple conditions the AND logic will be applied)
+     */
+    private static QueryRequest queryWithoutFilters(DynamoTableName tableName, List<String> columns, Map<String, AttributeValue> attributeValues) {
+        validateColumns(tableName, attributeValues, columns);
+        String keyCondition = columns.stream()
+                .map(column -> String.format("%s = :v_%s", column, column))
+                .collect(Collectors.joining(" AND "));
+        return DynamoQueryBuilder.withoutFilter(tableName.getValue(),
+                keyCondition,
                 attributeValues);
     }
 
-    private static QueryRequest buildPaymentInfoRequest(Map<String, AttributeValue> attributeValues) {
-        return DynamoQueryBuilder.withoutFilter(DynamoTableName.PAYMENT_INFO.getValue(),
-                "pk = :v_pk",
-                attributeValues);
+    /**
+     * Builds a query for DynamoDb only with the key condition and one or more filters.
+     * The first column is used for the key condition, the remaining ones for the filters (in case of multiple filters, the AND logic will be applied)
+     */
+    private static QueryRequest queryWithFilters(DynamoTableName tableName, List<String> columns, Map<String, AttributeValue> attributeValues) {
+        validateColumns(tableName, attributeValues, columns);
+        String keyCondition = String.format("%s = :v_%s", columns.get(0), columns.get(0));
+        String filterCondition = columns.stream()
+                .skip(1)
+                .map(column -> String.format("%s = :v_%s", column, column))
+                .collect(Collectors.joining(" AND "));
+        return DynamoQueryBuilder.withFilter(
+                tableName.getValue(),
+                keyCondition,
+                filterCondition,
+                attributeValues
+        );
     }
 
-    private static QueryRequest buildUserAttributesInfoRequest(Map<String, AttributeValue> attributeValues) {
-        return DynamoQueryBuilder.withoutFilter(DynamoTableName.USER_ATTRIBUTES.getValue(),
-                "pk = :v_pk",
-                attributeValues);
+    private static void validateColumns(DynamoTableName tableName, Map<String, AttributeValue> attributeValues, List<String> columns) {
+        if (attributeValues.keySet().size() != columns.size()) {
+            throw new IllegalArgumentException(String.format("Mismatch between number of arguments while querying table %s. AttributeValues size: %s. Columns size: %s",
+                    tableName.getValue(), attributeValues.keySet().size(), columns.size()));
+        }
+        List<String> columnsNotMatching = new ArrayList<>();
+        attributeValues.keySet().forEach(key -> {
+            String strippedKey = key.replaceFirst(":v_", "");
+            if (!columns.contains(strippedKey)) {
+                columnsNotMatching.add(strippedKey);
+            }
+        });
+        if (!columnsNotMatching.isEmpty()) {
+            throw new IllegalArgumentException(String.format("Mismatch between the following AttributeValues and Columns while querying table %s:%s",
+                    tableName.getValue(), columnsNotMatching));
+        }
     }
 
-    private static QueryRequest buildNotificationDeliveryCostRequest(Map<String, AttributeValue> attributeValues) {
-        return DynamoQueryBuilder.withoutFilter(DynamoTableName.NOTIFICATION_DELIVERY_COST.getValue(),
-                "pk = :v_pk AND sk = :v_sk",
-                attributeValues);
-    }
-
-    private static QueryRequest buildOnboardInstitutionsRequest(Map<String, AttributeValue> attributeValues) {
-        return DynamoQueryBuilder.withoutFilter(DynamoTableName.ONBOARD_INSTITUTIONS.getValue(),
-                "id = :v_id",
-                attributeValues);
-    }
-
-    private static QueryRequest buildNotificationReworksRequest(Map<String, AttributeValue> attributeValues) {
-        return DynamoQueryBuilder.withoutFilter(DynamoTableName.NOTIFICATION_REWORKS.getValue(),
-                "iun = :v_iun",
-                attributeValues);
-    }
-
-    private static QueryRequest buildReworkedTimelinesForInvoicingRequest(Map<String, AttributeValue> attributeValues) {
-        return DynamoQueryBuilder.withFilter(DynamoTableName.REWORKED_TIMELINES_FOR_INVOICING.getValue(),
-                "paId_invoicingDay = :pk",
-                "iun = :v_iun",
-                attributeValues);
-    }
-
-    private static QueryRequest buildCostComponentsRequest(Map<String, AttributeValue> attributeValues) {
-        return DynamoQueryBuilder.withoutFilter(DynamoTableName.COST_COMPONENTS.getValue(),
-                "pk = :v_pk",
-                attributeValues);
-    }
-
-    private static QueryRequest buildCostUpdateResultRequest(Map<String, AttributeValue> attributeValues) {
-        return DynamoQueryBuilder.withoutFilter(DynamoTableName.COST_UPDATE_RESULT.getValue(),
-                "pk = :v_pk",
-                attributeValues);
-    }
-
-    private static QueryRequest buildIOConnectorRequestsRequest(Map<String, AttributeValue> attributeValues) {
-        return DynamoQueryBuilder.withoutFilter(DynamoTableName.IO_CONNECTOR_REQUESTS.getValue(),
-                "requestId = :v_requestId",
-                attributeValues);
-    }
-
-    // added for cases when the result might be paginated:
-    // a DynamoDB query returns at most 1 MB per page, so the SDK paginator is used
-    // to transparently fetch and flatten all pages.
-    public List<Map<String, AttributeValue>> callAllPages(
-            DynamoTableName tableName,
-            Map<String, AttributeValue> attributeValues
-    ) {
+    /**
+     * Added for cases when the result might be paginated:
+     * a DynamoDB query returns at most 1 MB per page, so the SDK paginator is used to transparently fetch and flatten all pages.
+     */
+    public List<Map<String, AttributeValue>> callAllPages(DynamoTableName tableName, Map<String, AttributeValue> attributeValues) {
         QueryRequest baseRequest = buildRequest(tableName, attributeValues);
         return dynamoDbClient.queryPaginator(baseRequest)
                 .items()
@@ -114,9 +109,7 @@ public class DynamoDbService {
                 .toList();
     }
 
-    private static QueryRequest buildBatchRequestsBySendStatusAndLastReservedAfter(
-            Map<String, AttributeValue> attributeValues) {
-
+    private static QueryRequest buildBatchRequestsBySendStatusAndLastReservedAfter(Map<String, AttributeValue> attributeValues) {
         return DynamoQueryBuilder.withIndex(
                 DynamoTableName.BATCH_REQUESTS_WITH_INDEX_SEND_STATUS.getValue(),
                 "sendStatus = :v_sendStatus",
@@ -126,9 +119,7 @@ public class DynamoDbService {
         );
     }
 
-    private static QueryRequest buildBatchRequestsByStatus(
-            Map<String, AttributeValue> attributeValues) {
-
+    private static QueryRequest buildBatchRequestsByStatus(Map<String, AttributeValue> attributeValues) {
         return DynamoQueryBuilder.withIndex(
                 DynamoTableName.BATCH_REQUESTS_WITH_INDEX_STATUS.getValue(),
                 "status = :v_status",
