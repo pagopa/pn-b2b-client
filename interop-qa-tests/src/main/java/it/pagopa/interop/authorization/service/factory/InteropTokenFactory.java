@@ -22,7 +22,7 @@ public class InteropTokenFactory extends SessionTokenFactory {
         KmsClient kmsClient
         ) {
         super(interopClientConfigs, configFileReader, kmsClient);
-        getSessionTokenPayloadTemplate().put("aud", "{{ENVIRONMENT}}.interop.pagopa.it/ui");
+        loadToken();
     }
 
     public synchronized Map<String, Map<String, List<String>>> loadToken() {
