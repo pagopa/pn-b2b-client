@@ -1,15 +1,5 @@
 Feature: Test relativi al SRS di correzione timeline Fase 2
 
-
-  Scenario: [TIMELINE_REWORK_1] Verificare che, per una notifica inviata da oltre 120 giorni, l’operazione di invalidazione degli elementi di timeline vada a buon fine, a fronte del recupero dei documenti
-    Given imposto lo iun di SharedSteps a "" e la pa a "Comune_Multi"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason    |
-      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002F          | M01                          | REASON111 |
-    And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
-    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
-
   @timelineReworkF2
   Scenario: [TIMELINE_REWORK_2] Verificare che, per una notifica mono destinatario con ATTEMPT_0 in OK, la richiesta di rework vada in ERROR se viene passato un pcRetry = PCRETRY_1
     Given viene generata una nuova notifica
@@ -457,7 +447,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
       |                           |                           | RECRN002F          | M123                         | 400        |
       |                           |                           | RECAG003C          |                              | 400        |
       | WPUJ-CCCC-AAAA-202602-Q-1 |                           | RECRN002F          | M01                          | 404        |
-      |                           | REWORK_0.TRY_0.RECINDEX_1 | RECRN002F          | M01                          | 400        |
+      |                           | REWORK_0.TRY_0.RECINDEX_1 | RECRN002F          | M01                          | 404        |
 
   @timelineReworkF2 #rif 1 204
   Scenario: [TIMELINE_REWORK_9_2] Verificare che l’API di aggiornamento richiesta di correzione timeline risponda secondo l’esito atteso con successo

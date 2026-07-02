@@ -9,6 +9,7 @@ import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient;
@@ -90,7 +91,7 @@ public class AwsServiceSteps {
                 await().atMost(2, TimeUnit.MINUTES).pollInterval(10, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(() -> {
                     FilterLogEventsRequest logRequest = CloudWatchQueryBuilder.search(microservice, search, minutes);
                     FilterLogEventsResponse logResponse = cloudWatchLogsClient.filterLogEvents(logRequest);
-                    assertThat(logResponse.events().size()).as("Non è stato trovato nessun log che soddisfi la search %s", search).isGreaterThan(0);
+                    assertThat(logResponse.events().size()).as("Alle %s non è stato trovato nessun log che soddisfi la search %s", DateTime.now(), search).isGreaterThan(0);
                 });
             } catch (AssertionError assertionError) {
                 sharedSteps.throwAssertionErrorWithIUN(assertionError);

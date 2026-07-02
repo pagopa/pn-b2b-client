@@ -70,6 +70,8 @@ public class TenantSteps {
             log.info("Aligning tenant kinds...");
             maintenanceService.alignTenantKinds();
             log.info("Tenant kinds aligned");
+        } else {
+            log.info("Not a AdeguamentoAnalisiRischio test. Skipping.");
         }
     }
     /* ********************************************************************************************************/
@@ -80,4 +82,3 @@ public class TenantSteps {
         sharedStepsContext.setTenantType(kind);
     }
 }
-

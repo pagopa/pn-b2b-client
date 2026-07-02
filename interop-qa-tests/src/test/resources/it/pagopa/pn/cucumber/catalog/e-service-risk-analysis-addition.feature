@@ -28,6 +28,15 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
       | PA1  | security     |       403 |
       | PA1  | support      |       403 |
 
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo        | risultato |
+      | GSP  | reviewer     |       403 |
+      | GSP  | viewer       |       403 |
+      | PA2  | reviewer     |       403 |
+      | PA2  | viewer       |       403 |
+
   @happy-path
   @nrt-minimal
   @eservice_risk_analysis_addition2

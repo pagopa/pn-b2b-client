@@ -149,7 +149,9 @@ public class NotificationStepsV2 implements NotificationStepsInterface {
     }
 
     @Override
-    public String getSenderTaxId() { return notificationRequest.getSenderTaxId(); }
+    public String getSenderTaxId() {
+        return notificationRequest.getSenderTaxId();
+    }
 
     @Override
     public String getNotificationRequestGroup() {
@@ -401,5 +403,10 @@ public class NotificationStepsV2 implements NotificationStepsInterface {
     @Override
     public String getNoticeCode(int recipientIndex) {
         return notificationRequest.getRecipients().get(recipientIndex).getPayment().getNoticeCode();
+    }
+
+    @Override
+    public void setApplyCostFalse(int recipientIndex, int paymentIndex) {
+        throw new RuntimeException("Metodo non previsto per la versione V2");
     }
 }

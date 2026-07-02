@@ -49,6 +49,16 @@ Feature: Creazione di una nuova versione di finalità
       | Privato | api,security |
       | Privato | support      |
 
+    @nuovi-operatori-update
+    Examples:
+      | ente    | ruolo        |
+      | PA2     | reviewer     |
+      | PA2     | viewer       |
+      | GSP     | reviewer     |
+      | GSP     | viewer       |
+      | Privato | reviewer     |
+      | Privato | viewer       |
+
   @sad-path
   @nrt-minimal
   @purpose_version_create2

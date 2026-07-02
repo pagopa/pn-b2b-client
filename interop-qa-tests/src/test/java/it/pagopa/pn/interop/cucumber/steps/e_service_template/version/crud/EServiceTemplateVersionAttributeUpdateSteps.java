@@ -6,21 +6,18 @@ import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.e_service_template.mapper.DescriptorAttributesMapper;
-import it.pagopa.interop.generated.openapi.clients.bff.model.Attribute;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributeSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributes;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
+import lombok.Data;
+import org.jeasy.random.EasyRandom;
+import org.springframework.http.ResponseEntity;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
-import lombok.Data;
-import org.jeasy.random.EasyRandom;
-import org.springframework.http.ResponseEntity;
 
 /** Cucumber steps involving creation, editing, viewing or deletion
  * of E-service template versions */
@@ -65,6 +62,7 @@ public class EServiceTemplateVersionAttributeUpdateSteps {
                 case CERTIFIED, CERTIFIED_DISCRETE -> certified;
                 case DECLARED -> declared;
                 case VERIFIED -> verified;
+                default -> throw new IllegalArgumentException("Tipo di attributo non supportato: " + attribute.getKind());
             };
             DescriptorAttributeSeed seed = new DescriptorAttributeSeed()
                 .id(attribute.getId())

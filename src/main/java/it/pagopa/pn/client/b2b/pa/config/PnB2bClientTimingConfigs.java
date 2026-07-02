@@ -8,7 +8,6 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
-
 @ConfigurationProperties(prefix = "pn.configuration", ignoreUnknownFields = false)
 @Data
 public class PnB2bClientTimingConfigs {

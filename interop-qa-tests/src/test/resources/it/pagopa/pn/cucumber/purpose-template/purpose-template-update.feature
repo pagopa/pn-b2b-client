@@ -42,14 +42,20 @@ Feature: finalità agevolata, purpose template UPDATE
   Scenario Outline: [UPDATE_PURPOSE_TEMPLATE_NO_ADMIN] Modifica di una finalità agevolata da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
-    And l'utente è un "<ruolo>" di "PA1"
+    And l'utente è un "<ruolo>" di "<ente>"
     When si aggiorna il purpose template creato
     Then si ottiene lo status code 403
     Examples:
-      | ruolo    |
-      | api      |
-      | support  |
-      | security |
+      | ente | ruolo    |
+      | PA1  | api      |
+      | PA1  | support  |
+      | PA1  | security |
+
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo    |
+      | PA2  | reviewer |
+      | PA2  | viewer   |
 
   #14(KO)
   # 27 01 2026: In osservanza a https://pagopa.atlassian.net/browse/PIN-8190 il codice restituito è stato mutato 403 -> 404
