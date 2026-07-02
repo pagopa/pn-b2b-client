@@ -352,14 +352,14 @@ Feature: Attivazione richiesta di fruizione
   @happy-path
   @agreement-activate-refactor
   Scenario: [AGREEMENTS_UNSUSPEND_7] Un delegato all'erogazione riattiva una richiesta di fruizione in stato SUSPENDED per conto dell'erogatore
-    Given "PA2" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione automatica
-    And l'ente delegato "PA1"
-    And l'ente "PA1" concede la disponibilità a ricevere deleghe
-    And l'ente delegante "PA2"
-    And l'ente "PA2" richiede la creazione di una delega per l'ente "PA1"
-    And l'ente "PA1" accetta la delega
-    And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And l'ente delegato richiede una operazione di sospensione di quella richiesta di fruizione
+    Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione automatica
+    And l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe
+    And l'ente "PA1" richiede la creazione di una delega per l'ente "PA2"
+    And l'ente "PA2" accetta la delega
+    And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già sospeso quella richiesta di fruizione come PRODUCER
     When l'ente delegato richiede una operazione di riattivazione di quella richiesta di fruizione
     Then si ottiene status code 200
     And la richiesta di fruizione è in stato "ACTIVE"
@@ -411,14 +411,15 @@ Feature: Attivazione richiesta di fruizione
   @happy-path
   @agreement-activate-refactor
   Scenario: [AGREEMENTS_UNSUSPEND_12] Un delegato alla fruizione riattiva una richiesta di fruizione in stato SUSPENDED per conto del fruitore
-    Given "PA2" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione automatica
-    And l'ente delegato "PA1"
-    And l'ente "PA1" concede la disponibilità a ricevere deleghe in fruizione
+    Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione automatica
     And l'ente delegante "PA2"
+    And l'ente delegato "PA3"
+    And l'ente "PA3" concede la disponibilità a ricevere deleghe in fruizione
     And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
     And l'ente delegato accetta la delega in fruizione
-    And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'ente delegato richiede una operazione di sospensione di quella richiesta di fruizione
+    And "PA2" ha già sospeso quella richiesta di fruizione come CONSUMER
     When l'ente delegato richiede una operazione di riattivazione di quella richiesta di fruizione
     Then si ottiene status code 200
     And la richiesta di fruizione è in stato "ACTIVE"
