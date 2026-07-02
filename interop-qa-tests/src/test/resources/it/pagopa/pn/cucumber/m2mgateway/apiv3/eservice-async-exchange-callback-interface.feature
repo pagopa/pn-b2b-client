@@ -160,6 +160,7 @@ Feature: Gestione della callback interface per gli e-service asincroni
       | versionState          |
       | senza versione        |
       | con versione obsoleta |
+      | vuoto                 |
 
   Scenario Outline: [ASYNC_ESERVICE_CALLBACK_INTERFACE_TYPE] Per un e-service asincrono che eroga con una determinata tecnologia e
   che è in stato DRAFT, alla richiesta di caricamento di un'interfaccia di callback coerente con la tecnologia, da parte di un
