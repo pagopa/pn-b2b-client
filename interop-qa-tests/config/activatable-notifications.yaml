@@ -1,5 +1,5 @@
-# Full list of notifications activatable by role. By default, a notification is turned off.
-# Notification configuration not authorized for the role 'support'.
+# Lista completa delle notifiche attivabili per ciascun ruolo. Di default, una notifica è spenta.
+# La configurazione delle notifiche non è autorizzata per i ruoli support, reviewer e viewer.
 
 role: "admin"
 inAppNotifications:
