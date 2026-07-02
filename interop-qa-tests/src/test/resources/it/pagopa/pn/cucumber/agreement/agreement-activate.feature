@@ -359,7 +359,7 @@ Feature: Attivazione richiesta di fruizione
     And l'ente "PA2" richiede la creazione di una delega per l'ente "PA1"
     And l'ente "PA1" accetta la delega
     And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And l'ente delegante richiede una operazione di sospensione di quella richiesta di fruizione
+    And l'ente delegato richiede una operazione di sospensione di quella richiesta di fruizione
     When l'ente delegato richiede una operazione di riattivazione di quella richiesta di fruizione
     Then si ottiene status code 200
     And la richiesta di fruizione è in stato "ACTIVE"
@@ -407,6 +407,21 @@ Feature: Attivazione richiesta di fruizione
     When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 200
     And la richiesta di fruizione è in stato "SUSPENDED"
+
+  @happy-path
+  @agreement-activate-refactor
+  Scenario: [AGREEMENTS_UNSUSPEND_12] Un delegato alla fruizione riattiva una richiesta di fruizione in stato SUSPENDED per conto del fruitore
+    Given "PA2" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione automatica
+    And l'ente delegato "PA1"
+    And l'ente "PA1" concede la disponibilità a ricevere deleghe in fruizione
+    And l'ente delegante "PA2"
+    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+    And l'ente delegato accetta la delega in fruizione
+    And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'ente delegato richiede una operazione di sospensione di quella richiesta di fruizione
+    When l'ente delegato richiede una operazione di riattivazione di quella richiesta di fruizione
+    Then si ottiene status code 200
+    And la richiesta di fruizione è in stato "ACTIVE"
 
   @certifiedDiscreteAttribute
   @certifiedDiscreteAttributeFlagOn
