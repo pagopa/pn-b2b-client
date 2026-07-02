@@ -5,7 +5,7 @@ Feature: Aggiornamento di un descrittore già pubblicato
   @sad-path
   @nrt-minimal
   @descriptor_published_update1
-  Scenario Outline: [DESCRIPTOR_PUBLISHED_UPDATE_1] Per un e-service che ha un solo descrittore, il quale è in stato PUBLISHED, all’aggiornamento da parte di un utente autorizzato della durata del voucher e delle soglie di carico del descrittore, la bozza viene aggiornata correttamente
+  Scenario Outline: [DESCRIPTOR_PUBLISHED_UPDATE_1] Per un e-service che ha un solo descrittore, il quale è in stato PUBLISHED, all'aggiornamento da parte di un utente autorizzato della durata del voucher e delle soglie di carico del descrittore, la bozza viene aggiornata correttamente
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato un e-service con un descrittore in stato "DRAFT"
     When l'utente aggiorna la durata del voucher e le soglie di carico di quel descrittore
@@ -23,6 +23,14 @@ Feature: Aggiornamento di un descrittore già pubblicato
       | PA1  | security     |       403 |
       | PA1  | api,security |       400 |
       | PA1  | support      |       403 |
+
+    @nuovi-operatori-update
+    Examples: 
+      | ente | ruolo        | risultato |
+      | GSP  | reviewer     |       403 |
+      | GSP  | viewer       |       403 |
+      | PA2  | reviewer     |       403 |
+      | PA2  | viewer       |       403 |
 
   @nrt-minimal
   @descriptor_published_update2

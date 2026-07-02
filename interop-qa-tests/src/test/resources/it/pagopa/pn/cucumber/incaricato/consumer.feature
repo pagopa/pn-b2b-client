@@ -18,8 +18,8 @@ Feature: Test API Availability in Use of E-Service
 
   @deleghe1
   Scenario Outline: [TC_INCARICATO_45] Verificare che il richiamo dell’API di disponibilità in fruizione di un e-service possa essere compiuto da un utente di tipo amministratore
-    Given l'utente è un "<ruolo>" di "PA1"
-    When l'ente "PA1" concede la disponibilità a ricevere deleghe in fruizione
+    Given l'utente è un "<ruolo>" di "PA2"
+    When l'ente "PA2" concede la disponibilità a ricevere deleghe in fruizione
     Then si ottiene status code <statusCode>
 
     @happy-path
@@ -34,6 +34,13 @@ Feature: Test API Availability in Use of E-Service
       | security    |        403 |
       | api,security|        403 |
       | support     |        403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ruolo       | statusCode |
+      | reviewer    |        403 |
+      | viewer      |        403 |
 
 
   @happy-path @deleghe2
@@ -50,22 +57,29 @@ Feature: Test API Availability in Use of E-Service
     Given l'ente delegato "PA2"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
-    And l'ente delegante "PA1"
+    And l'ente delegante "<enteDelegante>"
     When l'ente delegante con ruolo "<ruolo>" ha inoltrato una richiesta di delega in fruizione all'ente delegato
     Then si ottiene status code <statusCode>
 
     @happy-path
     Examples:
-      | ruolo       | statusCode |
-      | admin       |        200 |
+      | ruolo       | enteDelegante | statusCode |
+      | admin       | PA1           |        200 |
 
     @sad-path
     Examples:
-      | ruolo       | statusCode |
-      | api         |        403 |
-      | security    |        403 |
-      | api,security|        403 |
-      | support     |        403 |
+      | ruolo       | enteDelegante | statusCode |
+      | api         | PA1           |        403 |
+      | security    | PA1           |        403 |
+      | api,security| PA1           |        403 |
+      | support     | PA1           |        403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ruolo       | enteDelegante | statusCode |
+      | reviewer    | PA4           |        403 |
+      | viewer      | PA4           |        403 |
 
   @sad-path @deleghe2
   Scenario: [TC_INCARICATO_47_BIS] Richiamare l’API di creazione di una delega da parte di un fruitore delegante verso un altro ente delegato, su un e-service NON delegabile in fruizione
@@ -81,19 +95,25 @@ Feature: Test API Availability in Use of E-Service
   @sad-path @deleghe1
   Scenario Outline: [TC_INCARICATO_48] La creazione di una delega in fruizione verso un ente che non ha dato la propria disponibilità a ricevere deleghe in fruizione deve fallire
     Given "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
-    Given l'ente delegante "PA1"
+    Given l'ente delegante "<enteDelegante>"
     And l'utente è un "<ruolo>" dell'ente delegante
     And l'ente delegato "PA2"
     #And l'ente delegato non è disponibile ad accettare deleghe     <--  si ritiene implicito per l'assenza dello step di concessione della disponibilità
     When l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
     Then si ottiene status code <statusCode>
     Examples:
-      | ruolo       | statusCode |
-      | admin       |        403 |
-      | api         |        403 |
-      | security    |        403 |
-      | api,security|        403 |
-      | support     |        403 |
+      | ruolo       | enteDelegante | statusCode |
+      | admin       | PA1           |        403 |
+      | api         | PA1           |        403 |
+      | security    | PA1           |        403 |
+      | api,security| PA1           |        403 |
+      | support     | PA1           |        403 |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo       | enteDelegante | statusCode |
+      | reviewer    | PA4           |        403 |
+      | viewer      | PA4           |        403 |
 
     @deleghe2
     Scenario Outline: [TC_INCARICATO_50] Richiamare l’API di accettazione di una delega in stato WAITING_FOR_APPROVAL
@@ -120,6 +140,13 @@ Feature: Test API Availability in Use of E-Service
       | security    |        403 |
       | api,security|        403 |
       | support     |        403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ruolo       | statusCode |
+      | reviewer    |        403 |
+      | viewer      |        403 |
 
   @sad-path @deleghe1
   Scenario: [TC_INCARICATO_51] Richiamare l’API di accettazione di una delega in stato "revocata" deve produrre un errore
@@ -152,10 +179,10 @@ Feature: Test API Availability in Use of E-Service
     @deleghe1
     Scenario Outline: [TC_INCARICATO_53] Richiamare l’API di rifiuto di una delega in stato WAITING_FOR_APPROVAL
     Given "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
-    Given l'ente delegato "PA1"
+    Given l'ente delegato "<enteDelegato>"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
-    And l'ente delegante "PA2"
+    And l'ente delegante "<enteDelegante>"
     And l'utente è un "admin" dell'ente delegante
     And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
     And l'utente è un "<ruolo>" dell'ente delegato
@@ -164,16 +191,23 @@ Feature: Test API Availability in Use of E-Service
 
     @happy-path
     Examples:
-      | ruolo       | statusCode |
-      | admin       |        200 |
+      | ruolo       | enteDelegato | enteDelegante | statusCode |
+      | admin       | PA1          | PA2           |        200 |
 
     @sad-path
     Examples:
-      | ruolo       | statusCode |
-      | api         |        403 |
-      | security    |        403 |
-      | api,security|        403 |
-      | support     |        403 |
+      | ruolo       | enteDelegato | enteDelegante | statusCode |
+      | api         | PA1          | PA2           |        403 |
+      | security    | PA1          | PA2           |        403 |
+      | api,security| PA1          | PA2           |        403 |
+      | support     | PA1          | PA2           |        403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ruolo       | enteDelegato | enteDelegante | statusCode |
+      | reviewer    | PA2          | PA4           |        403 |
+      | viewer      | PA2          | PA4           |        403 |
 
     @sad-path @deleghe1
     Scenario: [TC_INCARICATO_54] Richiamare l’API di rifiuto su una delega in stato REVOKED
@@ -208,6 +242,12 @@ Feature: Test API Availability in Use of E-Service
       | security    |        403 |
       | api,security|        403 |
       | support     |        403 |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo       | statusCode |
+      | reviewer    |        403 |
+      | viewer      |        403 |
 
     @sad-path @deleghe1
     Scenario: [TC_INCARICATO_56] Richiamare l’API di rifiuto di una delega in stato ACTIVE: non è permesso rifiutare una delega già precedentemente accettata
@@ -244,7 +284,7 @@ Feature: Test API Availability in Use of E-Service
   @sad-path
   Scenario Outline: [TC_INTEROP_NON-ADMIN_FRUITION_REQUEST] Un utente con ruolo NON amministratore NON può richiedere la fruizione di un e-service
     Given "GSP" ha già creato e pubblicato 1 e-service
-    And l'utente è un "<ruolo>" di "PA1"
+    And l'utente è un "<ruolo>" di "PA2"
     When l'utente crea una richiesta di fruizione
     Then si ottiene status code 403
     Examples:
@@ -253,6 +293,12 @@ Feature: Test API Availability in Use of E-Service
       | security     |
       | api,security |
       | support      |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo        |
+      | reviewer     |
+      | viewer       |
 
   # NOTA BUG: per un risultato di tipo 'not found' ci si aspetterebbe un 404, non 400
   # Response Body: {"type":"about:blank","title":"Delegation not found","status":400,"detail":"Delegation c3bb23e4-5b43-4cf9-88aa-704a5ebd0374 not found","correlationId":"30b9e0d1-372a-4105-af1e-8ae850b40d6a","errors":[{"code":"0026","detail":"Delegation c3bb23e4-5b43-4cf9-88aa-704a5ebd0374 not found"}]}
@@ -330,15 +376,17 @@ Feature: Test API Availability in Use of E-Service
 #    When il delegante ha già approvato quella richiesta di fruizione
     Then si ottiene status code <statusCode>
     Examples:
-      | ruolo       | statusCode |
-      | admin       |        200 |
+        | statusCode |
+        |        200 |
 #      | api         |        403 |
 #      | security    |        403 |
 #      | api,security|        403 |
 #      | support     |        403 |
+#      | reviewer    |        403 |
+#      | viewer      |        403 |
 
   @happy-path @deleghe1
-  Scenario Outline: [TC_INCARICATO_60] Richiamare l’API di rifiuto di una richiesta di fruizione fatta da un delegato
+  Scenario: [TC_INCARICATO_60] Richiamare l’API di rifiuto di una richiesta di fruizione fatta da un delegato
     Given "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
     Given l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
@@ -349,20 +397,12 @@ Feature: Test API Availability in Use of E-Service
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione
     And il delegato ha già creato e inviato una richiesta di fruizione in delega ed è in attesa di approvazione
-    And l'utente è un "<ruolo>" dell'ente delegante
     And "PA3" ha già rifiutato quella richiesta di fruizione
 #    When il delegante ha già rifiutato quella richiesta di fruizione
-    Then si ottiene status code <statusCode>
-    Examples:
-      | ruolo       | statusCode |
-      | admin       |        200 |
-#      | api         |        403 |
-#      | security    |        403 |
-#      | api,security|        403 |
-#      | support     |        403 |
+    Then si ottiene status code 200
 
-    @happy-path @deleghe1
-    Scenario Outline: [TC_INCARICATO_62] Richiamare l’API di creazione di una finalità da parte di un delegato alla fruizione
+  @happy-path @deleghe1
+  Scenario: [TC_INCARICATO_62] Richiamare l’API di creazione di una finalità da parte di un delegato alla fruizione
     Given "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
@@ -373,26 +413,19 @@ Feature: Test API Availability in Use of E-Service
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione
     And il delegato ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And l'utente è un "<ruolo>" dell'ente delegato
+    And l'utente è un "admin" dell'ente delegato
       #Questo step va rivisto perché il consumer da passare nella richiesta di creazione finalità sembra debba essere quello del DELEGANTE - FATTO!
     When per conto del delegante, il delegato ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice
-    Then si ottiene status code <statusCode>
-    Examples:
-      | ruolo       | statusCode |
-      | admin       |        200 |
-#      | api         |        403 |
-#      | security    |        403 |
-#      | api,security|        403 |
-#      | support     |        403 |
+    Then si ottiene status code 200
 
     @happy-path @deleghe1
     Scenario Outline: [TC_INCARICATO_63] Richiamare l’API di creazione di un client da parte del delegato alla fruizione
     Given l'utente è un "admin" di "PA3"
     And "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione con client del delegato utilizzabile
-    And l'ente delegato "PA1"
+    And l'ente delegato "<enteDelegato>"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
-    And l'ente delegante "PA2"
+    And l'ente delegante "<enteDelegante>"
     And l'utente è un "admin" dell'ente delegante
     And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
     And l'utente è un "admin" dell'ente delegato
@@ -405,12 +438,18 @@ Feature: Test API Availability in Use of E-Service
     When l'utente richiede la creazione di un client "CONSUMER"
     Then si ottiene status code <statusCode>
     Examples:
-      | ruolo       | statusCode |
-      | admin       |        200 |
-#      | api         |        403 |
-#      | security    |        403 |
-#      | api,security|        403 |
-#      | support     |        403 |
+      | ruolo       | enteDelegato | enteDelegante | statusCode |
+      | admin       | PA1          | PA2           |        200 |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo       | enteDelegato | enteDelegante | statusCode |
+      | reviewer    | PA2          | PA4           |        403 |
+      | viewer      | PA2          | PA4           |        403 |
+      | api         | PA2          | PA4           |        403 |
+      | security    | PA2          | PA4           |        403 |
+      | api,security| PA2          | PA4           |        403 |
+      | support     | PA2          | PA4           |        403 |
 
     @happy-path @deleghe1 @associa-finalita-client
     Scenario: [TC_INCARICATO_64] Richiamare l’API di associazione di un client creato dal delegato ad una finalità creata dal delegato
@@ -591,6 +630,13 @@ Feature: Test API Availability in Use of E-Service
       | api,security|        403 |
       | support     |        403 |
 
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ruolo       | statusCode |
+      | reviewer    |        403 |
+      | viewer      |        403 |
+
     @sad-path @deleghe1
     Scenario Outline: [TC_INCARICATO_73] Richiamare l’API di revoca di una delega in stato REFUSED
     Given l'utente è un "admin" di "PA3"
@@ -613,26 +659,38 @@ Feature: Test API Availability in Use of E-Service
       | api,security|        403 |
       | support     |        403 |
 
+    @nuovi-operatori-update
+    Examples:
+      | ruolo       | statusCode |
+      | reviewer    |        403 |
+      | viewer      |        403 |
+
     @sad-path @deleghe1
     Scenario Outline: [TC_INCARICATO_74] Il richiamo della API di revoca della delega da parte del delegato deve fallire
     Given l'utente è un "admin" di "PA3"
     And "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
-    Given l'ente delegato "PA1"
+    Given l'ente delegato "<enteDelegato>"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
-    And l'ente delegante "PA2"
+    And l'ente delegante "<enteDelegante>"
     And l'utente è un "admin" dell'ente delegante
     And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato con ruolo "<ruolo>" revoca la delega in fruizione
     Then si ottiene status code <statusCode>
     Examples:
-      | ruolo       | statusCode |
-      | admin       |        403 |
-      | api         |        403 |
-      | security    |        403 |
-      | api,security|        403 |
-      | support     |        403 |
+      | ruolo       | enteDelegato | enteDelegante | statusCode |
+      | admin       | PA1          | PA2           |        403 |
+      | api         | PA1          | PA2           |        403 |
+      | security    | PA1          | PA2           |        403 |
+      | api,security| PA1          | PA2           |        403 |
+      | support     | PA1          | PA2           |        403 |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo       | enteDelegato | enteDelegante | statusCode |
+      | reviewer    | PA2          | PA4           |        403 |
+      | viewer      | PA2          | PA4           |        403 |
 
     @happy-path @deleghe2
     Scenario: [TC_INCARICATO_75] Richiamare l’API da parte del delegante per la revoca della delega alla fruizione al delegato in stato attivo

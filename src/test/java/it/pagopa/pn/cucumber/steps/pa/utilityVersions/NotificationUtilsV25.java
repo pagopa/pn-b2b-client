@@ -538,6 +538,10 @@ public class NotificationUtilsV25 extends B2bUtils {
                     NotificationMetadataAttachment metadataAttachment = request.getRecipients().get(0).getPayments().get(0).getF24().getMetadataAttachment();
                     metadataAttachment.getDigests().setSha256(sha256);
                 }
+                case INVALID_DOCUMENT_KEY_SYNC -> {
+                    NotificationDocument doc = request.getDocuments().get(0);
+                    doc.getRef().setKey("PN_NOTIFICATION_ATTACHMENT-c3bc9525a5ac4f45a4fb7e940b2b9815.pdf");
+                }
             }
         }
         return request;

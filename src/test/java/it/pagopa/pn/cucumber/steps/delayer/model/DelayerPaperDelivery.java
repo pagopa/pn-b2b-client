@@ -3,6 +3,7 @@ package it.pagopa.pn.cucumber.steps.delayer.model;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.HashMap;
@@ -12,21 +13,29 @@ import java.util.Map;
 @Getter
 @Setter
 @EqualsAndHashCode(of = {"pk", "requestId"})
+@NoArgsConstructor
 public class DelayerPaperDelivery {
 
     private String pk;
     private String sk;
-    private String requestId;
+    private String attempt;
+    private String cap;
+    private String createdAt;
+    private String deliveryDate;
+    private String iun;
     private String notificationSentAt;
     private String prepareRequestDate;
-    private String productType;
-    private String senderPaId;
-    private String province;
-    private String cap;
-    private String attempt;
-    private String iun;
-    private String unifiedDeliveryDriver;
     private String priority;
+    private String productType;
+    private String province;
+    private String recipientId;
+    private String requestId;
+    private String senderPaId;
+    private String tenderId;
+    private String unifiedDeliveryDriver;
+    private String senderPriority;
+    private String virtualNotificationSentAt;
+    private boolean isInformalCommunication;
 
     public DelayerPaperDelivery(List<String> header, List<String> csvLine) {
         if (header == null || csvLine == null || header.size() != csvLine.size()) {
@@ -47,7 +56,17 @@ public class DelayerPaperDelivery {
         this.cap = requireField(rowMap, "cap");
         this.attempt = requireField(rowMap, "attempt");
         this.iun = requireField(rowMap, "iun");
-        this.unifiedDeliveryDriver = requireField(rowMap, "unifiedDeliveryDriver");
+        this.unifiedDeliveryDriver = getField(rowMap, "unifiedDeliveryDriver");
+        this.senderPriority = getField(rowMap, "senderPriority");
+        if (this.senderPriority == null) {
+            this.senderPriority = "0";
+        }
+        this.virtualNotificationSentAt = getField(rowMap, "virtualNotificationSentAt");
+        String communicationType = rowMap.get("communicationType");
+        if (communicationType == null || communicationType.isBlank()) {
+            communicationType = "LEGAL";
+        }
+        this.isInformalCommunication = communicationType.equalsIgnoreCase("INFORMAL");
     }
 
     public DelayerPaperDelivery(JsonNode tableRecord) {
@@ -64,6 +83,16 @@ public class DelayerPaperDelivery {
         this.iun = requireField(tableRecord, "iun", false);
         this.unifiedDeliveryDriver = requireField(tableRecord, "unifiedDeliveryDriver", true);
         this.priority = requireField(tableRecord, "priority", true);
+        this.senderPriority = requireField(tableRecord, "senderPriority", true);
+        if (this.senderPriority == null) {
+            this.senderPriority = "0";
+        }
+        this.virtualNotificationSentAt = requireField(tableRecord, "virtualNotificationSentAt", true);
+        String communicationType = requireField(tableRecord, "communicationType", true);
+        if (communicationType == null || communicationType.isBlank()) {
+            communicationType = "LEGAL";
+        }
+        this.isInformalCommunication = communicationType.equalsIgnoreCase("INFORMAL");
     }
 
     public DelayerPaperDelivery(DelayerPaperDelivery source) {
@@ -80,6 +109,9 @@ public class DelayerPaperDelivery {
         this.iun = source.iun;
         this.unifiedDeliveryDriver = source.unifiedDeliveryDriver;
         this.priority = source.priority;
+        this.senderPriority = source.senderPriority;
+        this.virtualNotificationSentAt = source.virtualNotificationSentAt;
+        this.isInformalCommunication = source.isInformalCommunication;
     }
 
     private String requireField(JsonNode node, String fieldName, boolean nullable) {
@@ -104,6 +136,14 @@ public class DelayerPaperDelivery {
         return (field != null && !field.isNull()) ? field.asText() : null;
     }
 
+    private String getField(Map<String, String> rowMap, String fieldName) {
+        String value = rowMap.get(fieldName);
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        return value;
+    }
+
     public boolean isRS() {
         return this.getProductType().equalsIgnoreCase("RS");
     }
@@ -111,5 +151,16 @@ public class DelayerPaperDelivery {
     public boolean isSecondAttempt() {
         return Integer.parseInt(this.getAttempt()) == 1;
     }
+    public int getSenderPriorityValue() {
+        if (this.senderPriority == null || this.senderPriority.isBlank()) {
+            return 0;
+        }
+        return Integer.parseInt(this.senderPriority);
+    }
 
+    public String getEffectiveNotificationSentAt() {
+        return this.virtualNotificationSentAt != null && !this.virtualNotificationSentAt.isBlank()
+                ? this.virtualNotificationSentAt
+                : this.notificationSentAt;
+    }
 }

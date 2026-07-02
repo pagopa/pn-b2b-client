@@ -32,6 +32,17 @@ Feature: Creazione e-service
       | PA1     | security     |       403 |
       | PA1     | support      |       403 |
 
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente    | ruolo        | risultato |
+      | GSP     | reviewer     |       403 |
+      | GSP     | viewer       |       403 |
+      | Privato | reviewer     |       403 |
+      | Privato | viewer       |       403 |
+      | PA2     | reviewer     |       403 |
+      | PA2     | viewer       |       403 |
+
   @sad-path
   @nrt-minimal
   @eservice_creation2
