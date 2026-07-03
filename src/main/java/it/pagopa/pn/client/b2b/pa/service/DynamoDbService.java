@@ -44,7 +44,7 @@ public class DynamoDbService {
     }
 
     private static QueryRequest queryWithoutFilters(DynamoTableName tableName, String column, Map<String, AttributeValue> attributeValues) {
-        return queryWithFilters(tableName, List.of(column), attributeValues);
+        return queryWithoutFilters(tableName, List.of(column), attributeValues);
     }
 
     /**
