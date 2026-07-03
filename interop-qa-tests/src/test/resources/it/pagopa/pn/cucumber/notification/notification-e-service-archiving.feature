@@ -8,7 +8,7 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
     """
     Il tuo e-service $CONTEXT(eServiceName) è in fase di archiviazione, ma risulta ancora attivo.
     L'e-service sarà archiviato il giorno $EUROPE_DATE_ADD(+2D).
@@ -20,7 +20,7 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
-    Then l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
+    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
     L'e-service $CONTEXT(eServiceName) sarà archiviato il giorno $EUROPE_DATE_ADD(+2D).
     Dopo questa data non potrai più scambiare dati con l’e-service.
@@ -34,7 +34,7 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
-    Then l'utente "admin" di "PA1" non ha ricevuto la notifica in-app
+    Then admin di "PA1" non ha ricevuto la notifica in-app
     """
     Il tuo e-service $CONTEXT(eServiceName) è in fase di archiviazione, ma risulta ancora attivo.
     L'archiviazione avverrà il giorno $EUROPE_DATE_ADD(+2D).
@@ -42,7 +42,7 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
 
   @ignore
   Scenario: [MANUAL_ARCHIVING_ESERVICE_NOTIFICATION_1.4] L'utente erogatore riceve una notifica nel momento in cui il suo e-service viene archiviato a causa della scadenza del periodo di preavviso
-    Then l'utente "admin" di "PA3" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
+    Then admin di "PA3" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
     """
     L'e-service $CONTEXT(eServiceName) è stato archiviato e non è più attivo. È stato rimosso dal catalogo e i
     fruitori non potranno più inviare richieste di fruizione o scambiare dati.
@@ -50,7 +50,7 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
 
   @ignore
   Scenario: [MANUAL_ARCHIVING_ESERVICE_NOTIFICATION_1.5] L'utente fruitore riceve una notifica nel momento in cui viene archiviato l'e-service per cui ha una richiesta di fruizione attiva
-    Then l'utente "admin" di "PA3" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
+    Then admin di "PA3" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
     L'e-service $CONTEXT(eServiceName) è stato archiviato definitivamente il giorno $EUROPE_TODAY()
     e non può più essere utilizzato.
@@ -58,7 +58,7 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
 
   @ignore
   Scenario: [MANUAL_ARCHIVING_ESERVICE_NOTIFICATION_1.6] L'utente erogatore riceve una notifica di promemoria che l'e-service verrà archiviato fra N giorni
-    Then l'utente "admin" di "PA3" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
+    Then admin di "PA3" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
     Il tuo e-service $CONTEXT(eServiceName) sarà archiviato il giorno $EUROPE_DATE_ADD(+2D).
     """
@@ -68,7 +68,7 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     When l'utente sospende quel descrittore in corso di archiviazione
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
     """
     La versione 1 dell'e-service $CONTEXT(eServiceName) è al momento sospesa.
     L'e-service sarà archiviato il giorno $EUROPE_DATE_ADD(+2D).
@@ -80,7 +80,7 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     And l'utente sospende quel descrittore in corso di archiviazione
-    Then l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
+    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
     La versione 1 dell'e-service $CONTEXT(eServiceName) è al momento sospesa.
     L'archiviazione avverrà il giorno $EUROPE_DATE_ADD(+2D).
@@ -92,7 +92,7 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
     And "PA1" ha già sospeso quell'e-service
     And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     When l'utente attiva il descrittore di quell'e-service
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
     """
     La versione 1 dell'e-service $CONTEXT(eServiceName) è di nuovo attiva.
     L'e-service sarà archiviato il giorno $EUROPE_DATE_ADD(+2D).
@@ -105,7 +105,7 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
     And "PA1" ha già sospeso quell'e-service
     And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     When l'utente attiva il descrittore di quell'e-service
-    Then l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
+    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
     La versione 1 dell'e-service $CONTEXT(eServiceName) è di nuovo attiva.
     L'e-service sarà archiviato il giorno $EUROPE_DATE_ADD(+2D).
@@ -116,7 +116,7 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     When l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
     """
     L'e-service $CONTEXT(eServiceName) non è più in fase di archiviazione.
     """
@@ -127,7 +127,7 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     When l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
-    Then l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
+    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
     L'e-service $CONTEXT(eServiceName) non è più in fase di archiviazione.
     """

@@ -7,6 +7,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.enums.EntityIdType;
+import it.pagopa.interop.common.enums.UserRole;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Notification;
 import it.pagopa.interop.generated.openapi.clients.bff.model.NotificationsCountBySection;
 import it.pagopa.interop.notification.NotificationClientImpl;
@@ -412,14 +413,14 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
 //    }
 
     /* 08 05 2026: terza versione */
-    @Then("l'utente {string} di {string} ha ricevuto la notifica in-app contenente il link {deepLink}")
-    public void checkInAppNotificationBody(String role, String tenant, DeepLinkType deepLinkType, String message) {
+    @Then("{userRole} di {string} ha ricevuto la notifica in-app contenente il link {deepLink}")
+    public void checkInAppNotificationBody(UserRole role, String tenant, DeepLinkType deepLinkType, String message) {
         message = message.replace("\n", " ");
         String deepLink = resolveDynamicValues(deepLinkType.getValue(), sharedStepsContext);
         String finalMessage = resolveDynamicValues(message, sharedStepsContext);
 
         PollingService.makePolling(
-                () -> (notificationStore.get(NotificationUser.of(role, tenant))),
+                () -> (notificationStore.get(NotificationUser.of(role.getValue(), tenant))),
                 all -> {
                     try {
                         assertThat(all)
@@ -444,13 +445,13 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
         );
     }
 
-    @Then("l'utente {string} di {string} ha ricevuto la notifica in-app")
-    public void checkInAppNotificationBody(String role, String tenant, String message) {
+    @Then("{userRole} di {string} ha ricevuto la notifica in-app")
+    public void checkInAppNotificationBody(UserRole role, String tenant, String message) {
         checkInAppNotificationBody(role, tenant, DeepLinkType.NO_DEEP_LINK, message);
     }
 
-    @Then("l'utente {string} di {string} non ha ricevuto la notifica in-app")
-    public void checkNoInAppNotificationBody(String role, String tenant, String message) {
+    @Then("{userRole} di {string} non ha ricevuto la notifica in-app")
+    public void checkNoInAppNotificationBody(UserRole role, String tenant, String message) {
         try {
             checkInAppNotificationBody(role, tenant, DeepLinkType.NO_DEEP_LINK, message);
             Assertions.fail("Found not expected notification");

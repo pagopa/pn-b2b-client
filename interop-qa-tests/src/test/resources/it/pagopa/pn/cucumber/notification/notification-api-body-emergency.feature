@@ -10,7 +10,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
   Scenario: [Notifica nuova richiesta di fruizione] - Ricezione nuova richiesta di fruizione per l'e-service dell'erogatore
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
     When "PA2" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link RICHIESTA_EROGAZIONE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link RICHIESTA_EROGAZIONE
     """
     Hai ricevuto una nuova richiesta di fruizione per l'e-service $CONTEXT(eServiceName) formulata
     da parte di $CONTEXT(consumerName).
@@ -19,7 +19,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
   Scenario: [Notifica richiesta di fruizione accettata] - Accettazione automatica di una richiesta di fruizione per l'e-service dell'erogatore
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link RICHIESTA_EROGAZIONE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link RICHIESTA_EROGAZIONE
     """
     È stata accettata una richiesta di fruizione per l'e-service $CONTEXT(eServiceName) formulata
     da parte di $CONTEXT(consumerName).
@@ -35,7 +35,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
     And un "admin" di "PA1" ha caricato una chiave pubblica nel client
     And "PA2" ha già pubblicato una nuova versione per quell'e-service
     When "PA1" ha già aggiornato la richiesta di fruizione all'ultima versione dell'eservice
-    Then l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link RICHIESTA_EROGAZIONE
+    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link RICHIESTA_EROGAZIONE
     """
     L'ente $CONTEXT(producerName) ha aggiornato la propria richiesta di fruizione per l'e-service
     $CONTEXT(eServiceName) alla versione più recente.
@@ -46,7 +46,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
     # Scenario: [Notifica richiesta di fruizione sospesa] - Il fruitore sospende la richiesta di fruizione per l'e-service dell'erogatore
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     When "PA2" ha una richiesta di fruizione in stato "SUSPENDED" per quell'e-service
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link RICHIESTA_EROGAZIONE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link RICHIESTA_EROGAZIONE
     """
     L'ente $CONTEXT(consumerName) ha sospeso la propria richiesta di fruizione per il suo e-service
     $CONTEXT(eServiceName).
@@ -54,7 +54,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
 
     # Scenario: [Notifica richiesta di fruizione riattivata] - Il fruitore riattiva la richiesta di fruizione per l'e-service dell'erogatore
     When "PA2" ha già attivato nuovamente quella richiesta di fruizione come CONSUMER
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link RICHIESTA_EROGAZIONE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link RICHIESTA_EROGAZIONE
     """
     L'ente $CONTEXT(consumerName) ha riattivato la propria richiesta di fruizione per il tuo e-service
     $CONTEXT(eServiceName), precedentemente sospesa.
@@ -68,7 +68,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
     And "PA2" ha già approvato quella richiesta di fruizione
     When l'utente è un "admin" di "PA2"
     And l'utente revoca l'attributo precedentemente verificato
-    Then l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link RICHIESTA_EROGAZIONE
+    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link RICHIESTA_EROGAZIONE
     """
     La Piattaforma PDND ha sospeso la richiesta di fruizione del fruitore $CONTEXT(consumerName) per il tuo
     e-service $CONTEXT(eServiceName), in quanto l'ente fruitore non dispone più dei requisiti per poter fruire
@@ -84,7 +84,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
     When l'utente è un "admin" di "PA2"
     And l'utente revoca l'attributo precedentemente verificato
     # TODO Capire come riassegnare l'attributo revocato
-    Then l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link RICHIESTA_EROGAZIONE
+    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link RICHIESTA_EROGAZIONE
     """
     La Piattaforma PDND ha riattivato la richiesta di fruizione del fruitore $CONTEXT(consumerName) per
     il tuo e-service $CONTEXT(eServiceName), precedentemente sospesa.
@@ -93,7 +93,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
   Scenario: [Notifica richiesta di fruizione archiviata] - Il fruitore archivia la richiesta di fruizione per l'e-service dell'erogatore
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     When "PA2" ha una richiesta di fruizione in stato "ARCHIVED" per quell'e-service
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link RICHIESTA_EROGAZIONE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link RICHIESTA_EROGAZIONE
     """
     Ti informiamo che il fruitore $CONTEXT(consumerName) ha archiviato la sua richiesta di fruizione per
     il tuo e-service $CONTEXT(eServiceName).
@@ -107,7 +107,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
     And "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
     And un "admin" di "PA1" ha caricato una chiave pubblica nel client
     When "PA1" ha già associato quella nuova finalità a quel client
-    Then l'utente "admin" di "GSP" ha ricevuto la notifica in-app contenente il link FINALITA_EROGAZIONE
+    Then admin di "GSP" ha ricevuto la notifica in-app contenente il link FINALITA_EROGAZIONE
     """
     L'ente $CONTEXT(consumerName) ha associato un proprio client alla finalità $CONTEXT(purposeTitle)
     per il tuo e-service $CONTEXT(eServiceName).
@@ -123,7 +123,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
     When "PA1" ha già associato quella nuova finalità a quel client
     When l'utente "admin" di "PA1" richiede la disassociazione della finalità dal client con successo
     # FALLISCE
-    Then l'utente "admin" di "GSP" ha ricevuto la notifica in-app contenente il link FINALITA_EROGAZIONE
+    Then admin di "GSP" ha ricevuto la notifica in-app contenente il link FINALITA_EROGAZIONE
     """
     L'ente $CONTEXT(consumerName) ha disassociato un proprio client dalla finalità $CONTEXT(purposeTitle)
     per il tuo e-service $CONTEXT(eServiceName).
@@ -134,7 +134,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     When "PA1" ha già richiesto l'aggiornamento della stima di carico superando i limiti di quell'e-service
-    Then l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link FINALITA_EROGAZIONE
+    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link FINALITA_EROGAZIONE
     """
     L'ente $CONTEXT(consumerName) ha richiesto un adeguamento del piano di carico per la finalità
     $CONTEXT(purposeId), associata al tuo e-service $CONTEXT(eServiceName).
@@ -151,7 +151,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
     When l'utente aggiorna la stima di carico per quella finalità superando la soglia
     And "PA1" ha già associato quella nuova finalità a quel client
     # FALLISCE
-    Then l'utente "admin" di "GSP" ha ricevuto la notifica in-app contenente il link FINALITA_EROGAZIONE
+    Then admin di "GSP" ha ricevuto la notifica in-app contenente il link FINALITA_EROGAZIONE
     """
     L'ente $CONTEXT(consumerName) ha inviato la finalità $CONTEXT(purposeId), che prevede un piano
     di carico superiore alla tua soglia, associata al tuo e-service $CONTEXT(eServiceName).
@@ -161,7 +161,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     When "PA2" ha già creato 1 finalità in stato "SUSPENDED" per quell'eservice
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link FINALITA_EROGAZIONE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link FINALITA_EROGAZIONE
     """
     Ti informiamo che l'ente $CONTEXT(consumerName) ha sospeso la finalità $CONTEXT(purposeId),
     associata al tuo e-service $CONTEXT(eServiceName).
@@ -173,7 +173,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
     And "PA2" ha già creato 1 finalità in stato "SUSPENDED" per quell'eservice
     When l'utente "admin" di "PA2" riattiva la finalità in stato "SUSPENDED" per quell'e-service
     #FALLISCE
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link FINALITA_EROGAZIONE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link FINALITA_EROGAZIONE
     """
     Ti informiamo che l'ente $CONTEXT(consumerName) ha riattivato la finalità $CONTEXT(purposeId),
     associata al tuo e-service $CONTEXT(eServiceName).
@@ -184,7 +184,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     When "PA2" ha già archiviato quella finalità
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link FINALITA_EROGAZIONE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link FINALITA_EROGAZIONE
     """
     Ti informiamo che l'ente $CONTEXT(consumerName) ha archiviato la finalità $CONTEXT(purposeId),
     associata al tuo e-service $CONTEXT(eServiceName).
@@ -198,7 +198,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la sospensione dell'e-service template
     # FALLISCE
-    Then l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link TEMPLATE_E_SERVICE_EROGAZIONE
+    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link TEMPLATE_E_SERVICE_EROGAZIONE
     """
     È stato sospeso il tuo template $CONTEXT(eServiceTemplateId).
     """
@@ -214,7 +214,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
     And un "admin" di "PA1" ha caricato una chiave pubblica nel client
     And "PA2" ha già pubblicato una nuova versione per quell'e-service
     When "PA2" ha già sospeso la vecchia versione di quell'e-service
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
     L'ente erogatore $CONTEXT(producerName) ha sospeso la versione 1 dell'e-service $CONTEXT(eServiceName),
     a cui sei iscritto.
@@ -222,7 +222,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
 
 #    # TODO andrebbero unificati questi test per ottimizzare tempi di esecuzione, però il 1° non passa più... perché?
 #    When "PA2" ha già attivato nuovamente la vecchia versione quell'e-service
-#    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
+#    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
 #    """
 #    L'ente erogatore $CONTEXT(producerName) ha riattivato la versione 1 dell'e-service $CONTEXT(eServiceName),
 #    precedentemente sospesa.
@@ -241,7 +241,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
     And "PA2" ha già pubblicato una nuova versione per quell'e-service
     And "PA2" ha già sospeso la vecchia versione di quell'e-service
     When "PA2" ha già attivato nuovamente la vecchia versione quell'e-service
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
     L'ente erogatore $CONTEXT(producerName) ha riattivato la versione 1 dell'e-service $CONTEXT(eServiceName),
     precedentemente sospesa.
@@ -257,7 +257,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
     And "PA1" ha già associato la finalità a quel client
     And un "admin" di "PA1" ha caricato una chiave pubblica nel client
     When "PA2" ha già pubblicato una nuova versione per quell'e-service
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
     È disponibile una nuova versione (1) per l'e-service $CONTEXT(eServiceName),
     pubblicato da $CONTEXT(producerName).
@@ -270,21 +270,21 @@ Feature: API Notifiche - verifica bodies (generato da excel)
     Given "PA1" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     When l'utente aggiorna la stima di carico per quella finalità restando entro la soglia
     # Come aggiornare la stima di carico ad una versione precedente?
-    Then l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
+    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
     L'ente erogatore $CONTEXT(producerName) ha apportato delle modifiche alle soglie di carico della
     versione 1 dell'e-service $CONTEXT(eServiceName) a cui sei iscritto.
     """
 
   Scenario: [Modifiche alla versione di e-service] - L'ente erogatore ha aggiunto un documento nella versione dell'e-service "" a cu…
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
     L'ente erogatore $CONTEXT(producerName) ha aggiunto un documento nella versione 1
     dell'e-service $CONTEXT(eServiceName) a cui sei iscritto.
     """
 
   Scenario: [Modifiche alla versione di e-service] - L'ente erogatore ha modificato la descrizione nella versione dell'e-service ""…
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
     L'ente erogatore $CONTEXT(producerName) ha modificato la descrizione nella versione 1
     dell'e-service $CONTEXT(eServiceName) a cui sei iscritto.
@@ -296,7 +296,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     When l'utente aggiorna il nome di quel documento
     # FALLISCE
-    Then l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
+    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
     L'ente erogatore $CONTEXT(producerName) ha aggiornato un documento $CONTEXT(nome_documento) della
     versione 1 dell'e-service $CONTEXT(eServiceName), a cui sei iscritto.
@@ -308,7 +308,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
     And l'utente "admin" di "PA1" crea un portachiavi erogatore con successo
     When l'utente "admin" di "PA1" associa il portachiavi erogatore all'e-service
     # FALLISCE
-    Then l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
+    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
     Ti informiamo che l'ente erogatore $CONTEXT(producerName) ha aggiunto un nuovo livello di sicurezza
     (portachiavi) all'e-service $CONTEXT(eServiceName).
@@ -319,7 +319,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     Given l'utente è un "admin" di "PA2"
     When l'utente aggiorna il nome dell'e-service con un valore di lunghezza 60 caratteri
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
     Ti informiamo che l'e-service $CONTEXT(precedente_eServiceName) è stato rinominato in
     $CONTEXT(eServiceName) dall'ente erogatore. La tua richiesta di fruizione rimane attiva e
@@ -330,7 +330,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
     And "PA2" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
     When "PA1" ha già approvato quella richiesta di fruizione
-    Then l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link RICHIESTA_FRUIZIONE
+    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link RICHIESTA_FRUIZIONE
     """
     L'ente erogatore $CONTEXT(producerName) ha accettato la richiesta di fruizione formulata dal tuo ente
     per l'e-service $CONTEXT(eServiceName). Puoi ora procedere alla creazione dei voucher per iniziare a
@@ -341,27 +341,27 @@ Feature: API Notifiche - verifica bodies (generato da excel)
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
     And "PA2" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
     When "PA1" ha già rifiutato quella richiesta di fruizione
-    Then l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link RICHIESTA_FRUIZIONE
+    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link RICHIESTA_FRUIZIONE
     """
     La richiesta di fruizione per l'e-service $CONTEXT(eServiceName) è stata rifiutata dall'ente erogatore.
     """
 
   Scenario: [Sospensione richiesta di fruizione per e-service] - L'ente erogatore ha sospeso la richiesta di fruizione formulata dal tuo ente pe…
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link RICHIESTA_FRUIZIONE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link RICHIESTA_FRUIZIONE
     """
     L'ente erogatore $CONTEXT(producerName) ha sospeso la richiesta di fruizione formulata dal tuo ente
     per l'e-service $CONTEXT(eServiceName). Non potrai utilizzare i voucher associati fino alla riattivazione.
     """
 
   Scenario: [NOTIFICATION_AGREEMENTS_5] - Sospensione richiesta di fruizione da parte della Piattaforma
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link RICHIESTA_FRUIZIONE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link RICHIESTA_FRUIZIONE
     """
     La Piattaforma PDND ha sospeso la richiesta di fruizione formulata dal tuo ente per l'e-service
     $CONTEXT(eServiceName), in quanto non risultano più soddisfatti i requisiti necessari.
     """
 
   Scenario: [La tua richiesta per e-service è stata riattivata] - L'ente erogatore ha riattivato la richiesta di fruizione formulata dal tuo ente…
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link RICHIESTA_FRUIZIONE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link RICHIESTA_FRUIZIONE
     """
     L'ente erogatore $CONTEXT(producerName) ha riattivato la richiesta di fruizione formulata dal tuo ente
     per l'e-service $CONTEXT(eServiceName), precedentemente sospesa. Puoi nuovamente utilizzare i voucher
@@ -369,7 +369,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
     """
 
   Scenario: [Riattivazione richiesta da parte della Piattaforma] - La Piattaforma PDND ha riattivato la richiesta di fruizione formulata dal tuo e…
-    Then l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link RICHIESTA_FRUIZIONE
+    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link RICHIESTA_FRUIZIONE
     """
     La Piattaforma PDND ha riattivato la richiesta di fruizione formulata dal tuo ente per l'e-service
     $CONTEXT(eServiceName), precedentemente sospesa.
@@ -377,7 +377,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
 
   Scenario: [Avviso: soglia di carico per finalità superata] - La stima di carico complessiva per le finalità associate all'e-service ha su…
     # TODO per l'ammontare delle chiamata API massimo, si può decidere a monte un numero basso e noto e poi usarlo
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link FINALITA_FRUIZIONE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link FINALITA_FRUIZIONE
     """
     La stima di carico complessiva per le finalità associate all'e-service $CONTEXT(eServiceName) ha superato
     la soglia massima consentita dall'erogatore pari a $CONTEXT(ammontare_chiamate_api) chiamate API giornaliere.
@@ -385,7 +385,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
 
   # Fallito, in quanto questa specifica notifica non è stata implementata (segnata come non-implementata nello sheet di riferimento). Test da togliere eventualmente.
   #Scenario: [Richiesta di adeguamento piano accettata] - L'ente erogatore ha accettato la richiesta di adeguamento del piano di carico f…
-  #  Then l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link FINALITA_FRUIZIONE
+  #  Then admin di "PA2" ha ricevuto la notifica in-app contenente il link FINALITA_FRUIZIONE
   #  """
   #  L'ente erogatore $CONTEXT(producerName) ha accettato la richiesta di adeguamento del piano di carico
   #  formulata dal tuo ente per la finalità $CONTEXT(purposeId), associata all'e-service
@@ -393,7 +393,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
   #  """
 
   Scenario: [Richiesta di adeguamento piano rifiutata] - L'ente erogatore ha rifiutato la richiesta di adeguamento del piano di carico f…
-    Then l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link FINALITA_FRUIZIONE
+    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link FINALITA_FRUIZIONE
     """
     L'ente erogatore $CONTEXT(producerName) ha rifiutato la richiesta di adeguamento del piano di carico
     formulata dal tuo ente per la finalità $CONTEXT(purposeId), associata all'e-service
@@ -401,49 +401,49 @@ Feature: API Notifiche - verifica bodies (generato da excel)
     """
 
   Scenario: [La tua finalità è stata approvata] - L'ente erogatore ha approvato la finalità che hai richiesto per l'e-service…
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link FINALITA_FRUIZIONE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link FINALITA_FRUIZIONE
     """
     L'ente erogatore $CONTEXT(producerName) ha approvato la finalità $CONTEXT(purposeId) che hai
     richiesto per l'e-service $CONTEXT(eServiceName).
     """
 
   Scenario: [La tua finalità è stata rifiutata] - L'ente erogatore ha rifiutato la finalità che il tuo ente ha inoltrato per l…
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link FINALITA_FRUIZIONE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link FINALITA_FRUIZIONE
     """
     L'ente erogatore $CONTEXT(producerName) ha rifiutato la finalità $CONTEXT(purposeId) che il tuo
     ente ha inoltrato per l'e-service $CONTEXT(eServiceName).
     """
 
   Scenario: [Sospensione della finalità] - L'ente erogatore ha sospeso la finalità, associata all'e-service.
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link FINALITA_FRUIZIONE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link FINALITA_FRUIZIONE
     """
     L'ente erogatore $CONTEXT(producerName) ha sospeso la finalità $CONTEXT(purposeId), associata
     all'e-service $CONTEXT(eServiceName).
     """
 
   Scenario: [Riattivazione della finalità] - L'ente erogatore ha riattivato la finalità, associata all'e-service
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link FINALITA_FRUIZIONE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link FINALITA_FRUIZIONE
     """
     L'ente erogatore $CONTEXT(producerName) ha riattivato la finalità $CONTEXT(purposeId), associata
     all'e-service $CONTEXT(eServiceName).
     """
 
   Scenario: [Nuova versione del template] - L'ente ha pubblicato una nuova versione del template
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
     """
     L'ente $CONTEXT(producerName) ha pubblicato una nuova versione $CONTEXT(versione_template) del
     template $CONTEXT(nome_template_e_service).
     """
 
   Scenario: [Aggiornamento nome del template] - Ti informiamo che il tuo e-service è stato rinominato in in quanto è stato modi…
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
     """
     Ti informiamo che il tuo e-service $CONTEXT(precedente_eServiceName) è stato rinominato in
     $CONTEXT(eServiceName) in quanto è stato modificato il template e-service da cui lo hai generato.
     """
 
   Scenario: [Sospensione del template] - L'ente ha sospeso un template e-service da cui il tuo ente ha generato l'e-service
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link TEMPLATE_E_SERVICE_EROGAZIONE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link TEMPLATE_E_SERVICE_EROGAZIONE
     """
     L'ente $CONTEXT(producerName) ha sospeso il template "$CONTEXT(nome_template)", da cui il tuo ente
     ha generato l'e-service.
@@ -465,41 +465,41 @@ Feature: API Notifiche - verifica bodies (generato da excel)
     When l'utente è un "admin" dell'ente delegato
     And l'ente delegato accetta la delega in fruizione
     # THEN precedentemente commentato:
-    #Then l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link DELEGA_ADERENTE
+    #Then admin di "PA2" ha ricevuto la notifica in-app contenente il link DELEGA_ADERENTE
     #"""
     #Ti informiamo che l'ente $CONTEXT(producerName) ha accettato la delega $CONTEXT(id_delega) che il
     #tuo ente gli ha conferito per l'e-service $CONTEXT(eServiceName). La delega è ora attiva.
     #"""
     # FALLISCE
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link DELEGA_ADERENTE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link DELEGA_ADERENTE
     """
     Ti informiamo che l'ente $CONTEXT(producerName) ha approvato la delega $CONTEXT(id_delega) che il
     tuo ente gli ha conferito per l'e-service $CONTEXT(eServiceName). La delega è ora attiva.
     """
 
   Scenario: [La tua richiesta di delega è stata rifiutata] - Ti informiamo che l'ente ha rifiutato la delega che il tuo ente gli ha conferito…
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link DELEGA_ADERENTE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link DELEGA_ADERENTE
     """
     Ti informiamo che l'ente $CONTEXT(nome_ente_delegato) ha rifiutato la delega $CONTEXT(id_delega) che il
     tuo ente gli ha conferito per l'e-service $CONTEXT(eServiceName).
     """
 
   Scenario: [Richiesta di approvazione per una nuova versione] - L'ente delegato richiede la tua approvazione per pubblicare una nuova versione…
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link DELEGA_ADERENTE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link DELEGA_ADERENTE
     """
     L'ente delegato $CONTEXT(nome_ente_delegato) richiede la tua approvazione per pubblicare una nuova versione
     dell'e-service $CONTEXT(eServiceName).
     """
 
   Scenario: [Approvata la pubblicazione della nuova versione] - L'ente delegante ha approvato la pubblicazione della nuova versione dell'e-serv…
-    Then l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link DELEGA_ADERENTE
+    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link DELEGA_ADERENTE
     """
     L'ente delegante $CONTEXT(nome_ente_delegante) ha approvato la pubblicazione della nuova versione dell'e-service
     $CONTEXT(eServiceName) che gestisci tramite delega.
     """
 
   Scenario: [Rifiutata la pubblicazione della nuova versione] - L'ente delegante ha rifiutato la pubblicazione della nuova versione dell'e-serv…
-    Then l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link DELEGA_ADERENTE
+    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link DELEGA_ADERENTE
     """
     L'ente delegante $CONTEXT(nome_ente_delegante) ha rifiutato la pubblicazione della nuova versione dell'e-service
     $CONTEXT(eServiceName) che gestisci tramite delega.
@@ -507,20 +507,20 @@ Feature: API Notifiche - verifica bodies (generato da excel)
 
   Scenario: [Hai ricevuto una richiesta di delega] - Hai ricevuto una richiesta di delega per "" dall'ente per l'e-service
     # originale
-    # Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link DELEGA_ADERENTE
+    # Then admin di "PA1" ha ricevuto la notifica in-app contenente il link DELEGA_ADERENTE
     # """
     # Hai ricevuto una richiesta di delega per $CONTEXT(id_delega) dall'ente $CONTEXT(nome_ente_delegante) per
     # l'e-service $CONTEXT(eServiceName).
     # """
     # adattato al messaggio ottenuto
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link DELEGA_ADERENTE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link DELEGA_ADERENTE
     """
     Hai ricevuto una richiesta di delega $CONTEXT(id_delega) dall'ente $CONTEXT(nome_ente_delegante) per
     l'e-service $CONTEXT(eServiceName).
     """
 
   Scenario: [Una delega che gestivi è stata revocata] - Ti informiamo che l'ente ha revocato la delega per l'e-service che ti aveva…
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link DELEGA_ADERENTE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link DELEGA_ADERENTE
     """
     Ti informiamo che l'ente $CONTEXT(nome_ente_delegante) ha revocato la delega $CONTEXT(id_delega) per
     l'e-service $CONTEXT(eServiceName) che ti aveva conferito.
@@ -532,7 +532,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
     And "PA1" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
     When "PA2" ha già verificato l'attributo verificato a "PA1"
     # FIXME perché non trova la notifica? è presente
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link ANAGRAFICA_ADERENTE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link ANAGRAFICA_ADERENTE
     """
     L'ente certificatore $CONTEXT(nome_ente) ha conferito al tuo ente l'attributo certificato
     $CONTEXT(id_attributo). Puoi ora utilizzarlo nelle richieste di fruizione.
@@ -548,7 +548,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
     Given "GSP" ha già verificato l'attributo verificato a "PA1" sull'altra richiesta di fruizione
     Given l'utente è un "admin" di "PA2"
     When l'utente revoca l'attributo precedentemente verificato
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link ANAGRAFICA_ADERENTE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link ANAGRAFICA_ADERENTE
     """
     Ti informiamo che l'ente certificatore $CONTEXT(nome_ente) ha revocato l'attributo certificato
     $CONTEXT(id_attributo). Tutte le richieste di fruizione che utilizzano tale attributo subiranno una sospensione.
@@ -556,14 +556,14 @@ Feature: API Notifiche - verifica bodies (generato da excel)
     """
 
   Scenario: [Hai ricevuto un nuovo attributo verificato] - L'ente certificatore ha conferito al tuo ente l'attributo verificato "". Puoi o…
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link ANAGRAFICA_ADERENTE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link ANAGRAFICA_ADERENTE
     """
     L'ente certificatore $CONTEXT(nome_ente) ha conferito al tuo ente l'attributo verificato
     $CONTEXT(id_attributo). Puoi ora utilizzarlo nelle richieste di fruizione.
     """
 
   Scenario: [Un tuo attributo verificato è stato revocato] - Ti informiamo che l'ente certificatore ha revocato l'attributo verificato "". T…
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link ANAGRAFICA_ADERENTE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link ANAGRAFICA_ADERENTE
     """
     Ti informiamo che l'ente certificatore $CONTEXT(nome_ente) ha revocato l'attributo verificato
     $CONTEXT(id_attributo). Tutte le richieste di fruizione che utilizzano tale attributo subiranno una sospensione.
@@ -583,12 +583,12 @@ Feature: API Notifiche - verifica bodies (generato da excel)
     And un "admin" di "PA1" ha aggiunto una nuova chiave pubblica al client
     When "PA1" rimuove quella nuova chiave dal client
     # FIXME Perché seppure la notifica è presente non viene vista? Quale delle due versioni di Then è quella giusta per il test?
-    #Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link API_E_SERVICE
+    #Then admin di "PA1" ha ricevuto la notifica in-app contenente il link API_E_SERVICE
     #"""
     #L'utente $CONTEXT(nome_ruolo) ha rimosso una chiave di e-service dal client $CONTEXT(id_client). Assicurati
     #che l'operatività non sia compromessa.
     #"""
-    Then l'utente "admin" di "GSP" ha ricevuto la notifica in-app contenente il link API_E_SERVICE
+    Then admin di "GSP" ha ricevuto la notifica in-app contenente il link API_E_SERVICE
     """
     La chiave $CONTEXT(id_chiave) è stata rimossa dal client $CONTEXT(id_client). Assicurati che l'operatività
     non sia compromessa.
@@ -601,7 +601,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
     And "PA1" ha già inserito l'utente con ruolo "security" come membro di quel client
     And un "security" di "PA1" ha caricato una chiave pubblica nel client
     When "PA1" ha già rimosso l'utente con ruolo "security" dai membri di quel client
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link API_E_SERVICE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link API_E_SERVICE
     """
     Una chiave associata al client $CONTEXT(id_client) non è più considerata sicura, in quanto l'operatore che l'ha
     caricata non è più attivo. La chiave deve essere sostituita per garantire la sicurezza e l'operatività.
@@ -614,7 +614,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
     And "PA1" ha già inserito l'utente con ruolo "security" come membro di quel client
     When un "security" di "PA1" ha caricato una chiave pubblica nel client
     # FALLISCE
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link API_E_SERVICE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link API_E_SERVICE
     """
     Ti informiamo che è stata aggiunta una nuova chiave e-service al client $CONTEXT(id_client).
     """
@@ -627,7 +627,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
     And l'utente "admin" di "PA1" associa il portachiavi erogatore all'e-service
     When l'utente "admin" di "PA1" rimuove tutte le chiavi dal portachiavi erogatore
     # FALLISCE
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link PORTACHIAVI_EROGAZIONE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link PORTACHIAVI_EROGAZIONE
     """
     La chiave $CONTEXT(id_chiave) è stata rimossa dal portachiavi erogatore $CONTEXT(nome_portachiavi).
     Assicurati che l'operatività non sia compromessa.
@@ -639,7 +639,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
     And l'utente "security" di "PA1" aggiunge una chiave al portachiavi erogatore
     When l'utente "admin" di "PA1" rimuove l'utente "security" dal portachiavi erogatore
     # FALLISCE: c'è solo il messaggio di chiave aggiunta al portachiavi
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link PORTACHIAVI_EROGAZIONE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link PORTACHIAVI_EROGAZIONE
     """
     Una chiave associata al portachiavi erogatore $CONTEXT(nome_portachiavi) non è più considerata sicura,
     in quanto l'operatore che l'ha caricata non è più attivo. La chiave deve essere sostituita per garantire la
@@ -650,7 +650,7 @@ Feature: API Notifiche - verifica bodies (generato da excel)
     And l'utente "admin" di "PA1" crea un portachiavi erogatore con successo
     And l'utente "admin" di "PA1" aggiunge l'utente "security" di "PA1" al portachiavi erogatore
     When l'utente "security" di "PA1" aggiunge una chiave al portachiavi erogatore
-    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link PORTACHIAVI_EROGAZIONE
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link PORTACHIAVI_EROGAZIONE
     """
     Ti informiamo che è stata aggiunta una nuova chiave al portachiavi erogatore $CONTEXT(nome_portachiavi).
     """
