@@ -122,7 +122,7 @@ Feature: Caricamento di un documento di interfaccia
   # PIN-9920 PST 2.1 - serverUrls description handling in interface documents
   @pin-9920
   @happy-path
-  Scenario: [PIN-9920 PST 2.1] Creazione e-service con interfaccia REST contenente serverUrls con description
+  Scenario: [DESCRIPTOR_UPLOAD_8] Creazione e-service con interfaccia REST contenente serverUrls con description
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT" e tecnologia "REST"
     When l'utente carica un'interfaccia "REST" con serverUrls che contengono descrizione
@@ -130,7 +130,7 @@ Feature: Caricamento di un documento di interfaccia
 
   @pin-9920
   @happy-path
-  Scenario: [PIN-9920 PST 2.1] Creazione e-service con interfaccia REST contenente serverUrls senza description
+  Scenario: [DESCRIPTOR_UPLOAD_9] Creazione e-service con interfaccia REST contenente serverUrls senza description
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT" e tecnologia "REST"
     When l'utente carica un'interfaccia "REST" con serverUrls senza descrizione
@@ -138,7 +138,8 @@ Feature: Caricamento di un documento di interfaccia
 
   @pin-9920
   @sad-path
-  Scenario: [PIN-9920 PST 2.1] Creazione e-service con interfaccia REST con serverUrls array vuoto
+  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-10525
+  Scenario: [DESCRIPTOR_UPLOAD_10] Creazione e-service con interfaccia REST con serverUrls array vuoto
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT" e tecnologia "REST"
     When l'utente carica un'interfaccia "REST" con serverUrls array vuoto
@@ -146,7 +147,8 @@ Feature: Caricamento di un documento di interfaccia
 
   @pin-9920
   @sad-path
-  Scenario: [PIN-9920 PST 2.1] Creazione e-service con interfaccia REST senza serverUrls
+  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-10527
+  Scenario: [DESCRIPTOR_UPLOAD_11] Creazione e-service con interfaccia REST senza serverUrls
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT" e tecnologia "REST"
     When l'utente carica un'interfaccia "REST" senza serverUrls

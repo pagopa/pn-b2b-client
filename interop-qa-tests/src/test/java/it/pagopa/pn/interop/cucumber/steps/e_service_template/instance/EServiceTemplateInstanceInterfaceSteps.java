@@ -12,9 +12,12 @@ import it.pagopa.pn.interop.cucumber.utility.StepParser;
 import it.pagopa.pn.interop.cucumber.utility.enums.ResolvableToken;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.beans.BeansException;
+import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.http.ResponseEntity;
 
-import java.net.URI;
 import java.util.*;
 
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -47,7 +50,17 @@ public class EServiceTemplateInstanceInterfaceSteps {
                 apiType,
                 getActualEServiceIdOrRandom(),
                 getActualDescriptorIdOrRandom(),
-                dataTable
+                parseFieldValueDataTable(dataTable)
+        );
+    }
+
+    @When("l'utente tenta di associare un'interfaccia template instance {string} senza specifiche")
+    public void addTemplateInstanceInterfaceWithoutPayload(String apiType) {
+        executeTemplateInstanceInterfaceCall(
+                apiType,
+                getActualEServiceIdOrRandom(),
+                getActualDescriptorIdOrRandom(),
+                Collections.emptyMap()
         );
     }
 
@@ -64,14 +77,13 @@ public class EServiceTemplateInstanceInterfaceSteps {
                 ? resolveIdToken(idValueToken, actualDescriptorId)
                 : actualDescriptorId;
 
-        executeTemplateInstanceInterfaceCall(apiType, eServiceId, descriptorId, dataTable);
+        executeTemplateInstanceInterfaceCall(apiType, eServiceId, descriptorId, parseFieldValueDataTable(dataTable));
     }
 
-    private void executeTemplateInstanceInterfaceCall(String apiType, UUID eServiceId, UUID descriptorId, DataTable dataTable) {
+    private void executeTemplateInstanceInterfaceCall(String apiType, UUID eServiceId, UUID descriptorId, Map<String, String> data) {
         String userToken = sharedStepsContext.getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
 
-        Map<String, String> data = dataTable.asMap(String.class, String.class);
         String normalizedApiType = normalizeApiType(apiType);
 
         if ("REST".equals(normalizedApiType)) {
@@ -110,7 +122,7 @@ public class EServiceTemplateInstanceInterfaceSteps {
 
                 ProducerEServiceDescriptor descriptor = eServiceClient.getEServiceDescriptor(eServiceId, descriptorId);
 
-                Map<String, String> expectedData = dataTable.asMap(String.class, String.class);
+                Map<String, String> expectedData = parseFieldValueDataTable(dataTable);
                 if ("REST".equals(normalizedApiType)) {
                     verifyRestInterfaceFields(descriptor, expectedData, softly);
                 } else {
@@ -162,20 +174,7 @@ public class EServiceTemplateInstanceInterfaceSteps {
      * Supports fields: contactName, contactEmail, contactUrl, termsAndConditionsUrl, serverUrls[i].url, serverUrls[i].description
      */
     private TemplateInstanceInterfaceRESTSeed buildRestSeed(Map<String, String> data) {
-        TemplateInstanceInterfaceRESTSeed seed = new TemplateInstanceInterfaceRESTSeed();
-
-        seed.contactName(StepParser.nullOrBlankOrValue(data.get("contactName")));
-        seed.contactEmail(StepParser.nullOrBlankOrValue(data.get("contactEmail")));
-        seed.contactUrl(toNullableUri(data.get("contactUrl")));
-        seed.termsAndConditionsUrl(toNullableUri(data.get("termsAndConditionsUrl")));
-
-        // Build serverUrls array
-        List<ServerUrlWithDescription> serverUrls = buildServerUrlsList(data);
-        if (!serverUrls.isEmpty()) {
-            seed.serverUrls(serverUrls);
-        }
-
-        return seed;
+        return populateSeedFromDataTable(new TemplateInstanceInterfaceRESTSeed(), data);
     }
 
     /**
@@ -183,58 +182,57 @@ public class EServiceTemplateInstanceInterfaceSteps {
      * Supports fields: serverUrls[i].url, serverUrls[i].description
      */
     private TemplateInstanceInterfaceSOAPSeed buildSoapSeed(Map<String, String> data) {
-        TemplateInstanceInterfaceSOAPSeed seed = new TemplateInstanceInterfaceSOAPSeed();
+        return populateSeedFromDataTable(new TemplateInstanceInterfaceSOAPSeed(), data);
+    }
 
-        // Build serverUrls array
-        List<ServerUrlWithDescription> serverUrls = buildServerUrlsList(data);
-        if (!serverUrls.isEmpty()) {
-            seed.serverUrls(serverUrls);
+    /**
+     * Populates a seed DTO via Spring introspection with support for nested/indexed paths
+     * (e.g. serverUrls[0].url, serverUrls[0].description).
+     */
+    private <T> T populateSeedFromDataTable(T seed, Map<String, String> data) {
+        BeanWrapper wrapper = new BeanWrapperImpl(seed);
+        wrapper.setAutoGrowNestedPaths(true);
+        wrapper.setConversionService(new DefaultConversionService());
+
+        for (Map.Entry<String, String> entry : data.entrySet()) {
+            try {
+                wrapper.setPropertyValue(entry.getKey(), StepParser.nullOrBlankOrValue(entry.getValue()));
+            } catch (BeansException ex) {
+                throw new IllegalArgumentException("Campo non valido o valore non convertibile: " + entry.getKey(), ex);
+            }
         }
 
         return seed;
     }
 
-    /**
-     * Builds list of ServerUrl objects from DataTable
-     * Handles dynamic array indices: serverUrls[0].url, serverUrls[0].description, serverUrls[1].url, etc.
-     */
-    private List<ServerUrlWithDescription> buildServerUrlsList(Map<String, String> data) {
-        Map<Integer, ServerUrlWithDescription> serverUrlsMap = new TreeMap<>();
-
-        for (Map.Entry<String, String> entry : data.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-
-            if (key.startsWith("serverUrls[") && key.endsWith("].url")) {
-                int index = extractIndex(key);
-                URI normalizedUrl = toNullableUri(value);
-                if (normalizedUrl != null) {
-                    serverUrlsMap.computeIfAbsent(index, i -> new ServerUrlWithDescription()).url(normalizedUrl);
-                } else {
-                    serverUrlsMap.computeIfAbsent(index, i -> new ServerUrlWithDescription());
-                }
-            } else if (key.startsWith("serverUrls[") && key.endsWith("].description")) {
-                int index = extractIndex(key);
-                String normalizedDesc = StepParser.nullOrBlankOrValue(value);
-                serverUrlsMap.computeIfAbsent(index, i -> new ServerUrlWithDescription()).description(normalizedDesc);
-            }
+    private Map<String, String> parseFieldValueDataTable(DataTable dataTable) {
+        List<List<String>> rows = dataTable.cells();
+        if (rows == null || rows.isEmpty()) {
+            return Collections.emptyMap();
         }
 
-        return new ArrayList<>(serverUrlsMap.values());
-    }
+        int startIndex = 0;
+        List<String> firstRow = rows.get(0);
+        if (firstRow.size() >= 2
+                && "field".equalsIgnoreCase(firstRow.get(0).trim())
+                && "value".equalsIgnoreCase(firstRow.get(1).trim())) {
+            startIndex = 1;
+        }
 
-    private URI toNullableUri(String rawValue) {
-        String normalized = StepParser.nullOrBlankOrValue(rawValue);
-        return normalized == null ? null : URI.create(normalized);
-    }
+        Map<String, String> mapped = new LinkedHashMap<>();
+        for (int i = startIndex; i < rows.size(); i++) {
+            List<String> row = rows.get(i);
+            if (row.size() < 2) {
+                continue;
+            }
+            String key = row.get(0) == null ? "" : row.get(0).trim();
+            if (key.isEmpty()) {
+                continue;
+            }
+            mapped.put(key, row.get(1));
+        }
 
-    /**
-     * Extracts array index from keys like "serverUrls[0].url" -> 0
-     */
-    private int extractIndex(String key) {
-        int startIdx = key.indexOf('[') + 1;
-        int endIdx = key.indexOf(']');
-        return Integer.parseInt(key.substring(startIdx, endIdx));
+        return mapped;
     }
 
     /**
