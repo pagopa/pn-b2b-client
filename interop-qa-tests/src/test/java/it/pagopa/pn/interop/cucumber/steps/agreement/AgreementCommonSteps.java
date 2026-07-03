@@ -214,6 +214,7 @@ public class AgreementCommonSteps {
             eServicesCommonContext.setEserviceId(firstDescriptor.getEServiceId());
             eServicesCommonContext.setDescriptorId(firstDescriptor.getDescriptorId());
         }
+        sharedStepsContext.getEServicesCommonContext().setProducerName(identityService.getTenantName(tenantType));
     }
 
     @Given("l'ente {delegationRole} ha già creato e pubblicato {int} e-service(s)")
