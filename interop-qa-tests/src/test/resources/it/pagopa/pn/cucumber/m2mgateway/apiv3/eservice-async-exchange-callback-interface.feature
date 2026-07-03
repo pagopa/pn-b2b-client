@@ -178,13 +178,9 @@ Feature: Gestione della callback interface per gli e-service asincroni
       | technology | type | expectedResult |
       | REST       | yaml | 200            |
       | REST       | json | 200            |
-      # KO
       | SOAP       | wsdl | 200            |
-      # KO
       | SOAP       | xml  | 200            |
-      #KO
       | REST       | wsdl | 400            |
-      #KO
       | REST       | xml  | 400            |
       | SOAP       | yaml | 400            |
       | SOAP       | json | 400            |
@@ -305,7 +301,6 @@ Feature: Gestione della callback interface per gli e-service asincroni
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente carica un'interfaccia di callback di scambio asincrono per quel descrittore
     And si ottiene response status code 200
-
     When l'utente è un "admin" di "<tenant>" con ruolo M2M <m2mRole>
     And l'utente effettua il download dell'interfaccia di callback di scambio asincrono per quel descrittore
     Then si ottiene lo status code <expectedResult>
