@@ -50,7 +50,7 @@ public class NotificationStepsConfig {
         private UserNotificationConfigUpdateSeed userConfig;
     }
 
-    enum ConfigStrategy {PER_ROLE, NO_CONFIG, ALL_BUT_ESERVICE_STATE_CHANGED}
+    enum ConfigStrategy {PER_ROLE, NO_CONFIG}
 
     private final NotificationClientImpl notificationClient;
     private final NotificationConfigClient notificationConfigClient;
@@ -346,12 +346,6 @@ public class NotificationStepsConfig {
         applyTaskForEveryUser(excludedRoles, role -> {
             GlobalNotificationConfig config = switch (configStrategy) {
                 case NO_CONFIG -> configureGlobalNotificationWithOptInLists();
-                case ALL_BUT_ESERVICE_STATE_CHANGED -> configureGlobalNotificationWithOptInLists(
-                        false,
-                        "in-app",
-                        activatableNotificationsByRole.get(role),
-                        List.of("eserviceStateChangedToProducer")
-                );
                 default -> configureGlobalNotificationWithOptInLists(
                         false,
                         "in-app",
@@ -403,14 +397,6 @@ public class NotificationStepsConfig {
         }
     }
 
-    @Given("l'utente attiva le notifiche tranne il cambio di stato dell'e-service per l'erogatore")
-    public void userTurnOnNotificationButEserviceStateChanged() throws Exception {
-        List<String> excludedRoles = activatableNotificationsByRole.keySet().stream()
-                .filter(role -> !List.of("admin").contains(role))
-                .toList();
-        this.configureNotificationsToUser(excludedRoles, ConfigStrategy.ALL_BUT_ESERVICE_STATE_CHANGED);
-    }
-
     @Given("{userRole} di {string} {turnOnOrOff} le notifiche {emailOrInApp} eccetto:")
     public void configureNotificationForUser(
             UserRole role,
@@ -434,7 +420,7 @@ public class NotificationStepsConfig {
                 // Attiva tutte le notifiche attivabili per un ruolo senza eccezioni
                 seed.set(configureGlobalNotificationWithOptInLists(
                         true,
-                        "in-app",
+                        notificationType,
                         activatableNotificationsByRole.get(role.getValue())
                 ).getUserConfig());
             } else {
@@ -442,7 +428,7 @@ public class NotificationStepsConfig {
                 List<String> exceptionFields = exceptionsTable.asList(String.class);
                 seed.set(configureGlobalNotificationWithOptInLists(
                         true,
-                        "in-app",
+                        notificationType,
                         activatableNotificationsByRole.get(role.getValue()),
                         exceptionFields
                 ).getUserConfig());
