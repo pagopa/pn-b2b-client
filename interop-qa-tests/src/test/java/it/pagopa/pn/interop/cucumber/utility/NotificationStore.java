@@ -3,6 +3,7 @@ package it.pagopa.pn.interop.cucumber.utility;
 import it.pagopa.interop.authorization.domain.Tenant;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.ConfigFileReader;
+import it.pagopa.interop.common.enums.UserRole;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Notification;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import java.util.HashMap;
@@ -70,6 +71,11 @@ public class NotificationStore {
             log.info("{} initialization already done. Skipping...",
                 this.getClass().getSimpleName());
         }
+    }
+
+    public List<Notification> getLastNotifications(int limit, NotificationUser user) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(user.getTenant(), user.getRole()));
+        return clientTokenConfigurator.getNotificationClient().getAll(0, limit);
     }
 
     private void initializeNotifications(NotificationUser user) {
