@@ -150,4 +150,19 @@ public class SharedStepsContext implements ISharedContext {
     public String getPurposeTitle() {
         return this.purposeCommonContext.getCreatedPurposes().get(0).getTitle();
     }
+
+    @Override
+    public String getEServiceTemplateId() {
+        return this.eServiceTemplateStepContext.getLastTemplateManaged().getId().toString();
+    }
+
+    @Override
+    public String getEServiceTemplateVersionId() {
+        return this.eServiceTemplateStepContext.getLastTemplateManaged().getLastVersionId().toString();
+    }
+
+    @Override
+    public String getEServiceTemplateName() {
+        return this.eServiceTemplateStepContext.getLastTemplateManaged().getName();
+    }
 }

@@ -10,4 +10,7 @@ public interface ISharedContext {
     String getConsumerName();
     String getPurposeId();
     String getPurposeTitle();
+    String getEServiceTemplateId();
+    String getEServiceTemplateVersionId();
+    String getEServiceTemplateName();
 }
