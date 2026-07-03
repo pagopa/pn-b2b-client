@@ -131,7 +131,7 @@ Feature: Gestione della callback interface per gli e-service asincroni
     And "PA1" ha già caricato un'interfaccia per quel descrittore
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente carica un'interfaccia di callback di scambio asincrono per quel descrittore
-    When l'utente carica un'interfaccia di callback di scambio asincrono per quel descrittore
+    When l'utente ricarica l'interfaccia di callback di scambio asincrono per quel descrittore
     Then si ottiene response status code 409
 
   Scenario: [ASYNC_ESERVICE_CALLBACK_INTERFACE_OWNERSHIP] Il caricamento dell'interfaccia di callback fallisce se l'utente

@@ -37,6 +37,7 @@ public class EServiceAsyncExchangeCallbackInterfaceSteps {
         this.blobFileCreator = blobFileCreator;
     }
 
+    @When("l'utente ricarica l'interfaccia di callback di scambio asincrono per quel descrittore")
     @When("l'utente carica un'interfaccia di callback di scambio asincrono per quel descrittore")
     public void uploadCallbackInterface() {
         this.uploadAsyncExchangeCallbackInterface(
