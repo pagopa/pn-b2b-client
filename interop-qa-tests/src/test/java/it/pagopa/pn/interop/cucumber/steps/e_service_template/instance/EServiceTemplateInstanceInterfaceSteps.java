@@ -1,6 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.instance;
 
-import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.service.IEServiceClient;
@@ -12,10 +11,6 @@ import it.pagopa.pn.interop.cucumber.utility.StepParser;
 import it.pagopa.pn.interop.cucumber.utility.enums.ResolvableToken;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
-import org.springframework.beans.BeansException;
-import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.http.ResponseEntity;
 
 import java.util.*;
@@ -44,28 +39,44 @@ public class EServiceTemplateInstanceInterfaceSteps {
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
     }
 
-    @When("l'utente tenta di associare un'interfaccia template instance {string} con:")
-    public void addTemplateInstanceInterface(String apiType, DataTable dataTable) {
-        executeTemplateInstanceInterfaceCall(
-                apiType,
+    @When("l'utente tenta di associare un'interfaccia template instance \"REST\" con:")
+    public void addTemplateInstanceRestInterface(TemplateInstanceInterfaceRESTSeed seed) {
+        executeTemplateInstanceInterfaceRestCall(
                 getActualEServiceIdOrRandom(),
                 getActualDescriptorIdOrRandom(),
-                parseFieldValueDataTable(dataTable)
+                seed
         );
     }
 
-    @When("l'utente tenta di associare un'interfaccia template instance {string} senza specifiche")
-    public void addTemplateInstanceInterfaceWithoutPayload(String apiType) {
-        executeTemplateInstanceInterfaceCall(
-                apiType,
+    @When("l'utente tenta di associare un'interfaccia template instance \"SOAP\" con:")
+    public void addTemplateInstanceSoapInterface(TemplateInstanceInterfaceSOAPSeed seed) {
+            executeTemplateInstanceInterfaceSoapCall(
                 getActualEServiceIdOrRandom(),
                 getActualDescriptorIdOrRandom(),
-                Collections.emptyMap()
+                seed
         );
     }
 
-    @When("l'utente tenta di associare un'interfaccia template instance {string} con {string} {string} e:")
-    public void addTemplateInstanceInterfaceWithCustomId(String apiType, String idField, String idValueToken, DataTable dataTable) {
+    @When("l'utente tenta di associare un'interfaccia template instance \"REST\" senza specifiche")
+    public void addTemplateInstanceRestInterfaceWithoutPayload() {
+        executeTemplateInstanceInterfaceRestCall(
+                getActualEServiceIdOrRandom(),
+                getActualDescriptorIdOrRandom(),
+                new TemplateInstanceInterfaceRESTSeed()
+        );
+    }
+
+    @When("l'utente tenta di associare un'interfaccia template instance \"SOAP\" senza specifiche")
+    public void addTemplateInstanceSoapInterfaceWithoutPayload() {
+        executeTemplateInstanceInterfaceSoapCall(
+                getActualEServiceIdOrRandom(),
+                getActualDescriptorIdOrRandom(),
+                new TemplateInstanceInterfaceSOAPSeed()
+        );
+    }
+
+    @When("l'utente tenta di associare un'interfaccia template instance \"REST\" con {string} {string} e:")
+    public void addTemplateInstanceRestInterfaceWithCustomId(String idField, String idValueToken, TemplateInstanceInterfaceRESTSeed seed) {
         UUID actualEServiceId = getActualEServiceIdOrRandom();
         UUID actualDescriptorId = getActualDescriptorIdOrRandom();
 
@@ -77,26 +88,38 @@ public class EServiceTemplateInstanceInterfaceSteps {
                 ? resolveIdToken(idValueToken, actualDescriptorId)
                 : actualDescriptorId;
 
-        executeTemplateInstanceInterfaceCall(apiType, eServiceId, descriptorId, parseFieldValueDataTable(dataTable));
+        executeTemplateInstanceInterfaceRestCall(eServiceId, descriptorId, seed);
     }
 
-    private void executeTemplateInstanceInterfaceCall(String apiType, UUID eServiceId, UUID descriptorId, Map<String, String> data) {
+    @When("l'utente tenta di associare un'interfaccia template instance \"SOAP\" con {string} {string} e:")
+    public void addTemplateInstanceSoapInterfaceWithCustomId(String idField, String idValueToken, TemplateInstanceInterfaceSOAPSeed seed) {
+        UUID actualEServiceId = getActualEServiceIdOrRandom();
+        UUID actualDescriptorId = getActualDescriptorIdOrRandom();
+
+        UUID eServiceId = "eServiceId".equalsIgnoreCase(idField)
+                ? resolveIdToken(idValueToken, actualEServiceId)
+                : actualEServiceId;
+
+        UUID descriptorId = "descriptorId".equalsIgnoreCase(idField)
+                ? resolveIdToken(idValueToken, actualDescriptorId)
+                : actualDescriptorId;
+
+        executeTemplateInstanceInterfaceSoapCall(eServiceId, descriptorId, seed);
+    }
+
+    private void executeTemplateInstanceInterfaceRestCall(UUID eServiceId, UUID descriptorId, TemplateInstanceInterfaceRESTSeed seed) {
         String userToken = sharedStepsContext.getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
+        httpCallExecutor.performCall(
+                () -> eServiceClient.addEServiceTemplateInstanceInterfaceRestWithHttpInfo(
+                        eServiceId, descriptorId, seed),
+                ResponseEntity::getStatusCode
+        );
+    }
 
-        String normalizedApiType = normalizeApiType(apiType);
-
-        if ("REST".equals(normalizedApiType)) {
-            TemplateInstanceInterfaceRESTSeed seed = buildRestSeed(data);
-            httpCallExecutor.performCall(
-                    () -> eServiceClient.addEServiceTemplateInstanceInterfaceRestWithHttpInfo(
-                            eServiceId, descriptorId, seed),
-                    ResponseEntity::getStatusCode
-            );
-            return;
-        }
-
-        TemplateInstanceInterfaceSOAPSeed seed = buildSoapSeed(data);
+    private void executeTemplateInstanceInterfaceSoapCall(UUID eServiceId, UUID descriptorId, TemplateInstanceInterfaceSOAPSeed seed) {
+        String userToken = sharedStepsContext.getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
         httpCallExecutor.performCall(
                 () -> eServiceClient.addEServiceTemplateInstanceInterfaceSoapWithHttpInfo(
                         eServiceId, descriptorId, seed),
@@ -104,10 +127,9 @@ public class EServiceTemplateInstanceInterfaceSteps {
         );
     }
 
-    @Then("l'interfaccia template instance {string} è stata registrata correttamente con i valori:")
-    public void verifyTemplateInstanceInterface(String apiType, DataTable dataTable) {
+    @Then("l'interfaccia template instance \"REST\" è stata registrata correttamente con i valori:")
+    public void verifyRestTemplateInstanceInterface(TemplateInstanceInterfaceRESTSeed expectedSeed) {
         ResponseEntity<?> response = (ResponseEntity<?>) httpCallExecutor.getResponse();
-        String normalizedApiType = normalizeApiType(apiType);
 
         assertSoftly(softly -> {
             softly.assertThat(response.getStatusCode().is2xxSuccessful())
@@ -121,13 +143,28 @@ public class EServiceTemplateInstanceInterfaceSteps {
                         .getLastEServiceIdCreatedFromTemplate();
 
                 ProducerEServiceDescriptor descriptor = eServiceClient.getEServiceDescriptor(eServiceId, descriptorId);
+                verifyRestInterfaceFields(descriptor, expectedSeed, softly);
+            }
+        });
+    }
 
-                Map<String, String> expectedData = parseFieldValueDataTable(dataTable);
-                if ("REST".equals(normalizedApiType)) {
-                    verifyRestInterfaceFields(descriptor, expectedData, softly);
-                } else {
-                    verifySoapInterfaceFields(descriptor, expectedData, softly);
-                }
+    @Then("l'interfaccia template instance \"SOAP\" è stata registrata correttamente con i valori:")
+    public void verifySoapTemplateInstanceInterface(TemplateInstanceInterfaceSOAPSeed expectedSeed) {
+        ResponseEntity<?> response = (ResponseEntity<?>) httpCallExecutor.getResponse();
+
+        assertSoftly(softly -> {
+            softly.assertThat(response.getStatusCode().is2xxSuccessful())
+                    .as("Response status code should be 2xx")
+                    .isTrue();
+
+            if (response.getBody() instanceof CreatedResource) {
+                UUID descriptorId = sharedStepsContext.getEServiceTemplateStepContext()
+                        .getLastEServiceDescriptorCreatedFromTemplate().getId();
+                UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext()
+                        .getLastEServiceIdCreatedFromTemplate();
+
+                ProducerEServiceDescriptor descriptor = eServiceClient.getEServiceDescriptor(eServiceId, descriptorId);
+                verifySoapInterfaceFields(descriptor, expectedSeed, softly);
             }
         });
     }
@@ -158,92 +195,15 @@ public class EServiceTemplateInstanceInterfaceSteps {
         throw new IllegalArgumentException("Valore ID non valido: " + idValueToken + ". Usa %actual, %random o UUID valido");
     }
 
-    private String normalizeApiType(String apiType) {
-        if (apiType == null) {
-            throw new IllegalArgumentException("Tipo API non specificato: usare REST o SOAP");
-        }
-        String normalizedApiType = apiType.trim().toUpperCase(Locale.ROOT);
-        if (!"REST".equals(normalizedApiType) && !"SOAP".equals(normalizedApiType)) {
-            throw new IllegalArgumentException("Tipo API non supportato: " + apiType + ". Valori ammessi: REST, SOAP");
-        }
-        return normalizedApiType;
-    }
-
-    /**
-     * Builds TemplateInstanceInterfaceRESTSeed from DataTable
-     * Supports fields: contactName, contactEmail, contactUrl, termsAndConditionsUrl, serverUrls[i].url, serverUrls[i].description
-     */
-    private TemplateInstanceInterfaceRESTSeed buildRestSeed(Map<String, String> data) {
-        return populateSeedFromDataTable(new TemplateInstanceInterfaceRESTSeed(), data);
-    }
-
-    /**
-     * Builds TemplateInstanceInterfaceSOAPSeed from DataTable
-     * Supports fields: serverUrls[i].url, serverUrls[i].description
-     */
-    private TemplateInstanceInterfaceSOAPSeed buildSoapSeed(Map<String, String> data) {
-        return populateSeedFromDataTable(new TemplateInstanceInterfaceSOAPSeed(), data);
-    }
-
-    /**
-     * Populates a seed DTO via Spring introspection with support for nested/indexed paths
-     * (e.g. serverUrls[0].url, serverUrls[0].description).
-     */
-    private <T> T populateSeedFromDataTable(T seed, Map<String, String> data) {
-        BeanWrapper wrapper = new BeanWrapperImpl(seed);
-        wrapper.setAutoGrowNestedPaths(true);
-        wrapper.setConversionService(new DefaultConversionService());
-
-        for (Map.Entry<String, String> entry : data.entrySet()) {
-            try {
-                wrapper.setPropertyValue(entry.getKey(), StepParser.nullOrBlankOrValue(entry.getValue()));
-            } catch (BeansException ex) {
-                throw new IllegalArgumentException("Campo non valido o valore non convertibile: " + entry.getKey(), ex);
-            }
-        }
-
-        return seed;
-    }
-
-    private Map<String, String> parseFieldValueDataTable(DataTable dataTable) {
-        List<List<String>> rows = dataTable.cells();
-        if (rows == null || rows.isEmpty()) {
-            return Collections.emptyMap();
-        }
-
-        int startIndex = 0;
-        List<String> firstRow = rows.get(0);
-        if (firstRow.size() >= 2
-                && "field".equalsIgnoreCase(firstRow.get(0).trim())
-                && "value".equalsIgnoreCase(firstRow.get(1).trim())) {
-            startIndex = 1;
-        }
-
-        Map<String, String> mapped = new LinkedHashMap<>();
-        for (int i = startIndex; i < rows.size(); i++) {
-            List<String> row = rows.get(i);
-            if (row.size() < 2) {
-                continue;
-            }
-            String key = row.get(0) == null ? "" : row.get(0).trim();
-            if (key.isEmpty()) {
-                continue;
-            }
-            mapped.put(key, row.get(1));
-        }
-
-        return mapped;
-    }
-
     /**
      * Verifies REST interface fields in descriptor match expected values
      */
     private void verifyRestInterfaceFields(ProducerEServiceDescriptor descriptor,
-                                          Map<String, String> expectedData,
+                                          TemplateInstanceInterfaceRESTSeed expectedSeed,
                                           org.assertj.core.api.SoftAssertions softly) {
         // Extract interface from descriptor - structure may vary based on BFF response
         // This is a placeholder - adjust based on actual descriptor structure
-        softly.assertThat(expectedData).isNotNull();
+        softly.assertThat(expectedSeed).isNotNull();
         softly.assertThat(descriptor).isNotNull();
     }
 
@@ -251,11 +211,11 @@ public class EServiceTemplateInstanceInterfaceSteps {
      * Verifies SOAP interface fields in descriptor match expected values
      */
     private void verifySoapInterfaceFields(ProducerEServiceDescriptor descriptor,
-                                          Map<String, String> expectedData,
+                                          TemplateInstanceInterfaceSOAPSeed expectedSeed,
                                           org.assertj.core.api.SoftAssertions softly) {
         // Extract interface from descriptor - structure may vary based on BFF response
         // This is a placeholder - adjust based on actual descriptor structure
-        softly.assertThat(expectedData).isNotNull();
+        softly.assertThat(expectedSeed).isNotNull();
         softly.assertThat(descriptor).isNotNull();
     }
 }
