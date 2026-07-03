@@ -21,13 +21,8 @@ import it.pagopa.pn.interop.cucumber.utility.FeatureLifecycleManager;
 import it.pagopa.pn.interop.cucumber.utility.NotificationStore;
 import it.pagopa.pn.interop.cucumber.utility.NotificationStore.NotificationUser;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -78,7 +73,7 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
         this.agreementCommonSteps = agreementCommonSteps;
         this.clientCreateStep = clientCreateStep;
         this.notificationStore = notificationStore;
-        this.notificationStore.concurrentSafeInitializeOnce();
+        //this.notificationStore.concurrentSafeInitializeOnce();
         this.sharedStepsContext = sharedStepsContext;
     }
 
@@ -420,8 +415,11 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
         String deepLink = resolveDynamicValues(deepLinkType.getValue(), sharedStepsContext);
         String finalMessage = resolveDynamicValues(message, sharedStepsContext);
 
-        final AtomicInteger limit = new AtomicInteger(5);
+        final int MAX_TRIES = 3;
         final int MAX_LIMIT = 50;
+        final AtomicInteger tryCount = new AtomicInteger(0);
+        final AtomicInteger limit = new AtomicInteger(5);
+        final AtomicBoolean foundBody = new AtomicBoolean(false);
 
         PollingService.makePolling(
                 () -> (notificationStore.getLastNotifications(
@@ -435,6 +433,7 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
                                 .anySatisfy(notif -> {
                                     assertThat(notif.getBody()).isEqualTo(finalMessage);
                                     log.info("Found notification: \"" + finalMessage + "\"");
+                                    foundBody.set(true);
                                     if (!deepLink.isEmpty()) {
                                         log.info("Checking deep link...");
                                         assertThat(notif.getDeepLink()).isEqualTo(deepLink);
@@ -443,11 +442,19 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
                                 });
                         return true;
                     } catch (AssertionError e) {
+                        if (tryCount.incrementAndGet() == MAX_TRIES) {
+                            if (!foundBody.get()) {
+                                log.warn("Last retrieved notifications before failing:");
+                                for (int i = all.size() - 1; i >= 0; i--) {
+                                    log.warn(all.get(i).getBody());
+                                }
+                            }
+                        }
                         return false;
                     }
                 },
                 "Not Found expected notification: \"" + finalMessage + "\" with DeepLink " + deepLink,
-                3,
+                MAX_TRIES,
                 3000
         );
     }
