@@ -9,6 +9,7 @@ public interface ISharedContext {
     String getProducerName();
     String getConsumerName();
     String getPurposeId();
+    String getNewPurposeId();
     String getPurposeTitle();
     String getEServiceTemplateId();
     String getEServiceTemplateVersionId();

@@ -143,7 +143,18 @@ public class SharedStepsContext implements ISharedContext {
 
     @Override
     public String getPurposeId() {
-        return this.purposeCommonContext.getNewPurposeId().toString();
+        // purposeId first or else fallback into newPurposeId
+        return (this.purposeCommonContext.getPurposeId() != null) ?
+                this.purposeCommonContext.getPurposeId() :
+                this.purposeCommonContext.getNewPurposeId().toString();
+    }
+
+    @Override
+    public String getNewPurposeId() {
+        // newPurposeId first or else fallback into purposeId
+        return (this.purposeCommonContext.getNewPurposeId() != null) ?
+                this.purposeCommonContext.getNewPurposeId().toString() :
+                this.purposeCommonContext.getPurposeId();
     }
 
     @Override
