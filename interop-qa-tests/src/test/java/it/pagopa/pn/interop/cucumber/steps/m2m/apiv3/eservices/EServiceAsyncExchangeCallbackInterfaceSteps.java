@@ -127,7 +127,7 @@ public class EServiceAsyncExchangeCallbackInterfaceSteps {
     }
 
     @When("l'utente tenta di effettuare la rimozione dell'interfaccia di callback di scambio asincrono del precedente descrittore dell'e-service")
-    public void uploadCallbackInterfaceWithPreviousDescriptor() {
+    public void deleteCallbackInterfaceWithPreviousDescriptor() {
         this.deleteAsyncExchangeCallbackInterface(
                 sharedStepsContext.getEServicesCommonContext().getEserviceId(),
                 sharedStepsContext.getEServicesCommonContext().getOldDescriptorId()
