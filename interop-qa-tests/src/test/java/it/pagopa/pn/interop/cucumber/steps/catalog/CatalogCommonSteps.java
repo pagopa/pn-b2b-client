@@ -155,6 +155,7 @@ public class CatalogCommonSteps {
     private void createEServiceWithDescriptorAndDocuments(String tenantType, String descriptorState, int documents,
                                                           String documentNamePrefix, String documentPrettyNamePrefix) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        sharedStepsContext.getEServicesCommonContext().setProducerName(identityService.getTenantName(tenantType));
 
         EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(new EServiceSeed(), new UpdateEServiceDescriptorSeed());
         MutateDescriptorResult result = dataPreparationService.bringDescriptorToGivenState(

@@ -226,6 +226,7 @@ public class AgreementCommonSteps {
     @Given("{string} ha già creato un e-service in stato {string} con approvazione {string}")
     public void tenantHasAlreadyCreatedEServiceWithStatusAndApproval(String tenantType, String descriptorState, String agreementApprovalPolicy) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        sharedStepsContext.getEServicesCommonContext().setProducerName(identityService.getTenantName(tenantType));
         EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(new EServiceSeed(),
                 new UpdateEServiceDescriptorSeed().agreementApprovalPolicy(AgreementApprovalPolicy.valueOf(agreementApprovalPolicy)));
 
