@@ -117,6 +117,11 @@ public class SharedStepsContext implements ISharedContext {
     }
 
     @Override
+    public String getOldEServiceName() {
+        return this.eServicesCommonContext.getOldName();
+    }
+
+    @Override
     public String getEServiceId() {
         return this.eServicesCommonContext.getEserviceId().toString();
     }
@@ -175,5 +180,10 @@ public class SharedStepsContext implements ISharedContext {
     @Override
     public String getEServiceTemplateName() {
         return this.eServiceTemplateStepContext.getLastTemplateManaged().getName();
+    }
+
+    @Override
+    public String getDocumentName() {
+        return this.eServicesCommonContext.getDocumentName();
     }
 }

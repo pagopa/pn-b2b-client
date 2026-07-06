@@ -3,6 +3,7 @@ package it.pagopa.common.model;
 public interface ISharedContext {
     String getAgreementId();
     String getEServiceName();
+    String getOldEServiceName();
     String getEServiceId();
     String getDescriptorId();
     String getOldDescriptorId();
@@ -14,4 +15,5 @@ public interface ISharedContext {
     String getEServiceTemplateId();
     String getEServiceTemplateVersionId();
     String getEServiceTemplateName();
+    String getDocumentName();
 }
