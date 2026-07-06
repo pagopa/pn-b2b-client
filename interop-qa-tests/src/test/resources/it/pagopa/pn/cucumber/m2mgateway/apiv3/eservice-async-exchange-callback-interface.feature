@@ -435,7 +435,7 @@ Feature: Gestione della callback interface per gli e-service asincroni
     Then si ottiene status code 400
 
   Scenario: [ASYNC_ESERVICE_CALLBACK_INTERFACE_DELETE_DEPRECATED] La rimozione dell'interfaccia di callback per un e-service
-  asincrono che si trova in stato SUSPENDED non può essere effettuato.
+  asincrono che si trova in stato DEPRECATED non può essere effettuato.
 
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service asincrono in stato "DRAFT" con:
