@@ -8,7 +8,6 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownload
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
-import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import java.io.IOException;
@@ -27,8 +26,7 @@ public class EServiceAsyncExchangeCallbackInterfaceSteps {
     public EServiceAsyncExchangeCallbackInterfaceSteps(
             ClientTokenConfigurator clientTokenConfigurator,
             SharedStepsContext sharedStepsContext,
-            BlobFileCreator blobFileCreator,
-            DelayService delayService
+            BlobFileCreator blobFileCreator
     ) {
         this.sharedStepsContext = sharedStepsContext;
         this.httpExecutor = sharedStepsContext.getHttpCallExecutor();
