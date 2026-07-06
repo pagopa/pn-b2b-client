@@ -151,8 +151,11 @@ public class EServiceAsyncExchangeCallbackInterfaceSteps {
             .resource(resource)
             .eServiceId(eServiceId)
             .descriptorId(descriptorId);
-        httpExecutor.performCall(() -> eServiceClient.uploadAsyncExchangeCallbackInterface(request));
-        blobFileCreator.deleteTempFile(fileName);
+        try {
+            httpExecutor.performCall(() -> eServiceClient.uploadAsyncExchangeCallbackInterface(request));
+        } finally {
+            blobFileCreator.deleteTempFile(fileName);
+        }
     }
 
     private void deleteAsyncExchangeCallbackInterface(UUID eServiceId, UUID descriptorId) {
