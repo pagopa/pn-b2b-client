@@ -145,7 +145,7 @@ Feature: Gestione della callback interface per gli e-service asincroni
     When l'utente carica un'interfaccia di callback di scambio asincrono per quel descrittore
     Then si ottiene lo status code 404
 
-  Scenario Outline: [ASYNC_ESERVICE_CALLBACK_INTERFACE_INVALID] Il caricamento dell'interfaccia di callback per un e-serive
+  Scenario Outline: [ASYNC_ESERVICE_CALLBACK_INTERFACE_INVALID] Il caricamento dell'interfaccia di callback per un e-service
   asincrono fallisce se il file YAML non è valido.
 
     Given l'utente è un "admin" di "PA1"
