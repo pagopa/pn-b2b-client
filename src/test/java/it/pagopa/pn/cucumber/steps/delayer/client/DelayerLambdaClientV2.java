@@ -182,18 +182,19 @@ public class DelayerLambdaClientV2 {
     }
 
     public DelayerPresigneUrlUpload getPresignedUrlUpload(String filename, String checksumSha256B64) {
-        var params = mapOf(
-                mandatoryEntry("filename", filename),
-                mandatoryEntry("checksumSha256B64", checksumSha256B64),
-                entry("presignedUrlType", "UPLOAD")
+        var params = Map.of(
+                "fileName", filename,
+                "checksumSha256B64", checksumSha256B64,
+                "presignedUrlType", "UPLOAD"
         );
         return invoke(DelayerOperation.GET_PRESIGNED_URL, DelayerPresigneUrlUpload.class, params);
     }
 
     public DelayerPresigneUrlDownload getPresignedUrlDownload(String filename) {
-        var params = mapOf(
-                mandatoryEntry("filename", filename),
-                entry("presignedUrlType", "DOWNLOAD")
+        var params = Map.of(
+                "fileName", filename,
+//                "checksumSha256B64", checksumSha256B64,
+                "presignedUrlType", "DOWNLOAD"
         );
         return invoke(DelayerOperation.GET_PRESIGNED_URL, DelayerPresigneUrlDownload.class, params);
     }
@@ -218,10 +219,11 @@ public class DelayerLambdaClientV2 {
     private <T> T getCounters(DelayerCounterType counterType,
                               String deliveryDate,
                               Map<String, String> parameters,
-                              Class<T> responseType) {
+                              Class<T> responseType,
+                              boolean fromMock) {
 
         var params = mapOf(
-                entry("table", DelayerTable.PaperDeliveryCounters),
+                entry("table", fromMock ? DelayerTable.PaperDeliveryCountersMock : DelayerTable.PaperDeliveryCounters),
                 mandatoryEntry("counterType", counterType),
                 mandatoryEntry("deliveryDate", deliveryDate),
                 entryMap(parameters)
@@ -235,18 +237,20 @@ public class DelayerLambdaClientV2 {
                 DelayerCounterType.PRINT,
                 deliveryDate,
                 null,
-                DelayerCountersPrint.class
+                DelayerCountersPrint.class,
+                false
         );
     }
 
     public DelayerCountersSumEstimates getCountersSumEstimates(String deliveryDate, String province,
-                                                               String productType) {
-        return getCountersSumEstimates(deliveryDate, province, productType, null);
+                                                               String productType, boolean fromMock) {
+        return getCountersSumEstimates(deliveryDate, province, productType, null, fromMock);
     }
 
     public DelayerCountersSumEstimates getCountersSumEstimates(String deliveryDate, String province,
                                                                String productType,
-                                                               String lastEvaluatedKey) {
+                                                               String lastEvaluatedKey,
+                                                               boolean fromMock) {
         var params = mapOf(
                 entry("province", province),
                 entry("productType", productType),
@@ -257,7 +261,8 @@ public class DelayerLambdaClientV2 {
                 DelayerCounterType.SUM_ESTIMATES,
                 deliveryDate,
                 params,
-                DelayerCountersSumEstimates.class
+                DelayerCountersSumEstimates.class,
+                fromMock
         );
     }
 
@@ -279,7 +284,8 @@ public class DelayerLambdaClientV2 {
                 DelayerCounterType.EXCLUDE,
                 deliveryDate,
                 params,
-                DelayerCountersExclude.class
+                DelayerCountersExclude.class,
+                false
         );
     }
 
@@ -294,6 +300,13 @@ public class DelayerLambdaClientV2 {
 
     public DelayerResidualPapers getResidualPapers(String deliveryDate) {
         return getResidualPapers(deliveryDate, null);
+    }
+
+    public void insertMockSenderLimits(String filename) {
+        var params = paramsOf(
+                mandatory("parameters", filename)
+        );
+        invoke(DelayerOperation.INSERT_MOCK_SENDER_LIMITS, Void.class, params);
     }
 
     private <T> T invoke(DelayerOperation operationType, TypeReference<T> responseType, Object parameters) {
