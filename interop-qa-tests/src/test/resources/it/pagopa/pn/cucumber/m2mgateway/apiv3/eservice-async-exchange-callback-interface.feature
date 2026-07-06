@@ -83,7 +83,7 @@ Feature: Gestione della callback interface per gli e-service asincroni
     When l'utente tenta di effettuare il caricamento di un'interfaccia di callback di scambio asincrono per un e-service inesistente
     Then si ottiene response status code 404
 
-  Scenario: [ASYNC_ESERVICE_CALLBACK_INTERFACE_UPLOAD_INVALID_DESCRIPTOR] Il caricamento dell'interfaccia di callback per un e-service
+  Scenario: [ASYNC_ESERVICE_CALLBACK_INTERFACE_UPLOAD_INVALID_DESCRIPTOR_1] Il caricamento dell'interfaccia di callback per un e-service
   asincrono fallisce se il descrittore dell'e-service non esiste.
 
     Given l'utente è un "admin" di "PA1"
@@ -253,7 +253,7 @@ Feature: Gestione della callback interface per gli e-service asincroni
     When l'utente tenta di effettuare la rimozione di un'interfaccia di callback di scambio asincrono per un e-service inesistente
     Then si ottiene response status code 404
 
-  Scenario: [ASYNC_ESERVICE_CALLBACK_INTERFACE_UPLOAD_INVALID_DESCRIPTOR] La rimozioe dell'interfaccia di callback per un e-service
+  Scenario: [ASYNC_ESERVICE_CALLBACK_INTERFACE_UPLOAD_INVALID_DESCRIPTOR_2] La rimozioe dell'interfaccia di callback per un e-service
   asincrono fallisce se il descrittore dell'e-service non esiste.
 
     Given l'utente è un "admin" di "PA1"
