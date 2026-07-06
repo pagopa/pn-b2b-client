@@ -1,3 +1,4 @@
+@m2m-apiv3-eservice-async-exchange-callback-interface
 Feature: Gestione della callback interface per gli e-service asincroni
 
   Scenario: [ASYNC_ESERVICE_CALLBACK_INTERFACE_UPLOAD_SUCCESS] Il caricamento dell'interfaccia di callback per un e-service
