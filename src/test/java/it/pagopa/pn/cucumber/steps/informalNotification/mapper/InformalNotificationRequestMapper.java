@@ -32,10 +32,11 @@ public class InformalNotificationRequestMapper {
         request.setSubject(getValue(data, SUBJECT.key));
         request.setGroup(getValue(data, GROUP.key));
 
-        String notifLang = getValue(data, NOTIFICATION_ADDITIONAL_LANGUAGE.key);
-        if (notifLang != null) {
-            request.setAdditionalLanguages(List.of(notifLang));
-        }
+//        String notifLang = getValue(data, NOTIFICATION_ADDITIONAL_LANGUAGE.key);
+//        if (notifLang != null) {
+//            request.setAdditionalLanguages(List.of(notifLang));
+//        }  todo t bonarie eliminare...
+
         request.setGroup(getValue(data, GROUP.key));
         //  NESSUN DESTINATARIO DI DEFAULT
         request.setRecipients(new ArrayList<>());

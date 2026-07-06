@@ -4,18 +4,18 @@ Feature: Sottomissione di una notifica bonaria.
 #  Sottomissione di una notifica bonaria Mancata validazione Sincrona
 # *******************************************************************
 
-  @informalNotificationsValidation @informalSyncValidation
+  @informalNotificationsValidation @informalSyncValidation @addLanguages
   Scenario: [NOTIFICHE_BONARIE_GROUP_DELETED] Come ente mittente invio una notifica bonaria con gruppo non attivo. Ricevo un errore
     Given mittente della notifica bonaria: "Comune_Multi"
     And imposto un gruppo non attivo per "Comune_Multi"
     And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId          | campaign-1 |
-      | additionalLanguages | FR         |
+      | campaignId | campaign-1 |
     And destinatario della notifica bonaria
-      | recipientType | PF                |
-      | taxId         | FRMTTR76M06B715E  |
-      | denomination  | Ettore Fieramosca |
-      | messageId     | ${IT-FR}          |
+      | recipientType       | PF                |
+      | taxId               | FRMTTR76M06B715E  |
+      | denomination        | Ettore Fieramosca |
+      | messageId           | ${IT-FR}          |
+      | additionalLanguages | FR                |
     When l'invio della notifica bonaria fallisce
     Then si riceve errore 400 "PN_DELIVERY_INVALIDPARAMETER_GROUP"
 
@@ -74,17 +74,17 @@ Feature: Sottomissione di una notifica bonaria.
     When l'invio della notifica bonaria fallisce
     Then si riceve errore 400
 
-  @informalNotificationsValidation @informalSyncValidation
+  @informalNotificationsValidation @informalSyncValidation @addLanguages
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_E] Invio bonaria con lingua secondaria non supportata 1
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con i seguenti parametri
-      | additionalLanguages | XX         |
-      | campaignId          | campaign-1 |
+      | campaignId | campaign-1 |
     And destinatario della notifica bonaria
-      | recipientType | PF                |
-      | taxId         | FRMTTR76M06B715E  |
-      | denomination  | Ettore Fieramosca |
-      | messageId     | ${IT}             |
+      | recipientType       | PF                |
+      | taxId               | FRMTTR76M06B715E  |
+      | denomination        | Ettore Fieramosca |
+      | messageId           | ${IT}             |
+      | additionalLanguages | XX                |
     When l'invio della notifica bonaria fallisce
     Then si riceve errore 400 "PN_DELIVERY_ADDITIONAL_LANG_UNSUPPORTED_VALUE"
 
@@ -282,7 +282,7 @@ Feature: Sottomissione di una notifica bonaria.
       | denomination  | Ettore Fieramosca |
       | messageId     | ${IT}             |
     When viene inviata una nuova notifica bonaria
-    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
     Given mittente della notifica bonaria: "Comune_1"
     When si verifica lo stato della richiesta di notifica bonaria
     Then si riceve errore 404
@@ -321,17 +321,17 @@ Feature: Sottomissione di una notifica bonaria.
     When l'invio della notifica bonaria fallisce
     Then si riceve errore 400 "PN_DELIVERY_MAX_ATTACHMENT_NUMBER_PASSED"
 
-  @informalNotificationsValidation @informalSyncValidation
+  @informalNotificationsValidation @informalSyncValidation @addLanguages
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_MULTI_LANG] Invio con più lingue aggiuntive
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId          | campaign-1 |
-      | additionalLanguages | FR,DE      |
+      | campaignId | campaign-1 |
     And destinatario della notifica bonaria
-      | recipientType | PF                |
-      | taxId         | FRMTTR76M06B715E  |
-      | denomination  | Ettore Fieramosca |
-      | messageId     | ${IT-FR}          |
+      | recipientType       | PF                |
+      | taxId               | FRMTTR76M06B715E  |
+      | denomination        | Ettore Fieramosca |
+      | messageId           | ${IT-FR}          |
+      | additionalLanguages | FR,DE             |
     When l'invio della notifica bonaria fallisce
     Then si riceve errore 400 "PN_DELIVERY_ADDITIONAL_LANG_UNSUPPORTED_VALUE"
 
@@ -590,17 +590,17 @@ Feature: Sottomissione di una notifica bonaria.
     Then la sottomissione della notifica bonaria è andata a buon fine
     And verifico che su DynamoDB è presente in timeline l'elemento "REQUEST_ACCEPTED"
 
-  @informalNotificationsValidation @informalAsyncValidation
+  @informalNotificationsValidation @informalAsyncValidation @addLanguages
   Scenario: [NOTIFICHE_BONARIE_SM_01_1_B] Come ente mittente invio una notifica bonaria con modalità one-to-one quindi con id messaggio, e seconda lingua specificata
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId          | campaign-1 |
-      | additionalLanguages | FR         |
+      | campaignId | campaign-1 |
     And destinatario della notifica bonaria
-      | recipientType | PF                |
-      | taxId         | FRMTTR76M06B715E  |
-      | denomination  | Ettore Fieramosca |
-      | messageId     | ${IT-FR}          |
+      | recipientType       | PF                |
+      | taxId               | FRMTTR76M06B715E  |
+      | denomination        | Ettore Fieramosca |
+      | messageId           | ${IT-FR}          |
+      | additionalLanguages | FR                |
     When viene inviata una nuova notifica bonaria
     And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
     Then la sottomissione della notifica bonaria è andata a buon fine
@@ -619,17 +619,17 @@ Feature: Sottomissione di una notifica bonaria.
     And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
     Then la sottomissione della notifica bonaria è andata a buon fine
 
-  @informalNotificationsValidation @informalAsyncValidation #bug fix PN-20248
+  @informalNotificationsValidation @informalAsyncValidation @addLanguages #bug fix PN-20248
   Scenario: [NOTIFICHE_BONARIE_SM_01_1_C] Come ente mittente invio una notifica bonaria con messaggio bilingue,  seconda lingua NON specificata
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId          | campaign-1 |
-      | additionalLanguages | NULL       |
+      | campaignId | campaign-1 |
     And destinatario della notifica bonaria
-      | recipientType | PF                |
-      | taxId         | FRMTTR76M06B715E  |
-      | denomination  | Ettore Fieramosca |
-      | messageId     | ${IT-FR}          |
+      | recipientType       | PF                |
+      | taxId               | FRMTTR76M06B715E  |
+      | denomination        | Ettore Fieramosca |
+      | messageId           | ${IT-FR}          |
+      | additionalLanguages | NULL              |
     When viene inviata una nuova notifica bonaria
     And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
     Then la sottomissione della notifica bonaria è andata a buon fine
@@ -767,18 +767,18 @@ Feature: Sottomissione di una notifica bonaria.
     And verifico che su DynamoDB è presente in timeline l'elemento "PUBLIC_REGISTRY_VALIDATION_RESPONSE"
     And verifico che su DynamoDB è presente in timeline l'elemento "VALIDATE_NORMALIZE_ADDRESSES_REQUEST"
 
-  @informalNotificationsValidation @informalAsyncValidation
+  @informalNotificationsValidation @informalAsyncValidation @addLanguages
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_G] Lingua secondaria non presente nella campagna
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId          | campaign-1 |
-      | additionalLanguages | FR         |
+      | campaignId | campaign-1 |
     And destinatario della notifica bonaria
-      | recipientType   | PF                        |
-      | taxId           | FRMTTR76M06B715E          |
-      | denomination    | Ettore Fieramosca         |
-      | messageId       | ${IT}                     |
-      | digitalDomicile | testpagopa1@pec.pagopa.it |
+      | recipientType       | PF                        |
+      | taxId               | FRMTTR76M06B715E          |
+      | denomination        | Ettore Fieramosca         |
+      | messageId           | ${IT}                     |
+      | additionalLanguages | FR                        |
+      | digitalDomicile     | testpagopa1@pec.pagopa.it |
     When viene inviata una nuova notifica bonaria
     And  si verifica che la notifica bonaria sia in stato "REFUSED"
     Then la notifica bonaria è stata rifiutata per l'errore: "MESSAGE_LANGUAGE_MISMATCH"
@@ -1214,9 +1214,6 @@ Feature: Sottomissione di una notifica bonaria.
   Scenario: [NOTIFICHE_BONARIE_SOTTOMISSIONE_14A] Come ente mittente creo una nuova notifica bonaria utilizzando valori di default.
   Con whitelist vuota ricevo un errore 403 Forbidden.
     Given mittente della notifica bonaria: "Comune_Multi"
-    When viene creata una nuova notifica bonaria con i seguenti parametri
-      | additionalLanguages | campaignId     |
-      | NULL                | campaign-1-uat |
     And destinatario della notifica bonaria
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |

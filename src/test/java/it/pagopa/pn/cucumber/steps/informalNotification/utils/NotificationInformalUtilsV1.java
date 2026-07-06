@@ -1,8 +1,12 @@
 package it.pagopa.pn.cucumber.steps.informalNotification.utils;
 
+
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.InformalPreLoadRequest;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.InformalPreLoadResponse;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bExternalInformalClientImpl;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +24,30 @@ import java.util.List;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class NotificationInformalUtilsV1 extends B2bUtils {
 
+    private final PnPaB2bExternalInformalClientImpl externalInformalClient;
 
     @Autowired
-    public NotificationInformalUtilsV1(ApplicationContext context, IPnPaB2bClient b2bClient, PnPollingFactory pollingFactory) {
+    public NotificationInformalUtilsV1(ApplicationContext context, IPnPaB2bClient b2bClient, PnPaB2bExternalInformalClientImpl externalInformalClient, PnPollingFactory pollingFactory) {
+
         super(context, b2bClient, pollingFactory);
+
+        this.externalInformalClient = externalInformalClient;
+    }
+
+
+    private Pair<String, String> preloadInformal(String resourceName, String contentType) throws IOException {
+
+        String sha256 = computeSha256(context, resourceName);
+
+        InformalPreLoadRequest request = new InformalPreLoadRequest().preloadIdx("0").contentType(contentType).sha256(sha256);
+
+        InformalPreLoadResponse response = externalInformalClient.informalPresignedUploadRequest(List.of(request)).get(0);
+
+        log.info("Informal preload resource={} sha256={} url={}", resourceName, sha256, response.getUrl());
+
+        loadToPresigned(context, response.getUrl(), response.getSecret(), sha256, resourceName, contentType);
+
+        return new Pair<>(response.getKey(), sha256);
     }
 
     // =========================================================
@@ -52,7 +76,7 @@ public class NotificationInformalUtilsV1 extends B2bUtils {
 
     public NotificationDocument preloadDocument(NotificationDocument doc) throws IOException {
 
-        Pair<String, String> preload = preloadGeneric(context, b2bClient, doc.getRef().getKey(), "application/pdf");
+        Pair<String, String> preload = preloadInformal(doc.getRef().getKey(), "application/pdf");
 
         doc.getRef().setKey(preload.getValue1());
         doc.getRef().setVersionToken("v1");
@@ -83,7 +107,7 @@ public class NotificationInformalUtilsV1 extends B2bUtils {
 
         if (attachment == null) return null;
 
-        Pair<String, String> preload = preloadGeneric(context, b2bClient, attachment.getRef().getKey(), "application/pdf");
+        Pair<String, String> preload = preloadInformal(attachment.getRef().getKey(), "application/pdf");
 
         attachment.getRef().setKey(preload.getValue1());
         attachment.getRef().setVersionToken("v1");
