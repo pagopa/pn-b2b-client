@@ -379,7 +379,7 @@ public class DelayerSevice {
 
     public int getDeclaredCapacity(String deliveryDate, String province, String product, Set<String> foundProducts) {
         try {
-            var declaredCapacityResponse = lambdaClient.getDeclaredCapacity(province, "20260123");
+            var declaredCapacityResponse = lambdaClient.getDeclaredCapacity(province, deliveryDate);
 
             return extractTotalCapacityForProduct(declaredCapacityResponse, product, foundProducts);
         } catch (Exception e) {
