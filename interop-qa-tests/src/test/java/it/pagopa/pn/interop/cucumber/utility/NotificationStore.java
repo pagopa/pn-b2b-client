@@ -75,7 +75,7 @@ public class NotificationStore {
     private void initializeNotifications(NotificationUser user) {
         String tenantName = (user == null) ? null : user.getTenant();
         this.applyTaskForEveryUser(
-            List.of("security", "api", "support", "api,security"), // 14 01 2026 causa problemi tecnici lato backend si può testare solo per ADMIN https://pagopaspa.slack.com/archives/C08RZ0ATBJ6/p1768317958663119
+            List.of("security", "api", "support", "api,security", "reviewer", "viewer"), // 14 01 2026 causa problemi tecnici lato backend si può testare solo per ADMIN https://pagopaspa.slack.com/archives/C08RZ0ATBJ6/p1768317958663119
             (role, tenant) -> {
                 int offset = 0;
                 List<Notification> currentNotif;
