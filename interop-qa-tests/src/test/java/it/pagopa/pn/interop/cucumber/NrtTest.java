@@ -28,7 +28,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         // abilita parallelismo Cucumber
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 })
-@ExcludeTags({"wait_for_fix", "ignore", "adeguamento-analisi-rischio", "certifiedDiscreteAttribute"})
+@ExcludeTags({"wait_for_fix", "ignore", "adeguamento-analisi-rischio", "certifiedDiscreteAttributeOn"})
 @IncludeTags({
         // BFF
         "agreement", "attribute", "descriptor", "document", "eservice", "purpose", "daily_calls_update_request",
@@ -42,7 +42,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         "m2m-parte2-agosto-rilascio1", "m2m-parte2-agosto-rilascio2", "m2m-parte2-settembre",
         "m2m-parte2-ottobre", "m2mEservices", "e-service-template-receive-m2m", "m2m-client", "m2m-purpose-client",
         "m2m-incaricato", "m2m-events", "e-service-template-m2m-version-get", "eservice_published_delegation",
-        "manual-archiving-eservice", "notification-manual-archiving-eservice"
+        "manual-archiving-eservice", "notification-manual-archiving-eservice", "certifiedDiscreteAttributeOff"
 
 })
 public class NrtTest {
