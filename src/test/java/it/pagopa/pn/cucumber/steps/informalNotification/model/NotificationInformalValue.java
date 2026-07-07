@@ -45,7 +45,7 @@ public enum NotificationInformalValue {
     //NOTIFICATION_ADDITIONAL_LANGUAGE("additionalLanguages", null, false),
     RECIPIENT_ADDITIONAL_LANGUAGES("additionalLanguages", null, false),
 
-    PAYMENT_AMOUNT("payment_amount", null, false),
+    PAYMENT_AMOUNT("payment_amount", "100", false),
     PAYMENT_DUE_DATE("payment_due_date", null, false),
 
 

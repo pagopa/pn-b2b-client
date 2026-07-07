@@ -1,5 +1,373 @@
 Feature: Sottomissione di una notifica bonaria.
 
+
+
+# *******************************************************************
+#  Lingua gestitia al livello del recipient
+# *******************************************************************
+
+  @informalNotificationsValidation @informalAsyncValidation @addLanguages
+  Scenario: [NOTIFICHE_LANGUAGES_01_1_A] Come ente mittente invio una notifica bonaria allegando
+  un messaggio multilingue e specificando la seconda lingia come lingua addizionale.
+    Given mittente della notifica bonaria: "Comune_Multi"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType       | PF                |
+      | taxId               | FRMTTR76M06B715E  |
+      | denomination        | Ettore Fieramosca |
+      | messageId           | ${NEW-IT-FR}      |
+      | additionalLanguages | FR                |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+
+
+  @informalNotificationsValidation @informalAsyncValidation @addLanguages
+  Scenario: [NOTIFICHE_LANGUAGES_01_1_B] Come ente mittente invio una notifica bonaria allegando
+  un messaggio multilingue e NON specificando nessuna addizionale.
+    Given mittente della notifica bonaria: "Comune_Multi"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType       | PG           |
+      | taxId               | 20517490320  |
+      | denomination        | Cucumber srl |
+      | messageId           | ${NEW-IT-FR} |
+      | additionalLanguages | NULL         |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+
+
+  @informalNotificationsValidation @informalAsyncValidation @addLanguages
+  Scenario: [NOTIFICHE_LANGUAGES_01_1_C] Come ente mittente invio una notifica bonaria allegando
+  un messaggio multilingue e specificando Italiano come lingua addizionale.
+    Given mittente della notifica bonaria: "Comune_Multi"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType       | PF                |
+      | taxId               | FRMTTR76M06B715E  |
+      | denomination        | Ettore Fieramosca |
+      | messageId           | ${NEW-IT-FR}      |
+      | additionalLanguages | IT                |
+    And destinatario della notifica bonaria
+      | recipientType       | PG           |
+      | taxId               | 20517490320  |
+      | denomination        | Cucumber srl |
+      | messageId           | ${NEW-IT-FR} |
+      | additionalLanguages | NULL         |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+
+
+  @informalNotificationsValidation @informalAsyncValidation @addLanguages
+  Scenario: [NOTIFICHE_LANGUAGES_01_2_A] Come ente mittente invio una notifica bonaria multidestinatario
+  allegando un messaggio multilingue indicando la lingua addizionale per un destinatario e italiana per l'altro
+    Given mittente della notifica bonaria: "Comune_Multi"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType       | PF                |
+      | taxId               | FRMTTR76M06B715E  |
+      | denomination        | Ettore Fieramosca |
+      | messageId           | ${NEW-IT-FR}      |
+      | additionalLanguages | FR                |
+    And destinatario della notifica bonaria
+      | recipientType       | PG           |
+      | taxId               | 20517490320  |
+      | denomination        | Cucumber srl |
+      | messageId           | ${NEW-IT-FR} |
+      | additionalLanguages | IT           |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+
+
+  @informalNotificationsValidation @informalAsyncValidation @addLanguages
+  Scenario: [NOTIFICHE_LANGUAGES_01_2_B] Come ente mittente invio una notifica bonaria multidestinatario
+  allegando un messaggio multilingue indicando la lingua addizionale per entrambi
+    Given mittente della notifica bonaria: "Comune_Multi"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType       | PF                |
+      | taxId               | FRMTTR76M06B715E  |
+      | denomination        | Ettore Fieramosca |
+      | messageId           | ${NEW-IT-FR}      |
+      | additionalLanguages | FR                |
+    And destinatario della notifica bonaria
+      | recipientType       | PG           |
+      | taxId               | 20517490320  |
+      | denomination        | Cucumber srl |
+      | messageId           | ${NEW-IT-FR} |
+      | additionalLanguages | FR           |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+
+
+  @informalNotificationsValidation @informalAsyncValidation @addLanguages
+  Scenario: [NOTIFICHE_LANGUAGES_01_2_C] Come ente mittente invio una notifica bonaria multidestinatario
+  allegando due diversi messaggi multilingue indicando la lingua addizionale per entrambi
+    Given mittente della notifica bonaria: "Comune_Multi"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType       | PF                |
+      | taxId               | FRMTTR76M06B715E  |
+      | denomination        | Ettore Fieramosca |
+      | messageId           | ${NEW-IT-FR}      |
+      | additionalLanguages | FR                |
+    And destinatario della notifica bonaria
+      | recipientType       | PG             |
+      | taxId               | 20517490320    |
+      | denomination        | Cucumber srl   |
+      | messageId           | ${SAVED-IT-FR} |
+      | additionalLanguages | FR             |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+
+
+  @informalNotificationsValidation @informalAsyncValidation @addLanguages
+  Scenario: [NOTIFICHE_LANGUAGES_01_2_D] Come ente mittente invio una notifica bonaria multidestinatario
+  allegando un messaggio monolingua indicando la lingua italiana per uno e nessuna lingua per l'altro
+    Given mittente della notifica bonaria: "Comune_Multi"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType       | PF                |
+      | taxId               | FRMTTR76M06B715E  |
+      | denomination        | Ettore Fieramosca |
+      | messageId           | ${NEW-IT}         |
+      | additionalLanguages | IT                |
+    And destinatario della notifica bonaria
+      | recipientType       | PG           |
+      | taxId               | 20517490320  |
+      | denomination        | Cucumber srl |
+      | messageId           | ${NEW-IT}    |
+      | additionalLanguages | NULL         |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+
+
+  @informalNotificationsValidation @informalSyncValidation @addLanguages
+  Scenario Outline: [NOTIFICHE_LANGUAGES_01_3_A] Come ente mittente ricevo errore nel tentativo di inviare
+  una notifica bonaria con allegato un messaggio e indicando una lingua non conforme
+    Given mittente della notifica bonaria: "Comune_Multi"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType       | PF                    |
+      | taxId               | FRMTTR76M06B715E      |
+      | denomination        | Ettore Fieramosca     |
+      | messageId           | ${IT}                 |
+      | additionalLanguages | <additionalLanguages> |
+    When l'invio della notifica bonaria fallisce
+    Then si riceve errore 400 "PN_DELIVERY_ADDITIONAL_LANG_UNSUPPORTED_VALUE"
+    Examples:
+      | additionalLanguages |
+      | AA                  |
+      | I T                 |
+      | ITT                 |
+
+  @informalNotificationsValidation @informalAsyncValidation @addLanguages
+  Scenario: [NOTIFICHE_LANGUAGES_01_3_B] Come ente mittente ricevo errore nel tentativo di inviare
+  una notifica bonaria con allegato un messaggio e indicando una lingua non presente nel messaggio
+    Given mittente della notifica bonaria: "Comune_Multi"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType       | PG           |
+      | taxId               | 20517490320  |
+      | denomination        | Cucumber srl |
+      | messageId           | ${NEW-IT-FR} |
+      | additionalLanguages | DE           |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "REFUSED"
+    Then la notifica bonaria è stata rifiutata per l'errore: "MESSAGE_LANGUAGE_MISMATCH"
+
+
+  @informalNotificationsValidation @informalAsyncValidation @addLanguages
+  Scenario: [NOTIFICHE_LANGUAGES_01_3_C] Come ente mittente invio una notifica bonaria multidestinatario
+  allegando due messaggi multilingua diversi, indicando una lingua non presente per uno di loro
+    Given mittente della notifica bonaria: "Comune_Multi"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType       | PF                |
+      | taxId               | FRMTTR76M06B715E  |
+      | denomination        | Ettore Fieramosca |
+      | messageId           | ${NEW-IT-FR}      |
+      | additionalLanguages | DE                |
+    And destinatario della notifica bonaria
+      | recipientType       | PG           |
+      | taxId               | 20517490320  |
+      | denomination        | Cucumber srl |
+      | messageId           | ${NEW-IT-FR} |
+      | additionalLanguages | FR           |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "REFUSED"
+    Then la notifica bonaria è stata rifiutata per l'errore: "MESSAGE_LANGUAGE_MISMATCH"
+
+
+  @informalNotificationsValidation @informalAsyncValidation @addLanguages
+  Scenario: [NOTIFICHE_LANGUAGES_01_3_D] Come ente mittente invio una notifica bonaria multidestinatario
+  allegando un messaggio multilingua, indicando una lingua non presente per uno di loro
+    Given mittente della notifica bonaria: "Comune_Multi"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType       | PF                |
+      | taxId               | FRMTTR76M06B715E  |
+      | denomination        | Ettore Fieramosca |
+      | messageId           | ${NEW-IT-FR}      |
+      | additionalLanguages | DE                |
+    And destinatario della notifica bonaria
+      | recipientType       | PG             |
+      | taxId               | 20517490320    |
+      | denomination        | Cucumber srl   |
+      | messageId           | ${SAVED-IT-FR} |
+      | additionalLanguages | FR             |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "REFUSED"
+    Then la notifica bonaria è stata rifiutata per l'errore: "MESSAGE_LANGUAGE_MISMATCH"
+
+
+# *******************************************************************
+#  Introduzione attributo amount e dueDate
+# *******************************************************************
+
+  @informalNotificationsValidation @informalAsyncValidation
+  Scenario: [NOTIFICHE_AMOUNT_02_1_A] Come ente mittente invio una notifica bonaria definendo il campo amount e dueDate correttamente
+    Given mittente della notifica bonaria: "Comune_Multi"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType    | PF                |
+      | taxId            | FRMTTR76M06B715E  |
+      | denomination     | Ettore Fieramosca |
+      | messageId        | ${NEW-IT}         |
+      | payment_amount   | 1500              |
+      | payment_due_date | 2028-12-31        |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+
+  @informalNotificationsValidation @informalAsyncValidation
+  Scenario: [NOTIFICHE_AMOUNT_02_1_B] Come ente mittente invio una notifica bonaria definendo il campo amount e non definendo il campo dueDate
+    Given mittente della notifica bonaria: "Comune_Multi"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType  | PF                |
+      | taxId          | FRMTTR76M06B715E  |
+      | denomination   | Ettore Fieramosca |
+      | messageId      | ${NEW-IT}         |
+      | payment_amount | 1500              |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+
+
+  @informalNotificationsValidation @informalAsyncValidation @addLanguages
+  Scenario: [NOTIFICHE_AMOUNT_02_1_C] Come ente mittente ricevo un errore nel tentativo di invio una notifica bonaria senza definire il campo amount
+    Given mittente della notifica bonaria: "Comune_Multi"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType       | PF                |
+      | taxId               | FRMTTR76M06B715E  |
+      | denomination        | Ettore Fieramosca |
+      | messageId           | ${NEW-IT-FR}      |
+      | additionalLanguages | FR                |
+      | payment_amount      | NULL              |
+      | payment_due_date    | 2026-12-31        |
+    When viene inviata una nuova notifica bonaria
+
+  @informalNotificationsValidation @informalAsyncValidation @addLanguages
+  Scenario Outline: [NOTIFICHE_AMOUNT_02_1_D] Come ente mittente ricevo un errore nel tentativo di invio una notifica bonaria definendo il campo amount con valori non conformi
+    Given mittente della notifica bonaria: "Comune_Multi"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType  | PF                |
+      | taxId          | FRMTTR76M06B715E  |
+      | denomination   | Ettore Fieramosca |
+      | messageId      | ${NEW-IT}         |
+      | payment_amount | <amount>          |
+    When viene inviata una nuova notifica bonaria
+    #***
+    Examples:
+      | amount |
+      | 10A0   |
+      | @      |
+      | 10.0   |
+      | 1,1    |
+      | 2 3    |
+      | 0001   |
+      | -1     |
+      | 0      |
+
+
+  @informalNotificationsValidation @informalAsyncValidation @addLanguages
+  Scenario Outline: [NOTIFICHE_AMOUNT_02_1_E] Come ente mittente invio una notifica bonaria....
+    Given mittente della notifica bonaria: "Comune_Multi"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType    | PF                |
+      | taxId            | FRMTTR76M06B715E  |
+      | denomination     | Ettore Fieramosca |
+      | messageId        | ${NEW-IT}         |
+      | payment_amount   | 1500              |
+      | payment_due_date | <dueDate>         |
+    When viene inviata una nuova notifica bonaria
+    #***
+    Examples:
+      | dueDate    |
+      | 2000-12-31 |
+      |            |
+      |            |
+
+
+# *******************************************************************
+#  Gestione stato della Campagna
+# *******************************************************************
+
+  @informalNotificationsValidation @informalAsyncValidation
+  Scenario Outline: [NOTIFICHE_BONARIE_CAMPAIGN_03_1_A] Come ente mittente invio una notifica bonaria con campagna con stato in progress.
+    Given mittente della notifica bonaria: "Comune_Multi"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | <campaignId> |
+    And destinatario della notifica bonaria
+      | recipientType        | PF               |
+      | taxId                | FRMTTR76M06B715E |
+      | payment_multy_number | 1                |
+      | messageId            | ${NEW-IT}            |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    Examples:
+      | campaignId           |
+      | campaign-in_progress |
+
+
+  @informalNotificationsValidation @informalAsyncValidation
+  Scenario Outline: [NOTIFICHE_BONARIE_CAMPAIGN_03_1_B] Come ente mittente invio una notifica bonaria indicando campagne con stati non validi, la nottifca viene rifiutata.
+    Given mittente della notifica bonaria: "Comune_Multi"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | <campaignId> |
+    And destinatario della notifica bonaria
+      | recipientType        | PF               |
+      | taxId                | FRMTTR76M06B715E |
+      | payment_multy_number | 1                |
+      | messageId            | ${NEW-IT}            |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "REFUSED"
+    Then la notifica bonaria è stata rifiutata per l'errore: "<ERROR>"
+    Examples:
+      | campaignId         | ERROR                   |
+      | campaign-draft     | CAMPAIGN_INVALID_STATUS |
+      | campaign-concluded | CAMPAIGN_INVALID_STATUS |
+      | campaign-cancelled | CAMPAIGN_INVALID_STATUS |
+
+
+
 # *******************************************************************
 #  Sottomissione di una notifica bonaria Mancata validazione Sincrona
 # *******************************************************************
@@ -813,7 +1181,7 @@ Feature: Sottomissione di una notifica bonaria.
     And  si verifica che la notifica bonaria sia in stato "REFUSED"
     Then la notifica bonaria è stata rifiutata per l'errore: "FILE_PDF_INVALID_ERROR"
 
-  @informalNotificationsValidation @informalAsyncValidation
+  @informalNotificationsValidation @informalAsyncValidation #todo
   Scenario Outline: [NOTIFICHE_BONARIE_ASYNC_01_3] Come ente mittente invio una notifica bonaria con campagne non conformi, la nottifca viene rifiutata.
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con i seguenti parametri
@@ -1221,3 +1589,6 @@ Feature: Sottomissione di una notifica bonaria.
     Then l'invio della notifica bonaria fallisce
     Then si riceve errore 403
 
+
+#      | payment_amount         | 1500 |
+#      | payment_due_date       | 2026-12-31 |
