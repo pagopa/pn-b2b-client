@@ -36,14 +36,19 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
 
   @happy-path
   @m2m-agreement-activate-refactor
-  Scenario: [M2M_AGREEMENTS_UNSUSPEND_1] Una richiesta di fruizione sospesa dal producer può essere riattivata da un utente con ruolo M2M-ADMIN dell'ente erogatore
+  Scenario Outline: [M2M_AGREEMENTS_UNSUSPEND_1] Una richiesta di fruizione sospesa dal'erogatore o dal fruitore può essere riattivata può essere riattivata e tornare ACTIVE
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And l'utente "admin" di "PA1" richiede una operazione di sospensione di quella richiesta di fruizione con successo
-    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And "<suspendingTenant>" ha già sospeso quella richiesta di fruizione come <suspendedBy>
+    And l'utente è un "admin" di "<reactivatingTenant>" con ruolo M2M m2m-admin
     When l'utente m2m richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 200
     And la richiesta di fruizione si trova in stato "ACTIVE"
+
+    Examples:
+      | suspendingTenant | suspendedBy | reactivatingTenant |
+      | PA1              | PRODUCER    | PA1                |
+      | PA2              | CONSUMER    | PA2                |
 
   @sad-path
   @m2m-agreement-activate-refactor
