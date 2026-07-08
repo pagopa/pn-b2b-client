@@ -241,7 +241,7 @@ Feature: Attivazione richiesta di fruizione
     And la richiesta di fruizione è in stato "ACTIVE"
 
   @agreement-activate-refactor
-  Scenario: [AGREEMENTS_APPROVE_3] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato PENDING, alla richiesta di attivazione da parte di un utente di un tenant non autoirizzato, si ottiene un errore
+  Scenario: [AGREEMENTS_APPROVE_3] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato PENDING, alla richiesta di attivazione da parte di un utente di un tenant non autorizzato, si ottiene un errore
     Given l'utente è un "admin" di "PA3"
     Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
     Given "PA1" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
@@ -460,6 +460,22 @@ Feature: Attivazione richiesta di fruizione
     And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già sospeso quella richiesta di fruizione come PRODUCER
     And l'ente "PA1" con ruolo "admin" revoca la delega
+    When l'ente delegato richiede una operazione di riattivazione di quella richiesta di fruizione
+    Then si ottiene status code 403
+    And la richiesta di fruizione è in stato "SUSPENDED"
+
+  @sad-path
+  @agreement-activate-refactor
+  Scenario: [AGREEMENTS_UNSUSPEND_16] Un delegato alla fruizione con delega revocata NON può riattivare una richiesta di fruizione in stato SUSPENDED per conto del fruitore
+    Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione automatica
+    And l'ente delegante "PA2"
+    And l'ente delegato "PA3"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'ente "PA3" concede la disponibilità a ricevere deleghe in fruizione
+    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+    And l'ente delegato accetta la delega in fruizione
+    And "PA2" ha già sospeso quella richiesta di fruizione come CONSUMER
+    And l'ente delegante con ruolo "admin" revoca la delega in fruizione
     When l'ente delegato richiede una operazione di riattivazione di quella richiesta di fruizione
     Then si ottiene status code 403
     And la richiesta di fruizione è in stato "SUSPENDED"
