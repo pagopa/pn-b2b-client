@@ -249,6 +249,18 @@ Feature: Attivazione richiesta di fruizione
     Then si ottiene status code 403
     And la richiesta di fruizione è in stato "PENDING"
 
+  @agreement-activate-refactor
+  Scenario: [AGREEMENTS_APPROVE_4] Un ente delegato con delega in erogazione non ancora accettata non può approvare una richiesta di fruizione in stato PENDING per conto dell'erogatore
+    Given "PA2" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
+    And l'ente delegato "PA1"
+    And l'ente "PA1" concede la disponibilità a ricevere deleghe
+    And l'ente delegante "PA2"
+    And l'ente "PA2" richiede la creazione di una delega per l'ente "PA1"
+    And "GSP" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    When l'ente delegato richiede una operazione di approvazione di quella richiesta di fruizione
+    Then si ottiene status code 403
+    And la richiesta di fruizione è in stato "PENDING"
+
   @sad-path
   @agreement-activate-refactor
   Scenario Outline: [AGREEMENTS_UNSUSPEND_1] La riattivazione di una richiesta di fruizione con id non valido restituisce errore
@@ -438,12 +450,12 @@ Feature: Attivazione richiesta di fruizione
     Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione automatica
     And l'ente delegante "PA2"
     And l'ente delegato "PA3"
-    And l'ente "PA3" concede la disponibilità a ricevere deleghe in fruizione
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
     And l'ente delegato accetta la delega in fruizione
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And il delegato ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'ente delegato richiede una operazione di sospensione di quella richiesta di fruizione
-    And "PA2" ha già sospeso quella richiesta di fruizione come CONSUMER
     When l'ente delegato richiede una operazione di riattivazione di quella richiesta di fruizione
     Then si ottiene status code 200
     And la richiesta di fruizione è in stato "ACTIVE"
