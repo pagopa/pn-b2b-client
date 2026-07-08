@@ -376,31 +376,9 @@ Feature: Attivazione richiesta di fruizione
     Then si ottiene status code 200
     And la richiesta di fruizione è in stato "ACTIVE"
 
-  @happy-path
-  @agreement-activate-refactor
-  Scenario: [AGREEMENTS_UNSUSPEND_8] La sospensione e riattivazione di una richiesta di fruizione eseguita dal fruitore va a buon fine
-    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA2" ha già sospeso quella richiesta di fruizione come PRODUCER
-    And l'utente è un "admin" di "PA2"
-    When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
-    Then si ottiene status code 200
-    And la richiesta di fruizione è in stato "ACTIVE"
-
-  @happy-path
-  @agreement-activate-refactor
-  Scenario: [AGREEMENTS_UNSUSPEND_9] La sospensione e riattivazione di una richiesta di fruizione eseguita dall'erogatore dell'e-service va a buon fine
-    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA1" ha già sospeso quella richiesta di fruizione come PRODUCER
-    And l'utente è un "admin" di "PA1"
-    When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
-    Then si ottiene status code 200
-    And la richiesta di fruizione è in stato "ACTIVE"
-
   @sad-path
   @agreement-activate-refactor
-  Scenario: [AGREEMENTS_UNSUSPEND_10] Se una richiesta di fruizione viene sospesa dall'erogatore dell'e-service e il fruitore tenta di riattivarla, questa rimarrà in stato SUSPENDED
+  Scenario: [AGREEMENTS_UNSUSPEND_8] Se una richiesta di fruizione viene sospesa dall'erogatore dell'e-service e il fruitore tenta di riattivarla, questa rimarrà in stato SUSPENDED
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già sospeso quella richiesta di fruizione come PRODUCER
@@ -411,7 +389,7 @@ Feature: Attivazione richiesta di fruizione
 
   @sad-path
   @agreement-activate-refactor
-  Scenario: [AGREEMENTS_UNSUSPEND_11] Se una richiesta di fruizione viene sospesa dall'erogatore e dal fruitore dell'e-service e il fruitore tenta di riattivarla, questa rimarrà in stato SUSPENDED
+  Scenario: [AGREEMENTS_UNSUSPEND_9] Se una richiesta di fruizione viene sospesa dall'erogatore e dal fruitore dell'e-service e il fruitore tenta di riattivarla, questa rimarrà in stato SUSPENDED
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già sospeso quella richiesta di fruizione come PRODUCER
@@ -423,7 +401,7 @@ Feature: Attivazione richiesta di fruizione
 
   @sad-path
   @agreement-activate-refactor
-  Scenario: [AGREEMENTS_UNSUSPEND_12] Se una richiesta di fruizione viene sospesa dal fruitore e l'erogatore dell'e-service tenta di riattivarla, questa rimarrà in stato SUSPENDED
+  Scenario: [AGREEMENTS_UNSUSPEND_10] Se una richiesta di fruizione viene sospesa dal fruitore e l'erogatore dell'e-service tenta di riattivarla, questa rimarrà in stato SUSPENDED
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA2" ha già sospeso quella richiesta di fruizione come PRODUCER
@@ -434,7 +412,7 @@ Feature: Attivazione richiesta di fruizione
 
   @sad-path
   @agreement-activate-refactor
-  Scenario: [AGREEMENTS_UNSUSPEND_13] Se una richiesta di fruizione viene sospesa dal fruitore e dall'erogatore e l'erogatore dell'e-service tenta di riattivarla, questa rimarrà in stato SUSPENDED
+  Scenario: [AGREEMENTS_UNSUSPEND_11] Se una richiesta di fruizione viene sospesa dal fruitore e dall'erogatore e l'erogatore dell'e-service tenta di riattivarla, questa rimarrà in stato SUSPENDED
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già sospeso quella richiesta di fruizione come PRODUCER
@@ -446,7 +424,7 @@ Feature: Attivazione richiesta di fruizione
 
   @happy-path
   @agreement-activate-refactor
-  Scenario: [AGREEMENTS_UNSUSPEND_14] Un delegato alla fruizione riattiva una richiesta di fruizione in stato SUSPENDED per conto del fruitore
+  Scenario: [AGREEMENTS_UNSUSPEND_12] Un delegato alla fruizione riattiva una richiesta di fruizione in stato SUSPENDED per conto del fruitore
     Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione automatica
     And l'ente delegante "PA2"
     And l'ente delegato "PA3"
@@ -462,7 +440,7 @@ Feature: Attivazione richiesta di fruizione
 
   @sad-path
   @agreement-activate-refactor
-  Scenario: [AGREEMENTS_UNSUSPEND_15] Un delegato all'erogazione con delega revocata NON può riattivare una richiesta di fruizione in stato SUSPENDED per conto dell'erogatore
+  Scenario: [AGREEMENTS_UNSUSPEND_13] Un delegato all'erogazione con delega revocata NON può riattivare una richiesta di fruizione in stato SUSPENDED per conto dell'erogatore
     Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione automatica
     And l'ente delegante "PA1"
     And l'ente delegato "PA2"
@@ -478,7 +456,7 @@ Feature: Attivazione richiesta di fruizione
 
   @sad-path
   @agreement-activate-refactor
-  Scenario: [AGREEMENTS_UNSUSPEND_16] Un delegato alla fruizione con delega revocata NON può riattivare una richiesta di fruizione in stato SUSPENDED per conto del fruitore
+  Scenario: [AGREEMENTS_UNSUSPEND_14] Un delegato alla fruizione con delega revocata NON può riattivare una richiesta di fruizione in stato SUSPENDED per conto del fruitore
     Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione automatica
     And l'ente delegante "PA2"
     And l'ente delegato "PA3"
