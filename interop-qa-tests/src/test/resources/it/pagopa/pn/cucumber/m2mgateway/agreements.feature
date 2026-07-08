@@ -92,7 +92,6 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
       | agreementStatus                |
       | "ACTIVE"                       |
       | "ARCHIVED"                     |
-      | "REJECTED"                     |
       | "SUSPENDED"                    |
       | "MISSING_CERTIFIED_ATTRIBUTES" |
 
@@ -110,7 +109,6 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
       | agreementStatus                |
       | "ACTIVE"                       |
       | "ARCHIVED"                     |
-      | "REJECTED"                     |
       | "PENDING"                      |
       | "MISSING_CERTIFIED_ATTRIBUTES" |
 
@@ -168,6 +166,29 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     Then si ottiene status code 403
     And la richiesta di fruizione si trova in stato "SUSPENDED"
 
+  @sad-path
+  @agreement-activate-refactor
+  Scenario: [M2M_AGREEMENTS_APPROVE_6] L'approvazione di una richiesta di fruizione con stato REJECTED restituisce errore
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
+    And "GSP" ha già creato e inviato una richiesta di fruizione per quell'e-service ed è in attesa di approvazione
+    And "PA1" ha già rifiutato quella richiesta di fruizione
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente m2m richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 409
+    And la richiesta di fruizione si trova in stato "REJECTED"
+
+  @sad-path
+  @agreement-activate-refactor
+  Scenario: [M2M_AGREEMENTS_UNSUSPEND_6] La riattivazione di una richiesta di fruizione con stato REJECTED restituisce errore
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
+    And "GSP" ha già creato e inviato una richiesta di fruizione per quell'e-service ed è in attesa di approvazione
+    And "PA1" ha già rifiutato quella richiesta di fruizione
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente m2m richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 409
+    And la richiesta di fruizione si trova in stato "REJECTED"
 
   # Da qui in poi test di "API V2 Parte 2" https://pagopa.atlassian.net/wiki/spaces/PDNDI/pages/1812562407/DRAFT+SRS+API+V2+Parte+2#Scenari-di-test
   @m2m-agreements-parte2-luglio

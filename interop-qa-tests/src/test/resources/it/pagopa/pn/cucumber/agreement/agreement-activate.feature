@@ -301,7 +301,7 @@ Feature: Attivazione richiesta di fruizione
     And "GSP" ha già creato e inviato una richiesta di fruizione per quell'e-service ed è in attesa di approvazione
     And "PA1" ha già rifiutato quella richiesta di fruizione
     When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
-    Then si ottiene status code 400
+    Then si ottiene status code 409
     And la richiesta di fruizione è in stato "REJECTED"
 
   @sad-path
