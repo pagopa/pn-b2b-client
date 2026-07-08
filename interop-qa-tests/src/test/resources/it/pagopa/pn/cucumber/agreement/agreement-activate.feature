@@ -308,11 +308,11 @@ Feature: Attivazione richiesta di fruizione
   @agreement-activate-refactor
   Scenario Outline: [AGREEMENTS_UNSUSPEND_4] La riattivazione di una richiesta di fruizione in stato MISSING_CERTIFIED_ATTRIBUTES restituisce errore
     Given l'utente è un "admin" di "<enteErogatore>"
-    Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
-    Given "<enteErogatore>" ha già creato un e-service in stato "PUBLISHED" che richiede quell'attributo certificato con approvazione automatica
-    Given "<enteFruitore>" ha una richiesta di fruizione in stato "DRAFT" per quell'e-service
-    Given "<enteCertificatore>" ha già revocato quell'attributo a "<enteFruitore>"
-    Given la richiesta di fruizione è passata in stato "MISSING_CERTIFIED_ATTRIBUTES"
+    And "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
+    And "<enteErogatore>" ha già creato un e-service in stato "PUBLISHED" che richiede quell'attributo certificato con approvazione automatica
+    And "<enteFruitore>" ha una richiesta di fruizione in stato "DRAFT" per quell'e-service
+    And "<enteCertificatore>" ha già revocato quell'attributo a "<enteFruitore>"
+    And la richiesta di fruizione è passata in stato "MISSING_CERTIFIED_ATTRIBUTES"
     When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 400
     And la richiesta di fruizione è in stato "MISSING_CERTIFIED_ATTRIBUTES"
