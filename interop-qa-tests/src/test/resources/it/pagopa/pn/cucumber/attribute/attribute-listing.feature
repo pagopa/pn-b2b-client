@@ -29,12 +29,6 @@ Feature: Listing attributi
       | Privato | support      |
       | Privato | api,security |
 
-    @nuovi-operatori-update
-    Examples:
-      | ente    | ruolo        |
-      | GSP     | viewer       |
-      | Privato | viewer       |
-
   # NOTE 16/04/2025 adattamento dello scenario così che risultati funzionante nell'attuale
   # ambiente di QA
   #@attribute_listing1
