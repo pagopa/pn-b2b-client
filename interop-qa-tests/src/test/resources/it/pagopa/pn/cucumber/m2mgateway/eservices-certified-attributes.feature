@@ -235,7 +235,6 @@ Feature: Gestione degli attributi certificati degli e-services attraverso APIs M
     Given l'utente è un "admin" di "PA2" con ruolo M2M m2m
     When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service
     Then si ottiene lo status code 404
-    And gli attributi certificati ottenuti sono coerenti con quelli aggiunti
 
   @m2m-parte2-ottobre
   Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_LIST_02] Un utente con ruolo M2M o M2M-ADMIN NON può leggere gli attributi certificati di una versione di un e-service indicando degli identificativi inesistenti (Parte2#Scenario intorno a 247)
