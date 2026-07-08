@@ -35,117 +35,117 @@ Feature: Sottomissione di una notifica bonaria.
       | messageId           | ${NEW-IT-FR} |
       | additionalLanguages | NULL         |
     When viene inviata una nuova notifica bonaria
-    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
 
 
-  @informalNotificationsValidation @informalAsyncValidation @addLanguages
-  Scenario: [NOTIFICHE_LANGUAGES_01_1_C] Come ente mittente invio una notifica bonaria allegando
-  un messaggio multilingue e specificando Italiano come lingua addizionale.
-    Given mittente della notifica bonaria: "Comune_Multi"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | campaign-1 |
-    And destinatario della notifica bonaria
-      | recipientType       | PF                |
-      | taxId               | FRMTTR76M06B715E  |
-      | denomination        | Ettore Fieramosca |
-      | messageId           | ${NEW-IT-FR}      |
-      | additionalLanguages | IT                |
-    And destinatario della notifica bonaria
-      | recipientType       | PG           |
-      | taxId               | 20517490320  |
-      | denomination        | Cucumber srl |
-      | messageId           | ${NEW-IT-FR} |
-      | additionalLanguages | NULL         |
-    When viene inviata una nuova notifica bonaria
-    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+#  @informalNotificationsValidation @informalAsyncValidation @addLanguages //non sarà più possibile l'invio multidestinatario
+#  Scenario: [NOTIFICHE_LANGUAGES_01_1_C] Come ente mittente invio una notifica bonaria allegando
+#  un messaggio multilingue e specificando Italiano come lingua addizionale.
+#    Given mittente della notifica bonaria: "Comune_Multi"
+#    And viene creata una nuova notifica bonaria con i seguenti parametri
+#      | campaignId | campaign-1 |
+#    And destinatario della notifica bonaria
+#      | recipientType       | PF                |
+#      | taxId               | FRMTTR76M06B715E  |
+#      | denomination        | Ettore Fieramosca |
+#      | messageId           | ${NEW-IT-FR}      |
+#      | additionalLanguages | IT                |
+#    And destinatario della notifica bonaria
+#      | recipientType       | PG           |
+#      | taxId               | 20517490320  |
+#      | denomination        | Cucumber srl |
+#      | messageId           | ${NEW-IT-FR} |
+#      | additionalLanguages | NULL         |
+#    When viene inviata una nuova notifica bonaria
+#    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
 
 
-  @informalNotificationsValidation @informalAsyncValidation @addLanguages
-  Scenario: [NOTIFICHE_LANGUAGES_01_2_A] Come ente mittente invio una notifica bonaria multidestinatario
-  allegando un messaggio multilingue indicando la lingua addizionale per un destinatario e italiana per l'altro
-    Given mittente della notifica bonaria: "Comune_Multi"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | campaign-1 |
-    And destinatario della notifica bonaria
-      | recipientType       | PF                |
-      | taxId               | FRMTTR76M06B715E  |
-      | denomination        | Ettore Fieramosca |
-      | messageId           | ${NEW-IT-FR}      |
-      | additionalLanguages | FR                |
-    And destinatario della notifica bonaria
-      | recipientType       | PG           |
-      | taxId               | 20517490320  |
-      | denomination        | Cucumber srl |
-      | messageId           | ${NEW-IT-FR} |
-      | additionalLanguages | IT           |
-    When viene inviata una nuova notifica bonaria
-    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+#  @informalNotificationsValidation @informalAsyncValidation @addLanguages //non sarà più possibile l'invio multidestinatario
+#  Scenario: [NOTIFICHE_LANGUAGES_01_2_A] Come ente mittente invio una notifica bonaria multidestinatario
+#  allegando un messaggio multilingue indicando la lingua addizionale per un destinatario e italiana per l'altro
+#    Given mittente della notifica bonaria: "Comune_Multi"
+#    And viene creata una nuova notifica bonaria con i seguenti parametri
+#      | campaignId | campaign-1 |
+#    And destinatario della notifica bonaria
+#      | recipientType       | PF                |
+#      | taxId               | FRMTTR76M06B715E  |
+#      | denomination        | Ettore Fieramosca |
+#      | messageId           | ${NEW-IT-FR}      |
+#      | additionalLanguages | FR                |
+#    And destinatario della notifica bonaria
+#      | recipientType       | PG           |
+#      | taxId               | 20517490320  |
+#      | denomination        | Cucumber srl |
+#      | messageId           | ${NEW-IT-FR} |
+#      | additionalLanguages | IT           |
+#    When viene inviata una nuova notifica bonaria
+#    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
 
 
-  @informalNotificationsValidation @informalAsyncValidation @addLanguages
-  Scenario: [NOTIFICHE_LANGUAGES_01_2_B] Come ente mittente invio una notifica bonaria multidestinatario
-  allegando un messaggio multilingue indicando la lingua addizionale per entrambi
-    Given mittente della notifica bonaria: "Comune_Multi"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | campaign-1 |
-    And destinatario della notifica bonaria
-      | recipientType       | PF                |
-      | taxId               | FRMTTR76M06B715E  |
-      | denomination        | Ettore Fieramosca |
-      | messageId           | ${NEW-IT-FR}      |
-      | additionalLanguages | FR                |
-    And destinatario della notifica bonaria
-      | recipientType       | PG           |
-      | taxId               | 20517490320  |
-      | denomination        | Cucumber srl |
-      | messageId           | ${NEW-IT-FR} |
-      | additionalLanguages | FR           |
-    When viene inviata una nuova notifica bonaria
-    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+#  @informalNotificationsValidation @informalAsyncValidation @addLanguages //non sarà più possibile l'invio multidestinatario
+#  Scenario: [NOTIFICHE_LANGUAGES_01_2_B] Come ente mittente invio una notifica bonaria multidestinatario
+#  allegando un messaggio multilingue indicando la lingua addizionale per entrambi
+#    Given mittente della notifica bonaria: "Comune_Multi"
+#    And viene creata una nuova notifica bonaria con i seguenti parametri
+#      | campaignId | campaign-1 |
+#    And destinatario della notifica bonaria
+#      | recipientType       | PF                |
+#      | taxId               | FRMTTR76M06B715E  |
+#      | denomination        | Ettore Fieramosca |
+#      | messageId           | ${NEW-IT-FR}      |
+#      | additionalLanguages | FR                |
+#    And destinatario della notifica bonaria
+#      | recipientType       | PG           |
+#      | taxId               | 20517490320  |
+#      | denomination        | Cucumber srl |
+#      | messageId           | ${NEW-IT-FR} |
+#      | additionalLanguages | FR           |
+#    When viene inviata una nuova notifica bonaria
+#    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
 
 
-  @informalNotificationsValidation @informalAsyncValidation @addLanguages
-  Scenario: [NOTIFICHE_LANGUAGES_01_2_C] Come ente mittente invio una notifica bonaria multidestinatario
-  allegando due diversi messaggi multilingue indicando la lingua addizionale per entrambi
-    Given mittente della notifica bonaria: "Comune_Multi"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | campaign-1 |
-    And destinatario della notifica bonaria
-      | recipientType       | PF                |
-      | taxId               | FRMTTR76M06B715E  |
-      | denomination        | Ettore Fieramosca |
-      | messageId           | ${NEW-IT-FR}      |
-      | additionalLanguages | FR                |
-    And destinatario della notifica bonaria
-      | recipientType       | PG             |
-      | taxId               | 20517490320    |
-      | denomination        | Cucumber srl   |
-      | messageId           | ${SAVED-IT-FR} |
-      | additionalLanguages | FR             |
-    When viene inviata una nuova notifica bonaria
-    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+#  @informalNotificationsValidation @informalAsyncValidation @addLanguages //non sarà più possibile l'invio multidestinatario
+#  Scenario: [NOTIFICHE_LANGUAGES_01_2_C] Come ente mittente invio una notifica bonaria multidestinatario
+#  allegando due diversi messaggi multilingue indicando la lingua addizionale per entrambi
+#    Given mittente della notifica bonaria: "Comune_Multi"
+#    And viene creata una nuova notifica bonaria con i seguenti parametri
+#      | campaignId | campaign-1 |
+#    And destinatario della notifica bonaria
+#      | recipientType       | PF                |
+#      | taxId               | FRMTTR76M06B715E  |
+#      | denomination        | Ettore Fieramosca |
+#      | messageId           | ${NEW-IT-FR}      |
+#      | additionalLanguages | FR                |
+#    And destinatario della notifica bonaria
+#      | recipientType       | PG             |
+#      | taxId               | 20517490320    |
+#      | denomination        | Cucumber srl   |
+#      | messageId           | ${SAVED-IT-FR} |
+#      | additionalLanguages | FR             |
+#    When viene inviata una nuova notifica bonaria
+#    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
 
 
-  @informalNotificationsValidation @informalAsyncValidation @addLanguages
-  Scenario: [NOTIFICHE_LANGUAGES_01_2_D] Come ente mittente invio una notifica bonaria multidestinatario
-  allegando un messaggio monolingua indicando la lingua italiana per uno e nessuna lingua per l'altro
-    Given mittente della notifica bonaria: "Comune_Multi"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | campaign-1 |
-    And destinatario della notifica bonaria
-      | recipientType       | PF                |
-      | taxId               | FRMTTR76M06B715E  |
-      | denomination        | Ettore Fieramosca |
-      | messageId           | ${NEW-IT}         |
-      | additionalLanguages | IT                |
-    And destinatario della notifica bonaria
-      | recipientType       | PG           |
-      | taxId               | 20517490320  |
-      | denomination        | Cucumber srl |
-      | messageId           | ${NEW-IT}    |
-      | additionalLanguages | NULL         |
-    When viene inviata una nuova notifica bonaria
-    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+#  @informalNotificationsValidation @informalAsyncValidation @addLanguages //non sarà più possibile l'invio multidestinatario
+#  Scenario: [NOTIFICHE_LANGUAGES_01_2_D] Come ente mittente invio una notifica bonaria multidestinatario
+#  allegando un messaggio monolingua indicando la lingua italiana per uno e nessuna lingua per l'altro
+#    Given mittente della notifica bonaria: "Comune_Multi"
+#    And viene creata una nuova notifica bonaria con i seguenti parametri
+#      | campaignId | campaign-1 |
+#    And destinatario della notifica bonaria
+#      | recipientType       | PF                |
+#      | taxId               | FRMTTR76M06B715E  |
+#      | denomination        | Ettore Fieramosca |
+#      | messageId           | ${NEW-IT}         |
+#      | additionalLanguages | IT                |
+#    And destinatario della notifica bonaria
+#      | recipientType       | PG           |
+#      | taxId               | 20517490320  |
+#      | denomination        | Cucumber srl |
+#      | messageId           | ${NEW-IT}    |
+#      | additionalLanguages | NULL         |
+#    When viene inviata una nuova notifica bonaria
+#    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
 
 
   @informalNotificationsValidation @informalSyncValidation @addLanguages
@@ -185,50 +185,50 @@ Feature: Sottomissione di una notifica bonaria.
     Then la notifica bonaria è stata rifiutata per l'errore: "MESSAGE_LANGUAGE_MISMATCH"
 
 
-  @informalNotificationsValidation @informalAsyncValidation @addLanguages
-  Scenario: [NOTIFICHE_LANGUAGES_01_3_C] Come ente mittente invio una notifica bonaria multidestinatario
-  allegando due messaggi multilingua diversi, indicando una lingua non presente per uno di loro
-    Given mittente della notifica bonaria: "Comune_Multi"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | campaign-1 |
-    And destinatario della notifica bonaria
-      | recipientType       | PF                |
-      | taxId               | FRMTTR76M06B715E  |
-      | denomination        | Ettore Fieramosca |
-      | messageId           | ${NEW-IT-FR}      |
-      | additionalLanguages | DE                |
-    And destinatario della notifica bonaria
-      | recipientType       | PG           |
-      | taxId               | 20517490320  |
-      | denomination        | Cucumber srl |
-      | messageId           | ${NEW-IT-FR} |
-      | additionalLanguages | FR           |
-    When viene inviata una nuova notifica bonaria
-    And  si verifica che la notifica bonaria sia in stato "REFUSED"
-    Then la notifica bonaria è stata rifiutata per l'errore: "MESSAGE_LANGUAGE_MISMATCH"
+#  @informalNotificationsValidation @informalAsyncValidation @addLanguages //non sarà più possibile l'invio multidestinatario
+#  Scenario: [NOTIFICHE_LANGUAGES_01_3_C] Come ente mittente invio una notifica bonaria multidestinatario
+#  allegando due messaggi multilingua diversi, indicando una lingua non presente per uno di loro
+#    Given mittente della notifica bonaria: "Comune_Multi"
+#    And viene creata una nuova notifica bonaria con i seguenti parametri
+#      | campaignId | campaign-1 |
+#    And destinatario della notifica bonaria
+#      | recipientType       | PF                |
+#      | taxId               | FRMTTR76M06B715E  |
+#      | denomination        | Ettore Fieramosca |
+#      | messageId           | ${NEW-IT-FR}      |
+#      | additionalLanguages | DE                |
+#    And destinatario della notifica bonaria
+#      | recipientType       | PG           |
+#      | taxId               | 20517490320  |
+#      | denomination        | Cucumber srl |
+#      | messageId           | ${NEW-IT-FR} |
+#      | additionalLanguages | FR           |
+#    When viene inviata una nuova notifica bonaria
+#    And  si verifica che la notifica bonaria sia in stato "REFUSED"
+#    Then la notifica bonaria è stata rifiutata per l'errore: "MESSAGE_LANGUAGE_MISMATCH"
 
 
-  @informalNotificationsValidation @informalAsyncValidation @addLanguages
-  Scenario: [NOTIFICHE_LANGUAGES_01_3_D] Come ente mittente invio una notifica bonaria multidestinatario
-  allegando un messaggio multilingua, indicando una lingua non presente per uno di loro
-    Given mittente della notifica bonaria: "Comune_Multi"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | campaign-1 |
-    And destinatario della notifica bonaria
-      | recipientType       | PF                |
-      | taxId               | FRMTTR76M06B715E  |
-      | denomination        | Ettore Fieramosca |
-      | messageId           | ${NEW-IT-FR}      |
-      | additionalLanguages | DE                |
-    And destinatario della notifica bonaria
-      | recipientType       | PG             |
-      | taxId               | 20517490320    |
-      | denomination        | Cucumber srl   |
-      | messageId           | ${SAVED-IT-FR} |
-      | additionalLanguages | FR             |
-    When viene inviata una nuova notifica bonaria
-    And  si verifica che la notifica bonaria sia in stato "REFUSED"
-    Then la notifica bonaria è stata rifiutata per l'errore: "MESSAGE_LANGUAGE_MISMATCH"
+#  @informalNotificationsValidation @informalAsyncValidation @addLanguages //non sarà più possibile l'invio multidestinatario
+#  Scenario: [NOTIFICHE_LANGUAGES_01_3_D] Come ente mittente invio una notifica bonaria multidestinatario
+#  allegando un messaggio multilingua, indicando una lingua non presente per uno di loro
+#    Given mittente della notifica bonaria: "Comune_Multi"
+#    And viene creata una nuova notifica bonaria con i seguenti parametri
+#      | campaignId | campaign-1 |
+#    And destinatario della notifica bonaria
+#      | recipientType       | PF                |
+#      | taxId               | FRMTTR76M06B715E  |
+#      | denomination        | Ettore Fieramosca |
+#      | messageId           | ${NEW-IT-FR}      |
+#      | additionalLanguages | DE                |
+#    And destinatario della notifica bonaria
+#      | recipientType       | PG             |
+#      | taxId               | 20517490320    |
+#      | denomination        | Cucumber srl   |
+#      | messageId           | ${SAVED-IT-FR} |
+#      | additionalLanguages | FR             |
+#    When viene inviata una nuova notifica bonaria
+#    And  si verifica che la notifica bonaria sia in stato "REFUSED"
+#    Then la notifica bonaria è stata rifiutata per l'errore: "MESSAGE_LANGUAGE_MISMATCH"
 
 
 # *******************************************************************
