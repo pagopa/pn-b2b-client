@@ -37,6 +37,7 @@ public class HttpCallExecutor implements IHttpExecutor {
             responseStatus = HttpStatus.OK;
             errorMessage = null;
         } catch (HttpStatusCodeException e) {
+            response = null;
             responseStatus = e.getStatusCode();
             errorMessage = e.getMessage();
         }
@@ -64,6 +65,7 @@ public class HttpCallExecutor implements IHttpExecutor {
             response = promiseResponse;
             responseStatus = httpStatusMapper.apply(promiseResponse);
         } catch (HttpStatusCodeException e) {
+            response = null;
             responseStatus = e.getStatusCode();
             errorMessage = e.getMessage();
         }
@@ -76,6 +78,7 @@ public class HttpCallExecutor implements IHttpExecutor {
             promise.run();
             responseStatus = HttpStatus.OK;
         } catch (HttpStatusCodeException e) {
+            response = null;
             responseStatus = e.getStatusCode();
             errorMessage = e.getMessage();
         }
