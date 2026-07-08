@@ -375,4 +375,3 @@ Feature: Gestione degli attributi certificati degli e-services attraverso APIs M
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di rimuovere l'attributo certificato numero 1 dal gruppo dell'e-service
     Then si ottiene lo status code 400
-    And gli attributi certificati del gruppo sono rimasti invariati
