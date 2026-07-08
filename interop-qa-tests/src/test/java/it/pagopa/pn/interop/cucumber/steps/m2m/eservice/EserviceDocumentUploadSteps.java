@@ -30,10 +30,9 @@ import java.util.UUID;
 
 public class EserviceDocumentUploadSteps {
 
-    enum ExpectedUploadOutcome {
+    enum ExpectedOutcome {
         SUCCESS,
         FAILURE;
-
 
         boolean isSuccessExpected() {
             return this == SUCCESS;
@@ -87,16 +86,16 @@ public class EserviceDocumentUploadSteps {
 
     // TODO verificare collocazione
     @ParameterType("positivo|negativo")
-    public ExpectedUploadOutcome uploadOutcome(String expectedOutcome) {
+    public ExpectedOutcome uploadOutcome(String expectedOutcome) {
         return switch (expectedOutcome) {
-            case "positivo" -> ExpectedUploadOutcome.SUCCESS;
-            case "negativo" -> ExpectedUploadOutcome.FAILURE;
+            case "positivo" -> ExpectedOutcome.SUCCESS;
+            case "negativo" -> ExpectedOutcome.FAILURE;
             default -> throw new IllegalStateException("Unexpected value: " + expectedOutcome);
         };
     }
 
     @Then("tutti i tentativi di caricamento hanno esito {uploadOutcome}")
-    public void verifyUploadAttemptsOutcome(ExpectedUploadOutcome expectedOutcome) {
+    public void verifyUploadAttemptsOutcome(ExpectedOutcome expectedOutcome) {
         Assertions.assertThat(uploadAttempts)
             .as("Nessun tentativo di caricamento e' stato registrato")
             .isNotEmpty();
