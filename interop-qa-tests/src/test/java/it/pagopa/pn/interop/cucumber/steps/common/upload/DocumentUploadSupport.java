@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.api.Assertions;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,6 +17,8 @@ import java.util.Map;
 import java.util.UUID;
 
 public class DocumentUploadSupport {
+
+    private static final HttpStatus EXPECTED_FAILURE_STATUS = HttpStatus.BAD_REQUEST;
 
     private final Map<String, Resource> filesByType;
 
@@ -50,11 +53,16 @@ public class DocumentUploadSupport {
             .isNotEmpty();
 
         List<UploadAttemptResult> unexpectedResults = uploadAttempts.stream()
-            .filter(result -> result.success() != expectedOutcome.isSuccessExpected())
+            .filter(result -> {
+                if (expectedOutcome.isSuccessExpected()) {
+                    return !result.success();
+                }
+                return result.success() || !EXPECTED_FAILURE_STATUS.equals(result.status());
+            })
             .toList();
 
         Assertions.assertThat(unexpectedResults)
-            .as("Verifico che tutti i tentativi abbiano esito %s", expectedOutcome)
+            .as("Verifico che tutti i tentativi abbiano esito %s e, se negativo, status %s", expectedOutcome, EXPECTED_FAILURE_STATUS)
             .isEmpty();
     }
 
@@ -65,6 +73,7 @@ public class DocumentUploadSupport {
     private UploadAttemptResult attemptUpload(UploadRequest request, DocumentUploadOps ops) {
         String uploadErrorMessage = null;
         boolean uploadSucceeded;
+        HttpStatus uploadStatus = null;
 
         try {
             Resource sourceResource = resolveSourceResource(request.fileType());
@@ -72,6 +81,7 @@ public class DocumentUploadSupport {
             String prettyName = buildPrettyName(request.fileType(), request.fileExtension());
 
             UploadOperationResult uploadResult = ops.upload(request, uploadResource, prettyName);
+            uploadStatus = uploadResult.status();
             uploadErrorMessage = uploadResult.errorMessage();
             uploadSucceeded = uploadResult.isSuccess();
 
@@ -89,7 +99,7 @@ public class DocumentUploadSupport {
             uploadErrorMessage = appendMessage(uploadErrorMessage, ex.getMessage());
         }
 
-        return new UploadAttemptResult(request.fileType(), request.fileExtension(), uploadSucceeded, uploadErrorMessage);
+        return new UploadAttemptResult(request.fileType(), request.fileExtension(), uploadStatus, uploadSucceeded, uploadErrorMessage);
     }
 
     private Resource resolveSourceResource(String fileType) {
