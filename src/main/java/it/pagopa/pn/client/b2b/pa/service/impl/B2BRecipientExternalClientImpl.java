@@ -7,17 +7,22 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.ApiClient;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.api.RecipientReadB2BApi;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullNotificationSearchResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.LegalNotificationSearchResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationAttachmentDownloadMetadataResponse;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.api.LegalFactsApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.model.LegalFactDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffDocumentDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffFullNotificationV1;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffLegalFactId;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.NotificationStatusV26;
+import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
+import it.pagopa.pn.client.b2b.pa.domain.NotificationSearchParam;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotification;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api.RecipientReadApi;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.CxTypeAuthFleet;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactCategory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -26,7 +31,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -44,11 +48,12 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
     private final String webBasePath;
     private final String b2bBasePath;
     private final RecipientReadB2BApi recipientReadB2BApi;
+    private final RecipientReadApi recipientReadApi;
     private final LegalFactsApi legalFactsApi;
     private BearerTokenType bearerTokenSetted;
 
     public B2BRecipientExternalClientImpl(RestTemplate restTemplate,
-                                          @Value("${pn.webapi.external.base-url}") String webBasePath,
+                                          @Value("${pn.delivery.base-url}") String webBasePath,
                                           @Value("${pn.external.dest.base-url}") String b2bBasePath,
                                           @Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
                                           @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken,
@@ -65,6 +70,7 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
         this.b2bBasePath = b2bBasePath;
         this.bearerTokenSetted = BearerTokenType.PG_1;
         this.recipientReadB2BApi = new RecipientReadB2BApi(newApiClient(restTemplate, webBasePath, gherkinSrlBearerToken));
+        this.recipientReadApi = new RecipientReadApi(createApiClient(restTemplate, webBasePath, gherkinSrlBearerToken));
         this.legalFactsApi = new LegalFactsApi(newLegalFactApiClient(restTemplate, b2bBasePath, gherkinSrlBearerToken));
     }
 
@@ -79,6 +85,12 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
         it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.ApiClient newApiClient = new it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
         newApiClient.setBearerToken(bearerToken);
+        return newApiClient;
+    }
+
+    private it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.ApiClient createApiClient(RestTemplate restTemplate, String basePath, String bearerToken) {
+        it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.ApiClient newApiClient = new it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.ApiClient(restTemplate);
+        newApiClient.setBasePath(basePath);
         return newApiClient;
     }
 
@@ -108,16 +120,53 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
     }
 
     @Override
-    public NotificationSearchResponse searchReceivedDelegatedNotification(OffsetDateTime startDate, OffsetDateTime endDate, String recipientId, String group, String senderId, NotificationStatusV26 status, String iunMatch, Integer size, String nextPagesKey) throws RestClientException {
-        return recipientReadB2BApi.searchReceivedDelegatedNotification(
-                startDate.toString(), endDate.toString(), senderId, recipientId, group, iunMatch, convertStatus(status), size, nextPagesKey);
+    public LegalNotificationSearchResponse searchReceivedDelegatedNotification(Destinatario destinatario, NotificationSearchParam param) throws RestClientException {
+        String cxType = resolveActual(param.xPagopaPnCxType, destinatario.getRecipientType());
+        String cxId = resolveActual(param.xPagopaPnCxId, String.format("%s-%s", destinatario.getRecipientType(), destinatario.getUid()));
+        /* TODO rivedere la condizione corretta da mettere a questo if
+         *  esso deve entrare nella prima condizione soltanto in caso di PG che voglia andare a chiamare le API di destinatari strutturati
+         *  in tutti gli altri casi deve andare sulle api internal sia per PF che per PG
+         */
+        if (destinatario.getRecipientType().equals("PA")) {
+            return recipientReadB2BApi.searchReceivedDelegatedNotification(
+                    param.startDate.toString(), param.endDate.toString(), param.senderId, param.recipientId,
+                    param.group, param.iunMatch, convertStatus(NotificationStatusV26.fromValue(param.status)), param.size, param.nextPagesKey);
+        }
+        else {
+            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.LegalNotificationSearchResponse response = recipientReadApi.searchReceivedDelegatedNotification(
+                    param.xPagopaPnUid, CxTypeAuthFleet.fromValue(cxType), cxId,
+                    param.startDate, param.endDate, param.xPagopaPnCxGroups, param.senderId, param.recipientId,
+                    param.group, param.iunMatch,
+                    it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationStatusV26.fromValue(param.status), param.size, param.nextPagesKey);
+            return deepCopy(response, LegalNotificationSearchResponse.class);
+        }
     }
 
     @Override
-    public NotificationSearchResponse searchReceivedNotification(OffsetDateTime startDate, OffsetDateTime endDate, String mandateId, String senderId, NotificationStatusV26 status, String subjectRegExp, String iunMatch, Integer size, String nextPagesKey) throws RestClientException {
-        it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchResponse response = recipientReadB2BApi.searchReceivedNotification(startDate.toString(), endDate.toString(), mandateId,
-                senderId, convertStatus(status), subjectRegExp, iunMatch, size, nextPagesKey);
-        return deepCopy(response, NotificationSearchResponse.class);
+    public FullNotificationSearchResponse searchReceivedNotification(Destinatario destinatario, NotificationSearchParam param) throws RestClientException {
+        String cxType = resolveActual(param.xPagopaPnCxType, destinatario.getRecipientType());
+        String cxId = resolveActual(param.xPagopaPnCxId, String.format("%s-%s", destinatario.getRecipientType(), destinatario.getUid()));
+        /* TODO rivedere la condizione corretta da mettere a questo if
+            *  esso deve entrare nella prima condizione soltanto in caso di PG che voglia andare a chiamare le API di destinatari strutturati
+            *  in tutti gli altri casi deve andare sulle api internal sia per PF che per PG
+         */
+        if(destinatario.getRecipientType().equals("PA")) {
+            return recipientReadB2BApi.searchReceivedNotification(param.startDate.toString(), param.endDate.toString(), param.mandateId,
+                    param.senderId, param.subjectRegExp, param.iunMatch, param.size, param.nextPagesKey, param.communicationType);
+        }
+        else {
+            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.FullNotificationSearchResponse response = recipientReadApi.searchReceivedNotification(
+                    param.xPagopaPnUid, CxTypeAuthFleet.fromValue(cxType), cxId,
+                    param.startDate, param.endDate, param.xPagopaPnCxGroups, param.mandateId,
+                    param.senderId, param.subjectRegExp, param.iunMatch, param.size, param.nextPagesKey, param.communicationType);
+            return deepCopy(response, FullNotificationSearchResponse.class);
+        }
+    }
+
+    // NotificationSearchParam.ACTUAL (default quando il campo non è specificato in tabella) -> valore derivato dal destinatario;
+    // qualunque altro valore, incluso null esplicito (per simulare un campo obbligatorio mancante), passa invariato
+    private static String resolveActual(String value, String actualValue) {
+        return NotificationSearchParam.ACTUAL.equals(value) ? actualValue : value;
     }
 
     @Override

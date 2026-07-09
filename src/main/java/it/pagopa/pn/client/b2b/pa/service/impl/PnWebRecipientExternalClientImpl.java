@@ -5,12 +5,20 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullNotificationSearchResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.LegalNotificationSearchResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationAttachmentDownloadMetadataResponse;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.model.LegalFactDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.ApiClient;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.NotificationReceivedApi;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.*;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffDocumentDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffDocumentType;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffFullNotificationV1;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffLegalFactId;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffNotificationsResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.NotificationStatusV26;
+import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
+import it.pagopa.pn.client.b2b.pa.domain.NotificationSearchParam;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotification;
@@ -24,7 +32,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -183,25 +190,23 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
     }
 
     @Override
-    public NotificationSearchResponse searchReceivedNotification(OffsetDateTime startDate, OffsetDateTime endDate, String mandateId, String senderId, NotificationStatusV26 status, String subjectRegExp, String iunMatch, Integer size, String nextPagesKey) throws RestClientException {
-        NotificationStatusV26 statusV26 = Optional.ofNullable(status)
-                .map(NotificationStatusV26::getValue)
+    public FullNotificationSearchResponse searchReceivedNotification(Destinatario destinatario, NotificationSearchParam searchParam) throws RestClientException {
+        NotificationStatusV26 statusV26 = Optional.ofNullable(searchParam.status)
                 .map(NotificationStatusV26::fromValue)
                 .orElse(null);
 
-        BffNotificationsResponse notificationsResponse = notificationReceivedApi.searchReceivedNotificationsV1(startDate, endDate, mandateId, senderId, statusV26, subjectRegExp, iunMatch, size, nextPagesKey);
-        return deepCopy(notificationsResponse, NotificationSearchResponse.class);
+        BffNotificationsResponse notificationsResponse = notificationReceivedApi.searchReceivedNotificationsV1(searchParam.startDate, searchParam.endDate, searchParam.mandateId, searchParam.senderId, statusV26, searchParam.subjectRegExp, searchParam.iunMatch, searchParam.size, searchParam.nextPagesKey);
+        return deepCopy(notificationsResponse, FullNotificationSearchResponse.class);
     }
 
     @Override
-    public NotificationSearchResponse searchReceivedDelegatedNotification(OffsetDateTime startDate, OffsetDateTime endDate, String senderId, String recipientId, String group, NotificationStatusV26 status, String iunMatch, Integer size, String nextPagesKey) throws RestClientException {
-        NotificationStatusV26 statusV26 = Optional.ofNullable(status)
-                .map(NotificationStatusV26::getValue)
+    public LegalNotificationSearchResponse searchReceivedDelegatedNotification(Destinatario destinatario, NotificationSearchParam searchParam) throws RestClientException {
+        NotificationStatusV26 statusV26 = Optional.ofNullable(searchParam.status)
                 .map(NotificationStatusV26::fromValue)
                 .orElse(null);
 
-        BffNotificationsResponse notificationsResponse = notificationReceivedApi.searchReceivedDelegatedNotificationsV1(startDate, endDate, senderId, recipientId, group, statusV26, iunMatch, size, nextPagesKey);
-        return deepCopy(notificationsResponse, NotificationSearchResponse.class);
+        BffNotificationsResponse notificationsResponse = notificationReceivedApi.searchReceivedDelegatedNotificationsV1(searchParam.startDate, searchParam.endDate, searchParam.senderId, searchParam.recipientId, searchParam.group, statusV26, searchParam.iunMatch, searchParam.size, searchParam.nextPagesKey);
+        return deepCopy(notificationsResponse, LegalNotificationSearchResponse.class);
     }
 
     @Override
