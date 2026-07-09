@@ -45,7 +45,7 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
       | ricezione  | SUSPENDED   |
       | ricezione  | DEPRECATED  |
 
-  @m2m-parte2-ottobre
+  @m2m-parte2-ottobre @ko-nrt-08072026
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_ADD_03] Un utente con ruolo M2M-ADMIN NON può aggiungere degli attributi dichiarati a una versione di un e-service template che non gli appartiene (Parte2#Scenario intorno a 115)
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
@@ -309,7 +309,7 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
       | mode        |
       | ricezione   |
 
-  @m2m-parte2-ottobre
+  @m2m-parte2-ottobre @ko-nrt-08072026
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_DELETE_02] Un utente con ruolo M2M NON può rimuovere gli attributi dichiarati di una versione di un e-service template (Parte2#Scenario intorno a 270)
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
@@ -409,7 +409,7 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
       | mode        |
       | ricezione   |
 
-  @m2m-parte2-ottobre
+  @m2m-parte2-ottobre @ko-nrt-08072026
   Scenario Outline: [M2M_ES_TEMPLATES_DECLARED_ATTRIBUTES_DELETE_06] Un utente NON può rimuovere gli attributi dichiarati da una versione di un e-service template in stato diverso da DRAFT (Parte2#Scenario intorno a 275)
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT

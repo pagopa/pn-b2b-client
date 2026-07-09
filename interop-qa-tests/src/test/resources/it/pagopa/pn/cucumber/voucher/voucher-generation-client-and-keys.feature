@@ -74,7 +74,7 @@ Scenario: [VOUCHER_GENERATION_CLIENT_AND_KEYS_5] La generazione del Voucher va a
     When l'utente richiede la generazione del voucher
     Then si ottiene la corretta generazione del voucher
 
-@voucher_generation_client_and_keys6
+@voucher_generation_client_and_keys6 @ko-nrt-08072026
 Scenario: [VOUCHER_GENERATION_CLIENT_AND_KEYS_6] La generazione del Voucher va a buon fine quando la finalità viene aggiunta prima della chiave
     Given l'utente è un "admin" di "PA1"
     Given "GSP" ha già creato e pubblicato 1 e-service

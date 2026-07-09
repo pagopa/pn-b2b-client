@@ -3,7 +3,7 @@ Feature: Listing utenti client
   Tutti gli utenti autorizzati o security possono leggere la lista dei membri di un client a cui sono associati
 
   @sad-path
-  @nrt-minimal
+  @nrt-minimal @ko-nrt-08072026
   Scenario Outline: [CLIENT_USER_LISTING_1] Un utente API richiede la lista dei membri del client. Ritorna errore 403.
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato 1 client "CONSUMER"

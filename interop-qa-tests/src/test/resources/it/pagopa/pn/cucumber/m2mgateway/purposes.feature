@@ -267,6 +267,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
   # Ticket associati (a cui si deve l'eterogeneità dei codici di risposta previsti)
     # https://pagopa.atlassian.net/browse/PIN-6999
     # https://pagopa.atlassian.net/browse/PIN-7024
+  @ko-nrt-08072026
   Scenario Outline: [M2M_PURPOSES_SUSPEND_5_A] Una finalità in stato diverso da ACTIVE NON può essere sospesa
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -325,7 +326,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
     Given l'utente è un "admin" di "PA2"
     And la finalità è in stato ACTIVE
 
-  @sad-path
+  @sad-path @ko-nrt-08072026
   Scenario Outline: [M2MG_PURPOSES_33] Archiviazione di una finalità non consentita con ruolo M2M (Scenario 52)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -345,7 +346,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
       | ACTIVE    |
       | SUSPENDED |
 
-  @happy-path
+  @happy-path @ko-nrt-08072026
   Scenario Outline: [M2MG_PURPOSES_34] Archiviazione di una finalità in stato <stato> con utente autorizzato (Scenario 119)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -613,7 +614,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
 
     And la finalità è in stato SUSPENDED
 
-  @sad-path
+  @sad-path @ko-nrt-08072026
   Scenario: [M2MG_PURPOSES_55] Riattivazione fallita di una finalità con token non valido (Scenario 136)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -707,7 +708,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
     When l'utente tenta di ottenere la richiesta di fruizione correlata a una finalità inesistente
     Then si ottiene status code 404
 
-  @m2m-agreements-parte2-luglio
+  @m2m-agreements-parte2-luglio @ko-nrt-08072026
   Scenario Outline: [M2M_PURPOSES_DOCUMENT_1] Il documento dell'analisi del rischio correlato a una finalità può essere visualizzato da un utente con ruolo M2M-ADMIN o M2M (Parte2#Scenario 24)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -755,7 +756,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
     And la finalità è stata parzialmente modificata correttamente
 
   @m2m-patch
-  @purpose-m2m-patch
+  @purpose-m2m-patch @ko-nrt-08072026
   Scenario Outline: [M2M_PATCH_DRAFT_PURPOSE_1.1] - Casi negativi
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -862,7 +863,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
   @m2m-parte2-agosto
   @m2m-parte2-agosto-rilascio2
   @purpose-m2m-patch
-  @m2m-patch
+  @m2m-patch @ko-nrt-08072026
   Scenario Outline: [M2M_PURPOSES_PATCH_5] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di una finalità in stato diverso da DRAFT (Parte2#Scenario intorno a 132)
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -910,7 +911,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
     And la finalità restituita è coerente con le modifiche effettuate
     And la finalità è stata parzialmente modificata correttamente
 
-  @m2m-patch
+  @m2m-patch @ko-nrt-08072026
   Scenario Outline: [M2M_PATCH_REVERSE_PURPOSE_1.1] - Casi negativi (vincoli OpenAPI)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "PUBLISHED"
@@ -975,7 +976,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
 
   # Ticket aperto https://pagopa.atlassian.net/browse/PIN-7808
   @m2m-patch
-  @m2m-parte2-settembre @reversePurpose
+  @m2m-parte2-settembre @reversePurpose @ko-nrt-08072026
   Scenario Outline: [M2M_REVERSE_PURPOSE_PATCH_5] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di una finalità associata ad un e-service ad erogazione inversa in stato diverso da DRAFT
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "PUBLISHED"

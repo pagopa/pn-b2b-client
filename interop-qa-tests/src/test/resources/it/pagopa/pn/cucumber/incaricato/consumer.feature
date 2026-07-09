@@ -92,7 +92,7 @@ Feature: Test API Availability in Use of E-Service
     When l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
     Then si ottiene status code 400
 
-  @sad-path @deleghe1
+  @sad-path @deleghe1 @ko-nrt-08072026
   Scenario Outline: [TC_INCARICATO_48] La creazione di una delega in fruizione verso un ente che non ha dato la propria disponibilità a ricevere deleghe in fruizione deve fallire
     Given "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegante "<enteDelegante>"

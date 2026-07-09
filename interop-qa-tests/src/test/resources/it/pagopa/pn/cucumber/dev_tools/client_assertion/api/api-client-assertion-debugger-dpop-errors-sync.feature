@@ -3,7 +3,7 @@ Feature: Debugger Client Assertion Sync DPoP Errors
   Voglio validare la mia DPoP Proof legata a una Client Assertion
   Al fine di verificare il binding di sicurezza (HTM/HTU/JWK) e identificare errori specifici DPoP durante la quarta fase di validazione
 
-  @devToolsClientAssertion
+  @devToolsClientAssertion @ko-nrt-08072026
   Scenario Outline: [VALIDATION_NOT_FOUND_ERROR_API_CLIENT_DPOP_PAYLOAD] Dato un client API valido, quando il claim <claimToRemove> non è presente nel payload allora la validazione formale fallisce con errore <expectedError>
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     When il tenant fruitore "PA1" crea una client assertion valida per un client di tipo API
@@ -27,7 +27,7 @@ Feature: Debugger Client Assertion Sync DPoP Errors
       | htu           | dpopHtuNotFound |
       | htm           | dpopHtmNotFound |
 
-  @devToolsClientAssertion
+  @devToolsClientAssertion @ko-nrt-08072026
   Scenario Outline: [VALIDATION_NOT_FOUND_ERROR_API_CLIENT_DPOP_HEADER] Dato un client API valido, quando il claim <claimToRemove> non è presente nell'header allora la validazione formale fallisce con errore <expectedError>
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     When il tenant fruitore "PA1" crea una client assertion valida per un client di tipo API

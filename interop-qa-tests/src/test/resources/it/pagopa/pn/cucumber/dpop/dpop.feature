@@ -55,6 +55,7 @@ Feature: Test di sicurezza e funzionalità dei token interop con DPoP
       | accessToken | null |
       | expiresIn   | null |
 
+  @ko-nrt-08072026
   Scenario: [DP03] Access token generato senza header DPoP deve essere di tipo "Bearer"
     Given l'utente è un "admin" di "PA1"
     And "PA2" ha già creato e pubblicato 1 e-service

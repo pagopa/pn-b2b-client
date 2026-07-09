@@ -41,7 +41,7 @@ Feature: finalità agevolata, purpose template REACTIVATION
       | PA2  | viewer   |
 
   #54(KO)
-  @purposeTemplate @purposeTemplateReactivation
+  @purposeTemplate @purposeTemplateReactivation @ko-nrt-08072026
   Scenario: [PURPOSE_TEMPLATE_REACTIVATION_NO_CREATOR] Riattivazione di una finalità agevolata sospesa da parte di un utente non appartenente alla PA che ha creato la finalità agevolata (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato PUBLISHED

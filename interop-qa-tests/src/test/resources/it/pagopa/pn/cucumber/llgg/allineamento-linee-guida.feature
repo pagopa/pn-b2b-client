@@ -365,7 +365,7 @@ Feature: Allineamento linee guida
       | false            |
 
   @llgg
-  @deleghe2
+  @deleghe2 @ko-nrt-08072026
   Scenario Outline: [LLGG_21] Verifica la pubblicazione di un e-service da parte di un ente delegato all'erogazione settando il flag personal data
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"

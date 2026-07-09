@@ -14,6 +14,7 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     $DA_CONTESTO(TODAY) perché senza fruitori. Da ora non è più attiva.
     """
 
+  @ko-nrt-08072026
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_NOTIFICATION_1.1] L'utente erogatore riceve una notifica nel momento in cui avvia il processo di archiviazione di uno specifico descrittore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -74,6 +75,7 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     La versione 1 dell'e-service $DA_CONTESTO(eServiceName) sarà archiviata il giorno $DA_CONTESTO(TODAY).
     """
 
+  @ko-nrt-08072026
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_CANCELLATION_NOTIFICATION_1.1] L'utente erogatore riceve una notifica quando annulla l'archiviazione in corso di un proprio descrittore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -112,6 +114,7 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     $DA_CONTESTO(TODAY+GRACE_PERIOD).
     """
 
+  @ko-nrt-08072026
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_SUSPENSION_NOTIFICATION_1.2] L'utente fruitore riceve una notifica nel momento in cui un descrittore per cui ha una richiesta di fruizione attiva viene sospeso
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -139,6 +142,7 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     $DA_CONTESTO(TODAY+GRACE_PERIOD).
     """
 
+  @ko-nrt-08072026
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_SUSPENSION_NOTIFICATION_1.4] L'utente fruitore riceve una notifica quando viene riattivato un descrittore sospeso per cui ha una richiesta di fruizione attiva
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"

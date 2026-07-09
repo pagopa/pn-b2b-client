@@ -21,6 +21,7 @@ Feature: Soglie differenziate con API M2M V3
       | remainingDailyCallsPerConsumer | 5   |
       | remainingDailyCallsTotal       | 995 |
 
+  @ko-nrt-08072026
   Scenario Outline: [PURPOSE_THRESHOLD_9b] Una richiesta con API M2M V3 per recuperare le soglie rimanenti effettuata con un ruolo non autorizzato fallisce
     Given l'utente è un "admin" di "PA1"
     And PA1 ha già creato 1 attributo CERTIFIED

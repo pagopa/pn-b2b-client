@@ -6,7 +6,7 @@ Feature: Gestione degli attributi certificati degli e-service templates template
   #   del rilascio di ottobre, escluso eservices-certified-attributes.feature
 
   @m2m-v3-204-to-200
-  @m2m-parte2-ottobre
+  @m2m-parte2-ottobre @ko-nrt-08072026
   Scenario Outline: [M2M_ES_TEMPLATES_CERTIFIED_ATTRIBUTES_ADD_01] Un utente con ruolo M2M-ADMIN può aggiungere degli attributi certificati a una versione di un e-service template (Parte2#Scenario intorno a 197)
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
@@ -175,7 +175,7 @@ Feature: Gestione degli attributi certificati degli e-service templates template
       | mode        |
       | ricezione   |
 
-  @m2m-parte2-ottobre
+  @m2m-parte2-ottobre @ko-nrt-08072026
   Scenario Outline: [M2M_ES_TEMPLATES_CERTIFIED_ATTRIBUTES_LIST_01_A] Un utente con ruolo M2M o M2M-ADMIN può leggere gli attributi certificati di una versione di un e-service template (Parte2#Scenario intorno a 244)
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT
@@ -409,7 +409,7 @@ Feature: Gestione degli attributi certificati degli e-service templates template
       | mode        |
       | ricezione   |
 
-  @m2m-parte2-ottobre
+  @m2m-parte2-ottobre @ko-nrt-08072026
   Scenario Outline: [M2M_ES_TEMPLATES_CERTIFIED_ATTRIBUTES_DELETE_06] Un utente NON può rimuovere gli attributi certificati da una versione di un e-service template in stato diverso da DRAFT (Parte2#Scenario intorno a 275)
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT

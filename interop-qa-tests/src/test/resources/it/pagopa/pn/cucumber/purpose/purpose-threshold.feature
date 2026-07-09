@@ -231,7 +231,7 @@ Feature: Verifica soglie differenziate
       | remainingDailyCallsTotal       | 1000 |
     And si ottiene status code 200
 
-  @dailyCallsThreshold
+  @dailyCallsThreshold @ko-nrt-08072026
   Scenario Outline: [PURPOSE_THRESHOLD_9] Una richiesta con API BFF per recuperare le soglie rimanenti effettuata con un ruolo non autorizzato fallisce
     Given l'utente è un "admin" di "PA1"
     And PA1 ha già creato 1 attributo CERTIFIED

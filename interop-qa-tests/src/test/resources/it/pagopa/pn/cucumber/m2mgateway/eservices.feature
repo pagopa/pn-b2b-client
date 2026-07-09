@@ -1,4 +1,4 @@
-﻿@m2mEservices
+@m2mEservices
 Feature: Gestione degli eServices attraverso APIs M2M
 
   @happy-path
@@ -49,7 +49,7 @@ Feature: Gestione degli eServices attraverso APIs M2M
       | api,security | m2m-admin |
       | support      | m2m-admin |
 
-  @happy-path
+  @happy-path @ko-nrt-08072026
   Scenario Outline: [M2MG_ESERVICES_5] Recupero del dettaglio di un eService con utente autorizzato (Scenario 83)
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M <ruolo-m2m>
@@ -142,7 +142,7 @@ Feature: Gestione degli eServices attraverso APIs M2M
       | m2m       |
       | m2m-admin |
 
-  @happy-path
+  @happy-path @ko-nrt-08072026
   Scenario Outline: [M2MG_ESERVICES_14] Recupero corretto di un descriptor per uno specifico eService (Scenario 91)
     Given "PA1" ha già creato e pubblicato 1 e-services
     And l'utente è un "admin" di "PA1" con ruolo M2M <ruolo-m2m>
@@ -251,7 +251,7 @@ Feature: Gestione degli eServices attraverso APIs M2M
     When l'utente tenta di effettuare la riattivazione dell'e-service
     Then si ottiene lo status code 403
 
-  @m2m-parte2-agosto-rilascio1
+  @m2m-parte2-agosto-rilascio1 @ko-nrt-08072026
   Scenario: [M2MG_ESERVICES_26] Un utente con ruolo M2M-ADMIN non può effettuare riattivazione di un e-service indicando degli identificativi inesistenti (Parte2#Scenario intorno a 42)
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la riattivazione di un e-service inesistente
@@ -264,14 +264,14 @@ Feature: Gestione degli eServices attraverso APIs M2M
     When l'utente tenta di effettuare la cancellazione di un e-service inesistente
     Then si ottiene lo status code 401
 
-  @m2m-parte2-agosto-rilascio1
+  @m2m-parte2-agosto-rilascio1 @ko-nrt-08072026
   Scenario: [M2MG_ESERVICES_28] Un utente con ruolo M2M-ADMIN non può effettuare riattivazione di un e-service in stato PUBLISHED (Parte2#Scenario intorno a 44)
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la riattivazione dell'e-service
     Then si ottiene lo status code 409
 
-  @m2m-parte2-agosto-rilascio1
+  @m2m-parte2-agosto-rilascio1 @ko-nrt-08072026
   Scenario Outline: [M2MG_ESERVICES_29_A] Un utente con ruolo M2M-ADMIN non può effettuare riattivazione di un e-service in stato diverso da ACTIVE o SUSPENDED (Parte2#Scenario intorno a 45)
     Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -284,7 +284,7 @@ Feature: Gestione degli eServices attraverso APIs M2M
       | DEPRECATED |
       | ARCHIVED   |
 
-  @m2m-parte2-agosto-rilascio1 @deleghe2
+  @m2m-parte2-agosto-rilascio1 @deleghe2 @ko-nrt-08072026
   Scenario: [M2MG_ESERVICES_29_B] Un utente con ruolo M2M-ADMIN non può effettuare riattivazione di un e-service in stato WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 45)
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
@@ -416,7 +416,7 @@ Feature: Gestione degli eServices attraverso APIs M2M
   @eservice_published_delegation_m2m_v3
   @sad-path
   @m2m-patch
-  @m2m-parte2-agosto-rilascio2
+  @m2m-parte2-agosto-rilascio2 @ko-nrt-08072026
   Scenario Outline: [M2MG_ESERVICES_38] Un utente con ruolo M2M NON può effettuare una modifica parziale della delega di un e-service
     Given "PA1" ha già creato un e-service con un descrittore in stato "<descriptorState>" e impostando delega amministrativa a "false" e delega tecnica a "false"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m
@@ -568,7 +568,7 @@ Feature: Gestione degli eServices attraverso APIs M2M
     Then si ottiene lo status code 404
 
   @m2m-patch
-  @m2m-parte2-agosto-rilascio2
+  @m2m-parte2-agosto-rilascio2 @ko-nrt-08072026
   Scenario Outline: [M2MG_ESERVICES_46] Un utente NON può effettuare una modifica parziale del nome di un e-service indicando un token non valido (Parte2#Scenario intorno a 82)
     Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -584,7 +584,7 @@ Feature: Gestione degli eServices attraverso APIs M2M
       | SUSPENDED  |
 
   # 09/03/2026 ticket https://pagopa.atlassian.net/browse/QA-10948: al momento non è possibile archiviare un e-service
-  @m2m-patch
+  @m2m-patch @ko-nrt-08072026
   Scenario Outline: [M2MG_ESERVICES_47_A] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale del nome di un e-service in stato DRAFT o ARCHIVED
     Given "PA1" ha già creato un e-service in stato <stato>
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -862,7 +862,7 @@ Feature: Gestione degli eServices attraverso APIs M2M
     Then l'e-service descriptor non ha subito modifiche
 
   @m2m-patch
-  @m2m-parte2-settembre
+  @m2m-parte2-settembre @ko-nrt-08072026
   Scenario Outline: [M2MG_ESERVICES_DESCRIPTORS_QUOTAS_05_A] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale delle quote di un descriptor di un e-service in stato DRAFT, DEPRECATED o ARCHIVED (Parte2#Scenario intorno a 234)
     Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -875,7 +875,7 @@ Feature: Gestione degli eServices attraverso APIs M2M
       | ARCHIVED |
 
   @m2m-patch
-  @m2m-parte2-settembre @deleghe2
+  @m2m-parte2-settembre @deleghe2 @ko-nrt-08072026
   Scenario: [M2MG_ESERVICES_DESCRIPTORS_QUOTAS_05_B] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale delle quote di un descriptor di un e-service in stato WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 234)
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
@@ -968,7 +968,7 @@ Feature: Gestione degli eServices attraverso APIs M2M
   #test cui richiesta dal client non viene effettuata poichè parametro obbligatorio settato a null
   @eservice_published_delegation
   @eservice_published_delegation_m2m_v3
-  @sad-path
+  @sad-path @ko-nrt-08072026
   Scenario: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_2] Un utente con ruolo M2M-ADMIN NON può modificare le flag di delega di un e-service se non specifica l'id dell'e-service
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "false" e delega tecnica a "false"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -996,7 +996,7 @@ Feature: Gestione degli eServices attraverso APIs M2M
 
   @eservice_published_delegation
   @eservice_published_delegation_m2m_v3
-  @sad-path
+  @sad-path @ko-nrt-08072026
   Scenario Outline: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_3B] Un utente con ruolo M2M-ADMIN e appartenente ad un ente di tipo GSP NON può modificare la flag di delega tecnica di un e-service ottenendo uno stato non permesso
     Given "GSP" ha già creato un e-service con un descrittore in stato "<descriptorState>" e impostando delega amministrativa a "false" e delega tecnica a "false"
     And l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
@@ -1015,7 +1015,7 @@ Feature: Gestione degli eServices attraverso APIs M2M
 
   @eservice_published_delegation
   @eservice_published_delegation_m2m_v3
-  @sad-path
+  @sad-path @ko-nrt-08072026
   Scenario Outline: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_3C] Un utente con ruolo M2M-ADMIN e appartenente ad un ente di tipo PRIVATE NON può modificare la flag di delega tecnica di un e-service ottenendo uno stato non permesso
     Given "Privato" ha già creato un e-service con un descrittore in stato "<descriptorState>" e impostando delega amministrativa a "false" e delega tecnica a "false"
     And l'utente è un "admin" di "Privato" con ruolo M2M m2m-admin
@@ -1034,7 +1034,7 @@ Feature: Gestione degli eServices attraverso APIs M2M
 
   @eservice_published_delegation
   @eservice_published_delegation_m2m_v3
-  @sad-path
+  @sad-path @ko-nrt-08072026
   Scenario Outline: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_4A] Un utente con ruolo M2M-ADMIN e appartenente ad un ente di tipo PA NON può modificare la flag di delega amministrativa di un e-service ottenendo uno stato non permesso
     Given "PA1" ha già creato un e-service con un descrittore in stato "<descriptorState>" e impostando delega amministrativa a "true" e delega tecnica a "true"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -1050,7 +1050,7 @@ Feature: Gestione degli eServices attraverso APIs M2M
 
   @eservice_published_delegation
   @eservice_published_delegation_m2m_v3
-  @sad-path
+  @sad-path @ko-nrt-08072026
   Scenario Outline: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_4B] Un utente con ruolo M2M-ADMIN e appartenente ad un ente di tipo GSP NON può modificare la flag di delega amministrativa di un e-service ottenendo uno stato non permesso
     Given "GSP" ha già creato un e-service con un descrittore in stato "<descriptorState>" e impostando delega amministrativa a "true" e delega tecnica a "true"
     And l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
@@ -1082,7 +1082,7 @@ Feature: Gestione degli eServices attraverso APIs M2M
 
   @eservice_published_delegation
   @eservice_published_delegation_m2m_v3
-  @happy-path
+  @happy-path @ko-nrt-08072026
   Scenario Outline: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_5] Un utente con ruolo M2M-ADMIN può modificare i flag di delega in fruizione dell'e-service di cui possiede la delega in erogazione
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
@@ -1197,7 +1197,7 @@ Feature: Gestione degli eServices attraverso APIs M2M
 
   @eservice_published_delegation
   @eservice_published_delegation_m2m_v3
-  @happy-path
+  @happy-path @ko-nrt-08072026
   Scenario Outline: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_10] Un utente con ruolo M2M-ADMIN può effettuare una modifica parziale della delega di un e-service in modalità "RECEIVE" in uno degli stati permessi
     #isConsumerDelegable=false e isClientAccessDelegable=false
     Given "PA1" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "<descriptorState>"
@@ -1234,7 +1234,7 @@ Feature: Gestione degli eServices attraverso APIs M2M
 
   @eservice_published_delegation
   @eservice_published_delegation_m2m_v3
-  @sad-path
+  @sad-path @ko-nrt-08072026
   Scenario Outline: [M2M_ESERVICE_PUBLISHED_UPDATE_DELEGATION_11] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale della delega di un e-service in modalità "RECEIVE" ottenendo lo stato non permesso
     #isConsumerDelegable=false e isClientAccessDelegable=false
     Given "PA1" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "<descriptorState>"
@@ -1253,7 +1253,7 @@ Feature: Gestione degli eServices attraverso APIs M2M
 
   @eservice_published_delegation
   @eservice_published_delegation_m2m_v3
-  @sad-path
+  @sad-path @ko-nrt-08072026
   Scenario Outline: [M2M_ESERVICE_PUBLISHED_DISABLE_DELEGATION_1] Un utente NON può creare una delega in fruizione per un e-service cui flag di delega amministrativa viene disabilitata dopo la pubblicazione dell'e-service
     Given "<producerTenant>" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "true" e delega tecnica a "true"
     And l'utente è un "admin" di "<producerTenant>" con ruolo M2M m2m-admin
@@ -1362,7 +1362,7 @@ Feature: Gestione degli eServices attraverso APIs M2M
 
   @eservice_published_delegation
   @eservice_published_delegation_m2m_v3
-  @sad-path
+  @sad-path @ko-nrt-08072026
   Scenario Outline: [M2M_ESERVICE_PUBLISHED_DISABLE_DELEGATION_5] Un utente delegato in fruizione NON può associare un proprio client a una finalità in delega quando la delega tecnica viene disabilitata su un e-service in stato PUBLISHED
     Given "<producerTenant>" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "true" e delega tecnica a "true"
     And l'utente è un "admin" di "<producerTenant>" con ruolo M2M m2m-admin
@@ -1424,7 +1424,7 @@ Feature: Gestione degli eServices attraverso APIs M2M
 
   @eservice_published_delegation
   @eservice_published_delegation_m2m_v3
-  @happy-path
+  @happy-path @ko-nrt-08072026
   Scenario Outline: [M2M_ESERVICE_PUBLISHED_ENABLE_DELEGATION_1] Un utente può creare una delega in fruizione per un e-service cui flag di delega amministrativa viene abilitata dopo la pubblicazione dell'e-service
     Given "<producerTenant>" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "false" e delega tecnica a "false"
     And l'utente è un "admin" di "<producerTenant>" con ruolo M2M m2m-admin
@@ -1476,7 +1476,7 @@ Feature: Gestione degli eServices attraverso APIs M2M
 
   @eservice_published_delegation
   @eservice_published_delegation_m2m_v3
-  @happy-path
+  @happy-path @ko-nrt-08072026
   Scenario Outline: [M2M_ESERVICE_PUBLISHED_ENABLE_DELEGATION_3] Un utente delegato in fruizione può associare un proprio client a una finalità creata in delega se la delega tecnica su un e-service in stato PUBLISHED viene abilitata dopo la creazione della delega in fruizione
     Given "<producerTenant>" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "true" e delega tecnica a "false"
     And l'ente delegante "PA2"

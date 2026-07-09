@@ -44,7 +44,7 @@ Feature: Gestione dei clients attraverso APIs M2M V2
     When l'utente tenta di ottenere le finalità associate ad un client inesistente
     Then si ottiene status code 404
 
-  @m2m-agreements-parte2-luglio
+  @m2m-agreements-parte2-luglio @ko-nrt-08072026
   Scenario Outline: [M2M_CLIENTS_PURPOSES_CATALOG_1] Consultazione finalità associate a un client (multi-filtro) con ruolo m2m-admin
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -94,7 +94,7 @@ Feature: Gestione dei clients attraverso APIs M2M V2
       | %actual | 10    | 0      | %blank      | %null                | 200        |
       | %actual | 10    | 0      | %null       | %blank               | 200        |
 
-  @m2m-agreements-parte2-luglio
+  @m2m-agreements-parte2-luglio @ko-nrt-08072026
   Scenario Outline: [M2M_CLIENTS_PURPOSES_CATALOG_2] Consultazione finalità associate a un client (multi-filtro) con ruolo m2m
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service

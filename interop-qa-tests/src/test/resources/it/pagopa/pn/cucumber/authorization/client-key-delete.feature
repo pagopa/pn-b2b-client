@@ -3,7 +3,7 @@ Feature: Cancellazione delle chiavi di un client
   Tutti gli utenti autorizzati possono cancellare le chiavi del proprio client, security solo le proprie
 
   @happy-path
-  @nrt-minimal
+  @nrt-minimal @ko-nrt-08072026
   Scenario Outline: [CLIENT_KEY_DELETE_1] Un utente con sufficienti permessi (admin o security); appartenente all'ente che ha creato il client; il quale utente è membro del client; nel quale client c'è una chiave pubblica caricata da lui stesso richiede la cancellazione della chiave. L'operazione va a buon fine.
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato 1 client "CONSUMER"

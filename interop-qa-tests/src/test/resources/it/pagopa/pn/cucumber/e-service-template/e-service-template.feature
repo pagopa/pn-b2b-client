@@ -1348,7 +1348,7 @@ Feature: Test API of e-service template
 
   # Ticket aperto: https://pagopa.atlassian.net/browse/PIN-8052
   @sad-path
-  @e-service-template-version-delete
+  @e-service-template-version-delete @ko-nrt-08072026
   Scenario: [INTEROP-EST-080] La cancellazione di una versione di un e-service template in stato DRAFT non può essere effettuata da un ente diverso dal creatore del template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT

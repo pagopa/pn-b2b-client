@@ -80,7 +80,7 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     And [si prende nota dello stato degli attributi verificati del gruppo dell'e-service]
     And gli attributi verificati del gruppo dell'e-service sono rimasti invariati
 
-  @m2m-parte2-ottobre
+  @m2m-parte2-ottobre @ko-nrt-08072026
   Scenario: [M2M_ESERVICES_VERIFIED_ATTRIBUTES_ADD_04] Un utente con ruolo M2M-ADMIN NON può aggiungere degli attributi verificati a una versione di un e-service indicando degli identificativi inesistenti (Parte2#Scenario intorno a 119)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1"
@@ -360,7 +360,7 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
       | DEPRECATED  |
       | ARCHIVED    |
 
-  @m2m-parte2-ottobre
+  @m2m-parte2-ottobre @ko-nrt-08072026
   Scenario: [M2M_ESERVICES_VERIFIED_ATTRIBUTES_DELETE_06_B] Un utente NON può rimuovere gli attributi verificati da una versione di un e-service in stato diverso WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 275)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1"

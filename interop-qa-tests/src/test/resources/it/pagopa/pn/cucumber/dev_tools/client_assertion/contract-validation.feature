@@ -1,6 +1,6 @@
 Feature: : Debugger Client Assertion Sync Bearer
 
-  @devToolsClientAssertion
+  @devToolsClientAssertion @ko-nrt-08072026
   Scenario: [CLIENT_ASSERTION_CONTRACT_VALIDATION_MISSING_AUTH] Dato un client CONSUMER valido, quando la richiesta di validazione non contiene un token di autenticazione valido la chiamata fallisce
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
@@ -9,7 +9,7 @@ Feature: : Debugger Client Assertion Sync Bearer
     Then si ottiene response status code 401
 
   # https://pagopaspa.slack.com/archives/C0A7AMD53MM/p1778754777127059
-  @devToolsClientAssertion
+  @devToolsClientAssertion @ko-nrt-08072026
   Scenario Outline: [CLIENT_ASSERTION_CONTRACT_VALIDATION_AUTHORIZED_ROLES_1] la richiesta di validazione della client assertion da parte di un utente
     va a buon fine soltanto se ha ruolo admin, support oppure se ha ruolo security ed è l'owner della chiave.
     Se il ruolo dell'utente è api la richiesta non va a buon fine.

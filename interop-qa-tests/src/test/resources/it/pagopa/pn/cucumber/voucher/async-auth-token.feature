@@ -170,6 +170,7 @@ Feature: Validazione delle Client Assertion ed emissione dei Token PDND per scam
     Then il voucher contiene i seguenti dati:
       | scope       | confirmation |
 
+  @ko-nrt-08072026
   Scenario: [ASYNC_TOKEN_RETRIEVE_4] Errore richiesta token (get_resource anticipato)
     Verifica il corretto rilascio del voucher per start_interaction e il conseguente fallimento se il fruitore richiede
     lo scope get_resource prima della notifica di callback dell'erogatore.
@@ -204,6 +205,7 @@ Feature: Validazione delle Client Assertion ed emissione dei Token PDND per scam
     When il tenant fruitore "PA2" richiede un voucher asincrono per l'e-service
     Then si ottiene status code 400
 
+  @ko-nrt-08072026
   Scenario: [ASYNC_TOKEN_RETRIEVE_5] Richiesta token confirmation fuori sequenza
     A seguito del rilascio di un voucher con scope start_interaction e di uno con scope callback_invocation,
     se il fruitore richiede un voucher con scope confirmation senza aver prima richiesto uno con scope get_resource,

@@ -41,7 +41,7 @@ Feature: finalità agevolata, purpose template ARCHIVIATION
       | PA2  | viewer   |
 
   #60(KO)
-  @purposeTemplate @purposeTemplateArchiviation
+  @purposeTemplate @purposeTemplateArchiviation @ko-nrt-08072026
   Scenario: [PURPOSE_TEMPLATE_ARCHIVIATION_NO_CREATOR] Archiviazione di una finalità agevolata da parte di un utente non appartenente alla PA che ha creato la finalità agevolata (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato SUSPENDED

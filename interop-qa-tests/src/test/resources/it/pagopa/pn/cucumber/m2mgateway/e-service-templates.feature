@@ -83,7 +83,7 @@ Feature: Test API M2M of e-service template
       | ricezione |
 
   @m2m-parte2-settembre
-  @e-service-template-m2m-unsuspend
+  @e-service-template-m2m-unsuspend @ko-nrt-08072026
   Scenario Outline: [INTEROP-EST-M2M-UNSUSPEND_05] Un utente con ruolo m2m-admin NON può effettuare la riattivazione di un e-service template in stato diverso da SUSPENDED
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di <state>
@@ -331,7 +331,7 @@ Feature: Test API M2M of e-service template
 
   @m2m-patch
   @m2m-parte2-settembre
-  @e-service-template-version-m2m-patch
+  @e-service-template-version-m2m-patch @ko-nrt-08072026
   Scenario: [INTEROP-EST-VERSION-M2M-PATCH_06] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di una versione di un e-service template che non gli appartiene (Parte2#Scenario intorno a 158)
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
@@ -397,7 +397,7 @@ Feature: Test API M2M of e-service template
 
   @m2m-patch
   @m2m-parte2-settembre
-  @e-service-template-version-quota-m2m-patch
+  @e-service-template-version-quota-m2m-patch @ko-nrt-08072026
   Scenario Outline: [INTEROP-EST-VERSION-QUOTAS-M2M-PATCH_04] Un utente NON può effettuare una modifica parziale delle quote una versione di un e-service template indicando un token non valido (Parte2#Scenario intorno a 184)
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di <state>
@@ -509,7 +509,7 @@ Feature: Test API M2M of e-service template
 
   # Ticket aperto: https://pagopa.atlassian.net/browse/PIN-8052
   @m2m-parte2-ottobre
-  @e-service-template-m2m-delete
+  @e-service-template-m2m-delete @ko-nrt-08072026
   Scenario: [INTEROP-EST-M2M-DELETE_05_A] Un utente con ruolo M2M-ADMIN NON può effettuare la cancellazione di un e-service template in stato DRAFT che non gli appartiene
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
@@ -536,7 +536,7 @@ Feature: Test API M2M of e-service template
       | erogazione | DEPRECATED |
 
   @m2m-parte2-ottobre
-  @e-service-template-m2m-delete
+  @e-service-template-m2m-delete @ko-nrt-08072026
   Scenario Outline: [INTEROP-EST-M2M-DELETE_06] Un utente con ruolo M2M-ADMIN NON può effettuare la cancellazione di un e-service template in stato non-DRAFT
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di <state>
@@ -620,7 +620,7 @@ Feature: Test API M2M of e-service template
     Then si ottiene response status code 409
 
   @m2m-parte2-ottobre
-  @e-service-template-m2m-version-create
+  @e-service-template-m2m-version-create @ko-nrt-08072026
   Scenario Outline: [INTEROP-EST-M2M-VERSION-CREATE_04] Un utente NON può effettuare la creazione di una versione di un e-service template che non gli appartiene
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
@@ -684,7 +684,7 @@ Feature: Test API M2M of e-service template
 
   @eservice_published_delegation
   @eservice_published_delegation_m2m_v3
-  @happy-path
+  @happy-path @ko-nrt-08072026
   Scenario Outline: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_1] Un utente con ruolo M2M-ADMIN può effettuare una modifica parziale della delega di un e-service template instance precedentemente creato in uno degli stati permessi
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED
@@ -719,7 +719,7 @@ Feature: Test API M2M of e-service template
 
   @eservice_published_delegation
   @eservice_published_delegation_m2m_v3
-  @sad-path
+  @sad-path @ko-nrt-08072026
   Scenario Outline: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_2] Un utente con ruolo M2M-ADMIN NON può modificare le flag di delega tecnica di un e-service template instance precedentemente creato ottenendo uno stato non permesso
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED
@@ -758,7 +758,7 @@ Feature: Test API M2M of e-service template
 
   @eservice_published_delegation
   @eservice_published_delegation_m2m_v3
-  @sad-path
+  @sad-path @ko-nrt-08072026
   Scenario Outline: [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_4] Un utente con ruolo M2M-ADMIN NON può modificare le flag di delega di un e-service template instance precedentemente creato avendo un token non valido
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED

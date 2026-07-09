@@ -131,7 +131,7 @@ Feature: finalità agevolata, purpose template GET
       | support  |
       | security |
 
-  @purposeTemplate @purposeTemplateGet-filtered
+  @purposeTemplate @purposeTemplateGet-filtered @ko-nrt-08072026
   Scenario Outline: [M2M_GET_PURPOSE_TEMPLATES] - Recupera i purpose templates con filtri opzionali
     Given l'utente è un "admin" di "PA1"
     And esistono purpose templates di test creati tramite data preparation

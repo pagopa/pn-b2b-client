@@ -161,7 +161,7 @@ Feature: Gestione degli attributes attraverso APIs M2M V2
       | m2m       |
       | m2m-admin |
 
-  @m2m-agreements-parte2-luglio
+  @m2m-agreements-parte2-luglio @ko-nrt-08072026
   Scenario: [M2MG_VERIFIEDATTRIBUTES_5] Creazione di un attributo verificato con utente M2M-ADMIN
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When viene effettuata la creazione dell'attributo verificato

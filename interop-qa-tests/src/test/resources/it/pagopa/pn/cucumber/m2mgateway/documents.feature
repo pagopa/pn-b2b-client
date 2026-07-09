@@ -123,7 +123,7 @@ Feature: Gestione dei documenti attraverso APIs M2M V2
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And è presente un'interfaccia per l'e-service
 
-  @m2m-parte2-agosto-rilascio1
+  @m2m-parte2-agosto-rilascio1 @ko-nrt-08072026
   Scenario Outline: [M2MG_DOCUMENTS_15] Un utente non può effettuare la cancellazione di un'interfaccia di un e-service in stato diverso da DRAFT (Parte2#Scenario intorno a 62)
     Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin

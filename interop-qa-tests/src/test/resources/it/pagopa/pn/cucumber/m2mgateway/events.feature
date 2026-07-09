@@ -50,7 +50,7 @@ Feature: Eventi M2M
       | descriptorId         | :descriptorId |
       | producerDelegationId | %null         |
 
-  @m2m-events-e-service
+  @m2m-events-e-service @ko-nrt-08072026
   Scenario: [M2M_E-SERVICE_EVENTS_04] Verifica che il producer di un e-service in stato PUBLISHED, con delega in erogazione in attesa di approvazione verso un altro ente, visualizza gli eventi di creazione e pubblicazione senza producerDelegationId
     Given l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin

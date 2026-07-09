@@ -64,7 +64,7 @@ Feature: Caricamento di una chiave pubblica contenuta in un client
     Then si ottiene status code 400
 
   @sad-path
-  @nrt-minimal
+  @nrt-minimal @ko-nrt-08072026
   Scenario: [CLIENT_KEY_UPLOAD_6] Un utente admin; appartenente all'ente che ha creato il client; il quale utente è membro del client; richiede il caricamento di una chiave pubblica di tipo RSA, lunghezza 2048; Per poi richiedere per la seconda volta il caricamento della stessa. Ottiene un errore
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato 1 client "CONSUMER"

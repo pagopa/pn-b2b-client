@@ -1,6 +1,6 @@
 Feature: Debugger Client Assertion Sync DPoP Async Errors
 
-  @devToolsClientAssertion
+  @devToolsClientAssertion @ko-nrt-08072026
   Scenario: [VALIDATION_SUCCESS_CONSUMER_CLIENT_DPOP_ASYNC] Validazione DPoP e client assertion asincrona a buon fine.
   Verifica che tutte le fasi di sicurezza (firma, chiavi, stati e DPoP proof) siano superate con successo durante la
   validazione asincrona di un client CONSUMER.
@@ -318,7 +318,7 @@ Feature: Debugger Client Assertion Sync DPoP Async Errors
       | platformStatesVerification           | SKIPPED | []                         |
       | dpopValidation                       | PASSED  | []                         |
 
-  @devToolsClientAssertion
+  @devToolsClientAssertion @ko-nrt-08072026
   Scenario: [VALIDATION_ERROR_CONSUMER_CLIENT_DPOP_ASYNC_10] Fallimento validazione per entityNumber mancante.
     Given l'admin del fruitore "PA2" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And "PA1" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
@@ -359,7 +359,7 @@ Feature: Debugger Client Assertion Sync DPoP Async Errors
       | platformStatesVerification           | SKIPPED | []                        |
       | dpopValidation                       | PASSED  | []                        |
 
-  @devToolsClientAssertion
+  @devToolsClientAssertion @ko-nrt-08072026
   Scenario: [VALIDATION_ERROR_CONSUMER_CLIENT_DPOP_ASYNC_11] Fallimento validazione per entityNumber non valido.
     Given l'admin del fruitore "PA2" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And "PA1" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:

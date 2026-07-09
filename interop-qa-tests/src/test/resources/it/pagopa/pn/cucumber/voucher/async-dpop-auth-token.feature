@@ -222,6 +222,7 @@ Feature: Validazione delle Client Assertion ed emissione dei Token PDND per scam
     When il tenant fruitore "PA2" richiede un voucher asincrono per l'e-service
     Then si ottiene status code 400
 
+  @ko-nrt-08072026
   Scenario: [ASYNC_DPOP_TOKEN_RETRIEVE_5] Richiesta token confirmation fuori sequenza
   A seguito del rilascio di un voucher con scope start_interaction e di uno con scope callback_invocation,
   se il fruitore richiede un voucher con scope confirmation senza aver prima richiesto uno con scope get_resource,

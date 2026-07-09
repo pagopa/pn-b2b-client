@@ -64,7 +64,7 @@ Feature: Generazione del voucher richiesta da un Ente
     Then si ottiene la corretta generazione del voucher
 
   @nrt-minimal
-  @voucher_generation_purpose5
+  @voucher_generation_purpose5 @ko-nrt-08072026
   Scenario: [VOUCHER_GENERATION_PURPOSE_05] La generazione del Voucher va a buon fine quando la finalità è attiva e ha una versione in attesa di approvazione, che viene rifiutata dall’erogatore
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service

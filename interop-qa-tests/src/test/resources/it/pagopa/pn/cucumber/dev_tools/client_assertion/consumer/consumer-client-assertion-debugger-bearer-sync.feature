@@ -321,7 +321,7 @@ Feature: Debugger Client Assertion Sync Bearer
       | clientAssertionSignatureVerification | PASSED | []                      |
       | platformStatesVerification           | FAILED | [invalidAgreementState] |
 
-  @devToolsClientAssertion
+  @devToolsClientAssertion @ko-nrt-08072026
   Scenario: [KEY_RETRIEVE_INVALID_ESERVICE_STATE_CONSUMER_CLIENT] Dato un client CONSUMER valido, quando l'e-service è in stato non valido allora il recupero della chiave pubblica fallisce con errore invalidEServiceState
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client

@@ -162,7 +162,7 @@ Feature: Generazione del voucher richiesta da un Ente
     Then la richiesta di generazione del Voucher non va a buon fine
 
   @nrt-minimal
-  @voucher_generation_eservice11
+  @voucher_generation_eservice11 @ko-nrt-08072026
   Scenario: [VOUCHER_GENERATION_ESERVICE_11] La generazione del Voucher fallisce per una Versione sospesa dell'EService quando esiste una Versione più recente pubblicata
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service

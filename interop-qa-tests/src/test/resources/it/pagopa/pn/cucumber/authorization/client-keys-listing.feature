@@ -66,7 +66,7 @@ Feature: Listing chiavi client
       | viewer       |
 
   @happy-path
-  @nrt-minimal
+  @nrt-minimal @ko-nrt-08072026
   Scenario: [CLIENT_KEYS_LISTING_4] Un utente admin; appartenente all'ente che ha creato il client; richiede l’elenco delle chiavi caricate per il client da uno specifico utente. L’operazione va a buon fine
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato 1 client "CONSUMER"

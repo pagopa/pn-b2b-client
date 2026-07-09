@@ -3,7 +3,7 @@ Feature: Debugger Client Assertion Sync DPoP Errors
   Voglio validare la mia DPoP Proof legata a una Client Assertion
   Al fine di verificare il binding di sicurezza (HTM/HTU/JWK) e identificare errori specifici DPoP durante la quarta fase di validazione
 
-  @devToolsClientAssertion
+  @devToolsClientAssertion @ko-nrt-08072026
   Scenario Outline: [VALIDATION_NOT_FOUND_ERROR_CONSUMER_CLIENT_DPOP_PAYLOAD] Dato un client API valido, quando il claim <claimToRemove> non è presente nel payload allora la validazione formale fallisce con errore <expectedError>
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
@@ -28,7 +28,7 @@ Feature: Debugger Client Assertion Sync DPoP Errors
       | htu           | dpopHtuNotFound |
       | htm           | dpopHtmNotFound |
 
-  @devToolsClientAssertion
+  @devToolsClientAssertion @ko-nrt-08072026
   Scenario Outline: [VALIDATION_NOT_FOUND_ERROR_CONSUMER_CLIENT_DPOP_PAYLOAD] Dato un client CONSUMER valido, quando il claim <claimToRemove> non è presente nel payload allora la validazione formale fallisce con errore <expectedError>
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
@@ -53,7 +53,7 @@ Feature: Debugger Client Assertion Sync DPoP Errors
       | htu           | dpopHtuNotFound |
       | htm           | dpopHtmNotFound |
 
-  @devToolsClientAssertion
+  @devToolsClientAssertion @ko-nrt-08072026
   Scenario Outline: [VALIDATION_NOT_FOUND_ERROR_CONSUMER_CLIENT_DPOP_HEADER] Dato un client CONSUMER valido, quando il claim <claimToRemove> non è presente nell'header allora la validazione formale fallisce con errore <expectedError>
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
@@ -77,7 +77,7 @@ Feature: Debugger Client Assertion Sync DPoP Errors
       | jwk           | dpopJwkNotFound       |
       | alg           | dpopAlgorithmNotFound |
 
-  @devToolsClientAssertion
+  @devToolsClientAssertion @ko-nrt-08072026
   Scenario: [VALIDATION_INVALID_FORMAT_ERROR_CONSUMER_CLIENT_DPOP_HEADER] Dato un client CONSUMER valido, quando il payload non è valido allora la validazione formale fallisce con errore invalidDPoPProofFormat
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client

@@ -24,7 +24,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     Then si ottiene lo status code 401
 
   # Da qui in poi test di "API V2 Parte 2" https://pagopa.atlassian.net/wiki/spaces/PDNDI/pages/1812562407/DRAFT+SRS+API+V2+Parte+2#Scenari-di-test
-  @m2m-agreements-parte2-luglio
+  @m2m-agreements-parte2-luglio @ko-nrt-08072026
   Scenario Outline: [M2M_AGREEMENTS_PURPOSES_1] La lista delle finalità correlate a un agreement può essere visualizzata da un utente con ruolo M2M-ADMIN o M2M (Parte2#Scenario 12)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service

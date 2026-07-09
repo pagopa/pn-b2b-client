@@ -190,7 +190,7 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
   # PST: Scenario 27 - Caso 27.1
   # KO ticket aperto https://pagopa.atlassian.net/browse/PIN-10441
   @nuovi-operatori-ko
-  @sad-path
+  @sad-path @ko-nrt-08072026
   Scenario: [COMB_NON_AMMESSE_27_1_DRAFT] Tentativo attivazione admin con workflow in stato DRAFT (negativo)
 	Given "PA1" ha già creato e pubblicato 1 e-service
 	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -203,7 +203,7 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
   # PST: Scenario 27 - Caso 27.1
   # KO ticket aperto https://pagopa.atlassian.net/browse/PIN-10441
   @nuovi-operatori-ko
-  @sad-path
+  @sad-path @ko-nrt-08072026
   Scenario: [COMB_NON_AMMESSE_27_1_ASSIGNED] Tentativo attivazione admin con workflow in stato ASSIGNED (negativo)
 	Given "PA1" ha già creato e pubblicato 1 e-service
 	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -216,7 +216,7 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
   # PST: Scenario 27 - Caso 27.1
   # KO ticket aperto https://pagopa.atlassian.net/browse/PIN-10441
   @nuovi-operatori-ko
-  @sad-path
+  @sad-path @ko-nrt-08072026
   Scenario: [COMB_NON_AMMESSE_27_1_SUBMITTED] Tentativo attivazione admin con workflow in stato SUBMITTED (negativo)
 	Given "PA1" ha già creato e pubblicato 1 e-service
 	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -231,7 +231,7 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
   # PST: Scenario 27 - Caso 27.1
   # KO ticket aperto https://pagopa.atlassian.net/browse/PIN-10441
   @nuovi-operatori-ko
-  @sad-path
+  @sad-path @ko-nrt-08072026
   Scenario: [COMB_NON_AMMESSE_27_1_REJECTED] Tentativo attivazione admin con workflow in stato REJECTED (negativo)
 	Given "PA1" ha già creato e pubblicato 1 e-service
 	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service

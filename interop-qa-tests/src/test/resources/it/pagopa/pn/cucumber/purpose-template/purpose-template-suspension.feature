@@ -41,7 +41,7 @@ Feature: finalità agevolata, purpose template SUSPENSION
       | PA2  | viewer   |
 
   #48(KO)
-  @purposeTemplate @purposeTemplateSuspension
+  @purposeTemplate @purposeTemplateSuspension @ko-nrt-08072026
   Scenario: [PURPOSE_TEMPLATE_SUSPENSION_NO_CREATOR] Sospensione di una finalità agevolata da parte di un utente non appartenente alla PA che ha creato la finalità agevolata (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato PUBLISHED
