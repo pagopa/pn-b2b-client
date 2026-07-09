@@ -14,8 +14,10 @@ import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.model.InformalSentNotificationV1;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.informalNotification.builders.InformalRecipientBuilder;
+import it.pagopa.pn.cucumber.steps.informalNotification.datatest.InformalDataTestV1;
 import it.pagopa.pn.cucumber.steps.informalNotification.mapper.InformalNotificationRequestMapper;
 import it.pagopa.pn.cucumber.steps.informalNotification.utils.NotificationInformalUtilsV1;
+import it.pagopa.pn.cucumber.steps.informalNotification.utils.NotificationInformalUtilsWorkFlowV1;
 import it.pagopa.pn.cucumber.utils.GroupPosition;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -25,10 +27,7 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -113,8 +112,7 @@ public class PresaInCaricoNoticaBonariaSteps {
         };
 
         if (!paName.equalsIgnoreCase("Comune_Root")) {
-            this.currentGroupId =
-                    sharedSteps.getGroupIdByPa(paName, GroupPosition.FIRST);
+            this.currentGroupId = sharedSteps.getGroupIdByPa(paName, GroupPosition.FIRST);
         }
     }
 
@@ -146,14 +144,9 @@ public class PresaInCaricoNoticaBonariaSteps {
     @And("destinatario della notifica bonaria")
     public void addInformalRecipientLight(Map<String, String> data) {
 
-        assertNotNull(informalNotificationRequestV1,
-                "Creare prima la notifica bonaria");
+        assertNotNull(informalNotificationRequestV1, "Creare prima la notifica bonaria");
 
-        Map<String, String> cleanedData = data.entrySet().stream()
-                .collect(Collectors.toMap(
-                        e -> e.getKey().trim(),
-                        e -> e.getValue() != null ? e.getValue().trim() : null
-                ));
+        Map<String, String> cleanedData = data.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().trim(), e -> e.getValue() != null ? e.getValue().trim() : null));
 
         InformalNotificationRecipientV1 recipient = recipientBuilder.build(cleanedData, currentCxId);
         informalNotificationRequestV1.getRecipients().add(recipient);
@@ -551,29 +544,27 @@ public class PresaInCaricoNoticaBonariaSteps {
 
     //*** CONTROLLI PresaInCaricoNoticaBonariaSteps.javaGENERICI
 
-@And("si riceve errore {int}")
-public void verifyError(int expectedStatus) {
-    assertNotNull(lastException, "Non è stato generato l'errore atteso");
+    @And("si riceve errore {int}")
+    public void verifyError(int expectedStatus) {
+        assertNotNull(lastException, "Non è stato generato l'errore atteso");
 
-    if (lastException instanceof HttpClientErrorException ex) {
-        assertEquals(expectedStatus, ex.getStatusCode().value());
-    } else {
-        fail("Eccezione inattesa: " + lastException.getClass());
+        if (lastException instanceof HttpClientErrorException ex) {
+            assertEquals(expectedStatus, ex.getStatusCode().value());
+        } else {
+            fail("Eccezione inattesa: " + lastException.getClass());
+        }
     }
-}
 
-@And("si riceve errore {int} {string}")
-public void verifyErrorAndMessage(int expectedStatus, String expectedErrorCode) {
-    verifyError(expectedStatus);
+    @And("si riceve errore {int} {string}")
+    public void verifyErrorAndMessage(int expectedStatus, String expectedErrorCode) {
+        verifyError(expectedStatus);
 
-    HttpClientErrorException ex = (HttpClientErrorException) lastException;
-    String responseBody = ex.getResponseBodyAsString();
+        HttpClientErrorException ex = (HttpClientErrorException) lastException;
+        String responseBody = ex.getResponseBodyAsString();
 
-    assertNotNull(responseBody, "Response body nullo");
-    assertTrue(responseBody.contains(expectedErrorCode),
-        "Codice errore atteso non trovato: " + expectedErrorCode + "\nResponse body: " + responseBody
-    );
-}
+        assertNotNull(responseBody, "Response body nullo");
+        assertTrue(responseBody.contains(expectedErrorCode), "Codice errore atteso non trovato: " + expectedErrorCode + "\nResponse body: " + responseBody);
+    }
 
     @When("il recupero del messaggio per le comunicazioni bonarie fallisce con errore {string}")
     public void getInformalMessageExpectError(String messageIdString) {
@@ -631,4 +622,78 @@ public void verifyErrorAndMessage(int expectedStatus, String expectedErrorCode) 
             data.put("group", currentGroupId);
         }
     }
+
+    //*********************
+    //***** WORKFLOW *****
+    //*********************
+
+    private FullSentInformalNotificationV1 fullInformalNotificationResponse;
+    private InformalTimelineElementV1 timelineElement;
+
+
+
+    @Then("la notifica bonaria ha stato {string}")
+    public void verifyNotificationState(String expectedStatus) {
+
+        assertNotNull(fullInformalNotificationResponse);
+        assertEquals(expectedStatus, fullInformalNotificationResponse.getNotificationStatus().getValue());
+    }
+
+    @When("si tenta il recupero completo della notifica bonaria tramite IUN")
+    public void getFullInformalNotification() {
+
+        try {
+            fullInformalNotificationResponse = pnPaB2bInternalInformalClientImpl.getSentInformalNotificationSender(currentCxId, savedIun, true);
+            lastException = null;
+        } catch (Exception e) {
+            lastException = e;
+            fullInformalNotificationResponse = null;
+        }
+    }
+
+    @Then("viene verificato che l'elemento di timeline bonaria {string} esista e sia correttamente compilato")
+    public void verifyTimelineElementAndDetailsExists(String category, Map<String, String> dataMap) {
+
+        assertNotNull(fullInformalNotificationResponse);
+        List<InformalTimelineElementV1> elements = fullInformalNotificationResponse.getTimeline().stream().filter(t -> category.equalsIgnoreCase(t.getCategory().getValue())).toList();
+        assertFalse(elements.isEmpty(), "Nessun elemento timeline trovato per categoria " + category);
+        InformalDataTestV1 expected = InformalDataTestV1.convertMap(dataMap);
+
+        if (expected == null) {
+            return;
+        }
+        boolean found = false;
+        List<AssertionError> errors = new ArrayList<>();
+
+        for (InformalTimelineElementV1 actual : elements) {
+            try {
+                NotificationInformalUtilsWorkFlowV1.checkTimelineElement(actual, expected.getTimelineElement());
+
+                timelineElement = actual;
+
+                found = true;
+                break;
+
+            } catch (AssertionError e) {
+                errors.add(e);
+            }
+        }
+        if (!found && !errors.isEmpty()) {
+            throw errors.get(0);
+        }
+    }
+
+    @Then("viene verificato che l'elemento di timeline bonaria {string} esista")
+    public void verifyTimelineElementExists(String category) {
+
+        List<InformalTimelineElementV1> elements =
+                NotificationInformalUtilsWorkFlowV1.waitForTimelineElementsByCategory(()
+                        -> pnPaB2bInternalInformalClientImpl.getSentInformalNotificationSender
+                        (currentCxId, savedIun, true), category, Duration.ofMinutes(2), Duration.ofSeconds(2));
+
+        assertFalse(elements.isEmpty(), "Nessun elemento trovato per categoria " + category);
+        timelineElement = elements.get(0);
+        log.info("Trovati {} elementi timeline per categoria {}", elements.size(), category);
+    }
+
 }

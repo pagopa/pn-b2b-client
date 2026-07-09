@@ -58,7 +58,7 @@ public class PnPaB2bInternalInformalClientImpl {
     }
 
     public MessageResponse getMessage(UUID messageId, String cxId) {
-        return messagesApi.getMessageById(messageId, operatorId, CxTypeAuthFleet.PA, cxId, groups);
+        return messagesApi.messageById(messageId, operatorId, CxTypeAuthFleet.PA, cxId, groups);
     }
 
     public NewInformalNotificationResponse sendNewInformalNotificationV1(String cxId, InformalNotificationRequestV1 informalNotificationRequestV1) throws RestClientException {
@@ -84,4 +84,11 @@ public class PnPaB2bInternalInformalClientImpl {
     public InformalSentNotificationV1 getSentInformalNotification(String iun) {
         return internalOnlyApi.getSentInformalNotificationPrivateV1(iun);
     }
+
+    public FullSentInformalNotificationV1 getSentInformalNotificationSender(String cxId, String iun, Boolean retrieveMessage) {
+        return senderReadInformalNotificationB2BApi.getSentInformalNotificationV1(operatorId, CxTypeAuthFleet.PA, cxId, iun, groups, retrieveMessage
+        );
+    }
+
+
 }
