@@ -56,6 +56,7 @@ import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Costanti;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
 import it.pagopa.pn.cucumber.steps.utilitySteps.DestinatarioRegistry;
+import it.pagopa.pn.cucumber.steps.utilitySteps.Environment;
 import it.pagopa.pn.cucumber.utils.DataTest;
 import it.pagopa.pn.cucumber.utils.EventId;
 import it.pagopa.pn.cucumber.utils.GroupPosition;
@@ -383,6 +384,21 @@ public class SharedSteps {
         assumeThat(versionUsed.getValue())
                 .as("Test skipped: la versione" + versionUsed + " non supporta questo test pensato per la " + version + " o superiore")
                 .isGreaterThanOrEqualTo(notificationVersion.getValue());
+    }
+
+    /**
+     * Step da usare come primissimo step di un metodo. Effettua un check sull'ambiente in uso, e la sua compatibilità con il test in esecuzione
+     */
+    @Given("il seguente test è {is} valido per l'ambiente {environment}")
+    public void checkEnvironment(boolean isValid, Environment environment) {
+        Environment environmentInUse = B2bUtils.getEnvironment(context);
+        if (isValid) {
+            assumeThat(environmentInUse)
+                    .as("Test skipped: only suitable for environment %s (current environment: %s", environment, environmentInUse)
+                    .isEqualTo(environment);
+        } else {
+            assumeThat(environmentInUse).as("Test skipped: not suitable for environment %s", environmentInUse).isNotEqualTo(environment);
+        }
     }
 
     /**

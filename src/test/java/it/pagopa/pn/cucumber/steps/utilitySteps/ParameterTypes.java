@@ -111,4 +111,9 @@ public class ParameterTypes {
     public static String deliveryNotificationCost(String value) {
         return value;
     }
+
+    @ParameterType("dev|test|uat|hotfix")
+    public static Environment environment(String value) {
+        return Environment.valueOf(value.toUpperCase());
+    }
 }
