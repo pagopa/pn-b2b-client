@@ -13,6 +13,8 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullNotificationSearchResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullNotificationSearchRow;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.TimelineElementV28;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationsResponse;
@@ -28,11 +30,14 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.generate.model.externalregistry.selfcare.privateapi.FilteredPaIdsResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.CxLanguage;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
+import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
+import it.pagopa.pn.client.b2b.pa.domain.NotificationSearchParam;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.AddressVerification;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.CourtesyDigitalAddress;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.LegalChannelType;
+import it.pagopa.pn.client.b2b.pa.mapper.NotificationSearchParamMapper;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.client.b2b.pa.service.IPnBFFRecipientNotificationClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnTosPrivacyClient;
@@ -49,7 +54,6 @@ import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotification;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
-import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
 import it.pagopa.pn.cucumber.utils.DataTest;
 import lombok.extern.slf4j.Slf4j;
 import org.awaitility.Awaitility;
@@ -61,11 +65,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.ByteArrayInputStream;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -74,27 +74,27 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.AAR_GENERATION;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.ALDA_MERINI;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_1;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_2;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_MULTI;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_ROOT;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_SON;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_SON_2;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.CRISTOFORO_COLOMBO;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.CUCUMBER_SPA;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DINO_SAURO;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.ETTORE_FIERAMOSCA;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.GALILEO_GALILEI;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.GHERKIN_SRL;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.LEONARDO_DA_VINCI;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.LUCIO_ANNEO_SENECA;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MARIO_CREDENZIALI_SCADUTE;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MARIO_CUCUMBER;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MARIO_GHERKIN;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.REFINEMENT;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SCHEDULE_REFINEMENT;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.AAR_GENERATION;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.ALDA_MERINI;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_1;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_2;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_MULTI;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_ROOT;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_SON;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_SON_2;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.CRISTOFORO_COLOMBO;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.CUCUMBER_SPA;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.DINO_SAURO;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.ETTORE_FIERAMOSCA;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.GALILEO_GALILEI;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.GHERKIN_SRL;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.LEONARDO_DA_VINCI;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.LUCIO_ANNEO_SENECA;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.MARIO_CREDENZIALI_SCADUTE;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.MARIO_CUCUMBER;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.MARIO_GHERKIN;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.REFINEMENT;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SCHEDULE_REFINEMENT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.awaitility.Awaitility.await;
@@ -116,6 +116,8 @@ public class RicezioneNotificheWebSteps {
     private BundleFullReceivedNotification fullReceivedNotification;
     private BffFullNotificationV1 bffFullNotificationV1Recipient;
     private OtpCodeService otpCodeService;
+    private final NotificationSearchParamMapper notificationSearchParamMapper;
+
 
     private final DynamoDbService dynamoDbService;
     private it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffFullNotificationV1 bffFullNotificationV1Sender;
@@ -161,7 +163,7 @@ public class RicezioneNotificheWebSteps {
     @Autowired
     public RicezioneNotificheWebSteps(ApplicationContext context, SharedSteps sharedSteps, PnWebUserAttributesInternalClientImpl iPnWebUserAttributesClient,
                                       IPnBFFRecipientNotificationClient bffRecipientNotificationClient, IPnTosPrivacyClient iPnTosPrivacyClient, PnB2bClientTimingConfigs timingConfigs, DynamoDbService dynamoDbService,
-                                      OtpCodeService otpCodeService, AooUoIdsClientImpl aooUoIdsClient) {
+                                      OtpCodeService otpCodeService, AooUoIdsClientImpl aooUoIdsClient, NotificationSearchParamMapper notificationSearchParamMapper) {
         this.context = context;
         this.sharedSteps = sharedSteps;
         this.webRecipientClient = sharedSteps.getWebRecipientClient();
@@ -174,6 +176,7 @@ public class RicezioneNotificheWebSteps {
         this.aooUoIdsClient = aooUoIdsClient;
         this.dynamoDbService = dynamoDbService;
         this.otpCodeService = otpCodeService;
+        this.notificationSearchParamMapper = notificationSearchParamMapper;
     }
 
     @Then("la notifica può essere correttamente recuperata da {string}")
@@ -553,7 +556,8 @@ public class RicezioneNotificheWebSteps {
     @Then("la notifica può essere correttamente recuperata con una ricerca da {string}")
     public void notificationCanBeCorrectlyReadWithResearch(String recipient, @Transpose NotificationSearchParam searchParam) {
         sharedSteps.selectUser(recipient);
-        Assertions.assertTrue(searchNotification(searchParam));
+        Destinatario recipientObj = sharedSteps.getDestinatarioRegistry().destinatario(recipient);
+        Assertions.assertTrue(searchNotification(recipientObj, searchParam));
     }
 
     @Then("la notifica può essere correttamente recuperata con una ricerca da web PA {string}")
@@ -565,26 +569,38 @@ public class RicezioneNotificheWebSteps {
     @Then("la notifica non viene recuperata con una ricerca da {string}")
     public void notificationCantBeCorrectlyReadWithResearch(String recipient, @Transpose NotificationSearchParam searchParam) {
         sharedSteps.selectUser(recipient);
-        Assertions.assertFalse(searchNotification(searchParam));
+        Destinatario destinatario = sharedSteps.getDestinatarioRegistry().destinatario(recipient);
+        Assertions.assertFalse(searchNotification(destinatario, searchParam));
     }
 
+//    @DataTableType
+//    public NotificationSearchParam convertNotificationSearchParam(Map<String, String> data) {
+//        NotificationSearchParam searchParam = new NotificationSearchParam();
+//
+//        B2bUtils.Pair<OffsetDateTime, OffsetDateTime> dates = getStartDateAndEndDate(data);
+//
+//        searchParam.startDate = dates.getValue1();
+//        searchParam.endDate = dates.getValue2();
+//        searchParam.subjectRegExp = data.getOrDefault("subjectRegExp", null);
+//        String iun = data.getOrDefault("iunMatch", null);
+//        if (data.containsKey("status")) {
+//            searchParam.status = data.get("status");
+//        }
+//        searchParam.iunMatch = iun != null && iun.equalsIgnoreCase("ACTUAL") ? sharedSteps.getNotificationIun() : iun;
+//        searchParam.size = Integer.parseInt(data.getOrDefault("size", "10"));
+//        if (searchParam.size == -1) searchParam.size = null;
+//        return searchParam;
+//    }
+
+    /**
+     * Metodo di conversione dei parametri di ricerca delle notifiche da DataTable in oggetto NotificationSearchParam
+     * @param data
+     * @return
+     */
     @DataTableType
     public NotificationSearchParam convertNotificationSearchParam(Map<String, String> data) {
-        NotificationSearchParam searchParam = new NotificationSearchParam();
-
         B2bUtils.Pair<OffsetDateTime, OffsetDateTime> dates = getStartDateAndEndDate(data);
-
-        searchParam.startDate = dates.getValue1();
-        searchParam.endDate = dates.getValue2();
-        searchParam.subjectRegExp = data.getOrDefault("subjectRegExp", null);
-        String iun = data.getOrDefault("iunMatch", null);
-        if (data.containsKey("status")) {
-            searchParam.status = data.get("status");
-        }
-        searchParam.iunMatch = iun != null && iun.equalsIgnoreCase("ACTUAL") ? sharedSteps.getNotificationIun() : iun;
-        searchParam.size = Integer.parseInt(data.getOrDefault("size", "10"));
-        if (searchParam.size == -1) searchParam.size = null;
-        return searchParam;
+        return notificationSearchParamMapper.build(data, dates.getValue1(), dates.getValue2(), sharedSteps.getNotificationIun());
     }
 
     @DataTableType
@@ -604,49 +620,23 @@ public class RicezioneNotificheWebSteps {
 
     private B2bUtils.Pair<OffsetDateTime, OffsetDateTime> getStartDateAndEndDate(Map<String, String> data) {
 
-        Calendar now = Calendar.getInstance();
-        int month = now.get(Calendar.MONTH);
-        String monthString = String.valueOf(((String.valueOf(month)).length() == 2 || month == 9) ? (month + 1) : ("0" + (month + 1)));
-        int day = now.get(Calendar.DAY_OF_MONTH);
-        String dayString = (String.valueOf(day)).length() == 2 ? (String.valueOf(day)) : ("0" + day);
-        String start = data.getOrDefault("startDate", dayString + "/" + monthString + "/" + now.get(Calendar.YEAR));
-        String end = data.getOrDefault("endDate", null);
-
-        FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
-        OffsetDateTime sentAt = Optional.ofNullable(fullSentNotification).map(FullSentNotificationV29::getSentAt).orElse(OffsetDateTime.now());
-        LocalDateTime localDateStart = LocalDate.parse(start, DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay();
-        OffsetDateTime startDate = OffsetDateTime.of(localDateStart, sentAt.getOffset());
-
-        OffsetDateTime endDate;
-        if (end != null) {
-            LocalDateTime localDateEnd = LocalDate.parse(end, DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay();
-            endDate = OffsetDateTime.of(localDateEnd, sentAt.getOffset());
-        } else {
-            endDate = sentAt;
-        }
-
-        return new B2bUtils.Pair<>(startDate, endDate);
+        String startDate = data.getOrDefault("startDate", "");
+        String endDate = data.getOrDefault("endDate", null);
+        return new B2bUtils.Pair<>(OffsetDateTime.parse(startDate + "T00:00:00Z"), OffsetDateTime.parse(endDate + "T00:00:00Z"));
     }
 
-    private boolean searchNotification(NotificationSearchParam searchParam) {
+    private boolean searchNotification(Destinatario recipient, NotificationSearchParam searchParam) {
         boolean beenFound;
-        NotificationStatusV26 notificationStatus = searchParam.status != null ? NotificationStatusV26.valueOf(searchParam.status) : null;
-        it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchResponse notificationSearchResponse = webRecipientClient
-                .searchReceivedNotification(
-                        searchParam.startDate, searchParam.endDate, searchParam.mandateId,
-                        searchParam.senderId, notificationStatus, searchParam.subjectRegExp,
-                        searchParam.iunMatch, searchParam.size, null);
-        List<it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchRow> resultsPage = notificationSearchResponse.getResultsPage();
+//        NotificationStatusV26 notificationStatus = searchParam.status != null ? NotificationStatusV26.valueOf(searchParam.status) : null;
+        FullNotificationSearchResponse notificationSearchResponse = webRecipientClient.searchReceivedNotification(recipient, searchParam);
+        List<FullNotificationSearchRow> resultsPage = notificationSearchResponse.getResultsPage();
         beenFound = Objects.requireNonNull(resultsPage).stream().filter(elem -> Objects.requireNonNull(elem.getIun()).equals(sharedSteps.getNotificationIun())).findAny().orElse(null) != null;
         if (!beenFound && Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())) {
             while (Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())) {
                 List<String> nextPagesKey = notificationSearchResponse.getNextPagesKey();
                 for (String pageKey : Objects.requireNonNull(nextPagesKey)) {
-                    notificationSearchResponse = webRecipientClient
-                            .searchReceivedNotification(
-                                    searchParam.startDate, searchParam.endDate, searchParam.mandateId,
-                                    searchParam.senderId, notificationStatus, searchParam.subjectRegExp,
-                                    searchParam.iunMatch, searchParam.size, pageKey);
+                    searchParam.setNextPagesKey(pageKey);
+                    notificationSearchResponse = webRecipientClient.searchReceivedNotification(recipient, searchParam);
                     beenFound = resultsPage.stream().filter(elem -> Objects.requireNonNull(elem.getIun()).equals(sharedSteps.getNotificationIun())).findAny().orElse(null) != null;
                     if (beenFound) break;
                 }
@@ -921,16 +911,16 @@ public class RicezioneNotificheWebSteps {
         waitState(waiting);
     }
 
-    public static class NotificationSearchParam {
-        OffsetDateTime startDate;
-        OffsetDateTime endDate;
-        String mandateId;
-        String senderId;
-        String status;
-        String subjectRegExp;
-        String iunMatch;
-        Integer size = 10;
-    }
+//    public static class NotificationSearchParam {
+//        OffsetDateTime startDate;
+//        OffsetDateTime endDate;
+//        String mandateId;
+//        String senderId;
+//        String status;
+//        String subjectRegExp;
+//        String iunMatch;
+//        Integer size = 10;
+//    }
 
     private static class NotificationSearchParamWebPA {
         OffsetDateTime startDate;

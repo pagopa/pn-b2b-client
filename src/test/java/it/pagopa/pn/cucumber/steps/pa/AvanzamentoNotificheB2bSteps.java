@@ -42,8 +42,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.PAYMENT;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.PAYMENT;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.*;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.PollingType.TIMELINE;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.checkTimelineElement.TimelineElementCheck.*;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;

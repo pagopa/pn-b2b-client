@@ -26,7 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Predicate;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.*;
 
 public class MandateReverseSteps {
     private final IMandateReverseServiceClient mandateReverseServiceClient;

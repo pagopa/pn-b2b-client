@@ -22,7 +22,7 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.A
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
-import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
+import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Environment;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;

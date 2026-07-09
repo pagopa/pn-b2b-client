@@ -12,6 +12,7 @@ import it.pagopa.pn.client.b2b.pa.config.springconfig.LegalFactTokenConfiguratio
 import it.pagopa.pn.client.b2b.pa.config.springconfig.MailSenderConfig;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.TimingConfiguration;
+import it.pagopa.pn.client.b2b.pa.mapper.NotificationSearchParamMapper;
 import it.pagopa.pn.client.b2b.pa.parsing.config.PnLegalFactTokenProperty;
 import it.pagopa.pn.client.b2b.pa.parsing.config.PnLegalFactTokens;
 import it.pagopa.pn.client.b2b.pa.parsing.parser.impl.PnParser;
@@ -386,7 +387,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnRaddNetVpceClientImpl.class,
         DataPreparationRaddVpceService.class,
         PnNotificationCostClientImpl.class,
-        StimeMittentiContext.class
+        StimeMittentiContext.class,
+        NotificationSearchParamMapper.class
+
 })
 @EnableScheduling
 @EnableConfigurationProperties

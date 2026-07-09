@@ -52,11 +52,11 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.PREPARE_ANALOG_DOMICILE;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.PREPARE_SIMPLE_REGISTERED_LETTER;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SEND_ANALOG_FEEDBACK;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SEND_ANALOG_PROGRESS;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.PREPARE_ANALOG_DOMICILE;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.PREPARE_SIMPLE_REGISTERED_LETTER;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SEND_ANALOG_FEEDBACK;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SEND_ANALOG_PROGRESS;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

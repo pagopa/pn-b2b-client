@@ -43,7 +43,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.AAR_GENERATION;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.AAR_GENERATION;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 

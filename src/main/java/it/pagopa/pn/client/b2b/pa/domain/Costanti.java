@@ -1,4 +1,4 @@
-package it.pagopa.pn.cucumber.steps.utilitySteps;
+package it.pagopa.pn.client.b2b.pa.domain;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;

@@ -1,8 +1,8 @@
-package it.pagopa.pn.cucumber.steps.utilitySteps;
+package it.pagopa.pn.client.b2b.pa.domain;
 
 import lombok.Getter;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.*;
 
 @Getter
 public class Destinatario {

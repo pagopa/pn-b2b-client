@@ -1,12 +1,13 @@
 package it.pagopa.pn.cucumber.steps.utilitySteps;
 
 import io.cucumber.java.ParameterType;
+import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
 import it.pagopa.pn.cucumber.utils.FiscalCodeGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.*;
 
 public class DestinatarioRegistry {
 

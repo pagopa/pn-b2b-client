@@ -4,7 +4,7 @@ import io.cucumber.java.ParameterType;
 
 import java.time.temporal.ChronoUnit;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.*;
 
 /**
  * Classe pensata come contenitore per tutti i ParameterType del progetto.

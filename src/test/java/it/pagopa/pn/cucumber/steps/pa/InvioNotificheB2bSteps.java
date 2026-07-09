@@ -49,8 +49,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_1;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MOST_RECENT;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_1;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.MOST_RECENT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;

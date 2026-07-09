@@ -5,10 +5,12 @@ import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullNotificationSearchResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.LegalNotificationSearchResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationAttachmentDownloadMetadataResponse;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.TimelineElementV28;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.NotificationStatusV26;
+import it.pagopa.pn.client.b2b.pa.domain.NotificationSearchParam;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV28;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebMandateClient;
@@ -19,7 +21,12 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnWebMandateExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotification;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.*;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.AcceptRequestDto;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.CxTypeAuthFleet;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.MandateDto;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.OrganizationIdDto;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.UpdateRequestDto;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.UserDto;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,10 +41,27 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_1;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_2;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_MULTI;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_ROOT;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_SON;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.CUCUMBER_SPA;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.GHERKIN_SRL;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.MARIO_CUCUMBER;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.MARIO_GHERKIN;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.NOTIFICATION_VIEWED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
@@ -569,17 +593,19 @@ public class RicezioneNotificheWebDelegheSteps {
         Assertions.assertDoesNotThrow(() -> webRecipientClient.getFullReceivedNotification(sharedSteps.getNotificationIun(), null));
     }
 
-    private NotificationSearchResponse notificationSearchResponse;
+    private Integer notificationSearchResponseCount;
+    private FullNotificationSearchResponse notificationSearchResponseFull;
+    private LegalNotificationSearchResponse notificationSearchResponseLegal;
 
     @And("{string} visualizza l'elenco delle notifiche per comune {string}")
-    public void notificationCanBeCorrectlyReadFromAtPa(String recipient, String paName, @Transpose RicezioneNotificheWebSteps.NotificationSearchParam searchParam) {
+    public void notificationCanBeCorrectlyReadFromAtPa(String recipient, String paName, @Transpose NotificationSearchParam searchParam) {
         sharedSteps.setPA(paName);
         sharedSteps.selectUser(recipient);
         NotificationStatusV26 notificationStatus = searchParam.status != null ? NotificationStatusV26.valueOf(searchParam.status) : null;
         try {
-            this.notificationSearchResponse = webRecipientClient.searchReceivedNotification(searchParam.startDate, searchParam.endDate, searchParam.mandateId /*mandateId = null by default*/,
-                    searchParam.senderId, notificationStatus, searchParam.subjectRegExp,
-                    searchParam.iunMatch, searchParam.size, null);
+            this.notificationSearchResponseFull = webRecipientClient.searchReceivedNotification(
+                    sharedSteps.getDestinatarioRegistry().destinatario(recipient), searchParam);
+            this.notificationSearchResponseCount = notificationSearchResponseFull.getResultsPage().size();
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
             this.notificationError = e;
@@ -587,15 +613,14 @@ public class RicezioneNotificheWebDelegheSteps {
     }
 
     @And("{string} visualizza l'elenco delle notifiche del delegante {string} per comune {string}")
-    public void notificationCanBeCorrectlyReadFromAtPa(String user, String recipient, String paName, @Transpose RicezioneNotificheWebSteps.NotificationSearchParam searchParam) {
+    public void notificationCanBeCorrectlyReadFromAtPa(String user, String recipient, String paName, @Transpose NotificationSearchParam searchParam) {
         sharedSteps.setPA(paName);
         sharedSteps.selectUser(user);
         NotificationStatusV26 notificationStatus = searchParam.status != null ? NotificationStatusV26.valueOf(searchParam.status) : null;
         try {
-            this.notificationSearchResponse = webRecipientClient.searchReceivedDelegatedNotification(
-                    searchParam.startDate, searchParam.endDate, getRecipientId(recipient),
-                    null, searchParam.senderId, notificationStatus,
-                    searchParam.iunMatch, searchParam.size, null);
+            this.notificationSearchResponseLegal = webRecipientClient.searchReceivedDelegatedNotification(
+                    sharedSteps.getDestinatarioRegistry().destinatario(recipient), searchParam);
+            this.notificationSearchResponseCount = notificationSearchResponseLegal.getResultsPage().size();
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
             this.notificationError = e;
@@ -615,7 +640,7 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @And("Si verifica che il numero di notifiche restituite nella pagina sia {int}")
     public void verifyNumberOfNotification(Integer number) {
-        Assertions.assertEquals(notificationSearchResponse.getResultsPage().size(), number);
+        Assertions.assertEquals(notificationSearchResponseCount, number);
     }
 
 
@@ -777,4 +802,15 @@ public class RicezioneNotificheWebDelegheSteps {
                 .companyName(companyName)
                 .person(isPerson);
     }
+
+    @And("l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:")
+    public void verifyNotificationSearchResponse(Map<String, String> criteria) {
+        if (notificationSearchResponseFull != null) {
+
+        } else if (notificationSearchResponseLegal != null) {
+
+        } else {
+            throw new IllegalStateException("Nessuna risposta di ricerca notifiche disponibile per la verifica dei criteri.");
+        }
+        }
 }

@@ -1,7 +1,7 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
 import io.cucumber.java.en.Then;
-import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
+import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
 import it.pagopa.pn.cucumber.steps.utilitySteps.DestinatarioRegistry;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
