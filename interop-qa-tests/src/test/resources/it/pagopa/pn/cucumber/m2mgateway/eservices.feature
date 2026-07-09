@@ -1557,6 +1557,9 @@ Feature: Gestione degli eServices attraverso APIs M2M
     And l'utente tenta di effettuare la modifica della descrizione dell'e-service specificando una descrizione di lunghezza pari a 401 caratteri
     Then si ottiene status code 400
 
+  @document_upload
+  @document
+  @document-type-check
   Scenario: [ESERVICE_UPLOAD_01] Per un e-service in stato DRAFT è possibile allegare tutti i file del tipo previsto dalla piattaforma.
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -1571,6 +1574,9 @@ Feature: Gestione degli eServices attraverso APIs M2M
       | wsdl |
     Then tutti i tentativi di caricamento hanno esito positivo
 
+  @document_upload
+  @document
+  @document-type-check
   Scenario: [ESERVICE_UPLOAD_02] Per un e-service in stato DRAFT non è possibile allegare un file se questo
   è di tipo non previsto dalla piattaforma: se il file non ha estensione consentita OPPURE se il file è
   riconosciuto come intrinsecamente non consentito - attraverso controllo su "magic byte" fatto dal backend -

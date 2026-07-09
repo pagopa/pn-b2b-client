@@ -1,5 +1,8 @@
 @m2m-purpose-templates
 @m2m-purpose-templates-annotation-documents
+@document_upload
+@document
+@document-type-check
 Feature: Upload documenti di annotazione risk analysis su purpose template
 
   # TODO 08/07/2026 al momento questa API sembra accettare solo documenti di tipo PDF. Quando la

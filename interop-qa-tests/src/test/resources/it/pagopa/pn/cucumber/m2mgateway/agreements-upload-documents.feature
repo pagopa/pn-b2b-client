@@ -1,5 +1,8 @@
 @m2m-agreements
 @m2m-agreements-documents
+@document_upload
+@document
+@document-type-check
 Feature: Upload documenti consumer su agreement via API M2M
 
   @happy-path

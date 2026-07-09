@@ -1,5 +1,8 @@
 @e-service-template-m2m
 @e-service-template-m2m-documents
+@document_upload
+@document
+@document-type-check
 Feature: Upload documenti su versione e-service template via API M2M
 
   @happy-path
