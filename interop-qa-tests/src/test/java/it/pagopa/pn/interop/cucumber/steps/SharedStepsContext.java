@@ -142,6 +142,11 @@ public class SharedStepsContext implements ISharedContext {
     }
 
     @Override
+    public String getTemplateProducerName() {
+        return this.eServiceTemplateStepContext.getProducerName();
+    }
+
+    @Override
     public String getConsumerName() {
         return this.tenantCommonContext.getConsumerTenantName();
     }
@@ -183,7 +188,61 @@ public class SharedStepsContext implements ISharedContext {
     }
 
     @Override
+    public String getNewEServiceTemplateName() {
+        return this.eServiceTemplateStepContext.getModifiedTemplateName();
+    }
+
+    @Override
     public String getDocumentName() {
         return this.eServicesCommonContext.getDocumentName();
+    }
+
+    @Override
+    public String getAttributeName() {
+        return this.attributeCommonContext.getAttributeName();
+    }
+
+    @Override
+    public String getKeychainId() {
+        int lastIndex = this.producerKeychainCommonContext.getProducerKeychainIds().size() - 1;
+        return this.producerKeychainCommonContext.getProducerKeychainIds().get(lastIndex).toString();
+    }
+
+    @Override
+    public String getKeychainName() {
+        return this.producerKeychainCommonContext.getKeychainName();
+    }
+
+
+    @Override
+    public String getProducerKeyName() {
+        return this.producerKeychainCommonContext.getProducerKeyName();
+    }
+
+
+    @Override
+    public String getClientId() {
+        return this.clientCommonContext.getLastClient().toString();
+    }
+
+    @Override
+    public String getClientName() {
+        int lastIndex = this.clientCommonContext.getClientNames().size() - 1;
+        return this.clientCommonContext.getClientNames().get(lastIndex);
+    }
+
+    @Override
+    public String getDelegationId() {
+        return this.delegationCommonContext.getDelegationId().toString();
+    }
+
+    @Override
+    public String getDelegateName() {
+        return identityService.getTenantName(this.delegationCommonContext.getDelegateTenant());
+    }
+
+    @Override
+    public String getCertifierName() {
+        return this.attributeCommonContext.getCertifierName();
     }
 }

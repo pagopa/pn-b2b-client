@@ -8,6 +8,7 @@ public interface ISharedContext {
     String getDescriptorId();
     String getOldDescriptorId();
     String getProducerName();
+    String getTemplateProducerName();
     String getConsumerName();
     String getPurposeId();
     String getNewPurposeId();
@@ -15,5 +16,15 @@ public interface ISharedContext {
     String getEServiceTemplateId();
     String getEServiceTemplateVersionId();
     String getEServiceTemplateName();
+    String getNewEServiceTemplateName();
     String getDocumentName();
+    String getAttributeName();
+    String getKeychainId();
+    String getKeychainName();
+    String getProducerKeyName();
+    String getClientId();
+    String getClientName();
+    String getDelegationId();
+    String getDelegateName();
+    String getCertifierName();
 }
