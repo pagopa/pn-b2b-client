@@ -15,7 +15,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
                         "html:target/cucumber-report-ko-nrt-08072026.html," +
                         "it.pagopa.pn.interop.cucumber.plugins.SetTenantKindPropsPlugin," +
                         "it.pagopa.pn.interop.cucumber.plugins.SetApiProfilePropsPlugin:" +
-                        "api.m2m.version=V3;" +
+                        "api.m2m.version=V2;" +
                         "api.mode=RIGHT_FIT;" +
                         "api.set=M2M;" +
                         "api.bff.version=V1;"
