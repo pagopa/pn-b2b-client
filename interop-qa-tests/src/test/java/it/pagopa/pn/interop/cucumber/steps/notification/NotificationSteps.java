@@ -444,9 +444,13 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
                     } catch (AssertionError e) {
                         if (tryCount.incrementAndGet() == MAX_TRIES) {
                             if (!foundBody.get()) {
-                                log.warn("Last retrieved notifications before failing:");
-                                for (int i = all.size() - 1; i >= 0; i--) {
-                                    log.warn(all.get(i).getBody());
+                                if (all.isEmpty()) {
+                                    log.warn("No notification received at all before failing");
+                                } else {
+                                    log.warn("Last retrieved notifications before failing:");
+                                    for (int i = all.size() - 1; i >= 0; i--) {
+                                        log.warn(all.get(i).getBody());
+                                    }
                                 }
                             }
                         }
