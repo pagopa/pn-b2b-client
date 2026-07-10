@@ -236,7 +236,7 @@ Feature: Attivazione richiesta di fruizione
     And l'ente "PA2" richiede la creazione di una delega per l'ente "PA1"
     And l'ente "PA1" accetta la delega
     And "GSP" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
-    When l'ente delegato richiede una operazione di approvazione di quella richiesta di fruizione
+    When l'ente delegato con id della delega "%actual" richiede una operazione di approvazione di quella richiesta di fruizione
     Then si ottiene status code 200
     And la richiesta di fruizione è in stato "ACTIVE"
 
@@ -257,7 +257,7 @@ Feature: Attivazione richiesta di fruizione
     And l'ente delegante "PA2"
     And l'ente "PA2" richiede la creazione di una delega per l'ente "PA1"
     And "GSP" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
-    When l'ente delegato richiede una operazione di approvazione di quella richiesta di fruizione
+    When l'ente delegato con id della delega "%actual" richiede una operazione di approvazione di quella richiesta di fruizione
     Then si ottiene status code 403
     And la richiesta di fruizione è in stato "PENDING"
 
@@ -282,7 +282,7 @@ Feature: Attivazione richiesta di fruizione
     And l'ente "PA2" accetta la delega
     And "PA3" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
     And l'ente "PA1" con ruolo "admin" revoca la delega
-    When l'ente delegato richiede una operazione di approvazione di quella richiesta di fruizione
+    When l'ente delegato con id della delega "%actual" richiede una operazione di approvazione di quella richiesta di fruizione
     Then si ottiene status code 403
     And la richiesta di fruizione si trova in stato "SUSPENDED"
 
@@ -397,7 +397,7 @@ Feature: Attivazione richiesta di fruizione
     And l'ente "PA2" accetta la delega
     And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'ente delegato richiede una operazione di sospensione di quella richiesta di fruizione
-    When l'ente delegato richiede una operazione di riattivazione di quella richiesta di fruizione
+    When l'ente delegato con id della delega "%actual" richiede una operazione di riattivazione di quella richiesta di fruizione
     Then si ottiene status code 200
     And la richiesta di fruizione è in stato "ACTIVE"
 
@@ -459,7 +459,7 @@ Feature: Attivazione richiesta di fruizione
     And l'ente delegato accetta la delega in fruizione
     And il delegato ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'ente delegato richiede una operazione di sospensione di quella richiesta di fruizione
-    When l'ente delegato richiede una operazione di riattivazione di quella richiesta di fruizione
+    When l'ente delegato con id della delega "%actual" richiede una operazione di riattivazione di quella richiesta di fruizione
     Then si ottiene status code 200
     And la richiesta di fruizione è in stato "ACTIVE"
 
@@ -475,7 +475,7 @@ Feature: Attivazione richiesta di fruizione
     And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'ente delegato richiede una operazione di sospensione di quella richiesta di fruizione
     And l'ente "PA1" con ruolo "admin" revoca la delega
-    When l'ente delegato richiede una operazione di riattivazione di quella richiesta di fruizione
+    When l'ente delegato con id della delega "%actual" richiede una operazione di riattivazione di quella richiesta di fruizione
     Then si ottiene status code 403
     And la richiesta di fruizione è in stato "SUSPENDED"
 
@@ -491,7 +491,7 @@ Feature: Attivazione richiesta di fruizione
     And l'ente delegato accetta la delega in fruizione
     And l'ente delegato richiede una operazione di sospensione di quella richiesta di fruizione
     And l'ente delegante con ruolo "admin" revoca la delega in fruizione
-    When l'ente delegato richiede una operazione di riattivazione di quella richiesta di fruizione
+    When l'ente delegato con id della delega "%actual" richiede una operazione di riattivazione di quella richiesta di fruizione
     Then si ottiene status code 403
     And la richiesta di fruizione è in stato "SUSPENDED"
 

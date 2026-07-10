@@ -244,24 +244,24 @@ public class AgreementActivateSteps {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
     }
 
-    @When("l'ente {delegationRole} richiede una operazione di approvazione di quella richiesta di fruizione")
-    public void userRequiresAgreementApprovalWithDelegate(DelegationRole delegationRole) {
+    @When("l'ente {delegationRole} con id della delega {string} richiede una operazione di approvazione di quella richiesta di fruizione")
+    public void userRequiresAgreementApprovalWithDelegate(DelegationRole delegationRole, String delegationId) {
         String tenant = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
         String token = identityService.getToken(tenant, null);
         clientTokenConfigurator.setBearerToken(token);
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient()
-                        .approveAgreement(sharedStepsContext.getAgreementId(), new DelegationRef().delegationId(sharedStepsContext.getDelegationCommonContext().getDelegationId())));
+                        .approveAgreement(sharedStepsContext.getAgreementId(), new DelegationRef().delegationId(agreementResolver.resolveDelegationId(delegationId))));
     }
 
-    @When("l'ente {delegationRole} richiede una operazione di riattivazione di quella richiesta di fruizione")
-    public void userRequiresAgreementUnsuspensionWithDelegate(DelegationRole delegationRole) {
+    @When("l'ente {delegationRole} con id della delega {string} richiede una operazione di riattivazione di quella richiesta di fruizione")
+    public void userRequiresAgreementUnsuspensionWithDelegate(DelegationRole delegationRole, String delegationId) {
         String tenant = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
         String token = identityService.getToken(tenant, null);
         clientTokenConfigurator.setBearerToken(token);
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient()
-                        .unsuspendAgreement(sharedStepsContext.getAgreementId(), new DelegationRef().delegationId(sharedStepsContext.getDelegationCommonContext().getDelegationId())));
+                        .unsuspendAgreement(sharedStepsContext.getAgreementId(), new DelegationRef().delegationId(agreementResolver.resolveDelegationId(delegationId))));
     }
 
     @Given("due gruppi di due attributi certificati da {string}, dei quali {string} ne possiede uno per gruppo")
