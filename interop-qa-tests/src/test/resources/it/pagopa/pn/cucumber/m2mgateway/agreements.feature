@@ -148,6 +148,22 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     Then si ottiene status code 403
     And la richiesta di fruizione si trova in stato "PENDING"
 
+  @sad-path
+  @m2m-agreement-activate-refactor
+  Scenario: [M2M_AGREEMENTS_APPROVE_10] Un delegato all'erogazione con delega revocata NON può attivare una richiesta di fruizione m2m in stato PENDING per conto dell'erogatore
+    Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione automatica
+    And l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe
+    And l'ente "PA1" richiede la creazione di una delega per l'ente "PA2"
+    And l'ente "PA2" accetta la delega
+    And "PA3" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    And l'ente "PA1" con ruolo "admin" revoca la delega
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente m2m richiede una operazione di riattivazione della richiesta di fruizione con id "%actual" e delegationId "%actual"
+    Then si ottiene status code 403
+    And la richiesta di fruizione si trova in stato "SUSPENDED"
+
   @happy-path
   @m2m-agreement-activate-refactor
   Scenario Outline: [M2M_AGREEMENTS_UNSUSPEND_1] Una richiesta di fruizione sospesa dal'erogatore o dal fruitore può essere riattivata può essere riattivata e tornare ACTIVE
