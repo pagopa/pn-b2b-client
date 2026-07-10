@@ -1,4 +1,4 @@
-package it.pagopa.pn.interop.cucumber.steps.m2m.agreement.utils;
+package it.pagopa.pn.interop.cucumber.steps.agreement.utils;
 
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.AbstractResolver;

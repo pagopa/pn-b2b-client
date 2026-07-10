@@ -1,4 +1,4 @@
-package it.pagopa.pn.interop.cucumber.steps.m2m;
+package it.pagopa.pn.interop.cucumber.steps.m2m.agreement;
 
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.ObjectUtils.allNull;
@@ -28,7 +28,7 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.DocumentMetadata;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.M2MDataPreparationService;
-import it.pagopa.pn.interop.cucumber.steps.m2m.agreement.utils.AgreementResolver;
+import it.pagopa.pn.interop.cucumber.steps.agreement.utils.AgreementResolver;
 
 import java.time.OffsetDateTime;
 import java.util.List;
