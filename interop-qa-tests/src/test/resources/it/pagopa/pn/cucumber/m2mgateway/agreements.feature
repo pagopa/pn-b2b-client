@@ -126,6 +126,17 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
 
   @happy-path
   @m2m-agreement-activate-refactor
+  Scenario: [M2M_AGREEMENTS_APPROVE_8] Una richiesta di fruizione in stato PENDING non può essere approvata da un ente diverso dall'erogatore o dal delegato all'erogazione
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
+    And "PA2" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    And l'utente è un "admin" di "PA3" con ruolo M2M m2m-admin
+    When l'utente m2m richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 200
+    And la richiesta di fruizione si trova in stato "ACTIVE"
+
+  @happy-path
+  @m2m-agreement-activate-refactor
   Scenario Outline: [M2M_AGREEMENTS_UNSUSPEND_1] Una richiesta di fruizione sospesa dal'erogatore o dal fruitore può essere riattivata può essere riattivata e tornare ACTIVE
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
