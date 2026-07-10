@@ -172,7 +172,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     And la richiesta di fruizione si trova in stato "SUSPENDED"
 
   @sad-path
-  @agreement-activate-refactor
+  @m2m-agreement-activate-refactor
   Scenario: [M2M_AGREEMENTS_APPROVE_6] L'approvazione di una richiesta di fruizione con stato REJECTED restituisce errore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
@@ -184,7 +184,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     And la richiesta di fruizione si trova in stato "REJECTED"
 
   @sad-path
-  @agreement-activate-refactor
+  @m2m-agreement-activate-refactor
   Scenario: [M2M_AGREEMENTS_UNSUSPEND_6] La riattivazione di una richiesta di fruizione con stato REJECTED restituisce errore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
@@ -195,6 +195,8 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     Then si ottiene status code 409
     And la richiesta di fruizione si trova in stato "REJECTED"
 
+  @sad-path
+  @m2m-agreement-activate-refactor
   Scenario Outline: [M2M_AGREEMENTS_APPROVE_7] L'approvazione di una richiesta di fruizione con stato MISSING_CERTIFIED_ATTRIBUTES restituisce errore
     Given l'utente è un "admin" di "<enteErogatore>"
     Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
@@ -212,7 +214,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
       | PA1          | PA2               | GSP           |
 
   @sad-path
-  @agreement-activate-refactor
+  @m2m-agreement-activate-refactor
   Scenario Outline: [M2M_AGREEMENTS_UNSUSPEND_7] La riattivazione di una richiesta di fruizione con stato MISSING_CERTIFIED_ATTRIBUTES restituisce errore
     Given l'utente è un "admin" di "<enteErogatore>"
     And "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
@@ -227,6 +229,52 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     Examples:
       | enteFruitore | enteCertificatore | enteErogatore |
       | PA1          | PA2               | GSP           |
+
+  @sad-path
+  @m2m-agreement-activate-refactor
+  Scenario: [M2M_AGREEMENTS_UNSUSPEND_8] Se una richiesta di fruizione m2m viene sospesa dall'erogatore dell'e-service e il fruitore tenta di riattivarla, questa rimarrà in stato SUSPENDED
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già sospeso quella richiesta di fruizione come PRODUCER
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente m2m richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 200
+    And la richiesta di fruizione si trova in stato "SUSPENDED"
+
+  @sad-path
+  @m2m-agreement-activate-refactor
+  Scenario: [M2M_AGREEMENTS_UNSUSPEND_9] Se una richiesta di fruizione m2m viene sospesa dall'erogatore e dal fruitore dell'e-service e il fruitore tenta di riattivarla, questa rimarrà in stato SUSPENDED
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già sospeso quella richiesta di fruizione come PRODUCER
+    And "PA2" ha già sospeso quella richiesta di fruizione come CONSUMER
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente m2m richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 200
+    And la richiesta di fruizione si trova in stato "SUSPENDED"
+
+  @sad-path
+  @m2m-agreement-activate-refactor
+  Scenario: [M2M_AGREEMENTS_UNSUSPEND_10] Se una richiesta di fruizione m2m viene sospesa dal fruitore e l'erogatore dell'e-service tenta di riattivarla, questa rimarrà in stato SUSPENDED
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già sospeso quella richiesta di fruizione come PRODUCER
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente m2m richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 200
+    And la richiesta di fruizione si trova in stato "SUSPENDED"
+
+  @sad-path
+  @m2m-agreement-activate-refactor
+  Scenario: [M2M_AGREEMENTS_UNSUSPEND_11] Se una richiesta di fruizione m2m viene sospesa dal fruitore e dall'erogatore e l'erogatore dell'e-service tenta di riattivarla, questa rimarrà in stato SUSPENDED
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già sospeso quella richiesta di fruizione come PRODUCER
+    And "PA2" ha già sospeso quella richiesta di fruizione come CONSUMER
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente m2m richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 200
+    And la richiesta di fruizione si trova in stato "SUSPENDED"
 
   # Da qui in poi test di "API V2 Parte 2" https://pagopa.atlassian.net/wiki/spaces/PDNDI/pages/1812562407/DRAFT+SRS+API+V2+Parte+2#Scenari-di-test
   @m2m-agreements-parte2-luglio
