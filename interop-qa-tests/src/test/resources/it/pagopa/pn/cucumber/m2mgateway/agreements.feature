@@ -398,6 +398,20 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     Then si ottiene status code 403
     And la richiesta di fruizione si trova in stato "SUSPENDED"
 
+  @happy-path
+  @m2m-agreement-activate-refactor
+  Scenario: [M2M_AGREEMENTS_UNSUSPEND_16] Una richiesta di fruizione sospesa dall'erogatore dell'e-service NON può essere riattivata da un ente con delega in erogazione non valida
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'ente delegato richiede una operazione di sospensione di quella richiesta di fruizione
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente m2m richiede una operazione di riattivazione della richiesta di fruizione con id "%actual" e delegationId "%random"
+    Then si ottiene status code 404
+    And la richiesta di fruizione si trova in stato "SUSPENDED"
+
   # Da qui in poi test di "API V2 Parte 2" https://pagopa.atlassian.net/wiki/spaces/PDNDI/pages/1812562407/DRAFT+SRS+API+V2+Parte+2#Scenari-di-test
   @m2m-agreements-parte2-luglio
   Scenario Outline: [M2M_AGREEMENTS_PURPOSES_1] La lista delle finalità correlate a un agreement può essere visualizzata da un utente con ruolo M2M-ADMIN o M2M (Parte2#Scenario 12)
