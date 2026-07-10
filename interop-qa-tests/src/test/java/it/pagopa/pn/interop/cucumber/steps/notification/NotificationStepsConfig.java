@@ -11,7 +11,6 @@ import it.pagopa.interop.common.enums.UserRole;
 import it.pagopa.interop.generated.openapi.clients.bff.model.NotificationConfig;
 import it.pagopa.interop.generated.openapi.clients.bff.model.TenantNotificationConfigUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UserNotificationConfigUpdateSeed;
-import it.pagopa.interop.notification.NotificationClientImpl;
 import it.pagopa.interop.notification.NotificationConfigClient;
 import it.pagopa.interop.notification.OptInNotificationConfig;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -19,6 +18,10 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.utility.FeatureLifecycleManager;
 import it.pagopa.pn.interop.cucumber.utility.functionalint.Task;
 import it.pagopa.pn.interop.cucumber.utility.functionalint.ThrowingConsumer;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -32,11 +35,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
@@ -52,7 +51,6 @@ public class NotificationStepsConfig {
 
     enum ConfigStrategy {PER_ROLE, NO_CONFIG}
 
-    private final NotificationClientImpl notificationClient;
     private final NotificationConfigClient notificationConfigClient;
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final FeatureLifecycleManager notificationTestsManager;
@@ -240,7 +238,7 @@ public class NotificationStepsConfig {
         this.clientTokenConfigurator = clientTokenConfigurator;
 
         // Necessario ricorrere all'implementazione concreta per usare il suo HttpCallExecutor
-        this.notificationClient = (NotificationClientImpl) clientTokenConfigurator.getNotificationClient();
+//        this.notificationClient = (NotificationClientImpl) clientTokenConfigurator.getNotificationClient();
         this.notificationConfigClient = (NotificationConfigClient) clientTokenConfigurator.getNotificationConfigClient();
         this.notificationTestsManager = notificationTestsManager;
         this.sharedStepsContext = sharedStepsContext;
@@ -383,6 +381,7 @@ public class NotificationStepsConfig {
             Map<String, List<String>> rolesCopy = new HashMap<>(tenant.getUserRoles());
             Set<Entry<String, List<String>>> roles = rolesCopy.entrySet();
             for (Entry<String, List<String>> roleEntry : roles) {
+                //TODO: da eliminare, patch per la gestio
                 String role = roleEntry.getKey();
                 List<String> users = roleEntry.getValue();
                 if (!role.equals("admin")) continue;
