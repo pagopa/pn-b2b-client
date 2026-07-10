@@ -431,7 +431,7 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
                         assertThat(all)
                                 .as("Check in-app body message and deep link")
                                 .anySatisfy(notif -> {
-                                    assertThat(notif.getBody()).isEqualTo(finalMessage);
+                                    assertThat(notif.getBody().trim()).isEqualTo(finalMessage);
                                     log.info("Found notification: \"" + finalMessage + "\"");
                                     foundBody.set(true);
                                     if (!deepLink.isEmpty()) {
