@@ -17,6 +17,8 @@ import org.springframework.stereotype.Component;
 public class ProducerKeychainCommonContext {
     private List<UUID> producerKeychainIds = new ArrayList<>();
     private List<KeyPairDecorator> producerKeyPairs = new ArrayList<>();
+    private String keychainName;
+    private String producerKeyName;
 
     public void addProducerKeychainId(UUID producerKeychainId) {
         producerKeychainIds.add(producerKeychainId);
