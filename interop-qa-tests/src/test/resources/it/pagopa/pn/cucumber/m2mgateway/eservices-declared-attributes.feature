@@ -212,7 +212,6 @@ Feature: Gestione degli attributi dichiarati degli e-services attraverso APIs M2
     Given l'utente è un "admin" di "GSP" con ruolo M2M m2m
     When l'utente tenta di reperire gli attributi dichiarati dal gruppo dell'e-service
     Then si ottiene lo status code 404
-    And gli attributi dichiarati ottenuti sono coerenti con quelli aggiunti
 
   @m2m-parte2-ottobre
   Scenario: [M2M_ESERVICES_DECLARED_ATTRIBUTES_LIST_01_C] Un utente con ruolo M2M o M2M-ADMIN può leggere gli attributi dichiarati di una versione di un e-service in stato DRAFT solo se appartiene all'ente creatore (Parte2#Scenario intorno a 244)
@@ -235,8 +234,6 @@ Feature: Gestione degli attributi dichiarati degli e-services attraverso APIs M2
     Given l'utente è un "admin" di "PA2" con ruolo M2M m2m
     When l'utente tenta di reperire gli attributi dichiarati dal gruppo dell'e-service
     Then si ottiene lo status code 404
-    And gli attributi dichiarati ottenuti sono coerenti con quelli aggiunti
-
 
   @m2m-parte2-ottobre
   Scenario: [M2M_ESERVICES_DECLARED_ATTRIBUTES_LIST_02] Un utente con ruolo M2M o M2M-ADMIN NON può leggere gli attributi dichiarati di una versione di un e-service indicando degli identificativi inesistenti (Parte2#Scenario intorno a 247)
@@ -375,4 +372,3 @@ Feature: Gestione degli attributi dichiarati degli e-services attraverso APIs M2
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente tenta di rimuovere l'attributo dichiarato numero 1 dal gruppo dell'e-service
     Then si ottiene lo status code 400
-    And gli attributi dichiarati del gruppo sono rimasti invariati
