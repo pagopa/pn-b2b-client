@@ -179,6 +179,11 @@ public class M2MEserviceDescriptorClientImpl extends AbstractClient implements I
     }
 
     @Override
+    public Document uploadInterface(UUID eserviceId, UUID descriptorId, Resource file, String prettyName) {
+        return eservicesApi.uploadEServiceDescriptorInterface(eserviceId, descriptorId, file, prettyName);
+    }
+
+    @Override
     public Document uploadDocument(UUID eserviceId, UUID descriptorId, Resource file, String prettyName) {
         return eservicesApi.uploadEServiceDescriptorDocument(eserviceId, descriptorId, file, prettyName);
     }

@@ -51,6 +51,7 @@ public interface IM2MEserviceDescriptorClient extends IClient<EServiceDescriptor
     it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor suspendDescriptor(UUID eServiceId, UUID descriptorId);
     void unsuspendEService(UUID eServiceId, UUID descriptorId);
     FileDownloadMultipart downloadEServiceDescriptorInterface(UUID eserviceId, UUID descriptorId);
+    Document uploadInterface(UUID eserviceId, UUID descriptorId, Resource file, String prettyName);
     Document uploadDocument(UUID eserviceId, UUID descriptorId, Resource file, String prettyName);
     FileDownloadMultipart downloadDocument(UUID eserviceId, UUID descriptorId, UUID documentId);
     Documents getDocuments(UUID eserviceId, UUID descriptorId);

@@ -180,6 +180,16 @@ public class M2MV3EserviceDescriptorClientImpl extends AbstractDPoPClient implem
     }
 
     @Override
+    public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Document uploadInterface(
+        UUID eserviceId,
+        UUID descriptorId,
+        Resource file,
+        String prettyName
+    ) {
+        return vMapper.mapToV2(eservicesApi.uploadEServiceDescriptorInterface(eserviceId, descriptorId, file, prettyName));
+    }
+
+    @Override
     public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Document uploadDocument(
         UUID eserviceId,
         UUID descriptorId,
