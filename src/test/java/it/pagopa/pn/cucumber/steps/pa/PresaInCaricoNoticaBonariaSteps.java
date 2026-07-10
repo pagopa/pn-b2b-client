@@ -687,9 +687,10 @@ public class PresaInCaricoNoticaBonariaSteps {
     public void verifyTimelineElementExists(String category) {
 
         List<InformalTimelineElementV1> elements =
-                NotificationInformalUtilsWorkFlowV1.waitForTimelineElementsByCategory(()
-                        -> pnPaB2bInternalInformalClientImpl.getSentInformalNotificationSender
-                        (currentCxId, savedIun, true), category, Duration.ofMinutes(2), Duration.ofSeconds(2));
+        NotificationInformalUtilsWorkFlowV1
+                .waitForTimelineElementsByCategory(
+                        () -> pnPaB2bInternalInformalClientImpl
+                                .getSentInformalNotificationSender(currentCxId, savedIun, true), category);
 
         assertFalse(elements.isEmpty(), "Nessun elemento trovato per categoria " + category);
         timelineElement = elements.get(0);

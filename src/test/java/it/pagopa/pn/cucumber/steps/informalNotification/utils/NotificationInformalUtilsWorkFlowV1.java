@@ -3,6 +3,7 @@ package it.pagopa.pn.cucumber.steps.informalNotification.utils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.FullSentInformalNotificationV1;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalTimelineElementDetailsV1;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalTimelineElementV1;
+import it.pagopa.pn.cucumber.steps.informalNotification.datatest.InformalTimelinePollingConfig;
 
 import java.time.Duration;
 import java.util.Collections;
@@ -51,7 +52,10 @@ public class NotificationInformalUtilsWorkFlowV1 {
         return notification.getTimeline().stream().filter(t -> t.getCategory() != null && category.equals(t.getCategory().getValue())).toList();
     }
 
-    public static List<InformalTimelineElementV1> waitForTimelineElementsByCategory(Supplier<FullSentInformalNotificationV1> notificationSupplier, String category, Duration timeout, Duration pollInterval) {
+    public static List<InformalTimelineElementV1> waitForTimelineElementsByCategory(Supplier<FullSentInformalNotificationV1> notificationSupplier, String category) {
+
+        Duration timeout = getTimeout(category);
+        Duration pollInterval = getPollingInterval(category);
 
         AtomicReference<List<InformalTimelineElementV1>> foundElements = new AtomicReference<>(Collections.emptyList());
 
@@ -67,5 +71,22 @@ public class NotificationInformalUtilsWorkFlowV1 {
         });
 
         return foundElements.get();
+    }
+
+    public static Duration getTimeout(String category) {
+
+        InformalTimelinePollingConfig.DefaultElementTimeValue config = getPollingConfig(category);
+        return Duration.ofSeconds(config.getNumCheck() * config.getWaitingMultiplier());
+    }
+
+    public static Duration getPollingInterval(String category) {
+
+        InformalTimelinePollingConfig.DefaultElementTimeValue config = getPollingConfig(category);
+        return Duration.ofSeconds(config.getWaitingMultiplier());
+    }
+
+    public static InformalTimelinePollingConfig.DefaultElementTimeValue getPollingConfig(String category) {
+
+        return InformalTimelinePollingConfig.DefaultElementTimeValue.valueOf(category);
     }
 }
