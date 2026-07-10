@@ -114,6 +114,7 @@ import it.pagopa.pn.client.b2b.pa.service.IMandateReverseServiceClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.AooUoIdsClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BDeliveryPushServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.B2BSenderReadClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2bMandateServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.BffMandateServiceClientImpl;
@@ -184,6 +185,7 @@ import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextF
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
 import it.pagopa.pn.cucumber.steps.utilitySteps.TaxIdConfiguration;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
+import it.pagopa.pn.cucumber.utils.notificationsearch.NotificationSearchCriteriaMapper;
 import it.pagopa.pn.cucumber.utils.validator.SchemaValidator;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -388,7 +390,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         DataPreparationRaddVpceService.class,
         PnNotificationCostClientImpl.class,
         StimeMittentiContext.class,
-        NotificationSearchParamMapper.class
+        NotificationSearchParamMapper.class,
+        NotificationSearchCriteriaMapper.class,
+        B2BSenderReadClientImpl.class,
+//        SendSharedContext.class
+
 
 })
 @EnableScheduling

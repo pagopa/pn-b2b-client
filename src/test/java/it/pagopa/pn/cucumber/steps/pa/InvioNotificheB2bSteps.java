@@ -10,20 +10,39 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationsResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationStatusV26;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.payment.*;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.payment.BffPaymentInfoItem;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.payment.BffPaymentRequest;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.payment.BffPaymentResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.payment.PaymentInfoRequest;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.payment.PaymentNotice;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.PaperEngageRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.PaperEngageRequestAttachmentsInner;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.ReceivedMessage;
 import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotification;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV20;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationAttachmentDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationDocument;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationMetadataAttachment;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationPaymentAttachment;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationPaymentItem;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationPriceResponseV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PhysicalAddress;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.RequestStatus;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.StatusDetail;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV28;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalChannelsServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
-import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchResponse;
-import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchRow;
+import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.LegalNotificationSearchResponse;
+import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.LegalNotificationSearchRow;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.NotificationUtilsV24;
@@ -42,9 +61,21 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
-import java.time.*;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
@@ -187,9 +218,9 @@ public class InvioNotificheB2bSteps {
     @And("{string} recupera notifica vecchia di 120 giorni da lato web PA e verifica presenza pagamento")
     public void retrieveNotification120DaysOldByIunWebPaSide(String paName) {
         sharedSteps.setPA(paName);
-        List<NotificationSearchRow> searchedNotifications = searchNotificationWebFromADate(OffsetDateTime.now().minusDays(120));
+        List<LegalNotificationSearchRow> searchedNotifications = searchNotificationWebFromADate(OffsetDateTime.now().minusDays(120));
         FullSentNotificationV29 notifica120 = null;
-        for (NotificationSearchRow notifica : searchedNotifications) {
+        for (LegalNotificationSearchRow notifica : searchedNotifications) {
             FullSentNotificationV29 result = b2bClient.getSentNotificationV29(notifica.getIun());
             if (result.getRecipients().get(0).getPayments() != null
                     && result.getRecipients().get(0).getPayments().get(0).getPagoPa() != null
@@ -227,10 +258,10 @@ public class InvioNotificheB2bSteps {
         LocalDate date = LocalDate.parse(stringDate);
         OffsetDateTime offsetDateTime = date.atStartOfDay(ZoneOffset.UTC).toOffsetDateTime();
 
-        List<NotificationSearchRow> searchedNotifications = searchNotificationWebFromADate(offsetDateTime);
+        List<LegalNotificationSearchRow> searchedNotifications = searchNotificationWebFromADate(offsetDateTime);
         FullSentNotificationV29 notifica = null;
 
-        for (NotificationSearchRow notifiche : searchedNotifications) {
+        for (LegalNotificationSearchRow notifiche : searchedNotifications) {
 
             notifica = b2bClient.getSentNotificationV29(notifiche.getIun());
 
@@ -263,8 +294,8 @@ public class InvioNotificheB2bSteps {
         }
     }
 
-    private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTime data) {
-        AtomicReference<NotificationSearchResponse> notificationByIun = new AtomicReference<>();
+    private List<LegalNotificationSearchRow> searchNotificationWebFromADate(OffsetDateTime data) {
+        AtomicReference<LegalNotificationSearchResponse> notificationByIun = new AtomicReference<>();
 
         Objects.requireNonNull(
                 webPaClient.searchSentNotification(data, data.plusDays(20), null, null, null, null, 50, null),

@@ -218,6 +218,16 @@ public class SharedSteps {
     @Setter
     private List<Destinatario> destinatariList = new ArrayList<>();
 
+    /**
+     * L'id dell'ultima delega (mandate) selezionata per la ricerca delle notifiche ricevute da un delegato.
+     * Viene valorizzato dagli step che gestiscono le deleghe (es. {@code RicezioneNotificheWebDelegheSteps})
+     * e serve a risolvere, tramite {@link it.pagopa.pn.cucumber.utils.token.TokenResolver}, i placeholder
+     * usati nei feature file per riferirsi a un valore generato dinamicamente (es. {@code :mandateId}).
+     */
+    @Getter
+    @Setter
+    private String mandateId;
+
     @Before("@useB2B")
     public void beforeMethod() {
         if (!(webRecipientClient instanceof B2BRecipientExternalClientImpl)) {

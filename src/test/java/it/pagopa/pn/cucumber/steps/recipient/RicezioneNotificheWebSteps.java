@@ -13,6 +13,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.common.util.StringUtils;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullNotificationSearchResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullNotificationSearchRow;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationAttachmentDownloadMetadataResponse;
@@ -38,6 +39,7 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.CourtesyDigitalAddress;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.LegalChannelType;
 import it.pagopa.pn.client.b2b.pa.mapper.NotificationSearchParamMapper;
+import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.client.b2b.pa.service.IPnBFFRecipientNotificationClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnTosPrivacyClient;
@@ -46,15 +48,23 @@ import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.AooUoIdsClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.B2BSenderReadClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesInternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotification;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
+import it.pagopa.pn.client.web.generated.openapi.clients.informal.web.pa.model.InformalNotificationSearchResponse;
+import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.LegalNotificationSearchResponse;
+import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.LegalNotificationSearchRow;
+import it.pagopa.pn.cucumber.steps.SendSharedContext;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.utils.DataTest;
+import it.pagopa.pn.cucumber.utils.notificationsearch.NotificationSearchCriteriaMapper;
+import it.pagopa.pn.cucumber.utils.notificationsearch.NotificationSearchRowAssertions;
+import it.pagopa.pn.cucumber.utils.token.TokenResolver;
 import lombok.extern.slf4j.Slf4j;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Assertions;
@@ -65,7 +75,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.ByteArrayInputStream;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -107,8 +119,10 @@ public class RicezioneNotificheWebSteps {
     private AooUoIdsClientImpl aooUoIdsClient;
     private final PnExternalServiceClientImpl externalClient;
     private final SharedSteps sharedSteps;
+    private final SendSharedContext sendSharedContext;
     private final IPnWebPaClient webPaClient;
     private final IPnBFFRecipientNotificationClient bffRecipientNotificationClient;
+    private final B2BSenderReadClientImpl b2BSenderReadClient;
     private final IPnTosPrivacyClient iPnTosPrivacyClient;
     private final PnB2bClientTimingConfigs timingConfigs;
     private static final Integer WAIT_DEFAULT = 10000;
@@ -117,6 +131,8 @@ public class RicezioneNotificheWebSteps {
     private BffFullNotificationV1 bffFullNotificationV1Recipient;
     private OtpCodeService otpCodeService;
     private final NotificationSearchParamMapper notificationSearchParamMapper;
+    private final NotificationSearchCriteriaMapper notificationSearchCriteriaMapper;
+    private final SenderInfoProvider senderInfoProvider;
 
 
     private final DynamoDbService dynamoDbService;
@@ -163,7 +179,9 @@ public class RicezioneNotificheWebSteps {
     @Autowired
     public RicezioneNotificheWebSteps(ApplicationContext context, SharedSteps sharedSteps, PnWebUserAttributesInternalClientImpl iPnWebUserAttributesClient,
                                       IPnBFFRecipientNotificationClient bffRecipientNotificationClient, IPnTosPrivacyClient iPnTosPrivacyClient, PnB2bClientTimingConfigs timingConfigs, DynamoDbService dynamoDbService,
-                                      OtpCodeService otpCodeService, AooUoIdsClientImpl aooUoIdsClient, NotificationSearchParamMapper notificationSearchParamMapper) {
+                                      OtpCodeService otpCodeService, AooUoIdsClientImpl aooUoIdsClient, NotificationSearchParamMapper notificationSearchParamMapper,
+                                      B2BSenderReadClientImpl b2BSenderReadClient, NotificationSearchCriteriaMapper notificationSearchCriteriaMapper,
+                                      SenderInfoProvider senderInfoProvider, SendSharedContext sendSharedContext) {
         this.context = context;
         this.sharedSteps = sharedSteps;
         this.webRecipientClient = sharedSteps.getWebRecipientClient();
@@ -177,6 +195,10 @@ public class RicezioneNotificheWebSteps {
         this.dynamoDbService = dynamoDbService;
         this.otpCodeService = otpCodeService;
         this.notificationSearchParamMapper = notificationSearchParamMapper;
+        this.b2BSenderReadClient = b2BSenderReadClient;
+        this.notificationSearchCriteriaMapper = notificationSearchCriteriaMapper;
+        this.senderInfoProvider = senderInfoProvider;
+        this.sendSharedContext = sendSharedContext;
     }
 
     @Then("la notifica può essere correttamente recuperata da {string}")
@@ -290,6 +312,28 @@ public class RicezioneNotificheWebSteps {
                                 && data.getDetails().getDeliveryDetailCode() != null
                                 && data.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode))
                 .findFirst();
+    }
+
+    private LegalNotificationSearchResponse notificationSearchResponse;
+    private InformalNotificationSearchResponse informalNotificationSearchResponse;
+
+    @And("vengono recuperate le notifiche inviate dal mittente {string}")
+    public void vengonoRecuperateLeNotificheInviateDalMittente(String sender, @Transpose NotificationSearchParam searchParam) {
+        selectPa(sender);
+        try {
+        notificationSearchResponse = b2BSenderReadClient.searchSentNotification(searchParam);
+        } catch (HttpStatusCodeException e) {
+            notificationError = e;
+        }
+    }
+
+    @And("vengono recuperate le notifiche bonarie inviate dal mittente {string}")
+    public void vengonoRecuperateLeNotificheBonarieInviateDalMittente(String sender, @Transpose NotificationSearchParam searchParam) {
+        try {
+            informalNotificationSearchResponse = b2BSenderReadClient.searchInformalSentNotification(searchParam);
+        } catch (HttpStatusCodeException e) {
+            notificationError = e;
+        }
     }
 
     @And("lato mittente vengono letti i dettagli della notifica lato web {string}")
@@ -513,6 +557,13 @@ public class RicezioneNotificheWebSteps {
         }
     }
 
+    @Then("si verifica che sia stato restituito un errore di tipo {string}")
+    public void verifyApiErrorType(String errorType) {
+            assertThat(notificationError.getStatusCode().getReasonPhrase().toUpperCase())
+                    .as("Il tipo di errore non coincide con quanto atteso")
+                    .contains(errorType.toUpperCase());
+    }
+
     @And("download attestazione opponibile AAR da parte {string}")
     public void downloadLegalFactIdAARByRecipient(String recipient) {
         sharedSteps.selectUser(recipient);
@@ -557,7 +608,12 @@ public class RicezioneNotificheWebSteps {
     public void notificationCanBeCorrectlyReadWithResearch(String recipient, @Transpose NotificationSearchParam searchParam) {
         sharedSteps.selectUser(recipient);
         Destinatario recipientObj = sharedSteps.getDestinatarioRegistry().destinatario(recipient);
-        Assertions.assertTrue(searchNotification(recipientObj, searchParam));
+        try {
+            Assertions.assertTrue(searchNotification(recipientObj, searchParam));
+        } catch (HttpStatusCodeException e) {
+            notificationError = e;
+            log.info("Errore durante la ricerca della notifica: {}", e.getMessage());
+        }
     }
 
     @Then("la notifica può essere correttamente recuperata con una ricerca da web PA {string}")
@@ -600,7 +656,8 @@ public class RicezioneNotificheWebSteps {
     @DataTableType
     public NotificationSearchParam convertNotificationSearchParam(Map<String, String> data) {
         B2bUtils.Pair<OffsetDateTime, OffsetDateTime> dates = getStartDateAndEndDate(data);
-        return notificationSearchParamMapper.build(data, dates.getValue1(), dates.getValue2(), sharedSteps.getNotificationIun());
+        TokenResolver tokenResolver = new TokenResolver(sharedSteps, sendSharedContext);
+        return notificationSearchParamMapper.build(data, dates.getValue1(), dates.getValue2(), sharedSteps.getNotificationIun(), tokenResolver::resolve);
     }
 
     @DataTableType
@@ -619,10 +676,17 @@ public class RicezioneNotificheWebSteps {
     }
 
     private B2bUtils.Pair<OffsetDateTime, OffsetDateTime> getStartDateAndEndDate(Map<String, String> data) {
+        String startDate = data.getOrDefault("startDate", LocalDate.now().minusDays(1).toString());
+        String endDate = data.getOrDefault("endDate", LocalDate.now().plusDays(1).toString());
+        return new B2bUtils.Pair<>(toStartOfDayUtc(startDate), toStartOfDayUtc(endDate));
+    }
 
-        String startDate = data.getOrDefault("startDate", "");
-        String endDate = data.getOrDefault("endDate", null);
-        return new B2bUtils.Pair<>(OffsetDateTime.parse(startDate + "T00:00:00Z"), OffsetDateTime.parse(endDate + "T00:00:00Z"));
+    private OffsetDateTime toStartOfDayUtc(String rawDate) {
+        String resolvedDate = StringUtils.resolveValue(rawDate);
+        if (resolvedDate == null) {
+            return null;
+        }
+        return LocalDate.parse(resolvedDate).atStartOfDay().atOffset(ZoneOffset.UTC);
     }
 
     private boolean searchNotification(Destinatario recipient, NotificationSearchParam searchParam) {
@@ -1296,6 +1360,13 @@ public class RicezioneNotificheWebSteps {
         } catch (JsonProcessingException exc) {
             throw new PnB2bException(exc.getMessage());
         }
+    }
+
+    @And("l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:")
+    public void verifySenderNotificationSearchResponse(Map<String, String> criteria) {
+        List<LegalNotificationSearchRow> resultsPage = notificationSearchResponse.getResultsPage();
+        Map<String, List<String>> resolvedCriteria = notificationSearchCriteriaMapper.build(criteria, new TokenResolver(sharedSteps, sendSharedContext));
+        NotificationSearchRowAssertions.assertAllRowsMatchCriteria(resultsPage, resolvedCriteria);
     }
 
 }

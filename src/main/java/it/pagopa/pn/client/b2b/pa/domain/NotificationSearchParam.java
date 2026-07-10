@@ -34,4 +34,5 @@ public class NotificationSearchParam {
     public Integer size = 10;
     public String nextPagesKey;
     public String communicationType;
+    public String campaignId;
 }

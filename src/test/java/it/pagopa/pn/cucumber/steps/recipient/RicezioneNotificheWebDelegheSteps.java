@@ -27,9 +27,12 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.M
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.OrganizationIdDto;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.UpdateRequestDto;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.UserDto;
+import it.pagopa.pn.cucumber.steps.SendSharedContext;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.utils.notificationsearch.NotificationSearchCriteriaMapper;
+import it.pagopa.pn.cucumber.utils.notificationsearch.NotificationSearchRowAssertions;
+import it.pagopa.pn.cucumber.utils.token.TokenResolver;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.jupiter.api.Assertions;
@@ -73,8 +76,9 @@ public class RicezioneNotificheWebDelegheSteps {
     private IPnWebMandateClient webMandateClient;
     private IPnWebRecipientClient webRecipientClient;
     private final SharedSteps sharedSteps;
+    private final SendSharedContext sendSharedContext;
+    private final NotificationSearchCriteriaMapper notificationSearchCriteriaMapper;
     @Getter
-    @Setter
     private MandateDto mandateToSearch;
     private final SettableBearerToken.BearerTokenType baseUser = SettableBearerToken.BearerTokenType.USER_2;
     private final String verificationCode = "24411";
@@ -105,11 +109,23 @@ public class RicezioneNotificheWebDelegheSteps {
     }
 
     @Autowired
-    public RicezioneNotificheWebDelegheSteps(ApplicationContext context, PnWebMandateExternalClientImpl webMandateClient, SharedSteps sharedSteps) {
+    public RicezioneNotificheWebDelegheSteps(ApplicationContext context, PnWebMandateExternalClientImpl webMandateClient, SharedSteps sharedSteps,
+                                             NotificationSearchCriteriaMapper notificationSearchCriteriaMapper, SendSharedContext sendSharedContext) {
         this.context = context;
         this.webMandateClient = webMandateClient;
         this.sharedSteps = sharedSteps;
         this.webRecipientClient = sharedSteps.getWebRecipientClient();
+        this.notificationSearchCriteriaMapper = notificationSearchCriteriaMapper;
+        this.sendSharedContext = sendSharedContext;
+    }
+
+    /**
+     * Imposta la delega usata come riferimento per le ricerche successive, propagandone l'id a
+     * {@link SharedSteps} affinché sia risolvibile tramite il token dinamico {@code :mandateId}.
+     */
+    public void setMandateToSearch(MandateDto mandateToSearch) {
+        this.mandateToSearch = mandateToSearch;
+        sharedSteps.setMandateId(mandateToSearch != null ? mandateToSearch.getMandateId() : null);
     }
 
     private String getTaxIdByUser(String user) {
@@ -175,6 +191,11 @@ public class RicezioneNotificheWebDelegheSteps {
     @Then("si verifica che lo status code sia: {int}")
     public void checkStatusCode(int statusCode) {
         Assertions.assertEquals(statusCode, this.notificationError.getStatusCode().value());
+    }
+
+    @Then("si verifica che venga ritornato un errore di tipo {string}")
+    public void checkErrorType(String errorType) {
+        Assertions.assertTrue(this.notificationError.getStatusCode().getReasonPhrase().toUpperCase().contains(errorType.toUpperCase()));
     }
 
     @And("{string} viene delegato da {string}")
@@ -275,7 +296,7 @@ public class RicezioneNotificheWebDelegheSteps {
         MandateDto mandateDto = mandateList.stream().filter(mandate -> Objects.requireNonNull(mandate.getDelegator()).getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)).findFirst().orElse(null);
 
         Assertions.assertNotNull(mandateDto);
-        this.mandateToSearch = mandateDto;
+        setMandateToSearch(mandateDto);
         Assertions.assertDoesNotThrow(() -> webMandateClient.acceptMandate(mandateDto.getMandateId(), new AcceptRequestDto().verificationCode(verificationCode)));
 
     }
@@ -290,7 +311,7 @@ public class RicezioneNotificheWebDelegheSteps {
         MandateDto mandateDto = mandateList.stream().filter(mandate -> Objects.requireNonNull(mandate.getDelegator()).getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)).findFirst().orElse(null);
 
         Assertions.assertNotNull(mandateDto);
-        this.mandateToSearch = mandateDto;
+        setMandateToSearch(mandateDto);
 
         List<HashMap<String, String>> resp = sharedSteps.getPnExternalServiceClient().pgGroupInfo(webRecipientClient.getBearerTokenSetted());
         String gruppoAttivo = null;
@@ -479,7 +500,7 @@ public class RicezioneNotificheWebDelegheSteps {
         }
 
         Assertions.assertNotNull(mandateDto);
-        this.mandateToSearch = mandateDto;
+        setMandateToSearch(mandateDto);
         webMandateClient.revokeMandate(mandateDto.getMandateId());
     }
 
@@ -498,7 +519,7 @@ public class RicezioneNotificheWebDelegheSteps {
         }
 
         Assertions.assertNotNull(mandateDto);
-        this.mandateToSearch = mandateDto;
+        setMandateToSearch(mandateDto);
         webMandateClient.rejectMandate(mandateDto.getMandateId());
     }
 
@@ -601,6 +622,7 @@ public class RicezioneNotificheWebDelegheSteps {
     public void notificationCanBeCorrectlyReadFromAtPa(String recipient, String paName, @Transpose NotificationSearchParam searchParam) {
         sharedSteps.setPA(paName);
         sharedSteps.selectUser(recipient);
+        setRequiredAPI(isUseB2BFlag);
         NotificationStatusV26 notificationStatus = searchParam.status != null ? NotificationStatusV26.valueOf(searchParam.status) : null;
         try {
             this.notificationSearchResponseFull = webRecipientClient.searchReceivedNotification(
@@ -616,6 +638,7 @@ public class RicezioneNotificheWebDelegheSteps {
     public void notificationCanBeCorrectlyReadFromAtPa(String user, String recipient, String paName, @Transpose NotificationSearchParam searchParam) {
         sharedSteps.setPA(paName);
         sharedSteps.selectUser(user);
+        setRequiredAPI(isUseB2BFlag);
         NotificationStatusV26 notificationStatus = searchParam.status != null ? NotificationStatusV26.valueOf(searchParam.status) : null;
         try {
             this.notificationSearchResponseLegal = webRecipientClient.searchReceivedDelegatedNotification(
@@ -805,12 +828,16 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @And("l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:")
     public void verifyNotificationSearchResponse(Map<String, String> criteria) {
+        List<?> resultsPage;
         if (notificationSearchResponseFull != null) {
-
+            resultsPage = notificationSearchResponseFull.getResultsPage();
         } else if (notificationSearchResponseLegal != null) {
-
+            resultsPage = notificationSearchResponseLegal.getResultsPage();
         } else {
             throw new IllegalStateException("Nessuna risposta di ricerca notifiche disponibile per la verifica dei criteri.");
         }
-        }
+
+        Map<String, List<String>> resolvedCriteria = notificationSearchCriteriaMapper.build(criteria, new TokenResolver(sharedSteps, sendSharedContext));
+        NotificationSearchRowAssertions.assertAllRowsMatchCriteria(resultsPage, resolvedCriteria);
+    }
 }
