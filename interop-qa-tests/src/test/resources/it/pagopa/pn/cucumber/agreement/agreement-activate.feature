@@ -53,7 +53,7 @@ Feature: Attivazione richiesta di fruizione
     Given "<enteErogatore>" ha già approvato quella richiesta di fruizione
     Given "<enteErogatore>" ha già sospeso quella richiesta di fruizione come PRODUCER
     Given "<enteFruitore>" ha già sospeso quella richiesta di fruizione come CONSUMER
-    When l'utente richiede una operazione di attivazione di quella richiesta di fruizione
+    When l'utente richiede una operazione di riattivazione di quella richiesta di fruizione
     Then si ottiene status code 200
 
     Examples:
