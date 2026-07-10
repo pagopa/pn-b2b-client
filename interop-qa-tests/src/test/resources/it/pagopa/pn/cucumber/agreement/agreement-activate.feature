@@ -288,6 +288,17 @@ Feature: Attivazione richiesta di fruizione
 
   @sad-path
   @agreement-activate-refactor
+  Scenario: [AGREEMENTS_APPROVE_7] Una richiesta di fruizione in stato PENDING NON può essere approvata da un ente con delega in erogazione non valida
+    Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione automatica
+    And l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And "PA3" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    When l'ente delegato con id della delega "%random" richiede una operazione di approvazione di quella richiesta di fruizione
+    Then si ottiene status code 404
+    And la richiesta di fruizione si trova in stato "SUSPENDED"
+
+  @sad-path
+  @agreement-activate-refactor
   Scenario Outline: [AGREEMENTS_UNSUSPEND_1] La riattivazione di una richiesta di fruizione con id non valido restituisce errore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"

@@ -166,7 +166,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
 
   @happy-path
   @m2m-agreement-activate-refactor
-  Scenario: [M2M_AGREEMENTS_APPROVE_11] Una richiesta di fruizione in stato PENDING NON può essere approvata da un ente con delega in erogazione non valida
+  Scenario: [M2M_AGREEMENTS_APPROVE_11] Una richiesta di fruizione m2m in stato PENDING NON può essere approvata da un ente con delega in erogazione non valida
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And l'utente è un "admin" di "PA1"
@@ -400,7 +400,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
 
   @happy-path
   @m2m-agreement-activate-refactor
-  Scenario: [M2M_AGREEMENTS_UNSUSPEND_16] Una richiesta di fruizione sospesa dall'erogatore dell'e-service NON può essere riattivata da un ente con delega in erogazione non valida
+  Scenario: [M2M_AGREEMENTS_UNSUSPEND_16] Una richiesta di fruizione m2m sospesa dall'erogatore dell'e-service NON può essere riattivata da un ente con delega in erogazione non valida
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And l'utente è un "admin" di "PA1"
