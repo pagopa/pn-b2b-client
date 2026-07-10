@@ -93,12 +93,12 @@ public class AgreementClientImpl implements IAgreementClient {
     }
 
     public Agreement activateAgreement(UUID agreementId, DelegationRef delegationRef) {
-        return agreementsApi.activateAgreement(agreementId, delegationRef);
+        return agreementsApi.approveAgreement(agreementId, delegationRef);
     }
 
     @Override
     public Agreement activateAgreement(UUID agreementId) {
-        return agreementsApi.activateAgreement(agreementId, null);
+        return agreementsApi.approveAgreement(agreementId, null);
     }
 
     @Override
