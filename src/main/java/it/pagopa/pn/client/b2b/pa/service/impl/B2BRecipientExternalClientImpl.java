@@ -51,6 +51,8 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
     private final RecipientReadApi recipientReadApi;
     private final LegalFactsApi legalFactsApi;
     private BearerTokenType bearerTokenSetted;
+    private final String pg1ClassicToken;
+    private final String pg2ClassicToken;
 
     public B2BRecipientExternalClientImpl(RestTemplate restTemplate,
                                           @Value("${pn.delivery.base-url}") String webBasePath,
@@ -59,7 +61,9 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
                                           @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken,
                                           @Value("${pn.bearer-token.user3}") String leonardoBearerToken,
                                           @Value("${pn.bearer-token-b2b.pg1}") String gherkinSrlBearerToken,
-                                          @Value("${pn.bearer-token-b2b.pg2}") String cucumberSpaBearerToken) {
+                                          @Value("${pn.bearer-token-b2b.pg2}") String cucumberSpaBearerToken,
+                                          @Value("${pn.bearer-token.pg1}") String pg1ClassicToken,
+                                          @Value("${pn.bearer-token.pg2}") String pg2ClassicToken) {
         this.marioCucumberBearerToken = marioCucumberBearerToken;
         this.marioGherkinBearerToken = marioGherkinBearerToken;
         this.leonardoBearerToken = leonardoBearerToken;
@@ -69,6 +73,8 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
         this.webBasePath = webBasePath;
         this.b2bBasePath = b2bBasePath;
         this.bearerTokenSetted = BearerTokenType.PG_1;
+        this.pg1ClassicToken = pg1ClassicToken;
+        this.pg2ClassicToken = pg2ClassicToken;
         this.recipientReadB2BApi = new RecipientReadB2BApi(newApiClient(restTemplate, webBasePath, gherkinSrlBearerToken));
         this.recipientReadApi = new RecipientReadApi(createApiClient(restTemplate, webBasePath, gherkinSrlBearerToken));
         this.legalFactsApi = new LegalFactsApi(newLegalFactApiClient(restTemplate, b2bBasePath, gherkinSrlBearerToken));
@@ -123,6 +129,9 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
     public LegalNotificationSearchResponse searchReceivedDelegatedNotification(Destinatario destinatario, NotificationSearchParam param) throws RestClientException {
         String cxType = resolveActual(param.xPagopaPnCxType, destinatario.getRecipientType());
         String cxId = resolveActual(param.xPagopaPnCxId, String.format("%s-%s", destinatario.getRecipientType(), destinatario.getUid()));
+        it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationStatusV26 statusV26 = Optional.ofNullable(param.status)
+                .map(it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationStatusV26::fromValue)
+                .orElse(null);
         /* TODO rivedere la condizione corretta da mettere a questo if
          *  esso deve entrare nella prima condizione soltanto in caso di PG che voglia andare a chiamare le API di destinatari strutturati
          *  in tutti gli altri casi deve andare sulle api internal sia per PF che per PG
@@ -136,8 +145,7 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
             it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.LegalNotificationSearchResponse response = recipientReadApi.searchReceivedDelegatedNotification(
                     param.xPagopaPnUid, CxTypeAuthFleet.fromValue(cxType), cxId,
                     param.startDate, param.endDate, param.xPagopaPnCxGroups, param.senderId, param.recipientId,
-                    param.group, param.iunMatch,
-                    it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationStatusV26.fromValue(param.status), param.size, param.nextPagesKey);
+                    param.group, param.iunMatch, statusV26, param.size, param.nextPagesKey);
             return deepCopy(response, LegalNotificationSearchResponse.class);
         }
     }
@@ -207,10 +215,12 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
             case PG_1 -> {
                 this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, b2bBasePath, gherkinSrlBearerToken));
                 this.bearerTokenSetted = BearerTokenType.PG_1;
+                this.recipientReadApi.setApiClient(createApiClient(restTemplate, webBasePath, pg1ClassicToken));
             }
             case PG_2 -> {
                 this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, b2bBasePath, cucumberSpaBearerToken));
                 this.legalFactsApi.setApiClient(newLegalFactApiClient(restTemplate, b2bBasePath, cucumberSpaBearerToken));
+                this.recipientReadApi.setApiClient(createApiClient(restTemplate, webBasePath, pg2ClassicToken));
                 this.bearerTokenSetted = BearerTokenType.PG_2;
             }
             default -> throw new IllegalStateException("Unexpected value: " + bearerToken);
