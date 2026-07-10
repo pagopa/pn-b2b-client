@@ -293,6 +293,24 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     Then si ottiene status code 200
     And la richiesta di fruizione è in stato "ACTIVE"
 
+  @happy-path
+  @m2m-agreement-activate-refactor
+  Scenario Outline: [M2M_AGREEMENTS_UNSUSPEND_13] Per una richiesta di fruizione m2m precedentemente creata da un fruitore, la quale è in stato SUSPENDED (riattivazione), con uno o più attributi richiesti non posseduti dal fruitore, alla richiesta di attivazione da parte di un utente con sufficienti permessi dell’ente erogatore, va a buon fine ma la richiesta di fruizione resta in stato "SUSPENDED"
+    Given l'utente è un "admin" di "<enteErogatore>"
+    And "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
+    And "<enteErogatore>" ha già creato un e-service in stato "PUBLISHED" che richiede quell'attributo certificato con approvazione automatica
+    And "<enteFruitore>" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "<enteCertificatore>" ha già revocato quell'attributo a "<enteFruitore>"
+    And la richiesta di fruizione è passata in stato "SUSPENDED"
+    And l'utente è un "admin" di "<enteErogatore>" con ruolo M2M m2m-admin
+    When l'utente m2m richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 200
+    And la richiesta di fruizione è in stato "SUSPENDED"
+
+    Examples:
+      | enteFruitore | enteCertificatore | enteErogatore |
+      | PA1          | PA2               | GSP           |
+
   # Da qui in poi test di "API V2 Parte 2" https://pagopa.atlassian.net/wiki/spaces/PDNDI/pages/1812562407/DRAFT+SRS+API+V2+Parte+2#Scenari-di-test
   @m2m-agreements-parte2-luglio
   Scenario Outline: [M2M_AGREEMENTS_PURPOSES_1] La lista delle finalità correlate a un agreement può essere visualizzata da un utente con ruolo M2M-ADMIN o M2M (Parte2#Scenario 12)
