@@ -37,7 +37,7 @@ import org.springframework.web.client.RestTemplate;
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Retryable(
-        retryFor = { HttpServerErrorException.class },
+        retryFor = {HttpServerErrorException.class},
         backoff = @Backoff(delay = 2000)
 )
 public class AgreementClientImpl implements IAgreementClient {
@@ -45,10 +45,18 @@ public class AgreementClientImpl implements IAgreementClient {
     private final RestTemplate restTemplate;
     private final String basePath;
     Map<HttpStatus, Runnable> statusActionMap = Map.of(
-            HttpStatus.BAD_REQUEST, () -> { throw new HttpClientErrorException(HttpStatus.BAD_REQUEST); },
-            HttpStatus.FORBIDDEN, () -> { throw new HttpClientErrorException(HttpStatus.FORBIDDEN); },
-            HttpStatus.INTERNAL_SERVER_ERROR, () -> { throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR); },
-            HttpStatus.NOT_FOUND, () -> { throw new HttpClientErrorException(HttpStatus.NOT_FOUND); });
+            HttpStatus.BAD_REQUEST, () -> {
+                throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
+            },
+            HttpStatus.FORBIDDEN, () -> {
+                throw new HttpClientErrorException(HttpStatus.FORBIDDEN);
+            },
+            HttpStatus.INTERNAL_SERVER_ERROR, () -> {
+                throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
+            },
+            HttpStatus.NOT_FOUND, () -> {
+                throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
+            });
 
     public AgreementClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
@@ -74,7 +82,7 @@ public class AgreementClientImpl implements IAgreementClient {
     }
 
     @Override
-    public  ResponseEntity<Void> getAgreementContract(UUID agreementId) {
+    public ResponseEntity<Void> getAgreementContract(UUID agreementId) {
         AtomicReference<HttpStatus> statusRef = new AtomicReference<>();
         ClientHttpRequestInterceptor interceptor = (request, body, execution) -> {
             ClientHttpResponse response = execution.execute(request, body);
@@ -85,30 +93,22 @@ public class AgreementClientImpl implements IAgreementClient {
 
         try {
             agreementsApi.getAgreementContractWithHttpInfo(agreementId);
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
 
         Runnable action = statusActionMap.get(statusRef.get());
         if (action != null) action.run();
         return new ResponseEntity<>(statusRef.get());
     }
 
+    @Override
     public Agreement approveAgreement(UUID agreementId, DelegationRef delegationRef) {
         return agreementsApi.approveAgreement(agreementId, delegationRef);
     }
 
     @Override
-    public Agreement approveAgreement(UUID agreementId) {
-        return agreementsApi.approveAgreement(agreementId, null);
-    }
-
-    @Override
     public Agreement unsuspendAgreement(UUID agreementId, DelegationRef delegationRef) {
         return agreementsApi.unsuspendAgreement(agreementId, delegationRef);
-    }
-
-    @Override
-    public Agreement unsuspendAgreement(UUID agreementId) {
-        return agreementsApi.unsuspendAgreement(agreementId, null);
     }
 
     @Override
@@ -157,7 +157,8 @@ public class AgreementClientImpl implements IAgreementClient {
 
         try {
             agreementsApi.addAgreementConsumerDocument(agreementId, name, prettyName, doc);
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
 
         Runnable action = statusActionMap.get(statusRef.get());
         if (action != null) action.run();
@@ -191,7 +192,8 @@ public class AgreementClientImpl implements IAgreementClient {
 
         try {
             agreementsApi.getAgreementConsumerDocument(agreementId, documentId);
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
 
         restTemplate.getInterceptors().remove(interceptor);
         Runnable action = statusActionMap.get(statusRef.get());
