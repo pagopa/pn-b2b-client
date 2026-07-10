@@ -41,7 +41,7 @@ Feature: API Notifiche - verifica bodies
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'utente "admin" di "PA2" richiede una operazione di sospensione di quella richiesta di fruizione con successo
-    When l'utente "admin" di "PA2" richiede una operazione di riattivazione di quella richiesta di fruizione con successo
+    When "PA2" ha già riattivato quella richiesta di fruizione come CONSUMER
     Then per l'utente "admin" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "L'ente .+ ha riattivato la propria richiesta di fruizione per il tuo e-service .+, precedentemente sospesa\." e "/erogazione/richieste/.+"
 
   # Nota 13 01 2026: ad un utente "api" non è permesso disassociare un client, motivo per cui tutte le precondizioni sono eseguite da un admin
