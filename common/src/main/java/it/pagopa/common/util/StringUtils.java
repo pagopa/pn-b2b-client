@@ -153,7 +153,7 @@ public class StringUtils {
                 Method getterMethod = ReflectionUtils.findMethod(ISharedContext.class, methodName);
                 if (getterMethod == null) {
                     throw new IllegalArgumentException(
-                            "La funzione $" + CONTEXT_FUNCTION_NAME + " non supporta " + argument
+                            "The function $" + CONTEXT_FUNCTION_NAME + " does not support " + argument
                     );
                 }
                 value = (String)ReflectionUtils.invokeMethod(getterMethod, context);
