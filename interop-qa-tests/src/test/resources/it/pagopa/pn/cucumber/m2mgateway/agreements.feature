@@ -276,6 +276,23 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     Then si ottiene status code 200
     And la richiesta di fruizione si trova in stato "SUSPENDED"
 
+  @happy-path
+  @m2m-agreement-activate-refactor
+  Scenario: [M2M_AGREEMENTS_UNSUSPEND_12] Un delegato alla fruizione riattiva una richiesta di fruizione m2m in stato SUSPENDED per conto del fruitore
+    Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione automatica
+    And l'ente delegante "PA2"
+    And l'ente delegato "PA3"
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
+    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+    And l'ente delegato accetta la delega in fruizione
+    And il delegato ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'ente delegato richiede una operazione di sospensione di quella richiesta di fruizione
+    And l'utente è un "admin" di "PA3" con ruolo M2M m2m-admin
+    When l'utente m2m richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 200
+    And la richiesta di fruizione è in stato "ACTIVE"
+
   # Da qui in poi test di "API V2 Parte 2" https://pagopa.atlassian.net/wiki/spaces/PDNDI/pages/1812562407/DRAFT+SRS+API+V2+Parte+2#Scenari-di-test
   @m2m-agreements-parte2-luglio
   Scenario Outline: [M2M_AGREEMENTS_PURPOSES_1] La lista delle finalità correlate a un agreement può essere visualizzata da un utente con ruolo M2M-ADMIN o M2M (Parte2#Scenario 12)
