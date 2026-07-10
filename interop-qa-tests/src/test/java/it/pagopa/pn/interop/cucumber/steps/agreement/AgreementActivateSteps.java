@@ -69,6 +69,7 @@ public class AgreementActivateSteps {
     public void tenantHasAlreadyCreateEservice(String tenantType, String descriptorState, String approvalAgreementPolicy, Integer dailyCallsPerConsumer, Integer dailyCallsTotal) {
 
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        sharedStepsContext.getEServicesCommonContext().setProducerName(identityService.getTenantName(tenantType));
 
         AttributeCommonContext attributeCommonContext = sharedStepsContext.getAttributeCommonContext();
 

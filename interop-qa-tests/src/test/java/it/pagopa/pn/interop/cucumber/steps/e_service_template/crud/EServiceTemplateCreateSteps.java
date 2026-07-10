@@ -240,6 +240,9 @@ public class EServiceTemplateCreateSteps {
     private void createEServiceTemplate(EServiceTemplateSeed templateSeed) {
         String userToken = sharedStepsContext.getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
+        sharedStepsContext.getEServiceTemplateStepContext().setProducerName(
+                identityService.getTenantName(sharedStepsContext.getTenantType())
+        );
 
         httpCallExecutor.performCall(() -> eServiceTemplateClient.createEServiceTemplate(templateSeed));
         if (httpCallExecutor.getResponseStatus().isError()) {

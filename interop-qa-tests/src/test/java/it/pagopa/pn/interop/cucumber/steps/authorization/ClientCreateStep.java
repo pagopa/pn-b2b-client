@@ -36,6 +36,7 @@ public class ClientCreateStep {
     @Given("l'utente è un {string} di {string}")
     public void setRole(String role, String tenantType) {
         setRole(1, role, tenantType);
+        sharedStepsContext.setTenantType(tenantType);
     }
 
     @Given("l'utente è il numero {int} ad avere ruolo {string} di {string}")

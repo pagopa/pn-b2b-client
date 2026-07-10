@@ -152,6 +152,7 @@ public class ClientCommonSteps {
     private ClientSeed createClientSeed(int index) {
         ClientSeed clientSeed = new ClientSeed();
         clientSeed.setName(String.format("client-%d-%d-%s", index, sharedStepsContext.getTestSeed(), ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)));
+        sharedStepsContext.getClientCommonContext().getClientNames().add(clientSeed.getName());
         return clientSeed;
     }
 }

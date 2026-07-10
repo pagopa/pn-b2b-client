@@ -251,6 +251,11 @@ public class EServiceTemplateInstanceCreateSteps {
                         .as("Check correttezza del nome dell'istanza creata")
                         .isEqualTo(instanceDefaultName);
 
+                sharedStepsContext.getEServicesCommonContext().setEserviceId(eServiceCreatedFromTemplate.get().getId());
+                sharedStepsContext.getEServicesCommonContext().setDescriptorId(
+                        this.getDescriptorId(eServiceCreatedFromTemplate.get().getName(), expectedState)
+                );
+
                 /* TODO 10/03/2025: in checkEServiceCreatedFromLatestTemplateVersion (parte del test
                  *   dell'API di upgrade del servizio) è stata usata l'API
                  *   getProducerEServiceDescriptor; verificare se possa essere sufficiente per essere usata

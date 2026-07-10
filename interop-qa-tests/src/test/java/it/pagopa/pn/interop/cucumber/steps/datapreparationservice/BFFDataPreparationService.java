@@ -347,6 +347,7 @@ public class BFFDataPreparationService {
             default -> throw new IllegalArgumentException("Invalid attributeKind: " + attributeKind);
         }
         assertValidResponse();
+        sharedStepsContext.getAttributeCommonContext().setAttributeName(actualName);
 
         pollingService.makePolling(
                 () -> attributeApiClient.getAttributes(1, 0, List.of(attributeKind), actualName, null),

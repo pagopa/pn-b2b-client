@@ -44,6 +44,11 @@ public class TenantAssignCertifiedAttributeSteps {
                     "There was an error while retrieving the attributes"
             );
         }
+        sharedStepsContext.getAttributeCommonContext().setCertifierName(
+                identityService.getTenantName(
+                        sharedStepsContext.getTenantType()
+                )
+        );
     }
 
     @When("l'utente assegna a {string} gli attributi certificati precedentemente creati")
