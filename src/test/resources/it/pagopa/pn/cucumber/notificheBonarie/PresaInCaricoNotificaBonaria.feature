@@ -168,6 +168,7 @@ Feature: Sottomissione di una notifica bonaria.
       | I T                 |
       | ITT                 |
 
+
   @informalNotificationsValidation @informalAsyncValidation @addLanguages
   Scenario: [NOTIFICHE_LANGUAGES_01_3_B] Come ente mittente ricevo errore nel tentativo di inviare
   una notifica bonaria con allegato un messaggio e indicando una lingua non presente nel messaggio
@@ -250,6 +251,7 @@ Feature: Sottomissione di una notifica bonaria.
     When viene inviata una nuova notifica bonaria
     And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
 
+
   @informalNotificationsValidation @informalAsyncValidation
   Scenario: [NOTIFICHE_AMOUNT_02_1_B] Come ente mittente invio una notifica bonaria definendo il campo amount e non definendo il campo dueDate
     Given mittente della notifica bonaria: "Comune_Multi"
@@ -279,6 +281,7 @@ Feature: Sottomissione di una notifica bonaria.
       | payment_amount      | NULL              |
       | payment_due_date    | 2026-12-31        |
     When viene inviata una nuova notifica bonaria
+
 
   @informalNotificationsValidation @informalAsyncValidation @addLanguages
   Scenario Outline: [NOTIFICHE_AMOUNT_02_1_D] Come ente mittente ricevo un errore nel tentativo di invio una notifica bonaria definendo il campo amount con valori non conformi
@@ -339,7 +342,7 @@ Feature: Sottomissione di una notifica bonaria.
       | recipientType        | PF               |
       | taxId                | FRMTTR76M06B715E |
       | payment_multy_number | 1                |
-      | messageId            | ${NEW-IT}            |
+      | messageId            | ${NEW-IT}        |
     When viene inviata una nuova notifica bonaria
     And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
     Examples:
@@ -356,7 +359,7 @@ Feature: Sottomissione di una notifica bonaria.
       | recipientType        | PF               |
       | taxId                | FRMTTR76M06B715E |
       | payment_multy_number | 1                |
-      | messageId            | ${NEW-IT}            |
+      | messageId            | ${NEW-IT}        |
     When viene inviata una nuova notifica bonaria
     And  si verifica che la notifica bonaria sia in stato "REFUSED"
     Then la notifica bonaria è stata rifiutata per l'errore: "<ERROR>"
@@ -365,6 +368,28 @@ Feature: Sottomissione di una notifica bonaria.
       | campaign-draft     | CAMPAIGN_INVALID_STATUS |
       | campaign-concluded | CAMPAIGN_INVALID_STATUS |
       | campaign-cancelled | CAMPAIGN_INVALID_STATUS |
+
+# *******************************************************************
+#  Preload AUDIT-LOG
+# *******************************************************************
+
+  @informalNotificationsValidation @informalAsyncValidation
+  Scenario: [NOTIFICHE_BONARIE_AUDITLOG_04_1] Come ente mittente invio una notifica bonaria e vengono generati i corretti auditlog in pn-commons
+    Given mittente della notifica bonaria: "Comune_Multi"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | campaign-1 |
+    And destinatario della notifica bonaria
+      | recipientType | PF                |
+      | taxId         | FRMTTR76M06B715E  |
+      | denomination  | Ettore Fieramosca |
+      | messageId     | ${IT}             |
+    When viene inviata una nuova notifica bonaria
+    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    And verifico la presenza di un audit log su "/aws/ecs/pn-commons" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | iun    | auto            |
+      | param1 | AUD_COM_PRELOAD |
+      | param2 | todo            |
+
 
 
 
