@@ -1633,12 +1633,12 @@ Feature: Gestione degli eServices attraverso APIs M2M
   @document_upload
   @document
   @document-type-check
-  Scenario: [ESERVICE_INTERFACE_UPLOAD_02] Per un e-service in stato DRAFT e' possibile caricare l'interfaccia del descriptor con il documento predefinito interface.yaml
+  Scenario: [ESERVICE_INTERFACE_UPLOAD_02] Per un e-service in stato DRAFT non è possibile caricare un interfaccia in formato yml non conforme allo standard OpenApi
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente tenta di caricare uno alla volta il seguente insieme di documenti come interfaccia del descriptor
       | yml  |
-    Then tutti i tentativi di caricamento come interfaccia del descriptor hanno esito positivo
+    Then tutti i tentativi di caricamento come interfaccia del descriptor hanno esito negativo
 
   @document_upload
   @document

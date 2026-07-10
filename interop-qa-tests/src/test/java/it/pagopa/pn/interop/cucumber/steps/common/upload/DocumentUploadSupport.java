@@ -49,7 +49,7 @@ public class DocumentUploadSupport {
 
     public void verifyUploadAttemptsOutcome(List<UploadAttemptResult> uploadAttempts, ExpectedOutcome expectedOutcome) {
         Assertions.assertThat(uploadAttempts)
-            .as("Nessun tentativo di caricamento e' stato registrato")
+            .as("Nessun tentativo di caricamento è stato registrato")
             .isNotEmpty();
 
         List<UploadAttemptResult> unexpectedResults = uploadAttempts.stream()
@@ -61,8 +61,11 @@ public class DocumentUploadSupport {
             })
             .toList();
 
+        String assertDescription = expectedOutcome.isSuccessExpected()
+            ? "Verifico che tutti i tentativi abbiano esito %s"
+            : "Verifico che tutti i tentativi abbiano esito %s con status %s";
         Assertions.assertThat(unexpectedResults)
-            .as("Verifico che tutti i tentativi abbiano esito %s e, se negativo, status %s", expectedOutcome, EXPECTED_FAILURE_STATUS)
+            .as(assertDescription, expectedOutcome, EXPECTED_FAILURE_STATUS)
             .isEmpty();
     }
 
