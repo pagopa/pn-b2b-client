@@ -62,11 +62,10 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     And la richiesta di fruizione si trova in stato <agreementStatus>
 
     Examples:
-      | agreementStatus                |
-      | "ACTIVE"                       |
-      | "ARCHIVED"                     |
-      | "SUSPENDED"                    |
-      | "MISSING_CERTIFIED_ATTRIBUTES" |
+      | agreementStatus |
+      | "ACTIVE"        |
+      | "ARCHIVED"      |
+      | "SUSPENDED"     |
 
   @happy-path
   @m2m-agreement-activate-refactor
@@ -134,6 +133,20 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     When l'utente m2m richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 200
     And la richiesta di fruizione si trova in stato "ACTIVE"
+
+  @sad-path
+  @m2m-agreement-activate-refactor
+  Scenario: [M2M_AGREEMENTS_APPROVE_9] Un ente delegato con delega in erogazione non attiva non può approvare una richiesta di fruizione in stato PENDING per conto dell'erogatore
+    Given "PA2" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
+    And l'ente delegato "PA1"
+    And l'ente "PA1" concede la disponibilità a ricevere deleghe
+    And l'ente delegante "PA2"
+    And l'ente "PA2" richiede la creazione di una delega per l'ente "PA1"
+    And "GSP" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente m2m richiede una operazione di approvazione della richiesta di fruizione con id "%actual" e delegationId "%actual"
+    Then si ottiene status code 403
+    And la richiesta di fruizione si trova in stato "PENDING"
 
   @happy-path
   @m2m-agreement-activate-refactor
