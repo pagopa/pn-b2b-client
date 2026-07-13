@@ -24,6 +24,7 @@ public interface ISharedContext {
     String getProducerKeyName();
     String getClientId();
     String getClientName();
+    String getNewKeyId();
     String getDelegationId();
     String getDelegateName();
     String getCertifierName();

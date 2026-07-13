@@ -209,6 +209,11 @@ public class SharedStepsContext implements ISharedContext {
     }
 
     @Override
+    public String getNewKeyId() {
+        return this.clientCommonContext.getNewKeyId();
+    }
+
+    @Override
     public String getKeychainName() {
         return this.producerKeychainCommonContext.getKeychainName();
     }
