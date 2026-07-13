@@ -1,6 +1,4 @@
 @bff-notification
-#@disable-notifications-hooks # FIXME usato per velocizzare l'esecuzione dei test in locale, rimuovere
-
 Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (generato da excel)
 
   # PASSA
@@ -582,45 +580,34 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     And l'ente "PA2" concede la disponibilità a ricevere deleghe
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato
     And l'utente accetta la delega
+    And l'utente è un "admin" di "PA2"
     And l'utente crea una nuova versione dell'e-service
+    # La notifica può comparire, ma con questi step non compare...
     Then admin di "PA1" ha ricevuto la notifica in-app contenente il link DELEGA_ADERENTE
     """
     L'ente delegato $CONTEXT(delegateName) richiede la tua approvazione per pubblicare
     una nuova versione dell'e-service "$CONTEXT(eServiceName)".
     """
 
-  # TODO non riesco ad approvare la pubblicazione causa errore 500
+  # TODO il delegato non riesce a pubblicare la versione, gli step precedenti non sono comunque sicuri
   Scenario: [Notifica approvazione nuova versione e-service] L'ente delegante approva la pubblicazione della nuova versione dell'e-service
-
-    Given l'ente "PA2" concede la disponibilità a ricevere deleghe
-    And l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
-    And l'utente richiede la creazione di una delega per l'ente "PA2"
-    And l'ente "PA2" accetta la delega
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And un utente dell'ente delegato con ruolo "admin"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato
+    And l'utente accetta la delega
     And l'utente è un "admin" di "PA2"
     And l'utente crea una nuova versione dell'e-service
     And l'utente delegato pubblica la versione dell'e-service
-
-#    Given l'ente delegante "PA1"
-#    And l'ente delegato "PA2"
-#    And un utente dell'ente delegato con ruolo "admin"
-#    And "PA1" ha già creato e pubblicato 1 e-service
-#    And l'ente "PA2" concede la disponibilità a ricevere deleghe
-#    And l'utente è un "admin" di "PA2"
-#    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato
-#    And l'utente è un "admin" di "PA1"
-#    And l'utente accetta la delega
-#    And l'utente è un "admin" di "PA2"
-#    And l'utente crea una nuova versione dell'e-service
-#    And "PA1" approva la pubblicazione dell'e-service
-
     Then admin di "PA2" ha ricevuto la notifica in-app contenente il link DELEGA_ADERENTE
     """
     L'ente delegante $CONTEXT(producerName) ha approvato la pubblicazione della nuova versione
     dell'e-service "$CONTEXT(eServiceName)" che gestisci tramite delega.
     """
 
-  # TODO non funziona lo step per rifiutare la pubblicazione di una versione e-service
+  # TODO
   Scenario: [Notifica rifiuto nuova versione e-service] L'ente delegante rifiuta la pubblicazione della nuova versione dell'e-service
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
@@ -669,7 +656,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
   # PASSA
   Scenario: [Notifica attributo certificato ricevuto] L'ente certificatore conferisce l'attributo certificato a un ente
     Given l'utente è un "admin" di "PA2"
-    Given PA2 ha già creato 1 attributo CERTIFIED
+    And PA2 ha già creato 1 attributo CERTIFIED
     When l'utente assegna a "PA1" l'attributo certificato precedentemente creato
     Then admin di "PA1" ha ricevuto la notifica in-app contenente il link ANAGRAFICA_ADERENTE
     """
@@ -677,11 +664,12 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     "$CONTEXT(attributeName)". Puoi ora utilizzarlo nelle richieste di fruizione.
     """
 
-  # TODO
+  # TODO messaggio diverso per utente aderente, come fare?
   Scenario: [Notifica aderente attributo certificato ricevuto] L'ente certificatore conferisce l'attributo certificato a un ente aderente
-    Given "PA2" ha creato un attributo certificato e lo ha assegnato a "PA1"
-    # GSP non riceve affatto notifiche
-    # PA1 non è un ente aderente, messaggio differente
+    Given l'utente è un "admin" di "PA2"
+    And PA2 ha già creato 1 attributo CERTIFIED
+    When l'utente assegna a "PA1" l'attributo certificato precedentemente creato
+    # Dovrebbe essere un utente aderente che riceve l'attributo certificato
     Then admin di "PA1" ha ricevuto la notifica in-app contenente il link ANAGRAFICA_ADERENTE
     """
     Al tuo ente è stato conferito l'attributo certificato "$CONTEXT(attributeName)".
@@ -702,7 +690,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     questo attributo per le richieste di fruizione.
     """
 
-  # TODO
+  # TODO messaggio diverso per utente aderente, come fare?
   Scenario: [Notifica aderente attributo certificato revocato] L'ente certificatore revoca l'attributo certificato a un ente aderente
     Then admin di "PA2" ha ricevuto la notifica in-app contenente il link ANAGRAFICA_ADERENTE
     """
@@ -737,10 +725,8 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     Non potrai più utilizzare questo attributo per le future richieste di fruizione.
     """
 
-## FIXME Da qui in avanti scrivere meglio ID e titoli degli scenari ##
-
   # TODO
-  Scenario: [Notifica chiave client rimossa da utente] Descrizione
+  Scenario: [Notifica chiave client rimossa da utente] L'utente rimuove una chiave e-service dal client
 #    Given l'utente è un "admin" di "PA1"
 #    Given "GSP" ha già creato e pubblicato 1 e-service
 #    Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -758,7 +744,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     """
 
   # PASSA
-  Scenario: [Notifica chiave client non più sicura] Una chiave associata al client non è più considerata sicura, in quanto l'ope…
+  Scenario: [Notifica chiave client non più sicura] L'operatore che ha caricato una chiave al client non è più attivo
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato 1 client "CONSUMER"
     And "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
@@ -772,26 +758,46 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     """
 
   # TODO: arriva una chiave, ma si aspetta una chiave e-service: forse step errati
-  Scenario: [Notifica chiave aggiunta al client] Ti informiamo che è stata aggiunta una nuova chiave e-service al client
+  Scenario: [Notifica chiave aggiunta al client] Viene aggiunta una nuova chiave e-service al client
+
     Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato 1 client "CONSUMER"
-    And "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
-    And "PA1" ha già inserito l'utente con ruolo "security" come membro di quel client
-    When un "security" di "PA1" ha caricato una chiave pubblica nel client
+    Given "PA1" ha già creato 1 client "CONSUMER"
+    Given "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
+    Given un "admin" di "PA1" ha caricato una chiave pubblica in quel client
+
+#    Given l'admin del fruitore "PA2" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
+#    And "PA1" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
+#      | asyncExchangeProperties.responseTime          | 100  |
+#      | asyncExchangeProperties.resourceAvailableTime | 100  |
+#      | asyncExchangeProperties.confirmation          | true |
+#      | asyncExchangeProperties.bulk                  | true |
+#      | asyncExchangeProperties.maxResultSet          | 50   |
+#    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+#    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+#    And "PA2" associa la finalità al client creato con successo
+#    And l'utente "admin" di "PA1" crea un portachiavi erogatore con successo
+#    And l'utente "admin" di "PA1" associa il portachiavi erogatore all'e-service con successo
+#    And l'utente "admin" di "PA1" aggiunge una chiave al portachiavi erogatore
+
+#    Given l'utente è un "admin" di "PA1"
+#    And "PA1" ha già creato 1 client "CONSUMER"
+#    And "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
+#    And "PA1" ha già inserito l'utente con ruolo "security" come membro di quel client
+#    When un "security" di "PA1" ha caricato una chiave pubblica nel client
     Then admin di "PA1" ha ricevuto la notifica in-app contenente il link API_E_SERVICE
     """
     Ti informiamo che è stata aggiunta una nuova chiave e-service al client "$CONTEXT(clientName)".
     """
 
-  # TODO
-  Scenario: [Notifica chiave aggiunta al client interop] L'utente...
+  # TODO: perché questa notifica menziona client interop?
+  Scenario: [Notifica chiave aggiunta al client interop] Viene aggiunta una nuova chiave al client interop
     Then admin di "PA1" ha ricevuto la notifica in-app contenente il link API_E_SERVICE
     """
     Ti informiamo che è stata aggiunta una nuova chiave al client interop "$CONTEXT(clientName)".
     """
 
-  # TODO: producerKeyName non è il campo giusto ma non trovo il nome che usa...
-  Scenario: [Notifica chiave rimossa dal portachiavi] L'utente ha rimosso una chiave dal portachiavi erogatore. Assicurati che l'o…
+  # PASSA
+  Scenario: [Notifica chiave rimossa dal portachiavi] L'utente rimuove una chiave dal portachiavi erogatore
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     And l'utente "admin" di "PA1" crea un portachiavi erogatore con successo
     And l'utente "admin" di "PA1" aggiunge l'utente "security" di "PA1" al portachiavi erogatore
@@ -800,12 +806,12 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     When l'utente "admin" di "PA1" rimuove tutte le chiavi dal portachiavi erogatore
     Then admin di "PA1" ha ricevuto la notifica in-app contenente il link PORTACHIAVI_EROGAZIONE
     """
-    La chiave $CONTEXT(producerKeyName) è stata rimossa dal portachiavi erogatore $CONTEXT(keychainName).
+    La chiave $CONTEXT(deletedKeyId) è stata rimossa dal portachiavi erogatore $CONTEXT(keychainName).
     Assicurati che l'operatività non sia compromessa.
     """
 
   # PASSA
-  Scenario: [Notifica chiave portachiavi non più sicura] Viene rimosso l'operatore che ha caricato una chiave che non viene più considerata sicura
+  Scenario: [Notifica chiave portachiavi non più sicura] L'operatore che ha caricato una chiave al portachiavi non è più attivo
     And l'utente "admin" di "PA1" crea un portachiavi erogatore con successo
     And l'utente "admin" di "PA1" aggiunge l'utente "security" di "PA1" al portachiavi erogatore
     And l'utente "security" di "PA1" aggiunge una chiave al portachiavi erogatore
@@ -827,8 +833,8 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     Ti informiamo che è stata aggiunta una nuova chiave al portachiavi erogatore $CONTEXT(keychainName).
     """
 
-  # TODO PASS ma verificare
-  Scenario: [Notifica chiave client rimossa] L'utente ha rimosso una chiave di e-service dal client. Assicurati che l'ope…
+  # PASSA
+  Scenario: [Notifica chiave client rimossa] L'utente rimuove una chiave pubblica dal client
     Given l'utente è un "admin" di "PA1"
     Given "GSP" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
