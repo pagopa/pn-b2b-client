@@ -666,10 +666,8 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     l'e-service $CONTEXT(eServiceName) che ti aveva conferito.
     """
 
-## FIXME Da qui in avanti scrivere meglio ID e titoli degli scenari ##
-
   # PASSA
-  Scenario: [Notifica certificatore attributo certificato ricevuto] L'ente certificatore conferisce l'attributo certificato a un ente
+  Scenario: [Notifica attributo certificato ricevuto] L'ente certificatore conferisce l'attributo certificato a un ente
     Given l'utente è un "admin" di "PA2"
     Given PA2 ha già creato 1 attributo CERTIFIED
     When l'utente assegna a "PA1" l'attributo certificato precedentemente creato
@@ -680,24 +678,32 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     """
 
   # TODO
-  Scenario: [Notifica aderente attributo certificato ricevuto] Descrizione
-    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link ANAGRAFICA_ADERENTE
+  Scenario: [Notifica aderente attributo certificato ricevuto] L'ente certificatore conferisce l'attributo certificato a un ente aderente
+    Given "PA2" ha creato un attributo certificato e lo ha assegnato a "PA1"
+    # GSP non riceve affatto notifiche
+    # PA1 non è un ente aderente, messaggio differente
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link ANAGRAFICA_ADERENTE
     """
     Al tuo ente è stato conferito l'attributo certificato "$CONTEXT(attributeName)".
     Puoi ora utilizzarlo nelle richieste di fruizione.
     """
 
-  # TODO
-  Scenario: [Notifica certificatore attributo certificato revocato] Descrizione
-    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link ANAGRAFICA_ADERENTE
+  # PASSA
+  Scenario: [Notifica attributo certificato revocato] L'ente certificatore revoca l'attributo certificato a un ente
+    Given "PA2" ha creato un attributo certificato e lo ha assegnato a "PA1"
+    And l'utente è un "admin" di "PA2"
+    And PA2 ha già creato 1 attributo CERTIFIED
+    And l'utente assegna a "PA1" l'attributo certificato precedentemente creato
+    When "PA2" ha già revocato quell'attributo "CERTIFIED" a "PA1"
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link ANAGRAFICA_ADERENTE
     """
-    L'ente certificatore $CONTEXT(producerName) ha revocato l'attributo certificato "$CONTEXT(attributeName)".
+    L'ente certificatore $CONTEXT(certifierName) ha revocato l'attributo certificato "$CONTEXT(attributeName)".
     Tutte le richieste di fruizione con questo attributo saranno sospese e in futuro non potrai più utilizzare
     questo attributo per le richieste di fruizione.
     """
 
   # TODO
-  Scenario: [Notifica aderente attributo certificato revocato] Descrizione
+  Scenario: [Notifica aderente attributo certificato revocato] L'ente certificatore revoca l'attributo certificato a un ente aderente
     Then admin di "PA2" ha ricevuto la notifica in-app contenente il link ANAGRAFICA_ADERENTE
     """
     Al tuo ente è stato revocato l'attributo certificato "$CONTEXT(attributeName)".
@@ -706,7 +712,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     """
 
   # PASSA
-  Scenario: [Notifica attributo verificato] L'ente certificatore ha conferito al tuo ente l'attributo verificato
+  Scenario: [Notifica attributo verificato ricevuto] L'ente certificatore conferisce l'attributo verificato a un ente
     Given "PA2" ha già creato un attributo verificato
     And "PA2" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
     And "PA1" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
@@ -717,39 +723,37 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     "$CONTEXT(attributeName)". Puoi ora utilizzarlo nelle richieste di fruizione.
     """
 
-  # TODO
-  Scenario: [Notifica attributo verificato revocato] Ti informiamo che l'ente certificatore ha revocato l'attributo verificato
-
-#    Given "PA2" ha già creato un attributo verificato
-#    And "PA2" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
-#    And "PA1" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
-#    When "PA2" ha già verificato l'attributo verificato a "PA1"
-#    Given l'utente è un "admin" di "PA2"
-#    When l'utente revoca l'attributo precedentemente verificato
-
-    Given l'utente è un "admin" di "PA1"
-    And due gruppi di due attributi certificati da "PA1", dei quali "PA2" ne possiede uno per gruppo
-    And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000
-    And l'utente tenta di aggiungere una soglia differenziata di 100 per l'attributo CERTIFIED 0-esimo creato nel gruppo 1-esimo
-    And l'utente è un "admin" di "PA2"
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 11
-    #And l'utente tenta di attivare la finalità
-    And l'utente è un "admin" di "PA1"
-    And l'utente revoca l'attributo certificato 0-esimo nel gruppo 1-esimo precedentemente creato e assegnato a "PA2"
-
-    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link ANAGRAFICA_ADERENTE
+  # FALLISCE: la notifica è diversa nella forma
+  Scenario: [Notifica attributo verificato revocato] L'ente certificatore revoca l'attributo verificato a un ente
+    Given "PA2" ha già creato un attributo verificato
+    And "PA2" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
+    And "PA1" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    And "PA2" ha già verificato l'attributo verificato a "PA1"
+    When "PA2" ha già revocato quell'attributo "VERIFIED" a "PA1"
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link ANAGRAFICA_ADERENTE
     """
     Ti informiamo che l'ente certificatore $CONTEXT(producerName) ha revocato l'attributo verificato
     "$CONTEXT(attributeName)". Tutte le richieste di fruizione che utilizzano tale attributo subiranno una sospensione.
     Non potrai più utilizzare questo attributo per le future richieste di fruizione.
     """
 
+## FIXME Da qui in avanti scrivere meglio ID e titoli degli scenari ##
+
   # TODO
   Scenario: [Notifica chiave client rimossa da utente] Descrizione
-    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link API_E_SERVICE
+#    Given l'utente è un "admin" di "PA1"
+#    Given "GSP" ha già creato e pubblicato 1 e-service
+#    Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+#    Given "PA1" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+#    Given "PA1" ha già creato 1 client "CONSUMER"
+#    Given "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
+#    Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
+#    Given "PA1" ha già associato la finalità a quel client
+#    Given un "admin" di "PA1" ha aggiunto una nuova chiave pubblica al client
+#    Given "PA1" rimuove quella nuova chiave dal client
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link API_E_SERVICE
     """
-    L'utente $CONTEXT(consumerName)? ha rimosso una chiave di e-service dal client "<nome client>".
+    L'utente CONTEXT(consumerName) ha rimosso una chiave di e-service dal client "client-0-716898252-1020312547".
     Assicurati che l'operatività non sia compromessa.
     """
 
@@ -823,27 +827,20 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     Ti informiamo che è stata aggiunta una nuova chiave al portachiavi erogatore $CONTEXT(keychainName).
     """
 
-  # TODO
-  # trigger: it/pagopa/pn/cucumber/authorization/client-key-delete.feature:7
+  # TODO PASS ma verificare
   Scenario: [Notifica chiave client rimossa] L'utente ha rimosso una chiave di e-service dal client. Assicurati che l'ope…
     Given l'utente è un "admin" di "PA1"
-    And "GSP" ha già creato e pubblicato 1 e-service
-    And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA1" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    And "PA1" ha già creato 1 client "CONSUMER"
-    And "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
-    And un "admin" di "PA1" ha caricato una chiave pubblica nel client
-    And "PA1" ha già associato la finalità a quel client
-    And un "admin" di "PA1" ha aggiunto una nuova chiave pubblica al client
-    When "PA1" rimuove quella nuova chiave dal client
-    # FIXME Perché seppure la notifica è presente non viene vista? Quale delle due versioni di Then è quella giusta per il test?
-    #Then admin di "PA1" ha ricevuto la notifica in-app contenente il link API_E_SERVICE
-    #"""
-    #L'utente $CONTEXT(nome_ruolo) ha rimosso una chiave di e-service dal client $CONTEXT(id_client). Assicurati
-    #che l'operatività non sia compromessa.
-    #"""
-    Then admin di "GSP" ha ricevuto la notifica in-app contenente il link API_E_SERVICE
+    Given "GSP" ha già creato e pubblicato 1 e-service
+    Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    Given "PA1" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    Given "PA1" ha già creato 1 client "CONSUMER"
+    Given "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
+    Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
+    Given "PA1" ha già associato la finalità a quel client
+    Given un "admin" di "PA1" ha aggiunto una nuova chiave pubblica al client
+    Given "PA1" rimuove quella nuova chiave dal client
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link API_E_SERVICE
     """
-    La chiave $CONTEXT(id_chiave) è stata rimossa dal client $CONTEXT(id_client). Assicurati che l'operatività
-    non sia compromessa.
+    La chiave $CONTEXT(newKeyId) è stata rimossa dal client $CONTEXT(clientName).
+    Assicurati che l'operatività non sia compromessa.
     """
