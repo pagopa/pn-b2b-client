@@ -763,7 +763,7 @@ Feature: Template engine
 
   @templateEngine # /templates-engine-private/v1/templates/informal/analog-communication
   Scenario: [TEMPLATE-ENGINE_54] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - body vuoto
-    When recupero il template per "comunicazione bonaria" in lingua "italiana" con recipient Type "PF"
+    When recupero il template per "comunicazione bonaria posta cartacea" in lingua "italiana" con recipient Type "PF"
     Then verifico che il template è in formato "pdf"
 
   @templateEngine # /templates-engine-private/v1/templates/informal/email-communication-body
