@@ -1,0 +1,32 @@
+package it.pagopa.pn.client.b2b.pa.utils;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
+
+/**
+ * Converte un oggetto in un'istanza di una classe "gemella" (stessa forma JSON, tipo Java diverso),
+ * serializzando e deserializzando tramite Jackson. Usato per mappare i DTO generati da un'openapi
+ * verso i DTO equivalenti generati da un'altra openapi (es. b2b-pg-external vs internal).
+ */
+public final class JsonDeepCopyMapper {
+    private static final ObjectMapper OBJECT_MAPPER = JsonMapper.builder()
+            .addModule(new JavaTimeModule())
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .build();
+
+    private JsonDeepCopyMapper() {
+    }
+
+    public static <T> T deepCopy(Object obj, Class<T> toClass) {
+        try {
+            String json = OBJECT_MAPPER.writeValueAsString(obj);
+            return OBJECT_MAPPER.readValue(json, toClass);
+        } catch (JsonProcessingException exc) {
+            throw new PnB2bException(exc.getMessage());
+        }
+    }
+}
