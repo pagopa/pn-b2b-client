@@ -756,6 +756,42 @@ Feature: Template engine
     When recupero il template per "avviso di cortesia EMAIL" in lingua "inglese" con il body "null"
     Then verifico che la chiamata sia andata in "400" error
 
+  ##############################
+  # COMUNICAZIONE BONARIA
+  #############################
+  # Endpoint definiti in: https://github.com/pagopa/pn-templates-engine/blob/1d71146851778765cd54fa866cf5252fed85762e/README.md
 
+  @templateEngine # /templates-engine-private/v1/templates/informal/analog-communication
+  Scenario: [TEMPLATE-ENGINE_54] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - body vuoto
+    When recupero il template per "comunicazione bonaria" in lingua "italiana" con recipient Type "PF"
+    Then verifico che il template è in formato "pdf"
 
+  @templateEngine # /templates-engine-private/v1/templates/informal/email-communication-body
+  Scenario: [TEMPLATE-ENGINE_54] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - body vuoto
+    When recupero il template per "email body comunicazione bonaria" in lingua "italiana" con recipient Type "PF"
+    Then verifico che il template è in formato "html"
 
+  @templateEngine # /templates-engine-private/v1/templates/informal/email-communication-subject
+  Scenario: [TEMPLATE-ENGINE_54] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - body vuoto
+    When recupero il template per "email subject comunicazione bonaria" in lingua "italiana" con recipient Type "PF"
+    Then verifico che il template è in formato "text"
+
+  @templateEngine # /templates-engine-private/v1/templates/informal/pec-communication-body
+  Scenario: [TEMPLATE-ENGINE_54] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - body vuoto
+    When recupero il template per "pec body comunicazione bonaria" in lingua "italiana" con recipient Type "PF"
+    Then verifico che il template è in formato "html"
+
+  @templateEngine # /templates-engine-private/v1/templates/informal/pec-communication-subject
+  Scenario: [TEMPLATE-ENGINE_54] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - body vuoto
+    When recupero il template per "pec subject comunicazione bonaria" in lingua "italiana" con recipient Type "PF"
+    Then verifico che il template è in formato "text"
+
+  @templateEngine # /templates-engine-private/v1/templates/informal/io-communication
+  Scenario: [TEMPLATE-ENGINE_54] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - body vuoto
+    When recupero il template per "IO comunicazione bonaria" in lingua "italiana" con recipient Type "PF"
+    Then verifico che il template è in formato "text"
+
+  @templateEngine # /templates-engine-private/v1/templates/informal/sms-communication
+  Scenario: [TEMPLATE-ENGINE_54] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - body vuoto
+    When recupero il template per "sms comunicazione bonaria" in lingua "italiana" con recipient Type "PF"
+    Then verifico che il template è in formato "text"
