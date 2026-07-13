@@ -1,10 +1,5 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.ApiClient;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.api.RecipientReadB2BApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullNotificationSearchResponse;
@@ -15,14 +10,11 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.model.L
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffDocumentDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffFullNotificationV1;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffLegalFactId;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.NotificationStatusV26;
 import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
 import it.pagopa.pn.client.b2b.pa.domain.NotificationSearchParam;
-import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotification;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api.RecipientReadApi;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.CxTypeAuthFleet;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactCategory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -32,9 +24,18 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
+import static it.pagopa.pn.client.b2b.pa.utils.JsonDeepCopyMapper.deepCopy;
+
+/**
+ * Instrada le due ricerche notifiche (searchReceivedNotification/searchReceivedDelegatedNotification)
+ * su {@link B2BExternalRecipientSearchDelegate} o {@link InternalRecipientSearchDelegate} a seconda
+ * che l'utenza attiva sia una PG dedicata _B2B oppure no; la scelta avviene una sola volta in
+ * {@link #setBearerToken(BearerTokenType)}. Le altre operazioni (notifica completa, allegati,
+ * documenti, atti legali) non hanno un equivalente sull'openapi internal e usano sempre
+ * recipientReadB2BApi/legalFactsApi.
+ */
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
@@ -54,6 +55,10 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
     private final String pg1ClassicToken;
     private final String pg2ClassicToken;
 
+    private final RecipientSearchDelegate b2bExternalSearchDelegate;
+    private final RecipientSearchDelegate internalSearchDelegate;
+    private RecipientSearchDelegate activeSearchDelegate;
+
     public B2BRecipientExternalClientImpl(RestTemplate restTemplate,
                                           @Value("${pn.delivery.base-url}") String webBasePath,
                                           @Value("${pn.external.dest.base-url}") String b2bBasePath,
@@ -72,12 +77,14 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
         this.restTemplate = restTemplate;
         this.webBasePath = webBasePath;
         this.b2bBasePath = b2bBasePath;
-        this.bearerTokenSetted = BearerTokenType.PG_1;
         this.pg1ClassicToken = pg1ClassicToken;
         this.pg2ClassicToken = pg2ClassicToken;
         this.recipientReadB2BApi = new RecipientReadB2BApi(newApiClient(restTemplate, webBasePath, gherkinSrlBearerToken));
         this.recipientReadApi = new RecipientReadApi(createApiClient(restTemplate, webBasePath, gherkinSrlBearerToken));
         this.legalFactsApi = new LegalFactsApi(newLegalFactApiClient(restTemplate, b2bBasePath, gherkinSrlBearerToken));
+        this.b2bExternalSearchDelegate = new B2BExternalRecipientSearchDelegate(recipientReadB2BApi);
+        this.internalSearchDelegate = new InternalRecipientSearchDelegate(recipientReadApi);
+        setBearerToken(BearerTokenType.PG_1);
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken) {
@@ -127,54 +134,12 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
 
     @Override
     public LegalNotificationSearchResponse searchReceivedDelegatedNotification(Destinatario destinatario, NotificationSearchParam param) throws RestClientException {
-        String cxType = resolveActual(param.xPagopaPnCxType, destinatario.getRecipientType());
-        String cxId = resolveActual(param.xPagopaPnCxId, String.format("%s-%s", destinatario.getRecipientType(), destinatario.getUid()));
-        it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationStatusV26 statusV26 = Optional.ofNullable(param.status)
-                .map(it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationStatusV26::fromValue)
-                .orElse(null);
-        /* TODO rivedere la condizione corretta da mettere a questo if
-         *  esso deve entrare nella prima condizione soltanto in caso di PG che voglia andare a chiamare le API di destinatari strutturati
-         *  in tutti gli altri casi deve andare sulle api internal sia per PF che per PG
-         */
-        if (destinatario.getRecipientType().equals("PA")) {
-            return recipientReadB2BApi.searchReceivedDelegatedNotification(
-                    param.startDate.toString(), param.endDate.toString(), param.senderId, param.recipientId,
-                    param.group, param.iunMatch, convertStatus(NotificationStatusV26.fromValue(param.status)), param.size, param.nextPagesKey);
-        }
-        else {
-            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.LegalNotificationSearchResponse response = recipientReadApi.searchReceivedDelegatedNotification(
-                    param.xPagopaPnUid, CxTypeAuthFleet.fromValue(cxType), cxId,
-                    param.startDate, param.endDate, param.xPagopaPnCxGroups, param.senderId, param.recipientId,
-                    param.group, param.iunMatch, statusV26, param.size, param.nextPagesKey);
-            return deepCopy(response, LegalNotificationSearchResponse.class);
-        }
+        return activeSearchDelegate.searchReceivedDelegatedNotification(destinatario, param);
     }
 
     @Override
     public FullNotificationSearchResponse searchReceivedNotification(Destinatario destinatario, NotificationSearchParam param) throws RestClientException {
-        String cxType = resolveActual(param.xPagopaPnCxType, destinatario.getRecipientType());
-        String cxId = resolveActual(param.xPagopaPnCxId, String.format("%s-%s", destinatario.getRecipientType(), destinatario.getUid()));
-        /* TODO rivedere la condizione corretta da mettere a questo if
-            *  esso deve entrare nella prima condizione soltanto in caso di PG che voglia andare a chiamare le API di destinatari strutturati
-            *  in tutti gli altri casi deve andare sulle api internal sia per PF che per PG
-         */
-        if(destinatario.getRecipientType().equals("PA")) {
-            return recipientReadB2BApi.searchReceivedNotification(param.startDate.toString(), param.endDate.toString(), param.mandateId,
-                    param.senderId, param.subjectRegExp, param.iunMatch, param.size, param.nextPagesKey, param.communicationType);
-        }
-        else {
-            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.FullNotificationSearchResponse response = recipientReadApi.searchReceivedNotification(
-                    param.xPagopaPnUid, CxTypeAuthFleet.fromValue(cxType), cxId,
-                    param.startDate, param.endDate, param.xPagopaPnCxGroups, param.mandateId,
-                    param.senderId, param.subjectRegExp, param.iunMatch, param.size, param.nextPagesKey, param.communicationType);
-            return deepCopy(response, FullNotificationSearchResponse.class);
-        }
-    }
-
-    // NotificationSearchParam.ACTUAL (default quando il campo non è specificato in tabella) -> valore derivato dal destinatario;
-    // qualunque altro valore, incluso null esplicito (per simulare un campo obbligatorio mancante), passa invariato
-    private static String resolveActual(String value, String actualValue) {
-        return NotificationSearchParam.ACTUAL.equals(value) ? actualValue : value;
+        return activeSearchDelegate.searchReceivedNotification(destinatario, param);
     }
 
     @Override
@@ -202,54 +167,47 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
         switch (bearerToken) {
             case USER_1 -> {
                 this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, webBasePath, marioCucumberBearerToken));
-                this.bearerTokenSetted = BearerTokenType.USER_1;
+                activateInternal(marioCucumberBearerToken, bearerToken);
             }
             case USER_2 -> {
                 this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, webBasePath, marioGherkinBearerToken));
-                this.bearerTokenSetted = BearerTokenType.USER_2;
+                activateInternal(marioGherkinBearerToken, bearerToken);
             }
             case USER_3 -> {
                 this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, webBasePath, leonardoBearerToken));
-                this.bearerTokenSetted = BearerTokenType.USER_3;
+                activateInternal(leonardoBearerToken, bearerToken);
             }
-            case PG_1 -> {
-                this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, b2bBasePath, gherkinSrlBearerToken));
-                this.bearerTokenSetted = BearerTokenType.PG_1;
-                this.recipientReadApi.setApiClient(createApiClient(restTemplate, webBasePath, pg1ClassicToken));
-            }
+            case PG_1 -> activateInternal(pg1ClassicToken, bearerToken);
             case PG_2 -> {
-                this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, b2bBasePath, cucumberSpaBearerToken));
+                this.legalFactsApi.setApiClient(newLegalFactApiClient(restTemplate, webBasePath, pg2ClassicToken));
+                activateInternal(pg2ClassicToken, bearerToken);
+            }
+            case PG_B2B_1 -> activateB2BExternal(gherkinSrlBearerToken, bearerToken);
+            case PG_B2B_2 -> {
                 this.legalFactsApi.setApiClient(newLegalFactApiClient(restTemplate, b2bBasePath, cucumberSpaBearerToken));
-                this.recipientReadApi.setApiClient(createApiClient(restTemplate, webBasePath, pg2ClassicToken));
-                this.bearerTokenSetted = BearerTokenType.PG_2;
+                activateB2BExternal(cucumberSpaBearerToken, bearerToken);
             }
             default -> throw new IllegalStateException("Unexpected value: " + bearerToken);
         }
         return true;
     }
 
+    // utenze non _B2B (PF o PG classiche): ricerca notifiche sull'API internal
+    private void activateInternal(String token, BearerTokenType bearerToken) {
+        this.recipientReadApi.setApiClient(createApiClient(restTemplate, webBasePath, token));
+        this.activeSearchDelegate = internalSearchDelegate;
+        this.bearerTokenSetted = bearerToken;
+    }
+
+    // utenze _B2B (PG dedicate): ricerca notifiche sull'API di destinatari strutturati (b2b)
+    private void activateB2BExternal(String token, BearerTokenType bearerToken) {
+        this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, b2bBasePath, token));
+        this.activeSearchDelegate = b2bExternalSearchDelegate;
+        this.bearerTokenSetted = bearerToken;
+    }
+
     @Override
     public BearerTokenType getBearerTokenSetted() {
         return this.bearerTokenSetted;
-    }
-
-    private it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationStatusV26 convertStatus(NotificationStatusV26 status) {
-        return Optional.ofNullable(status)
-                .map(NotificationStatusV26::getValue)
-                .map(it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationStatusV26::fromValue)
-                .orElse(null);
-    }
-
-    private <T> T deepCopy(Object obj, Class<T> toClass) {
-        ObjectMapper objMapper = JsonMapper.builder()
-                .addModule(new JavaTimeModule())
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .build();
-        try {
-            String json = objMapper.writeValueAsString(obj);
-            return objMapper.readValue(json, toClass);
-        } catch (JsonProcessingException exc) {
-            throw new PnB2bException(exc.getMessage());
-        }
     }
 }

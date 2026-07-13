@@ -21,12 +21,12 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnWebMandateExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotification;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.AcceptRequestDto;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.CxTypeAuthFleet;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.MandateDto;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.OrganizationIdDto;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.UpdateRequestDto;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.UserDto;
+import it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.AcceptRequestDto;
+import it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.CxTypeAuthFleet;
+import it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.MandateDto;
+import it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.OrganizationIdDto;
+import it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.UpdateRequestDto;
+import it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.UserDto;
 import it.pagopa.pn.cucumber.steps.SendSharedContext;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.utils.notificationsearch.NotificationSearchCriteriaMapper;
@@ -61,6 +61,8 @@ import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_MULTI;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_ROOT;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_SON;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.CUCUMBER_SPA;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.CUCUMBER_SPA_B2B;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.GHERKIN_SRL_B2B;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.GHERKIN_SRL;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.MARIO_CUCUMBER;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.MARIO_GHERKIN;
@@ -133,7 +135,9 @@ public class RicezioneNotificheWebDelegheSteps {
             case MARIO_CUCUMBER -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_CUCUMBER.getTaxId();
             case MARIO_GHERKIN -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_GHERKIN.getTaxId();
             case GHERKIN_SRL -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_GHERKIN_SRL.getTaxId();
+            case GHERKIN_SRL_B2B -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_GHERKIN_SRL_B2B.getTaxId();
             case CUCUMBER_SPA -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_CUCUMBER_SPA.getTaxId();
+            case CUCUMBER_SPA_B2B -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_CUCUMBER_SPA_B2B.getTaxId();
             case "Utente errato" -> "asdasdasd";
             default -> throw new IllegalArgumentException();
         };
@@ -147,6 +151,9 @@ public class RicezioneNotificheWebDelegheSteps {
             case "gherkinsrl" -> createUserDto(GHERKIN_SRL, "gherkin", "srl", sharedSteps.getDestinatarioRegistry().DESTINATARIO_GHERKIN_SRL.getTaxId(), GHERKIN_SRL, false);
             case "cucumberspa" ->
                     createUserDto(CUCUMBER_SPA, "cucumber", "spa", sharedSteps.getDestinatarioRegistry().DESTINATARIO_CUCUMBER_SPA.getTaxId(), CUCUMBER_SPA, false);
+            case "gherkinsrlb2b" -> createUserDto(GHERKIN_SRL_B2B, "gherkin", "srl", sharedSteps.getDestinatarioRegistry().DESTINATARIO_GHERKIN_SRL_B2B.getTaxId(), GHERKIN_SRL_B2B, false);
+            case "cucumberspab2b" ->
+                    createUserDto(CUCUMBER_SPA_B2B, "cucumber", "spa", sharedSteps.getDestinatarioRegistry().DESTINATARIO_CUCUMBER_SPA_B2B.getTaxId(), CUCUMBER_SPA_B2B, false);
             default -> throw new IllegalArgumentException();
         };
     }
@@ -154,20 +161,28 @@ public class RicezioneNotificheWebDelegheSteps {
     public boolean setBearerToken(String user) {
         return switch (user.trim()) {
             case MARIO_CUCUMBER -> {
-                setRequiredAPI(false);
+//                setRequiredAPI(false);
                 yield webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
             }
             case MARIO_GHERKIN -> {
-                setRequiredAPI(false);
+//                setRequiredAPI(false);
                 yield webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
             }
             case GHERKIN_SRL -> {
-                setRequiredAPI(isUseB2BFlag);
+//                setRequiredAPI(false);
                 yield webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
             }
             case CUCUMBER_SPA -> {
-                setRequiredAPI(isUseB2BFlag);
+//                setRequiredAPI(false);
                 yield webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+            }
+            case GHERKIN_SRL_B2B -> {
+//                setRequiredAPI(true);
+                yield webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_B2B_1);
+            }
+            case CUCUMBER_SPA_B2B -> {
+//                setRequiredAPI(true);
+                yield webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_B2B_2);
             }
             default -> throw new IllegalArgumentException();
         };

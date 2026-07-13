@@ -42,11 +42,11 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
     Examples:
       | tipo | destinatario   |
       | PF   | Mario Cucumber |
-#      | PG   | CucumberSpa    |
+      | PG   | CucumberSpa    |
 
   #CASO DI TEST 4.1 - communicationType = INFORMAL -> la notifica bonaria è presente
   @letturaDestinatario @useB2B
-  Scenario Outline: [RICERCA_RICEVUTE_4] Come destinatario ricerco le notifiche ricevute di tipo INFORMAL e trovo la notifica bonaria
+  Scenario Outline: [RICERCA_RICEVUTE_4] Come destinatario <tipo> ricerco le notifiche ricevute di tipo INFORMAL e trovo la notifica bonaria
     When viene inviata una nuova notifica bonaria
     And si verifica che la notifica bonaria sia in stato "ACCEPTED"
     Given "<destinatario>" visualizza l'elenco delle notifiche per comune "Comune_Multi"
@@ -59,11 +59,12 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
     Examples:
       | tipo | destinatario   |
       | PF   | Mario Cucumber |
+      | PG   | CucumberSpa    |
 
 
   #CASO DI TEST 4.1 - communicationType = LEGAL -> la notifica bonaria non è presente
   @letturaDestinatario @useB2B
-  Scenario: [RICERCA_RICEVUTE_5] Come destinatario ricerco le notifiche ricevute di tipo LEGAL e non trovo la notifica bonaria
+  Scenario Outline: [RICERCA_RICEVUTE_5] Come destinatario <tipo> ricerco le notifiche ricevute di tipo LEGAL e non trovo la notifica bonaria
     When viene inviata una nuova notifica bonaria
     And si verifica che la notifica bonaria sia in stato "ACCEPTED"
     Given "<destinatario>" visualizza l'elenco delle notifiche per comune "Comune_Multi"
@@ -72,10 +73,14 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
       | communicationType | LEGAL      |
     And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
       | communicationType | LEGAL |
+    Examples:
+      | tipo | destinatario   |
+      | PF   | Mario Cucumber |
+      | PG   | CucumberSpa    |
 
   #CASO DI TEST 4.1 - communicationType assente -> di default vengono cercate solo le LEGAL
   @letturaDestinatario
-  Scenario: [RICERCA_RICEVUTE_6] Come destinatario ricerco le notifiche ricevute senza specificare communicationType e di default non trovo la notifica bonaria
+  Scenario Outline: [RICERCA_RICEVUTE_6] Come destinatario <tipo> ricerco le notifiche ricevute senza specificare communicationType e di default non trovo la notifica bonaria
     When viene inviata una nuova notifica bonaria
     And si verifica che la notifica bonaria sia in stato "ACCEPTED"
     Given "<destinatario>" visualizza l'elenco delle notifiche per comune "Comune_Multi"
@@ -83,6 +88,10 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
       | endDate   | 2026-07-09 |
     And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
       | communicationType | LEGAL |
+    Examples:
+      | tipo | destinatario   |
+      | PF   | Mario Cucumber |
+      | PG   | CucumberSpa    |
 
   #CASO DI TEST 4.1 - solo campi obbligatori valorizzati correttamente
   @letturaDestinatario
@@ -94,7 +103,6 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
       | endDate   | 2026-07-09 |
     And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
       | communicationType | LEGAL |
-
     Examples:
       | tipo | destinatario   |
       | PF   | Mario Cucumber |
@@ -114,11 +122,11 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
       | startDate       |
       | endDate         |
 
-  @deleghe1 @AOO_UO @useB2B
-  Scenario: [B2B-AOO-UO_MANDATE_2] Invio notifica digitale altro destinatario e recupero AAR e Attestazione Opponibile positivo
-#    Given "Mario Cucumber" rifiuta se presente la delega ricevuta "Mario Gherkin"
-#    And "Mario Cucumber" viene delegato da "Mario Gherkin" per comune "Comune_Multi"
-#    And "Mario Cucumber" accetta la delega "Mario Gherkin"
+  @deleghe1 @useB2B
+  Scenario: [B2B-AOO-UO_MANDATE_2] Un delegato riceve una notifica legale e la ricerca delle notifiche ricevute lato delegato restituisce le notifiche attese dei criteri di ricerca
+    Given "Mario Cucumber" rifiuta se presente la delega ricevuta "Mario Gherkin"
+    And "Mario Cucumber" viene delegato da "Mario Gherkin" per comune "Comune_Multi"
+    And "Mario Cucumber" accetta la delega "Mario Gherkin"
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo         |
@@ -144,8 +152,9 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
       | sender | :sender |
 
 
-  @deleghe1 @AOO_UO @useB2B
-  Scenario: [B2B-AOO-UO_MANDATE_2AA] Invio notifica digitale altro destinatario e recupero AAR e Attestazione Opponibile positivo
+  @deleghe1 @useB2B
+  Scenario: [B2B-AOO-UO_MANDATE_2AA] Un delegato tenta di recuperare le notifiche ricevute di un delegante per il quale ha accettato la delega e si
+    aspetta di ricevere le notifiche attese dei criteri di ricerca
     Given "Mario Cucumber" rifiuta se presente la delega ricevuta "Mario Gherkin"
     And "Mario Cucumber" viene delegato da "Mario Gherkin" per comune "Comune_Multi"
     And "Mario Cucumber" accetta la delega "Mario Gherkin"

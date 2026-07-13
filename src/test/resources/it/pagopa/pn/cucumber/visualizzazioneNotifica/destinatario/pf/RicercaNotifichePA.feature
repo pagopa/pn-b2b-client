@@ -19,7 +19,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
 
   #CASO DI TEST 2.1 - tutti i campi (obbligatori e opzionali) valorizzati correttamente
   @letturaDestinatario
-  Scenario: [MITTENTE_RICERCA_NOTIFICHE_1] Come destinatario <tipo> ricerco le notifiche ricevute con tutti i filtri valorizzati
+  Scenario: [MITTENTE_RICERCA_NOTIFICHE_1] Come mittente recupero le notifiche inviate filtrando per tutti i campi obbligatori e opzionali
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di Palermo          |
@@ -70,14 +70,13 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
 
   @letturaDestinatario
   Scenario: [MITTENTE_RICERCA_NOTIFICHE_2] Viene inviata una notifica legale con gruppo e si recuperano le notifiche inviate dal mittente filtrando per gruppo
-#    Given viene generata una nuova notifica
-#      | subject            | invio notifica GA cucumber |
-#      | senderDenomination | Comune di Palermo          |
-#    And destinatario Mario Gherkin e:
-#      | payment_pagoPaForm | SI               |
-#      | payment_f24        | PAYMENT_F24_FLAT |
-#    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And imposto lo iun di SharedSteps a "UKYJ-KMYT-REWH-202607-Q-1" e la pa a "Comune_Multi"
+    Given viene generata una nuova notifica
+      | subject            | invio notifica GA cucumber |
+      | senderDenomination | Comune di Palermo          |
+    And destinatario Mario Gherkin e:
+      | payment_pagoPaForm | SI               |
+      | payment_f24        | PAYMENT_F24_FLAT |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono recuperate le notifiche inviate dal mittente "Comune_Multi"
       | startDate         | 2026-07-07 |
       | endDate           | 2026-07-09 |
@@ -109,7 +108,8 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
     #######################
 
   @letturaDestinatario
-  Scenario: [MITTENTE_RICERCA_NOTIFICHE_BONARIE_1] Viene inviata una notifica legale con gruppo e si recuperano le notifiche inviate dal mittente filtrando per gruppo
+  Scenario: [MITTENTE_RICERCA_NOTIFICHE_BONARIE_1] Vengono inviate due notifiche bonarie con esiti differenti
+  e si recuperano le notifiche inviate dal mittente filtrando per specifici criteri
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con i seguenti parametri
       | campaignId | campaign-1 |

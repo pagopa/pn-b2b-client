@@ -18,7 +18,9 @@ public class Costanti {
     public static final String MARIO_CUCUMBER = "Mario Cucumber";
     public static final String GHERKIN_SPA = "GherkinSpa";
     public static final String CUCUMBER_SPA = "CucumberSpa";
+    public static final String CUCUMBER_SPA_B2B = "CucumberSpaB2B";
     public static final String GHERKIN_SRL = "GherkinSrl";
+    public static final String GHERKIN_SRL_B2B = "GherkinSrlB2B";
     public static final String CUCUMBER_SRL = "CucumberSrl";
     public static final String GHERKIN_ANALOGIC = "Gherkin Analogic";
     public static final String CUCUMBER_ANALOGIC = "Cucumber Analogic";

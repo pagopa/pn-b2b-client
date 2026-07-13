@@ -8,7 +8,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationsResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffLegalNotificationsResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationStatusV26;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.payment.BffPaymentInfoItem;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.payment.BffPaymentRequest;
@@ -189,7 +189,7 @@ public class InvioNotificheB2bSteps {
 
     @And("la notifica può essere correttamente recuperata dal sistema tramite codice IUN web PA")
     public void notificationCanBeRetrievedWithIUNWebPA() {
-        AtomicReference<BffNotificationsResponse> notificationByIun = new AtomicReference<>();
+        AtomicReference<BffLegalNotificationsResponse> notificationByIun = new AtomicReference<>();
 
         assertThat(sharedSteps.getSentNotificationLastVersion())
                 .as("La notifica inviata non deve essere nulla prima di recuperare il codice IUN")
@@ -335,7 +335,7 @@ public class InvioNotificheB2bSteps {
             default -> throw new IllegalArgumentException();
         };
 
-        AtomicReference<BffNotificationsResponse> notificationByIun = new AtomicReference<>();
+        AtomicReference<BffLegalNotificationsResponse> notificationByIun = new AtomicReference<>();
         try {
             assertThatCode(() ->
                     notificationByIun.set(

@@ -38,7 +38,7 @@ import static it.pagopa.pn.client.b2b.pa.domain.Costanti.MARIO_CUCUMBER;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.MARIO_GHERKIN;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SIGNOR_CASUALE;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SIGNOR_GENERATO;
-import static it.pagopa.pn.cucumber.utils.FiscalCodeGenerator.generateCF;
+import static it.pagopa.pn.client.b2b.pa.utils.FiscalCodeGenerator.generateCF;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.generateRandomNumber;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 

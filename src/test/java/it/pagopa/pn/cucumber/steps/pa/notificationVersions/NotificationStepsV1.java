@@ -7,7 +7,7 @@ import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.NotificationUtilsV1;
 import it.pagopa.pn.client.b2b.pa.domain.Costanti;
 import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
-import it.pagopa.pn.cucumber.utils.FiscalCodeGenerator;
+import it.pagopa.pn.client.b2b.pa.utils.FiscalCodeGenerator;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;

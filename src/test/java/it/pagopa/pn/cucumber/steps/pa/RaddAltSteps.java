@@ -18,7 +18,7 @@ import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
 import it.pagopa.pn.cucumber.utils.Compress;
-import it.pagopa.pn.cucumber.utils.FiscalCodeGenerator;
+import it.pagopa.pn.client.b2b.pa.utils.FiscalCodeGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;

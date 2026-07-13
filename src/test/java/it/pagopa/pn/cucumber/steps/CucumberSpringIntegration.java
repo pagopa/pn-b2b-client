@@ -107,6 +107,7 @@ import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceValidationSta
 import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceValidationStatusNoAcceptedV29;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceValidationStatusV29;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceWebhookV29;
+import it.pagopa.pn.client.b2b.pa.provider.DestinatarioRegistry;
 import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.client.b2b.pa.service.IBffMandateServiceApi;
@@ -123,6 +124,8 @@ import it.pagopa.pn.client.b2b.pa.service.impl.IPnInteropProbingClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.IPnLegalPersonAuthClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.IPnLegalPersonVirtualKeyServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.IPnTosPrivacyClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.MandateB2BExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.MandateInternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.MandateReverseServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PaperCalculatorClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnApiKeyManagerExternalClientImpl;
@@ -183,7 +186,7 @@ import it.pagopa.pn.cucumber.steps.recipient.OtpCodeService;
 import it.pagopa.pn.cucumber.steps.templateEngine.TemplateConfiguration;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextFactory;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
-import it.pagopa.pn.cucumber.steps.utilitySteps.TaxIdConfiguration;
+import it.pagopa.pn.client.b2b.pa.config.springconfig.TaxIdConfiguration;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import it.pagopa.pn.cucumber.utils.notificationsearch.NotificationSearchCriteriaMapper;
 import it.pagopa.pn.cucumber.utils.validator.SchemaValidator;
@@ -205,6 +208,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnWebhookB2bExternalClientImpl.class,
         PnWebMandateExternalClientImpl.class,
         B2bMandateServiceClientImpl.class,
+        MandateInternalClientImpl.class,
+        MandateB2BExternalClientImpl.class,
         PnExternalServiceClientImpl.class,
         PnWebUserAttributesInternalClientImpl.class,
         PnAppIOB2bExternalClientImpl.class,
@@ -378,6 +383,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         DynamoDbService.class,
         AwsConfig.class,
         SenderInfoProvider.class,
+        DestinatarioRegistry.class,
         CacheConfig.class,
         AooUoIdsClientImpl.class,
         AooUoIdsApi.class,
