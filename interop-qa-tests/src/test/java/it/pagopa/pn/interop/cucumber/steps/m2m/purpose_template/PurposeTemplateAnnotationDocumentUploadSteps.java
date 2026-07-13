@@ -5,7 +5,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.conf.UploadDocumentFilesProperties;
-import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
+import it.pagopa.interop.purpose.service.IM2MPurposeTemplateClient;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.upload.DocumentUploadSupport;
@@ -33,7 +33,7 @@ public class PurposeTemplateAnnotationDocumentUploadSteps {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         PollingService pollingService = sharedStepsContext.getPollingService();
-        IPurposeTemplateClient purposeTemplateClient = clientTokenConfigurator.getPurposeTemplateClient();
+        IM2MPurposeTemplateClient purposeTemplateClient = clientTokenConfigurator.getM2mPurposeTemplateClient();
 
         this.uploadSupport = new DocumentUploadSupport(uploadDocumentFilesProperties);
         this.uploadOps = new PurposeTemplateAnnotationDocumentUploadOps(

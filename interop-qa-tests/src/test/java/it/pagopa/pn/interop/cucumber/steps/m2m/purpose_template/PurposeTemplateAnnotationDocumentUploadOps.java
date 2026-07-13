@@ -1,8 +1,8 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.purpose_template;
 
 import it.pagopa.interop.authorization.service.utils.PollingService;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerAnnotationDocument;
-import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Document;
+import it.pagopa.interop.purpose.service.IM2MPurposeTemplateClient;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.upload.DocumentUploadOps;
 import it.pagopa.pn.interop.cucumber.steps.common.upload.UploadOperationResult;
@@ -15,12 +15,12 @@ import java.util.UUID;
 final class PurposeTemplateAnnotationDocumentUploadOps implements DocumentUploadOps {
 
     private final SharedStepsContext sharedStepsContext;
-    private final IPurposeTemplateClient purposeTemplateClient;
+    private final IM2MPurposeTemplateClient purposeTemplateClient;
     private final PollingService pollingService;
 
     PurposeTemplateAnnotationDocumentUploadOps(
         SharedStepsContext sharedStepsContext,
-        IPurposeTemplateClient purposeTemplateClient,
+        IM2MPurposeTemplateClient purposeTemplateClient,
         PollingService pollingService
     ) {
         this.sharedStepsContext = sharedStepsContext;
@@ -34,7 +34,7 @@ final class PurposeTemplateAnnotationDocumentUploadOps implements DocumentUpload
         UUID answerId = requireRiskAnalysisAnswerId();
 
         HttpStatus uploadStatus = sharedStepsContext.getHttpCallExecutor().performCall(
-            () -> purposeTemplateClient.addRiskAnalysisTemplateAnswerAnnotationDocument(
+            () -> purposeTemplateClient.uploadRiskAnalysisTemplateAnswerAnnotationDocument(
                 purposeTemplateId,
                 answerId,
                 prettyName,
@@ -51,7 +51,7 @@ final class PurposeTemplateAnnotationDocumentUploadOps implements DocumentUpload
 
     @Override
     public UUID extractDocumentId(Object uploadResponse) {
-        if (uploadResponse instanceof RiskAnalysisTemplateAnswerAnnotationDocument document) {
+        if (uploadResponse instanceof Document document) {
             return document.getId();
         }
         return null;
@@ -60,13 +60,11 @@ final class PurposeTemplateAnnotationDocumentUploadOps implements DocumentUpload
     @Override
     public void pollDocumentAvailability(UUID documentId) {
         UUID purposeTemplateId = requirePurposeTemplateId();
-        UUID answerId = requireRiskAnalysisAnswerId();
 
         pollingService.makePolling(
             () -> sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> purposeTemplateClient.getRiskAnalysisTemplateAnswerAnnotationDocument(
                     purposeTemplateId,
-                    answerId,
                     documentId
                 )
             ),
@@ -91,4 +89,3 @@ final class PurposeTemplateAnnotationDocumentUploadOps implements DocumentUpload
         return answerId;
     }
 }
-
