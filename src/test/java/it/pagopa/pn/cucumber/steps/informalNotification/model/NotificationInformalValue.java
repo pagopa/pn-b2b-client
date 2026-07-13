@@ -42,7 +42,12 @@ public enum NotificationInformalValue {
     DOCUMENT_TITLE("document_title", null, false),
     DOCUMENT_DOCIDX("document_docidx", null, false),
 
-    NOTIFICATION_ADDITIONAL_LANGUAGE("additionalLanguages", null, false),
+    //NOTIFICATION_ADDITIONAL_LANGUAGE("additionalLanguages", null, false),
+    RECIPIENT_ADDITIONAL_LANGUAGES("additionalLanguages", null, false),
+
+    PAYMENT_AMOUNT("payment_amount", "100", false),
+    PAYMENT_DUE_DATE("payment_due_date", null, false),
+
 
     //ATTACHMENT_SHA256("attachment_sha256","1QKD/Ks6BohyQ+bgMxHf9NrpNhVmGUPxRYE1aerU4JQ=", false),
     //ATTACHMENT_KEY("attachment_key", "PN_NOTIFICATION_ATTACHMENTS-d7ec10e00bf847fcac1e4c70ea6e2afd.pdf", false),
