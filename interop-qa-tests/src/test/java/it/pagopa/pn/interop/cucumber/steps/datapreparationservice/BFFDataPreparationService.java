@@ -648,6 +648,11 @@ public class BFFDataPreparationService {
         // Add interface to secondDescriptor
         addInterfaceToDescriptor(eServiceId, secondDescriptorId);
 
+        // Add callback interface to secondDescriptor
+        if (addCallbackInterface != null && addCallbackInterface) {
+            addCallbackInterfaceToDescriptor(eServiceId, secondDescriptorId);
+        }
+
         // Publish secondDescriptor
         publishDescriptor(eServiceId, secondDescriptorId);
 
