@@ -205,7 +205,7 @@ public class AgreementActivateSteps {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient()
-                        .unsuspendAgreement(sharedStepsContext.getAgreementId()));
+                        .unsuspendAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId()));
     }
 
     @When("l'utente {string} di {string} richiede una operazione di attivazione di quella richiesta di fruizione")
