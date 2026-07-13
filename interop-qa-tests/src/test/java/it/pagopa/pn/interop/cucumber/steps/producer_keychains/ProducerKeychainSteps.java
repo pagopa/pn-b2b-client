@@ -126,8 +126,9 @@ public class ProducerKeychainSteps extends AbstractCommonSteps<ProducerKeychain,
             .getFirstProducerKeychainId();
 
         delayService.delay();
-        producerKeychainClient.getProducerKeysIds(producerKeychainId).forEach(
-            key -> producerKeychainClient.deleteProducerKey(producerKeychainId, key));
+        List<String> keyIds = producerKeychainClient.getProducerKeysIds(producerKeychainId);
+        getContext().getProducerKeychainCommonContext().setDeletedKeyIds(keyIds);
+        keyIds.forEach(key -> producerKeychainClient.deleteProducerKey(producerKeychainId, key));
 
         clientTokenConfigurator.setBearerToken(getContext().getUserToken());
     }

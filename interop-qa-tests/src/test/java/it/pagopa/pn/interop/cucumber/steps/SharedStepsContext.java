@@ -209,6 +209,12 @@ public class SharedStepsContext implements ISharedContext {
     }
 
     @Override
+    public String getDeletedKeyId() {
+        int lastIndex = this.producerKeychainCommonContext.getDeletedKeyIds().size() - 1;
+        return this.producerKeychainCommonContext.getDeletedKeyIds().get(lastIndex);
+    }
+
+    @Override
     public String getNewKeyId() {
         return this.clientCommonContext.getNewKeyId();
     }

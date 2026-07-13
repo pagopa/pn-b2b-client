@@ -20,6 +20,7 @@ public interface ISharedContext {
     String getDocumentName();
     String getAttributeName();
     String getKeychainId();
+    String getDeletedKeyId();
     String getKeychainName();
     String getProducerKeyName();
     String getClientId();
