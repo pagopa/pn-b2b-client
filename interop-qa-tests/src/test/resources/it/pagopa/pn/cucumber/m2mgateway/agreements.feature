@@ -78,7 +78,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
     And "PA3" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
-    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And l'utente è un m2m-admin dell'ente delegato
     When l'utente m2m richiede una operazione di approvazione della richiesta di fruizione con id "%actual" e delegationId "%actual"
     Then si ottiene status code 200
     And la richiesta di fruizione si trova in stato "ACTIVE"
@@ -143,7 +143,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     And l'ente delegante "PA2"
     And l'ente "PA2" richiede la creazione di una delega per l'ente "PA1"
     And "GSP" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
-    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente è un m2m-admin dell'ente delegato
     When l'utente m2m richiede una operazione di approvazione della richiesta di fruizione con id "%actual" e delegationId "%actual"
     Then si ottiene status code 403
     And la richiesta di fruizione si trova in stato "PENDING"
@@ -159,7 +159,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     And l'ente "PA2" accetta la delega
     And "PA3" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
     And l'ente "PA1" con ruolo "admin" revoca la delega
-    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And l'utente è un m2m-admin dell'ente delegato
     When l'utente m2m richiede una operazione di riattivazione della richiesta di fruizione con id "%actual" e delegationId "%actual"
     Then si ottiene status code 403
     And la richiesta di fruizione si trova in stato "SUSPENDED"
@@ -172,7 +172,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     And l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
     And "PA3" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
-    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And l'utente è un m2m-admin dell'ente delegato
     When l'utente m2m richiede una operazione di approvazione della richiesta di fruizione con id "%actual" e delegationId "%random"
     Then si ottiene status code 404
     And la richiesta di fruizione si trova in stato "SUSPENDED"
@@ -237,7 +237,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     And l'ente "PA2" accetta la delega in erogazione con successo
     And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'ente delegato richiede una operazione di sospensione di quella richiesta di fruizione
-    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And l'utente è un m2m-admin dell'ente delegato
     When l'utente m2m richiede una operazione di riattivazione della richiesta di fruizione con id "%actual" e delegationId "%actual"
     Then si ottiene status code 200
     And la richiesta di fruizione si trova in stato "ACTIVE"
@@ -375,7 +375,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'ente delegato richiede una operazione di sospensione di quella richiesta di fruizione
     And l'ente "PA1" con ruolo "admin" revoca la delega
-    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And l'utente è un m2m-admin dell'ente delegato
     When l'utente m2m richiede una operazione di riattivazione della richiesta di fruizione con id "%actual" e delegationId "%actual"
     Then si ottiene status code 403
     And la richiesta di fruizione si trova in stato "SUSPENDED"
@@ -392,7 +392,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     And l'ente delegato accetta la delega in fruizione
     And l'ente delegato richiede una operazione di sospensione di quella richiesta di fruizione
     And l'ente delegante con ruolo "admin" revoca la delega in fruizione
-    And l'utente è un "admin" di "PA3" con ruolo M2M m2m-admin
+    And l'utente è un m2m-admin dell'ente delegato
     When l'utente m2m richiede una operazione di riattivazione della richiesta di fruizione con id "%actual" e delegationId "%actual"
     Then si ottiene status code 403
     And la richiesta di fruizione si trova in stato "SUSPENDED"
@@ -406,7 +406,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'ente delegato richiede una operazione di sospensione di quella richiesta di fruizione
-    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And l'utente è un m2m-admin dell'ente delegato
     When l'utente m2m richiede una operazione di riattivazione della richiesta di fruizione con id "%actual" e delegationId "%random"
     Then si ottiene status code 404
     And la richiesta di fruizione si trova in stato "SUSPENDED"
