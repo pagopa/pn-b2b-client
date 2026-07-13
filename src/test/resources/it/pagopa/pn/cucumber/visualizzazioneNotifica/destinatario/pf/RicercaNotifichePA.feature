@@ -93,7 +93,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
   @letturaDestinatario
   Scenario Outline: [MITTENTE_RICERCA_NOTIFICHE_3] Si tenta il recupero delle notifiche inviate dal mittente quando manca un campo obbligatorio
     And vengono recuperate le notifiche inviate dal mittente "Comune_Multi"
-      | <campo>         | $NULL |
+      | <campo> | $NULL |
     Then si verifica che sia stato restituito un errore di tipo "BAD REQUEST"
     Examples:
       | campo           |
@@ -132,20 +132,20 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
     And si verifica che la notifica bonaria sia in stato "REFUSED"
 
     And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
-      | startDate  | 2026-07-07 |
-      | endDate    | 2026-07-09 |
-      | campaignId | campaign-1 |
-      | senderId   | :informal_senderId  |
-      | size       | 50         |
+      | startDate  | 2026-07-07         |
+      | endDate    | 2026-07-09         |
+      | campaignId | campaign-1         |
+      | senderId   | :informal_senderId |
+      | size       | 50                 |
     And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
       | sentAt     | 2026-07-07, 2026-07-09 |
       | campaignId | campaign-1             |
     And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
-      | startDate | 2026-07-07 |
-      | endDate   | 2026-07-09 |
-      | status    | REFUSED    |
-      | senderId  | :informal_senderId  |
-      | size      | 50         |
+      | startDate | 2026-07-07         |
+      | endDate   | 2026-07-09         |
+      | status    | REFUSED            |
+      | senderId  | :informal_senderId |
+      | size      | 50                 |
     And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
       | sentAt             | 2026-07-07, 2026-07-09 |
       | notificationStatus | REFUSED                |
@@ -158,4 +158,18 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
     And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
       | sentAt    | 2026-07-07, 2026-07-09 |
       | delivered | true                   |
+
+  @letturaDestinatario
+  Scenario Outline: [MITTENTE_RICERCA_NOTIFICHE_BONARIE_1] Si tenta il recupero delle notifiche bonarie inviate dal mittente quando manca un campo obbligatorio
+    And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
+      | <campo> | $NULL |
+    Then si verifica che sia stato restituito un errore di tipo "BAD REQUEST"
+    Examples:
+      | campo           |
+      | xPagopaPnUid    |
+      | xPagopaPnCxType |
+      | xPagopaPnCxId   |
+      | startDate       |
+      | endDate         |
+      | campaignId      |
 
