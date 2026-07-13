@@ -45,7 +45,7 @@ Feature: Clonazione di un e-service
       | ente | ruolo | statoDescrittore | risultato |
       | PA1  | admin | SUSPENDED        | 200       |
 
-  Scenario: [ESERVICE_CLONING_2] La clonazione di un e-service con un nome di lunghezza massima (60 caratteri) genera un nuovo e-service con un nome che non supera i 60 caratteri, aggiungendo al nome originale " - clone - " seguito dalla data e ora della clonazione;
+  Scenario: [ESERVICE_CLONING_2] La clonazione di un e-service con un nome di lunghezza massima (60 caratteri) genera un nuovo e-service con un nome che non supera i 60 caratteri, aggiungendo al nome originale ' - clone - ' seguito dalla data e ora della clonazione;
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And l'utente aggiorna il nome dell'e-service con un valore di lunghezza 60 caratteri

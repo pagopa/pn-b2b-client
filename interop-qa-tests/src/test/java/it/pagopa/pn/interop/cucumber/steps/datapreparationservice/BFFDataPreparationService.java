@@ -798,7 +798,7 @@ public class BFFDataPreparationService {
         TemplateInstanceInterfaceRESTSeed seed = new TemplateInstanceInterfaceRESTSeed()
             .contactName("Some contact name")
             .contactEmail("some@contact-email.it")
-            .addServerUrlsItem(new TemplateInstanceInterfaceServerUrlSeed().url(URI.create("http://www.some.url.it")));
+            .addServerUrlsItem(URI.create("http://www.some.url.it"));
         httpCallExecutor.performCall(() -> eServiceClient.addEServiceTemplateInstanceInterfaceRestWithHttpInfo(eServiceId, descriptorId, seed));
         assertValidResponse();
 
