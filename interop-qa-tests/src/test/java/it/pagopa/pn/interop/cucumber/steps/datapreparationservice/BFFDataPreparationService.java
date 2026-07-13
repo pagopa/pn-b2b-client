@@ -649,6 +649,11 @@ public class BFFDataPreparationService {
         // Add interface to secondDescriptor
         addInterfaceToDescriptor(eServiceId, secondDescriptorId);
 
+        // Add callback interface to secondDescriptor
+        if (addCallbackInterface != null && addCallbackInterface) {
+            addCallbackInterfaceToDescriptor(eServiceId, secondDescriptorId);
+        }
+
         // Publish secondDescriptor
         publishDescriptor(eServiceId, secondDescriptorId);
 
@@ -794,7 +799,7 @@ public class BFFDataPreparationService {
         TemplateInstanceInterfaceRESTSeed seed = new TemplateInstanceInterfaceRESTSeed()
             .contactName("Some contact name")
             .contactEmail("some@contact-email.it")
-            .addServerUrlsItem(new TemplateInstanceInterfaceServerUrlSeed().url(URI.create("http://www.some.url.it")));
+            .addServerUrlsItem(URI.create("http://www.some.url.it"));
         httpCallExecutor.performCall(() -> eServiceClient.addEServiceTemplateInstanceInterfaceRestWithHttpInfo(eServiceId, descriptorId, seed));
         assertValidResponse();
 

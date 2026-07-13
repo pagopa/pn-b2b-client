@@ -200,14 +200,6 @@ public class AgreementActivateSteps {
                         .activateAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId()));
     }
 
-    @When("l'utente richiede una operazione di riattivazione di quella richiesta di fruizione")
-    public void userRequiresAgreementReactivation() {
-        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-        sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getAgreementClient()
-                        .unsuspendAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId()));
-    }
-
     @When("l'utente {string} di {string} richiede una operazione di attivazione di quella richiesta di fruizione")
     public void userRequiresAgreementActivation(String role, String tenant) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getIdentityService().getToken(tenant, role));

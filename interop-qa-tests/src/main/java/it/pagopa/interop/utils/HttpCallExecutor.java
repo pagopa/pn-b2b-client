@@ -1,6 +1,7 @@
 package it.pagopa.interop.utils;
 
 import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.common.interceptor.dpop.IntegrityValidationInterceptor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +39,9 @@ public class HttpCallExecutor implements IHttpExecutor {
             errorMessage = null;
         } catch (HttpStatusCodeException e) {
             responseStatus = e.getStatusCode();
+            errorMessage = e.getMessage();
+        } catch (IntegrityValidationInterceptor.IntegrityValidationException e) {
+            responseStatus = e.getHttpStatus();
             errorMessage = e.getMessage();
         }
         return responseStatus;
