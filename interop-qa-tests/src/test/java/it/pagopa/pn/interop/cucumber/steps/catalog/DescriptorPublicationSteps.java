@@ -129,6 +129,18 @@ public class DescriptorPublicationSteps {
                 sharedStepsContext.getEServicesCommonContext());
     }
 
+    @When("l'utente ha pubblicato l'e-service")
+    public void userHasPublishedEService() {
+        userPublishDescriptor();
+        sharedStepsContext.getPollingService().makePolling(
+                () -> clientTokenConfigurator.getProducerClient().getProducerEServiceDescriptor(
+                        sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                        sharedStepsContext.getEServicesCommonContext().getDescriptorId()),
+                res -> res.getState() == EServiceDescriptorState.PUBLISHED,
+                "There was an error while retrieving the producer e-service descriptor in published state"
+        );
+    }
+
     public static void publishDescriptor(IHttpExecutor httpExecutor, IEServiceClient client, EServicesCommonContext context) {
         httpExecutor.performCall(
                 () -> client.publishDescriptor(

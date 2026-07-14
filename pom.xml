@@ -63,7 +63,7 @@
         <open.api.version.external.channels>develop</open.api.version.external.channels>
         <open.api.version.external.registries>v2.4.1</open.api.version.external.registries>
         <open.api.version.paper.channel>develop</open.api.version.paper.channel>
-        <open.api.version.external.bff>v1.11.0</open.api.version.external.bff>
+        <open.api.version.external.bff>v1.19.0</open.api.version.external.bff>
     </properties>
 
     <dependencies>
@@ -706,6 +706,38 @@
                             </configOptions>
                             <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api</apiPackage>
                             <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model</modelPackage>
+                        </configuration>
+                    </execution>
+
+                    <!--internal informal -->
+                    <execution>
+                        <id>generate-internal-informal-client-b2b-pa</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/refs/tags/v2.25.0/docs/openapi/api-internal-b2b-informal-pa.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.api</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                            <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.api</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model</modelPackage>
                         </configuration>
                     </execution>
 
@@ -1634,6 +1666,41 @@
                             </configOptions>
                             <apiPackage>it.pagopa.pn.client.web.generated.openapi.clients.privateDeliveryPush.api_v26</apiPackage>
                             <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.privateDeliveryPush.model_v26</modelPackage>
+                        </configuration>
+                    </execution>
+
+                    <!--private delivery  -->
+                    <execution>
+                        <id>generate-private-delivery</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/refs/tags/v2.25.0/docs/openapi/api-private.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <importMappings>
+                                FullSentNotificationV28=it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28
+                            </importMappings>
+                            <configOptions>
+                                <apiPackage>it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.api</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.model</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                            <apiPackage>it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.api</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.model</modelPackage>
                         </configuration>
                     </execution>
 
