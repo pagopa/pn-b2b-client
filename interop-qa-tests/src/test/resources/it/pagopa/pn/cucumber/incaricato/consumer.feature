@@ -960,7 +960,7 @@ Feature: Test API Availability in Use of E-Service
       | Privato       | PA2            | 200         |
       | PA3           | PA2            | 200         |
 
-  @sad-path
+  @sad-path @deleghe2
   Scenario: [DELEGATIONS_ACCESS_CONTROL_1] Un utente delegante con ruolo api non può visualizzare l'elenco delle deleghe conferite
     Given "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
     And l'ente delegato "PA2"
@@ -972,7 +972,7 @@ Feature: Test API Availability in Use of E-Service
     When l'ente delegante visualizza l'elenco delle deleghe conferite
     Then si ottiene status code 403
 
-  @sad-path
+  @sad-path @deleghe2
   Scenario: [DELEGATIONS_ACCESS_CONTROL_2] Un utente delegato con ruolo api non può visualizzare l'elenco delle deleghe ricevute
     Given "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
     And l'ente delegato "PA2"
