@@ -232,7 +232,7 @@ Feature: Gestione degli attributi verificati degli e-service templates templates
     Given l'utente è un "admin" di "PA2" con ruolo M2M m2m
     When l'utente tenta di reperire gli attributi verificati dal gruppo dell'e-service template
     Then si ottiene lo status code 404
-    And gli attributi verificati ottenuti sono coerenti con quelli aggiunti nel template
+
     Examples:
       | mode        |
       | erogazione  |
