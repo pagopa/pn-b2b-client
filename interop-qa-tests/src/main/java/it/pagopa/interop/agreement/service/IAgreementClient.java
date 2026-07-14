@@ -25,6 +25,8 @@ public interface IAgreementClient extends SettableBearerToken {
     Agreement submitAgreement(UUID agreementId, AgreementSubmissionPayload agreementSubmissionPayload);
     Agreement suspendAgreement(UUID agreementId, DelegationRef delegationRef);
     Agreement suspendAgreement(UUID agreementId);
+    Agreement unsuspendAgreement(UUID agreementId);
+    Agreement unsuspendAgreement(UUID agreementId, UUID delegationId);
     Agreement updateAgreement(UUID agreementId, AgreementUpdatePayload agreementUpdatePayload);
     Agreement upgradeAgreement(UUID agreementId);
     void archiveAgreement(UUID agreementId);

@@ -2,9 +2,11 @@ package it.pagopa.pn.client.b2b.pa.service.impl;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.ApiClient;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.api.NotificationCostRecipientApi;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.api.PaperCostApi;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.NewNotificationCostRequest;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.NotificationCostPaymentResponse;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.NotificationCostRecipientResponse;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.notificationcostservice.model.PaperCostToInvalidate;
 import it.pagopa.pn.client.b2b.pa.service.IPnNotificationCostClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -19,10 +21,13 @@ public class PnNotificationCostClientImpl implements IPnNotificationCostClient {
 
     private final NotificationCostRecipientApi notificationCostRecipientApi;
 
+    private final PaperCostApi paperCostApi;
+
     public PnNotificationCostClientImpl(
             RestTemplate restTemplate,
             @Value("${pn.delivery.base-url}") String basePath) {
         this.notificationCostRecipientApi = new NotificationCostRecipientApi(newApiClient(restTemplate, basePath));
+        this.paperCostApi = new PaperCostApi(newApiClient(restTemplate, basePath));
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath) {
@@ -45,5 +50,10 @@ public class PnNotificationCostClientImpl implements IPnNotificationCostClient {
     @Override
     public String initializeNotificationCost(String iun, NewNotificationCostRequest newNotificationCostRequest) throws RestClientException {
         return notificationCostRecipientApi.initializeNotificationCost(iun, newNotificationCostRequest);
+    }
+
+    @Override
+    public void invalidatePaperCost(String iun, PaperCostToInvalidate paperCostToInvalidate) throws RestClientException {
+        paperCostApi.invalidatePaperCost(iun, paperCostToInvalidate);
     }
 }

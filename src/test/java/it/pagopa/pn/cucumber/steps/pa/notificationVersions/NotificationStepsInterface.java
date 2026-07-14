@@ -89,4 +89,6 @@ public interface NotificationStepsInterface {
     String getCreditorTaxId(int recipientIndex);
 
     String getNoticeCode(int recipientIndex);
+
+    void setApplyCostFalse(int recipientIndex, int paymentIndex);
 }

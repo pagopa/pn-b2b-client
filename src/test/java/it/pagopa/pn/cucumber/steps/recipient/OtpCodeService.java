@@ -105,7 +105,7 @@ public class OtpCodeService {
     public void markExistingOtpAsSeen(Destinatario destinatario) {
         String pk = buildPk(destinatario);
         QueryResponse queryResponse = dynamoDbService.call(
-                DynamoTableName.PN_USER_ATTRIBUTES,
+                DynamoTableName.USER_ATTRIBUTES,
                 Map.of(":v_pk", AttributeValue.builder().s(pk).build())
         );
         if (queryResponse.items() == null) {
@@ -146,7 +146,7 @@ public class OtpCodeService {
 
     private Optional<String> readLatestOtp(String pk, LegalCourtesyAddressWrapper.ChannelType channelType) {
         QueryResponse queryResponse = dynamoDbService.call(
-                DynamoTableName.PN_USER_ATTRIBUTES,
+                DynamoTableName.USER_ATTRIBUTES,
                 Map.of(":v_pk", AttributeValue.builder().s(pk).build())
         );
         log.info("OTP RESPONSE per pk={}: {}", pk, queryResponse);
