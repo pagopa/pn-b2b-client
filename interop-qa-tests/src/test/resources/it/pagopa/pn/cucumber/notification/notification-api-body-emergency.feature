@@ -579,8 +579,8 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     And "PA1" ha già creato e pubblicato 1 e-service
     And l'ente "PA2" concede la disponibilità a ricevere deleghe
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato
-    And l'utente accetta la delega
     And l'utente è un "admin" di "PA2"
+    And l'utente accetta la delega
     And l'utente crea una nuova versione dell'e-service
     # La notifica può comparire, ma con questi step non compare...
     Then admin di "PA1" ha ricevuto la notifica in-app contenente il link DELEGA_ADERENTE
@@ -664,12 +664,11 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     "$CONTEXT(attributeName)". Puoi ora utilizzarlo nelle richieste di fruizione.
     """
 
-  # TODO messaggio diverso per utente aderente, come fare?
+  # FIXME due forme di notifica tra riga 101 e riga 102 del foglio Mappatura notifiche: ma perché differiscono?
   Scenario: [Notifica aderente attributo certificato ricevuto] L'ente certificatore conferisce l'attributo certificato a un ente aderente
-    Given l'utente è un "admin" di "PA2"
-    And PA2 ha già creato 1 attributo CERTIFIED
+    Given l'utente è un "admin" di "PA1"
+    And PA1 ha già creato 1 attributo CERTIFIED
     When l'utente assegna a "PA1" l'attributo certificato precedentemente creato
-    # Dovrebbe essere un utente aderente che riceve l'attributo certificato
     Then admin di "PA1" ha ricevuto la notifica in-app contenente il link ANAGRAFICA_ADERENTE
     """
     Al tuo ente è stato conferito l'attributo certificato "$CONTEXT(attributeName)".
@@ -690,7 +689,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     questo attributo per le richieste di fruizione.
     """
 
-  # TODO messaggio diverso per utente aderente, come fare?
+  # FIXME due forme di notifica tra riga 103 e riga 104 del foglio Mappatura notifiche: ma perché differiscono?
   Scenario: [Notifica aderente attributo certificato revocato] L'ente certificatore revoca l'attributo certificato a un ente aderente
     Then admin di "PA2" ha ricevuto la notifica in-app contenente il link ANAGRAFICA_ADERENTE
     """
@@ -725,23 +724,8 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     Non potrai più utilizzare questo attributo per le future richieste di fruizione.
     """
 
-  # TODO
-  Scenario: [Notifica chiave client rimossa da utente] L'utente rimuove una chiave e-service dal client
-#    Given l'utente è un "admin" di "PA1"
-#    Given "GSP" ha già creato e pubblicato 1 e-service
-#    Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-#    Given "PA1" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-#    Given "PA1" ha già creato 1 client "CONSUMER"
-#    Given "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
-#    Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
-#    Given "PA1" ha già associato la finalità a quel client
-#    Given un "admin" di "PA1" ha aggiunto una nuova chiave pubblica al client
-#    Given "PA1" rimuove quella nuova chiave dal client
-    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link API_E_SERVICE
-    """
-    L'utente CONTEXT(consumerName) ha rimosso una chiave di e-service dal client "client-0-716898252-1020312547".
-    Assicurati che l'operatività non sia compromessa.
-    """
+  # Scenario: [Notifica chiave rimossa da client e-service] Viene rimossa una chiave da un client e-service
+  # (presente nel file feature che contiene step M2M V3)
 
   # PASSA
   Scenario: [Notifica chiave client non più sicura] L'operatore che ha caricato una chiave al client non è più attivo
@@ -757,40 +741,16 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     caricata non è più attivo. La chiave deve essere sostituita per garantire la sicurezza e l'operatività.
     """
 
-  # TODO: arriva una chiave, ma si aspetta una chiave e-service: forse step errati
-  Scenario: [Notifica chiave aggiunta al client] Viene aggiunta una nuova chiave e-service al client
+  # Scenario: [Notifica chiave aggiunta a client e-service] Viene aggiunta una nuova chiave ad un client e-service
+  # (presente nel file feature che contiene step M2M V3)
 
-    Given l'utente è un "admin" di "PA1"
-    Given "PA1" ha già creato 1 client "CONSUMER"
-    Given "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
-    Given un "admin" di "PA1" ha caricato una chiave pubblica in quel client
-
-#    Given l'admin del fruitore "PA2" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
-#    And "PA1" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
-#      | asyncExchangeProperties.responseTime          | 100  |
-#      | asyncExchangeProperties.resourceAvailableTime | 100  |
-#      | asyncExchangeProperties.confirmation          | true |
-#      | asyncExchangeProperties.bulk                  | true |
-#      | asyncExchangeProperties.maxResultSet          | 50   |
-#    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-#    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-#    And "PA2" associa la finalità al client creato con successo
-#    And l'utente "admin" di "PA1" crea un portachiavi erogatore con successo
-#    And l'utente "admin" di "PA1" associa il portachiavi erogatore all'e-service con successo
-#    And l'utente "admin" di "PA1" aggiunge una chiave al portachiavi erogatore
-
-#    Given l'utente è un "admin" di "PA1"
-#    And "PA1" ha già creato 1 client "CONSUMER"
-#    And "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
-#    And "PA1" ha già inserito l'utente con ruolo "security" come membro di quel client
-#    When un "security" di "PA1" ha caricato una chiave pubblica nel client
-    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link API_E_SERVICE
-    """
-    Ti informiamo che è stata aggiunta una nuova chiave e-service al client "$CONTEXT(clientName)".
-    """
-
-  # TODO: perché questa notifica menziona client interop?
+  # FALLISCE: si aggiunge una chiave al client interop, ma la notifica non menziona 'interop'
+  # Inoltre le doppie virgolette attorno al nome del client sono attese ma non presenti
   Scenario: [Notifica chiave aggiunta al client interop] Viene aggiunta una nuova chiave al client interop
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato 1 client "API"
+    And "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
+    When un "admin" di "PA1" ha caricato una chiave pubblica nel client
     Then admin di "PA1" ha ricevuto la notifica in-app contenente il link API_E_SERVICE
     """
     Ti informiamo che è stata aggiunta una nuova chiave al client interop "$CONTEXT(clientName)".
