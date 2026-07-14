@@ -29,6 +29,7 @@ import it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.
 import it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.UserDto;
 import it.pagopa.pn.cucumber.steps.SendSharedContext;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.steps.common.MandateContext;
 import it.pagopa.pn.cucumber.utils.notificationsearch.NotificationSearchCriteriaMapper;
 import it.pagopa.pn.cucumber.utils.notificationsearch.NotificationSearchRowAssertions;
 import it.pagopa.pn.cucumber.utils.token.TokenResolver;
@@ -127,6 +128,8 @@ public class RicezioneNotificheWebDelegheSteps {
      */
     public void setMandateToSearch(MandateDto mandateToSearch) {
         this.mandateToSearch = mandateToSearch;
+        String mandateId = mandateToSearch != null ? mandateToSearch.getMandateId() : null;
+        sendSharedContext.getMandateContext().setMandateId(mandateId);
         sharedSteps.setMandateId(mandateToSearch != null ? mandateToSearch.getMandateId() : null);
     }
 
@@ -229,6 +232,10 @@ public class RicezioneNotificheWebDelegheSteps {
         System.out.println("MANDATE: " + mandate);
         try {
             webMandateClient.createMandate(mandate);
+            MandateContext mandateContext = new MandateContext();
+            mandateContext.setDelegate(sharedSteps.getDestinatarioRegistry().destinatario(delegate));
+            mandateContext.setDelegator(sharedSteps.getDestinatarioRegistry().destinatario(delegator));
+            sendSharedContext.setMandateContext(mandateContext);
         } catch (HttpStatusCodeException e) {
             this.notificationError = e;
         }
@@ -296,6 +303,7 @@ public class RicezioneNotificheWebDelegheSteps {
         }
         if (mandateDto != null) {
             MandateDto finalMandateDto = mandateDto;
+//            setBearerToken(delegate);
             Assertions.assertDoesNotThrow(() -> webMandateClient.rejectMandate(finalMandateDto.getMandateId()));
 
         }
@@ -312,9 +320,25 @@ public class RicezioneNotificheWebDelegheSteps {
 
         Assertions.assertNotNull(mandateDto);
         setMandateToSearch(mandateDto);
+//        setBearerToken(delegate);
         Assertions.assertDoesNotThrow(() -> webMandateClient.acceptMandate(mandateDto.getMandateId(), new AcceptRequestDto().verificationCode(verificationCode)));
 
     }
+
+//    @And("{string} accetta la delega {string}")
+//    public void userAcceptsMandateOfAnotherUser(String delegate, String delegator) {
+//        setBearerToken(delegate);
+//        String delegatorTaxId = getTaxIdByUser(delegator);
+//
+//        List<MandateDto> mandateList = webMandateClient.searchMandatesByDelegate(delegatorTaxId, null);
+//        System.out.println("MANDATE-LIST: " + mandateList);
+//        MandateDto mandateDto = mandateList.stream().filter(mandate -> Objects.requireNonNull(mandate.getDelegator()).getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)).findFirst().orElse(null);
+//
+//        Assertions.assertNotNull(mandateDto);
+//        this.mandateToSearch = mandateDto;
+//        Assertions.assertDoesNotThrow(() -> webMandateClient.acceptMandate(mandateDto.getMandateId(), new AcceptRequestDto().verificationCode(verificationCode)));
+//
+//    }
 
     @And("{string} accetta la delega {string} associando un gruppo")
     public void userAcceptsMandateWithGroups(String delegate, String delegator) {
@@ -637,7 +661,7 @@ public class RicezioneNotificheWebDelegheSteps {
     public void notificationCanBeCorrectlyReadFromAtPa(String recipient, String paName, @Transpose NotificationSearchParam searchParam) {
         sharedSteps.setPA(paName);
         sharedSteps.selectUser(recipient);
-        setRequiredAPI(isUseB2BFlag);
+//        setRequiredAPI(isUseB2BFlag);
         NotificationStatusV26 notificationStatus = searchParam.status != null ? NotificationStatusV26.valueOf(searchParam.status) : null;
         try {
             this.notificationSearchResponseFull = webRecipientClient.searchReceivedNotification(
@@ -653,11 +677,12 @@ public class RicezioneNotificheWebDelegheSteps {
     public void notificationCanBeCorrectlyReadFromAtPa(String user, String recipient, String paName, @Transpose NotificationSearchParam searchParam) {
         sharedSteps.setPA(paName);
         sharedSteps.selectUser(user);
-        setRequiredAPI(isUseB2BFlag);
+//        setRequiredAPI(isUseB2BFlag);
         NotificationStatusV26 notificationStatus = searchParam.status != null ? NotificationStatusV26.valueOf(searchParam.status) : null;
         try {
+
             this.notificationSearchResponseLegal = webRecipientClient.searchReceivedDelegatedNotification(
-                    sharedSteps.getDestinatarioRegistry().destinatario(recipient), searchParam);
+                    sendSharedContext.getMandateContext().getDelegate(), searchParam);
             this.notificationSearchResponseCount = notificationSearchResponseLegal.getResultsPage().size();
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
