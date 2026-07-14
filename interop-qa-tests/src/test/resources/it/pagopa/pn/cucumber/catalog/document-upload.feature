@@ -120,7 +120,7 @@ Feature: Caricamento di un documento di interfaccia
     Then si ottiene status code 400
 
   # PIN-9920 PST 2.1 - serverUrls description handling in interface documents
-  @pin-9920
+  @document-url-description
   @happy-path
   Scenario: [DESCRIPTOR_UPLOAD_8] Creazione e-service con interfaccia REST contenente serverUrls con description
     Given l'utente è un "admin" di "PA1"
@@ -128,7 +128,7 @@ Feature: Caricamento di un documento di interfaccia
     When l'utente carica un'interfaccia "REST" con serverUrls che contengono descrizione
     Then si ottiene status code 200
 
-  @pin-9920
+  @document-url-description
   @happy-path
   Scenario: [DESCRIPTOR_UPLOAD_9] Creazione e-service con interfaccia REST contenente serverUrls senza description
     Given l'utente è un "admin" di "PA1"
@@ -136,7 +136,7 @@ Feature: Caricamento di un documento di interfaccia
     When l'utente carica un'interfaccia "REST" con serverUrls senza descrizione
     Then si ottiene status code 200
 
-  @pin-9920
+  @document-url-description
   @sad-path
   # Ticket aperto https://pagopa.atlassian.net/browse/PIN-10525
   Scenario: [DESCRIPTOR_UPLOAD_10] Creazione e-service con interfaccia REST con serverUrls array vuoto
@@ -145,7 +145,7 @@ Feature: Caricamento di un documento di interfaccia
     When l'utente carica un'interfaccia "REST" con serverUrls array vuoto
     Then si ottiene status code 400
 
-  @pin-9920
+  @document-url-description
   @sad-path
   # Ticket aperto https://pagopa.atlassian.net/browse/PIN-10527
   Scenario: [DESCRIPTOR_UPLOAD_11] Creazione e-service con interfaccia REST senza serverUrls

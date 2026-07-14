@@ -1,5 +1,5 @@
 @e-service-template
-@pin-9920
+@document-url-description
 Feature: Test della creazione di interfacce REST e SOAP per istanze di template
 
   @happy-path
