@@ -27,7 +27,6 @@ import it.pagopa.pn.client.b2b.pa.service.impl.ReworkTimelineClientImpl;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Costanti;
-import it.pagopa.pn.cucumber.steps.utilitySteps.Environment;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.awaitility.core.ConditionTimeoutException;
@@ -42,8 +41,6 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -75,8 +72,9 @@ public class TimelineReworkSteps {
     private final IPnNotificationCostClient notificationCostClient;
     private final IPnExternalRegistryPrivateUserApi externalRegistryPrivateUserApi;
     private ReworkResponse reworkResponse;
-    private QueryResponse reworkedTimelinesForInvoicingResponse;
     private RestartAttemptResponse restartAttemptResponse;
+    private InvalidateTimelineElementsResponse removeElementsResponse;
+    private QueryResponse reworkedTimelinesForInvoicingResponse;
     private HttpStatus httpStatusCode;
     private String timestampString;
     private List<String> attempt1ElementIds = new ArrayList<>();
@@ -88,7 +86,7 @@ public class TimelineReworkSteps {
             ReworkItem.StatusEnum.ERROR, 5
     );
 
-    @ParameterType("rework|restart")
+    @ParameterType("rework|restart|remove")
     public static String timelineInvalidation(String value) {
         return value.toUpperCase();
     }
@@ -110,24 +108,9 @@ public class TimelineReworkSteps {
 
     @And("viene aggiornata la richiesta di {timelineInvalidation} con i seguenti dati:")
     public void updateRequestReworkWithError(String requestType, DataTable params) {
-        Map<String, String> inputData = params.asMaps().get(0);
-        String iun = getDataTableParams(inputData, "iun", sharedSteps.getNotificationIun());
-        String reworkId;
-        if (requestType.equals("REWORK")) {
-            reworkId = getDataTableParams(inputData, "reworkId", reworkResponse != null ? reworkResponse.getReworkId() : null);
-        } else {
-            reworkId = getDataTableParams(inputData, "reworkId", restartAttemptResponse != null ? restartAttemptResponse.getReworkId() : null);
-        }
-        if (reworkId == null) {
-            throw new AssertionError("reworkId nullo | IUN=" + iun);
-        }
-        UpdateReworkRequest updateReworkRequest =
-                createUpdateReworkRequest(
-                        getDataTableParams(inputData, "expectedStatusCode", null),
-                        getDataTableParams(inputData, "expectedDeliveryFailureCause", null)
-                );
+        ResolvedUpdate update = resolveUpdateRework(requestType, params);
         try {
-            reworkTimelineClient.updateNotificationRework(iun, reworkId, updateReworkRequest);
+            reworkTimelineClient.updateNotificationRework(update.iun(), update.reworkId(), update.request());
         } catch (HttpStatusCodeException exception) {
             httpStatusCode = exception.getStatusCode();
         }
@@ -135,48 +118,52 @@ public class TimelineReworkSteps {
 
     @And("viene correttamente aggiornata la richiesta di {timelineInvalidation} con i seguenti dati:")
     public void updateRequestRework(String requestType, DataTable params) {
-        Map<String, String> inputData = params.asMaps().get(0);
-        String iun = getDataTableParams(inputData, "iun", sharedSteps.getNotificationIun());
-        String reworkId;
-        if (requestType.equals("REWORK")) {
-            reworkId = getDataTableParams(inputData, "reworkId", reworkResponse != null ? reworkResponse.getReworkId() : null);
-        } else {
-            reworkId = getDataTableParams(inputData, "reworkId", restartAttemptResponse != null ? restartAttemptResponse.getReworkId() : null);
-        }
-        if (reworkId == null) {
-            throw new AssertionError("reworkId nullo | IUN=" + iun);
-        }
-        UpdateReworkRequest updateReworkRequest =
-                createUpdateReworkRequest(
-                        getDataTableParams(inputData, "expectedStatusCode", null),
-                        getDataTableParams(inputData, "expectedDeliveryFailureCause", null)
-                );
+        ResolvedUpdate update = resolveUpdateRework(requestType, params);
         Assertions.assertDoesNotThrow(
-                () -> reworkTimelineClient.updateNotificationRework(iun, reworkId, updateReworkRequest),
+                () -> reworkTimelineClient.updateNotificationRework(update.iun(), update.reworkId(), update.request()),
                 () -> String.format(
                         "Errore aggiornamento rework | IUN=%s | reworkId=%s | request=%s",
-                        iun,
-                        reworkId,
-                        updateReworkRequest
+                        update.iun(),
+                        update.reworkId(),
+                        update.request()
                 )
         );
     }
 
-    private UpdateReworkRequest createUpdateReworkRequest(String expectedStatusCode, String expectedDeliveryFailureCause) {
-        UpdateReworkRequest request = new UpdateReworkRequest();
-        if (expectedStatusCode != null) {
-            request.setExpectedStatusCode(expectedStatusCode);
+    private ResolvedUpdate resolveUpdateRework(String requestType, DataTable params) {
+        Map<String, String> inputData = params.asMaps().get(0);
+        String iun = getDataTableParams(inputData, "iun", sharedSteps.getNotificationIun());
+        String reworkId = getDataTableParams(inputData, "reworkId", resolveReworkId(requestType));
+        if (reworkId == null) {
+            throw new AssertionError("reworkId nullo | IUN=" + iun);
         }
-        if (expectedDeliveryFailureCause != null) {
-            request.setExpectedDeliveryFailureCause(expectedDeliveryFailureCause);
-        }
-        return request;
+        UpdateReworkRequest request = ReworkRequestFactory.updateReworkRequest(
+                getDataTableParams(inputData, "expectedStatusCode", null),
+                getDataTableParams(inputData, "expectedDeliveryFailureCause", null)
+        );
+        return new ResolvedUpdate(iun, reworkId, request);
+    }
+
+    private record ResolvedUpdate(String iun, String reworkId, UpdateReworkRequest request) {
+    }
+
+    /**
+     * ReworkId dell'ultima richiesta di rework / restart / remove effettuata nello scenario, null se assente.
+     */
+    private String resolveReworkId(String requestType) {
+        return switch (requestType) {
+            case "REWORK" -> reworkResponse != null ? reworkResponse.getReworkId() : null;
+            case "RESTART" -> restartAttemptResponse != null ? restartAttemptResponse.getReworkId() : null;
+            case "REMOVE" -> removeElementsResponse != null ? removeElementsResponse.getReworkId() : null;
+            default ->
+                    throw new IllegalArgumentException("Invalid requestType for timeline correction: " + requestType);
+        };
     }
 
     @And("viene invocata una richiesta di rework per la notifica appena creata")
     public void callReworkTimeline() {
         try {
-            reworkResponse = reworkTimelineClient.notificationRework(sharedSteps.getNotificationIun(), createRequestRework());
+            reworkResponse = reworkTimelineClient.notificationRework(sharedSteps.getNotificationIun(), ReworkRequestFactory.defaultReworkRequest());
             log.info("Successfully reworked. Rework response: {}", reworkResponse);
         } catch (HttpStatusCodeException e) {
             httpStatusCode = e.getStatusCode();
@@ -186,8 +173,41 @@ public class TimelineReworkSteps {
     @And("viene invocata una richiesta di restart per la notifica appena creata")
     public void callRestartTimeline() {
         try {
-            restartAttemptResponse = reworkTimelineClient.restartAttempt(sharedSteps.getNotificationIun(), createRequestRestart());
+            restartAttemptResponse = reworkTimelineClient.restartAttempt(sharedSteps.getNotificationIun(), ReworkRequestFactory.defaultRestartRequest());
             log.info("Successfully restarted. Restart attempt response: {}", restartAttemptResponse);
+        } catch (HttpStatusCodeException e) {
+            httpStatusCode = e.getStatusCode();
+        }
+    }
+
+    @And("viene invocata una richiesta di correzione puntuale per la notifica appena creata")
+    public void callInvalidateTimelineElements() {
+        try {
+            FullSentNotificationV29 fsn = sharedSteps.getSentNotificationLastVersion();
+            String timelineElementId = fsn.getTimeline().stream().filter(t -> t.getCategory().toString().equals(SEND_ANALOG_PROGRESS)).map(te -> te.getElementId()).findFirst().orElse(null);
+            removeElementsResponse = reworkTimelineClient.invalidateTimelineElements(sharedSteps.getNotificationIun(), ReworkRequestFactory.defaultInvalidationRequest(List.of(timelineElementId)));
+            log.info("Successfully invalidated. Invalidation response: {}", restartAttemptResponse);
+        } catch (HttpStatusCodeException e) {
+            httpStatusCode = e.getStatusCode();
+        }
+    }
+
+    @And("viene invocata una richiesta di correzione puntuale per la notifica appena creata con i seguenti parametri")
+    public void callInvalidateTimelineElementsFromData(Map<String, String> inputData) {
+        try {
+            String iun = getDataTableParams(inputData, "iun", sharedSteps.getNotificationIun());
+            String recIndex = getDataTableParams(inputData, "recIndex", "RECINDEX_0");
+            FullSentNotificationV29 fsn = sharedSteps.getSentNotificationLastVersion();
+            List<String> timelineElementsId = new ArrayList<>();
+            inputData.forEach((key, value) -> {
+                if (key.contains("element")) {
+                    String category = value;
+                    String timelineElementId = fsn.getTimeline().stream().filter(x -> x.getCategory().getValue().equals(value) && x.getElementId().contains(recIndex)).map(te -> te.getElementId()).findFirst().orElse(null);
+                    timelineElementsId.add(timelineElementId);
+                }
+            });
+            removeElementsResponse = reworkTimelineClient.invalidateTimelineElements(iun, ReworkRequestFactory.invalidationRequest(recIndex, timelineElementsId));
+            log.info("Successfully invalidated. Invalidation response: {}", restartAttemptResponse);
         } catch (HttpStatusCodeException e) {
             httpStatusCode = e.getStatusCode();
         }
@@ -206,7 +226,7 @@ public class TimelineReworkSteps {
 
     @And("si verifica che la richiesta di {timelineInvalidation} effettuata sia in stato {string}")
     public void verifyReworkStatusById(String requestType, String status) {
-        String reworkId = requestType.equals("REWORK") ? reworkResponse.getReworkId() : restartAttemptResponse.getReworkId();
+        String reworkId = resolveReworkId(requestType);
         ReworkItemsResponse reworkItemsResponse = reworkTimelineClient.retrieveNotificationReworkById(sharedSteps.getNotificationIun(), reworkId);
         checkRequestType(requestType);
         reworkItemsResponse.getItems().stream()
@@ -219,17 +239,8 @@ public class TimelineReworkSteps {
     public void callReworkWithParamsWithError(DataTable params) {
         Map<String, String> inputData = params.asMaps().get(0);
         String iun = getDataTableParams(inputData, "iun", sharedSteps.getNotificationIun());
-        String attemptId = getDataTableParams(inputData, "attemptId", "ATTEMPT_0");
-        ReworkRequest reworkRequest = createRequestRework(
-                attemptId != null ? ReworkRequest.AttemptIdEnum.fromValue(attemptId) : null,
-                getDataTableParams(inputData, "reason", "reason"),
-                getDataTableParams(inputData, "pcRetry", "PCRETRY_0"),
-                getDataTableParams(inputData, "recIndex", "RECINDEX_0"),
-                getDataTableParams(inputData, "expectedStatusCode", "RECRI003C"),
-                getDataTableParams(inputData, "expectedDeliveryFailureCause", null)
-        );
         try {
-            reworkResponse = reworkTimelineClient.notificationRework(iun, reworkRequest);
+            reworkResponse = reworkTimelineClient.notificationRework(iun, reworkRequestFromDataTable(inputData));
         } catch (HttpStatusCodeException exception) {
             log.info("Error caught: {}", exception.getMessage());
             httpStatusCode = exception.getStatusCode();
@@ -240,19 +251,8 @@ public class TimelineReworkSteps {
     public void callReworkWithParams(DataTable params) {
         Map<String, String> inputData = params.asMaps().get(0);
         String iun = getDataTableParams(inputData, "iun", sharedSteps.getNotificationIun());
-        String attemptId = getDataTableParams(inputData, "attemptId", "ATTEMPT_0");
-        ReworkRequest reworkRequest = createRequestRework(
-                attemptId != null
-                        ? ReworkRequest.AttemptIdEnum.fromValue(attemptId)
-                        : null,
-                getDataTableParams(inputData, "reason", "reason"),
-                getDataTableParams(inputData, "pcRetry", "PCRETRY_0"),
-                getDataTableParams(inputData, "recIndex", "RECINDEX_0"),
-                getDataTableParams(inputData, "expectedStatusCode", "RECRI003C"),
-                getDataTableParams(inputData, "expectedDeliveryFailureCause", null)
-        );
         try {
-            reworkResponse = reworkTimelineClient.notificationRework(iun, reworkRequest);
+            reworkResponse = reworkTimelineClient.notificationRework(iun, reworkRequestFromDataTable(inputData));
         } catch (HttpStatusCodeException exception) {
             throw new AssertionError(
                     String.format(
@@ -271,11 +271,8 @@ public class TimelineReworkSteps {
         Map<String, String> inputData = params.asMaps().get(0);
         String iun = getDataTableParams(inputData, "iun", sharedSteps.getNotificationIun());
         RestartAttemptRequest.AttemptIdEnum attemptId = inputData.get("attemptId") != null ? RestartAttemptRequest.AttemptIdEnum.fromValue(inputData.get("attemptId")) : null;
-        String recIndex = inputData.get("recIndex");
-        String reason = inputData.get("reason");
-        String task = inputData.get("task");
-
-        RestartAttemptRequest restartAttemptRequest = createRequestRestart(attemptId, recIndex, reason, task);
+        RestartAttemptRequest restartAttemptRequest = ReworkRequestFactory.restartRequest(
+                attemptId, inputData.get("recIndex"), inputData.get("reason"), inputData.get("task"));
         try {
             restartAttemptResponse = reworkTimelineClient.restartAttempt(iun, restartAttemptRequest);
         } catch (HttpStatusCodeException exception) {
@@ -284,40 +281,16 @@ public class TimelineReworkSteps {
         }
     }
 
-    private ReworkRequest createRequestRework() {
-        return createRequestRework(ReworkRequest.AttemptIdEnum._0, "reason", "PCRETRY_0", "RECINDEX_0", "RECRI003C", null);
-    }
-
-    private ReworkRequest createRequestRework(ReworkRequest.AttemptIdEnum attemptId,
-                                              String reason,
-                                              String pcRetry,
-                                              String recIndex,
-                                              String expectedStatusCode,
-                                              String expectedDeliveryFailureCause) {
-        ReworkRequest reworkRequest = new ReworkRequest();
-        reworkRequest.setAttemptId(attemptId);
-        reworkRequest.setExpectedDeliveryFailureCause(expectedDeliveryFailureCause);
-        reworkRequest.setReason(reason);
-        reworkRequest.setPcRetry(pcRetry);
-        reworkRequest.setRecIndex(recIndex);
-        reworkRequest.setExpectedStatusCode(expectedStatusCode);
-        return reworkRequest;
-    }
-
-    private RestartAttemptRequest createRequestRestart() {
-        return createRequestRestart(RestartAttemptRequest.AttemptIdEnum._0, "RECINDEX_0", "reasonTest", "TEST-12345");
-    }
-
-    private RestartAttemptRequest createRequestRestart(RestartAttemptRequest.AttemptIdEnum attemptId,
-                                                       String recIndex,
-                                                       String reason,
-                                                       String task) {
-        RestartAttemptRequest restartAttemptRequest = new RestartAttemptRequest();
-        restartAttemptRequest.setAttemptId(attemptId);
-        restartAttemptRequest.setRecIndex(recIndex);
-        restartAttemptRequest.setReason(reason);
-        restartAttemptRequest.setTask(task);
-        return restartAttemptRequest;
+    private ReworkRequest reworkRequestFromDataTable(Map<String, String> inputData) {
+        String attemptId = getDataTableParams(inputData, "attemptId", "ATTEMPT_0");
+        return ReworkRequestFactory.reworkRequest(
+                attemptId != null ? ReworkRequest.AttemptIdEnum.fromValue(attemptId) : null,
+                getDataTableParams(inputData, "reason", "reason"),
+                getDataTableParams(inputData, "pcRetry", "PCRETRY_0"),
+                getDataTableParams(inputData, "recIndex", "RECINDEX_0"),
+                getDataTableParams(inputData, "expectedStatusCode", "RECRI003C"),
+                getDataTableParams(inputData, "expectedDeliveryFailureCause", null)
+        );
     }
 
     @And("si verifica che la chiamata sia andata in errore con il seguente status code: {int}")
@@ -424,7 +397,7 @@ public class TimelineReworkSteps {
     @And("si verifica che la richiesta di {timelineInvalidation} effettuata sia in stato {string} entro {int} secondi controllando ogni {int} secondi")
     public void verifyReworkStatusById(String requestType, String expectedStatus, int timeoutSeconds, int pollIntervalSeconds) {
         String iun = sharedSteps.getNotificationIun();
-        String reworkId = requestType.equals("REWORK") ? reworkResponse.getReworkId() : restartAttemptResponse.getReworkId();
+        String reworkId = resolveReworkId(requestType);
         if (reworkId == null) {
             throw new AssertionError("ReworkId nullo | IUN=" + iun);
         }
@@ -502,58 +475,11 @@ public class TimelineReworkSteps {
     }
 
     private Map<String, Object> populateConsolidatoreMapCustom(Map<String, String> inputData) {
-        String iun = sharedSteps.getNotificationIun();
-        String timestampStringMethod = inputData.getOrDefault("timestamp", getOrInitNow());
-        String validateTimestamp = timestampStringMethod.equals("<null>") ? null : timestampStringMethod;
-        Map<String, Object> mapInfo = new HashMap<>();
-        mapInfo.put("requestId", buildRequestId(
-                iun,
-                inputData.get("productType"),
-                inputData.get("recIndex"),
-                inputData.get("attemptId"),
-                inputData.get("pcRetry")
-        ));
-        if (inputData.get("attachment_1") != null) {
-            Map<String, Object> attachment = new HashMap<>();
-            attachment.put("id", "1");
-            attachment.put("documentType", inputData.get("attachment_1"));
-            attachment.put("uri", this.getAttachmentEnvironmentBased());
-            attachment.put("sha256", "UaMdYj7cAVO6EZTC9ddUBD7pbkG6zdEZ0LaL/3cmphU=");
-            attachment.put("date", validateTimestamp);
-            mapInfo.put("attachments", Collections.singletonList(attachment));
-        } else {
-            mapInfo.put("attachments", null);
-        }
-        mapInfo.put("clientRequestTimeStamp", validateTimestamp);
-        mapInfo.put("deliveryFailureCause", inputData.getOrDefault("deliveryFailureCause", null));
-        mapInfo.put("discoveredAddress", null);
-        mapInfo.put("iun", iun);
-        mapInfo.put("productType", inputData.getOrDefault("productType", null));
-        String registeredLetterCode = inputData.getOrDefault("registeredLetterCode", "QATEST");
-        mapInfo.put("registeredLetterCode", registeredLetterCode.equals("<null>") ? null : registeredLetterCode);
-        mapInfo.put("statusCode", inputData.getOrDefault("statusCode", null));
-        mapInfo.put("statusDateTime", validateTimestamp);
-        mapInfo.put("statusDescription", "Quality assurance");
-        return mapInfo;
-    }
-
-    private String getAttachmentEnvironmentBased() {
-        Environment env = B2bUtils.getEnvironment(sharedSteps.getContext());
-        return switch (env) {
-            case DEV -> "safestorage://PN_EXTERNAL_LEGAL_FACTS-970c9a266a3e44fa88ff66f4c3f4e5ae.pdf";
-            case TEST -> "safestorage://PN_EXTERNAL_LEGAL_FACTS-243648ce692946f987b86fb72b33d98a.pdf";
-            case UAT -> "safestorage://PN_EXTERNAL_LEGAL_FACTS-dd7dc6811b024202ac66044671f3e2ad.pdf";
-            case HOTFIX -> "safestorage://PN_EXTERNAL_LEGAL_FACTS-31ea166ced054f63952e736f04647f0a.pdf";
-        };
-    }
-
-    private String buildRequestId(String iun, String productType, String recindex, String attempt, String pcRetry) {
-        if (productType.equals("RS") || productType.equals("RIS"))
-            return String.format("PREPARE_SIMPLE_REGISTERED_LETTER.IUN_%s.%s.%s", iun, recindex, pcRetry);
-        else
-            return String.format("PREPARE_ANALOG_DOMICILE.IUN_%s.%s.%s.%s",
-                    iun, recindex, attempt, pcRetry
-            );
+        String rawTimestamp = inputData.getOrDefault("timestamp", getOrInitNow());
+        String validateTimestamp = rawTimestamp.equals("<null>") ? null : rawTimestamp;
+        String attachmentUri = ConsolidatoreRequestBuilder.attachmentUriFor(B2bUtils.getEnvironment(sharedSteps.getContext()));
+        return ConsolidatoreRequestBuilder.buildConsolidatoreMap(
+                sharedSteps.getNotificationIun(), inputData, validateTimestamp, attachmentUri);
     }
 
     private void checkRequestType(String requestType) {
@@ -583,7 +509,7 @@ public class TimelineReworkSteps {
         try {
             await().atMost(15, TimeUnit.MINUTES).pollInterval(30, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(() -> {
                 reworkedTimelinesForInvoicingResponse = dynamoDbService.call(DynamoTableName.REWORKED_TIMELINES_FOR_INVOICING, Map.of(
-                        ":v_paId_invoicingDay", AttributeValue.builder().s(pk).build(),
+                        ":pk", AttributeValue.builder().s(pk).build(),
                         ":v_iun", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build()
                 ));
                 log.info("REWORKED_TIMELINES_FOR_INVOICING RESPONSE -> {}", reworkedTimelinesForInvoicingResponse);
@@ -614,7 +540,7 @@ public class TimelineReworkSteps {
 
     @Then("verifico la che il reworkId del {timelineInvalidation} generato sia corretto, con rework {int} try {int} e recIndex {int}")
     public void checkReworkId(String requestType, int reworkIndex, int tryIndex, int recIndex) {
-        String reworkId = requestType.equals("REWORK") ? reworkResponse.getReworkId() : restartAttemptResponse.getReworkId();
+        String reworkId = resolveReworkId(requestType);
         try {
             assertSoftly(softly -> {
                 softly.assertThat(reworkId).as("Il rework id dovrebbe avere rework index pari a %s", reworkIndex).contains("REWORK_" + reworkIndex);
@@ -695,7 +621,7 @@ public class TimelineReworkSteps {
                     e -> e.getCategory().getValue().equals(SEND_ANALOG_DOMICILE) && e.getElementId().contains("ATTEMPT_" + attempt)).findFirst().orElse(null);
             assertThat(notificationTimelineReworked).as("Element SEND_ANALOG_DOMICILE with attempt %s can't be null", attempt).isNotNull();
             assertThat(notificationTimelineReworked.getEventTimestamp())
-                    .as("The event timestamp of NOTIFICATION_TIMELINE_REWORKED does not match with the one of the invalidated SEND_ANALOG_DOMICILE at attempt %", attempt)
+                    .as("The event timestamp of NOTIFICATION_TIMELINE_REWORKED does not match with the one of the invalidated SEND_ANALOG_DOMICILE at attempt %s", attempt)
                     .isEqualTo(sendAnalogDomicileAttemptX.getEventTimestamp());
 
             QueryResponse queryResponse = dynamoDbService.call(DynamoTableName.TIMELINE, Map.of(
@@ -715,5 +641,3 @@ public class TimelineReworkSteps {
         }
     }
 }
-
-
