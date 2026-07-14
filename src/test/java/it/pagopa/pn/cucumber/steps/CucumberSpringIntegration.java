@@ -115,6 +115,8 @@ import it.pagopa.pn.client.b2b.pa.service.IMandateReverseServiceClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.AooUoIdsClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BDeliveryPushServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.RecipientInternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.RecipientB2BExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BSenderReadClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2bMandateServiceClientImpl;
@@ -349,6 +351,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         IMandateReverseServiceClient.class,
         MandateReverseServiceClientImpl.class,
         B2BRecipientExternalClientImpl.class,
+        RecipientInternalClientImpl.class,
+        RecipientB2BExternalClientImpl.class,
         IBffMandateServiceApi.class,
         BffMandateServiceClientImpl.class,
         B2BDeliveryPushServiceClientImpl.class,

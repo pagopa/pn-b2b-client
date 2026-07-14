@@ -39,12 +39,6 @@ public class MandateInternalClientImpl implements IPnWebMandateClient {
     private static final String X_PAGOPA_PN_UID = "TestAutomation";
     private static final String SRC_CH_B2B = "B2B";
 
-    private final RestTemplate restTemplate;
-    private final String webBasePath;
-    private final String marioCucumberBearerToken;
-    private final String marioGherkinBearerToken;
-    private final String pg1ClassicToken;
-    private final String pg2ClassicToken;
     private final DestinatarioRegistry destinatarioRegistry;
     private final MandateServiceApi mandateServiceApi;
 
@@ -55,60 +49,44 @@ public class MandateInternalClientImpl implements IPnWebMandateClient {
 
     public MandateInternalClientImpl(RestTemplate restTemplate,
                                      @Value("${pn.delivery.base-url}") String webBasePath,
-                                     @Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
-                                     @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken,
-                                     @Value("${pn.bearer-token.pg1}") String pg1ClassicToken,
-                                     @Value("${pn.bearer-token.pg2}") String pg2ClassicToken,
                                      DestinatarioRegistry destinatarioRegistry) {
-        this.restTemplate = restTemplate;
-        this.webBasePath = webBasePath;
-        this.marioCucumberBearerToken = marioCucumberBearerToken;
-        this.marioGherkinBearerToken = marioGherkinBearerToken;
-        this.pg1ClassicToken = pg1ClassicToken;
-        this.pg2ClassicToken = pg2ClassicToken;
         this.destinatarioRegistry = destinatarioRegistry;
-        this.mandateServiceApi = new MandateServiceApi(newApiClient(restTemplate, webBasePath, pg1ClassicToken));
+        this.mandateServiceApi = new MandateServiceApi(newApiClient(restTemplate, webBasePath));
         setBearerToken(BearerTokenType.PG_1);
     }
 
-    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken) {
+    // le API internal non richiedono bearer token: l'identita' e' veicolata dagli header cx-* risolti sotto
+    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath) {
         ApiClient apiClient = new ApiClient(restTemplate);
         apiClient.setBasePath(basePath);
-        apiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
         return apiClient;
     }
 
     @Override
     public boolean setBearerToken(BearerTokenType bearerToken) {
-        String token;
         CxTypeAuthFleet cxType;
         String uid;
         switch (bearerToken) {
             case PG_1 -> {
-                token = pg1ClassicToken;
                 cxType = CxTypeAuthFleet.PG;
                 uid = destinatarioRegistry.destinatario(GHERKIN_SRL).getUid();
                 this.xPagopaPnCxRole = "admin";
             }
             case PG_2 -> {
-                token = pg2ClassicToken;
                 cxType = CxTypeAuthFleet.PG;
                 uid = destinatarioRegistry.destinatario(CUCUMBER_SPA).getUid();
                 this.xPagopaPnCxRole = "admin";
             }
             case USER_1 -> {
-                token = marioCucumberBearerToken;
                 cxType = CxTypeAuthFleet.PF;
                 uid = destinatarioRegistry.destinatario(MARIO_CUCUMBER).getUid();
             }
             case USER_2 -> {
-                token = marioGherkinBearerToken;
                 cxType = CxTypeAuthFleet.PF;
                 uid = destinatarioRegistry.destinatario(MARIO_GHERKIN).getUid();
             }
             default -> throw new IllegalStateException("Unexpected value: " + bearerToken);
         }
-        this.mandateServiceApi.setApiClient(newApiClient(restTemplate, webBasePath, token));
         this.xPagopaPnCxType = cxType;
         this.xPagopaPnCxId = cxType.getValue() + "-" + uid;
         this.bearerTokenSetted = bearerToken;
