@@ -18,7 +18,7 @@ Feature: Ricerca delle notifiche ricevute lato delegato
       | endDate   | 2026-07-15 |
       | iunMatch  | :actualIun |
 #      | mandateId | :mandateId |
-    Then "CucumberSpa" visualizza l'elenco delle notifiche del delegante "GherkinSrl" per comune "Comune_1"
+    Then "CucumberSpaB2B" visualizza l'elenco delle notifiche del delegante "GherkinSrlB2B" per comune "Comune_1"
       | startDate | 2026-07-07 |
       | endDate   | 2026-07-15 |
       | iunMatch  | :actualIun |

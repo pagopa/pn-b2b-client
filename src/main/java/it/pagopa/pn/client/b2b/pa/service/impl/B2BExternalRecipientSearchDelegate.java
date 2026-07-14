@@ -19,9 +19,12 @@ class B2BExternalRecipientSearchDelegate implements RecipientSearchDelegate {
 
     @Override
     public LegalNotificationSearchResponse searchReceivedDelegatedNotification(Destinatario destinatario, NotificationSearchParam param) {
+        it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationStatusV26 statusV26 = Optional.ofNullable(param.status)
+                .map(it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationStatusV26::fromValue)
+                .orElse(null);
         return recipientReadB2BApi.searchReceivedDelegatedNotification(
                 param.startDate.toString(), param.endDate.toString(), param.senderId, param.recipientId,
-                param.group, param.iunMatch, convertStatus(NotificationStatusV26.fromValue(param.status)), param.size, param.nextPagesKey);
+                param.group, param.iunMatch, statusV26, param.size, param.nextPagesKey);
     }
 
     @Override

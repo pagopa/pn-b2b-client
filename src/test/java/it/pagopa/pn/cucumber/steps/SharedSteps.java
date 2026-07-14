@@ -104,6 +104,7 @@ import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_ROOT;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_SON;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.CRISTOFORO_COLOMBO;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.CUCUMBER_SPA;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.CUCUMBER_SPA_B2B;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.DINO_SAURO;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.DURATION_ANALOG_REFINEMENT_DEFAULT_FAILURE;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.DURATION_ANALOG_REFINEMENT_DEFAULT_SUCCESS;
@@ -119,6 +120,7 @@ import static it.pagopa.pn.client.b2b.pa.domain.Costanti.FILE_PDF_INVALID_ERROR;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.FILE_SHA_ERROR;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.GALILEO_GALILEI;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.GHERKIN_SRL;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.GHERKIN_SRL_B2B;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.INVALID_PARAMETER_MAX_ATTACHMENT;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.LEONARDO_DA_VINCI;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.LUCIO_ANNEO_SENECA;
@@ -1178,6 +1180,12 @@ public class SharedSteps {
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
                 iPnTosPrivacyClientImpl.setBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
+            }
+            case CUCUMBER_SPA_B2B -> {
+                webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_B2B_2);
+            }
+            case GHERKIN_SRL_B2B -> {
+                webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_B2B_1);
             }
             default -> throw new IllegalArgumentException("Invalid recipient name: " + recipient);
         }
