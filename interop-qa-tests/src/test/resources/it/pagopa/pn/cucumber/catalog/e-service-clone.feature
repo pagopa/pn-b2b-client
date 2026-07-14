@@ -1,11 +1,10 @@
-@eservice
+@eservice @eservice_cloning
 Feature: Clonazione di un e-service
   Tutti gli utenti autorizzati di enti erogatori possono clonare un proprio e-service e il relativo descrittore in stato PUBLISHED, SUSPENDED
 
   @nrt-minimal
   @eservice_cloning1
   @nrt-minimal
-  @eservice_cloning1
   Scenario Outline: [ESERVICE_CLONING_1] Per un e-service che ha 2 descrittori, l'ultimo dei quali è in stato PUBLISHED/SUSPENDED, alla richiesta di clonazione, viene creato un nuovo e-service che ha un solo descrittore in stato DRAFT. Sia il nuovo e-service che il suo descrittore hanno esattamente le stesse caratteristiche dell'e-service e descrittore di partenza (ad eccezione del nome dell'e-service al quale viene aggiunto un " - clone" alla fine;
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato un e-service con un descrittore in stato "PUBLISHED"
