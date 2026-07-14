@@ -959,7 +959,6 @@ Feature: Test API Availability in Use of E-Service
       | GSP           | PA2            | 200         |
       | Privato       | PA2            | 200         |
       | PA3           | PA2            | 200         |
-      | PA3           | PA2            | 200         |
 
   @sad-path
   Scenario: [DELEGATIONS_ACCESS_CONTROL_1] Un utente delegante con ruolo api non può visualizzare l'elenco delle deleghe conferite
