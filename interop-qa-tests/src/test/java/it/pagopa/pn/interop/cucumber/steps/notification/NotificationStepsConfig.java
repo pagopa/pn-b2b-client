@@ -1,36 +1,30 @@
 package it.pagopa.pn.interop.cucumber.steps.notification;
 
-import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.authorization.domain.Tenant;
 import it.pagopa.interop.authorization.service.utils.ConfigFileReader;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.Notification;
 import it.pagopa.interop.generated.openapi.clients.bff.model.NotificationConfig;
 import it.pagopa.interop.generated.openapi.clients.bff.model.TenantNotificationConfigUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UserNotificationConfigUpdateSeed;
-import it.pagopa.interop.notification.NotificationClientImpl;
 import it.pagopa.interop.notification.NotificationConfigClient;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.utility.FeatureLifecycleManager;
 import it.pagopa.pn.interop.cucumber.utility.functionalint.Task;
 import it.pagopa.pn.interop.cucumber.utility.functionalint.ThrowingConsumer;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.UUID;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
 
 public class NotificationStepsConfig {
     @Data
@@ -43,7 +37,6 @@ public class NotificationStepsConfig {
 
     enum ConfigStrategy {PER_ROLE, NO_CONFIG, ALL_BUT_ESERVICE_STATE_CHANGED}
 
-    private final NotificationClientImpl notificationClient;
     private final NotificationConfigClient notificationConfigClient;
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final FeatureLifecycleManager notificationTestsManager;
@@ -580,7 +573,9 @@ public class NotificationStepsConfig {
                 "support", supportConfig,
                 "security", securityConfig,
                 "api", apiConfig,
-                "api,security", apiSecurityConfig
+                "api,security", apiSecurityConfig,
+                "reviewer", adminConfig,
+                "viewer", adminConfig
         );
     }
 
@@ -593,7 +588,6 @@ public class NotificationStepsConfig {
         this.clientTokenConfigurator = clientTokenConfigurator;
 
         // necessario ricorrere all'impl. concreta per usare il suo HttpCallExecutor
-        this.notificationClient = (NotificationClientImpl) clientTokenConfigurator.getNotificationClient();
         this.notificationConfigClient = (NotificationConfigClient) clientTokenConfigurator.getNotificationConfigClient();
         this.notificationTestsManager = notificationTestsManager;
         this.sharedStepsContext = sharedStepsContext;
@@ -721,6 +715,7 @@ public class NotificationStepsConfig {
             Map<String, List<String>> rolesCopy = new HashMap<>(tenant.getUserRoles());
             Set<Entry<String, List<String>>> roles = rolesCopy.entrySet();
             for (Entry<String, List<String>> roleEntry : roles) {
+                //TODO: da eliminare, patch per la gestio
                 String role = roleEntry.getKey();
                 List<String> users = roleEntry.getValue();
                 for (int i = 0; i < users.size() && !excludedRoles.contains(role); i++) {
