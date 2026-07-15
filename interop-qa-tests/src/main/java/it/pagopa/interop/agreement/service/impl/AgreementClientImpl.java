@@ -93,12 +93,12 @@ public class AgreementClientImpl implements IAgreementClient {
     }
 
     public Agreement activateAgreement(UUID agreementId, DelegationRef delegationRef) {
-        return agreementsApi.activateAgreement(agreementId, delegationRef);
+        return agreementsApi.approveAgreement(agreementId, delegationRef);
     }
 
     @Override
     public Agreement activateAgreement(UUID agreementId) {
-        return agreementsApi.activateAgreement(agreementId, null);
+        return agreementsApi.approveAgreement(agreementId, null);
     }
 
     @Override
@@ -113,6 +113,16 @@ public class AgreementClientImpl implements IAgreementClient {
     @Override
     public Agreement suspendAgreement(UUID agreementId) {
         return agreementsApi.suspendAgreement(agreementId, null);
+    }
+
+    @Override
+    public Agreement unsuspendAgreement(UUID agreementId) {
+        return agreementsApi.unsuspendAgreement(agreementId, null);
+    }
+
+    @Override
+    public Agreement unsuspendAgreement(UUID agreementId, UUID delegationId) {
+        return agreementsApi.unsuspendAgreement(agreementId, new DelegationRef().delegationId(delegationId));
     }
 
     @Override
