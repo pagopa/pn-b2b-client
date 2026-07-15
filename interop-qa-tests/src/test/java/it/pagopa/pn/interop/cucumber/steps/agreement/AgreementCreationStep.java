@@ -189,11 +189,20 @@ public class AgreementCreationStep {
 
     @Given("{string} ha già pubblicato una nuova versione per quell'e-service")
     public void tenantHasAlreadyPublishedNewEServiceVersion(String tenantType) {
+        bringDescriptorToGivenState(tenantType, EServiceDescriptorState.PUBLISHED, false);
+    }
+
+    @Given("{string} ha già pubblicato una nuova versione per quell'e-service asincrono")
+    public void tenantHasAlreadyPublishedNewAsyncEServiceVersion(String tenantType) {
+        bringDescriptorToGivenState(tenantType, EServiceDescriptorState.PUBLISHED, true);
+    }
+
+    private void bringDescriptorToGivenState(String tenantType, EServiceDescriptorState state, boolean isAsync) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
         eServicesCommonContext.setOldDescriptorId(eServicesCommonContext.getDescriptorId());
         eServicesCommonContext.setDescriptorId(dataPreparationService.createNextDraftDescriptor(eServicesCommonContext.getEserviceId()));
         dataPreparationService.bringDescriptorToGivenState(eServicesCommonContext.getEserviceId(), eServicesCommonContext.getDescriptorId(),
-                EServiceDescriptorState.PUBLISHED, false);
+                state, false, isAsync);
     }
 }
