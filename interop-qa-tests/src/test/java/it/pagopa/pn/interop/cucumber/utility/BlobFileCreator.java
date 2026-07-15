@@ -35,4 +35,12 @@ public class BlobFileCreator {
             throw new RuntimeException("Error occured during temp file creation", e);
         }
     }
+
+    public void deleteTempFile(String fileName) {
+        try {
+            Files.deleteIfExists(Paths.get(fileName));
+        } catch (Exception e) {
+            throw new RuntimeException("Error occurred during temp file deletion: " + fileName, e);
+        }
+    }
 }

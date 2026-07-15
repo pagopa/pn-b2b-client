@@ -8,10 +8,10 @@ import it.pagopa.pn.cucumber.steps.informalNotification.provider.InformalMessage
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.*;
 
 import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.*;
 
@@ -36,6 +36,9 @@ public class InformalRecipientBuilder {
         recipient.setMessageId(resolveMessageId(data, currentCxId));
         recipient.setTaxId(getValue(data, RECIPIENT_TAX_ID.key));
         recipient.setDenomination(getValue(data, RECIPIENT_DENOMINATION.key));
+
+        recipient.setAdditionalLanguages(buildAdditionalLanguages(data));
+
 
         // =========================
         // DIGITAL
@@ -64,6 +67,22 @@ public class InformalRecipientBuilder {
         // =========================
         recipient.setPayments(buildPayments(data));
         return recipient;
+    }
+
+    // =========================
+    // ADDITIONAL LENGUAGES
+    // =========================
+    private List<String> buildAdditionalLanguages(Map<String, String> data) {
+
+        String languages = getValue(data, RECIPIENT_ADDITIONAL_LANGUAGES.key);
+
+        if (languages == null) {
+            return null;
+        }
+        return Arrays.stream(languages.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isBlank())
+                .toList();
     }
 
     // =========================================================
@@ -104,6 +123,16 @@ public class InformalRecipientBuilder {
             NotificationPaymentAttachment attachment = mapper.buildPaymentAttachment(data);
 
             PagoPaPaymentBase pagoPa = new PagoPaPaymentBase().noticeCode(generateNoticeCode(getValue(data, PAYMENT_NOTICE_CODE.key), i)).creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key)).attachment(attachment);
+
+            String amount = getValue(data, PAYMENT_AMOUNT.key);
+            if (amount != null) {
+                pagoPa.setAmount(Integer.valueOf(amount));
+            }
+
+            String dueDate = getValue(data, PAYMENT_DUE_DATE.key);
+            if (dueDate != null) {
+                pagoPa.setDueDate(parseDueDate(dueDate));
+            }
 
             InformalNotificationPaymentItem item = new InformalNotificationPaymentItem();
             item.setPagoPa(pagoPa);
@@ -153,6 +182,21 @@ public class InformalRecipientBuilder {
             return cleaned + "0".repeat(18 - cleaned.length());
         }
         return NotificationInformalValue.generateRandomNumber();
+    }
+
+    private OffsetDateTime parseDueDate(String value) {
+
+        if (value == null) {
+            return null;
+        }
+        if (value.length() == 10) {
+            return LocalDate
+                    .parse(value)
+                    .atStartOfDay()
+                    .atOffset(ZoneOffset.UTC);
+        }
+
+        return OffsetDateTime.parse(value);
     }
 }
 
