@@ -42,6 +42,7 @@ import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
 import it.pagopa.pn.cucumber.steps.delayer.validator.DelayerValidator;
 import it.pagopa.pn.cucumber.steps.informalNotification.builders.InformalRecipientBuilder;
 import it.pagopa.pn.cucumber.steps.informalNotification.mapper.InformalNotificationRequestMapper;
+import it.pagopa.pn.cucumber.steps.informalNotification.provider.InformalApiKeyProvider;
 import it.pagopa.pn.cucumber.steps.informalNotification.provider.InformalMessageProvider;
 import it.pagopa.pn.cucumber.steps.informalNotification.utils.NotificationInformalUtilsV1;
 import it.pagopa.pn.cucumber.steps.paperTracker.parser.EventTimelineParser;
@@ -257,6 +258,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnNotificationCostClientImpl.class,
         NotificationInformalUtilsV1.class,
         PnPaB2bExternalInformalClientImpl.class,
+        InformalApiKeyProvider.class,
         StimeMittentiContext.class
 })
 @EnableScheduling
