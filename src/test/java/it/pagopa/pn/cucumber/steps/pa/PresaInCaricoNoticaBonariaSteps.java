@@ -631,7 +631,6 @@ public class PresaInCaricoNoticaBonariaSteps {
     private InformalTimelineElementV1 timelineElement;
 
 
-
     @Then("la notifica bonaria ha stato {string}")
     public void verifyNotificationState(String expectedStatus) {
 
@@ -686,15 +685,40 @@ public class PresaInCaricoNoticaBonariaSteps {
     @Then("si attende che venga prodotto l'elemento {string} della notifica bonaria")
     public void verifyTimelineElementExists(String category) {
 
-        List<InformalTimelineElementV1> elements =
-        NotificationInformalUtilsWorkFlowV1
-                .waitForTimelineElementsByCategory(
-                        () -> pnPaB2bInternalInformalClientImpl
-                                .getSentInformalNotificationSender(currentCxId, savedIun, true), category);
+        List<InformalTimelineElementV1> elements = NotificationInformalUtilsWorkFlowV1.waitForTimelineElementsByCategory(() -> pnPaB2bInternalInformalClientImpl.getSentInformalNotificationSender(currentCxId, savedIun, true), category);
 
         assertFalse(elements.isEmpty(), "Nessun elemento trovato per categoria " + category);
         timelineElement = elements.get(0);
         log.info("Trovati {} elementi timeline per categoria {}", elements.size(), category);
+    }
+
+    //todo t bonarie testare e ottimizzare e cancellare vecchi step
+    @Given("l'ente mittente {string} compila una notifica bonaria con i seguenti dati:")
+    public void createInformalNotification(String paName, Map<String, String> dataInput) {
+
+        // STEP 1 - setSenderInformal
+        this.paName = paName;
+
+        this.currentCxId = switch (paName) {
+            case "Comune_1" -> senderId;
+            case "Comune_2" -> senderId2;
+            case "Comune_Multi" -> senderIdGA;
+            case "Comune_Root" -> senderIdROOT;
+            default -> throw new IllegalArgumentException("PA bonaria non valida: " + paName);
+        };
+
+        if (!paName.equalsIgnoreCase("Comune_Root")) {
+            this.currentGroupId = sharedSteps.getGroupIdByPa(paName, GroupPosition.FIRST);
+        }
+        // STEP 2 - createInformal
+        Map<String, String> data = new HashMap<>(dataInput);
+        handleGroup(data);
+        informalNotificationRequestV1 = informalNotificationRequestMapper.buildInformalNotificationRequest(data);
+
+        // STEP 3 - addInformalRecipientLight
+        Map<String, String> cleanedData = data.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().trim(), e -> e.getValue() != null ? e.getValue().trim() : null));
+        InformalNotificationRecipientV1 recipient = recipientBuilder.build(cleanedData, currentCxId);
+        informalNotificationRequestV1.getRecipients().add(recipient);
     }
 
 }
