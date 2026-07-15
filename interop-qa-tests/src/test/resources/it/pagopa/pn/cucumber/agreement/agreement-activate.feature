@@ -307,6 +307,7 @@ Feature: Attivazione richiesta di fruizione
     And "PA3" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
     When l'ente delegato con id della delega "%random" richiede una operazione di approvazione di quella richiesta di fruizione
     Then si ottiene status code 403
+    And l'utente è un "admin" di "PA2"
     And la richiesta di fruizione è in stato "PENDING"
 
   @sad-path
@@ -327,7 +328,7 @@ Feature: Attivazione richiesta di fruizione
 
   @sad-path
   @agreement-approve-unsuspend-refactor
-  Scenario Outline: [AGREEMENTS_UNSUSPEND_2] La riattivazione di una richiesta di fruizione in stato differente da SUSPENDED restituisce errore
+  Scenario Outline: [AGREEMENTS_UNSUSPEND_2A] La riattivazione di una richiesta di fruizione in stato differente da SUSPENDED restituisce errore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     And "PA2" ha una richiesta di fruizione in stato "<statoAgreement>" per quell'e-service
@@ -339,7 +340,16 @@ Feature: Attivazione richiesta di fruizione
       | statoAgreement |
       | ACTIVE         |
       | ARCHIVED       |
-      | PENDING        |
+
+  @sad-path
+  @agreement-approve-unsuspend-refactor
+  Scenario: [AGREEMENTS_UNSUSPEND_2B] La riattivazione di una richiesta di fruizione in stato PENDING restituisce errore
+    Given l'utente è un "admin" di "PA1"
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
+    And "PA2" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 400
+    And la richiesta di fruizione è in stato "PENDING"
 
   @sad-path
   @agreement-approve-unsuspend-refactor
@@ -349,7 +359,7 @@ Feature: Attivazione richiesta di fruizione
     And "GSP" ha già creato e inviato una richiesta di fruizione per quell'e-service ed è in attesa di approvazione
     And "PA1" ha già rifiutato quella richiesta di fruizione
     When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
-    Then si ottiene status code 409
+    Then si ottiene status code 400
     And la richiesta di fruizione è in stato "REJECTED"
 
   @sad-path
