@@ -68,6 +68,8 @@ Feature: Attivazione richiesta di fruizione
       | PA1          | PA2               | GSP           | security     | 403        |
       | PA1          | PA2               | GSP           | support      | 403        |
       | PA1          | PA2               | GSP           | api,security | 403        |
+      | PA1          | PA2               | GSP           | reviewer     | 403        |
+      | PA1          | PA2               | GSP           | viewer       | 403        |
 
   @happy-path @nrt-minimal
   @agreement_activate3 @no-parallel @agreement-approve-unsuspend-refactor
