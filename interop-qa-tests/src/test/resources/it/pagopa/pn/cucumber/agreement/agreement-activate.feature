@@ -229,6 +229,7 @@ Feature: Attivazione richiesta di fruizione
       | %null       | 400        |
       | %random     | 404        |
 
+  @happy-path
   @agreement-approve-unsuspend-refactor
   Scenario: [AGREEMENTS_APPROVE_2] Un delegato all'erogazione attiva una richiesta di fruizione in stato PENDING per conto dell'erogatore
     Given "PA2" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
@@ -240,17 +241,21 @@ Feature: Attivazione richiesta di fruizione
     And "GSP" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
     When l'ente delegato con id della delega "%actual" richiede una operazione di approvazione di quella richiesta di fruizione
     Then si ottiene status code 200
+    And l'utente è un "admin" di "PA1"
     And la richiesta di fruizione è in stato "ACTIVE"
 
+  @sad-path
   @agreement-approve-unsuspend-refactor
   Scenario: [AGREEMENTS_APPROVE_3] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato PENDING, alla richiesta di attivazione da parte di un utente di un tenant non autorizzato, si ottiene un errore
-    Given l'utente è un "admin" di "PA3"
     Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
-    Given "PA1" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    And "PA1" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    And l'utente è un "admin" di "PA3"
     When l'utente richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 403
+    And l'utente è un "admin" di "PA1"
     And la richiesta di fruizione è in stato "PENDING"
 
+  @sad-path
   @agreement-approve-unsuspend-refactor
   Scenario: [AGREEMENTS_APPROVE_4] Un ente delegato con delega in erogazione non ancora accettata non può approvare una richiesta di fruizione in stato PENDING per conto dell'erogatore
     Given "PA2" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
@@ -261,6 +266,7 @@ Feature: Attivazione richiesta di fruizione
     And "GSP" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
     When l'ente delegato con id della delega "%actual" richiede una operazione di approvazione di quella richiesta di fruizione
     Then si ottiene status code 403
+    And l'utente è un "admin" di "GSP"
     And la richiesta di fruizione è in stato "PENDING"
 
   @happy-path
@@ -276,28 +282,29 @@ Feature: Attivazione richiesta di fruizione
   @sad-path
   @agreement-approve-unsuspend-refactor
   Scenario: [AGREEMENTS_APPROVE_6] Un delegato all'erogazione con delega revocata NON può attivare una richiesta di fruizione in stato PENDING per conto dell'erogatore
-    Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione automatica
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
     And l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe
     And l'ente "PA1" richiede la creazione di una delega per l'ente "PA2"
     And l'ente "PA2" accetta la delega
     And "PA3" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
-    And l'ente "PA1" con ruolo "admin" revoca la delega
+    And l'ente "PA1" con ruolo "admin" revoca la delega con successo
     When l'ente delegato con id della delega "%actual" richiede una operazione di approvazione di quella richiesta di fruizione
     Then si ottiene status code 403
-    And la richiesta di fruizione si trova in stato "SUSPENDED"
+    And l'utente è un "admin" di "PA1"
+    And la richiesta di fruizione si trova in stato "PENDING"
 
   @sad-path
   @agreement-approve-unsuspend-refactor
   Scenario: [AGREEMENTS_APPROVE_7] Una richiesta di fruizione in stato PENDING NON può essere approvata da un ente con delega in erogazione non valida
-    Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione automatica
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
     And l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And "PA3" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
     When l'ente delegato con id della delega "%random" richiede una operazione di approvazione di quella richiesta di fruizione
     Then si ottiene status code 404
-    And la richiesta di fruizione si trova in stato "SUSPENDED"
+    And la richiesta di fruizione si trova in stato "PENDING"
 
   @sad-path
   @agreement-approve-unsuspend-refactor
