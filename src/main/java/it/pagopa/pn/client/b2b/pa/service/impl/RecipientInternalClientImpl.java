@@ -9,6 +9,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffLegalFactId;
 import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
 import it.pagopa.pn.client.b2b.pa.domain.NotificationSearchParam;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaldeliveryPushb2bpa.api.LegalFactsApi;
 import it.pagopa.pn.client.b2b.pa.provider.DestinatarioRegistry;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotification;
@@ -35,12 +36,12 @@ import static it.pagopa.pn.client.b2b.pa.domain.Costanti.MARIO_GHERKIN;
 import static it.pagopa.pn.client.b2b.pa.utils.JsonDeepCopyMapper.deepCopy;
 
 /**
- * Implementazione di IPnWebRecipientClient sull'openapi internal (RecipientReadApi): usata dal
+ * Implementazione di IPnWebRecipientClient sull'openapi internal: notifiche e ricerca via
+ * RecipientReadApi, atti legali via la LegalFactsApi internal di pn-delivery-push. Usata dal
  * flusso @useB2B per tutte le utenze che NON sono PG dedicate _B2B (PF e PG classiche). Selezionata
  * a runtime dal router {@link B2BRecipientExternalClientImpl}.
  * <p>
- * Le operazioni senza equivalente sull'openapi internal (BFF-only o legal facts, mai implementate
- * neanche prima di questo refactor) restano non supportate.
+ * Le operazioni puramente BFF (mai implementate neanche prima di questo refactor) restano non supportate.
  */
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -50,6 +51,7 @@ public class RecipientInternalClientImpl implements IPnWebRecipientClient {
 
     private final DestinatarioRegistry destinatarioRegistry;
     private final RecipientReadApi recipientReadApi;
+    private final LegalFactsApi legalFactsApi;
 
     private BearerTokenType bearerTokenSetted;
     private CxTypeAuthFleet xPagopaPnCxType;
@@ -57,15 +59,23 @@ public class RecipientInternalClientImpl implements IPnWebRecipientClient {
 
     public RecipientInternalClientImpl(RestTemplate restTemplate,
                                        @Value("${pn.delivery.base-url}") String webBasePath,
+                                       @Value("${pn.internal.delivery-push-base-url}") String deliveryPushBasePath,
                                        DestinatarioRegistry destinatarioRegistry) {
         this.destinatarioRegistry = destinatarioRegistry;
         this.recipientReadApi = new RecipientReadApi(newApiClient(restTemplate, webBasePath));
+        this.legalFactsApi = new LegalFactsApi(newLegalFactsApiClient(restTemplate, deliveryPushBasePath));
         setBearerToken(BearerTokenType.PG_1);
     }
 
     // le API internal non richiedono bearer token: l'identita' e' veicolata dagli header cx-* risolti sotto
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath) {
         ApiClient apiClient = new ApiClient(restTemplate);
+        apiClient.setBasePath(basePath);
+        return apiClient;
+    }
+
+    private static it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaldeliveryPushb2bpa.ApiClient newLegalFactsApiClient(RestTemplate restTemplate, String basePath) {
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaldeliveryPushb2bpa.ApiClient apiClient = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaldeliveryPushb2bpa.ApiClient(restTemplate);
         apiClient.setBasePath(basePath);
         return apiClient;
     }
@@ -172,8 +182,11 @@ public class RecipientInternalClientImpl implements IPnWebRecipientClient {
 
     @Override
     public LegalFactDownloadMetadataResponse getLegalFact(String iun, LegalFactCategory legalFactType, String legalFactId) throws RestClientException {
-        // nessun endpoint internal per gli atti legali dei destinatari, solo b2b-pg-external
-        throw new UnsupportedOperationException();
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaldeliveryPushb2bpa.model.CxTypeAuthFleet cxType =
+                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaldeliveryPushb2bpa.model.CxTypeAuthFleet.fromValue(xPagopaPnCxType.getValue());
+        return deepCopy(
+                legalFactsApi.getLegalFactById(X_PAGOPA_PN_UID, cxType, xPagopaPnCxId, iun, legalFactId, null, null),
+                LegalFactDownloadMetadataResponse.class);
     }
 
     @Override
