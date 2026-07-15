@@ -401,23 +401,23 @@ Feature: Attivazione richiesta di fruizione
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "<suspendingTenant>" ha già sospeso quella richiesta di fruizione come <suspendedBy>
-    And l'utente è un "<ruolo>" di "<ente>"
+    And l'utente è un "<role>" di "<tenant>"
     When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 403
     And la richiesta di fruizione è in stato "SUSPENDED"
 
     Examples:
-      | suspendingTenant | suspendedBy | ente | ruolo        |
-      | PA1              | PRODUCER    | PA1  | api          |
-      | PA1              | PRODUCER    | PA1  | security     |
-      | PA1              | PRODUCER    | PA1  | support      |
-      | PA1              | PRODUCER    | PA1  | api,security |
-      | PA1              | PRODUCER    | PA2  | admin        |
-      | PA2              | CONSUMER    | PA2  | api          |
-      | PA2              | CONSUMER    | PA2  | security     |
-      | PA2              | CONSUMER    | PA2  | support      |
-      | PA2              | CONSUMER    | PA2  | api,security |
-      | PA2              | CONSUMER    | PA1  | admin        |
+      | suspendingTenant | suspendedBy | tenant | role         |
+      | PA1              | PRODUCER    | PA1    | api          |
+      | PA1              | PRODUCER    | PA1    | security     |
+      | PA1              | PRODUCER    | PA1    | support      |
+      | PA1              | PRODUCER    | PA1    | api,security |
+      | PA1              | PRODUCER    | PA2    | admin        |
+      | PA2              | CONSUMER    | PA2    | api          |
+      | PA2              | CONSUMER    | PA2    | security     |
+      | PA2              | CONSUMER    | PA2    | support      |
+      | PA2              | CONSUMER    | PA2    | api,security |
+      | PA2              | CONSUMER    | PA1    | admin        |
 
   @happy-path
   @agreement-approve-unsuspend-refactor
@@ -432,6 +432,7 @@ Feature: Attivazione richiesta di fruizione
     And l'ente delegato richiede una operazione di sospensione di quella richiesta di fruizione
     When l'ente delegato con id della delega "%actual" richiede una operazione di riattivazione di quella richiesta di fruizione
     Then si ottiene status code 200
+    And l'utente è un "admin" di "PA2"
     And la richiesta di fruizione è in stato "ACTIVE"
 
   @sad-path
@@ -462,7 +463,7 @@ Feature: Attivazione richiesta di fruizione
   Scenario: [AGREEMENTS_UNSUSPEND_10] Se una richiesta di fruizione viene sospesa dal fruitore e l'erogatore dell'e-service tenta di riattivarla, questa rimarrà in stato SUSPENDED
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA2" ha già sospeso quella richiesta di fruizione come PRODUCER
+    And "PA2" ha già sospeso quella richiesta di fruizione come CONSUMER
     And l'utente è un "admin" di "PA1"
     When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 200
@@ -510,6 +511,7 @@ Feature: Attivazione richiesta di fruizione
     And l'ente "PA1" con ruolo "admin" revoca la delega
     When l'ente delegato con id della delega "%actual" richiede una operazione di riattivazione di quella richiesta di fruizione
     Then si ottiene status code 403
+    And l'utente è un "admin" di "PA1"
     And la richiesta di fruizione è in stato "SUSPENDED"
 
   @sad-path
@@ -526,6 +528,7 @@ Feature: Attivazione richiesta di fruizione
     And l'ente delegante con ruolo "admin" revoca la delega in fruizione
     When l'ente delegato con id della delega "%actual" richiede una operazione di riattivazione di quella richiesta di fruizione
     Then si ottiene status code 403
+    And l'utente è un "admin" di "PA1"
     And la richiesta di fruizione è in stato "SUSPENDED"
 
   @sad-path
