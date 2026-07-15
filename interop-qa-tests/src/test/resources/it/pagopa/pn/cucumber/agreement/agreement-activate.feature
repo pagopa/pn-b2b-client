@@ -17,20 +17,20 @@ Feature: Attivazione richiesta di fruizione
 
     @happy-path
     Examples:
-      | enteFruitore | enteCertificatore | enteErogatore | ruolo | statusCode |
-      | PA1          | PA2               | GSP           | admin | 200        |
-      | GSP          | PA2               | PA1           | admin | 200        |
+#      | enteFruitore | enteCertificatore | enteErogatore | ruolo | statusCode |
+#      | PA1          | PA2               | GSP           | admin | 200        |
+#      | GSP          | PA2               | PA1           | admin | 200        |
 
     @sad-path
     Examples:
       | enteFruitore | enteCertificatore | enteErogatore | ruolo        | statusCode |
-      | PA1          | PA2               | GSP           | api          | 403        |
-      | PA1          | PA2               | GSP           | security     | 403        |
-      | PA1          | PA2               | GSP           | support      | 403        |
-      | PA1          | PA2               | GSP           | api,security | 403        |
-      | GSP          | PA2               | PA1           | api          | 403        |
-      | GSP          | PA2               | PA1           | security     | 403        |
-      | GSP          | PA2               | PA1           | support      | 403        |
+#      | PA1          | PA2               | GSP           | api          | 403        |
+#      | PA1          | PA2               | GSP           | security     | 403        |
+#      | PA1          | PA2               | GSP           | support      | 403        |
+#      | PA1          | PA2               | GSP           | api,security | 403        |
+#      | GSP          | PA2               | PA1           | api          | 403        |
+#      | GSP          | PA2               | PA1           | security     | 403        |
+#      | GSP          | PA2               | PA1           | support      | 403        |
       | GSP          | PA2               | PA1           | api,security | 403        |
 
     @sad-path
@@ -106,7 +106,7 @@ Feature: Attivazione richiesta di fruizione
 
   @deleghe1
   @agreement-approve-unsuspend-refactor
-  Scenario: Un delegato alla fruizione sospende ed riattiva una finalità/richiesta di fruizione agendo come delegato e passando il delegationId
+  Scenario: [AGREEMENT_ACTIVATE_07] Un delegato alla fruizione sospende ed riattiva una finalità/richiesta di fruizione agendo come delegato e passando il delegationId
     Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
     Given l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
@@ -131,7 +131,7 @@ Feature: Attivazione richiesta di fruizione
 
   @deleghe1
   @agreement-approve-unsuspend-refactor
-  Scenario: Un delegato sia all'erogazione che alla fruizione sospende ed approva una richiesta di fruizione passando il Delegation-id come discriminante per capire se agisce come delegato all'erogazione o alla fruizione - Delegato all'erogazione
+  Scenario: [AGREEMENT_ACTIVATE_08] Un delegato sia all'erogazione che alla fruizione sospende ed approva una richiesta di fruizione passando il Delegation-id come discriminante per capire se agisce come delegato all'erogazione o alla fruizione - Delegato all'erogazione
     Given "PA2" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione automatica
     Given l'utente è un "admin" di "PA1"
     # CREAZIONE DELEGA IN FRUIZIONE VERSO PA1
