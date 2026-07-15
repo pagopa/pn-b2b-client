@@ -17,20 +17,20 @@ Feature: Attivazione richiesta di fruizione
 
     @happy-path
     Examples:
-#      | enteFruitore | enteCertificatore | enteErogatore | ruolo | statusCode |
-#      | PA1          | PA2               | GSP           | admin | 200        |
-#      | GSP          | PA2               | PA1           | admin | 200        |
+      | enteFruitore | enteCertificatore | enteErogatore | ruolo | statusCode |
+      | PA1          | PA2               | GSP           | admin | 200        |
+      | GSP          | PA2               | PA1           | admin | 200        |
 
     @sad-path
     Examples:
       | enteFruitore | enteCertificatore | enteErogatore | ruolo        | statusCode |
-#      | PA1          | PA2               | GSP           | api          | 403        |
-#      | PA1          | PA2               | GSP           | security     | 403        |
-#      | PA1          | PA2               | GSP           | support      | 403        |
-#      | PA1          | PA2               | GSP           | api,security | 403        |
-#      | GSP          | PA2               | PA1           | api          | 403        |
-#      | GSP          | PA2               | PA1           | security     | 403        |
-#      | GSP          | PA2               | PA1           | support      | 403        |
+      | PA1          | PA2               | GSP           | api          | 403        |
+      | PA1          | PA2               | GSP           | security     | 403        |
+      | PA1          | PA2               | GSP           | support      | 403        |
+      | PA1          | PA2               | GSP           | api,security | 403        |
+      | GSP          | PA2               | PA1           | api          | 403        |
+      | GSP          | PA2               | PA1           | security     | 403        |
+      | GSP          | PA2               | PA1           | support      | 403        |
       | GSP          | PA2               | PA1           | api,security | 403        |
 
     @sad-path
