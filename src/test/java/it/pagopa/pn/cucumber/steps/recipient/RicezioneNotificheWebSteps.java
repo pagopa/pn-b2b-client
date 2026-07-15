@@ -632,12 +632,12 @@ public class RicezioneNotificheWebSteps {
     private boolean searchNotification(NotificationSearchParam searchParam) {
         boolean beenFound;
         NotificationStatusV26 notificationStatus = searchParam.status != null ? NotificationStatusV26.valueOf(searchParam.status) : null;
-        it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchResponse notificationSearchResponse = webRecipientClient
+        it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.LegalNotificationSearchResponse notificationSearchResponse = webRecipientClient
                 .searchReceivedNotification(
                         searchParam.startDate, searchParam.endDate, searchParam.mandateId,
                         searchParam.senderId, notificationStatus, searchParam.subjectRegExp,
                         searchParam.iunMatch, searchParam.size, null);
-        List<it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchRow> resultsPage = notificationSearchResponse.getResultsPage();
+        List<it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.LegalNotificationSearchRow> resultsPage = notificationSearchResponse.getResultsPage();
         beenFound = Objects.requireNonNull(resultsPage).stream().filter(elem -> Objects.requireNonNull(elem.getIun()).equals(sharedSteps.getNotificationIun())).findAny().orElse(null) != null;
         if (!beenFound && Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())) {
             while (Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())) {
@@ -648,6 +648,7 @@ public class RicezioneNotificheWebSteps {
                                     searchParam.startDate, searchParam.endDate, searchParam.mandateId,
                                     searchParam.senderId, notificationStatus, searchParam.subjectRegExp,
                                     searchParam.iunMatch, searchParam.size, pageKey);
+                    resultsPage = notificationSearchResponse.getResultsPage();
                     beenFound = resultsPage.stream().filter(elem -> Objects.requireNonNull(elem.getIun()).equals(sharedSteps.getNotificationIun())).findAny().orElse(null) != null;
                     if (beenFound) break;
                 }
