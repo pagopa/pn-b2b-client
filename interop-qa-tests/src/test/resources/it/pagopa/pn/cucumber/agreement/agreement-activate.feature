@@ -293,7 +293,7 @@ Feature: Attivazione richiesta di fruizione
     When l'ente delegato con id della delega "%actual" richiede una operazione di approvazione di quella richiesta di fruizione
     Then si ottiene status code 403
     And l'utente è un "admin" di "PA1"
-    And la richiesta di fruizione si trova in stato "PENDING"
+    And la richiesta di fruizione è in stato "PENDING"
 
   @sad-path
   @agreement-approve-unsuspend-refactor
@@ -301,10 +301,13 @@ Feature: Attivazione richiesta di fruizione
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
     And l'ente delegante "PA1"
     And l'ente delegato "PA2"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe
+    And l'ente "PA1" richiede la creazione di una delega per l'ente "PA2"
+    And l'ente "PA2" accetta la delega
     And "PA3" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
     When l'ente delegato con id della delega "%random" richiede una operazione di approvazione di quella richiesta di fruizione
-    Then si ottiene status code 404
-    And la richiesta di fruizione si trova in stato "PENDING"
+    Then si ottiene status code 403
+    And la richiesta di fruizione è in stato "PENDING"
 
   @sad-path
   @agreement-approve-unsuspend-refactor
