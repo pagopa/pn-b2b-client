@@ -508,7 +508,7 @@ Feature: Attivazione richiesta di fruizione
     And l'ente "PA2" accetta la delega
     And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'ente delegato richiede una operazione di sospensione di quella richiesta di fruizione
-    And l'ente "PA1" con ruolo "admin" revoca la delega
+    And l'ente "PA1" con ruolo "admin" revoca la delega con successo
     When l'ente delegato con id della delega "%actual" richiede una operazione di riattivazione di quella richiesta di fruizione
     Then si ottiene status code 403
     And l'utente è un "admin" di "PA1"
@@ -520,12 +520,12 @@ Feature: Attivazione richiesta di fruizione
     Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione automatica
     And l'ente delegante "PA2"
     And l'ente delegato "PA3"
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'ente "PA3" concede la disponibilità a ricevere deleghe in fruizione
     And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
     And l'ente delegato accetta la delega in fruizione
+    And il delegato ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'ente delegato richiede una operazione di sospensione di quella richiesta di fruizione
-    And l'ente delegante con ruolo "admin" revoca la delega in fruizione
+    And l'ente delegante con ruolo "admin" revoca la delega in fruizione con successo
     When l'ente delegato con id della delega "%actual" richiede una operazione di riattivazione di quella richiesta di fruizione
     Then si ottiene status code 403
     And l'utente è un "admin" di "PA1"
@@ -538,9 +538,10 @@ Feature: Attivazione richiesta di fruizione
     And l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA3" ha già sospeso quella richiesta di fruizione come PRODUCER
+    And "PA3" ha già sospeso quella richiesta di fruizione come CONSUMER
     When l'ente delegato con id della delega "%random" richiede una operazione di riattivazione di quella richiesta di fruizione
-    Then si ottiene status code 404
+    Then si ottiene status code 403
+    And l'utente è un "admin" di "PA1"
     And la richiesta di fruizione è in stato "SUSPENDED"
 
   @certifiedDiscreteAttribute
