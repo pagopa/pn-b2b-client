@@ -651,7 +651,7 @@ public class PresaInCaricoNoticaBonariaSteps {
         }
     }
 
-    @Then("viene verificato che l'elemento di timeline bonaria {string} esista e sia correttamente compilato")
+    @Then("viene verificato che l'elemento di timeline {string} della notifica bonaria esista e sia correttamente compilato")
     public void verifyTimelineElementAndDetailsExists(String category, Map<String, String> dataMap) {
 
         assertNotNull(fullInformalNotificationResponse);
@@ -683,7 +683,7 @@ public class PresaInCaricoNoticaBonariaSteps {
         }
     }
 
-    @Then("viene verificato che l'elemento di timeline bonaria {string} esista")
+    @Then("si attende che venga prodotto l'elemento {string} della notifica bonaria")
     public void verifyTimelineElementExists(String category) {
 
         List<InformalTimelineElementV1> elements =
