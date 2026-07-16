@@ -813,7 +813,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/e54dad37c41cd42d62b2f3874d535ff006eb6fc2/docs/openapi/api-external-b2b-informal-pa-bundle.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/c42500ee49900b41a347cee991af4b111202b945/docs/openapi/api-external-b2b-informal-pa-bundle.yaml</inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
