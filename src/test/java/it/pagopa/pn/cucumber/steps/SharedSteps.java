@@ -14,8 +14,8 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pa.BffRequestNewApiKey;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pa.BffResponseNewApiKey;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationsResponse;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationSearchRow;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffLegalNotificationSearchRow;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffLegalNotificationsResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.digitaladdresses.BffUserAddress;
 import it.pagopa.pn.client.b2b.pa.cache.CacheManager;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
@@ -1427,14 +1427,14 @@ public class SharedSteps {
         setPA(paName);
         String recipientTaxId = recipient.getTaxId();
         OffsetDateTime todayDate = now().atZoneSameInstant(ZoneId.of("UTC")).toOffsetDateTime();
-        BffNotificationsResponse bffNotificationsResponse = webPaClient.searchSentNotification(
+        BffLegalNotificationsResponse bffNotificationsResponse = webPaClient.searchSentNotification(
                 todayDate.minusDays(upperLimit),
                 todayDate.minusDays(lowerLimit),
                 recipientTaxId, null, null, null, 50, null);
         AssertionsForClassTypes.assertThat(bffNotificationsResponse).as("La bffNotificationResponse non dev'essere null").isNotNull();
         AssertionsForInterfaceTypes.assertThat(bffNotificationsResponse.getResultsPage()).as("La lista di notifiche vecchie " + lowerLimit + " giorni non dev'essere null").isNotNull();
         AssertionsForInterfaceTypes.assertThat(bffNotificationsResponse.getResultsPage()).as("La lista di notifiche vecchie " + lowerLimit + " giorni non dev'essere vuota").isNotEmpty();
-        NotificationSearchRow result = bffNotificationsResponse.getResultsPage().stream().filter(
+        BffLegalNotificationSearchRow result = bffNotificationsResponse.getResultsPage().stream().filter(
                         n -> n.getRecipients().size() == 1 && n.getRecipients().contains(recipientTaxId))
                 .findFirst().orElse(null);
         AssertionsForClassTypes.assertThat(result).as("Nessuna notifica trovato con il solo destinatario " + recipientTaxId).isNotNull();
