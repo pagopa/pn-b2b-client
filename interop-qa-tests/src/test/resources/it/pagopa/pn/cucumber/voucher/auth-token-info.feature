@@ -21,6 +21,7 @@ Feature: Nella generazione del token sono aggiunte le seguenti informazioni: hea
       | payload  | digest.value |
       | payload  | client_id    |
     Then verifica che le informazioni di audit sul bucket S3 STANDARD contengano i seguenti dati per il voucher generato:
-      | position | element  | context   |
-      | payload  | jwtId    | jti       |
-      | payload  | clientId | client_id |
+      | position | element      | context      |
+      | payload  | jwtId        | jti          |
+      | payload  | clientId     | client_id    |
+      | payload  | digest.value | digest.value |
