@@ -1,30 +1,41 @@
 package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.Then;
+import it.pagopa.interop.event.enums.InteropEvent;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.ArchivingClient;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.ArchivedFileMatched;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.context.ArchivingContext;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.BucketRole;
-import it.pagopa.interop.event.enums.InteropEvent;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.context.ArchivingContext;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.InteropFile;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.ArchivedFile;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.FileInfo;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.validator.model.ValidationResult;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.registry.FileInfoRegistry;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.validator.model.ValidationResult;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils.TokenResolver;
+import it.pagopa.pn.interop.cucumber.steps.common.AuditTokenContext;
+import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.within;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+@Slf4j
 public class ArchivingSteps {
 
     private final ArchivingContext context;
+    private final AuditTokenContext auditTokenContext;
     private final ArchivingClient client;
     private final FileInfoRegistry fileInfoRegistry;
 
@@ -32,12 +43,17 @@ public class ArchivingSteps {
                           @Value("${s3.signed-document-base-path}") String documentWormBucketBase,
                           @Value("${s3.unsigned-event-base-path}") String eventBucketBase,
                           @Value("${s3.signed-event-base-path}") String eventWormBucketBase,
+                          @Value("${s3.unsigned-jwt-details-path}") String jwtDetailsBucketBase,
+                          @Value("${s3.signed-jwt-details-path}") String jwtDetailsWormBucketBase,
                           SharedStepsContext sharedStepsContext) {
         TokenResolver tokenResolver = new TokenResolver(sharedStepsContext);
 
         this.context = new ArchivingContext();
+        this.auditTokenContext = sharedStepsContext.getAuditTokenContext();
         this.client = new ArchivingClient();
-        this.fileInfoRegistry = new FileInfoRegistry(tokenResolver, documentBucketBase, documentWormBucketBase, eventBucketBase, eventWormBucketBase);
+        this.fileInfoRegistry = new FileInfoRegistry(tokenResolver, documentBucketBase, documentWormBucketBase,
+                eventBucketBase, eventWormBucketBase,
+                jwtDetailsBucketBase, jwtDetailsWormBucketBase);
     }
 
     @Then("verifica che a fronte dell'evento {interopEvent} venga generato nell'opportuno bucket S3 {bucketRole} un {interopFile}")
@@ -98,5 +114,71 @@ public class ArchivingSteps {
         Assertions.assertThat(validation.missingOptional())
                 .as("Le informazioni opzionali mancanti non sono zero")
                 .isEmpty();
+    }
+
+    @Then("verifica che le informazioni di audit sul bucket S3 {bucketRole} contengano i seguenti dati per il voucher generato:")
+    public void checkFileInS3Bucket(BucketRole bucketRole, List<Map<String, String>> rows) throws IOException {
+
+        InteropFile fileType = InteropFile.AUDIT_JWT_EVENTS_LOG;
+        FileInfo fileInfo = fileInfoRegistry.getFileInfo(fileType);
+
+        ArchivingClient.PollingSpecification pollingSpecification =
+                ArchivingClient.PollingSpecification.builder()
+                        .centerTimestamp(context.getCenterTimestamp())
+                        .timeoutMs(600_000)
+                        .pollIntervalMs(5_000)
+                        .deltaSeconds(300)
+                        .fileInfo(fileInfo)
+                        .bucketRole(bucketRole)
+                        .build();
+
+        ArchivedFileMatched archivedFile = client.findS3FileInInterval(pollingSpecification);
+
+        Assertions.assertThat(archivedFile)
+                .as("Atteso file %s nel bucket %s ma non è stato trovato", fileType, bucketRole)
+                .isNotNull();
+        context.setMatch(archivedFile);
+
+        checkArchivedFile(archivedFile, rows);
+    }
+
+    private void checkArchivedFile(ArchivedFileMatched archivedFile, List<Map<String, String>> rows) throws IOException {
+
+        String jsonString = new String(archivedFile.file().getContent().readAllBytes(), StandardCharsets.UTF_8);
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> archivedFileContent = mapper.readValue(jsonString, new TypeReference<Map<String, Object>>() {});
+
+        log.info("Check file content:\n{}", archivedFileContent);
+
+        Assertions.assertThat(archivedFileContent)
+                .as("Audit file content is not valid")
+                .isNotEmpty();
+
+        assertSoftly(softly -> {
+            for (Map<String, String> row : rows) {
+                String position = row.get("position");
+                String archivedField = row.get("element");
+                String contextField = row.get("context");
+                String auditField = (contextField == null || contextField.isBlank()) ? archivedField : contextField;
+
+                Map<String, String> contextValues = switch (position) {
+                    case "header" -> auditTokenContext.getHeaders();
+                    case "payload" -> auditTokenContext.getPayload();
+                    default -> throw new IllegalArgumentException("Invalid position: " + position);
+                };
+
+                Object actualValue = AuditTokenContext.resolveFieldValue(archivedFileContent, archivedField);
+                String expectedValue = contextValues.get(auditField);
+
+                softly.assertThat(actualValue)
+                        .as("Il campo '%s' non è presente", auditField)
+                        .isNotNull();
+                if (actualValue != null) {
+                    softly.assertThat(actualValue)
+                            .as("Il valore del campo '%s' non corrisponde a quello del file", auditField)
+                            .isEqualTo(expectedValue);
+                }
+            }
+        });
     }
 }
