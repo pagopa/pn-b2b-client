@@ -131,8 +131,9 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     And "PA2" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
     And l'utente è un "admin" di "PA3" con ruolo M2M m2m-admin
     When l'utente m2m richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
-    Then si ottiene status code 200
-    And la richiesta di fruizione si trova in stato "ACTIVE"
+    Then si ottiene status code 403
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And la richiesta di fruizione si trova in stato "PENDING"
 
   @sad-path
   @m2m-agreement-approve-unsuspend-refactor
@@ -146,6 +147,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     And l'utente è un m2m-admin dell'ente delegato
     When l'utente m2m richiede una operazione di approvazione della richiesta di fruizione con id "%actual" e delegationId "%actual"
     Then si ottiene status code 403
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And la richiesta di fruizione si trova in stato "PENDING"
 
   @sad-path
