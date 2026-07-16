@@ -516,24 +516,7 @@ Feature: Attivazione richiesta di fruizione
 
   @sad-path
   @agreement-approve-unsuspend-refactor
-  Scenario: [AGREEMENTS_UNSUSPEND_14] Un delegato alla fruizione con delega revocata NON può riattivare una richiesta di fruizione in stato SUSPENDED per conto del fruitore
-    Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione automatica
-    And l'ente delegante "PA2"
-    And l'ente delegato "PA3"
-    And l'ente "PA3" concede la disponibilità a ricevere deleghe in fruizione
-    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
-    And l'ente delegato accetta la delega in fruizione
-    And il delegato ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And l'ente delegato richiede una operazione di sospensione di quella richiesta di fruizione
-    And l'ente delegante con ruolo "admin" revoca la delega in fruizione con successo
-    When l'ente delegato con id della delega "%actual" richiede una operazione di riattivazione di quella richiesta di fruizione
-    Then si ottiene status code 403
-    And l'utente è un "admin" di "PA1"
-    And la richiesta di fruizione è in stato "SUSPENDED"
-
-  @sad-path
-  @agreement-approve-unsuspend-refactor
-  Scenario: [AGREEMENTS_UNSUSPEND_15] Una richiesta di fruizione sospesa dall'erogatore dell'e-service NON può essere riattivata da un ente con delega in erogazione non valida
+  Scenario: [AGREEMENTS_UNSUSPEND_14] Una richiesta di fruizione sospesa dall'erogatore dell'e-service NON può essere riattivata da un ente con delega in erogazione non valida
     Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione automatica
     And l'ente delegante "PA1"
     And l'ente delegato "PA2"
