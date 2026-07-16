@@ -25,3 +25,17 @@ Feature: Recupero utenze
       | ruolo    |
       | reviewer |
       | viewer   |
+
+  Scenario Outline: [USER_ROLES_ACCESS_CONTROL_1] Viene recuperata la lista di utenti da un utente non admin - KO
+    Given l'utente è un "<ruolo>" di "PA2"
+    When viene invocata l'API di recupero utenze per l'istituzione: "PA2"
+    Then si verifica che la chiamata a selfcare abbia ritornato uno status code: 403
+
+    Examples:
+      | ruolo        |
+      | api          |
+      | security     |
+      | api,security |
+      | support      |
+      | reviewer     |
+      | viewer       |

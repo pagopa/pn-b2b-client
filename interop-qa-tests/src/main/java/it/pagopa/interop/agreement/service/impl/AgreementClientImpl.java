@@ -116,6 +116,16 @@ public class AgreementClientImpl implements IAgreementClient {
     }
 
     @Override
+    public Agreement unsuspendAgreement(UUID agreementId) {
+        return agreementsApi.unsuspendAgreement(agreementId, null);
+    }
+
+    @Override
+    public Agreement unsuspendAgreement(UUID agreementId, UUID delegationId) {
+        return agreementsApi.unsuspendAgreement(agreementId, new DelegationRef().delegationId(delegationId));
+    }
+
+    @Override
     public Agreement updateAgreement(UUID agreementId, AgreementUpdatePayload agreementUpdatePayload) {
         return agreementsApi.updateAgreement(agreementId, agreementUpdatePayload);
     }

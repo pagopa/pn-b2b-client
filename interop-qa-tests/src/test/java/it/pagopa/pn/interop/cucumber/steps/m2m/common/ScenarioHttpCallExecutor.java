@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.common;
 
 import io.cucumber.spring.ScenarioScope;
 import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.common.interceptor.dpop.IntegrityValidationInterceptor;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -57,6 +58,9 @@ public class ScenarioHttpCallExecutor implements IHttpExecutor {
             responseStatus = HttpStatus.OK;
         } catch (HttpStatusCodeException e) {
             responseStatus = e.getStatusCode();
+        } catch (IntegrityValidationInterceptor.IntegrityValidationException e) {
+            responseStatus = e.getHttpStatus();
+            errorMessage = e.getMessage();
         }
         return responseStatus;
     }
