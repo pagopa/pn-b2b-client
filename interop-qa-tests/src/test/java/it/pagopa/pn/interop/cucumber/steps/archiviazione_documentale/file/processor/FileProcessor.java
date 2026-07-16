@@ -4,13 +4,15 @@ import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.proces
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.processor.model.ProcessedFile;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.processor.process.GzipFileProcessor;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.processor.process.P7mFileProcessor;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.processor.process.ZipFileProcessor;
 
 import java.util.List;
 
 public class FileProcessor {
     private final List<IFileProcessor> processors =  List.of(
             new GzipFileProcessor(),
-            new P7mFileProcessor()
+            new P7mFileProcessor(),
+            new ZipFileProcessor()
     );
 
     public ProcessedFile normalize(FileCandidate candidate) {

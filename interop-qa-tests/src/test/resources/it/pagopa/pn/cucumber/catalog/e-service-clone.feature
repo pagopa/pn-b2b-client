@@ -53,3 +53,24 @@ Feature: Clonazione di un e-service
     Then si ottiene status code 200
     And il nome del nuovo e-service non supera i 60 caratteri
     And il nome del nuovo e-service contiene " - clone - " seguito dalla data e ora della clonazione
+
+  Scenario: [ESERVICE_CLONING_3] La clonazione di un e-service asincrono già pubblicato genera un nuovo e-service che
+  mantiene le stesse configurazioni del descrittore originario.
+
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
+      | asyncExchangeProperties.responseTime          | 100  |
+      | asyncExchangeProperties.resourceAvailableTime | 100  |
+      | asyncExchangeProperties.confirmation          | true |
+      | asyncExchangeProperties.bulk                  | true |
+      | asyncExchangeProperties.maxResultSet          | 50   |
+    And si ottiene status code 200
+    When l'utente clona quell'e-service
+    And si ottiene status code 200
+    Then il nome del nuovo e-service contiene " - clone - " seguito dalla data e ora della clonazione
+    And l'e-service ha questa configurazione:
+      | asyncExchangeProperties.responseTime          | 100  |
+      | asyncExchangeProperties.resourceAvailableTime | 100  |
+      | asyncExchangeProperties.confirmation          | true |
+      | asyncExchangeProperties.bulk                  | true |
+      | asyncExchangeProperties.maxResultSet          | 50   |
