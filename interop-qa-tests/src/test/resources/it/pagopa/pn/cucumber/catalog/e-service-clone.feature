@@ -1,4 +1,4 @@
-@eservice @eservice_cloning
+@eservice
 Feature: Clonazione di un e-service
   Tutti gli utenti autorizzati di enti erogatori possono clonare un proprio e-service e il relativo descrittore in stato PUBLISHED, SUSPENDED
 

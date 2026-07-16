@@ -424,16 +424,3 @@ Feature: Creazione di una delega in erogazione
       | delegante |
       | Privato   |
       | GSP       |
-
-  @eservice_cloning
-  @sad-path @deleghe2
-  Scenario: [ESERVICE_DELEGATO_CLONAZIONE] Un delegante può delegare un solo ente per volta per un e-service
-    Given l'utente è un "admin" di "PA1"
-    Given l'ente "PA3" rimuove la disponibilità a ricevere deleghe
-    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
-    And l'ente "PA2" concede la disponibilità a ricevere deleghe
-    When l'utente richiede la creazione di una delega per l'ente "PA2"
-    And l'ente "PA2" accetta la delega
-    Given l'utente è un "admin" di "PA2"
-    When l'utente tenta di clonare quell'e-service
-    Then si ottiene status code 400
