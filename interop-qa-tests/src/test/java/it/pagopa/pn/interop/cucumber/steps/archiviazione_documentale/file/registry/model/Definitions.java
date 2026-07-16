@@ -20,10 +20,21 @@ public class Definitions {
             String documentBucketBase,
             String documentWormBucketBase,
             String eventBucketBase,
-            String eventWormBucketBase
+            String eventWormBucketBase,
+            String jwtDetailsBucketBase,
+            String jwtDetailsWormBucketBase
     ) {
 
         return List.of(
+
+                new FileInfoDefinition(
+                        AUDIT_JWT_EVENTS_LOG,
+                        MapFileTokenSource.of("jwtId", ":jwtId"),
+                        MapFileTokenSource.of(),
+                        List.of(new LocationDefinition(STANDARD, jwtDetailsBucketBase, FilenameFormat.NDJSON_LOG),
+                                new LocationDefinition(WORM, jwtDetailsWormBucketBase, FilenameFormat.NDJSON_LOG)
+                        )
+                ),
 
                 new FileInfoDefinition(
                         RISK_ANALYSIS_DOC,
