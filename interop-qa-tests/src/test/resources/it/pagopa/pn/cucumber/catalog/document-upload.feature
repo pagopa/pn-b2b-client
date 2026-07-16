@@ -153,3 +153,12 @@ Feature: Caricamento di un documento di interfaccia
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT" e tecnologia "REST"
     When l'utente carica un'interfaccia "REST" senza serverUrls
     Then si ottiene status code 400
+
+  @document-url-description
+  @sad-path
+  # Ticket di verifica aperto: https://pagopa.atlassian.net/browse/PIN-10621
+  Scenario: [DESCRIPTOR_UPLOAD_12] Creazione e-service con interfaccia REST contenente un server url con description di lunghezza eccessiva
+    Given l'utente è un "admin" di "PA1"
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT" e tecnologia "REST"
+    When l'utente carica un'interfaccia "REST" con serverUrls che contengono una descrizione di lunghezza eccedente il limite
+    Then si ottiene status code 200

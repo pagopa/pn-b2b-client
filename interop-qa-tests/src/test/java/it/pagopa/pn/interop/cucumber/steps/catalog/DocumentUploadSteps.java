@@ -136,6 +136,11 @@ public class DocumentUploadSteps {
         uploadInterface(apiType, "interface-missing-servers.yaml");
     }
 
+    @When("l'utente carica un'interfaccia {string} con serverUrls che contengono una descrizione di lunghezza eccedente il limite")
+    public void uploadInterfaceWithLongUrlDescription(String apiType) {
+        uploadInterface(apiType, "interface-with-long-description.yaml");
+    }
+
     private void uploadInterface(String apiType, String fileName) {
         String normalizedApiType = apiType == null ? "" : apiType.trim().toUpperCase(Locale.ROOT);
         if (!"REST".equals(normalizedApiType) && !"SOAP".equals(normalizedApiType)) {

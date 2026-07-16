@@ -1,22 +1,9 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.shared;
 
-import it.pagopa.interop.generated.openapi.clients.bff.model.CompactDescriptor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateAttributesSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateRiskAnalysisSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.pn.interop.cucumber.steps.DocumentMetadata;
 import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateDocumentInfo;
 import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
-import java.lang.reflect.Field;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
@@ -27,6 +14,10 @@ import org.jeasy.random.EasyRandomParameters;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 @Data
 @Getter
@@ -84,6 +75,8 @@ public class EServiceTemplateStepContext {
     private List<UUID> removedVerifiedAttributesIds = new ArrayList<>();
 
     private String modifiedTemplateName;
+
+    private EServiceTechnology technology = EServiceTechnology.REST; // DEFAULT a REST principalmente per mantenere retrocompatibilità prima dell'introduzione di questo attributo
 
     private static boolean isAnswersFieldInRiskAnalysisFormSeed(Field field) {
         return field.getName().equals("answers") && field.getDeclaringClass().equals(
@@ -143,4 +136,5 @@ public class EServiceTemplateStepContext {
     private <T> T lastOf(List<T> list) {
         return IterableUtils.isEmpty(list) ? null : list.get(list.size() - 1);
     }
+
 }

@@ -2,6 +2,10 @@
 @document-url-description
 Feature: Test della creazione di interfacce REST e SOAP per istanze di template
 
+  # TODO 14/07/2026 al momento il test ha un'imperfezione: non viene usato il corretto descriptorId al passo
+  # "l'utente tenta di associare un'interfaccia template instance "REST" con:" . Si attende la risoluzione
+  # del ticket https://pagopa.atlassian.net/browse/PIN-10534 per poter applicare una patch pulita.
+  # Nel frattempo, il test è stato eseguito manualmente senza riscontrare anomalie.
   @happy-path
   Scenario: [EST_INT_1] Creazione interfaccia template instance REST con tutti i parametri corretti
     Given l'utente è un "admin" di "PA1"
@@ -23,6 +27,7 @@ Feature: Test della creazione di interfacce REST e SOAP per istanze di template
       | serverUrls[0].url         | https://api.example.it |
       | serverUrls[0].description | API Server             |
 
+  # TODO 14/07/2026 stessa questione di [EST_INT_1], anche qui eseguito a mano senza rilevare anomalie
   @happy-path
   Scenario: [EST_INT_2] Creazione interfaccia template instance REST con contactName al limite di lunghezza
     Given l'utente è un "admin" di "PA1"
@@ -68,6 +73,7 @@ Feature: Test della creazione di interfacce REST e SOAP per istanze di template
       | serverUrls[0].url | https://api.example.it |
     Then si ottiene response status code 400
 
+  # TODO 14/07/2026 stessa questione di [EST_INT_1], anche qui eseguito a mano senza rilevare anomalie
   @sad-path
   Scenario: [EST_INT_6] Creazione interfaccia template instance REST con serverUrls assente
     Given l'utente è un "admin" di "PA1"
@@ -78,10 +84,11 @@ Feature: Test della creazione di interfacce REST e SOAP per istanze di template
       | contactEmail | test@example.it |
     Then si ottiene response status code 400
 
+  # TODO 14/07/2026 stessa questione di [EST_INT_1], anche qui eseguito a mano senza rilevare anomalie
   @happy-path
   Scenario: [EST_INT_7] Creazione interfaccia template instance SOAP con tutti i parametri corretti
     Given l'utente è un "admin" di "PA1"
-    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un e-service template sincrono in modalità erogazione con tecnologia "SOAP" in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service a partire dal template con successo indicando tutte le specifiche
     When l'utente tenta di associare un'interfaccia template instance "SOAP" con:
       | serverUrls[0].url     | https://soap.example.it |
@@ -92,18 +99,30 @@ Feature: Test della creazione di interfacce REST e SOAP per istanze di template
       | serverUrls[0].description | SOAP Server            |
 
   @happy-path
+  Scenario: [EST_INT_7b] Creazione interfaccia template instance SOAP da un template REST
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template sincrono in modalità erogazione con tecnologia "REST" in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service a partire dal template con successo indicando tutte le specifiche
+    When l'utente tenta di associare un'interfaccia template instance "SOAP" con:
+      | serverUrls[0].url     | https://soap.example.it |
+      | serverUrls[0].description | SOAP Server            |
+    Then si ottiene response status code 400
+
+  # TODO 14/07/2026 stessa questione di [EST_INT_1], anche qui eseguito a mano senza rilevare anomalie
+  @happy-path
   Scenario: [EST_INT_8] Creazione interfaccia template instance SOAP con serverUrls description assente (opzionale)
     Given l'utente è un "admin" di "PA1"
-    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un e-service template sincrono in modalità erogazione con tecnologia "SOAP" in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service a partire dal template con successo indicando tutte le specifiche
     When l'utente tenta di associare un'interfaccia template instance "SOAP" con:
       | serverUrls[0].url | https://soap.example.it |
     Then si ottiene response status code 200
 
+  # TODO 14/07/2026 stessa questione di [EST_INT_1], anche qui eseguito a mano senza rilevare anomalie
   @sad-path
   Scenario: [EST_INT_9] Creazione interfaccia template instance SOAP con serverUrls assente
     Given l'utente è un "admin" di "PA1"
-    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un e-service template sincrono in modalità erogazione con tecnologia "SOAP" in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service a partire dal template con successo indicando tutte le specifiche
     When l'utente tenta di associare un'interfaccia template instance "SOAP" senza specifiche
     Then si ottiene response status code 400
