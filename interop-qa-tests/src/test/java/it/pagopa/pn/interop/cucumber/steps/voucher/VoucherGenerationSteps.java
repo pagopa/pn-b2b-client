@@ -1,22 +1,28 @@
 package it.pagopa.pn.interop.cucumber.steps.voucher;
 
-import static it.pagopa.interop.authorization.service.utils.JWTUtils.decodeJwtPayload;
-import static org.assertj.core.api.Assertions.fail;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.authorization.service.utils.JWTUtils;
 import it.pagopa.interop.authorization.service.utils.voucher.VoucherService;
 import it.pagopa.interop.authorization.service.utils.voucher.domain.ClientAssertionOptions;
 import it.pagopa.interop.authorization.service.utils.voucher.domain.ClientAssertionOptions.ClientType;
 import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherRequest;
 import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherResponse;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import java.util.Map;
+import it.pagopa.pn.interop.cucumber.steps.common.AuditTokenContext;
+import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static it.pagopa.interop.authorization.service.utils.JWTUtils.decodeJwtPayload;
+import static org.assertj.core.api.Assertions.fail;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+
+@Slf4j
 public class VoucherGenerationSteps {
 
     private final SharedStepsContext sharedStepsContext;
@@ -101,6 +107,21 @@ public class VoucherGenerationSteps {
         }
     }
 
+    @Then("si ottiene la corretta generazione del voucher contenente le seguenti informazioni:")
+    public void checkVoucherGeneration(List<Map<String, String>> rows) {
+        Object response = httpCallExecutor.getResponse();
+        VoucherResponse voucherResponse = new ObjectMapper()
+                .convertValue(response, VoucherResponse.class);
+
+        Map<String, List<String>> expectedAuditInfo = rows.stream()
+                .collect(Collectors.groupingBy(
+                        row -> row.get("position"),
+                        Collectors.mapping(row -> row.get("element"), Collectors.toList())
+                ));
+
+        checkVoucherData(voucherResponse, expectedAuditInfo);
+    }
+
     private void requestVoucher(ClientAssertionOptions assertionOptions) {
         String clientAssertion = this.voucherService.createClientAssertion(assertionOptions);
         String clientId = sharedStepsContext.getClientCommonContext().getFirstClient().toString();
@@ -117,5 +138,43 @@ public class VoucherGenerationSteps {
             .publicKey(sharedStepsContext.getClientCommonContext().getClientPublicKeyAsObj())
             .privateKey(sharedStepsContext.getClientCommonContext().getClientPrivateKeyAsObj())
             .build();
+    }
+
+    private void checkVoucherData(VoucherResponse voucherResponse, Map<String, List<String>> expectedAuditInfo) {
+
+        AuditTokenContext context = sharedStepsContext.getAuditTokenContext();
+        JWTUtils.JWTPojo jwt = JWTUtils.decodeJwt(voucherResponse.getAccessToken());
+
+        log.info("Checking voucher data\n  header: {}\n  payload: {}", jwt.getHeader(), jwt.getPayload());
+
+        assertSoftly(softly -> {
+
+            softly.assertThat(voucherResponse).isNotNull();
+            softly.assertThat(voucherResponse.getAccessToken()).isNotBlank();
+            softly.assertThat(voucherResponse.getExpiresIn()).isNotNull();
+            softly.assertThat(voucherResponse.getTokenType()).isEqualTo("Bearer");
+
+            expectedAuditInfo.forEach((position, fields) -> {
+                for (String field : fields) {
+                    switch (position) {
+                        case "header" -> {
+                            softly.assertThat(AuditTokenContext.hasField(jwt.getHeader(), field))
+                                    .as("L'header non contiene '%s'", field)
+                                    .isTrue();
+                            Object value = AuditTokenContext.resolveFieldValue(jwt.getHeader(), field);
+                            context.addHeader(field, value != null ? value.toString() : null);
+                        }
+                        case "payload" -> {
+                            softly.assertThat(AuditTokenContext.hasField(jwt.getPayload(), field))
+                                    .as("Il payload non contiene la chiave: %s", field)
+                                    .isTrue();
+                            Object value = AuditTokenContext.resolveFieldValue(jwt.getPayload(), field);
+                            context.addPayload(field, value != null ? value.toString() : null);
+                        }
+                        default -> fail("Only 'payload' or 'header' expected, found: " + position);
+                    }
+                }
+            });
+        });
     }
 }
