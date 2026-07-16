@@ -404,6 +404,7 @@ Feature: Attivazione richiesta di fruizione
     And l'utente è un "<role>" di "<tenant>"
     When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 403
+    And l'utente è un "admin" di "PA1"
     And la richiesta di fruizione è in stato "SUSPENDED"
 
     Examples:
@@ -412,12 +413,10 @@ Feature: Attivazione richiesta di fruizione
       | PA1              | PRODUCER    | PA1    | security     |
       | PA1              | PRODUCER    | PA1    | support      |
       | PA1              | PRODUCER    | PA1    | api,security |
-      | PA1              | PRODUCER    | PA2    | admin        |
       | PA2              | CONSUMER    | PA2    | api          |
       | PA2              | CONSUMER    | PA2    | security     |
       | PA2              | CONSUMER    | PA2    | support      |
       | PA2              | CONSUMER    | PA2    | api,security |
-      | PA2              | CONSUMER    | PA1    | admin        |
 
   @happy-path
   @agreement-approve-unsuspend-refactor
