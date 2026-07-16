@@ -153,7 +153,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
   @sad-path
   @m2m-agreement-approve-unsuspend-refactor
   Scenario: [M2M_AGREEMENTS_APPROVE_10] Un delegato all'erogazione con delega revocata NON può attivare una richiesta di fruizione m2m in stato PENDING per conto dell'erogatore
-    Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione automatica
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
     And l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe
@@ -164,7 +164,8 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     And l'utente è un m2m-admin dell'ente delegato
     When l'utente m2m richiede una operazione di riattivazione della richiesta di fruizione con id "%actual" e delegationId "%actual"
     Then si ottiene status code 403
-    And la richiesta di fruizione si trova in stato "SUSPENDED"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And la richiesta di fruizione si trova in stato "PENDING"
 
   @happy-path
   @m2m-agreement-approve-unsuspend-refactor
@@ -176,8 +177,9 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     And "PA3" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
     And l'utente è un m2m-admin dell'ente delegato
     When l'utente m2m richiede una operazione di approvazione della richiesta di fruizione con id "%actual" e delegationId "%random"
-    Then si ottiene status code 404
-    And la richiesta di fruizione si trova in stato "SUSPENDED"
+    Then si ottiene status code 403
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And la richiesta di fruizione si trova in stato "PENDING"
 
   @happy-path
   @m2m-agreement-approve-unsuspend-refactor
@@ -213,7 +215,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
 
   @sad-path
   @m2m-agreement-approve-unsuspend-refactor
-  Scenario Outline: [M2M_AGREEMENTS_UNSUSPEND_3] La riattivazione di una richiesta di fruizione in stato differente da SUSPENDED restituisce errore
+  Scenario Outline: [M2M_AGREEMENTS_UNSUSPEND_3A] La riattivazione di una richiesta di fruizione in stato differente da SUSPENDED restituisce errore
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     And "PA2" ha una richiesta di fruizione in stato <agreementStatus> per quell'e-service
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -225,7 +227,17 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
       | agreementStatus |
       | "ACTIVE"        |
       | "ARCHIVED"      |
-      | "PENDING"       |
+
+  @sad-path
+  @m2m-agreement-approve-unsuspend-refactor
+  Scenario: [M2M_AGREEMENTS_UNSUSPEND_3B] La riattivazione di una richiesta di fruizione m2m in stato PENDING restituisce errore
+    Given l'utente è un "admin" di "PA1"
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
+    And "PA2" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente m2m richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 409
+    And la richiesta di fruizione si trova in stato "PENDING"
 
   @happy-path
   @m2m-agreement-approve-unsuspend-refactor
