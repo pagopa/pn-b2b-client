@@ -22,8 +22,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
+import io.cucumber.spring.ScenarioScope;
 
 import java.util.*;
 import java.util.function.BiFunction;
@@ -36,7 +35,7 @@ import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtil
 
 @Slf4j
 @RequiredArgsConstructor
-@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@ScenarioScope
 public class DelayerSteps {
 
     private final DelayerContext context;
