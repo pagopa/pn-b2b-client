@@ -6,6 +6,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementSee
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementState;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementSubmission;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreements;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DelegationRef;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Documents;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
 import java.util.List;
@@ -31,6 +32,10 @@ public interface IM2MAgreementClient extends SettableBearerToken {
     Agreement getAgreementById(UUID id);
     Agreement createAgreement(AgreementSeed agreementPayload);
     Agreement submitAgreement(UUID agreementId, AgreementSubmission agreementSubmission);
+    Agreement approveAgreement(UUID agreementId, DelegationRef delegationRef);
+    Agreement approveAgreement(UUID agreementId);
+    Agreement unsuspendAgreement(UUID agreementId, DelegationRef delegationRef);
+    Agreement unsuspendAgreement(UUID agreementId);
     Agreements getAgreements(AgreementsListRequest listRequest);
     Purposes getAgreementPurposes(UUID agreementId);
     Purposes getAgreementPurposes(UUID agreementId, int limit, int offset);
