@@ -108,7 +108,7 @@ Feature: Attivazione richiesta di fruizione
 
   @deleghe1
   @agreement-approve-unsuspend-refactor
-  Scenario: [AGREEMENT_ACTIVATE_07] Un delegato alla fruizione sospende ed riattiva una finalità/richiesta di fruizione agendo come delegato e passando il delegationId
+  Scenario: [AGREEMENT_ACTIVATE_07] Un delegato alla fruizione sospende e riattiva una finalità/richiesta di fruizione agendo come delegato e passando il delegationId
     Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
     And l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
