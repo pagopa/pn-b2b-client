@@ -1,18 +1,15 @@
 package it.pagopa.pn.cucumber.steps.templateEngine.strategies.comunicazioniBonarie;
 
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarNotification;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarRecipient;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarSender;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.InformalCommunication;
 import it.pagopa.pn.client.b2b.pa.config.TemplateEngineMessageConfigs;
 import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
-import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateNotification;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateEngineResult;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateRequestContext;
 import it.pagopa.pn.cucumber.steps.templateEngine.strategies.ITemplateEngineStrategy;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -35,41 +32,22 @@ public class InformalAnalogCommunicationStrategy implements ITemplateEngineStrat
 
     @Override
     public String getTextToCheckLanguage(String language, String recipientType) {
-        return getYamlText("aar-no-radd", recipientType, language);
+        return String.join(" ", getYamlText("informal-analog-communication", recipientType, language));
+    }
+
+    @Override
+    public List<String> getTextsToCheckLanguage(String language, String recipientType) {
+        return getYamlText("informal-analog-communication", recipientType, language);
     }
 
     private InformalCommunication createRequest(boolean body, TemplateRequestContext context) {
         if (!body)
             return null;
 
-        return new InformalCommunication();
+        return InformalCommunicationRequestFactory.buildInformalCommunication(context.getRawParameters());
     }
 
-    private AarRecipient createRecipient(TemplateRequestContext context) {
-        return Optional.ofNullable(context.getRecipient())
-                .map(data -> new AarRecipient()
-                        .recipientType(data.getRecipientType())
-                        .taxId(data.getTaxId()))
-                .orElse(null);
-    }
-
-    private AarNotification createNotification(TemplateRequestContext context) {
-        return Optional.ofNullable(context.getNotification())
-                .map(data -> new AarNotification()
-                        .iun(data.getIun())
-                        .subject(data.getSubject())
-                        .sender(createSender(data)))
-                .orElse(null);
-    }
-
-    private AarSender createSender(TemplateNotification notification) {
-        return Optional.ofNullable(notification.getSender())
-                .map(data -> new AarSender()
-                        .paDenomination(data.getPaDenomination()))
-                .orElse(null);
-    }
-
-    private String getYamlText(String templateKey, String recipientType, String language) {
+    private List<String> getYamlText(String templateKey, String recipientType, String language) {
         TemplateEngineMessageConfigs.LocalizedText localizedText =
                 Optional.ofNullable(configs.getMessages().get(templateKey))
                         .map(inner -> inner.get(recipientType.toLowerCase()))

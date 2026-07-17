@@ -35,10 +35,10 @@ Feature: Template engine
     Then verifico che il template è in formato ".pdf"
     And controllo che nel file "pdf" contenga il campo "<fieldToFind>" valorizzato a "<fieldValueToFind>"
     Examples:
-      | fieldName                                       | fieldValue | fieldToFind        | fieldValueToFind         |
-      | notification_recipient_physicalAddress          | null       | Indirizzo fisico   | non presente             |
-      | notification_recipient_digitalDomicile_address  | null       | Domicilio digitale | non fornito dalla PA     |
-      | notification_recipient_digitalDomicile          | null       | Domicilio digitale | non fornito dalla PA     |
+      | fieldName                                      | fieldValue | fieldToFind        | fieldValueToFind     |
+      | notification_recipient_physicalAddress         | null       | Indirizzo fisico   | non presente         |
+      | notification_recipient_digitalDomicile_address | null       | Domicilio digitale | non fornito dalla PA |
+      | notification_recipient_digitalDomicile         | null       | Domicilio digitale | non fornito dalla PA |
 
   @templateEngine #24 25 26 27 /templates-engine-private/v1/templates/pec-delivery-workflow-legal-fact
   Scenario Outline: [TEMPLATE-ENGINE_3] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di notifica digitale - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
@@ -75,9 +75,9 @@ Feature: Template engine
     Then verifico che il template è in formato ".pdf"
     And controllo che nel file "pdf" contenga il campo "<fieldToFind>" valorizzato a "<fieldValueToFind>"
     Examples:
-      | fieldName                  | fieldValue | fieldToFind                       | fieldValueToFind         |
-      | delivery_addressSource     | null       | Tipologia di domicilio digitale   | non presente             |
-      | delivery_address           | null       | Domicilio digitale                | non presente             |
+      | fieldName              | fieldValue | fieldToFind                     | fieldValueToFind |
+      | delivery_addressSource | null       | Tipologia di domicilio digitale | non presente     |
+      | delivery_address       | null       | Domicilio digitale              | non presente     |
 
   @templateEngine #121 /templates-engine-private/v1/templates/pec-delivery-workflow-legal-fact
   Scenario Outline: [TEMPLATE-ENGINE_4_4] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di notifica digitale - required fields
@@ -85,34 +85,34 @@ Feature: Template engine
       | <fieldName> | <fieldValue> |
     Then verifico che la chiamata sia andata in "500" error
     Examples:
-      | fieldName                  | fieldValue |
-      | context_endWorkflowDate    | null       |
-      | delivery_type              | null       |
+      | fieldName               | fieldValue |
+      | context_endWorkflowDate | null       |
+      | delivery_type           | null       |
 
   @templateEngine #122 /templates-engine-private/v1/templates/pec-delivery-workflow-legal-fact
   Scenario Outline: [TEMPLATE-ENGINE_4_5] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di notifica digitale - if context_endWorkflowStatus = SUCCESS
     When recupero il template per "attestazione opponibile a terzi di notifica digitale" con i valori nel request body:
-      | context_endWorkflowStatus    | SUCCESS            |
-      | context_endWorkflowDate      | <endWorkflowDate>  |
+      | context_endWorkflowStatus | SUCCESS           |
+      | context_endWorkflowDate   | <endWorkflowDate> |
     Then verifico che il template è in formato ".pdf"
     And controllo che nel file "pdf" contenga il testo "finale" valorizzato con "il relativo avviso di avvenuta ricezione in formato elettronico è stato consegnato in data string al domicilio digitale indicato immediatamente sopra la presente data. Firmato digitalmente da PagoPA S.p.A."
     Examples:
-      | endWorkflowDate  |
-      | null             |
-      | string           |
+      | endWorkflowDate |
+      | null            |
+      | string          |
 
   @templateEngine #123 /templates-engine-private/v1/templates/pec-delivery-workflow-legal-fact
   Scenario Outline: [TEMPLATE-ENGINE_4_6] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di notifica digitale - if delivery_address = null
     When recupero il template per "attestazione opponibile a terzi di notifica digitale" con i valori nel request body:
-      | delivery_address | null      |
-      | delivery_type    | <type>    |
+      | delivery_address | null   |
+      | delivery_type    | <type> |
     Then verifico che il template è in formato ".pdf"
     And controllo che nel file "pdf" contenga il campo "Domicilio digitale" valorizzato a "non presente"
     And controllo che nel file "pdf" contenga il testo "finale" valorizzato con "In data string il gestore della piattaforma ha reso disponibile l’avviso di mancato recapito del messaggio ai sensi dell’ art. 26, comma 6 del D.L. 76 del 16 luglio 2020. Firmato digitalmente da PagoPA S.p.A."
     Examples:
-      | type          |
-      | null          |
-      | string        |
+      | type   |
+      | null   |
+      | string |
 
   @templateEngine #29 30 31 32 /templates-engine-private/v1/templates/notification-viewed-legal-fact
   Scenario Outline: [TEMPLATE-ENGINE_5] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di avvenuto accesso - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
@@ -149,9 +149,9 @@ Feature: Template engine
     Then verifico che il template è in formato ".pdf"
     And controllo che nel file "pdf" contenga il testo "delegato" valorizzato con "<fieldExpectedValue>"
     Examples:
-      | fieldName                          | fieldValue | fieldExpectedValue   |
-      | context_delegate                   | null       | destinatario         |
-      | context_delegate                   | string     | delegato             |
+      | fieldName        | fieldValue | fieldExpectedValue |
+      | context_delegate | null       | destinatario       |
+      | context_delegate | string     | delegato           |
 
   @templateEngine #34 35 36 37 /templates-engine-private/v1/templates/legal-fact-malfunction
   Scenario Outline: [TEMPLATE-ENGINE_7] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di malfunzionamento e ripristino - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
@@ -189,7 +189,7 @@ Feature: Template engine
     Examples:
       | language | notificationType  |
       | italiana | multidestinatario |
-      | tedesca  | multidestinatario  |
+      | tedesca  | multidestinatario |
       | slovena  | monodestinatario  |
       | francese | monodestinatario  |
       | inglese  | monodestinatario  |
@@ -653,41 +653,39 @@ Feature: Template engine
 
   @templateEngine
   Scenario Outline: [TEMPLATE-ENGINE_42] Verifica dell'intero template AAR-NO-RADD per PF e PG per le lingue IT,DE,FR,SL
-  When recupero il template per "avviso di avvenuta ricezione" in lingua "<language>" con recipient Type "<recipientType>"
-  Then verifico che il template è in formato ".pdf"
-  And controllo che per il template "avviso di avvenuta ricezione" il file "pdf" sia in lingua "<language>"
-  Examples:
-  | language | recipientType |
-  | italiana | PF |
-  | italiana | PG |
-  | francese | PF |
-  | francese | PG |
-  | tedesca | PF |
-  | tedesca | PG |
-  | slovena | PF |
-  | slovena | PG |
-  | inglese | PF |
-  | inglese | PG |
+    When recupero il template per "avviso di avvenuta ricezione" in lingua "<language>" con recipient Type "<recipientType>"
+    Then verifico che il template è in formato ".pdf"
+    And controllo che per il template "avviso di avvenuta ricezione" il file "pdf" sia in lingua "<language>"
+    Examples:
+      | language | recipientType |
+      | italiana | PF            |
+      | italiana | PG            |
+      | francese | PF            |
+      | francese | PG            |
+      | tedesca  | PF            |
+      | tedesca  | PG            |
+      | slovena  | PF            |
+      | slovena  | PG            |
+      | inglese  | PF            |
+      | inglese  | PG            |
 
   @templateEngine
   Scenario Outline: [TEMPLATE-ENGINE_43B] Verifica dell'intero template AAR-RADD per PF e PG per le lingue IT,DE,FR,SL,EN
-  When recupero il template per "avviso di avvenuta ricezione RADD" in lingua "<language>" con recipient Type "<recipientType>"
-  Then verifico che il template è in formato ".pdf"
-  And controllo che per il template "avviso di avvenuta ricezione RADD" il file "pdf" sia in lingua "<language>"
-  Examples:
-    | language | recipientType |
-    | italiana | PF |
-    | italiana | PG |
-    | francese | PF |
-    | francese | PG |
-    | tedesca | PF |
-    | tedesca | PG |
-    | slovena | PF |
-    | slovena | PG |
-    | inglese | PF |
-    | inglese | PG |
-
-
+    When recupero il template per "avviso di avvenuta ricezione RADD" in lingua "<language>" con recipient Type "<recipientType>"
+    Then verifico che il template è in formato ".pdf"
+    And controllo che per il template "avviso di avvenuta ricezione RADD" il file "pdf" sia in lingua "<language>"
+    Examples:
+      | language | recipientType |
+      | italiana | PF            |
+      | italiana | PG            |
+      | francese | PF            |
+      | francese | PG            |
+      | tedesca  | PF            |
+      | tedesca  | PG            |
+      | slovena  | PF            |
+      | slovena  | PG            |
+      | inglese  | PF            |
+      | inglese  | PG            |
 
 
   @templateEngine @templateEngineCM #templates-engine-private/v1/templates/notification-aar-for-sms
@@ -755,43 +753,3 @@ Feature: Template engine
   Scenario: [TEMPLATE-ENGINE_53] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - body vuoto
     When recupero il template per "avviso di cortesia EMAIL" in lingua "inglese" con il body "null"
     Then verifico che la chiamata sia andata in "400" error
-
-  ##############################
-  # COMUNICAZIONE BONARIA
-  #############################
-  # Endpoint definiti in: https://github.com/pagopa/pn-templates-engine/blob/1d71146851778765cd54fa866cf5252fed85762e/README.md
-
-  @templateEngine # /templates-engine-private/v1/templates/informal/analog-communication
-  Scenario: [TEMPLATE-ENGINE_54] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - body vuoto
-    When recupero il template per "comunicazione bonaria posta cartacea" in lingua "italiana" con recipient Type "PF"
-    Then verifico che il template è in formato "pdf"
-
-  @templateEngine # /templates-engine-private/v1/templates/informal/email-communication-body
-  Scenario: [TEMPLATE-ENGINE_54] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - body vuoto
-    When recupero il template per "email body comunicazione bonaria" in lingua "italiana" con recipient Type "PF"
-    Then verifico che il template è in formato "html"
-
-  @templateEngine # /templates-engine-private/v1/templates/informal/email-communication-subject
-  Scenario: [TEMPLATE-ENGINE_54] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - body vuoto
-    When recupero il template per "email subject comunicazione bonaria" in lingua "italiana" con recipient Type "PF"
-    Then verifico che il template è in formato "text"
-
-  @templateEngine # /templates-engine-private/v1/templates/informal/pec-communication-body
-  Scenario: [TEMPLATE-ENGINE_54] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - body vuoto
-    When recupero il template per "pec body comunicazione bonaria" in lingua "italiana" con recipient Type "PF"
-    Then verifico che il template è in formato "html"
-
-  @templateEngine # /templates-engine-private/v1/templates/informal/pec-communication-subject
-  Scenario: [TEMPLATE-ENGINE_54] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - body vuoto
-    When recupero il template per "pec subject comunicazione bonaria" in lingua "italiana" con recipient Type "PF"
-    Then verifico che il template è in formato "text"
-
-  @templateEngine # /templates-engine-private/v1/templates/informal/io-communication
-  Scenario: [TEMPLATE-ENGINE_54] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - body vuoto
-    When recupero il template per "IO comunicazione bonaria" in lingua "italiana" con recipient Type "PF"
-    Then verifico che il template è in formato "text"
-
-  @templateEngine # /templates-engine-private/v1/templates/informal/sms-communication
-  Scenario: [TEMPLATE-ENGINE_54] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - body vuoto
-    When recupero il template per "sms comunicazione bonaria" in lingua "italiana" con recipient Type "PF"
-    Then verifico che il template è in formato "text"
