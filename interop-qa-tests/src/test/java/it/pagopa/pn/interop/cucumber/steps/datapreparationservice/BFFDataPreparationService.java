@@ -675,8 +675,8 @@ public class BFFDataPreparationService {
             String documentContent = """
                 Random document QA test - %s - %d""".formatted(uuid, i);
             int documentIndex = i + 1;
-            Resource tempFileResource = blobFileCreator.createBlobWithTempFile(
-                namePrefix + documentIndex + " - ", documentContent.getBytes());
+            Resource tempFileResource = blobFileCreator.createBlobTempFileWithExtension(
+                namePrefix + documentIndex + " - ", "txt", documentContent.getBytes());
             String prettyName = prettyNamePrefix + " - " + documentIndex;
 
             UUID documentId = documentUploader.apply(prettyName, tempFileResource);
