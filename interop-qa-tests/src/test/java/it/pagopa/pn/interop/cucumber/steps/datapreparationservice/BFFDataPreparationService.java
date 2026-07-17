@@ -648,6 +648,11 @@ public class BFFDataPreparationService {
         // Add interface to secondDescriptor
         addInterfaceToDescriptor(eServiceId, secondDescriptorId);
 
+        // Add callback interface to secondDescriptor
+        if (addCallbackInterface != null && addCallbackInterface) {
+            addCallbackInterfaceToDescriptor(eServiceId, secondDescriptorId);
+        }
+
         // Publish secondDescriptor
         publishDescriptor(eServiceId, secondDescriptorId);
 
@@ -793,7 +798,7 @@ public class BFFDataPreparationService {
         TemplateInstanceInterfaceRESTSeed seed = new TemplateInstanceInterfaceRESTSeed()
             .contactName("Some contact name")
             .contactEmail("some@contact-email.it")
-            .addServerUrlsItem(URI.create("http://www.some.url.it"));
+            .addServerUrlsItem(new TemplateInstanceInterfaceServerUrlSeed().url(URI.create("http://www.some.url.it")));
         httpCallExecutor.performCall(() -> eServiceClient.addEServiceTemplateInstanceInterfaceRestWithHttpInfo(eServiceId, descriptorId, seed));
         assertValidResponse();
 
@@ -1084,8 +1089,18 @@ public class BFFDataPreparationService {
         );
     }
 
-    public void activateAgreement(UUID agreementId, ClientType reactivatedBy, DelegationRef delegationRef) {
-        httpCallExecutor.performCall(() -> agreementClient.activateAgreement(agreementId, delegationRef));
+    public void approveAgreement(UUID agreementId, DelegationRef delegationRef) {
+        httpCallExecutor.performCall(() -> agreementClient.approveAgreement(agreementId, delegationRef));
+        assertValidResponse();
+        pollingService.makePolling(
+            () -> agreementClient.getAgreementById(agreementId),
+            res -> res.getState() == AgreementState.ACTIVE,
+            "There was an error while approving the agreement"
+        );
+    }
+
+    public void unsuspendAgreement(UUID agreementId, ClientType reactivatedBy, DelegationRef delegationRef) {
+        httpCallExecutor.performCall(() -> agreementClient.unsuspendAgreement(agreementId, delegationRef));
         assertValidResponse();
         pollingService.makePolling(
             () -> agreementClient.getAgreementById(agreementId),
@@ -1099,7 +1114,7 @@ public class BFFDataPreparationService {
                 }
                 return isActive;
             },
-            "There was an error while activating the agreement"
+            "There was an error while unsuspending the agreement"
         );
     }
 
