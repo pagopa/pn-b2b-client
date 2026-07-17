@@ -2,7 +2,7 @@ Feature: Nella generazione del token sono aggiunte le seguenti informazioni: hea
   jwt generato (quando presente), claim digest del jwt generato (quando presente), claim digest della client assertion
   (quando presente).
 
-  Scenario: [AUTH_TOKEN_INFO_1] Generazione con successo di un voucher con digest, con verifica della corretta struttura
+  Scenario Outline: [AUTH_TOKEN_INFO_1] Generazione con successo di un voucher con digest, con verifica della corretta struttura
   dei dati nel voucher e dei relativi log di audit salvati nel bucket S3
 
     Given l'utente è un "admin" di "PA1"
@@ -20,8 +20,14 @@ Feature: Nella generazione del token sono aggiunte le seguenti informazioni: hea
       | payload  | jti          |
       | payload  | digest.value |
       | payload  | client_id    |
-    Then verifica che le informazioni di audit sul bucket S3 STANDARD contengano i seguenti dati per il voucher generato:
+    Then verifica che le informazioni di audit sul bucket S3 <bucketRole> contengano i seguenti dati per il voucher generato:
       | position | element      | context      |
+      | header   | typ          | typ          |
       | payload  | jwtId        | jti          |
       | payload  | clientId     | client_id    |
       | payload  | digest.value | digest.value |
+
+    Examples:
+      | bucketRole |
+      | STANDARD   |
+      | WORM       |

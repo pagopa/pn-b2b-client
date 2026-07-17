@@ -1,7 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
 import io.cucumber.java.en.Then;
 import it.pagopa.interop.event.enums.InteropEvent;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -12,16 +11,17 @@ import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.context.Arc
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.InteropFile;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.ArchivedFile;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.FileInfo;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.processor.model.ProcessedFile;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.registry.FileInfoRegistry;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.validator.model.ValidationResult;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils.TokenResolver;
 import it.pagopa.pn.interop.cucumber.steps.common.AuditTokenContext;
+import it.pagopa.pn.interop.cucumber.utility.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
@@ -139,20 +139,28 @@ public class ArchivingSteps {
                 .isNotNull();
         context.setMatch(archivedFile);
 
-        checkArchivedFile(archivedFile, rows);
+        checkArchivedFile(archivedFile, rows, bucketRole);
     }
 
-    private void checkArchivedFile(ArchivedFileMatched archivedFile, List<Map<String, String>> rows) throws IOException {
+    private void checkArchivedFile(ArchivedFileMatched archivedFile, List<Map<String, String>> rows, BucketRole bucketRole) throws IOException {
 
-        String jsonString = new String(archivedFile.file().getContent().readAllBytes(), StandardCharsets.UTF_8);
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> archivedFileContent = mapper.readValue(jsonString, new TypeReference<Map<String, Object>>() {});
+        List<JsonNode> jsonNodes;
 
-        log.info("Check file content:\n{}", archivedFileContent);
+        if (bucketRole == BucketRole.WORM) {
+            ProcessedFile processed = client.normalizeFile(archivedFile);
+            jsonNodes = FileUtils.readNdjsonLines(processed.content());
+        } else {
+            jsonNodes = FileUtils.readNdjsonLines(archivedFile.file().getContent());
+        }
 
-        Assertions.assertThat(archivedFileContent)
-                .as("Audit file content is not valid")
-                .isNotEmpty();
+        JsonNode jsonNode = jsonNodes.stream()
+                .filter(node -> node.has("jwtId") && node.get("jwtId").asText().equals(auditTokenContext.getJwtId()))
+                .findFirst()
+                .orElse(null);
+
+        Assertions.assertThat(jsonNode)
+                .as("Impossibile trovare il nodo con jwtId: % nel bucket: %s", auditTokenContext.getJwtId(), bucketRole)
+                .isNotNull();
 
         assertSoftly(softly -> {
             for (Map<String, String> row : rows) {
@@ -167,7 +175,7 @@ public class ArchivingSteps {
                     default -> throw new IllegalArgumentException("Invalid position: " + position);
                 };
 
-                Object actualValue = AuditTokenContext.resolveFieldValue(archivedFileContent, archivedField);
+                Object actualValue = AuditTokenContext.resolveFieldValue(jsonNode, archivedField);
                 String expectedValue = contextValues.get(auditField);
 
                 softly.assertThat(actualValue)
