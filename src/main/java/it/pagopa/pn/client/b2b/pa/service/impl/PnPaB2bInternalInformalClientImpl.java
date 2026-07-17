@@ -89,4 +89,11 @@ public class PnPaB2bInternalInformalClientImpl {
         return newInformalNotificationApi.informalPresignedUploadRequest(operatorId, CxTypeAuthFleet.PA, cxId,requests);
     }
 
+
+    public FullSentInformalNotificationV1 getSentInformalNotificationSender(String cxId, String iun, Boolean retrieveMessage) {
+        return senderReadInformalNotificationB2BApi.getSentInformalNotificationV1(operatorId, CxTypeAuthFleet.PA, cxId, iun, groups, retrieveMessage
+        );
+    }
+
+
 }
