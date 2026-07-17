@@ -51,6 +51,11 @@ public class DelayerSteps {
 
     @Before("@delayerParallel")
     public void bindParallelScenario(Scenario scenario) {
+        if (!DelayerSuiteContext.isSuiteConfigured()) {
+            throw new IllegalStateException(
+                    "Scenario @delayerParallel senza suite configurata: avviare con -Dtest=DelayerParallelTest "
+                            + "(o Delayer1Test…Delayer5Test) così che @BeforeAll legga gli scenario id");
+        }
         parallelScenarioId = suiteContext.extractScenarioId(scenario.getName());
         context.resetContext();
         availableCapacityByDriver.clear();

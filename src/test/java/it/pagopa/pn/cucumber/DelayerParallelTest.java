@@ -1,9 +1,9 @@
 package it.pagopa.pn.cucumber;
 
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSuiteContext;
 import org.junit.platform.suite.api.*;
 
 import static io.cucumber.junit.platform.engine.Constants.*;
+import static it.pagopa.pn.cucumber.steps.delayer.model.DelayerSuiteContext.SCENARIO_IDS_PROPERTY;
 
 @Suite
 @IncludeEngines("cucumber")
@@ -23,12 +23,13 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 )
 @ConfigurationParameter(key = PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME, value = "true")
 @ConfigurationParameter(key = PARALLEL_CONFIG_STRATEGY_PROPERTY_NAME, value = "fixed")
+// Ceiling: >= partecipanti al gate; non serve allinearlo al numero esatto di id.
+@ConfigurationParameter(key = PARALLEL_CONFIG_FIXED_PARALLELISM_PROPERTY_NAME, value = "50")
+@ConfigurationParameter(
+        key = SCENARIO_IDS_PROPERTY,
+        value = "DELAYER-TC1,DELAYER-TC2,DELAYER-TC3,DELAYER-TC4,DELAYER-TC5"
+)
 @ExcludeTags({"ignore"})
 @IncludeTags({"delayerParallel"})
 public class DelayerParallelTest {
-
-    static {
-        DelayerSuiteContext.configureParallelSuite(
-                "DELAYER-TC1", "DELAYER-TC2", "DELAYER-TC3", "DELAYER-TC4", "DELAYER-TC5");
-    }
 }

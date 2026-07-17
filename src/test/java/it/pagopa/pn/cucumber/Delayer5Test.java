@@ -1,9 +1,9 @@
 package it.pagopa.pn.cucumber;
 
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSuiteContext;
 import org.junit.platform.suite.api.*;
 
 import static io.cucumber.junit.platform.engine.Constants.*;
+import static it.pagopa.pn.cucumber.steps.delayer.model.DelayerSuiteContext.SCENARIO_IDS_PROPERTY;
 
 @Suite
 @IncludeEngines("cucumber")
@@ -21,11 +21,8 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         key = EXECUTION_MODE_FEATURE_PROPERTY_NAME,
         value = "same_thread"
 )
+@ConfigurationParameter(key = SCENARIO_IDS_PROPERTY, value = "DELAYER-TC5")
 @ExcludeTags({"ignore"})
 @IncludeTags({"delayer5"})
 public class Delayer5Test {
-
-    static {
-        DelayerSuiteContext.configureSuiteScenarios("DELAYER-TC5");
-    }
 }
