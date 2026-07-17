@@ -30,6 +30,7 @@ Feature: Upload documenti di annotazione risk analysis su purpose template
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
+    And viene aggiunta un'annotazione con testo entro i 2000 caratteri ad una risposta esistente del purpose template
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente tenta di caricare uno alla volta i seguenti tipi documenti sulla risk analysis del purpose template, con l'estensione specificata
       | documento | estensione |

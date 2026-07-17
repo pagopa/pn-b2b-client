@@ -1633,6 +1633,7 @@ Feature: Gestione degli eServices attraverso APIs M2M
   @document_upload
   @document
   @document-type-check
+  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-10608
   Scenario: [ESERVICE_INTERFACE_UPLOAD_02] Per un e-service in stato DRAFT non è possibile caricare un interfaccia in formato yml non conforme allo standard OpenApi
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
