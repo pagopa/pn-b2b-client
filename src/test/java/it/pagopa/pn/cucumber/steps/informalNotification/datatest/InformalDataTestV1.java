@@ -1,10 +1,7 @@
 package it.pagopa.pn.cucumber.steps.informalNotification.datatest;
 
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.DigitalAddressSource;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalTimelineElementDetailsV1;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalTimelineElementV1;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.ResponseStatus;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.*;
 import lombok.Data;
 
 import java.util.Map;
@@ -30,6 +27,11 @@ public class InformalDataTestV1 {
             String digitalAddressSource = data.get("details_digitalAddressSource");
             String sentAttemptMade = data.get("details_sentAttemptMade");
             String sourceElementId = data.get("details_sourceElementId");
+            String deliveryDetailFailureCause = data.get("details_deliveryDetailFailureCause");
+
+
+            String channel = data.get("details_channel");
+            String deliveryDetailCode = data.get("details_deliveryDetailCode");
 
             InformalDataTestV1 result = new InformalDataTestV1();
 
@@ -38,7 +40,10 @@ public class InformalDataTestV1 {
                     .responseStatus(responseStatus != null ? ResponseStatus.valueOf(responseStatus) : null)
                     .digitalAddressSource(digitalAddressSource != null ? DigitalAddressSource.valueOf(digitalAddressSource) : null)
                     .sentAttemptMade(sentAttemptMade != null ? Integer.valueOf(sentAttemptMade) : null)
-                    .sourceElementId(sourceElementId != null ? sourceElementId : null);
+                    .sourceElementId(sourceElementId != null ? sourceElementId : null)
+                    .channel(channel != null ? DigitalChannels.valueOf(channel) : null)
+                    .deliveryDetail(deliveryDetailCode != null ? new AnalogDeliveryDetail().code(deliveryDetailCode) : null)
+                    .deliveryDetail(deliveryDetailCode != null || deliveryDetailFailureCause != null ? new AnalogDeliveryDetail().code(deliveryDetailCode).failureCause(deliveryDetailFailureCause) : null);
 
             InformalTimelineElementV1 element = new InformalTimelineElementV1().details(details);
 

@@ -44,6 +44,20 @@ Feature: Workflow di una notifica bonaria.
     And viene verificato che l'elemento di timeline "WORKFLOW_ENDED_UNDELIVERABLE" della notifica bonaria esista e sia correttamente compilato
 
 
+    Then viene verificato che l'elemento di timeline "SEND_DIGITAL_MESSAGE_PROGRESS" della notifica bonaria esista e sia correttamente compilato
+      | details_recIndex           | 0 |
+      | details_channel            | IO |
+      | details_deliveryDetailCode | SENT_TO_IO |
+
+
+      | details_deliveryDetailCode         | C011 |
+      | details_deliveryDetailFailureCause | ADDRESS_ERROR |
+
+
+
+
+
+
  #example@pecSuccess.it
 #testpagopa3@pec.pagopa.it
 #testpagopa1@pec.pagopa.it

@@ -3,6 +3,8 @@ package it.pagopa.pn.cucumber.steps.informalNotification.utils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.FullSentInformalNotificationV1;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalTimelineElementDetailsV1;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalTimelineElementV1;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewInformalNotificationRequestStatusResponseV1;
+import it.pagopa.pn.cucumber.steps.informalNotification.datatest.InformalStatusPollingConfig;
 import it.pagopa.pn.cucumber.steps.informalNotification.datatest.InformalTimelinePollingConfig;
 
 import java.time.Duration;
@@ -13,6 +15,7 @@ import java.util.function.Supplier;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class NotificationInformalUtilsWorkFlowV1 {
 
@@ -39,6 +42,15 @@ public class NotificationInformalUtilsWorkFlowV1 {
         }
         if (expectedDetails.getSourceElementId() != null) {
             assertEquals(expectedDetails.getSourceElementId(), actualDetails.getSourceElementId());
+        }
+        if (expectedDetails.getChannel() != null) {
+            assertEquals(expectedDetails.getChannel(), actualDetails.getChannel());
+        }
+        if (expectedDetails.getDeliveryDetail() != null) {
+            assertEquals(expectedDetails.getDeliveryDetail(), actualDetails.getDeliveryDetail());
+        }
+        if (expectedDetails.getDeliveryDetail() != null && expectedDetails.getDeliveryDetail().getFailureCause() != null) {
+            assertEquals(expectedDetails.getDeliveryDetail().getFailureCause(), actualDetails.getDeliveryDetail().getFailureCause());
         }
 
     }
@@ -89,4 +101,53 @@ public class NotificationInformalUtilsWorkFlowV1 {
 
         return InformalTimelinePollingConfig.DefaultElementTimeValue.valueOf(category);
     }
+
+
+    public static NewInformalNotificationRequestStatusResponseV1 waitForStatus(Supplier<NewInformalNotificationRequestStatusResponseV1> statusSupplier, String expectedStatus) {
+
+        AtomicReference<NewInformalNotificationRequestStatusResponseV1> responseRef = new AtomicReference<>();
+
+        AtomicReference<String> stopStatusReached = new AtomicReference<>();
+
+        AtomicReference<String> lastStatus = new AtomicReference<>();
+
+        InformalStatusPollingConfig.DefaultStatusValue config = InformalStatusPollingConfig.DefaultStatusValue.valueOf(expectedStatus);
+
+        await().atMost(Duration.ofMinutes(12)).pollInterval(Duration.ofSeconds(5)).until(() -> {
+
+            NewInformalNotificationRequestStatusResponseV1 response = statusSupplier.get();
+
+            responseRef.set(response);
+
+            if (response == null) {
+                return false;
+            }
+
+            String actualStatus = response.getNotificationRequestStatus();
+
+            lastStatus.set(actualStatus);
+
+            if (config.getStopStatuses().contains(actualStatus)) {
+
+                stopStatusReached.set(actualStatus);
+
+                return true;
+            }
+
+            return expectedStatus.equals(actualStatus);
+        });
+
+        if (stopStatusReached.get() != null) {
+
+            fail("Atteso stato " + expectedStatus + " ma raggiunto lo stato " + stopStatusReached.get());
+        }
+
+        if (responseRef.get() == null) {
+
+            fail("Nessuna response disponibile. " + "Atteso stato: " + expectedStatus);
+        }
+
+        return responseRef.get();
+    }
+
 }
