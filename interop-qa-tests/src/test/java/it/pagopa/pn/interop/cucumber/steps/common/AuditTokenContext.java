@@ -1,5 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.common;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -42,7 +44,6 @@ public class AuditTokenContext {
     }
 
     static public Object resolveFieldValue(Map<String, Object> source, String field) {
-
         if (source == null || field == null || field.isBlank()) {
             return null;
         }
@@ -51,6 +52,19 @@ public class AuditTokenContext {
             StandardEvaluationContext context = new StandardEvaluationContext(source);
             context.addPropertyAccessor(new MapAccessor());
             return parser.parseExpression(field).getValue(context);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    static public Object resolveFieldValue(JsonNode source, String field) {
+        if (source == null || field == null || field.isBlank()) {
+            return null;
+        }
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, Object> convertedSource = mapper.convertValue(source, Map.class);
+            return resolveFieldValue(convertedSource, field);
         } catch (Exception e) {
             return null;
         }
