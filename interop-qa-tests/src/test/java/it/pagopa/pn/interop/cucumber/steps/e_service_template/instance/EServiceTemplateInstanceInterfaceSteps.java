@@ -138,7 +138,7 @@ public class EServiceTemplateInstanceInterfaceSteps {
 
             if (response.getBody() instanceof CreatedResource) {
                 UUID descriptorId = sharedStepsContext.getEServiceTemplateStepContext()
-                        .getLastEServiceDescriptorCreatedFromTemplate().getId();
+                        .getLastEServiceCreatedFromTemplate().getDescriptorId();
                 UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext()
                         .getLastEServiceIdCreatedFromTemplate();
 
@@ -159,7 +159,7 @@ public class EServiceTemplateInstanceInterfaceSteps {
 
             if (response.getBody() instanceof CreatedResource) {
                 UUID descriptorId = sharedStepsContext.getEServiceTemplateStepContext()
-                        .getLastEServiceDescriptorCreatedFromTemplate().getId();
+                        .getLastEServiceCreatedFromTemplate().getDescriptorId();
                 UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext()
                         .getLastEServiceIdCreatedFromTemplate();
 
@@ -175,8 +175,8 @@ public class EServiceTemplateInstanceInterfaceSteps {
     }
 
     private UUID getActualDescriptorIdOrRandom() {
-        CompactDescriptor current = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorCreatedFromTemplate();
-        return current != null ? current.getId() : UUID.randomUUID();
+        UUID descriptorId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceCreatedFromTemplate().getDescriptorId();
+        return descriptorId != null ? descriptorId : UUID.randomUUID();
     }
 
     private UUID resolveIdToken(String idValueToken, UUID actualId) {

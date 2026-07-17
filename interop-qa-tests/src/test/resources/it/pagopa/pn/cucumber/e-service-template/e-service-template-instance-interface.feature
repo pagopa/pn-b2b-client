@@ -98,6 +98,7 @@ Feature: Test della creazione di interfacce REST e SOAP per istanze di template
       | serverUrls[0].url     | https://soap.example.it |
       | serverUrls[0].description | SOAP Server            |
 
+  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-10642
   @happy-path
   Scenario: [EST_INT_7b] Creazione interfaccia template instance SOAP da un template REST
     Given l'utente è un "admin" di "PA1"
