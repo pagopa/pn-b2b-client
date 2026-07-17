@@ -14,8 +14,8 @@ import static io.cucumber.junit.platform.engine.Constants.PARALLEL_CONFIG_FIXED_
 
 /**
  * Contesto di suite per gate tra scenari {@code @delayerParallel}.
- * Traccia fasi per scenarioId e ARN condivisi di Batch / Phase2.
- * La pulizia tabelle e la registrazione partecipanti avvengono una tantum nel {@code @BeforeAll}.
+ * I partecipanti sono quelli passati a {@link #configureSuiteScenarios} / {@link #configureParallelSuite}
+ * nello static initializer del runner (una sola volta).
  */
 @Component
 public class DelayerSuiteContext {
@@ -53,25 +53,6 @@ public class DelayerSuiteContext {
         System.setProperty(PARALLEL_CONFIG_FIXED_PARALLELISM_PROPERTY_NAME, Integer.toString(scenarioIds.length));
     }
 
-    public synchronized void registerScenariosFromSuite() {
-        if (!scenarioStates.isEmpty()) {
-            return;
-        }
-        if (suiteConfiguredScenarioIds.isEmpty()) {
-            throw new IllegalStateException(
-                    "Nessun scenarioId configurato: chiamare DelayerSuiteContext.configureSuiteScenarios(...) "
-                            + "nello static initializer del runner (es. DelayerParallelTest / Delayer1Test)");
-        }
-        batchExecutionArn = null;
-        phase2ExecutionArn = null;
-        for (String id : suiteConfiguredScenarioIds) {
-            if (id == null || id.isBlank()) {
-                continue;
-            }
-            scenarioStates.put(id.trim(), ParallelScenarioPhase.REGISTERED);
-        }
-    }
-
     public void advance(String scenarioId, ParallelScenarioPhase phase) {
         if (scenarioId == null) {
             return;
@@ -98,10 +79,11 @@ public class DelayerSuiteContext {
     }
 
     private boolean allAtLeast(ParallelScenarioPhase min) {
-        if (scenarioStates.isEmpty()) {
+        if (suiteConfiguredScenarioIds.isEmpty()) {
             return true;
         }
-        for (ParallelScenarioPhase phase : scenarioStates.values()) {
+        for (String id : suiteConfiguredScenarioIds) {
+            ParallelScenarioPhase phase = scenarioStates.get(id);
             if (phase == null || phase.ordinal() < min.ordinal()) {
                 return false;
             }
@@ -110,9 +92,10 @@ public class DelayerSuiteContext {
     }
 
     private void requireKnown(String scenarioId) {
-        if (!scenarioStates.containsKey(scenarioId)) {
+        if (!suiteConfiguredScenarioIds.contains(scenarioId)) {
             throw new IllegalStateException(
-                    "Scenario parallelo non registrato: " + scenarioId + " (stati=" + scenarioStates + ")");
+                    "Scenario parallelo non in suite: " + scenarioId
+                            + " (configurati=" + suiteConfiguredScenarioIds + ")");
         }
     }
 }

@@ -8,8 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.test.context.TestContextManager;
 
 /**
- * Setup una tantum della suite {@code @delayerParallel}: registrazione gate + delete tabelle,
- * prima che partano gli scenari (anche in parallelo).
+ * Setup una tantum della suite {@code @delayerParallel}: delete tabelle prima degli scenari.
+ * I partecipanti al gate sono configurati nello static initializer del runner.
  */
 @Slf4j
 public final class DelayerParallelSuiteHooks {
@@ -27,7 +27,6 @@ public final class DelayerParallelSuiteHooks {
         testContextManager.prepareTestInstance(new CucumberSpringIntegration());
         var applicationContext = testContextManager.getTestContext().getApplicationContext();
 
-        applicationContext.getBean(DelayerSuiteContext.class).registerScenariosFromSuite();
         log.info("Suite Delayer @BeforeAll: pulizia tabelle una tantum");
         applicationContext.getBean(DelayerSevice.class).deleteDataAll();
     }
