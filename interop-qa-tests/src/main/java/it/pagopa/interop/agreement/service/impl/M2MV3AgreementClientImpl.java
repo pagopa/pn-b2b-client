@@ -57,6 +57,26 @@ public class M2MV3AgreementClientImpl extends AbstractDPoPClient implements IM2M
     }
 
     @Override
+    public Agreement approveAgreement(UUID agreementId, DelegationRef delegationRef) {
+        return this.mapper.mapToV2(agreementsApi.approveAgreement(agreementId, mapper.mapToV3(delegationRef)));
+    }
+
+    @Override
+    public Agreement approveAgreement(UUID agreementId) {
+        return this.mapper.mapToV2(agreementsApi.approveAgreement(agreementId, null));
+    }
+
+    @Override
+    public Agreement unsuspendAgreement(UUID agreementId, DelegationRef delegationRef) {
+        return this.mapper.mapToV2(agreementsApi.unsuspendAgreement(agreementId, mapper.mapToV3(delegationRef)));
+    }
+
+    @Override
+    public Agreement unsuspendAgreement(UUID agreementId) {
+        return this.mapper.mapToV2(agreementsApi.unsuspendAgreement(agreementId, null));
+    }
+
+    @Override
     public Agreements getAgreements(AgreementsListRequest listRequest) {
         it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Agreements v3Bean = agreementsApi.getAgreements(
             listRequest.getOffset(),

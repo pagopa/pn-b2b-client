@@ -52,6 +52,26 @@ public class M2MAgreementClientImpl implements IM2MAgreementClient {
     }
 
     @Override
+    public Agreement approveAgreement(UUID agreementId, DelegationRef delegationRef) {
+        return agreementsApi.approveAgreement(agreementId, delegationRef);
+    }
+
+    @Override
+    public Agreement approveAgreement(UUID agreementId) {
+        return agreementsApi.approveAgreement(agreementId, null);
+    }
+
+    @Override
+    public Agreement unsuspendAgreement(UUID agreementId, DelegationRef delegationRef) {
+        return agreementsApi.unsuspendAgreement(agreementId, delegationRef);
+    }
+
+    @Override
+    public Agreement unsuspendAgreement(UUID agreementId) {
+        return agreementsApi.unsuspendAgreement(agreementId, null);
+    }
+
+    @Override
     public Agreements getAgreements(AgreementsListRequest listRequest) {
         return agreementsApi.getAgreements(
             listRequest.getOffset(),
