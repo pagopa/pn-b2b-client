@@ -1,6 +1,8 @@
 package it.pagopa.pn.cucumber.steps.delayer;
 
 import io.cucumber.datatable.DataTable;
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -9,6 +11,8 @@ import it.pagopa.pn.cucumber.steps.delayer.loader.DelayerCsvLoader;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerCountersPrintItem;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDelivery;
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSuiteContext;
+import it.pagopa.pn.cucumber.steps.delayer.model.enums.ParallelScenarioPhase;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
 import it.pagopa.pn.cucumber.steps.delayer.planner.DelayerPlanner;
 import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSevice;
@@ -18,21 +22,25 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static it.pagopa.pn.cucumber.steps.delayer.model.DelayerSuiteContext.GATE_TIMEOUT;
 import static it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps.*;
 import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.*;
 
 @Slf4j
 @RequiredArgsConstructor
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class DelayerSteps {
 
-
     private final DelayerContext context;
+    private final DelayerSuiteContext suiteContext;
     private final DelayerCsvLoader csvLoader;
     private final DelayerPlanner planner;
     private final DelayerSevice service;
@@ -40,6 +48,14 @@ public class DelayerSteps {
     private final DelayerPaperDeliveryUtils utils;
     private final Map<String, Integer> availableCapacityByDriver = new HashMap<>();
 
+    private String parallelScenarioId;
+
+    @Before("@delayerParallel")
+    public void bindParallelScenario(Scenario scenario) {
+        parallelScenarioId = suiteContext.extractScenarioId(scenario.getName());
+        context.resetContext();
+        availableCapacityByDriver.clear();
+    }
 
     @Given("il CSV {string} contiene {int} notifiche distribuite tra i seguenti test case:")
     public void initParams(String csv, Integer expectedNotificationCount, DataTable dataTable) {
@@ -55,6 +71,7 @@ public class DelayerSteps {
     }
 
     @Then("vengono puliti i dati dalle tabelle target")
+    @Given("vengono puliti i dati dalle tabelle target")
     public void deleteDataFormTargetTable() {
         service.deleteDataAll();
     }
@@ -252,28 +269,48 @@ public class DelayerSteps {
 
     @When("viene avviata la step function BatchWorkflowStateMachine con deliveryDate: {string}")
     public void runFirstStepFunctionWithFixedDeliveryDate(String deliveryWeek) throws Exception {
-        context.currentExecutionArn = service.runBatchWorkflowStateMachine(context.printCapacity, deliveryWeek);
+        suiteContext.advance(parallelScenarioId, ParallelScenarioPhase.BATCH_REQUESTED);
+        suiteContext.awaitAllAtLeast(ParallelScenarioPhase.BATCH_REQUESTED, GATE_TIMEOUT);
+
+        synchronized (suiteContext) {
+            if (suiteContext.batchExecutionArn == null) {
+                suiteContext.batchExecutionArn =
+                        service.runBatchWorkflowStateMachine(context.printCapacity, deliveryWeek);
+            }
+            context.currentExecutionArn = suiteContext.batchExecutionArn;
+        }
+
         service.waitUntilStepFunctionEnd(context);
+        suiteContext.advance(parallelScenarioId, ParallelScenarioPhase.BATCH_DONE);
     }
 
     @When("viene avviata la step function BatchWorkflowStateMachine con deliveryDate in avanti di {int} settimane")
     public void runFirstStepFunctionWithDeliveryDate(int weeksToAdd) throws Exception {
-        context.currentExecutionArn = service.runBatchWorkflowStateMachine(context.printCapacity, getNextMonday(weeksToAdd));
-        service.waitUntilStepFunctionEnd(context);
+        String deliveryWeek = getNextMonday(weeksToAdd);
+        runFirstStepFunctionWithFixedDeliveryDate(deliveryWeek);
     }
 
     @When("viene avviata la step function BatchWorkflowStateMachine")
     public void runFirstStepFunction() throws Exception {
-        context.currentExecutionArn = service.runBatchWorkflowStateMachine(context.printCapacity, getCurrentMonday());
-        service.waitUntilStepFunctionEnd(context);
+        runFirstStepFunctionWithFixedDeliveryDate(getCurrentMonday());
     }
 
     @When("viene avviata la step function DelayerToPaperChannelStateMachine")
     public void runSecondStepFunction() throws Exception {
-        context.currentExecutionArn = service.runDelayerToPaperChannel().getExecutionArn();
+        suiteContext.advance(parallelScenarioId, ParallelScenarioPhase.PHASE2_REQUESTED);
+        suiteContext.awaitAllAtLeast(ParallelScenarioPhase.PHASE2_REQUESTED, GATE_TIMEOUT);
+
+        synchronized (suiteContext) {
+            if (suiteContext.phase2ExecutionArn == null) {
+                suiteContext.phase2ExecutionArn = service.runDelayerToPaperChannel().getExecutionArn();
+            }
+            context.currentExecutionArn = suiteContext.phase2ExecutionArn;
+        }
+
         service.waitUntilStepFunctionEnd(context);
         ++context.currentStepFunction2ExecutionIndex;
         checkPrintCapacityCounter();
+        suiteContext.advance(parallelScenarioId, ParallelScenarioPhase.PHASE2_DONE);
     }
 
     @And("verifica che i parametri in PrintCapacityCounter siano conformi a quelli calcolati internamente")

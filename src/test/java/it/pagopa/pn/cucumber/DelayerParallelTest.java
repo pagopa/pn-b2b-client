@@ -1,5 +1,6 @@
 package it.pagopa.pn.cucumber;
 
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSuiteContext;
 import org.junit.platform.suite.api.*;
 
 import static io.cucumber.junit.platform.engine.Constants.*;
@@ -16,12 +17,18 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         key = GLUE_PROPERTY_NAME,
         value = "it.pagopa.pn.cucumber.steps"
 )
-// Imposta esecuzione sequenziale
 @ConfigurationParameter(
         key = EXECUTION_MODE_FEATURE_PROPERTY_NAME,
-        value = "same_thread"
+        value = "concurrent"
 )
+@ConfigurationParameter(key = PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME, value = "true")
+@ConfigurationParameter(key = PARALLEL_CONFIG_STRATEGY_PROPERTY_NAME, value = "fixed")
 @ExcludeTags({"ignore"})
-@IncludeTags({"delayer1"})
-public class DelayerTest {
+@IncludeTags({"delayerParallel"})
+public class DelayerParallelTest {
+
+    static {
+        DelayerSuiteContext.configureParallelSuite(
+                "DELAYER-TC1", "DELAYER-TC2", "DELAYER-TC3", "DELAYER-TC4", "DELAYER-TC5");
+    }
 }

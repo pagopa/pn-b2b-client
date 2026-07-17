@@ -168,6 +168,7 @@ import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
 import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClientV2;
 import it.pagopa.pn.cucumber.steps.delayer.loader.DelayerCsvLoader;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSuiteContext;
 import it.pagopa.pn.cucumber.steps.delayer.planner.DelayerPlanner;
 import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSevice;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
@@ -367,6 +368,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         DelayerLambdaClient.class,
         DelayerValidator.class,
         DelayerContext.class,
+        DelayerSuiteContext.class,
         DelayerPaperDeliveryUtils.class,
         DelayerCsvLoader.class,
         DelayerPlanner.class,

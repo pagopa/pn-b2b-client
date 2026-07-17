@@ -1,5 +1,6 @@
 package it.pagopa.pn.cucumber;
 
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSuiteContext;
 import org.junit.platform.suite.api.*;
 
 import static io.cucumber.junit.platform.engine.Constants.*;
@@ -16,7 +17,6 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         key = GLUE_PROPERTY_NAME,
         value = "it.pagopa.pn.cucumber.steps"
 )
-// Imposta esecuzione sequenziale
 @ConfigurationParameter(
         key = EXECUTION_MODE_FEATURE_PROPERTY_NAME,
         value = "same_thread"
@@ -24,4 +24,8 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 @ExcludeTags({"ignore"})
 @IncludeTags({"delayer5"})
 public class Delayer5Test {
+
+    static {
+        DelayerSuiteContext.configureSuiteScenarios("DELAYER-TC5");
+    }
 }
