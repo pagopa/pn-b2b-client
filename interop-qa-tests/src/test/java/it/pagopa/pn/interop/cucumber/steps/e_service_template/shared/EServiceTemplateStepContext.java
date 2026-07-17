@@ -34,7 +34,7 @@ public class EServiceTemplateStepContext {
     private UUID lastEServiceIdCreatedFromTemplate;
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    private List<CreatedResource> eServiceCreatedFromTemplates = new ArrayList<>();
+    private List<CreatedEServiceDescriptor> eServiceCreatedFromTemplates = new ArrayList<>();
 
     // TODO si somigliano troppo, sceglierne uno
     private CompactDescriptor lastEServiceDescriptorCreatedFromTemplate;
@@ -96,15 +96,15 @@ public class EServiceTemplateStepContext {
         return map;
     }
 
-    public CreatedResource getLastEServiceCreatedFromTemplate() {
+    public CreatedEServiceDescriptor getLastEServiceCreatedFromTemplate() {
         return lastOf(eServiceCreatedFromTemplates);
     }
 
-    public void setLastEServiceCreatedFromTemplate(CreatedResource eServiceCreatedFromTemplate) {
+    public void setLastEServiceCreatedFromTemplate(CreatedEServiceDescriptor eServiceCreatedFromTemplate) {
         this.eServiceCreatedFromTemplates.add(eServiceCreatedFromTemplate);
     }
 
-    public CreatedResource getEServiceCreatedFromTemplateWithIndex(int indexFromLast) {
+    public CreatedEServiceDescriptor getEServiceCreatedFromTemplateWithIndex(int indexFromLast) {
         if (this.eServiceCreatedFromTemplates.size() < indexFromLast) return null;
         return this.eServiceCreatedFromTemplates.get(this.eServiceCreatedFromTemplates.size() - (indexFromLast + 1));
     }

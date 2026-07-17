@@ -12,6 +12,13 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.junit.jupiter.api.Assertions;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,12 +27,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import org.apache.commons.compress.archivers.ArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
-import org.junit.jupiter.api.Assertions;
-import org.springframework.core.io.Resource;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
 
 public class DescriptorExportSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
@@ -107,7 +108,7 @@ public class DescriptorExportSteps {
     public void userAddDocumentDescriptor() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         UUID uuid = UUID.randomUUID();
-        Resource textDoc = blobFileCreator.createBlobWithTempFile("Document " + uuid,
+        Resource textDoc = blobFileCreator.createBlobTempFileWithExtension("Document " + uuid, "txt",
             "Some random text - %s".formatted(uuid).getBytes(
                 StandardCharsets.UTF_8));
         dataPreparationService.addDocumentToDescriptor(
