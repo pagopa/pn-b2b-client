@@ -32,7 +32,7 @@ public class Definitions {
                         MapFileTokenSource.of("jwtId", ":jwtId"),
                         MapFileTokenSource.of(),
                         List.of(new LocationDefinition(STANDARD, jwtDetailsBucketBase, FilenameFormat.NDJSON_LOG),
-                                new LocationDefinition(WORM, jwtDetailsWormBucketBase, FilenameFormat.NDJSON_LOG)
+                                new LocationDefinition(WORM, jwtDetailsWormBucketBase, FilenameFormat.NDJSON_SIGNED_LOG)
                         )
                 ),
 
