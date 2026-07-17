@@ -183,7 +183,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
 
   @happy-path
   @m2m-agreement-approve-unsuspend-refactor
-  Scenario Outline: [M2M_AGREEMENTS_UNSUSPEND_1] Una richiesta di fruizione sospesa dal'erogatore o dal fruitore può essere riattivata può essere riattivata e tornare ACTIVE
+  Scenario Outline: [M2M_AGREEMENTS_UNSUSPEND_1] Una richiesta di fruizione sospesa dall'erogatore o dal fruitore può essere riattivata e tornare ACTIVE
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "<suspendingTenant>" ha già sospeso quella richiesta di fruizione come <suspendedBy>
