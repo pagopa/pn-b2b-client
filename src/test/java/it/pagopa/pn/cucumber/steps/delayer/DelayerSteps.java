@@ -70,7 +70,6 @@ public class DelayerSteps {
         service.importData(csvName, context.expectedDeliveryDate);
     }
 
-    @Then("vengono puliti i dati dalle tabelle target")
     @Given("vengono puliti i dati dalle tabelle target")
     public void deleteDataFormTargetTable() {
         service.deleteDataAll();
