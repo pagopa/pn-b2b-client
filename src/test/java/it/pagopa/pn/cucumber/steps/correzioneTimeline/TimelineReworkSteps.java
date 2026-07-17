@@ -74,6 +74,7 @@ public class TimelineReworkSteps {
     private ReworkResponse reworkResponse;
     private RestartAttemptResponse restartAttemptResponse;
     private InvalidateTimelineElementsResponse removeElementsResponse;
+    private InvalidateTimelineElementsRequest punctualCorrectionRequest;
     private QueryResponse reworkedTimelinesForInvoicingResponse;
     private HttpStatus httpStatusCode;
     private String timestampString;
@@ -180,18 +181,6 @@ public class TimelineReworkSteps {
         }
     }
 
-    @And("viene invocata una richiesta di correzione puntuale per la notifica appena creata")
-    public void callInvalidateTimelineElements() {
-        try {
-            FullSentNotificationV29 fsn = sharedSteps.getSentNotificationLastVersion();
-            String timelineElementId = fsn.getTimeline().stream().filter(t -> t.getCategory().toString().equals(SEND_ANALOG_PROGRESS)).map(te -> te.getElementId()).findFirst().orElse(null);
-            removeElementsResponse = reworkTimelineClient.invalidateTimelineElements(sharedSteps.getNotificationIun(), ReworkRequestFactory.defaultInvalidationRequest(List.of(timelineElementId)));
-            log.info("Successfully invalidated. Invalidation response: {}", restartAttemptResponse);
-        } catch (HttpStatusCodeException e) {
-            httpStatusCode = e.getStatusCode();
-        }
-    }
-
     @And("viene invocata una richiesta di correzione puntuale per la notifica appena creata con i seguenti parametri")
     public void callInvalidateTimelineElementsFromData(Map<String, String> inputData) {
         try {
@@ -201,12 +190,38 @@ public class TimelineReworkSteps {
             List<String> timelineElementsId = new ArrayList<>();
             inputData.forEach((key, value) -> {
                 if (key.contains("element")) {
-                    String category = value;
-                    String timelineElementId = fsn.getTimeline().stream().filter(x -> x.getCategory().getValue().equals(value) && x.getElementId().contains(recIndex)).map(te -> te.getElementId()).findFirst().orElse(null);
-                    timelineElementsId.add(timelineElementId);
+                    String[] filters = value.split(";");
+                    String category = filters[0];
+                    String recIndexFilter = Arrays.stream(filters).toList().stream().filter(x -> x.contains("RECINDEX_")).findFirst().orElse(null);
+                    String attemptFilter = Arrays.stream(filters).toList().stream().filter(x -> x.contains("ATTEMPT_")).findFirst().orElse(null);
+                    String timelineElementId = fsn.getTimeline().stream().filter(x ->
+                                    x.getCategory().getValue().equals(category)
+                                            && (recIndexFilter != null ? x.getElementId().contains(recIndexFilter) : true)
+                                            && (attemptFilter != null ? x.getElementId().contains(attemptFilter) : true))
+                            .map(te -> te.getElementId())
+                            .findFirst()
+                            .orElse(null);
+                    if (timelineElementId != null) {
+                        timelineElementsId.add(timelineElementId);
+                    }
+                }
+                if (key.contains("id") && value != null && !value.isEmpty()) {
+                    timelineElementsId.add(value);
                 }
             });
-            removeElementsResponse = reworkTimelineClient.invalidateTimelineElements(iun, ReworkRequestFactory.invalidationRequest(recIndex, timelineElementsId));
+            punctualCorrectionRequest = ReworkRequestFactory.invalidationRequest(recIndex, timelineElementsId);
+            removeElementsResponse = reworkTimelineClient.invalidateTimelineElements(iun, punctualCorrectionRequest);
+            log.info("Successfully invalidated. Invalidation response: {}", restartAttemptResponse);
+        } catch (HttpStatusCodeException e) {
+            httpStatusCode = e.getStatusCode();
+        }
+    }
+
+    @And("viene ripetuta la richiesta di invalidazione precedente")
+    public void repeatInvalidateTimelineElements() {
+        assertThat(punctualCorrectionRequest).as("").isNotNull();
+        try {
+            removeElementsResponse = reworkTimelineClient.invalidateTimelineElements(sharedSteps.getNotificationIun(), punctualCorrectionRequest);
             log.info("Successfully invalidated. Invalidation response: {}", restartAttemptResponse);
         } catch (HttpStatusCodeException e) {
             httpStatusCode = e.getStatusCode();
