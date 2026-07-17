@@ -97,7 +97,7 @@ Feature: Attivazione richiesta di fruizione
     And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     And "GSP" ha una richiesta di fruizione in stato "<statoAgreement>" per quell'e-service
     When l'utente richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
-    Then si ottiene status code 400
+    Then si ottiene status code 409
     And la richiesta di fruizione è in stato "<statoAgreement>"
 
     Examples:
@@ -166,7 +166,7 @@ Feature: Attivazione richiesta di fruizione
     And "<enteCertificatore>" ha già revocato quell'attributo a "<enteFruitore>"
     And la richiesta di fruizione è passata in stato "MISSING_CERTIFIED_ATTRIBUTES"
     When l'utente richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
-    Then si ottiene status code 400
+    Then si ottiene status code 409
     And la richiesta di fruizione è in stato "MISSING_CERTIFIED_ATTRIBUTES"
 
     Examples:
@@ -182,7 +182,7 @@ Feature: Attivazione richiesta di fruizione
     And "GSP" ha già creato e inviato una richiesta di fruizione per quell'e-service ed è in attesa di approvazione
     And "PA1" ha già rifiutato quella richiesta di fruizione
     When l'utente richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
-    Then si ottiene status code 400
+    Then si ottiene status code 409
     And la richiesta di fruizione è in stato "REJECTED"
 
   @sad-path
@@ -333,7 +333,7 @@ Feature: Attivazione richiesta di fruizione
     And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     And "PA2" ha una richiesta di fruizione in stato "<statoAgreement>" per quell'e-service
     When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
-    Then si ottiene status code 400
+    Then si ottiene status code 409
     And la richiesta di fruizione è in stato "<statoAgreement>"
 
     Examples:
@@ -348,7 +348,7 @@ Feature: Attivazione richiesta di fruizione
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
     And "PA2" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
     When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
-    Then si ottiene status code 400
+    Then si ottiene status code 409
     And la richiesta di fruizione è in stato "PENDING"
 
   @sad-path
@@ -359,7 +359,7 @@ Feature: Attivazione richiesta di fruizione
     And "GSP" ha già creato e inviato una richiesta di fruizione per quell'e-service ed è in attesa di approvazione
     And "PA1" ha già rifiutato quella richiesta di fruizione
     When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
-    Then si ottiene status code 400
+    Then si ottiene status code 409
     And la richiesta di fruizione è in stato "REJECTED"
 
   @sad-path
@@ -372,7 +372,7 @@ Feature: Attivazione richiesta di fruizione
     And "<enteCertificatore>" ha già revocato quell'attributo a "<enteFruitore>"
     And la richiesta di fruizione è passata in stato "MISSING_CERTIFIED_ATTRIBUTES"
     When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
-    Then si ottiene status code 400
+    Then si ottiene status code 409
     And la richiesta di fruizione è in stato "MISSING_CERTIFIED_ATTRIBUTES"
 
     Examples:
