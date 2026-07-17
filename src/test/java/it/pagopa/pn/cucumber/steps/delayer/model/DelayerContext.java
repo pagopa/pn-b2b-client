@@ -3,12 +3,13 @@ package it.pagopa.pn.cucumber.steps.delayer.model;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
 import io.cucumber.spring.ScenarioScope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 @Component
-@ScenarioScope
+@ScenarioScope(proxyMode = ScopedProxyMode.NO)
 public class DelayerContext {
 
     public static final int STANDARD_PRINT_CAPACITY = 180_000;
