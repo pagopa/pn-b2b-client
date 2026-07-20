@@ -179,7 +179,7 @@ public class AgreementSteps {
 
     private void verifyAgreementState(AgreementState expectedState, String errorMessage) {
 
-        UUID agreementId = sharedStepsContext.getAgreementId();
+        UUID agreementId = sharedStepsContext.getAgreementCommonContext().getAgreementId();
         pollingService.makePolling(
                 () -> httpCallExecutor.performCall(() -> agreementClient.getAgreementById(agreementId)),
                 status -> status.is2xxSuccessful() &&
