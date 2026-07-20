@@ -50,7 +50,7 @@
         <!-- Le due property sottostanti (relative all'ultima versione) coincidono con le due di sopra.
         Questa duplicità è dovuta al fatto che al rilascio di una nuova versione, alcune execution dovranno usare le versioni più
          recenti di delivery e deliveryPush, altre dovranno continuare a usare specificamente la versione precedente -->
-        <open.api.version.delivery>refs/heads/develop</open.api.version.delivery>
+        <open.api.version.delivery>refs/tags/v2.25.0</open.api.version.delivery>
         <open.api.version.delivery.push>v2.24.0</open.api.version.delivery.push>
 
         <open.api.version.user.attributes>v2.19.0</open.api.version.user.attributes>
@@ -2023,7 +2023,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-bff/develop/docs/openapi/api-external-pn-bff-pa-notifications.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-bff/refs/tags/v1.19.0/docs/openapi/api-external-pn-bff-pa-notifications.yaml</inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
