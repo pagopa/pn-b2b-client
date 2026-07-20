@@ -90,6 +90,17 @@ Feature: Workflow di una notifica bonaria.
 # **** SoricalFattOrd
 # ***********************************************
 
+
+  Scenario: [NOTIFICHE_BONARIE_WORKFLO] Come ente mittente invio una notifica bonaria...
+    Given si tenta il recupero completo della notifica bonaria tramite IUN "RDND-NJMA-EDYZ-202607-U-A"
+    #And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria
+    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
+      | details_recIndex           | 0     |
+        And si verifica che la notifica bonaria sia in stato "PROCESSING"
+
+
+
+
   #TODO il controllo può essere inglobato in altro scenario
   @informalNotificationsWorkFlow
   Scenario: [NOTIFICHE_BONARIE_WORKFLOW_01_1] Come ente mittente invio una notifica bonaria...
@@ -104,8 +115,8 @@ Feature: Workflow di una notifica bonaria.
       | pec_address    | NULL              |
     When viene inviata una nuova notifica bonaria
     And si verifica che la notifica bonaria sia in stato "ACCEPTED"
-
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria
+      | details_recIndex           | 0     |
     And si verifica che la notifica bonaria sia in stato "PROCESSING"
 
 

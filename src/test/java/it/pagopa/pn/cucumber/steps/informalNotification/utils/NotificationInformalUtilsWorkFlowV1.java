@@ -56,43 +56,32 @@ public class NotificationInformalUtilsWorkFlowV1 {
     }
 
     public static List<InformalTimelineElementV1> getTimelineElementsByCategory(FullSentInformalNotificationV1 notification, String category) {
-
         if (notification == null || notification.getTimeline() == null) {
             return Collections.emptyList();
         }
-
         return notification.getTimeline().stream().filter(t -> t.getCategory() != null && category.equals(t.getCategory().getValue())).toList();
     }
 
     public static List<InformalTimelineElementV1> waitForTimelineElementsByCategory(Supplier<FullSentInformalNotificationV1> notificationSupplier, String category) {
-
         Duration timeout = getTimeout(category);
         Duration pollInterval = getPollingInterval(category);
 
         AtomicReference<List<InformalTimelineElementV1>> foundElements = new AtomicReference<>(Collections.emptyList());
-
         await().atMost(timeout).pollInterval(pollInterval).until(() -> {
-
             FullSentInformalNotificationV1 notification = notificationSupplier.get();
-
             List<InformalTimelineElementV1> elements = getTimelineElementsByCategory(notification, category);
-
             foundElements.set(elements);
-
             return !elements.isEmpty();
         });
-
         return foundElements.get();
     }
 
     public static Duration getTimeout(String category) {
-
         InformalTimelinePollingConfig.DefaultElementTimeValue config = getPollingConfig(category);
         return Duration.ofSeconds(config.getNumCheck() * config.getWaitingMultiplier());
     }
 
     public static Duration getPollingInterval(String category) {
-
         InformalTimelinePollingConfig.DefaultElementTimeValue config = getPollingConfig(category);
         return Duration.ofSeconds(config.getWaitingMultiplier());
     }
@@ -102,6 +91,47 @@ public class NotificationInformalUtilsWorkFlowV1 {
         return InformalTimelinePollingConfig.DefaultElementTimeValue.valueOf(category);
     }
 
+    public static InformalTimelineElementV1 waitForTimelineElement(Supplier<FullSentInformalNotificationV1> notificationSupplier, String category, InformalTimelineElementV1 expected) {
+
+        Duration timeout = getTimeout(category);
+        Duration pollInterval = getPollingInterval(category);
+
+        AtomicReference<InformalTimelineElementV1> foundElement = new AtomicReference<>();
+
+        await().atMost(timeout).pollInterval(pollInterval).until(() -> {
+
+            FullSentInformalNotificationV1 notification = notificationSupplier.get();
+
+            List<InformalTimelineElementV1> elements = getTimelineElementsByCategory(notification, category);
+
+
+            if (elements.isEmpty()) {
+                return false;
+            }
+            // Nessun dettaglio atteso => basta la categoria
+//            if (expected == null || expected.getDetails() == null) {
+//                return !elements.isEmpty();
+//            }
+
+            for (InformalTimelineElementV1 actual : elements) {
+
+                try {
+
+                    checkTimelineElement(actual, expected);
+
+                    foundElement.set(actual);
+
+                    return true;
+
+                } catch (AssertionError ignored) {
+                }
+            }
+
+            return false;
+        });
+
+        return foundElement.get();
+    }
 
     public static NewInformalNotificationRequestStatusResponseV1 waitForStatus(Supplier<NewInformalNotificationRequestStatusResponseV1> statusSupplier, String expectedStatus) {
 

@@ -717,7 +717,8 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/bef7b04d25d95df92993ecaf8a4d9401c4181d88/docs/openapi/api-internal-b2b-informal-pa.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/refs/heads/develop/docs/openapi/api-internal-b2b-informal-pa.yaml
+                            </inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
@@ -813,7 +814,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/c42500ee49900b41a347cee991af4b111202b945/docs/openapi/api-external-b2b-informal-pa-bundle.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/refs/heads/develop/docs/openapi/api-external-b2b-informal-pa-bundle.yaml</inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>

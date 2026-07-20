@@ -22,7 +22,7 @@ public class InformalTimelinePollingConfig {
         REQUEST_ACCEPTED(10, 1),
         REQUEST_REFUSED(10, 1),
 
-        SEND_DIGITAL_MESSAGE(20, 1),
+        SEND_DIGITAL_MESSAGE(20, 10),
         SEND_DIGITAL_MESSAGE_PROGRESS(30, 1),
         SEND_DIGITAL_MESSAGE_FEEDBACK(60, 1),
         SEND_DIGITAL_MESSAGE_SKIP(60, 1),

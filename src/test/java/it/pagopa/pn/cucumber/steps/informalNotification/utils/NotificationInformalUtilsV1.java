@@ -1,9 +1,8 @@
 package it.pagopa.pn.cucumber.steps.informalNotification.utils;
 
 
-//import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.InformalPreLoadRequest;
-//import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.InformalPreLoadResponse;
-
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.InformalPreLoadRequest;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.InformalPreLoadResponse;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
@@ -51,8 +50,8 @@ public class NotificationInformalUtilsV1 extends B2bUtils {
 
         InformalPreLoadRequest request = new InformalPreLoadRequest().preloadIdx("0").contentType(contentType).sha256(sha256);
 
-        //InformalPreLoadResponse response = externalInformalClient.informalPresignedUploadRequest(apiKey, List.of(request)).get(0);
-        InformalPreLoadResponse response = internalInformalClient.informalPresignedUploadRequest("5b994d4a-0fa8-47ac-9c7b-354f1d44a1ce",List.of(request)).get(0);
+        InformalPreLoadResponse response = externalInformalClient.informalPresignedUploadRequest(apiKey, List.of(request)).get(0);
+        //InformalPreLoadResponse response = internalInformalClient.informalPresignedUploadRequest("5b994d4a-0fa8-47ac-9c7b-354f1d44a1ce",List.of(request)).get(0);
 
 
         log.info("Informal preload resource={} sha256={} url={}", resourceName, sha256, response.getUrl());
