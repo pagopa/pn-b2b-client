@@ -128,6 +128,15 @@ public class DelayerLambdaClientV2 {
         return getPaperDelivery(deliveryDate, workFlowStep, null);
     }
 
+    public DelayerSenderLimits getSenderLimitByProvinceWithTable(String table, String deliveryDate, String province) {
+        var params = mapOf(
+                mandatoryEntry("table", table),
+                mandatoryEntry("deliveryDate", deliveryDate),
+                mandatoryEntry("province", province)
+        );
+        return invoke(DelayerOperation.GET_SENDER_LIMIT, DelayerSenderLimits.class, params);
+    }
+
     public DelayerSenderLimits getSenderLimitByProvince(String deliveryDate, String province) {
         var params = mapOf(
                 mandatoryEntry("deliveryDate", deliveryDate),

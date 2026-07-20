@@ -4,7 +4,7 @@ Feature: Censimento stime mittenti
     And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
       | classpath:/t0_tc_modulo_commessa_gennaio_25.json  |
       | classpath:/t0_tc_modulo_commessa_febbraio_25.json |
-    And si verifica che la tabella pn-DelayerSenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
+    And si verifica che la tabella pn-PaperDeliverySenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
 
   @censimentoStimeMittenti
   Scenario: [SM_01] Verifica la gestione del caricamento delle commesse per il calcolo delle stime mittenti
@@ -13,17 +13,17 @@ Feature: Censimento stime mittenti
     And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
       | classpath:/t0_tc_modulo_commessa_gennaio_25.json  |
       | classpath:/t0_tc_modulo_commessa_febbraio_25.json |
-    And si verifica che la tabella pn-DelayerSenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
+    And si verifica che la tabella pn-PaperDeliverySenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
     When viene caricato su SafeStorage il documento "classpath:/t1_tc_modulo_commessa_febbraio_25.json" con contentType "application/json" di tipo "PN_SERVICE_ORDER" e status "SAVED"
     And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
       | classpath:/t0_tc_modulo_commessa_gennaio_25.json  |
       | classpath:/t1_tc_modulo_commessa_febbraio_25.json |
-    And si verifica che la tabella pn-DelayerSenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
+    And si verifica che la tabella pn-PaperDeliverySenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
     And viene caricato su SafeStorage il documento "classpath:/t1_tc_modulo_commessa_gennaio_25.json" con contentType "application/json" di tipo "PN_SERVICE_ORDER" e status "SAVED"
     And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
       | classpath:/t1_tc_modulo_commessa_gennaio_25.json  |
       | classpath:/t1_tc_modulo_commessa_febbraio_25.json |
-    Then si verifica che la tabella pn-DelayerSenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
+    Then si verifica che la tabella pn-PaperDeliverySenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
 
   @controlloCalcoloStimeMittenti
   Scenario: [SM_02] Verifica il calcolo delle stime settimanali provinciali a partire dai dati delle stime mensili regionali
@@ -33,7 +33,7 @@ Feature: Censimento stime mittenti
       | classpath:/t0_tc_modulo_commessa_febbraio_26.json |
       | classpath:/t0_tc_modulo_commessa_marzo_26.json    |
     When vengono recuperate le stime mittenti da "01-2026" a "03-2026" per la provincia "P1"
-    Then si verifica che la tabella pn-DelayerSenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
+    Then si verifica che la tabella pn-PaperDeliverySenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
 
   @controlloCalcoloStimeMittenti
   Scenario Outline: [SM_03] Verifica del calcolo della percentuale garantita al mittente
@@ -149,7 +149,7 @@ Feature: Censimento stime mittenti
     Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_maggio_26.zip"
     And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
       | classpath:/modulo_commessa_ranking2nd_890.json |
-    Then si verifica che la tabella pn-DelayerSenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
+    Then si verifica che la tabella pn-PaperDeliverySenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
 #    And si verifica se la settimana del: "2026-04-27" è interamente compresa all'interno del mese
     And per la settimana "2026-04-27", per il prodotto "890" per la provincia "P1" si verifica che la somma delle commesse sia:
       | numberOfShipments           | 7 |
@@ -160,7 +160,7 @@ Feature: Censimento stime mittenti
     Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_aprile_26_modified.zip"
     And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
       | classpath:/modulo_commessa_P1_aprile_modified.json |
-    Then si verifica che la tabella pn-DelayerSenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
+    Then si verifica che la tabella pn-PaperDeliverySenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
     And per la settimana "2026-04-27", per il prodotto "890" per la provincia "P1" si verifica che la somma delle commesse sia:
       | numberOfShipments           | 15 |
       | firstWeekNumberOfShipments  | 12 |
@@ -171,7 +171,7 @@ Feature: Censimento stime mittenti
     Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_maggio_26_modified.zip"
     And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
       | classpath:/modulo_commessa_P1_maggio_modified.json |
-    Then si verifica che la tabella pn-DelayerSenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
+    Then si verifica che la tabella pn-PaperDeliverySenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
     And per la settimana "2026-04-27", per il prodotto "890" per la provincia "P1" si verifica che la somma delle commesse sia:
       | numberOfShipments           | 21 |
       # firstWeekNumberOfShipments rimane invariato in quanto la modifica è stata fatta solo sul modulo commessa di MAGGIO
@@ -184,22 +184,24 @@ Feature: Censimento stime mittenti
   @censimentoStimeMittenti
   Scenario: [TC_CENSIMENTO_STIME_MOCK_1] Verifica che il caricamento di moduli commessa MOCK non influisca sulle tabelle reali
     #Carichi una commessa reale e ne verifichi il corretto caricamento con i giusti limiti
-    Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_mock_26.zip"
-    And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
-      | classpath:/modulo_commessa_ranking2nd_890.json |
-    And per la settimana "2026-04-27", per il prodotto "890" per la provincia "P1" si verifica che la somma delle commesse sia:
-      | numberOfShipments           | 7 |
-      | firstWeekNumberOfShipments  | 4 |
-      | secondWeekNumberOfShipments | 3 |
-    Then si verifica che la tabella pn-DelayerSenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
+#    Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_aprile_26.zip"
+#    Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_maggio_26.zip"
+#    And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
+#      | classpath:/modulo_commessa_ranking2nd_890.json |
+#    And per la settimana "2026-04-27", per il prodotto "890" per la provincia "P1" si verifica che la somma delle commesse sia:
+#      | numberOfShipments           | 7 |
+#      | firstWeekNumberOfShipments  | 4 |
+#      | secondWeekNumberOfShipments | 3 |
+#    Then si verifica che la tabella pn-PaperDeliverySenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
 
     #Carico una commessa MOCK e ne verifico il corretto caricamento con i giusti limiti soltanto nella tabella MOCK e non in quella reale
-    Given vengono caricati i moduli commessa mock tramite il seguente zip: "portfatt_modulo_commessa_mock_26.zip"
+    Given vengono caricati i moduli commessa mock tramite il seguente zip: "portfatt_modulo_commessa_mock_aprile_26.zip"
+    Given vengono caricati i moduli commessa mock tramite il seguente zip: "portfatt_modulo_commessa_mock_maggio_26.zip"
     And vengono applicati localmente i seguenti moduli commessa per la provincia "P6":
-      | classpath:/modulo_commessa_ranking2nd_890.json |
-    Then si verifica che la tabella pn-DelayerSenderLimitMock contenga i nuovi limiti mittenti per la provincia "P1"
-    Then si verifica che la tabella pn-DelayerSenderLimit non contenga i nuovi limiti mittenti per la provincia "P1"
-    Then per la settimana "2026-04-27", per il prodotto "AR" per la provincia "P6" si verifica che la somma delle commesse nella tabella pn-DelayerSenderLimitMock sia:
+      | classpath:/modulo_commessa_ranking890_mock_aprile.json |
+    Then si verifica che la tabella pn-PaperDeliverySenderLimitMock contenga i nuovi limiti mittenti per la provincia "P6"
+    Then si verifica che la tabella pn-PaperDeliverySenderLimit non contenga i nuovi limiti mittenti per la provincia "P6"
+    Then per la settimana "2026-04-27", per il prodotto "AR" per la provincia "P6" si verifica che la somma delle commesse nella tabella pn-PaperDeliverySenderLimitMock sia:
       | numberOfShipments           | 7 |
       | firstWeekNumberOfShipments  | 4 |
       | secondWeekNumberOfShipments | 3 |

@@ -52,7 +52,7 @@ public class CensimentoStimeMittentiSteps {
     private final ApplicationContext applicationContext;
     private final DelayerSevice delayerSevice;
 
-    @ParameterType("pn-DelayerSenderLimit|pn-DelayerSenderLimitMock")
+    @ParameterType("pn-PaperDeliverySenderLimit|pn-PaperDeliverySenderLimitMock")
     public String senderLimitTable(String tableName) {
         return tableName;
     }
@@ -74,7 +74,7 @@ public class CensimentoStimeMittentiSteps {
                         .pollInterval(Duration.ofSeconds(10))
                         .pollDelay(Duration.ZERO)
                         .until(() -> {
-                            DelayerSenderLimits actual = lambdaClientV2.getSenderLimitByProvince(senderLimit.getDeliveryDate(), province);
+                            DelayerSenderLimits actual = lambdaClientV2.getSenderLimitByProvinceWithTable(senderLimitTable, senderLimit.getDeliveryDate(), province);
                             boolean found = actual.getItems()
                                     .stream()
                                     .anyMatch(item -> item.getPk().equals(senderLimit.getPk())
