@@ -5,7 +5,7 @@ Feature: Sottomissione di una notifica bonaria.
   Scenario: [NOTIFICHE_BONARIE_TESTING] Come ente mittente invio una notifica bonaria con gruppo.
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | campaign-1 |
+      | campaignId | SoricalFattOrd |
     And destinatario della notifica bonaria
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
