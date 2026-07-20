@@ -21,11 +21,12 @@ Feature: Nella generazione del token sono aggiunte le seguenti informazioni: hea
       | payload  | digest.value |
       | payload  | client_id    |
     Then verifica che le informazioni di audit sul bucket S3 <bucketRole> contengano i seguenti dati per il voucher generato:
-      | position | element      | context      |
-      | header   | typ          | typ          |
-      | payload  | jwtId        | jti          |
-      | payload  | clientId     | client_id    |
-      | payload  | digest.value | digest.value |
+      | position | element                      | context      |
+      | header   | typ                          | typ          |
+      | payload  | jwtId                        | jti          |
+      | payload  | clientId                     | client_id    |
+      | payload  | digest.value                 | digest.value |
+      | payload  | clientAssertion.digest.value | digest.value |
 
     Examples:
       | bucketRole |
