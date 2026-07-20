@@ -1,22 +1,9 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.shared;
 
-import it.pagopa.interop.generated.openapi.clients.bff.model.CompactDescriptor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateAttributesSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateRiskAnalysisSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.pn.interop.cucumber.steps.DocumentMetadata;
 import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateDocumentInfo;
 import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
-import java.lang.reflect.Field;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
@@ -27,6 +14,10 @@ import org.jeasy.random.EasyRandomParameters;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 @Data
 @Getter
@@ -44,7 +35,7 @@ public class EServiceTemplateStepContext {
     private UUID lastEServiceIdCreatedFromTemplate;
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    private List<CreatedResource> eServiceCreatedFromTemplates = new ArrayList<>();
+    private List<CreatedEServiceDescriptor> eServiceCreatedFromTemplates = new ArrayList<>();
 
     // TODO si somigliano troppo, sceglierne uno
     private CompactDescriptor lastEServiceDescriptorCreatedFromTemplate;
@@ -104,15 +95,15 @@ public class EServiceTemplateStepContext {
         return map;
     }
 
-    public CreatedResource getLastEServiceCreatedFromTemplate() {
+    public CreatedEServiceDescriptor getLastEServiceCreatedFromTemplate() {
         return lastOf(eServiceCreatedFromTemplates);
     }
 
-    public void setLastEServiceCreatedFromTemplate(CreatedResource eServiceCreatedFromTemplate) {
+    public void setLastEServiceCreatedFromTemplate(CreatedEServiceDescriptor eServiceCreatedFromTemplate) {
         this.eServiceCreatedFromTemplates.add(eServiceCreatedFromTemplate);
     }
 
-    public CreatedResource getEServiceCreatedFromTemplateWithIndex(int indexFromLast) {
+    public CreatedEServiceDescriptor getEServiceCreatedFromTemplateWithIndex(int indexFromLast) {
         if (this.eServiceCreatedFromTemplates.size() < indexFromLast) return null;
         return this.eServiceCreatedFromTemplates.get(this.eServiceCreatedFromTemplates.size() - (indexFromLast + 1));
     }

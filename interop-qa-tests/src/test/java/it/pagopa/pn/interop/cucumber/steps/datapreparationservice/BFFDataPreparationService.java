@@ -676,8 +676,8 @@ public class BFFDataPreparationService {
             String documentContent = """
                 Random document QA test - %s - %d""".formatted(uuid, i);
             int documentIndex = i + 1;
-            Resource tempFileResource = blobFileCreator.createBlobWithTempFile(
-                namePrefix + documentIndex + " - ", documentContent.getBytes());
+            Resource tempFileResource = blobFileCreator.createBlobTempFileWithExtension(
+                namePrefix + documentIndex + " - ", "txt", documentContent.getBytes());
             String prettyName = prettyNamePrefix + " - " + documentIndex;
 
             UUID documentId = documentUploader.apply(prettyName, tempFileResource);
@@ -1090,8 +1090,18 @@ public class BFFDataPreparationService {
         );
     }
 
-    public void activateAgreement(UUID agreementId, ClientType reactivatedBy, DelegationRef delegationRef) {
-        httpCallExecutor.performCall(() -> agreementClient.activateAgreement(agreementId, delegationRef));
+    public void approveAgreement(UUID agreementId, DelegationRef delegationRef) {
+        httpCallExecutor.performCall(() -> agreementClient.approveAgreement(agreementId, delegationRef));
+        assertValidResponse();
+        pollingService.makePolling(
+            () -> agreementClient.getAgreementById(agreementId),
+            res -> res.getState() == AgreementState.ACTIVE,
+            "There was an error while approving the agreement"
+        );
+    }
+
+    public void unsuspendAgreement(UUID agreementId, ClientType reactivatedBy, DelegationRef delegationRef) {
+        httpCallExecutor.performCall(() -> agreementClient.unsuspendAgreement(agreementId, delegationRef));
         assertValidResponse();
         pollingService.makePolling(
             () -> agreementClient.getAgreementById(agreementId),
@@ -1105,7 +1115,7 @@ public class BFFDataPreparationService {
                 }
                 return isActive;
             },
-            "There was an error while activating the agreement"
+            "There was an error while unsuspending the agreement"
         );
     }
 

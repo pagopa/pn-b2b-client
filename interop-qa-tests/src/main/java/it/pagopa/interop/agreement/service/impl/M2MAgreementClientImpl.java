@@ -8,6 +8,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreement;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementSubmission;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreements;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DelegationRef;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Documents;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
 import java.util.UUID;
@@ -52,6 +53,26 @@ public class M2MAgreementClientImpl implements IM2MAgreementClient {
     @Override
     public Agreement submitAgreement(UUID agreementId, AgreementSubmission agreementSubmission) {
         return agreementsApi.submitAgreement(agreementId, agreementSubmission);
+    }
+
+    @Override
+    public Agreement approveAgreement(UUID agreementId, DelegationRef delegationRef) {
+        return agreementsApi.approveAgreement(agreementId, delegationRef);
+    }
+
+    @Override
+    public Agreement approveAgreement(UUID agreementId) {
+        return agreementsApi.approveAgreement(agreementId, null);
+    }
+
+    @Override
+    public Agreement unsuspendAgreement(UUID agreementId, DelegationRef delegationRef) {
+        return agreementsApi.unsuspendAgreement(agreementId, delegationRef);
+    }
+
+    @Override
+    public Agreement unsuspendAgreement(UUID agreementId) {
+        return agreementsApi.unsuspendAgreement(agreementId, null);
     }
 
     @Override

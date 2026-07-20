@@ -31,9 +31,9 @@ public class VoucherGenerationAgreementSteps {
     }
 
     @Given("{string} ha già attivato nuovamente quella richiesta di fruizione come {clientType}")
-    public void activateAgreement(String tenantType, ClientType clientType) {
+    public void unsuspendAgreement(String tenantType, ClientType clientType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        dataPreparationService.activateAgreement(
+        dataPreparationService.unsuspendAgreement(
             sharedStepsContext.getAgreementCommonContext().getAgreementId(),
             clientType, null
         );
@@ -159,7 +159,7 @@ public class VoucherGenerationAgreementSteps {
     @Given("{string} approva quella richiesta di fruizione")
     public void approveAgreement(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        dataPreparationService.activateAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId(), null, null);
+        dataPreparationService.approveAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId(), null);
     }
 
     private static void handleUnknownAttributeKind(String attributeKind) {
