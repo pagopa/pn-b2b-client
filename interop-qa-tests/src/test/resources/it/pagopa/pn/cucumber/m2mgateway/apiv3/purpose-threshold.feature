@@ -59,6 +59,7 @@ Feature: Soglie differenziate con API M2M V3
 
     @sad-path
     @nuovi-operatori-update
+    @PIN-10457
     Examples:
       | role         | m2mRole   | purposeId | statusCode |
       | reviewer     | m2m-admin | %actual   | 403        |
