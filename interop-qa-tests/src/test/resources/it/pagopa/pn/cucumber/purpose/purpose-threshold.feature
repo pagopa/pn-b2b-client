@@ -267,8 +267,14 @@ Feature: Verifica soglie differenziate
     @nuovi-operatori-update
     Examples:
       | ruolo        | purposeId | statusCode |
-      | reviewer     | %actual   | 403        |
       | viewer       | %actual   | 403        |
+
+    @sad-path
+    @nuovi-operatori-update
+    @PIN-10457
+    Examples:
+      | ruolo        | purposeId | statusCode |
+      | reviewer     | %actual   | 403        |
 
   @dailyCallsThreshold
   Scenario Outline: [PURPOSE_THRESHOLD_10] Una richiesta con API BFF per recuperare le soglie rimanenti specificando una finalità non valida o inesistente fallisce
