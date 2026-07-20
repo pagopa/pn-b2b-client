@@ -8,8 +8,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffLegalNotificationSearchRow;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffLegalNotificationsResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationsResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationStatusV26;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.payment.*;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.PaperEngageRequest;
@@ -23,6 +22,8 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalChannelsServiceClientIm
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
+import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchResponse;
+import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchRow;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.NotificationUtilsV24;
@@ -157,7 +158,7 @@ public class InvioNotificheB2bSteps {
 
     @And("la notifica può essere correttamente recuperata dal sistema tramite codice IUN web PA")
     public void notificationCanBeRetrievedWithIUNWebPA() {
-        AtomicReference<BffLegalNotificationsResponse> notificationByIun = new AtomicReference<>();
+        AtomicReference<BffNotificationsResponse> notificationByIun = new AtomicReference<>();
 
         assertThat(sharedSteps.getSentNotificationLastVersion())
                 .as("La notifica inviata non deve essere nulla prima di recuperare il codice IUN")
@@ -186,9 +187,9 @@ public class InvioNotificheB2bSteps {
     @And("{string} recupera notifica vecchia di 120 giorni da lato web PA e verifica presenza pagamento")
     public void retrieveNotification120DaysOldByIunWebPaSide(String paName) {
         sharedSteps.setPA(paName);
-        List<BffLegalNotificationSearchRow> searchedNotifications = searchNotificationWebFromADate(OffsetDateTime.now().minusDays(120));
+        List<NotificationSearchRow> searchedNotifications = searchNotificationWebFromADate(OffsetDateTime.now().minusDays(120));
         FullSentNotificationV29 notifica120 = null;
-        for (BffLegalNotificationSearchRow notifica : searchedNotifications) {
+        for (NotificationSearchRow notifica : searchedNotifications) {
             FullSentNotificationV29 result = b2bClient.getSentNotificationV29(notifica.getIun());
             if (result.getRecipients().get(0).getPayments() != null
                     && result.getRecipients().get(0).getPayments().get(0).getPagoPa() != null
@@ -226,10 +227,10 @@ public class InvioNotificheB2bSteps {
         LocalDate date = LocalDate.parse(stringDate);
         OffsetDateTime offsetDateTime = date.atStartOfDay(ZoneOffset.UTC).toOffsetDateTime();
 
-        List<BffLegalNotificationSearchRow> searchedNotifications = searchNotificationWebFromADate(offsetDateTime);
+        List<NotificationSearchRow> searchedNotifications = searchNotificationWebFromADate(offsetDateTime);
         FullSentNotificationV29 notifica = null;
 
-        for (BffLegalNotificationSearchRow notifiche : searchedNotifications) {
+        for (NotificationSearchRow notifiche : searchedNotifications) {
 
             notifica = b2bClient.getSentNotificationV29(notifiche.getIun());
 
@@ -262,13 +263,13 @@ public class InvioNotificheB2bSteps {
         }
     }
 
-    private List<BffLegalNotificationSearchRow> searchNotificationWebFromADate(OffsetDateTime data) {
-        AtomicReference<BffLegalNotificationsResponse> notificationByIun = new AtomicReference<>();
+    private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTime data) {
+        AtomicReference<NotificationSearchResponse> notificationByIun = new AtomicReference<>();
 
-        notificationByIun.set(Objects.requireNonNull(
+        Objects.requireNonNull(
                 webPaClient.searchSentNotification(data, data.plusDays(20), null, null, null, null, 50, null),
                 "Il risultato della ricerca delle notifiche inviate non deve essere nullo"
-        ));
+        );
 
         assertSoftly(softly -> {
             softly.assertThat(notificationByIun.get())
@@ -303,7 +304,7 @@ public class InvioNotificheB2bSteps {
             default -> throw new IllegalArgumentException();
         };
 
-        AtomicReference<BffLegalNotificationsResponse> notificationByIun = new AtomicReference<>();
+        AtomicReference<BffNotificationsResponse> notificationByIun = new AtomicReference<>();
         try {
             assertThatCode(() ->
                     notificationByIun.set(

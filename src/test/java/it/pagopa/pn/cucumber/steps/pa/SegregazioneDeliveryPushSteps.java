@@ -4,8 +4,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffLegalNotificationSearchRow;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffLegalNotificationsResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationsResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationSearchRow;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
@@ -34,7 +34,7 @@ public class SegregazioneDeliveryPushSteps {
     private final IPnWebPaClient webPaClient;
     private final Map<String, String> failedIUN = new HashMap<>();
     private final String deliveryPushBaseUrl;
-    private BffLegalNotificationsResponse searchResponse;
+    private BffNotificationsResponse searchResponse;
     private QueryParamsPojo queryParamsPojo;
     private static final String NEW_TIMELINE_URL = "/delivery-push-private/test/new-impl/timeline/";
 
@@ -86,7 +86,7 @@ public class SegregazioneDeliveryPushSteps {
 
         int counter = 0;
         while (counter < queryParamsPojo.notificationSampleSize) {
-            for (BffLegalNotificationSearchRow x : searchResponse.getResultsPage()) {
+            for (NotificationSearchRow x : searchResponse.getResultsPage()) {
                 String iun = x.getIun();
                 String queryParams = Boolean.parseBoolean(confidentialInfoRequired) ? "?confidentialInfoRequired=true" : "";
                 iunList.add(iun);
@@ -136,7 +136,7 @@ public class SegregazioneDeliveryPushSteps {
 
         int counter = 0;
         while (counter < queryParamsPojo.notificationSampleSize) {
-            for (BffLegalNotificationSearchRow x : searchResponse.getResultsPage()) {
+            for (NotificationSearchRow x : searchResponse.getResultsPage()) {
                 String iun = x.getIun();
                 int recipientNum = x.getRecipients().size();
                 OffsetDateTime createdAt = x.getSentAt();

@@ -9,8 +9,8 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffDocumentType;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffFullNotificationV1;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNewNotificationRequest;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffLegalNotificationSearchRow;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffLegalNotificationsResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationsResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationSearchRow;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnApiKeyManagerExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnBffPaClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
@@ -100,7 +100,7 @@ public class SupportTeamApiSteps {
         bffApiKeyClient.setApiKeys(SettableApiKey.ApiKeyType.SUPPORT_1);
     }
 
-    private BffLegalNotificationsResponse searchSentNotification() {
+    private BffNotificationsResponse searchSentNotification() {
         OffsetDateTime startDate = now().minusYears(1).atZoneSameInstant(ZoneId.of("UTC")).toOffsetDateTime();
         OffsetDateTime endDate = now().atZoneSameInstant(ZoneId.of("UTC")).toOffsetDateTime();
         return bffPaClient.searchSentNotification(startDate, endDate,
@@ -122,9 +122,9 @@ public class SupportTeamApiSteps {
     }
 
     private void getSentNotificationPayment() {
-        BffLegalNotificationsResponse bffNotificationsResponse = searchSentNotification();
+        BffNotificationsResponse bffNotificationsResponse = searchSentNotification();
         assertNotNull(bffNotificationsResponse.getResultsPage(), "La ricerca delle notifiche non ha restituito alcun risultato");
-        for (BffLegalNotificationSearchRow notificationSearchRow : bffNotificationsResponse.getResultsPage()) {
+        for (NotificationSearchRow notificationSearchRow : bffNotificationsResponse.getResultsPage()) {
             BffFullNotificationV1 bffFullNotificationV1 = getSentNotification(notificationSearchRow.getIun());
             if (!bffFullNotificationV1.getDocuments().isEmpty()) {
                 BffDocumentDownloadMetadataResponse response = bffPaClient.getSentNotificationPaymentV1(notificationSearchRow.getIun(), 0, "PAGOPA", 0);
@@ -152,7 +152,7 @@ public class SupportTeamApiSteps {
     }
 
     private String retrieveFirstIunFromSearch() {
-        BffLegalNotificationsResponse response = searchSentNotification();
+        BffNotificationsResponse response = searchSentNotification();
         assertNotNull(response.getResultsPage(), "La ricerca delle notifiche non ha restituito alcun risultato");
         if (response.getResultsPage().isEmpty()) {
             throw new RuntimeException("Nessuna notifica trovata per eseguire il test");
