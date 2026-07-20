@@ -184,30 +184,30 @@ Feature: Censimento stime mittenti
   @censimentoStimeMittenti
   Scenario: [TC_CENSIMENTO_STIME_MOCK_1] Verifica che il caricamento di moduli commessa MOCK non influisca sulle tabelle reali
     #Carichi una commessa reale e ne verifichi il corretto caricamento con i giusti limiti
-#    Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_aprile_26.zip"
-#    Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_maggio_26.zip"
-#    And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
-#      | classpath:/modulo_commessa_ranking2nd_890.json |
-#    And per la settimana "2026-04-27", per il prodotto "890" per la provincia "P1" si verifica che la somma delle commesse sia:
-#      | numberOfShipments           | 7 |
-#      | firstWeekNumberOfShipments  | 4 |
-#      | secondWeekNumberOfShipments | 3 |
-#    Then si verifica che la tabella pn-PaperDeliverySenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
+    Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_aprile_26.zip"
+    Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_maggio_26.zip"
+    And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
+      | classpath:/modulo_commessa_ranking2nd_890.json |
+    And per la settimana "2026-04-27", per il prodotto "890" per la provincia "P1" si verifica che la somma delle commesse sia:
+      | numberOfShipments           | 7 |
+      | firstWeekNumberOfShipments  | 4 |
+      | secondWeekNumberOfShipments | 3 |
+    Then si verifica che la tabella pn-PaperDeliverySenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
 
     #Carico una commessa MOCK e ne verifico il corretto caricamento con i giusti limiti soltanto nella tabella MOCK e non in quella reale
     Given vengono caricati i moduli commessa mock tramite il seguente zip: "portfatt_modulo_commessa_mock_aprile_26.zip"
     Given vengono caricati i moduli commessa mock tramite il seguente zip: "portfatt_modulo_commessa_mock_maggio_26.zip"
-    And vengono applicati localmente i seguenti moduli commessa per la provincia "P6":
+    And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
       | classpath:/modulo_commessa_ranking890_mock_aprile.json |
-    Then si verifica che la tabella pn-PaperDeliverySenderLimitMock contenga i nuovi limiti mittenti per la provincia "P6"
-    Then si verifica che la tabella pn-PaperDeliverySenderLimit non contenga i nuovi limiti mittenti per la provincia "P6"
-    Then per la settimana "2026-04-27", per il prodotto "AR" per la provincia "P6" si verifica che la somma delle commesse nella tabella pn-PaperDeliverySenderLimitMock sia:
-      | numberOfShipments           | 7 |
-      | firstWeekNumberOfShipments  | 4 |
-      | secondWeekNumberOfShipments | 3 |
+    Then si verifica che la tabella pn-PaperDeliverySenderLimitMock contenga i nuovi limiti mittenti per la provincia "P1"
+    Then si verifica che la tabella pn-PaperDeliverySenderLimit non contenga i nuovi limiti mittenti per la provincia "P1"
+    Then per la settimana "2026-04-27", per il prodotto "890" per la provincia "P1" si verifica che la somma delle commesse mock sia:
+      | numberOfShipments           | 46 |
+      | firstWeekNumberOfShipments  | 27 |
+      | secondWeekNumberOfShipments | 19 |
     #Verifico che la tabella reale non sia stata modifiata dal caricamento della commessa MOCK
-    And per la settimana "2026-04-27", per il prodotto "890" per la provincia "P6" si verifica che la somma delle commesse sia:
-      | numberOfShipments           | 70|
+    And per la settimana "2026-04-27", per il prodotto "890" per la provincia "P1" si verifica che la somma delle commesse sia:
+      | numberOfShipments           | 7 |
       | firstWeekNumberOfShipments  | 4 |
       | secondWeekNumberOfShipments | 3 |
 

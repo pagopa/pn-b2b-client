@@ -198,7 +198,7 @@ public class CensimentoStimeMittentiSteps {
                 () -> delayerSevice.getCountersSumEstimates(deliveryDate, province, product));
     }
 
-    @And("per la settimana {string}, per il prodotto {string} per la provincia {string} si verifica che la somma delle commesse nella tabella {senderLimitTable} sia:")
+    @And("per la settimana {string}, per il prodotto {string} per la provincia {string} si verifica che la somma delle commesse mock sia:")
     public void verifyWeeklyProvincialEstimatesInSenderLimitTable(String deliveryDate, String product, String province, Map<String, String> dataTable) {
         verifyWeeklyProvincialEstimates(dataTable,
                 () -> delayerSevice.getCountersSumEstimates(deliveryDate, province, product, true));
