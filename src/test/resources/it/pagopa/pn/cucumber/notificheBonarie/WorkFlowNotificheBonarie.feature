@@ -15,6 +15,24 @@ Feature: Workflow di una notifica bonaria.
     And si verifica che la notifica bonaria sia in stato "ACCEPTED"
     Then la sottomissione della notifica bonaria è andata a buon fine
 
+
+  Scenario: [NOTIFICHE_BONARIE_WORKFLOW_test] Come ente mittente invio una notifica bonaria verso PF ottengo errore SPAM sul email e solo feddback negativi
+    Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
+      | campaignId     | SoricalFattOrd                    |
+      | messageId      | ${IT}                             |
+      | subject        | Test workflow                     |
+      | recipientType  | PF                                |
+      | taxId          | FRMTTR76M06B715E                  |
+      | denomination   | Ettore Fieramosca                 |
+      | digitalAddress | complaint@simulator.amazonses.com |
+      | pec_address    | NULL                              |
+    When viene inviata una nuova notifica bonaria
+    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    And si verifica che la notifica bonaria sia in stato "COMPLETED_UNREACHED"
+    And si attende che venga prodotto l'elemento "WORKFLOW_ENDED_UNREACHED" della notifica bonaria
+    And viene verificato che l'elemento di timeline "WORKFLOW_ENDED_UNREACHED" della notifica bonaria esista e sia correttamente compilato
+
+
   #----------- STEP --------------------------------------------
 
     And si verifica che la notifica bonaria sia in stato "ACCEPTED"
