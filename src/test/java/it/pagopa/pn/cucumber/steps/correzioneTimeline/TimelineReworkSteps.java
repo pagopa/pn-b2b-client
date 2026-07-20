@@ -89,6 +89,9 @@ public class TimelineReworkSteps {
 
     @ParameterType("rework|restart|remove")
     public static String timelineInvalidation(String value) {
+        if (value.equals("remove")) {
+            return "INVALIDATE_ELEMENTS";
+        }
         return value.toUpperCase();
     }
 
@@ -155,7 +158,7 @@ public class TimelineReworkSteps {
         return switch (requestType) {
             case "REWORK" -> reworkResponse != null ? reworkResponse.getReworkId() : null;
             case "RESTART" -> restartAttemptResponse != null ? restartAttemptResponse.getReworkId() : null;
-            case "REMOVE" -> removeElementsResponse != null ? removeElementsResponse.getReworkId() : null;
+            case "INVALIDATE_ELEMENTS" -> removeElementsResponse != null ? removeElementsResponse.getReworkId() : null;
             default ->
                     throw new IllegalArgumentException("Invalid requestType for timeline correction: " + requestType);
         };

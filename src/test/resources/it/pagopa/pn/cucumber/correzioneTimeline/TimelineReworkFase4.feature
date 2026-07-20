@@ -8,11 +8,11 @@ Feature: Test relativi al SRS di correzione timeline fase 4
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Gherkin e:
+    And destinatario Galileo Galilei e:
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
       | digitalDomicile         | NULL                     |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
     When viene invocata una richiesta di correzione puntuale per la notifica appena creata con i seguenti parametri
       | element1 | ANALOG_FAILURE_WORKFLOW |
@@ -225,7 +225,7 @@ Feature: Test relativi al SRS di correzione timeline fase 4
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Gherkin e:
+    And destinatario Galileo Galilei e:
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
       | digitalDomicile         | NULL                     |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -242,7 +242,7 @@ Feature: Test relativi al SRS di correzione timeline fase 4
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Gherkin e:
+    And destinatario Galileo Galilei e:
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
       | digitalDomicile         | NULL                     |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -259,7 +259,7 @@ Feature: Test relativi al SRS di correzione timeline fase 4
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Gherkin e:
+    And destinatario Galileo Galilei e:
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
       | digitalDomicile         | NULL                     |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -276,7 +276,7 @@ Feature: Test relativi al SRS di correzione timeline fase 4
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Gherkin e:
+    And destinatario Galileo Galilei e:
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
       | digitalDomicile         | NULL                     |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -324,7 +324,7 @@ Feature: Test relativi al SRS di correzione timeline fase 4
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
     When viene invocata una richiesta di correzione puntuale per la notifica appena creata con i seguenti parametri
       | element1 | PREPARE_ANALOG_DOMICILE |
-      | element1 | SEND_ANALOG_PROGRESS    |
+      | element2 | SEND_ANALOG_PROGRESS    |
     Then si verifica che la richiesta di remove effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di remove effettuata sia in stato "ERROR" entro 300 secondi controllando ogni 5 secondi
 
@@ -343,7 +343,7 @@ Feature: Test relativi al SRS di correzione timeline fase 4
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
     When viene invocata una richiesta di correzione puntuale per la notifica appena creata con i seguenti parametri
       | element1 | PREPARE_ANALOG_DOMICILE |
-      | element1 | PREPARE_ANALOG_DOMICILE |
+      | element2 | PREPARE_ANALOG_DOMICILE |
     Then si verifica che la richiesta di remove effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di remove effettuata sia in stato "DONE" entro 300 secondi controllando ogni 5 secondi
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
@@ -376,7 +376,7 @@ Feature: Test relativi al SRS di correzione timeline fase 4
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Gherkin e:
+    And destinatario Galileo Galilei e:
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
       | digitalDomicile         | NULL                     |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -429,9 +429,9 @@ Feature: Test relativi al SRS di correzione timeline fase 4
     And la category "NOTIFICATION_TIMELINE_REWORKED" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V23"
     And la category "NOTIFICATION_TIMELINE_REWORKED" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V10"
 
-  @timelineReworkF4
+  @timelineReworkF4 @nrt
   Scenario: [VISUALIZZAZIONE_POST_120_GG] In caso di notifica visualizzata dopo più di 120 giorni, la visualizzazione non deve produrre gli elementi di timeline di visualizzazione, nè la relativa attestazione opponibile
-    Given "Comune_Multi" recupera lato web PA una notifica inviata tra 200 e 120 giorni fa con destinatario Mario Gherkin
+    Given "Comune_Multi" recupera lato web PA una notifica perfezionata inviata tra 200 e 120 giorni fa con destinatario Mario Gherkin
     When "Mario Gherkin" legge la notifica ricevuta
     And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" non esista
       | loadTimeline     | true     |

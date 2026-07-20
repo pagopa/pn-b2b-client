@@ -1420,7 +1420,7 @@ public class SharedSteps {
     /**
      * Step precedentemente adibito unicamente al recupero di una notifica vecchia 120 giorni, ora il range temporale è impostabile a piacimento
      */
-    @And("{string} recupera lato web PA una notifica inviata tra {int} e {int} giorni fa con destinatario {destinatario}")
+    @And("{string} recupera lato web PA una notifica perfezionata inviata tra {int} e {int} giorni fa con destinatario {destinatario}")
     public void retrieveNotification120DaysOldByIunWebPaSide(String paName, int limitA, int limitB, Destinatario recipient) {
         long upperLimit = Math.max(limitA, limitB);
         long lowerLimit = Math.min(limitB, limitA);
@@ -1434,8 +1434,10 @@ public class SharedSteps {
         AssertionsForClassTypes.assertThat(bffNotificationsResponse).as("La bffNotificationResponse non dev'essere null").isNotNull();
         AssertionsForInterfaceTypes.assertThat(bffNotificationsResponse.getResultsPage()).as("La lista di notifiche vecchie " + lowerLimit + " giorni non dev'essere null").isNotNull();
         AssertionsForInterfaceTypes.assertThat(bffNotificationsResponse.getResultsPage()).as("La lista di notifiche vecchie " + lowerLimit + " giorni non dev'essere vuota").isNotEmpty();
-        BffLegalNotificationSearchRow result = bffNotificationsResponse.getResultsPage().stream().filter(
-                        n -> n.getRecipients().size() == 1 && n.getRecipients().contains(recipientTaxId))
+        BffLegalNotificationSearchRow result = bffNotificationsResponse.getResultsPage().stream().filter(n ->
+                        n.getRecipients().size() == 1
+                                && n.getRecipients().contains(recipientTaxId)
+                                && n.getNotificationStatus().getValue().equals("EFFECTIVE_DATE"))
                 .findFirst().orElse(null);
         AssertionsForClassTypes.assertThat(result).as("Nessuna notifica trovato con il solo destinatario " + recipientTaxId).isNotNull();
         FullSentNotificationV29 oldNotification = getSentNotificationLastVersionByIun(result.getIun());
