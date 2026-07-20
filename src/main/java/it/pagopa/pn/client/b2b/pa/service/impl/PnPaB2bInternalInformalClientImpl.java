@@ -26,20 +26,22 @@ public class PnPaB2bInternalInformalClientImpl {
     private final InformalNotificationTerminationApi informalNotificationTerminationApi;
     private final InternalOnlyApi internalOnlyApi;
     private final List<String> groups;
+    private String deliveryBasePath;
 
     public PnPaB2bInternalInformalClientImpl(
             RestTemplate restTemplate,
-            @Value("${pn.delivery.base-url}") String deliveryBasePath,
+            @Value("${pn.delivery.base-url}") String deliveryBasePathOrigin,
             @Value("${pn.internal.pa-id}") String paId) {
 
+        this.deliveryBasePath = deliveryBasePathOrigin+"/informal/";
         this.paId = paId;
         this.operatorId = "TestMv";
         this.groups = Collections.emptyList();
-        this.messagesApi = new MessagesApi(newInformalApiClient(restTemplate, deliveryBasePath));
-        this.senderReadInformalNotificationB2BApi = new SenderReadInformalNotificationB2BApi(newInformalApiClient(restTemplate, deliveryBasePath));
-        this.newInformalNotificationApi = new NewInformalNotificationApi(newInformalApiClient(restTemplate, deliveryBasePath));
+        this.messagesApi = new MessagesApi(newInformalApiClient(restTemplate, deliveryBasePathOrigin));
+        this.senderReadInformalNotificationB2BApi = new SenderReadInformalNotificationB2BApi(newInformalApiClient(restTemplate, deliveryBasePathOrigin));
+        this.newInformalNotificationApi = new NewInformalNotificationApi(newInformalApiClient(restTemplate, deliveryBasePathOrigin));
         this.informalNotificationTerminationApi = new InformalNotificationTerminationApi();
-        this.internalOnlyApi = new InternalOnlyApi(newPrivateDeliveryApiClient(restTemplate, deliveryBasePath));
+        this.internalOnlyApi = new InternalOnlyApi(newPrivateDeliveryApiClient(restTemplate, deliveryBasePathOrigin));
     }
 
     private static it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.ApiClient newInformalApiClient(RestTemplate restTemplate, String basePath) {
