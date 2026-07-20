@@ -107,8 +107,8 @@ public class VoucherGenerationSteps {
         }
     }
 
-    @Then("si ottiene la corretta generazione del voucher contenente le seguenti informazioni:")
-    public void checkVoucherGeneration(List<Map<String, String>> rows) {
+    @Then("si ottiene la corretta generazione del voucher di tipo {string} contenente le seguenti informazioni:")
+    public void checkVoucherGeneration(String tokenType, List<Map<String, String>> rows) {
         Object response = httpCallExecutor.getResponse();
         VoucherResponse voucherResponse = new ObjectMapper()
                 .convertValue(response, VoucherResponse.class);
@@ -119,7 +119,7 @@ public class VoucherGenerationSteps {
                         Collectors.mapping(row -> row.get("element"), Collectors.toList())
                 ));
 
-        checkVoucherData(voucherResponse, expectedAuditInfo);
+        checkVoucherData(voucherResponse, expectedAuditInfo, tokenType);
     }
 
     private void requestVoucher(ClientAssertionOptions assertionOptions) {
@@ -140,7 +140,7 @@ public class VoucherGenerationSteps {
             .build();
     }
 
-    private void checkVoucherData(VoucherResponse voucherResponse, Map<String, List<String>> expectedAuditInfo) {
+    private void checkVoucherData(VoucherResponse voucherResponse, Map<String, List<String>> expectedAuditInfo, String tokenType) {
 
         AuditTokenContext context = sharedStepsContext.getAuditTokenContext();
         JWTUtils.JWTPojo jwt = JWTUtils.decodeJwt(voucherResponse.getAccessToken());
@@ -152,7 +152,7 @@ public class VoucherGenerationSteps {
             softly.assertThat(voucherResponse).isNotNull();
             softly.assertThat(voucherResponse.getAccessToken()).isNotBlank();
             softly.assertThat(voucherResponse.getExpiresIn()).isNotNull();
-            softly.assertThat(voucherResponse.getTokenType()).isEqualTo("Bearer");
+            softly.assertThat(voucherResponse.getTokenType()).isEqualTo(tokenType);
 
             expectedAuditInfo.forEach((position, fields) -> {
                 for (String field : fields) {
