@@ -250,6 +250,7 @@ public class NotificationStepsConfig {
         // In relazione agli utenti con certi ruoli e su certi enti su cui si devono controllare le notifiche,
         // vengono attivate solo quelle necessarie:
         configureNotificationForUser(UserRole.ADMIN, "PA1", "attiva", "in-app");
+        configureNotificationForUser(UserRole.SECURITY, "PA1", "attiva", "in-app");
         configureNotificationForUser(UserRole.ADMIN, "PA2", "attiva", "in-app");
         configureNotificationForUser(UserRole.ADMIN, "GSP", "attiva", "in-app");
     }
