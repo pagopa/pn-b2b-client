@@ -3,6 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps.e_service_template.instance;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.service.IEServiceClient;
+import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 
 import javax.annotation.Nonnull;
 import java.util.*;
+import java.util.function.Predicate;
 
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -25,6 +27,12 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 @Data
 @Slf4j(topic = "EServiceTemplateInstanceInterfaceSteps")
 public class EServiceTemplateInstanceInterfaceSteps {
+
+    @FunctionalInterface
+    private interface DescriptorVerifier<T> {
+        void verify(ProducerEServiceDescriptor descriptor, T expectedSeed, org.assertj.core.api.SoftAssertions softly);
+    }
+
     private final SharedStepsContext sharedStepsContext;
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final IEServiceClient eServiceClient;
@@ -130,32 +138,34 @@ public class EServiceTemplateInstanceInterfaceSteps {
 
     @Then("l'interfaccia template instance \"REST\" è stata registrata correttamente con i valori:")
     public void verifyRestTemplateInstanceInterface(TemplateInstanceInterfaceRESTSeed expectedSeed) {
-        ResponseEntity<?> response = (ResponseEntity<?>) httpCallExecutor.getResponse();
-
-        assertSoftly(softly -> {
-            softly.assertThat(response.getStatusCode().is2xxSuccessful())
-                    .as("Response status code should be 2xx")
-                    .isTrue();
-
-            if (response.getBody() instanceof CreatedResource) {
-                UUID descriptorId = sharedStepsContext.getEServiceTemplateStepContext()
-                        .getLastEServiceCreatedFromTemplate().getDescriptorId();
-                UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext()
-                        .getLastEServiceIdCreatedFromTemplate();
-
-                ProducerEServiceDescriptor descriptor = eServiceClient.getEServiceDescriptor(eServiceId, descriptorId);
-                verifyRestInterfaceFields(descriptor, expectedSeed, softly);
-            }
-        });
+        verifyTemplateInstanceInterface(
+                expectedSeed,
+                desc -> desc != null
+                        && desc.getTemplateRef() != null
+                        && desc.getTemplateRef().getInterfaceMetadata() != null,
+                this::verifyRestInterfaceFields
+        );
     }
 
     @Then("l'interfaccia template instance \"SOAP\" è stata registrata correttamente con i valori:")
     public void verifySoapTemplateInstanceInterface(TemplateInstanceInterfaceSOAPSeed expectedSeed) {
+        verifyTemplateInstanceInterface(
+                expectedSeed,
+                desc -> desc != null && desc.getServerUrls() != null,
+                this::verifySoapInterfaceFields
+        );
+    }
+
+    private <T> void verifyTemplateInstanceInterface(
+            T expectedSeed,
+            Predicate<ProducerEServiceDescriptor> pollingCondition,
+            DescriptorVerifier<T> verifier
+    ) {
         ResponseEntity<?> response = (ResponseEntity<?>) httpCallExecutor.getResponse();
 
         assertSoftly(softly -> {
             softly.assertThat(response.getStatusCode().is2xxSuccessful())
-                    .as("Response status code should be 2xx")
+                    .as("Lo status code della risposta deve essere 2xx")
                     .isTrue();
 
             if (response.getBody() instanceof CreatedResource) {
@@ -163,8 +173,14 @@ public class EServiceTemplateInstanceInterfaceSteps {
                 UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext()
                         .getLastEServiceIdCreatedFromTemplate();
 
-                ProducerEServiceDescriptor descriptor = eServiceClient.getEServiceDescriptor(eServiceId, descriptorId);
-                verifySoapInterfaceFields(descriptor, expectedSeed, softly);
+                PollingService pollingService = sharedStepsContext.getPollingService();
+                ProducerEServiceDescriptor descriptor = pollingService.makePolling(
+                        () -> eServiceClient.getEServiceDescriptor(eServiceId, descriptorId),
+                        pollingCondition,
+                        "Informazioni di interfaccia non trovate"
+                );
+
+                verifier.verify(descriptor, expectedSeed, softly);
             }
         });
     }
@@ -211,22 +227,106 @@ public class EServiceTemplateInstanceInterfaceSteps {
     private void verifyRestInterfaceFields(ProducerEServiceDescriptor descriptor,
                                           TemplateInstanceInterfaceRESTSeed expectedSeed,
                                           org.assertj.core.api.SoftAssertions softly) {
-        // Extract interface from descriptor - structure may vary based on BFF response
-        // This is a placeholder - adjust based on actual descriptor structure
-        softly.assertThat(expectedSeed).isNotNull();
         softly.assertThat(descriptor).isNotNull();
+        softly.assertThat(expectedSeed).isNotNull();
+
+        if (descriptor == null || expectedSeed == null) {
+            return;
+        }
+
+        EServiceTemplateRef templateRef = descriptor.getTemplateRef();
+        softly.assertThat(templateRef)
+                .as("templateRef del descriptor valorizzato")
+                .isNotNull();
+
+        TemplateInstanceInterfaceMetadata actualMetadata = templateRef != null
+                ? templateRef.getInterfaceMetadata()
+                : null;
+
+        softly.assertThat(actualMetadata)
+                .as("templateRef.interfaceMetadata valorizzato")
+                .isNotNull();
+
+        if (actualMetadata != null) {
+            softly.assertThat(actualMetadata.getContactName())
+                    .as("contactName")
+                    .isEqualTo(expectedSeed.getContactName());
+            softly.assertThat(actualMetadata.getContactEmail())
+                    .as("contactEmail")
+                    .isEqualTo(expectedSeed.getContactEmail());
+            softly.assertThat(actualMetadata.getContactUrl())
+                    .as("contactUrl")
+                    .isEqualTo(expectedSeed.getContactUrl());
+            softly.assertThat(actualMetadata.getTermsAndConditionsUrl())
+                    .as("termsAndConditionsUrl")
+                    .isEqualTo(expectedSeed.getTermsAndConditionsUrl());
+        }
+
+        List<TemplateInstanceInterfaceServerUrlSeed> expectedServerUrls = expectedSeed.getServerUrls();
+        List<ProducerEServiceDescriptorServerUrlsInner> actualServerUrls = descriptor.getServerUrls();
+
+        softly.assertThat(actualServerUrls)
+                .as("serverUrls presenti nel descriptor")
+                .isNotNull();
+
+        if (actualServerUrls != null && expectedServerUrls != null) {
+            softly.assertThat(actualServerUrls)
+                    .as("numero serverUrls")
+                    .hasSameSizeAs(expectedServerUrls);
+
+            int itemsToCheck = Math.min(actualServerUrls.size(), expectedServerUrls.size());
+            for (int i = 0; i < itemsToCheck; i++) {
+                TemplateInstanceInterfaceServerUrlSeed expectedUrl = expectedServerUrls.get(i);
+                ProducerEServiceDescriptorServerUrlsInner actualUrl = actualServerUrls.get(i);
+
+                softly.assertThat(actualUrl.getUrl())
+                        .as("serverUrls[%d].url", i)
+                        .isEqualTo(expectedUrl.getUrl() != null ? expectedUrl.getUrl().toString() : null);
+                softly.assertThat(actualUrl.getDescription())
+                        .as("serverUrls[%d].description", i)
+                        .isEqualTo(expectedUrl.getDescription());
+            }
+        }
     }
 
     /**
-     * Verifies SOAP interface fields in descriptor match expected values
+     * Verifies SOAP interface fields in descriptor match expected values.
+     * SOAP seed contains only serverUrls (no contact metadata fields like REST).
      */
     private void verifySoapInterfaceFields(ProducerEServiceDescriptor descriptor,
                                           TemplateInstanceInterfaceSOAPSeed expectedSeed,
                                           org.assertj.core.api.SoftAssertions softly) {
-        // Extract interface from descriptor - structure may vary based on BFF response
-        // This is a placeholder - adjust based on actual descriptor structure
-        softly.assertThat(expectedSeed).isNotNull();
         softly.assertThat(descriptor).isNotNull();
+        softly.assertThat(expectedSeed).isNotNull();
+
+        if (descriptor == null || expectedSeed == null) {
+            return;
+        }
+
+        List<TemplateInstanceInterfaceServerUrlSeed> expectedServerUrls = expectedSeed.getServerUrls();
+        List<ProducerEServiceDescriptorServerUrlsInner> actualServerUrls = descriptor.getServerUrls();
+
+        softly.assertThat(actualServerUrls)
+                .as("serverUrls presenti nel descriptor")
+                .isNotNull();
+
+        if (actualServerUrls != null && expectedServerUrls != null) {
+            softly.assertThat(actualServerUrls)
+                    .as("numero serverUrls")
+                    .hasSameSizeAs(expectedServerUrls);
+
+            int itemsToCheck = Math.min(actualServerUrls.size(), expectedServerUrls.size());
+            for (int i = 0; i < itemsToCheck; i++) {
+                TemplateInstanceInterfaceServerUrlSeed expectedUrl = expectedServerUrls.get(i);
+                ProducerEServiceDescriptorServerUrlsInner actualUrl = actualServerUrls.get(i);
+
+                softly.assertThat(actualUrl.getUrl())
+                        .as("serverUrls[%d].url", i)
+                        .isEqualTo(expectedUrl.getUrl() != null ? expectedUrl.getUrl().toString() : null);
+                softly.assertThat(actualUrl.getDescription())
+                        .as("serverUrls[%d].description", i)
+                        .isEqualTo(expectedUrl.getDescription());
+            }
+        }
     }
 }
-
