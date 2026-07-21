@@ -16,13 +16,6 @@ Feature: Upload documenti di annotazione risk analysis su purpose template
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente tenta di caricare uno alla volta il seguente insieme di documenti sulla risk analysis del purpose template
       | pdf  |
-      | json |
-      | md   |
-      | xsd  |
-      | yml  |
-      | yaml |
-      | txt  |
-      | wsdl |
     Then tutti i tentativi di caricamento sulla risk analysis del purpose template hanno esito positivo
 
   @sad-path
@@ -47,6 +40,13 @@ Feature: Upload documenti di annotazione risk analysis su purpose template
       | zip       | zip        |
       | msi       | msi        |
       | exe       | exe        |
+      | json      | json       |
+      | md        | md         |
+      | xsd       | xsd        |
+      | yml       | yml        |
+      | yaml      | yaml       |
+      | txt       | txt        |
+      | wsdl      | wsdl       |
       # tipi di file non permessi, con estensione permessa (magic byte riconoscibile)
       | png       | pdf        |
       | docx      | pdf        |
