@@ -14,7 +14,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
   # PASSA
   Scenario: [Notifica richiesta fruizione accettata] Accettazione automatica di una richiesta di fruizione per l'e-service dell'erogatore
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    When "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     Then admin di "PA1" ha ricevuto la notifica in-app contenente il link RICHIESTA_EROGAZIONE
     """
     È stata accettata una richiesta di fruizione per l'e-service $CONTEXT(eServiceName) formulata
@@ -66,8 +66,8 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     And "PA1" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
     And "PA2" ha già verificato l'attributo verificato a "PA1"
     And "PA2" ha già approvato quella richiesta di fruizione
-    When l'utente è un "admin" di "PA2"
-    And l'utente revoca l'attributo precedentemente verificato
+    And l'utente è un "admin" di "PA2"
+    When l'utente revoca l'attributo precedentemente verificato
     Then admin di "PA2" ha ricevuto la notifica in-app contenente il link RICHIESTA_EROGAZIONE
     """
     La Piattaforma PDND ha sospeso la richiesta di fruizione del fruitore $CONTEXT(consumerName) per il tuo
@@ -82,9 +82,9 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     And "PA1" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
     And "PA2" ha già verificato l'attributo verificato a "PA1"
     And "PA2" ha già approvato quella richiesta di fruizione
-    When l'utente è un "admin" di "PA2"
+    And l'utente è un "admin" di "PA2"
     And l'utente revoca l'attributo precedentemente verificato
-    And "PA2" ha già verificato l'attributo verificato a "PA1"
+    When "PA2" ha già verificato l'attributo verificato a "PA1"
     Then admin di "PA2" ha ricevuto la notifica in-app contenente il link RICHIESTA_EROGAZIONE
     """
     La Piattaforma PDND ha riattivato la richiesta di fruizione del fruitore $CONTEXT(consumerName) per
@@ -124,7 +124,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     And "PA1" ha già creato 1 client "CONSUMER"
     And "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
     And un "admin" di "PA1" ha caricato una chiave pubblica nel client
-    When "PA1" ha già associato quella nuova finalità a quel client
+    And "PA1" ha già associato quella nuova finalità a quel client
     When l'utente "admin" di "PA1" richiede la disassociazione della finalità dal client con successo
     Then admin di "GSP" ha ricevuto la notifica in-app contenente il link FINALITA_EROGAZIONE
     """
@@ -202,10 +202,10 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
   Scenario: [Notifica e-service template sospeso] Il creatore sospende il proprio e-service template e l'erogatore viene notificato
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service - OK"
-    Given l'utente è un "admin" di "PA2"
+    And l'utente è un "admin" di "PA2"
     And l'utente tenta la creazione di un nuovo e-service con suffisso "OK_2" a partire dal template indicando tutte le specifiche
-    Given l'utente è un "admin" di "PA1"
-    And l'utente effettua la sospensione dell'e-service template
+    And l'utente è un "admin" di "PA1"
+    When l'utente effettua la sospensione dell'e-service template
     Then admin di "PA1" ha ricevuto la notifica in-app contenente il link TEMPLATE_E_SERVICE_EROGAZIONE
     """
     È stato sospeso il tuo template "$CONTEXT(eServiceTemplateName)".
@@ -266,7 +266,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED" e un documento già caricato
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    Given l'utente ha già aggiunto un documento al descrittore
+    When l'utente ha già aggiunto un documento al descrittore
     Then admin di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
     L'ente erogatore $CONTEXT(producerName) ha aggiunto un documento nella versione 1
@@ -275,9 +275,9 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
 
   # PASSA
   Scenario: [Notifica e-service rinominato] L'erogatore rinomina l'e-service a cui il fruitore è iscritto
-    And "PA2" ha già creato e pubblicato 1 e-service
+    Given "PA2" ha già creato e pubblicato 1 e-service
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    Given l'utente è un "admin" di "PA2"
+    And l'utente è un "admin" di "PA2"
     When l'utente aggiorna il nome dell'e-service con un valore di lunghezza 60 caratteri
     Then admin di "PA1" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
@@ -289,9 +289,9 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
   # PASSA
   Scenario: [Notifica modifica descrizione a versione e-service] L'erogatore modifica la descrizione nella versione dell'e-service a cui il fruitore è iscritto
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
-    Given "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    Given "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    Given l'utente è un "admin" di "PA1"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    And l'utente è un "admin" di "PA1"
     When l'utente aggiorna la descrizione di quell'e-service
     Then admin di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
@@ -456,9 +456,9 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
   # FALLISCE per una questione di virgolette assenti rispetto all'Excel
   Scenario: [Notifica finalità rifiutata] L'erogatore rifiuta la finalità richiesta dal fruitore per un e-service
     Given l'utente è un "admin" di "PA1"
-    Given "PA1" ha già creato e pubblicato 1 e-service
-    Given "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    Given "PA2" ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "WAITING_FOR_APPROVAL" per quell'eservice
     When l'utente rifiuta la finalità aggiungendo una motivazione
     Then admin di "PA2" ha ricevuto la notifica in-app contenente il link FINALITA_FRUIZIONE
     """
@@ -498,7 +498,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
   Scenario: [Notifica nuova versione template] L'erogatore pubblica una nuova versione di e-service template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
-    Given l'utente è un "admin" di "PA2"
+    And l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
     And l'utente è un "admin" di "PA1"
     When l'utente aggiunge all'e-service template una versione in stato PUBLISHED con successo
@@ -540,14 +540,14 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
   # PASSA
   Scenario: [Notifica richiesta delega accettata] Il delegato accetta la delega alla fruizione di un e-service delegabile
     Given "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
-    Given l'ente delegato "PA2"
+    And l'ente delegato "PA2"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     And l'ente delegante "PA1"
     And l'utente è un "admin" dell'ente delegante
     And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
-    When l'utente è un "admin" dell'ente delegato
-    And l'ente delegato accetta la delega in fruizione
+    And l'utente è un "admin" dell'ente delegato
+    When l'ente delegato accetta la delega in fruizione
     Then admin di "PA1" ha ricevuto la notifica in-app contenente il link DELEGA_ADERENTE
     """
     Ti informiamo che l'ente $CONTEXT(delegateName) ha accettato la delega alla fruizione che il
@@ -557,13 +557,13 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
   # PASSA
   Scenario: [Notifica richiesta delega rifiutata] Il delegato rifiuta la delega alla fruizione di un e-service delegabile
     Given "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
-    Given l'ente delegato "PA2"
+    And l'ente delegato "PA2"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     And l'ente delegante "PA1"
     And l'utente è un "admin" dell'ente delegante
     And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
-    When l'utente è un "admin" dell'ente delegato
+    And l'utente è un "admin" dell'ente delegato
     When l'ente delegato rifiuta la delega in fruizione
     Then admin di "PA1" ha ricevuto la notifica in-app contenente il link DELEGA_ADERENTE
     """
@@ -668,8 +668,8 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     And l'ente "PA2" concede la disponibilità a ricevere deleghe
     And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And "PA1" ha già caricato un'interfaccia per quel descrittore
-    When l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
-    And l'ente "PA1" con ruolo "admin" revoca la delega in erogazione con successo
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    When l'ente "PA1" con ruolo "admin" revoca la delega in erogazione con successo
     Then admin di "PA2" ha ricevuto la notifica in-app contenente il link DELEGA_ADERENTE
     """
     Ti informiamo che l'ente $CONTEXT(producerName) ha revocato la delega all'erogazione per
@@ -687,16 +687,17 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     "$CONTEXT(attributeName)". Puoi ora utilizzarlo nelle richieste di fruizione.
     """
 
-  # FIXME due forme di notifica tra riga 101 e riga 102 del foglio Mappatura notifiche: ma perché differiscono?
-  Scenario: [Notifica aderente attributo certificato ricevuto] L'ente certificatore conferisce l'attributo certificato a un ente aderente
-    Given l'utente è un "admin" di "PA1"
-    And PA1 ha già creato 1 attributo CERTIFIED
-    When l'utente assegna a "PA1" l'attributo certificato precedentemente creato
-    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link ANAGRAFICA_ADERENTE
-    """
-    Al tuo ente è stato conferito l'attributo certificato "$CONTEXT(attributeName)".
-    Puoi ora utilizzarlo nelle richieste di fruizione.
-    """
+  # Due forme di notifica tra riga 101 e riga 102 del foglio Mappatura notifiche: ma perché differiscono?
+  # Questa notifica risulta NON IMPLEMENTATA
+#  Scenario: [Notifica aderente attributo certificato ricevuto] L'ente certificatore conferisce l'attributo certificato a un ente aderente
+#    Given l'utente è un "admin" di "PA1"
+#    And PA1 ha già creato 1 attributo CERTIFIED
+#    When l'utente assegna a "PA1" l'attributo certificato precedentemente creato
+#    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link ANAGRAFICA_ADERENTE
+#    """
+#    Al tuo ente è stato conferito l'attributo certificato "$CONTEXT(attributeName)".
+#    Puoi ora utilizzarlo nelle richieste di fruizione.
+#    """
 
   # PASSA
   Scenario: [Notifica attributo certificato revocato] L'ente certificatore revoca l'attributo certificato a un ente
@@ -712,14 +713,15 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     questo attributo per le richieste di fruizione.
     """
 
-  # FIXME due forme di notifica tra riga 103 e riga 104 del foglio Mappatura notifiche: ma perché differiscono?
-  Scenario: [Notifica aderente attributo certificato revocato] L'ente certificatore revoca l'attributo certificato a un ente aderente
-    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link ANAGRAFICA_ADERENTE
-    """
-    Al tuo ente è stato revocato l'attributo certificato "$CONTEXT(attributeName)".
-    Tutte le richieste di fruizione con questo attributo saranno sospese e in futuro
-    non potrai più utilizzare questo attributo per le richieste di fruizione.
-    """
+  # Due forme di notifica tra riga 103 e riga 104 del foglio Mappatura notifiche: ma perché differiscono?
+  # Questa notifica risulta NON IMPLEMENTATA
+#  Scenario: [Notifica aderente attributo certificato revocato] L'ente certificatore revoca l'attributo certificato a un ente aderente
+#    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link ANAGRAFICA_ADERENTE
+#    """
+#    Al tuo ente è stato revocato l'attributo certificato "$CONTEXT(attributeName)".
+#    Tutte le richieste di fruizione con questo attributo saranno sospese e in futuro
+#    non potrai più utilizzare questo attributo per le richieste di fruizione.
+#    """
 
   # PASSA
   Scenario: [Notifica attributo verificato ricevuto] L'ente certificatore conferisce l'attributo verificato a un ente
@@ -795,7 +797,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
 
   # PASSA
   Scenario: [Notifica chiave portachiavi non più sicura] L'operatore che ha caricato una chiave al portachiavi non è più attivo
-    And l'utente "admin" di "PA1" crea un portachiavi erogatore con successo
+    Given l'utente "admin" di "PA1" crea un portachiavi erogatore con successo
     And l'utente "admin" di "PA1" aggiunge l'utente "security" di "PA1" al portachiavi erogatore
     And l'utente "security" di "PA1" aggiunge una chiave al portachiavi erogatore
     When l'utente "admin" di "PA1" rimuove l'utente "security" dal portachiavi erogatore
@@ -808,7 +810,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
 
   # PASSA
   Scenario: [Notifica chiave aggiunta al portachiavi] Viene aggiunta una nuova chiave al portachiavi erogatore
-    And l'utente "admin" di "PA1" crea un portachiavi erogatore con successo
+    Given l'utente "admin" di "PA1" crea un portachiavi erogatore con successo
     And l'utente "admin" di "PA1" aggiunge l'utente "security" di "PA1" al portachiavi erogatore
     When l'utente "security" di "PA1" aggiunge una chiave al portachiavi erogatore
     Then admin di "PA1" ha ricevuto la notifica in-app contenente il link PORTACHIAVI_EROGAZIONE
@@ -819,15 +821,15 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
   # PASSA
   Scenario: [Notifica chiave client rimossa] L'utente rimuove una chiave pubblica dal client
     Given l'utente è un "admin" di "PA1"
-    Given "GSP" ha già creato e pubblicato 1 e-service
-    Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    Given "PA1" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    Given "PA1" ha già creato 1 client "CONSUMER"
-    Given "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
-    Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
-    Given "PA1" ha già associato la finalità a quel client
-    Given un "admin" di "PA1" ha aggiunto una nuova chiave pubblica al client
-    Given "PA1" rimuove quella nuova chiave dal client
+    And "GSP" ha già creato e pubblicato 1 e-service
+    And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    And "PA1" ha già creato 1 client "CONSUMER"
+    And "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
+    And un "admin" di "PA1" ha caricato una chiave pubblica nel client
+    And "PA1" ha già associato la finalità a quel client
+    And un "admin" di "PA1" ha aggiunto una nuova chiave pubblica al client
+    When "PA1" rimuove quella nuova chiave dal client
     Then admin di "PA1" ha ricevuto la notifica in-app contenente il link API_E_SERVICE
     """
     La chiave $CONTEXT(newKeyId) è stata rimossa dal client $CONTEXT(clientName).
