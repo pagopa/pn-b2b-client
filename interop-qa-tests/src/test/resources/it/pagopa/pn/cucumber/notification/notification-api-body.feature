@@ -179,25 +179,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     "$CONTEXT(purposeTitle)", associata al tuo e-service $CONTEXT(eServiceName).
     """
 
-## Notifica NON IMPLEMENTATA stando alla mappatura notifiche utente (In-app implementata: cella vuota)
-#  Scenario: [Notifica piano di carico sopra soglia] Il fruitore chiede un adeguamento del piano di carico della finalità superiore alla soglia dell'e-service
-#    Given l'utente è un "admin" di "PA1"
-#    And PA1 ha già creato 2 attributi CERTIFIED
-#    And l'utente assegna a "PA2" gli attributi certificati precedentemente creati
-#    And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 100
-#    And l'utente tenta di aggiungere una soglia differenziata di 15 per l'attributo CERTIFIED 0-esimo creato
-#    And l'utente tenta di aggiungere una soglia differenziata di 150 per l'attributo CERTIFIED 1-esimo creato
-#    And l'utente è un "admin" di "PA2"
-#    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-#    And l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 500
-#    Given "PA2" ha già creato 1 client "CONSUMER"
-#    When l'utente richiede l'associazione della finalità al client
-#    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link FINALITA_EROGAZIONE
-#    """
-#    L'ente $CONTEXT(consumerName) ha inviato la finalità "$CONTEXT(purposeTitle)", che prevede un piano
-#    di carico superiore alla tua soglia, associata al tuo e-service $CONTEXT(eServiceName).
-#    """
-
   # PASSA
   Scenario: [Notifica e-service template sospeso] Il creatore sospende il proprio e-service template e l'erogatore viene notificato
     Given l'utente è un "admin" di "PA1"
@@ -410,15 +391,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     La stima di carico complessiva per le finalità associate all'e-service "$CONTEXT(eServiceName)" ha superato
     la soglia massima consentita dall'erogatore pari a 50 chiamate API giornaliere.
     """
-
-## Notifica NON IMPLEMENTATA stando alla mappatura notifiche utente (In-app implementata: NO)
-#  Scenario: [Notifica richiesta di adeguamento piano accettata] - L'erogatore accetta la richiesta di adeguamento del piano di carico
-#    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link FINALITA_FRUIZIONE
-#    """
-#    L'ente erogatore $CONTEXT(producerName) ha accettato la richiesta di adeguamento del piano di carico
-#    formulata dal tuo ente per la finalità $CONTEXT(purposeId), associata all'e-service
-#    $CONTEXT(eServiceName).
-#    """
 
   # PASSA
   Scenario: [Notifica richiesta di adeguamento piano rifiutata] L'erogatore rifiuta la richiesta di adeguamento del piano di carico al fruitore
@@ -749,8 +721,19 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     Non potrai più utilizzare questo attributo per le future richieste di fruizione.
     """
 
-  # Scenario: [Notifica chiave rimossa da client e-service] Viene rimossa una chiave da un client e-service
-  # (presente nel file feature che contiene step M2M V3)
+  # FALLISCE: la notifica è diversa nella forma
+  Scenario: [Notifica chiave rimossa da client e-service] Viene rimossa una chiave da un client e-service
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato 1 client "CONSUMER"
+    And "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
+    And "PA1" ha già inserito l'utente con ruolo "security" come membro di quel client
+    And un "admin" di "PA1" ha caricato una chiave pubblica nel client
+    When "PA1" rimuove quella chiave dal client
+    Then security di "PA1" ha ricevuto la notifica in-app contenente il link API_E_SERVICE
+    """
+    L'utente $CONTEXT(producerName) ha rimosso una chiave di e-service dal client "CONTEXT(clientName)".
+    Assicurati che l'operatività non sia compromessa.
+    """
 
   # PASSA
   Scenario: [Notifica chiave client non più sicura] L'operatore che ha caricato una chiave al client non è più attivo
@@ -766,8 +749,18 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     caricata non è più attivo. La chiave deve essere sostituita per garantire la sicurezza e l'operatività.
     """
 
-  # Scenario: [Notifica chiave aggiunta a client e-service] Viene aggiunta una nuova chiave ad un client e-service
-  # (presente nel file feature che contiene step M2M V3)
+  # FALLISCE: si aggiunge una chiave al client e-service, ma la notifica non menziona 'e-service'
+  # Inoltre le doppie virgolette attorno al nome del client sono attese ma non presenti
+  Scenario: [Notifica chiave aggiunta a client e-service] Viene aggiunta una nuova chiave ad un client e-service
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato 1 client "CONSUMER"
+    And "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
+    And "PA1" ha già inserito l'utente con ruolo "security" come membro di quel client
+    When un "admin" di "PA1" ha caricato una chiave pubblica nel client
+    Then security di "PA1" ha ricevuto la notifica in-app contenente il link API_E_SERVICE
+    """
+    Ti informiamo che è stata aggiunta una nuova chiave e-service al client "$CONTEXT(clientName)".
+    """
 
   # FALLISCE: si aggiunge una chiave al client interop, ma la notifica non menziona 'interop'
   # Inoltre le doppie virgolette attorno al nome del client sono attese ma non presenti
@@ -775,8 +768,9 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato 1 client "API"
     And "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
+    And "PA1" ha già inserito l'utente con ruolo "security" come membro di quel client
     When un "admin" di "PA1" ha caricato una chiave pubblica nel client
-    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link API_E_SERVICE
+    Then security di "PA1" ha ricevuto la notifica in-app contenente il link API_E_SERVICE
     """
     Ti informiamo che è stata aggiunta una nuova chiave al client interop "$CONTEXT(clientName)".
     """
