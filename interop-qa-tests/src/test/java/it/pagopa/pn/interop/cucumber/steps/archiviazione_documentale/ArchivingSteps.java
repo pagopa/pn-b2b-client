@@ -182,7 +182,7 @@ public class ArchivingSteps {
                         .as("Il campo '%s' non è presente", auditField)
                         .isNotNull();
                 if (actualValue != null) {
-                    softly.assertThat(actualValue)
+                    softly.assertThat(actualValue.toString())
                             .as("Il valore del campo '%s' non corrisponde a quello del file", auditField)
                             .isEqualTo(expectedValue);
                 }
