@@ -13,6 +13,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -158,8 +159,7 @@ public class EServiceTemplateInstanceInterfaceSteps {
                     .isTrue();
 
             if (response.getBody() instanceof CreatedResource) {
-                UUID descriptorId = sharedStepsContext.getEServiceTemplateStepContext()
-                        .getLastEServiceCreatedFromTemplate().getDescriptorId();
+                UUID descriptorId = getDescriptorId();
                 UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext()
                         .getLastEServiceIdCreatedFromTemplate();
 
@@ -167,6 +167,14 @@ public class EServiceTemplateInstanceInterfaceSteps {
                 verifySoapInterfaceFields(descriptor, expectedSeed, softly);
             }
         });
+    }
+
+    @Nonnull
+    private UUID getDescriptorId() {
+        CreatedEServiceDescriptor lastEServiceCreatedFromTemplate = Objects.requireNonNull(
+                sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceCreatedFromTemplate(),
+                "Non risulta un e-service template, il quale però precondizione per l'esecuzione dello step. Verificare che negli step precedenti questo sia stato correttamente creato e aggiunto in contesto.");
+        return lastEServiceCreatedFromTemplate.getDescriptorId();
     }
 
     private UUID getActualEServiceIdOrRandom() {
