@@ -3,7 +3,7 @@ package it.pagopa.pn.client.b2b.pa.service.impl;
 import it.pagopa.pn.client.b2b.pa.domain.NotificationSearchParam;
 import it.pagopa.pn.client.web.generated.openapi.clients.informal.web.pa.api.SenderInformalReadWebApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.informal.web.pa.model.InformalNotificationSearchResponse;
-import it.pagopa.pn.client.web.generated.openapi.clients.informal.web.pa.model.InformalNotificationStatus;
+import it.pagopa.pn.client.web.generated.openapi.clients.informal.web.pa.model.InformalNotificationStatusV1;
 import it.pagopa.pn.client.web.generated.openapi.clients.webPa.ApiClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.webPa.api.SenderReadWebApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.CxTypeAuthFleet;
@@ -45,16 +45,16 @@ public class B2BSenderReadClientImpl {
         NotificationStatusV26 statusV26 = searchParam.status != null ? NotificationStatusV26.fromValue(searchParam.status) : null;
         return senderReadWebApi.searchSentNotification(searchParam.xPagopaPnUid, cxType != null ? CxTypeAuthFleet.fromValue(cxType) : null, searchParam.senderId,
                 searchParam.startDate, searchParam.endDate, searchParam.xPagopaPnCxGroups, searchParam.recipientId,
-                statusV26, searchParam.subjectRegExp, searchParam.iunMatch, searchParam.size, searchParam.nextPagesKey);
+                statusV26, searchParam.iunMatch, searchParam.size, searchParam.nextPagesKey);
     }
 
     public InformalNotificationSearchResponse searchInformalSentNotification(NotificationSearchParam searchParam) throws RestClientException {
         String cxType = resolveActual(searchParam.xPagopaPnCxType, "PA");
         it.pagopa.pn.client.web.generated.openapi.clients.informal.web.pa.model.CxTypeAuthFleet cxTypeAuthFleet = cxType != null ? it.pagopa.pn.client.web.generated.openapi.clients.informal.web.pa.model.CxTypeAuthFleet.fromValue(cxType) : null;
-        InformalNotificationStatus status = searchParam.status != null ? InformalNotificationStatus.fromValue(searchParam.status) : null;
+        InformalNotificationStatusV1 status = searchParam.status != null ? InformalNotificationStatusV1.fromValue(searchParam.status) : null;
         return senderInformalReadWebApi.searchInformalSentNotification(searchParam.xPagopaPnUid, cxTypeAuthFleet, searchParam.senderId,
                 searchParam.campaignId, searchParam.startDate, searchParam.endDate, searchParam.xPagopaPnCxGroups, searchParam.recipientId,
-                searchParam.iunMatch, status, searchParam.group, false, true, searchParam.size, searchParam.nextPagesKey);
+                searchParam.iunMatch, status, false, true, searchParam.size, searchParam.nextPagesKey);
     }
 
     // NotificationSearchParam.ACTUAL (default quando il campo non è specificato in tabella) -> valore derivato dal destinatario;

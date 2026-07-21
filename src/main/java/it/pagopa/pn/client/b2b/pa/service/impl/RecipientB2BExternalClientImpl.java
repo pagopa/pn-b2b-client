@@ -24,6 +24,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static it.pagopa.pn.client.b2b.pa.utils.JsonDeepCopyMapper.deepCopy;
@@ -117,10 +118,12 @@ public class RecipientB2BExternalClientImpl implements IPnWebRecipientClient {
 
     @Override
     public LegalNotificationSearchResponse searchReceivedDelegatedNotification(Destinatario destinatario, NotificationSearchParam param) throws RestClientException {
+        it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.NotificationStatusV26 statusV26 = Optional.ofNullable(param.status)
+                .map(it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.NotificationStatusV26::fromValue)
+                .orElse(null);
         return recipientReadB2BApi.searchReceivedDelegatedNotification(
                 param.startDate.toString(), param.endDate.toString(), param.senderId, param.recipientId,
-                param.group, param.iunMatch, convertStatus(it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.NotificationStatusV26.fromValue(param.status)),
-                param.size, param.nextPagesKey);
+                param.group, param.iunMatch, convertStatus(statusV26), param.size, param.nextPagesKey);
     }
 
     @Override

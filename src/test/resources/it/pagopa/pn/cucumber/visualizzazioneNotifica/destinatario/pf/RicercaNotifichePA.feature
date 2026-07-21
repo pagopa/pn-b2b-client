@@ -19,7 +19,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
 
   #CASO DI TEST 2.1 - tutti i campi (obbligatori e opzionali) valorizzati correttamente
   @letturaDestinatario
-  Scenario: [MITTENTE_RICERCA_NOTIFICHE_1] Come mittente recupero le notifiche inviate filtrando per tutti i campi obbligatori e opzionali
+  Scenario: [MITTENTE_RICERCA_NOTIFICHE_1_A] Come mittente recupero le notifiche inviate filtrando per tutti i campi obbligatori e opzionali
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di Palermo          |
@@ -69,7 +69,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
 
 
   @letturaDestinatario
-  Scenario: [MITTENTE_RICERCA_NOTIFICHE_2] Viene inviata una notifica legale con gruppo e si recuperano le notifiche inviate dal mittente filtrando per gruppo
+  Scenario: [MITTENTE_RICERCA_NOTIFICHE_1_B] Viene inviata una notifica legale con gruppo e si recuperano le notifiche inviate dal mittente filtrando per gruppo
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di Palermo          |
@@ -90,7 +90,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
 
 
   @letturaDestinatario
-  Scenario Outline: [MITTENTE_RICERCA_NOTIFICHE_3] Si tenta il recupero delle notifiche inviate dal mittente quando manca un campo obbligatorio
+  Scenario Outline: [MITTENTE_RICERCA_NOTIFICHE_1_C] Si tenta il recupero delle notifiche inviate dal mittente quando manca un campo obbligatorio
     And vengono recuperate le notifiche inviate dal mittente "Comune_Multi"
       | <campo> | $NULL |
     Then si verifica che sia stato restituito un errore di tipo "BAD REQUEST"
@@ -108,7 +108,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
     #######################
 
   @letturaDestinatario
-  Scenario: [MITTENTE_RICERCA_NOTIFICHE_BONARIE_1] Vengono inviate due notifiche bonarie con esiti differenti
+  Scenario: [MITTENTE_RICERCA_NOTIFICHE_BONARIE_2.A] Vengono inviate due notifiche bonarie con esiti differenti
   e si recuperano le notifiche inviate dal mittente filtrando per specifici criteri
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con i seguenti parametri
@@ -160,7 +160,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
       | delivered | true                   |
 
   @letturaDestinatario
-  Scenario Outline: [MITTENTE_RICERCA_NOTIFICHE_BONARIE_1] Si tenta il recupero delle notifiche bonarie inviate dal mittente quando manca un campo obbligatorio
+  Scenario Outline: [MITTENTE_RICERCA_NOTIFICHE_BONARIE_2.B] Si tenta il recupero delle notifiche bonarie inviate dal mittente quando manca un campo obbligatorio
     And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
       | <campo> | $NULL |
     Then si verifica che sia stato restituito un errore di tipo "BAD REQUEST"

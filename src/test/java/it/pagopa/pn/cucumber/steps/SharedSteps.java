@@ -251,6 +251,8 @@ public class SharedSteps {
 
     private final CacheManager<String, String> senderTaxIdCacheManager;
 
+    private final SendSharedContext sendSharedContext;
+
     /**
      * Rappresenta la versione con cui è stata generata una notifica. Viene impostata al momento di preparazione della request.
      * Va da sè che gli step successivi (aggiunta di destinatari, invio, etc) dovranno anch'essi utilizzare tale versione, salvo diversamente specificato.
@@ -322,7 +324,8 @@ public class SharedSteps {
                        DynamoDbService dynamoDbService,
                        SenderInfoProvider senderInfoProvider,
                        @Qualifier("senderTaxIdCacheManager") CacheManager<String, String> senderTaxIdCacheManager,
-                       DestinatarioRegistry destinatarioRegistry
+                       DestinatarioRegistry destinatarioRegistry,
+                       SendSharedContext sendSharedContext
     ) {
         this.context = context;
         this.b2bClient = b2bClient;
@@ -344,6 +347,7 @@ public class SharedSteps {
         versionUsed = getNotificationVersion(MOST_RECENT);
         this.senderTaxIdCacheManager = senderTaxIdCacheManager;
         this.destinatarioRegistry = destinatarioRegistry;
+        this.sendSharedContext = sendSharedContext;
     }
 
     @BeforeAll
@@ -483,6 +487,7 @@ public class SharedSteps {
 
     @And("destinatario {destinatario}")
     public void addDestinatario(Destinatario destinatario) {
+        sendSharedContext.getLegalNotificationContext().getRecipient().setDestinatario(destinatario);
         getNotificationStepInterface().addRecipientToNotification(destinatario, new HashMap<>());
     }
 

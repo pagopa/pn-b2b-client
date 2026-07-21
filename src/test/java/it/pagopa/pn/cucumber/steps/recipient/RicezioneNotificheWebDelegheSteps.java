@@ -173,19 +173,26 @@ public class RicezioneNotificheWebDelegheSteps {
             }
             case GHERKIN_SRL -> {
 //                setRequiredAPI(false);
-                yield webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
+                webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
+                yield webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
             }
             case CUCUMBER_SPA -> {
 //                setRequiredAPI(false);
-                yield webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+                webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+                yield webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+
             }
             case GHERKIN_SRL_B2B -> {
 //                setRequiredAPI(true);
-                yield webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_B2B_1);
+                webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_B2B_1);
+                yield webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_B2B_1);
+
             }
             case CUCUMBER_SPA_B2B -> {
 //                setRequiredAPI(true);
-                yield webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_B2B_2);
+                webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_B2B_2);
+                yield webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_B2B_2);
+
             }
             default -> throw new IllegalArgumentException();
         };
@@ -351,7 +358,6 @@ public class RicezioneNotificheWebDelegheSteps {
 
         Assertions.assertNotNull(mandateDto);
         setMandateToSearch(mandateDto);
-
         List<HashMap<String, String>> resp = sharedSteps.getPnExternalServiceClient().pgGroupInfo(webRecipientClient.getBearerTokenSetted());
         String gruppoAttivo = null;
         if (resp != null && !resp.isEmpty()) {
@@ -680,6 +686,8 @@ public class RicezioneNotificheWebDelegheSteps {
 //        setRequiredAPI(isUseB2BFlag);
         NotificationStatusV26 notificationStatus = searchParam.status != null ? NotificationStatusV26.valueOf(searchParam.status) : null;
         try {
+            sendSharedContext.getMandateContext().setDelegate(sharedSteps.getDestinatarioRegistry().destinatario(user));
+            sendSharedContext.getMandateContext().setDelegator(sharedSteps.getDestinatarioRegistry().destinatario(recipient));
 
             this.notificationSearchResponseLegal = webRecipientClient.searchReceivedDelegatedNotification(
                     sendSharedContext.getMandateContext().getDelegate(), searchParam);
@@ -876,6 +884,7 @@ public class RicezioneNotificheWebDelegheSteps {
         } else {
             throw new IllegalStateException("Nessuna risposta di ricerca notifiche disponibile per la verifica dei criteri.");
         }
+        Assertions.assertFalse(resultsPage.isEmpty(), "La pagina dei risultati della ricerca notifiche è vuota, impossibile verificare i criteri.");
 
         Map<String, List<String>> resolvedCriteria = notificationSearchCriteriaMapper.build(criteria, new TokenResolver(sharedSteps, sendSharedContext));
         NotificationSearchRowAssertions.assertAllRowsMatchCriteria(resultsPage, resolvedCriteria);

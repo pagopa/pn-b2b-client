@@ -5,6 +5,7 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,6 +19,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  * {@code OffsetDateTime} o {@code String} a seconda del modello), il confronto non è testuale ma per
  * data: un solo valore atteso richiede che la notifica sia stata inviata in quel giorno, due valori
  * (separati da virgola nella cella del feature) definiscono un range inclusivo {@code [start, end]}.
+ * <p>
+ * Se il valore letto dalla riga è una {@link List} (es. {@code recipients}, la lista dei taxId dei
+ * destinatari), il confronto è un'uguaglianza esatta con i valori attesi (ordine libero): la riga deve
+ * contenere tutti e soli i valori elencati in tabella, non un semplice sottoinsieme.
  */
 public final class NotificationSearchRowAssertions {
 
@@ -31,6 +36,10 @@ public final class NotificationSearchRowAssertions {
 
     private static void assertRowFieldMatches(Object row, String field, List<String> allowedValues) {
         Object actualValue = NotificationRowFieldReader.readField(row, field);
+        if (actualValue instanceof List<?> actualList) {
+            assertListFieldMatchesExactly(row, field, actualList, allowedValues);
+            return;
+        }
         String actualValueAsString = actualValue == null ? null : actualValue.toString();
         OffsetDateTime actualDateTime = parseAsDateTime(actualValueAsString);
         if (actualDateTime != null) {
@@ -41,6 +50,16 @@ public final class NotificationSearchRowAssertions {
                 .as("Il campo '%s' della notifica con iun '%s' vale '%s': atteso uno tra %s",
                         field, readIunSafely(row), actualValueAsString, allowedValues)
                 .contains(actualValueAsString);
+    }
+
+    private static void assertListFieldMatchesExactly(Object row, String field, List<?> actualList, List<String> allowedValues) {
+        List<String> actualValuesAsString = actualList.stream()
+                .map(value -> value == null ? null : value.toString())
+                .collect(Collectors.toList());
+        assertThat(actualValuesAsString)
+                .as("Il campo '%s' della notifica con iun '%s' vale %s: atteso esattamente %s",
+                        field, readIunSafely(row), actualValuesAsString, allowedValues)
+                .containsExactlyInAnyOrderElementsOf(allowedValues);
     }
 
     private static void assertDateFieldWithinRange(Object row, String field, OffsetDateTime actualDateTime, List<String> allowedValues) {

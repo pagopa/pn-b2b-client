@@ -108,7 +108,7 @@ public class DestinatarioRegistry {
 
         DESTINATARIO_GHERKIN_SRL_B2B = new Destinatario(
                 GHERKIN_SRL_B2B, recipients.getGherkinSrl().getTaxId(),
-                recipients.getCucumberSpa().getUid(), PG, PEC, true);
+                recipients.getGherkinSrl().getUid(), PG, PEC, true);
 
         DESTINATARIO_CUCUMBER_SRL = new Destinatario(
                 CUCUMBER_SRL, recipients.getCucumberSrl().getTaxId(),

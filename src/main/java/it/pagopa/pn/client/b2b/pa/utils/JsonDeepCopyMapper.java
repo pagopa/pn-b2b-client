@@ -3,6 +3,7 @@ package it.pagopa.pn.client.b2b.pa.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
@@ -16,7 +17,8 @@ public final class JsonDeepCopyMapper {
     private static final ObjectMapper OBJECT_MAPPER = JsonMapper.builder()
             .addModule(new JavaTimeModule())
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .build();
+            .build()
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
     private JsonDeepCopyMapper() {
     }

@@ -43,6 +43,8 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
       | tipo | destinatario   |
       | PF   | Mario Cucumber |
       | PG   | CucumberSpa    |
+      | PG   | CucumberSpaB2B |
+
 
   #CASO DI TEST 4.1 - communicationType = INFORMAL -> la notifica bonaria è presente
   @letturaDestinatario @useB2B
@@ -60,6 +62,8 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
       | tipo | destinatario   |
       | PF   | Mario Cucumber |
       | PG   | CucumberSpa    |
+      | PG   | CucumberSpaB2B |
+
 
 
   #CASO DI TEST 4.1 - communicationType = LEGAL -> la notifica bonaria non è presente
@@ -77,6 +81,8 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
       | tipo | destinatario   |
       | PF   | Mario Cucumber |
       | PG   | CucumberSpa    |
+      | PG   | CucumberSpaB2B |
+
 
   #CASO DI TEST 4.1 - communicationType assente -> di default vengono cercate solo le LEGAL
   @letturaDestinatario
@@ -92,6 +98,8 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
       | tipo | destinatario   |
       | PF   | Mario Cucumber |
       | PG   | CucumberSpa    |
+      | PG   | CucumberSpaB2B |
+
 
   #CASO DI TEST 4.1 - solo campi obbligatori valorizzati correttamente
   @letturaDestinatario
@@ -107,11 +115,13 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
       | tipo | destinatario   |
       | PF   | Mario Cucumber |
       | PG   | CucumberSpa    |
+      | PG   | CucumberSpaB2B |
+
 
   #CASO DI TEST 4.1 - campo obbligatorio non valorizzato -> 400 KO
   @letturaDestinatario @useB2B
   Scenario Outline: [RICERCA_RICEVUTE_3] Come destinatario non riesco a ricercare le notifiche ricevute se manca un campo obbligatorio
-    And "Mario Cucumber" visualizza l'elenco delle notifiche per comune "Comune_Multi"
+    And "<destinatario>" visualizza l'elenco delle notifiche per comune "Comune_Multi"
       | <campo> | NULL |
     Then si verifica che venga ritornato un errore di tipo "BAD REQUEST"
     Examples:
@@ -121,6 +131,12 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
       | xPagopaPnCxId   |
       | startDate       |
       | endDate         |
+    Examples:
+      | destinatario   |
+      | Mario Cucumber |
+      | CucumberSpaB2B |
+
+
 
   @deleghe1 @useB2B
   Scenario: [B2B-AOO-UO_MANDATE_2] Un delegato riceve una notifica legale e la ricerca delle notifiche ricevute lato delegato restituisce le notifiche attese dei criteri di ricerca
@@ -129,7 +145,7 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
     And "Mario Cucumber" accetta la delega "Mario Gherkin"
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
-      | senderDenomination | Comune di palermo         |
+      | senderDenomination | Comune di palermo          |
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm | SI               |
       | payment_f24        | PAYMENT_F24_FLAT |
@@ -154,7 +170,7 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
 
   @deleghe1 @useB2B
   Scenario: [B2B-AOO-UO_MANDATE_2AA] Un delegato tenta di recuperare le notifiche ricevute di un delegante per il quale ha accettato la delega e si
-    aspetta di ricevere le notifiche attese dei criteri di ricerca
+  aspetta di ricevere le notifiche attese dei criteri di ricerca
     Given "Mario Cucumber" rifiuta se presente la delega ricevuta "Mario Gherkin"
     And "Mario Cucumber" viene delegato da "Mario Gherkin" per comune "Comune_Multi"
     And "Mario Cucumber" accetta la delega "Mario Gherkin"
@@ -174,7 +190,7 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
     # POSSIBILE BUG: FA QUERY SUL MANDATEID MA NELLA RISPOSTA VA IN ERRORE PERCHé IL MANDATEID NON è PRESENTE NELLA RISPOSTA
     And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
 #      | communicationType | LEGAL      |
-      | mandateId         | :mandateId |
+      | mandateId | :mandateId |
     And "Mario Cucumber" visualizza l'elenco delle notifiche per comune "Comune_Multi"
       | startDate | 2026-07-07 |
       | endDate   | 2026-07-10 |
@@ -183,8 +199,8 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
     And Si verifica che il numero di notifiche restituite nella pagina sia 1
     And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
 #      | communicationType | LEGAL      |
-      | mandateId         | :mandateId |
-      | iun               | :actualIun |
+      | mandateId | :mandateId |
+      | iun       | :actualIun |
 
 
 
