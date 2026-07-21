@@ -571,10 +571,9 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     tuo ente gli ha conferito per l'e-service "$CONTEXT(eServiceName)".
     """
 
-  # FALLISCE per una questione di virgolette assenti rispetto all'Excel - Audience viene compilato ma lo ritiene vuoto
+  # FALLISCE per una questione di virgolette assenti rispetto all'Excel
   Scenario: [Notifica richiesta approvazione nuova versione e-service] L'ente delegato richiede l'approvazione per pubblicare una nuova versione di e-service
     Given l'ente delegato "PA2"
-    And l'ente delegato "PA2"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And "PA1" ha già creato e pubblicato 1 e-service
     And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
@@ -596,20 +595,52 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     una nuova versione dell'e-service "$CONTEXT(eServiceName)".
     """
 
-  # TODO - vedere il problema bloccante sopra
+  # FALLISCE per una questione di virgolette assenti rispetto all'Excel
   Scenario: [Notifica approvazione nuova versione e-service] L'ente delegante approva la pubblicazione della nuova versione dell'e-service
-    # come il test sopra e poi si pubblica la nuova versione dell'e-service
+    Given l'ente delegato "PA2"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    And l'utente crea una nuova versione dell'e-service
+    And "PA2" ha già caricato un'interfaccia per quel descrittore
+    And l'utente aggiorna alcuni parametri di quel descrittore con:
+      | agreementApprovalPolicy | MANUAL    |
+      | audience                | pagopa.it |
+      | dailyCallsPerConsumer   | 100       |
+      | dailyCallsTotal         | 1000      |
+      | description             | Descrizione versione 2 |
+      | voucherLifespan         | 80        |
+    And l'utente pubblica quel descrittore
     And l'utente è un "admin" di "PA1"
-    And l'utente approva la pubblicazione dell'e-service
+    When l'utente approva la pubblicazione dell'e-service
     Then admin di "PA2" ha ricevuto la notifica in-app contenente il link DELEGA_ADERENTE
     """
     L'ente delegante $CONTEXT(producerName) ha approvato la pubblicazione della nuova versione
     dell'e-service "$CONTEXT(eServiceName)" che gestisci tramite delega.
     """
 
-  # TODO
+  # FALLISCE per una questione di virgolette assenti rispetto all'Excel
   Scenario: [Notifica rifiuto nuova versione e-service] L'ente delegante rifiuta la pubblicazione della nuova versione dell'e-service
-    # come due test sopra e poi si rifiuta la nuova versione dell'e-service
+    Given l'ente delegato "PA2"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    And l'utente crea una nuova versione dell'e-service
+    And "PA2" ha già caricato un'interfaccia per quel descrittore
+    And l'utente aggiorna alcuni parametri di quel descrittore con:
+      | agreementApprovalPolicy | MANUAL    |
+      | audience                | pagopa.it |
+      | dailyCallsPerConsumer   | 100       |
+      | dailyCallsTotal         | 1000      |
+      | description             | Descrizione versione 2 |
+      | voucherLifespan         | 80        |
+    And l'utente pubblica quel descrittore
+    And l'utente è un "admin" di "PA1"
+    When l'utente rifiuta la pubblicazione dell'e-service
     Then admin di "PA2" ha ricevuto la notifica in-app contenente il link DELEGA_ADERENTE
     """
     L'ente delegante $CONTEXT(producerName) ha rifiutato la pubblicazione della nuova versione
