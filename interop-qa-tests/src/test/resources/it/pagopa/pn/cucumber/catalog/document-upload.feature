@@ -155,7 +155,7 @@ Feature: Caricamento di un documento di interfaccia
     Then si ottiene status code 400
 
   @document-url-description
-  @sad-path
+  @happy-path
   # Ticket di verifica aperto: https://pagopa.atlassian.net/browse/PIN-10621
   Scenario: [DESCRIPTOR_UPLOAD_12] Creazione e-service con interfaccia REST contenente un server url con description di lunghezza eccessiva
     Given l'utente è un "admin" di "PA1"
