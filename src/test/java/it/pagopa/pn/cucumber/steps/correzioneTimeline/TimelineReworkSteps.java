@@ -290,7 +290,7 @@ public class TimelineReworkSteps {
         String iun = getDataTableParams(inputData, "iun", sharedSteps.getNotificationIun());
         RestartAttemptRequest.AttemptIdEnum attemptId = inputData.get("attemptId") != null ? RestartAttemptRequest.AttemptIdEnum.fromValue(inputData.get("attemptId")) : null;
         RestartAttemptRequest restartAttemptRequest = ReworkRequestFactory.restartRequest(
-                attemptId, inputData.get("recIndex"), inputData.get("reason"), inputData.get("task"));
+                attemptId, inputData.get("recIndex"), inputData.get("reason"), inputData.get("task"), inputData.get("canInvalidateViewed"));
         try {
             restartAttemptResponse = reworkTimelineClient.restartAttempt(iun, restartAttemptRequest);
         } catch (HttpStatusCodeException exception) {

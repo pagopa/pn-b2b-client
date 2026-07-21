@@ -409,6 +409,39 @@ Feature: Correzione timeline fase 3
 #      | noElementsExpected |  |
 
   @timelineReworkF3 @checkRestart
+  Scenario: [TR3_RESTART_5_VIEWED_CAN_INVALIDATE_VIEWED] Tentativo di restart (destinato a fallire causa VIEWED) di notifica che va in OK all'attempt 0 (anche al restart sarebbe dovuta andare in OK all'attempt 0)
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+      | pagoPaIntMode         | SYNC                        |
+      | feePolicy             | DELIVERY_MODE               |
+      | paFee                 | 17                          |
+      | vat                   | 10                          |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | Via@OK_AR          |
+      | digitalDomicile         | NULL               |
+      | payment_creditorTaxId   | 77777777777        |
+      | payment_pagoPaForm      | SI                 |
+      | payment_f24             | NULL               |
+      | title_payment           | PagoPa_testRestart |
+      | apply_cost_pagopa       | SI                 |
+      | payment_multy_number    | 1                  |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And "Mario Gherkin" legge la notifica
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
+    When viene invocata una richiesta di restart per la notifica appena creata con i seguenti parametri:
+      | iun | attemptId | recIndex   | reason     | task       | canInvalidateViewed |
+      |     | ATTEMPT_0 | <recIndex> | reasonTest | TEST-12345 | true                |
+    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
+    And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
+
+  @timelineReworkF3 @checkRestart
   Scenario: [TR3_RESTART_6_VIEWED] Tentativo di restart (destinato a fallire causa VIEWED) di notifica che va in OK all'attempt 0 (al restart sarebbe dovuta andare in KO all'attempt 0 e OK all'attempt 1)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -803,6 +836,40 @@ Feature: Correzione timeline fase 3
 #      | element3 | REFINEMENT;RECINDEX_0                     |
 #    And controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato NEW
 #      | noElementsExpected |  |
+
+  @timelineReworkF3 @checkRestart
+  Scenario: [TR3_RESTART_9_VIEWED_CAN_INVALIDATE_VIEWED] Tentativo di restart (destinato a fallire causa VIEWED) di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (anche al restart sarebbe dovuta andare in KO all'attempt 0 e in OK all'attempt 1)
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+      | pagoPaIntMode         | SYNC                        |
+      | feePolicy             | DELIVERY_MODE               |
+      | paFee                 | 17                          |
+      | vat                   | 10                          |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | Via@FAIL-DISCOVERY_AR |
+      | digitalDomicile         | NULL                  |
+      | payment_creditorTaxId   | 77777777777           |
+      | payment_pagoPaForm      | SI                    |
+      | payment_f24             | NULL                  |
+      | title_payment           | PagoPa_testRestart    |
+      | apply_cost_pagopa       | SI                    |
+      | payment_multy_number    | 1                     |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And "Mario Gherkin" legge la notifica
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
+    When viene invocata una richiesta di restart per la notifica appena creata con i seguenti parametri:
+      | iun | attemptId | recIndex   | reason     | task       | canInvalidateViewed |
+      |     | ATTEMPT_0 | <recIndex> | reasonTest | TEST-12345 | true                |
+    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
+    And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
 
   @timelineReworkF3 @checkRestart
   Scenario: [TR3_RESTART_10_VIEWED] Tentativo di restart (destinato a fallire causa VIEWED) di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (al restart sarebbe dovuta andare in OK all'attempt 0)
@@ -1225,6 +1292,40 @@ Feature: Correzione timeline fase 3
 #      | noElementsExpected |  |
 
   @timelineReworkF3 @checkRestart
+  Scenario: [TR3_RESTART_13_VIEWED_CAN_INVALIDATE_VIEWED] Tentativo di restart (destinato a fallire causa VIEWED) di notifica che va in KO all'attempt 0 e all'attempt 1 (anche al restart sarebbe dovuta andare in KO all'attempt 0 e all'attempt 1)
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+      | pagoPaIntMode         | SYNC                        |
+      | feePolicy             | DELIVERY_MODE               |
+      | paFee                 | 17                          |
+      | vat                   | 10                          |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | Via@FAIL-DISCOVERYIRREPERIBILE_AR |
+      | digitalDomicile         | NULL                              |
+      | payment_creditorTaxId   | 77777777777                       |
+      | payment_pagoPaForm      | SI                                |
+      | payment_f24             | NULL                              |
+      | title_payment           | PagoPa_testRestart                |
+      | apply_cost_pagopa       | SI                                |
+      | payment_multy_number    | 1                                 |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
+    And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And "Mario Gherkin" legge la notifica
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
+    When viene invocata una richiesta di restart per la notifica appena creata con i seguenti parametri:
+      | iun | attemptId | recIndex   | reason     | task       | canInvalidateViewed |
+      |     | ATTEMPT_0 | <recIndex> | reasonTest | TEST-12345 | true                |
+    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
+    And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
+
+  @timelineReworkF3 @checkRestart
   Scenario: [TR3_RESTART_14_VIEWED] Tentativo di restart (destinato a fallire causa VIEWED) di notifica che va in KO all'attempt 0 e all'attempt 1 (al restart sarebbe dovuta andare in OK all'attempt 0)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -1622,6 +1723,40 @@ Feature: Correzione timeline fase 3
 #      | noElementsExpected |  |
 
   @timelineReworkF3 @checkRestart
+  Scenario: [TR3_RESTART_17_VIEWED_CAN_INVALIDATE_VIEWED] Tentativo di restart (destinato a fallire causa VIEWED) all'attempt 1 di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (anche al restart sarebbe dovuta andare in OK all'attempt 1)
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+      | pagoPaIntMode         | SYNC                        |
+      | feePolicy             | DELIVERY_MODE               |
+      | paFee                 | 17                          |
+      | vat                   | 10                          |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | Via@FAIL-DISCOVERY_AR |
+      | digitalDomicile         | NULL                  |
+      | payment_creditorTaxId   | 77777777777           |
+      | payment_pagoPaForm      | SI                    |
+      | payment_f24             | NULL                  |
+      | title_payment           | PagoPa_testRestart    |
+      | apply_cost_pagopa       | SI                    |
+      | payment_multy_number    | 1                     |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And "Mario Gherkin" legge la notifica
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
+    When viene invocata una richiesta di restart per la notifica appena creata con i seguenti parametri:
+      | iun | attemptId | recIndex   | reason     | task       | canInvalidateViewed |
+      |     | ATTEMPT_1 | RECINDEX_0 | reasonTest | TEST-12345 | true                |
+    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
+    And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
+
+  @timelineReworkF3 @checkRestart
   Scenario: [TR3_RESTART_18_VIEWED] Tentativo di restart (destinato a fallire causa VIEWED) all'attempt 1 di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (al restart sarebbe dovuta andare in KO all'attempt 1)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -1712,6 +1847,39 @@ Feature: Correzione timeline fase 3
 #      | element2 | REFINEMENT;RECINDEX_0                     |
 #    And controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato NEW
 #      | noElementsExpected |  |
+
+  Scenario: [TR3_RESTART_19_VIEWED_CAN_INVALIDATE_VIEWED] Tentativo di restart (destinato a fallire causa VIEWED) all'attempt 1 di notifica che va in KO all'attempt 0 e all'attempt 1 (anche al restart sarebbe dovuta andare in KO all'attempt 1)
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+      | pagoPaIntMode         | SYNC                        |
+      | feePolicy             | DELIVERY_MODE               |
+      | paFee                 | 17                          |
+      | vat                   | 10                          |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | Via@FAIL-DISCOVERYIRREPERIBILE_AR |
+      | digitalDomicile         | NULL                              |
+      | payment_creditorTaxId   | 77777777777                       |
+      | payment_pagoPaForm      | SI                                |
+      | payment_f24             | NULL                              |
+      | title_payment           | PagoPa_testRestart                |
+      | apply_cost_pagopa       | SI                                |
+      | payment_multy_number    | 1                                 |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
+    And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And "Mario Gherkin" legge la notifica
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
+    When viene invocata una richiesta di restart per la notifica appena creata con i seguenti parametri:
+      | iun | attemptId | recIndex   | reason     | task       | canInvalidateViewed |
+      |     | ATTEMPT_1 | RECINDEX_0 | reasonTest | TEST-12345 | true                |
+    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
+    And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
 
   @timelineReworkF3 @checkRestart
   Scenario: [TR3_RESTART_20_VIEWED] Tentativo di restart (destinato a fallire causa VIEWED) all'attempt 1 di notifica che va in KO all'attempt 0 e all'attempt 1 (al restart sarebbe dovuta andare in OK all'attempt 1)

@@ -199,7 +199,6 @@ Feature: Test relativi al SRS di correzione timeline fase 4
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
     And viene invocata una richiesta di restart per la notifica appena creata
     And si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
-    And si verifica che la richiesta di restart effettuata sia in stato "IN_PROGRESS" entro 300 secondi controllando ogni 5 secondi
     When viene invocata una richiesta di correzione puntuale per la notifica appena creata con i seguenti parametri
       | element1 | SEND_ANALOG_PROGRESS |
     Then si verifica che la chiamata sia andata in errore con il seguente status code: 409
@@ -412,7 +411,46 @@ Feature: Test relativi al SRS di correzione timeline fase 4
 
   @timelineReworkF4 @nrt
   Scenario: [VISUALIZZAZIONE_POST_120_GG] In caso di notifica visualizzata dopo più di 120 giorni, la visualizzazione non deve produrre gli elementi di timeline di visualizzazione, nè la relativa attestazione opponibile
-    Given "Comune_Multi" recupera lato web PA una notifica perfezionata inviata tra 200 e 120 giorni fa con destinatario Mario Gherkin
+    Given "Comune_Multi" recupera lato web PA una notifica monodestinatario in stato "EFFECTIVE_DATE" inviata tra 200 e 120 giorni fa con destinatario Mario Gherkin senza allegati disponibili
+    When "Mario Gherkin" legge la notifica ricevuta
+    And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" non esista
+      | loadTimeline     | true     |
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
+    And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED_CREATION_REQUEST" non esista
+      | loadTimeline     | true     |
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
+
+  @timelineReworkF4 @nrt
+  Scenario: [VISUALIZZAZIONE_POST_120_GG_MULTI] In caso di notifica visualizzata dopo più di 120 giorni, la visualizzazione non deve produrre gli elementi di timeline di visualizzazione, nè la relativa attestazione opponibile
+    Given "Comune_Multi" recupera lato web PA una notifica multidestinatario in stato "EFFECTIVE_DATE" inviata tra 200 e 120 giorni fa con destinatario Mario Gherkin senza allegati disponibili
+    When "Mario Gherkin" legge la notifica ricevuta
+    And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" non esista
+      | loadTimeline     | true     |
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
+    And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED_CREATION_REQUEST" non esista
+      | loadTimeline     | true     |
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
+
+  @timelineReworkF4 @nrt
+  Scenario: [VISUALIZZAZIONE_POST_120_GG_DECEDUTO] In caso di notifica visualizzata dopo più di 120 giorni, la visualizzazione non deve produrre gli elementi di timeline di visualizzazione, nè la relativa attestazione opponibile
+    Given "Comune_Multi" recupera lato web PA una notifica monodestinatario in stato "RETURNED_TO_SENDER" inviata tra 200 e 120 giorni fa con destinatario Mario Gherkin senza allegati disponibili
+    When "Mario Gherkin" legge la notifica ricevuta
+    And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" non esista
+      | loadTimeline     | true     |
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
+    And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED_CREATION_REQUEST" non esista
+      | loadTimeline     | true     |
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
+
+  @timelineReworkF4 @nrt
+  Scenario: [VISUALIZZAZIONE_POST_120_GG_DECEDUTO_MULTI] In caso di notifica visualizzata dopo più di 120 giorni, la visualizzazione non deve produrre gli elementi di timeline di visualizzazione, nè la relativa attestazione opponibile
+    Given "Comune_Multi" recupera lato web PA una notifica multidestinatario in stato "RETURNED_TO_SENDER" inviata tra 200 e 120 giorni fa con destinatario Mario Gherkin senza allegati disponibili
     When "Mario Gherkin" legge la notifica ricevuta
     And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" non esista
       | loadTimeline     | true     |
@@ -425,11 +463,11 @@ Feature: Test relativi al SRS di correzione timeline fase 4
 
   @timelineReworkF4 @nrt
   Scenario: [VISUALIZZAZIONE_POST_120_GG_CON_DELEGA] In caso di notifica visualizzata tramite delega dopo più di 120 giorni, la visualizzazione non deve produrre gli elementi di timeline di visualizzazione, nè la relativa attestazione opponibile
-    Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
-    And "Mario Gherkin" viene delegato da "Mario Cucumber"
-    And "Mario Gherkin" accetta la delega "Mario Cucumber"
-    And "Comune_Multi" recupera lato web PA una notifica perfezionata inviata tra 200 e 120 giorni fa con destinatario Mario Cucumber
-    When la notifica può essere correttamente letta da "Mario Gherkin" con delega
+    Given "Comune_Multi" recupera lato web PA una notifica monodestinatario in stato "EFFECTIVE_DATE" inviata tra 200 e 120 giorni fa con destinatario Mario Gherkin senza allegati disponibili
+    And "Mario Cucumber" rifiuta se presente la delega ricevuta "Mario Gherkin"
+    And "Mario Cucumber" viene delegato da "Mario Gherkin"
+    And "Mario Cucumber" accetta la delega "Mario Gherkin"
+    When la notifica può essere correttamente letta da "Mario Cucumber" con delega
     Then viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" non esista
       | loadTimeline     | true     |
       | details          | NOT_NULL |

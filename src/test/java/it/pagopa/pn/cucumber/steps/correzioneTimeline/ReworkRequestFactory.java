@@ -37,18 +37,20 @@ final class ReworkRequestFactory {
     }
 
     static RestartAttemptRequest defaultRestartRequest() {
-        return restartRequest(RestartAttemptRequest.AttemptIdEnum._0, "RECINDEX_0", "reasonTest", "TEST-12345");
+        return restartRequest(RestartAttemptRequest.AttemptIdEnum._0, "RECINDEX_0", "reasonTest", "TEST-12345", "false");
     }
 
     static RestartAttemptRequest restartRequest(RestartAttemptRequest.AttemptIdEnum attemptId,
                                                 String recIndex,
                                                 String reason,
-                                                String task) {
+                                                String task,
+                                                String canInvalidateViewed) {
         RestartAttemptRequest restartAttemptRequest = new RestartAttemptRequest();
         restartAttemptRequest.setAttemptId(attemptId);
         restartAttemptRequest.setRecIndex(recIndex);
         restartAttemptRequest.setReason(reason);
         restartAttemptRequest.setTask(task);
+        restartAttemptRequest.setCanInvalidateViewed(canInvalidateViewed != null ? Boolean.parseBoolean(canInvalidateViewed) : null);
         log.info("RESTART request built: %s", restartAttemptRequest);
         return restartAttemptRequest;
     }
