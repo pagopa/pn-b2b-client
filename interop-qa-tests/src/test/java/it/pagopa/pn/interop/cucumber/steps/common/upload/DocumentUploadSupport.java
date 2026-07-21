@@ -122,8 +122,8 @@ public class DocumentUploadSupport {
 
         String suffix = normalizedExtension.isBlank() ? "" : "." + normalizedExtension;
 
-        try {
-            byte[] payload = sourceResource.getInputStream().readAllBytes();
+        try (var is = sourceResource.getInputStream()) {
+            byte[] payload = is.readAllBytes();
             String fileName = "upload-" + UUID.randomUUID() + suffix;
             Path tempDirectory = Files.createTempDirectory("document-upload-");
             Path filePath = tempDirectory.resolve(fileName);
