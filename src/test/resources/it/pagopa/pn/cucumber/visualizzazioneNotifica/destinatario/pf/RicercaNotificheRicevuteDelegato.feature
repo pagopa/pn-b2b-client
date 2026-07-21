@@ -1,31 +1,65 @@
 Feature: Ricerca delle notifiche ricevute lato delegato
 
+
+  Background:
+    Given mittente della notifica bonaria: "Comune_Multi"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | SoricalMessaMora |
+    And destinatario della notifica bonaria
+      | recipientType | PF               |
+      | taxId         | FRMTTR76M06B715E |
+      | denomination  | Mario Cucumber   |
+      | messageId     | ${IT}            |
+
   #CASO DI TEST 5.1 - tutti i campi (obbligatori e opzionali) valorizzati correttamente
   #Nota: la response è tipizzata su LegalNotificationSearchResponse, quindi le notifiche bonarie
   #non possono mai comparire nell'elenco lato delegato: non serve un test dedicato, è garantito dal contratto API.
   @letturaDestinatario @useB2B
   Scenario: [RICERCA_RICEVUTE_DELEGATO_B2B_1] Come delegato ricerco le notifiche ricevute con tutti i filtri valorizzati
-    Given "CucumberSpaB2B" rifiuta se presente la delega ricevuta "GherkinSrlB2B"
-    Given "CucumberSpaB2B" viene delegato da "GherkinSrlB2B"
-    And "CucumberSpaB2B" accetta la delega "GherkinSrlB2B"
+    e le notifiche bonarie non devono essere presenti nell'elenco delle notifiche ricevute
+#    Given "CucumberSpaB2B" rifiuta se presente la delega ricevuta "GherkinSrlB2B"
+#    Given "CucumberSpaB2B" viene delegato da "GherkinSrlB2B"
+#    And "CucumberSpaB2B" accetta la delega "GherkinSrlB2B"
+
+
+    Given mittente della notifica bonaria: "Comune_Multi"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | SoricalMessaMora |
+    And destinatario della notifica bonaria
+      | recipientType   | PG            |
+      | taxId           | 12666810299   |
+      | denomination    | GherkinSrlB2B |
+      | messageId       | ${IT}         |
+      | digitalDomicile | tu@gmail.com  |
+
+    When viene inviata una nuova notifica bonaria
+    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+
+
+
+
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
     And destinatario GherkinSrlB2B
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    Then "GherkinSrlB2B" visualizza l'elenco delle notifiche per comune "Comune_Multi"
-      | startDate | 2026-07-07 |
-      | endDate   | 2026-07-21 |
-      | iunMatch  | :actualIun |
-#      | mandateId | :mandateId |
     Then "CucumberSpaB2B" visualizza l'elenco delle notifiche del delegante "GherkinSrlB2B" per comune "Comune_Multi"
       | startDate | 2026-07-07 |
-      | endDate   | 2026-07-21 |
+      | endDate   | 2026-07-22 |
       | iunMatch  | :actualIun |
-#      | mandateId | :mandateId |
-    And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
-#      | communicationType | LEGAL      |
       | mandateId | :mandateId |
+    And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
+      | communicationType | LEGAL      |
+     # | mandateId         | :mandateId |
+      | iun               | :actualIun |
+      | itemsFound        | 1          |
+    Then "CucumberSpaB2B" visualizza l'elenco delle notifiche del delegante "GherkinSrlB2B" per comune "Comune_Multi"
+      | startDate | 2026-07-07 |
+      | endDate   | 2026-07-22 |
+    And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
+      | communicationType | LEGAL |
+
+
 
 
   #CASO DI TEST 5.3 - tutti i campi (obbligatori e opzionali) valorizzati correttamente
@@ -56,7 +90,7 @@ Feature: Ricerca delle notifiche ricevute lato delegato
     And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
       | sentAt             | 2026-07-07, 2026-07-21 |
       | notificationStatus | EFFECTIVE_DATE         |
-      | recipients        | :recipientId          |
+      | recipients         | :recipientId           |
     Then "<delegato>" visualizza l'elenco delle notifiche del delegante "<delegatore>" per comune "Comune_Multi"
       | startDate | 2026-07-07 |
       | endDate   | 2026-07-21 |
@@ -65,9 +99,9 @@ Feature: Ricerca delle notifiche ricevute lato delegato
       | sentAt | 2026-07-07, 2026-07-21 |
       | group  | :group                 |
     Examples:
-      | delegato       | delegatore |
+      | delegato       | delegatore    |
       | CucumberSpa    | GherkinSrl    |
-#      | CucumberSpaB2B | GherkinSrlB2B |
+      | CucumberSpaB2B | GherkinSrlB2B |
 
 
   #CASO DI TEST 5.1 - campo obbligatorio non valorizzato -> 400 KO

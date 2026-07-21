@@ -11,6 +11,7 @@ import it.pagopa.pn.client.b2b.pa.config.springconfig.BearerTokenConfiguration;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.LegalFactTokenConfiguration;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.MailSenderConfig;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
+import it.pagopa.pn.client.b2b.pa.config.springconfig.TaxIdConfiguration;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.TimingConfiguration;
 import it.pagopa.pn.client.b2b.pa.mapper.NotificationSearchParamMapper;
 import it.pagopa.pn.client.b2b.pa.parsing.config.PnLegalFactTokenProperty;
@@ -115,8 +116,6 @@ import it.pagopa.pn.client.b2b.pa.service.IMandateReverseServiceClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.AooUoIdsClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BDeliveryPushServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.RecipientInternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.RecipientB2BExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BSenderReadClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2bMandateServiceClientImpl;
@@ -147,6 +146,7 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnIoUserAttributerExternaClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnMandateAppIoClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnNotificationCostClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bExternalInformalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bInternalInformalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaperChannelClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaperTrackerClientImpl;
@@ -164,6 +164,8 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnWebMandateExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesInternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebhookB2bExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.RecipientB2BExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.RecipientInternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.ReworkTimelineClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.TemplateEngineClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
@@ -181,14 +183,15 @@ import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
 import it.pagopa.pn.cucumber.steps.delayer.validator.DelayerValidator;
 import it.pagopa.pn.cucumber.steps.informalNotification.builders.InformalRecipientBuilder;
 import it.pagopa.pn.cucumber.steps.informalNotification.mapper.InformalNotificationRequestMapper;
+import it.pagopa.pn.cucumber.steps.informalNotification.provider.InformalApiKeyProvider;
 import it.pagopa.pn.cucumber.steps.informalNotification.provider.InformalMessageProvider;
+import it.pagopa.pn.cucumber.steps.informalNotification.utils.NotificationInformalUtilsV1;
 import it.pagopa.pn.cucumber.steps.paperTracker.parser.EventTimelineParser;
 import it.pagopa.pn.cucumber.steps.paperTracker.proxy.PaperTrackerSchemaValidatorProxy;
 import it.pagopa.pn.cucumber.steps.recipient.OtpCodeService;
 import it.pagopa.pn.cucumber.steps.templateEngine.TemplateConfiguration;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextFactory;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
-import it.pagopa.pn.client.b2b.pa.config.springconfig.TaxIdConfiguration;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import it.pagopa.pn.cucumber.utils.notificationsearch.NotificationSearchCriteriaMapper;
 import it.pagopa.pn.cucumber.utils.validator.SchemaValidator;
@@ -403,9 +406,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         NotificationSearchParamMapper.class,
         NotificationSearchCriteriaMapper.class,
         B2BSenderReadClientImpl.class,
-//        SendSharedContext.class
-
-
+        NotificationInformalUtilsV1.class,
+        PnPaB2bExternalInformalClientImpl.class,
+        InformalApiKeyProvider.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

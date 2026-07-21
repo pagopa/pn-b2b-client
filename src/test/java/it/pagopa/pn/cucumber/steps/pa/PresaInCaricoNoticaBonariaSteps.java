@@ -101,8 +101,12 @@ public class PresaInCaricoNoticaBonariaSteps {
     private final SendSharedContext sendSharedContext;
     private final DestinatarioRegistry destinatarioRegistry;
 
+    private String recipientTaxId;
+    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet recipientCxType;
+
+
     @Autowired
-    public PresaInCaricoNoticaBonariaSteps(InformalNotificationRequestMapper informalNotificationRequestMapper,
+    public PresaInCaricoNoticaBonariaSteps(NotificationInformalUtilsV1 notificationInformalUtilsV1, InformalNotificationRequestMapper informalNotificationRequestMapper,
                                            InformalRecipientBuilder recipientBuilder, PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl,
                                            SharedSteps sharedSteps, TimingForPolling timingForPolling,
                                            IPnPrivateDeliveryPushExternalClient pnPrivateDeliveryPushExternalClient,
@@ -115,7 +119,8 @@ public class PresaInCaricoNoticaBonariaSteps {
         this.b2bClient = sharedSteps.getB2bClient();
         this.pnPollingFactory = sharedSteps.getPollingFactory();
         this.informalNotificationRequestMapper = informalNotificationRequestMapper;
-        notificationInformalUtilsV1 = new NotificationInformalUtilsV1(sharedSteps.getContext(), b2bClient, sharedSteps.getPollingFactory());
+        //notificationInformalUtilsV1 = new NotificationInformalUtilsV1(sharedSteps.getContext(), b2bClient, sharedSteps.getPollingFactory());//todo t bonarie elimina
+        this.notificationInformalUtilsV1 = notificationInformalUtilsV1;
         this.recipientBuilder = recipientBuilder;
         this.sendSharedContext = sendSharedContext;
         this.destinatarioRegistry = destinatarioRegistry;
@@ -188,7 +193,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     @Then("viene inviata una nuova notifica bonaria con content type non valido")
     public void sendInformalInvalidContentType() {
         try {
-            informalNotificationRequestV1 = notificationInformalUtilsV1.preloadAndPrepare(informalNotificationRequestV1);
+            informalNotificationRequestV1 = notificationInformalUtilsV1.preloadAndPrepare(informalNotificationRequestV1, paName);
             informalNotificationRequestV1.getDocuments().forEach(doc -> doc.setContentType("application/txt"));
             newInformalNotificationResponse = pnPaB2bInternalInformalClientImpl.sendNewInformalNotificationV1(currentCxId, informalNotificationRequestV1);
             savedNotificationRequestId = newInformalNotificationResponse.getNotificationRequestId();
@@ -204,7 +209,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     @Then("l'invio della notifica bonaria fallisce")
     public void sendInformalError() {
         try {
-            informalNotificationRequestV1 = notificationInformalUtilsV1.preloadAndPrepare(informalNotificationRequestV1);
+            informalNotificationRequestV1 = notificationInformalUtilsV1.preloadAndPrepare(informalNotificationRequestV1, paName);
             newInformalNotificationResponse = pnPaB2bInternalInformalClientImpl.sendNewInformalNotificationV1(currentCxId, informalNotificationRequestV1);
             fail("Atteso errore ma la richiesta è andata a buon fine " + newInformalNotificationResponse + "***" + informalNotificationRequestV1 + "***" + paName);
 
@@ -216,7 +221,7 @@ public class PresaInCaricoNoticaBonariaSteps {
 
     @Then("viene inviata una nuova notifica bonaria")
     public void sendInformal() throws IOException {
-        informalNotificationRequestV1 = notificationInformalUtilsV1.preloadAndPrepare(informalNotificationRequestV1);
+        informalNotificationRequestV1 = notificationInformalUtilsV1.preloadAndPrepare(informalNotificationRequestV1, paName);
         newInformalNotificationResponse = pnPaB2bInternalInformalClientImpl.sendNewInformalNotificationV1(currentCxId, informalNotificationRequestV1);
         savedNotificationRequestId = newInformalNotificationResponse.getNotificationRequestId();
 
@@ -226,7 +231,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     @Then("viene inviata una nuova notifica bonaria con sha non valido")
     public void sendInformalShaNotValid() {
         try {
-            informalNotificationRequestV1 = notificationInformalUtilsV1.preloadAndPrepare(informalNotificationRequestV1);
+            informalNotificationRequestV1 = notificationInformalUtilsV1.preloadAndPrepare(informalNotificationRequestV1, paName);
             informalNotificationRequestV1.getDocuments().forEach(doc -> doc.setDigests(new NotificationAttachmentDigests().sha256("INVALID_SHA")));
             newInformalNotificationResponse = pnPaB2bInternalInformalClientImpl.sendNewInformalNotificationV1(currentCxId, informalNotificationRequestV1);
             savedNotificationRequestId = newInformalNotificationResponse.getNotificationRequestId();
@@ -243,7 +248,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     @When("viene inviata una nuova notifica bonaria con fileKey duplicata")
     public void sendInformalDuplicateKey() {
         try {
-            informalNotificationRequestV1 = notificationInformalUtilsV1.preloadAndPrepare(informalNotificationRequestV1);
+            informalNotificationRequestV1 = notificationInformalUtilsV1.preloadAndPrepare(informalNotificationRequestV1, paName);
             var docs = informalNotificationRequestV1.getDocuments();
             if (docs.size() >= 2) {
                 docs.get(1).getRef().setKey(docs.get(0).getRef().getKey());
@@ -263,7 +268,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     @Then("viene inviata una nuova notifica bonaria con nome attachment non valido")
     public void sendInformalInvalidAttachmentName() {
         try {
-            informalNotificationRequestV1 = notificationInformalUtilsV1.preloadAndPrepare(informalNotificationRequestV1);
+            informalNotificationRequestV1 = notificationInformalUtilsV1.preloadAndPrepare(informalNotificationRequestV1, paName);
             informalNotificationRequestV1.getDocuments().forEach(doc -> {
                 if (doc.getRef() != null) {
                     doc.getRef().setKey("PN_NOTIFICATION_ATTACHMENT-c3bc9525a5ac4f45a4fb7e940b2b9815.pdf");

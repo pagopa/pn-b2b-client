@@ -23,15 +23,45 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Se il valore letto dalla riga è una {@link List} (es. {@code recipients}, la lista dei taxId dei
  * destinatari), il confronto è un'uguaglianza esatta con i valori attesi (ordine libero): la riga deve
  * contenere tutti e soli i valori elencati in tabella, non un semplice sottoinsieme.
+ * <p>
+ * Il criterio {@value #ITEMS_FOUND_FIELD} è un caso speciale: non è un campo di una riga ma verifica il
+ * numero di notifiche restituite (es. {@code | itemsFound | 3 |}), quindi non viene letto per
+ * riflessione né applicato riga per riga.
  */
 public final class NotificationSearchRowAssertions {
+
+    private static final String ITEMS_FOUND_FIELD = "itemsFound";
 
     private NotificationSearchRowAssertions() {
     }
 
     public static void assertAllRowsMatchCriteria(List<?> rows, Map<String, List<String>> criteria) {
         assertThat(rows).as("L'elenco delle notifiche recuperate non deve essere nullo").isNotNull();
-        rows.forEach(row -> criteria.forEach((field, allowedValues) -> assertRowFieldMatches(row, field, allowedValues)));
+        List<String> itemsFound = criteria.get(ITEMS_FOUND_FIELD);
+        if (itemsFound != null) {
+            assertItemsFound(rows, itemsFound);
+        }
+        rows.forEach(row -> criteria.forEach((field, allowedValues) -> {
+            if (!ITEMS_FOUND_FIELD.equals(field)) {
+                assertRowFieldMatches(row, field, allowedValues);
+            }
+        }));
+    }
+
+    private static void assertItemsFound(List<?> rows, List<String> allowedValues) {
+        if (allowedValues.size() != 1) {
+            throw new IllegalArgumentException("Il criterio '" + ITEMS_FOUND_FIELD + "' richiede un solo valore numerico, ricevuti: " + allowedValues);
+        }
+        String rawValue = allowedValues.get(0);
+        int expectedItemsFound;
+        try {
+            expectedItemsFound = Integer.parseInt(rawValue);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Il criterio '" + ITEMS_FOUND_FIELD + "' richiede un valore numerico, ricevuto: '" + rawValue + "'", e);
+        }
+        assertThat(rows)
+                .as("Il numero di notifiche recuperate è %s: atteso esattamente %s", rows.size(), expectedItemsFound)
+                .hasSize(expectedItemsFound);
     }
 
     private static void assertRowFieldMatches(Object row, String field, List<String> allowedValues) {
