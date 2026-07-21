@@ -214,6 +214,7 @@ Feature: Test relativi al SRS di correzione timeline fase 4
       | physicalAddress_address | Via@OK_AR |
       | digitalDomicile         | NULL      |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS"
     When viene invocata una richiesta di correzione puntuale per la notifica appena creata con i seguenti parametri
       | element1 | SEND_ANALOG_PROGRESS |
     Then si verifica che la richiesta di remove effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
@@ -304,8 +305,8 @@ Feature: Test relativi al SRS di correzione timeline fase 4
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
     When viene invocata una richiesta di correzione puntuale per la notifica appena creata con i seguenti parametri
-      | recIndex | RECINDEX_1                      |
-      | element1 | SEND_ANALOG_PROGRESS;RECINDEX_0 |
+      | recIndex | RECINDEX_0                      |
+      | element1 | SEND_ANALOG_PROGRESS;RECINDEX_1 |
     Then si verifica che la richiesta di remove effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di remove effettuata sia in stato "ERROR" entro 300 secondi controllando ogni 5 secondi
 
@@ -329,27 +330,7 @@ Feature: Test relativi al SRS di correzione timeline fase 4
     And si verifica che la richiesta di remove effettuata sia in stato "ERROR" entro 300 secondi controllando ogni 5 secondi
 
   @timelineReworkF4
-  Scenario: [TR4_INVALIDATION_KO_19] Tentativo di effettuare una correzione puntuale inserendo nella request un timelineElementId duplicato
-    Given viene generata una nuova notifica
-      | subject               | invio notifica con cucumber |
-      | senderDenomination    | Comune di Palermo           |
-      | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Gherkin e:
-      | physicalAddress_address | Via@OK_AR |
-      | digitalDomicile         | NULL      |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-    And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
-    When viene invocata una richiesta di correzione puntuale per la notifica appena creata con i seguenti parametri
-      | element1 | PREPARE_ANALOG_DOMICILE |
-      | element2 | PREPARE_ANALOG_DOMICILE |
-    Then si verifica che la richiesta di remove effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
-    And si verifica che la richiesta di remove effettuata sia in stato "DONE" entro 300 secondi controllando ogni 5 secondi
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
-
-  @timelineReworkF4
-  Scenario: [TR4_INVALIDATION_KO_20] Tentativo di effettuare una correzione puntuale di un elemento già corretto in precedenza
+  Scenario: [TR4_INVALIDATION_KO_19] Tentativo di effettuare una correzione puntuale di un elemento già corretto in precedenza
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -371,7 +352,7 @@ Feature: Test relativi al SRS di correzione timeline fase 4
     And si verifica che la richiesta di remove effettuata sia in stato "ERROR" entro 300 secondi controllando ogni 5 secondi
 
   @timelineReworkF4
-  Scenario: [TR4_INVALIDATION_KO_21] Tentativo di effettuare una correzione puntuale passando una lista di timelineElementIds vuota
+  Scenario: [TR4_INVALIDATION_KO_20] Tentativo di effettuare una correzione puntuale passando una lista di timelineElementIds vuota
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -434,6 +415,22 @@ Feature: Test relativi al SRS di correzione timeline fase 4
     Given "Comune_Multi" recupera lato web PA una notifica perfezionata inviata tra 200 e 120 giorni fa con destinatario Mario Gherkin
     When "Mario Gherkin" legge la notifica ricevuta
     And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" non esista
+      | loadTimeline     | true     |
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
+    And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED_CREATION_REQUEST" non esista
+      | loadTimeline     | true     |
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
+
+  @timelineReworkF4 @nrt
+  Scenario: [VISUALIZZAZIONE_POST_120_GG_CON_DELEGA] In caso di notifica visualizzata tramite delega dopo più di 120 giorni, la visualizzazione non deve produrre gli elementi di timeline di visualizzazione, nè la relativa attestazione opponibile
+    Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
+    And "Mario Gherkin" viene delegato da "Mario Cucumber"
+    And "Mario Gherkin" accetta la delega "Mario Cucumber"
+    And "Comune_Multi" recupera lato web PA una notifica perfezionata inviata tra 200 e 120 giorni fa con destinatario Mario Cucumber
+    When la notifica può essere correttamente letta da "Mario Gherkin" con delega
+    Then viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" non esista
       | loadTimeline     | true     |
       | details          | NOT_NULL |
       | details_recIndex | 0        |
