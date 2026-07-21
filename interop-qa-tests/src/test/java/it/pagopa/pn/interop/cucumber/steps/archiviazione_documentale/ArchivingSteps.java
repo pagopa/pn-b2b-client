@@ -159,7 +159,7 @@ public class ArchivingSteps {
                 .orElse(null);
 
         Assertions.assertThat(jsonNode)
-                .as("Impossibile trovare il nodo con jwtId: % nel bucket: %s", auditTokenContext.getJwtId(), bucketRole)
+                .as("Impossibile trovare il nodo con jwtId: %s nel bucket: %s", auditTokenContext.getJwtId(), bucketRole)
                 .isNotNull();
 
         assertSoftly(softly -> {
