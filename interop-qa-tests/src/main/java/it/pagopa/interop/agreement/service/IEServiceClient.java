@@ -132,4 +132,6 @@ public interface IEServiceClient extends SettableBearerToken {
     ProducerEServiceDescriptor getEServiceDescriptor(UUID eServiceId, UUID descriptorId);
 
     void approveDelegatedEServiceDescriptor(UUID eServiceId, UUID descriptorId);
+
+    void rejectDelegatedEServiceDescriptor(UUID eServiceId, UUID descriptorId, RejectDelegatedEServiceDescriptorSeed rejectDelegatedEServiceDescriptorSeed);
 }
