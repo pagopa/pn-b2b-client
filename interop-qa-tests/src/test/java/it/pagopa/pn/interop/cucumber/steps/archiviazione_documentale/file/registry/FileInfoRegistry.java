@@ -22,12 +22,12 @@ public class FileInfoRegistry {
 
     public FileInfoRegistry(TokenResolver tokenResolver, String documentBucketBase, String documentWormBucketBase,
                             String eventBucketBase, String eventWormBucketBase,
-                            String jwtDetailsBucketBase, String jwtDetailsWormBucketBase) {
+                            String jwtDetailsBucketBase, String jwtDetailsSignedBucketBase) {
         this.tokenResolver = tokenResolver;
 
         this.registry = definitions(documentBucketBase, documentWormBucketBase,
                     eventBucketBase, eventWormBucketBase,
-                    jwtDetailsBucketBase, jwtDetailsWormBucketBase)
+                    jwtDetailsBucketBase, jwtDetailsSignedBucketBase)
                 .stream()
                 .collect(Collectors.toUnmodifiableMap(
                         FileInfoDefinition::type,

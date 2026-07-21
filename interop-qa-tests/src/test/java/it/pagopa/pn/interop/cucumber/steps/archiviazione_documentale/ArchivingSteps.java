@@ -44,7 +44,7 @@ public class ArchivingSteps {
                           @Value("${s3.unsigned-event-base-path}") String eventBucketBase,
                           @Value("${s3.signed-event-base-path}") String eventWormBucketBase,
                           @Value("${s3.unsigned-jwt-details-path}") String jwtDetailsBucketBase,
-                          @Value("${s3.signed-jwt-details-path}") String jwtDetailsWormBucketBase,
+                          @Value("${s3.signed-jwt-details-path}") String jwtDetailsSignedBucketBase,
                           SharedStepsContext sharedStepsContext) {
         TokenResolver tokenResolver = new TokenResolver(sharedStepsContext);
 
@@ -53,7 +53,7 @@ public class ArchivingSteps {
         this.client = new ArchivingClient();
         this.fileInfoRegistry = new FileInfoRegistry(tokenResolver, documentBucketBase, documentWormBucketBase,
                 eventBucketBase, eventWormBucketBase,
-                jwtDetailsBucketBase, jwtDetailsWormBucketBase);
+                jwtDetailsBucketBase, jwtDetailsSignedBucketBase);
     }
 
     @Then("verifica che a fronte dell'evento {interopEvent} venga generato nell'opportuno bucket S3 {bucketRole} un {interopFile}")
@@ -116,8 +116,15 @@ public class ArchivingSteps {
                 .isEmpty();
     }
 
+    @Then("verifica che le informazioni di audit sul bucket S3 {string} contengano i seguenti dati per il voucher generato:")
     @Then("verifica che le informazioni di audit sul bucket S3 {bucketRole} contengano i seguenti dati per il voucher generato:")
-    public void checkFileInS3Bucket(BucketRole bucketRole, List<Map<String, String>> rows) throws IOException {
+    public void checkFileInS3Bucket(String bucketType, List<Map<String, String>> rows) throws IOException {
+
+        BucketRole bucketRole = switch (bucketType.toUpperCase()) {
+            case "PERSISTENZA" -> BucketRole.STANDARD;
+            case "SIGNED" -> BucketRole.WORM;
+            default -> throw new IllegalArgumentException("Tipo di bucket non riconosciuto: " + bucketType);
+        };
 
         InteropFile fileType = InteropFile.AUDIT_JWT_EVENTS_LOG;
         FileInfo fileInfo = fileInfoRegistry.getFileInfo(fileType);

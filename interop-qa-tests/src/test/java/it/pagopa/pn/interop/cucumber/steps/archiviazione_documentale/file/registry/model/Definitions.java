@@ -22,7 +22,7 @@ public class Definitions {
             String eventBucketBase,
             String eventWormBucketBase,
             String jwtDetailsBucketBase,
-            String jwtDetailsWormBucketBase
+            String jwtDetailsSignedBucketBase
     ) {
 
         return List.of(
@@ -32,7 +32,7 @@ public class Definitions {
                         MapFileTokenSource.of("jwtId", ":jwtId"),
                         MapFileTokenSource.of(),
                         List.of(new LocationDefinition(STANDARD, jwtDetailsBucketBase, FilenameFormat.NDJSON_LOG),
-                                new LocationDefinition(WORM, jwtDetailsWormBucketBase, FilenameFormat.NDJSON_SIGNED_LOG)
+                                new LocationDefinition(WORM, jwtDetailsSignedBucketBase, FilenameFormat.NDJSON_SIGNED_LOG)
                         )
                 ),
 

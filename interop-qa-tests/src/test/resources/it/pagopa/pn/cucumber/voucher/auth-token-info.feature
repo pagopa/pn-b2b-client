@@ -2,7 +2,7 @@ Feature: Nella generazione del token sono aggiunte le seguenti informazioni: hea
   jwt generato (quando presente), claim digest del jwt generato (quando presente), claim digest della client assertion
   (quando presente).
 
-  Scenario Outline: [AUTH_TOKEN_INFO_1] Generazione con successo di un voucher bearer con digest, con verifica della corretta
+  Scenario: [AUTH_TOKEN_INFO_1] Generazione con successo di un voucher bearer con digest, con verifica della corretta
   struttura dei dati nel voucher e dei relativi log di audit salvati nel bucket S3
 
     Given l'utente è un "admin" di "PA1"
@@ -20,7 +20,14 @@ Feature: Nella generazione del token sono aggiunte le seguenti informazioni: hea
       | payload  | jti          |
       | payload  | digest.value |
       | payload  | client_id    |
-    Then verifica che le informazioni di audit sul bucket S3 <bucketRole> contengano i seguenti dati per il voucher generato:
+    Then verifica che le informazioni di audit sul bucket S3 "persistenza" contengano i seguenti dati per il voucher generato:
+      | position | element                      | context      |
+      | header   | typ                          | typ          |
+      | payload  | jwtId                        | jti          |
+      | payload  | clientId                     | client_id    |
+      | payload  | digest.value                 | digest.value |
+      | payload  | clientAssertion.digest.value | digest.value |
+    Then verifica che le informazioni di audit sul bucket S3 "signed" contengano i seguenti dati per il voucher generato:
       | position | element                      | context      |
       | header   | typ                          | typ          |
       | payload  | jwtId                        | jti          |
@@ -28,10 +35,6 @@ Feature: Nella generazione del token sono aggiunte le seguenti informazioni: hea
       | payload  | digest.value                 | digest.value |
       | payload  | clientAssertion.digest.value | digest.value |
 
-    Examples:
-      | bucketRole |
-      | STANDARD   |
-      | WORM       |
 
   Scenario Outline: [AUTH_TOKEN_INFO_2] Generazione con successo di un voucher DPoP con digest, con verifica della corretta
   struttura dei dati nel voucher e dei relativi log di audit salvati nel bucket S3
@@ -52,15 +55,18 @@ Feature: Nella generazione del token sono aggiunte le seguenti informazioni: hea
       | header   | typ     |
       | payload  | jti     |
       | payload  | cnf.jkt |
-    Then verifica che le informazioni di audit sul bucket S3 <bucketRole> contengano i seguenti dati per il voucher generato:
+    Then verifica che le informazioni di audit sul bucket S3 "persistenza" contengano i seguenti dati per il voucher generato:
+      | position | element | context |
+      | header   | typ     | typ     |
+      | payload  | jwtId   | jti     |
+      | payload  | cnf.jkt | cnf.jkt |
+    Then verifica che le informazioni di audit sul bucket S3 "signed" contengano i seguenti dati per il voucher generato:
       | position | element | context |
       | header   | typ     | typ     |
       | payload  | jwtId   | jti     |
       | payload  | cnf.jkt | cnf.jkt |
 
     Examples:
-      | keyType | bucketRole |
-      | EC      | STANDARD   |
-      | EC      | WORM       |
-      | RSA     | STANDARD   |
-      | RSA     | WORM       |
+      | keyType |
+      | EC      |
+      | RSA     |
