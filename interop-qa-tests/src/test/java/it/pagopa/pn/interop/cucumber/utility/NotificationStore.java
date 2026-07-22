@@ -73,8 +73,15 @@ public class NotificationStore {
     }
 
     public List<Notification> getLastNotifications(int limit, NotificationUser user) {
-        clientTokenConfigurator.setBearerToken(identityService.getToken(user.getTenant(), user.getRole()));
-        return clientTokenConfigurator.getNotificationClient().getAll(0, limit);
+        String previousToken = clientTokenConfigurator.getLastToken();
+        try {
+            clientTokenConfigurator.setBearerToken(identityService.getToken(user.getTenant(), user.getRole()));
+            return clientTokenConfigurator.getNotificationClient().getAll(0, limit);
+        } finally {
+            if (previousToken != null) {
+                clientTokenConfigurator.setBearerToken(previousToken);
+            }
+        }
     }
 
     private void initializeNotifications(NotificationUser user) {
