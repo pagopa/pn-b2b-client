@@ -22,7 +22,7 @@ public class CommonParameterType {
 
     @ParameterType("admin|api|security|api,security|support|reviewer|viewer")
     public UserRole userRole(String role) {
-        return UserRole.valueOf(role.toUpperCase());
+        return UserRole.valueOf(role.toUpperCase().replace(",", "_"));
     }
 
     @ParameterType("attiva|disattiva")
