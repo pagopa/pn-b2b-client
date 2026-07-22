@@ -218,8 +218,7 @@ public class NotificationStepsConfig {
             yaml.loadAll(reader).forEach(i -> notificationConfigList.add((OptInNotificationConfig) i));
 
         } catch (IOException exception) {
-            log.error("Something went wrong reading " + filePath);
-            exception.printStackTrace();
+            throw new IllegalStateException("Failed to read notification opt-in config from " + filePath, exception);
         }
 
         for (OptInNotificationConfig notificationConfig : notificationConfigList) {
