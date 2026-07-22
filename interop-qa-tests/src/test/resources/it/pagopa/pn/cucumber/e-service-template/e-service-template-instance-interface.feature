@@ -107,7 +107,7 @@ Feature: Test della creazione di interfacce REST e SOAP per istanze di template
     When l'utente tenta di associare un'interfaccia template instance "SOAP" con:
       | serverUrls[0].url     | https://soap.example.it |
       | serverUrls[0].description | SOAP Server            |
-    Then si ottiene response status code 400
+    Then si ottiene response status code 409
 
   # TODO 14/07/2026 stessa questione di [EST_INT_1], anche qui eseguito a mano senza rilevare anomalie
   @happy-path
