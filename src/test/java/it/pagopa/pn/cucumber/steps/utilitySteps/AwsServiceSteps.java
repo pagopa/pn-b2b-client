@@ -4,8 +4,8 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.common.util.CloudWatchQueryBuilder;
-import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
+import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -106,5 +106,37 @@ public class AwsServiceSteps {
     @Given("vengono disabilitati i check sugli audit log")
     public void disableAuditLogCheck() {
         checkAuditLogDisabled = true;
+    }
+
+    @Then("verifico che su DynamoDB {is} presente l'elemento {string} con errorCode {string} nella tabella paperRequestError")
+    public void checkPaperErrorInDynamoDB(boolean isPresent, String timelineElement, String errorCode) {
+        QueryResponse queryResponse = dynamoDbService.call(DynamoTableName.PAPER_REQUEST_ERROR, Map.of(
+                ":v_requestId", AttributeValue.builder().s(timelineElement.concat(".IUN_" + sharedSteps.getNotificationIun() + ".RECINDEX_0.ATTEMPT_0")).build()
+        ));
+        log.info("Elementi trovati con categoria {}: {}", timelineElement, queryResponse.count());
+        try {
+            if (isPresent) {
+                assertThat(queryResponse.items().size()).as("La response non contiene nessun elemento con category " + timelineElement).isGreaterThan(0);
+                assertThat(queryResponse.items())
+                        .anyMatch(item ->
+                                item.containsKey("error")
+                                        && item.get("error").s().contains(errorCode)
+                        );
+                for (int i = 0; i < queryResponse.items().size(); i++) {
+                    Map<String, AttributeValue> item = queryResponse.items().get(i);
+                    log.info("--- ELEMENTO TIMELINE {} ---", i + 1);
+                    item.forEach((key, value) -> {
+                        Object val = (value.s() != null) ? value.s() :
+                                (value.n() != null) ? value.n() :
+                                        (value.bool() != null) ? value.bool() : value.toString();
+                        log.info("{}: {}", key, val);
+                    });
+                }
+            } else {
+                assertThat(queryResponse.items().size()).as("La response non deve contenere nessun elemento con category " + timelineElement).isEqualTo(0);
+            }
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
     }
 }
