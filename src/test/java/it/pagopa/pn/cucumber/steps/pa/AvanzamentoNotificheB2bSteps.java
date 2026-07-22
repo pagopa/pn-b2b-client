@@ -869,19 +869,6 @@ public class AvanzamentoNotificheB2bSteps {
         b2bStepsInterface.checkIfTimelineElementExists(timelineEventCategory, true, CHECK_RESPONSE_STATUS, checkFilters);
     }
 
-    @And("vengono letti gli eventi fino all'elemento di timeline della notifica {string} con responseStatus {string} al tentativo {string}")
-    public void vengonoLettiGliEventiFinoAllElementoDiTimelineDellaNotificaConResponseStatusEalTentativo(String timelineEventCategory, String responseStatus, String attempt) {
-        WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder()
-                .withElementIdSuffix(attempt)
-                .build();
-        B2bStepsInterface b2bStepsInterface = getB2bStepsInterface();
-        b2bStepsInterface.waitForEventOrStatus(TIMELINE_RAPID, TIMELINE, timelineEventCategory, filters);
-        TimelineElementCheckFilters checkFilters = TimelineElementCheckFilters.builder()
-                .responseStatus(responseStatus)
-                .build();
-        b2bStepsInterface.checkIfTimelineElementExists(timelineEventCategory, true, CHECK_RESPONSE_STATUS, checkFilters);
-    }
-
 
     @Then("viene verificato che nell'elemento di timeline della notifica {string} siano configurati i campi municipalityDetails e foreignState")
     public void vieneVerificatoCheElementoTimelineSianoConfiguratiCampiMunicipalityDetailsForeignState(String timelineEventCategory) {
