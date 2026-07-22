@@ -409,7 +409,7 @@ public class NotificationStepsConfig {
         IHttpExecutor configExecutor = this.notificationConfigClient.getHttpCallExecutor();
 
         this.sharedStepsContext.setTenantType(tenantName);
-        String token = this.sharedStepsContext.getIdentityService().getToken(tenantName, role.name().toLowerCase(), 0);
+        String token = this.sharedStepsContext.getIdentityService().getToken(tenantName, role.getValue(), 0);
         this.clientTokenConfigurator.setBearerToken(token);
 
         final AtomicReference<UserNotificationConfigUpdateSeed> seed =
