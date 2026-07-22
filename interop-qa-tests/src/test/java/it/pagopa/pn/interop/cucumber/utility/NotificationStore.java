@@ -3,7 +3,6 @@ package it.pagopa.pn.interop.cucumber.utility;
 import it.pagopa.interop.authorization.domain.Tenant;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.ConfigFileReader;
-import it.pagopa.interop.common.enums.UserRole;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Notification;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import java.util.HashMap;
