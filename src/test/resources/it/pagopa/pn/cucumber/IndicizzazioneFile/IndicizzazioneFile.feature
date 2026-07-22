@@ -27,9 +27,13 @@ Feature: test preliminari indicizzazione File safeStorage
     Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
       | global_multivalue:test1,test2 |
       | global_singlevalue:test1      |
+      | local_multivalue:test1,test2  |
+      | local_singlevalue:test1       |
     Then Il documento 1 è correttamente formato con la seguente lista di tag
       | global_multivalue:test1,test2 |
       | global_singlevalue:test1      |
+      | local_multivalue:test1,test2  |
+      | local_singlevalue:test1       |
 
   ########################################################### GET TAGS ###################################################################
 
@@ -43,6 +47,17 @@ Feature: test preliminari indicizzazione File safeStorage
     Then Il documento 1 è stato correttamente modificato con la seguente lista di tag
       | global_multivalue:test1,test2,test3 |
       | global_singlevalue:test1            |
+
+  @aggiuntaTag
+  @indicizzazioneSafeStorage
+  Scenario: [INDEX_SS_GET_TAGS_1_LOCAL] GetTags SUCCESS
+    Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS"
+    When Si modifica il documento 1 secondo le seguenti operazioni
+      | local_multivalue:test1,test2,test3 | SET |
+      | local_singlevalue:test1            | SET |
+    Then Il documento 1 è stato correttamente modificato con la seguente lista di tag
+      | local_multivalue:test1,test2,test3 |
+      | local_singlevalue:test1            |
 
   @pn-16132
   @indicizzazioneSafeStorage
