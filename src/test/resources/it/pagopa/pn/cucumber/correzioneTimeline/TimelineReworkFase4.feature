@@ -366,6 +366,27 @@ Feature: Test relativi al SRS di correzione timeline fase 4
       | recIndex | RECINDEX_0 |
     Then si verifica che la chiamata sia andata in errore con il seguente status code: 400
 
+  @timelineReworkF4
+  Scenario: [TR4_INVALIDATION_KO_21] Tentativo di effettuare una correzione puntuale degli elementi di visualizzazione dopo averla visualizzata entro 120 giorni
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
+      | digitalDomicile         | NULL                     |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+    And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
+    And "Mario Gherkin" legge la notifica ricevuta
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED_CREATION_REQUEST"
+    When viene invocata una richiesta di correzione puntuale per la notifica appena creata con i seguenti parametri
+      | element1 | NOTIFICATION_VIEWED                  |
+      | element2 | NOTIFICATION_VIEWED_CREATION_REQUEST |
+    Then si verifica che la richiesta di remove effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di remove effettuata sia in stato "ERROR" entro 300 secondi controllando ogni 5 secondi
+
   @timelineReworkF4 @cleanWebhook @precondition @webhookV29
   Scenario: [TR4_INVALIDATION_WEBHOOK] Correzione puntuale di un elemento di timeline e verifica della presenza (o meno) del NOTIFICATION_TIMELINE_REWORKED negli stream con le varie versioni
     Given viene generata una nuova notifica
