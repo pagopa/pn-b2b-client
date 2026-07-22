@@ -365,6 +365,12 @@ public class PurposesSteps {
         UUID purposeId = sharedStepsContext.getPurposeCommonContext().getLastPurposeId();
         UUID versionId = sharedStepsContext.getPurposeCommonContext().getCurrentVersionIdAsUUID();
         httpCallExecutor.performCall(() -> purposeClient.downloadPurposeVersionDocument(purposeId, versionId));
+
+        sharedStepsContext.getPollingService().makePolling(
+                () -> httpCallExecutor.performCall(() -> purposeClient.downloadPurposeVersionDocument(purposeId, versionId)),
+                HttpStatus::is2xxSuccessful,
+                "Errore durante il recupero dell'analisi del rischio"
+        );
     }
 
     @When("l'utente tenta di ottenere il documento dell'analisi del rischio correlato a una finalità inesistente")

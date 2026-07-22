@@ -141,6 +141,12 @@ public interface IM2MEserviceClient extends IClient<EService, UUID> {
 
     Document uploadInterface(EServiceInterfaceUploadRequest body);
 
+    Document uploadAsyncExchangeCallbackInterface(EServiceInterfaceUploadRequest body);
+
+    void deleteEServiceDescriptorAsyncExchangeCallbackInterface(UUID eServiceId, UUID descriptorId);
+
+    FileDownloadMultipart downloadEServiceDescriptorAsyncExchangeCallbackInterface(UUID eServiceId, UUID descriptorId);
+
     EService createEService(EServiceCreateRequest body);
 
     EService patchEService(UUID eServiceId, EServicePatchRequest body);
