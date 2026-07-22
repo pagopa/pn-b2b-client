@@ -103,8 +103,10 @@ public class RicezioneNotificheWebDelegheSteps {
         return switch (user.trim().toLowerCase()) {
             case "mario cucumber" ->
                     createUserDto(MARIO_CUCUMBER, "Mario", "Cucumber", sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_CUCUMBER.getTaxId(), null, true);
-            case "mario gherkin" -> createUserDto(MARIO_GHERKIN, "Mario", "Gherkin", sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_GHERKIN.getTaxId(), null, true);
-            case "gherkinsrl" -> createUserDto(GHERKIN_SRL, "gherkin", "srl", sharedSteps.getDestinatarioRegistry().DESTINATARIO_GHERKIN_SRL.getTaxId(), GHERKIN_SRL, false);
+            case "mario gherkin" ->
+                    createUserDto(MARIO_GHERKIN, "Mario", "Gherkin", sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_GHERKIN.getTaxId(), null, true);
+            case "gherkinsrl" ->
+                    createUserDto(GHERKIN_SRL, "gherkin", "srl", sharedSteps.getDestinatarioRegistry().DESTINATARIO_GHERKIN_SRL.getTaxId(), GHERKIN_SRL, false);
             case "cucumberspa" ->
                     createUserDto(CUCUMBER_SPA, "cucumber", "spa", sharedSteps.getDestinatarioRegistry().DESTINATARIO_CUCUMBER_SPA.getTaxId(), CUCUMBER_SPA, false);
             default -> throw new IllegalArgumentException();

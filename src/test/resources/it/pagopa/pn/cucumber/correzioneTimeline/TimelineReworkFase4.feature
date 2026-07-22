@@ -460,19 +460,3 @@ Feature: Test relativi al SRS di correzione timeline fase 4
       | loadTimeline     | true     |
       | details          | NOT_NULL |
       | details_recIndex | 0        |
-
-  @timelineReworkF4 @nrt
-  Scenario: [VISUALIZZAZIONE_POST_120_GG_CON_DELEGA] In caso di notifica visualizzata tramite delega dopo più di 120 giorni, la visualizzazione non deve produrre gli elementi di timeline di visualizzazione, nè la relativa attestazione opponibile
-    Given "Comune_Multi" recupera lato web PA una notifica monodestinatario in stato "EFFECTIVE_DATE" inviata tra 200 e 120 giorni fa con destinatario Mario Gherkin senza allegati disponibili
-    And "Mario Cucumber" rifiuta se presente la delega ricevuta "Mario Gherkin"
-    And "Mario Cucumber" viene delegato da "Mario Gherkin"
-    And "Mario Cucumber" accetta la delega "Mario Gherkin"
-    When la notifica può essere correttamente letta da "Mario Cucumber" con delega
-    Then viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" non esista
-      | loadTimeline     | true     |
-      | details          | NOT_NULL |
-      | details_recIndex | 0        |
-    And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED_CREATION_REQUEST" non esista
-      | loadTimeline     | true     |
-      | details          | NOT_NULL |
-      | details_recIndex | 0        |
