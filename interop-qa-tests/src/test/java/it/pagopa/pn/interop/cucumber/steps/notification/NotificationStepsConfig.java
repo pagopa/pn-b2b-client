@@ -128,7 +128,7 @@ public class NotificationStepsConfig {
                 );
 
             } catch (Exception e) {
-                e.printStackTrace();
+                throw new IllegalStateException("Failed to invoke notification setter: " + methodName, e);
             }
         }
         return config;
