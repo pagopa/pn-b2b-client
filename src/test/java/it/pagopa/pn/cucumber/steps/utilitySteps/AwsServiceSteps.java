@@ -108,7 +108,7 @@ public class AwsServiceSteps {
         checkAuditLogDisabled = true;
     }
 
-    @Then("verifico che su DynamoDB {is} presente in paperRequestError l'elemento {string} con errorCode {string}")
+    @Then("verifico che su DynamoDB {is} presente l'elemento {string} con errorCode {string} nella tabella paperRequestError")
     public void checkPaperErrorInDynamoDB(boolean isPresent, String timelineElement, String errorCode) {
         QueryResponse queryResponse = dynamoDbService.call(DynamoTableName.PAPER_REQUEST_ERROR, Map.of(
                 ":v_requestId", AttributeValue.builder().s(timelineElement.concat(".IUN_" + sharedSteps.getNotificationIun() + ".RECINDEX_0.ATTEMPT_0")).build()
