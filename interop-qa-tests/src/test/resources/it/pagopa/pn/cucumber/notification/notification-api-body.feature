@@ -731,7 +731,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     When "PA1" rimuove quella chiave dal client
     Then security di "PA1" ha ricevuto la notifica in-app contenente il link API_E_SERVICE
     """
-    L'utente $CONTEXT(producerName) ha rimosso una chiave di e-service dal client "CONTEXT(clientName)".
+    L'utente $CONTEXT(producerName) ha rimosso una chiave di e-service dal client "$CONTEXT(clientName)".
     Assicurati che l'operatività non sia compromessa.
     """
 
