@@ -163,7 +163,7 @@ public class DelegationDenyStep {
     }
 
     @And("l'utente rifiuta la pubblicazione dell'e-service")
-    public void abc() {
+    public void rejectDelegatedEServicePublication() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         RejectDelegatedEServiceDescriptorSeed seed = new RejectDelegatedEServiceDescriptorSeed();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
