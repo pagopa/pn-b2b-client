@@ -2,8 +2,8 @@ Feature: Nella generazione del token sono aggiunte le seguenti informazioni: hea
   jwt generato (quando presente), claim digest del jwt generato (quando presente), claim digest della client assertion
   (quando presente).
 
-  Scenario: [AUTH_TOKEN_INFO_1] Generazione con successo di un voucher bearer con digest, con verifica della corretta
-  struttura dei dati nel voucher e dei relativi log di audit salvati nel bucket S3
+  Scenario: [AUTH_TOKEN_INFO_1] Generazione con successo di un voucher bearer con digest con relativi log di audit salvati
+  nel bucket S3
 
     Given l'utente è un "admin" di "PA1"
     And "PA2" ha già creato e pubblicato 1 e-service
@@ -35,9 +35,8 @@ Feature: Nella generazione del token sono aggiunte le seguenti informazioni: hea
       | payload  | digest.value                 | digest.value |
       | payload  | clientAssertion.digest.value | digest.value |
 
-
-  Scenario Outline: [AUTH_TOKEN_INFO_2] Generazione con successo di un voucher DPoP con digest, con verifica della corretta
-  struttura dei dati nel voucher e dei relativi log di audit salvati nel bucket S3
+  Scenario Outline: [AUTH_TOKEN_INFO_2] Generazione con successo di un voucher DPoP con digest con relativi log di audit
+  salvati nel bucket S3
 
     Given l'utente è un "admin" di "PA1"
     And "PA2" ha già creato e pubblicato 1 e-service
@@ -49,7 +48,7 @@ Feature: Nella generazione del token sono aggiunte le seguenti informazioni: hea
     And un "admin" di "PA1" ha caricato una chiave "RSA" pubblica nel client
     When "PA1" genera una dpop proof con una chiave "<keyType>" e verifica i campi HTU,HTM
     And "PA1" cerca di ottenere un access token per il client "CONSUMER" usando il dpop proof creato
-    Then si ottiene lo status code 200
+    And si ottiene lo status code 200
     And si ottiene la corretta generazione del voucher di tipo "DPoP" contenente le seguenti informazioni:
       | position | element |
       | header   | typ     |
@@ -60,7 +59,7 @@ Feature: Nella generazione del token sono aggiunte le seguenti informazioni: hea
       | header   | typ     | typ     |
       | payload  | jwtId   | jti     |
       | payload  | cnf.jkt | cnf.jkt |
-    Then verifica che le informazioni di audit sul bucket S3 "signed" contengano i seguenti dati per il voucher generato:
+    And verifica che le informazioni di audit sul bucket S3 "signed" contengano i seguenti dati per il voucher generato:
       | position | element | context |
       | header   | typ     | typ     |
       | payload  | jwtId   | jti     |
@@ -70,3 +69,28 @@ Feature: Nella generazione del token sono aggiunte le seguenti informazioni: hea
       | keyType |
       | EC      |
       | RSA     |
+
+  Scenario: [AUTH_TOKEN_INFO_3] Generazione con successo di un voucher M2M con relativi log di audit salvati nel bucket S3
+
+    Given l'utente è un "admin" di "PA1"
+    Given "PA1" ha già creato 1 client "API"
+    Given "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
+    Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
+    When l'utente richiede la generazione del voucher M2M
+    And si ottiene la corretta generazione del voucher
+    And si ottiene lo status code 200
+    And si ottiene la corretta generazione del voucher di tipo "Bearer" contenente le seguenti informazioni:
+      | position | element   |
+      | header   | typ       |
+      | payload  | jti       |
+      | payload  | client_id |
+    Then verifica che le informazioni di audit sul bucket S3 "persistenza m2m" contengano i seguenti dati per il voucher generato:
+      | position | element  | context   |
+      | header   | typ      | typ       |
+      | payload  | jwtId    | jti       |
+      | payload  | clientId | client_id |
+    And verifica che le informazioni di audit sul bucket S3 "signed m2m" contengano i seguenti dati per il voucher generato:
+      | position | element  | context   |
+      | header   | typ      | typ       |
+      | payload  | jwtId    | jti       |
+      | payload  | clientId | client_id |

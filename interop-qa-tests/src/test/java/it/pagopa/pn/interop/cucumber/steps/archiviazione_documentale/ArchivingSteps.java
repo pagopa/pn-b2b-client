@@ -45,6 +45,8 @@ public class ArchivingSteps {
                           @Value("${s3.signed-event-base-path}") String eventWormBucketBase,
                           @Value("${s3.unsigned-jwt-details-path}") String jwtDetailsBucketBase,
                           @Value("${s3.signed-jwt-details-path}") String jwtDetailsSignedBucketBase,
+                          @Value("${s3.unsigned-m2m-jwt-details-path}") String m2mJwtDetailsBucketBase,
+                          @Value("${s3.signed-m2m-jwt-details-path}") String m2mJwtDetailsSignedBucketBase,
                           SharedStepsContext sharedStepsContext) {
         TokenResolver tokenResolver = new TokenResolver(sharedStepsContext);
 
@@ -53,7 +55,8 @@ public class ArchivingSteps {
         this.client = new ArchivingClient();
         this.fileInfoRegistry = new FileInfoRegistry(tokenResolver, documentBucketBase, documentWormBucketBase,
                 eventBucketBase, eventWormBucketBase,
-                jwtDetailsBucketBase, jwtDetailsSignedBucketBase);
+                jwtDetailsBucketBase, jwtDetailsSignedBucketBase,
+                m2mJwtDetailsBucketBase, m2mJwtDetailsSignedBucketBase);
     }
 
     @Then("verifica che a fronte dell'evento {interopEvent} venga generato nell'opportuno bucket S3 {bucketRole} un {interopFile}")
@@ -117,16 +120,30 @@ public class ArchivingSteps {
     }
 
     @Then("verifica che le informazioni di audit sul bucket S3 {string} contengano i seguenti dati per il voucher generato:")
-    @Then("verifica che le informazioni di audit sul bucket S3 {bucketRole} contengano i seguenti dati per il voucher generato:")
     public void checkFileInS3Bucket(String bucketType, List<Map<String, String>> rows) throws IOException {
 
-        BucketRole bucketRole = switch (bucketType.toUpperCase()) {
-            case "PERSISTENZA" -> BucketRole.STANDARD;
-            case "SIGNED" -> BucketRole.WORM;
+        BucketRole bucketRole;
+        InteropFile fileType;
+        switch (bucketType.toUpperCase()) {
+            case "PERSISTENZA" -> {
+                bucketRole = BucketRole.STANDARD;
+                fileType = InteropFile.AUDIT_JWT_EVENTS_LOG;
+            }
+            case "SIGNED" -> {
+                bucketRole = BucketRole.SIGNED;
+                fileType = InteropFile.AUDIT_JWT_EVENTS_LOG;
+            }
+            case "PERSISTENZA M2M" -> {
+                bucketRole = BucketRole.STANDARD;
+                fileType = InteropFile.AUDIT_JWT_M2M_EVENTS_LOG;
+            }
+            case "SIGNED M2M" -> {
+                bucketRole = BucketRole.SIGNED;
+                fileType = InteropFile.AUDIT_JWT_M2M_EVENTS_LOG;
+            }
             default -> throw new IllegalArgumentException("Tipo di bucket non riconosciuto: " + bucketType);
-        };
+        }
 
-        InteropFile fileType = InteropFile.AUDIT_JWT_EVENTS_LOG;
         FileInfo fileInfo = fileInfoRegistry.getFileInfo(fileType);
 
         ArchivingClient.PollingSpecification pollingSpecification =
@@ -153,7 +170,7 @@ public class ArchivingSteps {
 
         List<JsonNode> jsonNodes;
 
-        if (bucketRole == BucketRole.WORM) {
+        if (bucketRole == BucketRole.SIGNED) {
             ProcessedFile processed = client.normalizeFile(archivedFile);
             jsonNodes = FileUtils.readNdjsonLines(processed.content());
         } else {
