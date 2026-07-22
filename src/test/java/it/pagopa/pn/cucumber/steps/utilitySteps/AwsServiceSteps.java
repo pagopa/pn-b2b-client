@@ -108,12 +108,13 @@ public class AwsServiceSteps {
         checkAuditLogDisabled = true;
     }
 
-    @Then("verifico che su DynamoDB {is} presente l'elemento {string} con errorCode {string} nella tabella paperRequestError")
-    public void checkPaperErrorInDynamoDB(boolean isPresent, String timelineElement, String errorCode) {
+    @Then("verifico che su DynamoDB {is} presente l'elemento {string} con errorCode {string} nella tabella paperRequestError al tentativo {int}")
+    public void checkPaperErrorInDynamoDB(boolean isPresent, String timelineElement, String errorCode, int attempt) {
+        String requestId = String.format("%s.IUN_%s.RECINDEX_0.ATTEMPT_%d", timelineElement, sharedSteps.getNotificationIun(), attempt);
         QueryResponse queryResponse = dynamoDbService.call(DynamoTableName.PAPER_REQUEST_ERROR, Map.of(
-                ":v_requestId", AttributeValue.builder().s(timelineElement.concat(".IUN_" + sharedSteps.getNotificationIun() + ".RECINDEX_0.ATTEMPT_0")).build()
+                ":v_requestId", AttributeValue.builder().s(requestId).build()
         ));
-        log.info("Elementi trovati con categoria {}: {}", timelineElement, queryResponse.count());
+        log.info("Elementi trovati con requestId {}: {}", requestId, queryResponse.count());
         try {
             if (isPresent) {
                 assertThat(queryResponse.items().size()).as("La response non contiene nessun elemento con category " + timelineElement).isGreaterThan(0);

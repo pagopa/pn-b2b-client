@@ -39,7 +39,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
       | details                 | NOT_NULL |
       | details_sentAttemptMade | 1        |
       | details_recIndex        | 0        |
-    And verifico che su DynamoDB è presente l'elemento "PREPARE_ANALOG_DOMICILE" con errorCode "PNADDR003" nella tabella paperRequestError
+    And verifico che su DynamoDB è presente l'elemento "PREPARE_ANALOG_DOMICILE" con errorCode "PNADDR003" nella tabella paperRequestError al tentativo 1
 
 
   @workflowAnalogico
