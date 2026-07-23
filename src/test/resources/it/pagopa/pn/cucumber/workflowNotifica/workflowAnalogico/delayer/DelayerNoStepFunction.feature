@@ -22,7 +22,7 @@ Feature: Delayer — test senza Step Function
       | "tcZeroDriver.csv" | 15  |
 
   # Per il driver: zeroDriver è stata modificata la capacity a 10 per il periodo 2025-12-29T00:00:00.000Z - 2026-01-04T23:59:59.999Z
-  # si verifica che la capacity ritornata per quella settiamana sia esattamente quella attesa: 10
+  # si verifica che la capacity ritornata per quella settimana sia esattamente quella attesa: 10
   @delayer10
   Scenario Outline: [DELAYER-TC10] A seguito di un aggiornamento della capacity per il driver: zeroDriver verifica che la capacità ritornata sia esattamente quella attesa: 10.
     Given vengono puliti i dati dalle tabelle target
