@@ -59,7 +59,7 @@ public class CensimentoStimeMittentiSteps {
         for (DelayerSenderLimit senderLimit : context.expected.senderLimits) {
             try {
                 delayerSevice.pollSenderLimitUntilCondition(senderLimit.getDeliveryDate(), province, MAX_ATTEMPTS, SLEEP_MILLIS, actual -> {
-                    log.info("Trovati i seguenti limti: {}", actual);
+                    log.info("Trovati i seguenti limiti: {}", actual);
                     boolean ok = actual.contains(senderLimit);
                     if (!ok) {
                         log.info("SenderLimit mancante: {}", senderLimit);
