@@ -35,7 +35,7 @@ public class DescriptorArchivingSteps {
         this.archivingScheduleVerifier = new DescriptorArchivingScheduleVerifier(clientTokenConfigurator, sharedStepsContext);
     }
 
-    @When("l'utente archivia la vecchia versione identificata da {string} per l'e-service {string} impostando {gracePeriodDays} giorni di preavviso")
+    @When("l'utente avvia la messa in archiviazione della vecchia versione identificata da {string} per l'e-service {string} impostando {gracePeriodDays} giorni di preavviso")
     public void archiveOldDescriptor(String descriptorId, String eServiceId, GracePeriodDays gracePeriodDays) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
@@ -45,7 +45,7 @@ public class DescriptorArchivingSteps {
         scheduleArchiveDescriptor(resolvedEServiceId, resolvedDescriptorId, gracePeriodDays);
     }
 
-    @When("l'utente archivia la versione più recente dell'e-service impostando {gracePeriodDays} giorni di preavviso")
+    @When("l'utente avvia la messa in archiviazione della versione più recente dell'e-service impostando {gracePeriodDays} giorni di preavviso")
     public void archiveLatestDescriptor(GracePeriodDays gracePeriodDays) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
