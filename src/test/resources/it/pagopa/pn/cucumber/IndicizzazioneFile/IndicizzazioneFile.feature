@@ -27,13 +27,29 @@ Feature: test preliminari indicizzazione File safeStorage
     Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
       | global_multivalue:test1,test2 |
       | global_singlevalue:test1      |
-      | local_multivalue:test1,test2  |
-      | local_singlevalue:test1       |
     Then Il documento 1 è correttamente formato con la seguente lista di tag
       | global_multivalue:test1,test2 |
       | global_singlevalue:test1      |
-      | local_multivalue:test1,test2  |
-      | local_singlevalue:test1       |
+
+  @aggiuntaTag
+  @indicizzazioneSafeStorage
+  #local_multivalue e local_singlevalue sono tag locali, registrati con il prefisso pn-test~ su pn-SS-IndexingConfiguration
+  Scenario: [INDEX_SS_GET_FILE_1_LOCAL] GetFile - SUCCESS (tag locali)
+    Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
+      | local_multivalue:test1,test2 |
+      | local_singlevalue:test1      |
+    Then Il documento 1 è correttamente formato con la seguente lista di tag
+      | local_multivalue:test1,test2 |
+      | local_singlevalue:test1      |
+
+  @aggiuntaTag
+  @indicizzazioneSafeStorage
+  #recIndex è un tag locale, registrato senza il prefisso pn-test~ su pn-SS-IndexingConfiguration
+  Scenario: [INDEX_SS_GET_FILE_1_LOCAL_2] GetFile - SUCCESS (tag locali)
+    Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
+      | recIndex:test1 |
+    Then Il documento 1 è correttamente formato con la seguente lista di tag
+      | recIndex:test1 |
 
   ########################################################### GET TAGS ###################################################################
 
@@ -53,8 +69,8 @@ Feature: test preliminari indicizzazione File safeStorage
   Scenario: [INDEX_SS_GET_TAGS_1_LOCAL] GetTags SUCCESS
     Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS"
     When Si modifica il documento 1 secondo le seguenti operazioni
-      | local_multivalue:test1,test2,test3 | SET |
-      | local_singlevalue:test1            | SET |
+      | pn-test~local_multivalue:test1,test2,test3 | SET |
+      | pn-test~local_singlevalue:test1            | SET |
     Then Il documento 1 è stato correttamente modificato con la seguente lista di tag
       | local_multivalue:test1,test2,test3 |
       | local_singlevalue:test1            |
@@ -90,6 +106,26 @@ Feature: test preliminari indicizzazione File safeStorage
     Then Il documento 1 è associato alla seguente lista di tag
       | global_multivalue:test1,test2 |
       | global_singlevalue:test1      |
+
+  @aggiuntaTag
+  @indicizzazioneSafeStorage
+  Scenario: [INDEX_SS_CREATE_1_LOCAL] Create - SUCCESS
+    Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
+      | local_multivalue:test1,test2 |
+      | local_singlevalue:test1      |
+    Then Il documento 1 è associato alla seguente lista di tag
+      | local_multivalue:test1,test2 |
+      | local_singlevalue:test1      |
+
+  @aggiuntaTag
+  @indicizzazioneSafeStorage
+  Scenario: [VALIDATION_BUG_20667] Creazione con successo di un documento con document type avante un nome libero, che non inizia per forza con "PN_"
+    Given Viene caricato un nuovo documento di tipo "DOCUMENT_WITH_NO_PN_PREFIX" con tag associati
+      | local_multivalue:test1,test2 |
+      | local_singlevalue:test1      |
+    Then Il documento 1 è associato alla seguente lista di tag
+      | local_multivalue:test1,test2 |
+      | local_singlevalue:test1      |
 
   @aggiuntaTag
   @indicizzazioneSafeStorage
@@ -144,6 +180,15 @@ Feature: test preliminari indicizzazione File safeStorage
 
   @aggiuntaTag
   @indicizzazioneSafeStorage
+  Scenario: [INDEX_SS_UPDATE_SINGLE_1_LOCAL] UpdateSingle SUCCESS - solo operazioni SET
+    Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS"
+    When Si modifica il documento 1 secondo le seguenti operazioni
+      | pn-test~local_multivalue:test | SET |
+    Then Il documento 1 è stato correttamente modificato con la seguente lista di tag
+      | local_multivalue:test |
+
+  @aggiuntaTag
+  @indicizzazioneSafeStorage
   Scenario: [INDEX_SS_UPDATE_SINGLE_2] UpdateSingle SUCCESS - solo operazioni DELETE (PARZIALE)
     Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
       | global_multivalue:test1,test2 |
@@ -154,11 +199,31 @@ Feature: test preliminari indicizzazione File safeStorage
 
   @aggiuntaTag
   @indicizzazioneSafeStorage
+  Scenario: [INDEX_SS_UPDATE_SINGLE_2_LOCAL] UpdateSingle SUCCESS - solo operazioni DELETE (PARZIALE)
+    Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
+      | local_multivalue:test1,test2 |
+    When Si modifica il documento 1 secondo le seguenti operazioni
+      | pn-test~local_multivalue:test2 | DELETE |
+    Then Il documento 1 è associato alla seguente lista di tag
+      | local_multivalue:test1 |
+
+  @aggiuntaTag
+  @indicizzazioneSafeStorage
   Scenario: [INDEX_SS_UPDATE_SINGLE_3] UpdateSingle SUCCESS - solo operazioni DELETE (TOTALE)
     Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
       | global_multivalue:test1,test2 |
     When Si modifica il documento 1 secondo le seguenti operazioni
       | global_multivalue:test1,test2 | DELETE |
+    Then Il documento 1 è associato alla seguente lista di tag
+      | null |
+
+  @aggiuntaTag
+  @indicizzazioneSafeStorage
+  Scenario: [INDEX_SS_UPDATE_SINGLE_3_LOCAL] UpdateSingle SUCCESS - solo operazioni DELETE (TOTALE)
+    Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
+      | local_multivalue:test1,test2 |
+    When Si modifica il documento 1 secondo le seguenti operazioni
+      | pn-test~local_multivalue:test1,test2 | DELETE |
     Then Il documento 1 è associato alla seguente lista di tag
       | null |
 
@@ -193,6 +258,17 @@ Feature: test preliminari indicizzazione File safeStorage
       | global_multivalue:test1 | DELETE |
     Then La chiamata genera un errore con status code 400
     And Il messaggio di errore riporta la dicitura "SET and DELETE cannot contain the same tags: [global_multivalue]"
+
+  @aggiuntaTag
+  @indicizzazioneSafeStorage
+  Scenario: [INDEX_SS_UPDATE_SINGLE_6_LOCAL] UpdateSingle ERROR - Set+Delete sullo stesso tag
+    Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
+      | local_multivalue:test1 |
+    When Si modifica il documento 1 secondo le seguenti operazioni
+      | pn-test~local_multivalue:test2 | SET    |
+      | pn-test~local_multivalue:test1 | DELETE |
+    Then La chiamata genera un errore con status code 400
+    And Il messaggio di errore riporta la dicitura "SET and DELETE cannot contain the same tags: [pn-test~local_multivalue]"
 
   @aggiuntaTag
   @indicizzazioneSafeStorage
@@ -235,6 +311,22 @@ Feature: test preliminari indicizzazione File safeStorage
 
   @aggiuntaTag
   @indicizzazioneSafeStorage
+  Scenario: [INDEX_SS_UPDATE_MASSIVE_1_LOCAL] Update Massive SUCCESS - solo operazioni SET
+    Given Vengono caricati 2 nuovi documenti di tipo "PN_NOTIFICATION_ATTACHMENTS"
+    When Si modificano i documenti secondo le seguenti operazioni
+      | tag                             | documentIndex | operation |
+      | pn-test~local_multivalue:test1  | 1             | SET       |
+      | pn-test~local_singlevalue:test1 | 1             | SET       |
+      | pn-test~local_multivalue:test2  | 2             | SET       |
+    Then L'update massivo va in successo con stato 200
+    And Il documento 1 è associato alla seguente lista di tag
+      | local_multivalue:test1  |
+      | local_singlevalue:test1 |
+    And Il documento 2 è associato alla seguente lista di tag
+      | local_multivalue:test2 |
+
+  @aggiuntaTag
+  @indicizzazioneSafeStorage
   Scenario: [INDEX_SS_UPDATE_MASSIVE_2] Update Massive SUCCESS - solo operazioni DELETE (PARZIALE)
     Given Vengono caricati 2 nuovi documenti di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
       | global_multivalue:test1,test2 |
@@ -251,6 +343,25 @@ Feature: test preliminari indicizzazione File safeStorage
       | global_multivalue:test1 |
     And Il documento 2 non contiene la seguente lista di tag
       | global_multivalue:test2 |
+
+  @aggiuntaTag
+  @indicizzazioneSafeStorage
+  Scenario: [INDEX_SS_UPDATE_MASSIVE_2_LOCAL] Update Massive SUCCESS - solo operazioni DELETE (PARZIALE)
+    Given Vengono caricati 2 nuovi documenti di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
+      | pn-test~local_multivalue:test1,test2 |
+    When Si modificano i documenti secondo le seguenti operazioni
+      | tag                            | documentIndex | operation |
+      | pn-test~local_multivalue:test1 | 1             | DELETE    |
+      | pn-test~local_multivalue:test2 | 2             | DELETE    |
+    Then L'update massivo va in successo con stato 200
+    And Il documento 1 è associato alla seguente lista di tag
+      | local_multivalue:test2 |
+    And Il documento 2 è associato alla seguente lista di tag
+      | local_multivalue:test1 |
+    And Il documento 1 non contiene la seguente lista di tag
+      | local_multivalue:test1 |
+    And Il documento 2 non contiene la seguente lista di tag
+      | local_multivalue:test2 |
 
   @aggiuntaTag
   @indicizzazioneSafeStorage
@@ -274,6 +385,26 @@ Feature: test preliminari indicizzazione File safeStorage
 
   @aggiuntaTag
   @indicizzazioneSafeStorage
+  Scenario: [INDEX_SS_UPDATE_MASSIVE_3_LOCAL] Update Massive SUCCESS - solo operazioni DELETE (TOTALE)
+    Given Vengono caricati 2 nuovi documenti di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
+      | local_multivalue:test1,test2 |
+      | local_singlevalue:test1      |
+    When Si modificano i documenti secondo le seguenti operazioni
+      | tag                                  | documentIndex | operation |
+      | pn-test~local_multivalue:test1,test2 | 1             | DELETE    |
+      | pn-test~local_multivalue:test1,test2 | 2             | DELETE    |
+    Then L'update massivo va in successo con stato 200
+    And Il documento 1 è associato alla seguente lista di tag
+      | local_singlevalue:test1 |
+    And Il documento 2 è associato alla seguente lista di tag
+      | local_singlevalue:test1 |
+    And Il documento 1 non contiene la seguente lista di tag
+      | local_multivalue:test1,test2 |
+    And Il documento 2 non contiene la seguente lista di tag
+      | local_multivalue:test1,test2 |
+
+  @aggiuntaTag
+  @indicizzazioneSafeStorage
   Scenario: [INDEX_SS_UPDATE_MASSIVE_4] Update Massive SUCCESS - solo operazioni DELETE (ININFLUENTE)
     Given Vengono caricati 2 nuovi documenti di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
       | global_multivalue:test1,test2 |
@@ -286,6 +417,21 @@ Feature: test preliminari indicizzazione File safeStorage
       | global_multivalue:test1,test2 |
     And Il documento 2 è associato alla seguente lista di tag
       | global_multivalue:test1,test2 |
+
+  @aggiuntaTag
+  @indicizzazioneSafeStorage
+  Scenario: [INDEX_SS_UPDATE_MASSIVE_4_LOCAL] Update Massive SUCCESS - solo operazioni DELETE (ININFLUENTE)
+    Given Vengono caricati 2 nuovi documenti di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
+      | local_multivalue:test1,test2 |
+    When Si modificano i documenti secondo le seguenti operazioni
+      | tag                            | documentIndex | operation |
+      | pn-test~local_multivalue:test3 | 1             | DELETE    |
+      | pn-test~local_multivalue:test3 | 2             | DELETE    |
+    Then L'update massivo va in successo con stato 200
+    And Il documento 1 è associato alla seguente lista di tag
+      | local_multivalue:test1,test2 |
+    And Il documento 2 è associato alla seguente lista di tag
+      | local_multivalue:test1,test2 |
 
   @aggiuntaTag
   @indicizzazioneSafeStorage
@@ -304,6 +450,24 @@ Feature: test preliminari indicizzazione File safeStorage
     And Il documento 2 è associato alla seguente lista di tag
       | global_multivalue:test1  |
       | global_singlevalue:test1 |
+
+  @aggiuntaTag
+  @indicizzazioneSafeStorage
+  Scenario: [INDEX_SS_UPDATE_MASSIVE_5_LOCAL] Update Massive SUCCESS - operazioni SET+DELETE
+    Given Vengono caricati 2 nuovi documenti di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
+      | local_multivalue:test1,test2 |
+      | local_singlevalue:test1      |
+    When Si modificano i documenti secondo le seguenti operazioni
+      | operation | tag                            | documentIndex |
+      | DELETE    | pn-test~local_multivalue:test2 | 1             |
+      | DELETE    | pn-test~local_multivalue:test2 | 2             |
+    Then L'update massivo va in successo con stato 200
+    And Il documento 1 è associato alla seguente lista di tag
+      | local_multivalue:test1  |
+      | local_singlevalue:test1 |
+    And Il documento 2 è associato alla seguente lista di tag
+      | local_multivalue:test1  |
+      | local_singlevalue:test1 |
 
   @aggiuntaTag
   @indicizzazioneSafeStorage
@@ -459,6 +623,25 @@ Feature: test preliminari indicizzazione File safeStorage
   @aggiuntaTag
     @concurrencyIndexSs
     @indicizzazioneSafeStorage
+  Scenario Outline: [INDEX_SS_SEARCH_2_LOCAL] SEARCH SUCCESS: Empty Result
+    Given Vengono caricati 2 nuovi documenti di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
+      | local_indexed_multivalue:test1,test2 |
+      | local_indexed_singlevalue:test1      |
+    When Vengono ricercate con logica "<logic>" le fileKey aventi i seguenti tag
+      | local_indexed_multivalue:testEmpty  |
+      | local_indexed_singlevalue:testEmpty |
+    Then Il risultato della search contiene le fileKey relative ai seguenti documenti
+      | null |
+    Examples:
+      | logic |
+      | and   |
+      | or    |
+      |       |
+
+
+  @aggiuntaTag
+    @concurrencyIndexSs
+    @indicizzazioneSafeStorage
   Scenario Outline: [INDEX_SS_SEARCH_3] SEARCH ERROR: 0 parametri tag
     Given Vengono caricati 2 nuovi documenti di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
       | global_indexed_multivalue:test1,test2 |
@@ -510,9 +693,27 @@ Feature: test preliminari indicizzazione File safeStorage
       |       |
 
   @aggiuntaTag
+    @concurrencyIndexSs
+    @indicizzazioneSafeStorage
+  Scenario Outline: [INDEX_SS_SEARCH_5_LOCAL] SEARCH SUCCESS: multipli parametri tag (logic and o null)
+    Given Vengono caricati 2 nuovi documenti di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
+      | local_indexed_multivalue:testMultipleParam1,testMultipleParam2 |
+      | local_indexed_singlevalue:testMultipleParam1                   |
+    When Vengono ricercate con logica "<logic>" le fileKey aventi i seguenti tag
+      | pn-test~local_indexed_multivalue:testMultipleParam1  |
+      | pn-test~local_indexed_singlevalue:testMultipleParam1 |
+    Then Il risultato della search contiene le fileKey relative ai seguenti documenti
+      | 1 |
+      | 2 |
+    Examples:
+      | logic |
+      | and   |
+      |       |
+
+  @aggiuntaTag
   @concurrencyIndexSs
   @indicizzazioneSafeStorage
-  Scenario: [INDEX_SS_SEARCH_6] SEARCH SUCCESS: multipli parametri tag (logic or)
+  Scenario: [INDEX_SS_SEARCH_6] SEARCH SUCCESS: multipli parametri tag globali (logic or)
     Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
       | global_indexed_multivalue:testOrParam1,testOrParam2 |
     And Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
@@ -523,3 +724,55 @@ Feature: test preliminari indicizzazione File safeStorage
     Then Il risultato della search contiene le fileKey relative ai seguenti documenti
       | 1 |
       | 2 |
+
+  @aggiuntaTag
+  @concurrencyIndexSs
+  @indicizzazioneSafeStorage
+  Scenario: [INDEX_SS_SEARCH_6_LOCAL] SEARCH SUCCESS: multipli parametri tag locali (logic or)
+    Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
+      | local_indexed_multivalue:testOrParam1,testOrParam2 |
+    And Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
+      | local_indexed_singlevalue:testOrParam1 |
+    When Vengono ricercate con logica "or" le fileKey aventi i seguenti tag
+      | pn-test~local_indexed_multivalue:testOrParam1  |
+      | pn-test~local_indexed_singlevalue:testOrParam1 |
+    Then Il risultato della search contiene le fileKey relative ai seguenti documenti
+      | 1 |
+      | 2 |
+
+  @aggiuntaTag
+  @concurrencyIndexSs
+  @indicizzazioneSafeStorage
+  Scenario: [INDEX_SS_SEARCH_6_LOCAL_2] SEARCH SUCCESS: multipli parametri tag (uno locale, uno globale) (logic or)
+    Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
+      | local_indexed_singlevalue:testOrParam1 |
+    Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
+      | global_indexed_singlevalue:testOrParam1 |
+    When Vengono ricercate con logica "or" le fileKey aventi i seguenti tag
+      | local_indexed_singlevalue:testOrParam1  |
+      | global_indexed_singlevalue:testOrParam1 |
+    Then Il risultato della search contiene le fileKey relative ai seguenti documenti
+      | 1 |
+      | 2 |
+
+  @aggiuntaTag
+  @concurrencyIndexSs
+  @indicizzazioneSafeStorage
+  Scenario: [INDEX_SS_SEARCH_7] SEARCH FAIL: la ricerca di un tag globale NON indicizzato non deve produrre risultati (logic or)
+    Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
+      | global_singlevalue:testOrParam1 |
+    When Vengono ricercate con logica "or" le fileKey aventi i seguenti tag
+      | global_singlevalue:testOrParam1 |
+    Then Il risultato della search contiene le fileKey relative ai seguenti documenti
+      | null |
+
+  @aggiuntaTag
+  @concurrencyIndexSs
+  @indicizzazioneSafeStorage
+  Scenario: [INDEX_SS_SEARCH_7_LOCAL] SEARCH FAIL: la ricerca di un tag locale NON indicizzato non deve produrre risultati (logic or)
+    Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
+      | recIndex:testOrParam1 |
+    When Vengono ricercate con logica "or" le fileKey aventi i seguenti tag
+      | recIndex:testOrParam1 |
+    Then Il risultato della search contiene le fileKey relative ai seguenti documenti
+      | null |
