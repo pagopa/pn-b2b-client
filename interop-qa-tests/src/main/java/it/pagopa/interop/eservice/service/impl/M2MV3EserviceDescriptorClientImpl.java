@@ -186,11 +186,11 @@ public class M2MV3EserviceDescriptorClientImpl extends AbstractDPoPClient implem
 
     @Override
     public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor scheduleArchiveEServiceDescriptor(
-        UUID eserviceId, UUID descriptorId) {
+        UUID eserviceId, UUID descriptorId, Integer gracePeriodDays) {
         return vMapper.mapToV2(eservicesApi.scheduleArchiveEserviceDescriptor(
             eserviceId,
             descriptorId,
-            new GracePeriodDaysSeed().gracePeriodDays(GracePeriodDays.NUMBER_60)
+            new GracePeriodDaysSeed().gracePeriodDays(GracePeriodDays.fromValue(gracePeriodDays))
         ));
     }
 
