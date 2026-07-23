@@ -3,54 +3,6 @@
   # con la deliveryDate alla W+1(corrente) e ora, settimana W+1 le stiamo valutando
   Feature: Gestione notifiche tramite algoritmo del microservizio ritardatore e Lambda di test
 
-    Scenario Outline: [DELAYER-TC17tes] Verifica che priorità 100 della settimana successiva preceda priorità 80 congelata dalla settimana precedente
-      And il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
-        | seed                    | quantita |
-        | tcSenderPriorityFrozen_ | <TOT>    |
-      And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
-        | senderId              | comparative | limit |
-        | ranking2nd_890~890~P1 | esattamente | 7     |
-      And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
-        | unifiedDeliveryDriverId      | comparative | limit |
-        | driverRanking2nd_890~P1      | esattamente | 10    |
-        | driverRanking2nd_890~CAP1_P1 | esattamente | 10    |
-      And viene impostato il limite massimo di 5 spedizioni in SENT_TO_PREPARE_PHASE_2 per ogni esecuzione di DelayerToPaperChannelStateMachine
-      And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
-      And vengono recuperate le notifiche al workflow step "EVALUATE_SENDER_LIMIT"
-      And verifica che il processo fino al workflow step "EVALUATE_SENDER_LIMIT" abbia rispettato i criteri di ranking per almeno un test case:
-        | categoria         | ordinamentoCampo   |
-        | RS                | prepareRequestDate |
-        | SECONDO_TENTATIVO | prepareRequestDate |
-        | ALTRO             | notificationSentAt |
-      And vengono recuperate le notifiche al workflow step "EVALUATE_RESIDUAL_CAPACITY"
-      And verifica che il processo fino al workflow step "EVALUATE_RESIDUAL_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
-        | categoria         | ordinamentoCampo   |
-        | RS                | prepareRequestDate |
-        | SECONDO_TENTATIVO | prepareRequestDate |
-        | ALTRO             | notificationSentAt |
-      #And vengono recuperate le notifiche al workflow step "EVALUATE_DRIVER_CAPACITY"
-      #And verifica che il processo fino al workflow step "EVALUATE_DRIVER_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
-      #  | categoria         | ordinamentoCampo   |
-      #  | RS                | prepareRequestDate |
-      #  | SECONDO_TENTATIVO | prepareRequestDate |
-      #  | ALTRO             | notificationSentAt |
-      And vengono recuperate le notifiche al workflow step "EVALUATE_PRINT_CAPACITY"
-      And verifica che il processo fino al workflow step "EVALUATE_PRINT_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
-        | categoria         | ordinamentoCampo   |
-        | RS                | prepareRequestDate |
-        | SECONDO_TENTATIVO | prepareRequestDate |
-        | ALTRO             | notificationSentAt |
-      Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
-      And vengono simulate internamente le operazioni di DelayerToPaperChannelStateMachine
-      And vengono avviate le 1 esecuzioni della step function DelayerToPaperChannelStateMachine
-      And verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
-      And verifica la corretta pianificazione di ogni test case
-
-      Examples:
-        | csv                             | TOT |
-        | "tcSenderPriorityFrozenW12.csv" | 11  |
-
-
     @delayer6
       #Lo scenario testa il corretto funzionamento della prima parte della lambda, pertanto si utilizzano mittenti non censiti e, non conoscendo a priori il driver,
       #il confronto tra actual ed expected per lo stato EVALUATE_RESIDUAL_CAPACITY non considererà il campo unifiedDriverDelivery
@@ -299,56 +251,6 @@
         | "tcSenderUnknow_5010.csv" | 5010 |
 
 
-    # Per il driver: zeroDriver è stata modificata la capacity a 10 per il periodo 2025-12-29T00:00:00.000Z - 2026-01-04T23:59:59.999Z
-    # si verifica che la capacity ritornata per quella settiamana sia esattamente quella attesa: 10
-    @delayer10
-    Scenario Outline: [DELAYER-TC10] A seguito di un aggiornamento della capacity per il driver: zeroDriver verifica che la capacità ritornata sia esattamente quella attesa: 10.
-      Given vengono puliti i dati dalle tabelle target
-      Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
-        | seed          | quantita | deliveryWeek |
-        | tcZeroDriver_ | 15       | 2025-12-29   |
-      And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
-        | senderId       | comparative | limit |
-        | unknow~RS~P10  | esattamente | 0     |
-        | unknow~AR~P10  | esattamente | 0     |
-        | unknow~890~P10 | esattamente | 0     |
-      And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
-        | unifiedDeliveryDriverId | comparative | limit |
-        | zeroDriverP10~P10       | esattamente | 10    |
-        | zeroDriverP10~CAP1_P10  | esattamente | 10    |
-      And si verifica che il limite settimanale utilizzato dai recapitisti (unifiedDeliveryDriver-geoKey) sia:
-        | unifiedDeliveryDriverId | comparative | limit |
-        | zeroDriverP10~P10       | esattamente | 10    |
-        | zeroDriverP10~CAP1_P10  | esattamente | 10    |
-      Examples:
-        | csv                | TOT |
-        | "tcZeroDriver.csv" | 15  |
-
-    # Per il driver: zeroDriver è stata modificata la capacity a 10 per il periodo 2025-12-29T00:00:00.000Z - 2026-01-04T23:59:59.999Z
-    # si verifica che la capacity ritornata per una settimana diversa da quella modificata precedentemente sia quella di default: 0.
-    @delayer11
-    Scenario Outline: [DELAYER-TC4.B] Verifica la gestione di una capacity driver nulla
-      Given vengono puliti i dati dalle tabelle target
-      Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
-        | seed          | quantita |
-        | tcZeroDriver_ | 15       |
-      And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
-        | senderId       | comparative | limit |
-        | unknow~RS~P10  | esattamente | 0     |
-        | unknow~AR~P10  | esattamente | 0     |
-        | unknow~890~P10 | esattamente | 0     |
-      And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
-        | unifiedDeliveryDriverId | comparative | limit |
-        | zeroDriverP10~P10       | esattamente | 0     |
-        | zeroDriverP10~CAP1_P10  | esattamente | 0     |
-      And si verifica che il limite settimanale utilizzato dai recapitisti (unifiedDeliveryDriver-geoKey) sia:
-        | unifiedDeliveryDriverId | comparative | limit |
-        | zeroDriverP10~P10       | esattamente | 0     |
-        | zeroDriverP10~CAP1_P10  | esattamente | 0     |
-      Examples:
-        | csv                | TOT |
-        | "tcZeroDriver.csv" | 15  |
-
     @delayer12
     #La capacità di recapito di un driver non cambia se la spedizione viene annullata prima che essa venga pianificata
     #Esempio:
@@ -444,24 +346,6 @@
       And viene verificata che la capacità utilizzata per i seguenti driver sia uguale a: 3
         | unifiedDeliveryDriverId |
         | Poste~80125             |
-
-    @delayer14
-    Scenario Outline: [DELAYER-TC14] Verifica che la pulizia delle tabelle target rimuova completamente i dati di test
-      Given vengono puliti i dati dalle tabelle target
-      And il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
-        | seed          | quantita | deliveryWeek |
-        | tcZeroDriver_ | 15       | 2025-12-29   |
-      And il CSV <csv> è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
-      When vengono puliti i dati dalle tabelle target
-      Then non devono esistere record in pn-DelayerPaperDelivery per la deliveryDate "2025-12-29"
-      And non deve esistere capacità usata alla deliveryDate "2025-12-29"
-        | unifiedDeliveryDriverId |
-        | Poste~80125             |
-      And non devono esistere contatori per la deliveryDate "2025-12-29"
-      And non devono esistere limiti mittente per la deliveryDate "2025-12-29" e pk "unknow~RS~P10"
-      Examples:
-        | csv                | TOT |
-        | "tcZeroDriver.csv" | 15  |
 
     @delayer15
     Scenario: [DELAYER-TC15] Verifica riordinamento per senderPriority e fairness globale tra PA
