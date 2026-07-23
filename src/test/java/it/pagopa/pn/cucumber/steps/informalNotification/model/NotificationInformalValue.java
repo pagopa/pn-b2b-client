@@ -1,5 +1,7 @@
 package it.pagopa.pn.cucumber.steps.informalNotification.model;
 
+import it.pagopa.common.util.StringUtils;
+
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
@@ -95,20 +97,17 @@ public enum NotificationInformalValue {
         if (data.containsKey(key)) {
             String value = data.get(key);
 
-            // NULL esplicito → null nel JSON
+            // NULL esplicito → null nel JSON, senza fallback al DEFAULT
             if (NULL_VALUE.equals(value)) {
                 return null;
             }
-            // stringa vuota o solo spazi → DEFAULT
-            if (value == null || value.trim().isEmpty()) {
-                return getDefaultValue(key);
-            }
             // _CHAR → generatore
-            if (value.contains("_CHAR")) {
+            if (value != null && value.contains("_CHAR")) {
                 return getCharSeq(value);
             }
-            // valore reale
-            return value;
+            // stringa vuota o solo spazi → DEFAULT, valore reale → lascia così
+            String resolvedValue = StringUtils.resolveValue(value);
+            return resolvedValue != null ? resolvedValue : getDefaultValue(key);
         } else {
             // chiave assente → DEFAULT
             return getDefaultValue(key);
