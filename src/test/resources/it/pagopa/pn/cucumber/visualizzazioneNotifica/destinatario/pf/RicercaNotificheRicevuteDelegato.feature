@@ -1,15 +1,15 @@
 Feature: Ricerca delle notifiche ricevute lato delegato
 
 
-  Background:
-    Given mittente della notifica bonaria: "Comune_Multi"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | SoricalMessaMora |
-    And destinatario della notifica bonaria
-      | recipientType | PF               |
-      | taxId         | FRMTTR76M06B715E |
-      | denomination  | Mario Cucumber   |
-      | messageId     | ${IT}            |
+#  Background:
+#    Given mittente della notifica bonaria: "Comune_Multi"
+#    And viene creata una nuova notifica bonaria con i seguenti parametri
+#      | campaignId | SoricalMessaMora |
+#    And destinatario della notifica bonaria
+#      | recipientType | PF               |
+#      | taxId         | FRMTTR76M06B715E |
+#      | denomination  | Mario Cucumber   |
+#      | messageId     | ${IT}            |
 
   #CASO DI TEST 5.1 - tutti i campi (obbligatori e opzionali) valorizzati correttamente
   #Nota: la response è tipizzata su LegalNotificationSearchResponse, quindi le notifiche bonarie
@@ -44,8 +44,8 @@ Feature: Ricerca delle notifiche ricevute lato delegato
     And destinatario GherkinSrlB2B
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then "CucumberSpaB2B" visualizza l'elenco delle notifiche del delegante "GherkinSrlB2B" per comune "Comune_Multi"
-      | startDate | 2026-07-07 |
-      | endDate   | 2026-07-22 |
+      | startDate | $DATE_ADD(-1D) |
+      | endDate   | $DATE_ADD(1D) |
       | iunMatch  | :actualIun |
       | mandateId | :mandateId |
     And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
@@ -54,8 +54,8 @@ Feature: Ricerca delle notifiche ricevute lato delegato
       | iun               | :actualIun |
       | itemsFound        | 1          |
     Then "CucumberSpaB2B" visualizza l'elenco delle notifiche del delegante "GherkinSrlB2B" per comune "Comune_Multi"
-      | startDate | 2026-07-07 |
-      | endDate   | 2026-07-22 |
+      | startDate | $DATE_ADD(-1D) |
+      | endDate   | $DATE_ADD(1D) |
     And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
       | communicationType | LEGAL |
 
@@ -76,32 +76,54 @@ Feature: Ricerca delle notifiche ricevute lato delegato
     And destinatario <delegatore>
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then "<delegato>" visualizza l'elenco delle notifiche del delegante "<delegatore>" per comune "Comune_Multi"
-      | startDate | 2026-07-07 |
-      | endDate   | 2026-07-21 |
+      | startDate | $DATE_ADD(-1D) |
+      | endDate   | $DATE_ADD(1D) |
       | iunMatch  | :actualIun |
     And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
 #      | communicationType | LEGAL      |
       | iun | :actualIun |
     Then "<delegato>" visualizza l'elenco delle notifiche del delegante "<delegatore>" per comune "Comune_Multi"
-      | startDate   | 2026-07-07     |
-      | endDate     | 2026-07-21     |
+      | startDate   | $DATE_ADD(-1D)     |
+      | endDate     | $DATE_ADD(1D)     |
       | status      | EFFECTIVE_DATE |
       | recipientId | :recipientUid  |
     And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
-      | sentAt             | 2026-07-07, 2026-07-21 |
+      | sentAt             | $DATE_ADD(-1D), $DATE_ADD(1D) |
       | notificationStatus | EFFECTIVE_DATE         |
       | recipients         | :recipientId           |
     Then "<delegato>" visualizza l'elenco delle notifiche del delegante "<delegatore>" per comune "Comune_Multi"
-      | startDate | 2026-07-07 |
-      | endDate   | 2026-07-21 |
+      | startDate | $DATE_ADD(-1D) |
+      | endDate   | $DATE_ADD(1D) |
       | group     | :group     |
     And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
-      | sentAt | 2026-07-07, 2026-07-21 |
-      | group  | :group                 |
+      | sentAt | $DATE_ADD(-1D), $DATE_ADD(1D) |
+      | group  | CONSISTENT                    |
+    Then "<delegato>" visualizza l'elenco delle notifiche del delegante "<delegatore>" per comune "Comune_Multi"
+      | startDate | $DATE_ADD(-1D) |
+      | endDate   | $DATE_ADD(1D) |
+      | senderId  | :senderId  |
+    And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
+      | sender | comune di milano |
     Examples:
       | delegato       | delegatore    |
       | CucumberSpa    | GherkinSrl    |
       | CucumberSpaB2B | GherkinSrlB2B |
+
+
+  #CASO DI TEST 5.3/5.4 - paginazione con più risultati
+  @letturaDestinatario @useB2B
+  Scenario: [RICERCA_RICEVUTE_DELEGATO_PG_4] Come delegato recupero le notifiche ricevute del delegante sfogliando tutte le pagine dei risultati
+    Given "CucumberSpa" rifiuta se presente la delega ricevuta "GherkinSrl"
+    Given "CucumberSpa" viene delegato da "GherkinSrl"
+    And "CucumberSpa" accetta la delega "GherkinSrl"
+    Given vengono create 5 notifiche con destinatario GherkinSrl per la pa "Comune_Multi" e si aspetta che raggiungano l'elemento di timeline della notifica "REQUEST_ACCEPTED"
+      | subject            | invio notifica paginazione |
+      | senderDenomination | comune di milano            |
+    Then "CucumberSpa" visualizza l'elenco delle notifiche del delegante "GherkinSrl" per comune "Comune_Multi"
+      | startDate | $DATE_ADD(-1D) |
+      | endDate   | $DATE_ADD(1D) |
+      | size      | 1          |
+    And si sfogliano tutte le pagine della ricerca lato destinatario e si verifica che vengano raccolte almeno 5 notifiche
 
 
   #CASO DI TEST 5.1 - campo obbligatorio non valorizzato -> 400 KO

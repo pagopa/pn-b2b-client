@@ -5,6 +5,7 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,16 +22,26 @@ import static org.assertj.core.api.Assertions.assertThat;
  * (separati da virgola nella cella del feature) definiscono un range inclusivo {@code [start, end]}.
  * <p>
  * Se il valore letto dalla riga è una {@link List} (es. {@code recipients}, la lista dei taxId dei
- * destinatari), il confronto è un'uguaglianza esatta con i valori attesi (ordine libero): la riga deve
- * contenere tutti e soli i valori elencati in tabella, non un semplice sottoinsieme.
+ * destinatari), la riga è valida se contiene almeno tutti i valori elencati in tabella (ordine libero):
+ * la lista effettiva può contenere anche altri valori non elencati, non deve necessariamente coincidere.
+ * <p>
+ * Tutti i confronti testuali (campo singolo, elementi di lista, valore di {@value #CONSISTENT_VALUE})
+ * ignorano maiuscole/minuscole: conta il contenuto del valore, non la sua formattazione esatta.
  * <p>
  * Il criterio {@value #ITEMS_FOUND_FIELD} è un caso speciale: non è un campo di una riga ma verifica il
  * numero di notifiche restituite (es. {@code | itemsFound | 3 |}), quindi non viene letto per
  * riflessione né applicato riga per riga.
+ * <p>
+ * Il valore atteso {@value #CONSISTENT_VALUE} è un altro caso speciale, utile quando la request espone
+ * un identificativo (es. l'id di un gruppo) ma la riga di risposta espone invece un valore derivato
+ * diverso (es. il nome del gruppo), che quindi non è confrontabile con il valore inviato in request: in
+ * questo caso si verifica solo che il campo sia valorizzato e che abbia lo stesso valore su tutte le
+ * righe restituite, senza confrontarlo con un valore atteso specifico.
  */
 public final class NotificationSearchRowAssertions {
 
     private static final String ITEMS_FOUND_FIELD = "itemsFound";
+    private static final String CONSISTENT_VALUE = "CONSISTENT";
 
     private NotificationSearchRowAssertions() {
     }
@@ -41,11 +52,34 @@ public final class NotificationSearchRowAssertions {
         if (itemsFound != null) {
             assertItemsFound(rows, itemsFound);
         }
-        rows.forEach(row -> criteria.forEach((field, allowedValues) -> {
-            if (!ITEMS_FOUND_FIELD.equals(field)) {
-                assertRowFieldMatches(row, field, allowedValues);
+        criteria.forEach((field, allowedValues) -> {
+            if (ITEMS_FOUND_FIELD.equals(field)) {
+                return;
             }
-        }));
+            if (isConsistentValue(allowedValues)) {
+                assertFieldConsistentAcrossRows(rows, field);
+                return;
+            }
+            rows.forEach(row -> assertRowFieldMatches(row, field, allowedValues));
+        });
+    }
+
+    private static boolean isConsistentValue(List<String> allowedValues) {
+        return allowedValues.size() == 1 && CONSISTENT_VALUE.equalsIgnoreCase(allowedValues.get(0));
+    }
+
+    private static void assertFieldConsistentAcrossRows(List<?> rows, String field) {
+        List<Object> actualValues = rows.stream()
+                .map(row -> NotificationRowFieldReader.readField(row, field))
+                .collect(Collectors.toList());
+        actualValues.forEach(value -> assertThat(value).as("Il campo '%s' non deve essere nullo", field).isNotNull());
+        if (actualValues.isEmpty()) {
+            return;
+        }
+        Object referenceValue = actualValues.get(0);
+        assertThat(actualValues)
+                .as("Il campo '%s' deve avere lo stesso valore su tutte le notifiche restituite: trovati %s", field, actualValues)
+                .allMatch(value -> equalsIgnoringCase(referenceValue, value));
     }
 
     private static void assertItemsFound(List<?> rows, List<String> allowedValues) {
@@ -67,7 +101,7 @@ public final class NotificationSearchRowAssertions {
     private static void assertRowFieldMatches(Object row, String field, List<String> allowedValues) {
         Object actualValue = NotificationRowFieldReader.readField(row, field);
         if (actualValue instanceof List<?> actualList) {
-            assertListFieldMatchesExactly(row, field, actualList, allowedValues);
+            assertListFieldContainsAllValues(row, field, actualList, allowedValues);
             return;
         }
         String actualValueAsString = actualValue == null ? null : actualValue.toString();
@@ -76,20 +110,37 @@ public final class NotificationSearchRowAssertions {
             assertDateFieldWithinRange(row, field, actualDateTime, allowedValues);
             return;
         }
-        assertThat(allowedValues)
+        boolean matchesAnyAllowedValue = allowedValues.stream().anyMatch(allowed -> equalsIgnoringCase(allowed, actualValueAsString));
+        assertThat(matchesAnyAllowedValue)
                 .as("Il campo '%s' della notifica con iun '%s' vale '%s': atteso uno tra %s",
                         field, readIunSafely(row), actualValueAsString, allowedValues)
-                .contains(actualValueAsString);
+                .isTrue();
     }
 
-    private static void assertListFieldMatchesExactly(Object row, String field, List<?> actualList, List<String> allowedValues) {
+    private static void assertListFieldContainsAllValues(Object row, String field, List<?> actualList, List<String> allowedValues) {
         List<String> actualValuesAsString = actualList.stream()
                 .map(value -> value == null ? null : value.toString())
                 .collect(Collectors.toList());
-        assertThat(actualValuesAsString)
-                .as("Il campo '%s' della notifica con iun '%s' vale %s: atteso esattamente %s",
+        assertThat(lowerCased(actualValuesAsString))
+                .as("Il campo '%s' della notifica con iun '%s' vale %s: atteso che contenga almeno %s",
                         field, readIunSafely(row), actualValuesAsString, allowedValues)
-                .containsExactlyInAnyOrderElementsOf(allowedValues);
+                .containsAll(lowerCased(allowedValues));
+    }
+
+    private static List<String> lowerCased(List<String> values) {
+        return values.stream().map(value -> value == null ? null : value.toLowerCase()).collect(Collectors.toList());
+    }
+
+    /**
+     * Confronto testuale case-insensitive, usato per tutti i criteri (campo singolo, elementi di lista,
+     * valore di riferimento di {@value #CONSISTENT_VALUE}). I valori non stringa vengono confrontati con
+     * {@link Object#equals(Object)}.
+     */
+    private static boolean equalsIgnoringCase(Object expected, Object actual) {
+        if (expected instanceof String && actual instanceof String) {
+            return ((String) expected).equalsIgnoreCase((String) actual);
+        }
+        return Objects.equals(expected, actual);
     }
 
     private static void assertDateFieldWithinRange(Object row, String field, OffsetDateTime actualDateTime, List<String> allowedValues) {

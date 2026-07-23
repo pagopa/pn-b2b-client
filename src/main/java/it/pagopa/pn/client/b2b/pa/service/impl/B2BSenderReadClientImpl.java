@@ -54,7 +54,7 @@ public class B2BSenderReadClientImpl {
         InformalNotificationStatusV1 status = searchParam.status != null ? InformalNotificationStatusV1.fromValue(searchParam.status) : null;
         return senderInformalReadWebApi.searchInformalSentNotification(searchParam.xPagopaPnUid, cxTypeAuthFleet, searchParam.senderId,
                 searchParam.campaignId, searchParam.startDate, searchParam.endDate, searchParam.xPagopaPnCxGroups, searchParam.recipientId,
-                searchParam.iunMatch, status, false, true, searchParam.size, searchParam.nextPagesKey);
+                searchParam.iunMatch, status, searchParam.viewed, searchParam.delivered, searchParam.size, searchParam.nextPagesKey);
     }
 
     // NotificationSearchParam.ACTUAL (default quando il campo non è specificato in tabella) -> valore derivato dal destinatario;

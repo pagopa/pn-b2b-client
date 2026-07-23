@@ -4,6 +4,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.common.util.StringUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalNotificationRecipientV1;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalNotificationRequestV1;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.MessageResponse;
@@ -15,6 +16,7 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainforma
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NotificationRequestRefusedProblemError;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.TerminationRequestStatus;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
+import it.pagopa.pn.client.b2b.pa.provider.DestinatarioRegistry;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnPrivateDeliveryPushExternalClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
@@ -26,7 +28,6 @@ import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.informalNotification.builders.InformalRecipientBuilder;
 import it.pagopa.pn.cucumber.steps.informalNotification.mapper.InformalNotificationRequestMapper;
 import it.pagopa.pn.cucumber.steps.informalNotification.utils.NotificationInformalUtilsV1;
-import it.pagopa.pn.client.b2b.pa.provider.DestinatarioRegistry;
 import it.pagopa.pn.cucumber.utils.GroupPosition;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -144,6 +145,7 @@ public class PresaInCaricoNoticaBonariaSteps {
         if (!paName.equalsIgnoreCase("Comune_Root")) {
             this.currentGroupId =
                     sharedSteps.getGroupIdByPa(paName, GroupPosition.FIRST);
+            sendSharedContext.getInformalNotificationContext().setGroupId(currentGroupId);
         }
         sendSharedContext.getInformalNotificationContext().setSenderId(currentCxId);
     }
@@ -188,6 +190,26 @@ public class PresaInCaricoNoticaBonariaSteps {
         InformalNotificationRecipientV1 recipient = recipientBuilder.build(cleanedData, currentCxId);
         informalNotificationRequestV1.getRecipients().add(recipient);
         sendSharedContext.getInformalNotificationContext().getRecipient().setDestinatario(destinatarioRegistry.destinatario(data.get("denomination")));
+    }
+
+    @Given("vengono create {int} notifiche bonarie per la pa {string} con campagna {string}")
+    public void creaNotificheBonarie(int notificationNumber, String paName, String campaignId) throws IOException {
+        setSenderInformal(paName);
+        for (int i = 0; i < notificationNumber; i++) {
+            Map<String, String> creationData = new HashMap<>();
+            creationData.put("campaignId", campaignId);
+            createInformal(creationData);
+
+            Map<String, String> recipientData = new HashMap<>();
+            recipientData.put("recipientType", "PF");
+            recipientData.put("taxId", "FRMTTR76M06B715E");
+            recipientData.put("denomination", "Mario Cucumber");
+            recipientData.put("messageId", "${IT}");
+            addInformalRecipientLight(recipientData);
+
+            sendInformal();
+            verifyNotificationStatus("ACCEPTED");
+        }
     }
 
     @Then("viene inviata una nuova notifica bonaria con content type non valido")
@@ -509,6 +531,7 @@ public class PresaInCaricoNoticaBonariaSteps {
         }
         savedIun = statusResponse.getIun();
         sharedSteps.setNotificationIun(savedIun);
+        sendSharedContext.getInformalNotificationContext().setIun(savedIun);
         lastException = null;
     }
 
@@ -644,17 +667,14 @@ public void verifyErrorAndMessage(int expectedStatus, String expectedErrorCode) 
 
             String value = data.get("group");
 
-            //NULL esplicito → null
+            //NULL esplicito → null, senza fallback
             if ("NULL".equalsIgnoreCase(value)) {
                 data.put("group", null);
                 return;
             }
-            // vuoto → fallback API
-            if (value == null || value.trim().isEmpty()) {
-                data.put("group", currentGroupId);
-                return;
-            }
-            //valore reale → lascia così
+            // vuoto/assente → fallback API, valore reale → lascia così
+            String resolvedValue = StringUtils.resolveValue(value);
+            data.put("group", resolvedValue != null ? resolvedValue : currentGroupId);
             return;
         }
         //CHIAVE ASSENTE → fallback API

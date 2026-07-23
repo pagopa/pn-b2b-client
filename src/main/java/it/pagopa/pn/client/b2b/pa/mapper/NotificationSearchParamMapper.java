@@ -56,6 +56,8 @@ public class NotificationSearchParamMapper {
 
 //        String iun = resolveWithDefault(data, "iunMatch", null, dynamicValueResolver);
         searchParam.iunMatch = resolveWithDefault(data, "iunMatch", null, dynamicValueResolver);
+        searchParam.viewed = Boolean.parseBoolean(resolveWithDefault(data, "viewed", "false", dynamicValueResolver));
+        searchParam.delivered = Boolean.parseBoolean(resolveWithDefault(data, "delivered", "false", dynamicValueResolver));
 
         return searchParam;
     }

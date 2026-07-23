@@ -10,6 +10,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.LegalN
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.TimelineElementV28;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.NotificationStatusV26;
+import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
 import it.pagopa.pn.client.b2b.pa.domain.NotificationSearchParam;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV28;
@@ -662,6 +663,8 @@ public class RicezioneNotificheWebDelegheSteps {
     private Integer notificationSearchResponseCount;
     private FullNotificationSearchResponse notificationSearchResponseFull;
     private LegalNotificationSearchResponse notificationSearchResponseLegal;
+    private NotificationSearchParam lastDestinatarioSearchParam;
+    private Destinatario lastDestinatarioSearched;
 
     @And("{string} visualizza l'elenco delle notifiche per comune {string}")
     public void notificationCanBeCorrectlyReadFromAtPa(String recipient, String paName, @Transpose NotificationSearchParam searchParam) {
@@ -669,9 +672,12 @@ public class RicezioneNotificheWebDelegheSteps {
         sharedSteps.selectUser(recipient);
 //        setRequiredAPI(isUseB2BFlag);
         NotificationStatusV26 notificationStatus = searchParam.status != null ? NotificationStatusV26.valueOf(searchParam.status) : null;
+        notificationSearchResponseLegal = null;
+        lastDestinatarioSearchParam = searchParam;
+        lastDestinatarioSearched = sharedSteps.getDestinatarioRegistry().destinatario(recipient);
         try {
             this.notificationSearchResponseFull = webRecipientClient.searchReceivedNotification(
-                    sharedSteps.getDestinatarioRegistry().destinatario(recipient), searchParam);
+                    lastDestinatarioSearched, searchParam);
             this.notificationSearchResponseCount = notificationSearchResponseFull.getResultsPage().size();
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
@@ -685,17 +691,46 @@ public class RicezioneNotificheWebDelegheSteps {
         sharedSteps.selectUser(user);
 //        setRequiredAPI(isUseB2BFlag);
         NotificationStatusV26 notificationStatus = searchParam.status != null ? NotificationStatusV26.valueOf(searchParam.status) : null;
+        notificationSearchResponseFull = null;
+        lastDestinatarioSearchParam = searchParam;
         try {
             sendSharedContext.getMandateContext().setDelegate(sharedSteps.getDestinatarioRegistry().destinatario(user));
             sendSharedContext.getMandateContext().setDelegator(sharedSteps.getDestinatarioRegistry().destinatario(recipient));
+            lastDestinatarioSearched = sendSharedContext.getMandateContext().getDelegate();
 
             this.notificationSearchResponseLegal = webRecipientClient.searchReceivedDelegatedNotification(
-                    sendSharedContext.getMandateContext().getDelegate(), searchParam);
+                    lastDestinatarioSearched, searchParam);
             this.notificationSearchResponseCount = notificationSearchResponseLegal.getResultsPage().size();
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
             this.notificationError = e;
         }
+    }
+
+    @And("si sfogliano tutte le pagine della ricerca lato destinatario e si verifica che vengano raccolte almeno {int} notifiche")
+    public void sfogliaTutteLePagineLatoDestinatario(int minimumExpectedCount) {
+        int totalCollected;
+        if (notificationSearchResponseFull != null) {
+            totalCollected = notificationSearchResponseFull.getResultsPage().size();
+            while (Boolean.TRUE.equals(notificationSearchResponseFull.getMoreResult())
+                    && notificationSearchResponseFull.getNextPagesKey() != null && !notificationSearchResponseFull.getNextPagesKey().isEmpty()) {
+                lastDestinatarioSearchParam.setNextPagesKey(notificationSearchResponseFull.getNextPagesKey().get(0));
+                notificationSearchResponseFull = webRecipientClient.searchReceivedNotification(lastDestinatarioSearched, lastDestinatarioSearchParam);
+                totalCollected += notificationSearchResponseFull.getResultsPage().size();
+            }
+        } else if (notificationSearchResponseLegal != null) {
+            totalCollected = notificationSearchResponseLegal.getResultsPage().size();
+            while (Boolean.TRUE.equals(notificationSearchResponseLegal.getMoreResult())
+                    && notificationSearchResponseLegal.getNextPagesKey() != null && !notificationSearchResponseLegal.getNextPagesKey().isEmpty()) {
+                lastDestinatarioSearchParam.setNextPagesKey(notificationSearchResponseLegal.getNextPagesKey().get(0));
+                notificationSearchResponseLegal = webRecipientClient.searchReceivedDelegatedNotification(lastDestinatarioSearched, lastDestinatarioSearchParam);
+                totalCollected += notificationSearchResponseLegal.getResultsPage().size();
+            }
+        } else {
+            throw new IllegalStateException("Nessuna risposta di ricerca notifiche disponibile per sfogliare le pagine.");
+        }
+        Assertions.assertTrue(totalCollected >= minimumExpectedCount,
+                "Numero totale di notifiche raccolte sfogliando tutte le pagine: atteso almeno " + minimumExpectedCount + ", trovate " + totalCollected);
     }
 
     //TODO: insert recipientID da selfcare (si possono recuperare dai token)

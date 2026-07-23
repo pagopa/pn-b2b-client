@@ -43,18 +43,20 @@ public class TokenResolver {
         String resolve(SharedSteps sharedSteps, SendSharedContext sendSharedContext, int index);
     }
 
-    private static final Map<String, TokenValueResolver> DYNAMIC_TOKENS = Map.of(
-            ":group", (sharedSteps, sendSharedContext) -> sharedSteps.getNotificationStepInterface().getNotificationRequestGroup(),
-            ":mandateId", (sharedSteps, sendSharedContext) -> sharedSteps.getMandateId(),
-            ":actualIun", (sharedSteps, sendSharedContext) -> sharedSteps.getNotificationIun(),
-            ":sender", (sharedSteps, sendSharedContext) -> sharedSteps.getSentNotificationLastVersion().getSenderDenomination(),
-            ":senderId", (sharedSteps, sendSharedContext) -> sharedSteps.getSentNotificationLastVersion().getSenderPaId(),
-            ":recipientId", (sharedSteps, sendSharedContext) -> sharedSteps.getSentNotificationLastVersion().getRecipients().get(0).getTaxId(),
-            ":recipientUid", (sharedSteps, sendSharedContext) ->
+    private static final Map<String, TokenValueResolver> DYNAMIC_TOKENS = Map.ofEntries(
+            Map.entry(":group", (sharedSteps, sendSharedContext) -> sharedSteps.getNotificationStepInterface().getNotificationRequestGroup()),
+            Map.entry(":mandateId", (sharedSteps, sendSharedContext) -> sharedSteps.getMandateId()),
+            Map.entry(":actualIun", (sharedSteps, sendSharedContext) -> sharedSteps.getNotificationIun()),
+            Map.entry(":sender", (sharedSteps, sendSharedContext) -> sharedSteps.getSentNotificationLastVersion().getSenderDenomination()),
+            Map.entry(":senderId", (sharedSteps, sendSharedContext) -> sharedSteps.getSentNotificationLastVersion().getSenderPaId()),
+            Map.entry(":recipientId", (sharedSteps, sendSharedContext) -> sharedSteps.getSentNotificationLastVersion().getRecipients().get(0).getTaxId()),
+            Map.entry(":recipientUid", (sharedSteps, sendSharedContext) ->
                     sendSharedContext.getLegalNotificationContext().getRecipient().getDestinatario().getRecipientType()
-                    + "-" + sendSharedContext.getLegalNotificationContext().getRecipient().getDestinatario().getUid(),
-            ":informal_recipientId", (sharedSteps, sendSharedContext) -> sendSharedContext.getInformalNotificationContext().getRecipient().getDestinatario().getTaxId(),
-            ":informal_senderId", (sharedSteps, sendSharedContext) -> sendSharedContext.getInformalNotificationContext().getSenderId()
+                    + "-" + sendSharedContext.getLegalNotificationContext().getRecipient().getDestinatario().getUid()),
+            Map.entry(":informal_recipientId", (sharedSteps, sendSharedContext) -> sendSharedContext.getInformalNotificationContext().getRecipient().getDestinatario().getTaxId()),
+            Map.entry(":informal_senderId", (sharedSteps, sendSharedContext) -> sendSharedContext.getInformalNotificationContext().getSenderId()),
+            Map.entry(":informal_group", (sharedSteps, sendSharedContext) -> sendSharedContext.getInformalNotificationContext().getGroupId()),
+            Map.entry(":informal_iun", (sharedSteps, sendSharedContext) -> sendSharedContext.getInformalNotificationContext().getIun())
     );
 
     private static final Map<String, IndexedTokenValueResolver> INDEXED_DYNAMIC_TOKENS = Map.of(

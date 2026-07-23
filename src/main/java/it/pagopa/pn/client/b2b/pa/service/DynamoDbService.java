@@ -36,6 +36,7 @@ public class DynamoDbService {
             case NOTIFICATION_REWORKS -> queryWithoutFilters(tableName, "iun", attributeValues);
             case IO_CONNECTOR_REQUESTS -> queryWithoutFilters(tableName, "requestId", attributeValues);
             case NOTIFICATION_DELIVERY_COST -> queryWithoutFilters(tableName, List.of("pk", "sk"), attributeValues);
+            case NOTIFICATIONS_METADATA -> queryWithoutFilters(tableName, "iun_recipientId", attributeValues);
             //query WITH sorting
             case BATCH_REQUESTS_WITH_INDEX_SEND_STATUS ->
                     buildBatchRequestsBySendStatusAndLastReservedAfter(attributeValues);

@@ -1,24 +1,46 @@
 Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
 
-#  @informalNotificationsMessageAttachment
-#  Scenario: [NOTIFICHE_BONARIE_05_1] Come ente mittente Recupero i documenti di una notifica bonaria
-#    Given mittente della notifica bonaria: "Comune_Multi"
-#    And viene creata una nuova notifica bonaria con i seguenti parametri
-#      | campaignId | campaign-1 |
-#    And destinatario della notifica bonaria
-#      | recipientType | PF                |
-#      | taxId         | FRMTTR76M06B715E  |
-#      | denomination  | Ettore Fieramosca |
-#      | messageId     | ${IT}             |
-#    When viene inviata una nuova notifica bonaria
-#    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
-#    And si tenta il recupero documento della notifica bonaria
-#    Then il download risulta correttamente effettuato
+    #######################
+    # SCENARIO 1 - Verifica nuovi dati sulla tabella pn-NotificationsMetadata
+    #######################
 
+  #CASO DI TEST 1.1
+  @letturaDestinatarioPA
+  Scenario: [DYNAMO_NOTIFICATIONS_METADATA_1] Verifica gli attributi communicationType/campaignId/viewed/delivered/desiredFeedback su pn-NotificationsMetadata
+    Given viene generata una nuova notifica
+      | subject            | invio notifica GA cucumber |
+      | senderDenomination | Comune di Palermo          |
+    And destinatario Mario Gherkin e:
+      | payment_pagoPaForm | SI               |
+      | payment_f24        | PAYMENT_F24_FLAT |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And si verifica sulla tabella pn-NotificationsMetadata che per lo IUN ":actualIun" e il destinatario con taxId ":recipientId" di tipo "PF" gli attributi siano:
+      | communicationType | LEGAL |
+      | campaignId        | $NULL |
+      | viewed            | $NULL |
+      | delivered         | $NULL |
+      | desiredFeedback   | $NULL |
+#
+    Given mittente della notifica bonaria: "Comune_Multi"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | SoricalMessaMora |
+    And destinatario della notifica bonaria
+      | recipientType | PF               |
+      | taxId         | FRMTTR76M06B715E |
+      | denomination  | Mario Cucumber   |
+      | messageId     | ${IT}            |
+    When viene inviata una nuova notifica bonaria
+    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    And si verifica sulla tabella pn-NotificationsMetadata che per lo IUN ":informal_iun" e il destinatario con taxId ":informal_recipientId" di tipo "PF" gli attributi siano:
+      | communicationType | INFORMAL         |
+      | campaignId        | SoricalMessaMora |
+      | viewed            | BOOLEAN          |
+      | delivered         | BOOLEAN          |
+      | desiredFeedback   | BOOLEAN          |
 
 
   #CASO DI TEST 2.1 - tutti i campi (obbligatori e opzionali) valorizzati correttamente
-  @letturaDestinatario
+  @letturaDestinatarioPA
   Scenario: [MITTENTE_RICERCA_NOTIFICHE_1_A] Come mittente recupero le notifiche inviate filtrando per tutti i campi obbligatori e opzionali
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
@@ -27,49 +49,65 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
       | payment_pagoPaForm | SI               |
       | payment_f24        | PAYMENT_F24_FLAT |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And vengono recuperate le notifiche inviate dal mittente "Comune_Multi"
-      | startDate | 2026-07-07 |
-      | endDate   | 2026-07-09 |
-#      | communicationType | INFORMAL   |
-      | size      | 50         |
-      | senderId  | :senderId  |
+      | startDate         | $DATE_ADD(-1D) |
+      | endDate           | $DATE_ADD(1D)  |
+      | communicationType | LEGAL          |
+      | size              | 50             |
+      | senderId          | :senderId      |
     And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
-      | sentAt   | 2026-07-07, 2026-07-09 |
-      | senderId | :senderId              |
+      | communicationType | LEGAL                         |
+      | sentAt            | $DATE_ADD(-1D), $DATE_ADD(1D) |
+      | sender            | Comune di Palermo             |
     And vengono recuperate le notifiche inviate dal mittente "Comune_Multi"
-      | sentAt      | 2026-07-07, 2026-07-09 |
-#      | communicationType | INFORMAL               |
-      | size        | 50                     |
-      | senderId    | :senderId              |
-      | recipientId | :recipientId           |
+      | sentAt            | $DATE_ADD(-1D), $DATE_ADD(1D) |
+      | communicationType | LEGAL                         |
+      | size              | 50                            |
+      | senderId          | :senderId                     |
+      | recipientId       | :recipientId                  |
     And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
-      | sentAt      | 2026-07-07, 2026-07-09 |
-      | senderId    | :senderId              |
-      | recipientId | :recipientId           |
+      | communicationType | LEGAL                         |
+      | sentAt            | $DATE_ADD(-1D), $DATE_ADD(1D) |
+      | sender            | Comune di Palermo             |
+      | recipients        | CLMCST42R12D969Z              |
     And vengono recuperate le notifiche inviate dal mittente "Comune_Multi"
-      | sentAt   | 2026-07-07, 2026-07-09 |
-#      | communicationType | INFORMAL               |
-      | size     | 50                     |
-      | senderId | :senderId              |
-      | iunMatch | :actualIun             |
+      | communicationType | LEGAL                         |
+      | sentAt            | $DATE_ADD(-1D), $DATE_ADD(1D) |
+      | size              | 50                            |
+      | senderId          | :senderId                     |
+      | iunMatch          | :actualIun                    |
     And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
-      | sentAt | 2026-07-07, 2026-07-09 |
-      | sender | :senderId              |
-      | iun    | :actualIun             |
+      | communicationType | LEGAL                         |
+      | sentAt            | $DATE_ADD(-1D), $DATE_ADD(1D) |
+      | sender            | Comune di Palermo             |
+      | iun               | :actualIun                    |
     And vengono recuperate le notifiche inviate dal mittente "Comune_Multi"
-      | sentAt   | 2026-07-07, 2026-07-09 |
-#      | communicationType | INFORMAL               |
-      | size     | 50                     |
-      | senderId | :senderId              |
-      | status   | EFFECTIVE_DATE         |
+      | communicationType | LEGAL                         |
+      | sentAt            | $DATE_ADD(-1D), $DATE_ADD(1D) |
+      | size              | 50                            |
+      | senderId          | :senderId                     |
+      | status            | EFFECTIVE_DATE                |
+    # si verifica che anche passando communicationType=INFORMAL vengano recuperate le notifiche inviate dal mittente "Comune_Multi" con communicationType=LEGAL
     And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
-      | sentAt             | 2026-07-07, 2026-07-09 |
-      | sender             | :senderId              |
-      | notificationStatus | EFFECTIVE_DATE         |
+      | communicationType  | LEGAL                         |
+      | sentAt             | $DATE_ADD(-1D), $DATE_ADD(1D) |
+      | sender             | Comune di Palermo             |
+      | notificationStatus | EFFECTIVE_DATE                |
+    And vengono recuperate le notifiche inviate dal mittente "Comune_Multi"
+      | communicationType | INFORMAL                      |
+      | sentAt            | $DATE_ADD(-1D), $DATE_ADD(1D) |
+      | size              | 50                            |
+      | senderId          | :senderId                     |
+      | status            | EFFECTIVE_DATE                |
+    And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
+      | communicationType  | LEGAL                         |
+      | sentAt             | $DATE_ADD(-1D), $DATE_ADD(1D) |
+      | sender             | Comune di Palermo             |
+      | notificationStatus | EFFECTIVE_DATE                |
 
-  @letturaDestinatario
+  @letturaDestinatarioPA
   Scenario: [MITTENTE_RICERCA_NOTIFICHE_1_B] Viene creata una notifica legale con due destinatari e si verifica che venga ritornata una sola notifica
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
@@ -82,19 +120,19 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And vengono recuperate le notifiche inviate dal mittente "Comune_Multi"
-      | sentAt   | 2026-07-21, 2026-07-22 |
+      | sentAt   | $DATE_ADD(-1D), $DATE_ADD(1D) |
 #      | communicationType | INFORMAL               |
-      | size     | 50                     |
-      | senderId | :senderId              |
-      | iunMatch | :actualIun             |
+      | size     | 50                            |
+      | senderId | :senderId                     |
+      | iunMatch | :actualIun                    |
     And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
-      | sentAt     | 2026-07-21, 2026-07-22 |
-      | sender     | Comune di Palermo      |
-      | iun        | :actualIun             |
-      | itemsFound | 1                      |
+      | sentAt     | $DATE_ADD(-1D), $DATE_ADD(1D) |
+      | sender     | Comune di Palermo             |
+      | iun        | :actualIun                    |
+      | itemsFound | 1                             |
 
 
-  @letturaDestinatario
+  @letturaDestinatarioPA
   Scenario: [MITTENTE_RICERCA_NOTIFICHE_1_C] Viene inviata una notifica legale con gruppo e si recuperano le notifiche inviate dal mittente filtrando per gruppo
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
@@ -104,18 +142,18 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
       | payment_f24        | PAYMENT_F24_FLAT |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono recuperate le notifiche inviate dal mittente "Comune_Multi"
-      | startDate         | 2026-07-07 |
-      | endDate           | 2026-07-09 |
-      | communicationType | INFORMAL   |
-      | size              | 50         |
-      | senderId          | :senderId  |
-      | xPagopaPnCxGroups | :group     |
+      | startDate         | $DATE_ADD(-1D) |
+      | endDate           | $DATE_ADD(1D)  |
+      | communicationType | INFORMAL       |
+      | size              | 50             |
+      | senderId          | :senderId      |
+      | xPagopaPnCxGroups | :group         |
     And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
-      | sentAt            | 2026-07-07, 2026-07-09 |
-      | xPagopaPnCxGroups | :group                 |
+      | sentAt | $DATE_ADD(-1D), $DATE_ADD(1D) |
+      | group  | CONSISTENT                    |
 
 
-  @letturaDestinatario
+  @letturaDestinatarioPA
   Scenario Outline: [MITTENTE_RICERCA_NOTIFICHE_1_D] Si tenta il recupero delle notifiche inviate dal mittente quando manca un campo obbligatorio
     And vengono recuperate le notifiche inviate dal mittente "Comune_Multi"
       | <campo> | $NULL |
@@ -129,63 +167,198 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
       | endDate         |
 
 
+  #CASO DI TEST 2.2 - ricerca per specifico destinatario persona giuridica
+  @letturaDestinatarioPA
+  Scenario: [MITTENTE_RICERCA_NOTIFICHE_1_E] Come mittente recupero le notifiche inviate filtrando per uno specifico destinatario persona giuridica
+    Given viene generata una nuova notifica
+      | subject            | invio notifica GA cucumber |
+      | senderDenomination | Comune di Palermo          |
+    And destinatario GherkinSrl
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono recuperate le notifiche inviate dal mittente "Comune_Multi"
+      | sentAt      | $DATE_ADD(-1D), $DATE_ADD(1D) |
+      | size        | 50                            |
+      | senderId    | :senderId                     |
+      | recipientId | :recipientId                  |
+    And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
+      | sentAt     | $DATE_ADD(-1D), $DATE_ADD(1D) |
+      | recipients | :recipientId_0                |
+
+
+  #CASO DI TEST 2.1/2.2 - paginazione con più risultati
+  @letturaDestinatarioPA
+  Scenario: [MITTENTE_RICERCA_NOTIFICHE_1_F] Come mittente recupero le notifiche inviate sfogliando tutte le pagine dei risultati
+    Given vengono create 5 notifiche con destinatario Mario Gherkin per la pa "Comune_Multi" e si aspetta che raggiungano l'elemento di timeline della notifica "REQUEST_ACCEPTED"
+      | subject            | invio notifica paginazione |
+      | senderDenomination | Comune di Palermo          |
+    And vengono recuperate le notifiche inviate dal mittente "Comune_Multi"
+      | sentAt   | $DATE_ADD(-1D), $DATE_ADD(1D) |
+      | size     | 1                             |
+      | senderId | :senderId                     |
+    And si sfogliano tutte le pagine della ricerca lato mittente e si verifica che vengano raccolte almeno 5 notifiche
+
+
     #######################
     # Comunicazioni Bonarie
     #######################
 
-  @letturaDestinatario
+  @letturaDestinatarioPA
   Scenario: [MITTENTE_RICERCA_NOTIFICHE_BONARIE_2.A] Vengono inviate due notifiche bonarie con esiti differenti
   e si recuperano le notifiche inviate dal mittente filtrando per specifici criteri
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con i seguenti parametri
       | campaignId | SoricalMessaMora |
     And destinatario della notifica bonaria
-      | recipientType | PF               |
-      | taxId         | FRMTTR76M06B715E |
-      | denomination  | Mario Cucumber   |
-      | messageId     | ${IT}            |
+      | messageId       | ${IT}             |
+      | subject         | Test workflow     |
+      | recipientType   | PF                |
+      | taxId           | FRMTTR76M06B715E  |
+      | denomination    | Ettore Fieramosca |
+      | email           | NULL              |
+      | digitalDomicile | NULL              |
     When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+#    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    #Da aggiungere lo step per leggere gli eventi fino all'elemento di timeline della notifica "UNDELIVERABLE"
+    #tramite API /received implementato in un nuovo branch
+    #And si verifica che la notifica bonaria sia in stato "COMPLETED_REACHED"
 
     And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | campaign-4 |
+      | campaignId | SoricalFattOrd |
     And destinatario della notifica bonaria
-      | recipientType | PF               |
-      | taxId         | FRMTTR76M06B715E |
-      | denomination  | Mario Cucumber   |
-      | messageId     | ${IT}            |
+      | messageId       | ${IT}             |
+      | subject         | Test workflow     |
+      | recipientType   | PF                |
+      | taxId           | FRMTTR76M06B715E  |
+      | denomination    | Ettore Fieramosca |
+      | email           | NULL              |
+      | digitalDomicile | NULL              |
     When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "REFUSED"
+#    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    #Da aggiungere lo step per leggere gli eventi fino all'elemento di timeline della notifica "UNDELIVERABLE"
+    #tramite API /received implementato in un nuovo branch
+    #And si verifica che la notifica bonaria sia in stato "UNDELIVERABLE"
 
     And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
-      | startDate  | 2026-07-07         |
-      | endDate    | 2026-07-09         |
-      | campaignId | campaign-1         |
+      | startDate  | $DATE_ADD(-1D)     |
+      | endDate    | $DATE_ADD(1D)      |
+      | campaignId | SoricalMessaMora   |
       | senderId   | :informal_senderId |
       | size       | 50                 |
     And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
-      | sentAt     | 2026-07-07, 2026-07-09 |
-      | campaignId | campaign-1             |
+      | sentAt     | $DATE_ADD(-1D), $DATE_ADD(1D) |
+      | campaignId | SoricalMessaMora              |
+    #    ricerca per specifico stato
     And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
-      | startDate | 2026-07-07         |
-      | endDate   | 2026-07-09         |
-      | status    | REFUSED            |
-      | senderId  | :informal_senderId |
-      | size      | 50                 |
+      | startDate  | $DATE_ADD(-1D)     |
+      | endDate    | $DATE_ADD(1D)      |
+      | campaignId | SoricalMessaMora   |
+      | status     | COMPLETED_REACHED  |
+      | senderId   | :informal_senderId |
+      | size       | 50                 |
     And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
-      | sentAt             | 2026-07-07, 2026-07-09 |
-      | notificationStatus | REFUSED                |
+      | sentAt             | $DATE_ADD(-1D), $DATE_ADD(1D) |
+      | notificationStatus | COMPLETED_REACHED             |
+    #    ricerca per specifico stato UNDELIVERABLE
+    And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
+      | startDate  | $DATE_ADD(-1D)     |
+      | endDate    | $DATE_ADD(1D)      |
+      | campaignId | SoricalFattOrd     |
+      | status     | UNDELIVERABLE      |
+      | senderId   | :informal_senderId |
+      | size       | 50                 |
+      | viewed     | false              |
+      | delivered  | false              |
+    And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
+      | sentAt             | $DATE_ADD(-1D), $DATE_ADD(1D) |
+      | notificationStatus | UNDELIVERABLE                 |
+      | campaignId         | SoricalFattOrd                |
+      | viewed             | false                         |
+      | delivered          | false                         |
 #    ricerca per specifico esito
     And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
-      | startDate | 2026-07-07 |
-      | endDate   | 2026-07-09 |
-      | delivered | true       |
-      | size      | 50         |
+      | startDate  | $DATE_ADD(-1D)     |
+      | endDate    | $DATE_ADD(1D)      |
+      | campaignId | SoricalFattOrd     |
+      | senderId   | :informal_senderId |
+      | delivered  | true               |
+      | size       | 50                 |
     And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
-      | sentAt    | 2026-07-07, 2026-07-09 |
-      | delivered | true                   |
+      | sentAt    | $DATE_ADD(-1D), $DATE_ADD(1D) |
+      | delivered | true                          |
 
-  @letturaDestinatario
+#    ricerca per specifico destinatario PF e specifica campagna
+    And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
+      | startDate   | $DATE_ADD(-1D)        |
+      | endDate     | $DATE_ADD(1D)         |
+      | campaignId  | SoricalMessaMora      |
+      | recipientId | :informal_recipientId |
+      | senderId    | :informal_senderId    |
+      | size        | 50                    |
+    And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
+      | sentAt     | $DATE_ADD(-1D), $DATE_ADD(1D) |
+      | campaignId | SoricalMessaMora              |
+      | recipients | :informal_recipientId         |
+
+    Given mittente della notifica bonaria: "Comune_Multi"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | SoricalFattOrd |
+    And destinatario della notifica bonaria
+      | recipientType   | PG            |
+      | taxId           | 12666810299   |
+      | denomination    | GherkinSrlB2B |
+      | messageId       | ${IT}         |
+      | digitalDomicile | tu@gmail.com  |
+    When viene inviata una nuova notifica bonaria
+    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+#    ricerca per specifico destinatario PG e specifica campagna
+    And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
+      | startDate   | $DATE_ADD(-1D)        |
+      | endDate     | $DATE_ADD(1D)         |
+      | campaignId  | SoricalFattOrd        |
+      | recipientId | :informal_recipientId |
+      | senderId    | :informal_senderId    |
+      | size        | 50                    |
+    And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
+      | sentAt     | $DATE_ADD(-1D), $DATE_ADD(1D) |
+      | campaignId | SoricalFattOrd                |
+      | recipients | :informal_recipientId         |
+#    ricerca per specifica campagna e specifico IUN
+    And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
+      | startDate  | $DATE_ADD(-1D)     |
+      | endDate    | $DATE_ADD(1D)      |
+      | campaignId | SoricalFattOrd     |
+      | iunMatch   | :informal_iun      |
+      | senderId   | :informal_senderId |
+      | size       | 50                 |
+    And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
+      | sentAt | $DATE_ADD(-1D), $DATE_ADD(1D) |
+      | iun    | :informal_iun                 |
+#    ricerca per specifico gruppo
+    And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
+      | startDate         | $DATE_ADD(-1D)     |
+      | endDate           | $DATE_ADD(1D)      |
+      | campaignId        | SoricalFattOrd     |
+      | xPagopaPnCxGroups | :informal_group    |
+      | senderId          | :informal_senderId |
+      | size              | 50                 |
+    And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
+      | sentAt | $DATE_ADD(-1D), $DATE_ADD(1D) |
+      | group  | CONSISTENT                    |
+
+
+  #CASO DI TEST 3.2 - paginazione con più risultati
+  @letturaDestinatarioPA
+  Scenario: [MITTENTE_RICERCA_NOTIFICHE_BONARIE_2.C] Come mittente recupero le notifiche bonarie inviate sfogliando tutte le pagine dei risultati
+    Given vengono create 5 notifiche bonarie per la pa "Comune_Multi" con campagna "SoricalMessaMora"
+    And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
+      | startDate  | $DATE_ADD(-1D)     |
+      | endDate    | $DATE_ADD(1D)      |
+      | campaignId | SoricalMessaMora   |
+      | size       | 1                  |
+      | senderId   | :informal_senderId |
+    And si sfogliano tutte le pagine della ricerca lato mittente e si verifica che vengano raccolte almeno 5 notifiche
+
+  @letturaDestinatarioPA
   Scenario Outline: [MITTENTE_RICERCA_NOTIFICHE_BONARIE_2.B] Si tenta il recupero delle notifiche bonarie inviate dal mittente quando manca un campo obbligatorio
     And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
       | <campo> | $NULL |
@@ -198,4 +371,84 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
       | startDate       |
       | endDate         |
       | campaignId      |
+
+
+    #######################
+    # SCENARIO 6 - Ricerca notifiche da parte di servicedesk - NRT
+    #######################
+
+  #CASO DI TEST 6.1/6.2 - ricerca per mittente e destinatario persona fisica, con filtro gruppo
+  @letturaDestinatarioPA
+  Scenario: [SERVICEDESK_RICERCA_NOTIFICHE_1] Il servicedesk recupera le notifiche legali filtrando per mittente, destinatario persona fisica e gruppo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica GA cucumber |
+      | senderDenomination | Comune di Palermo          |
+    And destinatario Mario Gherkin e:
+      | payment_pagoPaForm | SI               |
+      | payment_f24        | PAYMENT_F24_FLAT |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono recuperate le notifiche da servicedesk
+      | startDate         | $DATE_ADD(-1D) |
+      | endDate           | $DATE_ADD(1D)  |
+#      | recipientId       | :recipientUid   |
+      | recipientIdOpaque | false          |
+      | senderId          | :senderId      |
+      | status            | ACCEPTED       |
+      | cxType            | PF             |
+      | size              | 50             |
+    And l'elenco delle notifiche recuperate da servicedesk rispettare i seguenti criteri:
+      | sender | Comune di palermo |
+    And vengono recuperate le notifiche da servicedesk
+      | startDate   | $DATE_ADD(-1D) |
+      | endDate     | $DATE_ADD(1D)  |
+      | recipientId | :recipientUid  |
+      | size        | 50             |
+    And l'elenco delle notifiche recuperate da servicedesk rispettare i seguenti criteri:
+      | sender     | Comune di palermo |
+      | recipients | CLMCST42R12D969Z  |
+
+
+  #CASO DI TEST 6.2 - ricerca per mittente e destinatario persona giuridica
+  @letturaDestinatarioPA
+  Scenario: [SERVICEDESK_RICERCA_NOTIFICHE_2] Il servicedesk recupera le notifiche legali filtrando per mittente e destinatario persona giuridica
+    Given viene generata una nuova notifica
+      | subject            | invio notifica GA cucumber |
+      | senderDenomination | Comune di Palermo          |
+    And destinatario GherkinSrl
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono recuperate le notifiche da servicedesk
+      | startDate         | $DATE_ADD(-1D) |
+      | endDate           | $DATE_ADD(1D)  |
+      | recipientIdOpaque | false          |
+      | senderId          | :senderId      |
+      | cxType            | PG             |
+      | size              | 50             |
+    And l'elenco delle notifiche recuperate da servicedesk rispettare i seguenti criteri:
+      | sender | Comune di palermo |
+
+
+  #CASO DI TEST 6.2 - paginazione con più risultati
+  @letturaDestinatarioPA
+  Scenario: [SERVICEDESK_RICERCA_NOTIFICHE_3] Il servicedesk recupera le notifiche legali sfogliando tutte le pagine dei risultati
+    Given vengono create 5 notifiche con destinatario Mario Gherkin per la pa "Comune_Multi" e si aspetta che raggiungano l'elemento di timeline della notifica "REQUEST_ACCEPTED"
+      | subject            | invio notifica paginazione |
+      | senderDenomination | Comune di Palermo          |
+    And vengono recuperate le notifiche da servicedesk
+      | startDate   | $DATE_ADD(-1D) |
+      | endDate     | $DATE_ADD(1D)  |
+      | recipientId | :recipientUid  |
+      | size        | 1              |
+    And si sfogliano tutte le pagine della ricerca da servicedesk e si verifica che vengano raccolte almeno 5 notifiche
+
+
+  #CASO DI TEST 6.1 - campo obbligatorio non valorizzato -> 400 KO
+  @letturaDestinatarioPA
+  Scenario Outline: [SERVICEDESK_RICERCA_NOTIFICHE_4] Il servicedesk non riesce a recuperare le notifiche se manca un campo obbligatorio
+    And vengono recuperate le notifiche da servicedesk
+      | <campo> | $NULL |
+    Then si verifica che la ricerca notifiche da servicedesk abbia prodotto un errore di tipo "BAD REQUEST"
+    Examples:
+      | campo     |
+      | startDate |
+      | endDate   |
 

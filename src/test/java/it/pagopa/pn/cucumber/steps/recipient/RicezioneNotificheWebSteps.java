@@ -13,6 +13,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.common.util.DateUtils;
 import it.pagopa.common.util.StringUtils;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullNotificationSearchResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullNotificationSearchRow;
@@ -32,6 +33,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.generate.model.external
 import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.CxLanguage;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
+import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.pa.domain.NotificationSearchParam;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
@@ -57,7 +59,6 @@ import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotification;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
 import it.pagopa.pn.client.web.generated.openapi.clients.informal.web.pa.model.InformalNotificationSearchResponse;
 import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.LegalNotificationSearchResponse;
-import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.LegalNotificationSearchRow;
 import it.pagopa.pn.cucumber.steps.SendSharedContext;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
@@ -73,6 +74,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.client.HttpStatusCodeException;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 import java.io.ByteArrayInputStream;
 import java.time.LocalDate;
@@ -316,10 +319,13 @@ public class RicezioneNotificheWebSteps {
 
     private LegalNotificationSearchResponse notificationSearchResponse;
     private InformalNotificationSearchResponse informalNotificationSearchResponse;
+    private NotificationSearchParam lastMittenteSearchParam;
 
     @And("vengono recuperate le notifiche inviate dal mittente {string}")
     public void vengonoRecuperateLeNotificheInviateDalMittente(String sender, @Transpose NotificationSearchParam searchParam) {
         selectPa(sender);
+        informalNotificationSearchResponse = null;
+        lastMittenteSearchParam = searchParam;
         try {
         notificationSearchResponse = b2BSenderReadClient.searchSentNotification(searchParam);
         } catch (HttpStatusCodeException e) {
@@ -329,11 +335,40 @@ public class RicezioneNotificheWebSteps {
 
     @And("vengono recuperate le notifiche bonarie inviate dal mittente {string}")
     public void vengonoRecuperateLeNotificheBonarieInviateDalMittente(String sender, @Transpose NotificationSearchParam searchParam) {
+        notificationSearchResponse = null;
+        lastMittenteSearchParam = searchParam;
         try {
             informalNotificationSearchResponse = b2BSenderReadClient.searchInformalSentNotification(searchParam);
         } catch (HttpStatusCodeException e) {
             notificationError = e;
         }
+    }
+
+    @And("si sfogliano tutte le pagine della ricerca lato mittente e si verifica che vengano raccolte almeno {int} notifiche")
+    public void sfogliaTutteLePagineLatoMittente(int minimumExpectedCount) {
+        int totalCollected;
+        if (notificationSearchResponse != null) {
+            totalCollected = notificationSearchResponse.getResultsPage().size();
+            while (Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())
+                    && notificationSearchResponse.getNextPagesKey() != null && !notificationSearchResponse.getNextPagesKey().isEmpty()) {
+                lastMittenteSearchParam.setNextPagesKey(notificationSearchResponse.getNextPagesKey().get(0));
+                notificationSearchResponse = b2BSenderReadClient.searchSentNotification(lastMittenteSearchParam);
+                totalCollected += notificationSearchResponse.getResultsPage().size();
+            }
+        } else if (informalNotificationSearchResponse != null) {
+            totalCollected = informalNotificationSearchResponse.getResultsPage().size();
+            while (Boolean.TRUE.equals(informalNotificationSearchResponse.getMoreResult())
+                    && informalNotificationSearchResponse.getNextPagesKey() != null && !informalNotificationSearchResponse.getNextPagesKey().isEmpty()) {
+                lastMittenteSearchParam.setNextPagesKey(informalNotificationSearchResponse.getNextPagesKey().get(0));
+                informalNotificationSearchResponse = b2BSenderReadClient.searchInformalSentNotification(lastMittenteSearchParam);
+                totalCollected += informalNotificationSearchResponse.getResultsPage().size();
+            }
+        } else {
+            throw new IllegalStateException("Nessuna risposta di ricerca notifiche disponibile per sfogliare le pagine.");
+        }
+        assertThat(totalCollected)
+                .as("Numero totale di notifiche raccolte sfogliando tutte le pagine")
+                .isGreaterThanOrEqualTo(minimumExpectedCount);
     }
 
     @And("lato mittente vengono letti i dettagli della notifica lato web {string}")
@@ -682,7 +717,7 @@ public class RicezioneNotificheWebSteps {
     }
 
     private OffsetDateTime toStartOfDayUtc(String rawDate) {
-        String resolvedDate = StringUtils.resolveValue(rawDate);
+        String resolvedDate = DateUtils.resolveDate(rawDate);
         if (resolvedDate == null) {
             return null;
         }
@@ -1364,9 +1399,66 @@ public class RicezioneNotificheWebSteps {
 
     @And("l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:")
     public void verifySenderNotificationSearchResponse(Map<String, String> criteria) {
-        List<LegalNotificationSearchRow> resultsPage = notificationSearchResponse.getResultsPage();
+        List<?> resultsPage;
+        if (notificationSearchResponse != null) {
+            resultsPage = notificationSearchResponse.getResultsPage();
+        } else if (informalNotificationSearchResponse != null) {
+            resultsPage = informalNotificationSearchResponse.getResultsPage();
+        } else {
+            throw new IllegalStateException("Nessuna risposta di ricerca notifiche disponibile per la verifica dei criteri.");
+        }
         Map<String, List<String>> resolvedCriteria = notificationSearchCriteriaMapper.build(criteria, new TokenResolver(sharedSteps, sendSharedContext));
         NotificationSearchRowAssertions.assertAllRowsMatchCriteria(resultsPage, resolvedCriteria);
+    }
+
+    @And("si verifica sulla tabella pn-NotificationsMetadata che per lo IUN {string} e il destinatario con taxId {string} di tipo {string} gli attributi siano:")
+    public void verifyNotificationsMetadataAttributes(String iun, String taxId, String recipientType, Map<String, String> expectedAttributes) {
+        TokenResolver tokenResolver = new TokenResolver(sharedSteps, sendSharedContext);
+        String resolvedIun = tokenResolver.resolve(iun);
+        String resolvedTaxId = tokenResolver.resolve(taxId);
+        String internalId = externalClient.getInternalIdFromTaxId(recipientType, resolvedTaxId);
+        String iunRecipientId = resolvedIun + "##" + internalId;
+
+        // Il record e i suoi attributi possono comparire su pn-NotificationsMetadata con un piccolo ritardo
+        Awaitility.await()
+                .atMost(2, TimeUnit.MINUTES)
+                .pollInterval(5, TimeUnit.SECONDS)
+                .ignoreExceptions()
+                .untilAsserted(() -> {
+                    QueryResponse queryResponse = dynamoDbService.call(DynamoTableName.NOTIFICATIONS_METADATA,
+                            Map.of(":v_iun_recipientId", AttributeValue.builder().s(iunRecipientId).build()));
+                    assertThat(queryResponse.items())
+                            .as("pn-NotificationsMetadata deve contenere esattamente un record per iun_recipientId '%s'", iunRecipientId)
+                            .hasSize(1);
+
+                    Map<String, AttributeValue> item = queryResponse.items().get(0);
+                    expectedAttributes.forEach((attributeName, expectedValue) -> assertNotificationsMetadataAttribute(item, attributeName, expectedValue));
+                });
+    }
+
+    /**
+     * "$NULL" (risolto tramite {@link StringUtils#resolveValue}) verifica che l'attributo sia assente,
+     * "BOOLEAN" verifica solo che sia presente e di tipo booleano (per gli attributi il cui valore
+     * concreto non è deterministico), qualunque altro valore è un confronto esatto.
+     */
+    private void assertNotificationsMetadataAttribute(Map<String, AttributeValue> item, String attributeName, String expectedValue) {
+        String resolvedExpectedValue = StringUtils.resolveValue(expectedValue);
+        if (resolvedExpectedValue == null) {
+            assertThat(item).as("L'attributo '%s' non deve essere presente su pn-NotificationsMetadata", attributeName).doesNotContainKey(attributeName);
+            return;
+        }
+        AttributeValue actualValue = item.get(attributeName);
+        assertThat(actualValue).as("L'attributo '%s' deve essere presente su pn-NotificationsMetadata", attributeName).isNotNull();
+        if ("BOOLEAN".equalsIgnoreCase(resolvedExpectedValue)) {
+            assertThat(actualValue.bool()).as("L'attributo '%s' deve essere valorizzato con un booleano", attributeName).isNotNull();
+            return;
+        }
+        String actualAsString = actualValue.s() != null ? actualValue.s()
+                : actualValue.bool() != null ? actualValue.bool().toString()
+                : actualValue.n();
+        assertThat(actualAsString)
+                .as("L'attributo '%s' su pn-NotificationsMetadata vale '%s': atteso '%s'", attributeName, actualAsString, resolvedExpectedValue)
+                .isEqualTo(resolvedExpectedValue);
     }
 
 }

@@ -35,4 +35,6 @@ public class NotificationSearchParam {
     public String nextPagesKey;
     public String communicationType;
     public String campaignId;
+    public boolean viewed;
+    public boolean delivered;
 }

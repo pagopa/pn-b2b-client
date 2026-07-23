@@ -493,6 +493,7 @@ public class SharedSteps {
 
     @And("destinatario {destinatario} e:")
     public void addDestinatarioWithParams(Destinatario destinatario, Map<String, String> data) {
+        sendSharedContext.getLegalNotificationContext().getRecipient().setDestinatario(destinatario);
         getNotificationStepInterface().addRecipientToNotification(destinatario, data);
     }
 
@@ -504,6 +505,7 @@ public class SharedSteps {
 
     @And("vengono create {int} notifiche con destinatario {destinatario} per la pa {string} e si aspetta che raggiungano l'elemento di timeline della notifica {string}")
     public void creaNotifiche(int notificationNumber, Destinatario destinatario, String pa, String timelineEvent, Map<String, String> data) throws IOException, InterruptedException {
+        sendSharedContext.getLegalNotificationContext().getRecipient().setDestinatario(destinatario);
         NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface();
         for (int i = 0; i < notificationNumber; i++) {
             prepareNotificationRequestWithVersion(MOST_RECENT, data);

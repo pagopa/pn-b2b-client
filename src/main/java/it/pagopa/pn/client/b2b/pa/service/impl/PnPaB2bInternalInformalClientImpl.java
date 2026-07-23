@@ -7,11 +7,14 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainforma
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.*;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.api.InternalOnlyApi;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.model.InformalSentNotificationV1;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.model.NotificationSearchResponse;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.model.NotificationStatusV26;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -85,6 +88,12 @@ public class PnPaB2bInternalInformalClientImpl {
 
     public InformalSentNotificationV1 getSentInformalNotification(String iun) {
         return internalOnlyApi.getSentInformalNotificationPrivateV1(iun);
+    }
+
+    public NotificationSearchResponse searchNotificationsPrivate(OffsetDateTime startDate, OffsetDateTime endDate, String recipientId, Boolean recipientIdOpaque,
+                                                                   String senderId, List<NotificationStatusV26> status, String mandateId, String cxType,
+                                                                   Integer size, String nextPagesKey) {
+        return internalOnlyApi.searchNotificationsPrivate(startDate, endDate, recipientId, recipientIdOpaque, senderId, status, mandateId, cxType, size, nextPagesKey);
     }
     public List<InformalPreLoadResponse> informalPresignedUploadRequest(String cxId, List<InformalPreLoadRequest> requests) {
         return newInformalNotificationApi.informalPresignedUploadRequest(operatorId, CxTypeAuthFleet.PA, cxId, requests);

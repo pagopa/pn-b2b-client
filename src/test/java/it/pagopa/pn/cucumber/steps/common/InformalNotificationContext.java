@@ -7,6 +7,8 @@ import lombok.Data;
 public class InformalNotificationContext {
     public InformalRecipientContext recipient = new InformalRecipientContext();
     public String senderId;
+    public String groupId;
+    public String iun;
 
 
     @Data
