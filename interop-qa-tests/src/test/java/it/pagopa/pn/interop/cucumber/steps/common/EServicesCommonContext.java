@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.common;
 
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.GracePeriodDays;
 import it.pagopa.pn.interop.cucumber.steps.DocumentMetadata;
 import lombok.Getter;
 import lombok.Setter;
@@ -54,6 +55,7 @@ public class EServicesCommonContext {
     private OffsetDateTime publicationTimestamp;
     private OffsetDateTime eServiceEditTimestamp;
     private OffsetDateTime descriptorArchivingRequestTimestamp;
+    private GracePeriodDays descriptorArchivingGracePeriodDays;
 
     public void addCertifiedAttributes(List<UUID> attributesIds) {
         this.certifiedAttributesIds.addAll(attributesIds);

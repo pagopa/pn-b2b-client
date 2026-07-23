@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.catalog.utils;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.ArchivingSchedule;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ArchivingScope;
+import it.pagopa.interop.generated.openapi.clients.bff.model.GracePeriodDays;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -13,7 +14,6 @@ import java.time.format.DateTimeParseException;
 import java.util.UUID;
 
 public class DescriptorArchivingScheduleVerifier {
-    private static final int GRACE_PERIOD_ARCHIVING_ESERVICE = 1;
     private static final Duration STARTED_AT_TOLERANCE = Duration.ofSeconds(5);
 
     private final ClientTokenConfigurator clientTokenConfigurator;
@@ -27,9 +27,11 @@ public class DescriptorArchivingScheduleVerifier {
         this.sharedStepsContext = sharedStepsContext;
     }
 
-    public void registerDescriptorArchivingRequestTimestamp() {
+    public void registerDescriptorArchivingRequestTimestamp(GracePeriodDays gracePeriodDays) {
         sharedStepsContext.getEServicesCommonContext()
                 .setDescriptorArchivingRequestTimestamp(OffsetDateTime.now(ZoneOffset.UTC));
+        sharedStepsContext.getEServicesCommonContext()
+                .setDescriptorArchivingGracePeriodDays(gracePeriodDays);
     }
 
     public void pollDescriptorWithoutArchivingSchedule(UUID eServiceId, UUID descriptorId) {
@@ -91,21 +93,29 @@ public class DescriptorArchivingScheduleVerifier {
 
         try {
             OffsetDateTime actualArchivableOn = OffsetDateTime.parse(archivableOn);
+            OffsetDateTime expectedArchivableOn = calculateExpectedArchivableOn();
             return ZoneOffset.UTC.equals(actualArchivableOn.getOffset())
-                    && calculateExpectedArchivableOn().isEqual(actualArchivableOn);
+                && expectedArchivableOn != null
+                && expectedArchivableOn.isEqual(actualArchivableOn);
         } catch (DateTimeParseException e) {
             return false;
         }
     }
 
     private OffsetDateTime calculateExpectedArchivableOn() {
+        GracePeriodDays gracePeriodDays = sharedStepsContext.getEServicesCommonContext()
+            .getDescriptorArchivingGracePeriodDays();
+        if (gracePeriodDays == null) {
+            return null;
+        }
+
         OffsetDateTime descriptorArchivingRequestTimestamp = sharedStepsContext.getEServicesCommonContext()
                 .getDescriptorArchivingRequestTimestamp();
         OffsetDateTime referenceTimestamp = descriptorArchivingRequestTimestamp != null
                 ? descriptorArchivingRequestTimestamp
                 : OffsetDateTime.now(ZoneOffset.UTC);
         return referenceTimestamp.toLocalDate()
-                .plusDays(GRACE_PERIOD_ARCHIVING_ESERVICE + 1L)
+            .plusDays(gracePeriodDays.getValue() + 1L)
                 .atStartOfDay()
                 .atOffset(ZoneOffset.UTC);
     }
