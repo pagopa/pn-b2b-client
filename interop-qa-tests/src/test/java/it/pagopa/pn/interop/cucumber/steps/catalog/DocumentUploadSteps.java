@@ -16,6 +16,7 @@ import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import org.springframework.core.io.Resource;
 
+import java.util.Locale;
 import java.util.UUID;
 
 public class DocumentUploadSteps {
@@ -111,6 +112,47 @@ public class DocumentUploadSteps {
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().createEServiceDocument(eServicesCommonContext.getEserviceId(),
                         eServicesCommonContext.getDescriptorId(), "DOCUMENT", prettyName, resource)
+        );
+    }
+
+    // PIN-9920 PST 2.1 - serverUrls description handling in e-service interface documents
+    @When("l'utente carica un'interfaccia {string} con serverUrls che contengono descrizione")
+    public void uploadInterfaceWithServerUrlDescription(String apiType) {
+        uploadInterface(apiType, "interface-with-description.yaml");
+    }
+
+    @When("l'utente carica un'interfaccia {string} con serverUrls senza descrizione")
+    public void uploadInterfaceWithoutServerUrlDescription(String apiType) {
+        uploadInterface(apiType, "interface-without-description.yaml");
+    }
+
+    @When("l'utente carica un'interfaccia {string} con serverUrls array vuoto")
+    public void uploadInterfaceWithEmptyServerUrls(String apiType) {
+        uploadInterface(apiType, "interface-empty-servers.yaml");
+    }
+
+    @When("l'utente carica un'interfaccia {string} senza serverUrls")
+    public void uploadInterfaceWithoutServerUrls(String apiType) {
+        uploadInterface(apiType, "interface-missing-servers.yaml");
+    }
+
+    @When("l'utente carica un'interfaccia {string} con serverUrls che contengono una descrizione di lunghezza eccedente il limite")
+    public void uploadInterfaceWithLongUrlDescription(String apiType) {
+        uploadInterface(apiType, "interface-with-long-description.yaml");
+    }
+
+    private void uploadInterface(String apiType, String fileName) {
+        String normalizedApiType = apiType == null ? "" : apiType.trim().toUpperCase(Locale.ROOT);
+        if (!"REST".equals(normalizedApiType) && !"SOAP".equals(normalizedApiType)) {
+            throw new IllegalArgumentException("Tipo interfaccia non supportato: " + apiType + ". Valori ammessi: REST, SOAP");
+        }
+
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        String filePath = String.format("src/main/resources/%s", fileName);
+        Resource resource = blobFileCreator.createBlobFile(filePath, fileName);
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getEServiceClient().createEServiceDocument(eServicesCommonContext.getEserviceId(),
+                        eServicesCommonContext.getDescriptorId(), "INTERFACE", "Interfaccia", resource)
         );
     }
 }

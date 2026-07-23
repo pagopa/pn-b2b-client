@@ -327,6 +327,13 @@ public class EServiceApiClientImpl implements IEServiceClient {
     }
 
     @Override
+    public ResponseEntity<CreatedResource> addEServiceTemplateInstanceInterfaceSoapWithHttpInfo(
+            UUID eServiceId, UUID descriptorId,
+            TemplateInstanceInterfaceSOAPSeed templateInstanceInterfaceSOAPSeed) {
+        return this.eservicesApi.addEServiceTemplateInstanceInterfaceSoapWithHttpInfo(eServiceId, descriptorId, templateInstanceInterfaceSOAPSeed);
+    }
+
+    @Override
     public void editAgreementApprovalPolicy(UUID eServiceId, UUID descriptorId,
                                             AgreementApprovalPolicy policy) {
         eservicesApi.updateAgreementApprovalPolicy(
