@@ -5,7 +5,7 @@
 
 Feature: Delayer — test paralleli (BatchWorkflow + DelayerToPaperChannel)
 
-  @delayerParallel @delayer1
+  @delayer1
   Scenario Outline: [DELAYER-TC1] Verifica la coerenza dell'algoritmo valutando la corretta applicazione dei limiti mittente, recapitista, stampa e la pianificazione per priorità
     Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
       | seed                 | quantita |
@@ -112,7 +112,7 @@ Feature: Delayer — test paralleli (BatchWorkflow + DelayerToPaperChannel)
       | csv                   | TOT |
       | "tcRankingMerged.csv" | 111 |
 
-  @delayerParallel @delayer2
+  @delayer2
   Scenario Outline: [DELAYER-TC2] Verifica la gestione di un mittente non censito
     Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
       | seed            | quantita |
@@ -170,7 +170,7 @@ Feature: Delayer — test paralleli (BatchWorkflow + DelayerToPaperChannel)
       | "tcSenderUnknow.csv" | 15  |
 
   #La capacità di recapito viene suddivisa prendendo la capacità di recapito della provincia e suddividendola per i CAP.
-  @delayerParallel @delayer3
+  @delayer3
   Scenario Outline: [DELAYER-TC3] Verifica la corretta gestione della capacità di recapito aggregata
     Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
       | seed           | quantita |
@@ -231,7 +231,7 @@ Feature: Delayer — test paralleli (BatchWorkflow + DelayerToPaperChannel)
       | "tcSplitSender.csv" | 14  |
 
   #BUG: https://pagopa.atlassian.net/browse/PN-15504
-  @delayerParallel @delayer4
+  @delayer4
   Scenario Outline: [DELAYER-TC4] Verifica la gestione di una capacity driver nulla
     Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
       | seed          | quantita |
@@ -283,7 +283,7 @@ Feature: Delayer — test paralleli (BatchWorkflow + DelayerToPaperChannel)
       | "tcZeroDriver.csv" | 15  |
 
   #BUG: https://pagopa.atlassian.net/browse/PN-16324
-  @delayerParallel @delayer5
+  @delayer5
   Scenario Outline: [DELAYER-TC5] Verifica la gestione di province e cap non censiti
     Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
       | seed                 | quantita |

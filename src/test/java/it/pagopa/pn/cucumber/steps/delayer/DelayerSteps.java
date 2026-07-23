@@ -49,11 +49,11 @@ public class DelayerSteps {
 
     private String parallelScenarioId;
 
-    @Before("@delayerParallel")
+    @Before("@delayer1 or @delayer2 or @delayer3 or @delayer4 or @delayer5")
     public void bindParallelScenario(Scenario scenario) {
         if (!DelayerSuiteContext.isSuiteConfigured()) {
             throw new IllegalStateException(
-                    "Scenario @delayerParallel senza suite configurata: avviare con -Dtest=DelayerParallelTest "
+                    "Scenario Delayer parallelo senza suite configurata: avviare con -Dtest=DelayerParallelTest "
                             + "(o Delayer1Test…Delayer5Test) così che @BeforeAll legga gli scenario id");
         }
         parallelScenarioId = suiteContext.extractScenarioId(scenario.getName());

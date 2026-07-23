@@ -1,6 +1,7 @@
 package it.pagopa.pn.cucumber.steps.delayer.service;
 
-import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClientV2;
+import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.interfaces.SenderLimitCondition;
+import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
 import it.pagopa.pn.cucumber.steps.delayer.loader.DelayerCsvLoader;
 import it.pagopa.pn.cucumber.steps.delayer.model.*;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
@@ -25,7 +26,7 @@ public class DelayerSevice {
     public static final String[] CSV_FILES = new String[]{"tcRankingMerged.csv", "tcSenderUnknow.csv", "tcSplitSender.csv", "tcZeroDriver.csv", "tcProvCapNonCensite.csv",
             "spedizioni_3000.csv", "tcWeeklyPrintCapacity.csv", "tcSenderUnknow_5010.csv", "notificationCancelled.csv", "tcSenderPriority.csv", "tcSenderPriorityFrozenW1.csv", "tcSenderPriorityFrozenW2.csv"};
 
-    private final DelayerLambdaClientV2 lambdaClient;
+    private final DelayerLambdaClient lambdaClient;
     private final DelayerCsvLoader csvLoader;
 
 
@@ -425,6 +426,77 @@ public class DelayerSevice {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public List<DelayerSenderLimit> getSenderLimits(String deliveryDate, String province) {
+        var response = lambdaClient.getSenderLimitByProvince(deliveryDate, province);
+        if (response == null || response.getItems() == null) {
+            return List.of();
+        }
+        return response.getItems().stream().map(this::toSenderLimit).toList();
+    }
+
+    public List<DelayerSenderLimit> pollSenderLimit(
+            String deliveryDate, String province, int maxAttempts, int sleepMillis) throws Exception {
+        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+            List<DelayerSenderLimit> items = getSenderLimits(deliveryDate, province);
+            if (!items.isEmpty()) {
+                return items;
+            }
+            Thread.sleep(sleepMillis);
+        }
+        log.debug("Polling esaurito per GET_SENDER_LIMIT su provincia {} e data {}", province, deliveryDate);
+        return List.of();
+    }
+
+    public void pollSenderLimitUntilCondition(
+            String deliveryDate,
+            String province,
+            int maxAttempts,
+            int sleepMillis,
+            SenderLimitCondition condition
+    ) throws Exception {
+        long startTime = System.currentTimeMillis();
+        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+            List<DelayerSenderLimit> items = getSenderLimits(deliveryDate, province);
+            log.info("Tentativo {} - Recuperati {} senderLimit per provincia {} e data {}",
+                    attempt, items.size(), province, deliveryDate);
+            if (condition.test(items)) {
+                log.info("Condizione soddisfatta dopo {} tentativi ({} secondi)",
+                        attempt, (System.currentTimeMillis() - startTime) / 1000);
+                return;
+            }
+            if (attempt < maxAttempts) {
+                Thread.sleep(sleepMillis);
+            }
+        }
+        throw new NoSuchElementException(
+                "Condizione non soddisfatta dopo %d tentativi (sleep=%d ms)".formatted(maxAttempts, sleepMillis));
+    }
+
+    public String getPresignedUploadUrl(String filename, String checksumSha256B64) {
+        return lambdaClient.getPresignedUrlUpload(filename, checksumSha256B64).getUploadUrl();
+    }
+
+    public String getPresignedDownloadUrl(String filename) {
+        return lambdaClient.getPresignedUrlDownload(filename).getDownloadUrl();
+    }
+
+    public void invokePortfatFileReady(String portfatLambdaName, String downloadUrl) {
+        lambdaClient.invokePortfatFileReady(portfatLambdaName, downloadUrl);
+    }
+
+    private DelayerSenderLimit toSenderLimit(DelayerSenderLimitItem item) {
+        DelayerSenderLimit limit = new DelayerSenderLimit();
+        limit.setPk(item.getPk());
+        limit.setDeliveryDate(item.getDeliveryDate());
+        limit.setWeeklyEstimate(item.getWeeklyEstimate() == null ? 0 : item.getWeeklyEstimate());
+        limit.setMonthlyEstimate(item.getMonthlyEstimate() == null ? 0 : item.getMonthlyEstimate());
+        limit.setOriginalEstimate(item.getOriginalEstimate() == null ? 0 : item.getOriginalEstimate());
+        limit.setPaId(item.getPaId());
+        limit.setProductType(item.getProductType());
+        limit.setProvince(item.getProvince());
+        return limit;
     }
 
 }

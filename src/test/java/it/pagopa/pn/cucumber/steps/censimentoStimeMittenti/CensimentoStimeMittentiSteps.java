@@ -1,14 +1,11 @@
 package it.pagopa.pn.cucumber.steps.censimentoStimeMittenti;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.model.ModuloCommessa;
 import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.model.StimeMittentiContext;
-import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerCountersSumEstimatesItem;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimit;
 import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSevice;
@@ -49,7 +46,6 @@ public class CensimentoStimeMittentiSteps {
     @Value("${pn.delayer.portfat.lambda.name}")
     private String portfatLambdaName;
 
-    private final DelayerLambdaClient lambdaClient;
     private final StimeMittentiContext context;
     private Map<LocalDate, Integer> expectedWeeklyEstimates;
     private final ApplicationContext applicationContext;
@@ -62,7 +58,7 @@ public class CensimentoStimeMittentiSteps {
 
         for (DelayerSenderLimit senderLimit : context.expected.senderLimits) {
             try {
-                lambdaClient.pollSenderLimitUntilCondition(senderLimit.getDeliveryDate(), province, null, MAX_ATTEMPTS, SLEEP_MILLIS, actual -> {
+                delayerSevice.pollSenderLimitUntilCondition(senderLimit.getDeliveryDate(), province, MAX_ATTEMPTS, SLEEP_MILLIS, actual -> {
                     log.info("Trovati i seguenti limti: {}", actual);
                     boolean ok = actual.contains(senderLimit);
                     if (!ok) {
@@ -95,7 +91,7 @@ public class CensimentoStimeMittentiSteps {
         List<LocalDate> mondays = DelayerSenderLimitUtils.getMondaysBetween(da, a, false, false);
 
         for (LocalDate monday : mondays) {
-            List<DelayerSenderLimit> limits = lambdaClient.pollSenderLimit(monday.toString(), provincia, null, attempt, sleepMillis);
+            List<DelayerSenderLimit> limits = delayerSevice.pollSenderLimit(monday.toString(), provincia, attempt, sleepMillis);
             context.actual.senderLimits.addAll(limits);
         }
     }
@@ -120,47 +116,14 @@ public class CensimentoStimeMittentiSteps {
     public void uploadZipFile(String fileName) {
         try {
             String sha256 = B2bUtils.computeSha256(applicationContext, String.format("classpath:/%s", fileName));
-            Map<String,String> uploadParams = prepareParametersForGetPresignedUrl(fileName, sha256, "UPLOAD");
-            String uploadResponse = lambdaClient.invoke("GET_PRESIGNED_URL", uploadParams);
-            String preloadUrlUpload = extractUrlFromPresignedUrlResponse(uploadResponse, "uploadUrl");
-            // viene caricato il file zip su S3 tramite il presigned url ottenuto
+            String preloadUrlUpload = delayerSevice.getPresignedUploadUrl(fileName, sha256);
             B2bUtils.loadToPresigned(applicationContext, preloadUrlUpload, null, null, String.format("classpath:/%s", fileName), "application/zip");
-            Map<String,String> downloadParams = prepareParametersForGetPresignedUrl(fileName, sha256, "DOWNLOAD");
-            // viene ottenuto il presigned url per il download del file elaborato
-            String downloadResponse = lambdaClient.invoke("GET_PRESIGNED_URL", downloadParams);
-            String preloadUrlDownload = extractUrlFromPresignedUrlResponse(downloadResponse, "downloadUrl");
-
-            // viene invocata la lambda portfat che elabora il file e genera le stime mittenti
-            lambdaClient.invokePortfatLambda("pn-portfat-eventFileReady-lambda", portfatLambdaName, preloadUrlDownload);
-
+            String preloadUrlDownload = delayerSevice.getPresignedDownloadUrl(fileName);
+            delayerSevice.invokePortfatFileReady(portfatLambdaName, preloadUrlDownload);
         } catch (Exception e) {
             log.info("Errore non bloccante durante il caricamento del file zip e l'invocazione della lambda Portfat", e);
         }
-
-
     }
-
-    private String extractUrlFromPresignedUrlResponse(String response, String fieldName) throws Exception {
-        JsonNode root = new ObjectMapper().readTree(response);
-        JsonNode body = new ObjectMapper().readTree(root.get("body").asText());
-        return body.get(fieldName).asText();
-    }
-
-
-    private Map<String, String> prepareParametersForGetPresignedUrl(
-            String fileName,
-            String checksumSha256B64,
-            String presignedUrlType
-    ) {
-        return Map.of(
-                "fileName", fileName,
-                "checksumSha256B64", checksumSha256B64,
-                "presignedUrlType", presignedUrlType
-        );
-    }
-
-
-
 
     private void calculateExpectedWeeklyProvincialEstimates() {
         YearMonth yearMonth = YearMonth.of(2025, 7); // luglio 2025

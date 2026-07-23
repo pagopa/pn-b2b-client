@@ -11,7 +11,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Gate tra scenari {@code @delayerParallel}.
+ * Gate tra scenari Delayer paralleli (TC1–TC5).
  * Gli id si configurano una tantum da {@code DelayerParallelSuiteHooks}.
  */
 @Component
@@ -35,7 +35,7 @@ public class DelayerSuiteContext {
         Matcher matcher = SCENARIO_ID_IN_TITLE.matcher(scenarioName.trim());
         if (!matcher.find()) {
             throw new IllegalStateException(
-                    "Scenario @delayerParallel senza id [..] all'inizio del titolo: " + scenarioName);
+                    "Scenario Delayer parallelo senza id [..] all'inizio del titolo: " + scenarioName);
         }
         return matcher.group(1);
     }

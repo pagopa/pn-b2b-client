@@ -3,7 +3,7 @@
 
 Feature: Delayer — test senza Step Function
 
-  @delayerNoSf @delayer14
+  @delayer14
   Scenario Outline: [DELAYER-TC14] Verifica che la pulizia delle tabelle target rimuova completamente i dati di test
     Given vengono puliti i dati dalle tabelle target
     And il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
@@ -23,7 +23,7 @@ Feature: Delayer — test senza Step Function
 
   # Per il driver: zeroDriver è stata modificata la capacity a 10 per il periodo 2025-12-29T00:00:00.000Z - 2026-01-04T23:59:59.999Z
   # si verifica che la capacity ritornata per quella settiamana sia esattamente quella attesa: 10
-  @delayerNoSf @delayer10
+  @delayer10
   Scenario Outline: [DELAYER-TC10] A seguito di un aggiornamento della capacity per il driver: zeroDriver verifica che la capacità ritornata sia esattamente quella attesa: 10.
     Given vengono puliti i dati dalle tabelle target
     Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:
@@ -48,7 +48,7 @@ Feature: Delayer — test senza Step Function
 
   # Per il driver: zeroDriver è stata modificata la capacity a 10 per il periodo 2025-12-29T00:00:00.000Z - 2026-01-04T23:59:59.999Z
   # si verifica che la capacity ritornata per una settimana diversa da quella modificata precedentemente sia quella di default: 0.
-  @delayerNoSf @delayer11
+  @delayer11
   Scenario Outline: [DELAYER-TC4.B] Verifica la gestione di una capacity driver nulla
     Given vengono puliti i dati dalle tabelle target
     Given il CSV <csv> contiene <TOT> notifiche distribuite tra i seguenti test case:

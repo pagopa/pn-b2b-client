@@ -1,10 +1,10 @@
 package it.pagopa.pn.cucumber.steps.delayer.validator;
 
 import io.cucumber.datatable.DataTable;
-import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDelivery;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
+import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSevice;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ public class DelayerValidator {
 
     public static final int FROZEN_POLLING_MAX_MINUTES = 45;
     private final DelayerContext context;
-    private final DelayerLambdaClient lambdaClient;
+    private final DelayerSevice service;
     private final DelayerPaperDeliveryUtils utils;
 
     public void assertPianifications() {
@@ -137,7 +137,7 @@ public class DelayerValidator {
             assertPianifications();
         }
 
-        List<DelayerPaperDelivery> actualFrozen = lambdaClient.findByWorkflowStep(
+        List<DelayerPaperDelivery> actualFrozen = service.findByWorkflowStep(
                 frozenExpected.stream().map(DelayerPaperDelivery::getRequestId).collect(Collectors.toSet()),
                 step.name(),
                 getNextMondayFromDate(context.expectedDeliveryDate, 1),

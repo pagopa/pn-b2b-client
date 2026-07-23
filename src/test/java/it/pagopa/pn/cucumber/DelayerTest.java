@@ -4,6 +4,10 @@ import org.junit.platform.suite.api.*;
 
 import static io.cucumber.junit.platform.engine.Constants.*;
 
+/**
+ * Suite isolata dei test ancora in {@code Delayer.feature} (con Step Function / E2E).
+ * Ogni elemento in {@code @IncludeTags} = uno scenario.
+ */
 @Suite
 @IncludeEngines("cucumber")
 @SelectClasspathResource("it/pagopa/pn/cucumber")
@@ -22,9 +26,13 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 )
 @ExcludeTags({"ignore"})
 @IncludeTags({
-        "delayer14",
-        "delayer10",
-        "delayer11"
+        "delayer6",
+        "delayer7",
+        "delayer9",
+        "delayer12",
+        "delayer13",
+        "delayer15",
+        "delayer16"
 })
-public class DelayerNoStepFunctionTest {
+public class DelayerTest {
 }

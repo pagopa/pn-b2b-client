@@ -30,6 +30,12 @@ import static it.pagopa.pn.cucumber.steps.delayer.model.DelayerSuiteContext.SCEN
         value = "DELAYER-TC1,DELAYER-TC2,DELAYER-TC3,DELAYER-TC4,DELAYER-TC5"
 )
 @ExcludeTags({"ignore"})
-@IncludeTags({"delayerParallel"})
+@IncludeTags({
+        "delayer1",
+        "delayer2",
+        "delayer3",
+        "delayer4",
+        "delayer5"
+})
 public class DelayerParallelTest {
 }

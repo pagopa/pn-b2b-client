@@ -1,341 +1,400 @@
 package it.pagopa.pn.cucumber.steps.delayer.client;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.interfaces.SenderLimitCondition;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDelivery;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPayload;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimit;
-import it.pagopa.pn.cucumber.steps.delayer.model.ExecutionStatusResponse;
+import it.pagopa.pn.cucumber.steps.delayer.model.*;
+import it.pagopa.pn.cucumber.steps.delayer.model.enums.DelayerCounterType;
+import it.pagopa.pn.cucumber.steps.delayer.model.enums.DelayerOperation;
+import it.pagopa.pn.cucumber.steps.delayer.model.enums.DelayerTable;
+import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Slf4j
-@Component
+@Service
+@RequiredArgsConstructor
 public class DelayerLambdaClient {
-
     private final LambdaInvoker lambdaInvoker;
-    private final ObjectMapper objectMapper = new ObjectMapper();
-    private final String lambdaName;
+    private final ObjectMapper objectMapper;
+    @Value("${pn.delayer.lambda.arn}")
+    private String lambdaName;
 
-    @Data
-    public static class SenderLimitResult {
-        private final List<DelayerSenderLimit> items;
-        private final String lastEvaluatedKey;
+    public void importData(String filename, String deliveryWeek) {
+        var params = paramsOf(
+                DelayerTable.DelayerPaperDelivery,
+                DelayerTable.PaperDeliveryCounters, // da codice esistente
+                // DelayerTable.PaperDeliveryDriverCapacities, // da documentazione
+                mandatory("filename", filename),
+                deliveryWeek
+        );
+        invoke(DelayerOperation.IMPORT_DATA, Void.class, params);
     }
 
-    public DelayerLambdaClient(LambdaInvoker lambdaInvoker,@Value("${pn.delayer.lambda.arn}") String lambdaName) {
-        this.lambdaInvoker = lambdaInvoker;
-        this.lambdaName = lambdaName;
+    public void importData(String filename) {
+        importData(filename, null);
     }
 
-    public String invoke(String operationType, String... parameters) throws Exception {
-        String payload = buildPayload(operationType, parameters);
-        String rawResult = lambdaInvoker.invokeMyLambda(lambdaName, payload);
-        checkLambdaResponse(rawResult, operationType);
-        return rawResult;
+    public void deleteData(String filename) {
+        var params = paramsOf(
+                DelayerTable.DelayerPaperDelivery,
+                DelayerTable.PaperDeliveryDriverUsedCapacities,
+                DelayerTable.PaperDeliveryUsedSenderLimit,
+                DelayerTable.PaperDeliveryCounters,
+                filename
+        );
+
+        invoke(DelayerOperation.DELETE_DATA, Void.class, params);
     }
 
-    public String invokePortfatLambda(String operationType, String portfatLambdaName, String downloadUrl) throws Exception {
-        String payload = buildFileReadyEventJson(downloadUrl);
-        String rawResult = lambdaInvoker.invokeMyLambda(portfatLambdaName, payload);
-        checkLambdaResponse(rawResult, operationType);
-        return rawResult;
+    public void deleteData() {
+        deleteData(null);
     }
 
-    public String invoke(String operationType, Map<String, String> parameters) throws Exception {
-        String payload = buildPayload(operationType, parameters);
-        String rawResult = lambdaInvoker.invokeMyLambda(lambdaName, payload);
-        checkLambdaResponse(rawResult, operationType);
-        return rawResult;
+    public Optional<DelayerUsedCapacity> getUsedCapacity(String unifiedDeliveryDriver,
+                                                         String geoKey,
+                                                         String deliveryDate) {
+        var params = paramsOf(
+                DelayerTable.PaperDeliveryDriverUsedCapacities,
+                mandatory("unifiedDeliveryDriver", unifiedDeliveryDriver),
+                mandatory("geokey", geoKey),
+                mandatory("deliveryDate", deliveryDate)
+        );
+
+        var response = invoke(DelayerOperation.GET_USED_CAPACITY, JsonNode.class, params);
+
+        if (response.has("message") && "Item not found".equalsIgnoreCase(response.path("message").asText())) {
+            return Optional.empty();
+        }
+
+        return Optional.of(objectMapper.convertValue(response, DelayerUsedCapacity.class));
     }
 
-    private JsonNode getDriverCapacityNode(String driver, String provincia, String deliveryDate) {
+    public List<DelayerPaperDelivery> getByRequestId(String requestId) {
+        var params = paramsOf(
+                mandatory("requestId", requestId)
+        );
+        return invoke(DelayerOperation.GET_BY_REQUEST_ID, new TypeReference<>() {
+        }, params);
+    }
+
+    public DelayerPayload runAlgorithm(Integer printCapacity, String deliveryWeek) {
+        var params = paramsOf(
+                DelayerTable.DelayerPaperDelivery,
+                DelayerTable.PaperDeliveryDriverCapacities,
+                DelayerTable.PaperDeliveryDriverUsedCapacities,
+                DelayerTable.PaperDeliverySenderLimit,
+                DelayerTable.PaperDeliveryUsedSenderLimit,
+                DelayerTable.PaperDeliveryCounters,
+                mandatory("printCapacity", printCapacity),
+                mandatory("deliveryWeek", deliveryWeek)
+        );
+
+        return invoke(DelayerOperation.RUN_ALGORITHM, FirstStepFunctionResponseWrapper.class, params).getBody();
+
+    }
+
+    public DelayerPayload delayerToPaperChannel() {
+        var params = paramsOf(
+                DelayerTable.DelayerPaperDelivery,
+                DelayerTable.PaperDeliveryCounters
+        );
+        return invoke(DelayerOperation.DELAYER_TO_PAPER_CHANNEL, DelayerPayload.class, params);
+    }
+
+    public DelayerStatusExecution getStatusExecution(String executionArn) {
+        var params = paramsOf(
+                mandatory("executionArn", executionArn)
+        );
+        return invoke(DelayerOperation.GET_STATUS_EXECUTION, DelayerStatusExecution.class, params);
+    }
+
+    public DelayerPaperDeliverys getPaperDelivery(String deliveryDate, WorkflowSteps workFlowStep, String lastEvaluatedKey) {
+        var params = paramsOf(
+                DelayerTable.DelayerPaperDelivery,
+                mandatory("deliveryDate", deliveryDate),
+                mandatory("workFlowStep", workFlowStep),
+                lastEvaluatedKey
+        );
+        return invoke(DelayerOperation.GET_PAPER_DELIVERY, DelayerPaperDeliverys.class, params);
+    }
+
+    public DelayerPaperDeliverys getPaperDelivery(String deliveryDate, WorkflowSteps workFlowStep) {
+        return getPaperDelivery(deliveryDate, workFlowStep, null);
+    }
+
+    public DelayerSenderLimits getSenderLimitByProvince(String deliveryDate, String province) {
+        var params = mapOf(
+                mandatoryEntry("deliveryDate", deliveryDate),
+                mandatoryEntry("province", province)
+        );
+        return invoke(DelayerOperation.GET_SENDER_LIMIT, DelayerSenderLimits.class, params);
+    }
+
+    public DelayerSenderLimits getSenderLimitByProvince(String deliveryDate, String province, String lastEvaluatedKey) {
+        var params = mapOf(
+                mandatoryEntry("deliveryDate", deliveryDate),
+                mandatoryEntry("province", province),
+                entry("lastEvaluatedKey", lastEvaluatedKey)
+        );
+        return invoke(DelayerOperation.GET_SENDER_LIMIT, DelayerSenderLimits.class, params);
+    }
+
+    public DelayerSenderLimits getSenderLimitByPk(String deliveryDate, String pk) {
+        var params = mapOf(
+                mandatoryEntry("deliveryDate", deliveryDate),
+                mandatoryEntry("pk", pk)
+        );
+        return invoke(DelayerOperation.GET_SENDER_LIMIT, DelayerSenderLimits.class, params);
+    }
+
+    public DelayerUsedSenderLimit getUsedSenderLimitByProvince(String deliveryDate, String province) {
+        var params = mapOf(
+                entry("table", DelayerTable.PaperDeliveryUsedSenderLimit),
+                mandatoryEntry("deliveryDate", deliveryDate),
+                mandatoryEntry("province", province)
+        );
+        return invoke(DelayerOperation.GET_USED_SENDER_LIMIT, DelayerUsedSenderLimit.class, params);
+    }
+
+    public DelayerUsedSenderLimit getUsedSenderLimitByProvince(String deliveryDate, String province, String lastEvaluatedKey) {
+        var params = mapOf(
+                entry("table", DelayerTable.PaperDeliveryUsedSenderLimit),
+                mandatoryEntry("deliveryDate", deliveryDate),
+                mandatoryEntry("province", province),
+                entry("lastEvaluatedKey", lastEvaluatedKey)
+        );
+        return invoke(DelayerOperation.GET_USED_SENDER_LIMIT, DelayerUsedSenderLimit.class, params);
+    }
+
+    public DelayerUsedSenderLimit getUsedSenderLimitByPk(String deliveryDate, String pk) {
+        var params = mapOf(
+                entry("table", DelayerTable.PaperDeliveryUsedSenderLimit),
+                mandatoryEntry("deliveryDate", deliveryDate),
+                mandatoryEntry("pk", pk)
+        );
+        return invoke(DelayerOperation.GET_USED_SENDER_LIMIT, DelayerUsedSenderLimit.class, params);
+    }
+
+    public DelayerPresigneUrlUpload getPresignedUrlUpload(String filename, String checksumSha256B64) {
+        var params = mapOf(
+                mandatoryEntry("filename", filename),
+                mandatoryEntry("checksumSha256B64", checksumSha256B64),
+                entry("presignedUrlType", "UPLOAD")
+        );
+        return invoke(DelayerOperation.GET_PRESIGNED_URL, DelayerPresigneUrlUpload.class, params);
+    }
+
+    public DelayerPresigneUrlDownload getPresignedUrlDownload(String filename) {
+        var params = mapOf(
+                mandatoryEntry("filename", filename),
+                entry("presignedUrlType", "DOWNLOAD")
+        );
+        return invoke(DelayerOperation.GET_PRESIGNED_URL, DelayerPresigneUrlDownload.class, params);
+    }
+
+    public DelayerDeclaredCapacity getDeclaredCapacity(String province, String deliveryDate) {
+        var params = paramsOf(
+                //DelayerTable.PaperDeliveryDriverCapacitiesMock,
+                DelayerTable.PaperDeliveryDriverCapacities,
+                mandatory("province", province),
+                mandatory("deliveryDate", deliveryDate)
+        );
+        return invoke(DelayerOperation.GET_DECLARED_CAPACITY, DelayerDeclaredCapacity.class, params);
+    }
+
+    public void insertMockCapacities(String filename) {
+        var params = paramsOf(
+                mandatory("filename", filename)
+        );
+        invoke(DelayerOperation.INSERT_MOCK_CAPACITIES, Void.class, params);
+    }
+
+    private <T> T getCounters(DelayerCounterType counterType,
+                              String deliveryDate,
+                              Map<String, String> parameters,
+                              Class<T> responseType) {
+
+        var params = mapOf(
+                entry("table", DelayerTable.PaperDeliveryCounters),
+                mandatoryEntry("counterType", counterType),
+                mandatoryEntry("deliveryDate", deliveryDate),
+                entryMap(parameters)
+        );
+
+        return invoke(DelayerOperation.GET_COUNTERS, responseType, params);
+    }
+
+    public DelayerCountersPrint getCountersPrint(String deliveryDate) {
+        return getCounters(
+                DelayerCounterType.PRINT,
+                deliveryDate,
+                null,
+                DelayerCountersPrint.class
+        );
+    }
+
+    public DelayerCountersSumEstimates getCountersSumEstimates(String deliveryDate, String province,
+                                                               String productType) {
+        return getCountersSumEstimates(deliveryDate, province, productType, null);
+    }
+
+    public DelayerCountersSumEstimates getCountersSumEstimates(String deliveryDate, String province,
+                                                               String productType,
+                                                               String lastEvaluatedKey) {
+        var params = mapOf(
+                entry("province", province),
+                entry("productType", productType),
+                entry("lastEvaluatedKey", lastEvaluatedKey)
+        );
+
+        return getCounters(
+                DelayerCounterType.SUM_ESTIMATES,
+                deliveryDate,
+                params,
+                DelayerCountersSumEstimates.class
+        );
+    }
+
+    public DelayerCountersExclude getCountersExclude(String deliveryDate, String province,
+                                                     String productType) {
+        return getCountersExclude(deliveryDate, province, productType, null);
+    }
+
+    public DelayerCountersExclude getCountersExclude(String deliveryDate, String province,
+                                                     String productType,
+                                                     String lastEvaluatedKey) {
+        var params = mapOf(
+                entry("province", province),
+                entry("productType", productType),
+                entry("lastEvaluatedKey", lastEvaluatedKey)
+        );
+
+        return getCounters(
+                DelayerCounterType.EXCLUDE,
+                deliveryDate,
+                params,
+                DelayerCountersExclude.class
+        );
+    }
+
+    public DelayerResidualPapers getResidualPapers(String deliveryDate, String executionDate) {
+        var params = paramsOf(
+                DelayerTable.DelayerPaperDeliveryJsonView,
+                mandatory("deliveryDate", deliveryDate),
+                executionDate
+        );
+        return invoke(DelayerOperation.GET_RESIDUAL_PAPERS, DelayerResidualPapers.class, params);
+    }
+
+    public DelayerResidualPapers getResidualPapers(String deliveryDate) {
+        return getResidualPapers(deliveryDate, null);
+    }
+
+    /**
+     * Invoca la lambda Portfat con evento file-ready (downloadUrl del file zip elaborato).
+     */
+    public void invokePortfatFileReady(String portfatLambdaName, String downloadUrl) {
         try {
-            String response = invoke("GET_USED_CAPACITY", "pn-PaperDeliveryDriverUsedCapacities", driver, provincia, deliveryDate);
-            return extractBody(response);
-        } catch (Exception e) {
-            throw new RuntimeException("Errore durante GET_USED_CAPACITY per driver %s".formatted(driver), e);
-        }
-    }
-
-    public int getUsedCapacity(String driver, String provincia, String deliveryDate) {
-        JsonNode body = getDriverCapacityNode(driver, provincia, deliveryDate);
-        return body.path("usedCapacity").asInt(-1);
-    }
-
-    public int getAvailableCapacity(String driver, String provincia, String deliveryDate) {
-        JsonNode body = getDriverCapacityNode(driver, provincia, deliveryDate);
-        int declared = body.path("declaredCapacity").asInt(-1);
-        int used = body.path("usedCapacity").asInt(-1);
-        if (declared == -1 && used == -1) {
-            return -1;
-        }
-        return declared - used;
-    }
-
-    public ExecutionStatusResponse getExecutionStatus(String executionArn) {
-        try {
-            String response = invoke("GET_STATUS_EXECUTION", executionArn);
-
-            JsonNode body = extractBody(response);
-
-            if (body == null || body.isMissingNode() || body.isNull()) {
-                throw new RuntimeException("Body mancante nella risposta GET_STATUS_EXECUTION");
-            }
-
-            return objectMapper.treeToValue(body, ExecutionStatusResponse.class);
-
-        } catch (Exception e) {
-            throw new RuntimeException("Errore durante GET_STATUS_EXECUTION per executionArn %s".formatted(executionArn), e);
-        }
-    }
-
-    public List<DelayerPaperDelivery> pollByRequestId(String requestId, int maxAttempts, int sleepMillis) throws Exception {
-        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
-            String response = invoke("GET_BY_REQUEST_ID", requestId);
-            JsonNode body = extractBody(response);
-
-            if (body.isArray() && !body.isEmpty()) {
-                List<DelayerPaperDelivery> result = new ArrayList<>();
-                for (JsonNode node : body) {
-                    result.add(new DelayerPaperDelivery(node));
-                }
-                return result;
-            }
-
-            Thread.sleep(sleepMillis);
-        }
-
-        log.debug("Polling esaurito per requestId {}", requestId);
-        return Collections.emptyList();
-    }
-
-    public List<DelayerPaperDelivery> findByWorkflowStep(Set<String> requestIds, String workflowStep, String deliveryDate, int maxMinutes) throws Exception {
-        Set<DelayerPaperDelivery> found = new LinkedHashSet<>();
-        Set<String> pending = new HashSet<>(requestIds);
-
-        final int retryFrequency = 3000; // ms
-        final int pollingFrequency = 200;     // ms per richiesta
-        final long totalMinPollingTimeMillis = maxMinutes * 60L * 1000L;
-
-        long startTime = System.currentTimeMillis();
-        int attempt = 0;
-
-        do {
-            attempt++;
-
-            long elapsedMillis = System.currentTimeMillis() - startTime;
-            long remainingMillis = Math.max(0, totalMinPollingTimeMillis - elapsedMillis);
-            long elapsedSeconds = elapsedMillis / 1000;
-            long remainingSeconds = remainingMillis / 1000;
-
-            log.info("Tentativo {} - RequestId rimanenti: {} | Workflow step: {} | Tempo trascorso: {}s | Tempo rimanente: {}s",
-                    attempt, pending.size(), workflowStep, elapsedSeconds, remainingSeconds);
-
-            Iterator<String> iterator = pending.iterator();
-            while (iterator.hasNext()) {
-                String requestId = iterator.next();
-                List<DelayerPaperDelivery> results = pollByRequestId(requestId, 1, pollingFrequency);
-
-                Optional<DelayerPaperDelivery> match = results.stream()
-                        .filter(r -> r.getPk().contains(workflowStep) && r.getPk().contains(deliveryDate))
-                        .findFirst();
-
-                match.ifPresent(delivery -> {
-                    found.add(delivery);
-                    iterator.remove();
-                });
-            }
-
-            if (!pending.isEmpty()) {
-                Thread.sleep(retryFrequency);
-            }
-
-        } while (!pending.isEmpty() && (System.currentTimeMillis() - startTime < totalMinPollingTimeMillis));
-
-        long elapsedMillis = System.currentTimeMillis() - startTime;
-        long elapsedSeconds = elapsedMillis / 1000;
-
-        String reason;
-        if (pending.isEmpty()) {
-            reason = "Tutte le notifiche trovate correttamente";
-        } else if (elapsedMillis >= totalMinPollingTimeMillis) {
-            reason = "Timeout raggiunto dopo almeno %d minuti".formatted(maxMinutes);
-        } else {
-            reason = "Uscita anticipata imprevista (possibile errore nel loop)";
-        }
-
-        if (found.size() != requestIds.size()) {
-            log.warn("""
-                    Trovate %d notifiche su %d attese per step '%s'
-                    Tempo totale di polling: %d secondi
-                    Motivo dell'uscita: %s
-                    """.formatted(found.size(), requestIds.size(), workflowStep, elapsedSeconds, reason));
-        } else {
-            log.info("""
-                    Tutte le %d notifiche trovate correttamente per step '%s'
-                    Tempo di polling: %d secondi
-                    """.formatted(found.size(), workflowStep, elapsedSeconds));
-        }
-
-        return new ArrayList<>(found);
-    }
-
-    public SenderLimitResult getSenderLimit(String deliveryDate, String province, String lastEvaluatedKey) {
-        try {
-//            String[] params = (lastEvaluatedKey != null && !lastEvaluatedKey.isBlank())
-//                    ? new String[]{deliveryDate, province, lastEvaluatedKey}
-//                    : new String[]{deliveryDate, province};
-
-            Map<String, String> paramsMap = Map.of(
-                    "deliveryDate", deliveryDate,
-                    "province", province
-            );
-
-            String response = invoke("GET_SENDER_LIMIT", paramsMap);
-            JsonNode body = extractBody(response);
-
-            List<DelayerSenderLimit> items = new ArrayList<>();
-            if (body.has("items") && body.get("items").isArray()) {
-                for (JsonNode node : body.get("items")) {
-                    items.add(new DelayerSenderLimit(node));
-                }
-            }
-
-            JsonNode lekNode = body.path("lastEvaluatedKey");
-            String lek = lekNode.isMissingNode() || lekNode.isEmpty() ? null : lekNode.toString();
-
-            return new SenderLimitResult(items, lek);
-
-        } catch (Exception e) {
-            throw new RuntimeException("Errore durante GET_SENDER_LIMIT per provincia %s e data %s"
-                    .formatted(province, deliveryDate), e);
-        }
-    }
-
-    public List<DelayerSenderLimit> pollSenderLimit(String deliveryDate, String province, String lastEvaluatedKey, int maxAttempts, int sleepMillis) throws Exception {
-        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
-            SenderLimitResult result = getSenderLimit(deliveryDate, province, lastEvaluatedKey);
-
-            if (!result.getItems().isEmpty()) {
-                return result.getItems();
-            }
-
-            Thread.sleep(sleepMillis);
-        }
-
-        log.debug("Polling esaurito per GET_SENDER_LIMIT su provincia {} e data {}", province, deliveryDate);
-        return Collections.emptyList();
-    }
-
-    public void pollSenderLimitUntilCondition(String deliveryDate, String province, String lastEvaluatedKey, int maxAttempts, int sleepMillis, SenderLimitCondition condition) throws Exception {
-
-        long startTime = System.currentTimeMillis();
-
-        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
-            List<DelayerSenderLimit> items = getSenderLimit(deliveryDate, province, lastEvaluatedKey).getItems();
-
-            log.info("Tentativo {} - Recuperati {} senderLimit per provincia {} e data {}",
-                    attempt, items.size(), province, deliveryDate);
-
-            if (condition.test(items)) {
-                long elapsedSeconds = (System.currentTimeMillis() - startTime) / 1000;
-                log.info("Condizione soddisfatta dopo {} tentativi ({} secondi)", attempt, elapsedSeconds);
-                return;
-            }
-
-            if (attempt < maxAttempts) {
-                Thread.sleep(sleepMillis);
-            }
-        }
-
-        throw new NoSuchElementException("Condizione non soddisfatta dopo %d tentativi (sleep=%d ms)"
-                .formatted(maxAttempts, sleepMillis));
-    }
-
-    private String buildPayload(String operationType, String... parameters) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{ \"operationType\": \"").append(operationType).append("\", \"parameters\": [");
-
-        for (int i = 0; i < parameters.length; i++) {
-            sb.append("\"").append(parameters[i]).append("\"");
-            if (i < parameters.length - 1) sb.append(", ");
-        }
-
-        sb.append("] }");
-        return sb.toString();
-    }
-
-    private String buildFileReadyEventJson(String downloadUrl) {
-        try {
-            // body node
-            ObjectNode bodyNode = objectMapper.createObjectNode();
+            var bodyNode = objectMapper.createObjectNode();
             bodyNode.put("downloadUrl", downloadUrl);
             bodyNode.put("fileVersion", "1.0.0");
 
-            // root node
-            ObjectNode rootNode = objectMapper.createObjectNode();
+            var rootNode = objectMapper.createObjectNode();
             rootNode.put("httpMethod", "POST");
             rootNode.put("resource", "/file-ready-event");
-
-            // body must be a STRING containing JSON
             rootNode.put("body", bodyNode.toString());
 
-            return rootNode.toString();
+            String rawResult = lambdaInvoker.invokeMyLambda(portfatLambdaName, objectMapper.writeValueAsString(rootNode));
+            JsonNode root = objectMapper.readTree(rawResult);
+            int statusCode = root.path("statusCode").asInt(-1);
+            if (statusCode != 200 && statusCode != -1) {
+                throw new RuntimeException("Portfat lambda failed: " + root.path("body").asText());
+            }
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
-            throw new RuntimeException("Failed to build file-ready-event JSON", e);
+            throw new RuntimeException("Failed to invoke portfat file-ready lambda", e);
         }
     }
 
-
-    private String buildPayload(String operationType, Map<String, String> parameters) {
+    private <T> T invoke(DelayerOperation operationType, TypeReference<T> responseType, Object parameters) {
         try {
-            ObjectNode root = objectMapper.createObjectNode();
-            root.put("operationType", operationType);
+            String payload = objectMapper.writeValueAsString(
+                    Map.of("operationType", operationType, "parameters", parameters)
+            );
+            return lambdaInvoker.invokeMyLambda(lambdaName, payload, responseType);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to invoke lambda operation " + operationType, e);
+        }
+    }
 
-            ObjectNode paramsNode = objectMapper.createObjectNode();
-            parameters.forEach(paramsNode::put);
-
-            root.set("parameters", paramsNode);
-
-            return objectMapper.writeValueAsString(root);
+    private <T> T invoke(DelayerOperation operationType, Class<T> responseType, Object parameters) {
+        try {
+            String payload = objectMapper.writeValueAsString(Map.of("operationType", operationType, "parameters", parameters));
+            return lambdaInvoker.invokeMyLambda(lambdaName, payload, responseType);
         } catch (Exception e) {
             throw new RuntimeException("Failed to build JSON payload", e);
         }
     }
 
+    private static final String MAP_ENTRY_KEY = "__MAP__";
 
-    private void checkLambdaResponse(String rawJson, String operationType) throws Exception {
-        if (rawJson == null) {
-            throw new RuntimeException("Lambda ha restituito null per " + operationType);
-        }
-
-        JsonNode root = objectMapper.readTree(rawJson);
-        int statusCode = root.path("statusCode").asInt(-1);
-        String bodyText = root.path("body").asText();
-
-        if (statusCode != 200) {
-            String message = bodyText.startsWith("{")
-                    ? objectMapper.readTree(bodyText).path("message").asText("Errore sconosciuto")
-                    : bodyText;
-
-            throw new RuntimeException("Lambda [%s] failed: %s".formatted(operationType, message));
-        }
+    private List<String> paramsOf(Object... values) {
+        return Arrays.stream(values)
+                .filter(value -> !isBlank(value))
+                .map(Object::toString)
+                .toList();
     }
 
-    private JsonNode extractBody(String rawJson) throws Exception {
-        JsonNode root = objectMapper.readTree(rawJson);
-        JsonNode body = root.path("body");
-        if (body.isTextual()) {
-            return objectMapper.readTree(body.asText());
+    private Object mandatory(String name, Object value) {
+        if (isBlank(value)) {
+            log.warn("Parametro mancante: {}, stai testando un edge case", name);
         }
-        return body;
+        return value;
     }
+
+    private boolean isBlank(Object value) {
+        return value == null || value.toString().isBlank();
+    }
+
+    private Map<String, String> mapOf(ParamEntry... entries) {
+        Map<String, String> result = new HashMap<>();
+
+        for (ParamEntry e : entries) {
+            if (MAP_ENTRY_KEY.equals(e.key()) && e.value() instanceof Map<?, ?> m) {
+                m.forEach((k, v) -> {
+                    if (!isBlank(v)) {
+                        result.put(k.toString(), v.toString());
+                    }
+                });
+            } else if (!isBlank(e.value())) {
+                result.put(e.key(), e.value().toString());
+            }
+        }
+
+        return result;
+    }
+
+    private ParamEntry entry(Object key, Object value) {
+        return new ParamEntry(key.toString(), value);
+    }
+
+    private ParamEntry mandatoryEntry(Object key, Object value) {
+        mandatory(key.toString(), value);
+        return entry(key, value);
+    }
+
+    private ParamEntry entryMap(Map<String, String> map) {
+        return new ParamEntry(MAP_ENTRY_KEY, map);
+    }
+
+    private record ParamEntry(String key, Object value) {
+    }
+
 }
