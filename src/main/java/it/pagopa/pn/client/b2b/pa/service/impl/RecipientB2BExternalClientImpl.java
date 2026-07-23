@@ -129,7 +129,7 @@ public class RecipientB2BExternalClientImpl implements IPnWebRecipientClient {
     @Override
     public FullNotificationSearchResponse searchReceivedNotification(Destinatario destinatario, NotificationSearchParam param) throws RestClientException {
         return recipientReadB2BApi.searchReceivedNotification(param.startDate.toString(), param.endDate.toString(), param.mandateId,
-                param.senderId, param.subjectRegExp, param.iunMatch, param.size, param.nextPagesKey, param.communicationType);
+                param.senderId, param.iunMatch, param.size, param.nextPagesKey, param.communicationType);
     }
 
     private static NotificationStatusV26 convertStatus(it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.NotificationStatusV26 status) {

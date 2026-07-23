@@ -167,10 +167,12 @@ public class RecipientInternalClientImpl implements IPnWebRecipientClient {
 
     @Override
     public FullNotificationSearchResponse searchReceivedNotification(Destinatario destinatario, NotificationSearchParam param) throws RestClientException {
-        String cxType = resolveActual(param.xPagopaPnCxType, destinatario.getRecipientType());
+        CxTypeAuthFleet cxType = Optional.ofNullable(resolveActual(param.xPagopaPnCxType, destinatario.getRecipientType()))
+                .map(CxTypeAuthFleet::fromValue)
+                .orElse(null);
         String cxId = resolveActual(param.xPagopaPnCxId, String.format("%s-%s", destinatario.getRecipientType(), destinatario.getUid()));
         it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.FullNotificationSearchResponse response = recipientReadApi.searchReceivedNotification(
-                param.xPagopaPnUid, CxTypeAuthFleet.fromValue(cxType), cxId,
+                param.xPagopaPnUid, cxType, cxId,
                 param.startDate, param.endDate, param.xPagopaPnCxGroups, param.mandateId,
                 param.senderId, param.iunMatch, param.size, param.nextPagesKey, param.communicationType);
         return deepCopy(response, FullNotificationSearchResponse.class);

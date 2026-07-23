@@ -1,23 +1,8 @@
 Feature: Ricerca delle notifiche ricevute lato destinatario
 
-#  @informalNotificationsMessageAttachment
-#  Scenario: [NOTIFICHE_BONARIE_05_1] Come ente mittente Recupero i documenti di una notifica bonaria
-#    Given mittente della notifica bonaria: "Comune_Multi"
-#    And viene creata una nuova notifica bonaria con i seguenti parametri
-#      | campaignId | campaign-1 |
-#    And destinatario della notifica bonaria
-#      | recipientType | PF                |
-#      | taxId         | FRMTTR76M06B715E  |
-#      | denomination  | Ettore Fieramosca |
-#      | messageId     | ${IT}             |
-#    When viene inviata una nuova notifica bonaria
-#    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
-#    And si tenta il recupero documento della notifica bonaria
-#    Then il download risulta correttamente effettuato
-
-
-
-  Background:
+  #CASO DI TEST 4.1 - tutti i campi (obbligatori e opzionali) valorizzati correttamente
+  @letturaDestinatario1 @useB2B
+  Scenario Outline: [RICERCA_RICEVUTE_1] Come destinatario <tipo> ricerco le notifiche ricevute con tutti i filtri valorizzati
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con i seguenti parametri
       | campaignId | SoricalMessaMora |
@@ -26,12 +11,9 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
       | taxId         | FRMTTR76M06B715E |
       | denomination  | Mario Cucumber   |
       | messageId     | ${IT}            |
-
-  #CASO DI TEST 4.1 - tutti i campi (obbligatori e opzionali) valorizzati correttamente
-  @letturaDestinatario @useB2B
-  Scenario Outline: [RICERCA_RICEVUTE_1] Come destinatario <tipo> ricerco le notifiche ricevute con tutti i filtri valorizzati
     When viene inviata una nuova notifica bonaria
     And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di Palermo          |
@@ -42,30 +24,30 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
     # Passando communicationType = ALL si ottengono sia le notifiche bonarie che quelle legali
     Given "<destinatario>" visualizza l'elenco delle notifiche per comune "Comune_Multi"
       | startDate         | $DATE_ADD(-1D) |
-      | endDate           | $DATE_ADD(1D) |
-      | communicationType | ALL        |
-      | size              | 50         |
+      | endDate           | $DATE_ADD(1D)  |
+      | communicationType | ALL            |
+      | size              | 50             |
     And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
       | communicationType | LEGAL, INFORMAL |
     # Passando communicationType = INFORMAL, la notifica bonaria è presente nell'elenco delle notifiche ricevute
     Given "<destinatario>" visualizza l'elenco delle notifiche per comune "Comune_Multi"
       | startDate         | $DATE_ADD(-1D) |
-      | endDate           | $DATE_ADD(1D) |
-      | communicationType | INFORMAL   |
-      | size              | 50         |
+      | endDate           | $DATE_ADD(1D)  |
+      | communicationType | INFORMAL       |
+      | size              | 50             |
     And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
       | communicationType | INFORMAL |
     # Passando communicationType = LEGAL, la notifica bonaria non è presente nell'elenco delle notifiche ricevute
     Given "<destinatario>" visualizza l'elenco delle notifiche per comune "Comune_Multi"
       | startDate         | $DATE_ADD(-1D) |
-      | endDate           | $DATE_ADD(1D) |
-      | communicationType | LEGAL      |
+      | endDate           | $DATE_ADD(1D)  |
+      | communicationType | LEGAL          |
     And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
       | communicationType | LEGAL |
     # Passando communicationType assente, di default vengono cercate solo le LEGAL e la notifica bonaria non è presente nell'elenco delle notifiche ricevute
     Given "<destinatario>" visualizza l'elenco delle notifiche per comune "Comune_Multi"
       | startDate | $DATE_ADD(-1D) |
-      | endDate   | $DATE_ADD(1D) |
+      | endDate   | $DATE_ADD(1D)  |
     And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
       | communicationType | LEGAL |
 
@@ -77,9 +59,9 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
 
 
   #CASO DI TEST 4.1 - campo obbligatorio non valorizzato -> 400 KO
-  @letturaDestinatario @useB2B
+  @letturaDestinatario1 @useB2B
   Scenario Outline: [RICERCA_RICEVUTE_2] Come destinatario non riesco a ricercare le notifiche ricevute se manca un campo obbligatorio
-    And "<destinatario>" visualizza l'elenco delle notifiche per comune "Comune_Multi"
+    And "Mario Cucumber" visualizza l'elenco delle notifiche per comune "Comune_Multi"
       | <campo> | NULL |
     Then si verifica che venga ritornato un errore di tipo "BAD REQUEST"
     Examples:
@@ -89,62 +71,132 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
       | xPagopaPnCxId   |
       | startDate       |
       | endDate         |
-    Examples:
-      | destinatario   |
-      | Mario Cucumber |
-      | CucumberSpa    |
-      | CucumberSpaB2B |
 
 
-  @deleghe1 @useB2B
+  @deleghe4 @useB2B @letturaDestinatario1
   Scenario: [RICERCA_RICEVUTE_3] Un delegato riceve una notifica legale e la ricerca delle notifiche ricevute lato delegato restituisce le notifiche attese dei criteri di ricerca
     Given "Mario Cucumber" rifiuta se presente la delega ricevuta "Mario Gherkin"
     And "Mario Cucumber" viene delegato da "Mario Gherkin" per comune "Comune_Multi"
     And "Mario Cucumber" accetta la delega "Mario Gherkin"
+    Given mittente della notifica bonaria: "Comune_Multi"
+    # Viene creata una notifica bonaria
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | SoricalMessaMora |
+    And destinatario della notifica bonaria
+      | recipientType | PF               |
+      | taxId         | CLMCST42R12D969Z |
+      | denomination  | Mario Cucumber   |
+      | messageId     | ${IT}            |
+    When viene inviata una nuova notifica bonaria
+    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    # Viene creata una notifica legale
+    Given viene generata una nuova notifica
+      | subject            | invio notifica GA cucumber |
+      | senderDenomination | Comune di palermo          |
+    And destinatario Mario Gherkin e:
+      | payment_pagoPaForm | SI               |
+      | payment_f24        | PAYMENT_F24_FLAT |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
 
+    #Viene effettuata la ricerca delle notifiche ricevute lato delegato e si verifica che vengano restituite le sole notifiche legali
+    And "Mario Cucumber" visualizza l'elenco delle notifiche per comune "Comune_Multi"
+      | startDate | $DATE_ADD(-1D) |
+      | endDate   | $DATE_ADD(1D)  |
+      | iunMatch  | :actualIun     |
+      | senderId  | :senderId      |
+      | mandateId | :mandateId     |
+    And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
+      | communicationType | LEGAL      |
+      | iun               | :actualIun |
+      | mandateId         | :mandateId |
+      | itemsFound        | 1          |
+
+    And "Mario Cucumber" visualizza l'elenco delle notifiche per comune "Comune_Multi"
+      | startDate         | $DATE_ADD(-1D) |
+      | endDate           | $DATE_ADD(1D)  |
+      | communicationType | ALL            |
+      | senderId          | :senderId      |
+      | mandateId         | :mandateId     |
+    And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
+      | communicationType | LEGAL             |
+      | sender            | Comune di palermo |
+
+    And "Mario Cucumber" visualizza l'elenco delle notifiche per comune "Comune_Multi"
+      | startDate | $DATE_ADD(-1D) |
+      | endDate   | $DATE_ADD(1D)  |
+      | group     | :group         |
+      | senderId  | :senderId      |
+      | mandateId | :mandateId     |
+    And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
+      | group     | CONSISTENT |
+      | mandateId | :mandateId |
+
+
+  @deleghe4 @useB2B @letturaDestinatario1
+  Scenario: [RICERCA_RICEVUTE_3aaa] Un delegato riceve una notifica legale e la ricerca delle notifiche ricevute lato delegato restituisce le sole notifiche legali
+  ricevute dal delegato a partire dalla creazione della delega. Le notifiche bonarie non vengono restituite.
+    Given "Mario Cucumber" rifiuta se presente la delega ricevuta "Mario Gherkin"
+    And "Mario Cucumber" viene delegato da "Mario Gherkin" per comune "Comune_Multi"
+    Given mittente della notifica bonaria: "Comune_Multi"
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | SoricalMessaMora |
+    And destinatario della notifica bonaria
+      | recipientType | PF               |
+      | taxId         | CLMCST42R12D969Z |
+      | denomination  | Mario Gherkin    |
+      | messageId     | ${IT}            |
     When viene inviata una nuova notifica bonaria
     And si verifica che la notifica bonaria sia in stato "ACCEPTED"
 
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo          |
-    And destinatario Mario Cucumber e:
+    And destinatario Mario Gherkin e:
       | payment_pagoPaForm | SI               |
       | payment_f24        | PAYMENT_F24_FLAT |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+
+    And "Mario Cucumber" accetta la delega "Mario Gherkin"
+
     And "Mario Cucumber" visualizza l'elenco delle notifiche per comune "Comune_Multi"
       | startDate | $DATE_ADD(-1D) |
-      | endDate   | $DATE_ADD(1D) |
-      | iunMatch  | :actualIun |
-    And Si verifica che il numero di notifiche restituite nella pagina sia 1
+      | endDate   | $DATE_ADD(1D)  |
+      | iunMatch  | :actualIun     |
+      | senderId  | :senderId      |
+      | mandateId | :mandateId     |
     And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
       | communicationType | LEGAL      |
       | iun               | :actualIun |
+      | itemsFound        | 1          |
+
     And "Mario Cucumber" visualizza l'elenco delle notifiche per comune "Comune_Multi"
       | startDate         | $DATE_ADD(-1D) |
-      | endDate           | $DATE_ADD(1D) |
-      | senderId          | :senderId  |
-      | communicationType | ALL        |
+      | endDate           | $DATE_ADD(1D)  |
+      | communicationType | ALL            |
+      | senderId          | :senderId      |
+      | mandateId         | :mandateId     |
+
     And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
-      | communicationType | LEGAL, INFORMAL |
-      | sender            | Comune di palermo         |
+      | communicationType | LEGAL, INFORMAL   |
+      | sender            | Comune di palermo |
+
+
+  #CASO DI TEST 4.1 - un delegato non può cercare le notifiche bonarie del delegante: mandateId + communicationType INFORMAL deve restituire 400
+  @deleghe4 @useB2B @letturaDestinatario1
+  Scenario: [RICERCA_RICEVUTE_6] Un delegato non può cercare le notifiche bonarie del delegante tramite mandateId
+    Given "Mario Cucumber" rifiuta se presente la delega ricevuta "Mario Gherkin"
+    And "Mario Cucumber" viene delegato da "Mario Gherkin" per comune "Comune_Multi"
+    And "Mario Cucumber" accetta la delega "Mario Gherkin"
     And "Mario Cucumber" visualizza l'elenco delle notifiche per comune "Comune_Multi"
       | startDate         | $DATE_ADD(-1D) |
-      | endDate           | $DATE_ADD(1D) |
-      | senderId          | :senderId  |
-      | communicationType | INFORMAL   |
-    And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
-      | communicationType | INFORMAL |
-    And "Mario Cucumber" visualizza l'elenco delle notifiche per comune "Comune_Multi"
-      | startDate | $DATE_ADD(-1D) |
-      | endDate   | $DATE_ADD(1D) |
-      | group     | :group     |
-    And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
-      | group | CONSISTENT |
+      | endDate           | $DATE_ADD(1D)  |
+      | mandateId         | :mandateId     |
+      | communicationType | INFORMAL       |
+    Then si verifica che venga ritornato un errore di tipo "BAD REQUEST"
 
 
   #CASO DI TEST 4.3/4.4 - ricerca per specifico mittente, IUN e gruppo lato destinatario
-  @letturaDestinatario @useB2B
+  @letturaDestinatario1 @useB2B
   Scenario Outline: [RICERCA_RICEVUTE_4] Come destinatario <tipo> ricerco le notifiche ricevute filtrando per mittente, IUN e gruppo
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
@@ -153,20 +205,23 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Given "<destinatario>" visualizza l'elenco delle notifiche per comune "Comune_Multi"
       | startDate | $DATE_ADD(-1D) |
-      | endDate   | $DATE_ADD(1D) |
-      | senderId  | :senderId  |
+      | endDate   | $DATE_ADD(1D)  |
+      | senderId  | :senderId      |
+      | size      | 2              |
     And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
       | sender | Comune di Palermo |
     Given "<destinatario>" visualizza l'elenco delle notifiche per comune "Comune_Multi"
       | startDate | $DATE_ADD(-1D) |
-      | endDate   | $DATE_ADD(1D) |
-      | iunMatch  | :actualIun |
+      | endDate   | $DATE_ADD(1D)  |
+      | iunMatch  | :actualIun     |
+      | senderId  | :senderId      |
     And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
-      | iun | :actualIun |
+      | iun    | :actualIun        |
+      | sender | Comune di Palermo |
     Given "<destinatario>" visualizza l'elenco delle notifiche per comune "Comune_Multi"
       | startDate | $DATE_ADD(-1D) |
-      | endDate   | $DATE_ADD(1D) |
-      | group     | :group     |
+      | endDate   | $DATE_ADD(1D)  |
+      | group     | :group         |
     And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
       | group | CONSISTENT |
 
@@ -178,15 +233,15 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
 
 
   #CASO DI TEST 4.3/4.4 - paginazione con più risultati
-  @letturaDestinatario @useB2B
+  @letturaDestinatario1 @useB2B
   Scenario: [RICERCA_RICEVUTE_5] Come destinatario recupero le notifiche ricevute sfogliando tutte le pagine dei risultati
     Given vengono create 5 notifiche con destinatario Mario Cucumber per la pa "Comune_Multi" e si aspetta che raggiungano l'elemento di timeline della notifica "REQUEST_ACCEPTED"
       | subject            | invio notifica paginazione |
       | senderDenomination | Comune di Palermo          |
     And "Mario Cucumber" visualizza l'elenco delle notifiche per comune "Comune_Multi"
       | startDate | $DATE_ADD(-1D) |
-      | endDate   | $DATE_ADD(1D) |
-      | size      | 1          |
+      | endDate   | $DATE_ADD(1D)  |
+      | size      | 1              |
     And si sfogliano tutte le pagine della ricerca lato destinatario e si verifica che vengano raccolte almeno 5 notifiche
 
 

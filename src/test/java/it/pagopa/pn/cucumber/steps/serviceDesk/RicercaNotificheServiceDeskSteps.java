@@ -5,7 +5,7 @@ import io.cucumber.java.en.Then;
 import it.pagopa.common.util.DateUtils;
 import it.pagopa.common.util.StringUtils;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bInternalInformalClientImpl;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.model.NotificationSearchResponse;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.model.LegalNotificationSearchResponse;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.model.NotificationStatusV26;
 import it.pagopa.pn.cucumber.steps.SendSharedContext;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
@@ -38,7 +38,7 @@ public class RicercaNotificheServiceDeskSteps {
     private final SharedSteps sharedSteps;
     private final SendSharedContext sendSharedContext;
 
-    private NotificationSearchResponse notificationSearchResponse;
+    private LegalNotificationSearchResponse notificationSearchResponse;
     private HttpStatusCodeException notificationError;
     private OffsetDateTime lastStartDate;
     private OffsetDateTime lastEndDate;

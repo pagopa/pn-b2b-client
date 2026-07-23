@@ -28,6 +28,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Tutti i confronti testuali (campo singolo, elementi di lista, valore di {@value #CONSISTENT_VALUE})
  * ignorano maiuscole/minuscole: conta il contenuto del valore, non la sua formattazione esatta.
  * <p>
+ * Se per un campo scalare (non lista, non data) vengono elencati più valori ammessi (es.
+ * {@code communicationType | LEGAL, INFORMAL}), il controllo è duplice: ogni riga deve avere uno dei
+ * valori elencati, e in più ognuno dei valori elencati deve comparire in almeno una riga tra quelle
+ * restituite (non basta quindi che le righe abbiano tutte lo stesso valore tra quelli ammessi).
+ * <p>
  * Il criterio {@value #ITEMS_FOUND_FIELD} è un caso speciale: non è un campo di una riga ma verifica il
  * numero di notifiche restituite (es. {@code | itemsFound | 3 |}), quindi non viene letto per
  * riflessione né applicato riga per riga.
@@ -61,6 +66,39 @@ public final class NotificationSearchRowAssertions {
                 return;
             }
             rows.forEach(row -> assertRowFieldMatches(row, field, allowedValues));
+            if (allowedValues.size() > 1) {
+                assertAllAllowedScalarValuesAreRepresented(rows, field, allowedValues);
+            }
+        });
+    }
+
+    /**
+     * Verifica che, quando per un campo scalare sono ammessi più valori, ognuno di essi compaia in
+     * almeno una delle righe restituite. Non si applica ai campi lista (es. {@code recipients}) né ai
+     * campi data (es. {@code sentAt}), per cui più valori indicano rispettivamente un elenco di valori
+     * ammessi per riga o un range: per questi due casi il tipo del campo viene dedotto dalla prima riga.
+     */
+    private static void assertAllAllowedScalarValuesAreRepresented(List<?> rows, String field, List<String> allowedValues) {
+        if (!rows.isEmpty()) {
+            Object firstValue = NotificationRowFieldReader.readField(rows.get(0), field);
+            if (firstValue instanceof List) {
+                return;
+            }
+            String firstValueAsString = firstValue == null ? null : firstValue.toString();
+            if (parseAsDateTime(firstValueAsString) != null) {
+                return;
+            }
+        }
+        List<String> actualValues = rows.stream()
+                .map(row -> NotificationRowFieldReader.readField(row, field))
+                .map(value -> value == null ? null : value.toString())
+                .collect(Collectors.toList());
+        allowedValues.forEach(allowedValue -> {
+            boolean isRepresented = actualValues.stream().anyMatch(actual -> equalsIgnoringCase(allowedValue, actual));
+            assertThat(isRepresented)
+                    .as("Il valore '%s' del criterio '%s' non è presente in nessuna delle notifiche restituite: valori trovati %s",
+                            allowedValue, field, actualValues)
+                    .isTrue();
         });
     }
 

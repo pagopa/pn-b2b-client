@@ -14,7 +14,7 @@ Feature: Ricerca delle notifiche ricevute lato delegato
   #CASO DI TEST 5.1 - tutti i campi (obbligatori e opzionali) valorizzati correttamente
   #Nota: la response è tipizzata su LegalNotificationSearchResponse, quindi le notifiche bonarie
   #non possono mai comparire nell'elenco lato delegato: non serve un test dedicato, è garantito dal contratto API.
-  @letturaDestinatario @useB2B
+  @letturaDestinatarioDelegato @useB2B
   Scenario: [RICERCA_RICEVUTE_DELEGATO_B2B_1] Come delegato ricerco le notifiche ricevute con tutti i filtri valorizzati
     e le notifiche bonarie non devono essere presenti nell'elenco delle notifiche ricevute
 #    Given "CucumberSpaB2B" rifiuta se presente la delega ricevuta "GherkinSrlB2B"
@@ -65,7 +65,7 @@ Feature: Ricerca delle notifiche ricevute lato delegato
   #CASO DI TEST 5.3 - tutti i campi (obbligatori e opzionali) valorizzati correttamente
   #Nota: la response è tipizzata su LegalNotificationSearchResponse, quindi le notifiche bonarie
   #non possono mai comparire nell'elenco lato delegato: non serve un test dedicato, è garantito dal contratto API.
-  @letturaDestinatario @useB2B
+  @letturaDestinatarioDelegato @useB2B
   Scenario Outline: [RICERCA_RICEVUTE_DELEGATO_PG_2] Come delegato ricerco le notifiche ricevute con tutti i filtri valorizzati
     Given "<delegato>" rifiuta se presente la delega ricevuta "<delegatore>"
     Given "<delegato>" viene delegato da "<delegatore>"
@@ -111,7 +111,7 @@ Feature: Ricerca delle notifiche ricevute lato delegato
 
 
   #CASO DI TEST 5.3/5.4 - paginazione con più risultati
-  @letturaDestinatario @useB2B
+  @letturaDestinatarioDelegato @useB2B
   Scenario: [RICERCA_RICEVUTE_DELEGATO_PG_4] Come delegato recupero le notifiche ricevute del delegante sfogliando tutte le pagine dei risultati
     Given "CucumberSpa" rifiuta se presente la delega ricevuta "GherkinSrl"
     Given "CucumberSpa" viene delegato da "GherkinSrl"
@@ -127,7 +127,7 @@ Feature: Ricerca delle notifiche ricevute lato delegato
 
 
   #CASO DI TEST 5.1 - campo obbligatorio non valorizzato -> 400 KO
-  @letturaDestinatario @useB2B
+  @letturaDestinatarioDelegato @useB2B
   Scenario Outline: [RICERCA_RICEVUTE_DELEGATO_PG_3] Come destinatario non riesco a ricercare le notifiche ricevute se manca un campo obbligatorio
     Then "<destinatario>" visualizza l'elenco delle notifiche del delegante "GherkinSrl" per comune "Comune_Multi"
       | <campo> | NULL |
