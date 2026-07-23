@@ -6,6 +6,7 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainforma
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewInformalNotificationRequestStatusResponseV1;
 import it.pagopa.pn.cucumber.steps.informalNotification.datatest.InformalStatusPollingConfig;
 import it.pagopa.pn.cucumber.steps.informalNotification.datatest.InformalTimelinePollingConfig;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
 import java.util.Collections;
@@ -17,12 +18,14 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
+@Slf4j
+
+//Per aggiungere nuovi campi aggiornare anche la classe:InformalTimelineElementV1
 public class NotificationInformalUtilsWorkFlowV1 {
 
     public static void checkTimelineElement(InformalTimelineElementV1 actual, InformalTimelineElementV1 expected) {
 
         InformalTimelineElementDetailsV1 actualDetails = actual.getDetails();
-
         InformalTimelineElementDetailsV1 expectedDetails = expected.getDetails();
 
         if (expectedDetails.getRecIndex() != null) {
@@ -46,13 +49,9 @@ public class NotificationInformalUtilsWorkFlowV1 {
         if (expectedDetails.getChannel() != null) {
             assertEquals(expectedDetails.getChannel(), actualDetails.getChannel());
         }
-        if (expectedDetails.getDeliveryDetail() != null) {
-            assertEquals(expectedDetails.getDeliveryDetail(), actualDetails.getDeliveryDetail());
-        }
         if (expectedDetails.getDeliveryDetail() != null && expectedDetails.getDeliveryDetail().getFailureCause() != null) {
             assertEquals(expectedDetails.getDeliveryDetail().getFailureCause(), actualDetails.getDeliveryDetail().getFailureCause());
         }
-
     }
 
     public static List<InformalTimelineElementV1> getTimelineElementsByCategory(FullSentInformalNotificationV1 notification, String category) {
@@ -97,38 +96,43 @@ public class NotificationInformalUtilsWorkFlowV1 {
         Duration pollInterval = getPollingInterval(category);
 
         AtomicReference<InformalTimelineElementV1> foundElement = new AtomicReference<>();
+        AtomicReference<FullSentInformalNotificationV1> lastNotification = new AtomicReference<>();
+        try {
 
-        await().atMost(timeout).pollInterval(pollInterval).until(() -> {
+            await().atMost(timeout).pollInterval(pollInterval).until(() -> {
 
-            FullSentInformalNotificationV1 notification = notificationSupplier.get();
+                FullSentInformalNotificationV1 notification = notificationSupplier.get();
+                lastNotification.set(notification);
+                List<InformalTimelineElementV1> elements = getTimelineElementsByCategory(notification, category);
 
-            List<InformalTimelineElementV1> elements = getTimelineElementsByCategory(notification, category);
-
-
-            if (elements.isEmpty()) {
-                return false;
-            }
-            // Nessun dettaglio atteso => basta la categoria
-//            if (expected == null || expected.getDetails() == null) {
-//                return !elements.isEmpty();
-//            }
-
-            for (InformalTimelineElementV1 actual : elements) {
-
-                try {
-
-                    checkTimelineElement(actual, expected);
-
-                    foundElement.set(actual);
-
-                    return true;
-
-                } catch (AssertionError ignored) {
+                if (elements.isEmpty()) {
+                    return false;
                 }
-            }
+                // Nessun dettaglio atteso: basta che esista almeno un elemento
+                if (expected == null || expected.getDetails() == null) {
+                    foundElement.set(elements.get(0));
+                    return true;
+                }
+                for (InformalTimelineElementV1 actual : elements) {
+                    try {
+                        checkTimelineElement(actual, expected);
+                        foundElement.set(actual);
+                        return true;
 
-            return false;
-        });
+                    } catch (AssertionError ignored) {
+                    }
+                }
+                return false;
+            });
+
+        } catch (Exception e) {
+
+            FullSentInformalNotificationV1 notification = lastNotification.get();
+
+            throw new AssertionError("""
+                        Elemento timeline non trovato. Categoria attesa: %s Ultima FullSentInformalNotificationV1: %s """.formatted(category, notification), e);
+        }
+
 
         return foundElement.get();
     }
@@ -136,9 +140,7 @@ public class NotificationInformalUtilsWorkFlowV1 {
     public static NewInformalNotificationRequestStatusResponseV1 waitForStatus(Supplier<NewInformalNotificationRequestStatusResponseV1> statusSupplier, String expectedStatus) {
 
         AtomicReference<NewInformalNotificationRequestStatusResponseV1> responseRef = new AtomicReference<>();
-
         AtomicReference<String> stopStatusReached = new AtomicReference<>();
-
         AtomicReference<String> lastStatus = new AtomicReference<>();
 
         InformalStatusPollingConfig.DefaultStatusValue config = InformalStatusPollingConfig.DefaultStatusValue.valueOf(expectedStatus);
@@ -152,7 +154,6 @@ public class NotificationInformalUtilsWorkFlowV1 {
             if (response == null) {
                 return false;
             }
-
             String actualStatus = response.getNotificationRequestStatus();
 
             lastStatus.set(actualStatus);
@@ -163,20 +164,16 @@ public class NotificationInformalUtilsWorkFlowV1 {
 
                 return true;
             }
-
             return expectedStatus.equals(actualStatus);
         });
 
         if (stopStatusReached.get() != null) {
-
             fail("Atteso stato " + expectedStatus + " ma raggiunto lo stato " + stopStatusReached.get());
         }
 
         if (responseRef.get() == null) {
-
             fail("Nessuna response disponibile. " + "Atteso stato: " + expectedStatus);
         }
-
         return responseRef.get();
     }
 

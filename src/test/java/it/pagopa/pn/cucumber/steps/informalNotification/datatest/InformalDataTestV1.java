@@ -19,17 +19,13 @@ public class InformalDataTestV1 {
         if (data.size() == 1 && data.get("NULL") != null) {
             return null;
         }
-
         try {
-
             String recIndex = data.get("details_recIndex");
             String responseStatus = data.get("details_responseStatus");
             String digitalAddressSource = data.get("details_digitalAddressSource");
             String sentAttemptMade = data.get("details_sentAttemptMade");
             String sourceElementId = data.get("details_sourceElementId");
             String deliveryDetailFailureCause = data.get("details_deliveryDetailFailureCause");
-
-
             String channel = data.get("details_channel");
             String deliveryDetailCode = data.get("details_deliveryDetailCode");
 
@@ -41,9 +37,9 @@ public class InformalDataTestV1 {
                     .digitalAddressSource(digitalAddressSource != null ? DigitalAddressSource.valueOf(digitalAddressSource) : null)
                     .sentAttemptMade(sentAttemptMade != null ? Integer.valueOf(sentAttemptMade) : null)
                     .sourceElementId(sourceElementId != null ? sourceElementId : null)
-                    .channel(channel != null ? DigitalChannels.valueOf(channel) : null)
-                    .deliveryDetail(deliveryDetailCode != null ? new AnalogDeliveryDetail().code(deliveryDetailCode) : null)
-                    .deliveryDetail(deliveryDetailCode != null || deliveryDetailFailureCause != null ? new AnalogDeliveryDetail().code(deliveryDetailCode).failureCause(deliveryDetailFailureCause) : null);
+                    .channel(channel != null ? channel : null)
+                    .deliveryDetail(deliveryDetailCode != null || deliveryDetailFailureCause != null ? new AnalogDeliveryDetail()
+                            .code(deliveryDetailCode).failureCause(deliveryDetailFailureCause) : null);
 
             InformalTimelineElementV1 element = new InformalTimelineElementV1().details(details);
 

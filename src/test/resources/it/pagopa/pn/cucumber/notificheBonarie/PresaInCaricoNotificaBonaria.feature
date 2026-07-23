@@ -148,7 +148,7 @@ Feature: Sottomissione di una notifica bonaria.
 #    And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
 
 
-  @informalNotificationsValidation @informalSyncValidation @addLanguages
+  @informalNotificationsValidation @informalSyncValidation
   Scenario Outline: [NOTIFICHE_LANGUAGES_01_3_A] Come ente mittente ricevo errore nel tentativo di inviare
   una notifica bonaria con allegato un messaggio e indicando una lingua non conforme
     Given mittente della notifica bonaria: "Comune_Multi"
@@ -169,7 +169,7 @@ Feature: Sottomissione di una notifica bonaria.
       | ITT                 |
 
 
-  @informalNotificationsValidation @informalAsyncValidation @addLanguages
+  @informalNotificationsValidation @informalAsyncValidation
   Scenario: [NOTIFICHE_LANGUAGES_01_3_B] Come ente mittente ricevo errore nel tentativo di inviare
   una notifica bonaria con allegato un messaggio e indicando una lingua non presente nel messaggio
     Given mittente della notifica bonaria: "Comune_Multi"
@@ -1027,7 +1027,7 @@ Feature: Sottomissione di una notifica bonaria.
     And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
     Then la sottomissione della notifica bonaria è andata a buon fine
 
-  @informalNotificationsValidation @informalAsyncValidation
+  #@informalNotificationsValidation @informalAsyncValidation #Multidestinatario disabilitato per il momento
   Scenario: [NOTIFICHE_BONARIE_SM_01_1_D] Come ente mittenste invio delle notifiche bonarie verso più destinatari con più pagamenti
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con i seguenti parametri
@@ -1520,7 +1520,7 @@ Feature: Sottomissione di una notifica bonaria.
     Then la notifica bonaria risulta già terminata
 
 
-  @informalNotificationsValidation @informalSyncValidation
+  #@informalNotificationsValidation @informalSyncValidation #Multidestinatario disabilitato per il momento
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_D] Invio bonaria verso 11 destinatari - errore 400
   Nome Parametro Max numero destinatari: PN_DELIVERY_INFORMALNOTIFICATIONMAXRECIPIENTS.
     Given mittente della notifica bonaria: "Comune_Multi"

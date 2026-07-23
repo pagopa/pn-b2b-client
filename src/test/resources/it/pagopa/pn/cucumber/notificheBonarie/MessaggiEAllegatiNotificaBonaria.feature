@@ -357,3 +357,40 @@ Feature: Messaggi e allegati di una notifica bonaria.
     When si tenta il recupero allegato pagamento con recipient 5 e attachment 0
     Then si riceve errore 404
 
+
+
+    # DOWNLOAD ALLEGATI LATO DESTINATARIO
+
+  @informalNotificationsMessageAttachment @informalAuditlog
+  Scenario: [NOTIFICHE_BONARIE_DL_DESTINATARIO_1] Come ente mittente Recupero l'allegato di pagamento di una notifica bonaria
+    Given mittente della notifica bonaria: "Comune_Multi"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipientType | PF                |
+      | taxId         | FRMTTR76M06B715E  |
+      | denomination  | Ettore Fieramosca |
+      | messageId     | ${IT}             |
+    When viene inviata una nuova notifica bonaria
+    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    And il destinatario tenta il recupero dell'allegato pagamento della notifica bonaria
+    Then il download del destinatario risulta correttamente effettuato
+    And verifico la presenza di un audit log su "/aws/ecs/pn-commons" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | iun    | auto             |
+      | param1 | AUD_COM_ATCHOPEN_RCP |
+
+  @informalNotificationsMessageAttachment @informalAuditlog
+  Scenario: [NOTIFICHE_BONARIE_DL_DESTINATARIO_2] Come ente mittente Recupero l'allegato di pagamento di una notifica bonaria
+    Given mittente della notifica bonaria: "Comune_Multi"
+    And viene creata una nuova notifica bonaria con valori di default
+    And destinatario della notifica bonaria
+      | recipientType | PF                |
+      | taxId         | FRMTTR76M06B715E  |
+      | denomination  | Ettore Fieramosca |
+      | messageId     | ${IT}             |
+    When viene inviata una nuova notifica bonaria
+    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    And il destinatario tenta il recupero del documento della notifica bonaria
+    Then il download del destinatario risulta correttamente effettuato
+    And verifico la presenza di un audit log su "/aws/ecs/pn-commons" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | iun    | auto             |
+      | param1 | AUD_COM_DOCOPEN_RCP |

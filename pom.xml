@@ -750,7 +750,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/8301f9487ab67fa5463e68f856fb99426219750e/docs/openapi/api-internal-web-informal-recipient.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/refs/heads/develop/docs/openapi/api-internal-web-informal-recipient.yaml</inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>

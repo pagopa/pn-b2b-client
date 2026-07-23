@@ -14,6 +14,7 @@ public class InformalScenarioContext {
     // destinatario
     private String recipientTaxId;
     private String recipientDenomination;
+    private String recipientCxId;
 
     // auth recipient
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet recipientCxType;

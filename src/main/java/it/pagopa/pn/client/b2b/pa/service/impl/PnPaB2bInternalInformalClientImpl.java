@@ -44,7 +44,7 @@ public class PnPaB2bInternalInformalClientImpl {
         this.senderReadInformalNotificationB2BApi = new SenderReadInformalNotificationB2BApi(newInformalApiClient(restTemplate, deliveryBasePathOrigin));
         this.newInformalNotificationApi = new NewInformalNotificationApi(newInformalApiClient(restTemplate, deliveryBasePathOrigin));
         this.informalNotificationTerminationApi = new InformalNotificationTerminationApi();
-        this.recipientReadInformalNotificationApi = new RecipientReadInformalNotificationApi(newRecipientInformalApiClient(restTemplate, deliveryBasePath));
+        this.recipientReadInformalNotificationApi = new RecipientReadInformalNotificationApi(newRecipientInformalApiClient(restTemplate, deliveryBasePathOrigin));
         this.internalOnlyApi = new InternalOnlyApi(newPrivateDeliveryApiClient(restTemplate, deliveryBasePathOrigin));
     }
 
@@ -106,7 +106,17 @@ public class PnPaB2bInternalInformalClientImpl {
     }
 
     public FullReceivedInformalNotificationV1 getReceivedInformalNotification(String cxId, String iun, it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet recipientType) {
-        return recipientReadInformalNotificationApi.getReceivedInformalNotificationV1(operatorId, recipientType, cxId, "WEB", iun, null, null
+        return recipientReadInformalNotificationApi.getReceivedInformalNotificationV1(operatorId, recipientType, cxId, "WEB", iun, null, null, false
+        );
+    }
+
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.NotificationAttachmentDownloadMetadataResponse getReceivedInformalNotificationDocument(String cxId, String iun, it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet recipientType, Integer docIdx) {
+        return recipientReadInformalNotificationApi.getReceivedInformalNotificationDocumentV1(operatorId, recipientType, cxId, "WEB", iun, docIdx, null, null
+        );
+    }
+
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.NotificationAttachmentDownloadMetadataResponse getReceivedInformalNotificationAttachment(String cxId, String iun, it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet recipientType, Integer attachmentIdx) {
+        return recipientReadInformalNotificationApi.getReceivedInformalNotificationAttachmentV1(operatorId, recipientType, cxId, "WEB", iun, null, null, null, attachmentIdx
         );
     }
 
