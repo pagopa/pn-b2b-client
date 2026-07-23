@@ -105,12 +105,16 @@ public class EServiceApiClientImpl implements IEServiceClient {
 
     @Override
     public ResponseEntity<Void> scheduleArchiveDescriptor(UUID eServiceId, UUID descriptorId) {
-        return eservicesApi.scheduleArchiveEserviceDescriptorWithHttpInfo(eServiceId, descriptorId);
+        return eservicesApi.scheduleArchiveEserviceDescriptorWithHttpInfo(
+                eServiceId,
+                descriptorId,
+                new GracePeriodDaysSeed().gracePeriodDays(GracePeriodDays.NUMBER_60)
+        );
     }
 
     @Override
-    public ResponseEntity<Void> scheduleArchiveEService(UUID eServiceId, EServiceArchivingReasonSeed eserviceArchivingReasonSeed) {
-        return eservicesApi.scheduleArchiveEserviceWithHttpInfo(eServiceId, eserviceArchivingReasonSeed);
+    public ResponseEntity<Void> scheduleArchiveEService(UUID eServiceId, EServiceArchivingSeed eserviceArchivingSeed) {
+        return eservicesApi.scheduleArchiveEserviceWithHttpInfo(eServiceId, eserviceArchivingSeed);
     }
 
     @Override
@@ -228,7 +232,7 @@ public class EServiceApiClientImpl implements IEServiceClient {
     }
 
     @Override
-    public ResponseEntity<CreatedEServiceDescriptor> createEServiceInstanceFromTemplateWithHttpInfo(
+    public ResponseEntity<CreatedResource> createEServiceInstanceFromTemplateWithHttpInfo(
             UUID templateId, InstanceEServiceSeed instanceEServiceSeed) {
         /* DEV. NOTE 10/03/2025: al momento InstanceEServiceSeed è required dalla API, tuttavia
          * nessuno dei suoi campi lo è; per comodità si permette a questo metodo di passare NULL
