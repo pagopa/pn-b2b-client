@@ -5,26 +5,22 @@ import it.pagopa.interop.common.client.AbstractDPoPClient;
 import it.pagopa.interop.common.rest_template.DpopRestTemplate;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.e_service_template.IM2MV3EServiceTemplateClient;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Documents;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplate;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersion;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersionQuotasUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersionSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersions;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.EserviceTemplatesApi;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTemplateDescriptionUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTemplateDraftUpdateSeed;
 import it.pagopa.interop.utils.ApiClientUtils;
-import java.util.Collections;
-import java.util.Map;
-import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+
+import java.util.Collections;
+import java.util.Map;
+import java.util.UUID;
 
 @ToString
 @EqualsAndHashCode
@@ -112,6 +108,25 @@ public class M2MV3EServiceTemplateClientImpl extends AbstractDPoPClient implemen
             eserviceTemplatesApi.createEServiceTemplateVersionWithHttpInfo(templateId,
                 vMapper.mapToV3(v2Seed)),
             vMapper::mapToV2);
+    }
+
+    @Override
+    public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Document uploadDocument(
+        UUID templateId,
+        UUID versionId,
+        Resource file,
+        String prettyName
+    ) {
+        return vMapper.mapToV2(eserviceTemplatesApi.uploadEServiceTemplateVersionDocument(templateId, versionId, file, prettyName));
+    }
+
+    @Override
+    public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart downloadDocument(
+        UUID templateId,
+        UUID versionId,
+        UUID documentId
+    ) {
+        return vMapper.mapToV2(eserviceTemplatesApi.downloadEServiceTemplateVersionDocument(templateId, versionId, documentId));
     }
 
     @Override
