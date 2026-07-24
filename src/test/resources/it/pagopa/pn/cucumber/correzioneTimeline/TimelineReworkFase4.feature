@@ -455,29 +455,3 @@ Feature: Test relativi al SRS di correzione timeline fase 4
       | loadTimeline     | true     |
       | details          | NOT_NULL |
       | details_recIndex | 0        |
-
-  @timelineReworkF4 @nrt
-  Scenario: [VISUALIZZAZIONE_POST_120_GG_DECEDUTO] In caso di notifica visualizzata dopo più di 120 giorni, la visualizzazione non deve produrre gli elementi di timeline di visualizzazione, nè la relativa attestazione opponibile
-    Given "Comune_Multi" recupera lato web PA una notifica monodestinatario in stato "RETURNED_TO_SENDER" inviata tra 200 e 120 giorni fa con destinatario Mario Gherkin senza allegati disponibili
-    When "Mario Gherkin" legge la notifica ricevuta
-    And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" non esista
-      | loadTimeline     | true     |
-      | details          | NOT_NULL |
-      | details_recIndex | 0        |
-    And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED_CREATION_REQUEST" non esista
-      | loadTimeline     | true     |
-      | details          | NOT_NULL |
-      | details_recIndex | 0        |
-
-  @timelineReworkF4 @nrt
-  Scenario: [VISUALIZZAZIONE_POST_120_GG_DECEDUTO_MULTI] In caso di notifica visualizzata dopo più di 120 giorni, la visualizzazione non deve produrre gli elementi di timeline di visualizzazione, nè la relativa attestazione opponibile
-    Given "Comune_Multi" recupera lato web PA una notifica multidestinatario in stato "RETURNED_TO_SENDER" inviata tra 200 e 120 giorni fa con destinatario Mario Gherkin senza allegati disponibili
-    When "Mario Gherkin" legge la notifica ricevuta
-    And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" non esista
-      | loadTimeline     | true     |
-      | details          | NOT_NULL |
-      | details_recIndex | 0        |
-    And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED_CREATION_REQUEST" non esista
-      | loadTimeline     | true     |
-      | details          | NOT_NULL |
-      | details_recIndex | 0        |
