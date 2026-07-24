@@ -12,6 +12,7 @@ import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateRequestContext;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -34,6 +35,11 @@ public class NotificationAARStrategy implements ITemplateEngineStrategy {
 
     @Override
     public String getTextToCheckLanguage(String language, String recipientType) {
+        return String.join(" ", getYamlText("aar-no-radd", recipientType, language));
+    }
+
+    @Override
+    public List<String> getTextsToCheckLanguage(String language, String recipientType) {
         return getYamlText("aar-no-radd", recipientType, language);
     }
 
@@ -75,7 +81,7 @@ public class NotificationAARStrategy implements ITemplateEngineStrategy {
                 .orElse(null);
     }
 
-    private String getYamlText(String templateKey, String recipientType, String language) {
+    private List<String> getYamlText(String templateKey, String recipientType, String language) {
         TemplateEngineMessageConfigs.LocalizedText localizedText =
                 Optional.ofNullable(configs.getMessages().get(templateKey))
                         .map(inner -> inner.get(recipientType.toLowerCase()))

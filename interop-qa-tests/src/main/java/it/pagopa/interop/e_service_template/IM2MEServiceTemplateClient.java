@@ -3,13 +3,15 @@ package it.pagopa.interop.e_service_template;
 import it.pagopa.interop.ListRequest;
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
-import java.util.UUID;
-import javax.annotation.Nullable;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
+
+import javax.annotation.Nullable;
+import java.util.UUID;
 
 public interface IM2MEServiceTemplateClient extends SettableBearerToken {
     @Data
@@ -80,6 +82,10 @@ public interface IM2MEServiceTemplateClient extends SettableBearerToken {
     ResponseEntity<EServiceTemplateVersion> createEserviceTemplateVersion(
         UUID templateId,
         EServiceTemplateVersionCreationRequest request);
+
+    Document uploadDocument(UUID templateId, UUID versionId, Resource file, String prettyName);
+
+    FileDownloadMultipart downloadDocument(UUID templateId, UUID versionId, UUID documentId);
 
     Documents getDocuments(UUID templateId, UUID versionId);
 
