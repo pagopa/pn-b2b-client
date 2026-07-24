@@ -201,7 +201,7 @@ Feature: Comunicazioni bonarie
     And il corpo del messaggio contiene il testo "Paga ora"
 
   @templateEngine # /templates-engine-private/v1/templates/informal/email-communication-body
-  Scenario: [COMBO_TEMPLATE_ENGINE_9_7] Richiamare l’API per il recupero del template di email body comunicazione bonaria - hasPayment false con checkoutUrl null e si verifica che non siano presenti i messaggi di pagamento nel corpo del messaggio
+  Scenario: [COMBO_TEMPLATE_ENGINE_9_8] Richiamare l’API per il recupero del template di email body comunicazione bonaria - hasPayment false con checkoutUrl null e si verifica che non siano presenti i messaggi di pagamento nel corpo del messaggio
     When recupero il template per "email body comunicazione bonaria" con i valori nel request body:
       | hasPayment  | false |
       | checkoutUrl | null  |
