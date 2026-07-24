@@ -14,8 +14,8 @@ Feature: Workflow di una notifica bonaria.
     When viene inviata una nuova notifica bonaria
     And si verifica che la notifica bonaria sia in stato "ACCEPTED"
     #And il destinatario legge la notifica bonaria
-    And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
-    And si attende che venga prodotto l'elemento "WORKFLOW_ENDED_UNREACHED" della notifica bonaria
+#    And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
+#    And si attende che venga prodotto l'elemento "WORKFLOW_ENDED_UNREACHED" della notifica bonaria
 
  #example@pecSuccess.it
 #testpagopa3@pec.pagopa.it

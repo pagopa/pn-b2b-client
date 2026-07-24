@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.util.Map;
 
+//Per aggiungere nuovi campi aggiornare anche la classe: NotificationInformalUtilsWorkFlowV1
 @Data
 public class InformalDataTestV1 {
 

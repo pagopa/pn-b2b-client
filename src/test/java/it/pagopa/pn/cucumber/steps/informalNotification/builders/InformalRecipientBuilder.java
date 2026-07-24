@@ -132,9 +132,7 @@ public class InformalRecipientBuilder {
             String dueDate = getValue(data, PAYMENT_DUE_DATE.key);
             if (dueDate != null) {
                 pagoPa.setDueDate(parseDueDate(dueDate));
-            }//todo t bonarie
-
-
+            }
 
             InformalNotificationPaymentItem item = new InformalNotificationPaymentItem();
             item.setPagoPa(pagoPa);

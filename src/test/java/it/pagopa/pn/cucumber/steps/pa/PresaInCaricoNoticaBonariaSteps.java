@@ -822,7 +822,9 @@ public class PresaInCaricoNoticaBonariaSteps {
 
         return switch (taxId) {
 
-            case "FRMTTR76M06B715E" -> "PF-aa0c4556-5a6f-45b1-800c-0f4f3c5a57b6";
+            case "FRMTTR76M06B715Em" -> "PF-aa0c4556-5a6f-45b1-800c-0f4f3c5a57b6";
+
+            //todo t bonarie case "FRMTTR76M06B715E" -> sharedSteps.
 
             case "20517490320" -> "PG-b05de777-80c6-4549-a054-d8dfda139c62";
 

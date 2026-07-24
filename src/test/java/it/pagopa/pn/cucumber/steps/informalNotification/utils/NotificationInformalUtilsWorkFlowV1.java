@@ -19,8 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @Slf4j
-
-//Per aggiungere nuovi campi aggiornare anche la classe:InformalTimelineElementV1
+//Per aggiungere nuovi campi aggiornare anche la classe: InformalDataTestV1
 public class NotificationInformalUtilsWorkFlowV1 {
 
     public static void checkTimelineElement(InformalTimelineElementV1 actual, InformalTimelineElementV1 expected) {
