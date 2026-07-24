@@ -189,8 +189,7 @@ Feature: Comunicazioni bonarie
       | false         | subject Ciao recipient_denomination, body_primaryContent In ogni caso, qualora avessi bisogno di assistenza, contatta sender_denomination attraverso i suoi canali ufficiali |
 
   @templateEngine # /templates-engine-private/v1/templates/informal/email-communication-body
-  Scenario: [COMBO_TEMPLATE_ENGINE_9_7] Richiamare l’API per il recupero del template di email body comunicazione bonaria - hasPayment true con checkoutUrl popolato
-  e si verifica che nel template siano presenti i messaggi di pagamento nel corpo del messaggio
+  Scenario: [COMBO_TEMPLATE_ENGINE_9_7] Richiamare l’API per il recupero del template di email body comunicazione bonaria - hasPayment true con checkoutUrl popolato e si verifica che nel template siano presenti i messaggi di pagamento nel corpo del messaggio
     When recupero il template per "email body comunicazione bonaria" con i valori nel request body:
       | hasPayment  | true       |
       | checkoutUrl | paymentUrl |
@@ -202,8 +201,7 @@ Feature: Comunicazioni bonarie
     And il corpo del messaggio contiene il testo "Paga ora"
 
   @templateEngine # /templates-engine-private/v1/templates/informal/email-communication-body
-  Scenario: [COMBO_TEMPLATE_ENGINE_9_7] Richiamare l’API per il recupero del template di email body comunicazione bonaria - hasPayment false con checkoutUrl null
-  e si verifica che non siano presenti i messaggi di pagamento nel corpo del messaggio
+  Scenario: [COMBO_TEMPLATE_ENGINE_9_7] Richiamare l’API per il recupero del template di email body comunicazione bonaria - hasPayment false con checkoutUrl null e si verifica che non siano presenti i messaggi di pagamento nel corpo del messaggio
     When recupero il template per "email body comunicazione bonaria" con i valori nel request body:
       | hasPayment  | false |
       | checkoutUrl | null  |
@@ -294,7 +292,7 @@ Feature: Comunicazioni bonarie
     And il corpo del messaggio contiene il testo "Paga su SEND"
 
   @templateEngine # /templates-engine-private/v1/templates/informal/pec-communication-body
-  Scenario: [COMBO_TEMPLATE_ENGINE_10_7] Richiamare l’API per il recupero del template di pec body comunicazione bonaria - hasPayment false senza checkoutUrl
+  Scenario: [COMBO_TEMPLATE_ENGINE_10_8] Richiamare l’API per il recupero del template di pec body comunicazione bonaria - hasPayment false senza checkoutUrl
     When recupero il template per "pec body comunicazione bonaria" con i valori nel request body:
       | hasPayment  | false |
       | checkoutUrl | null  |
