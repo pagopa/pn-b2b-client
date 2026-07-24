@@ -485,9 +485,15 @@ Feature: Comunicazioni bonarie
     Then verifico che la chiamata sia andata in "400" error
 
   @templateEngine # /templates-engine-private/v1/templates/informal/sms-communication
-  Scenario: [COMBO_TEMPLATE_ENGINE_14_3] Richiamare l’API per il recupero del template di sms comunicazione bonaria - campo obbligatorio non valorizzato
+  Scenario: [COMBO_TEMPLATE_ENGINE_14_3] Richiamare l’API per il recupero del template di sms comunicazione bonaria - campo obbligatorio senderPaDenomination non valorizzato
     When recupero il template per "sms comunicazione bonaria" con i valori nel request body:
       | senderPaDenomination | null |
+    Then verifico che la chiamata sia andata in "400" error
+
+  @templateEngine # /templates-engine-private/v1/templates/informal/sms-communication
+  Scenario: [COMBO_TEMPLATE_ENGINE_14_3] Richiamare l’API per il recupero del template di sms comunicazione bonaria - campo obbligatorio recipientType non valorizzato
+    When recupero il template per "sms comunicazione bonaria" con i valori nel request body:
+      | recipientType | null |
     Then verifico che la chiamata sia andata in "400" error
 
 
