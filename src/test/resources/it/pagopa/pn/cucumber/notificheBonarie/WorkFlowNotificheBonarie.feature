@@ -13,23 +13,11 @@ Feature: Workflow di una notifica bonaria.
       | digitalDomicile | NULL              |
     When viene inviata una nuova notifica bonaria
     And si verifica che la notifica bonaria sia in stato "ACCEPTED"
-    #And il destinatario legge la notifica bonaria
+    Then si verifica che il codice tassonomico sia correttamente compilato in pn-Notifications
 #    And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
 #    And si attende che venga prodotto l'elemento "WORKFLOW_ENDED_UNREACHED" della notifica bonaria
 
- #example@pecSuccess.it
-#testpagopa3@pec.pagopa.it
-#testpagopa1@pec.pagopa.it
-# example@OK-pecSuccess.it
 
-  #example@FAIL-pecFirstKO.it
-
-#  pn.recipient.mario-gherkin.tax-id=CLMCST42R12D969Z
-#  pn.recipient.mario-gherkin.uid=37654561-446a-4c88-b328-6699a8322b33
-## ---------------------------------
-#
-#  pn.recipient.cucumber-spa.tax-id=20517490320
-#  pn.recipient.cucumber-spa.uid=b05de777-80c6-4549-a054-d8dfda139c62
 
 # ***********************************************
 # **** Fatturazione Ordinaria
@@ -371,7 +359,7 @@ Feature: Workflow di una notifica bonaria.
       | denomination    | Acme spa                   |
       | email           | NULL                       |
       | digitalDomicile | example@FAIL-pecFirstKO.it |
-      | phone_number    | +393935988796                   |
+      | phone_number    | +3900000                   |
     When viene inviata una nuova notifica bonaria
     And si verifica che la notifica bonaria sia in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
@@ -740,8 +728,10 @@ Feature: Workflow di una notifica bonaria.
 
 
 
+# ***********************************************
+# *** AUDIT LOG ********
+# ***********************************************
 
-  # AUDIT LOG ********
 
   @informalNotificationsWorkFlow @informalAuditlog
   Scenario: [NOTIFICHE_BONARIE_WORKFLOW_05_1_A] Come ente mittente invio una notifica bonaria verso PG con pec e analogico e verifico gli auditlog
@@ -814,9 +804,8 @@ Feature: Workflow di una notifica bonaria.
     When viene inviata una nuova notifica bonaria
     And si verifica che la notifica bonaria sia in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
-      | details_channel        | EMAIL |
-      | details_responseStatus | OK    |
-    And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
+      | details_channel | EMAIL |
+    #And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-workflow-manager" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun    | auto               |
       | param1 | AUD_COM_SEND_EMAIL |

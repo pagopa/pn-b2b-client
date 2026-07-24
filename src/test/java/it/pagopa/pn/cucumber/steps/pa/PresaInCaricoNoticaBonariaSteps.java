@@ -4,6 +4,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.*;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.FullReceivedInformalNotificationV1;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
@@ -20,12 +21,15 @@ import it.pagopa.pn.cucumber.steps.informalNotification.datatest.InformalStatusP
 import it.pagopa.pn.cucumber.steps.informalNotification.mapper.InformalNotificationRequestMapper;
 import it.pagopa.pn.cucumber.steps.informalNotification.utils.NotificationInformalUtilsV1;
 import it.pagopa.pn.cucumber.steps.informalNotification.utils.NotificationInformalUtilsWorkFlowV1;
+import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
 import it.pagopa.pn.cucumber.utils.GroupPosition;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.HttpClientErrorException;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -36,6 +40,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -303,6 +308,19 @@ public class PresaInCaricoNoticaBonariaSteps {
         assertNull(lastException, "Errore non atteso");
         assertNotNull(messageResponse, "Response messaggio nulla");
         assertNotNull(messageResponse.getCreatedAt(), "Campo create AT messaggio nullo");
+    }
+
+    @And("si verifica che il {string} sia correttamente compilato in pn-Notifications")
+    public void gettaxonomyCodeFromDb(String element) {
+
+        QueryResponse response = sharedSteps.getDynamoDbService().call(DynamoTableName.NOTIFICATIONS, Map.of(
+                ":v_iun", AttributeValue.builder().s(savedIun).build()
+        ));
+
+        assertThat(response.items().size()).as("Query on pn-Notifications non ha restituito nessun elemento").isGreaterThan(0);
+        Map<String, AttributeValue> dynamoNotification = response.items().get(0);
+        assertThat(dynamoNotification.containsKey(element)).isTrue();
+        assertThat(dynamoNotification.get(element).s()).isNotNull();
     }
 
 
@@ -820,16 +838,13 @@ public class PresaInCaricoNoticaBonariaSteps {
 
     private String resolveRecipientCxId(String taxId) {
 
-        return switch (taxId) {
+        Destinatario destinatario =
+                sharedSteps.getDestinatarioRegistry()
+                        .getByTaxId(taxId);
 
-            case "FRMTTR76M06B715Em" -> "PF-aa0c4556-5a6f-45b1-800c-0f4f3c5a57b6";
-
-            //todo t bonarie case "FRMTTR76M06B715E" -> sharedSteps.
-
-            case "20517490320" -> "PG-b05de777-80c6-4549-a054-d8dfda139c62";
-
-            default -> throw new IllegalArgumentException("Recipient CX ID non configurato per taxId: " + taxId);
-        };
+        return destinatario.getRecipientType()
+                + "-"
+                + destinatario.getUid();
     }
 
     private void setSenderContext(String paName) {
