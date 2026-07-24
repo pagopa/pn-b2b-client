@@ -172,11 +172,11 @@ public class TemplateEngineSteps {
 
     private List<String> getTextsToRetrieve(String language, TemplateType templateType, String recipientType) {
         List<String> retrievedTexts = templateEngineStrategy.get(templateType).getTextsToCheckLanguage(language, recipientType);
-        List<String> result = new ArrayList<>();
+        List<String> texts = new ArrayList<>();
         for (String retrievedText : retrievedTexts) {
-            result.add(retrievedText.replace("{%profile}", runProfile));
+            texts.add(retrievedText.replace("{%profile}", runProfile));
         }
-        return result;
+        return texts;
     }
 
     @And("controllo che nel file {string} contenga il (campo)(testo) {string} valorizzato (a)(con) {string}")
