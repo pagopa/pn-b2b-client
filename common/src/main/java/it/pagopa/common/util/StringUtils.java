@@ -1,6 +1,16 @@
 package it.pagopa.common.util;
 
+import it.pagopa.common.model.ISharedContext;
+import org.springframework.util.ReflectionUtils;
+import org.yaml.snakeyaml.introspector.PropertyUtils;
+
+import java.lang.reflect.Method;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,6 +40,11 @@ public class StringUtils {
      * Alfabeto maiuscolo inglese.
      */
     public static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    /**
+     * Nome della funzione per recuperare valori dal contesto.
+     */
+    public static final String CONTEXT_FUNCTION_NAME = "CONTEXT";
 
     /**
      * Pattern utilizzato per identificare i placeholder dinamici.
@@ -94,7 +109,7 @@ public class StringUtils {
 
             if (function == null) {
                 throw new IllegalArgumentException(
-                        "Funzione stringa non supportata: $" + functionName
+                        "Not supported string function: $" + functionName
                 );
             }
 
@@ -106,5 +121,64 @@ public class StringUtils {
         }
 
         return value;
+    }
+
+    public static String resolveDynamicValues(String textTemplate, ISharedContext context) {
+        StringBuilder text = new StringBuilder();
+        String functionName, argument;
+        int reachedIndex = 0;
+        int functionNameStart = textTemplate.indexOf("$", reachedIndex);
+        int functionNameEnd = textTemplate.indexOf("(", functionNameStart);
+        int argumentStart = 0, argumentEnd = 0;
+
+        while (functionNameStart > -1 && functionNameEnd > -1) {
+            String value = "";
+
+            // Raccogli testo non coinvolto in una funzione
+            text.append(textTemplate.substring(reachedIndex, functionNameStart));
+
+            // Recupera il nome di una funzione
+            functionName = textTemplate.substring(functionNameStart + 1, functionNameEnd);
+
+            // Recupera l'argomento della funzione
+            argumentStart = functionNameEnd + 1;
+            argumentEnd = textTemplate.indexOf(')', functionNameEnd);
+            argument = textTemplate.substring(argumentStart, argumentEnd);
+
+            // Esegue il tipo di funzione riconosciuto:
+
+            // 1) Funzione di recupero di un valore dal contesto
+            if (functionName.equals(CONTEXT_FUNCTION_NAME)) {
+                String methodName = "get" + argument.substring(0, 1).toUpperCase() + argument.substring(1);
+                Method getterMethod = ReflectionUtils.findMethod(ISharedContext.class, methodName);
+                if (getterMethod == null) {
+                    throw new IllegalArgumentException(
+                            "The function $" + CONTEXT_FUNCTION_NAME + " does not support " + argument
+                    );
+                }
+                value = (String)ReflectionUtils.invokeMethod(getterMethod, context);
+
+            // 2) Funzione su DateUtils
+            } else if (DateUtils.FUNCTIONS.containsKey(functionName)) {
+                value = DateUtils.FUNCTIONS.get(functionName).apply(argument);
+
+            // 3) Funzione su StringUtils
+            } else if (StringUtils.FUNCTIONS.containsKey(functionName)) {
+                value = StringUtils.FUNCTIONS.get(functionName).get();
+
+            // 4) Nessuna funzione riconosciuta: considera testo ordinario
+            } else {
+                text.append(textTemplate.substring(functionNameStart, argumentEnd + 1));
+            }
+            text.append(value);
+
+            // Controlla se c'è una prossima funzione in stringa
+            reachedIndex = argumentEnd + 1;
+            functionNameStart = textTemplate.indexOf("$", reachedIndex);
+            functionNameEnd = textTemplate.indexOf("(", functionNameStart);
+        }
+        text.append(textTemplate.substring(reachedIndex));
+        if (text.isEmpty()) text.append(textTemplate);
+        return text.toString();
     }
 }

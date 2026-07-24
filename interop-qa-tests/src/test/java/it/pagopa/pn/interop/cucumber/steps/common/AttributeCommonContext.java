@@ -22,10 +22,12 @@ import org.springframework.stereotype.Component;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class AttributeCommonContext {
     UUID attributeId;
+    String attributeName;
     List<List<UUID>> requiredCertifiedAttributes = new ArrayList<>();
     List<List<UUID>> requiredDeclaredAttributes = new ArrayList<>();
     List<List<UUID>> requiredVerifiedAttributes = new ArrayList<>();
     String attributeConsumerTenant;
+    String certifierName;
 
     List<Attribute> createdAttributes = new ArrayList<>();
     List<CompactAttribute> availableCertifiedDiscreteAttributes = new ArrayList<>();

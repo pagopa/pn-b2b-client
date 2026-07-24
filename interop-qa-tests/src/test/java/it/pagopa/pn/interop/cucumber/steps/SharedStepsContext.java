@@ -12,6 +12,7 @@ import it.pagopa.pn.interop.cucumber.steps.common.*;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import it.pagopa.pn.interop.cucumber.steps.notification.model.NotificationCommonContext;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
+import it.pagopa.common.model.ISharedContext;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +20,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
 @Setter
 @Slf4j
 @ScenarioScope
-public class SharedStepsContext {
+public class SharedStepsContext implements ISharedContext {
     private final IHttpExecutor httpCallExecutor;
     private final IdentityService identityService;
     private final PollingService pollingService;
@@ -39,7 +39,6 @@ public class SharedStepsContext {
     private Role role;
     private String userToken;
     private Auth auth;
-    private UUID agreementId;
     private ClientCommonContext clientCommonContext;
     private PurposeCommonContext purposeCommonContext;
     private EServicesCommonContext eServicesCommonContext;
@@ -107,4 +106,154 @@ public class SharedStepsContext {
         return scenarioId;
     }
 
+    @Override
+    public String getAgreementId() {
+        return this.agreementCommonContext.getAgreementId().toString();
+    }
+
+    @Override
+    public String getEServiceName() {
+        return this.eServicesCommonContext.getName();
+    }
+
+    @Override
+    public String getOldEServiceName() {
+        return this.eServicesCommonContext.getOldName();
+    }
+
+    @Override
+    public String getEServiceId() {
+        return this.eServicesCommonContext.getEserviceId().toString();
+    }
+
+    @Override
+    public String getDescriptorId() {
+        return this.eServicesCommonContext.getDescriptorId().toString();
+    }
+
+    @Override
+    public String getOldDescriptorId() {
+        return this.eServicesCommonContext.getOldDescriptorId().toString();
+    }
+
+    @Override
+    public String getProducerName() {
+        return this.eServicesCommonContext.getProducerName();
+    }
+
+    @Override
+    public String getTemplateProducerName() {
+        return this.eServiceTemplateStepContext.getProducerName();
+    }
+
+    @Override
+    public String getConsumerName() {
+        return this.tenantCommonContext.getConsumerTenantName();
+    }
+
+    @Override
+    public String getPurposeId() {
+        // purposeId first or else fallback into newPurposeId
+        return (this.purposeCommonContext.getPurposeId() != null) ?
+                this.purposeCommonContext.getPurposeId() :
+                this.purposeCommonContext.getNewPurposeId().toString();
+    }
+
+    @Override
+    public String getNewPurposeId() {
+        // newPurposeId first or else fallback into purposeId
+        return (this.purposeCommonContext.getNewPurposeId() != null) ?
+                this.purposeCommonContext.getNewPurposeId().toString() :
+                this.purposeCommonContext.getPurposeId();
+    }
+
+    @Override
+    public String getPurposeTitle() {
+        return this.purposeCommonContext.getCreatedPurposes().get(0).getTitle();
+    }
+
+    @Override
+    public String getEServiceTemplateId() {
+        return this.eServiceTemplateStepContext.getLastTemplateManaged().getId().toString();
+    }
+
+    @Override
+    public String getEServiceTemplateVersionId() {
+        return this.eServiceTemplateStepContext.getLastTemplateManaged().getLastVersionId().toString();
+    }
+
+    @Override
+    public String getEServiceTemplateName() {
+        return this.eServiceTemplateStepContext.getLastTemplateManaged().getName();
+    }
+
+    @Override
+    public String getNewEServiceTemplateName() {
+        return this.eServiceTemplateStepContext.getModifiedTemplateName();
+    }
+
+    @Override
+    public String getDocumentName() {
+        return this.eServicesCommonContext.getDocumentName();
+    }
+
+    @Override
+    public String getAttributeName() {
+        return this.attributeCommonContext.getAttributeName();
+    }
+
+    @Override
+    public String getKeychainId() {
+        int lastIndex = this.producerKeychainCommonContext.getProducerKeychainIds().size() - 1;
+        return this.producerKeychainCommonContext.getProducerKeychainIds().get(lastIndex).toString();
+    }
+
+    @Override
+    public String getDeletedKeyId() {
+        int lastIndex = this.producerKeychainCommonContext.getDeletedKeyIds().size() - 1;
+        return this.producerKeychainCommonContext.getDeletedKeyIds().get(lastIndex);
+    }
+
+    @Override
+    public String getNewKeyId() {
+        return this.clientCommonContext.getNewKeyId();
+    }
+
+    @Override
+    public String getKeychainName() {
+        return this.producerKeychainCommonContext.getKeychainName();
+    }
+
+
+    @Override
+    public String getProducerKeyName() {
+        return this.producerKeychainCommonContext.getProducerKeyName();
+    }
+
+
+    @Override
+    public String getClientId() {
+        return this.clientCommonContext.getLastClient().toString();
+    }
+
+    @Override
+    public String getClientName() {
+        int lastIndex = this.clientCommonContext.getClientNames().size() - 1;
+        return this.clientCommonContext.getClientNames().get(lastIndex);
+    }
+
+    @Override
+    public String getDelegationId() {
+        return this.delegationCommonContext.getDelegationId().toString();
+    }
+
+    @Override
+    public String getDelegateName() {
+        return identityService.getTenantName(this.delegationCommonContext.getDelegateTenant());
+    }
+
+    @Override
+    public String getCertifierName() {
+        return this.attributeCommonContext.getCertifierName();
+    }
 }

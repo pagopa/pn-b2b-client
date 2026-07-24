@@ -1,0 +1,100 @@
+# Lista completa delle notifiche attivabili per ciascun ruolo. Di default, una notifica è spenta.
+# La configurazione delle notifiche non è autorizzata per i ruoli support, reviewer e viewer.
+
+role: "admin"
+notifications:
+  # Fruizione dei dati
+  - eserviceStateChangedToConsumer
+  - agreementActivatedRejectedToConsumer
+  - agreementSuspendedUnsuspendedToConsumer
+
+  # Finalità (Fruizione)
+  - purposeActivatedRejectedToConsumer
+  - purposeSuspendedUnsuspendedToConsumer
+
+  # Soglie di carico (Fruizione)
+  - purposeOverQuotaStateToConsumer
+  - purposeQuotaAdjustmentRequestToProducer
+
+  # Richieste di fruizione (Erogazione)
+  - eserviceStateChangedToProducer
+  - agreementManagementToProducer
+  - agreementSuspendedUnsuspendedToProducer
+
+  # Finalità (Erogazione)
+  - purposeStatusChangedToProducer
+
+  # Client (Erogazione)
+  - clientAddedRemovedToProducer
+
+  # Template di e-service
+  - eserviceTemplateStatusChangedToInstantiator
+  - newEserviceTemplateVersionToInstantiator
+  - eserviceTemplateNameChangedToInstantiator
+  - templateStatusChangedToProducer
+
+  # Conferimento di un e-service in delega
+  - delegationApprovedRejectedToDelegator
+  - eserviceNewVersionSubmittedToDelegator
+
+  # Ricezione di una delega per un e-service
+  - delegationSubmittedRevokedToDelegate
+  - eserviceNewVersionApprovedRejectedToDelegate
+
+  # Attributi certificati o verificati
+  - certifiedVerifiedAttributeAssignedRevokedToAssignee
+
+  # Chiavi (Attributi e chiavi)
+  - clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers
+---
+role: "api"
+notifications:
+  # Finalità (Erogazione)
+  - purposeStatusChangedToProducer
+
+  # Client (Erogazione)
+  - clientAddedRemovedToProducer
+
+  # Template di e-service
+  - templateStatusChangedToProducer
+---
+role: "security"
+notifications:
+  # Fruizione dei dati
+  - eserviceStateChangedToConsumer
+  - agreementSuspendedUnsuspendedToConsumer
+
+  # Finalità (Fruizione)
+  - purposeSuspendedUnsuspendedToConsumer
+
+  # Soglie di carico (Fruizione)
+  - purposeOverQuotaStateToConsumer
+  - purposeQuotaAdjustmentRequestToProducer
+
+  # Chiavi (Attributi e chiavi)
+  - clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers
+---
+role: "api,security"
+notifications:
+  # Fruizione dei dati
+  - eserviceStateChangedToConsumer
+  - agreementSuspendedUnsuspendedToConsumer
+
+  # Finalità (Fruizione)
+  - purposeSuspendedUnsuspendedToConsumer
+
+  # Soglie di carico (Fruizione)
+  - purposeOverQuotaStateToConsumer
+  - purposeQuotaAdjustmentRequestToProducer
+
+  # Finalità (Erogazione)
+  - purposeStatusChangedToProducer
+
+  # Client (Erogazione)
+  - clientAddedRemovedToProducer
+
+  # Template di e-service
+  - templateStatusChangedToProducer
+
+  # Chiavi (Attributi e chiavi)
+  - clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers

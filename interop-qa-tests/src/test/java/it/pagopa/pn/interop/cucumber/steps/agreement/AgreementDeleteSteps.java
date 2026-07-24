@@ -18,6 +18,6 @@ public class AgreementDeleteSteps {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient()
-                        .deleteAgreement(sharedStepsContext.getAgreementId()));
+                        .deleteAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId()));
     }
 }

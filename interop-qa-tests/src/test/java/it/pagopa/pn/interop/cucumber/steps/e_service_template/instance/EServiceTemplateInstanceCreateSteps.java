@@ -219,6 +219,11 @@ public class EServiceTemplateInstanceCreateSteps {
                         .as("Check correttezza del nome dell'istanza creata")
                         .isEqualTo(instanceDefaultName);
 
+                sharedStepsContext.getEServicesCommonContext().setEserviceId(
+                        eServiceCreatedDescriptor.getEservice().getId()
+                );
+                sharedStepsContext.getEServicesCommonContext().setDescriptorId(eServiceCreatedDescriptor.getId());
+
                 /* TODO 10/03/2025 sebbene i controlli soprastanti bastino a implementare lo
                     scenario indicato in SRS, sarebbe il caso di verificare che il risultato sia
                     coerente con tutti gli altri parametri del template, nonché con i parametri

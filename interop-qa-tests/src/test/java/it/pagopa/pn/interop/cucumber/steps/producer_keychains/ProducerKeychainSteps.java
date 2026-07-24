@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.producer_keychains;
 
 import com.nimbusds.jose.jwk.KeyType;
 import io.cucumber.java.en.And;
+import io.jsonwebtoken.lang.Assert;
 import it.pagopa.interop.authorization.domain.KeyPairDecorator;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
@@ -56,7 +57,11 @@ public class ProducerKeychainSteps extends AbstractCommonSteps<ProducerKeychain,
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenant, ruolo));
         getContext().getPollingService().makePolling(
             () -> producerKeychainClient.get(getContext().getProducerKeychainCommonContext().getFirstProducerKeychainId()),
-            Objects::nonNull,
+            res -> {
+                Assert.notNull(res);
+                getContext().getProducerKeychainCommonContext().setKeychainName(res.getName());
+                return true;
+            },
             "La creazione del portachiavi erogatore non ha avuto successo"
         );
         clientTokenConfigurator.setBearerToken(getContext().getUserToken());
@@ -109,6 +114,7 @@ public class ProducerKeychainSteps extends AbstractCommonSteps<ProducerKeychain,
             .getFirstProducerKeychainId();
         producerKeychainClient.createProducerKey(producerKeychainId, keySeed);
         getContext().getProducerKeychainCommonContext().addProducerKeyPair(keyPair);
+        getContext().getProducerKeychainCommonContext().setProducerKeyName(keySeed.getName());
         clientTokenConfigurator.setBearerToken(getContext().getUserToken());
         delayService.delay();
     }
@@ -120,8 +126,9 @@ public class ProducerKeychainSteps extends AbstractCommonSteps<ProducerKeychain,
             .getFirstProducerKeychainId();
 
         delayService.delay();
-        producerKeychainClient.getProducerKeysIds(producerKeychainId).forEach(
-            key -> producerKeychainClient.deleteProducerKey(producerKeychainId, key));
+        List<String> keyIds = producerKeychainClient.getProducerKeysIds(producerKeychainId);
+        getContext().getProducerKeychainCommonContext().setDeletedKeyIds(keyIds);
+        keyIds.forEach(key -> producerKeychainClient.deleteProducerKey(producerKeychainId, key));
 
         clientTokenConfigurator.setBearerToken(getContext().getUserToken());
     }

@@ -873,7 +873,7 @@ public class PurposeTemplateSteps {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         assertThat(eServiceId).as("L'id dell'eService creato risulta null").isNotNull();
         fromSeed.setEserviceId(eServiceId);
-        UUID agreementId = sharedStepsContext.getAgreementId();
+        UUID agreementId = sharedStepsContext.getAgreementCommonContext().getAgreementId();
         assertThat(agreementId).as("L'id dell'agreement creato risulta null").isNotNull();
         Agreement agreement = clientTokenConfigurator.getAgreementClient().getAgreementById(agreementId);
         assertThat(agreement).as("L'agreement restituito risulta null").isNotNull();

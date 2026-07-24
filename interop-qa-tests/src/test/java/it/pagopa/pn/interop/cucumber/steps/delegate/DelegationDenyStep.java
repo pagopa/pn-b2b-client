@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.delegate;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
@@ -9,6 +10,7 @@ import it.pagopa.interop.delegate.service.IConsumerDelegationsApiClient;
 import it.pagopa.interop.delegate.service.IDelegationApiClient;
 import it.pagopa.interop.delegate.service.IProducerDelegationsApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RejectDelegatedEServiceDescriptorSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RejectDelegationPayload;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -25,6 +27,7 @@ public class DelegationDenyStep {
     private final IProducerDelegationsApiClient producerDelegationsApiClient;
     private final IConsumerDelegationsApiClient consumerDelegationsApiClient;
     private final IDelegationApiClient delegationApiClient;
+    private final IEServiceClient eServiceClient;
     private final IdentityService identityService;
     private final SharedStepsContext sharedStepsContext;
     private final IHttpExecutor httpCallExecutor;
@@ -36,6 +39,7 @@ public class DelegationDenyStep {
         this.producerDelegationsApiClient = clientTokenConfigurator.getProducerDelegationsApiClient();
         this.consumerDelegationsApiClient = clientTokenConfigurator.getConsumerDelegationsApiClient();
         this.delegationApiClient = clientTokenConfigurator.getDelegationApiClient();
+        this.eServiceClient = clientTokenConfigurator.getEServiceClient();
         this.sharedStepsContext = sharedStepsContext;
         this.identityService = sharedStepsContext.getIdentityService();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
@@ -158,4 +162,14 @@ public class DelegationDenyStep {
         );
     }
 
+    @And("l'utente rifiuta la pubblicazione dell'e-service")
+    public void rejectDelegatedEServicePublication() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        RejectDelegatedEServiceDescriptorSeed seed = new RejectDelegatedEServiceDescriptorSeed();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+        seed.setRejectionReason("Rifiutato descrittore " + descriptorId);
+        httpCallExecutor.performCall(() -> eServiceClient.rejectDelegatedEServiceDescriptor(
+                sharedStepsContext.getEServicesCommonContext().getEserviceId(), descriptorId, seed
+        ));
+    }
 }

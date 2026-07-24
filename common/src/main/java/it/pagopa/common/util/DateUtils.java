@@ -23,15 +23,18 @@ import java.util.regex.Pattern;
  * $DATE_ADD(-1D)
  * $DATE_ADD(2M)
  * $TODAY()
+ * $EUROPE_TODAY()
  * </pre>
  * <p>
  * Funzioni supportate:
  * <ul>
  *     <li><b>DATE_ADD</b>: aggiunge o sottrae un intervallo temporale alla data corrente.</li>
+ *     <li><b>EUROPE_DATE_ADD</b>: come DATE_ADD, ma il formato data è europeo DD/MM/YYYY.</li>
  *     <li><b>TODAY</b>: restituisce la data corrente.</li>
+ *     <li><b>EUROPE_TODAY</b>: come TODAY, ma il formato data è europeo DD/MM/YYYY.</li>
  * </ul>
  * <p>
- * Unità temporali supportate da DATE_ADD:
+ * Unità temporali supportate da DATE_ADD o EUROPE_DATE_ADD:
  * <ul>
  *     <li>D = Giorni</li>
  *     <li>W = Settimane</li>
@@ -39,10 +42,16 @@ import java.util.regex.Pattern;
  *     <li>Y = Anni</li>
  * </ul>
  * <p>
- * Le date restituite sono formattate secondo lo standard ISO-8601:
+ * Le date restituite sono formattate di default secondo lo standard ISO-8601:
  *
  * <pre>
  * yyyy-MM-dd
+ * </pre>
+ *
+ * Se le funzioni hanno il prefisso EUROPE_ allora le date sono formattate con il formato europeo:
+ *
+ * <pre>
+ * dd/MM/yyyy
  * </pre>
  */
 public class DateUtils {
@@ -52,6 +61,9 @@ public class DateUtils {
      */
     public static final DateTimeFormatter FORMATTER_ISO =
             DateTimeFormatter.ISO_LOCAL_DATE;
+
+    public static final DateTimeFormatter FORMATTER_EU =
+            DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     /**
      * Pattern utilizzato per identificare le funzioni dinamiche supportate.
@@ -66,7 +78,7 @@ public class DateUtils {
             Pattern.compile("^\\$(\\w+)\\((.*)\\)$");
 
     /**
-     * Pattern utilizzato per il parsing degli argomenti della funzione DATE_ADD.
+     * Pattern utilizzato per il parsing degli argomenti della funzione DATE_ADD o EUROPE_DATE_ADD.
      * <p>
      * Formati supportati:
      *
@@ -82,10 +94,12 @@ public class DateUtils {
     /**
      * Registro delle funzioni dinamiche supportate.
      */
-    private static final Map<String, Function<String, String>> FUNCTIONS =
+    public static final Map<String, Function<String, String>> FUNCTIONS =
             Map.of(
-                    "DATE_ADD", DateUtils::dateAdd,
-                    "TODAY", DateUtils::today
+                    "DATE_ADD", DateUtils::isoDateAdd,
+                    "EUROPE_DATE_ADD", DateUtils::europeDateAdd,
+                    "TODAY", DateUtils::today,
+                    "EUROPE_TODAY", DateUtils::europeToday
             );
 
     /**
@@ -97,8 +111,9 @@ public class DateUtils {
      * Esempi:
      *
      * <pre>
-     * $TODAY()       -> 2026-05-07
-     * $DATE_ADD(-1D) -> 2026-05-06
+     * $TODAY()        -> 2026-05-07
+     * $EUROPE_TODAY() -> 07/05/2026
+     * $DATE_ADD(-1D)  -> 2026-05-06
      * </pre>
      *
      * @param value espressione da risolvere
@@ -157,7 +172,27 @@ public class DateUtils {
      * @return data calcolata formattata come ISO_LOCAL_DATE
      * @throws IllegalArgumentException se il formato dell'espressione non è valido
      */
-    private static String dateAdd(String value) {
+    private static String isoDateAdd(String value) {
+        LocalDate result = dateAdd(value);
+        return result.format(FORMATTER_ISO);
+    }
+
+    /**
+     * Risolve la funzione EUROPE_DATE_ADD.
+     * <p>
+     * Come la funzione DATE_ADD, ma restituisce un formato data europeo.
+     * <p>
+     *
+     * @param value espressione temporale
+     * @return data calcolata formattata con formato europeo
+     * @throws IllegalArgumentException se il formato dell'espressione non è valido
+     */
+    private static String europeDateAdd(String value) {
+        LocalDate result = dateAdd(value);
+        return result.format(FORMATTER_EU);
+    }
+
+    private static LocalDate dateAdd(String value) {
 
         Matcher matcher = DATE_ADD_PATTERN.matcher(value);
 
@@ -172,7 +207,7 @@ public class DateUtils {
 
         LocalDate date = LocalDate.now();
 
-        LocalDate result = switch (unit) {
+        return switch (unit) {
             case 'Y' -> date.plusYears(amount);
             case 'W' -> date.plusWeeks(amount);
             case 'M' -> date.plusMonths(amount);
@@ -181,8 +216,6 @@ public class DateUtils {
                     "Unità temporale non valida: " + unit
             );
         };
-
-        return result.format(FORMATTER_ISO);
     }
 
     /**
@@ -195,5 +228,17 @@ public class DateUtils {
      */
     private static String today(String ignored) {
         return LocalDate.now().format(FORMATTER_ISO);
+    }
+
+    /**
+     * Risolve la funzione EUROPE_TODAY.
+     * <p>
+     * Come la funzione TODAY, ma restituisce un formato data europeo.
+     *
+     * @param ignored parametro non utilizzato
+     * @return data corrente
+     */
+    private static String europeToday(String ignored) {
+        return LocalDate.now().format(FORMATTER_EU);
     }
 }
