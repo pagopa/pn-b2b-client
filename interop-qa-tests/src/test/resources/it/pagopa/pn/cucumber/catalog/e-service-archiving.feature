@@ -641,7 +641,7 @@ Feature: Archiviazione manuale di un e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
-    When l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    When l'utente avvia la messa in archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     Then si ottiene response status code 400
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service

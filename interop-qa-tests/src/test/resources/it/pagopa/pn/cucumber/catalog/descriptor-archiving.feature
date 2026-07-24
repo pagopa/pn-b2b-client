@@ -7,7 +7,7 @@ Feature: Archiviazione manuale di un descrittore
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    When l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    When l'utente avvia la messa in archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
@@ -25,7 +25,7 @@ Feature: Archiviazione manuale di un descrittore
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    When l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    When l'utente avvia la messa in archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     Then si ottiene response status code 403
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
@@ -42,7 +42,7 @@ Feature: Archiviazione manuale di un descrittore
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And viene impostato per l'utente un token non valido
-    When l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    When l'utente avvia la messa in archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     Then si ottiene response status code 401
 
   @sad-path
@@ -51,7 +51,7 @@ Feature: Archiviazione manuale di un descrittore
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    When l'utente archivia la vecchia versione con id "<descriptorId>" dell'e-service con id "<eserviceId>"
+    When l'utente avvia la messa in archiviazione della vecchia versione identificata da "<descriptorId>" per l'e-service "<eserviceId>" impostando 60 giorni di preavviso
     Then si ottiene response status code <statusCode>
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
@@ -70,7 +70,7 @@ Feature: Archiviazione manuale di un descrittore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    When l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    When l'utente avvia la messa in archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     Then si ottiene response status code 400
     And la vecchia versione dell'e-service è in stato "ARCHIVED"
     And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
@@ -82,7 +82,7 @@ Feature: Archiviazione manuale di un descrittore
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
-    When l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    When l'utente avvia la messa in archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     Then si ottiene response status code 400
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
@@ -94,19 +94,19 @@ Feature: Archiviazione manuale di un descrittore
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    When l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    When l'utente avvia la messa in archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And "PA4" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    When l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    When l'utente avvia la messa in archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
     And "PA1" ha già sospeso quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    When l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    When l'utente avvia la messa in archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "ARCHIVING_SUSPENDED"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
@@ -118,7 +118,7 @@ Feature: Archiviazione manuale di un descrittore
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già sospeso quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    When l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    When l'utente avvia la messa in archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "ARCHIVING_SUSPENDED"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
@@ -137,7 +137,7 @@ Feature: Archiviazione manuale di un descrittore
     And "PA1" ha già sospeso quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
-    When l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    When l'utente avvia la messa in archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     Then si ottiene response status code 400
     And la vecchia versione dell'e-service è in stato "ARCHIVING_SUSPENDED"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
@@ -245,7 +245,7 @@ Feature: Archiviazione manuale di un descrittore
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente è un "admin" di "PA3"
-    And l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    And l'utente avvia la messa in archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     Then si ottiene response status code 403
     And l'utente è un "admin" di "PA1"
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
@@ -274,7 +274,7 @@ Feature: Archiviazione manuale di un descrittore
     And l'ente "PA1" richiede la creazione di una delega per l'ente "PA3"
     And l'utente è un "admin" di "PA3"
     And l'utente accetta la delega
-    When l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    When l'utente avvia la messa in archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     Then si ottiene response status code 403
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
@@ -305,7 +305,7 @@ Feature: Archiviazione manuale di un descrittore
     And l'utente è un "admin" di "PA3"
     And l'utente accetta la delega
     And l'utente è un "admin" di "PA1"
-    When l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    When l'utente avvia la messa in archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     Then si ottiene response status code 409
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore

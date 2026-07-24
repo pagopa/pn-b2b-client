@@ -7,7 +7,7 @@ Feature: Archiviazione manuale di un descrittore
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And l'utente avvia il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
+    And l'utente avvia l'archiviazione della vecchia versione "%actual" dell'e-service "%actual" prevedendo 60 giorni di preavviso
     Then si ottiene response status code 200
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
@@ -18,7 +18,7 @@ Feature: Archiviazione manuale di un descrittore
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m
-    And l'utente avvia il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
+    And l'utente avvia l'archiviazione della vecchia versione "%actual" dell'e-service "%actual" prevedendo 60 giorni di preavviso
     Then si ottiene response status code 403
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
@@ -30,7 +30,7 @@ Feature: Archiviazione manuale di un descrittore
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene impostato per l'utente un token m2m non valido
-    And l'utente avvia il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
+    And l'utente avvia l'archiviazione della vecchia versione "%actual" dell'e-service "%actual" prevedendo 60 giorni di preavviso
     Then si ottiene response status code 401
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
@@ -41,7 +41,7 @@ Feature: Archiviazione manuale di un descrittore
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And l'utente avvia il processo di archiviazione della vecchia versione con id "<descriptorId>" dell'e-service con id "<eserviceId>"
+    And l'utente avvia l'archiviazione della vecchia versione "<descriptorId>" dell'e-service "<eserviceId>" prevedendo 60 giorni di preavviso
     Then si ottiene response status code <statusCode>
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
@@ -63,7 +63,7 @@ Feature: Archiviazione manuale di un descrittore
     And "PA1" ha già sospeso quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And l'utente avvia il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
+    And l'utente avvia l'archiviazione della vecchia versione "%actual" dell'e-service "%actual" prevedendo 60 giorni di preavviso
     Then si ottiene response status code 200
     And la vecchia versione dell'e-service è in stato "ARCHIVING_SUSPENDED"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
