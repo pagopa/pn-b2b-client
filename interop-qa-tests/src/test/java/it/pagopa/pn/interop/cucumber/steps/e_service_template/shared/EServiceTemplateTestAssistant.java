@@ -165,7 +165,7 @@ public class EServiceTemplateTestAssistant {
         addDocumentToEserviceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, kind, prettyName, userToken, doc);
     }
 
-    private static Resource buildResource(EServiceTemplateDocumentKind kind, int fileIndex) {
+    private Resource buildResource(EServiceTemplateDocumentKind kind, int fileIndex) {
         /* 19/03/2025 Versione precedente in cui si supponeva si potesse passare ogni genere di byte array. */
         /*String docBody = "Hello, I'm a document of type %s".formatted(kind);
         Resource doc = new ByteArrayResource(docBody.getBytes(StandardCharsets.UTF_8));*/
@@ -174,7 +174,9 @@ public class EServiceTemplateTestAssistant {
         String strFileIndex = fileIndex == 0 ? "" : String.valueOf(fileIndex);
 
         String documentPath = basePath + "dummy" + strFileIndex + ".pdf";
-        String interfacePath = basePath + "interface" + strFileIndex + ".yaml";
+
+        boolean isRest = this.sharedStepsContext.getEServiceTemplateStepContext().getTechnology() == EServiceTechnology.REST;
+        String interfacePath = basePath + "interface" + strFileIndex + (isRest ? ".yaml" : ".wsdl");
 
         switch (kind) {
             case DOCUMENT -> {

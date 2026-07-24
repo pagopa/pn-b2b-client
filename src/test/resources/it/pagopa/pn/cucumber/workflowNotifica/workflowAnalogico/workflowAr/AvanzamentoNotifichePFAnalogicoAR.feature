@@ -4,6 +4,44 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
     Given viene rimossa se presente la pec di piattaforma di "Mario Gherkin"
 
 
+  @workflowAnalogico @mockNR
+  Scenario: [POSTEL_DEDUPLICA] Viene effettuato un secondo tentativo di consegna analogica allo stesso indirizzo della prima consegna analogica
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | feePolicy             | DELIVERY_MODE               |
+      | paFee                 | 0                           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario
+      | denomination                        | Test deduplica postel     |
+      | taxId                               | PRMRGG74T16H501R          |
+      | digitalDomicile                     | NULL                      |
+      | physicalAddress_address             | Via @FAIL-Irreperibile_AR |
+      | at                                  | 0_CHAR                    |
+      | physicalAddress_addressDetails      | 0_CHAR                    |
+      | physicalAddress_province            | CT                        |
+      | physicalAddress_municipality        | LICODIA EUBEA             |
+      | physicalAddress_zip                 | 95059                     |
+      | physicalAddress_municipalityDetails | 0_CHAR                    |
+      | physicalAddress_State               | 0_CHAR                    |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | details                    | NOT_NULL  |
+      | details_deliveryDetailCode | RECRN002F |
+      | details_sentAttemptMade    | 0         |
+      | details_responseStatus     | KO        |
+      | details_recIndex           | 0         |
+      | loadTimeline               | true      |
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE" al tentativo "ATTEMPT_1"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_DOMICILE" non esista
+      | loadTimeline            | true     |
+      | details                 | NOT_NULL |
+      | details_sentAttemptMade | 1        |
+      | details_recIndex        | 0        |
+    And verifico che su DynamoDB è presente l'elemento "PREPARE_ANALOG_DOMICILE" con errorCode "PNADDR003" nella tabella paperRequestError al tentativo 1
+
+
   @workflowAnalogico
   Scenario: [B2B_TIMELINE_ANALOG_AR_1] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo
     Given viene generata una nuova notifica

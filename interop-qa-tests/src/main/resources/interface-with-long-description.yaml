@@ -1,0 +1,28 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Test API with Server URL Description
+servers:
+  - url: https://api.example.it/v1
+    description: Production API Server
+  - url: https://staging.example.it/v1
+
+    # 15/07/2026 si supera il limite di 250 caratteri, che attualmente è il limite imposto quando si crea una ISTANZA di e-service a partire da template (in quel flusso viene specificato manualmente, non dedotto dal file OpenAPI)
+    description: Long description - 01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789
+paths:
+  /resource:
+    get:
+      description: Returns a resource
+      operationId: getResource
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+components:
+  schemas:
+    Resource:
+      type: object
+

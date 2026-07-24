@@ -683,6 +683,7 @@ public class PurposeTemplateSteps {
         httpCallExecutor.performCall(() -> purposeTemplateClient.addPurposeTemplateRiskAnalysisAnswer(ptId, request));
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             riskAnalysis = (RiskAnalysisTemplateAnswerResponse) httpCallExecutor.getResponse();
+            sharedStepsContext.getPurposeTemplateContext().setRiskAnalysisAnswerId(riskAnalysis.getId());
             pollingService.makePolling(
                     () -> httpCallExecutor.performCall(() -> purposeTemplateClient.getPurposeTemplate(ptId)),
                     res -> res != HttpStatus.NOT_FOUND,
