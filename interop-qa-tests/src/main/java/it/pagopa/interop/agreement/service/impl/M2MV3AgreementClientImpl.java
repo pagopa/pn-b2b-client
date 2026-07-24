@@ -1,29 +1,25 @@
 package it.pagopa.interop.agreement.service.impl;
 
-import static it.pagopa.interop.utils.ApiClientUtils.V3_UNSUPPORTED_BEARER_MSG;
-
 import it.pagopa.interop.M2MVersionsMapper;
 import it.pagopa.interop.agreement.service.IM2MV3AgreementClient;
 import it.pagopa.interop.common.client.AbstractDPoPClient;
 import it.pagopa.interop.common.rest_template.DpopRestTemplate;
 import it.pagopa.interop.conf.InteropClientConfigs;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreement;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementSubmission;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreements;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DelegationRef;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Documents;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.AgreementsApi;
 import it.pagopa.interop.utils.ApiClientUtils;
-import java.util.Collections;
-import java.util.Map;
-import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
+
+import java.util.Collections;
+import java.util.Map;
+import java.util.UUID;
+
+import static it.pagopa.interop.utils.ApiClientUtils.V3_UNSUPPORTED_BEARER_MSG;
 
 @ToString
 @EqualsAndHashCode
@@ -107,6 +103,16 @@ public class M2MV3AgreementClientImpl extends AbstractDPoPClient implements IM2M
     @Override
     public Purposes getAgreementPurposes(UUID agreementId, int limit, int offset) {
         return this.mapper.mapToV2(this.agreementsApi.getAgreementPurposes(agreementId, limit, offset));
+    }
+
+    @Override
+    public Document uploadConsumerDocument(UUID agreementId, Resource document, String prettyName) {
+        return this.mapper.mapToV2(this.agreementsApi.uploadAgreementConsumerDocument(agreementId, document, prettyName));
+    }
+
+    @Override
+    public FileDownloadMultipart getConsumerDocument(UUID agreementId, UUID documentId) {
+        return this.mapper.mapToV2(this.agreementsApi.downloadAgreementConsumerDocument(agreementId, documentId));
     }
 
     @Override

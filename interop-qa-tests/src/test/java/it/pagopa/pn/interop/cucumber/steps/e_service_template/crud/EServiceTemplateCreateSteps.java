@@ -1,8 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.crud;
 
-import static java.util.Objects.nonNull;
-
-import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
@@ -19,14 +16,15 @@ import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPrepara
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
-
-import java.util.List;
-import java.util.UUID;
-
 import lombok.Data;
 import org.jeasy.random.randomizers.text.StringRandomizer;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.http.HttpStatus;
+
+import java.util.List;
+import java.util.UUID;
+
+import static java.util.Objects.nonNull;
 
 // TODO perché @Data? Considerarne rimozione da questa e dalle altre classi
 
@@ -87,6 +85,7 @@ public class EServiceTemplateCreateSteps {
     @When("l'utente effettua la creazione di un e-service template in modalità {eServiceMode} in stato di {eServiceTemplateVersionState}")
     public void createEServiceTemplate(EServiceMode eServiceMode, EServiceTemplateVersionState desiredState) {
         createEServiceTemplate(eServiceMode);
+
         EServiceTemplateInfo lastTemplateManaged = sharedStepsContext.getEServiceTemplateStepContext()
                 .getLastTemplateManaged();
         if (eServiceMode == EServiceMode.RECEIVE && nonNull(lastTemplateManaged)) {
@@ -97,8 +96,10 @@ public class EServiceTemplateCreateSteps {
 
     @When("l'utente effettua la creazione di un e-service template {isAsynchronous} in modalità {eServiceMode} con tecnologia {string} in stato di {eServiceTemplateVersionState}")
     public void createEServiceTemplate(Boolean isAsync, EServiceMode eServiceMode, String technology, EServiceTemplateVersionState desiredState) {
+        EServiceTechnology technology1 = EServiceTechnology.fromValue(technology);
+        sharedStepsContext.getEServiceTemplateStepContext().setTechnology(technology1);
         EServiceTemplateSeed templateSeed = this.getEServiceTemplateSeed(eServiceMode);
-        templateSeed.asyncExchange(isAsync).technology(EServiceTechnology.fromValue(technology));
+        templateSeed.asyncExchange(isAsync).technology(technology1);
         this.createEServiceTemplate(templateSeed);
         EServiceTemplateInfo lastTemplateManaged = sharedStepsContext.getEServiceTemplateStepContext()
             .getLastTemplateManaged();
