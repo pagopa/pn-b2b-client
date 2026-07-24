@@ -45,8 +45,8 @@ Feature: Archiviazione manuale di un e-service
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
   Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_1.4] Un utente con ruolo non autorizzato NON può avviare il processo di archiviazione manuale dell'e-service
-    Given l'utente è un "<role>" di "PA1"
-    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    Given l'utente è un "<role>" di "PA2"
+    And "PA2" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     Then si ottiene response status code 403
     And la versione più recente dell'e-service è in stato "PUBLISHED"
@@ -56,6 +56,8 @@ Feature: Archiviazione manuale di un e-service
       | role     |
       | security |
       | support  |
+      | reviewer |
+      | viewer   |
 
   Scenario: [MANUAL_ARCHIVING_ESERVICE_1.5] Un utente con token non valido NON può avviare il processo di archiviazione manuale dell'e-service
     Given l'utente è un "admin" di "PA1"
@@ -205,10 +207,10 @@ Feature: Archiviazione manuale di un e-service
       | api,security |
 
   Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_SUSPENSION_1.2] Un utente con ruolo non autorizzato NON può sospendere un e-service in stato ARCHIVING
-    Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    Given l'utente è un "admin" di "PA2"
+    And "PA2" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
-    When l'utente è un "<role>" di "PA1"
+    When l'utente è un "<role>" di "PA2"
     And l'utente sospende quel descrittore in corso di archiviazione
     Then si ottiene response status code 403
     And la versione più recente dell'e-service è in stato "ARCHIVING"
@@ -217,6 +219,8 @@ Feature: Archiviazione manuale di un e-service
       | role     |
       | support  |
       | security |
+      | reviewer |
+      | viewer   |
 
   Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_SUSPENSION_1.3] Un ente erogatore di un e-service in stato ARCHIVING_SUSPENDED è in grado di riattivare l'e-service in questione e le richieste di fruizione attive possono generare nuovi voucher
     Given l'utente è un "<role>" di "PA1"
@@ -245,11 +249,11 @@ Feature: Archiviazione manuale di un e-service
       | api,security |
 
   Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_SUSPENSION_1.4] Un utente con ruolo non autorizzato NON può riattivare un e-service in stato ARCHIVING_SUSPENDED
-    Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
-    And "PA1" ha già sospeso quell'e-service
+    Given l'utente è un "admin" di "PA2"
+    And "PA2" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha già sospeso quell'e-service
     And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
-    Given l'utente è un "<role>" di "PA1"
+    Given l'utente è un "<role>" di "PA2"
     When l'utente attiva il descrittore di quell'e-service
     Then si ottiene response status code 403
     And la versione più recente dell'e-service è in stato "ARCHIVING_SUSPENDED"
@@ -259,6 +263,8 @@ Feature: Archiviazione manuale di un e-service
       | role     |
       | support  |
       | security |
+      | reviewer |
+      | viewer   |
 
   Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_CANCELLATION_1.1] L'ente erogatore di un e-service in stato ARCHIVING può annullare il processo di archiviazione manuale di un e-service in corso
     Given l'utente è un "<role>" di "PA1"
@@ -313,10 +319,10 @@ Feature: Archiviazione manuale di un e-service
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
   Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_CANCELLATION_1.4] Un utente con ruolo non autorizzato NON può annullare il processo di archiviazione manuale dell'e-service
-    Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    Given l'utente è un "admin" di "PA2"
+    And "PA2" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
-    When l'utente è un "<role>" di "PA1"
+    When l'utente è un "<role>" di "PA2"
     And l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
     Then si ottiene response status code 403
     And la versione più recente dell'e-service è in stato "ARCHIVING"
@@ -325,6 +331,8 @@ Feature: Archiviazione manuale di un e-service
       | role     |
       | security |
       | support  |
+      | reviewer |
+      | viewer   |
 
   Scenario: [MANUAL_ARCHIVING_ESERVICE_CANCELLATION_1.5] Un utente con token non valido NON può annullare il processo di archiviazione manuale dell'e-service
     Given l'utente è un "admin" di "PA1"
