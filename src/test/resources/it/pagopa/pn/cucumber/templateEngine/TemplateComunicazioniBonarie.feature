@@ -112,7 +112,7 @@ Feature: Comunicazioni bonarie
     And il corpo del messaggio contiene il testo "COMUNICAZIONE DA PARTE DI sender_denomination Comunicazione inviata tramite Identificativo Univoco Notifica: UTGP-ZRHR-XDNQ-202505-Q-1 Codice fiscale: recipient_taxId notifichedigitali.it Hai ricevuto una comunicazione da sender_denomination con oggetto: subject Ciao recipient_denomination, body_primaryContent Per avere maggiori informazioni prendi visione degli allegati, che possono fornirti dettagli importanti. Per saldare l’importo tramite tutti i canali abilitati a pagoPA, fai riferimento all’avviso di pagamento allegato. In ogni caso, qualora avessi bisogno di assistenza, contatta sender_denomination attraverso i suoi canali ufficiali. CON L'APP IO È ANCORA PIÙ SEMPLICE! Ricevi le prossime comunicazioni dagli enti pubblici, aggiungi i tuoi documenti personali, ottieni bonus e sconti. E in più, paghi in digitale. Scarica gratis l'app IO!"
 
   @templateEngine # /templates-engine-private/v1/templates/informal/analog-communication
-  Scenario Outline: [COMBO_TEMPLATE_ENGINE_8_8] Richiamare l’API per il recupero del template di comunicazione bonaria posta cartacea - hasPayment false senza checkoutUrl popolato
+Scenario Outline: [COMBO_TEMPLATE_ENGINE_8_8] Richiamare l’API per il recupero del template di comunicazione bonaria posta cartacea - hasPayment false con checkoutUrl null o valorizzato
     When recupero il template per "comunicazione bonaria posta cartacea" con i valori nel request body:
       | hasPayment  | <hasPayment>  |
       | checkoutUrl | <checkoutUrl> |
