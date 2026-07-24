@@ -47,7 +47,7 @@ public class DescriptorArchivingScheduleVerifier {
                 () -> clientTokenConfigurator.getEServiceClient().getEServiceDescriptor(eServiceId, descriptorId),
                 descriptor -> hasExpectedArchivingSchedule(descriptor, expectedScope),
                 "Il descrittore dell'e-service non contiene un archivingSchedule valido: "
-                        + "scope, startedAt o archivableOn assente o non corretto"
+                        + "scope, startedAt, archivableOn o gracePeriodDays assente o non corretto"
         );
     }
 
@@ -68,7 +68,8 @@ public class DescriptorArchivingScheduleVerifier {
         ArchivingSchedule archivingSchedule = descriptor.getArchivingSchedule();
         return expectedScope.equals(archivingSchedule.getScope())
                 && isStartedAtWithinTolerance(archivingSchedule.getStartedAt())
-                && hasExpectedArchivableOn(archivingSchedule.getArchivableOn());
+            && hasExpectedArchivableOn(archivingSchedule.getArchivableOn())
+            && hasExpectedGracePeriodDays(archivingSchedule.getGracePeriodDays());
     }
 
     private boolean hasPopulatedArchivingSchedule(ProducerEServiceDescriptor descriptor, ArchivingScope expectedScope) {
@@ -84,6 +85,12 @@ public class DescriptorArchivingScheduleVerifier {
 
     private boolean isPopulated(String value) {
         return value != null && !value.isBlank();
+    }
+
+    private boolean hasExpectedGracePeriodDays(GracePeriodDays actualGracePeriodDays) {
+        GracePeriodDays expectedGracePeriodDays = sharedStepsContext.getEServicesCommonContext()
+                .getDescriptorArchivingGracePeriodDays();
+        return expectedGracePeriodDays != null && expectedGracePeriodDays.equals(actualGracePeriodDays);
     }
 
     private boolean hasExpectedArchivableOn(String archivableOn) {
