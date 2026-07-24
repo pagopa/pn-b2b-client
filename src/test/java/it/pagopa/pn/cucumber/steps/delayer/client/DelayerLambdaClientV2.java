@@ -202,7 +202,6 @@ public class DelayerLambdaClientV2 {
     public DelayerPresigneUrlDownload getPresignedUrlDownload(String filename) {
         var params = Map.of(
                 "fileName", filename,
-//                "checksumSha256B64", checksumSha256B64,
                 "presignedUrlType", "DOWNLOAD"
         );
         return invoke(DelayerOperation.GET_PRESIGNED_URL, DelayerPresigneUrlDownload.class, params);

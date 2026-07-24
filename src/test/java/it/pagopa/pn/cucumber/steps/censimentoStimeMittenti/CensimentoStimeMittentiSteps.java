@@ -32,11 +32,8 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
@@ -64,39 +61,39 @@ public class CensimentoStimeMittentiSteps {
 
     @When("si verifica che la tabella {senderLimitTable} {containsOrNot} i nuovi limiti mittenti per la provincia {string}")
     public void fetchSenderLimitUntilCondition(String senderLimitTable, boolean shouldContain, String province) {
-        Set<DelayerSenderLimit> missing = new HashSet<>();
         Assertions.assertThat(context.province).as("Confronto di actual ed expected su province diverse").isEqualTo(province);
 
-        for (DelayerSenderLimit senderLimit : context.expected.senderLimits) {
-            try {
-                Awaitility.await()
-                        .atMost(Duration.ofMinutes(5))
-                        .pollInterval(Duration.ofSeconds(10))
-                        .pollDelay(Duration.ZERO)
-                        .until(() -> {
-                            DelayerSenderLimits actual = lambdaClientV2.getSenderLimitByProvinceWithTable(senderLimitTable, senderLimit.getDeliveryDate(), province);
-                            boolean found = actual.getItems()
-                                    .stream()
-                                    .anyMatch(item -> item.getPk().equals(senderLimit.getPk())
-                                            && item.getDeliveryDate().equals(senderLimit.getDeliveryDate())
-                                            && item.getWeeklyEstimate() == senderLimit.getWeeklyEstimate());
-
-                            log.info("Trovati i seguenti limiti: {}", actual);
-
-                            boolean ok = shouldContain ? found : !found;
-
-                            if (!ok) {
-                                log.info("SenderLimit {}: {}", shouldContain ? "mancante" : "ancora presente", senderLimit);
-                                missing.add(senderLimit);
-                            }
-                            return ok;
-                        });
-            } catch (NoSuchElementException e) {
-                Assertions.assertThat(missing).as(shouldContain ? "Stime mittenti mancanti" : "Stime mittenti ancora presenti").isEmpty();
-            } catch (Exception e) {
-                throw new RuntimeException("Errore inatteso durante il polling", e);
-            }
+        for (DelayerSenderLimit expectedSenderLimit : context.expected.senderLimits) {
+            assertSenderLimitMatchesEventually(senderLimitTable, province, expectedSenderLimit, shouldContain);
         }
+    }
+
+    private void assertSenderLimitMatchesEventually(String senderLimitTable, String province, DelayerSenderLimit expectedSenderLimit, boolean shouldContain) {
+        try {
+            Awaitility.await()
+                    .atMost(Duration.ofMinutes(5))
+                    .pollInterval(Duration.ofSeconds(10))
+                    .pollDelay(Duration.ZERO)
+                    .until(() -> {
+                        DelayerSenderLimits actual = lambdaClientV2.getSenderLimitByProvinceWithTable(senderLimitTable, expectedSenderLimit.getDeliveryDate(), province);
+                        boolean found = isPresent(actual, expectedSenderLimit);
+                        log.info("Trovati i seguenti limiti: {}", actual);
+                        return shouldContain ? found : !found;
+                    });
+        } catch (ConditionTimeoutException e) {
+            Assertions.fail(shouldContain
+                    ? "Stima mittente mancante: " + expectedSenderLimit
+                    : "Stima mittente ancora presente: " + expectedSenderLimit);
+        } catch (Exception e) {
+            throw new RuntimeException("Errore inatteso durante il polling", e);
+        }
+    }
+
+    private boolean isPresent(DelayerSenderLimits actual, DelayerSenderLimit expected) {
+        return actual.getItems().stream()
+                .anyMatch(item -> item.getPk().equals(expected.getPk())
+                        && item.getDeliveryDate().equals(expected.getDeliveryDate())
+                        && item.getWeeklyEstimate() == expected.getWeeklyEstimate());
     }
 
     @Given("vengono recuperate le stime mittenti da {string} a {string} per la provincia {string}")
@@ -156,7 +153,8 @@ public class CensimentoStimeMittentiSteps {
             delayerSevice.insertMockSenderLimit(fileName);
 
         } catch (Exception e) {
-            log.info("Errore non bloccante durante il caricamento del file zip e l'invocazione della lambda per i limiti mittenti mock", e);
+            log.error("Errore durante il caricamento del file zip e l'invocazione della lambda portfat", e);
+            throw new RuntimeException("Errore durante il caricamento del file zip e l'invocazione della lambda portfat nella fase di preload", e);
         }
     }
 

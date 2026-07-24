@@ -22,7 +22,7 @@ public class PortfatLambdaClient {
     public void invokePortfatLambda(String downloadUrl) {
         String payload = buildFileReadyEventJson(downloadUrl);
         try {
-            log.info("Invoking Portfat Lambda with payload: {}", payload);
+            log.info("Invoking Portfat Lambda file-ready-event");
             lambdaInvoker.invokeMyLambda(portfatLambdaName, payload);
         } catch (Exception e) {
             throw new RuntimeException("Failed to invoke Portfat Lambda", e);

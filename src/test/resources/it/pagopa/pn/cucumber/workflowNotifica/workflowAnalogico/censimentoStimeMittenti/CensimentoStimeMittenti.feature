@@ -198,7 +198,7 @@ Feature: Censimento stime mittenti
     Given vengono caricati i moduli commessa mock tramite il seguente zip: "portfatt_modulo_commessa_mock_aprile_26.zip"
     Given vengono caricati i moduli commessa mock tramite il seguente zip: "portfatt_modulo_commessa_mock_maggio_26.zip"
     And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
-      | classpath:/modulo_commessa_ranking890_mock_aprile.json |
+      | classpath:/modulo_commessa_ranking2nd_890_mock_aprile.json |
     Then si verifica che la tabella pn-PaperDeliverySenderLimitMock contenga i nuovi limiti mittenti per la provincia "P1"
     Then si verifica che la tabella pn-PaperDeliverySenderLimit non contenga i nuovi limiti mittenti per la provincia "P1"
     Then per la settimana "2026-04-27", per il prodotto "890" per la provincia "P1" si verifica che la somma delle commesse mock sia:
@@ -210,4 +210,10 @@ Feature: Censimento stime mittenti
       | numberOfShipments           | 7 |
       | firstWeekNumberOfShipments  | 4 |
       | secondWeekNumberOfShipments | 3 |
+    #Allineo le commesse MOCK a quelle reali prima di chiudere il test
+    Given vengono caricati i moduli commessa mock tramite il seguente zip: "portfatt_modulo_commessa_aprile_26.zip"
+    Given vengono caricati i moduli commessa mock tramite il seguente zip: "portfatt_modulo_commessa_maggio_26.zip"
+    And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
+      | classpath:/modulo_commessa_ranking2nd_890.json |
+    Then si verifica che la tabella pn-PaperDeliverySenderLimitMock contenga i nuovi limiti mittenti per la provincia "P1"
 
