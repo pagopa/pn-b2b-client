@@ -450,7 +450,7 @@ Feature: Comunicazioni bonarie
     And il corpo del messaggio contiene il testo "Ciao recipient_denomination, body_primaryContent Per avere maggiori informazioni **prendi visione degli allegati**, che possono fornirti dettagli importanti. Ma ricorda: saranno disponibili online per un periodo limitato, quindi salvali sul tuo dispositivo. Puoi effettuare il pagamento direttamente sull'app IO premendo **Paga**. In alternativa, puoi utilizzare l'**avviso allegato** per saldare l'importo tramite tutti i canali abilitati a pagoPA. In ogni caso, qualora avessi bisogno di assistenza, **contatta sender_denomination attraverso i suoi canali ufficiali**."
 
   @templateEngine # /templates-engine-private/v1/templates/informal/io-communication
-  Scenario: [COMBO_TEMPLATE_ENGINE_13_7] Richiamare l’API per il recupero del template di IO comunicazione bonaria - hasPayment false senza checkoutUrl
+  Scenario: [COMBO_TEMPLATE_ENGINE_13_8] Richiamare l’API per il recupero del template di IO comunicazione bonaria - hasPayment false senza checkoutUrl
     When recupero il template per "IO comunicazione bonaria" con i valori nel request body:
       | hasPayment  | false |
       | checkoutUrl | null  |
@@ -489,7 +489,7 @@ Feature: Comunicazioni bonarie
     Then verifico che la chiamata sia andata in "400" error
 
   @templateEngine # /templates-engine-private/v1/templates/informal/sms-communication
-  Scenario: [COMBO_TEMPLATE_ENGINE_14_3] Richiamare l’API per il recupero del template di sms comunicazione bonaria - campo obbligatorio recipientType non valorizzato
+  Scenario: [COMBO_TEMPLATE_ENGINE_14_4] Richiamare l’API per il recupero del template di sms comunicazione bonaria - campo obbligatorio recipientType non valorizzato
     When recupero il template per "sms comunicazione bonaria" con i valori nel request body:
       | recipientType | null |
     Then verifico che la chiamata sia andata in "400" error
