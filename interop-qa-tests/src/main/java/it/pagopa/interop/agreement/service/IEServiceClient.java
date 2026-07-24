@@ -127,6 +127,9 @@ public interface IEServiceClient extends SettableBearerToken {
     ResponseEntity<CreatedResource> addEServiceTemplateInstanceInterfaceRestWithHttpInfo(
             UUID eServiceId, UUID descriptorId, TemplateInstanceInterfaceRESTSeed templateInstanceInterfaceRESTSeed);
 
+    ResponseEntity<CreatedResource> addEServiceTemplateInstanceInterfaceSoapWithHttpInfo(
+            UUID eServiceId, UUID descriptorId, TemplateInstanceInterfaceSOAPSeed templateInstanceInterfaceSOAPSeed);
+
     void editAgreementApprovalPolicy(UUID eServiceId, UUID descriptorId, AgreementApprovalPolicy policy);
 
     ProducerEServiceDescriptor getEServiceDescriptor(UUID eServiceId, UUID descriptorId);

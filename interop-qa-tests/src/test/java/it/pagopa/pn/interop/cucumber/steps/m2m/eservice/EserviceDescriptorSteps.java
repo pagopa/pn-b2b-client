@@ -16,15 +16,13 @@ import it.pagopa.pn.interop.cucumber.steps.catalog.utils.CatalogResolver;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.AbstractCommonSteps;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.assistant.EServiceDescriptorPatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.assistant.EServiceDescriptorQuotasPatchOperationsAssistant;
-
+import org.apache.commons.lang3.tuple.Pair;
+import org.assertj.core.api.Assertions;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import org.apache.commons.lang3.tuple.Pair;
-import org.assertj.core.api.Assertions;
 
 public class EserviceDescriptorSteps extends AbstractCommonSteps<EServiceDescriptor, Pair<UUID, UUID>> {
     private final IM2MEserviceDescriptorClient client;
@@ -35,10 +33,10 @@ public class EserviceDescriptorSteps extends AbstractCommonSteps<EServiceDescrip
     private final EServiceDescriptorQuotasPatchOperationsAssistant quotasPatchAssistant;
 
     public EserviceDescriptorSteps(
-            SharedStepsContext sharedStepsContext,
-            ClientTokenConfigurator clientTokenConfigurator,
-            EServiceDescriptorPatchOperationsAssistant eServiceDescriptorPatchAssistant,
-            EServiceDescriptorQuotasPatchOperationsAssistant eServiceDescriptorQuotasPatchAssistant
+        SharedStepsContext sharedStepsContext,
+        ClientTokenConfigurator clientTokenConfigurator,
+        EServiceDescriptorPatchOperationsAssistant eServiceDescriptorPatchAssistant,
+        EServiceDescriptorQuotasPatchOperationsAssistant eServiceDescriptorQuotasPatchAssistant
     ) {
         super("descriptor", clientTokenConfigurator.getM2mEServiceDescriptorClient(), sharedStepsContext);
         this.client = clientTokenConfigurator.getM2mEServiceDescriptorClient();
@@ -132,8 +130,8 @@ public class EserviceDescriptorSteps extends AbstractCommonSteps<EServiceDescrip
     @When("l'utente tenta di effettuare la modifica parziale delle quote di un descriptor dell'e-service specificando un sottoinsieme di informazioni")
     public void patchEServiceDescriptorQuotasSubset() {
         EServiceDescriptorQuotasPatchRequest request = EServiceDescriptorQuotasPatchRequest.builder()
-                .dailyCallsPerConsumer(7)
-                .build();
+            .dailyCallsPerConsumer(7)
+            .build();
 
         quotasPatchAssistant.patchResource(request);
     }
@@ -174,7 +172,7 @@ public class EserviceDescriptorSteps extends AbstractCommonSteps<EServiceDescrip
         UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
 
         sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> client.cancelEServiceDescriptorArchiving(resolvedEServiceId, resolvedDescriptorId));
+            () -> client.cancelEServiceDescriptorArchiving(resolvedEServiceId, resolvedDescriptorId));
     }
 
     @Override
