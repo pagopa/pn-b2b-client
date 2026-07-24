@@ -139,11 +139,12 @@ public class CensimentoStimeMittentiSteps {
     public void uploadZipFile(String fileName) {
         try {
             String preloadUrlDownload = preloadZipFile(fileName, true);
+            Assertions.assertThat(preloadUrlDownload).as("Presigned url download non generato correttamente").isNotNull();
             // viene invocata la lambda portfat che elabora il file e genera le stime mittenti
             portfatLambdaClient.invokePortfatLambda(preloadUrlDownload);
 
         } catch (Exception e) {
-            log.info("Errore non bloccante durante il caricamento del file zip e l'invocazione della lambda Portfat", e);
+            throw new RuntimeException("Errore durante il caricamento del file zip e l'invocazione della lambda portfat", e);
         }
     }
 
@@ -174,7 +175,8 @@ public class CensimentoStimeMittentiSteps {
                 preloadUrl = downloadResponse.getDownloadUrl();
             }
         } catch (Exception e) {
-            log.info("Errore non bloccante durante il caricamento del file zip e l'invocazione della lambda", e);
+            log.error("Errore durante il caricamento del file zip e l'invocazione della lambda portfat", e);
+            throw new RuntimeException("Errore durante il caricamento del file zip e l'invocazione della lambda portfat nella fase di preload", e);
         }
         return preloadUrl;
     }

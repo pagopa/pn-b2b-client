@@ -205,7 +205,7 @@ Feature: Censimento stime mittenti
       | numberOfShipments           | 46 |
       | firstWeekNumberOfShipments  | 27 |
       | secondWeekNumberOfShipments | 19 |
-    #Verifico che la tabella reale non sia stata modifiata dal caricamento della commessa MOCK
+    #Verifico che la tabella reale non sia stata modificata dal caricamento della commessa MOCK
     And per la settimana "2026-04-27", per il prodotto "890" per la provincia "P1" si verifica che la somma delle commesse sia:
       | numberOfShipments           | 7 |
       | firstWeekNumberOfShipments  | 4 |

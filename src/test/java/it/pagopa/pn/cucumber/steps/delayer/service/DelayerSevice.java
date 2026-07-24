@@ -25,7 +25,7 @@ public class DelayerSevice {
     public static final String[] CSV_FILES = new String[]{"tcRankingMerged.csv", "tcSenderUnknow.csv", "tcSplitSender.csv", "tcZeroDriver.csv", "tcProvCapNonCensite.csv",
             "spedizioni_3000.csv", "tcWeeklyPrintCapacity.csv", "tcSenderUnknow_5010.csv", "notificationCancelled.csv", "tcSenderPriority.csv", "tcSenderPriorityFrozenW1.csv", "tcSenderPriorityFrozenW2.csv", "tcSenderPriorityFrozenW12.csv"};
 
-    public final DelayerLambdaClientV2 lambdaClient;
+    private final DelayerLambdaClientV2 lambdaClient;
     private final DelayerCsvLoader csvLoader;
 
 
