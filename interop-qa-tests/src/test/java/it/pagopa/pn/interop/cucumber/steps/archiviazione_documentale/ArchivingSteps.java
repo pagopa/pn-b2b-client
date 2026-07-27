@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.cucumber.java.en.Then;
+import it.pagopa.interop.authorization.service.utils.JWTUtils;
 import it.pagopa.interop.event.enums.InteropEvent;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.ArchivingClient;
@@ -188,26 +189,39 @@ public class ArchivingSteps {
 
         assertSoftly(softly -> {
             for (Map<String, String> row : rows) {
-                String position = row.get("position");
-                String archivedField = row.get("element");
-                String contextField = row.get("context");
-                String auditField = (contextField == null || contextField.isBlank()) ? archivedField : contextField;
 
-                Map<String, String> contextValues = switch (position) {
-                    case "header" -> auditTokenContext.getHeaders();
-                    case "payload" -> auditTokenContext.getPayload();
-                    default -> throw new IllegalArgumentException("Invalid position: " + position);
+                String s3Element = row.get("s3-element");
+                String ctxSource = row.get("ctx-source");
+                String ctxGroup = row.get("ctx-group");
+                String ctxItem = row.get("ctx-item");
+
+                JWTUtils.JWTPojo contextGroups = switch (ctxSource) {
+                    case "voucher" -> auditTokenContext.getDecodedToken(AuditTokenContext.TokenType.VOUCHER_REQUEST);
+                    case "client-assertion" -> auditTokenContext.getDecodedToken(AuditTokenContext.TokenType.CLIENT_ASSERTION);
+                    case "dpop-proof" -> auditTokenContext.getDecodedToken(AuditTokenContext.TokenType.DPOP_PROOF);
+                    default -> throw new IllegalStateException("Unexpected value: " + ctxSource);
                 };
 
-                Object actualValue = AuditTokenContext.resolveFieldValue(jsonNode, archivedField);
-                String expectedValue = contextValues.get(auditField);
+                Map<String, Object> contextItems = switch (ctxGroup) {
+                    case "header" -> contextGroups.getHeader();
+                    case "payload" -> contextGroups.getPayload();
+                    default -> throw new IllegalArgumentException("Invalid group: " + ctxGroup);
+                };
+
+                Object actualValue = AuditTokenContext.resolveFieldValue(jsonNode, s3Element);
+                String expectedValue = AuditTokenContext.resolveFieldValue(contextItems, ctxItem).toString();
+
+                // On S3 timestamps are stored in milliseconds, while the JWT timestamps are stored in seconds
+                switch (ctxItem) {
+                    case "iat", "nbf", "exp" -> expectedValue += "000";
+                }
 
                 softly.assertThat(actualValue)
-                        .as("Il campo '%s' non è presente", auditField)
+                        .as("Il campo '%s' non è presente", ctxItem)
                         .isNotNull();
                 if (actualValue != null) {
                     softly.assertThat(actualValue.toString())
-                            .as("Il valore del campo '%s' non corrisponde a quello del file", auditField)
+                            .as("Il valore del campo '%s' non corrisponde a quello del file", ctxItem)
                             .isEqualTo(expectedValue);
                 }
             }
