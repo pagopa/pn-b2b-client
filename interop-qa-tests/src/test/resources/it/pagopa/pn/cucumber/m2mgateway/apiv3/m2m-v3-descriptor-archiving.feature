@@ -48,19 +48,20 @@ Feature: Archiviazione manuale di un descrittore
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And l'utente avvia l'archiviazione della vecchia versione "<descriptorId>" dell'e-service "<eserviceId>" prevedendo 60 giorni di preavviso
+    And l'utente avvia l'archiviazione della vecchia versione "<descriptorId>" dell'e-service "<eserviceId>" prevedendo <gracePeriod> giorni di preavviso
     Then si ottiene response status code <statusCode>
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
     Examples:
-      | descriptorId | eserviceId | statusCode |
-      | %null        | %actual    | 400        |
-      | %actual      | %null      | 400        |
-      | %null        | %null      | 400        |
-      | %random      | %actual    | 404        |
-      | %actual      | %random    | 404        |
-      | %random      | %random    | 404        |
+      | descriptorId | eserviceId | gracePeriod | statusCode |
+      | %null        | %actual    | 60          | 400        |
+      | %actual      | %null      | 60          | 400        |
+      | %null        | %null      | 60          | 400        |
+      | %actual      | %actual    | 10          | 400        |
+      | %random      | %actual    | 60          | 404        |
+      | %actual      | %random    | 60          | 404        |
+      | %random      | %random    | 60          | 404        |
 
   @happy-path
   Scenario: [M2M_V3_MANUAL_ARCHIVING_DESCRIPTOR_1.5] Un ente erogatore di un e-service può avviare via M2M v3 il processo di archiviazione manuale del primo e meno recente descrittore in stato SUSPENDED
