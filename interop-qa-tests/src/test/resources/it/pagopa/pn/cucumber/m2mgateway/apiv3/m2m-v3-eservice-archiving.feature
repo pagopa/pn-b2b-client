@@ -107,19 +107,26 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
       | 9                     |
       | 251                   |
 
-  Scenario: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_1.8] Un ente erogatore di un e-service con prima versione in stato PUBLISHED e seconda in stato SUSPENDED può avviare il processo di archiviazione manuale dell'e-service
+  Scenario Outline: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_1.8] Un ente erogatore di un e-service con prima versione in stato PUBLISHED e seconda in stato SUSPENDED può avviare il processo di archiviazione manuale dell'e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già sospeso quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And viene avviata l'archiviazione dell'e-service "%actual" indicando la motivazione "QA test manual-archiving" e un preavviso di 60 giorni
+    And viene avviata l'archiviazione dell'e-service "%actual" indicando la motivazione "QA test manual-archiving" e un preavviso di <gracePeriod> giorni
     Then si ottiene response status code 200
     And la vecchia versione dell'e-service è in stato "ARCHIVING_SUSPENDED"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
     And la versione più recente dell'e-service è in stato "ARCHIVING"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    Examples:
+      | gracePeriod |
+      | 30          |
+      | 60          |
+      | 90          |
+      | 120         |
 
   Scenario: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_1.9] Un ente erogatore di un e-service con prima versione in stato SUSPENDED e seconda in stato SUSPENDED può avviare il processo di archiviazione manuale dell'e-service
     Given l'utente è un "admin" di "PA1"
