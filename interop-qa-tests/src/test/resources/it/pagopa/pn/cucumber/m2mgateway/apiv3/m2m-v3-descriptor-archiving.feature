@@ -1,16 +1,23 @@
 @m2m-v3-manual-archiving-eservice
 Feature: Archiviazione manuale di un descrittore
 
-  Scenario: [M2M_V3_MANUAL_ARCHIVING_DESCRIPTOR_1.1] Un ente erogatore di un e-service può avviare via M2M v3 il processo di archiviazione manuale del primo e meno recente descrittore in stato DEPRECATED
+  Scenario Outline: [M2M_V3_MANUAL_ARCHIVING_DESCRIPTOR_1.1] Un ente erogatore di un e-service può avviare via M2M v3 il processo di archiviazione manuale del primo e meno recente descrittore in stato DEPRECATED
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And l'utente avvia l'archiviazione della vecchia versione "%actual" dell'e-service "%actual" prevedendo 60 giorni di preavviso
+    And l'utente avvia l'archiviazione della vecchia versione "%actual" dell'e-service "%actual" prevedendo <gracePeriod> giorni di preavviso
     Then si ottiene response status code 200
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
+
+    Examples:
+      | gracePeriod |
+      | 30          |
+      | 60          |
+      | 90          |
+      | 120         |
 
   Scenario: [M2M_V3_MANUAL_ARCHIVING_DESCRIPTOR_1.2] Un utente con ruolo M2M NON può avviare il processo di archiviazione manuale del descrittore
     Given l'utente è un "admin" di "PA1"
