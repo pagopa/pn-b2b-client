@@ -76,6 +76,8 @@ public class EServiceTemplateStepContext {
 
     private String modifiedTemplateName;
 
+    private EServiceTechnology technology = EServiceTechnology.REST; // DEFAULT a REST principalmente per mantenere retrocompatibilità prima dell'introduzione di questo attributo
+
     private static boolean isAnswersFieldInRiskAnalysisFormSeed(Field field) {
         return field.getName().equals("answers") && field.getDeclaringClass().equals(
             RiskAnalysisFormSeed.class);
@@ -134,4 +136,5 @@ public class EServiceTemplateStepContext {
     private <T> T lastOf(List<T> list) {
         return IterableUtils.isEmpty(list) ? null : list.get(list.size() - 1);
     }
+
 }

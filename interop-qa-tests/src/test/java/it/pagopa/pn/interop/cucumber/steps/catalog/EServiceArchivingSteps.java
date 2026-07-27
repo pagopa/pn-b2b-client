@@ -6,8 +6,9 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ArchivingScope;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactDescriptor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceArchivingReasonSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceArchivingSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.GracePeriodDays;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -129,7 +130,9 @@ public class EServiceArchivingSteps {
                 () -> clientTokenConfigurator.getEServiceClient()
                         .scheduleArchiveEService(
                                 eServiceId,
-                                new EServiceArchivingReasonSeed().archivingReason(archivingReason)
+                            new EServiceArchivingSeed()
+                                .archivingReason(archivingReason)
+                                .gracePeriodDays(GracePeriodDays.NUMBER_60)
                         ),
                 ResponseEntity::getStatusCode
         );
