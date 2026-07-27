@@ -1,19 +1,8 @@
 package it.pagopa.pn.cucumber.steps.pa.b2bVersions;
 
 import io.cucumber.datatable.DataTable;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationPaymentItem;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationPriceResponse;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationPriceResponseV23;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryElementV26;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusV26;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PaymentEventPagoPa;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PaymentEventsRequestPagoPa;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PhysicalAddress;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.ServiceLevel;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV28;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV28;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
+import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.IPnPollingService;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingPredicate;
@@ -35,6 +24,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 import java.lang.reflect.InvocationTargetException;
 import java.time.Duration;
@@ -49,23 +40,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.IntStream;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.ANALOG_FAILURE_WORKFLOW;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.ANALOG_SUCCESS_WORKFLOW;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DIGITAL_DELIVERY_CREATION_REQUEST;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DIGITAL_FAILURE_WORKFLOW;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DIGITAL_SUCCESS_WORKFLOW;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.LOAD_FROM_DELIVERY_PUSH;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOTIFICATION_VIEWED;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.REQUEST_REFUSED;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SCHEDULE_REFINEMENT;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SEND_ANALOG_FEEDBACK;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SEND_ANALOG_PROGRESS;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SEND_COURTESY_MESSAGE;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SEND_DIGITAL_FEEDBACK;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.STATUS_RAPID;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.TIMELINE_RAPID;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.TIMELINE_SLOW;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.PollingType.STATUS;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.PollingType.TIMELINE;
 import static java.time.OffsetDateTime.now;
@@ -443,6 +418,9 @@ public class B2bStepsV26 implements B2bStepsInterface {
                             .isNotNull();
                 });
                 log.info("TIMELINE_ELEMENT: {}", timelineElement);
+                if (category.equals(NOTIFICATION_TIMELINE_REWORKED)) {
+                    furtherChecks = TimelineElementCheck.CHECK_INVALIDATED_ELEMENTS_TIMESTAMP;
+                }
                 if (furtherChecks != null) {
                     performFurtherChecks(furtherChecks, filterParams);
                 }
@@ -913,6 +891,29 @@ public class B2bStepsV26 implements B2bStepsInterface {
                 });
 
             }
+            case CHECK_INVALIDATED_ELEMENTS_TIMESTAMP -> {
+                assertThat(timelineElement.getDetails()).as("I details dell'elemento %s non possono essere null", timelineElement.getElementId()).isNotNull();
+                List<NotificationStatusHistoryInvalidatedElement> invalidatedElements = timelineElement.getDetails().getInvalidatedTimelineAndStatusHistory();
+                QueryResponse fullDynamoTimeline = sharedSteps.getDynamoDbService().call(DynamoTableName.TIMELINE_FULL, Map.of(
+                        ":v_iun", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build()
+                ));
+                assertThat(fullDynamoTimeline).as("La timeline recuperata da Dynamo non dev'essere null").isNotNull();
+                assertThat(fullDynamoTimeline.items().size()).as("La timeline recuperata da Dynamo non contiene elementi").isGreaterThan(0);
+                for (NotificationStatusHistoryInvalidatedElement status : invalidatedElements) {
+                    assertThat(status.getRelatedTimelineElements()).as("La lista di elementi invalidati relativa allo status %s non dev'essere vuota", status).isNotEmpty();
+                    for (TimelineElementV28 el : status.getRelatedTimelineElements()) {
+                        Map<String, AttributeValue> invalidatedElement = fullDynamoTimeline.items().stream().filter(x ->
+                                        x.get("timelineElementId") != null
+                                                && x.get("timelineElementId").s().equals(el.getElementId()))
+                                .findFirst().orElse(null);
+                        String businessTimestamp = invalidatedElement.get("businessTimestamp").s();
+                        log.info("BUSINESS TIMESTAMP OF %s : &s", el, businessTimestamp);
+                        assertThat(el.getEventTimestamp().toString())
+                                .as("L'eventTimestamp dell'elemento invalidato non coincide con il business timestamp dell'elemento recuperato sulla timeline")
+                                .isEqualTo(businessTimestamp);
+                    }
+                }
+            }
         }
     }
 
@@ -1134,8 +1135,8 @@ public class B2bStepsV26 implements B2bStepsInterface {
         OffsetDateTime expectedDate =
                 unitaTemporale == DAYS ? date1.plusDays(timeQuantity) :
                         unitaTemporale == HOURS ? date1.plusHours(timeQuantity) :
-                        unitaTemporale == MINUTES ? date1.plusMinutes(timeQuantity) :
-                                date1.plusSeconds(timeQuantity);
+                                unitaTemporale == MINUTES ? date1.plusMinutes(timeQuantity) :
+                                        date1.plusSeconds(timeQuantity);
         if (isSuperiore == null) {
             assertThat(date2)
                     .as("La data di " + code2 + " non è pari a quella di " + code1)

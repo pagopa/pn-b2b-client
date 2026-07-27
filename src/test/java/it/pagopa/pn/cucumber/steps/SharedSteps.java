@@ -178,6 +178,7 @@ public class SharedSteps {
 
     private boolean checkAuditLogDisabled;
 
+    @Getter
     private final DynamoDbService dynamoDbService;
 
     private final CacheManager<String, String> senderTaxIdCacheManager;
