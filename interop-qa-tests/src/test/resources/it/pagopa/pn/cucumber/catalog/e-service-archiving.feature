@@ -71,7 +71,7 @@ Feature: Archiviazione manuale di un e-service
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    When l'utente avvia il processo di archiviazione dell'e-service "<eserviceId>" specificando la motivazione "<archivingReason>" e 60 giorni di preavviso
+    When l'utente avvia il processo di archiviazione dell'e-service "<eserviceId>" specificando la motivazione "<archivingReason>" e <gracePeriod> giorni di preavviso
     Then si ottiene response status code <statusCode>
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
@@ -79,12 +79,14 @@ Feature: Archiviazione manuale di un e-service
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
     Examples:
-      | eserviceId | archivingReason          | statusCode |
-      | %null      | QA test manual-archiving | 400        |
-      | %actual    | %null                    | 400        |
-      | %null      | %null                    | 400        |
-      | %actual    | %blank                   | 400        |
-      | %random    | QA test manual-archiving | 404        |
+      | eserviceId | archivingReason          | gracePeriod | statusCode |
+      | %null      | QA test manual-archiving | 60          | 400        |
+      | %actual    | %null                    | 60          | 400        |
+      | %null      | %null                    | 60          | 400        |
+      | %actual    | QA test manual-archiving | %null       | 400        |
+      | %actual    | QA test manual-archiving | 10          | 400        |
+      | %actual    | %blank                   | 60          | 400        |
+      | %random    | QA test manual-archiving | 60          | 404        |
 
   Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_1.7] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale dell'e-service se la stringa archivingReason non rispetta la lunghezza attesa
     Given l'utente è un "admin" di "PA1"
