@@ -116,7 +116,7 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
     @Override
     public LegalNotificationSearchResponse searchReceivedNotification(OffsetDateTime startDate, OffsetDateTime endDate, String mandateId, String senderId, NotificationStatusV26 status, String subjectRegExp, String iunMatch, Integer size, String nextPagesKey) throws RestClientException {
         it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullNotificationSearchResponse response = recipientReadB2BApi.searchReceivedNotification(startDate.toString(), endDate.toString(), mandateId,
-                senderId, subjectRegExp, iunMatch, size, nextPagesKey, null);
+                senderId, iunMatch, size, nextPagesKey, null);
         return deepCopy(response, LegalNotificationSearchResponse.class);
     }
 

@@ -1556,3 +1556,130 @@ Feature: Gestione degli eServices attraverso APIs M2M
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente tenta di effettuare la modifica della descrizione dell'e-service specificando una descrizione di lunghezza pari a 401 caratteri
     Then si ottiene status code 400
+
+  @document_upload
+  @document
+  @document-type-check
+  Scenario: [ESERVICE_UPLOAD_01] Per un e-service in stato DRAFT è possibile allegare tutti i file del tipo previsto dalla piattaforma.
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente tenta di caricare uno alla volta il seguente insieme di documenti
+      | pdf |
+      | json |
+      | md   |
+      | xsd  |
+      | yml  |
+      | yaml |
+      | txt  |
+      | wsdl |
+    Then tutti i tentativi di caricamento hanno esito positivo
+
+  @document_upload
+  @document
+  @document-type-check
+  Scenario: [ESERVICE_UPLOAD_02] Per un e-service in stato DRAFT non è possibile allegare un file se questo
+  è di tipo non previsto dalla piattaforma: se il file non ha estensione consentita OPPURE se il file è
+  riconosciuto come intrinsecamente non consentito - attraverso controllo su "magic byte" fatto dal backend -
+  allora il caricamento del file fallisce.
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente tenta di caricare uno alla volta i seguenti tipi documenti, con l'estensione specificata
+      | documento | estensione |
+      # tipi di file non permessi, con estensione non permessa: ogni file conserva la propria estensione
+      | html      | html       |
+      | sh        | sh         |
+      | bat       | bat        |
+      | cmd       | cmd        |
+      | js        | js         |
+      | bash      | bash       |
+      | ps1       | ps1        |
+      | png       | png        |
+      | docx      | docx        |
+      | zip       | zip        |
+      | msi       | msi        |
+      | exe       | exe        |
+      # tipi di file non permessi, con estensione permessa (magic byte riconoscibile)
+      | png       | pdf        |
+      | docx      | pdf        |
+      | zip       | pdf        |
+      | msi       | pdf        |
+      | exe       | pdf        |
+      # tipi di file permessi, con estensione non permessa
+      | pdf       | exe        |
+      | json      | exe        |
+      | md        | exe        |
+      | xsd       | exe        |
+      | yml       | exe        |
+      | yaml      | exe        |
+      | txt       | exe        |
+      | wsdl      | exe        |
+      # tipi di file permessi, senza estensione
+      | pdf       |            |
+      # tipo di file non permesso, con estensione non permessa
+      | html      | exe        |
+      # tipo di file permesso, con doppia estensione non permessa
+      | pdf       | pdf.exe    |
+    Then tutti i tentativi di caricamento hanno esito negativo
+
+  @document_upload
+  @document
+  @document-type-check
+  Scenario: [ESERVICE_INTERFACE_UPLOAD_01] Per un e-service in stato DRAFT e' possibile caricare l'interfaccia del descriptor con il documento predefinito interface.yaml
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente carica il documento di interfaccia predefinito
+    Then tutti i tentativi di caricamento come interfaccia del descriptor hanno esito positivo
+
+  @document_upload
+  @document
+  @document-type-check
+  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-10608
+  Scenario: [ESERVICE_INTERFACE_UPLOAD_02] Per un e-service in stato DRAFT non è possibile caricare un interfaccia in formato yml non conforme allo standard OpenApi
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente tenta di caricare uno alla volta il seguente insieme di documenti come interfaccia del descriptor
+      | yml  |
+    Then tutti i tentativi di caricamento come interfaccia del descriptor hanno esito negativo
+
+  @document_upload
+  @document
+  @document-type-check
+  Scenario: [ESERVICE_INTERFACE_UPLOAD_03] Per un e-service in stato DRAFT il caricamento dell'interfaccia del descriptor
+  fallisce per i tipi non inclusi nella whitelist: se il file non ha estensione consentita OPPURE se il file è
+  riconosciuto come intrinsecamente non consentito - attraverso controllo su "magic byte" fatto dal backend -
+  allora il caricamento fallisce.
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente tenta di caricare uno alla volta i seguenti tipi documenti come interfaccia del descriptor, con l'estensione specificata
+      | documento | estensione |
+      # tipi di file non permessi, con estensione non permessa: ogni file conserva la propria estensione
+      | pdf       | pdf        |
+      | md        | md         |
+      | xsd       | xsd        |
+      | txt       | txt        |
+      | html      | html       |
+      | sh        | sh         |
+      | bat       | bat        |
+      | cmd       | cmd        |
+      | js        | js         |
+      | bash      | bash       |
+      | ps1       | ps1        |
+      | png       | png        |
+      | docx      | docx       |
+      | zip       | zip        |
+      | msi       | msi        |
+      | exe       | exe        |
+      # tipi di file non permessi, con estensione permessa (magic byte riconoscibile)
+      | png       | yml        |
+      | pdf       | yml        |
+      | zip       | yml        |
+      | exe       | yml        |
+      # tipi di file permessi (yml/yaml), con estensione non permessa
+      | yml       | pdf        |
+      | yml      | txt        |
+      | yml       | exe        |
+      # tipo di file permesso (yml), senza estensione
+      | yml       |            |
+      # tipo di file permesso, con doppia estensione non permessa
+      | yml       | yml.exe    |
+    Then tutti i tentativi di caricamento come interfaccia del descriptor hanno esito negativo
