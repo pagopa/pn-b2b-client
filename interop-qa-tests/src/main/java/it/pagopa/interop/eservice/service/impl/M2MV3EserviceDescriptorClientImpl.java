@@ -15,6 +15,8 @@ import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.EservicesApi
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptorAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptorDraftUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptorQuotasUpdateSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.GracePeriodDays;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.GracePeriodDaysSeed;
 import it.pagopa.interop.utils.ApiClientUtils;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -212,7 +214,11 @@ public class M2MV3EserviceDescriptorClientImpl extends AbstractDPoPClient implem
     @Override
     public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor scheduleArchiveEServiceDescriptor(
         UUID eserviceId, UUID descriptorId) {
-        return vMapper.mapToV2(eservicesApi.scheduleArchiveEserviceDescriptor(eserviceId, descriptorId));
+        return vMapper.mapToV2(eservicesApi.scheduleArchiveEserviceDescriptor(
+            eserviceId,
+            descriptorId,
+            new GracePeriodDaysSeed().gracePeriodDays(GracePeriodDays.NUMBER_60)
+        ));
     }
 
     @Override

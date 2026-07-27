@@ -413,10 +413,7 @@ public class PurposeTemplateSteps {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID ptId = exists ? createdPurposeTemplate.getId() : UUID.randomUUID();
 
-        LinkEServiceToPurposeTemplateRequest request = new LinkEServiceToPurposeTemplateRequest()
-            .eserviceId(eServiceId);
-
-        httpCallExecutor.performCall(() -> purposeTemplateClient.linkEServiceToPurposeTemplate(ptId, request));
+        httpCallExecutor.performCall(() -> purposeTemplateClient.linkEServiceToPurposeTemplate(ptId, eServiceId));
         if(httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             pollingService.makePolling(
                 () -> purposeTemplateClient.getPurposeTemplateEServices(ptId, 0, 30, null, null),
@@ -432,7 +429,7 @@ public class PurposeTemplateSteps {
         if (exists) {
             pollingService.makePolling(
                     () -> httpCallExecutor.performCall(() -> purposeTemplateClient.getPurposeTemplateEServices(ptId, 0, 10, null, null)),
-                    res -> ((EServiceDescriptorsPurposeTemplate) httpCallExecutor.getResponse()).getResults().size() > 0,
+                    res -> !((IPurposeTemplateClient.Resources) httpCallExecutor.getResponse()).getResults().isEmpty(),
                     "Failed to retrieve the client!"
             );
         } else {
@@ -440,11 +437,11 @@ public class PurposeTemplateSteps {
         }
 
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
-            EServiceDescriptorsPurposeTemplate esDescriptorsPt = (EServiceDescriptorsPurposeTemplate) httpCallExecutor.getResponse();
+            IPurposeTemplateClient.Resources esDescriptorsPt = (IPurposeTemplateClient.Resources) httpCallExecutor.getResponse();
             assertThat(esDescriptorsPt).as("L'output della get degli e-service associati non dev'essere null").isNotNull();
             assertThat(esDescriptorsPt.getResults()).as("Il result dell'output della get degli e-service associati non dev'essere null").isNotNull();
-            List<EServiceDescriptorPurposeTemplateWithCompactEServiceAndDescriptor> resultList = esDescriptorsPt.getResults();
-            linkedEServices = resultList.stream().map(EServiceDescriptorPurposeTemplateWithCompactEServiceAndDescriptor::getEservice).toList();
+            List<LinkableResource> resultList = esDescriptorsPt.getResults();
+            linkedEServices = resultList.stream().map(LinkableResource::getEservice).toList();
             checkEServicesList(true);
         }
     }
@@ -472,15 +469,12 @@ public class PurposeTemplateSteps {
 
         UUID ptId = exists ? createdPurposeTemplate.getId() : UUID.randomUUID();
 
-        LinkEServiceToPurposeTemplateRequest request = new LinkEServiceToPurposeTemplateRequest()
-            .eserviceId(eServiceId);
-
-        httpCallExecutor.performCall(() -> purposeTemplateClient.unlinkEServiceToPurposeTemplate(ptId, request));
+        httpCallExecutor.performCall(() -> purposeTemplateClient.unlinkEServiceToPurposeTemplate(ptId, eServiceId));
         if (exists) {
             if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
                 pollingService.makePolling(
                         () -> httpCallExecutor.performCall(() -> purposeTemplateClient.getPurposeTemplateEServices(ptId, 0, 10, null, null)),
-                        res -> ((EServiceDescriptorsPurposeTemplate) httpCallExecutor.getResponse()).getResults().stream().filter(
+                        res -> ((IPurposeTemplateClient.Resources) httpCallExecutor.getResponse()).getResults().stream().filter(
                                 x -> x.getEservice().getId().equals(eServiceId)).toList().isEmpty(),
                         "Error while checking if the eService is correctly unlinked from purpose template"
                 );
@@ -1081,9 +1075,7 @@ public class PurposeTemplateSteps {
         // 6) Link EService (opzionale)
         if (eserviceIdsValue != null && !eserviceIdsValue.isEmpty()) {
             for (UUID eserviceId : eserviceIdsValue) {
-                LinkEServiceToPurposeTemplateRequest linkReq = new LinkEServiceToPurposeTemplateRequest()
-                        .eserviceId(eserviceId);
-                purposeTemplateClient.linkEServiceToPurposeTemplate(purposeTemplateId, linkReq);
+                purposeTemplateClient.linkEServiceToPurposeTemplate(purposeTemplateId, eserviceId);
             }
         }
 
