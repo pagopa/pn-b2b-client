@@ -2,8 +2,8 @@ Feature: Nella generazione del token sono aggiunte le seguenti informazioni: hea
   jwt generato (quando presente), claim digest del jwt generato (quando presente), claim digest della client assertion
   (quando presente).
 
-  Scenario: [AUTH_TOKEN_INFO_1] Generazione con successo di un voucher bearer con digest con relativi log di audit salvati
-  nel bucket S3
+  Scenario: [AUTH_TOKEN_INFO_1] Generazione con successo di un voucher bearer con digest e validazione dei relativi log
+  di audit salvati nel bucket S3.
 
     Given l'utente è un "admin" di "PA1"
     And "PA2" ha già creato e pubblicato 1 e-service
@@ -30,8 +30,8 @@ Feature: Nella generazione del token sono aggiunte le seguenti informazioni: hea
       | digest.value                 | voucher    | payload   | digest.value |
       | clientAssertion.digest.value | voucher    | payload   | digest.value |
 
-  Scenario Outline: [AUTH_TOKEN_INFO_2] Generazione con successo di un voucher DPoP con digest con relativi log di audit
-  salvati nel bucket S3
+  Scenario Outline: [AUTH_TOKEN_INFO_2] Generazione con successo di un voucher DPoP con digest e validazione dei relativi
+  log di audit salvati nel bucket S3.
 
     Given l'utente è un "admin" di "PA1"
     And "PA2" ha già creato e pubblicato 1 e-service
@@ -61,7 +61,8 @@ Feature: Nella generazione del token sono aggiunte le seguenti informazioni: hea
       | EC      |
       | RSA     |
 
-  Scenario: [AUTH_TOKEN_INFO_3] Generazione con successo di un voucher M2M con relativi log di audit salvati nel bucket S3
+  Scenario: [AUTH_TOKEN_INFO_3] Generazione con successo di un voucher M2M e validazione dei relativi log di audit salvati
+  nel bucket S3.
 
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato 1 client "API"
@@ -101,7 +102,8 @@ Feature: Nella generazione del token sono aggiunte le seguenti informazioni: hea
       | audience       | voucher    | payload   | aud            |
       | subject        | voucher    | payload   | sub            |
 
-  Scenario: [AUTH_TOKEN_INFO_4] Generazione con successo di un voucher M2M con relativi log di audit salvati nel bucket S3
+  Scenario: [AUTH_TOKEN_INFO_4] Generazione con successo di un voucher M2M con DPoP e validazione dei relativi log di audit
+  salvati nel bucket S3 con dpop e clientAssertion.
 
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato 1 client "API"
