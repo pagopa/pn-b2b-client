@@ -38,6 +38,7 @@ public class EServiceTemplateStepContext {
 
     // TODO si somigliano troppo, sceglierne uno
     private CompactDescriptor lastEServiceDescriptorCreatedFromTemplate;
+    private UUID oldEServiceDescriptorIdCreatedFromTemplate;
     private UUID lastEServiceDescriptorIdCreatedFromTemplate;
 
     private DescriptorAttributesSeed lastDescriptorAttributesSeed;

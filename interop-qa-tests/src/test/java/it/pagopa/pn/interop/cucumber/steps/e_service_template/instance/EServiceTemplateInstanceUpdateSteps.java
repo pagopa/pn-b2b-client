@@ -173,6 +173,11 @@ public class EServiceTemplateInstanceUpdateSteps {
 
     @Given("l'utente effettua l'aggiunta di una versione in stato {eServiceDescriptorState} all'e-service con successo")
     public void createEServiceVersionDraftSuccessfully(EServiceDescriptorState descriptorState) {
+        UUID oldDescriptor = sharedStepsContext.getEServiceTemplateStepContext()
+                .getLastEServiceDescriptorIdCreatedFromTemplate();
+        sharedStepsContext.getEServiceTemplateStepContext()
+                .setOldEServiceDescriptorIdCreatedFromTemplate(oldDescriptor);
+
         UUID newDescriptor = this.dataPreparationService.createNextDraftDescriptor(
                 sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate());
         this.dataPreparationService.bringTemplateInstanceDescriptorToGivenState(
