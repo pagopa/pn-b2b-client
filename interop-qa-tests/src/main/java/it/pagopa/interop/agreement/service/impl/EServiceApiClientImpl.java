@@ -231,7 +231,7 @@ public class EServiceApiClientImpl implements IEServiceClient {
     }
 
     @Override
-    public ResponseEntity<CreatedResource> createEServiceInstanceFromTemplateWithHttpInfo(
+    public ResponseEntity<CreatedEServiceDescriptor> createEServiceInstanceFromTemplateWithHttpInfo(
             UUID templateId, InstanceEServiceSeed instanceEServiceSeed) {
         /* DEV. NOTE 10/03/2025: al momento InstanceEServiceSeed è required dalla API, tuttavia
          * nessuno dei suoi campi lo è; per comodità si permette a questo metodo di passare NULL
