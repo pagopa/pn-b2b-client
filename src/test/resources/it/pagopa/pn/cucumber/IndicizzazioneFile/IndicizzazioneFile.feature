@@ -69,8 +69,8 @@ Feature: test preliminari indicizzazione File safeStorage
   Scenario: [INDEX_SS_GET_TAGS_1_LOCAL] GetTags SUCCESS
     Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS"
     When Si modifica il documento 1 secondo le seguenti operazioni
-      | pn-test~local_multivalue:test1,test2,test3 | SET |
-      | pn-test~local_singlevalue:test1            | SET |
+      | local_multivalue:test1,test2,test3 | SET |
+      | local_singlevalue:test1            | SET |
     Then Il documento 1 è stato correttamente modificato con la seguente lista di tag
       | local_multivalue:test1,test2,test3 |
       | local_singlevalue:test1            |
@@ -120,7 +120,7 @@ Feature: test preliminari indicizzazione File safeStorage
   @aggiuntaTag
   @indicizzazioneSafeStorage
   Scenario: [VALIDATION_BUG_20667] Creazione con successo di un documento con document type avante un nome libero, che non inizia per forza con "PN_"
-    Given Viene caricato un nuovo documento di tipo "DOCUMENT_WITH_NO_PN_PREFIX" con tag associati
+    Given Viene caricato un nuovo documento di tipo "INTEROP_LEGAL_FACTS" con tag associati
       | local_multivalue:test1,test2 |
       | local_singlevalue:test1      |
     Then Il documento 1 è associato alla seguente lista di tag
@@ -183,7 +183,7 @@ Feature: test preliminari indicizzazione File safeStorage
   Scenario: [INDEX_SS_UPDATE_SINGLE_1_LOCAL] UpdateSingle SUCCESS - solo operazioni SET
     Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS"
     When Si modifica il documento 1 secondo le seguenti operazioni
-      | pn-test~local_multivalue:test | SET |
+      | local_multivalue:test | SET |
     Then Il documento 1 è stato correttamente modificato con la seguente lista di tag
       | local_multivalue:test |
 
@@ -203,7 +203,7 @@ Feature: test preliminari indicizzazione File safeStorage
     Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
       | local_multivalue:test1,test2 |
     When Si modifica il documento 1 secondo le seguenti operazioni
-      | pn-test~local_multivalue:test2 | DELETE |
+      | local_multivalue:test2 | DELETE |
     Then Il documento 1 è associato alla seguente lista di tag
       | local_multivalue:test1 |
 
@@ -223,7 +223,7 @@ Feature: test preliminari indicizzazione File safeStorage
     Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
       | local_multivalue:test1,test2 |
     When Si modifica il documento 1 secondo le seguenti operazioni
-      | pn-test~local_multivalue:test1,test2 | DELETE |
+      | local_multivalue:test1,test2 | DELETE |
     Then Il documento 1 è associato alla seguente lista di tag
       | null |
 
@@ -265,8 +265,8 @@ Feature: test preliminari indicizzazione File safeStorage
     Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
       | local_multivalue:test1 |
     When Si modifica il documento 1 secondo le seguenti operazioni
-      | pn-test~local_multivalue:test2 | SET    |
-      | pn-test~local_multivalue:test1 | DELETE |
+      | local_multivalue:test2 | SET    |
+      | local_multivalue:test1 | DELETE |
     Then La chiamata genera un errore con status code 400
     And Il messaggio di errore riporta la dicitura "SET and DELETE cannot contain the same tags: [pn-test~local_multivalue]"
 
@@ -314,10 +314,10 @@ Feature: test preliminari indicizzazione File safeStorage
   Scenario: [INDEX_SS_UPDATE_MASSIVE_1_LOCAL] Update Massive SUCCESS - solo operazioni SET
     Given Vengono caricati 2 nuovi documenti di tipo "PN_NOTIFICATION_ATTACHMENTS"
     When Si modificano i documenti secondo le seguenti operazioni
-      | tag                             | documentIndex | operation |
-      | pn-test~local_multivalue:test1  | 1             | SET       |
-      | pn-test~local_singlevalue:test1 | 1             | SET       |
-      | pn-test~local_multivalue:test2  | 2             | SET       |
+      | tag                     | documentIndex | operation |
+      | local_multivalue:test1  | 1             | SET       |
+      | local_singlevalue:test1 | 1             | SET       |
+      | local_multivalue:test2  | 2             | SET       |
     Then L'update massivo va in successo con stato 200
     And Il documento 1 è associato alla seguente lista di tag
       | local_multivalue:test1  |
@@ -348,11 +348,11 @@ Feature: test preliminari indicizzazione File safeStorage
   @indicizzazioneSafeStorage
   Scenario: [INDEX_SS_UPDATE_MASSIVE_2_LOCAL] Update Massive SUCCESS - solo operazioni DELETE (PARZIALE)
     Given Vengono caricati 2 nuovi documenti di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
-      | pn-test~local_multivalue:test1,test2 |
+      | local_multivalue:test1,test2 |
     When Si modificano i documenti secondo le seguenti operazioni
-      | tag                            | documentIndex | operation |
-      | pn-test~local_multivalue:test1 | 1             | DELETE    |
-      | pn-test~local_multivalue:test2 | 2             | DELETE    |
+      | tag                    | documentIndex | operation |
+      | local_multivalue:test1 | 1             | DELETE    |
+      | local_multivalue:test2 | 2             | DELETE    |
     Then L'update massivo va in successo con stato 200
     And Il documento 1 è associato alla seguente lista di tag
       | local_multivalue:test2 |
@@ -390,9 +390,9 @@ Feature: test preliminari indicizzazione File safeStorage
       | local_multivalue:test1,test2 |
       | local_singlevalue:test1      |
     When Si modificano i documenti secondo le seguenti operazioni
-      | tag                                  | documentIndex | operation |
-      | pn-test~local_multivalue:test1,test2 | 1             | DELETE    |
-      | pn-test~local_multivalue:test1,test2 | 2             | DELETE    |
+      | tag                          | documentIndex | operation |
+      | local_multivalue:test1,test2 | 1             | DELETE    |
+      | local_multivalue:test1,test2 | 2             | DELETE    |
     Then L'update massivo va in successo con stato 200
     And Il documento 1 è associato alla seguente lista di tag
       | local_singlevalue:test1 |
@@ -424,9 +424,9 @@ Feature: test preliminari indicizzazione File safeStorage
     Given Vengono caricati 2 nuovi documenti di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
       | local_multivalue:test1,test2 |
     When Si modificano i documenti secondo le seguenti operazioni
-      | tag                            | documentIndex | operation |
-      | pn-test~local_multivalue:test3 | 1             | DELETE    |
-      | pn-test~local_multivalue:test3 | 2             | DELETE    |
+      | tag                    | documentIndex | operation |
+      | local_multivalue:test3 | 1             | DELETE    |
+      | local_multivalue:test3 | 2             | DELETE    |
     Then L'update massivo va in successo con stato 200
     And Il documento 1 è associato alla seguente lista di tag
       | local_multivalue:test1,test2 |
@@ -458,9 +458,9 @@ Feature: test preliminari indicizzazione File safeStorage
       | local_multivalue:test1,test2 |
       | local_singlevalue:test1      |
     When Si modificano i documenti secondo le seguenti operazioni
-      | operation | tag                            | documentIndex |
-      | DELETE    | pn-test~local_multivalue:test2 | 1             |
-      | DELETE    | pn-test~local_multivalue:test2 | 2             |
+      | operation | tag                    | documentIndex |
+      | DELETE    | local_multivalue:test2 | 1             |
+      | DELETE    | local_multivalue:test2 | 2             |
     Then L'update massivo va in successo con stato 200
     And Il documento 1 è associato alla seguente lista di tag
       | local_multivalue:test1  |
@@ -700,8 +700,8 @@ Feature: test preliminari indicizzazione File safeStorage
       | local_indexed_multivalue:testMultipleParam1,testMultipleParam2 |
       | local_indexed_singlevalue:testMultipleParam1                   |
     When Vengono ricercate con logica "<logic>" le fileKey aventi i seguenti tag
-      | pn-test~local_indexed_multivalue:testMultipleParam1  |
-      | pn-test~local_indexed_singlevalue:testMultipleParam1 |
+      | local_indexed_multivalue:testMultipleParam1  |
+      | local_indexed_singlevalue:testMultipleParam1 |
     Then Il risultato della search contiene le fileKey relative ai seguenti documenti
       | 1 |
       | 2 |
@@ -734,8 +734,8 @@ Feature: test preliminari indicizzazione File safeStorage
     And Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
       | local_indexed_singlevalue:testOrParam1 |
     When Vengono ricercate con logica "or" le fileKey aventi i seguenti tag
-      | pn-test~local_indexed_multivalue:testOrParam1  |
-      | pn-test~local_indexed_singlevalue:testOrParam1 |
+      | local_indexed_multivalue:testOrParam1  |
+      | local_indexed_singlevalue:testOrParam1 |
     Then Il risultato della search contiene le fileKey relative ai seguenti documenti
       | 1 |
       | 2 |
