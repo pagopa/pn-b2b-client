@@ -11,7 +11,8 @@ Feature: Messaggi e allegati di una notifica bonaria.
   Includo nella notifica allegati di pagamento e documenti.
     Given mittente della notifica bonaria: "COMUNE_MULTI"
     And viene creata una nuova notifica bonaria con i seguenti parametri
-      | document | DOC_1_PG;DOC_2_PG;DOC_3_PG |
+      | document   | DOC_1_PG;DOC_2_PG;DOC_3_PG |
+      | campaignId | SoricalFattOrd             |
     And destinatario della notifica bonaria
       | recipient_type       | PF                    |
       | payment_multy_number | 3                     |
@@ -39,6 +40,7 @@ Feature: Messaggi e allegati di una notifica bonaria.
     Then tento il recupero del messaggio precedentemente creato per le comunicazioni bonarie
     And l'operazione è andata a buon fine
 
+
   @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_MESSAGGI_02_1_B] Come ente mittente creo un nuovo messaggio con valori di default con seconda lingua non specificata
     Given mittente della notifica bonaria: "Comune_Multi"
@@ -46,6 +48,7 @@ Feature: Messaggi e allegati di una notifica bonaria.
       | primary_subject   | additional_language |
       | Messaggio bonario | NULL                |
     Then l'operazione è andata a buon fine
+
 
   @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_MESSAGGI_02_1_C] Come ente mittente creo un nuovo messaggio con valori di default con seconda lingua specificata
@@ -55,14 +58,16 @@ Feature: Messaggi e allegati di una notifica bonaria.
       | Messaggio bonario | FR                  |
     Then l'operazione è andata a buon fine
 
+
   @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_MESSAGGI_02_1_D] Come ente mittente creo un nuovo messaggio con valori di default con seconda lingua non specificata
     Given mittente della notifica bonaria: "Comune_Multi"
     Then si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
       | primary_subject   | additional_language | additional_short_body | additional_long_body | additional_subject |
-      | Messaggio bonario | FR                  | Testo short add       | testo long add       | subj add           |
+      | Messaggio bonario | FR                  | Testo short add       | testo long add       | subj add msg          |
     Then tento il recupero del messaggio precedentemente creato per le comunicazioni bonarie
     Then l'operazione è andata a buon fine
+
 
   @informalNotificationsMessageAttachment
   Scenario Outline: [NOTIFICHE_BONARIE_MESSAGGI_02_1_D2] Come ente mittente creo un nuovo messaggio con campi addizionali a null, ricevo errore.
@@ -81,13 +86,9 @@ Feature: Messaggi e allegati di una notifica bonaria.
 #            CASO DI TEST 2.2  Errore sulla Creazione di un messaggio.
 
 
-#  @informalNotificationsMessageAttachment tutte le pa sono abilitate
+#  @informalNotificationsMessageAttachment #tutte le pa sono abilitate
 #  Scenario: [NOTIFICHE_BONARIE_MESSAGGI_02_1_A1] Come ente mittente non abilitato alla creazione di un messaggio tento di crearlo con valori di default.
-#    Given mittente della notifica bonaria: "Comune_2"
-#    When si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
-#      | primary_subject                       |
-#      | Nuovo messaggio per notifiche bonarie |
-#    Then si riceve errore 403
+
 
   @informalNotificationsMessageAttachment
   Scenario Outline: [NOTIFICHE_BONARIE_MESSAGGI_02_2_B] Come ente mittente ricevo un errore sulla creazione di un nuovo messaggio non valorizzando campi obbligatori.
@@ -114,6 +115,7 @@ Feature: Messaggi e allegati di una notifica bonaria.
       | 257_CHAR        |                   |                    |
       |                 | 10001_CHAR        |                    |
       |                 |                   | 161_CHAR           |
+
 
   @informalNotificationsMessageAttachment
   Scenario Outline: [NOTIFICHE_BONARIE_MESSAGGI_02_2_D] Come ente mittente ricevo un Errore sulla creazione di un nuovo messaggio compilando i campi addizionali in maniera non conforme.
@@ -227,7 +229,7 @@ Feature: Messaggi e allegati di una notifica bonaria.
   Scenario: [NOTIFICHE_BONARIE_05_1] Come ente mittente Recupero i documenti di una notifica bonaria
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | campaign-1 |
+      | campaignId | SoricalFattOrd |
     And destinatario della notifica bonaria
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
@@ -243,7 +245,8 @@ Feature: Messaggi e allegati di una notifica bonaria.
   @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_05_4_] Come ente mittente Recupero l'allegato di pagamento di una notifica bonaria
     Given mittente della notifica bonaria: "Comune_Multi"
-    And viene creata una nuova notifica bonaria con valori di default
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | SoricalFattOrd |
     And destinatario della notifica bonaria
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
@@ -261,7 +264,8 @@ Feature: Messaggi e allegati di una notifica bonaria.
   @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_05_3_A] come ente mittente tento il recupero del documento di una notifica non inviata da me ricevendo un errore
     Given mittente della notifica bonaria: "Comune_Multi"
-    And viene creata una nuova notifica bonaria con valori di default
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | SoricalFattOrd |
     And destinatario della notifica bonaria
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
@@ -276,7 +280,8 @@ Feature: Messaggi e allegati di una notifica bonaria.
   @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_05_3_A1] come ente mittente tento il recupero del documento di una notifica non inviata da me ricevendo un errore
     Given mittente della notifica bonaria: "Comune_Multi"
-    And viene creata una nuova notifica bonaria con valori di default
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | SoricalFattOrd |
     And destinatario della notifica bonaria
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
@@ -291,7 +296,8 @@ Feature: Messaggi e allegati di una notifica bonaria.
   #@informalNotificationsMessageAttachment errore già noto con bug PN-20078
   Scenario: [NOTIFICHE_BONARIE_05_3_B] Come ente mittente tento il Recupero del documento con indice non valido ricevendo errore
     Given mittente della notifica bonaria: "Comune_Multi"
-    And viene creata una nuova notifica bonaria con valori di default
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | SoricalFattOrd |
     And destinatario della notifica bonaria
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
@@ -317,7 +323,8 @@ Feature: Messaggi e allegati di una notifica bonaria.
   @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_05_4_A] Come ente mittente tento il Recupero del allegato di pagamento con iun non valido ricevendo errore
     Given mittente della notifica bonaria: "Comune_Multi"
-    And viene creata una nuova notifica bonaria con valori di default
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | SoricalFattOrd |
     And destinatario della notifica bonaria
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
@@ -331,7 +338,8 @@ Feature: Messaggi e allegati di una notifica bonaria.
   #@informalNotificationsMessageAttachment errore già noto con bug PN-20078
   Scenario: [NOTIFICHE_BONARIE_05_4_B] Come ente mittente tento il Recupero del allegato di pagamento con indice non valido ricevendo errore
     Given mittente della notifica bonaria: "Comune_Multi"
-    And viene creata una nuova notifica bonaria con valori di default
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | SoricalFattOrd |
     And destinatario della notifica bonaria
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
@@ -346,7 +354,8 @@ Feature: Messaggi e allegati di una notifica bonaria.
   @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_05_4_C] Come ente mittente tento il Recupero del allegato di pagamento con indice non valido ricevendo errore
     Given mittente della notifica bonaria: "Comune_Multi"
-    And viene creata una nuova notifica bonaria con valori di default
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | SoricalFattOrd |
     And destinatario della notifica bonaria
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
@@ -364,7 +373,8 @@ Feature: Messaggi e allegati di una notifica bonaria.
   @informalNotificationsMessageAttachment @informalAuditlog
   Scenario: [NOTIFICHE_BONARIE_DL_DESTINATARIO_1] Come ente mittente Recupero l'allegato di pagamento di una notifica bonaria
     Given mittente della notifica bonaria: "Comune_Multi"
-    And viene creata una nuova notifica bonaria con valori di default
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | SoricalFattOrd |
     And destinatario della notifica bonaria
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
@@ -375,13 +385,14 @@ Feature: Messaggi e allegati di una notifica bonaria.
     And il destinatario tenta il recupero dell'allegato pagamento della notifica bonaria
     Then il download del destinatario risulta correttamente effettuato
     And verifico la presenza di un audit log su "/aws/ecs/pn-commons" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
-      | iun    | auto             |
+      | iun    | auto                 |
       | param1 | AUD_COM_ATCHOPEN_RCP |
 
   @informalNotificationsMessageAttachment @informalAuditlog
   Scenario: [NOTIFICHE_BONARIE_DL_DESTINATARIO_2] Come ente mittente Recupero l'allegato di pagamento di una notifica bonaria
     Given mittente della notifica bonaria: "Comune_Multi"
-    And viene creata una nuova notifica bonaria con valori di default
+    And viene creata una nuova notifica bonaria con i seguenti parametri
+      | campaignId | SoricalFattOrd |
     And destinatario della notifica bonaria
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
@@ -392,5 +403,5 @@ Feature: Messaggi e allegati di una notifica bonaria.
     And il destinatario tenta il recupero del documento della notifica bonaria
     Then il download del destinatario risulta correttamente effettuato
     And verifico la presenza di un audit log su "/aws/ecs/pn-commons" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
-      | iun    | auto             |
+      | iun    | auto                |
       | param1 | AUD_COM_DOCOPEN_RCP |

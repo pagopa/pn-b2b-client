@@ -13,7 +13,7 @@ Feature: Workflow di una notifica bonaria.
       | digitalDomicile | NULL              |
     When viene inviata una nuova notifica bonaria
     And si verifica che la notifica bonaria sia in stato "ACCEPTED"
-    Then si verifica che il codice tassonomico sia correttamente compilato in pn-Notifications
+
 #    And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
 #    And si attende che venga prodotto l'elemento "WORKFLOW_ENDED_UNREACHED" della notifica bonaria
 

@@ -382,7 +382,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     public void getReceivedDocument() {
 
         try {
-            receivedAttachmentResponse = pnPaB2bInternalInformalClientImpl.getReceivedInformalNotificationDocument(currentCxId, savedIun, recipientCxType, 0);
+            receivedAttachmentResponse = pnPaB2bInternalInformalClientImpl.getReceivedInformalNotificationDocument(resolveRecipientCxId(currentCxId), savedIun, recipientCxType.PF, 0);
             lastException = null;
 
         } catch (Exception e) {
@@ -425,7 +425,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     public void getReceivedAttachment() {
 
         try {
-            receivedAttachmentResponse = pnPaB2bInternalInformalClientImpl.getReceivedInformalNotificationAttachment(currentCxId, savedIun, recipientCxType, 0);
+            receivedAttachmentResponse = pnPaB2bInternalInformalClientImpl.getReceivedInformalNotificationAttachment(resolveRecipientCxId(currentCxId), savedIun, recipientCxType.PF, 0);
             lastException = null;
 
         } catch (Exception e) {
@@ -838,9 +838,7 @@ public class PresaInCaricoNoticaBonariaSteps {
 
     private String resolveRecipientCxId(String taxId) {
 
-        Destinatario destinatario =
-                sharedSteps.getDestinatarioRegistry()
-                        .getByTaxId(taxId);
+        Destinatario destinatario = sharedSteps.getDestinatarioRegistry().getByTaxId(taxId);
 
         return destinatario.getRecipientType()
                 + "-"

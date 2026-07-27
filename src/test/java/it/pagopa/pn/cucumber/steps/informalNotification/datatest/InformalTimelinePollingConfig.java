@@ -45,7 +45,12 @@ public class InformalTimelinePollingConfig {
         WORKFLOW_ENDED_UNDELIVERABLE(300, 5),
 
         WORKFLOW_DONE_REACHED(200, 5),
-        WORKFLOW_DONE_UNREACHED(200, 5);
+        WORKFLOW_DONE_UNREACHED(200, 5),
+
+        PUBLIC_REGISTRY_VALIDATION_CALL(300, 5),
+        PUBLIC_REGISTRY_VALIDATION_RESPONSE(300, 5),
+        VALIDATE_NORMALIZE_ADDRESSES_REQUEST(300, 5);
+
 
         private final Integer numCheck;
         private final Integer waitingMultiplier;

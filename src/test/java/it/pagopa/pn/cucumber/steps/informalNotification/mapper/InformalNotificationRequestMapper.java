@@ -97,6 +97,7 @@ public class InformalNotificationRequestMapper {
             case "DOC_3_PG" -> "classpath:/sample_3pg.pdf";
             case "DOC_4_PG" -> "classpath:/sample_4pg.pdf";
             case "DOC_30MB" -> "classpath:/allegato_30Mb.pdf";
+            case "DOC_INFORMAL" -> "classpath:/Documento_combo.pdf";
             case "ALLEGATO_1_BN" -> "classpath:/Allegato1_BN.pdf";
             case "ALLEGATO_2_BN" -> "classpath:/Allegato2_BN.pdf";
 

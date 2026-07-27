@@ -64,7 +64,6 @@ public class PnPaB2bInternalInformalClientImpl {
         return client;
     }
 
-
     public MessageResponse createMessage(String cxId, NewMessageRequest request) {
         return messagesApi.newMessage(operatorId, CxTypeAuthFleet.PA, cxId, request, groups);
     }
