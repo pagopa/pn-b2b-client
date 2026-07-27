@@ -824,13 +824,12 @@ public class SafeStorageSteps {
             if (!tagMap.isEmpty()) {
                 int maxValuesLimit = 100;//TODO al variare di MaxValuesPerTagPerRequest questo valore deve cambiare di conseguenza
                 for (Map.Entry<String, List<String>> entry : tagMap.entrySet()) {
-                    String tagName = entry.getKey().startsWith("local_") ? "pn-test~" + entry.getKey() : entry.getKey();
                     int numberOfValues = entry.getValue().size();
                     int valuesDeleted = 0;
                     while (valuesDeleted < numberOfValues) {
                         int valuesToDelete = Math.min(maxValuesLimit, (numberOfValues - valuesDeleted));
                         List<String> valuesToDeleteList = entry.getValue().subList(valuesDeleted, valuesDeleted + valuesToDelete);
-                        request.putDELETEItem(tagName, valuesToDeleteList);
+                        request.putDELETEItem(entry.getKey(), valuesToDeleteList);
                         safeStorageClient.additionalFileTagsUpdate(file.getKey(), request);
                         valuesDeleted += valuesToDelete;
                     }
