@@ -79,7 +79,7 @@ public interface IEServiceClient extends SettableBearerToken {
 
     void updateEServicePersonalDataFlagAfterPublication(UUID eServiceId, EServicePersonalDataFlagUpdateSeed seed);
 
-    ResponseEntity<CreatedResource> createEServiceInstanceFromTemplateWithHttpInfo(
+    ResponseEntity<CreatedEServiceDescriptor> createEServiceInstanceFromTemplateWithHttpInfo(
             UUID templateId, InstanceEServiceSeed instanceEServiceSeed);
 
     ResponseEntity<EServiceTemplateInstances> getEServiceTemplateInstancesWithHttpInfo(
