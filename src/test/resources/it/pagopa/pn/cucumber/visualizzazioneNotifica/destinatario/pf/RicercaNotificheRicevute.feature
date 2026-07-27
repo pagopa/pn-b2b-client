@@ -1,7 +1,7 @@
 Feature: Ricerca delle notifiche ricevute lato destinatario
 
   #CASO DI TEST 4.1 - tutti i campi (obbligatori e opzionali) valorizzati correttamente
-  @letturaDestinatario1 @useB2B
+  @ricercaNotifiche @useB2B
   Scenario Outline: [RICERCA_RICEVUTE_1] Come destinatario <tipo> ricerco le notifiche ricevute con tutti i filtri valorizzati
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con i seguenti parametri
@@ -59,7 +59,7 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
 
 
   #CASO DI TEST 4.1 - campo obbligatorio non valorizzato -> 400 KO
-  @letturaDestinatario1 @useB2B
+  @ricercaNotifiche @useB2B
   Scenario Outline: [RICERCA_RICEVUTE_2] Come destinatario non riesco a ricercare le notifiche ricevute se manca un campo obbligatorio
     And "Mario Cucumber" visualizza l'elenco delle notifiche per comune "Comune_Multi"
       | <campo> | NULL |
@@ -73,7 +73,7 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
       | endDate         |
 
 
-  @deleghe4 @useB2B @letturaDestinatario1
+  @deleghe4 @useB2B @ricercaNotifiche
   Scenario: [RICERCA_RICEVUTE_3] Un delegato riceve una notifica legale e la ricerca delle notifiche ricevute lato delegato restituisce le notifiche attese dei criteri di ricerca
     Given "Mario Cucumber" rifiuta se presente la delega ricevuta "Mario Gherkin"
     And "Mario Cucumber" viene delegato da "Mario Gherkin" per comune "Comune_Multi"
@@ -132,7 +132,7 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
       | mandateId | :mandateId |
 
 
-  @deleghe4 @useB2B @letturaDestinatario1
+  @deleghe4 @useB2B @ricercaNotifiche
   Scenario: [RICERCA_RICEVUTE_3aaa] Un delegato riceve una notifica legale e la ricerca delle notifiche ricevute lato delegato restituisce le sole notifiche legali
   ricevute dal delegato a partire dalla creazione della delega. Le notifiche bonarie non vengono restituite.
     Given "Mario Cucumber" rifiuta se presente la delega ricevuta "Mario Gherkin"
@@ -182,7 +182,7 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
 
 
   #CASO DI TEST 4.1 - un delegato non può cercare le notifiche bonarie del delegante: mandateId + communicationType INFORMAL deve restituire 400
-  @deleghe4 @useB2B @letturaDestinatario1
+  @deleghe4 @useB2B @ricercaNotifiche
   Scenario: [RICERCA_RICEVUTE_6] Un delegato non può cercare le notifiche bonarie del delegante tramite mandateId
     Given "Mario Cucumber" rifiuta se presente la delega ricevuta "Mario Gherkin"
     And "Mario Cucumber" viene delegato da "Mario Gherkin" per comune "Comune_Multi"
@@ -196,7 +196,7 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
 
 
   #CASO DI TEST 4.3/4.4 - ricerca per specifico mittente, IUN e gruppo lato destinatario
-  @letturaDestinatario1 @useB2B
+  @ricercaNotifiche @useB2B
   Scenario Outline: [RICERCA_RICEVUTE_4] Come destinatario <tipo> ricerco le notifiche ricevute filtrando per mittente, IUN e gruppo
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
@@ -233,7 +233,7 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
 
 
   #CASO DI TEST 4.3/4.4 - paginazione con più risultati
-  @letturaDestinatario1 @useB2B
+  @ricercaNotifiche @useB2B
   Scenario: [RICERCA_RICEVUTE_5] Come destinatario recupero le notifiche ricevute sfogliando tutte le pagine dei risultati
     Given vengono create 5 notifiche con destinatario Mario Cucumber per la pa "Comune_Multi" e si aspetta che raggiungano l'elemento di timeline della notifica "REQUEST_ACCEPTED"
       | subject            | invio notifica paginazione |

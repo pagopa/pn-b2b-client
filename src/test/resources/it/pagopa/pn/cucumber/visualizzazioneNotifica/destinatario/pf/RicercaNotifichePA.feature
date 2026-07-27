@@ -5,7 +5,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
     #######################
 
   #CASO DI TEST 1.1
-  @letturaDestinatarioPA
+  @ricercaNotifiche
   Scenario: [DYNAMO_NOTIFICATIONS_METADATA_1] Verifica gli attributi communicationType/campaignId/viewed/delivered/desiredFeedback su pn-NotificationsMetadata
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
@@ -40,7 +40,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
 
 
   #CASO DI TEST 2.1 - tutti i campi (obbligatori e opzionali) valorizzati correttamente
-  @letturaDestinatarioPA
+  @ricercaNotifiche
   Scenario: [MITTENTE_RICERCA_NOTIFICHE_1_A] Come mittente recupero le notifiche inviate filtrando per tutti i campi obbligatori e opzionali
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
@@ -107,7 +107,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
       | sender             | Comune di Palermo             |
       | notificationStatus | EFFECTIVE_DATE                |
 
-  @letturaDestinatarioPA
+  @ricercaNotifiche
   Scenario: [MITTENTE_RICERCA_NOTIFICHE_1_B] Viene creata una notifica legale con due destinatari e si verifica che venga ritornata una sola notifica
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
@@ -132,7 +132,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
       | itemsFound | 1                             |
 
 
-  @letturaDestinatarioPA
+  @ricercaNotifiche
   Scenario: [MITTENTE_RICERCA_NOTIFICHE_1_C] Viene inviata una notifica legale con gruppo e si recuperano le notifiche inviate dal mittente filtrando per gruppo
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
@@ -153,7 +153,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
       | group  | CONSISTENT                    |
 
 
-  @letturaDestinatarioPA
+  @ricercaNotifiche
   Scenario Outline: [MITTENTE_RICERCA_NOTIFICHE_1_D] Si tenta il recupero delle notifiche inviate dal mittente quando manca un campo obbligatorio
     And vengono recuperate le notifiche inviate dal mittente "Comune_Multi"
       | <campo> | $NULL |
@@ -168,7 +168,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
 
 
   #CASO DI TEST 2.2 - ricerca per specifico destinatario persona giuridica
-  @letturaDestinatarioPA
+  @ricercaNotifiche
   Scenario: [MITTENTE_RICERCA_NOTIFICHE_1_E] Come mittente recupero le notifiche inviate filtrando per uno specifico destinatario persona giuridica
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
@@ -186,7 +186,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
 
 
   #CASO DI TEST 2.1/2.2 - paginazione con più risultati
-  @letturaDestinatarioPA
+  @ricercaNotifiche
   Scenario: [MITTENTE_RICERCA_NOTIFICHE_1_F] Come mittente recupero le notifiche inviate sfogliando tutte le pagine dei risultati
     Given vengono create 5 notifiche con destinatario Mario Gherkin per la pa "Comune_Multi" e si aspetta che raggiungano l'elemento di timeline della notifica "REQUEST_ACCEPTED"
       | subject            | invio notifica paginazione |
@@ -202,7 +202,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
     # Comunicazioni Bonarie
     #######################
 
-  @letturaDestinatarioPA
+  @ricercaNotifiche
   Scenario: [MITTENTE_RICERCA_NOTIFICHE_BONARIE_2.A] Vengono inviate due notifiche bonarie con esiti differenti
   e si recuperano le notifiche inviate dal mittente filtrando per specifici criteri
     Given mittente della notifica bonaria: "Comune_Multi"
@@ -347,7 +347,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
 
 
   #CASO DI TEST 3.2 - paginazione con più risultati
-  @letturaDestinatarioPA
+  @ricercaNotifiche
   Scenario: [MITTENTE_RICERCA_NOTIFICHE_BONARIE_2.C] Come mittente recupero le notifiche bonarie inviate sfogliando tutte le pagine dei risultati
     Given vengono create 5 notifiche bonarie per la pa "Comune_Multi" con campagna "SoricalMessaMora"
     And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
@@ -358,7 +358,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
       | senderId   | :informal_senderId |
     And si sfogliano tutte le pagine della ricerca lato mittente e si verifica che vengano raccolte almeno 5 notifiche
 
-  @letturaDestinatarioPA
+  @ricercaNotifiche
   Scenario Outline: [MITTENTE_RICERCA_NOTIFICHE_BONARIE_2.B] Si tenta il recupero delle notifiche bonarie inviate dal mittente quando manca un campo obbligatorio
     And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
       | <campo> | $NULL |
@@ -378,7 +378,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
     #######################
 
   #CASO DI TEST 6.1/6.2 - ricerca per mittente e destinatario persona fisica, con filtro gruppo
-  @letturaDestinatarioPA
+  @ricercaNotifiche
   Scenario: [SERVICEDESK_RICERCA_NOTIFICHE_1] Il servicedesk recupera le notifiche legali filtrando per mittente, destinatario persona fisica e gruppo
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
@@ -409,7 +409,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
 
 
   #CASO DI TEST 6.2 - ricerca per mittente e destinatario persona giuridica
-  @letturaDestinatarioPA
+  @ricercaNotifiche
   Scenario: [SERVICEDESK_RICERCA_NOTIFICHE_2] Il servicedesk recupera le notifiche legali filtrando per mittente e destinatario persona giuridica
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
@@ -428,7 +428,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
 
 
   #CASO DI TEST 6.2 - paginazione con più risultati
-  @letturaDestinatarioPA
+  @ricercaNotifiche
   Scenario: [SERVICEDESK_RICERCA_NOTIFICHE_3] Il servicedesk recupera le notifiche legali sfogliando tutte le pagine dei risultati
     Given vengono create 5 notifiche con destinatario Mario Gherkin per la pa "Comune_Multi" e si aspetta che raggiungano l'elemento di timeline della notifica "REQUEST_ACCEPTED"
       | subject            | invio notifica paginazione |
@@ -442,7 +442,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
 
 
   #CASO DI TEST 6.1 - campo obbligatorio non valorizzato -> 400 KO
-  @letturaDestinatarioPA
+  @ricercaNotifiche
   Scenario Outline: [SERVICEDESK_RICERCA_NOTIFICHE_4] Il servicedesk non riesce a recuperare le notifiche se manca un campo obbligatorio
     And vengono recuperate le notifiche da servicedesk
       | <campo> | $NULL |
