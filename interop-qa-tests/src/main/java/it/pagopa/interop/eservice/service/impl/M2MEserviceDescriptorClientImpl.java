@@ -10,20 +10,19 @@ import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient;
 import it.pagopa.interop.eservice.service.mapper.EserviceDescriptorDomainMapper;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.EservicesApi;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Documents;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorDraftUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorQuotasUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
-import java.util.List;
-import java.util.UUID;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
+import java.util.UUID;
 
 @ToString
 @EqualsAndHashCode
@@ -177,6 +176,21 @@ public class M2MEserviceDescriptorClientImpl extends AbstractClient implements I
     public FileDownloadMultipart downloadEServiceDescriptorInterface(UUID eserviceId,
         UUID descriptorId) {
         return eservicesApi.downloadEServiceDescriptorInterface(eserviceId, descriptorId);
+    }
+
+    @Override
+    public Document uploadInterface(UUID eserviceId, UUID descriptorId, Resource file, String prettyName) {
+        return eservicesApi.uploadEServiceDescriptorInterface(eserviceId, descriptorId, file, prettyName);
+    }
+
+    @Override
+    public Document uploadDocument(UUID eserviceId, UUID descriptorId, Resource file, String prettyName) {
+        return eservicesApi.uploadEServiceDescriptorDocument(eserviceId, descriptorId, file, prettyName);
+    }
+
+    @Override
+    public FileDownloadMultipart downloadDocument(UUID eserviceId, UUID descriptorId, UUID documentId) {
+        return eservicesApi.downloadEServiceDescriptorDocument(eserviceId, descriptorId, documentId);
     }
 
     @Override
