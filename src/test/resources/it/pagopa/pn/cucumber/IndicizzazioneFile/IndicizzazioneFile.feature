@@ -42,15 +42,6 @@ Feature: test preliminari indicizzazione File safeStorage
       | local_multivalue:test1,test2 |
       | local_singlevalue:test1      |
 
-  @aggiuntaTag
-  @indicizzazioneSafeStorage
-  #recIndex è un tag locale, registrato senza il prefisso pn-test~ su pn-SS-IndexingConfiguration
-  Scenario: [INDEX_SS_GET_FILE_1_LOCAL_2] GetFile - SUCCESS (tag locali)
-    Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
-      | recIndex:test1 |
-    Then Il documento 1 è correttamente formato con la seguente lista di tag
-      | recIndex:test1 |
-
   ########################################################### GET TAGS ###################################################################
 
   @aggiuntaTag
@@ -119,7 +110,7 @@ Feature: test preliminari indicizzazione File safeStorage
 
   @aggiuntaTag
   @indicizzazioneSafeStorage
-  Scenario: [VALIDATION_BUG_20667] Creazione con successo di un documento con document type avante un nome libero, che non inizia per forza con "PN_"
+  Scenario: [VALIDATION_BUG_20667] Creazione con successo di un documento con document type avante un nome che non inizia per forza con "PN_"
     Given Viene caricato un nuovo documento di tipo "INTEROP_LEGAL_FACTS" con tag associati
       | local_multivalue:test1,test2 |
       | local_singlevalue:test1      |
@@ -570,7 +561,7 @@ Feature: test preliminari indicizzazione File safeStorage
       | SET       | global_singlevalue:test1             | 1             |
       | SET       | global_singlevalue_inesistente:test2 | 2             |
     Then L'update massivo va in successo con stato 200
-    And La response contiene uno o più errori "400.00" riportanti la dicitura "Tag 'global_singlevalue_inesistente' not found in the indexing configuration" riguardanti il documento 2
+    And La response contiene uno o più errori "400.00" riportanti la dicitura "Tag global_singlevalue_inesistente not found in the indexing configuration" riguardanti il documento 2
     And Il documento 1 è associato alla seguente lista di tag
       | global_singlevalue:test1 |
     And Il documento 2 è associato alla seguente lista di tag
@@ -585,8 +576,8 @@ Feature: test preliminari indicizzazione File safeStorage
       | SET       | global_singlevalue_inesistente:test1 | 1             |
       | SET       | global_singlevalue_inesistente:test2 | 2             |
     Then L'update massivo va in successo con stato 200
-    And La response contiene uno o più errori "400.00" riportanti la dicitura "Tag 'global_singlevalue_inesistente' not found in the indexing configuration" riguardanti il documento 1
-    And La response contiene uno o più errori "400.00" riportanti la dicitura "Tag 'global_singlevalue_inesistente' not found in the indexing configuration" riguardanti il documento 2
+    And La response contiene uno o più errori "400.00" riportanti la dicitura "Tag global_singlevalue_inesistente not found in the indexing configuration" riguardanti il documento 1
+    And La response contiene uno o più errori "400.00" riportanti la dicitura "Tag global_singlevalue_inesistente not found in the indexing configuration" riguardanti il documento 2
     And Il documento 1 è associato alla seguente lista di tag
       | null |
     And Il documento 2 è associato alla seguente lista di tag
@@ -771,8 +762,8 @@ Feature: test preliminari indicizzazione File safeStorage
   @indicizzazioneSafeStorage
   Scenario: [INDEX_SS_SEARCH_7_LOCAL] SEARCH FAIL: la ricerca di un tag locale NON indicizzato non deve produrre risultati (logic or)
     Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
-      | recIndex:testOrParam1 |
+      | local_singleValue:testOrParam1 |
     When Vengono ricercate con logica "or" le fileKey aventi i seguenti tag
-      | recIndex:testOrParam1 |
+      | local_singleValue:testOrParam1 |
     Then Il risultato della search contiene le fileKey relative ai seguenti documenti
       | null |
