@@ -102,6 +102,46 @@ Feature: Nella generazione del token sono aggiunte le seguenti informazioni: hea
       | audience       | voucher    | payload   | aud            |
       | subject        | voucher    | payload   | sub            |
 
+  Scenario: [AUTH_TOKEN_INFO_3b] Generazione con successo di un voucher M2M con utenza non amministrativa e validazione
+  dei relativi log di audit salvati nel bucket S3.
+
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato 1 client "API"
+    And "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
+    And un "admin" di "PA1" ha caricato una chiave pubblica nel client
+    When l'utente richiede la generazione del voucher M2M
+    And si ottiene la corretta generazione del voucher di tipo "Bearer"
+    Then verifica che le informazioni di audit sul bucket S3 "persistenza m2m" contengano i seguenti dati per il voucher generato:
+      | s3-element     | ctx-source | ctx-group | ctx-item       |
+      | algorithm      | voucher    | header    | alg            |
+      | keyId          | voucher    | header    | kid            |
+      | typ            | voucher    | header    | typ            |
+      | jwtId          | voucher    | payload   | jti            |
+      | issuedAt       | voucher    | payload   | iat            |
+      | clientId       | voucher    | payload   | client_id      |
+      | organizationId | voucher    | payload   | organizationId |
+      | adminId        | voucher    | payload   | ${MISSING}     |
+      | notBefore      | voucher    | payload   | nbf            |
+      | expirationTime | voucher    | payload   | exp            |
+      | issuer         | voucher    | payload   | iss            |
+      | audience       | voucher    | payload   | aud            |
+      | subject        | voucher    | payload   | sub            |
+    And verifica che le informazioni di audit sul bucket S3 "signed m2m" contengano i seguenti dati per il voucher generato:
+      | s3-element     | ctx-source | ctx-group | ctx-item       |
+      | algorithm      | voucher    | header    | alg            |
+      | keyId          | voucher    | header    | kid            |
+      | typ            | voucher    | header    | typ            |
+      | jwtId          | voucher    | payload   | jti            |
+      | issuedAt       | voucher    | payload   | iat            |
+      | clientId       | voucher    | payload   | client_id      |
+      | organizationId | voucher    | payload   | organizationId |
+      | adminId        | voucher    | payload   | ${MISSING}     |
+      | notBefore      | voucher    | payload   | nbf            |
+      | expirationTime | voucher    | payload   | exp            |
+      | issuer         | voucher    | payload   | iss            |
+      | audience       | voucher    | payload   | aud            |
+      | subject        | voucher    | payload   | sub            |
+
   Scenario: [AUTH_TOKEN_INFO_4] Generazione con successo di un voucher M2M con DPoP e validazione dei relativi log di audit
   salvati nel bucket S3 con dpop e clientAssertion.
 

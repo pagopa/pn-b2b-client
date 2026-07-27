@@ -208,6 +208,13 @@ public class ArchivingSteps {
                     default -> throw new IllegalArgumentException("Invalid group: " + ctxGroup);
                 };
 
+                if (ctxItem.equals("${MISSING}")) {
+                    softly.assertThat(jsonNode.has(s3Element))
+                            .as("Field '%s' should not be present in the file", s3Element)
+                            .isFalse();
+                    continue;
+                }
+
                 Object actualValue = AuditTokenContext.resolveFieldValue(jsonNode, s3Element);
                 String expectedValue = AuditTokenContext.resolveFieldValue(contextItems, ctxItem).toString();
 
