@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.common;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.pagopa.interop.authorization.service.utils.JWTUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -13,6 +14,7 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Getter
@@ -23,27 +25,39 @@ public class AuditTokenContext {
 
     private static final String JWT_ID = "jti";
 
-    private Map<String, String> headers = new HashMap<>();
-    private Map<String, String> payload = new HashMap<>();
-
-    public void addHeader(String key, String value) {
-        headers.put(key, value);
-    }
-
-    public void addPayload(String key, String value) {
-        payload.put(key, value);
-    }
-
     public String getJwtId() {
-        return payload.get(JWT_ID);
+        return this.getDecodedToken(TokenType.VOUCHER_REQUEST).getPayload().get(JWT_ID).toString();
     }
 
+    public enum TokenType { CLIENT_ASSERTION, VOUCHER_REQUEST, DPOP_PROOF}
+    private Map<TokenType, String> accessTokens = new HashMap<>();
+    public void setToken(TokenType tokenType, String accessToken) {
+        this.accessTokens.put(tokenType, accessToken);
+    }
+    public JWTUtils.JWTPojo getDecodedToken(TokenType key) {
+        String accessToken = accessTokens.get(key);
+        return JWTUtils.decodeJwt(accessToken);
+    }
 
     static public boolean hasField(Map<String, Object> source, String field) {
         return resolveFieldValue(source, field) != null;
     }
 
     static public Object resolveFieldValue(Map<String, Object> source, String field) {
+        if (source == null || field == null || field.isBlank()) {
+            return null;
+        }
+        try {
+            final ExpressionParser parser = new SpelExpressionParser();
+            StandardEvaluationContext context = new StandardEvaluationContext(source);
+            context.addPropertyAccessor(new MapAccessor());
+            return parser.parseExpression(field).getValue(context);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    static public Object resolveFieldValue(LinkedHashMap<String, Object> source, String field) {
         if (source == null || field == null || field.isBlank()) {
             return null;
         }
