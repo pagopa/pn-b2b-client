@@ -81,6 +81,7 @@ public class TemplateEngineSteps {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("context_recipientType", recipientType); // todo t mc.
         parameters.put("recipient_recipientType", recipientType); // todo t mc.
+        parameters.put("recipientType", recipientType);
         retrieveTemplate(templateTypeObject, language, BODY_CORRETTO, "semplice", parameters);
     }
 
