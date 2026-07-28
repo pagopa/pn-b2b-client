@@ -160,6 +160,8 @@ public class EServiceTemplateInstanceCreateSteps {
                 .getLastEServiceIdCreatedFromTemplate();
         UUID descriptorId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorIdCreatedFromTemplate();
         sharedStepsContext.getEServiceTemplateStepContext().setLastEServiceDescriptorIdCreatedFromTemplate(descriptorId);
+        sharedStepsContext.getEServicesCommonContext().setDescriptorId(descriptorId);
+        sharedStepsContext.getEServicesCommonContext().setEserviceId(lastEServiceIdCreatedFromTemplate);
         this.dataPreparationService.bringTemplateInstanceDescriptorToGivenState(
                 lastEServiceIdCreatedFromTemplate,
                 descriptorId,

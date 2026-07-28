@@ -173,10 +173,6 @@ public class EServiceTemplateInstanceUpdateSteps {
 
     @Given("l'utente effettua l'aggiunta di una versione in stato {eServiceDescriptorState} all'e-service con successo")
     public void createEServiceVersionDraftSuccessfully(EServiceDescriptorState descriptorState) {
-        UUID oldDescriptor = sharedStepsContext.getEServiceTemplateStepContext()
-                .getLastEServiceDescriptorIdCreatedFromTemplate();
-        sharedStepsContext.getEServiceTemplateStepContext()
-                .setOldEServiceDescriptorIdCreatedFromTemplate(oldDescriptor);
 
         UUID newDescriptor = this.dataPreparationService.createNextDraftDescriptor(
                 sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate());
@@ -187,6 +183,9 @@ public class EServiceTemplateInstanceUpdateSteps {
                 false
         );
         sharedStepsContext.getEServiceTemplateStepContext().setLastEServiceDescriptorIdCreatedFromTemplate(newDescriptor);
+        sharedStepsContext.getEServicesCommonContext().setDescriptorId(sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorIdCreatedFromTemplate());
+        sharedStepsContext.getEServicesCommonContext().setOldDescriptorId(sharedStepsContext.getEServicesCommonContext().getDescriptorId());
+
     }
 
     @When("l'utente tenta di associare un'interfaccia all'istanza dell'e-service template")
