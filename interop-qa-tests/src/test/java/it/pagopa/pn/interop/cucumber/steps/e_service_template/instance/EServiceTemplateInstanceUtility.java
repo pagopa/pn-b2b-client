@@ -27,18 +27,6 @@ public class EServiceTemplateInstanceUtility extends AbstractResolver {
         return resolveOrParse(eServiceTemplateInstanceId, UUID::fromString, () -> sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate(), () -> sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate(), UUID::randomUUID, () -> null);
     }
 
-    public UUID resolveOldEServiceTemplateInstanceDescriptorId(String descriptorId) {
-        return resolveOrParse(descriptorId, UUID::fromString, () -> sharedStepsContext.getEServiceTemplateStepContext().getOldEServiceDescriptorIdCreatedFromTemplate(), () -> sharedStepsContext.getEServiceTemplateStepContext().getOldEServiceDescriptorIdCreatedFromTemplate(), UUID::randomUUID, () -> null);
-    }
-
-    public UUID resolveLatestEServiceTemplateInstanceDescriptorId(String descriptorId) {
-        return resolveOrParse(descriptorId, UUID::fromString, () -> sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorIdCreatedFromTemplate(), () -> sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorIdCreatedFromTemplate(), UUID::randomUUID, () -> null);
-    }
-
-    public String resolveArchivingReason(String raw) {
-        return resolveOrParse(raw, value -> value, null, null, null, () -> "");
-    }
-
     public UUID resolveEServiceTemplateId(String eServiceTemplateId) {
         return resolveOrParse(eServiceTemplateId, UUID::fromString, () -> sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), () -> sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), UUID::randomUUID, () -> null);
     }
