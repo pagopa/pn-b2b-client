@@ -60,7 +60,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
     And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
       | communicationType | LEGAL                         |
       | sentAt            | $DATE_ADD(-1D), $DATE_ADD(1D) |
-      | sender            | Comune di Palermo             |
+      | sender            | $NOT_EMPTY                    |
     And vengono recuperate le notifiche inviate dal mittente "Comune_Multi"
       | sentAt            | $DATE_ADD(-1D), $DATE_ADD(1D) |
       | communicationType | LEGAL                         |
@@ -70,7 +70,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
     And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
       | communicationType | LEGAL                         |
       | sentAt            | $DATE_ADD(-1D), $DATE_ADD(1D) |
-      | sender            | Comune di Palermo             |
+      | sender            | $NOT_EMPTY                    |
       | recipients        | CLMCST42R12D969Z              |
     And vengono recuperate le notifiche inviate dal mittente "Comune_Multi"
       | communicationType | LEGAL                         |
@@ -81,7 +81,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
     And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
       | communicationType | LEGAL                         |
       | sentAt            | $DATE_ADD(-1D), $DATE_ADD(1D) |
-      | sender            | Comune di Palermo             |
+      | sender            | $NOT_EMPTY                    |
       | iun               | :actualIun                    |
     And vengono recuperate le notifiche inviate dal mittente "Comune_Multi"
       | communicationType | LEGAL                         |
@@ -93,7 +93,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
     And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
       | communicationType  | LEGAL                         |
       | sentAt             | $DATE_ADD(-1D), $DATE_ADD(1D) |
-      | sender             | Comune di Palermo             |
+      | sender             | $NOT_EMPTY                    |
       | notificationStatus | EFFECTIVE_DATE                |
     And vengono recuperate le notifiche inviate dal mittente "Comune_Multi"
       | communicationType | INFORMAL                      |
@@ -104,7 +104,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
     And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
       | communicationType  | LEGAL                         |
       | sentAt             | $DATE_ADD(-1D), $DATE_ADD(1D) |
-      | sender             | Comune di Palermo             |
+      | sender             | $NOT_EMPTY                    |
       | notificationStatus | EFFECTIVE_DATE                |
 
   @ricercaNotifiche
@@ -127,7 +127,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
       | iunMatch | :actualIun                    |
     And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
       | sentAt     | $DATE_ADD(-1D), $DATE_ADD(1D) |
-      | sender     | Comune di Palermo             |
+      | sender     | $NOT_EMPTY                    |
       | iun        | :actualIun                    |
       | itemsFound | 1                             |
 
@@ -209,18 +209,19 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
     And viene creata una nuova notifica bonaria con i seguenti parametri
       | campaignId | SoricalMessaMora |
     And destinatario della notifica bonaria
-      | messageId       | ${IT}             |
-      | subject         | Test workflow     |
-      | recipientType   | PF                |
-      | taxId           | FRMTTR76M06B715E  |
-      | denomination    | Ettore Fieramosca |
-      | email           | NULL              |
-      | digitalDomicile | NULL              |
+      | messageId                | ${IT}             |
+      | subject                  | Test workflow     |
+      | recipientType            | PF                |
+      | taxId                    | FRMTTR76M06B715E  |
+      | denomination             | Ettore Fieramosca |
+      | email                    | NULL              |
+      | digitalDomicile          | NULL              |
+      | physical_address_address | Via@ok_RS         |
     When viene inviata una nuova notifica bonaria
-#    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
     #Da aggiungere lo step per leggere gli eventi fino all'elemento di timeline della notifica "UNDELIVERABLE"
     #tramite API /received implementato in un nuovo branch
-    #And si verifica che la notifica bonaria sia in stato "COMPLETED_REACHED"
+    And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
 
     And viene creata una nuova notifica bonaria con i seguenti parametri
       | campaignId | SoricalFattOrd |
@@ -233,10 +234,10 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
       | email           | NULL              |
       | digitalDomicile | NULL              |
     When viene inviata una nuova notifica bonaria
-#    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    And si attende che la notifica bonaria passi in stato "UNDELIVERABLE"
     #Da aggiungere lo step per leggere gli eventi fino all'elemento di timeline della notifica "UNDELIVERABLE"
     #tramite API /received implementato in un nuovo branch
-    #And si verifica che la notifica bonaria sia in stato "UNDELIVERABLE"
 
     And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
       | startDate  | $DATE_ADD(-1D)     |
@@ -255,6 +256,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
       | status     | COMPLETED_REACHED  |
       | senderId   | :informal_senderId |
       | size       | 50                 |
+      | delivered  | true               |
     And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
       | sentAt             | $DATE_ADD(-1D), $DATE_ADD(1D) |
       | notificationStatus | COMPLETED_REACHED             |
@@ -278,7 +280,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
     And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
       | startDate  | $DATE_ADD(-1D)     |
       | endDate    | $DATE_ADD(1D)      |
-      | campaignId | SoricalFattOrd     |
+      | campaignId | SoricalMessaMora   |
       | senderId   | :informal_senderId |
       | delivered  | true               |
       | size       | 50                 |
@@ -310,6 +312,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
       | digitalDomicile | tu@gmail.com  |
     When viene inviata una nuova notifica bonaria
     And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
 #    ricerca per specifico destinatario PG e specifica campagna
     And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
       | startDate   | $DATE_ADD(-1D)        |
@@ -318,6 +321,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
       | recipientId | :informal_recipientId |
       | senderId    | :informal_senderId    |
       | size        | 50                    |
+      | delivered   | true                  |
     And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
       | sentAt     | $DATE_ADD(-1D), $DATE_ADD(1D) |
       | campaignId | SoricalFattOrd                |
@@ -330,6 +334,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
       | iunMatch   | :informal_iun      |
       | senderId   | :informal_senderId |
       | size       | 50                 |
+      | delivered  | true               |
     And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
       | sentAt | $DATE_ADD(-1D), $DATE_ADD(1D) |
       | iun    | :informal_iun                 |
@@ -341,6 +346,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
       | xPagopaPnCxGroups | :informal_group    |
       | senderId          | :informal_senderId |
       | size              | 50                 |
+      | delivered         | true               |
     And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
       | sentAt | $DATE_ADD(-1D), $DATE_ADD(1D) |
       | group  | CONSISTENT                    |
@@ -397,15 +403,15 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
       | cxType            | PF             |
       | size              | 50             |
     And l'elenco delle notifiche recuperate da servicedesk rispettare i seguenti criteri:
-      | sender | Comune di palermo |
+      | sender | $NOT_EMPTY |
     And vengono recuperate le notifiche da servicedesk
       | startDate   | $DATE_ADD(-1D) |
       | endDate     | $DATE_ADD(1D)  |
       | recipientId | :recipientUid  |
       | size        | 50             |
     And l'elenco delle notifiche recuperate da servicedesk rispettare i seguenti criteri:
-      | sender     | Comune di palermo |
-      | recipients | CLMCST42R12D969Z  |
+      | sender     | $NOT_EMPTY       |
+      | recipients | CLMCST42R12D969Z |
 
 
   #CASO DI TEST 6.2 - ricerca per mittente e destinatario persona giuridica
@@ -424,7 +430,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
       | cxType            | PG             |
       | size              | 50             |
     And l'elenco delle notifiche recuperate da servicedesk rispettare i seguenti criteri:
-      | sender | Comune di palermo |
+      | sender | $NOT_EMPTY |
 
 
   #CASO DI TEST 6.2 - paginazione con più risultati

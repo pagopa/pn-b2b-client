@@ -103,7 +103,7 @@ Feature: Ricerca delle notifiche ricevute lato delegato
       | endDate   | $DATE_ADD(1D)  |
       | senderId  | :senderId      |
     And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
-      | sender | comune di milano |
+      | sender | $NOT_EMPTY |
     Examples:
       | delegato       | delegatore    |
       | CucumberSpa    | GherkinSrl    |

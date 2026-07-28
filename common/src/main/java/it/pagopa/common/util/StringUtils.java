@@ -16,15 +16,25 @@ import java.util.regex.Pattern;
  * <pre>
  * $NULL
  * $EMPTY
+ * $NOT_EMPTY
  * </pre>
  * <p>
  * Placeholder supportati:
  * <ul>
  *     <li><b>$NULL</b>: restituisce {@code null}</li>
  *     <li><b>$EMPTY</b>: restituisce una stringa vuota ({@code ""})</li>
+ *     <li><b>$NOT_EMPTY</b>: restituisce il marcatore {@link #NOT_EMPTY_MARKER}, da interpretare
+ *     lato chiamante come "il valore deve solo essere presente e non vuoto", senza un confronto
+ *     puntuale (utile per campi il cui contenuto non è deterministico)</li>
  * </ul>
  */
 public class StringUtils {
+
+    /**
+     * Marcatore restituito dal placeholder {@code $NOT_EMPTY}. Non è un valore effettivo del
+     * dominio: segnala al chiamante che deve verificare solo presenza e non vuotezza del campo.
+     */
+    public static final String NOT_EMPTY_MARKER = "NOT_EMPTY";
 
     /**
      * Alfabeto maiuscolo inglese.
@@ -50,7 +60,8 @@ public class StringUtils {
     private static final Map<String, Supplier<String>> FUNCTIONS =
             Map.of(
                     "NULL", () -> null,
-                    "EMPTY", () -> ""
+                    "EMPTY", () -> "",
+                    "NOT_EMPTY", () -> NOT_EMPTY_MARKER
             );
 
     /**

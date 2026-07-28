@@ -5,6 +5,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.common.util.StringUtils;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.FullSentInformalNotificationV1;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalNotificationRecipientV1;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalNotificationRequestV1;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.MessageResponse;
@@ -99,6 +100,8 @@ public class PresaInCaricoNoticaBonariaSteps {
     private final InformalNotificationRequestMapper informalNotificationRequestMapper;
     private final InformalRecipientBuilder recipientBuilder;
     private final NotificationInformalUtilsV1 notificationInformalUtilsV1;
+    private FullSentInformalNotificationV1 fullInformalNotificationResponse;
+
     private final SendSharedContext sendSharedContext;
     private final DestinatarioRegistry destinatarioRegistry;
 
@@ -498,6 +501,49 @@ public class PresaInCaricoNoticaBonariaSteps {
         } catch (Exception e) {
             lastException = e;
             statusResponse = null;
+        }
+    }
+
+    @Then("si attende che la notifica bonaria passi in stato {string}")
+    public void verifyFinalNotificationStatus(String expectedStatus) {
+        AtomicReference<String> lastStatus = new AtomicReference<>(null);
+        AtomicReference<FullSentInformalNotificationV1> lastNotification = new AtomicReference<>();
+        try {
+            await().atMost(Duration.ofMinutes(12)).pollInterval(Duration.ofSeconds(30)).until(() -> {
+                FullSentInformalNotificationV1 notification = getFullInformalNotification();
+                if (notification == null) {
+                    return false;
+                }
+                lastNotification.set(notification);
+                String actualStatus = notification.getNotificationStatus().getValue();
+                lastStatus.set(actualStatus);
+                log.info("Polling stato notifica: {}", actualStatus);
+                log.info("IUN: {}", notification.getIun());
+                return expectedStatus.equals(actualStatus);
+            });
+
+        } catch (Exception e) {
+            throw new AssertionError("Stato finale non valido.\n" + "Atteso: " + expectedStatus + "\n" + "Ultimo stato ricevuto: " + lastStatus.get() + "\n" + "Response: " + getFullInformalNotification(), e);
+        }
+        lastException = null;
+    }
+
+    private FullSentInformalNotificationV1 getFullInformalNotification() {
+
+        try {
+
+            fullInformalNotificationResponse = pnPaB2bInternalInformalClientImpl.getSentInformalNotificationSender(currentCxId, savedIun, true);
+            lastException = null;
+            log.info("Full informal notification response: {}", fullInformalNotificationResponse);
+            return fullInformalNotificationResponse;
+
+        } catch (Exception e) {
+
+            log.error("Errore durante il recupero della notifica. IUN={}", savedIun, e);
+            lastException = e;
+            fullInformalNotificationResponse = null;
+
+            throw new RuntimeException("Errore durante il recupero della notifica " + savedIun, e);
         }
     }
 

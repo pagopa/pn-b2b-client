@@ -1,8 +1,11 @@
 package it.pagopa.pn.cucumber.utils.notificationsearch;
 
+import it.pagopa.common.util.StringUtils;
+
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeParseException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -42,11 +45,21 @@ import static org.assertj.core.api.Assertions.assertThat;
  * diverso (es. il nome del gruppo), che quindi non è confrontabile con il valore inviato in request: in
  * questo caso si verifica solo che il campo sia valorizzato e che abbia lo stesso valore su tutte le
  * righe restituite, senza confrontarlo con un valore atteso specifico.
+ * <p>
+ * Il placeholder {@code $NOT_EMPTY} (risolto tramite {@link StringUtils#resolveValue} nel
+ * {@link NotificationSearchCriteriaMapper} in {@link #NOT_EMPTY_VALUE}) è un ulteriore caso speciale,
+ * ancora più permissivo di {@value #CONSISTENT_VALUE}: verifica solo che il campo sia presente e non
+ * vuoto su ogni riga restituita, senza richiedere che il valore sia lo stesso su tutte le righe né
+ * confrontarlo con un valore atteso. È il caso di campi testuali a scelta libera dell'ente mittente
+ * (es. {@code sender}, la denominazione del mittente) i cui dati, negli ambienti di test, sono spesso
+ * "sporchi" (es. impostati a un valore diverso da quello effettivamente usato in fase di creazione
+ * della notifica): un confronto puntuale o di coerenza tra le righe risulterebbe quindi instabile.
  */
 public final class NotificationSearchRowAssertions {
 
     private static final String ITEMS_FOUND_FIELD = "itemsFound";
     private static final String CONSISTENT_VALUE = "CONSISTENT";
+    private static final String NOT_EMPTY_VALUE = StringUtils.NOT_EMPTY_MARKER;
 
     private NotificationSearchRowAssertions() {
     }
@@ -63,6 +76,10 @@ public final class NotificationSearchRowAssertions {
             }
             if (isConsistentValue(allowedValues)) {
                 assertFieldConsistentAcrossRows(rows, field);
+                return;
+            }
+            if (isNotEmptyValue(allowedValues)) {
+                rows.forEach(row -> assertFieldNotEmpty(row, field));
                 return;
             }
             rows.forEach(row -> assertRowFieldMatches(row, field, allowedValues));
@@ -104,6 +121,26 @@ public final class NotificationSearchRowAssertions {
 
     private static boolean isConsistentValue(List<String> allowedValues) {
         return allowedValues.size() == 1 && CONSISTENT_VALUE.equalsIgnoreCase(allowedValues.get(0));
+    }
+
+    private static boolean isNotEmptyValue(List<String> allowedValues) {
+        return allowedValues.size() == 1 && NOT_EMPTY_VALUE.equalsIgnoreCase(allowedValues.get(0));
+    }
+
+    private static void assertFieldNotEmpty(Object row, String field) {
+        Object actualValue = NotificationRowFieldReader.readField(row, field);
+        assertThat(actualValue)
+                .as("Il campo '%s' della notifica con iun '%s' deve essere presente", field, readIunSafely(row))
+                .isNotNull();
+        if (actualValue instanceof String actualString) {
+            assertThat(actualString)
+                    .as("Il campo '%s' della notifica con iun '%s' non deve essere vuoto", field, readIunSafely(row))
+                    .isNotBlank();
+        } else if (actualValue instanceof Collection<?> actualCollection) {
+            assertThat(actualCollection)
+                    .as("Il campo '%s' della notifica con iun '%s' non deve essere vuoto", field, readIunSafely(row))
+                    .isNotEmpty();
+        }
     }
 
     private static void assertFieldConsistentAcrossRows(List<?> rows, String field) {

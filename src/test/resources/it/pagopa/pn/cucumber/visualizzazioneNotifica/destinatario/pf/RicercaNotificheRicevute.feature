@@ -7,10 +7,14 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
     And viene creata una nuova notifica bonaria con i seguenti parametri
       | campaignId | SoricalMessaMora |
     And destinatario della notifica bonaria
-      | recipientType | PF               |
-      | taxId         | FRMTTR76M06B715E |
-      | denomination  | Mario Cucumber   |
-      | messageId     | ${IT}            |
+      | recipientType | <tipo>         |
+      | taxId         | <taxId>        |
+      | denomination  | <destinatario> |
+      | messageId     | ${IT}          |
+      | subject         | Test workflow            |
+      | email           | NULL                     |
+      | digitalDomicile | <digitalDomicile> |
+
     When viene inviata una nuova notifica bonaria
     And si verifica che la notifica bonaria sia in stato "ACCEPTED"
 
@@ -52,10 +56,10 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
       | communicationType | LEGAL |
 
     Examples:
-      | tipo | destinatario   |
-      | PF   | Mario Cucumber |
-      | PG   | CucumberSpa    |
-      | PG   | CucumberSpaB2B |
+      | tipo | destinatario   | taxId            | digitalDomicile |
+      | PF   | Mario Cucumber | FRMTTR76M06B715E | NULL             |
+      | PG   | CucumberSpa    | 20517490320      | example@OK-pecSuccess.it    |
+      | PG   | CucumberSpaB2B | 20517490320      | example@OK-pecSuccess.it    |
 
 
   #CASO DI TEST 4.1 - campo obbligatorio non valorizzato -> 400 KO
@@ -118,8 +122,8 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
       | senderId          | :senderId      |
       | mandateId         | :mandateId     |
     And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
-      | communicationType | LEGAL             |
-      | sender            | Comune di palermo |
+      | communicationType | LEGAL      |
+      | sender            | $NOT_EMPTY |
 
     And "Mario Cucumber" visualizza l'elenco delle notifiche per comune "Comune_Multi"
       | startDate | $DATE_ADD(-1D) |
@@ -177,8 +181,8 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
       | mandateId         | :mandateId     |
 
     And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
-      | communicationType | LEGAL, INFORMAL   |
-      | sender            | Comune di palermo |
+      | communicationType | LEGAL, INFORMAL |
+      | sender            | $NOT_EMPTY      |
 
 
   #CASO DI TEST 4.1 - un delegato non può cercare le notifiche bonarie del delegante: mandateId + communicationType INFORMAL deve restituire 400
@@ -209,15 +213,15 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
       | senderId  | :senderId      |
       | size      | 2              |
     And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
-      | sender | Comune di Palermo |
+      | sender | $NOT_EMPTY |
     Given "<destinatario>" visualizza l'elenco delle notifiche per comune "Comune_Multi"
       | startDate | $DATE_ADD(-1D) |
       | endDate   | $DATE_ADD(1D)  |
       | iunMatch  | :actualIun     |
       | senderId  | :senderId      |
     And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
-      | iun    | :actualIun        |
-      | sender | Comune di Palermo |
+      | iun    | :actualIun |
+      | sender | $NOT_EMPTY |
     Given "<destinatario>" visualizza l'elenco delle notifiche per comune "Comune_Multi"
       | startDate | $DATE_ADD(-1D) |
       | endDate   | $DATE_ADD(1D)  |

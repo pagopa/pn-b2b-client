@@ -1,6 +1,7 @@
 package it.pagopa.pn.cucumber.utils.notificationsearch;
 
 import it.pagopa.common.util.DateUtils;
+import it.pagopa.common.util.StringUtils;
 import it.pagopa.pn.cucumber.utils.token.TokenResolver;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +19,9 @@ import java.util.stream.Collectors;
  * Un valore può essere un token dinamico (es. {@code :group}), nel qual caso viene risolto tramite
  * il {@link TokenResolver} fornito dal chiamante anziché confrontato letteralmente. Un valore può anche
  * essere un placeholder di {@link DateUtils} (es. {@code $TODAY()}, {@code $DATE_ADD(-1D)}) per i campi
- * data come {@code sentAt}: viene risolto prima della risoluzione dei token.
+ * data come {@code sentAt}, oppure un placeholder di {@link StringUtils} (es. {@code $NOT_EMPTY}) per i
+ * campi il cui valore non è confrontabile puntualmente: entrambi vengono risolti prima della risoluzione
+ * dei token.
  */
 @Component
 public class NotificationSearchCriteriaMapper {
@@ -32,6 +35,7 @@ public class NotificationSearchCriteriaMapper {
     private List<String> resolveValues(String rawValues, TokenResolver tokenResolver) {
         return Arrays.stream(rawValues.split(","))
                 .map(String::trim)
+                .map(StringUtils::resolveValue)
                 .map(DateUtils::resolveDate)
                 .map(tokenResolver::resolve)
                 .collect(Collectors.toList());

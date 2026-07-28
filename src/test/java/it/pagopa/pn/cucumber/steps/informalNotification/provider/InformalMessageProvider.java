@@ -50,9 +50,9 @@ public class InformalMessageProvider {
 
         NewMessageRequestPrimaryMessage primary = new NewMessageRequestPrimaryMessage()
                 .language("IT")
-                .subject("Oggetto IT")
-                .longBody("Test body IT")
-                .shortBody("Short IT");
+                .subject("È stata emessa una nuova fattura per te")
+                .longBody("Sorical S.p.a. ti informa che è stata emessa una fattura per l'utenza n.182140 relativa al periodo 23 dicembre 2025/31 marzo 2026. Di seguito trovi le informazioni principali per il pagamento: Importo:60,68€ Scadenza 26 maggio 2026")
+                .shortBody("SEND, il Servizio di Notifiche Digitali, ti informa che hai ricevuto una comunicazione da Sorical S.p.A. Per leggerla, accedi con SPID o CIE al sito di SEND.");
 
         NewMessageRequest request = new NewMessageRequest()
                 .primaryMessage(primary);
