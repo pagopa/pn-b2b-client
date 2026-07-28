@@ -1,3 +1,4 @@
+@audit-jwt
 Feature: Nella generazione del token sono aggiunte le seguenti informazioni: header typ del jwt generato, claim cnf del
   jwt generato (quando presente), claim digest del jwt generato (quando presente), claim digest della client assertion
   (quando presente).
