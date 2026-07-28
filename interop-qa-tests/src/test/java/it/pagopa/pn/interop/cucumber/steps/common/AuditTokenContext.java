@@ -13,9 +13,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 @Getter
 @Setter
@@ -25,18 +23,19 @@ public class AuditTokenContext {
 
     private static final String JWT_ID = "jti";
 
-    public String getJwtId() {
-        return this.getDecodedToken(TokenType.VOUCHER_REQUEST).getPayload().get(JWT_ID).toString();
+    public enum TokenType { CLIENT_ASSERTION, VOUCHER_REQUEST, DPOP_PROOF}
+    private Map<TokenType, JWTUtils.JWTPojo> accessTokens2 = new HashMap<>();
+
+    public JWTUtils.JWTPojo getDecodedToken(TokenType key) {
+        return accessTokens2.get(key);
     }
 
-    public enum TokenType { CLIENT_ASSERTION, VOUCHER_REQUEST, DPOP_PROOF}
-    private Map<TokenType, String> accessTokens = new HashMap<>();
     public void setToken(TokenType tokenType, String accessToken) {
-        this.accessTokens.put(tokenType, accessToken);
+        this.accessTokens2.put(tokenType, JWTUtils.decodeJwt(accessToken));
     }
-    public JWTUtils.JWTPojo getDecodedToken(TokenType key) {
-        String accessToken = accessTokens.get(key);
-        return JWTUtils.decodeJwt(accessToken);
+
+    public String getJwtId() {
+        return this.getDecodedToken(TokenType.VOUCHER_REQUEST).getPayload().get(JWT_ID).toString();
     }
 
     static public boolean hasField(Map<String, Object> source, String field) {
