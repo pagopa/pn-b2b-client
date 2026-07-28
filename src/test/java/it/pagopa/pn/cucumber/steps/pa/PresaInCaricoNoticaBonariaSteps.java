@@ -40,6 +40,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
@@ -109,7 +110,6 @@ public class PresaInCaricoNoticaBonariaSteps {
         this.b2bClient = sharedSteps.getB2bClient();
         this.pnPollingFactory = sharedSteps.getPollingFactory();
         this.informalNotificationRequestMapper = informalNotificationRequestMapper;
-        //notificationInformalUtilsV1 = new NotificationInformalUtilsV1(sharedSteps.getContext(), b2bClient, sharedSteps.getPollingFactory());//todo t bonarie elimina
         this.notificationInformalUtilsV1 = notificationInformalUtilsV1;
         this.recipientBuilder = recipientBuilder;
     }
@@ -313,9 +313,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     @And("si verifica che il {string} sia correttamente compilato in pn-Notifications")
     public void gettaxonomyCodeFromDb(String element) {
 
-        QueryResponse response = sharedSteps.getDynamoDbService().call(DynamoTableName.NOTIFICATIONS, Map.of(
-                ":v_iun", AttributeValue.builder().s(savedIun).build()
-        ));
+        QueryResponse response = sharedSteps.getDynamoDbService().call(DynamoTableName.NOTIFICATIONS, Map.of(":v_iun", AttributeValue.builder().s(savedIun).build()));
 
         assertThat(response.items().size()).as("Query on pn-Notifications non ha restituito nessun elemento").isGreaterThan(0);
         Map<String, AttributeValue> dynamoNotification = response.items().get(0);
@@ -378,11 +376,13 @@ public class PresaInCaricoNoticaBonariaSteps {
     }
 
 
-    @When("il destinatario tenta il recupero del documento della notifica bonaria")
-    public void getReceivedDocument() {
+    @When("il destinatario {string} tenta il recupero del documento della notifica bonaria")
+    public void getReceivedDocument(String taxId) {
+
+        String recipientCxIdResolved = resolveRecipientCxId(setTaxID(taxId));
 
         try {
-            receivedAttachmentResponse = pnPaB2bInternalInformalClientImpl.getReceivedInformalNotificationDocument(resolveRecipientCxId(currentCxId), savedIun, recipientCxType.PF, 0);
+            receivedAttachmentResponse = pnPaB2bInternalInformalClientImpl.getReceivedInformalNotificationDocument(recipientCxIdResolved, savedIun, recipientCxType.PF, 0);
             lastException = null;
 
         } catch (Exception e) {
@@ -421,11 +421,15 @@ public class PresaInCaricoNoticaBonariaSteps {
 
     //*** STEP ALLEGATI PAGAMENTO
 
-    @When("il destinatario tenta il recupero dell'allegato pagamento della notifica bonaria")
-    public void getReceivedAttachment() {
+    @When("il destinatario {string} tenta il recupero dell'allegato di pagamento della notifica bonaria")
+    public void getReceivedAttachment(String taxId) {
+
+        String cf = setTaxID(taxId);
+        String recipientCxIdResolved = resolveRecipientCxId(cf);
 
         try {
-            receivedAttachmentResponse = pnPaB2bInternalInformalClientImpl.getReceivedInformalNotificationAttachment(resolveRecipientCxId(currentCxId), savedIun, recipientCxType.PF, 0);
+            receivedAttachmentResponse = pnPaB2bInternalInformalClientImpl.getReceivedInformalNotificationAttachment(recipientCxIdResolved, savedIun, recipientCxType.PF, 0);
+
             lastException = null;
 
         } catch (Exception e) {
@@ -474,7 +478,7 @@ public class PresaInCaricoNoticaBonariaSteps {
 
     //*** STATO DELLA NOTIFICA
 
-    @When("si verifica lo stato della richiesta di notifica bonaria")
+    @When("si verifica lo stato della richiesta della notifica bonaria con errore")
     public void getNotificationStatus() {
         try {
             statusResponse = pnPaB2bInternalInformalClientImpl.getNotificationStatusByRequestId(currentCxId, savedNotificationRequestId);
@@ -502,14 +506,11 @@ public class PresaInCaricoNoticaBonariaSteps {
     public void verifyFinalNotificationStatus(String expectedStatus) {
 
         AtomicReference<String> lastStatus = new AtomicReference<>(null);
-
         AtomicReference<FullSentInformalNotificationV1> lastNotification = new AtomicReference<>();
-
 
         InformalStatusPollingConfig.DefaultStatusValue config = InformalStatusPollingConfig.DefaultStatusValue.valueOf(expectedStatus);
 
         try {
-
             await().atMost(Duration.ofMinutes(12)).pollInterval(Duration.ofSeconds(3)).until(() -> {
 
                 FullSentInformalNotificationV1 notification = getFullInformalNotification();
@@ -530,12 +531,10 @@ public class PresaInCaricoNoticaBonariaSteps {
 
                     throw new AssertionError("Raggiunto stato incompatibile con quello atteso.\n" + "Atteso: " + expectedStatus + "\n" + "Raggiunto: " + actualStatus + "\n" + "Response: " + notification + "\n" + "Ultima FullSentInformalNotificationV1:\n" + lastNotification.get() + "\n" + "IUN:\n" + savedIun);
                 }
-
                 return expectedStatus.equals(actualStatus);
             });
 
         } catch (Exception e) {
-
             throw new AssertionError("Stato finale non valido.\n" + "Atteso: " + expectedStatus + "\n" + "Ultimo stato ricevuto: " + lastStatus.get() + "\n" + "Response: " + getFullInformalNotification(), e);
 
         }
@@ -546,19 +545,14 @@ public class PresaInCaricoNoticaBonariaSteps {
     public void verifyNotificationStatus(String expectedStatus) {
 
         AtomicReference<String> lastStatus = new AtomicReference<>(null);
-
         InformalStatusPollingConfig.DefaultStatusValue config = InformalStatusPollingConfig.DefaultStatusValue.valueOf(expectedStatus);
-
         try {
-
             await().atMost(Duration.ofMinutes(12)).pollInterval(Duration.ofSeconds(3)).until(() -> {
-
                 statusResponse = pnPaB2bInternalInformalClientImpl.getNotificationStatusByRequestId(currentCxId, savedNotificationRequestId);
 
                 if (statusResponse == null) {
                     return false;
                 }
-
                 String actualStatus = statusResponse.getNotificationRequestStatus();
 
                 lastStatus.set(actualStatus);
@@ -567,19 +561,15 @@ public class PresaInCaricoNoticaBonariaSteps {
                 log.info("IUN: {}", savedIun);
 
                 if (config.getStopStatuses().contains(actualStatus)) {
-
                     throw new AssertionError("Raggiunto stato incompatibile con quello atteso.\n" + "Atteso: " + expectedStatus + "\n" + "Raggiunto: " + actualStatus + "\n" + "Response: " + statusResponse);
                 }
-
                 return expectedStatus.equals(actualStatus);
             });
 
         } catch (Exception e) {
-
             throw new AssertionError("Stato finale non valido.\n" + "Atteso: " + expectedStatus + "\n" + "Ultimo stato ricevuto: " + lastStatus.get() + "\n" + "Response: " + statusResponse, e);
 
         } finally {
-
             log.info("=== RESPONSE FINALE NOTIFICA ===");
 
             if (statusResponse != null) {
@@ -588,7 +578,6 @@ public class PresaInCaricoNoticaBonariaSteps {
                 log.info("Nessuna response disponibile");
             }
         }
-
         savedIun = statusResponse.getIun();
         sharedSteps.setNotificationIun(savedIun);
         lastException = null;
@@ -780,16 +769,6 @@ public class PresaInCaricoNoticaBonariaSteps {
 
     }
 
-    @Then("si attende che notitifca sia in stato {string}")
-    public void waitNotificationStatus(String expectedStatus) {
-
-        statusResponse = NotificationInformalUtilsWorkFlowV1.waitForStatus(() -> pnPaB2bInternalInformalClientImpl.getNotificationStatusByRequestId(currentCxId, savedNotificationRequestId), expectedStatus);
-
-        savedIun = statusResponse.getIun();
-        sharedSteps.setNotificationIun(savedIun);
-        lastException = null;
-    }
-
     @Then("si attende che venga prodotto l'elemento {string} della notifica bonaria")
     public void verifyTimelineElementArrive(String category) {
 
@@ -818,17 +797,13 @@ public class PresaInCaricoNoticaBonariaSteps {
         try {
 
             fullInformalNotificationResponse = pnPaB2bInternalInformalClientImpl.getSentInformalNotificationSender(currentCxId, savedIun, true);
-
             lastException = null;
-
             log.info("Full informal notification response: {}", fullInformalNotificationResponse);
-
             return fullInformalNotificationResponse;
 
         } catch (Exception e) {
 
             log.error("Errore durante il recupero della notifica. IUN={}", savedIun, e);
-
             lastException = e;
             fullInformalNotificationResponse = null;
 
@@ -840,13 +815,11 @@ public class PresaInCaricoNoticaBonariaSteps {
 
         Destinatario destinatario = sharedSteps.getDestinatarioRegistry().getByTaxId(taxId);
 
-        return destinatario.getRecipientType()
-                + "-"
-                + destinatario.getUid();
+        return destinatario.getRecipientType() + "-" + destinatario.getUid();
     }
 
     private void setSenderContext(String paName) {
-
+        //todo t bonarie portare nel provider
         this.paName = paName;
 
         this.currentCxId = switch (paName) {
@@ -859,6 +832,20 @@ public class PresaInCaricoNoticaBonariaSteps {
         if (!"Comune_Root".equalsIgnoreCase(paName)) {
             this.currentGroupId = sharedSteps.getGroupIdByPa(paName, GroupPosition.FIRST);
         }
+    }
+
+    public String setTaxID(String taxId) {
+        String result;
+        result = switch (taxId) {
+            case MARIO_GHERKIN -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_GHERKIN.getTaxId();
+            case MARIO_CUCUMBER -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_CUCUMBER.getTaxId();
+            case ETTORE_FIERAMOSCA -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_CUCUMBER.getTaxId();
+            case CUCUMBER_SPA -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_CUCUMBER_SPA.getTaxId();
+            case GHERKIN_SRL -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_GHERKIN_SRL.getTaxId();
+            case GALILEO_GALILEI -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_GALILEO_GALILEI.getTaxId();
+            default -> null;
+        };
+        return result;
     }
 }
 

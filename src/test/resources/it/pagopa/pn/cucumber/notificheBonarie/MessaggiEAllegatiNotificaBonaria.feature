@@ -63,8 +63,8 @@ Feature: Messaggi e allegati di una notifica bonaria.
   Scenario: [NOTIFICHE_BONARIE_MESSAGGI_02_1_D] Come ente mittente creo un nuovo messaggio con valori di default con seconda lingua non specificata
     Given mittente della notifica bonaria: "Comune_Multi"
     Then si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
-      | primary_subject   | additional_language | additional_short_body | additional_long_body | additional_subject |
-      | Messaggio bonario | FR                  | Testo short add       | testo long add       | subj add msg          |
+      | primary_subject                         | additional_language | additional_short_body                      | additional_long_body                                                             | additional_subject                                                       |
+      | È stata emessa una nuova fattura per te | FR                  | Une nouvelle facture a ete emise pour vous | Sorical S.p.A. vous informe qu une facture a ete emise pour le contrat n 182140. | SEND vous informe que vous avez reçu une communication de Sorical S.p.A. |
     Then tento il recupero del messaggio precedentemente creato per le comunicazioni bonarie
     Then l'operazione è andata a buon fine
 
@@ -115,7 +115,7 @@ Feature: Messaggi e allegati di una notifica bonaria.
       | 257_CHAR        |                   |                    |
       |                 | 10001_CHAR        |                    |
       |                 |                   | 161_CHAR           |
-
+      |                 | 79_CHAR           |                    |
 
   @informalNotificationsMessageAttachment
   Scenario Outline: [NOTIFICHE_BONARIE_MESSAGGI_02_2_D] Come ente mittente ricevo un Errore sulla creazione di un nuovo messaggio compilando i campi addizionali in maniera non conforme.
@@ -129,6 +129,7 @@ Feature: Messaggi e allegati di una notifica bonaria.
       | 257_CHAR           |                      |                       |
       |                    | 10001_CHAR           |                       |
       |                    |                      | 161_CHAR              |
+      |                    | 79_CHAR              |                       |
 
   @informalNotificationsMessageAttachment
   Scenario Outline: [NOTIFICHE_BONARIE_MESSAGGI_02_2_E] Come ente mittente ricevo un Errore sulla creazione di un nuovo messaggio compilando i campi relativi alla lingua in maniera non conforme.
@@ -382,9 +383,9 @@ Feature: Messaggi e allegati di una notifica bonaria.
       | messageId     | ${IT}             |
     When viene inviata una nuova notifica bonaria
     And si verifica che la notifica bonaria sia in stato "ACCEPTED"
-    And il destinatario tenta il recupero dell'allegato pagamento della notifica bonaria
+    And il destinatario "Ettore Fieramosca" tenta il recupero dell'allegato di pagamento della notifica bonaria
     Then il download del destinatario risulta correttamente effettuato
-    And verifico la presenza di un audit log su "/aws/ecs/pn-commons" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun    | auto                 |
       | param1 | AUD_COM_ATCHOPEN_RCP |
 
@@ -400,8 +401,14 @@ Feature: Messaggi e allegati di una notifica bonaria.
       | messageId     | ${IT}             |
     When viene inviata una nuova notifica bonaria
     And si verifica che la notifica bonaria sia in stato "ACCEPTED"
-    And il destinatario tenta il recupero del documento della notifica bonaria
+    And il destinatario "Ettore Fieramosca" tenta il recupero del documento della notifica bonaria
     Then il download del destinatario risulta correttamente effettuato
-    And verifico la presenza di un audit log su "/aws/ecs/pn-commons" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun    | auto                |
       | param1 | AUD_COM_DOCOPEN_RCP |
+
+
+  Scenario: [NOTIFICHE_BONASTINATARIO_1] Come ente mittente Recupero l'allegato di pagamento di una notifica bonaria
+
+    And il destinatario "Ettore Fieramosca" tenta il recupero dell'allegato di pagamento della notifica bonaria
+    Then il download del destinatario risulta correttamente effettuato

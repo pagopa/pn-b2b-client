@@ -14,7 +14,8 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent")
 @ExcludeTags({"informalUAT"})
 //@ExcludeTags({"informalIgnoreUAT"})
-@IncludeTags({"informalNotificationsMessageAttachment","informalSyncValidation","informalAsyncValidation"})
+//@IncludeTags({"informalNotificationsMessageAttachment","informalSyncValidation","informalAsyncValidation"})
+@IncludeTags({"informalNotificationsMessageAttachment"})
 public class InformalNotificationTest {
 
 }

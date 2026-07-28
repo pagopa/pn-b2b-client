@@ -674,7 +674,7 @@ Feature: Sottomissione di una notifica bonaria.
     When viene inviata una nuova notifica bonaria
     And si verifica che la notifica bonaria sia in stato "ACCEPTED"
     Given mittente della notifica bonaria: "Comune_1"
-    When si verifica lo stato della richiesta di notifica bonaria
+    When si verifica lo stato della richiesta della notifica bonaria con errore
     Then si riceve errore 404
 
 
@@ -1326,7 +1326,7 @@ Feature: Sottomissione di una notifica bonaria.
       | denomination  | Ettore Fieramosca |
       | messageId     | ${IT}             |
     When viene inviata una nuova notifica bonaria
-    And si verifica lo stato della richiesta di notifica bonaria
+    And si verifica lo stato della richiesta della notifica bonaria con errore
     Then l'operazione non ha generato errori
 
 
@@ -1343,7 +1343,7 @@ Feature: Sottomissione di una notifica bonaria.
     When viene inviata una nuova notifica bonaria
     And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
     Given mittente della notifica bonaria: "Comune_2"
-    When si verifica lo stato della richiesta di notifica bonaria
+    When si verifica lo stato della richiesta della notifica bonaria con errore
     Then si riceve errore 404
 
 

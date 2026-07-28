@@ -2,9 +2,9 @@ package it.pagopa.pn.cucumber.steps.informalNotification.provider;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.MessageResponse;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewMessageRequest;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewMessageRequestAdditionalMessage;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewMessageRequestPrimaryMessage;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bInternalInformalClientImpl;
+import it.pagopa.pn.cucumber.steps.informalNotification.InformalTemplateMessage.InformalMessageTemplates;
+import it.pagopa.pn.cucumber.steps.informalNotification.utils.InformalMessageUtils;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -102,20 +102,17 @@ public class InformalMessageProvider {
 
     private String createMessageIT(String cxId) {
 
-        NewMessageRequestPrimaryMessage primary = new NewMessageRequestPrimaryMessage().language("IT").subject("Oggetto IT").longBody("Test body IT").shortBody("Short IT");
-
-        NewMessageRequest request = new NewMessageRequest().primaryMessage(primary);
+        NewMessageRequest request = new NewMessageRequest()
+                .primaryMessage(InformalMessageUtils.buildPrimaryMessage(InformalMessageTemplates.SORICAL_IT));
 
         return pnPaB2bInternalInformalClientImpl.createMessage(cxId, request).getMessageId().toString();
     }
 
     private String createMessageITFR(String cxId) {
 
-        NewMessageRequestPrimaryMessage primary = new NewMessageRequestPrimaryMessage().language("IT").subject("Oggetto IT").longBody("Test body IT").shortBody("Short IT");
-
-        NewMessageRequestAdditionalMessage additional = new NewMessageRequestAdditionalMessage().language("FR").subject("Objet FR").shortBody("Short FR").longBody("Message en français");
-
-        NewMessageRequest request = new NewMessageRequest().primaryMessage(primary).additionalMessage(additional);
+        NewMessageRequest request = new NewMessageRequest()
+                .primaryMessage(InformalMessageUtils.buildPrimaryMessage(InformalMessageTemplates.SORICAL_IT))
+                .additionalMessage(InformalMessageUtils.buildAdditionalMessage(InformalMessageTemplates.SORICAL_FR));
 
         return pnPaB2bInternalInformalClientImpl.createMessage(cxId, request).getMessageId().toString();
     }

@@ -115,7 +115,7 @@ public class PnPaB2bInternalInformalClientImpl {
     }
 
     public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.NotificationAttachmentDownloadMetadataResponse getReceivedInformalNotificationAttachment(String cxId, String iun, it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet recipientType, Integer attachmentIdx) {
-        return recipientReadInformalNotificationApi.getReceivedInformalNotificationAttachmentV1(operatorId, recipientType, cxId, "WEB", iun, null, null, null, attachmentIdx
+        return recipientReadInformalNotificationApi.getReceivedInformalNotificationAttachmentV1(operatorId, recipientType, cxId, "WEB", iun, "PAGOPA", null, null, attachmentIdx
         );
     }
 
