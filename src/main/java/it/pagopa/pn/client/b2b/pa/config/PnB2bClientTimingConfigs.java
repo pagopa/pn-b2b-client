@@ -121,8 +121,8 @@ public class PnB2bClientTimingConfigs {
         PUBLIC_REGISTRY_VALIDATION_CALL(2, 1),
         PUBLIC_REGISTRY_VALIDATION_RESPONSE(2, 1),
 
-        //v29 todo t v29
-        NOTIFICATION_TIMELINE_REWORKED(2, 1);
+        //V29
+        NOTIFICATION_TIMELINE_REWORKED(16, 1);
 
         private final int defaultNumCheck;
         private final int defaultWaitingMultiplier;
