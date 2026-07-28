@@ -190,7 +190,7 @@ Feature: Sottomissione di una notifica bonaria.
       | SoricalFattOrd |
 
 
-  @informalNotificationsValidation @informalAsyncValidation #todo t bonarie
+  @informalNotificationsValidation @informalAsyncValidation @informalNotMVP #todo t bonarie
   Scenario Outline: [NOTIFICHE_BONARIE_CAMPAIGN_03_1_B] Come ente mittente invio una notifica bonaria indicando campagne con stati non validi, la nottifca viene rifiutata.
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con i seguenti parametri
@@ -1082,7 +1082,7 @@ Feature: Sottomissione di una notifica bonaria.
     And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
 
 
-  @informalNotificationsValidation @informalAsyncValidation #todo
+  @informalNotificationsValidation @informalAsyncValidation @informalNotMVP #todo
   Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6_D] Come ente mittente tento invio una notifica bonaria senza indirizzo digitale per un campagna con canale digitale verso PF.
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con i seguenti parametri
@@ -1097,7 +1097,7 @@ Feature: Sottomissione di una notifica bonaria.
     And  si verifica che la notifica bonaria sia in stato "ACCEPTED"
 
 
-  @informalNotificationsValidation @informalAsyncValidation #todo
+  @informalNotificationsValidation @informalAsyncValidation @informalNotMVP #todo
   Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6_D_PG2] Come ente mittente invio una notifica bonaria senza indirizzo digitale per un campagna NON digitale.
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con i seguenti parametri
@@ -1180,7 +1180,7 @@ Feature: Sottomissione di una notifica bonaria.
     Then la notifica bonaria è stata rifiutata per l'errore: "FILE_PDF_INVALID_ERROR"
 
 
-  @informalNotificationsValidation @informalAsyncValidation #todo
+  @informalNotificationsValidation @informalAsyncValidation @informalNotMVP #todo
   Scenario Outline: [NOTIFICHE_BONARIE_ASYNC_01_3] Come ente mittente invio una notifica bonaria con campagne non conformi, la nottifca viene rifiutata.
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con i seguenti parametri

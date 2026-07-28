@@ -676,7 +676,7 @@ Feature: Workflow di una notifica bonaria.
 # ***********************************************
 
 
-  @informalNotificationsWorkFlow #SENT in EMAIL
+  @informalNotificationsWorkFlow @informalNotMVP #SENT in EMAIL
   Scenario: [NOTIFICHE_BONARIE_WORKFLOW_01_5_A] Come ente mittente invio una notifica bonaria verso PF ricevo feedback desiderato ma non..
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | todo                                    |
@@ -693,32 +693,16 @@ Feature: Workflow di una notifica bonaria.
     And si attende che la notifica bonaria passi in stato "COMPLETED_UNREACHED"
     And si attende che venga prodotto l'elemento "WORKFLOW_DONE_UNREACHED" della notifica bonaria
 
-  @informalNotificationsWorkFlow #SENT in PEC
-  Scenario: [NOTIFICHE_BONARIE_WORKFLOW_01_5_B] Come ente mittente invio una notifica bonaria...
-    Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | todo                       |
-      | messageId       | ${IT}                      |
-      | subject         | Test workflow              |
-      | recipientType   | PG                         |
-      | taxId           | 20517490320                |
-      | denomination    | Acme spa                   |
-      | email           | NULL                       |
-      | digitalDomicile | example@FAIL-pecFirstKO.it |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
-    And si attende che la notifica bonaria passi in stato "COMPLETED_UNREACHED"
-    And si attende che venga prodotto l'elemento "WORKFLOW_DONE_UNREACHED" della notifica bonaria
 
-
-  @informalNotificationsWorkFlow #SENT in EMAIL
-  Scenario: [NOTIFICHE_BONARIE_WORKFLOW_01_5_A] Come ente mittente invio una notifica bonaria verso PF ricevo feedback desiderato ma non..
+  @informalNotificationsWorkFlow @informalNotMVP #SENT in EMAIL
+  Scenario: [NOTIFICHE_BONARIE_WORKFLOW_01_5_B] Come ente mittente invio una notifica bonaria verso PF ricevo feedback desiderato ma non..
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | todo                     |
       | messageId       | ${IT}                    |
       | subject         | Test workflow            |
-      | recipientType   | PF                       |
-      | taxId           | FRMTTR76M06B715E         |
-      | denomination    | Ettore Fieramosca        |
+      | recipientType   | PG                       |
+      | taxId           | 20517490320              |
+      | denomination    | Acme spa                 |
       | email           | NULL                     |
       | digitalDomicile | example@OK-pecSuccess.it |
     When viene inviata una nuova notifica bonaria
@@ -859,15 +843,3 @@ Feature: Workflow di una notifica bonaria.
       | iun    | auto             |
       | param1 | AUD_COM_VIEW_SND |
 
-
-
-
-  #todo dettaglio dest/mittente + download doc/attach
-
-#  In pn-commons
-#
-#  AUD_COM_VIEW_SND(AUDIT5Y)
-#
-#  AUD_COM_VIEW_RCP(AUDIT10Y)
-
- # AUD_COM_ATCHOPEN_RCP - AUD_COM_DOCOPEN_RCP

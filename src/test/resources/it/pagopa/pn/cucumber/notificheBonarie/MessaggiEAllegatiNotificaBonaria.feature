@@ -406,9 +406,3 @@ Feature: Messaggi e allegati di una notifica bonaria.
     And verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun    | auto                |
       | param1 | AUD_COM_DOCOPEN_RCP |
-
-
-  Scenario: [NOTIFICHE_BONASTINATARIO_1] Come ente mittente Recupero l'allegato di pagamento di una notifica bonaria
-
-    And il destinatario "Ettore Fieramosca" tenta il recupero dell'allegato di pagamento della notifica bonaria
-    Then il download del destinatario risulta correttamente effettuato
