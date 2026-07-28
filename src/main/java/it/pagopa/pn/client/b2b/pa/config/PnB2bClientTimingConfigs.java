@@ -63,8 +63,8 @@ public class PnB2bClientTimingConfigs {
         DIGITAL_DELIVERY_CREATION_REQUEST(15, 1),
         DIGITAL_SUCCESS_WORKFLOW(8, 3),
         DIGITAL_FAILURE_WORKFLOW(9, 1),
-        ANALOG_SUCCESS_WORKFLOW(15, 1),
-        ANALOG_FAILURE_WORKFLOW(14, 1),
+        ANALOG_SUCCESS_WORKFLOW(25, 1),
+        ANALOG_FAILURE_WORKFLOW(25, 1),
         PREPARE_SIMPLE_REGISTERED_LETTER(14, 1),
         SEND_SIMPLE_REGISTERED_LETTER(14, 1),
         SEND_SIMPLE_REGISTERED_LETTER_PROGRESS(15, 1),
@@ -99,7 +99,7 @@ public class PnB2bClientTimingConfigs {
         DELIVERING(2, 4),
         DELIVERED(8, 4),
         VIEWED(5, 1),
-        EFFECTIVE_DATE(11, 1),
+        EFFECTIVE_DATE(16, 1),
         PAID(5, 1),
         UNREACHABLE(11, 1),
         CANCELLED(11, 1),
@@ -115,7 +115,7 @@ public class PnB2bClientTimingConfigs {
 
         //V26
         RETURNED_TO_SENDER(12, 1),
-        ANALOG_WORKFLOW_RECIPIENT_DECEASED(12, 1),
+        ANALOG_WORKFLOW_RECIPIENT_DECEASED(20, 1),
 
         //V27
         PUBLIC_REGISTRY_VALIDATION_CALL(2, 1),
