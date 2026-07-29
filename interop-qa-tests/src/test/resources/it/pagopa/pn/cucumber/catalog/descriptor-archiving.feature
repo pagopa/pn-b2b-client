@@ -358,3 +358,27 @@ Feature: Archiviazione manuale di un descrittore
       | 39db89b0-7791-4e18-b5b0-8022947bceb1 | 6408e689-f901-44e1-836b-716f31668950 | e71d472d-0fdc-499e-a7fe-671ac453686c | ARCHIVING             | 9c12a5d1-15fa-4317-8710-20ae7cf6858c |
 #      firstDescriptorId=descrittore in Archiving_Suspended . secondDescriptorId=descrittore in Published
       | 0fef54c8-611f-4787-b6ab-16c9955a6e64 | 0a2d71a3-7962-4ee2-a94f-c1166358406d | a35969dc-efa6-452b-8a2e-f3434d520fed | ARCHIVING_SUSPENDED   | 100ed036-3e48-498e-8263-83d40fcec0af |
+
+  @happy-path
+  Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_TEMPLATE_INSTANCE_1.1] Un ente erogatore di un e-service creato da template può avviare il processo di archiviazione manuale del primo e meno recente descrittore in stato DEPRECATED
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    And l'utente effettua l'aggiunta di una versione in stato PUBLISHED all'e-service con successo
+    When l'utente è un "<role>" di "PA1"
+    And l'utente avvia la messa in archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando <gracePeriod> giorni di preavviso
+    Then si ottiene response status code 204
+    And la vecchia versione dell'e-service è in stato "ARCHIVING"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
+
+    Examples:
+      | role         | gracePeriod |
+      | admin        | 30          |
+      | api          | 30          |
+      | api,security | 30          |
+      | admin        | 60          |
+      | admin        | 90          |
+      | admin        | 120         |
+
