@@ -67,8 +67,7 @@ public class CensimentoStimeMittentiSteps {
                     .pollInterval(Duration.ofSeconds(10))
                     .pollDelay(Duration.ZERO)
                     .until(() -> {
-                        DelayerSenderLimits actual = delayerSevice.getSenderLimitByProvinceWithTable(
-                                senderLimitTable, expectedSenderLimit.getDeliveryDate(), province);
+                        DelayerSenderLimits actual = delayerSevice.getSenderLimitByProvinceWithTable(senderLimitTable, expectedSenderLimit.getDeliveryDate(), province);
                         boolean found = isPresent(actual, expectedSenderLimit);
                         log.info("Trovati i seguenti limiti: {}", actual);
                         return shouldContain ? found : !found;
@@ -83,6 +82,9 @@ public class CensimentoStimeMittentiSteps {
     }
 
     private boolean isPresent(DelayerSenderLimits actual, DelayerSenderLimit expected) {
+        if (actual == null || actual.getItems() == null) {
+            return false;
+        }
         return actual.getItems().stream()
                 .anyMatch(item -> item.getPk().equals(expected.getPk())
                         && item.getDeliveryDate().equals(expected.getDeliveryDate())
@@ -124,17 +126,25 @@ public class CensimentoStimeMittentiSteps {
         try {
             String preloadUrlDownload = preloadZipFile(fileName, true);
             Assertions.assertThat(preloadUrlDownload).as("Presigned url download non generato correttamente").isNotNull();
+            // viene invocata la lambda portfat che elabora il file e genera le stime mittenti
             delayerSevice.invokePortfatLambda(preloadUrlDownload);
         } catch (Exception e) {
             throw new RuntimeException("Errore durante il caricamento del file zip e l'invocazione della lambda portfat", e);
         }
     }
-
+    /*
+    Given ricavo il presigned url e carico lo zip
+    Then verifico l'elaborazione delle commesse e ottengo le stime settimanali provinciali calcolate dal sistema
+    And effettuo il calcolo delle stime settimanali provinciali attese
+    Then si verifica che i risultati siano coerenti con quelli attesi
+     */
     @Given("vengono caricati i moduli commessa mock tramite il seguente zip: {string}")
     public void uploadMockZipFile(String fileName) {
         try {
             preloadZipFile(fileName, false);
+             // viene invocata la lambda per effettuare il caricamento dei limiti mittenti mock
             delayerSevice.insertMockSenderLimit(fileName);
+
         } catch (Exception e) {
             log.error("Errore durante il caricamento del file zip e l'invocazione della lambda portfat", e);
             throw new RuntimeException("Errore durante il caricamento del file zip e l'invocazione della lambda portfat nella fase di preload", e);
@@ -145,9 +155,11 @@ public class CensimentoStimeMittentiSteps {
         String preloadUrl = null;
         try {
             String sha256 = B2bUtils.computeSha256(applicationContext, String.format("classpath:/%s", fileName));
+            // viene caricato il file zip su S3 tramite il presigned url ottenuto
             preloadUrl = delayerSevice.getPresignedUploadUrl(fileName, sha256);
             B2bUtils.loadToPresigned(applicationContext, preloadUrl, null, null, String.format("classpath:/%s", fileName), "application/zip");
             if (withDownload) {
+                // viene ottenuto il presigned url per il download del file elaborato
                 preloadUrl = delayerSevice.getPresignedDownloadUrl(fileName);
             }
         } catch (Exception e) {
@@ -157,6 +169,19 @@ public class CensimentoStimeMittentiSteps {
         return preloadUrl;
     }
 
+    /**
+     * Verifica che la somma delle stime di tutte le PA per la coppia prodotto e provincia sia coerente con quella attesa passata in input.
+     * La stima attesa è calcolata internamente in base alla distribuzione dei giorni della settimana considerando anche i giorni a cavallo tra due mesi e al valore di commessa di ciascun mese.
+     * Formula:
+     * - numberOfShipments = (valore commessa primo mese / giorni totali primo mese) * giorni della settimana a cavallo del primo mese + (valore commessa secondo mese / giorni totali secondo mese) * giorni della settimana a cavallo del secondo mese
+     * @param deliveryDate la settimana di riferimento (formato yyyy-MM-dd, deve essere un lunedì)
+     * @param product il prodotto di riferimento
+     * @param province la provincia di riferimento
+     * @param dataTable la tabella con le stime attese, con le seguenti colonne:
+     *                  - numberOfShipments: la stima settimanale provinciale attesa
+     *                  - firstWeekNumberOfShipments: la stima della prima parte della settimana a cavallo attesa
+     *                  - secondWeekNumberOfShipments: la stima della seconda parte della settimana a cavallo attesa
+     */
     @And("per la settimana {string}, per il prodotto {string} per la provincia {string} si verifica che la somma delle commesse sia:")
     public void verifyWeeklyProvincialEstimates(String deliveryDate, String product, String province, Map<String, String> dataTable) {
         verifyWeeklyProvincialEstimates(dataTable,
@@ -181,7 +206,7 @@ public class CensimentoStimeMittentiSteps {
             Awaitility.await()
                     .atMost(Duration.ofMinutes(3))
                     .pollInterval(Duration.ofSeconds(20))
-                    .pollDelay(Duration.ZERO)
+                    .pollDelay(Duration.ZERO) // prova subito, poi ripete ogni 20s
                     .until(() -> {
                         DelayerCountersSumEstimatesItem item = estimatesSupplier.get();
                         lastResult.set(item);
@@ -191,19 +216,21 @@ public class CensimentoStimeMittentiSteps {
                                 && item.getSecondWeekNumberOfShipments() == expectedSecondWeek;
                     });
         } catch (ConditionTimeoutException e) {
+            // Timeout scaduto: eseguo comunque gli assert "classici" per avere
+            // un messaggio di errore dettagliato su quale campo non coincide
             DelayerCountersSumEstimatesItem estimatesItem = lastResult.get();
             Assertions.assertThat(estimatesItem)
                     .as("Nessuna stima disponibile dopo 3 minuti di attesa")
                     .isNotNull();
 
             Assertions.assertThat(estimatesItem.getNumberOfShipments())
-                    .as("La somma delle stime settimanali provinciali calcolate internamente non e coerente con quella attesa passata in input")
+                    .as("La somma delle stime settimanali provinciali calcolate internamente non è coerente con quella attesa passata in input")
                     .isEqualTo(expectedTotal);
             Assertions.assertThat(estimatesItem.getFirstWeekNumberOfShipments())
-                    .as("La stima della prima parte della settimana a cavallo non e coerente con quella attesa")
+                    .as("La stima della prima parte della settimana a cavallo non è coerente con quella attesa")
                     .isEqualTo(expectedFirstWeek);
             Assertions.assertThat(estimatesItem.getSecondWeekNumberOfShipments())
-                    .as("La stima della seconda parte della settimana a cavallo non e coerente con quella attesa")
+                    .as("La stima della seconda parte della settimana a cavallo non è coerente con quella attesa")
                     .isEqualTo(expectedSecondWeek);
         }
     }
