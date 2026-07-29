@@ -121,19 +121,16 @@ public class InformalRecipientBuilder {
         for (int i = 0; i < paymentNumber; i++) {
 
             NotificationPaymentAttachment attachment = mapper.buildPaymentAttachment(data);
-
             PagoPaPaymentBase pagoPa = new PagoPaPaymentBase().noticeCode(generateNoticeCode(getValue(data, PAYMENT_NOTICE_CODE.key), i)).creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key)).attachment(attachment);
 
             String amount = getValue(data, PAYMENT_AMOUNT.key);
             if (amount != null) {
                 pagoPa.setAmount(Integer.valueOf(amount));
             }
-
             String dueDate = getValue(data, PAYMENT_DUE_DATE.key);
             if (dueDate != null) {
                 pagoPa.setDueDate(parseDueDate(dueDate));
             }
-
             InformalNotificationPaymentItem item = new InformalNotificationPaymentItem();
             item.setPagoPa(pagoPa);
             payments.add(item);
@@ -154,15 +151,10 @@ public class InformalRecipientBuilder {
         return switch (value) {
 
             case "${IT}" -> UUID.fromString(messageProvider.getOrCreateMessageIT(currentCxId));
-
             case "${NEW-IT}" -> UUID.fromString(messageProvider.createAndSaveMessageIT(currentCxId));
-
             case "${SAVED-IT}" -> UUID.fromString(messageProvider.getSavedMessageIT());
-
             case "${IT-FR}" -> UUID.fromString(messageProvider.getOrCreateMessageITFR(currentCxId));
-
             case "${NEW-IT-FR}" -> UUID.fromString(messageProvider.createAndSaveMessageITFR(currentCxId));
-
             case "${SAVED-IT-FR}" -> UUID.fromString(messageProvider.getSavedMessageITFR());
 
             default -> UUID.fromString(value);
@@ -204,7 +196,6 @@ public class InformalRecipientBuilder {
                     .atStartOfDay()
                     .atOffset(ZoneOffset.UTC);
         }
-
         return OffsetDateTime.parse(value);
     }
 }

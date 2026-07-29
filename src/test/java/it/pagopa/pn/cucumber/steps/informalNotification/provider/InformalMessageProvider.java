@@ -46,9 +46,7 @@ public class InformalMessageProvider {
     public String createAndSaveMessageIT(String cxId) {
 
         String messageId = createMessageIT(cxId);
-
         verifyMessageCreated(messageId, cxId);
-
         this.messageIdIT = messageId;
 
         return messageId;
@@ -76,7 +74,6 @@ public class InformalMessageProvider {
                 }
             }
         }
-
         return messageIdITFR;
     }
 
@@ -92,7 +89,6 @@ public class InformalMessageProvider {
         if (messageIdITFR == null) {
             throw new IllegalStateException("Nessun messaggio IT-FR precedentemente creato");
         }
-
         return messageIdITFR;
     }
 

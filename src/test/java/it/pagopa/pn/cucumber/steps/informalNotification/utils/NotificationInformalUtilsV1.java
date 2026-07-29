@@ -44,8 +44,6 @@ public class NotificationInformalUtilsV1 extends B2bUtils {
     private Pair<String, String> preloadInformal(String resourceName, String contentType, String paName) throws IOException {
 
         String apiKey = informalApiKeyProvider.getApiKey(paName);
-
-
         String sha256 = computeSha256(context, resourceName);
 
         InformalPreLoadRequest request = new InformalPreLoadRequest().preloadIdx("0").contentType(contentType).sha256(sha256);

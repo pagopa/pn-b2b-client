@@ -187,15 +187,6 @@ public class PresaInCaricoNoticaBonariaSteps {
         }
     }
 
-    @Then("viene inviata una nuova notifica bonaria")
-    public void sendInformal() throws IOException {
-        informalNotificationRequestV1 = notificationInformalUtilsV1.preloadAndPrepare(informalNotificationRequestV1, paName);
-        newInformalNotificationResponse = pnPaB2bInternalInformalClientImpl.sendNewInformalNotificationV1(currentCxId, informalNotificationRequestV1);
-        savedNotificationRequestId = newInformalNotificationResponse.getNotificationRequestId();
-
-        lastException = null;
-    }
-
     @Then("viene inviata una nuova notifica bonaria con sha non valido")
     public void sendInformalShaNotValid() {
         try {
@@ -429,11 +420,9 @@ public class PresaInCaricoNoticaBonariaSteps {
 
         try {
             receivedAttachmentResponse = pnPaB2bInternalInformalClientImpl.getReceivedInformalNotificationAttachment(recipientCxIdResolved, savedIun, recipientCxType.PF, 0);
-
             lastException = null;
 
         } catch (Exception e) {
-
             lastException = e;
             receivedAttachmentResponse = null;
         }
@@ -467,7 +456,6 @@ public class PresaInCaricoNoticaBonariaSteps {
     public void getAttachmentCustom(int recipientIdx, int attachmentIdx) {
         try {
             attachmentResponse = pnPaB2bInternalInformalClientImpl.getSentInformalNotificationAttachment(savedIun, currentCxId, recipientIdx, attachmentIdx);
-
             lastException = null;
 
         } catch (Exception e) {
@@ -512,23 +500,19 @@ public class PresaInCaricoNoticaBonariaSteps {
 
         try {
             await().atMost(Duration.ofMinutes(12)).pollInterval(Duration.ofSeconds(3)).until(() -> {
-
                 FullSentInformalNotificationV1 notification = getFullInformalNotification();
 
                 if (notification == null) {
                     return false;
                 }
                 lastNotification.set(notification);
-
                 String actualStatus = notification.getNotificationStatus().getValue();
-
                 lastStatus.set(actualStatus);
 
                 log.info("Polling stato notifica: {}", actualStatus);
                 log.info("IUN: {}", notification.getIun());
 
                 if (config.getStopStatuses().contains(actualStatus)) {
-
                     throw new AssertionError("Raggiunto stato incompatibile con quello atteso.\n" + "Atteso: " + expectedStatus + "\n" + "Raggiunto: " + actualStatus + "\n" + "Response: " + notification + "\n" + "Ultima FullSentInformalNotificationV1:\n" + lastNotification.get() + "\n" + "IUN:\n" + savedIun);
                 }
                 return expectedStatus.equals(actualStatus);
@@ -536,50 +520,7 @@ public class PresaInCaricoNoticaBonariaSteps {
 
         } catch (Exception e) {
             throw new AssertionError("Stato finale non valido.\n" + "Atteso: " + expectedStatus + "\n" + "Ultimo stato ricevuto: " + lastStatus.get() + "\n" + "Response: " + getFullInformalNotification(), e);
-
         }
-        lastException = null;
-    }
-
-    @Then("si verifica che la notifica bonaria sia in stato {string}")
-    public void verifyNotificationStatus(String expectedStatus) {
-
-        AtomicReference<String> lastStatus = new AtomicReference<>(null);
-        InformalStatusPollingConfig.DefaultStatusValue config = InformalStatusPollingConfig.DefaultStatusValue.valueOf(expectedStatus);
-        try {
-            await().atMost(Duration.ofMinutes(12)).pollInterval(Duration.ofSeconds(3)).until(() -> {
-                statusResponse = pnPaB2bInternalInformalClientImpl.getNotificationStatusByRequestId(currentCxId, savedNotificationRequestId);
-
-                if (statusResponse == null) {
-                    return false;
-                }
-                String actualStatus = statusResponse.getNotificationRequestStatus();
-
-                lastStatus.set(actualStatus);
-
-                log.info("Polling stato: {}", actualStatus);
-                log.info("IUN: {}", savedIun);
-
-                if (config.getStopStatuses().contains(actualStatus)) {
-                    throw new AssertionError("Raggiunto stato incompatibile con quello atteso.\n" + "Atteso: " + expectedStatus + "\n" + "Raggiunto: " + actualStatus + "\n" + "Response: " + statusResponse);
-                }
-                return expectedStatus.equals(actualStatus);
-            });
-
-        } catch (Exception e) {
-            throw new AssertionError("Stato finale non valido.\n" + "Atteso: " + expectedStatus + "\n" + "Ultimo stato ricevuto: " + lastStatus.get() + "\n" + "Response: " + statusResponse, e);
-
-        } finally {
-            log.info("=== RESPONSE FINALE NOTIFICA ===");
-
-            if (statusResponse != null) {
-                log.info("Response: {}", statusResponse);
-            } else {
-                log.info("Nessuna response disponibile");
-            }
-        }
-        savedIun = statusResponse.getIun();
-        sharedSteps.setNotificationIun(savedIun);
         lastException = null;
     }
 
@@ -812,14 +753,12 @@ public class PresaInCaricoNoticaBonariaSteps {
     }
 
     private String resolveRecipientCxId(String taxId) {
-
         Destinatario destinatario = sharedSteps.getDestinatarioRegistry().getByTaxId(taxId);
-
         return destinatario.getRecipientType() + "-" + destinatario.getUid();
     }
 
     private void setSenderContext(String paName) {
-        //todo t bonarie portare nel provider
+        //todo t bonarie portare nel provider?
         this.paName = paName;
 
         this.currentCxId = switch (paName) {
@@ -847,5 +786,88 @@ public class PresaInCaricoNoticaBonariaSteps {
         };
         return result;
     }
+
+    @Then("viene inviata una nuova notifica bonaria e si attende che vada in stato {string}")
+    public void sendInformalAndWaitStatus(String expectedStatus) throws IOException {
+
+        informalNotificationRequestV1 = notificationInformalUtilsV1.preloadAndPrepare(informalNotificationRequestV1, paName);
+        newInformalNotificationResponse = pnPaB2bInternalInformalClientImpl.sendNewInformalNotificationV1(currentCxId, informalNotificationRequestV1);
+        savedNotificationRequestId = newInformalNotificationResponse.getNotificationRequestId();
+        log.info("Notifica inviata. notificationRequestId={}", savedNotificationRequestId);
+
+        AtomicReference<String> lastStatus = new AtomicReference<>(null);
+        InformalStatusPollingConfig.DefaultStatusValue config = InformalStatusPollingConfig.DefaultStatusValue.valueOf(expectedStatus);
+
+        try {
+            await().atMost(Duration.ofMinutes(12)).pollInterval(Duration.ofSeconds(5)).until(() -> {
+                statusResponse = pnPaB2bInternalInformalClientImpl.getNotificationStatusByRequestId(currentCxId, savedNotificationRequestId);
+
+                if (statusResponse == null) {
+                    return false;
+                }
+                String actualStatus = statusResponse.getNotificationRequestStatus();
+                lastStatus.set(actualStatus);
+                log.info("Polling stato: {}", actualStatus);
+
+                if (config.getStopStatuses().contains(actualStatus)) {
+                    throw new AssertionError("Raggiunto stato incompatibile con quello atteso.\n" + "Atteso: " + expectedStatus + "\n" + "Raggiunto: " + actualStatus + "\n" + "Response: " + statusResponse);
+                }
+                return expectedStatus.equals(actualStatus);
+            });
+        } catch (Exception e) {
+            throw new AssertionError("Stato finale non valido.\n" + "Atteso: " + expectedStatus + "\n" + "Ultimo stato ricevuto: " + lastStatus.get() + "\n" + "Response: " + statusResponse, e);
+        }
+        log.info("=== RESPONSE FINALE NOTIFICA ===");
+        log.info("Response: {}", statusResponse);
+
+        savedIun = statusResponse.getIun();
+        sharedSteps.setNotificationIun(savedIun);
+        lastException = null;
+    }
+// todo t bonarie eliminare dopo test dello step unico
+//    @Then("viene inviata una nuova notifica bonaria")
+//    public void sendInformal() throws IOException {
+//        informalNotificationRequestV1 = notificationInformalUtilsV1.preloadAndPrepare(informalNotificationRequestV1, paName);
+//        newInformalNotificationResponse = pnPaB2bInternalInformalClientImpl.sendNewInformalNotificationV1(currentCxId, informalNotificationRequestV1);
+//        savedNotificationRequestId = newInformalNotificationResponse.getNotificationRequestId();
+//        lastException = null;
+//    }
+//
+//    @Then("si verifica che la notifica bonaria sia in stato {string}")
+//    public void verifyNotificationStatus(String expectedStatus) {
+//        AtomicReference<String> lastStatus = new AtomicReference<>(null);
+//        InformalStatusPollingConfig.DefaultStatusValue config = InformalStatusPollingConfig.DefaultStatusValue.valueOf(expectedStatus);
+//        try {
+//            await().atMost(Duration.ofMinutes(12)).pollInterval(Duration.ofSeconds(3)).until(() -> {
+//                statusResponse = pnPaB2bInternalInformalClientImpl.getNotificationStatusByRequestId(currentCxId, savedNotificationRequestId);
+//                if (statusResponse == null) {
+//                    return false;
+//                }
+//                String actualStatus = statusResponse.getNotificationRequestStatus();
+//                lastStatus.set(actualStatus);
+//                log.info("Polling stato: {}", actualStatus);
+//                log.info("IUN: {}", savedIun);
+//                if (config.getStopStatuses().contains(actualStatus)) {
+//                    throw new AssertionError("Raggiunto stato incompatibile con quello atteso.\n" + "Atteso: " + expectedStatus + "\n" + "Raggiunto: " + actualStatus + "\n" + "Response: " + statusResponse);
+//                }
+//                return expectedStatus.equals(actualStatus);
+//            });
+//        } catch (Exception e) {
+//            throw new AssertionError("Stato finale non valido.\n" + "Atteso: " + expectedStatus + "\n" + "Ultimo stato ricevuto: " + lastStatus.get() + "\n" + "Response: " + statusResponse, e);
+//        } finally {
+//            log.info("=== RESPONSE FINALE NOTIFICA ===");
+//            if (statusResponse != null) {
+//                log.info("Response: {}", statusResponse);
+//            } else {
+//                log.info("Nessuna response disponibile");
+//            }
+//        }
+//        savedIun = statusResponse.getIun();
+//        sharedSteps.setNotificationIun(savedIun);
+//        lastException = null;
+//    }
+
+
+
 }
 

@@ -11,8 +11,8 @@ Feature: Workflow di una notifica bonaria.
       | denomination    | Ettore Fieramosca |
       | email           | NULL              |
       | digitalDomicile | NULL              |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
+
 
 #    And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
 #    And si attende che venga prodotto l'elemento "WORKFLOW_ENDED_UNREACHED" della notifica bonaria
@@ -35,14 +35,13 @@ Feature: Workflow di una notifica bonaria.
       | denomination    | Ettore Fieramosca       |
       | email           | tullio.test@virgilio.it |
       | digitalDomicile | NULL                    |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
       | details_recIndex | 0 |
     And si attende che la notifica bonaria passi in stato "PROCESSING"
 
 
-  @informalNotificationsWorkFlow
+  @informalNotificationsWorkFlow @testb
   Scenario: [NOTIFICHE_BONARIE_WORKFLOW_01_2_A] Come ente mittente invio una notifica bonaria, ottengo il feedback desiderato sull email ricevuta
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | SoricalFattOrd          |
@@ -53,8 +52,7 @@ Feature: Workflow di una notifica bonaria.
       | denomination    | Ettore Fieramosca       |
       | email           | tullio.test@virgilio.it |
       | digitalDomicile | NULL                    |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
       | details_channel            | EMAIL |
       | details_deliveryDetailCode | M004  |
@@ -62,7 +60,7 @@ Feature: Workflow di una notifica bonaria.
     And si attende che venga prodotto l'elemento "WORKFLOW_DONE_REACHED" della notifica bonaria
 
 
-  @informalNotificationsWorkFlow
+  @informalNotificationsWorkFlow @testb
   Scenario: [NOTIFICHE_BONARIE_WORKFLOW_01_2_B] Come ente mittente invio una notifica bonaria verso PF ottengo errore SPAM sul email quindi non ko subito ma successivo
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | SoricalFattOrd                    |
@@ -73,8 +71,7 @@ Feature: Workflow di una notifica bonaria.
       | denomination    | Ettore Fieramosca                 |
       | email           | complaint@simulator.amazonses.com |
       | digitalDomicile | NULL                              |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
       | details_channel            | EMAIL |
       | details_deliveryDetailCode | M006  |
@@ -94,15 +91,14 @@ Feature: Workflow di una notifica bonaria.
       | denomination    | Ettore Fieramosca                       |
       | email           | suppressionlist@simulator.amazonses.com |
       | digitalDomicile | NULL                                    |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_PROGRESS" della notifica bonaria con dettagli
       | details_channel            | EMAIL |
       | details_deliveryDetailCode | M003  |
     And si attende che la notifica bonaria passi in stato "COMPLETED_UNREACHED"
     And si attende che venga prodotto l'elemento "WORKFLOW_ENDED_UNREACHED" della notifica bonaria
 
-  @informalNotificationsWorkFlow
+  @informalNotificationsWorkFlow @testb
   Scenario: [NOTIFICHE_BONARIE_WORKFLOW_01_2_D] Come ente mittente invio una notifica bonaria verso PF ottengo errore BOUCED sul email e solo feddback negativi
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | SoricalFattOrd                 |
@@ -113,8 +109,7 @@ Feature: Workflow di una notifica bonaria.
       | denomination    | Ettore Fieramosca              |
       | email           | bounce@simulator.amazonses.com |
       | digitalDomicile | NULL                           |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
       | details_channel            | EMAIL |
       | details_deliveryDetailCode | M005  |
@@ -133,8 +128,7 @@ Feature: Workflow di una notifica bonaria.
       | denomination    | Acme spa                 |
       | email           | NULL                     |
       | digitalDomicile | example@OK-pecSuccess.it |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
       | details_channel | PEC |
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_PROGRESS" della notifica bonaria con dettagli
@@ -157,8 +151,7 @@ Feature: Workflow di una notifica bonaria.
       | denomination    | Acme spa                   |
       | email           | NULL                       |
       | digitalDomicile | example@FAIL-pecFirstKO.it |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
       | details_channel | PEC |
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_PROGRESS" della notifica bonaria con dettagli
@@ -181,17 +174,14 @@ Feature: Workflow di una notifica bonaria.
       | denomination    | Ettore Fieramosca |
       | email           | NULL              |
       | digitalDomicile | NULL              |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
       | details_channel | EMAIL |
     And si attende che la notifica bonaria passi in stato "UNDELIVERABLE"
     And si attende che venga prodotto l'elemento "WORKFLOW_ENDED_UNDELIVERABLE" della notifica bonaria
 
 
-
-#todo da verificare se possibile in quanto il desiderato è già recived quindi non potrà arrivare feedb. negativo? in Asyncrono?
-  #@informalNotificationsWorkFlow
+  #@informalNotificationsWorkFlow #scenari implementati per campagna ad hoc, non è possibile ottenere da campegne MVP
   Scenario: [NOTIFICHE_BONARIE_WORKFLOW_01_5_A] Come ente mittente invio una notifica bonaria verso PF ricevo feedback desiderato ma non..
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | SoricalFattOrd    |
@@ -202,13 +192,12 @@ Feature: Workflow di una notifica bonaria.
       | denomination    | Ettore Fieramosca |
       | email           | todo              |
       | digitalDomicile | todo              |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che la notifica bonaria passi in stato "COMPLETED_UNREACHED"
     And si attende che venga prodotto l'elemento "WORKFLOW_DONE_UNREACHED" della notifica bonaria
 
-  #todo da verificare se possibile in quanto il desiderato è già recived quindi non potrà arrivare feedb. in quanto pec
-  #@informalNotificationsWorkFlow
+
+  #@informalNotificationsWorkFlow #scenari implementati per campagna ad hoc, non è possibile ottenere da campegne MVP
   Scenario: [NOTIFICHE_BONARIE_WORKFLOW_01_5_B] Come ente mittente invio una notifica bonaria...
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | SoricalFattOrd |
@@ -219,8 +208,7 @@ Feature: Workflow di una notifica bonaria.
       | denomination    | Acme spa       |
       | email           | todo           |
       | digitalDomicile | todo           |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che la notifica bonaria passi in stato "COMPLETED_UNREACHED"
     And si attende che venga prodotto l'elemento "WORKFLOW_DONE_UNREACHED" della notifica bonaria
 
@@ -236,8 +224,7 @@ Feature: Workflow di una notifica bonaria.
       | denomination    | Ettore Fieramosca              |
       | email           | bounce@simulator.amazonses.com |
       | digitalDomicile | NULL                           |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che la notifica bonaria passi in stato "COMPLETED_UNREACHED"
     And si attende che venga prodotto l'elemento "WORKFLOW_ENDED_UNREACHED" della notifica bonaria
     And il destinatario legge la notifica bonaria
@@ -262,12 +249,11 @@ Feature: Workflow di una notifica bonaria.
       | email           | tullio.test@virgilio.it |
       | digitalDomicile | NULL                    |
       | phone_number    | NULL                    |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria
     And si attende che la notifica bonaria passi in stato "PROCESSING"
 
-  @informalNotificationsWorkFlow
+  @informalNotificationsWorkFlow @testb
   Scenario: [NOTIFICHE_BONARIE_WORKFLOW_02_2_A] Come ente mittente invio una notifica bonaria verso PF e ottengo il desiderato ricevuto dell' email
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | SoricalReminder         |
@@ -279,8 +265,7 @@ Feature: Workflow di una notifica bonaria.
       | email           | tullio.test@virgilio.it |
       | digitalDomicile | NULL                    |
       | phone_number    | NULL                    |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
       | details_channel | EMAIL |
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_PROGRESS" della notifica bonaria con dettagli
@@ -292,7 +277,7 @@ Feature: Workflow di una notifica bonaria.
     And si attende che venga prodotto l'elemento "WORKFLOW_DONE_REACHED" della notifica bonaria
 
 
-  @informalNotificationsWorkFlow
+  @informalNotificationsWorkFlow @testb
   Scenario: [NOTIFICHE_BONARIE_WORKFLOW_02_2_B] Come ente mittente invio una notifica bonaria verso PF ricevo solo feddback negativi
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | SoricalReminder                |
@@ -304,8 +289,7 @@ Feature: Workflow di una notifica bonaria.
       | email           | bounce@simulator.amazonses.com |
       | digitalDomicile | NULL                           |
       | phone_number    | +39001                         |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
       | details_responseStatus | KO    |
       | details_channel        | EMAIL |
@@ -335,8 +319,7 @@ Feature: Workflow di una notifica bonaria.
       | email           | NULL                     |
       | digitalDomicile | example@OK-pecSuccess.it |
       | phone_number    | NULL                     |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
       | details_channel | PEC |
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_PROGRESS" della notifica bonaria con dettagli
@@ -360,8 +343,7 @@ Feature: Workflow di una notifica bonaria.
       | email           | NULL                       |
       | digitalDomicile | example@FAIL-pecFirstKO.it |
       | phone_number    | +3900000                   |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
       | details_channel | PEC |
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_PROGRESS" della notifica bonaria con dettagli
@@ -377,7 +359,7 @@ Feature: Workflow di una notifica bonaria.
     And si attende che venga prodotto l'elemento "WORKFLOW_ENDED_UNREACHED" della notifica bonaria
 
 
-  @informalNotificationsWorkFlow
+  @informalNotificationsWorkFlow @testb
   Scenario: [NOTIFICHE_BONARIE_WORKFLOW_02_4_A] Come ente mittente invio una notifica bonaria...
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | SoricalReminder                |
@@ -389,8 +371,7 @@ Feature: Workflow di una notifica bonaria.
       | email           | bounce@simulator.amazonses.com |
       | digitalDomicile | NULL                           |
       | phone_number    | +3900000                       |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
       | details_channel | SMS |
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
@@ -412,8 +393,7 @@ Feature: Workflow di una notifica bonaria.
       | email           | NULL                       |
       | digitalDomicile | example@FAIL-pecFirstKO.it |
       | phone_number    | +3900000                   |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
       | details_channel | PEC |
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_PROGRESS" della notifica bonaria con dettagli
@@ -442,8 +422,7 @@ Feature: Workflow di una notifica bonaria.
       | email           | NULL              |
       | digitalDomicile | NULL              |
       | phone_number    | NULL              |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
       | details_channel | EMAIL |
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
@@ -464,8 +443,7 @@ Feature: Workflow di una notifica bonaria.
       | email           | NULL                       |
       | digitalDomicile | example@FAIL-pecFirstKO.it |
       | phone_number    | +39001                     |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
       | details_channel        | PEC |
       | details_responseStatus | KO  |
@@ -480,16 +458,13 @@ Feature: Workflow di una notifica bonaria.
 
 
 
-#todo con feedback recived possiamo avere il non recapitato?
-  @informalNotificationsWorkFlow
-  Scenario: [NOTIFICHE_BONARIE_WORKFLOW_02_7_A] Come ente mittente invio una notifica bonaria verso PF ricevo feedback desiderato ma la notifica non è recapitata
 
+  #@informalNotificationsWorkFlow #scenari implementati per campagna ad hoc, non è possibile ottenere da campegne MVP
+  Scenario: [NOTIFICHE_BONARIE_WORKFLOW_02_7_A] Come ente mittente invio una notifica bonaria verso PF ricevo feedback desiderato ma la notifica non è recapitata
     And si attende che la notifica bonaria passi in stato "COMPLETED_UNREACHED"
     And si attende che venga prodotto l'elemento "WORKFLOW_DONE_UNREACHED" della notifica bonaria
-
-  @informalNotificationsWorkFlow
+  #@informalNotificationsWorkFlow #scenari implementati per campagna ad hoc, non è possibile ottenere da campegne MVP
   Scenario: [NOTIFICHE_BONARIE_WORKFLOW_02_7_B] Come ente mittente invio una notifica bonaria verso PG ricevo feedback desiderato ma la notifica non è recapitata
-
     And si attende che la notifica bonaria passi in stato "COMPLETED_UNREACHED"
     And si attende che venga prodotto l'elemento "WORKFLOW_DONE_UNREACHED" della notifica bonaria
 
@@ -511,8 +486,7 @@ Feature: Workflow di una notifica bonaria.
       | denomination    | Acme spa                 |
       | email           | NULL                     |
       | digitalDomicile | example@OK-pecSuccess.it |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
       | details_channel        | PEC |
       | details_responseStatus | OK  |
@@ -532,8 +506,7 @@ Feature: Workflow di una notifica bonaria.
       | email            | NULL                       |
       | digitalDomicile  | example@FAIL-pecFirstKO.it |
       | physical_address | ${PHYSICAL_ADDRESS_NULL}   |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
       | details_channel        | PEC |
       | details_responseStatus | KO  |
@@ -556,8 +529,7 @@ Feature: Workflow di una notifica bonaria.
       | email                    | suppressionlist@simulator.amazonses.com |
       | digitalDomicile          | NULL                                    |
       | physical_address_address | Via@OK_RIS                              |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_ANALOG_MESSAGE_PROGRESS" della notifica bonaria
     And si attende che venga prodotto l'elemento "SEND_ANALOG_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
       | details_responseStatus | OK |
@@ -577,8 +549,7 @@ Feature: Workflow di una notifica bonaria.
       | email                    | NULL                       |
       | digitalDomicile          | example@FAIL-pecFirstKO.it |
       | physical_address_address | Via@OK_RIS                 |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "COVERPAGE_CREATION_REQUEST" della notifica bonaria
     And si attende che venga prodotto l'elemento "PREPARE_ANALOG_DELIVERY" della notifica bonaria
     And si attende che venga prodotto l'elemento "SEND_ANALOG_MESSAGE_PROGRESS" della notifica bonaria
@@ -600,8 +571,7 @@ Feature: Workflow di una notifica bonaria.
       | email                    | NULL                       |
       | digitalDomicile          | example@FAIL-pecFirstKO.it |
       | physical_address_address | via@FAIL_RS                |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che la notifica bonaria passi in stato "COMPLETED_UNREACHED"
     And si attende che venga prodotto l'elemento "WORKFLOW_ENDED_UNREACHED" della notifica bonaria
     And il destinatario legge la notifica bonaria
@@ -621,8 +591,7 @@ Feature: Workflow di una notifica bonaria.
       | email                    | NULL                       |
       | digitalDomicile          | example@FAIL-pecFirstKO.it |
       | physical_address_address | via@FAIL_RS                |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
       | details_channel        | PEC |
       | details_responseStatus | KO  |
@@ -646,8 +615,7 @@ Feature: Workflow di una notifica bonaria.
       | digitalDomicile  | NULL                     |
       | phone_number     | NULL                     |
       | physical_address | ${PHYSICAL_ADDRESS_NULL} |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che la notifica bonaria passi in stato "UNDELIVERABLE"
     And si attende che venga prodotto l'elemento "WORKFLOW_ENDED_UNDELIVERABLE" della notifica bonaria
 
@@ -664,8 +632,7 @@ Feature: Workflow di una notifica bonaria.
       | digitalDomicile  | NULL                     |
       | phone_number     | NULL                     |
       | physical_address | ${PHYSICAL_ADDRESS_NULL} |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che la notifica bonaria passi in stato "UNDELIVERABLE"
     And si attende che venga prodotto l'elemento "WORKFLOW_ENDED_UNDELIVERABLE" della notifica bonaria
 
@@ -688,8 +655,7 @@ Feature: Workflow di una notifica bonaria.
       #| email           | bounce@simulator.amazonses.com |
       | email           | suppressionlist@simulator.amazonses.com |
       | digitalDomicile | NULL                                    |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che la notifica bonaria passi in stato "COMPLETED_UNREACHED"
     And si attende che venga prodotto l'elemento "WORKFLOW_DONE_UNREACHED" della notifica bonaria
 
@@ -705,8 +671,7 @@ Feature: Workflow di una notifica bonaria.
       | denomination    | Acme spa                 |
       | email           | NULL                     |
       | digitalDomicile | example@OK-pecSuccess.it |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
     And si attende che venga prodotto l'elemento "WORKFLOW_ENDED_REACHED" della notifica bonaria
 
@@ -729,8 +694,7 @@ Feature: Workflow di una notifica bonaria.
       | email                    | NULL                       |
       | digitalDomicile          | example@FAIL-pecFirstKO.it |
       | physical_address_address | Via@OK_RIS                 |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_ANALOG_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
       | details_responseStatus | OK |
     And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
@@ -762,8 +726,7 @@ Feature: Workflow di una notifica bonaria.
       | denomination    | Acme spa              |
       | email           | NULL                  |
       | digitalDomicile | example@pecSuccess.it |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
       | details_channel        | PEC |
       | details_responseStatus | OK  |
@@ -785,8 +748,7 @@ Feature: Workflow di una notifica bonaria.
       | email           | tullio.test@virgilio.it |
       | digitalDomicile | NULL                    |
       | phone_number    | NULL                    |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
       | details_channel | EMAIL |
     #And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
@@ -807,8 +769,7 @@ Feature: Workflow di una notifica bonaria.
       | email           | NULL              |
       | digitalDomicile | NULL              |
       | phone_number    | +3900000          |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
       | details_channel        | SMS |
       | details_responseStatus | KO  |
@@ -829,8 +790,7 @@ Feature: Workflow di una notifica bonaria.
       | denomination    | Ettore Fieramosca              |
       | email           | bounce@simulator.amazonses.com |
       | digitalDomicile | NULL                           |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che la notifica bonaria passi in stato "COMPLETED_UNREACHED"
     And si attende che venga prodotto l'elemento "WORKFLOW_ENDED_UNREACHED" della notifica bonaria
     And il destinatario legge la notifica bonaria

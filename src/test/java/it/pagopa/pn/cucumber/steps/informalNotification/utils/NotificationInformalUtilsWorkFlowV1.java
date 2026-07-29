@@ -131,8 +131,6 @@ public class NotificationInformalUtilsWorkFlowV1 {
             throw new AssertionError("""
                         Elemento timeline non trovato. Categoria attesa: %s Ultima FullSentInformalNotificationV1: %s """.formatted(category, notification), e);
         }
-
-
         return foundElement.get();
     }
 
@@ -145,7 +143,6 @@ public class NotificationInformalUtilsWorkFlowV1 {
         InformalStatusPollingConfig.DefaultStatusValue config = InformalStatusPollingConfig.DefaultStatusValue.valueOf(expectedStatus);
 
         await().atMost(Duration.ofMinutes(12)).pollInterval(Duration.ofSeconds(5)).until(() -> {
-
             NewInformalNotificationRequestStatusResponseV1 response = statusSupplier.get();
 
             responseRef.set(response);
@@ -158,9 +155,7 @@ public class NotificationInformalUtilsWorkFlowV1 {
             lastStatus.set(actualStatus);
 
             if (config.getStopStatuses().contains(actualStatus)) {
-
                 stopStatusReached.set(actualStatus);
-
                 return true;
             }
             return expectedStatus.equals(actualStatus);
