@@ -15,7 +15,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 @ExcludeTags({"informalUAT","informalNotMVP"})
 //@ExcludeTags({"informalIgnoreUAT"})
 //@IncludeTags({"informalNotificationsMessageAttachment","informalSyncValidation","informalAsyncValidation"})
-@IncludeTags({"informalNotificationsMessageAttachment"})
-public class InformalNotificationTest {
+@IncludeTags({"informalAsyncValidation"})
+public class InformalNotificationAsyncValidationTest {
 
 }
