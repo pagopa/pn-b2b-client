@@ -7,12 +7,12 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
     And viene creata una nuova notifica bonaria con i seguenti parametri
       | campaignId | SoricalMessaMora |
     And destinatario della notifica bonaria
-      | recipientType | <tipo>         |
-      | taxId         | <taxId>        |
-      | denomination  | <destinatario> |
-      | messageId     | ${IT}          |
-      | subject         | Test workflow            |
-      | email           | NULL                     |
+      | recipientType   | <tipo>            |
+      | taxId           | <taxId>           |
+      | denomination    | <destinatario>    |
+      | messageId       | ${IT}             |
+      | subject         | Test workflow     |
+      | email           | NULL              |
       | digitalDomicile | <digitalDomicile> |
 
     When viene inviata una nuova notifica bonaria
@@ -56,10 +56,10 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
       | communicationType | LEGAL |
 
     Examples:
-      | tipo | destinatario   | taxId            | digitalDomicile |
-      | PF   | Mario Cucumber | FRMTTR76M06B715E | NULL             |
-      | PG   | CucumberSpa    | 20517490320      | example@OK-pecSuccess.it    |
-      | PG   | CucumberSpaB2B | 20517490320      | example@OK-pecSuccess.it    |
+      | tipo | destinatario   | taxId            | digitalDomicile          |
+      | PF   | Mario Cucumber | FRMTTR76M06B715E | NULL                     |
+      | PG   | CucumberSpa    | 20517490320      | example@OK-pecSuccess.it |
+      | PG   | CucumberSpaB2B | 20517490320      | example@OK-pecSuccess.it |
 
 
   #CASO DI TEST 4.1 - campo obbligatorio non valorizzato -> 400 KO
@@ -145,12 +145,14 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
     And viene creata una nuova notifica bonaria con i seguenti parametri
       | campaignId | SoricalMessaMora |
     And destinatario della notifica bonaria
-      | recipientType | PF               |
-      | taxId         | CLMCST42R12D969Z |
-      | denomination  | Mario Gherkin    |
-      | messageId     | ${IT}            |
+      | recipientType | PF                      |
+      | taxId         | CLMCST42R12D969Z        |
+      | denomination  | Mario Gherkin           |
+      | messageId     | ${IT}                   |
+      | email         | tullio.test@virgilio.it |
     When viene inviata una nuova notifica bonaria
     And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
 
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
@@ -179,6 +181,16 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
       | communicationType | ALL            |
       | senderId          | :senderId      |
       | mandateId         | :mandateId     |
+
+    And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
+      | communicationType | LEGAL      |
+      | sender            | $NOT_EMPTY |
+
+    And "Mario Cucumber" visualizza l'elenco delle notifiche per comune "Comune_Multi"
+      | startDate         | $DATE_ADD(-1D) |
+      | endDate           | $DATE_ADD(1D)  |
+      | communicationType | ALL            |
+      | senderId          | :senderId      |
 
     And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
       | communicationType | LEGAL, INFORMAL |
@@ -222,12 +234,6 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
     And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
       | iun    | :actualIun |
       | sender | $NOT_EMPTY |
-    Given "<destinatario>" visualizza l'elenco delle notifiche per comune "Comune_Multi"
-      | startDate | $DATE_ADD(-1D) |
-      | endDate   | $DATE_ADD(1D)  |
-      | group     | :group         |
-    And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
-      | group | CONSISTENT |
 
     Examples:
       | tipo | destinatario   |

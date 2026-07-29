@@ -209,14 +209,14 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
     And viene creata una nuova notifica bonaria con i seguenti parametri
       | campaignId | SoricalMessaMora |
     And destinatario della notifica bonaria
-      | messageId                | ${IT}             |
-      | subject                  | Test workflow     |
-      | recipientType            | PF                |
-      | taxId                    | FRMTTR76M06B715E  |
-      | denomination             | Ettore Fieramosca |
-      | email                    | NULL              |
-      | digitalDomicile          | NULL              |
-      | physical_address_address | Via@ok_RS         |
+      | messageId       | ${IT}                   |
+      | subject         | Test workflow           |
+      | recipientType   | PF                      |
+      | taxId           | FRMTTR76M06B715E        |
+      | denomination    | Ettore Fieramosca       |
+      | email           | tullio.test@virgilio.it |
+      | digitalDomicile | NULL                    |
+      | phone_number    | NULL                    |
     When viene inviata una nuova notifica bonaria
     And si verifica che la notifica bonaria sia in stato "ACCEPTED"
     #Da aggiungere lo step per leggere gli eventi fino all'elemento di timeline della notifica "UNDELIVERABLE"
@@ -313,6 +313,19 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
     When viene inviata una nuova notifica bonaria
     And si verifica che la notifica bonaria sia in stato "ACCEPTED"
     And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
+
+    #    ricerca per specifica campagna e specifico IUN
+    And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
+      | startDate  | $DATE_ADD(-1D)     |
+      | endDate    | $DATE_ADD(1D)      |
+      | campaignId | SoricalFattOrd     |
+      | iunMatch   | :informal_iun      |
+      | senderId   | :informal_senderId |
+      | size       | 50                 |
+      | delivered  | true               |
+    And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
+      | sentAt | $DATE_ADD(-1D), $DATE_ADD(1D) |
+      | iun    | :informal_iun                 |
 #    ricerca per specifico destinatario PG e specifica campagna
     And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
       | startDate   | $DATE_ADD(-1D)        |
@@ -326,18 +339,6 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
       | sentAt     | $DATE_ADD(-1D), $DATE_ADD(1D) |
       | campaignId | SoricalFattOrd                |
       | recipients | :informal_recipientId         |
-#    ricerca per specifica campagna e specifico IUN
-    And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
-      | startDate  | $DATE_ADD(-1D)     |
-      | endDate    | $DATE_ADD(1D)      |
-      | campaignId | SoricalFattOrd     |
-      | iunMatch   | :informal_iun      |
-      | senderId   | :informal_senderId |
-      | size       | 50                 |
-      | delivered  | true               |
-    And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
-      | sentAt | $DATE_ADD(-1D), $DATE_ADD(1D) |
-      | iun    | :informal_iun                 |
 #    ricerca per specifico gruppo
     And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
       | startDate         | $DATE_ADD(-1D)     |

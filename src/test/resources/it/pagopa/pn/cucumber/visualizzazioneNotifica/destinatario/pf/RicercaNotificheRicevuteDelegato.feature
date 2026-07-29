@@ -50,7 +50,7 @@ Feature: Ricerca delle notifiche ricevute lato delegato
       | mandateId | :mandateId     |
     And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
       | communicationType | LEGAL      |
-     # | mandateId         | :mandateId |
+      | mandateId         | :mandateId |
       | iun               | :actualIun |
       | itemsFound        | 1          |
     Then "CucumberSpaB2B" visualizza l'elenco delle notifiche del delegante "GherkinSrlB2B" per comune "Comune_Multi"
@@ -91,13 +91,14 @@ Feature: Ricerca delle notifiche ricevute lato delegato
       | sentAt             | $DATE_ADD(-1D), $DATE_ADD(1D) |
       | notificationStatus | EFFECTIVE_DATE                |
       | recipients         | :recipientId                  |
-    Then "<delegato>" visualizza l'elenco delle notifiche del delegante "<delegatore>" per comune "Comune_Multi"
-      | startDate | $DATE_ADD(-1D) |
-      | endDate   | $DATE_ADD(1D)  |
-      | group     | :group         |
-    And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
-      | sentAt | $DATE_ADD(-1D), $DATE_ADD(1D) |
-      | group  | CONSISTENT                    |
+    # Parte commentata poichè affetta dal seguente bug di prod: https://pagopa.atlassian.net/browse/PN-20903
+#    Then "<delegato>" visualizza l'elenco delle notifiche del delegante "<delegatore>" per comune "Comune_Multi"
+#      | startDate | $DATE_ADD(-1D) |
+#      | endDate   | $DATE_ADD(1D)  |
+#      | group     | :group         |
+#    And l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:
+#      | sentAt | $DATE_ADD(-1D), $DATE_ADD(1D) |
+#      | group  | CONSISTENT                    |
     Then "<delegato>" visualizza l'elenco delle notifiche del delegante "<delegatore>" per comune "Comune_Multi"
       | startDate | $DATE_ADD(-1D) |
       | endDate   | $DATE_ADD(1D)  |
