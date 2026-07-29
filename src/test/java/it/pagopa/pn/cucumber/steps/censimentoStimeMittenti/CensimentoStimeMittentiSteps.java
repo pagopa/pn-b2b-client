@@ -121,6 +121,12 @@ private boolean isPresent(DelayerSenderLimits actual, DelayerSenderLimit expecte
         context.applyCommesseInExpected(provincia, commesse.toArray(new ModuloCommessa[0]));
     }
 
+    /*
+    Given ricavo il presigned url e carico lo zip
+    Then verifico l'elaborazione delle commesse e ottengo le stime settimanali provinciali calcolate dal sistema
+    And effettuo il calcolo delle stime settimanali provinciali attese
+    Then si verifica che i risultati siano coerenti con quelli attesi
+     */
     @Given("vengono caricati i moduli commessa come file zip su portfat: {string}")
     public void uploadZipFile(String fileName) {
         try {
@@ -132,17 +138,12 @@ private boolean isPresent(DelayerSenderLimits actual, DelayerSenderLimit expecte
             throw new RuntimeException("Errore durante il caricamento del file zip e l'invocazione della lambda portfat", e);
         }
     }
-    /*
-    Given ricavo il presigned url e carico lo zip
-    Then verifico l'elaborazione delle commesse e ottengo le stime settimanali provinciali calcolate dal sistema
-    And effettuo il calcolo delle stime settimanali provinciali attese
-    Then si verifica che i risultati siano coerenti con quelli attesi
-     */
+
     @Given("vengono caricati i moduli commessa mock tramite il seguente zip: {string}")
     public void uploadMockZipFile(String fileName) {
         try {
             preloadZipFile(fileName, false);
-             // viene invocata la lambda per effettuare il caricamento dei limiti mittenti mock
+            // viene invocata la lambda per effettuare il caricamento dei limiti mittenti mock
             delayerSevice.insertMockSenderLimit(fileName);
 
         } catch (Exception e) {
@@ -150,6 +151,7 @@ private boolean isPresent(DelayerSenderLimits actual, DelayerSenderLimit expecte
             throw new RuntimeException("Errore durante il caricamento del file zip e l'invocazione della lambda portfat nella fase di preload", e);
         }
     }
+
 
     private String preloadZipFile(String fileName, boolean withDownload) {
         String preloadUrl = null;
