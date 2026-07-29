@@ -16,6 +16,7 @@ import it.pagopa.interop.authorization.service.utils.voucher.domain.ClientAssert
 import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherResponse;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.authorization.model.VoucherContext;
+import it.pagopa.pn.interop.cucumber.steps.common.AuditTokenContext;
 import it.pagopa.pn.interop.cucumber.steps.dev_tools.config.DevToolsRequestConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -56,6 +57,7 @@ public class DPoPSteps {
     @When("{string} genera una dpop proof con una chiave {string} e verifica i campi HTU,HTM")
     public void getDpopProof(String tenantType, String keyAlgorithm) {
         this.dpopProofJwt = generateDpopProofWith(keyAlgorithm, DEFAULT_TYP, DEFAULT_HTTP_METHOD, DEFAULT_OAUTH_SERVER_URL);
+        context.getAuditTokenContext().setToken(AuditTokenContext.TokenType.DPOP_PROOF, this.dpopProofJwt);
     }
 
     @When("{string} genera una dpop proof con una chiave {string} e campo typ errato")
@@ -98,6 +100,13 @@ public class DPoPSteps {
 
         Pair<String, VoucherResponse> proofWithToken = dPoPTokenService.getAccessTokenWithoutCache(dpopProofJwt, client.clientId().toString(), client.keyPair().getKeyPair(), clientType, tenantType, purposeId);
         this.voucherResponse = proofWithToken.getRight();
+
+        context.getAuditTokenContext().setToken(
+                AuditTokenContext.TokenType.CLIENT_ASSERTION, dPoPTokenService.getUsedClientAssertion()
+        );
+        context.getAuditTokenContext().setToken(
+                AuditTokenContext.TokenType.VOUCHER_REQUEST, this.voucherResponse.getAccessToken()
+        );
     }
 
     @When("{string} tenta di ottenere un access token per il client {string} usando il dpop proof creato e inviando due header DPoP nella richiesta")

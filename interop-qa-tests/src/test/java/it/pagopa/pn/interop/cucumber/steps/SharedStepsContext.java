@@ -52,6 +52,7 @@ public class SharedStepsContext {
     private NotificationCommonContext notificationCommonContext = new NotificationCommonContext();
     private ProducerKeychainCommonContext producerKeychainCommonContext;
     private TenantCommonContext tenantCommonContext;
+    private AuditTokenContext auditTokenContext;
 
     public SharedStepsContext(
             IHttpExecutor httpCallExecutor,
@@ -78,6 +79,7 @@ public class SharedStepsContext {
         purposeTemplateContext = new PurposeTemplateCommonContext();
         producerKeychainCommonContext = new ProducerKeychainCommonContext();
         tenantCommonContext = new TenantCommonContext();
+        auditTokenContext = new AuditTokenContext();
     }
 
     @Before(order = Integer.MIN_VALUE)

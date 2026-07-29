@@ -1,16 +1,20 @@
 package it.pagopa.pn.cucumber.steps.censimentoStimeMittenti;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.datatable.DataTable;
+import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.model.ModuloCommessa;
 import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.model.StimeMittentiContext;
 import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
+import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClientV2;
+import it.pagopa.pn.cucumber.steps.delayer.client.PortfatLambdaClient;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerCountersSumEstimatesItem;
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPresigneUrlDownload;
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPresigneUrlUpload;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimit;
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimits;
 import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSevice;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerSenderLimitUtils;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
@@ -20,64 +24,80 @@ import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
 import org.awaitility.core.ConditionTimeoutException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 
-import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAdjusters;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Stream;
+import java.util.function.Supplier;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
 @Slf4j
 public class CensimentoStimeMittentiSteps {
-    public static final int MAX_ATTEMPTS = 600;
-    public static final int SLEEP_MILLIS = 500;
-    @Value("${pn.delayer.portfat.lambda.name}")
-    private String portfatLambdaName;
 
     private final DelayerLambdaClient lambdaClient;
+    private final DelayerLambdaClientV2 lambdaClientV2;
+    private final PortfatLambdaClient portfatLambdaClient;
     private final StimeMittentiContext context;
-    private Map<LocalDate, Integer> expectedWeeklyEstimates;
     private final ApplicationContext applicationContext;
     private final DelayerSevice delayerSevice;
 
-    @When("si verifica che la tabella pn-DelayerSenderLimit contenga i nuovi limiti mittenti per la provincia {string}")
-    public void fetchSenderLimitUntilCondition(String province) {
-        Set<DelayerSenderLimit> missing = new HashSet<>();
+    @ParameterType("pn-PaperDeliverySenderLimit|pn-PaperDeliverySenderLimitMock")
+    public String senderLimitTable(String tableName) {
+        return tableName;
+    }
+
+    @ParameterType("contenga|non contenga")
+    public boolean containsOrNot(String value) {
+        return value.equals("contenga");
+    }
+
+    @When("si verifica che la tabella {senderLimitTable} {containsOrNot} i nuovi limiti mittenti per la provincia {string}")
+    public void fetchSenderLimitUntilCondition(String senderLimitTable, boolean shouldContain, String province) {
         Assertions.assertThat(context.province).as("Confronto di actual ed expected su province diverse").isEqualTo(province);
 
-        for (DelayerSenderLimit senderLimit : context.expected.senderLimits) {
-            try {
-                lambdaClient.pollSenderLimitUntilCondition(senderLimit.getDeliveryDate(), province, null, MAX_ATTEMPTS, SLEEP_MILLIS, actual -> {
-                    log.info("Trovati i seguenti limti: {}", actual);
-                    boolean ok = actual.contains(senderLimit);
-                    if (!ok) {
-                        log.info("SenderLimit mancante: {}", senderLimit);
-                        missing.add(senderLimit);
-                    }
-                    return ok;
-                });
-            } catch (NoSuchElementException e) {
-                Assertions.assertThat(missing).as("Stime mittenti mancanti").isEmpty();
-            } catch (Exception e) {
-                throw new RuntimeException("Errore inatteso durante il polling", e);
-            }
+        for (DelayerSenderLimit expectedSenderLimit : context.expected.senderLimits) {
+            assertSenderLimitMatchesEventually(senderLimitTable, province, expectedSenderLimit, shouldContain);
         }
     }
+
+    private void assertSenderLimitMatchesEventually(String senderLimitTable, String province, DelayerSenderLimit expectedSenderLimit, boolean shouldContain) {
+        try {
+            Awaitility.await()
+                    .atMost(Duration.ofMinutes(5))
+                    .pollInterval(Duration.ofSeconds(10))
+                    .pollDelay(Duration.ZERO)
+                    .until(() -> {
+                        DelayerSenderLimits actual = lambdaClientV2.getSenderLimitByProvinceWithTable(senderLimitTable, expectedSenderLimit.getDeliveryDate(), province);
+                        boolean found = isPresent(actual, expectedSenderLimit);
+                        log.info("Trovati i seguenti limiti: {}", actual);
+                        return shouldContain ? found : !found;
+                    });
+        } catch (ConditionTimeoutException e) {
+            Assertions.fail(shouldContain
+                    ? "Stima mittente mancante: " + expectedSenderLimit
+                    : "Stima mittente ancora presente: " + expectedSenderLimit);
+        } catch (Exception e) {
+            throw new RuntimeException("Errore inatteso durante il polling", e);
+        }
+    }
+
+private boolean isPresent(DelayerSenderLimits actual, DelayerSenderLimit expected) {
+    if (actual == null || actual.getItems() == null) {
+        return false;
+    }
+    return actual.getItems().stream()
+            .anyMatch(item -> item.getPk().equals(expected.getPk())
+                    && item.getDeliveryDate().equals(expected.getDeliveryDate())
+                    && item.getWeeklyEstimate() == expected.getWeeklyEstimate());
+}
 
     @Given("vengono recuperate le stime mittenti da {string} a {string} per la provincia {string}")
     public void getSenderLimits(String meseAnnoDa, String meseAnnoA, String provincia) throws Exception {
@@ -115,118 +135,51 @@ public class CensimentoStimeMittentiSteps {
     And effettuo il calcolo delle stime settimanali provinciali attese
     Then si verifica che i risultati siano coerenti con quelli attesi
      */
-
     @Given("vengono caricati i moduli commessa come file zip su portfat: {string}")
     public void uploadZipFile(String fileName) {
         try {
-            String sha256 = B2bUtils.computeSha256(applicationContext, String.format("classpath:/%s", fileName));
-            Map<String,String> uploadParams = prepareParametersForGetPresignedUrl(fileName, sha256, "UPLOAD");
-            String uploadResponse = lambdaClient.invoke("GET_PRESIGNED_URL", uploadParams);
-            String preloadUrlUpload = extractUrlFromPresignedUrlResponse(uploadResponse, "uploadUrl");
-            // viene caricato il file zip su S3 tramite il presigned url ottenuto
-            B2bUtils.loadToPresigned(applicationContext, preloadUrlUpload, null, null, String.format("classpath:/%s", fileName), "application/zip");
-            Map<String,String> downloadParams = prepareParametersForGetPresignedUrl(fileName, sha256, "DOWNLOAD");
-            // viene ottenuto il presigned url per il download del file elaborato
-            String downloadResponse = lambdaClient.invoke("GET_PRESIGNED_URL", downloadParams);
-            String preloadUrlDownload = extractUrlFromPresignedUrlResponse(downloadResponse, "downloadUrl");
-
+            String preloadUrlDownload = preloadZipFile(fileName, true);
+            Assertions.assertThat(preloadUrlDownload).as("Presigned url download non generato correttamente").isNotNull();
             // viene invocata la lambda portfat che elabora il file e genera le stime mittenti
-            lambdaClient.invokePortfatLambda("pn-portfat-eventFileReady-lambda", portfatLambdaName, preloadUrlDownload);
+            portfatLambdaClient.invokePortfatLambda(preloadUrlDownload);
 
         } catch (Exception e) {
-            log.info("Errore non bloccante durante il caricamento del file zip e l'invocazione della lambda Portfat", e);
+            throw new RuntimeException("Errore durante il caricamento del file zip e l'invocazione della lambda portfat", e);
         }
-
-
     }
 
-    private String extractUrlFromPresignedUrlResponse(String response, String fieldName) throws Exception {
-        JsonNode root = new ObjectMapper().readTree(response);
-        JsonNode body = new ObjectMapper().readTree(root.get("body").asText());
-        return body.get(fieldName).asText();
-    }
+    @Given("vengono caricati i moduli commessa mock tramite il seguente zip: {string}")
+    public void uploadMockZipFile(String fileName) {
+        try {
+            preloadZipFile(fileName, false);
+            // viene invocata la lambda per effettuare il caricamento dei limiti mittenti mock
+            delayerSevice.insertMockSenderLimit(fileName);
 
-
-    private Map<String, String> prepareParametersForGetPresignedUrl(
-            String fileName,
-            String checksumSha256B64,
-            String presignedUrlType
-    ) {
-        return Map.of(
-                "fileName", fileName,
-                "checksumSha256B64", checksumSha256B64,
-                "presignedUrlType", presignedUrlType
-        );
-    }
-
-
-
-
-    private void calculateExpectedWeeklyProvincialEstimates() {
-        YearMonth yearMonth = YearMonth.of(2025, 7); // luglio 2025
-        int monthlyRegionalEstimate = 1000;
-
-        // Province e percentuali (es. Perugia 100%, Terni 100%)
-        Map<String, Integer> provincePercentages = Map.of(
-                "PE", 100
-                // , "TR", 100
-        );
-
-        expectedWeeklyEstimates = new HashMap<>();
-
-        for (Map.Entry<String, Integer> entry : provincePercentages.entrySet()) {
-            String province = entry.getKey();
-            int percentage = entry.getValue();
-
-            calculateProvinceWeeklyEstimates(
-                    yearMonth,
-                    monthlyRegionalEstimate,
-                    province,
-                    percentage,
-                    expectedWeeklyEstimates
-            );
+        } catch (Exception e) {
+            log.error("Errore durante il caricamento del file zip e l'invocazione della lambda portfat", e);
+            throw new RuntimeException("Errore durante il caricamento del file zip e l'invocazione della lambda portfat nella fase di preload", e);
         }
     }
 
 
-    private void calculateProvinceWeeklyEstimates(
-            YearMonth yearMonth,
-            int regionalMonthlyEstimate,
-            String province,
-            int percentage,
-            Map<LocalDate, Integer> result
-    ) {
-        int daysInMonth = yearMonth.lengthOfMonth();
-
-        // a) stima provinciale mensile
-        double provincialMonthlyEstimate =
-                regionalMonthlyEstimate * (percentage / 100.0);
-
-        // b) stima provinciale giornaliera
-        double dailyEstimate = provincialMonthlyEstimate / daysInMonth;
-
-        LocalDate firstDayOfMonth = yearMonth.atDay(1);
-        LocalDate lastDayOfMonth = yearMonth.atEndOfMonth();
-
-        // c+d) settimane che iniziano di lunedì
-        LocalDate firstMonday = firstDayOfMonth.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-        LocalDate currentMonday = firstMonday;
-
-        while (!currentMonday.isAfter(lastDayOfMonth)) {
-            LocalDate weekEnd = currentMonday.plusDays(6);
-
-            long daysInCurrentMonth = Stream.iterate(currentMonday, d -> d.plusDays(1))
-                    .limit(7)
-                    .filter(d -> !d.isBefore(firstDayOfMonth) && !d.isAfter(lastDayOfMonth))
-                    .count();
-
-            if (daysInCurrentMonth > 0) {
-                int weeklyEstimate = (int) Math.round(dailyEstimate * daysInCurrentMonth);
-                result.merge(currentMonday, weeklyEstimate, Integer::sum);
+    private String preloadZipFile(String fileName, boolean withDownload) {
+        String preloadUrl = null;
+        try {
+            String sha256 = B2bUtils.computeSha256(applicationContext, String.format("classpath:/%s", fileName));
+            DelayerPresigneUrlUpload uploadResponse = lambdaClientV2.getPresignedUrlUpload(fileName, sha256);
+            preloadUrl = uploadResponse.getUploadUrl();
+            // viene caricato il file zip su S3 tramite il presigned url ottenuto
+            B2bUtils.loadToPresigned(applicationContext, preloadUrl, null, null, String.format("classpath:/%s", fileName), "application/zip");
+            if (withDownload) {
+                // viene ottenuto il presigned url per il download del file elaborato
+                DelayerPresigneUrlDownload downloadResponse = lambdaClientV2.getPresignedUrlDownload(fileName);
+                preloadUrl = downloadResponse.getDownloadUrl();
             }
-
-            currentMonday = currentMonday.plusWeeks(1);
+        } catch (Exception e) {
+            log.error("Errore durante il caricamento del file zip e l'invocazione della lambda portfat", e);
+            throw new RuntimeException("Errore durante il caricamento del file zip e l'invocazione della lambda portfat nella fase di preload", e);
         }
+        return preloadUrl;
     }
 
     /**
@@ -244,6 +197,18 @@ public class CensimentoStimeMittentiSteps {
      */
     @And("per la settimana {string}, per il prodotto {string} per la provincia {string} si verifica che la somma delle commesse sia:")
     public void verifyWeeklyProvincialEstimates(String deliveryDate, String product, String province, Map<String, String> dataTable) {
+        verifyWeeklyProvincialEstimates(dataTable,
+                () -> delayerSevice.getCountersSumEstimates(deliveryDate, province, product));
+    }
+
+    @And("per la settimana {string}, per il prodotto {string} per la provincia {string} si verifica che la somma delle commesse mock sia:")
+    public void verifyWeeklyProvincialEstimatesInSenderLimitTable(String deliveryDate, String product, String province, Map<String, String> dataTable) {
+        verifyWeeklyProvincialEstimates(dataTable,
+                () -> delayerSevice.getCountersSumEstimates(deliveryDate, province, product, true));
+    }
+
+    private void verifyWeeklyProvincialEstimates(Map<String, String> dataTable,
+                                                 Supplier<DelayerCountersSumEstimatesItem> estimatesSupplier) {
         int expectedTotal = Integer.parseInt(dataTable.get("numberOfShipments"));
         int expectedFirstWeek = Integer.parseInt(dataTable.get("firstWeekNumberOfShipments"));
         int expectedSecondWeek = Integer.parseInt(dataTable.get("secondWeekNumberOfShipments"));
@@ -256,8 +221,7 @@ public class CensimentoStimeMittentiSteps {
                     .pollInterval(Duration.ofSeconds(20))
                     .pollDelay(Duration.ZERO) // prova subito, poi ripete ogni 20s
                     .until(() -> {
-                        DelayerCountersSumEstimatesItem item =
-                                delayerSevice.getCountersSumEstimates(deliveryDate, province, product);
+                        DelayerCountersSumEstimatesItem item = estimatesSupplier.get();
                         lastResult.set(item);
                         return item != null
                                 && item.getNumberOfShipments() == expectedTotal
