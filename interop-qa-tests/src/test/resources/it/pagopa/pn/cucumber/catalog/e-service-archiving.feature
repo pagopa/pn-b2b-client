@@ -736,3 +736,27 @@ Feature: Archiviazione manuale di un e-service
       | firstDescriptorId                    | secondDescriptorId                   | eserviceId                           | firstDescriptorState | secondDescriptorState |
 #      firstDescriptorId=descrittore in Archived . secondDescriptorId=descrittore in Archiving
       | 50bc283a-4a63-445b-a042-2b545501c988 | 9900424b-c0da-49d8-92ef-6661a65d8898 | aaaff1d2-d964-41f8-b8ef-dcbd35ea6f4e | ARCHIVED             | ARCHIVING             |
+
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_TEMPLATE_INSTANCE_1.1] Un ente erogatore di un e-service creato da template in stato PUBLISHED e seconda versione DEPRECATED, può avviare il processo di archiviazione manuale dell'e-service
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    And l'utente effettua l'aggiunta di una versione in stato PUBLISHED all'e-service con successo
+    When l'utente è un "<role>" di "PA1"
+    And l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e <gracePeriod> giorni di preavviso
+    Then si ottiene response status code 204
+    And la vecchia versione dell'e-service è in stato "ARCHIVING"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And la versione più recente dell'e-service è in stato "ARCHIVING"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    Examples:
+      | role         | gracePeriod |
+      | admin        | 30          |
+      | api          | 30          |
+      | api,security | 30          |
+      | admin        | 60          |
+      | admin        | 90          |
+      | admin        | 120         |
