@@ -841,3 +841,19 @@ Feature: Archiviazione manuale di un e-service
       | admin        |
       | api          |
       | api,security |
+
+  @happy-path
+  Scenario: [MANUAL_ARCHIVING_ESERVICE_CLONING_1.1] L'ente erogatore può clonare un e-service in stato ARCHIVING
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    When l'utente clona quell'e-service
+    Then si ottiene response status code 200
+
+  @happy-path
+  Scenario: [MANUAL_ARCHIVING_ESERVICE_CLONING_1.2] L'ente erogatore può clonare un e-service in stato ARCHIVING_SUSPENDED
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "SUSPENDED"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    When l'utente clona quell'e-service
+    Then si ottiene response status code 200
