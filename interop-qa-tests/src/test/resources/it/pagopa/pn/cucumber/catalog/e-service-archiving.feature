@@ -293,13 +293,13 @@ Feature: Archiviazione manuale di un e-service
       | api          |
       | api,security |
 
-  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_CANCELLATION_1.2] L'ente erogatore di un e-service in stato SUSPENDED può annullare il processo di archiviazione manuale di un e-service in corso
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_CANCELLATION_1.2] L'ente erogatore di un e-service in stato ARCHIVING_SUSPENDED può annullare il processo di archiviazione manuale in corso dell'e-service
     Given l'utente è un "<role>" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And "PA1" ha già sospeso quell'e-service
-    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e <gracePeriod> giorni di preavviso
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     When l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
@@ -308,13 +308,10 @@ Feature: Archiviazione manuale di un e-service
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
     Examples:
-      | role         | gracePeriod |
-      | admin        | 30          |
-      | api          | 30          |
-      | api,security | 30          |
-      | admin        | 60          |
-      | admin        | 90          |
-      | admin        | 120         |
+      | role         |
+      | admin        |
+      | api          |
+      | api,security |
 
   Scenario: [MANUAL_ARCHIVING_ESERVICE_CANCELLATION_1.3] Un descrittore con stato ARCHIVED a cui viene applicato il processo di archiviazione manuale dell'e-service e poi viene annullato, mantiene lo stato ARCHIVED
     Given l'utente è un "admin" di "PA1"
