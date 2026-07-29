@@ -426,3 +426,46 @@ Feature: Archiviazione manuale di un descrittore
       | admin        | 60          |
       | admin        | 90          |
       | admin        | 120         |
+
+  @happy-path
+  Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_TEMPLATE_INSTANCE_ELIMINATION_1.1] L'ente erogatore di un e-service creato da template può annullare l'archiviazione manuale in corso di un descrittore precedentemente in stato DEPRECATED
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    And l'utente effettua l'aggiunta di una versione in stato PUBLISHED all'e-service con successo
+    And l'utente è un "<role>" di "PA1"
+    And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
+    When l'utente annulla il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
+    Then si ottiene response status code 204
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
+    And l'archiviazione manuale del singolo descrittore è stata annullata con successo
+
+    Examples:
+      | role         |
+      | admin        |
+      | api          |
+      | api,security |
+
+  @happy-path
+  Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_TEMPLATE_INSTANCE_ELIMINATION_1.2] L'ente erogatore di un e-service creato da template può annullare l'archiviazione manuale in corso di un descrittore precedentemente in stato SUSPENDED
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già sospeso quell'e-service
+    And l'utente è un "admin" di "PA1"
+    And l'utente effettua l'aggiunta di una versione in stato PUBLISHED all'e-service con successo
+    And l'utente è un "<role>" di "PA1"
+    And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
+    When l'utente annulla il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
+    Then si ottiene response status code 204
+    And la vecchia versione dell'e-service è in stato "SUSPENDED"
+    And l'archiviazione manuale del singolo descrittore è stata annullata con successo
+
+    Examples:
+      | role         |
+      | admin        |
+      | api          |
+      | api,security |
