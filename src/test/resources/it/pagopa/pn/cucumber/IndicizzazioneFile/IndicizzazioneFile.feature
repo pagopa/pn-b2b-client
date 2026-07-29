@@ -110,7 +110,7 @@ Feature: test preliminari indicizzazione File safeStorage
 
   @aggiuntaTag
   @indicizzazioneSafeStorage
-  Scenario: [VALIDATION_BUG_20667] Creazione con successo di un documento con document type avante un nome che non inizia per forza con "PN_"
+  Scenario: [VALIDATION_BUG_20667] Creazione con successo di un documento con document type avente un nome che non inizia per forza con "PN_"
     Given Viene caricato un nuovo documento di tipo "INTEROP_LEGAL_FACTS" con tag associati
       | local_multivalue:test1,test2 |
       | local_singlevalue:test1      |
@@ -762,8 +762,8 @@ Feature: test preliminari indicizzazione File safeStorage
   @indicizzazioneSafeStorage
   Scenario: [INDEX_SS_SEARCH_7_LOCAL] SEARCH FAIL: la ricerca di un tag locale NON indicizzato non deve produrre risultati (logic or)
     Given Viene caricato un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS" con tag associati
-      | local_singleValue:testOrParam1 |
+      | global_singlevalue:testOrParam1 |
     When Vengono ricercate con logica "or" le fileKey aventi i seguenti tag
-      | local_singleValue:testOrParam1 |
+      | global_singlevalue:testOrParam1 |
     Then Il risultato della search contiene le fileKey relative ai seguenti documenti
       | null |
