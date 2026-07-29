@@ -81,15 +81,15 @@ public class CensimentoStimeMittentiSteps {
         }
     }
 
-    private boolean isPresent(DelayerSenderLimits actual, DelayerSenderLimit expected) {
-        if (actual == null || actual.getItems() == null) {
-            return false;
-        }
-        return actual.getItems().stream()
-                .anyMatch(item -> item.getPk().equals(expected.getPk())
-                        && item.getDeliveryDate().equals(expected.getDeliveryDate())
-                        && item.getWeeklyEstimate() == expected.getWeeklyEstimate());
+private boolean isPresent(DelayerSenderLimits actual, DelayerSenderLimit expected) {
+    if (actual == null || actual.getItems() == null) {
+        return false;
     }
+    return actual.getItems().stream()
+            .anyMatch(item -> item.getPk().equals(expected.getPk())
+                    && item.getDeliveryDate().equals(expected.getDeliveryDate())
+                    && item.getWeeklyEstimate() == expected.getWeeklyEstimate());
+}
 
     @Given("vengono recuperate le stime mittenti da {string} a {string} per la provincia {string}")
     public void getSenderLimits(String meseAnnoDa, String meseAnnoA, String provincia) throws Exception {
