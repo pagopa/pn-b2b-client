@@ -81,6 +81,10 @@ public class EServiceTemplateTestAssistant {
             .getLastTemplateManaged();
         BiConsumer<UUID, UUID> publisher = (templateId, versionId) -> {
             this.addDocumentToEServiceTemplateVersionSuccessfully(templateId, versionId, EServiceTemplateDocumentKind.INTERFACE, 0); // perché ogni template deve avere almeno un'interfaccia
+            if(lastTemplateManaged.getAsync().equals(true)) {
+                this.updateLastTemplateVersionWithAsyncExchangeProperties();
+                this.addDocumentToEServiceTemplateVersionSuccessfully(EServiceTemplateDocumentKind.ASYNC_EXCHANGE_CALLBACK_INTERFACE, 0); // perché ogni template async deve avere almeno un'interfaccia di callback
+            }
             publishEServiceTemplate(templateId, versionId);
         };
         switch (desiredState) {
@@ -96,6 +100,98 @@ public class EServiceTemplateTestAssistant {
                 publisher.accept(lastTemplateManaged.getId(), newVersionId);
             }
             default -> throw new IllegalArgumentException("Stato non supportato: " + desiredState);
+        }
+    }
+
+    /**
+     * Aggiorna l'ultima versione del template con una configurazione async di base,
+     * preservando gli attributi già presenti sulla versione corrente.
+     *
+     * Flusso:
+     * 1) legge la versione attuale del template
+     * 2) recupera/mappa gli attributes esistenti
+     * 3) invia update con asyncExchangeProperties
+     * 4) effettua polling finché i campi async non risultano persistiti
+     */
+    private void updateLastTemplateVersionWithAsyncExchangeProperties() {
+        EServiceTemplateInfo lastTemplateManaged = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
+        UUID eServiceTemplateId = lastTemplateManaged.getId();
+        UUID eServiceTemplateVersionId = lastTemplateManaged.getLastVersionId();
+
+        // Read della versione corrente per non perdere informazioni preesistenti (es. attributes).
+        httpCallExecutor.performCall(
+            () -> this.eServiceTemplateClient.getEServiceTemplateVersion(
+                eServiceTemplateId,
+                eServiceTemplateVersionId));
+
+        if (httpCallExecutor.getResponseStatus().isError()) {
+            throw new IllegalStateException(
+                "Esito negativo non previsto durante il recupero della versione del template: "
+                    + httpCallExecutor.getResponseStatus()
+                    + " - "
+                    + httpCallExecutor.getErrorMessage());
+        }
+
+        EServiceTemplateVersionDetails retrievedVersion = (EServiceTemplateVersionDetails) httpCallExecutor.getResponse();
+        DescriptorAttributes retrievedAttributes = nonNull(retrievedVersion)
+            ? retrievedVersion.getAttributes()
+            : null;
+        // Gli attributes vengono rimappati nel seed di update così da preservare lo stato attuale.
+        EServiceTemplateAttributesSeed attributesSeed = nonNull(retrievedAttributes)
+            ? this.descriptorAttributesMapper.mapAttributesToSeeds(retrievedAttributes)
+            : new EServiceTemplateAttributesSeed();
+
+        AsyncExchangeProperties asyncExchangeProperties = new AsyncExchangeProperties()
+            .responseTime(100)
+            .resourceAvailableTime(100)
+            .maxResultSet(100)
+            .confirmation(true)
+            .bulk(true);
+
+        UpdateEServiceTemplateVersionSeed seed = new UpdateEServiceTemplateVersionSeed()
+            .attributes(attributesSeed)
+            .voucherLifespan(6000)
+            .asyncExchangeProperties(asyncExchangeProperties);
+
+        // Update della versione con i dati async richiesti dallo scenario.
+        httpCallExecutor.performCall(
+            () -> this.eServiceTemplateClient.updateEServiceTemplateVersion(
+                eServiceTemplateId,
+                eServiceTemplateVersionId,
+                seed));
+
+        if (httpCallExecutor.getResponseStatus().isError()) {
+            throw new IllegalStateException(
+                "Esito negativo non previsto durante l'aggiornamento delle asyncExchangeProperties: "
+                    + httpCallExecutor.getResponseStatus()
+                    + " - "
+                    + httpCallExecutor.getErrorMessage());
+        }
+
+        try {
+            // Polling su GET versione finché la configurazione async non è effettivamente visibile.
+            pollingService.makePolling(
+                () -> httpCallExecutor.performCall(
+                    () -> this.eServiceTemplateClient.getEServiceTemplateVersion(
+                        eServiceTemplateId,
+                        eServiceTemplateVersionId)),
+                status -> {
+                    if (status == HttpStatus.NOT_FOUND) {
+                        return false;
+                    }
+                    EServiceTemplateVersionDetails version = (EServiceTemplateVersionDetails) httpCallExecutor.getResponse();
+                    AsyncExchangeProperties retrievedAsyncExchangeProperties = nonNull(version) ? version.getAsyncExchangeProperties() : null;
+                    return nonNull(retrievedAsyncExchangeProperties)
+                        && Integer.valueOf(100).equals(retrievedAsyncExchangeProperties.getResponseTime())
+                        && Integer.valueOf(100).equals(retrievedAsyncExchangeProperties.getResourceAvailableTime())
+                        && Integer.valueOf(100).equals(retrievedAsyncExchangeProperties.getMaxResultSet())
+                        && retrievedAsyncExchangeProperties.getConfirmation()
+                        && retrievedAsyncExchangeProperties.getBulk();
+                },
+                "Le asyncExchangeProperties non sono state applicate correttamente alla versione dell'e-service template"
+            );
+        } catch (PollingPredicateException e) {
+            fail("Le asyncExchangeProperties non sono state applicate correttamente alla versione dell'e-service template: " + e.getMessage());
         }
     }
 

@@ -150,3 +150,14 @@ Feature: Configurazione e gestione di template e-service per scambi asincroni e 
     And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
     And l'utente effettua la pubblicazione dell'e-service template
     And si ottiene status code 400
+
+
+
+  # TODO tentativo di formalizzazione TA del bug rilevato da Silvano
+  Scenario: [TMP] La pubblicazione di una seconda versione di un'istanza di template va a buon fine
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template asincrono in modalità erogazione con tecnologia "REST" in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    Then si ottiene response status code 200
+
