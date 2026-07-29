@@ -173,18 +173,22 @@ public class EServiceTemplateInstanceUpdateSteps {
 
     @Given("l'utente effettua l'aggiunta di una versione in stato {eServiceDescriptorState} all'e-service con successo")
     public void createEServiceVersionDraftSuccessfully(EServiceDescriptorState descriptorState) {
+        UUID oldDescriptor = sharedStepsContext.getEServiceTemplateStepContext()
+                .getLastEServiceDescriptorIdCreatedFromTemplate();
+        UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext()
+                .getLastEServiceIdCreatedFromTemplate();
+        sharedStepsContext.getEServicesCommonContext().setEserviceId(eServiceId);
+        sharedStepsContext.getEServicesCommonContext().setOldDescriptorId(oldDescriptor);
 
-        UUID newDescriptor = this.dataPreparationService.createNextDraftDescriptor(
-                sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate());
+        UUID newDescriptor = this.dataPreparationService.createNextDraftDescriptor(eServiceId);
         this.dataPreparationService.bringTemplateInstanceDescriptorToGivenState(
-                sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate(),
+                eServiceId,
                 newDescriptor,
                 descriptorState,
                 false
         );
         sharedStepsContext.getEServiceTemplateStepContext().setLastEServiceDescriptorIdCreatedFromTemplate(newDescriptor);
-        sharedStepsContext.getEServicesCommonContext().setDescriptorId(sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorIdCreatedFromTemplate());
-        sharedStepsContext.getEServicesCommonContext().setOldDescriptorId(sharedStepsContext.getEServicesCommonContext().getDescriptorId());
+        sharedStepsContext.getEServicesCommonContext().setDescriptorId(newDescriptor);
 
     }
 
