@@ -679,6 +679,27 @@ Feature: Archiviazione manuale di un e-service
     And la versione più recente dell'e-service è in stato "ARCHIVING"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
+  Scenario Outline: [COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_5.1] Un ente erogatore quando è già in corso l’archiviazione manuale di un singolo descrittore, non può avviare anche l’archiviazione dell’intero e-service se il tempo di preavviso scelto genera una data di archiviazione dell’e-service antecedente a quella già prevista per il descrittore.
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando <descriptorArchiving> giorni di preavviso
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e <eserviceArchiving> giorni di preavviso
+    Then si ottiene response status code 400
+    And la vecchia versione dell'e-service è in stato "ARCHIVING"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    # COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_5.1 usa un sottoinsieme strategico di combinazioni dei periodi di preavviso, sufficiente a garantire una buona copertura senza testare tutte le permutazioni possibili.
+    Examples:
+      | descriptorArchiving | eserviceArchiving |
+      | 60                  | 30                |
+      | 90                  | 60                |
+      | 90                  | 30                |
+      | 120                 | 90                |
+
   @happy-path
   Scenario Outline: [ARCHIVING_ESERVICE_BY_JOB_1.1] Raggiunta la data finale del tempo di preavviso per l'archiviazione di un e-service, questo risulterà correttamente archiviato
     Then l'utente è un "admin" di "PA1"
