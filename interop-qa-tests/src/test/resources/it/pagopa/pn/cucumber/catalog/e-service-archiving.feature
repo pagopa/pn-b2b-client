@@ -550,32 +550,47 @@ Feature: Archiviazione manuale di un e-service
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And la versione più recente dell'e-service è in stato "PUBLISHED"
 
-  Scenario: [COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_1.1] Un ente erogatore può avviare il processo di archiviazione dell'intero e-service anche se l'archiviazione di uno specifico descrittore in stato ARCHIVING di quell'e-service è già in corso
+  Scenario Outline: [COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_1.1] Un ente erogatore può avviare il processo di archiviazione dell'intero e-service anche se l'archiviazione di uno specifico descrittore in stato ARCHIVING di quell'e-service è già in corso
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
-    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando <descriptorArchiving> giorni di preavviso
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e <eserviceArchiving> giorni di preavviso
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
     And la versione più recente dell'e-service è in stato "ARCHIVING"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
-  Scenario: [COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_1.2] Un ente erogatore può avviare il processo di archiviazione dell'intero e-service anche se l'archiviazione di uno specifico descrittore in stato ARCHIVING_SUSPENDED di quell'e-service è già in corso
+    # Gli scenari COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_1.1 e 1.2 usano un sottoinsieme strategico di combinazioni dei periodi di preavviso, sufficiente a garantire una buona copertura senza testare tutte le permutazioni possibili.
+    Examples:
+      | descriptorArchiving | eserviceArchiving |
+      | 30                  | 30                |
+      | 30                  | 60                |
+      | 60                  | 90                |
+      | 90                  | 120               |
+
+  Scenario Outline: [COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_1.2] Un ente erogatore può avviare il processo di archiviazione dell'intero e-service anche se l'archiviazione di uno specifico descrittore in stato ARCHIVING_SUSPENDED di quell'e-service è già in corso
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già sospeso quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
-    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando <descriptorArchiving> giorni di preavviso
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e <eserviceArchiving> giorni di preavviso
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "ARCHIVING_SUSPENDED"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
     And la versione più recente dell'e-service è in stato "ARCHIVING"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    Examples:
+      | descriptorArchiving | eserviceArchiving |
+      | 30                  | 90                |
+      | 60                  | 60                |
+      | 60                  | 120               |
+      | 120                 | 120               |
 
   Scenario: [COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_2.1] Un ente erogatore può annullare il processo di archiviazione dello specifico descrittore in corso in stato ARCHIVING anche se è parallelamente in esecuzione l'archiviazione dell'intero e-service
   E' in corso un processo di archiviazione combinata. Ovvero archiviazione dell'intero e-service e del primo e meno recente descrittore contemporaneamente
