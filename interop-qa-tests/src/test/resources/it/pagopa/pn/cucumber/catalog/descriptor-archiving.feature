@@ -402,3 +402,27 @@ Feature: Archiviazione manuale di un descrittore
       | support  |
       | reviewer |
       | viewer   |
+
+  @happy-path
+  Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_TEMPLATE_INSTANCE_1.3] Un ente erogatore di un e-service creato da template può avviare il processo di archiviazione manuale del primo e meno recente descrittore in stato SUSPENDED
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già sospeso quell'e-service
+    And l'utente è un "admin" di "PA1"
+    And l'utente effettua l'aggiunta di una versione in stato PUBLISHED all'e-service con successo
+    When l'utente è un "<role>" di "PA1"
+    And l'utente avvia la messa in archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando <gracePeriod> giorni di preavviso
+    Then si ottiene response status code 204
+    And la vecchia versione dell'e-service è in stato "ARCHIVING_SUSPENDED"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
+
+    Examples:
+      | role         | gracePeriod |
+      | admin        | 30          |
+      | api          | 30          |
+      | api,security | 30          |
+      | admin        | 60          |
+      | admin        | 90          |
+      | admin        | 120         |
