@@ -902,7 +902,20 @@ Feature: Archiviazione manuale di un e-service
       | 60                  | 120               |
       | 120                 | 120               |
 
-
+  Scenario: [COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_FROM_TEMPLATE_2.1] Un ente erogatore NON può avviare il processo di archiviazione dello specifico descrittore se l'archiviazione dell'intero e-service creato da template è già in corso
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    And l'utente effettua l'aggiunta di una versione in stato PUBLISHED all'e-service con successo
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    When l'utente avvia la messa in archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
+    Then si ottiene response status code 400
+    And la vecchia versione dell'e-service è in stato "ARCHIVING"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And la versione più recente dell'e-service è in stato "ARCHIVING"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
   @happy-path
   Scenario: [MANUAL_ARCHIVING_ESERVICE_CLONING_1.1] L'ente erogatore può clonare un e-service in stato ARCHIVING
