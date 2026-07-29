@@ -296,16 +296,14 @@ Feature: Test relativi al SRS di correzione timeline fase 4
     And destinatario Mario Gherkin e:
       | physicalAddress_address | Via@OK_AR |
       | digitalDomicile         | NULL      |
-    And destinatario Mario Cucumber e:
-      | physicalAddress_address | Via@OK_AR |
-      | digitalDomicile         | NULL      |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
+    Given imposto lo iun di SharedSteps a "JAVW-RPKV-AGRG-202607-K-1" e la pa a "Comune_Multi"
     When viene invocata una richiesta di correzione puntuale per la notifica appena creata con i seguenti parametri
-      | recIndex | RECINDEX_0                      |
-      | element1 | SEND_ANALOG_PROGRESS;RECINDEX_1 |
+      | recIndex | RECINDEX_1                      |
+      | element1 | SEND_ANALOG_PROGRESS;RECINDEX_0 |
     Then si verifica che la richiesta di remove effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di remove effettuata sia in stato "ERROR" entro 300 secondi controllando ogni 5 secondi
 
@@ -378,7 +376,7 @@ Feature: Test relativi al SRS di correzione timeline fase 4
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
-    And "Mario Gherkin" legge la notifica ricevuta
+    And "Galileo Galilei" legge la notifica ricevuta
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED_CREATION_REQUEST"
     When viene invocata una richiesta di correzione puntuale per la notifica appena creata con i seguenti parametri
@@ -439,8 +437,8 @@ Feature: Test relativi al SRS di correzione timeline fase 4
     When viene invocata una richiesta di correzione puntuale per la notifica appena creata con i seguenti parametri
       | element1 | SEND_ANALOG_PROGRESS |
     Then si verifica che la richiesta di remove effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
-    And si invoca l'api Webhook versione "più recente" per ottenere gli elementi di timeline di tale notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And si invoca l'api Webhook versione "più recente" per ottenere gli elementi di timeline di tale notifica
     And si invoca l'api Webhook versione "V28" per ottenere gli elementi di timeline di tale notifica
     And si invoca l'api Webhook versione "V25" per ottenere gli elementi di timeline di tale notifica
     And si invoca l'api Webhook versione "V23" per ottenere gli elementi di timeline di tale notifica
