@@ -139,7 +139,11 @@ public class AvanzamentoNotificheB2bSteps {
     @Then("controllo la correttezza dei timelineElementId degli elementi di timeline della fullSentNotification con versione b2b {string}")
     public void checkReworkTimelineElement(String version) {
         NotificationVersion notificationVersion = sharedSteps.getNotificationVersion(version);
-        getB2bStepsInterface(notificationVersion).checkReworkTimelineWithVersion();
+        try {
+            getB2bStepsInterface(notificationVersion).checkReworkTimelineWithVersion();
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
     }
 
     /**

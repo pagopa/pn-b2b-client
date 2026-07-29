@@ -372,7 +372,7 @@ Feature: Test relativi al SRS di correzione timeline fase 4
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Gherkin e:
+    And destinatario Galileo Galilei e:
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
       | digitalDomicile         | NULL                     |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -407,9 +407,6 @@ Feature: Test relativi al SRS di correzione timeline fase 4
     And recuperando la fullSentNotification con la versione b2b "V24" non è presente l'elemento di timeline "NOTIFICATION_TIMELINE_REWORKED"
     And recuperando la fullSentNotification con la versione b2b "V23" non è presente l'elemento di timeline "NOTIFICATION_TIMELINE_REWORKED"
     And recuperando la fullSentNotification con la versione b2b "V2" non è presente l'elemento di timeline "NOTIFICATION_TIMELINE_REWORKED"
-    And controllo la correttezza dei timelineElementId degli elementi di timeline della fullSentNotification con versione b2b "V24"
-    And controllo la correttezza dei timelineElementId degli elementi di timeline della fullSentNotification con versione b2b "V23"
-    And controllo la correttezza dei timelineElementId degli elementi di timeline della fullSentNotification con versione b2b "V2"
 
   @timelineReworkF4 @cleanWebhook @precondition @webhookV29
   Scenario: [TR4_INVALIDATION_CHECK_WEBHOOK] Correzione puntuale di un elemento di timeline e verifica della presenza (o meno) del NOTIFICATION_TIMELINE_REWORKED negli stream con le varie versioni
@@ -420,10 +417,6 @@ Feature: Test relativi al SRS di correzione timeline fase 4
     And destinatario Mario Gherkin e:
       | physicalAddress_address | Via@OK_AR |
       | digitalDomicile         | NULL      |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-    And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
     And si predispone 1 nuovo stream denominato "stream-testLast" con eventType "TIMELINE" con versione "più recente"
     And si predispone 1 nuovo stream denominato "stream-testV28" con eventType "TIMELINE" con versione "V28"
     And si predispone 1 nuovo stream denominato "stream-testV25" con eventType "TIMELINE" con versione "V25"
@@ -434,6 +427,10 @@ Feature: Test relativi al SRS di correzione timeline fase 4
     And si crea il nuovo stream per il "Comune_Multi" con versione "V25"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V23"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "più recente"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V28"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V25"
