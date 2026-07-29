@@ -783,3 +783,20 @@ Feature: Archiviazione manuale di un e-service
       | admin        | 60          |
       | admin        | 90          |
       | admin        | 120         |
+
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_TEMPLATE_INSTANCE_1.3] Un utente con ruolo non autorizzato NON può avviare il processo di archiviazione manuale di un e-service creato da template
+    Given l'utente è un "admin" di "PA2"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    When l'utente è un "<role>" di "PA2"
+    And l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    Then si ottiene response status code 403
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    Examples:
+      | role     |
+      | security |
+      | support  |
+      | reviewer |
+      | viewer   |
