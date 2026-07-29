@@ -2,6 +2,7 @@ package it.pagopa.pn.cucumber.steps.delayer.service;
 
 import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.interfaces.SenderLimitCondition;
 import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
+import it.pagopa.pn.cucumber.steps.delayer.client.PortfatLambdaClient;
 import it.pagopa.pn.cucumber.steps.delayer.loader.DelayerCsvLoader;
 import it.pagopa.pn.cucumber.steps.delayer.model.*;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
@@ -27,6 +28,7 @@ public class DelayerSevice {
             "spedizioni_3000.csv", "tcWeeklyPrintCapacity.csv", "tcSenderUnknow_5010.csv", "notificationCancelled.csv", "tcSenderPriority.csv", "tcSenderPriorityFrozenW1.csv", "tcSenderPriorityFrozenW2.csv"};
 
     private final DelayerLambdaClient lambdaClient;
+    private final PortfatLambdaClient portfatLambdaClient;
     private final DelayerCsvLoader csvLoader;
 
 
@@ -444,6 +446,10 @@ public class DelayerSevice {
         return response.getItems().stream().map(this::toSenderLimit).toList();
     }
 
+    public DelayerSenderLimits getSenderLimitByProvinceWithTable(String table, String deliveryDate, String province) {
+        return lambdaClient.getSenderLimitByProvinceWithTable(table, deliveryDate, province);
+    }
+
     public List<DelayerSenderLimit> pollSenderLimit(
             String deliveryDate, String province, int maxAttempts, int sleepMillis) throws Exception {
         for (int attempt = 1; attempt <= maxAttempts; attempt++) {
@@ -496,6 +502,10 @@ public class DelayerSevice {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void invokePortfatLambda(String downloadUrl) {
+        portfatLambdaClient.invokePortfatLambda(downloadUrl);
     }
 
     private DelayerSenderLimit toSenderLimit(DelayerSenderLimitItem item) {

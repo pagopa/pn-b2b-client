@@ -7,11 +7,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.model.ModuloCommessa;
 import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.model.StimeMittentiContext;
-import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
-import it.pagopa.pn.cucumber.steps.delayer.client.PortfatLambdaClient;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerCountersSumEstimatesItem;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPresigneUrlDownload;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPresigneUrlUpload;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimit;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimits;
 import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSevice;
@@ -41,8 +37,6 @@ import java.util.function.Supplier;
 @Slf4j
 public class CensimentoStimeMittentiSteps {
 
-    private final DelayerLambdaClient lambdaClient;
-    private final PortfatLambdaClient portfatLambdaClient;
     private final StimeMittentiContext context;
     private final ApplicationContext applicationContext;
     private final DelayerSevice delayerSevice;
@@ -73,7 +67,7 @@ public class CensimentoStimeMittentiSteps {
                     .pollInterval(Duration.ofSeconds(10))
                     .pollDelay(Duration.ZERO)
                     .until(() -> {
-                        DelayerSenderLimits actual = lambdaClient.getSenderLimitByProvinceWithTable(
+                        DelayerSenderLimits actual = delayerSevice.getSenderLimitByProvinceWithTable(
                                 senderLimitTable, expectedSenderLimit.getDeliveryDate(), province);
                         boolean found = isPresent(actual, expectedSenderLimit);
                         log.info("Trovati i seguenti limiti: {}", actual);
@@ -130,7 +124,7 @@ public class CensimentoStimeMittentiSteps {
         try {
             String preloadUrlDownload = preloadZipFile(fileName, true);
             Assertions.assertThat(preloadUrlDownload).as("Presigned url download non generato correttamente").isNotNull();
-            portfatLambdaClient.invokePortfatFileReady(preloadUrlDownload);
+            delayerSevice.invokePortfatLambda(preloadUrlDownload);
         } catch (Exception e) {
             throw new RuntimeException("Errore durante il caricamento del file zip e l'invocazione della lambda portfat", e);
         }
@@ -151,12 +145,10 @@ public class CensimentoStimeMittentiSteps {
         String preloadUrl = null;
         try {
             String sha256 = B2bUtils.computeSha256(applicationContext, String.format("classpath:/%s", fileName));
-            DelayerPresigneUrlUpload uploadResponse = lambdaClient.getPresignedUrlUpload(fileName, sha256);
-            preloadUrl = uploadResponse.getUploadUrl();
+            preloadUrl = delayerSevice.getPresignedUploadUrl(fileName, sha256);
             B2bUtils.loadToPresigned(applicationContext, preloadUrl, null, null, String.format("classpath:/%s", fileName), "application/zip");
             if (withDownload) {
-                DelayerPresigneUrlDownload downloadResponse = lambdaClient.getPresignedUrlDownload(fileName);
-                preloadUrl = downloadResponse.getDownloadUrl();
+                preloadUrl = delayerSevice.getPresignedDownloadUrl(fileName);
             }
         } catch (Exception e) {
             log.error("Errore durante il caricamento del file zip e l'invocazione della lambda portfat", e);

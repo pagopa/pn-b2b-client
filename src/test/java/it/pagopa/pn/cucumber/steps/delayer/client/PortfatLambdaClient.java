@@ -1,6 +1,5 @@
 package it.pagopa.pn.cucumber.steps.delayer.client;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
@@ -19,34 +18,30 @@ public class PortfatLambdaClient {
     private final LambdaInvoker lambdaInvoker;
     private final ObjectMapper objectMapper;
 
-    /**
-     * Invoca la lambda Portfat con evento file-ready (downloadUrl del file zip elaborato).
-     */
-    public void invokePortfatFileReady(String downloadUrl) {
+
+    public void invokePortfatLambda(String downloadUrl) {
+        String payload = buildFileReadyEventJson(downloadUrl);
         try {
             log.info("Invoking Portfat Lambda file-ready-event");
-            String rawResult = lambdaInvoker.invokeMyLambda(portfatLambdaName, buildFileReadyEventJson(downloadUrl));
-            JsonNode root = objectMapper.readTree(rawResult);
-            int statusCode = root.path("statusCode").asInt(-1);
-            if (statusCode != 200 && statusCode != -1) {
-                throw new RuntimeException("Portfat lambda failed: " + root.path("body").asText());
-            }
-        } catch (RuntimeException e) {
-            throw e;
+            lambdaInvoker.invokeMyLambda(portfatLambdaName, payload);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to invoke portfat file-ready lambda", e);
+            throw new RuntimeException("Failed to invoke Portfat Lambda", e);
         }
     }
 
     private String buildFileReadyEventJson(String downloadUrl) {
         try {
+            // body node
             ObjectNode bodyNode = objectMapper.createObjectNode();
             bodyNode.put("downloadUrl", downloadUrl);
             bodyNode.put("fileVersion", "1.0.0");
 
+            // root node
             ObjectNode rootNode = objectMapper.createObjectNode();
             rootNode.put("httpMethod", "POST");
             rootNode.put("resource", "/file-ready-event");
+
+            // body must be a STRING containing JSON
             rootNode.put("body", bodyNode.toString());
 
             return rootNode.toString();
@@ -54,4 +49,6 @@ public class PortfatLambdaClient {
             throw new RuntimeException("Failed to build file-ready-event JSON", e);
         }
     }
+
+
 }
