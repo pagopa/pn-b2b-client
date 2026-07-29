@@ -324,6 +324,12 @@ public class EServiceTemplateInstanceCreateSteps {
                     .setLastEServiceIdCreatedFromTemplate(createdEServiceDescriptor.getId());
             this.sharedStepsContext.getEServiceTemplateStepContext()
                     .setLastEServiceDescriptorIdCreatedFromTemplate(createdEServiceDescriptor.getDescriptorId());
+            this.sharedStepsContext.getEServicesCommonContext()
+                    .setEserviceId(createdEServiceDescriptor.getId());
+            this.sharedStepsContext.getEServicesCommonContext()
+                    .setDescriptorId(createdEServiceDescriptor.getDescriptorId());
+            this.sharedStepsContext.getEServicesCommonContext()
+                    .setOldDescriptorId(null);
 
             this.sharedStepsContext.getEServiceTemplateStepContext()
                     .setLastEServiceCreatedFromTemplate(createdEServiceDescriptor);
