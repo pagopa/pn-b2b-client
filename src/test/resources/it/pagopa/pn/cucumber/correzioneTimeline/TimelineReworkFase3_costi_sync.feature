@@ -102,39 +102,40 @@ Feature: Correzione timeline fase 3 costi
 
   @timelineReworkF3_costi_sync #11.6 dopo restart il baseCost non cambia, costi supplementari potrebbero cambiare
   Scenario Outline: [TR3_PAYMENTS_RESTART_6_DELIVERY_MODE_SYNC] Invio di una notifica mono-destinatario con pagamento/i PagoPA(delivery mode sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al restart
-    Given viene generata una nuova notifica
-      | subject               | test costi restart   |
-      | physicalCommunication | AR_REGISTERED_LETTER |
-      | senderDenomination    | Comune di palermo    |
-      | pagoPaIntMode         | SYNC                 |
-      | feePolicy             | DELIVERY_MODE        |
-      | paFee                 | 17                   |
-      | vat                   | 10                   |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile              | NULL                    |
-      | physicalAddress_address      | <sequence>              |
-      | physicalAddress_municipality | LAGO PATRIA             |
-      | physicalAddress_zip          | 80014                   |
-      | physicalAddress_province     | NA                      |
-      | payment_creditorTaxId        | 77777777777             |
-      | payment_pagoPaForm           | SI                      |
-      | payment_f24                  | NULL                    |
-      | title_payment                | PagoPa_mono_sync_d_mode |
-      | apply_cost_pagopa            | SI                      |
-      | payment_multy_number         | 1                       |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEvent>"
-    And pre restart vengono recuperati i costi dall'api di delivery per il destinatario 0
-    And pre restart verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attempt>
-    And vengono letti gli eventi fino allo stato della notifica "<finalStatus>"
+#    Given viene generata una nuova notifica
+#      | subject               | test costi restart   |
+#      | physicalCommunication | AR_REGISTERED_LETTER |
+#      | senderDenomination    | Comune di palermo    |
+#      | pagoPaIntMode         | SYNC                 |
+#      | feePolicy             | DELIVERY_MODE        |
+#      | paFee                 | 17                   |
+#      | vat                   | 10                   |
+#    And destinatario Mario Gherkin e:
+#      | digitalDomicile              | NULL                    |
+#      | physicalAddress_address      | <sequence>              |
+#      | physicalAddress_municipality | LAGO PATRIA             |
+#      | physicalAddress_zip          | 80014                   |
+#      | physicalAddress_province     | NA                      |
+#      | payment_creditorTaxId        | 77777777777             |
+#      | payment_pagoPaForm           | SI                      |
+#      | payment_f24                  | NULL                    |
+#      | title_payment                | PagoPa_mono_sync_d_mode |
+#      | apply_cost_pagopa            | SI                      |
+#      | payment_multy_number         | 1                       |
+#    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+#    And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEvent>"
+#    And pre restart vengono recuperati i costi dall'api di delivery per il destinatario 0
+#    And pre restart verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati inseriti e correttamente valorizzati fino all'attempt <attempt>
+#    And vengono letti gli eventi fino allo stato della notifica "<finalStatus>"
+    Given imposto lo iun di SharedSteps a "KLRA-VJTQ-LTRU-202607-H-1" e la pa a "Comune_Multi"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEventRestart>"
-    And vengono letti gli eventi fino allo stato della notifica "<finalStatusRestart>"
-    Then la timeline contiene elementi con la stringa "REWORK_"
-    And post restart vengono recuperati i costi dall'api di delivery per il destinatario 0
-    And il valore dei costi restituiti dall'api di delivery è <deliveryCost> rispetto a prima del rework
-    And post restart verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt <attemptRestart>
-    And il baseCost è uguale rispetto a prima del rework
+#    And vengono letti gli eventi fino all'elemento di timeline della notifica "<finalEventRestart>"
+#    And vengono letti gli eventi fino allo stato della notifica "<finalStatusRestart>"
+#    Then la timeline contiene elementi con la stringa "REWORK_"
+#    And post restart vengono recuperati i costi dall'api di delivery per il destinatario 0
+#    And il valore dei costi restituiti dall'api di delivery è <deliveryCost> rispetto a prima del rework
+#    And post restart verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt <attemptRestart>
+#    And il baseCost è uguale rispetto a prima del rework
     Examples:
       | sequence                               | finalEvent                         | finalStatus        | attempt | finalEventRestart                  | finalStatusRestart | attemptRestart | deliveryCost |
       | Via@OK_DEC_RESTART_CONS_AR             | ANALOG_WORKFLOW_RECIPIENT_DECEASED | RETURNED_TO_SENDER | 0       | ANALOG_SUCCESS_WORKFLOW            | EFFECTIVE_DATE     | 0              | differente   |

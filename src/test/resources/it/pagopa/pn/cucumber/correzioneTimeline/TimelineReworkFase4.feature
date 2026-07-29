@@ -387,8 +387,32 @@ Feature: Test relativi al SRS di correzione timeline fase 4
     Then si verifica che la richiesta di remove effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di remove effettuata sia in stato "ERROR" entro 300 secondi controllando ogni 5 secondi
 
+  @timelineReworkF4
+  Scenario: [TR4_INVALIDATION_CHECK_FULL_SENT_NOTIFICATION] Correzione puntuale di un elemento di timeline e verifica della presenza (o meno) del NOTIFICATION_TIMELINE_REWORKED nelle fullSentNotification con le varie versioni
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | Via@OK_AR |
+      | digitalDomicile         | NULL      |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
+    When viene invocata una richiesta di correzione puntuale per la notifica appena creata con i seguenti parametri
+      | element1 | SEND_ANALOG_PROGRESS |
+    Then si verifica che la richiesta di remove effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
+    And recuperando la fullSentNotification con la versione b2b "V24" non è presente l'elemento di timeline "NOTIFICATION_TIMELINE_REWORKED"
+    And recuperando la fullSentNotification con la versione b2b "V23" non è presente l'elemento di timeline "NOTIFICATION_TIMELINE_REWORKED"
+    And recuperando la fullSentNotification con la versione b2b "V2" non è presente l'elemento di timeline "NOTIFICATION_TIMELINE_REWORKED"
+    And controllo la correttezza dei timelineElementId degli elementi di timeline della fullSentNotification con versione b2b "V24"
+    And controllo la correttezza dei timelineElementId degli elementi di timeline della fullSentNotification con versione b2b "V23"
+    And controllo la correttezza dei timelineElementId degli elementi di timeline della fullSentNotification con versione b2b "V2"
+
   @timelineReworkF4 @cleanWebhook @precondition @webhookV29
-  Scenario: [TR4_INVALIDATION_WEBHOOK] Correzione puntuale di un elemento di timeline e verifica della presenza (o meno) del NOTIFICATION_TIMELINE_REWORKED negli stream con le varie versioni
+  Scenario: [TR4_INVALIDATION_CHECK_WEBHOOK] Correzione puntuale di un elemento di timeline e verifica della presenza (o meno) del NOTIFICATION_TIMELINE_REWORKED negli stream con le varie versioni
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -430,7 +454,7 @@ Feature: Test relativi al SRS di correzione timeline fase 4
     And la category "NOTIFICATION_TIMELINE_REWORKED" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V23"
     And la category "NOTIFICATION_TIMELINE_REWORKED" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V10"
 
-  @timelineReworkF4 @nrt
+  @timelineReworkF4 @visualizzazioneNotifica
   Scenario: [VISUALIZZAZIONE_POST_120_GG] In caso di notifica visualizzata dopo più di 120 giorni, la visualizzazione non deve produrre gli elementi di timeline di visualizzazione, nè la relativa attestazione opponibile
     Given "Comune_Multi" recupera lato web PA una notifica monodestinatario in stato "EFFECTIVE_DATE" inviata tra 200 e 120 giorni fa con destinatario Mario Gherkin senza allegati disponibili
     When "Mario Gherkin" legge la notifica ricevuta
@@ -443,7 +467,76 @@ Feature: Test relativi al SRS di correzione timeline fase 4
       | details          | NOT_NULL |
       | details_recIndex | 0        |
 
-  @timelineReworkF4 @nrt
+  @timelineReworkF4 @visualizzazioneNotifica
+  Scenario: [VISUALIZZAZIONE_POST_120_GG_MULTI] In caso di notifica visualizzata dopo più di 120 giorni, la visualizzazione non deve produrre gli elementi di timeline di visualizzazione, nè la relativa attestazione opponibile
+    Given "Comune_Multi" recupera lato web PA una notifica multidestinatario in stato "EFFECTIVE_DATE" inviata tra 200 e 120 giorni fa con destinatario Mario Gherkin senza allegati disponibili
+    When "Mario Gherkin" legge la notifica ricevuta
+    And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" non esista
+      | loadTimeline     | true     |
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
+    And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED_CREATION_REQUEST" non esista
+      | loadTimeline     | true     |
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
+
+  @timelineReworkF4 @visualizzazioneNotifica
+  Scenario: [VISUALIZZAZIONE_POST_120_GG_DECEDUTO] In caso di notifica visualizzata dopo più di 120 giorni, la visualizzazione non deve produrre gli elementi di timeline di visualizzazione, nè la relativa attestazione opponibile
+    Given "Comune_Multi" recupera lato web PA una notifica monodestinatario in stato "RETURNED_TO_SENDER" inviata tra 200 e 120 giorni fa con destinatario Mario Gherkin senza allegati disponibili
+    When "Mario Gherkin" legge la notifica ricevuta
+    And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" non esista
+      | loadTimeline     | true     |
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
+    And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED_CREATION_REQUEST" non esista
+      | loadTimeline     | true     |
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
+
+  @timelineReworkF4 @visualizzazioneNotifica
+  Scenario: [VISUALIZZAZIONE_POST_120_GG_DECEDUTO_MULTI] In caso di notifica visualizzata dopo più di 120 giorni, la visualizzazione non deve produrre gli elementi di timeline di visualizzazione, nè la relativa attestazione opponibile
+    Given "Comune_Multi" recupera lato web PA una notifica multidestinatario in stato "RETURNED_TO_SENDER" inviata tra 200 e 120 giorni fa con destinatario Mario Gherkin senza allegati disponibili
+    When "Mario Gherkin" legge la notifica ricevuta
+    And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" non esista
+      | loadTimeline     | true     |
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
+    And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED_CREATION_REQUEST" non esista
+      | loadTimeline     | true     |
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
+
+  @timelineReworkF4 @visualizzazioneNotifica
+  Scenario: [VISUALIZZAZIONE_ENTRO_120_GG_ATTESTAZIONE_OPPONIBILE_PERFEZIONATA] In caso di notifica perfezionata visualizzata entro 120 giorni, la visualizzazione produce gli elementi di timeline di visualizzazione e la relativa attestazione opponibile
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | Via@OK_AR |
+      | digitalDomicile         | NULL      |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
+    When "Mario Gherkin" legge la notifica ricevuta
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
+    Then "Mario Gherkin" richiede il download dell'attestazione opponibile "RECIPIENT_ACCESS"
+
+  @timelineReworkF4 @visualizzazioneNotifica
+  Scenario: [VISUALIZZAZIONE_ENTRO_120_GG_ATTESTAZIONE_OPPONIBILE_DECEDUTO] In caso di notifica in stato deceduto visualizzata entro 120 giorni, la visualizzazione produce gli elementi di timeline di visualizzazione e la relativa attestazione opponibile
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | @FAIL_DECEDUTO_AR |
+      | digitalDomicile         | NULL              |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino allo stato della notifica "RETURNED_TO_SENDER"
+    When "Mario Gherkin" legge la notifica ricevuta
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
+    Then "Mario Gherkin" richiede il download dell'attestazione opponibile "RECIPIENT_ACCESS"
+
+  @visualizzazioneNotificaFeatureFlagOff
   Scenario: [VISUALIZZAZIONE_POST_120_GG_MULTI] In caso di notifica visualizzata dopo più di 120 giorni, la visualizzazione non deve produrre gli elementi di timeline di visualizzazione, nè la relativa attestazione opponibile
     Given "Comune_Multi" recupera lato web PA una notifica multidestinatario in stato "EFFECTIVE_DATE" inviata tra 200 e 120 giorni fa con destinatario Mario Gherkin senza allegati disponibili
     When "Mario Gherkin" legge la notifica ricevuta

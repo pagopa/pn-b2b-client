@@ -908,9 +908,9 @@ public class B2bStepsV26 implements B2bStepsInterface {
                                 .findFirst().orElse(null);
                         String businessTimestamp = invalidatedElement.get("businessTimestamp").s();
                         log.info("BUSINESS TIMESTAMP OF %s : &s", el, businessTimestamp);
-                        assertThat(el.getEventTimestamp().toString())
-                                .as("L'eventTimestamp dell'elemento invalidato non coincide con il business timestamp dell'elemento recuperato sulla timeline")
-                                .isEqualTo(businessTimestamp);
+                        assertThat(el.getEventTimestamp())
+                                .as("L'eventTimestamp dell'elemento invalidato %s non coincide con il business timestamp dell'elemento recuperato sulla timeline", el.getElementId())
+                                .isEqualTo(OffsetDateTime.parse(businessTimestamp));
                     }
                 }
             }
