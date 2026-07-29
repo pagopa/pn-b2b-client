@@ -128,6 +128,15 @@ public class DelayerLambdaClient {
         return getPaperDelivery(deliveryDate, workFlowStep, null);
     }
 
+    public DelayerSenderLimits getSenderLimitByProvinceWithTable(String table, String deliveryDate, String province) {
+        var params = mapOf(
+                mandatoryEntry("table", table),
+                mandatoryEntry("deliveryDate", deliveryDate),
+                mandatoryEntry("province", province)
+        );
+        return invoke(DelayerOperation.GET_SENDER_LIMIT, DelayerSenderLimits.class, params);
+    }
+
     public DelayerSenderLimits getSenderLimitByProvince(String deliveryDate, String province) {
         var params = mapOf(
                 mandatoryEntry("deliveryDate", deliveryDate),
@@ -182,18 +191,18 @@ public class DelayerLambdaClient {
     }
 
     public DelayerPresigneUrlUpload getPresignedUrlUpload(String filename, String checksumSha256B64) {
-        var params = mapOf(
-                mandatoryEntry("filename", filename),
-                mandatoryEntry("checksumSha256B64", checksumSha256B64),
-                entry("presignedUrlType", "UPLOAD")
+        var params = Map.of(
+                "fileName", filename,
+                "checksumSha256B64", checksumSha256B64,
+                "presignedUrlType", "UPLOAD"
         );
         return invoke(DelayerOperation.GET_PRESIGNED_URL, DelayerPresigneUrlUpload.class, params);
     }
 
     public DelayerPresigneUrlDownload getPresignedUrlDownload(String filename) {
-        var params = mapOf(
-                mandatoryEntry("filename", filename),
-                entry("presignedUrlType", "DOWNLOAD")
+        var params = Map.of(
+                "fileName", filename,
+                "presignedUrlType", "DOWNLOAD"
         );
         return invoke(DelayerOperation.GET_PRESIGNED_URL, DelayerPresigneUrlDownload.class, params);
     }
@@ -218,10 +227,11 @@ public class DelayerLambdaClient {
     private <T> T getCounters(DelayerCounterType counterType,
                               String deliveryDate,
                               Map<String, String> parameters,
-                              Class<T> responseType) {
+                              Class<T> responseType,
+                              boolean fromMock) {
 
         var params = mapOf(
-                entry("table", DelayerTable.PaperDeliveryCounters),
+                entry("table", fromMock ? DelayerTable.PaperDeliveryCountersMock : DelayerTable.PaperDeliveryCounters),
                 mandatoryEntry("counterType", counterType),
                 mandatoryEntry("deliveryDate", deliveryDate),
                 entryMap(parameters)
@@ -235,18 +245,26 @@ public class DelayerLambdaClient {
                 DelayerCounterType.PRINT,
                 deliveryDate,
                 null,
-                DelayerCountersPrint.class
+                DelayerCountersPrint.class,
+                false
         );
     }
 
     public DelayerCountersSumEstimates getCountersSumEstimates(String deliveryDate, String province,
                                                                String productType) {
-        return getCountersSumEstimates(deliveryDate, province, productType, null);
+        return getCountersSumEstimates(deliveryDate, province, productType, null, false);
     }
 
     public DelayerCountersSumEstimates getCountersSumEstimates(String deliveryDate, String province,
                                                                String productType,
-                                                               String lastEvaluatedKey) {
+                                                               boolean fromMock) {
+        return getCountersSumEstimates(deliveryDate, province, productType, null, fromMock);
+    }
+
+    public DelayerCountersSumEstimates getCountersSumEstimates(String deliveryDate, String province,
+                                                               String productType,
+                                                               String lastEvaluatedKey,
+                                                               boolean fromMock) {
         var params = mapOf(
                 entry("province", province),
                 entry("productType", productType),
@@ -257,7 +275,8 @@ public class DelayerLambdaClient {
                 DelayerCounterType.SUM_ESTIMATES,
                 deliveryDate,
                 params,
-                DelayerCountersSumEstimates.class
+                DelayerCountersSumEstimates.class,
+                fromMock
         );
     }
 
@@ -279,7 +298,8 @@ public class DelayerLambdaClient {
                 DelayerCounterType.EXCLUDE,
                 deliveryDate,
                 params,
-                DelayerCountersExclude.class
+                DelayerCountersExclude.class,
+                false
         );
     }
 
@@ -296,31 +316,11 @@ public class DelayerLambdaClient {
         return getResidualPapers(deliveryDate, null);
     }
 
-    /**
-     * Invoca la lambda Portfat con evento file-ready (downloadUrl del file zip elaborato).
-     */
-    public void invokePortfatFileReady(String portfatLambdaName, String downloadUrl) {
-        try {
-            var bodyNode = objectMapper.createObjectNode();
-            bodyNode.put("downloadUrl", downloadUrl);
-            bodyNode.put("fileVersion", "1.0.0");
-
-            var rootNode = objectMapper.createObjectNode();
-            rootNode.put("httpMethod", "POST");
-            rootNode.put("resource", "/file-ready-event");
-            rootNode.put("body", bodyNode.toString());
-
-            String rawResult = lambdaInvoker.invokeMyLambda(portfatLambdaName, objectMapper.writeValueAsString(rootNode));
-            JsonNode root = objectMapper.readTree(rawResult);
-            int statusCode = root.path("statusCode").asInt(-1);
-            if (statusCode != 200 && statusCode != -1) {
-                throw new RuntimeException("Portfat lambda failed: " + root.path("body").asText());
-            }
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to invoke portfat file-ready lambda", e);
-        }
+    public void insertMockSenderLimits(String filename) {
+        var params = paramsOf(
+                mandatory("parameters", filename)
+        );
+        invoke(DelayerOperation.INSERT_MOCK_SENDER_LIMITS, Void.class, params);
     }
 
     private <T> T invoke(DelayerOperation operationType, TypeReference<T> responseType, Object parameters) {

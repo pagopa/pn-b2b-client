@@ -24,7 +24,14 @@ import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import io.cucumber.spring.ScenarioScope;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -483,13 +490,16 @@ public class DelayerSteps {
     }
 
 
-    @Then("viene verificato il limite garantito per la pa: {string} relativo a provincia: {string}, prodotto: {string} e deliveryDate: {string}")
-    public void checkSenderLimitForPA(String paId, String province, String product, String deliveryDate) {
+    @Then("viene verificato che il limite garantito per la pa: {string} relativo a provincia: {string}, prodotto: {string} sia corretto")
+    public void checkSenderLimitForPA(String paId, String province, String product) {
+        Assertions.assertThat(context.expectedDeliveryDate)
+                .as("La deliveryDate deve essere impostata prima di verificare il limite del mittente")
+                .isNotNull();
+        String deliveryDate = context.expectedDeliveryDate;
 
         String pk = new StringBuilder(paId).append("~")
                 .append(product).append("~")
                 .append(province).toString();
-
         int sumEstimate = service.getCountersSumEstimates(deliveryDate, province, product).getNumberOfShipments();
         int weeklyEstimate = service.fetchWeeklyEstimateForPA(deliveryDate, pk);
         Set<String> productsWithCapacity = new HashSet<>();
@@ -509,7 +519,7 @@ public class DelayerSteps {
 
         double expectedSenderLimit = Math.ceil((sumDeclaredCapacity - toBeExcluded) * (senderLimitPercentage / 100.0));
 
-        int actualSenderLimit = service.getUsedSenderLimit(deliveryDate, pk);
+        int actualSenderLimit = service.getUsedSenderLimit(DelayerPaperDeliveryUtils.getPreviousMondayFromDate(deliveryDate, 1), pk);
 
         Assertions.assertThat(expectedSenderLimit).as("Confronto di actual ed expected del limite del mittente").isEqualTo(actualSenderLimit);
 

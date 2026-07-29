@@ -165,6 +165,7 @@ import it.pagopa.pn.client.b2b.pa.utils.DataPreparationRaddVpceService;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.model.StimeMittentiContext;
 import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
+import it.pagopa.pn.cucumber.steps.delayer.client.PortfatLambdaClient;
 import it.pagopa.pn.cucumber.steps.delayer.loader.DelayerCsvLoader;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSuiteContext;
@@ -325,7 +326,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnPollingServiceValidationStatusAcceptedExtraRapidV29.class,
         PnPollingServiceStatusExtraRapidV29.class,
         PnPollingServiceTimelineExtraRapidV29.class,
-
+        PortfatLambdaClient.class,
         MailSenderConfig.class,
         PnParserService.class,
         LegalFactTokenConfiguration.class,
