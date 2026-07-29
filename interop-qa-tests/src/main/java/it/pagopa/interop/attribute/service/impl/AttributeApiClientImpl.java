@@ -50,6 +50,11 @@ public class AttributeApiClientImpl implements IAttributeApiClient {
     }
 
     @Override
+    public Attribute createCertifiedDiscreteAttribute(AttributeSeed attributeSeed) {
+        return attributesApi.createCertifiedDiscreteAttribute(attributeSeed);
+    }
+
+    @Override
     public Attribute createVerifiedAttribute(AttributeSeed attributeSeed) {
         return attributesApi.createVerifiedAttribute(attributeSeed);
     }

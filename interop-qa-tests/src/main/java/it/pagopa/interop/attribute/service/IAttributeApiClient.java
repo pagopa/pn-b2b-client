@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 
 public interface IAttributeApiClient extends SettableBearerToken {
     Attribute createCertifiedAttribute(CertifiedAttributeSeed certifiedAttributeSeed);
+    Attribute createCertifiedDiscreteAttribute(AttributeSeed attributeSeed);
     Attribute createVerifiedAttribute(AttributeSeed attributeSeed);
     Attribute createDeclaredAttribute(AttributeSeed attributeSeed);
     Attributes getAttributes(Integer limit, Integer offset, List<AttributeKind> kinds, String q, String origin);
