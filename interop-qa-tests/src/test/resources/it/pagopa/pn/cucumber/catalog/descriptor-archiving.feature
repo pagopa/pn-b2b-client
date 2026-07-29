@@ -382,3 +382,23 @@ Feature: Archiviazione manuale di un descrittore
       | admin        | 90          |
       | admin        | 120         |
 
+  @sad-path
+  Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_TEMPLATE_INSTANCE_1.2] Un utente con ruolo non autorizzato NON può avviare il processo di archiviazione manuale del descrittore di un e-service creato da template
+    Given l'utente è un "admin" di "PA2"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA2"
+    And l'utente effettua l'aggiunta di una versione in stato PUBLISHED all'e-service con successo
+    When l'utente è un "<role>" di "PA2"
+    And l'utente avvia la messa in archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
+    Then si ottiene response status code 403
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
+    And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
+
+    Examples:
+      | role     |
+      | security |
+      | support  |
+      | reviewer |
+      | viewer   |
