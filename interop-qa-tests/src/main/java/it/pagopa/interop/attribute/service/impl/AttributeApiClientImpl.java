@@ -85,6 +85,11 @@ public class AttributeApiClientImpl implements IAttributeApiClient {
     }
 
     @Override
+    public Attribute getAttributeById(UUID attributeId) {
+        return attributesApi.getAttributeById(attributeId);
+    }
+
+    @Override
     public ResponseEntity<Attribute> getAttributeByIdRE(UUID attributeId) {
         return attributesApi.getAttributeByIdWithHttpInfo(attributeId);
     }
