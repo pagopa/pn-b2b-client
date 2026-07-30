@@ -300,7 +300,6 @@ Feature: Test relativi al SRS di correzione timeline fase 4
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
-    Given imposto lo iun di SharedSteps a "JAVW-RPKV-AGRG-202607-K-1" e la pa a "Comune_Multi"
     When viene invocata una richiesta di correzione puntuale per la notifica appena creata con i seguenti parametri
       | recIndex | RECINDEX_1                      |
       | element1 | SEND_ANALOG_PROGRESS;RECINDEX_0 |
@@ -501,7 +500,7 @@ Feature: Test relativi al SRS di correzione timeline fase 4
       | details          | NOT_NULL |
       | details_recIndex | 0        |
 
-  @timelineReworkF4 @visualizzazioneNotifica
+  @timelineReworkF4 @visualizzazioneNotifica @visualizzazioneNotificaFeatureFlagOff
   Scenario: [VISUALIZZAZIONE_ENTRO_120_GG_ATTESTAZIONE_OPPONIBILE_PERFEZIONATA] In caso di notifica perfezionata visualizzata entro 120 giorni, la visualizzazione produce gli elementi di timeline di visualizzazione e la relativa attestazione opponibile
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -516,7 +515,7 @@ Feature: Test relativi al SRS di correzione timeline fase 4
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     Then "Mario Gherkin" richiede il download dell'attestazione opponibile "RECIPIENT_ACCESS"
 
-  @timelineReworkF4 @visualizzazioneNotifica
+  @timelineReworkF4 @visualizzazioneNotifica @visualizzazioneNotificaFeatureFlagOff
   Scenario: [VISUALIZZAZIONE_ENTRO_120_GG_ATTESTAZIONE_OPPONIBILE_DECEDUTO] In caso di notifica in stato deceduto visualizzata entro 120 giorni, la visualizzazione produce gli elementi di timeline di visualizzazione e la relativa attestazione opponibile
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |

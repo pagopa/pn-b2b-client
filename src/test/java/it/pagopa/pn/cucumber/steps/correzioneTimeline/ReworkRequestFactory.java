@@ -32,7 +32,7 @@ final class ReworkRequestFactory {
         reworkRequest.setPcRetry(pcRetry);
         reworkRequest.setRecIndex(recIndex);
         reworkRequest.setExpectedStatusCode(expectedStatusCode);
-        log.info("REWORK request built: %s", reworkRequest);
+        log.info("REWORK request built: {}", reworkRequest);
         return reworkRequest;
     }
 

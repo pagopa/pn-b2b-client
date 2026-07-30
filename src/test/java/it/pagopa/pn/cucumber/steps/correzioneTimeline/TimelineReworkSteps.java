@@ -214,7 +214,7 @@ public class TimelineReworkSteps {
             });
             punctualCorrectionRequest = ReworkRequestFactory.invalidationRequest(recIndex, timelineElementsId);
             removeElementsResponse = reworkTimelineClient.invalidateTimelineElements(iun, punctualCorrectionRequest);
-            log.info("Successfully invalidated. Invalidation response: {}", restartAttemptResponse);
+            log.info("Successfully invalidated. Invalidation response: {}", removeElementsResponse);
         } catch (HttpStatusCodeException e) {
             httpStatusCode = e.getStatusCode();
         }
@@ -222,10 +222,10 @@ public class TimelineReworkSteps {
 
     @And("viene ripetuta la richiesta di invalidazione precedente")
     public void repeatInvalidateTimelineElements() {
-        assertThat(punctualCorrectionRequest).as("").isNotNull();
+        assertThat(punctualCorrectionRequest).as("La richiesta di invalidazione precedente non è stata inizializzata").isNotNull();
         try {
             removeElementsResponse = reworkTimelineClient.invalidateTimelineElements(sharedSteps.getNotificationIun(), punctualCorrectionRequest);
-            log.info("Successfully invalidated. Invalidation response: {}", restartAttemptResponse);
+            log.info("Successfully invalidated. Invalidation response: {}", removeElementsResponse);
         } catch (HttpStatusCodeException e) {
             httpStatusCode = e.getStatusCode();
         }
@@ -527,7 +527,7 @@ public class TimelineReworkSteps {
         try {
             await().atMost(15, TimeUnit.MINUTES).pollInterval(30, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(() -> {
                 reworkedTimelinesForInvoicingResponse = dynamoDbService.call(DynamoTableName.REWORKED_TIMELINES_FOR_INVOICING, Map.of(
-                        ":pk", AttributeValue.builder().s(pk).build(),
+                        ":v_paId_invoicingDay", AttributeValue.builder().s(pk).build(),
                         ":v_iun", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build()
                 ));
                 log.info("REWORKED_TIMELINES_FOR_INVOICING RESPONSE -> {}", reworkedTimelinesForInvoicingResponse);
