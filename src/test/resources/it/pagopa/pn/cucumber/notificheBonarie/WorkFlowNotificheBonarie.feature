@@ -300,11 +300,6 @@ Feature: Workflow di una notifica bonaria.
     And si attende che venga prodotto l'elemento "WORKFLOW_ENDED_UNREACHED" della notifica bonaria
 
 
-  @informalNotificationsWorkFlow
-  Scenario: [NOTIFICHE_BONARIE_WORKFLOW_02_2_C] Come ente mittente invio una notifica bonaria verso PF
-
-  @informalNotificationsWorkFlow
-  Scenario: [NOTIFICHE_BONARIE_WORKFLOW_02_2_D] Come ente mittente invio una notifica bonaria verso PF
 
 
   @informalNotificationsWorkFlow
@@ -646,8 +641,8 @@ Feature: Workflow di una notifica bonaria.
   @informalNotificationsWorkFlow @informalNotMVP #SENT in EMAIL
   Scenario: [NOTIFICHE_BONARIE_WORKFLOW_01_5_A] Come ente mittente invio una notifica bonaria verso PF ricevo feedback desiderato ma non..
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | todo                                    |
-      | messageId       | ${IT}                                   |
+      | campaignId      | QADigital                               |
+      | messageId       | ${NEW-IT}                               |
       | subject         | Test workflow                           |
       | recipientType   | PF                                      |
       | taxId           | FRMTTR76M06B715E                        |
@@ -663,8 +658,8 @@ Feature: Workflow di una notifica bonaria.
   @informalNotificationsWorkFlow @informalNotMVP #SENT in EMAIL
   Scenario: [NOTIFICHE_BONARIE_WORKFLOW_01_5_B] Come ente mittente invio una notifica bonaria verso PF ricevo feedback desiderato ma non..
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | todo                     |
-      | messageId       | ${IT}                    |
+      | campaignId      | QADigital                |
+      | messageId       | ${NEW-IT}                |
       | subject         | Test workflow            |
       | recipientType   | PG                       |
       | taxId           | 20517490320              |
@@ -749,9 +744,12 @@ Feature: Workflow di una notifica bonaria.
       | digitalDomicile | NULL                    |
       | phone_number    | NULL                    |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
-    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
-      | details_channel | EMAIL |
-    #And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
+    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_PROGRESS" della notifica bonaria con dettagli
+      | details_channel            | EMAIL |
+      | details_deliveryDetailCode | M003  |
+    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_PROGRESS" della notifica bonaria con dettagli
+      | details_channel            | EMAIL |
+      | details_deliveryDetailCode | M004  |
     And verifico la presenza di un audit log su "/aws/ecs/pn-workflow-manager" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun    | auto               |
       | param1 | AUD_COM_SEND_EMAIL |
@@ -772,7 +770,7 @@ Feature: Workflow di una notifica bonaria.
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
       | details_channel        | SMS |
-      | details_responseStatus | KO  |
+      | details_responseStatus | OK  |
     And si attende che la notifica bonaria passi in stato "COMPLETED_UNREACHED"
     And verifico la presenza di un audit log su "/aws/ecs/pn-workflow-manager" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun    | auto             |
@@ -796,10 +794,10 @@ Feature: Workflow di una notifica bonaria.
     And il destinatario legge la notifica bonaria
     And si attende che venga prodotto l'elemento "INFORMAL_NOTIFICATION_VIEWED" della notifica bonaria
     And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-commons" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun    | auto             |
       | param1 | AUD_COM_VIEW_RCP |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-commons" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun    | auto             |
       | param1 | AUD_COM_VIEW_SND |
 

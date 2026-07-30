@@ -824,6 +824,7 @@ public class PresaInCaricoNoticaBonariaSteps {
         sharedSteps.setNotificationIun(savedIun);
         lastException = null;
     }
+}
 // todo t bonarie eliminare dopo test dello step unico
 //    @Then("viene inviata una nuova notifica bonaria")
 //    public void sendInformal() throws IOException {
@@ -869,5 +870,5 @@ public class PresaInCaricoNoticaBonariaSteps {
 
 
 
-}
+
 

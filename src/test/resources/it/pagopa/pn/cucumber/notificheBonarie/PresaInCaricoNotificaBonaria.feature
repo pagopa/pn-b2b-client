@@ -175,9 +175,9 @@ Feature: Sottomissione di una notifica bonaria.
     Then la notifica bonaria è stata rifiutata per l'errore: "<ERROR>"
     Examples:
       | campaignId         | ERROR                   |
-      | campaign-draft     | CAMPAIGN_INVALID_STATUS |
-      | campaign-concluded | CAMPAIGN_INVALID_STATUS |
-      | campaign-cancelled | CAMPAIGN_INVALID_STATUS |
+      | CampDraft     | CAMPAIGN_INVALID_STATUS |
+      | CampConcluded | CAMPAIGN_INVALID_STATUS |
+      | CampCancelled | CAMPAIGN_INVALID_STATUS |
 
 
 # *******************************************************************
@@ -933,7 +933,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalAsyncValidation @informalNotMVP #todo
   Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6_D] Come ente mittente tento invio una notifica bonaria senza indirizzo digitale per un campagna con canale digitale verso PF.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | campaign-digital  |
+      | campaignId      | QADigital  |
       | recipientType   | PF                |
       | taxId           | FRMTTR76M06B715E  |
       | denomination    | Ettore Fieramosca |
@@ -945,7 +945,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalAsyncValidation @informalNotMVP #todo
   Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6_D_PG2] Come ente mittente invio una notifica bonaria senza indirizzo digitale per un campagna NON digitale.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | SoricalFattOrd |
+      | campaignId      | CampAnalogic |
       | recipientType   | PG             |
       | taxId           | 20517490320    |
       | denomination    | Acme Spa       |
