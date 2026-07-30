@@ -154,6 +154,26 @@ public class EServiceTemplateInstanceCreateSteps {
         checkEServiceAndMutateState(expectedState);
     }
 
+    @Given("l'utente pubblica una nuova versione dell'istanza del template {isAsynchronous} con successo")
+    public void publishNewTemplateInstanceVersionSuccessfully(boolean isAsynchronous) {
+        String userToken = sharedStepsContext.getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+
+        UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
+        UUID newDescriptorId = this.dataPreparationService.createNextDraftDescriptor(eServiceId);
+        sharedStepsContext.getEServiceTemplateStepContext().setLastEServiceDescriptorIdCreatedFromTemplate(newDescriptorId);
+
+        //this.dataPreparationService.bringDescriptorToGivenState(
+        this.dataPreparationService.bringTemplateInstanceDescriptorToGivenState(
+            eServiceId,
+            newDescriptorId,
+            EServiceDescriptorState.PUBLISHED,
+            false,
+            isAsynchronous
+        );
+
+    }
+
     private void checkEServiceAndMutateState(EServiceDescriptorState expectedState) {
         checkEServiceCreated(EServiceDescriptorState.DRAFT);
         UUID lastEServiceIdCreatedFromTemplate = sharedStepsContext.getEServiceTemplateStepContext()

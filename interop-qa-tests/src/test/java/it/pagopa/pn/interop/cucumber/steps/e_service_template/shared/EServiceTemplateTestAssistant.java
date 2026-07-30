@@ -81,7 +81,7 @@ public class EServiceTemplateTestAssistant {
             .getLastTemplateManaged();
         BiConsumer<UUID, UUID> publisher = (templateId, versionId) -> {
             this.addDocumentToEServiceTemplateVersionSuccessfully(templateId, versionId, EServiceTemplateDocumentKind.INTERFACE, 0); // perché ogni template deve avere almeno un'interfaccia
-            if(lastTemplateManaged.getAsync().equals(true)) {
+            if (Boolean.TRUE.equals(lastTemplateManaged.getAsync())) {
                 this.updateLastTemplateVersionWithAsyncExchangeProperties();
                 this.addDocumentToEServiceTemplateVersionSuccessfully(EServiceTemplateDocumentKind.ASYNC_EXCHANGE_CALLBACK_INTERFACE, 0); // perché ogni template async deve avere almeno un'interfaccia di callback
             }
