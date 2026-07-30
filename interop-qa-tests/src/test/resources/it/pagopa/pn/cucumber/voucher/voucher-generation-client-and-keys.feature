@@ -115,7 +115,7 @@ Scenario: [VOUCHER_GENERATION_CLIENT_AND_KEYS_8] La generazione del Voucher fall
     Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
     Given "PA1" rimuove quella chiave dal client 
     When l'utente richiede la generazione del voucher 
-    Then la richiesta di generazione del Voucher non va a buon fine
+    Then si ottiene status code 400
 
 @voucher_generation_client_and_keys9
 Scenario: [VOUCHER_GENERATION_CLIENT_AND_KEYS_9] La generazione del Voucher fallisce quando la chiave viene rimossa dal client
@@ -130,7 +130,7 @@ Scenario: [VOUCHER_GENERATION_CLIENT_AND_KEYS_9] La generazione del Voucher fall
     Given un "admin" di "PA1" ha aggiunto una nuova chiave pubblica al client
     Given "PA1" rimuove quella chiave dal client 
     When l'utente richiede la generazione del voucher
-    Then la richiesta di generazione del Voucher non va a buon fine
+    Then si ottiene status code 400
 
 @voucher_generation_client_and_keys10
 Scenario: [VOUCHER_GENERATION_CLIENT_AND_KEYS_10] La generazione del Voucher fallisce quando l’unica finalità presente viene rimossa dal client
@@ -144,7 +144,7 @@ Scenario: [VOUCHER_GENERATION_CLIENT_AND_KEYS_10] La generazione del Voucher fal
     Given "PA1" ha già associato la finalità a quel client
     Given "PA1" rimuove quella finalità dal client
     When l'utente richiede la generazione del voucher
-    Then la richiesta di generazione del Voucher non va a buon fine
+    Then si ottiene status code 400
 
 @voucher_generation_client_and_keys11
 Scenario: [VOUCHER_GENERATION_CLIENT_AND_KEYS_11] La generazione del Voucher fallisce quando la finalità viene rimossa dal client
@@ -160,7 +160,7 @@ Scenario: [VOUCHER_GENERATION_CLIENT_AND_KEYS_11] La generazione del Voucher fal
     Given "PA1" ha già associato quella nuova finalità a quel client
     Given "PA1" rimuove quella finalità dal client
     When l'utente richiede la generazione del voucher
-    Then la richiesta di generazione del Voucher non va a buon fine
+    Then si ottiene status code 400
 
 @voucher_generation_client_and_keys12
 Scenario: [VOUCHER_GENERATION_CLIENT_AND_KEYS_12] La generazione del Voucher fallisce quando la chiave non è associata a un client
@@ -174,7 +174,7 @@ Scenario: [VOUCHER_GENERATION_CLIENT_AND_KEYS_12] La generazione del Voucher fal
     Given "PA1" ha già associato la finalità a quel client
     Given "PA1" ha già creato una nuova chiave pubblica senza associarla al client
     When l'utente richiede la generazione del voucher 
-    Then la richiesta di generazione del Voucher non va a buon fine
+    Then si ottiene status code 400
 
 @voucher_generation_client_and_keys13
 Scenario: [VOUCHER_GENERATION_CLIENT_AND_KEYS_13] La generazione del Voucher fallisce quando la chiave non è associata al client richiesto
@@ -191,7 +191,7 @@ Scenario: [VOUCHER_GENERATION_CLIENT_AND_KEYS_13] La generazione del Voucher fal
     Given "PA1" ha già associato la finalità a quel client
     Given "PA1" ha già associato la finalità al nuovo client
     When l'utente richiede la generazione del voucher indicando il primo client ma con la chiave caricata nel secondo
-    Then la richiesta di generazione del Voucher non va a buon fine
+    Then si ottiene status code 400
 
 @voucher_generation_client_and_keys14
 Scenario: [VOUCHER_GENERATION_CLIENT_AND_KEYS_14] La generazione del Voucher fallisce quando il client viene cancellato
@@ -205,4 +205,4 @@ Scenario: [VOUCHER_GENERATION_CLIENT_AND_KEYS_14] La generazione del Voucher fal
     Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
     Given "PA1" cancella quel client
     When l'utente richiede la generazione del voucher
-    Then la richiesta di generazione del Voucher non va a buon fine
+    Then si ottiene status code 400

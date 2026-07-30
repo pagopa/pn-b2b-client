@@ -196,7 +196,7 @@ Feature: Archiviazione manuale di un e-service
     And la richiesta di fruizione assume lo stato "ACTIVE"
     When l'utente è un "admin" di "PA2"
     And l'utente richiede la generazione del voucher
-    Then la richiesta di generazione del Voucher non va a buon fine
+    Then si ottiene status code 400
 
     Examples:
       | role         |
