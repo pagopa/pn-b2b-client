@@ -182,7 +182,7 @@ Feature: Workflow di una notifica bonaria.
 
 
   #@informalNotificationsWorkFlow #scenari implementati per campagna ad hoc, non è possibile ottenere da campegne MVP
-  Scenario: [NOTIFICHE_BONARIE_WORKFLOW_01_5_A] Come ente mittente invio una notifica bonaria verso PF ricevo feedback desiderato ma non..
+  Scenario: [NOTIFICHE_BONARIE_WORKFLOW_01_5_A1] Come ente mittente invio una notifica bonaria verso PF ricevo feedback desiderato ma non..
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | SoricalFattOrd    |
       | messageId       | ${IT}             |
@@ -198,7 +198,7 @@ Feature: Workflow di una notifica bonaria.
 
 
   #@informalNotificationsWorkFlow #scenari implementati per campagna ad hoc, non è possibile ottenere da campegne MVP
-  Scenario: [NOTIFICHE_BONARIE_WORKFLOW_01_5_B] Come ente mittente invio una notifica bonaria...
+  Scenario: [NOTIFICHE_BONARIE_WORKFLOW_01_5_B1] Come ente mittente invio una notifica bonaria...
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | SoricalFattOrd |
       | messageId       | ${IT}          |
@@ -300,6 +300,44 @@ Feature: Workflow di una notifica bonaria.
     And si attende che venga prodotto l'elemento "WORKFLOW_ENDED_UNREACHED" della notifica bonaria
 
 
+  @informalNotificationsWorkFlow @testb
+  Scenario: [NOTIFICHE_BONARIE_WORKFLOW_02_2_C] Come ente mittente invio una notifica bonaria verso PF ottengo errore SPAM sul email quindi non ko subito ma successivo e ko sms
+    Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
+      | campaignId      | SoricalReminder                    |
+      | messageId       | ${IT}                             |
+      | subject         | Test workflow                     |
+      | recipientType   | PF                                |
+      | taxId           | FRMTTR76M06B715E                  |
+      | denomination    | Ettore Fieramosca                 |
+      | email           | complaint@simulator.amazonses.com |
+      | digitalDomicile | NULL                              |
+      | phone_number    | +39001                            |
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
+    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
+      | details_channel            | EMAIL |
+      | details_deliveryDetailCode | M006  |
+    And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
+    And si attende che venga prodotto l'elemento "WORKFLOW_DONE_REACHED" della notifica bonaria
+
+
+  @informalNotificationsWorkFlow @testb
+  Scenario: [NOTIFICHE_BONARIE_WORKFLOW_02_2_D] Come ente mittente invio una notifica bonaria verso PF ottengo errore BOUCED sul email e solo feddback negativi e ok sms
+    Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
+      | campaignId      | SoricalReminder                 |
+      | messageId       | ${IT}                          |
+      | subject         | Test workflow                  |
+      | recipientType   | PF                             |
+      | taxId           | FRMTTR76M06B715E               |
+      | denomination    | Ettore Fieramosca              |
+      | email           | bounce@simulator.amazonses.com |
+      | digitalDomicile | NULL                           |
+      | phone_number    | +3900000                         |
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
+    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
+      | details_channel            | EMAIL |
+      | details_deliveryDetailCode | M005  |
+    And si attende che la notifica bonaria passi in stato "COMPLETED_UNREACHED"
+    And si attende che venga prodotto l'elemento "WORKFLOW_ENDED_UNREACHED" della notifica bonaria
 
 
   @informalNotificationsWorkFlow
@@ -489,7 +527,7 @@ Feature: Workflow di una notifica bonaria.
     And si attende che venga prodotto l'elemento "WORKFLOW_DONE_REACHED" della notifica bonaria
 
 
-  #@informalNotificationsWorkFlow #La campagna analogica prevede sempre indirizzo analogico per PF
+  #@informalNotificationsWorkFlow @testb #La campagna analogica va sempre indicato un indirizzo o cmq trovato sul vas
   Scenario: [NOTIFICHE_BONARIE_WORKFLOW_03_2_B] Come ente mittente invio una notifica bonaria verso PG ricevo solo feedback negativi
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId       | SoricalMessaMora           |
@@ -778,7 +816,7 @@ Feature: Workflow di una notifica bonaria.
 
 
   @informalNotificationsWorkFlow @informalAuditlog
-  Scenario: [NOTIFICHE_BONARIE_WORKFLOW_todo] Come ente mittente invio una notifica bonaria e solo feddback negativi e in seguito viene visualizzata controllo gli audit log
+  Scenario: [NOTIFICHE_BONARIE_WORKFLOW_05_C] Come ente mittente invio una notifica bonaria e solo feddback negativi e in seguito viene visualizzata controllo gli audit log
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | SoricalFattOrd                 |
       | messageId       | ${IT}                          |

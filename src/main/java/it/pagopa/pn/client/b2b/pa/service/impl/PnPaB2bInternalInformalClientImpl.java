@@ -29,14 +29,12 @@ public class PnPaB2bInternalInformalClientImpl {
     private final RecipientReadInformalNotificationApi recipientReadInformalNotificationApi;
     private final InternalOnlyApi internalOnlyApi;
     private final List<String> groups;
-    private String deliveryBasePath;
 
     public PnPaB2bInternalInformalClientImpl(
             RestTemplate restTemplate,
             @Value("${pn.delivery.base-url}") String deliveryBasePathOrigin,
             @Value("${pn.internal.pa-id}") String paId) {
 
-        this.deliveryBasePath = deliveryBasePathOrigin+"/informal/";
         this.paId = paId;
         this.operatorId = "TestMv";
         this.groups = Collections.emptyList();

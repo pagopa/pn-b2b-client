@@ -24,9 +24,7 @@ public class PnPaB2bInternalInformalCampaignClientImpl implements IPnPaB2bIntern
     private static it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformalcampaign.ApiClient newCampaignApiClient(RestTemplate restTemplate, String basePath) {
 
         var client = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformalcampaign.ApiClient(restTemplate);
-
         client.setBasePath(basePath);
-
         return client;
     }
 

@@ -174,7 +174,7 @@ Feature: Sottomissione di una notifica bonaria.
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "REFUSED"
     Then la notifica bonaria è stata rifiutata per l'errore: "<ERROR>"
     Examples:
-      | campaignId         | ERROR                   |
+      | campaignId    | ERROR                   |
       | CampDraft     | CAMPAIGN_INVALID_STATUS |
       | CampConcluded | CAMPAIGN_INVALID_STATUS |
       | CampCancelled | CAMPAIGN_INVALID_STATUS |
@@ -768,7 +768,7 @@ Feature: Sottomissione di una notifica bonaria.
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
-      | messageId     | ${NEW-IT}         |
+      | messageId     | ${IT}         |
       | email         | test@test.it      |
       | phone_number  | <phone>           |
     When l'invio della notifica bonaria fallisce
@@ -787,7 +787,7 @@ Feature: Sottomissione di una notifica bonaria.
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
-      | messageId     | ${NEW-IT}         |
+      | messageId     | ${IT}         |
       | email         | test@test.it      |
       | phone_number  | <phone>           |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
@@ -933,7 +933,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalAsyncValidation @informalNotMVP #todo
   Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6_D] Come ente mittente tento invio una notifica bonaria senza indirizzo digitale per un campagna con canale digitale verso PF.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | QADigital  |
+      | campaignId      | QADigital         |
       | recipientType   | PF                |
       | taxId           | FRMTTR76M06B715E  |
       | denomination    | Ettore Fieramosca |
@@ -946,11 +946,11 @@ Feature: Sottomissione di una notifica bonaria.
   Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6_D_PG2] Come ente mittente invio una notifica bonaria senza indirizzo digitale per un campagna NON digitale.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | CampAnalogic |
-      | recipientType   | PG             |
-      | taxId           | 20517490320    |
-      | denomination    | Acme Spa       |
-      | messageId       | ${NEW-IT}      |
-      | digitalDomicile | NULL           |
+      | recipientType   | PG           |
+      | taxId           | 20517490320  |
+      | denomination    | Acme Spa     |
+      | messageId       | ${NEW-IT}    |
+      | digitalDomicile | NULL         |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
 
 
@@ -981,7 +981,7 @@ Feature: Sottomissione di una notifica bonaria.
     Then la notifica bonaria è stata rifiutata per l'errore: "MESSAGE_LANGUAGE_MISMATCH"
 
 
-  @informalNotificationsValidation @informalAsyncValidation
+  @informalNotificationsValidation @informalSyncValidation
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_G2] Come mittente non associato alla campagna tento l'invio di una notifica bonaria.
     Given l'ente mittente "Comune_1" compila una notifica bonaria con i seguenti dati:
       | campaignId      | SoricalFattOrd            |
@@ -1008,22 +1008,6 @@ Feature: Sottomissione di una notifica bonaria.
     Then la notifica bonaria è stata rifiutata per l'errore: "FILE_PDF_INVALID_ERROR"
 
 
-  @informalNotificationsValidation @informalAsyncValidation @informalNotMVP #todo
-  Scenario Outline: [NOTIFICHE_BONARIE_ASYNC_01_3] Come ente mittente invio una notifica bonaria con campagne non conformi, la nottifca viene rifiutata.
-    Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId           | <campaignId>     |
-      | recipientType        | PF               |
-      | taxId                | FRMTTR76M06B715E |
-      | payment_multy_number | 1                |
-      | messageId            | ${NEW-IT}        |
-    When viene inviata una nuova notifica bonaria e si attende che vada in stato "REFUSED"
-    Then la notifica bonaria è stata rifiutata per l'errore: "<ERROR>"
-    Examples:
-      | campaignId       | ERROR              |
-      | campaign-expired | CAMPAIGN_CLOSED    |
-      | campaign-closed  | CAMPAIGN_CLOSED    |
-      | CAMPAGNA_FAKE    | CAMPAIGN_NOT_FOUND |
-
 
   @informalNotificationsValidation @informalAsyncValidation
   Scenario: [NOTIFICHE_BONARIE_ASYNC_01_4] Come ente mittente invio una notifica bonaria con messaggi id non esistente, la nottifca viene rifiutata.
@@ -1037,7 +1021,7 @@ Feature: Sottomissione di una notifica bonaria.
     Then la notifica bonaria è stata rifiutata per l'errore: "MESSAGE_NOT_FOUND"
 
 
-  @informalNotificationsValidation @informalAsyncValidation
+  @informalNotificationsValidation @informalSyncValidation
   Scenario: [NOTIFICHE_BONARIE_ASYNC_01_4B] Come ente mittente invio una notifica bonaria con campagna id non esistente, la nottifca viene rifiutata.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId           | campaign-0       |
@@ -1045,18 +1029,6 @@ Feature: Sottomissione di una notifica bonaria.
       | taxId                | FRMTTR76M06B715E |
       | payment_multy_number | 1                |
       | messageId            | ${NEW-IT}        |
-    When l'invio della notifica bonaria fallisce
-    Then si riceve errore 404 "PN_DELIVERY_CAMPAIGN_NOT_FOUND"
-
-
-  @informalNotificationsValidation @informalAsyncValidation
-  Scenario: [NOTIFICHE_BONARIE_ASYNC_01_4B2] Come ente mittente tento l'invio di una bonaria per campagna non censita per me.
-    Given l'ente mittente "Comune_1" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalFattOrd    |
-      | recipientType | PF                |
-      | taxId         | FRMTTR76M06B715E  |
-      | denomination  | Ettore Fieramosca |
-      | messageId     | ${NEW-IT}         |
     When l'invio della notifica bonaria fallisce
     Then si riceve errore 404 "PN_DELIVERY_CAMPAIGN_NOT_FOUND"
 

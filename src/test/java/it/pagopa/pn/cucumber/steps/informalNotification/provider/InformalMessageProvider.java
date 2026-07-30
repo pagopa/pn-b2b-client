@@ -80,7 +80,6 @@ public class InformalMessageProvider {
     public String createAndSaveMessageITFR(String cxId) {
 
         messageIdITFR = createMessageITFR(cxId);
-
         return messageIdITFR;
     }
 
@@ -99,7 +98,7 @@ public class InformalMessageProvider {
     private String createMessageIT(String cxId) {
 
         NewMessageRequest request = new NewMessageRequest()
-                .primaryMessage(InformalMessageUtils.buildPrimaryMessage(InformalMessageTemplates.SORICAL_IT));
+                .primaryMessage(InformalMessageUtils.buildPrimaryMessage(InformalMessageTemplates.SORICAL_IT.getContent()));
 
         return pnPaB2bInternalInformalClientImpl.createMessage(cxId, request).getMessageId().toString();
     }
@@ -107,8 +106,8 @@ public class InformalMessageProvider {
     private String createMessageITFR(String cxId) {
 
         NewMessageRequest request = new NewMessageRequest()
-                .primaryMessage(InformalMessageUtils.buildPrimaryMessage(InformalMessageTemplates.SORICAL_IT))
-                .additionalMessage(InformalMessageUtils.buildAdditionalMessage(InformalMessageTemplates.SORICAL_FR));
+                .primaryMessage(InformalMessageUtils.buildPrimaryMessage(InformalMessageTemplates.SORICAL_IT.getContent()))
+                .additionalMessage(InformalMessageUtils.buildAdditionalMessage(InformalMessageTemplates.SORICAL_FR.getContent()));
 
         return pnPaB2bInternalInformalClientImpl.createMessage(cxId, request).getMessageId().toString();
     }
@@ -122,9 +121,7 @@ public class InformalMessageProvider {
     private void waitForMessageAvailability(UUID messageId, String cxId) {
 
         await().atMost(Duration.ofSeconds(10)).pollInterval(Duration.ofSeconds(1)).ignoreExceptions().untilAsserted(() -> {
-
             MessageResponse response = pnPaB2bInternalInformalClientImpl.getMessage(messageId, cxId);
-
             assertNotNull(response);
             assertEquals(messageId, response.getMessageId());
         });
