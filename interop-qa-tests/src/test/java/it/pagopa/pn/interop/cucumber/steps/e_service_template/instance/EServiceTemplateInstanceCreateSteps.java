@@ -167,8 +167,8 @@ public class EServiceTemplateInstanceCreateSteps {
         checkEServiceAndMutateState(EServiceDescriptorState.DRAFT);
     }
 
-    @Given("l'utente specifica i metadati di interfaccia dell'istanza del template con successo")
-    public void putInterfaceMetadataSuccessfully() {
+    @Given("l'utente specifica i metadati mancanti all'istanza del template {isAsynchronous} con successo")
+    public void putInterfaceMetadataSuccessfully(boolean isAsync) {
         String userToken = sharedStepsContext.getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
 
@@ -176,6 +176,7 @@ public class EServiceTemplateInstanceCreateSteps {
         UUID descriptorId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorIdCreatedFromTemplate();
 
         dataPreparationService.interpolateInterfaceToDescriptor(eServiceId, descriptorId);
+        dataPreparationService.updateTemplateInstanceDraftDescriptor(eServiceId, descriptorId, isAsync);
     }
 
     @And("l'utente tenta la pubblicazione di una nuova versione dell'istanza del template")
@@ -186,6 +187,7 @@ public class EServiceTemplateInstanceCreateSteps {
         UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
         UUID descriptorId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorIdCreatedFromTemplate();
 
+        sharedStepsContext.getDelayService().delayForSeconds(5);
         httpCallExecutor.performCall(() -> eServiceClient.publishDescriptor(eServiceId, descriptorId));
     }
 
