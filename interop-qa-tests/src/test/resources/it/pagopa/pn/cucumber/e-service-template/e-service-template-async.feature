@@ -151,6 +151,7 @@ Feature: Configurazione e gestione di template e-service per scambi asincroni e 
     And l'utente effettua la pubblicazione dell'e-service template
     And si ottiene status code 400
 
+  # KO a causa di https://pagopa.atlassian.net/browse/PIN-10734
   Scenario: [ASYNC_TEMPLATE_ESERVICE_VERSION_1] La pubblicazione di una seconda versione di un'istanza di template va a buon fine
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template asincrono in modalità erogazione con tecnologia "REST" in stato di PUBLISHED
