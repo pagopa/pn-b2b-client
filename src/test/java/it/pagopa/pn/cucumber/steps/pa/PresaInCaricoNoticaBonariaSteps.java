@@ -373,7 +373,7 @@ public class PresaInCaricoNoticaBonariaSteps {
         String recipientCxIdResolved = resolveRecipientCxId(setTaxID(taxId));
 
         try {
-            receivedAttachmentResponse = pnPaB2bInternalInformalClientImpl.getReceivedInformalNotificationDocument(recipientCxIdResolved, savedIun, recipientCxType.PF, 0);
+            receivedAttachmentResponse = pnPaB2bInternalInformalClientImpl.getReceivedInformalNotificationDocument(recipientCxIdResolved, savedIun, recipientCxType, 0);
             lastException = null;
 
         } catch (Exception e) {
@@ -419,7 +419,7 @@ public class PresaInCaricoNoticaBonariaSteps {
         String recipientCxIdResolved = resolveRecipientCxId(cf);
 
         try {
-            receivedAttachmentResponse = pnPaB2bInternalInformalClientImpl.getReceivedInformalNotificationAttachment(recipientCxIdResolved, savedIun, recipientCxType.PF, 0);
+            receivedAttachmentResponse = pnPaB2bInternalInformalClientImpl.getReceivedInformalNotificationAttachment(recipientCxIdResolved, savedIun, recipientCxType, 0);
             lastException = null;
 
         } catch (Exception e) {

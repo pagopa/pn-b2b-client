@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.*;
@@ -187,16 +188,21 @@ public class InformalRecipientBuilder {
 
     private OffsetDateTime parseDueDate(String value) {
 
-        if (value == null) {
+        if (value == null || value.isBlank()) {
             return null;
         }
-        if (value.length() == 10) {
-            return LocalDate
-                    .parse(value)
+        try {
+            return value.length() == 10
+                    ? LocalDate.parse(value)
                     .atStartOfDay()
-                    .atOffset(ZoneOffset.UTC);
+                    .atOffset(ZoneOffset.UTC)
+                    : OffsetDateTime.parse(value);
+
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException(
+                    "Invalid payment dueDate: " + value,
+                    e);
         }
-        return OffsetDateTime.parse(value);
     }
 }
 

@@ -182,7 +182,7 @@ Feature: Invio messaggi cortesia e2e
 
 
   @courtesyMessage @addressBook3 @CM_FlagOFF #rif srs 45
-  Scenario: [COURTESY_SSAGE_SERCQ_F2_8] Verifica successione elementi - Invio ANALOGICO con TPP di cortesia solo PF
+  Scenario: [COURTESY_MESSAGE_SERCQ_F2_8] Verifica successione elementi - Invio ANALOGICO con TPP di cortesia solo PF
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
@@ -194,50 +194,13 @@ Feature: Invio messaggi cortesia e2e
       | payment_pagoPaForm      | SI                      |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_COURTESY_MESSAGE"
-    #And viene verificato che il timestamp dell'evento "SEND_COURTESY_MESSAGE" sia immediatamente successivo a quello dell'evento "AAR_GENERATION" con una differenza massima di 999 secondi
+    And viene verificato che il timestamp dell'evento "SEND_COURTESY_MESSAGE" sia immediatamente successivo a quello dell'evento "AAR_GENERATION" con una differenza massima di 999 secondi
     And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
       | details                | NOT_NULL                          |
       | details_recIndex       | 0                                 |
       | details_digitalAddress | {"type": "TPP", "address": "APP"} |
-    #And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_ANALOG_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_ANALOG_WORKFLOW"
 
-
-  Scenario: [COURTESYSSAGE_SERCQ_F2_8] Verifica successione elementi - Invio ANALOGICO con TPP di cortesia solo PF
-    Given viene generata una nuova notifica
-      | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo               |
-    And destinatario
-      | denomination            | OK-CompiutaGiacenza_890 |
-      | taxId                   | CLMCST42R12D969Z        |
-      | digitalDomicile         | NULL                    |
-      | physicalAddress_address | Via@ok_AR               |
-      | payment_pagoPaForm      | SI                      |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_COURTESY_MESSAGE"
-    #And viene verificato che il timestamp dell'evento "SEND_COURTESY_MESSAGE" sia immediatamente successivo a quello dell'evento "AAR_GENERATION" con una differenza massima di 999 secondi
-    And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
-      | details                | NOT_NULL                          |
-      | details_recIndex       | 0                                 |
-      | details_digitalAddress | {"type": "TPP", "address": "APP"} |
-
-
-  Scenario: [COURTESY_SAGE_SERCQ_F2_8] Verifica successione elementi - Invio ANALOGICO con TPP di cortesia solo PF
-    Given viene generata una nuova notifica
-      | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo               |
-    And destinatario
-      | denomination            | OK-CompiutaGiacenza_890 |
-      | taxId                   | CLMCST42R12D969Z        |
-      | digitalDomicile         | NULL                    |
-      | physicalAddress_address | Via@ok_AR               |
-      | payment_pagoPaForm      | SI                      |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_COURTESY_MESSAGE"
-    #And viene verificato che il timestamp dell'evento "SEND_COURTESY_MESSAGE" sia immediatamente successivo a quello dell'evento "AAR_GENERATION" con una differenza massima di 999 secondi
-    And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
-      | details                | NOT_NULL                          |
-      | details_recIndex       | 0                                 |
-      | details_digitalAddress | {"type": "TPP", "address": "APP"} |
 
 
 
