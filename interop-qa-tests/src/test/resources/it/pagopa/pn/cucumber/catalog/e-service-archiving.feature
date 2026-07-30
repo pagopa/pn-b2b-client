@@ -976,3 +976,56 @@ Feature: Archiviazione manuale di un e-service
     And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     When l'utente clona quell'e-service
     Then si ottiene response status code 200
+
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_ASYNC_1.1] Un ente erogatore di un e-service asincrono in stato PUBLISHED e seconda versione DEPRECATED, può avviare il processo di archiviazione manuale dell'e-service
+    Given l'utente è un "<role>" di "PA1"
+    And "PA1" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
+      | asyncExchangeProperties.responseTime          | 100  |
+      | asyncExchangeProperties.resourceAvailableTime | 100  |
+      | asyncExchangeProperties.confirmation          | true |
+      | asyncExchangeProperties.bulk                  | true |
+      | asyncExchangeProperties.maxResultSet          | 50   |
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service asincrono
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e <gracePeriod> giorni di preavviso
+    Then si ottiene response status code 204
+    And la vecchia versione dell'e-service è in stato "ARCHIVING"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And la versione più recente dell'e-service è in stato "ARCHIVING"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    Examples:
+      | role         | gracePeriod |
+      | admin        | 30          |
+      | api          | 30          |
+      | api,security | 30          |
+      | admin        | 60          |
+      | admin        | 90          |
+      | admin        | 120         |
+
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_ASYNC_1.2] Un ente erogatore di un e-service asincrono in stato SUSPENDED e seconda versione DEPRECATED, può avviare il processo di archiviazione manuale dell'e-service
+    Given l'utente è un "<role>" di "PA1"
+    And "PA1" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
+      | asyncExchangeProperties.responseTime          | 100  |
+      | asyncExchangeProperties.resourceAvailableTime | 100  |
+      | asyncExchangeProperties.confirmation          | true |
+      | asyncExchangeProperties.bulk                  | true |
+      | asyncExchangeProperties.maxResultSet          | 50   |
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service asincrono
+    And "PA1" ha già sospeso quell'e-service
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e <gracePeriod> giorni di preavviso
+    Then si ottiene response status code 204
+    And la vecchia versione dell'e-service è in stato "ARCHIVING"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And la versione più recente dell'e-service è in stato "ARCHIVING_SUSPENDED"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    Examples:
+      | role         | gracePeriod |
+      | admin        | 30          |
+      | api          | 30          |
+      | api,security | 30          |
+      | admin        | 60          |
+      | admin        | 90          |
+      | admin        | 120         |
