@@ -1030,6 +1030,28 @@ Feature: Archiviazione manuale di un e-service
       | admin        | 90          |
       | admin        | 120         |
 
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_ASYNC_1.3] Un utente con ruolo non autorizzato NON può avviare il processo di archiviazione manuale di un e-service asincrono
+    Given l'utente è un "<role>" di "PA1"
+    And "PA1" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
+      | asyncExchangeProperties.responseTime          | 100  |
+      | asyncExchangeProperties.resourceAvailableTime | 100  |
+      | asyncExchangeProperties.confirmation          | true |
+      | asyncExchangeProperties.bulk                  | true |
+      | asyncExchangeProperties.maxResultSet          | 50   |
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service asincrono
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    Then si ottiene response status code 403
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    Examples:
+      | role     |
+      | security |
+      | support  |
+      | reviewer |
+      | viewer   |
+
   Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_ASYNC_CANCELLATION_1.1] L'ente erogatore di un e-service asincrono in stato ARCHIVING può annullare il processo di archiviazione manuale di un e-service in corso
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
