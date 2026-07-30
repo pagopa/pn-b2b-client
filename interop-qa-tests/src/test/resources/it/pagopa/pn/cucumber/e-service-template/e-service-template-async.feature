@@ -158,6 +158,8 @@ Feature: Configurazione e gestione di template e-service per scambi asincroni e 
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template asincrono in modalità erogazione con tecnologia "REST" in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
-    And l'utente pubblica una nuova versione dell'istanza del template asincrono con successo
+    And l'utente crea una nuova versione dell'istanza del template con successo
+    And l'utente specifica i metadati di interfaccia dell'istanza del template con successo
+    And l'utente tenta la pubblicazione di una nuova versione dell'istanza del template
     Then si ottiene response status code 200
 

@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.instance;
 
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -154,8 +155,8 @@ public class EServiceTemplateInstanceCreateSteps {
         checkEServiceAndMutateState(expectedState);
     }
 
-    @Given("l'utente pubblica una nuova versione dell'istanza del template {isAsynchronous} con successo")
-    public void publishNewTemplateInstanceVersionSuccessfully(boolean isAsynchronous) {
+    @Given("l'utente crea una nuova versione dell'istanza del template con successo")
+    public void publishNewTemplateInstanceVersionSuccessfully() {
         String userToken = sharedStepsContext.getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
 
@@ -163,15 +164,29 @@ public class EServiceTemplateInstanceCreateSteps {
         UUID newDescriptorId = this.dataPreparationService.createNextDraftDescriptor(eServiceId);
         sharedStepsContext.getEServiceTemplateStepContext().setLastEServiceDescriptorIdCreatedFromTemplate(newDescriptorId);
 
-        //this.dataPreparationService.bringDescriptorToGivenState(
-        this.dataPreparationService.bringTemplateInstanceDescriptorToGivenState(
-            eServiceId,
-            newDescriptorId,
-            EServiceDescriptorState.PUBLISHED,
-            false,
-            isAsynchronous
-        );
+        checkEServiceAndMutateState(EServiceDescriptorState.DRAFT);
+    }
 
+    @Given("l'utente specifica i metadati di interfaccia dell'istanza del template con successo")
+    public void putInterfaceMetadataSuccessfully() {
+        String userToken = sharedStepsContext.getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+
+        UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
+        UUID descriptorId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorIdCreatedFromTemplate();
+
+        dataPreparationService.interpolateInterfaceToDescriptor(eServiceId, descriptorId);
+    }
+
+    @And("l'utente tenta la pubblicazione di una nuova versione dell'istanza del template")
+    public void attemptToPublishNewTemplateInstanceVersion() {
+        String userToken = sharedStepsContext.getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+
+        UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
+        UUID descriptorId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorIdCreatedFromTemplate();
+
+        httpCallExecutor.performCall(() -> eServiceClient.publishDescriptor(eServiceId, descriptorId));
     }
 
     private void checkEServiceAndMutateState(EServiceDescriptorState expectedState) {

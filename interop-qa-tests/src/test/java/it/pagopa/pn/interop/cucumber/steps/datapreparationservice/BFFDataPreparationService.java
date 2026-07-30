@@ -693,10 +693,6 @@ public class BFFDataPreparationService {
     }
 
     public Map<String, Object> bringTemplateInstanceDescriptorToGivenState(UUID eServiceId, UUID descriptorId, EServiceDescriptorState descriptorState, boolean withDocument) {
-        return bringTemplateInstanceDescriptorToGivenState(eServiceId, descriptorId, descriptorState, withDocument, false);
-    }
-
-    public Map<String, Object> bringTemplateInstanceDescriptorToGivenState(UUID eServiceId, UUID descriptorId, EServiceDescriptorState descriptorState, boolean withDocument, boolean addCallbackInterface) {
         // 1 add document to descriptor
         UUID documentId = null;
         Map<String, Object> result = new HashMap<>();
@@ -708,11 +704,6 @@ public class BFFDataPreparationService {
 
         // 2. Add interface to descriptor
         interpolateInterfaceToDescriptor(eServiceId, descriptorId);
-
-        // 2.1. Add callback interface to descriptor (opzionale)
-        if (addCallbackInterface) {
-            addCallbackInterfaceToDescriptor(eServiceId, descriptorId);
-        }
 
         // 3. Publish Descriptor
         publishTemplateInstanceDescriptor(eServiceId, descriptorId);
@@ -735,11 +726,6 @@ public class BFFDataPreparationService {
 
         // Add interface to secondDescriptor
         interpolateInterfaceToDescriptor(eServiceId, secondDescriptorId);
-
-        // Add callback interface to secondDescriptor (opzionale)
-        if (addCallbackInterface) {
-            addCallbackInterfaceToDescriptor(eServiceId, secondDescriptorId);
-        }
 
         // Publish secondDescriptor
         publishTemplateInstanceDescriptor(eServiceId, secondDescriptorId);
