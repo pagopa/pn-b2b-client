@@ -29,10 +29,10 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 @IncludeEngines("cucumber")
 @SelectClasspathResource("it/pagopa/pn/cucumber/Radd/RaddAlternative/RaddAlternative.feature")
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty")
-@ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "json:target/cucumber-report-radd-act62.json," +
-        "html:target/cucumber-report-radd-act62.html")
+@ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "json:target/cucumber-report.json," +
+        "html:target/cucumber-report.html")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.cucumber.steps")
-@ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "same_thread")
+@ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent")
 @ConfigurationParameter(
         key = FILTER_NAME_PROPERTY_NAME,
         value = ".*RADD-ALT_ACT-(57|60|61|62|63).*"
