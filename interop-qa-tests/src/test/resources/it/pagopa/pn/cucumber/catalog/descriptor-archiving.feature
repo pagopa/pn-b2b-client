@@ -233,7 +233,7 @@ Feature: Archiviazione manuale di un descrittore
       | %random      | %random    | 404        |
 
   @happy-path
-  Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_ELIMINATION_1.5] L'ente erogatore di un e-service può annullare l'archiviazione manuale in corso di un descrittore precedentemente in stato SUSPENDED
+  Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_ELIMINATION_1.5] L'ente erogatore di un e-service può annullare l'archiviazione manuale in corso di un descrittore in stato ARCHIVING_SUSPENDED
     Given l'utente è un "<role>" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
