@@ -31,7 +31,6 @@ import java.util.UUID;
 
 @Component
 public class PnPaB2bInternalInformalClientImpl {
-    private final String paId;
     private final String operatorId;
     private final MessagesApi messagesApi;
     private final SenderReadInformalNotificationB2BApi senderReadInformalNotificationB2BApi;
@@ -39,15 +38,12 @@ public class PnPaB2bInternalInformalClientImpl {
     private final InformalNotificationTerminationApi informalNotificationTerminationApi;
     private final InternalOnlyApi internalOnlyApi;
     private final List<String> groups;
-    private String deliveryBasePath;
 
     public PnPaB2bInternalInformalClientImpl(
             RestTemplate restTemplate,
             @Value("${pn.delivery.base-url}") String deliveryBasePathOrigin,
             @Value("${pn.internal.pa-id}") String paId) {
 
-        this.deliveryBasePath = deliveryBasePathOrigin+"/informal/";
-        this.paId = paId;
         this.operatorId = "TestMv";
         this.groups = Collections.emptyList();
         this.messagesApi = new MessagesApi(newInformalApiClient(restTemplate, deliveryBasePathOrigin));

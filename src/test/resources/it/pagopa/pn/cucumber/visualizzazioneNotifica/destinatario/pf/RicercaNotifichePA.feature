@@ -357,12 +357,17 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
   @ricercaNotifiche
   Scenario: [MITTENTE_RICERCA_NOTIFICHE_BONARIE_2.C] Come mittente recupero le notifiche bonarie inviate sfogliando tutte le pagine dei risultati
     Given vengono create 5 notifiche bonarie per la pa "Comune_Multi" con campagna "SoricalMessaMora"
+      | recipientType | PF               |
+      | taxId         | FRMTTR76M06B715E |
+      | denomination  | Mario Cucumber   |
+      | messageId     | ${IT}            |
     And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
       | startDate  | $DATE_ADD(-1D)     |
       | endDate    | $DATE_ADD(1D)      |
       | campaignId | SoricalMessaMora   |
       | size       | 1                  |
       | senderId   | :informal_senderId |
+      | delivered  | true               |
     And si sfogliano tutte le pagine della ricerca lato mittente e si verifica che vengano raccolte almeno 5 notifiche
 
   @ricercaNotifiche

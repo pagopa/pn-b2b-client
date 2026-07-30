@@ -103,7 +103,7 @@ public class RecipientB2BExternalClientImpl implements IPnWebRecipientClient {
 
     @Override
     public NotificationAttachmentDownloadMetadataResponse getReceivedNotificationAttachment(String iun, String attachmentName, UUID mandateId, Integer attachmentIdx) throws RestClientException {
-        return recipientReadB2BApi.getReceivedNotificationAttachment(iun, attachmentName, mandateId, null);
+        return recipientReadB2BApi.getReceivedNotificationAttachment(iun, attachmentName, mandateId, attachmentIdx);
     }
 
     @Override
@@ -121,14 +121,18 @@ public class RecipientB2BExternalClientImpl implements IPnWebRecipientClient {
         it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.NotificationStatusV26 statusV26 = Optional.ofNullable(param.status)
                 .map(it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.NotificationStatusV26::fromValue)
                 .orElse(null);
+        String startDateStr = Optional.ofNullable(param.startDate).map(Object::toString).orElse(null);
+        String endDateStr = Optional.ofNullable(param.endDate).map(Object::toString).orElse(null);
         return recipientReadB2BApi.searchReceivedDelegatedNotification(
-                param.startDate.toString(), param.endDate.toString(), param.senderId, param.recipientId,
+                startDateStr, endDateStr, param.senderId, param.recipientId,
                 param.group, param.iunMatch, convertStatus(statusV26), param.size, param.nextPagesKey);
     }
 
     @Override
     public FullNotificationSearchResponse searchReceivedNotification(Destinatario destinatario, NotificationSearchParam param) throws RestClientException {
-        return recipientReadB2BApi.searchReceivedNotification(param.startDate.toString(), param.endDate.toString(), param.mandateId,
+        String startDateStr = Optional.ofNullable(param.startDate).map(Object::toString).orElse(null);
+        String endDateStr = Optional.ofNullable(param.endDate).map(Object::toString).orElse(null);
+        return recipientReadB2BApi.searchReceivedNotification(startDateStr, endDateStr, param.mandateId,
                 param.senderId, param.iunMatch, param.size, param.nextPagesKey, param.communicationType);
     }
 

@@ -68,6 +68,7 @@ import it.pagopa.pn.cucumber.utils.notificationsearch.NotificationSearchRowAsser
 import it.pagopa.pn.cucumber.utils.token.TokenResolver;
 import lombok.extern.slf4j.Slf4j;
 import org.awaitility.Awaitility;
+import org.awaitility.core.ConditionTimeoutException;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -338,9 +339,21 @@ public class RicezioneNotificheWebSteps {
         notificationSearchResponse = null;
         lastMittenteSearchParam = searchParam;
         try {
-            informalNotificationSearchResponse = b2BSenderReadClient.searchInformalSentNotification(searchParam);
+            // Subito dopo l'invio la notifica bonaria può non essere ancora indicizzata lato ricerca:
+            // si ritenta finché resultsPage non è popolata, senza far fallire lo step in caso di timeout,
+            // cosi' che sia l'eventuale step di verifica successivo a segnalare l'assenza di risultati.
+            Awaitility.await()
+                    .atMost(1, TimeUnit.MINUTES)
+                    .pollInterval(10, TimeUnit.SECONDS)
+                    .until(() -> {
+                        informalNotificationSearchResponse = b2BSenderReadClient.searchInformalSentNotification(searchParam);
+                        return informalNotificationSearchResponse.getResultsPage() != null
+                                && !informalNotificationSearchResponse.getResultsPage().isEmpty();
+                    });
         } catch (HttpStatusCodeException e) {
             notificationError = e;
+        } catch (ConditionTimeoutException e) {
+            log.warn("resultsPage ancora vuota dopo il retry per il mittente '{}'", sender);
         }
     }
 
@@ -357,7 +370,7 @@ public class RicezioneNotificheWebSteps {
             }
         } else if (informalNotificationSearchResponse != null) {
             totalCollected = informalNotificationSearchResponse.getResultsPage().size();
-            while (Boolean.TRUE.equals(informalNotificationSearchResponse.getMoreResult())
+            while (Boolean.TRUE.equals(informalNotificationSearchResponse.getMoreResult()) && totalCollected < minimumExpectedCount
                     && informalNotificationSearchResponse.getNextPagesKey() != null && !informalNotificationSearchResponse.getNextPagesKey().isEmpty()) {
                 lastMittenteSearchParam.setNextPagesKey(informalNotificationSearchResponse.getNextPagesKey().get(0));
                 informalNotificationSearchResponse = b2BSenderReadClient.searchInformalSentNotification(lastMittenteSearchParam);
@@ -692,7 +705,7 @@ public class RicezioneNotificheWebSteps {
     public NotificationSearchParam convertNotificationSearchParam(Map<String, String> data) {
         B2bUtils.Pair<OffsetDateTime, OffsetDateTime> dates = getStartDateAndEndDate(data);
         TokenResolver tokenResolver = new TokenResolver(sharedSteps, sendSharedContext);
-        return notificationSearchParamMapper.build(data, dates.getValue1(), dates.getValue2(), sharedSteps.getNotificationIun(), tokenResolver::resolve);
+        return notificationSearchParamMapper.build(data, dates.getValue1(), dates.getValue2(), tokenResolver::resolve);
     }
 
     @DataTableType

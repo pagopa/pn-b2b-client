@@ -16,7 +16,7 @@ import java.util.function.UnaryOperator;
  * per simulare l'assenza esplicita di un valore (es. per testare errori di validazione) è
  * sufficiente valorizzare la cella con {@code $NULL}, gestito da {@link StringUtils#resolveValue}.
  * <p>
- * {@code xPagopaPnCxType}/{@code xPagopaPnCxId} (come già {@code iunMatch}) usano invece come
+ * {@code xPagopaPnCxType}/{@code xPagopaPnCxId} usano invece come
  * default il valore convenzionale {@link NotificationSearchParam#ACTUAL}: quando la chiave è assente
  * dalla tabella, chi costruisce la chiamata verso l'API (che conosce il destinatario) può risolverlo
  * nel valore reale; se invece la cella è valorizzata esplicitamente a {@code NULL}, il campo resta
@@ -34,7 +34,7 @@ public class NotificationSearchParamMapper {
     private static final String DEFAULT_SIZE = "10";
     private static final String NO_LIMIT_SIZE = "-1";
 
-    public NotificationSearchParam build(Map<String, String> data, OffsetDateTime startDate, OffsetDateTime endDate, String actualIun, UnaryOperator<String> dynamicValueResolver) {
+    public NotificationSearchParam build(Map<String, String> data, OffsetDateTime startDate, OffsetDateTime endDate, UnaryOperator<String> dynamicValueResolver) {
         NotificationSearchParam searchParam = new NotificationSearchParam();
 
         searchParam.startDate = startDate;

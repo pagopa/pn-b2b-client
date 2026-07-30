@@ -27,13 +27,13 @@ Feature: Censimento stime mittenti
 
   @controlloCalcoloStimeMittenti
   Scenario: [SM_02] Verifica il calcolo delle stime settimanali provinciali a partire dai dati delle stime mensili regionali
-    Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_luglio_26.zip"
-#    And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
-#      | classpath:/t0_tc_modulo_commessa_gennaio_26.json  |
-#      | classpath:/t0_tc_modulo_commessa_febbraio_26.json |
-#      | classpath:/t0_tc_modulo_commessa_marzo_26.json    |
-#    When vengono recuperate le stime mittenti da "01-2026" a "03-2026" per la provincia "P1"
-#    Then si verifica che la tabella pn-DelayerSenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
+    Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_primo_trimestre_26.zip"
+    And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
+      | classpath:/t0_tc_modulo_commessa_gennaio_26.json  |
+      | classpath:/t0_tc_modulo_commessa_febbraio_26.json |
+      | classpath:/t0_tc_modulo_commessa_marzo_26.json    |
+    When vengono recuperate le stime mittenti da "01-2026" a "03-2026" per la provincia "P1"
+    Then si verifica che la tabella pn-DelayerSenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
 
   @controlloCalcoloStimeMittenti
   Scenario Outline: [SM_03] Verifica del calcolo della percentuale garantita al mittente

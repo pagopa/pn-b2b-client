@@ -24,6 +24,7 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bInternalInformalClientImpl;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.model.InformalSentNotificationV1;
+import it.pagopa.pn.client.web.generated.openapi.clients.informal.web.pa.model.InformalNotificationStatusV1;
 import it.pagopa.pn.cucumber.steps.SendSharedContext;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.informalNotification.builders.InformalRecipientBuilder;
@@ -37,13 +38,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -184,35 +189,52 @@ public class PresaInCaricoNoticaBonariaSteps {
         assertNotNull(informalNotificationRequestV1,
                 "Creare prima la notifica bonaria");
 
-        Map<String, String> cleanedData = data.entrySet().stream()
-                .collect(Collectors.toMap(
-                        e -> e.getKey().trim(),
-                        e -> e.getValue() != null ? e.getValue().trim() : null
-                ));
+        Map<String, String> cleanedData = trimData(data);
 
         InformalNotificationRecipientV1 recipient = recipientBuilder.build(cleanedData, currentCxId);
         informalNotificationRequestV1.getRecipients().add(recipient);
         sendSharedContext.getInformalNotificationContext().getRecipient().setDestinatario(destinatarioRegistry.destinatario(data.get("denomination")));
     }
 
+    /**
+     * Crea le {@code notificationNumber} notifiche bonarie in parallelo invece che in sequenza, cosi'
+     * l'attesa del raggiungimento dello stato {@code COMPLETED_REACHED} di ciascuna (che può richiedere
+     * diversi secondi) avviene contemporaneamente per tutte anziché sommarsi. Ogni notifica viene creata
+     * e tracciata da {@link #createAndAwaitSingleInformalNotification} usando solo variabili locali: i
+     * campi di istanza della classe (es. {@code savedIun}, {@code statusResponse}) sono pensati per una
+     * singola notifica per scenario e verrebbero sovrascritti in modo incoerente da thread concorrenti,
+     * quindi non vengono toccati da questo flusso.
+     */
     @Given("vengono create {int} notifiche bonarie per la pa {string} con campagna {string}")
-    public void creaNotificheBonarie(int notificationNumber, String paName, String campaignId) throws IOException {
+    public void creaNotificheBonarie(int notificationNumber, String paName, String campaignId, Map<String, String> recipientData) {
         setSenderInformal(paName);
-        for (int i = 0; i < notificationNumber; i++) {
-            Map<String, String> creationData = new HashMap<>();
-            creationData.put("campaignId", campaignId);
-            createInformal(creationData);
+        Map<String, String> cleanedRecipientData = trimData(recipientData);
+        IntStream.range(0, notificationNumber)
+                .parallel()
+                .forEach(i -> createAndAwaitSingleInformalNotification(campaignId, cleanedRecipientData));
+    }
 
-            Map<String, String> recipientData = new HashMap<>();
-            recipientData.put("recipientType", "PF");
-            recipientData.put("taxId", "FRMTTR76M06B715E");
-            recipientData.put("denomination", "Mario Cucumber");
-            recipientData.put("messageId", "${IT}");
-            addInformalRecipientLight(recipientData);
+    private void createAndAwaitSingleInformalNotification(String campaignId, Map<String, String> recipientData) {
+        Map<String, String> creationData = new HashMap<>();
+        creationData.put("campaignId", campaignId);
+        handleGroup(creationData);
+        InformalNotificationRequestV1 request = informalNotificationRequestMapper.buildInformalNotificationRequest(creationData);
 
-            sendInformal();
-            verifyNotificationStatus("ACCEPTED");
+        request.getRecipients().add(recipientBuilder.build(new HashMap<>(recipientData), currentCxId));
+        sendSharedContext.getInformalNotificationContext().getRecipient().setDestinatario(destinatarioRegistry.destinatario(recipientData.get("denomination")));
+
+        try {
+            request = notificationInformalUtilsV1.preloadAndPrepare(request, paName);
+        } catch (IOException e) {
+            throw new UncheckedIOException("Errore durante la preparazione della notifica bonaria con campagna " + campaignId, e);
         }
+
+        NewInformalNotificationResponse response = pnPaB2bInternalInformalClientImpl.sendNewInformalNotificationV1(currentCxId, request);
+        String notificationRequestId = response.getNotificationRequestId();
+
+        NewInformalNotificationRequestStatusResponseV1 acceptedStatus =
+                pollNotificationRequestStatus(notificationRequestId, InformalNotificationStatusV1.ACCEPTED.getValue());
+        pollFullNotificationStatus(acceptedStatus.getIun(), InformalNotificationStatusV1.COMPLETED_REACHED.getValue());
     }
 
     @Then("viene inviata una nuova notifica bonaria con content type non valido")
@@ -506,67 +528,27 @@ public class PresaInCaricoNoticaBonariaSteps {
 
     @Then("si attende che la notifica bonaria passi in stato {string}")
     public void verifyFinalNotificationStatus(String expectedStatus) {
-        AtomicReference<String> lastStatus = new AtomicReference<>(null);
-        AtomicReference<FullSentInformalNotificationV1> lastNotification = new AtomicReference<>();
-        try {
-            await().atMost(Duration.ofMinutes(12)).pollInterval(Duration.ofSeconds(30)).until(() -> {
-                FullSentInformalNotificationV1 notification = getFullInformalNotification();
-                if (notification == null) {
-                    return false;
-                }
-                lastNotification.set(notification);
-                String actualStatus = notification.getNotificationStatus().getValue();
-                lastStatus.set(actualStatus);
-                log.info("Polling stato notifica: {}", actualStatus);
-                log.info("IUN: {}", notification.getIun());
-                return expectedStatus.equals(actualStatus);
-            });
-
-        } catch (Exception e) {
-            throw new AssertionError("Stato finale non valido.\n" + "Atteso: " + expectedStatus + "\n" + "Ultimo stato ricevuto: " + lastStatus.get() + "\n" + "Response: " + getFullInformalNotification(), e);
-        }
+        fullInformalNotificationResponse = pollFullNotificationStatus(savedIun, expectedStatus);
         lastException = null;
     }
 
-    private FullSentInformalNotificationV1 getFullInformalNotification() {
-
-        try {
-
-            fullInformalNotificationResponse = pnPaB2bInternalInformalClientImpl.getSentInformalNotificationSender(currentCxId, savedIun, true);
-            lastException = null;
-            log.info("Full informal notification response: {}", fullInformalNotificationResponse);
-            return fullInformalNotificationResponse;
-
-        } catch (Exception e) {
-
-            log.error("Errore durante il recupero della notifica. IUN={}", savedIun, e);
-            lastException = e;
-            fullInformalNotificationResponse = null;
-
-            throw new RuntimeException("Errore durante il recupero della notifica " + savedIun, e);
-        }
+    /**
+     * Attende (fino a un massimo di 12 minuti) che la notifica bonaria identificata da {@code iun}
+     * raggiunga {@code expectedStatus}. A differenza di {@link #verifyFinalNotificationStatus}, non
+     * legge né scrive campi di istanza: può quindi essere invocato in sicurezza da più thread in
+     * parallelo, ognuno con il proprio IUN (vedi {@link #createAndAwaitSingleInformalNotification}).
+     */
+    private FullSentInformalNotificationV1 pollFullNotificationStatus(String iun, String expectedStatus) {
+        return pollUntilStatus("notifica IUN=" + iun,
+                () -> pnPaB2bInternalInformalClientImpl.getSentInformalNotificationSender(currentCxId, iun, true),
+                notification -> notification.getNotificationStatus().getValue(),
+                expectedStatus, Duration.ofMinutes(12), Duration.ofSeconds(30));
     }
 
     @Then("si verifica che la notifica bonaria sia in stato {string}")
     public void verifyNotificationStatus(String expectedStatus) {
-
-        AtomicReference<String> lastStatus = new AtomicReference<>(null);
-
         try {
-            await().atMost(Duration.ofMinutes(12)).pollInterval(Duration.ofSeconds(3)).until(() -> {
-                statusResponse = pnPaB2bInternalInformalClientImpl.getNotificationStatusByRequestId(currentCxId, savedNotificationRequestId);
-                if (statusResponse == null) {
-                    return false;
-                }
-                String actualStatus = statusResponse.getNotificationRequestStatus();
-                lastStatus.set(actualStatus);
-                log.info("Polling stato: {}", actualStatus);
-                return expectedStatus.equals(actualStatus);
-            });
-
-        } catch (Exception e) {
-            throw new AssertionError("Stato finale non valido.\n" + "Atteso: " + expectedStatus + "\n" + "Ultimo stato ricevuto: " + lastStatus.get() + "\n" + "Response: " + statusResponse, e);
-
+            statusResponse = pollNotificationRequestStatus(savedNotificationRequestId, expectedStatus);
         } finally {
             log.info("=== RESPONSE FINALE NOTIFICA ===");
             if (statusResponse != null) {
@@ -579,6 +561,52 @@ public class PresaInCaricoNoticaBonariaSteps {
         sharedSteps.setNotificationIun(savedIun);
         sendSharedContext.getInformalNotificationContext().setIun(savedIun);
         lastException = null;
+    }
+
+    /**
+     * Attende (fino a un massimo di 12 minuti) che la richiesta di notifica bonaria identificata da
+     * {@code notificationRequestId} raggiunga {@code expectedStatus}. Come {@link #pollFullNotificationStatus},
+     * non tocca campi di istanza ed è quindi sicuro da chiamare in parallelo su più notifiche.
+     */
+    private NewInformalNotificationRequestStatusResponseV1 pollNotificationRequestStatus(String notificationRequestId, String expectedStatus) {
+        return pollUntilStatus("richiesta notificationRequestId=" + notificationRequestId,
+                () -> pnPaB2bInternalInformalClientImpl.getNotificationStatusByRequestId(currentCxId, notificationRequestId),
+                NewInformalNotificationRequestStatusResponseV1::getNotificationRequestStatus,
+                expectedStatus, Duration.ofMinutes(12), Duration.ofSeconds(3));
+    }
+
+    /**
+     * Attende che {@code fetch} restituisca un risultato il cui stato (estratto con {@code statusExtractor})
+     * coincida con {@code expectedStatus}, ripetendo la chiamata ogni {@code pollInterval} fino a
+     * {@code timeout}. Generalizza il polling usato per lo stato della richiesta e per lo stato della
+     * notifica bonaria: non tocca campi di istanza, quindi è sicuro da invocare in parallelo su thread diversi.
+     */
+    private <T> T pollUntilStatus(String description, Supplier<T> fetch, Function<T, String> statusExtractor,
+                                   String expectedStatus, Duration timeout, Duration pollInterval) {
+        AtomicReference<String> lastStatus = new AtomicReference<>(null);
+        AtomicReference<T> lastResult = new AtomicReference<>();
+        try {
+            await().atMost(timeout).pollInterval(pollInterval).until(() -> {
+                T result;
+                try {
+                    result = fetch.get();
+                } catch (Exception e) {
+                    log.error("Errore durante il recupero di {}", description, e);
+                    throw new RuntimeException("Errore durante il recupero di " + description, e);
+                }
+                if (result == null) {
+                    return false;
+                }
+                lastResult.set(result);
+                String actualStatus = statusExtractor.apply(result);
+                lastStatus.set(actualStatus);
+                log.info("Polling stato {}: {}", description, actualStatus);
+                return expectedStatus.equals(actualStatus);
+            });
+        } catch (Exception e) {
+            throw new AssertionError("Stato finale non valido.\n" + "Atteso: " + expectedStatus + "\n" + "Ultimo stato ricevuto: " + lastStatus.get() + "\n" + "Response: " + lastResult.get(), e);
+        }
+        return lastResult.get();
     }
 
     @Then("la notifica bonaria è stata rifiutata per l'errore: {string}")
@@ -705,6 +733,14 @@ public void verifyErrorAndMessage(int expectedStatus, String expectedErrorCode) 
         } catch (IllegalArgumentException e) {
             return null;
         }
+    }
+
+    private Map<String, String> trimData(Map<String, String> data) {
+        return data.entrySet().stream()
+                .collect(Collectors.toMap(
+                        e -> e.getKey().trim(),
+                        e -> e.getValue() != null ? e.getValue().trim() : null
+                ));
     }
 
     private void handleGroup(Map<String, String> data) {
