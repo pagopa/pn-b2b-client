@@ -42,7 +42,6 @@ Feature: Creazione attributo certificato
       | Privato | reviewer     |       403 |
       | Privato | viewer       |       403 |
 
-
   @certifiedDiscreteAttribute
   @certifiedDiscreteAttributeFlagOn
   Scenario Outline: [DISCRETE_ATTRIBUTE_CREATION_1] Verifica dell'esito della creazione di un attributo discreto in base
@@ -84,4 +83,4 @@ Feature: Creazione attributo certificato
     Given l'utente è un "admin" di "PA1"
     And l'utente crea un attributo certificato
     When l'utente crea un attributo certificato discreto utilizzando lo stesso nome dell'ultimo attributo certificato creato
-    Then si ottiene status code 200
+    Then si ottiene status code 409
