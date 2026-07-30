@@ -100,7 +100,7 @@ public class DestinatarioRegistry {
 
         DESTINATARIO_CUCUMBER_SPA_B2B = new Destinatario(
                 CUCUMBER_SPA_B2B, recipients.getCucumberSpa().getTaxId(),
-                recipients.getCucumberSpa().getUid(), PG, PEC, true);
+                recipients.getCucumberSpa().getUid(), PG, PEC);
 
         DESTINATARIO_GHERKIN_SRL = new Destinatario(
                 GHERKIN_SRL, recipients.getGherkinSrl().getTaxId(),
@@ -108,7 +108,7 @@ public class DestinatarioRegistry {
 
         DESTINATARIO_GHERKIN_SRL_B2B = new Destinatario(
                 GHERKIN_SRL_B2B, recipients.getGherkinSrl().getTaxId(),
-                recipients.getGherkinSrl().getUid(), PG, PEC, true);
+                recipients.getGherkinSrl().getUid(), PG, PEC);
 
         DESTINATARIO_CUCUMBER_SRL = new Destinatario(
                 CUCUMBER_SRL, recipients.getCucumberSrl().getTaxId(),
