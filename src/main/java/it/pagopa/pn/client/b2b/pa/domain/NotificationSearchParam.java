@@ -16,7 +16,7 @@ public class NotificationSearchParam {
      * della ricerca), anziché in un valore esplicito. Un {@code null} esplicito, al contrario, deve
      * restare tale fino alla chiamata API, per simulare l'assenza di un campo obbligatorio.
      */
-    public static final String ACTUAL = "ACTUAL";
+    public static final String RESOLVE_FROM_CALLER = "RESOLVE_FROM_CALLER";
 
     public String xPagopaPnUid;
     public String xPagopaPnCxType;

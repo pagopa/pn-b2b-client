@@ -1,5 +1,7 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.ApiClient;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.api.MandateReverseServiceApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.MandateDtoRequest;
@@ -42,7 +44,12 @@ public class MandateReverseServiceClientImpl implements IMandateReverseServiceCl
 
     @Override
     public String createReverseMandate(MandateDtoRequest mandateDtoRequest) throws RestClientException {
-        return mandateReverseServiceApi.createReverseMandate(mandateDtoRequest);
+        String response = mandateReverseServiceApi.createReverseMandate(mandateDtoRequest);
+        try {
+            return new ObjectMapper().readTree(response).get("mandateId").asText();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

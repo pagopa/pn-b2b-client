@@ -17,7 +17,7 @@ import java.util.function.UnaryOperator;
  * sufficiente valorizzare la cella con {@code $NULL}, gestito da {@link StringUtils#resolveValue}.
  * <p>
  * {@code xPagopaPnCxType}/{@code xPagopaPnCxId} usano invece come
- * default il valore convenzionale {@link NotificationSearchParam#ACTUAL}: quando la chiave è assente
+ * default il valore convenzionale {@link NotificationSearchParam#RESOLVE_FROM_CALLER}: quando la chiave è assente
  * dalla tabella, chi costruisce la chiamata verso l'API (che conosce il destinatario) può risolverlo
  * nel valore reale; se invece la cella è valorizzata esplicitamente a {@code NULL}, il campo resta
  * {@code null} fino alla chiamata, per simulare l'assenza del campo obbligatorio.
@@ -40,8 +40,8 @@ public class NotificationSearchParamMapper {
         searchParam.startDate = startDate;
         searchParam.endDate = endDate;
         searchParam.xPagopaPnUid = resolveWithDefault(data, "xPagopaPnUid", "TestAutomation", dynamicValueResolver);
-        searchParam.xPagopaPnCxType = resolveWithDefault(data, "xPagopaPnCxType", NotificationSearchParam.ACTUAL, dynamicValueResolver);
-        searchParam.xPagopaPnCxId = resolveWithDefault(data, "xPagopaPnCxId", NotificationSearchParam.ACTUAL, dynamicValueResolver);
+        searchParam.xPagopaPnCxType = resolveWithDefault(data, "xPagopaPnCxType", NotificationSearchParam.RESOLVE_FROM_CALLER, dynamicValueResolver);
+        searchParam.xPagopaPnCxId = resolveWithDefault(data, "xPagopaPnCxId", NotificationSearchParam.RESOLVE_FROM_CALLER, dynamicValueResolver);
         searchParam.mandateId = resolveWithDefault(data, "mandateId", null, dynamicValueResolver);
         searchParam.senderId = resolveWithDefault(data, "senderId", null, dynamicValueResolver);
         searchParam.status = resolveWithDefault(data, "status", null, dynamicValueResolver);

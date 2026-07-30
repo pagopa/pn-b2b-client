@@ -57,10 +57,10 @@ public class B2BSenderReadClientImpl {
                 searchParam.iunMatch, status, searchParam.viewed, searchParam.delivered, searchParam.size, searchParam.nextPagesKey);
     }
 
-    // NotificationSearchParam.ACTUAL (default quando il campo non è specificato in tabella) -> valore derivato dal destinatario;
+    // NotificationSearchParam.RESOLVE_FROM_CALLER (default quando il campo non è specificato in tabella) -> valore derivato dal destinatario;
     // qualunque altro valore, incluso null esplicito (per simulare un campo obbligatorio mancante), passa invariato
     private static String resolveActual(String value, String actualValue) {
-        return NotificationSearchParam.ACTUAL.equals(value) ? actualValue : value;
+        return NotificationSearchParam.RESOLVE_FROM_CALLER.equals(value) ? actualValue : value;
     }
 
 
