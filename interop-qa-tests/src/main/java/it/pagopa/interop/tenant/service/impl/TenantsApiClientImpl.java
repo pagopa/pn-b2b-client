@@ -47,6 +47,11 @@ public class TenantsApiClientImpl implements ITenantsApi {
     }
 
     @Override
+    public void addCertifiedDiscreteAttribute(UUID tenantId, CertifiedDiscreteTenantAttributeSeed certifiedDiscreteTenantAttributeSeed) {
+        tenantsApi.addCertifiedDiscreteAttribute(tenantId, certifiedDiscreteTenantAttributeSeed);
+    }
+
+    @Override
     public CertifiedAttributesResponse getCertifiedAttributes(UUID tenantId) {
        return tenantsApi.getCertifiedAttributes(tenantId);
     }
