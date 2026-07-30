@@ -541,3 +541,52 @@ Feature: Archiviazione manuale di un descrittore
       | admin        | 60          |
       | admin        | 90          |
       | admin        | 120         |
+
+  @happy-path
+  Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_ASYNC_ELIMINATION_1.1] L'ente erogatore di un e-service asincrono può annullare l'archiviazione manuale in corso di un descrittore precedentemente in stato DEPRECATED
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
+      | asyncExchangeProperties.responseTime          | 100  |
+      | asyncExchangeProperties.resourceAvailableTime | 100  |
+      | asyncExchangeProperties.confirmation          | true |
+      | asyncExchangeProperties.bulk                  | true |
+      | asyncExchangeProperties.maxResultSet          | 50   |
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service asincrono
+    And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
+    And l'utente è un "<role>" di "PA1"
+    When l'utente annulla il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
+    Then si ottiene response status code 204
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
+    And l'archiviazione manuale del singolo descrittore è stata annullata con successo
+
+    Examples:
+      | role         |
+      | admin        |
+      | api          |
+      | api,security |
+
+  @happy-path
+  Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_ASYNC_ELIMINATION_1.2] L'ente erogatore di un e-service può annullare l'archiviazione manuale in corso di un descrittore in stato ARCHIVING_SUSPENDED
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
+      | asyncExchangeProperties.responseTime          | 100  |
+      | asyncExchangeProperties.resourceAvailableTime | 100  |
+      | asyncExchangeProperties.confirmation          | true |
+      | asyncExchangeProperties.bulk                  | true |
+      | asyncExchangeProperties.maxResultSet          | 50   |
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già sospeso quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service asincrono
+    And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
+    And l'utente è un "<role>" di "PA1"
+    When l'utente annulla il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
+    Then si ottiene response status code 204
+    And la vecchia versione dell'e-service è in stato "SUSPENDED"
+    And l'archiviazione manuale del singolo descrittore è stata annullata con successo
+
+    Examples:
+      | role         |
+      | admin        |
+      | api          |
+      | api,security |
