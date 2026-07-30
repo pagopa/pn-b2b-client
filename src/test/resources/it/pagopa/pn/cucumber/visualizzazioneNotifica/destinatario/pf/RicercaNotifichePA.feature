@@ -296,6 +296,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
       | recipientId | :informal_recipientId |
       | senderId    | :informal_senderId    |
       | size        | 50                    |
+      | delivered   | true                  |
     And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
       | sentAt     | $DATE_ADD(-1D), $DATE_ADD(1D) |
       | campaignId | SoricalMessaMora              |
