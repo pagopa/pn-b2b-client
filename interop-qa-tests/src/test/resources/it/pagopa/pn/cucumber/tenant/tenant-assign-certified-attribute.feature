@@ -40,6 +40,8 @@ Feature: Assegnazione di un attributo certificato ad un aderente
     When l'utente assegna a "GSP" l'attributo certificato precedentemente creato
     Then si ottiene status code 403
 
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
   Scenario Outline: [TENANT_ASSIGN_CERTIFIED_DISCRETE_ATTRIBUTE_1] Assegnazione attributo certificato discreto a un tenant.
   Verifica l'esito dell'assegnazione di un attributo certificato discreto a un tenant da parte dell'admin di un ente certificatore,
   al variare del valore discreto inserito.
@@ -56,6 +58,8 @@ Feature: Assegnazione di un attributo certificato ad un aderente
       | 0             | 400            |
       | 1000000001    | 400            |
 
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
   Scenario Outline: [TENANT_ASSIGN_CERTIFIED_DISCRETE_ATTRIBUTE_2] L'attributo certificato discreto può essere assegnato
   soltanto da un admin di un ente certifcatore.
 
@@ -80,6 +84,8 @@ Feature: Assegnazione di un attributo certificato ad un aderente
       | GSP     | viewer       | 403       |
       | Privato | admin        | 403       |
 
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
   Scenario: [TENANT_ASSIGN_CERTIFIED_DISCRETE_ATTRIBUTE_3] La riassegnazione del medesimo attributo certificato discreto
   ad un ente non va a buon fine.
 
