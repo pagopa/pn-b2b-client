@@ -7,13 +7,9 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
+import org.springframework.http.HttpStatus;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class TenantAssignCertifiedAttributeSteps {
@@ -74,6 +70,13 @@ public class TenantAssignCertifiedAttributeSteps {
         UUID lastAttributeId = sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes().get(0).get(
                 sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes().get(0).size() - 1
         );
+
+        sharedStepsContext.getPollingService().makePolling(
+                () -> sharedStepsContext.getHttpCallExecutor().performCall(
+                        () -> clientTokenConfigurator.getAttributeApiClient().getAttributeById(lastAttributeId)),
+                res -> res != HttpStatus.INTERNAL_SERVER_ERROR,
+                "Impossibile recuperare l'attributo");
+
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getTenantsApi().addCertifiedDiscreteAttribute(
                         tenantId,
