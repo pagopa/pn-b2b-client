@@ -1,16 +1,7 @@
 package it.pagopa.pn.interop.cucumber;
 
-import static io.cucumber.junit.platform.engine.Constants.EXECUTION_MODE_FEATURE_PROPERTY_NAME;
-import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
-import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
-
-import org.junit.platform.suite.api.ConfigurationParameter;
-import org.junit.platform.suite.api.ConfigurationParameters;
-import org.junit.platform.suite.api.ExcludeTags;
-import org.junit.platform.suite.api.IncludeEngines;
-import org.junit.platform.suite.api.IncludeTags;
-import org.junit.platform.suite.api.SelectClasspathResource;
-import org.junit.platform.suite.api.Suite;
+import org.junit.platform.suite.api.*;
+import static io.cucumber.junit.platform.engine.Constants.*;
 
 @Suite
 @IncludeEngines("cucumber")
@@ -19,8 +10,8 @@ import org.junit.platform.suite.api.Suite;
         @ConfigurationParameter(
                 key = PLUGIN_PROPERTY_NAME,
                 value = "pretty," +
-                        "json:target/cucumber-report.json," +
-                        "html:target/cucumber-report.html," +
+                        "json:target/cucumber-report-nrt-bff-m2mv2.json," +
+                        "html:target/cucumber-report-nrt-bff-m2mv2.html," +
                         "it.pagopa.pn.interop.cucumber.plugins.SetApiProfilePropsPlugin:" +
                         "api.m2m.version=V2;" +
                         "api.mode=RIGHT_FIT;" +
@@ -36,7 +27,7 @@ import org.junit.platform.suite.api.Suite;
         // abilita parallelismo Cucumber
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 })
-@ExcludeTags({"wait_for_fix"})
-@IncludeTags({"voucher"})
-public class VoucherTest {
+@ExcludeTags({"wait_for_fix", "ignore"})
+@IncludeTags({"audit-jwt"})
+public class AuditJwtTest {
 }
