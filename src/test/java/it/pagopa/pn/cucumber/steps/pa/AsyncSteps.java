@@ -144,6 +144,7 @@ public class AsyncSteps {
         log.info("User: " + positionUser);
         log.info("Messaggio json da allegare: " + paymentInfoRequest);
         log.info("Polling amount GPD: tentativi={}, intervalloMs={}", numCheck, waitingMs);
+        long pollingStartedAt = System.currentTimeMillis();
         //TODO utilizzare algoritmo di polling
         for (int i = 0; i < numCheck; i++) {
             try {
@@ -152,8 +153,12 @@ public class AsyncSteps {
                     log.info("Risposta recupero posizione debitoria: " + paymentInfoResponse.toString());
                 });
                 Assertions.assertNotNull(paymentInfoResponse);
-                if (!Objects.equals(amountGPD, paymentInfoResponse.get(0).getAmount())) {
-                    amountGPD = paymentInfoResponse.get(0).getAmount();
+                Integer readAmount = paymentInfoResponse.get(0).getAmount();
+                if (!Objects.equals(amountGPD, readAmount)) {
+                    long elapsedMs = System.currentTimeMillis() - pollingStartedAt;
+                    log.info("GPD amount changed: attempt={}/{}, elapsedMs={}, {} -> {}",
+                            i + 1, numCheck, elapsedMs, amountGPD, readAmount);
+                    amountGPD = readAmount;
                     break;
                 }
                 try {

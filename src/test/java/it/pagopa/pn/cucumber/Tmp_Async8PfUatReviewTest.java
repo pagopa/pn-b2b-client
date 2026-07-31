@@ -7,8 +7,13 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 /**
  * TEMPORANEO — da cancellare a fine analisi QA-16429 (prefisso {@code Tmp_}).
  * <p>
- * Isola {@code B2B_ASYNC_8_PF}: verifica se con polling GPD prolungato (120×2s)
- * l'amount torna a 100 dopo {@code NOTIFICATION_CANCELLED}.
+ * Misura latenza rollback GPD di {@code B2B_ASYNC_8_PF} sotto concorrenza:
+ * <ul>
+ *   <li>B2B_ASYNC_8_PF — target (poll post-cancel 120×2s, log tentativo al cambio amount)</li>
+ *   <li>B2B_ASYNC_15_PF — carico GPD fino a SEND_SIMPLE_REGISTERED_LETTER</li>
+ *   <li>B2B_ASYNC_11_PF — carico GPD multipagamento</li>
+ * </ul>
+ * Nei log cercare {@code GPD amount changed} (attempt / elapsedMs / old→new).
  */
 @Suite
 @IncludeEngines("cucumber")
@@ -17,8 +22,11 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "json:target/cucumber-report.json," +
         "html:target/cucumber-report.html")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.cucumber.steps")
-@ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "same_thread")
-@ConfigurationParameter(key = FILTER_NAME_PROPERTY_NAME, value = ".*B2B_ASYNC_8_PF.*")
+@ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent")
+@ConfigurationParameter(
+        key = FILTER_NAME_PROPERTY_NAME,
+        value = ".*B2B_ASYNC_8_PF.*|.*B2B_ASYNC_15_PF.*|.*B2B_ASYNC_11_PF.*"
+)
 @ExcludeTags({"ignore"})
 @IncludeTags({"Async"})
 public class Tmp_Async8PfUatReviewTest {
