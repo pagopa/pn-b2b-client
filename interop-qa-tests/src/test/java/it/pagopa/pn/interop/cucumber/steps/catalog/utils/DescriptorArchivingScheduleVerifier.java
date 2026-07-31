@@ -11,6 +11,7 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeParseException;
+import java.util.Objects;
 import java.util.UUID;
 
 public class DescriptorArchivingScheduleVerifier {
@@ -32,6 +33,13 @@ public class DescriptorArchivingScheduleVerifier {
                 .setDescriptorArchivingRequestTimestamp(OffsetDateTime.now(ZoneOffset.UTC));
         sharedStepsContext.getEServicesCommonContext()
                 .setDescriptorArchivingGracePeriodDays(gracePeriodDays);
+    }
+
+    public void registerEServiceArchivingRequestTimestamp(GracePeriodDays gracePeriodDays) {
+        sharedStepsContext.getEServicesCommonContext()
+                .setEServiceArchivingRequestTimestamp(OffsetDateTime.now(ZoneOffset.UTC));
+        sharedStepsContext.getEServicesCommonContext()
+                .setEServiceArchivingGracePeriodDays(gracePeriodDays);
     }
 
     public void pollDescriptorWithoutArchivingSchedule(UUID eServiceId, UUID descriptorId) {
@@ -60,6 +68,18 @@ public class DescriptorArchivingScheduleVerifier {
         );
     }
 
+    public void pollDescriptorWithSameArchivingSchedule(UUID eServiceId, UUID descriptorId, UUID referenceDescriptorId, ArchivingScope expectedScope) {
+        sharedStepsContext.getPollingService().makePolling(
+                () -> clientTokenConfigurator.getEServiceClient().getEServiceDescriptor(eServiceId, descriptorId),
+                descriptor -> hasSameArchivingSchedule(
+                        descriptor,
+                        clientTokenConfigurator.getEServiceClient().getEServiceDescriptor(eServiceId, referenceDescriptorId),
+                        expectedScope
+                ),
+                "Il descrittore dell'e-service non contiene gli stessi dati di archiviazione del descrittore di riferimento"
+        );
+    }
+
     private boolean hasExpectedArchivingSchedule(ProducerEServiceDescriptor descriptor, ArchivingScope expectedScope) {
         if (descriptor == null || descriptor.getArchivingSchedule() == null) {
             return false;
@@ -67,9 +87,9 @@ public class DescriptorArchivingScheduleVerifier {
 
         ArchivingSchedule archivingSchedule = descriptor.getArchivingSchedule();
         return expectedScope.equals(archivingSchedule.getScope())
-                && isStartedAtWithinTolerance(archivingSchedule.getStartedAt())
-            && hasExpectedArchivableOn(archivingSchedule.getArchivableOn())
-            && hasExpectedGracePeriodDays(archivingSchedule.getGracePeriodDays());
+                && isStartedAtWithinTolerance(archivingSchedule.getStartedAt(), expectedScope)
+                && hasExpectedArchivableOn(archivingSchedule.getArchivableOn(), expectedScope)
+                && hasExpectedGracePeriodDays(archivingSchedule.getGracePeriodDays(), expectedScope);
     }
 
     private boolean hasPopulatedArchivingSchedule(ProducerEServiceDescriptor descriptor, ArchivingScope expectedScope) {
@@ -84,24 +104,43 @@ public class DescriptorArchivingScheduleVerifier {
                 && archivingSchedule.getGracePeriodDays() != null;
     }
 
+    private boolean hasSameArchivingSchedule(
+            ProducerEServiceDescriptor descriptor,
+            ProducerEServiceDescriptor referenceDescriptor,
+            ArchivingScope expectedScope
+    ) {
+        if (descriptor == null || referenceDescriptor == null
+                || descriptor.getArchivingSchedule() == null
+                || referenceDescriptor.getArchivingSchedule() == null) {
+            return false;
+        }
+
+        ArchivingSchedule archivingSchedule = descriptor.getArchivingSchedule();
+        ArchivingSchedule referenceArchivingSchedule = referenceDescriptor.getArchivingSchedule();
+        return expectedScope.equals(archivingSchedule.getScope())
+                && expectedScope.equals(referenceArchivingSchedule.getScope())
+                && Objects.equals(archivingSchedule.getStartedAt(), referenceArchivingSchedule.getStartedAt())
+                && Objects.equals(archivingSchedule.getArchivableOn(), referenceArchivingSchedule.getArchivableOn())
+                && Objects.equals(archivingSchedule.getGracePeriodDays(), referenceArchivingSchedule.getGracePeriodDays());
+    }
+
     private boolean isPopulated(String value) {
         return value != null && !value.isBlank();
     }
 
-    private boolean hasExpectedGracePeriodDays(GracePeriodDays actualGracePeriodDays) {
-        GracePeriodDays expectedGracePeriodDays = sharedStepsContext.getEServicesCommonContext()
-                .getDescriptorArchivingGracePeriodDays();
+    private boolean hasExpectedGracePeriodDays(GracePeriodDays actualGracePeriodDays, ArchivingScope expectedScope) {
+        GracePeriodDays expectedGracePeriodDays = getExpectedGracePeriodDays(expectedScope);
         return expectedGracePeriodDays != null && expectedGracePeriodDays.equals(actualGracePeriodDays);
     }
 
-    private boolean hasExpectedArchivableOn(String archivableOn) {
+    private boolean hasExpectedArchivableOn(String archivableOn, ArchivingScope expectedScope) {
         if (archivableOn == null || archivableOn.isBlank()) {
             return false;
         }
 
         try {
             OffsetDateTime actualArchivableOn = OffsetDateTime.parse(archivableOn);
-            OffsetDateTime expectedArchivableOn = calculateExpectedArchivableOn();
+            OffsetDateTime expectedArchivableOn = calculateExpectedArchivableOn(expectedScope);
             return ZoneOffset.UTC.equals(actualArchivableOn.getOffset())
                 && expectedArchivableOn != null
                 && expectedArchivableOn.isEqual(actualArchivableOn);
@@ -110,40 +149,55 @@ public class DescriptorArchivingScheduleVerifier {
         }
     }
 
-    private OffsetDateTime calculateExpectedArchivableOn() {
-        GracePeriodDays gracePeriodDays = sharedStepsContext.getEServicesCommonContext()
-            .getDescriptorArchivingGracePeriodDays();
+    private OffsetDateTime calculateExpectedArchivableOn(ArchivingScope expectedScope) {
+        GracePeriodDays gracePeriodDays = getExpectedGracePeriodDays(expectedScope);
         if (gracePeriodDays == null) {
             return null;
         }
 
-        OffsetDateTime descriptorArchivingRequestTimestamp = sharedStepsContext.getEServicesCommonContext()
-                .getDescriptorArchivingRequestTimestamp();
-        OffsetDateTime referenceTimestamp = descriptorArchivingRequestTimestamp != null
-                ? descriptorArchivingRequestTimestamp
+        OffsetDateTime archivingRequestTimestamp = getExpectedRequestTimestamp(expectedScope);
+        OffsetDateTime referenceTimestamp = archivingRequestTimestamp != null
+                ? archivingRequestTimestamp
                 : OffsetDateTime.now(ZoneOffset.UTC);
         return referenceTimestamp.toLocalDate()
-            .plusDays(gracePeriodDays.getValue() + 1L)
+                .plusDays(gracePeriodDays.getValue() + 1L)
                 .atStartOfDay()
                 .atOffset(ZoneOffset.UTC);
     }
 
-    private boolean isStartedAtWithinTolerance(String startedAt) {
-        OffsetDateTime descriptorArchivingRequestTimestamp = sharedStepsContext.getEServicesCommonContext()
-                .getDescriptorArchivingRequestTimestamp();
-        if (startedAt == null || startedAt.isBlank() || descriptorArchivingRequestTimestamp == null) {
+    private boolean isStartedAtWithinTolerance(String startedAt, ArchivingScope expectedScope) {
+        OffsetDateTime archivingRequestTimestamp = getExpectedRequestTimestamp(expectedScope);
+        if (startedAt == null || startedAt.isBlank() || archivingRequestTimestamp == null) {
             return false;
         }
 
         try {
             OffsetDateTime actualStartedAt = OffsetDateTime.parse(startedAt);
             Duration delta = Duration.between(
-                    descriptorArchivingRequestTimestamp.toInstant(),
+                    archivingRequestTimestamp.toInstant(),
                     actualStartedAt.toInstant()
             ).abs();
             return ZoneOffset.UTC.equals(actualStartedAt.getOffset()) && delta.compareTo(STARTED_AT_TOLERANCE) <= 0;
         } catch (DateTimeParseException e) {
             return false;
         }
+    }
+
+    private OffsetDateTime getExpectedRequestTimestamp(ArchivingScope expectedScope) {
+        return switch (expectedScope) {
+            case DESCRIPTOR -> sharedStepsContext.getEServicesCommonContext()
+                    .getDescriptorArchivingRequestTimestamp();
+            case ESERVICE -> sharedStepsContext.getEServicesCommonContext()
+                    .getEServiceArchivingRequestTimestamp();
+        };
+    }
+
+    private GracePeriodDays getExpectedGracePeriodDays(ArchivingScope expectedScope) {
+        return switch (expectedScope) {
+            case DESCRIPTOR -> sharedStepsContext.getEServicesCommonContext()
+                    .getDescriptorArchivingGracePeriodDays();
+            case ESERVICE -> sharedStepsContext.getEServicesCommonContext()
+                    .getEServiceArchivingGracePeriodDays();
+        };
     }
 }

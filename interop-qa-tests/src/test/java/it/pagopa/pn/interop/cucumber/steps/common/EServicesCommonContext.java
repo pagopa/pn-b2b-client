@@ -56,6 +56,8 @@ public class EServicesCommonContext {
     private OffsetDateTime eServiceEditTimestamp;
     private OffsetDateTime descriptorArchivingRequestTimestamp;
     private GracePeriodDays descriptorArchivingGracePeriodDays;
+    private OffsetDateTime eServiceArchivingRequestTimestamp;
+    private GracePeriodDays eServiceArchivingGracePeriodDays;
 
     public void addCertifiedAttributes(List<UUID> attributesIds) {
         this.certifiedAttributesIds.addAll(attributesIds);

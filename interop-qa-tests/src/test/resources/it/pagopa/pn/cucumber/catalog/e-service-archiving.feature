@@ -607,6 +607,7 @@ Feature: Archiviazione manuale di un e-service
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And il vecchio descrittore eredita i dati di archiviazione dell'intero e-service dal descrittore più recente
     And la versione più recente dell'e-service è in stato "ARCHIVING"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
@@ -626,6 +627,7 @@ Feature: Archiviazione manuale di un e-service
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "ARCHIVING_SUSPENDED"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And il vecchio descrittore eredita i dati di archiviazione dell'intero e-service dal descrittore più recente
     And la versione più recente dell'e-service è in stato "ARCHIVING"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 

@@ -111,6 +111,22 @@ public class EServiceArchivingSteps {
         archivingScheduleVerifier.pollDescriptorArchivingSchedule(eServiceId, descriptorId, ArchivingScope.ESERVICE);
     }
 
+    @Then("il vecchio descrittore eredita i dati di archiviazione dell'intero e-service dal descrittore più recente")
+    public void oldDescriptorHasSameEServiceArchivingScheduleAsLatestDescriptor() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID oldDescriptorId = sharedStepsContext.getEServicesCommonContext().getOldDescriptorId();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+
+        archivingScheduleVerifier.pollDescriptorWithSameArchivingSchedule(
+                eServiceId,
+                oldDescriptorId,
+                descriptorId,
+                ArchivingScope.ESERVICE
+        );
+    }
+
     //Step specifico per i test relativi al cron job di archiviazione
     @Then("il descrittore con id {string} dell'e-service avente id {string} è stato correttamente archiviato tramite l'archiviazione manuale dell'intero e-service")
     @Then("il descrittore con id {string} dell'e-service avente id {string} è in fase di archiviazione tramite l'archiviazione manuale dell'intero e-service")
@@ -125,7 +141,7 @@ public class EServiceArchivingSteps {
     }
 
     private void scheduleArchiveEService(UUID eServiceId, String archivingReason, GracePeriodDays gracePeriodDays) {
-        archivingScheduleVerifier.registerDescriptorArchivingRequestTimestamp(gracePeriodDays);
+        archivingScheduleVerifier.registerEServiceArchivingRequestTimestamp(gracePeriodDays);
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getEServiceClient()
                         .scheduleArchiveEService(

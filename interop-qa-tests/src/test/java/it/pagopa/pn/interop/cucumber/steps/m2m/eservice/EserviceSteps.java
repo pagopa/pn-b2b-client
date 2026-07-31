@@ -173,9 +173,9 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
 
     private void scheduleArchiveEService(UUID eServiceId, String archivingReason, GracePeriodDays gracePeriodDays) {
         sharedStepsContext.getEServicesCommonContext()
-                .setDescriptorArchivingRequestTimestamp(OffsetDateTime.now(ZoneOffset.UTC));
+                .setEServiceArchivingRequestTimestamp(OffsetDateTime.now(ZoneOffset.UTC));
         sharedStepsContext.getEServicesCommonContext()
-                .setDescriptorArchivingGracePeriodDays(gracePeriodDays);
+                .setEServiceArchivingGracePeriodDays(gracePeriodDays);
 
         EServiceArchivingRequest request = EServiceArchivingRequest.builder()
                 .archivingReason(archivingReason)
