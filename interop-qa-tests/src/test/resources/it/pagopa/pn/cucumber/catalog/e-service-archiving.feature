@@ -1130,7 +1130,7 @@ Feature: Archiviazione manuale di un e-service
       | admin        | 90          |
       | admin        | 120         |
 
-  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_ASYNC_1.2] Un ente erogatore di un e-service asincrono creato da template in stato SUSPENDED e seconda versione DEPRECATED, può avviare il processo di archiviazione manuale dell'e-service
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_ASYNC_TEMPLATE_INSTANCE_1.2] Un ente erogatore di un e-service asincrono creato da template in stato SUSPENDED e seconda versione DEPRECATED, può avviare il processo di archiviazione manuale dell'e-service
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template asincrono in modalità erogazione con tecnologia "REST" in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
