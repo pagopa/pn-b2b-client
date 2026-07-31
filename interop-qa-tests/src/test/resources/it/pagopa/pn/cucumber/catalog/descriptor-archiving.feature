@@ -494,15 +494,16 @@ Feature: Archiviazione manuale di un descrittore
 
   @happy-path
   Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_ASYNC_1.1] Un ente erogatore di un e-service asincrono può avviare il processo di archiviazione manuale del primo e meno recente descrittore in stato DEPRECATED
-    Given l'utente è un "<role>" di "PA1"
-    And "PA1" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
+    Given l'utente è un "admin" di "PA2"
+    And "PA2" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
       | asyncExchangeProperties.responseTime          | 100  |
       | asyncExchangeProperties.resourceAvailableTime | 100  |
       | asyncExchangeProperties.confirmation          | true |
       | asyncExchangeProperties.bulk                  | true |
       | asyncExchangeProperties.maxResultSet          | 50   |
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA1" ha già pubblicato una nuova versione per quell'e-service asincrono
+    And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già pubblicato una nuova versione per quell'e-service asincrono
+    And l'utente è un "<role>" di "PA2"
     When l'utente avvia la messa in archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando <gracePeriod> giorni di preavviso
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
@@ -519,16 +520,17 @@ Feature: Archiviazione manuale di un descrittore
 
   @happy-path
   Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_ASYNC_1.2] Un ente erogatore di un e-service asincrono può avviare il processo di archiviazione manuale del primo e meno recente descrittore in stato SUSPENDED
-    Given l'utente è un "<role>" di "PA1"
-    And "PA1" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
+    Given l'utente è un "admin" di "PA2"
+    And "PA2" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
       | asyncExchangeProperties.responseTime          | 100  |
       | asyncExchangeProperties.resourceAvailableTime | 100  |
       | asyncExchangeProperties.confirmation          | true |
       | asyncExchangeProperties.bulk                  | true |
       | asyncExchangeProperties.maxResultSet          | 50   |
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA1" ha già sospeso quell'e-service
-    And "PA1" ha già pubblicato una nuova versione per quell'e-service asincrono
+    And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già sospeso quell'e-service
+    And "PA2" ha già pubblicato una nuova versione per quell'e-service asincrono
+    And l'utente è un "<role>" di "PA2"
     When l'utente avvia la messa in archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando <gracePeriod> giorni di preavviso
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "ARCHIVING_SUSPENDED"
@@ -545,17 +547,19 @@ Feature: Archiviazione manuale di un descrittore
 
   @sad-path
   Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_ASYNC_1.3] Un utente con ruolo non autorizzato NON può avviare il processo di archiviazione manuale per un descrittore asincrono
-    Given l'utente è un "<role>" di "PA1"
-    And "PA1" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
+    Given l'utente è un "admin" di "PA2"
+    And "PA2" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
       | asyncExchangeProperties.responseTime          | 100  |
       | asyncExchangeProperties.resourceAvailableTime | 100  |
       | asyncExchangeProperties.confirmation          | true |
       | asyncExchangeProperties.bulk                  | true |
       | asyncExchangeProperties.maxResultSet          | 50   |
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA1" ha già pubblicato una nuova versione per quell'e-service asincrono
+    And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già pubblicato una nuova versione per quell'e-service asincrono
+    And l'utente è un "<role>" di "PA2"
     When l'utente avvia la messa in archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     Then si ottiene response status code 403
+    And l'utente è un "admin" di "PA2"
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
