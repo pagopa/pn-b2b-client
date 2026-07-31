@@ -16,10 +16,10 @@ Feature: Archiviazione manuale di un e-service
     #quando il primo descrittore smetterà di essere il più recente, il suo stato passerà da PUBLISHED a DEPRECATED
     Examples:
       | role         | gracePeriod |
-#      | admin        | 30          |
-#      | api          | 30          |
-#      | api,security | 30          |
-#      | admin        | 60          |
+      | admin        | 30          |
+      | api          | 30          |
+      | api,security | 30          |
+      | admin        | 60          |
       | admin        | 90          |
       | admin        | 120         |
 
