@@ -758,7 +758,7 @@ Feature: annullamento notifiche b2b
       | denomination    | Galileo Galilei  |
       | taxId           | GLLGLL64B15G702I |
       | digitalDomicile | NULL             |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata con polling EXTRA_RAPID
     When vengono letti gli eventi fino all'elemento di timeline della notifica annullata "NOTIFICATION_CANCELLATION_REQUEST"
     Then viene controllato che l'elemento di timeline della notifica "SEND_COURTESY_MESSAGE" non esiste
 
@@ -1003,7 +1003,7 @@ Feature: annullamento notifiche b2b
       | digitalDomicile_address | test@OK-PEC-SLOW.it |
       | payment_f24             | PAYMENT_F24_FLAT    |
       | title_payment           | F24_FLAT_GHERKIN    |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata con polling EXTRA_RAPID
     When vengono letti gli eventi fino all'elemento di timeline della notifica annullata "NOTIFICATION_CANCELLATION_REQUEST"
     Then viene controllato che l'elemento di timeline della notifica "SEND_DIGITAL_PROGRESS" non esiste
 

@@ -530,8 +530,17 @@ public class SharedSteps {
 
     @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi ACCEPTED e successivamente annullata")
     public void laNotificaVieneInviataOkAndCancelled(String paName) {
+        laNotificaVieneInviataOkAndCancelled(paName, WAIT_EXTRA_RAPID, NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS);
+    }
+
+    @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi ACCEPTED e successivamente annullata con polling EXTRA_RAPID")
+    public void laNotificaVieneInviataOkAndCancelledExtraRapid(String paName) {
+        laNotificaVieneInviataOkAndCancelled(paName, WAIT_EXTRA_RAPID, NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS_EXTRA_RAPID);
+    }
+
+    private void laNotificaVieneInviataOkAndCancelled(String paName, int wait, String status, String pollingStrategy) {
         setPaAndSenderTaxId(paName);
-        getNotificationStepInterface().sendNotification(WAIT_EXTRA_RAPID, NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS);
+        getNotificationStepInterface().sendNotification(wait, status, pollingStrategy);
         Assertions.assertDoesNotThrow(() -> {
             RequestStatus resp = Assertions.assertDoesNotThrow(() -> b2bClient.notificationCancellation(notificationIun));
 
