@@ -16,10 +16,10 @@ public class PnPaB2bExternalInformalClientImpl implements IPnPaB2bExternalInform
     private final RestTemplate restTemplate;
     private final String basePath;
 
-    public PnPaB2bExternalInformalClientImpl(RestTemplate restTemplate, @Value("${pn.external.base-url}") String basePath) {
+    public PnPaB2bExternalInformalClientImpl(RestTemplate restTemplate, @Value("${pn.external.informal-base-url}") String basePath) {
 
         this.restTemplate = restTemplate;
-        this.basePath = basePath+"/informal/";
+        this.basePath = basePath;
     }
 
     @Override

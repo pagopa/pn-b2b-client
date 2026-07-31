@@ -354,7 +354,7 @@ Feature: Messaggi e allegati di una notifica bonaria.
       | denomination  | Ettore Fieramosca |
       | messageId     | ${IT}             |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
-    And il destinatario "Ettore Fieramosca" tenta il recupero dell'allegato di pagamento della notifica bonaria
+    And il destinatario Ettore Fieramosca tenta il recupero dell'allegato di pagamento della notifica bonaria
     Then il download del destinatario risulta correttamente effettuato
     And verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun    | auto                 |
@@ -369,7 +369,8 @@ Feature: Messaggi e allegati di una notifica bonaria.
       | denomination  | Ettore Fieramosca |
       | messageId     | ${IT}             |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
-    And il destinatario "Ettore Fieramosca" tenta il recupero del documento della notifica bonaria
+    And il destinatario legge la notifica bonaria
+    And il destinatario Ettore Fieramosca tenta il recupero del documento della notifica bonaria
     Then il download del destinatario risulta correttamente effettuato
     And verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun    | auto                |

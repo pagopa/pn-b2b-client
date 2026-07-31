@@ -8,6 +8,7 @@ import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.*;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.FullReceivedInformalNotificationV1;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
+import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnPrivateDeliveryPushExternalClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
@@ -26,7 +27,6 @@ import it.pagopa.pn.cucumber.utils.GroupPosition;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.HttpClientErrorException;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
@@ -40,24 +40,13 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_ROOT;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 public class PresaInCaricoNoticaBonariaSteps {
-
-    @Value("${pn.external.senderId}")
-    private String senderId;
-    @Value("${pn.external.senderId-2}")
-    private String senderId2;
-    @Value("${pn.external.senderId-GA}")
-    private String senderIdGA;
-    @Value("${pn.external.senderId-SON}")
-    private String senderIdSON;
-    @Value("${pn.external.senderId-ROOT}")
-    private String senderIdROOT;
 
     @Getter
     private final SharedSteps sharedSteps;
@@ -95,8 +84,7 @@ public class PresaInCaricoNoticaBonariaSteps {
 
     private FullSentInformalNotificationV1 fullInformalNotificationResponse;
     private InformalTimelineElementV1 timelineElement;
-    private FullReceivedInformalNotificationV1 fullReceivedInformalNotificationResponse;
-    private String recipientTaxId;
+    private Destinatario recipient;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet recipientCxType;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.NotificationAttachmentDownloadMetadataResponse receivedAttachmentResponse;
 
@@ -367,22 +355,6 @@ public class PresaInCaricoNoticaBonariaSteps {
     }
 
 
-    @When("il destinatario {string} tenta il recupero del documento della notifica bonaria")
-    public void getReceivedDocument(String taxId) {
-
-        String recipientCxIdResolved = resolveRecipientCxId(setTaxID(taxId));
-
-        try {
-            receivedAttachmentResponse = pnPaB2bInternalInformalClientImpl.getReceivedInformalNotificationDocument(recipientCxIdResolved, savedIun, recipientCxType, 0);
-            lastException = null;
-
-        } catch (Exception e) {
-
-            lastException = e;
-            receivedAttachmentResponse = null;
-        }
-    }
-
     //*** DOCUMENTO NON CONFORME
 
     @And("documento non valido: {string}")
@@ -412,31 +384,30 @@ public class PresaInCaricoNoticaBonariaSteps {
 
     //*** STEP ALLEGATI PAGAMENTO
 
-    @When("il destinatario {string} tenta il recupero dell'allegato di pagamento della notifica bonaria")
-    public void getReceivedAttachment(String taxId) {
 
-        String cf = setTaxID(taxId);
-        String recipientCxIdResolved = resolveRecipientCxId(cf);
+    @When("il destinatario {destinatario} tenta il recupero del documento della notifica bonaria")
+    public void getReceivedDocument(Destinatario destinatario) {
 
+        String recipientCxId = sharedSteps.getDestinatarioRegistry().getCxId(destinatario);
         try {
-            receivedAttachmentResponse = pnPaB2bInternalInformalClientImpl.getReceivedInformalNotificationAttachment(recipientCxIdResolved, savedIun, recipientCxType, 0);
+            receivedAttachmentResponse = pnPaB2bInternalInformalClientImpl.getReceivedInformalNotificationDocument(recipientCxId, savedIun, recipientCxType, 0);
             lastException = null;
-
         } catch (Exception e) {
             lastException = e;
             receivedAttachmentResponse = null;
         }
     }
 
-    @When("si tenta il recupero allegato pagamento della notifica bonaria")
-    public void getAttachment() {
-        try {
-            attachmentResponse = pnPaB2bInternalInformalClientImpl.getSentInformalNotificationAttachment(savedIun, currentCxId, 0, 0);
-            lastException = null;
+    @When("il destinatario {destinatario} tenta il recupero dell'allegato di pagamento della notifica bonaria")
+    public void getReceivedAttachment(Destinatario destinatario) {
 
+        String recipientCxId = sharedSteps.getDestinatarioRegistry().getCxId(destinatario);
+        try {
+            receivedAttachmentResponse = pnPaB2bInternalInformalClientImpl.getReceivedInformalNotificationAttachment(recipientCxId, savedIun, recipientCxType, 0);
+            lastException = null;
         } catch (Exception e) {
             lastException = e;
-            attachmentResponse = null;
+            receivedAttachmentResponse = null;
         }
     }
 
@@ -680,15 +651,18 @@ public class PresaInCaricoNoticaBonariaSteps {
     @And("il destinatario legge la notifica bonaria")
     public void recipientReadsInformalNotification() {
 
-        fullReceivedInformalNotificationResponse = assertDoesNotThrow(() -> pnPaB2bInternalInformalClientImpl.getReceivedInformalNotification(resolveRecipientCxId(recipientTaxId), savedIun, recipientCxType));
+        String recipientCxId = sharedSteps.getDestinatarioRegistry().getCxId(recipient);
+        FullReceivedInformalNotificationV1 fullReceivedInformalNotificationResponse = assertDoesNotThrow(() -> pnPaB2bInternalInformalClientImpl.getReceivedInformalNotification(recipientCxId, savedIun, recipientCxType));
+
         try {
             Thread.sleep(sharedSteps.getWorkFlowWait());
         } catch (InterruptedException exc) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException(exc);
         }
     }
 
-    //todo t bonarie testare e ottimizzare e cancellare vecchi step
+
     @Given("l'ente mittente {string} compila una notifica bonaria con i seguenti dati:")
     public void createInformalNotification(String paName, Map<String, String> dataInput) {
 
@@ -705,9 +679,9 @@ public class PresaInCaricoNoticaBonariaSteps {
         InformalNotificationRecipientV1 recipient = recipientBuilder.build(cleanedData, currentCxId);
         informalNotificationRequestV1.getRecipients().add(recipient);
 
-        this.recipientTaxId = recipient.getTaxId();
+        //this.recipientTaxId = recipient.getTaxId();
         this.recipientCxType = "PF".equalsIgnoreCase(recipient.getRecipientType().getValue()) ? it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet.PF : it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet.PG;
-
+        this.recipient = sharedSteps.getDestinatarioRegistry().getByTaxId(recipient.getTaxId());
     }
 
     @Then("si attende che venga prodotto l'elemento {string} della notifica bonaria")
@@ -725,18 +699,9 @@ public class PresaInCaricoNoticaBonariaSteps {
         assertNotNull(timelineElement);
     }
 
-    @When("si tenta il recupero completo della notifica bonaria tramite IUN {string}")
-    public void getFullInformalNotificationStep(String iun) {
-        savedIun = iun;
-        currentCxId = "5b994d4a-0fa8-47ac-9c7b-354f1d44a1ce"; //todo t bonarie
-        getFullInformalNotification();
-    }
-
-
     private FullSentInformalNotificationV1 getFullInformalNotification() {
 
         try {
-
             fullInformalNotificationResponse = pnPaB2bInternalInformalClientImpl.getSentInformalNotificationSender(currentCxId, savedIun, true);
             lastException = null;
             log.info("Full informal notification response: {}", fullInformalNotificationResponse);
@@ -752,40 +717,17 @@ public class PresaInCaricoNoticaBonariaSteps {
         }
     }
 
-    private String resolveRecipientCxId(String taxId) {
-        Destinatario destinatario = sharedSteps.getDestinatarioRegistry().getByTaxId(taxId);
-        return destinatario.getRecipientType() + "-" + destinatario.getUid();
-    }
-
     private void setSenderContext(String paName) {
-        //todo t bonarie portare nel provider?
-        this.paName = paName;
 
-        this.currentCxId = switch (paName) {
-            case "Comune_1" -> senderId;
-            case "Comune_2" -> senderId2;
-            case "Comune_Multi" -> senderIdGA;
-            case "Comune_Root" -> senderIdROOT;
-            default -> throw new IllegalArgumentException("PA bonaria non valida: " + paName);
-        };
-        if (!"Comune_Root".equalsIgnoreCase(paName)) {
+        this.paName = paName;
+        SenderInfoProvider.PaInfo paInfo = sharedSteps.getSenderInfoProvider().getPaInfo(paName);
+        this.currentCxId = paInfo.getSenderId();
+
+        if (!COMUNE_ROOT.equalsIgnoreCase(paName)) {
             this.currentGroupId = sharedSteps.getGroupIdByPa(paName, GroupPosition.FIRST);
         }
     }
 
-    public String setTaxID(String taxId) {
-        String result;
-        result = switch (taxId) {
-            case MARIO_GHERKIN -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_GHERKIN.getTaxId();
-            case MARIO_CUCUMBER -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_CUCUMBER.getTaxId();
-            case ETTORE_FIERAMOSCA -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_CUCUMBER.getTaxId();
-            case CUCUMBER_SPA -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_CUCUMBER_SPA.getTaxId();
-            case GHERKIN_SRL -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_GHERKIN_SRL.getTaxId();
-            case GALILEO_GALILEI -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_GALILEO_GALILEI.getTaxId();
-            default -> null;
-        };
-        return result;
-    }
 
     @Then("viene inviata una nuova notifica bonaria e si attende che vada in stato {string}")
     public void sendInformalAndWaitStatus(String expectedStatus) throws IOException {
@@ -825,50 +767,6 @@ public class PresaInCaricoNoticaBonariaSteps {
         lastException = null;
     }
 }
-// todo t bonarie eliminare dopo test dello step unico
-//    @Then("viene inviata una nuova notifica bonaria")
-//    public void sendInformal() throws IOException {
-//        informalNotificationRequestV1 = notificationInformalUtilsV1.preloadAndPrepare(informalNotificationRequestV1, paName);
-//        newInformalNotificationResponse = pnPaB2bInternalInformalClientImpl.sendNewInformalNotificationV1(currentCxId, informalNotificationRequestV1);
-//        savedNotificationRequestId = newInformalNotificationResponse.getNotificationRequestId();
-//        lastException = null;
-//    }
-//
-//    @Then("si verifica che la notifica bonaria sia in stato {string}")
-//    public void verifyNotificationStatus(String expectedStatus) {
-//        AtomicReference<String> lastStatus = new AtomicReference<>(null);
-//        InformalStatusPollingConfig.DefaultStatusValue config = InformalStatusPollingConfig.DefaultStatusValue.valueOf(expectedStatus);
-//        try {
-//            await().atMost(Duration.ofMinutes(12)).pollInterval(Duration.ofSeconds(3)).until(() -> {
-//                statusResponse = pnPaB2bInternalInformalClientImpl.getNotificationStatusByRequestId(currentCxId, savedNotificationRequestId);
-//                if (statusResponse == null) {
-//                    return false;
-//                }
-//                String actualStatus = statusResponse.getNotificationRequestStatus();
-//                lastStatus.set(actualStatus);
-//                log.info("Polling stato: {}", actualStatus);
-//                log.info("IUN: {}", savedIun);
-//                if (config.getStopStatuses().contains(actualStatus)) {
-//                    throw new AssertionError("Raggiunto stato incompatibile con quello atteso.\n" + "Atteso: " + expectedStatus + "\n" + "Raggiunto: " + actualStatus + "\n" + "Response: " + statusResponse);
-//                }
-//                return expectedStatus.equals(actualStatus);
-//            });
-//        } catch (Exception e) {
-//            throw new AssertionError("Stato finale non valido.\n" + "Atteso: " + expectedStatus + "\n" + "Ultimo stato ricevuto: " + lastStatus.get() + "\n" + "Response: " + statusResponse, e);
-//        } finally {
-//            log.info("=== RESPONSE FINALE NOTIFICA ===");
-//            if (statusResponse != null) {
-//                log.info("Response: {}", statusResponse);
-//            } else {
-//                log.info("Nessuna response disponibile");
-//            }
-//        }
-//        savedIun = statusResponse.getIun();
-//        sharedSteps.setNotificationIun(savedIun);
-//        lastException = null;
-//    }
-
-
 
 
 
