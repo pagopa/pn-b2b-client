@@ -81,7 +81,6 @@ Feature: Listing degli aderenti
       | GSP     | viewer       | 200       |
       | Privato | admin        | 200       |
       | Privato | security     | 200       |
-      | Privato | security     | 200       |
       | Privato | api,security | 200       |
       | Privato | reviewer     | 200       |
       | Privato | viewer       | 200       |
