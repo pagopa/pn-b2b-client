@@ -56,7 +56,7 @@ public class DescriptorArchivingScheduleVerifier {
                 () -> clientTokenConfigurator.getEServiceClient().getEServiceDescriptor(eServiceId, descriptorId),
                 descriptor -> hasPopulatedArchivingSchedule(descriptor, expectedScope),
                 "Il descrittore dell'e-service non contiene un archivingSchedule valorizzato: "
-                        + "scope, startedAt o archivableOn assente o vuoto"
+                        + "scope, startedAt, archivableOn o gracePeriodDays assente o vuoto"
         );
     }
 
@@ -80,7 +80,8 @@ public class DescriptorArchivingScheduleVerifier {
         ArchivingSchedule archivingSchedule = descriptor.getArchivingSchedule();
         return expectedScope.equals(archivingSchedule.getScope())
                 && isPopulated(archivingSchedule.getStartedAt())
-                && isPopulated(archivingSchedule.getArchivableOn());
+                && isPopulated(archivingSchedule.getArchivableOn())
+                && archivingSchedule.getGracePeriodDays() != null;
     }
 
     private boolean isPopulated(String value) {
