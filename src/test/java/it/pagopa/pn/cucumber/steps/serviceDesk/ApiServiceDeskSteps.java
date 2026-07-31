@@ -1522,7 +1522,8 @@ public class ApiServiceDeskSteps {
     private String createIUN(String iun) {
         return switch (iun.toUpperCase()) {
             case "VUOTO" -> "";
-            case "INESISTENTE" -> IUN_ERRATO;
+            case "INESISTENTE" -> INEXISTENT_IUN;
+            case "NON VALIDO" -> INVALID_IUN;
             case "ASSOCIATO A PAGAMENTO PAGOPA" -> iunWithPagoPAPayment;
             case "ASSOCIATO A PAGAMENTO F24" -> iunWithF24Payment;
             case "NOTIFICA SENZA PAGAMENTI" -> iunWithoutPayment;

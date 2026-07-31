@@ -688,7 +688,7 @@ Feature: Api Service Cruscotto Assistenza
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     And viene inserito un recapito legale "example2@pecSuccess.it"
-    And viene controllato che siano presenti pec verificate inserite per il comune "default"
+    And viene controllato che sia presente la pec verificate "example2@pecSuccess.it" inserita per il comune "default"
     When come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Galileo Galilei" e recipientType  "PF"
     Then controllo che i timestamp di creazione e modifica del recapito "legale" "PEC" siano "diverse" tra di loro
 
@@ -715,7 +715,7 @@ Feature: Api Service Cruscotto Assistenza
     And viene verificato che Sercq sia "abilitato" per il comune "default"
     And viene disabilitato il servizio SERCQ SEND per il comune "default"
     When come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Galileo Galilei" e recipientType  "PF"
-    Then controllo che i timestamp di creazione e modifica del recapito "legale" "SERCQ" siano "vuoti"
+    Then controllo che i timestamp di creazione e modifica del recapito "legale" "SERCQ" siano "vuoti" tra di loro
 
   @evolutiveCruscottoAssistenza
   Scenario Outline: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_7] Recupero del dettaglio della notifica con i pagamenti associati con l’utilizzo di uno IUN vuoto - IUN inesistente - IUN non associato allo User
@@ -723,6 +723,7 @@ Feature: Api Service Cruscotto Assistenza
     Then il servizio risponde con errore "<ERROR>"
     Examples:
       | USER           | IUN                      | UID      | ERROR |
+      | Mario Gherkin  | NON VALIDO               | corretto | 400   |
       | Mario Gherkin  | VUOTO                    | corretto | 400   |
       | Mario Gherkin  | INESISTENTE              | corretto | 404   |
       |                | NOTIFICA SENZA PAGAMENTI | corretto | 400   |
