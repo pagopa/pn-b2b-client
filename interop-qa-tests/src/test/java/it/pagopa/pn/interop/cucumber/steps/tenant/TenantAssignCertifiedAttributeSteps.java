@@ -88,8 +88,13 @@ public class TenantAssignCertifiedAttributeSteps {
 
         if(sharedStepsContext.getHttpCallExecutor().getResponseStatus().is2xxSuccessful()){
             sharedStepsContext.getPollingService().makePolling(
-                    () -> clientTokenConfigurator.getTenantsApi().getCertifiedAttributes(tenantId),
-                    res -> res.getAttributes().stream().anyMatch(attr -> attr.getId().equals(lastAttributeId)),
+                    () -> sharedStepsContext.getHttpCallExecutor().performCall(
+                            () -> clientTokenConfigurator.getTenantsApi().getCertifiedAttributes(tenantId)
+                    ),
+                    res -> res.is2xxSuccessful()
+                            && ((CertifiedAttributesResponse) sharedStepsContext.getHttpCallExecutor().getResponse())
+                                .getAttributes().stream()
+                                .anyMatch(attr -> attr.getId().equals(lastAttributeId)),
                     "There was an error while retrieving the attributes"
             );
 
