@@ -156,7 +156,7 @@ public class EServiceTemplateInstanceCreateSteps {
     }
 
     @Given("l'utente crea una nuova versione dell'istanza del template con successo")
-    public void publishNewTemplateInstanceVersionSuccessfully() {
+    public void createNewTemplateInstanceVersionSuccessfully() {
         String userToken = sharedStepsContext.getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
 
