@@ -751,6 +751,8 @@ Feature: annullamento notifiche b2b
   @Annullamento @mockPec @addressBook1 @ignoreHotfixTemp #temp
   Scenario:  [B2B-PA-ANNULLAMENTO_28_1] PA mittente: annullamento notifica inibizione invio mail di cortesia
     Given si predispone addressbook per l'utente "Galileo Galilei"
+    And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail2@test.it" per il comune "default"
     And viene inserito un recapito legale "example@sequence.90s-C000.90s-C001.90s-C005.90s-C003"
     And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
