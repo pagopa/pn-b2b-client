@@ -72,16 +72,17 @@ public class TenantListingSteps {
                 .filter(Objects::nonNull)
                 .distinct()
                 .toList();
-        List<RequesterCertifiedAttribute> allResults = getAllRequesterCertifiedAttributes();
 
-        Set<UUID> actualAttributeIds = allResults.stream()
-                .map(RequesterCertifiedAttribute::getAttributeId)
-                .collect(Collectors.toSet());
-
-        expectedAttributeIds.forEach(attributeId -> Assertions.assertTrue(
-                actualAttributeIds.contains(attributeId),
-                "L'attributo certificato assegnato " + attributeId + " non è presente nella risposta paginata di getRequesterCertifiedAttributes"
-        ));
+        sharedStepsContext.getPollingService().makePolling(
+                this::getAllRequesterCertifiedAttributes,
+                allResults -> {
+                    Set<UUID> actualAttributeIds = allResults.stream()
+                            .map(RequesterCertifiedAttribute::getAttributeId)
+                            .collect(Collectors.toSet());
+                    return actualAttributeIds.containsAll(expectedAttributeIds);
+                },
+                "L'attributo certificato assegnato non è presente nella risposta paginata di getRequesterCertifiedAttributes"
+        );
     }
 
     @When("l'utente richiede una operazione di listing di tutti gli attributi certificati discreti e l'attributo assegnato è presente")
