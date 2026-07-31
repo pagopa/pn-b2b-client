@@ -95,11 +95,11 @@ public class M2MAuthSteps {
         boolean bestFit = mode == ApiProfile.ApiMode.BEST_FIT;
         boolean rightFit = mode == ApiProfile.ApiMode.RIGHT_FIT;
 
-        boolean useBearer = bestFit || (rightFit && version == ApiProfile.ApiM2MVersion.V2);
         boolean useDpop = bestFit || (rightFit && version == ApiProfile.ApiM2MVersion.V3);
 
         if (useDpop) {
-            Auth auth = sharedStepsContext.getAuth();
+            //Auth auth = sharedStepsContext.getAuth(); // TODO 31 07 2026: versione precedente, rimuovere in futuro una volta appurata l'assenza di breaking changes
+            Auth auth = Auth.of(null, null, null, null, null);
 
             DpopHeaderPolicy policy = new DpopHeaderPolicy();
             policy.setMode(DpopHeaderPolicy.Mode.INVALID_AUTH);
@@ -108,10 +108,8 @@ public class M2MAuthSteps {
             clientTokenConfigurator.setAuth(auth);
         }
 
-        if (useBearer) {
-            clientTokenConfigurator.setBearerToken(INVALID_AUTH_TOKEN);
-            sharedStepsContext.setUserToken(INVALID_AUTH_TOKEN);
-        }
+        clientTokenConfigurator.setBearerToken(INVALID_AUTH_TOKEN);
+        sharedStepsContext.setUserToken(INVALID_AUTH_TOKEN);
     }
 
     @Given("viene rimosso l'header di autenticazione DPoP")
