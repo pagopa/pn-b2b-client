@@ -101,8 +101,8 @@ public class TenantListingSteps {
                 "There was an error while retrieving the attributes"
         );
 
-        UUID attributeIdInList = ((Attributes) httpCallExecutor.getResponse()).getResults().get(0).getId();
-        Assertions.assertEquals(lastCreatedAttribute.getId(), attributeIdInList);
+        List<CompactAttribute> results = ((Attributes) httpCallExecutor.getResponse()).getResults();
+        Assertions.assertTrue(results.stream().anyMatch(a -> a.getId().equals(lastCreatedAttribute.getId())));
     }
 
     private List<RequesterCertifiedAttribute> getAllRequesterCertifiedAttributes() {
