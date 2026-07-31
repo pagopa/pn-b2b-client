@@ -61,7 +61,7 @@ Feature: Assegnazione di un attributo certificato ad un aderente
   @certifiedDiscreteAttribute
   @certifiedDiscreteAttributeFlagOn
   Scenario Outline: [TENANT_ASSIGN_CERTIFIED_DISCRETE_ATTRIBUTE_2] L'attributo certificato discreto può essere assegnato
-  soltanto da un admin di un ente certifcatore.
+  soltanto da un admin di un ente certificatore.
 
     Given l'utente è un "admin" di "GSP"
     And GSP ha già creato 1 attributo CERTIFIED_DISCRETE
