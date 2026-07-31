@@ -96,7 +96,8 @@ public class TenantListingSteps {
                         List.of(AttributeKind.CERTIFIED_DISCRETE),
                         lastCreatedAttribute.getName(), null)
                 ),
-                res -> !((Attributes) httpCallExecutor.getResponse()).getResults().isEmpty(),
+                res -> res.is2xxSuccessful() && httpCallExecutor.getResponse() != null
+                        && !((Attributes) httpCallExecutor.getResponse()).getResults().isEmpty(),
                 "There was an error while retrieving the attributes"
         );
 
