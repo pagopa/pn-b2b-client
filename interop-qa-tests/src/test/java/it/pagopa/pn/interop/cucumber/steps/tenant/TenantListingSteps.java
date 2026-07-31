@@ -85,7 +85,7 @@ public class TenantListingSteps {
         );
     }
 
-    @When("l'utente richiede una operazione di listing di tutti gli attributi certificati discreti e l'attributo assegnato è presente")
+    @When("l'utente richiede una operazione di listing di tutti gli attributi certificati discreti e l'attributo creato è presente")
     public void requireCertifiedDiscreteAttributeOperationAll() {
 
         Attribute lastCreatedAttribute = sharedStepsContext.getAttributeCommonContext().getLastCreatedAttribute();

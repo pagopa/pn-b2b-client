@@ -58,7 +58,7 @@ Feature: Listing degli aderenti
   certificatore, l'attributo certificato discreto risulti presente nella lista degli attributi del tenant.
     Given l'utente è un "admin" di "GSP"
     When GSP ha già creato 1 attributo CERTIFIED_DISCRETE
-    Then l'utente richiede una operazione di listing di tutti gli attributi certificati discreti e l'attributo assegnato è presente
+    Then l'utente richiede una operazione di listing di tutti gli attributi certificati discreti e l'attributo creato è presente
 
   @certifiedDiscreteAttribute
   @certifiedDiscreteAttributeFlagOn
