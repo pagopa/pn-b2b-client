@@ -7,6 +7,11 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.payment.PaymentInfoRequest;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingPaymentInfo;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponsePaymentInfo;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServicePaymentInfo;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnGPDClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.gpd.model.PaymentOptionModel;
@@ -44,8 +49,6 @@ public class AsyncSteps {
     private String deleteGpdResponse;
     private Integer amountGPD;
     private final List<Integer> amountNotifica;
-    private static final Integer NUM_CHECK_PAYMENT_INFO = 32;
-    private static final Integer WAITING_PAYMENT_INFO = 1000;
 
 
     @Autowired
@@ -119,15 +122,6 @@ public class AsyncSteps {
 
     @And("lettura amount posizione debitoria per la notifica corrente di {string}")
     public void letturaAmountPosizioneDebitoria(String user) {
-        letturaAmountPosizioneDebitoria(user, NUM_CHECK_PAYMENT_INFO, WAITING_PAYMENT_INFO);
-    }
-
-    @And("lettura amount posizione debitoria per la notifica corrente di {string} con tentativi {int} e intervallo {int}")
-    public void letturaAmountPosizioneDebitoriaConAttesa(String user, Integer tentativi, Integer intervalloMs) {
-        letturaAmountPosizioneDebitoria(user, tentativi, intervalloMs);
-    }
-
-    private void letturaAmountPosizioneDebitoria(String user, int numCheck, int waitingMs) {
         PaymentPositionModel positionUser = new PaymentPositionModel();
         for (PaymentPositionModel position : paymentPositionModel) {
             if (position.getFullName().equalsIgnoreCase(user)) {
@@ -143,35 +137,24 @@ public class AsyncSteps {
 
         log.info("User: " + positionUser);
         log.info("Messaggio json da allegare: " + paymentInfoRequest);
-        log.info("Polling amount GPD: tentativi={}, intervalloMs={}", numCheck, waitingMs);
-        long pollingStartedAt = System.currentTimeMillis();
-        //TODO utilizzare algoritmo di polling
-        for (int i = 0; i < numCheck; i++) {
-            try {
-                Assertions.assertDoesNotThrow(() -> {
-                    paymentInfoResponse = pnPaymentInfoClientImpl.getPaymentInfoV21(paymentInfoRequestList);
-                    log.info("Risposta recupero posizione debitoria: " + paymentInfoResponse.toString());
-                });
-                Assertions.assertNotNull(paymentInfoResponse);
-                Integer readAmount = paymentInfoResponse.get(0).getAmount();
-                if (!Objects.equals(amountGPD, readAmount)) {
-                    long elapsedMs = System.currentTimeMillis() - pollingStartedAt;
-                    log.info("GPD amount changed: attempt={}/{}, elapsedMs={}, {} -> {}",
-                            i + 1, numCheck, elapsedMs, amountGPD, readAmount);
-                    amountGPD = readAmount;
-                    break;
-                }
-                try {
-                    Thread.sleep(waitingMs);
-                } catch (InterruptedException exc) {
-                    throw new RuntimeException(exc);
-                }
-            } catch (AssertionFailedError assertionFailedError) {
-                String message = assertionFailedError.getMessage() +
-                        "{la posizione debitoria " + (paymentInfoResponse == null ? "NULL" : paymentInfoResponse.toString()) + " }";
-                throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-            }
-        }
+
+        PnPollingPaymentInfo pollingPaymentInfo = new PnPollingPaymentInfo();
+        pollingPaymentInfo.setPaymentInfoRequestList(paymentInfoRequestList);
+        pollingPaymentInfo.setPreviousAmount(amountGPD);
+
+        PnPollingServicePaymentInfo pollingService = (PnPollingServicePaymentInfo) sharedSteps.getPollingFactory()
+                .getPollingService(PnPollingStrategy.PAYMENT_INFO);
+        PnPollingResponsePaymentInfo pollingResponse = pollingService.waitForEvent(
+                PnPollingStrategy.PAYMENT_INFO,
+                PnPollingParameter.builder()
+                        .value(PnPollingStrategy.PAYMENT_INFO)
+                        .pnPollingPaymentInfo(pollingPaymentInfo)
+                        .build());
+
+        paymentInfoResponse = pollingResponse.getPaymentInfoResponse();
+        amountGPD = pollingResponse.getAmount();
+        Assertions.assertNotNull(paymentInfoResponse);
+        Assertions.assertNotNull(amountGPD);
     }
 
     @And("lettura amount posizione debitoria per pagamento {int}")

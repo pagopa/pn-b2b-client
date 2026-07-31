@@ -7,13 +7,13 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 /**
  * TEMPORANEO — da cancellare a fine analisi QA-16429 (prefisso {@code Tmp_}).
  * <p>
- * Misura latenza rollback GPD di {@code B2B_ASYNC_8_PF} sotto concorrenza:
+ * Verifica rollback GPD di {@code B2B_ASYNC_8_PF} sotto concorrenza, dopo migrazione a
+ * {@code PnPollingStrategy.PAYMENT_INFO} (Awaitility; timing {@code PAYMENT_INFO} ≈ 45×2s = 90s, early-exit):
  * <ul>
- *   <li>B2B_ASYNC_8_PF — target (poll post-cancel 120×2s, log tentativo al cambio amount)</li>
+ *   <li>B2B_ASYNC_8_PF — target; nei log {@code GPD amount changed}</li>
  *   <li>B2B_ASYNC_15_PF — carico GPD fino a SEND_SIMPLE_REGISTERED_LETTER</li>
  *   <li>B2B_ASYNC_11_PF — carico GPD multipagamento</li>
  * </ul>
- * Nei log cercare {@code GPD amount changed} (attempt / elapsedMs / old→new).
  */
 @Suite
 @IncludeEngines("cucumber")

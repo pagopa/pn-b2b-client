@@ -120,8 +120,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     Then la notifica può essere annullata dal sistema tramite codice IUN
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
-    # Attesa prolungata rollback GPD post-cancel (default 32x1s insufficiente in NRT UAT)
-    Then lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin" con tentativi 120 e intervallo 2000
+    Then lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
     And  viene effettuato il controllo del amount di GPD = "100"
     Then viene cancellata la posizione debitoria di "Mario Gherkin"
 

@@ -110,6 +110,9 @@ public class PnB2bClientTimingConfigs {
         //TIMING FOR WEBHOOK
         WEBHOOK(150000, 500),
 
+        //TIMING FOR GPD / payment-info
+        PAYMENT_INFO(45, 1),
+
         //TIMING FOR TRACING
         INTEROP_TRACING(3, 1),
 
