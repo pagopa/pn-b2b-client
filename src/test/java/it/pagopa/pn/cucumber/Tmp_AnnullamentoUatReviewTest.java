@@ -7,11 +7,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 /**
  * TEMPORANEO — da cancellare a fine analisi QA-16429 (prefisso {@code Tmp_}).
  * <p>
- * Isola i KO annullamento precoce NRT UAT dopo overload step con polling EXTRA_RAPID:
- * <ul>
- *   <li>B2B-PA-ANNULLAMENTO_28_1 — inibizione SEND_COURTESY_MESSAGE</li>
- *   <li>B2B-PA-ANNULLAMENTO_35 — inibizione SEND_DIGITAL_PROGRESS</li>
- * </ul>
+ * Isola B2B-PA-ANNULLAMENTO_28_1 (rilancio: _35 già PASS con EXTRA_RAPID).
  * Esecuzione {@code same_thread}.
  */
 @Suite
@@ -24,7 +20,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "same_thread")
 @ConfigurationParameter(
         key = FILTER_NAME_PROPERTY_NAME,
-        value = ".*B2B-PA-ANNULLAMENTO_28_1.*|.*B2B-PA-ANNULLAMENTO_35.*"
+        value = ".*B2B-PA-ANNULLAMENTO_28_1.*"
 )
 @ExcludeTags({"ignore"})
 @IncludeTags({"Annullamento"})
