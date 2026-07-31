@@ -299,3 +299,17 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
       | 60                  | 60                |
       | 60                  | 120               |
       | 120                 | 120               |
+
+  Scenario: [M2M_V3_COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_2.1] Un ente erogatore m2m NON può avviare il processo di archiviazione dello specifico descrittore se l'archiviazione dell'intero e-service è già in corso
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene avviata l'archiviazione dell'e-service "%actual" indicando la motivazione "QA test manual-archiving" e un preavviso di 60 giorni
+    Then si ottiene response status code 400
+    And la vecchia versione dell'e-service è in stato "ARCHIVING"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And la versione più recente dell'e-service è in stato "ARCHIVING"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
