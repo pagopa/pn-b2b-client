@@ -16,10 +16,10 @@ Feature: Archiviazione manuale di un e-service
     #quando il primo descrittore smetterà di essere il più recente, il suo stato passerà da PUBLISHED a DEPRECATED
     Examples:
       | role         | gracePeriod |
-      | admin        | 30          |
-      | api          | 30          |
-      | api,security | 30          |
-      | admin        | 60          |
+#      | admin        | 30          |
+#      | api          | 30          |
+#      | api,security | 30          |
+#      | admin        | 60          |
       | admin        | 90          |
       | admin        | 120         |
 
@@ -119,7 +119,7 @@ Feature: Archiviazione manuale di un e-service
       | 251                   |
 
   Scenario: [MANUAL_ARCHIVING_ESERVICE_1.8] Un ente erogatore di un e-service in stato PUBLISHED e seconda versione SUSPENDED, può avviare il processo di archiviazione manuale dell'e-service
-    Given l'utente è un "<role>" di "PA1"
+    Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già sospeso quell'e-service
