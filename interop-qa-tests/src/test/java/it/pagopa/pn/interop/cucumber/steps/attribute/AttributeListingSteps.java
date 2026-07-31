@@ -4,13 +4,10 @@ import static it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKin
 import static java.lang.String.valueOf;
 
 import io.cucumber.java.en.When;
-import it.pagopa.interop.attribute.service.IAttributeApiClient;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Attributes;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactAttribute;
-import it.pagopa.interop.generated.openapi.clients.bff.model.Tenant;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.attribute.AttributeListingSteps.AttributeListRequest.AttributeListRequestBuilder;
