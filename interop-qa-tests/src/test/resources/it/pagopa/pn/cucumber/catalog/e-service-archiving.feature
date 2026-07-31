@@ -978,7 +978,7 @@ Feature: Archiviazione manuale di un e-service
     Then si ottiene response status code 200
 
   Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_ASYNC_1.1] Un ente erogatore di un e-service asincrono in stato PUBLISHED e seconda versione DEPRECATED, può avviare il processo di archiviazione manuale dell'e-service
-    Given l'utente è un "<role>" di "PA1"
+    Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
       | asyncExchangeProperties.responseTime          | 100  |
       | asyncExchangeProperties.resourceAvailableTime | 100  |
@@ -987,6 +987,7 @@ Feature: Archiviazione manuale di un e-service
       | asyncExchangeProperties.maxResultSet          | 50   |
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service asincrono
+    And l'utente è un "<role>" di "PA1"
     When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e <gracePeriod> giorni di preavviso
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
@@ -1004,7 +1005,7 @@ Feature: Archiviazione manuale di un e-service
       | admin        | 120         |
 
   Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_ASYNC_1.2] Un ente erogatore di un e-service asincrono in stato SUSPENDED e seconda versione DEPRECATED, può avviare il processo di archiviazione manuale dell'e-service
-    Given l'utente è un "<role>" di "PA1"
+    Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
       | asyncExchangeProperties.responseTime          | 100  |
       | asyncExchangeProperties.resourceAvailableTime | 100  |
@@ -1014,6 +1015,7 @@ Feature: Archiviazione manuale di un e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service asincrono
     And "PA1" ha già sospeso quell'e-service
+    And l'utente è un "<role>" di "PA1"
     When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e <gracePeriod> giorni di preavviso
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
