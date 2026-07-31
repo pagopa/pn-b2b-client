@@ -8,7 +8,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
  * TEMPORANEO — da cancellare a fine analisi QA-16429 (prefisso {@code Tmp_}).
  * <p>
  * Riproduce {@code B2B-TIMELINE_HOTFIX-BUG-PEC_4} (F24 expected 20 was 0 su allegati cartacei).
- * Nei log cercare {@code PaperEngage attachments dump} / {@code documentType}.
+ * Nei log cercare: {@code F24 sha compare SUMMARY}, {@code PaperEngage attachments dump}.
  */
 @Suite
 @IncludeEngines("cucumber")

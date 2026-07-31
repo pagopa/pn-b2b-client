@@ -1114,6 +1114,9 @@ public class InvioNotificheB2bSteps {
     @And("si verifica che il contenuto degli attachments da inviare in via cartacea abbia {int} attachment di tipo {string}")
     public void presenceAttachmentAnalogicFlow(Integer numeroDocumenti, String tipologia) {
         logPaperEngageAttachmentsDump("presenceAttachmentAnalogicFlow tipologia=" + tipologia);
+        if ("F24".equalsIgnoreCase(tipologia)) {
+            logF24ShaVsPaperEngage(0);
+        }
         List<String> attachmentsUri = Optional.ofNullable(documentiPec.get(0))
                 .map(ReceivedMessage::getPaperEngageRequest)
                 .map(PaperEngageRequest::getAttachments)
@@ -1140,7 +1143,7 @@ public class InvioNotificheB2bSteps {
         }
     }
 
-    /** Dump diagnostico allegati cartacei (uri + documentType) — utile per review NRT. */
+    /** Dump diagnostico allegati cartacei (uri + documentType + sha256) — utile per review NRT. */
     private void logPaperEngageAttachmentsDump(String context) {
         if (documentiPec == null || documentiPec.isEmpty() || documentiPec.get(0).getPaperEngageRequest() == null) {
             log.warn("PaperEngage attachments dump [{}]: documentiPec/paperEngage assenti", context);
@@ -1153,16 +1156,133 @@ public class InvioNotificheB2bSteps {
                 .collect(Collectors.groupingBy(
                         a -> a.getDocumentType() == null ? "null" : a.getDocumentType(),
                         Collectors.counting()));
-        log.info("PaperEngage attachments dump [{}]: iun={}, total={}, byDocumentType={}",
-                context, sharedSteps.getNotificationIun(), attachments.size(), byDocumentType);
+        Map<String, Long> bySha256 = attachments.stream()
+                .collect(Collectors.groupingBy(
+                        a -> a.getSha256() == null ? "null" : a.getSha256(),
+                        Collectors.counting()));
+        log.info("PaperEngage attachments dump [{}]: iun={}, total={}, byDocumentType={}, distinctSha256={}",
+                context, sharedSteps.getNotificationIun(), attachments.size(), byDocumentType, bySha256.size());
         int i = 0;
         for (PaperEngageRequestAttachmentsInner attachment : attachments) {
-            log.info("PaperEngage attachment[{}]: order={}, documentType={}, uri={}",
+            log.info("PaperEngage attachment[{}]: order={}, documentType={}, sha256={}, uri={}",
                     i++,
                     attachment.getOrder(),
                     attachment.getDocumentType(),
+                    attachment.getSha256(),
                     attachment.getUri());
         }
+    }
+
+    /**
+     * Diagnostica QA-16429 / PEC_4: confronta SHA PDF F24 (download B2B per attachmentIdx)
+     * con gli sha256 del PaperEngage. Il digests dei metadata F24 NON deve matchare il plico.
+     */
+    private void logF24ShaVsPaperEngage(int recipientIdx) {
+        String iun = sharedSteps.getNotificationIun();
+        FullSentNotificationV29 sent = sharedSteps.getSentNotificationLastVersion();
+        if (sent == null || sent.getRecipients() == null || sent.getRecipients().size() <= recipientIdx) {
+            log.warn("F24 sha compare: sent notification/recipient assenti iun={}", iun);
+            return;
+        }
+        List<NotificationPaymentItem> payments = sent.getRecipients().get(recipientIdx).getPayments();
+        if (payments == null || payments.isEmpty()) {
+            log.warn("F24 sha compare: payments assenti iun={} recipient={}", iun, recipientIdx);
+            return;
+        }
+
+        Set<String> metaShas = new LinkedHashSet<>();
+        Set<String> apiPdfShas = new LinkedHashSet<>();
+        Set<String> computedPdfShas = new LinkedHashSet<>();
+        int f24PaymentCount = 0;
+        int downloadOk = 0;
+        int downloadFail = 0;
+
+        for (int attachmentIdx = 0; attachmentIdx < payments.size(); attachmentIdx++) {
+            NotificationPaymentItem payment = payments.get(attachmentIdx);
+            if (payment.getF24() == null) {
+                continue;
+            }
+            f24PaymentCount++;
+            if (payment.getF24().getMetadataAttachment() != null
+                    && payment.getF24().getMetadataAttachment().getDigests() != null
+                    && payment.getF24().getMetadataAttachment().getDigests().getSha256() != null) {
+                metaShas.add(payment.getF24().getMetadataAttachment().getDigests().getSha256());
+            }
+            try {
+                NotificationAttachmentDownloadMetadataResponse resp =
+                        downloadF24AttachmentWithRetry(iun, recipientIdx, attachmentIdx);
+                if (resp == null) {
+                    downloadFail++;
+                    log.warn("F24 sha compare: resp null iun={} attachmentIdx={}", iun, attachmentIdx);
+                    continue;
+                }
+                if (resp.getSha256() != null) {
+                    apiPdfShas.add(resp.getSha256());
+                }
+                if (resp.getUrl() != null) {
+                    byte[] bytes = B2bUtils.downloadFile(resp.getUrl());
+                    String computed = B2bUtils.computeSha256(new ByteArrayInputStream(bytes));
+                    computedPdfShas.add(computed);
+                    log.info("F24 sha compare download: attachmentIdx={}, apiSha={}, computedSha={}, filename={}, matchApiComputed={}",
+                            attachmentIdx, resp.getSha256(), computed, resp.getFilename(),
+                            Objects.equals(resp.getSha256(), computed));
+                } else {
+                    log.info("F24 sha compare download: attachmentIdx={}, apiSha={}, url=null, retryAfter={}",
+                            attachmentIdx, resp.getSha256(), resp.getRetryAfter());
+                }
+                downloadOk++;
+            } catch (Exception e) {
+                downloadFail++;
+                log.warn("F24 sha compare: download failed iun={} attachmentIdx={}: {}",
+                        iun, attachmentIdx, e.getMessage());
+            }
+        }
+
+        List<PaperEngageRequestAttachmentsInner> paperAttachments = Optional.ofNullable(documentiPec)
+                .filter(list -> !list.isEmpty())
+                .map(list -> list.get(0).getPaperEngageRequest())
+                .map(PaperEngageRequest::getAttachments)
+                .orElse(List.of());
+
+        Set<String> paperShas = paperAttachments.stream()
+                .map(PaperEngageRequestAttachmentsInner::getSha256)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        long paperMatchApiPdf = paperAttachments.stream()
+                .filter(a -> a.getSha256() != null && apiPdfShas.contains(a.getSha256()))
+                .count();
+        long paperMatchComputedPdf = paperAttachments.stream()
+                .filter(a -> a.getSha256() != null && computedPdfShas.contains(a.getSha256()))
+                .count();
+        long paperMatchMeta = paperAttachments.stream()
+                .filter(a -> a.getSha256() != null && metaShas.contains(a.getSha256()))
+                .count();
+
+        Set<String> apiInPaper = apiPdfShas.stream().filter(paperShas::contains).collect(Collectors.toCollection(LinkedHashSet::new));
+        Set<String> computedInPaper = computedPdfShas.stream().filter(paperShas::contains).collect(Collectors.toCollection(LinkedHashSet::new));
+
+        log.info("F24 sha compare SUMMARY: iun={}, f24Payments={}, downloadOk={}, downloadFail={}, "
+                        + "distinctMetaSha={}, distinctApiPdfSha={}, distinctComputedPdfSha={}, "
+                        + "paperAttachments={}, paperMatchApiPdf={}, paperMatchComputedPdf={}, paperMatchMeta={}, "
+                        + "apiPdfShaIntersectPaper={}, computedPdfShaIntersectPaper={}",
+                iun, f24PaymentCount, downloadOk, downloadFail,
+                metaShas.size(), apiPdfShas.size(), computedPdfShas.size(),
+                paperAttachments.size(), paperMatchApiPdf, paperMatchComputedPdf, paperMatchMeta,
+                apiInPaper, computedInPaper);
+        log.info("F24 sha compare SETS: metaShas={}, apiPdfShas={}, computedPdfShas={}",
+                metaShas, apiPdfShas, computedPdfShas);
+    }
+
+    private NotificationAttachmentDownloadMetadataResponse downloadF24AttachmentWithRetry(
+            String iun, int recipientIdx, int attachmentIdx) throws InterruptedException {
+        NotificationAttachmentDownloadMetadataResponse resp =
+                b2bClient.getSentNotificationAttachment(iun, recipientIdx, "F24", attachmentIdx);
+        if (resp != null && resp.getRetryAfter() != null && resp.getRetryAfter() > 0) {
+            Thread.sleep(resp.getRetryAfter() * 3L);
+            resp = b2bClient.getSentNotificationAttachment(iun, recipientIdx, "F24", attachmentIdx);
+        }
+        return resp;
     }
 
     @And("si verifica che il {int} documento arrivato sia di tipo {string}")
