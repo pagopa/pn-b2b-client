@@ -563,3 +563,18 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | details_sentAttemptMade    | 0                         |
       | details_attachments        | [{"documentType": "23L"}] |
 
+  @paperTrackerRunMode890
+  Scenario: [PAPER_TRACKER_TEMPORARY_TEST_4_890_11] Per la sequence FAIL-Giacenza-lte10_890_NO23L sono previsti due RECAG012 e questo in timeline deve produrre la presenza di un solo elemento di tipo RECAG012A
+  e controllo la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs per il prodotto 890
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@FAIL-Giacenza-lte10_890_NO23L |
+      | digitalDomicile         | NULL                        |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And genera la key da utilizzare per invocare l'API per il prodotto: "890"
+    And si controlla che siano presenti tutti gli eventi relativi alla sequence "FAIL-Giacenza-lte10_890_NO23L"
