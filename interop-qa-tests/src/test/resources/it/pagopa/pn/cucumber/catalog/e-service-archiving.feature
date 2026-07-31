@@ -1138,8 +1138,8 @@ Feature: Archiviazione manuale di un e-service
     And l'utente specifica i metadati mancanti all'istanza del template asincrono con successo
     And l'utente tenta la pubblicazione di una nuova versione dell'istanza del template
     And si ottiene response status code 200
-    And l'utente è un "<role>" di "PA1"
     And "PA1" ha già sospeso quell'e-service
+    And l'utente è un "<role>" di "PA1"
     When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e <gracePeriod> giorni di preavviso
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
@@ -1155,3 +1155,50 @@ Feature: Archiviazione manuale di un e-service
       | admin        | 60          |
       | admin        | 90          |
       | admin        | 120         |
+
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_ASYNC_TEMPLATE_INSTANCE_CANCELLATION_1.1] L'ente erogatore di un e-service asincrono creato da template in stato ARCHIVING può annullare il processo di archiviazione manuale di un e-service in corso
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template asincrono in modalità erogazione con tecnologia "REST" in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And l'utente crea una nuova versione dell'istanza del template con successo
+    And l'utente specifica i metadati mancanti all'istanza del template asincrono con successo
+    And l'utente tenta la pubblicazione di una nuova versione dell'istanza del template
+    And si ottiene response status code 200
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    And l'utente è un "<role>" di "PA1"
+    When l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
+    Then si ottiene response status code 204
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
+    And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    Examples:
+      | role         |
+      | admin        |
+      | api          |
+      | api,security |
+
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_ASYNC_TEMPLATE_INSTANCE_CANCELLATION_1.2] L'ente erogatore di un e-service asincrono creato da template in stato ARCHIVING_SUSPENDED può annullare il processo di archiviazione manuale in corso dell'e-service
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template asincrono in modalità erogazione con tecnologia "REST" in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And l'utente crea una nuova versione dell'istanza del template con successo
+    And l'utente specifica i metadati mancanti all'istanza del template asincrono con successo
+    And l'utente tenta la pubblicazione di una nuova versione dell'istanza del template
+    And si ottiene response status code 200
+    And "PA1" ha già sospeso quell'e-service
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    And l'utente è un "<role>" di "PA1"
+    When l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
+    Then si ottiene response status code 204
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
+    And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And la versione più recente dell'e-service è in stato "SUSPENDED"
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    Examples:
+      | role         |
+      | admin        |
+      | api          |
+      | api,security |
