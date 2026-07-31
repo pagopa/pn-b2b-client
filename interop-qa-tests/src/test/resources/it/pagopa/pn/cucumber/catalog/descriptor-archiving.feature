@@ -393,6 +393,7 @@ Feature: Archiviazione manuale di un descrittore
     When l'utente è un "<role>" di "PA2"
     And l'utente avvia la messa in archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     Then si ottiene response status code 403
+    And l'utente è un "admin" di "PA2"
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
