@@ -47,6 +47,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_1;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MOST_RECENT;
@@ -1099,6 +1100,7 @@ public class InvioNotificheB2bSteps {
             Assertions.assertNotNull(documentiPec, "La lista dei documenti PEC ricevuti è nulla o vuota per il destinatario " + destinatario + " l'API con Endpoint: /historical/received-message/" + sharedSteps.getNotificationIun() + "/" + destinatario + " Non ha restituito risultati");
 
             log.info("documenti analogici : {}", documentiPec);
+            logPaperEngageAttachmentsDump("checkDocumentInviatiPaper");
 
             Assertions.assertEquals(allegati, documentiPec.get(0).getPaperEngageRequest().getAttachments().size(),
                     "Il numero di allegati ricevuti è diverso da quello atteso. Expected: " + allegati + ", Actual: " + documentiPec.get(0).getPaperEngageRequest().getAttachments().size());
@@ -1111,20 +1113,55 @@ public class InvioNotificheB2bSteps {
 
     @And("si verifica che il contenuto degli attachments da inviare in via cartacea abbia {int} attachment di tipo {string}")
     public void presenceAttachmentAnalogicFlow(Integer numeroDocumenti, String tipologia) {
+        logPaperEngageAttachmentsDump("presenceAttachmentAnalogicFlow tipologia=" + tipologia);
         List<String> attachmentsUri = Optional.ofNullable(documentiPec.get(0))
                 .map(ReceivedMessage::getPaperEngageRequest)
                 .map(PaperEngageRequest::getAttachments)
                 .orElse(List.of())
                 .stream()
                 .map(PaperEngageRequestAttachmentsInner::getUri)
-                .filter(uri -> uri.contains(tipologia))
+                .filter(uri -> uri != null && uri.contains(tipologia))
                 .toList();
+        long matchDocumentType = Optional.ofNullable(documentiPec.get(0))
+                .map(ReceivedMessage::getPaperEngageRequest)
+                .map(PaperEngageRequest::getAttachments)
+                .orElse(List.of())
+                .stream()
+                .filter(a -> a.getDocumentType() != null && a.getDocumentType().contains(tipologia))
+                .count();
+        log.info("PaperEngage filter by uri.contains('{}'): count={}; filter by documentType.contains('{}'): count={}",
+                tipologia, attachmentsUri.size(), tipologia, matchDocumentType);
         try {
             Assertions.assertEquals(numeroDocumenti, attachmentsUri.size(),
                     "Il numero di allegati di tipo '" + tipologia + "' è diverso da quello atteso. Expected: " + numeroDocumenti + ", Actual: " + attachmentsUri.size());
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() + " - Verifica Allegati Cartacei in errore.";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
+
+    /** Dump diagnostico allegati cartacei (uri + documentType) — utile per review NRT. */
+    private void logPaperEngageAttachmentsDump(String context) {
+        if (documentiPec == null || documentiPec.isEmpty() || documentiPec.get(0).getPaperEngageRequest() == null) {
+            log.warn("PaperEngage attachments dump [{}]: documentiPec/paperEngage assenti", context);
+            return;
+        }
+        List<PaperEngageRequestAttachmentsInner> attachments = Optional.ofNullable(
+                        documentiPec.get(0).getPaperEngageRequest().getAttachments())
+                .orElse(List.of());
+        Map<String, Long> byDocumentType = attachments.stream()
+                .collect(Collectors.groupingBy(
+                        a -> a.getDocumentType() == null ? "null" : a.getDocumentType(),
+                        Collectors.counting()));
+        log.info("PaperEngage attachments dump [{}]: iun={}, total={}, byDocumentType={}",
+                context, sharedSteps.getNotificationIun(), attachments.size(), byDocumentType);
+        int i = 0;
+        for (PaperEngageRequestAttachmentsInner attachment : attachments) {
+            log.info("PaperEngage attachment[{}]: order={}, documentType={}, uri={}",
+                    i++,
+                    attachment.getOrder(),
+                    attachment.getDocumentType(),
+                    attachment.getUri());
         }
     }
 
