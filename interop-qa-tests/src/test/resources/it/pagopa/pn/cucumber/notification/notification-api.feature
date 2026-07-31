@@ -99,7 +99,7 @@ Feature: API CRUD Notifiche
       | role    |
       | support |
 
-  Scenario Outline: [NOTIFICATION_SINGLE_READ_1] Lettura di una specifica notifica (Scenario 13)
+  Scenario Outline: [NOTIFICATION_SINGLE_READ_1] Lettura/Unread/Eliminazione di una specifica notifica (Scenario 13)
     Given l'utente è un "admin" di "PA3"
     And si attivano tutte le notifiche InApp per l'utente corrente
     And "PA3" ha già generato 1 notifiche
