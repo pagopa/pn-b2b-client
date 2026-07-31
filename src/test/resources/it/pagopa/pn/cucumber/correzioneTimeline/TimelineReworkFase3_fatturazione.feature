@@ -421,7 +421,7 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     When viene invocata una richiesta di restart per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | recIndex   | reason     | task       | canInvalidateViewed |
-      |     | ATTEMPT_0 | <recIndex> | reasonTest | TEST-12345 | true                |
+      |     | ATTEMPT_0 | RECINDEX_0 | reasonTest | TEST-12345 | true                |
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
     And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
@@ -787,7 +787,7 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     When viene invocata una richiesta di restart per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | recIndex   | reason     | task       | canInvalidateViewed |
-      |     | ATTEMPT_0 | <recIndex> | reasonTest | TEST-12345 | true                |
+      |     | ATTEMPT_0 | RECINDEX_0 | reasonTest | TEST-12345 | true                |
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
     And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
@@ -1156,7 +1156,7 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     When viene invocata una richiesta di restart per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | recIndex   | reason     | task       | canInvalidateViewed |
-      |     | ATTEMPT_0 | <recIndex> | reasonTest | TEST-12345 | true                |
+      |     | ATTEMPT_0 | RECINDEX_0 | reasonTest | TEST-12345 | true                |
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
     And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
