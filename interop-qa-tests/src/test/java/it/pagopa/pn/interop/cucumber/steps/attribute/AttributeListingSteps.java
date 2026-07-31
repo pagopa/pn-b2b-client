@@ -7,12 +7,14 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.attribute.service.IAttributeApiClient;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Attributes;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactAttribute;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Tenant;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.attribute.AttributeListingSteps.AttributeListRequest.AttributeListRequestBuilder;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.Builder;
 import org.junit.jupiter.api.Assertions;
@@ -88,18 +90,8 @@ public class AttributeListingSteps {
 
     @When("l'utente richiede una operazione di listing degli attributi certificati discreti disponibili")
     public void listCertifiedDiscreteAttributes() {
-
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-        AttributeListRequest attributeListRequest = getAttributeListRequestPrototype()
-                .kinds(List.of(CERTIFIED_DISCRETE))
-                .q(null)
-                .build();
-        listAttributes(attributeListRequest);
-
-        Assertions.assertTrue(sharedStepsContext.getHttpCallExecutor().getResponseStatus().is2xxSuccessful(), "Expected 2xx successful status code for attribute listing");
-
-        List<CompactAttribute> attributes = ((it.pagopa.interop.generated.openapi.clients.bff.model.Attributes) sharedStepsContext.getHttpCallExecutor().getResponse()).getResults();
-        sharedStepsContext.getAttributeCommonContext().setAvailableCertifiedDiscreteAttributes(attributes);
+        sharedStepsContext.getAttributeCommonContext().setAvailableCertifiedDiscreteAttributes(listAllCertifiedDiscreteAttributes());
     }
 
     private AttributeListRequestBuilder getAttributeListRequestPrototype() {
@@ -121,5 +113,35 @@ public class AttributeListingSteps {
                 attributeListRequest.getOrigin()
             )
         );
+    }
+
+    private List<CompactAttribute> listAllCertifiedDiscreteAttributes() {
+
+        int limit = 50;
+        int offset = 0;
+        int totalCount;
+        List<CompactAttribute> allAttributes = new ArrayList<>();
+
+        do {
+            final int currentOffset = offset;
+            httpCallExecutor.performCall(() ->
+                    clientTokenConfigurator.getAttributeApiClient().getAttributes(
+                            limit,
+                            currentOffset,
+                            List.of(CERTIFIED_DISCRETE),
+                            null,
+                            null
+                    )
+            );
+
+            Assertions.assertTrue(httpCallExecutor.getResponseStatus().is2xxSuccessful(), "Expected 2xx successful status code for attribute listing");
+
+            Attributes response = (Attributes) httpCallExecutor.getResponse();
+            allAttributes.addAll(response.getResults());
+            totalCount = response.getPagination().getTotalCount();
+            offset += limit;
+        } while (allAttributes.size() < totalCount);
+
+        return allAttributes;
     }
 }
