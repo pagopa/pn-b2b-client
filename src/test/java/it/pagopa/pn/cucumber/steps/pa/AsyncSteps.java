@@ -119,6 +119,15 @@ public class AsyncSteps {
 
     @And("lettura amount posizione debitoria per la notifica corrente di {string}")
     public void letturaAmountPosizioneDebitoria(String user) {
+        letturaAmountPosizioneDebitoria(user, NUM_CHECK_PAYMENT_INFO, WAITING_PAYMENT_INFO);
+    }
+
+    @And("lettura amount posizione debitoria per la notifica corrente di {string} con tentativi {int} e intervallo {int}")
+    public void letturaAmountPosizioneDebitoriaConAttesa(String user, Integer tentativi, Integer intervalloMs) {
+        letturaAmountPosizioneDebitoria(user, tentativi, intervalloMs);
+    }
+
+    private void letturaAmountPosizioneDebitoria(String user, int numCheck, int waitingMs) {
         PaymentPositionModel positionUser = new PaymentPositionModel();
         for (PaymentPositionModel position : paymentPositionModel) {
             if (position.getFullName().equalsIgnoreCase(user)) {
@@ -134,8 +143,9 @@ public class AsyncSteps {
 
         log.info("User: " + positionUser);
         log.info("Messaggio json da allegare: " + paymentInfoRequest);
+        log.info("Polling amount GPD: tentativi={}, intervalloMs={}", numCheck, waitingMs);
         //TODO utilizzare algoritmo di polling
-        for (int i = 0; i < NUM_CHECK_PAYMENT_INFO; i++) {
+        for (int i = 0; i < numCheck; i++) {
             try {
                 Assertions.assertDoesNotThrow(() -> {
                     paymentInfoResponse = pnPaymentInfoClientImpl.getPaymentInfoV21(paymentInfoRequestList);
@@ -147,7 +157,7 @@ public class AsyncSteps {
                     break;
                 }
                 try {
-                    Thread.sleep(WAITING_PAYMENT_INFO);
+                    Thread.sleep(waitingMs);
                 } catch (InterruptedException exc) {
                     throw new RuntimeException(exc);
                 }
