@@ -681,7 +681,7 @@ Feature: Archiviazione manuale di un e-service
     And la versione più recente dell'e-service è in stato "ARCHIVING"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
-  Scenario Outline: [COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_5.1] Un ente erogatore quando è già in corso l’archiviazione manuale di un singolo descrittore, non può avviare anche l’archiviazione dell’intero e-service se il tempo di preavviso scelto genera una data di archiviazione dell’e-service antecedente a quella già prevista per il descrittore.
+  Scenario Outline: [COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_5.1] Un ente erogatore, quando è già in corso l’archiviazione manuale di un singolo descrittore, non può avviare anche l’archiviazione dell’intero e-service se il tempo di preavviso scelto genera una data di archiviazione dell’e-service antecedente a quella già prevista per il descrittore.
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
