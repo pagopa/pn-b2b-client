@@ -200,6 +200,7 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già sospeso quell'e-service
     And l'utente è un "admin" di "PA1"
     And l'utente effettua l'aggiunta di una versione in stato PUBLISHED all'e-service con successo
     And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 120 giorni di preavviso
@@ -215,6 +216,7 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già sospeso quell'e-service
     And l'utente è un "admin" di "PA1"
     And l'utente effettua l'aggiunta di una versione in stato PUBLISHED all'e-service con successo
     And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 120 giorni di preavviso
