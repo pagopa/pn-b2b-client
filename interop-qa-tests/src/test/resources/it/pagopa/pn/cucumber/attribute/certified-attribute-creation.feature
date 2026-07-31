@@ -41,3 +41,46 @@ Feature: Creazione attributo certificato
       | PA2     | viewer       |       403 |
       | Privato | reviewer     |       403 |
       | Privato | viewer       |       403 |
+
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
+  Scenario Outline: [DISCRETE_ATTRIBUTE_CREATION_1] Verifica dell'esito della creazione di un attributo discreto in base
+  all'ente e al ruolo dell'utente.
+
+    Given l'utente è un "<ruolo>" di "<ente>"
+    When l'utente crea un attributo certificato discreto
+    Then si ottiene status code <risultato>
+
+    @happy-path
+    Examples:
+      | ente | ruolo | risultato |
+      | GSP  | admin | 200       |
+
+    @sad-path
+    Examples:
+      | ente    | ruolo        | risultato |
+      | GSP     | api          | 403       |
+      | GSP     | security     | 403       |
+      | GSP     | api,security | 403       |
+      | GSP     | reviewer     | 403       |
+      | GSP     | viewer       | 403       |
+      | Privato | admin        | 403       |
+
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
+  Scenario: [DISCRETE_ATTRIBUTE_CREATION_2] La creazione di un attributo certificato discreto non va a buon fine se ce n'è
+  già uno con lo stesso nome.
+
+    Given l'utente è un "admin" di "PA1"
+    When l'utente tenta di creare due attributi certificati discreti con lo stesso nome
+    Then si ottiene status code 409
+
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
+  Scenario: [DISCRETE_ATTRIBUTE_CREATION_3] La creazione di un attributo certificato discreto non va a buon fine anche se esiste
+  un attributo certificato con lo stesso nome.
+
+    Given l'utente è un "admin" di "PA1"
+    And l'utente crea un attributo certificato
+    When l'utente crea un attributo certificato discreto utilizzando lo stesso nome dell'ultimo attributo certificato creato
+    Then si ottiene status code 409

@@ -40,3 +40,51 @@ Feature: Listing degli aderenti
     Given l'utente è un "admin" di "PA1"
     When l'utente richiede una operazione di listing degli aderenti filtrando per la keyword "unknown"
     Then si ottiene status code 200 e la lista di 0 tenant
+
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
+  Scenario: [TENANTS_CERTIFIED_DISCRETE_ATTRIBUTE_LISTING_1] Verifica che, a seguito dell'assegnazione da parte di un ente
+  certificatore, l'attributo certificato discreto risulti presente nella lista degli attributi del tenant.
+    Given l'utente è un "admin" di "GSP"
+    And GSP ha già creato 1 attributo CERTIFIED_DISCRETE
+    When l'utente assegna a "PA1" l'attributo certificato discreto precedentemente creato con un valore discreto di 100
+    And si ottiene lo status code 200
+    Then l'utente è un "admin" di "PA1"
+    And l'utente richiede una operazione di listing dei suoi attributi certificati discreti e l'attributo assegnato è presente
+
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
+  Scenario: [TENANTS_CERTIFIED_DISCRETE_ATTRIBUTE_LISTING_2] Verifica che, a seguito dell'assegnazione da parte di un ente
+  certificatore, l'attributo certificato discreto risulti presente nella lista degli attributi del tenant.
+    Given l'utente è un "admin" di "GSP"
+    When GSP ha già creato 1 attributo CERTIFIED_DISCRETE
+    Then l'utente richiede una operazione di listing di tutti gli attributi certificati discreti e l'attributo creato è presente
+
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
+  Scenario Outline: [TENANTS_CERTIFIED_DISCRETE_ATTRIBUTE_LISTING_3] Verifica che l'assegnazione dell'attributo certificato discreto
+  vada a buon fine e che l'attributo risulti correttamente creato.
+    Given l'utente è un "admin" di "GSP"
+    And GSP ha già creato 1 attributo CERTIFIED_DISCRETE
+    When l'utente assegna a "PA1" l'attributo certificato discreto precedentemente creato con un valore discreto di 100
+    And si ottiene lo status code 200
+    Then l'utente è un "<ruolo>" di "<ente>"
+    And l'attributo certificato discreto è stato creato correttamente
+    And si ottiene lo status code <risultato>
+
+    Examples:
+      | ente    | ruolo        | risultato |
+      | GSP     | admin        | 200       |
+      | GSP     | security     | 200       |
+      | GSP     | api,security | 200       |
+      | GSP     | reviewer     | 200       |
+      | GSP     | viewer       | 200       |
+      | Privato | admin        | 200       |
+      | Privato | security     | 200       |
+      | Privato | api,security | 200       |
+      | Privato | reviewer     | 200       |
+      | Privato | viewer       | 200       |
+      | PA1     | admin        | 200       |
+      | PA1     | security     | 200       |
+      | PA2     | admin        | 200       |
+      | PA2     | security     | 200       |
