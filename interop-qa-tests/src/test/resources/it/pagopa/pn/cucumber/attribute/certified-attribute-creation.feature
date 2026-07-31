@@ -77,7 +77,7 @@ Feature: Creazione attributo certificato
 
   @certifiedDiscreteAttribute
   @certifiedDiscreteAttributeFlagOn
-  Scenario: [DISCRETE_ATTRIBUTE_CREATION_3] La creazione di un attributo certificato discreto va a buon fine anche se esiste
+  Scenario: [DISCRETE_ATTRIBUTE_CREATION_3] La creazione di un attributo certificato discreto non va a buon fine anche se esiste
   un attributo certificato con lo stesso nome.
 
     Given l'utente è un "admin" di "PA1"
