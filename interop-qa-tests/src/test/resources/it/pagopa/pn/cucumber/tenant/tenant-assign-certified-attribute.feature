@@ -12,17 +12,17 @@ Feature: Assegnazione di un attributo certificato ad un aderente
 
     Examples:
       | ruolo        | statusCode |
-      | admin        |        204 |
-      | api          |        403 |
-      | security     |        403 |
-      | support      |        403 |
-      | api,security |        403 |
+      | admin        | 204        |
+      | api          | 403        |
+      | security     | 403        |
+      | support      | 403        |
+      | api,security | 403        |
 
     @nuovi-operatori-update
     Examples:
-      | ruolo        | statusCode |
-      | reviewer     |        403 |
-      | viewer       |        403 |
+      | ruolo    | statusCode |
+      | reviewer | 403        |
+      | viewer   | 403        |
 
   @nrt-minimal
   @tenant_assign_certified_attribute2 @wait_for_fix @PIN-5037
@@ -39,3 +39,59 @@ Feature: Assegnazione di un attributo certificato ad un aderente
     Given PA2 ha già creato 1 attributo CERTIFIED
     When l'utente assegna a "GSP" l'attributo certificato precedentemente creato
     Then si ottiene status code 403
+
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
+  Scenario Outline: [TENANT_ASSIGN_CERTIFIED_DISCRETE_ATTRIBUTE_1] Assegnazione attributo certificato discreto a un tenant.
+  Verifica l'esito dell'assegnazione di un attributo certificato discreto a un tenant da parte dell'admin di un ente certificatore,
+  al variare del valore discreto inserito.
+
+    Given l'utente è un "admin" di "GSP"
+    And GSP ha già creato 1 attributo CERTIFIED_DISCRETE
+    When l'utente assegna a "PA1" l'attributo certificato discreto precedentemente creato con un valore discreto di <discreteValue>
+    Then si ottiene lo status code <expectedResult>
+
+    Examples:
+      | discreteValue | expectedResult |
+      | 1             | 200            |
+      | 1000000000    | 200            |
+      | 0             | 400            |
+      | 1000000001    | 400            |
+
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
+  Scenario Outline: [TENANT_ASSIGN_CERTIFIED_DISCRETE_ATTRIBUTE_2] L'attributo certificato discreto può essere assegnato
+  soltanto da un admin di un ente certificatore.
+
+    Given l'utente è un "admin" di "GSP"
+    And GSP ha già creato 1 attributo CERTIFIED_DISCRETE
+    When l'utente è un "<ruolo>" di "<ente>"
+    When l'utente assegna a "PA1" l'attributo certificato discreto precedentemente creato con un valore discreto di 100
+    Then si ottiene lo status code <risultato>
+
+    @happy-path
+    Examples:
+      | ente | ruolo | risultato |
+      | GSP  | admin | 200       |
+
+    @sad-path
+    Examples:
+      | ente    | ruolo        | risultato |
+      | GSP     | api          | 403       |
+      | GSP     | security     | 403       |
+      | GSP     | api,security | 403       |
+      | GSP     | reviewer     | 403       |
+      | GSP     | viewer       | 403       |
+      | Privato | admin        | 403       |
+
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
+  Scenario: [TENANT_ASSIGN_CERTIFIED_DISCRETE_ATTRIBUTE_3] La riassegnazione del medesimo attributo certificato discreto
+  ad un ente non va a buon fine.
+
+    Given l'utente è un "admin" di "GSP"
+    And GSP ha già creato 1 attributo CERTIFIED_DISCRETE
+    And l'utente assegna a "PA1" l'attributo certificato discreto precedentemente creato con un valore discreto di 100
+    And si ottiene lo status code 200
+    When l'utente assegna a "PA1" l'attributo certificato discreto precedentemente creato con un valore discreto di 200
+    Then si ottiene lo status code 409

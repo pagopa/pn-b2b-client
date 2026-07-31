@@ -344,6 +344,8 @@ public class BFFDataPreparationService {
                     httpCallExecutor.performCall(() -> attributeApiClient.createVerifiedAttribute(new AttributeSeed().description(DESCRIPTION_TEST).name(actualName)));
             case DECLARED ->
                     httpCallExecutor.performCall(() -> attributeApiClient.createDeclaredAttribute(new AttributeSeed().description(DESCRIPTION_TEST).name(actualName)));
+            case CERTIFIED_DISCRETE ->
+                    httpCallExecutor.performCall(() -> attributeApiClient.createCertifiedDiscreteAttribute(new AttributeSeed().description(DESCRIPTION_TEST).name(actualName)));
             default -> throw new IllegalArgumentException("Invalid attributeKind: " + attributeKind);
         }
         assertValidResponse();
@@ -560,11 +562,23 @@ public class BFFDataPreparationService {
     }
 
     public void updateTemplateInstanceDraftDescriptor(UUID eServiceId, UUID descriptorId) {
+        updateTemplateInstanceDraftDescriptor(eServiceId, descriptorId, false);
+    }
+
+    public void updateTemplateInstanceDraftDescriptor(UUID eServiceId, UUID descriptorId, boolean isAsync) {
         UpdateEServiceDescriptorTemplateInstanceSeed seed = new UpdateEServiceDescriptorTemplateInstanceSeed()
             .dailyCallsPerConsumer(10)
             .dailyCallsTotal(100)
             .addAudienceItem("some audience item")
             .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC);
+
+        if (isAsync) {
+            AsyncExchangePropertiesInstanceSeed asyncSeed = new AsyncExchangePropertiesInstanceSeed();
+            asyncSeed.setResponseTime(100);
+            asyncSeed.setResourceAvailableTime(100);
+            asyncSeed.setMaxResultSet(100);
+            seed.setAsyncExchangeProperties(asyncSeed);
+        }
 
         httpCallExecutor.performCall(() -> eServiceClient.updateDraftDescriptorTemplateInstanceWithHttpInfo(eServiceId, descriptorId, seed));
         assertValidResponse();
