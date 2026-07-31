@@ -87,25 +87,25 @@ public class TenantRevokeCertifiedAttributeSteps {
         }
     }
 
-    @When("l'utente revoca a {string} l'attributo precedentemente creato ma non associato")
+    @When("l'utente revoca a {string} l'attributo certificato discreto precedentemente creato ma non associato")
     public void revokeAttributePreviouslyCreatedButNotAssociated(String tenantType) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         UUID lastAttributeId = sharedStepsContext.getAttributeCommonContext().getAttributeId();
         this.ensureAttributeHasBeenCreated(sharedStepsContext.getAttributeCommonContext().getAttributeId());
         httpCallExecutor.performCall(
-                () -> clientTokenConfigurator.getTenantsApi().revokeCertifiedAttribute(
+                () -> clientTokenConfigurator.getTenantsApi().revokeCertifiedDiscreteAttribute(
                         identityService.getOrganizationId(tenantType),
                         lastAttributeId)
         );
     }
 
-    @When("l'utente revoca l'attributo precedentemente creato ad un ente non esistente")
+    @When("l'utente revoca l'attributo certificato discreto precedentemente creato ad un ente non esistente")
     public void revokeAttributePreviouslyCreatedToNonExistingEntity() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         UUID lastAttributeId = sharedStepsContext.getAttributeCommonContext().getAttributeId();
         ensureAttributeHasBeenCreated(lastAttributeId);
         httpCallExecutor.performCall(
-                () -> clientTokenConfigurator.getTenantsApi().revokeCertifiedAttribute(
+                () -> clientTokenConfigurator.getTenantsApi().revokeCertifiedDiscreteAttribute(
                         UUID.randomUUID(),
                         lastAttributeId)
         );
