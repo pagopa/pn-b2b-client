@@ -305,7 +305,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene avviata l'archiviazione dell'e-service "%actual" indicando la motivazione "QA test manual-archiving" e un preavviso di <eserviceArchiving> giorni
     Then si ottiene response status code 200
-    And la vecchia versione dell'e-service è in stato "ARCHIVING"
+    And la vecchia versione dell'e-service è in stato "ARCHIVING_SUSPENDED"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
     And la versione più recente dell'e-service è in stato "ARCHIVING"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
