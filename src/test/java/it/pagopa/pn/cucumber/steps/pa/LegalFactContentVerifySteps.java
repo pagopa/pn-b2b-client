@@ -483,6 +483,8 @@ public class LegalFactContentVerifySteps {
         return legalFactDownloadMetadataResponse.get();
     }
 
+    // TODO: creare utility condivisa nel modulo common per estrazione/ricerca testo da PDF (PDFBox);
+    //       oggi duplicato anche in TemplateEngineSteps.isValidPdf e InvioNotificheB2bSteps.isF24FromPdfContent
     private boolean checkTypeAAR(byte[] source, String aarType) {
         Pattern pattern = Pattern.compile("\\((CAF)\\s");
         try (final PDDocument document = Loader.loadPDF(source)) {

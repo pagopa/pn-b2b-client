@@ -31,6 +31,8 @@ public class PnContentExtractor implements IPnContentExtractor {
         this.pnLegalFactTokens = pnLegalFactTokens;
     }
 
+    // TODO: creare utility condivisa nel modulo common per estrazione/ricerca testo da PDF (PDFBox);
+    //       oggi pattern simile anche in LegalFactContentVerifySteps, TemplateEngineSteps, InvioNotificheB2bSteps
     @Override
     public PnParserRecord.PnParserContent extractContent(byte[] source, IPnParserLegalFact.LegalFactType legalFactType) {
         try (final PDDocument document = Loader.loadPDF(source)) {

@@ -131,6 +131,8 @@ public class TemplateEngineSteps {
         }
     }
 
+    // TODO: creare utility condivisa nel modulo common per estrazione/ricerca testo da PDF (PDFBox);
+    //       oggi duplicato anche in LegalFactContentVerifySteps.checkTypeAAR e InvioNotificheB2bSteps.isF24FromPdfContent
     public boolean isValidPdf(Resource resource) {
         try (InputStream is = resource.getInputStream()) {
             byte[] pdfBytes = is.readAllBytes();

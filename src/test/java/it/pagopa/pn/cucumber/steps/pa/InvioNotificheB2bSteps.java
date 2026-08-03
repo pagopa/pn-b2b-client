@@ -1211,6 +1211,8 @@ public class InvioNotificheB2bSteps {
         return false;
     }
 
+    // TODO: creare utility condivisa nel modulo common per estrazione/ricerca testo da PDF (PDFBox);
+    //       oggi duplicato anche in LegalFactContentVerifySteps.checkTypeAAR e TemplateEngineSteps.isValidPdf
     private boolean isF24FromPdfContent(byte[] pdfContent) {
         if (pdfContent == null || pdfContent.length == 0) {
             return false;
