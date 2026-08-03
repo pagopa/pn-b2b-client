@@ -313,7 +313,7 @@ Feature: API CRUD Notifiche
     And si ottiene lo status code 400
     Then modifica non applicata
 
-    When  si tenta di modificare la configurazione delle notifiche per user
+    When si tenta di modificare la configurazione delle notifiche per user
     And la response ha status code 204
     Then modifica viene applicata
 
