@@ -575,6 +575,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | digitalDomicile         | NULL                        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG007B" e verifica tipo DOC "Plico"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG007B" e verifica tipo DOC "ARCAD"
     And genera la key da utilizzare per invocare l'API per il prodotto: "890"
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "FAIL-Giacenza-lte10_890_NO23L"
