@@ -82,7 +82,7 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
     }
 
     @Given("vengono inizializzate le notifiche per tutte le utenze")
-    public void init(){
+    public void initializeNotificationsForAllUsers() {
         this.notificationStore.concurrentSafeInitializeOnce();
     }
 
