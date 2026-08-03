@@ -432,8 +432,8 @@ Feature: Archiviazione manuale di un e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     And l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
-    And la versione più recente dell'e-service è in stato "ARCHIVING"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And la versione più recente dell'e-service è in stato "ARCHIVING"
     When "PA2" ha già archiviato quella richiesta di fruizione
     Then la vecchia versione dell'e-service è in stato "ARCHIVED"
     And la versione più recente dell'e-service è in stato "ARCHIVING"
@@ -925,8 +925,9 @@ Feature: Archiviazione manuale di un e-service
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già sospeso quell'e-service
     And l'utente è un "admin" di "PA1"
-    And l'utente effettua l'aggiunta di una versione in stato SUSPENDED all'e-service con successo
+    And l'utente effettua l'aggiunta di una versione in stato PUBLISHED all'e-service con successo
     And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando <descriptorArchiving> giorni di preavviso
     When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e <eserviceArchiving> giorni di preavviso
     Then si ottiene response status code 204
