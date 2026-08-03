@@ -7,11 +7,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 /**
  * TEMPORANEO — da cancellare a fine analisi QA-16429 (prefisso {@code Tmp_}).
  * <p>
- * Riproduce {@code B2B-TIMELINE_HOTFIX-BUG-PEC_4} (F24 expected 20 was 0 su allegati cartacei).
- * Modalità URL-only: log {@code PaperEngage PRESIGN-ONLY} / {@code F24 PRESIGN-ONLY}
- * (~5 min di vita). File (se accessibile sul runner):
- * {@code target/tmp-hotfix-pec4-pdfs/<IUN>/presigned-urls-paper.txt}.
- * Passa subito l'XML così si possono scaricare i PDF prima della scadenza.
+ * Riproduce {@code B2B-TIMELINE_HOTFIX-BUG-PEC_4} (assert 20 attachment F24 su allegati cartacei).
  */
 @Suite
 @IncludeEngines("cucumber")
