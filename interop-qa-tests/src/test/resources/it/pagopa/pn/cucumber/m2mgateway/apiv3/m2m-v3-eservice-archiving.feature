@@ -324,7 +324,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And viene avviata l'archiviazione dell'e-service "%actual" indicando la motivazione "QA test manual-archiving" e un preavviso di 60 giorni
+    And l'utente avvia l'archiviazione della vecchia versione "%actual" dell'e-service "%actual" prevedendo 60 giorni di preavviso
     Then si ottiene response status code 400
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
