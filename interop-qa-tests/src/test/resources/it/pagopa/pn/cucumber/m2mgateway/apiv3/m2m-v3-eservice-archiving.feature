@@ -143,6 +143,23 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     And la versione più recente dell'e-service è in stato "ARCHIVING_SUSPENDED"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
+  Scenario Outline: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_1.10] Un ente erogatore m2m di un e-service in stato ARCHIVED e seconda versione ARCHIVED, NON può avviare il processo di archiviazione manuale dell'e-service
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When viene avviata l'archiviazione dell'e-service "<eserviceId>" indicando la motivazione "QA test manual-archiving" e un preavviso di 60 giorni
+    Then si ottiene response status code 400
+    And l'utente è un "admin" di "PA1"
+    #versione più recente
+    And il descrittore con id "<secondDescriptorId>" dell'e-service con id "<eserviceId>" è in stato "ARCHIVED"
+    And il descrittore con id "<secondDescriptorId>" dell'e-service avente id "<eserviceId>" è stato correttamente archiviato tramite l'archiviazione manuale dell'intero e-service
+    #versione meno recente
+    And il descrittore con id "<firstDescriptorId>" dell'e-service con id "<eserviceId>" è in stato "ARCHIVED"
+    And il descrittore con id "<firstDescriptorId>" dell'e-service avente id "<eserviceId>" è stato correttamente archiviato tramite l'archiviazione manuale dell'intero e-service
+
+    #è possibile ottenere un e-service in stato ARCHIVED solo utilizzando e-service preparati dalla data preparation
+    Examples:
+      | firstDescriptorId                    | secondDescriptorId                   | eserviceId                           |
+      | 7b379f88-31a6-4e39-9553-f7ad74afde4f | abde2f2c-be8d-46d9-b626-e19b1e7f9490 | 785023e5-9a73-42e1-a6e2-b633baf1618c |
+
   Scenario: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_CANCELLATION_1.1] L'ente erogatore di un e-service con prima versione in stato ARCHIVING e seconda in stato ARCHIVING può annullare il processo di archiviazione manuale di un e-service in corso
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"

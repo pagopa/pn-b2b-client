@@ -145,6 +145,22 @@ Feature: Archiviazione manuale di un e-service
     And la versione più recente dell'e-service è in stato "ARCHIVING_SUSPENDED"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_1.10] Un ente erogatore di un e-service in stato ARCHIVED e seconda versione ARCHIVED, NON può avviare il processo di archiviazione manuale dell'e-service
+    Given l'utente è un "admin" di "PA1"
+    When l'utente avvia il processo di archiviazione dell'e-service "<eserviceId>" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    Then si ottiene response status code 400
+    #versione più recente
+    And il descrittore con id "<secondDescriptorId>" dell'e-service con id "<eserviceId>" è in stato "ARCHIVED"
+    And il descrittore con id "<secondDescriptorId>" dell'e-service avente id "<eserviceId>" è stato correttamente archiviato tramite l'archiviazione manuale dell'intero e-service
+    #versione meno recente
+    And il descrittore con id "<firstDescriptorId>" dell'e-service con id "<eserviceId>" è in stato "ARCHIVED"
+    And il descrittore con id "<firstDescriptorId>" dell'e-service avente id "<eserviceId>" è stato correttamente archiviato tramite l'archiviazione manuale dell'intero e-service
+
+    #è possibile ottenere un e-service in stato ARCHIVED solo utilizzando e-service preparati dalla data preparation
+    Examples:
+      | firstDescriptorId                    | secondDescriptorId                   | eserviceId                           |
+      | 7b379f88-31a6-4e39-9553-f7ad74afde4f | abde2f2c-be8d-46d9-b626-e19b1e7f9490 | 785023e5-9a73-42e1-a6e2-b633baf1618c |
+
   Scenario: [MANUAL_ARCHIVING_ESERVICE_2.1] L'avvio del processo di archiviazione dell'e-service, causa l'eliminazione dell'ultimo descrittore in stato DRAFT, se presente
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
