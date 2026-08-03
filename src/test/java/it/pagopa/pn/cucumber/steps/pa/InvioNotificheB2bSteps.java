@@ -1115,6 +1115,9 @@ public class InvioNotificheB2bSteps {
     public void presenceAttachmentAnalogicFlow(Integer numeroDocumenti, String tipologia) {
         logPaperEngageAttachmentsDump("presenceAttachmentAnalogicFlow tipologia=" + tipologia);
         if ("F24".equalsIgnoreCase(tipologia)) {
+            logPaperEngageDiagnosticContext();
+            logNotificationPaymentsDiagnostic(0);
+            logPaperEngageSafeStorageForAllAttachments();
             logF24ShaVsPaperEngage(0);
         }
         List<String> attachmentsUri = Optional.ofNullable(documentiPec.get(0))
@@ -1173,6 +1176,363 @@ public class InvioNotificheB2bSteps {
         }
     }
 
+    /** Contesto plico + frequenza sha (diagnostica massiva QA-16429). */
+    private void logPaperEngageDiagnosticContext() {
+        if (documentiPec == null || documentiPec.isEmpty()) {
+            log.warn("PaperEngage diagnostic context: documentiPec assenti");
+            return;
+        }
+        ReceivedMessage msg = documentiPec.get(0);
+        log.info("PaperEngage diagnostic ReceivedMessage FULL: {}", msg);
+        if (msg.getPaperEngageRequest() != null) {
+            log.info("PaperEngage diagnostic PaperEngageRequest FULL: {}", msg.getPaperEngageRequest());
+        }
+        List<PaperEngageRequestAttachmentsInner> attachments = Optional.ofNullable(msg.getPaperEngageRequest())
+                .map(PaperEngageRequest::getAttachments)
+                .orElse(List.of());
+        Map<String, Long> bySha = attachments.stream()
+                .collect(Collectors.groupingBy(
+                        a -> a.getSha256() == null ? "null" : a.getSha256(),
+                        LinkedHashMap::new,
+                        Collectors.counting()));
+        log.info("PaperEngage diagnostic shaFrequency: {}", bySha);
+        bySha.forEach((sha, count) -> {
+            List<String> orders = attachments.stream()
+                    .filter(a -> Objects.equals(sha, a.getSha256()))
+                    .map(a -> String.valueOf(a.getOrder()))
+                    .toList();
+            log.info("PaperEngage diagnostic shaGroup: count={}, sha={}, orders={}", count, sha, orders);
+        });
+    }
+
+    /** Dump payments delivery (F24 meta + pagoPa) per associare al plico. */
+    private void logNotificationPaymentsDiagnostic(int recipientIdx) {
+        String iun = sharedSteps.getNotificationIun();
+        FullSentNotificationV29 sent = sharedSteps.getSentNotificationLastVersion();
+        if (sent == null || sent.getRecipients() == null || sent.getRecipients().size() <= recipientIdx) {
+            log.warn("Payments diagnostic: sent/recipient assenti iun={}", iun);
+            return;
+        }
+        List<NotificationPaymentItem> payments = sent.getRecipients().get(recipientIdx).getPayments();
+        log.info("Payments diagnostic START: iun={}, recipientIdx={}, paymentsSize={}",
+                iun, recipientIdx, payments == null ? 0 : payments.size());
+        if (payments == null) {
+            return;
+        }
+        for (int i = 0; i < payments.size(); i++) {
+            NotificationPaymentItem p = payments.get(i);
+            String f24Title = null;
+            Boolean f24ApplyCost = null;
+            String f24MetaKey = null;
+            String f24MetaVersion = null;
+            String f24MetaSha = null;
+            String f24MetaContentType = null;
+            String pagoPaNotice = null;
+            String pagoPaAttachKey = null;
+            String pagoPaAttachSha = null;
+            String pagoPaContentType = null;
+            if (p.getF24() != null) {
+                f24Title = p.getF24().getTitle();
+                f24ApplyCost = p.getF24().getApplyCost();
+                if (p.getF24().getMetadataAttachment() != null) {
+                    f24MetaContentType = p.getF24().getMetadataAttachment().getContentType();
+                    if (p.getF24().getMetadataAttachment().getDigests() != null) {
+                        f24MetaSha = p.getF24().getMetadataAttachment().getDigests().getSha256();
+                    }
+                    if (p.getF24().getMetadataAttachment().getRef() != null) {
+                        f24MetaKey = p.getF24().getMetadataAttachment().getRef().getKey();
+                        f24MetaVersion = p.getF24().getMetadataAttachment().getRef().getVersionToken();
+                    }
+                }
+            }
+            if (p.getPagoPa() != null) {
+                pagoPaNotice = p.getPagoPa().getNoticeCode();
+                if (p.getPagoPa().getAttachment() != null) {
+                    pagoPaContentType = p.getPagoPa().getAttachment().getContentType();
+                    if (p.getPagoPa().getAttachment().getDigests() != null) {
+                        pagoPaAttachSha = p.getPagoPa().getAttachment().getDigests().getSha256();
+                    }
+                    if (p.getPagoPa().getAttachment().getRef() != null) {
+                        pagoPaAttachKey = p.getPagoPa().getAttachment().getRef().getKey();
+                    }
+                }
+            }
+            log.info("Payments diagnostic item: idx={}, hasF24={}, hasPagoPa={}, f24Title={}, f24ApplyCost={}, "
+                            + "f24MetaKey={}, f24MetaVersion={}, f24MetaSha={}, f24MetaContentType={}, "
+                            + "pagoPaNotice={}, pagoPaAttachKey={}, pagoPaAttachSha={}, pagoPaContentType={}, payment={}",
+                    i, p.getF24() != null, p.getPagoPa() != null, f24Title, f24ApplyCost,
+                    f24MetaKey, f24MetaVersion, f24MetaSha, f24MetaContentType,
+                    pagoPaNotice, pagoPaAttachKey, pagoPaAttachSha, pagoPaContentType, p);
+            if (f24MetaKey != null) {
+                try {
+                    PnExternalServiceClientImpl.SafeStorageResponse metaSs =
+                            safeStorageClient.safeStorageInfo(toSafeStorageFileKey(f24MetaKey));
+                    log.info("Payments diagnostic F24 meta SafeStorage: idx={}, key={}, ss={}",
+                            i, f24MetaKey, metaSs);
+                } catch (Exception e) {
+                    log.warn("Payments diagnostic F24 meta SafeStorage FAILED: idx={}, key={}, error={}",
+                            i, f24MetaKey, e.getMessage());
+                }
+            }
+        }
+        log.info("Payments diagnostic END: iun={}", iun);
+    }
+
+    /**
+     * Diagnostica QA-16429 / PEC_4: per ogni allegato del plico chiama SafeStorage
+     * e scarica il PDF (metadati + headers + hint F24 nel contenuto).
+     */
+    private void logPaperEngageSafeStorageForAllAttachments() {
+        List<PaperEngageRequestAttachmentsInner> attachments = Optional.ofNullable(documentiPec)
+                .filter(list -> !list.isEmpty())
+                .map(list -> list.get(0).getPaperEngageRequest())
+                .map(PaperEngageRequest::getAttachments)
+                .orElse(List.of());
+        if (attachments.isEmpty()) {
+            log.warn("PaperEngage SafeStorage dump: attachments assenti iun={}", sharedSteps.getNotificationIun());
+            return;
+        }
+
+        Map<String, Long> bySsDocumentType = new LinkedHashMap<>();
+        Map<String, Long> bySsDocumentStatus = new LinkedHashMap<>();
+        Map<String, Long> byContentType = new LinkedHashMap<>();
+        int ok = 0;
+        int fail = 0;
+        int f24HintCount = 0;
+        log.info("PaperEngage SafeStorage dump START: iun={}, attachments={}",
+                sharedSteps.getNotificationIun(), attachments.size());
+
+        for (PaperEngageRequestAttachmentsInner attachment : attachments) {
+            String uri = attachment.getUri();
+            String fileKey = toSafeStorageFileKey(uri);
+            try {
+                PnExternalServiceClientImpl.SafeStorageResponse ss = safeStorageClient.safeStorageInfo(fileKey);
+                String ssDocType = ss != null ? ss.getDocumentType() : null;
+                String ssDocStatus = ss != null ? ss.getDocumentStatus() : null;
+                String ssChecksum = ss != null ? ss.getChecksum() : null;
+                String ssContentType = ss != null ? ss.getContentType() : null;
+                Integer ssContentLength = ss != null ? ss.getContentLength() : null;
+                String ssVersionId = ss != null ? ss.getVersionId() : null;
+                String ssRetentionUntil = ss != null ? ss.getRetentionUntil() : null;
+                String ssKey = ss != null ? ss.getKey() : null;
+                String downloadUrl = (ss != null && ss.getDownload() != null) ? ss.getDownload().getUrl() : null;
+                String downloadRetryAfter = (ss != null && ss.getDownload() != null) ? ss.getDownload().getRetryAfter() : null;
+                String urlPath = extractUrlPath(downloadUrl);
+                boolean checksumMatchPaper = ssChecksum != null && ssChecksum.equals(attachment.getSha256());
+
+                DownloadProbe probe = new DownloadProbe(null, null, null, null, null);
+                String computedSha = null;
+                Integer bytesLen = null;
+                boolean pdfMagic = false;
+                boolean contentHasF24 = false;
+                String contentAsciiHint = null;
+                if (downloadUrl != null) {
+                    try {
+                        DownloadBody body = downloadWithHeaders(downloadUrl);
+                        probe = body.probe;
+                        byte[] bytes = body.bytes;
+                        bytesLen = bytes.length;
+                        computedSha = B2bUtils.computeSha256(new ByteArrayInputStream(bytes));
+                        pdfMagic = bytes.length >= 4
+                                && bytes[0] == '%' && bytes[1] == 'P' && bytes[2] == 'D' && bytes[3] == 'F';
+                        contentHasF24 = bytesContainsAsciiIgnoreCase(bytes, "F24");
+                        contentAsciiHint = extractAsciiHints(bytes, List.of("F24", "f24", "PAGOPA", "pagoPa", "AAR"));
+                    } catch (Exception downloadEx) {
+                        log.warn("PaperEngage SafeStorage body download FAILED: order={}, error={}",
+                                attachment.getOrder(), downloadEx.getMessage());
+                    }
+                }
+
+                boolean f24Hint = containsIgnoreCase(fileKey, "F24")
+                        || containsIgnoreCase(ssDocType, "F24")
+                        || containsIgnoreCase(urlPath, "F24")
+                        || containsIgnoreCase(probe.contentDisposition, "F24")
+                        || containsIgnoreCase(downloadUrl, "F24")
+                        || containsIgnoreCase(probe.allHeaders, "F24")
+                        || contentHasF24;
+                if (f24Hint) {
+                    f24HintCount++;
+                }
+
+                bySsDocumentType.merge(ssDocType == null ? "null" : ssDocType, 1L, Long::sum);
+                bySsDocumentStatus.merge(ssDocStatus == null ? "null" : ssDocStatus, 1L, Long::sum);
+                byContentType.merge(ssContentType == null ? "null" : ssContentType, 1L, Long::sum);
+
+                log.info("PaperEngage SafeStorage attachment: order={}, paperDocType={}, paperSha={}, paperUri={}, "
+                                + "fileKey={}, ssKey={}, ssDocType={}, ssDocStatus={}, ssChecksum={}, ssContentType={}, "
+                                + "ssContentLength={}, ssVersionId={}, ssRetentionUntil={}, checksumMatchPaper={}, "
+                                + "downloadRetryAfter={}, urlPath={}, httpStatus={}, httpContentType={}, "
+                                + "httpContentLength={}, contentDisposition={}, httpHeaders={}, "
+                                + "bytesLen={}, computedSha={}, computedMatchPaper={}, pdfMagic={}, "
+                                + "contentHasF24={}, contentAsciiHint={}, f24Hint={}, downloadUrl={}, ssFull={}",
+                        attachment.getOrder(),
+                        attachment.getDocumentType(),
+                        attachment.getSha256(),
+                        uri,
+                        fileKey,
+                        ssKey,
+                        ssDocType,
+                        ssDocStatus,
+                        ssChecksum,
+                        ssContentType,
+                        ssContentLength,
+                        ssVersionId,
+                        ssRetentionUntil,
+                        checksumMatchPaper,
+                        downloadRetryAfter,
+                        urlPath,
+                        probe.httpStatus,
+                        probe.contentType,
+                        probe.contentLength,
+                        probe.contentDisposition,
+                        probe.allHeaders,
+                        bytesLen,
+                        computedSha,
+                        Objects.equals(computedSha, attachment.getSha256()),
+                        pdfMagic,
+                        contentHasF24,
+                        contentAsciiHint,
+                        f24Hint,
+                        downloadUrl,
+                        ss);
+                ok++;
+            } catch (Exception e) {
+                fail++;
+                log.warn("PaperEngage SafeStorage attachment FAILED: order={}, uri={}, error={}",
+                        attachment.getOrder(), uri, e.getMessage());
+            }
+        }
+
+        log.info("PaperEngage SafeStorage dump SUMMARY: iun={}, ok={}, fail={}, f24HintCount={}, "
+                        + "bySsDocumentType={}, bySsDocumentStatus={}, byContentType={}",
+                sharedSteps.getNotificationIun(), ok, fail, f24HintCount,
+                bySsDocumentType, bySsDocumentStatus, byContentType);
+    }
+
+    private static String toSafeStorageFileKey(String uri) {
+        if (uri == null) {
+            return null;
+        }
+        String fileKey = uri.startsWith("safestorage://") ? uri.substring("safestorage://".length()) : uri;
+        int q = fileKey.indexOf('?');
+        return q >= 0 ? fileKey.substring(0, q) : fileKey;
+    }
+
+    private static String extractUrlPath(String downloadUrl) {
+        if (downloadUrl == null) {
+            return null;
+        }
+        try {
+            java.net.URI u = java.net.URI.create(downloadUrl);
+            return u.getPath();
+        } catch (Exception e) {
+            int q = downloadUrl.indexOf('?');
+            return q >= 0 ? downloadUrl.substring(0, q) : downloadUrl;
+        }
+    }
+
+    private static final class DownloadProbe {
+        final Integer httpStatus;
+        final String contentType;
+        final String contentLength;
+        final String contentDisposition;
+        final String allHeaders;
+
+        DownloadProbe(Integer httpStatus, String contentType, String contentLength,
+                      String contentDisposition, String allHeaders) {
+            this.httpStatus = httpStatus;
+            this.contentType = contentType;
+            this.contentLength = contentLength;
+            this.contentDisposition = contentDisposition;
+            this.allHeaders = allHeaders;
+        }
+    }
+
+    private static final class DownloadBody {
+        final byte[] bytes;
+        final DownloadProbe probe;
+
+        DownloadBody(byte[] bytes, DownloadProbe probe) {
+            this.bytes = bytes;
+            this.probe = probe;
+        }
+    }
+
+    private static DownloadBody downloadWithHeaders(String downloadUrl) throws java.io.IOException {
+        java.net.HttpURLConnection conn = null;
+        try {
+            conn = openDownloadConnection(downloadUrl, "GET", false);
+            int status = conn.getResponseCode();
+            Map<String, List<String>> headerFields = conn.getHeaderFields();
+            StringBuilder headers = new StringBuilder();
+            if (headerFields != null) {
+                for (Map.Entry<String, List<String>> e : headerFields.entrySet()) {
+                    if (e.getKey() == null) {
+                        continue;
+                    }
+                    headers.append(e.getKey()).append('=').append(e.getValue()).append("; ");
+                }
+            }
+            DownloadProbe probe = new DownloadProbe(
+                    status,
+                    conn.getContentType(),
+                    conn.getHeaderField("Content-Length"),
+                    conn.getHeaderField("Content-Disposition"),
+                    headers.toString());
+            try (java.io.InputStream in = status >= 400 ? conn.getErrorStream() : conn.getInputStream()) {
+                if (in == null) {
+                    return new DownloadBody(new byte[0], probe);
+                }
+                return new DownloadBody(in.readAllBytes(), probe);
+            }
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
+        }
+    }
+
+    private static java.net.HttpURLConnection openDownloadConnection(String downloadUrl, String method, boolean range)
+            throws java.io.IOException {
+        java.net.HttpURLConnection conn = (java.net.HttpURLConnection) new java.net.URL(downloadUrl).openConnection();
+        conn.setInstanceFollowRedirects(true);
+        conn.setConnectTimeout(15_000);
+        conn.setReadTimeout(60_000);
+        conn.setRequestMethod(method);
+        if (range) {
+            conn.setRequestProperty("Range", "bytes=0-0");
+        }
+        conn.connect();
+        return conn;
+    }
+
+    private static boolean bytesContainsAsciiIgnoreCase(byte[] bytes, String token) {
+        if (bytes == null || token == null || token.isEmpty()) {
+            return false;
+        }
+        String lower = new String(bytes, StandardCharsets.ISO_8859_1).toLowerCase(Locale.ROOT);
+        return lower.contains(token.toLowerCase(Locale.ROOT));
+    }
+
+    private static String extractAsciiHints(byte[] bytes, List<String> tokens) {
+        if (bytes == null || bytes.length == 0) {
+            return "";
+        }
+        String ascii = new String(bytes, StandardCharsets.ISO_8859_1);
+        String lower = ascii.toLowerCase(Locale.ROOT);
+        List<String> found = new ArrayList<>();
+        for (String token : tokens) {
+            if (token != null && lower.contains(token.toLowerCase(Locale.ROOT))) {
+                found.add(token);
+            }
+        }
+        return String.join(",", found);
+    }
+
+    private static boolean containsIgnoreCase(String value, String token) {
+        return value != null && token != null && value.toLowerCase(Locale.ROOT).contains(token.toLowerCase(Locale.ROOT));
+    }
+
     /**
      * Diagnostica QA-16429 / PEC_4: confronta SHA PDF F24 (download B2B per attachmentIdx)
      * con gli sha256 del PaperEngage. Il digests dei metadata F24 NON deve matchare il plico.
@@ -1219,13 +1579,28 @@ public class InvioNotificheB2bSteps {
                 if (resp.getSha256() != null) {
                     apiPdfShas.add(resp.getSha256());
                 }
+                DownloadProbe probe = new DownloadProbe(null, null, null, null, null);
+                log.info("F24 sha compare download metadata: attachmentIdx={}, respFull={}, filename={}, "
+                                + "apiSha={}, url={}, contentLength={}, contentType={}, retryAfter={}",
+                        attachmentIdx, resp, resp.getFilename(), resp.getSha256(), resp.getUrl(),
+                        resp.getContentLength(), resp.getContentType(), resp.getRetryAfter());
                 if (resp.getUrl() != null) {
-                    byte[] bytes = B2bUtils.downloadFile(resp.getUrl());
+                    DownloadBody body = downloadWithHeaders(resp.getUrl());
+                    probe = body.probe;
+                    byte[] bytes = body.bytes;
                     String computed = B2bUtils.computeSha256(new ByteArrayInputStream(bytes));
                     computedPdfShas.add(computed);
-                    log.info("F24 sha compare download: attachmentIdx={}, apiSha={}, computedSha={}, filename={}, matchApiComputed={}",
-                            attachmentIdx, resp.getSha256(), computed, resp.getFilename(),
-                            Objects.equals(resp.getSha256(), computed));
+                    boolean contentHasF24 = bytesContainsAsciiIgnoreCase(bytes, "F24");
+                    String contentAsciiHint = extractAsciiHints(bytes, List.of("F24", "f24", "PAGOPA", "pagoPa"));
+                    boolean pdfMagic = bytes.length >= 4
+                            && bytes[0] == '%' && bytes[1] == 'P' && bytes[2] == 'D' && bytes[3] == 'F';
+                    log.info("F24 sha compare download body: attachmentIdx={}, apiSha={}, computedSha={}, "
+                                    + "matchApiComputed={}, bytesLen={}, pdfMagic={}, contentHasF24={}, "
+                                    + "contentAsciiHint={}, filename={}, httpStatus={}, httpHeaders={}, contentDisposition={}",
+                            attachmentIdx, resp.getSha256(), computed,
+                            Objects.equals(resp.getSha256(), computed), bytes.length, pdfMagic,
+                            contentHasF24, contentAsciiHint, resp.getFilename(),
+                            probe.httpStatus, probe.allHeaders, probe.contentDisposition);
                 } else {
                     log.info("F24 sha compare download: attachmentIdx={}, apiSha={}, url=null, retryAfter={}",
                             attachmentIdx, resp.getSha256(), resp.getRetryAfter());
