@@ -50,9 +50,13 @@ import java.nio.charset.StandardCharsets;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_1;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MOST_RECENT;
@@ -1121,6 +1125,10 @@ public class InvioNotificheB2bSteps {
         }
     }
 
+    /** Parallelismo per check F24 (I/O SafeStorage + parse PDF); pool dedicato, non common ForkJoinPool. */
+    private static final int F24_CHECK_PARALLELISM = 8;
+    private static final Pattern F24_WORD_PATTERN = Pattern.compile("\\bF24\\b", Pattern.CASE_INSENSITIVE);
+
     @And("si verifica che il contenuto degli attachments da inviare in via cartacea abbia {int} attachment di tipo {string}")
     public void presenceAttachmentAnalogicFlow(Integer numeroDocumenti, String tipologia) {
         List<PaperEngageRequestAttachmentsInner> attachments = Optional.ofNullable(documentiPec.get(0))
@@ -1130,7 +1138,7 @@ public class InvioNotificheB2bSteps {
 
         long actualCount;
         if ("F24".equalsIgnoreCase(tipologia)) {
-            actualCount = attachments.stream().filter(this::isF24).count();
+            actualCount = countF24Attachments(attachments);
         } else {
             actualCount = attachments.stream()
                     .map(PaperEngageRequestAttachmentsInner::getUri)
@@ -1147,11 +1155,38 @@ public class InvioNotificheB2bSteps {
         }
     }
 
+    private long countF24Attachments(List<PaperEngageRequestAttachmentsInner> attachments) {
+        if (attachments.isEmpty()) {
+            return 0;
+        }
+        int parallelism = Math.min(F24_CHECK_PARALLELISM, attachments.size());
+        ExecutorService executor = Executors.newFixedThreadPool(parallelism);
+        try {
+            List<CompletableFuture<Boolean>> futures = attachments.stream()
+                    .map(attachment -> CompletableFuture.supplyAsync(() -> isF24(attachment), executor))
+                    .toList();
+            return futures.stream()
+                    .map(CompletableFuture::join)
+                    .filter(Boolean::booleanValue)
+                    .count();
+        } finally {
+            executor.shutdown();
+            try {
+                if (!executor.awaitTermination(5, TimeUnit.MINUTES)) {
+                    executor.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                executor.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
     /**
      * Riconosce un allegato F24 con cascade a costo crescente:
      * 1) uri / documentType già presenti su PaperEngage
      * 2) metadati SafeStorage (key, documentType, tags, url) via getFile
-     * 3) solo in ultima istanza download PDF e ricerca testuale di "F24"
+     * 3) solo in ultima istanza download PDF e ricerca testuale di "F24" (word boundary)
      */
     private boolean isF24(PaperEngageRequestAttachmentsInner attachment) {
         if (attachment == null) {
@@ -1221,7 +1256,7 @@ public class InvioNotificheB2bSteps {
             PDFTextStripper pdfStripper = new PDFTextStripper();
             pdfStripper.setSortByPosition(true);
             String extractedText = pdfStripper.getText(document);
-            return extractedText != null && extractedText.toUpperCase(Locale.ROOT).contains("F24");
+            return extractedText != null && F24_WORD_PATTERN.matcher(extractedText).find();
         } catch (Exception exception) {
             log.warn("isF24FromPdfContent: errore parsing PDF: {}", exception.getMessage());
             return false;
