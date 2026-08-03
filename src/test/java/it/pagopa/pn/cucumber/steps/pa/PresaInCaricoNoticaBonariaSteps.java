@@ -6,7 +6,6 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.*;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.FullReceivedInformalNotificationV1;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
@@ -14,7 +13,6 @@ import it.pagopa.pn.client.b2b.pa.service.IPnPrivateDeliveryPushExternalClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bInternalInformalClientImpl;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.model.InformalSentNotificationV1;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.informalNotification.builders.InformalRecipientBuilder;
 import it.pagopa.pn.cucumber.steps.informalNotification.datatest.InformalDataTestV1;
@@ -76,16 +74,12 @@ public class PresaInCaricoNoticaBonariaSteps {
     private NewInformalNotificationResponse newInformalNotificationResponse;
     private NotificationAttachmentDownloadMetadataResponse attachmentResponse;
     private NewInformalNotificationRequestStatusResponseV1 statusResponse;
-    private InformalSentNotificationV1 informalNotificationResponse;
-
     private final InformalNotificationRequestMapper informalNotificationRequestMapper;
     private final InformalRecipientBuilder recipientBuilder;
     private final NotificationInformalUtilsV1 notificationInformalUtilsV1;
 
     private FullSentInformalNotificationV1 fullInformalNotificationResponse;
     private InformalTimelineElementV1 timelineElement;
-    //private Destinatario recipient;
-    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet recipientCxType;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.NotificationAttachmentDownloadMetadataResponse receivedAttachmentResponse;
 
     @Autowired
@@ -382,7 +376,7 @@ public class PresaInCaricoNoticaBonariaSteps {
 
         String recipientCxId = sharedSteps.getDestinatarioRegistry().getCxId(destinatario);
         try {
-            receivedAttachmentResponse = pnPaB2bInternalInformalClientImpl.getReceivedInformalNotificationDocument(recipientCxId, savedIun, recipientCxType, 0);
+            receivedAttachmentResponse = pnPaB2bInternalInformalClientImpl.getReceivedInformalNotificationDocument(recipientCxId, savedIun, toRecipientCxType(destinatario), 0);
             lastException = null;
         } catch (Exception e) {
             lastException = e;
@@ -395,7 +389,7 @@ public class PresaInCaricoNoticaBonariaSteps {
 
         String recipientCxId = sharedSteps.getDestinatarioRegistry().getCxId(destinatario);
         try {
-            receivedAttachmentResponse = pnPaB2bInternalInformalClientImpl.getReceivedInformalNotificationAttachment(recipientCxId, savedIun, recipientCxType, 0);
+            receivedAttachmentResponse = pnPaB2bInternalInformalClientImpl.getReceivedInformalNotificationAttachment(recipientCxId, savedIun, toRecipientCxType(destinatario), 0);
             lastException = null;
         } catch (Exception e) {
             lastException = e;
@@ -474,7 +468,7 @@ public class PresaInCaricoNoticaBonariaSteps {
         InformalStatusPollingConfig.DefaultStatusValue config = InformalStatusPollingConfig.DefaultStatusValue.valueOf(expectedStatus);
 
         try {
-            await().atMost(Duration.ofMinutes(12)).pollInterval(Duration.ofSeconds(3)).until(() -> {
+            await().atMost(Duration.ofMinutes(12)).pollInterval(Duration.ofSeconds(10)).until(() -> {
                 FullSentInformalNotificationV1 notification = getFullInformalNotification();
 
                 if (notification == null) {
@@ -592,14 +586,11 @@ public class PresaInCaricoNoticaBonariaSteps {
     }
 
     public UUID toUuid(String value) {
+
         if (value == null || value.isBlank()) {
             return null;
         }
-        try {
-            return UUID.fromString(value);
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
+        return UUID.fromString(value);
     }
 
     private void handleGroup(Map<String, String> data) {
@@ -632,13 +623,10 @@ public class PresaInCaricoNoticaBonariaSteps {
     //*********************
 
     @And("il destinatario {destinatario} legge la notifica bonaria")
-    public void recipientReadsInformalNotification(
-            Destinatario destinatario) {
+    public void recipientReadsInformalNotification(Destinatario destinatario) {
 
         String recipientCxId = sharedSteps.getDestinatarioRegistry().getCxId(destinatario);
-
-        FullReceivedInformalNotificationV1 fullReceivedInformalNotificationResponse =
-                assertDoesNotThrow(() -> pnPaB2bInternalInformalClientImpl.getReceivedInformalNotification(recipientCxId, savedIun, recipientCxType));
+        assertDoesNotThrow(() -> pnPaB2bInternalInformalClientImpl.getReceivedInformalNotification(recipientCxId, savedIun, toRecipientCxType(destinatario)));
         try {
             Thread.sleep(sharedSteps.getWorkFlowWait());
         } catch (InterruptedException exc) {
@@ -663,7 +651,7 @@ public class PresaInCaricoNoticaBonariaSteps {
         Map<String, String> cleanedData = data.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().trim(), e -> e.getValue() != null ? e.getValue().trim() : null));
         InformalNotificationRecipientV1 recipient = recipientBuilder.build(cleanedData, currentCxId);
         informalNotificationRequestV1.getRecipients().add(recipient);
-        this.recipientCxType = "PF".equalsIgnoreCase(recipient.getRecipientType().getValue()) ? it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet.PF : it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet.PG;
+        //this.recipientCxType = "PF".equalsIgnoreCase(recipient.getRecipientType().getValue()) ? it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet.PF : it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet.PG;
     }
 
     @Then("si attende che venga prodotto l'elemento {string} della notifica bonaria")
@@ -747,6 +735,13 @@ public class PresaInCaricoNoticaBonariaSteps {
         savedIun = statusResponse.getIun();
         sharedSteps.setNotificationIun(savedIun);
         lastException = null;
+    }
+
+    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet toRecipientCxType(Destinatario destinatario) {
+
+        return "PF".equalsIgnoreCase(destinatario.getRecipientType())
+                ? it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet.PF
+                : it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet.PG;
     }
 }
 
