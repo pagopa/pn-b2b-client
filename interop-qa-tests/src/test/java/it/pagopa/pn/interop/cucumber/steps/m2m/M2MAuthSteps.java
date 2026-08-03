@@ -87,7 +87,6 @@ public class M2MAuthSteps {
     }
 
     @Given("viene impostato per l'utente un token m2m non valido")
-    @Given("viene impostato per l'utente un token non valido")
     public void setExpiredM2MAuth() {
         ApiProfile.ApiMode mode = apiProfile.getApiMode();
         ApiProfile.ApiM2MVersion version = apiProfile.getApiM2MVersion();
@@ -95,11 +94,11 @@ public class M2MAuthSteps {
         boolean bestFit = mode == ApiProfile.ApiMode.BEST_FIT;
         boolean rightFit = mode == ApiProfile.ApiMode.RIGHT_FIT;
 
+        boolean useBearer = bestFit || (rightFit && version == ApiProfile.ApiM2MVersion.V2);
         boolean useDpop = bestFit || (rightFit && version == ApiProfile.ApiM2MVersion.V3);
 
         if (useDpop) {
-            //Auth auth = sharedStepsContext.getAuth(); // TODO 31 07 2026: versione precedente, rimuovere in futuro una volta appurata l'assenza di breaking changes
-            Auth auth = Auth.of(null, null, null, null, null);
+            Auth auth = sharedStepsContext.getAuth();
 
             DpopHeaderPolicy policy = new DpopHeaderPolicy();
             policy.setMode(DpopHeaderPolicy.Mode.INVALID_AUTH);
@@ -108,6 +107,13 @@ public class M2MAuthSteps {
             clientTokenConfigurator.setAuth(auth);
         }
 
+        if (useBearer) {
+            setExpiredBFFAuth();
+        }
+    }
+
+    @Given("viene impostato per l'utente un token non valido")
+    public void setExpiredBFFAuth(){
         clientTokenConfigurator.setBearerToken(INVALID_AUTH_TOKEN);
         sharedStepsContext.setUserToken(INVALID_AUTH_TOKEN);
     }
