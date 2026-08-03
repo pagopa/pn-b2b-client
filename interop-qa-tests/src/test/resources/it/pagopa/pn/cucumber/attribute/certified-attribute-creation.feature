@@ -67,6 +67,15 @@ Feature: Creazione attributo certificato
       | Privato | admin        | 403       |
 
   @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOff
+  Scenario: [DISCRETE_ATTRIBUTE_CREATION_1b] La creazione di un attributo certificato discreto non va a buon fine
+  con il feature flag impostato a false.
+
+    Given l'utente è un "admin" di "GSP"
+    When l'utente crea un attributo certificato discreto
+    Then si ottiene status code 501
+
+  @certifiedDiscreteAttribute
   @certifiedDiscreteAttributeFlagOn
   Scenario: [DISCRETE_ATTRIBUTE_CREATION_2] La creazione di un attributo certificato discreto non va a buon fine se ce n'è
   già uno con lo stesso nome.
