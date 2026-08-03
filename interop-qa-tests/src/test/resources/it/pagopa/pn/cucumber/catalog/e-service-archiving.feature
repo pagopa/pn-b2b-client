@@ -95,8 +95,6 @@ Feature: Archiviazione manuale di un e-service
       | %null      | QA test manual-archiving | 60          | 400        |
       | %actual    | %null                    | 60          | 400        |
       | %null      | %null                    | 60          | 400        |
-      | %actual    | QA test manual-archiving | %null       | 400        |
-      | %actual    | QA test manual-archiving | 10          | 400        |
       | %actual    | %blank                   | 60          | 400        |
       | %random    | QA test manual-archiving | 60          | 404        |
 

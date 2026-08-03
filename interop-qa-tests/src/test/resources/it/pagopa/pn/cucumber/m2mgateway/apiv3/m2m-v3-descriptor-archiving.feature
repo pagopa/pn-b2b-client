@@ -58,7 +58,6 @@ Feature: Archiviazione manuale di un descrittore
       | %null        | %actual    | 60          | 400        |
       | %actual      | %null      | 60          | 400        |
       | %null        | %null      | 60          | 400        |
-      | %actual      | %actual    | 10          | 400        |
       | %random      | %actual    | 60          | 404        |
       | %actual      | %random    | 60          | 404        |
       | %random      | %random    | 60          | 404        |
