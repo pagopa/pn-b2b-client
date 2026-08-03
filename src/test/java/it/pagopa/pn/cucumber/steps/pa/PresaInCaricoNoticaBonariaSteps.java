@@ -117,21 +117,15 @@ public class PresaInCaricoNoticaBonariaSteps {
 
     @Given("viene creata una nuova notifica bonaria con i seguenti parametri")
     public void createInformal(Map<String, String> dataInput) {
-
         Map<String, String> data = new HashMap<>(dataInput);
-
         //gestione custom group
         handleGroup(data);
-
         informalNotificationRequestV1 = informalNotificationRequestMapper.buildInformalNotificationRequest(data);
     }
 
-
     @Given("viene creata una nuova notifica bonaria con valori di default")
     public void createInformal() {
-
         informalNotificationRequestV1 = informalNotificationRequestMapper.buildInformalNotificationRequest(Map.of());
-
         log.info("Invio notifica bonaria - request: {}", informalNotificationRequestV1);
     }
 
@@ -139,9 +133,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     public void addInformalRecipientLight(Map<String, String> data) {
 
         assertNotNull(informalNotificationRequestV1, "Creare prima la notifica bonaria");
-
         Map<String, String> cleanedData = data.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().trim(), e -> e.getValue() != null ? e.getValue().trim() : null));
-
         InformalNotificationRecipientV1 recipient = recipientBuilder.build(cleanedData, currentCxId);
         informalNotificationRequestV1.getRecipients().add(recipient);
     }
@@ -506,27 +498,6 @@ public class PresaInCaricoNoticaBonariaSteps {
         boolean found = errors.stream().anyMatch(e -> expectedError.equals(e.getCode()));
         assertTrue(found, "Errore atteso non trovato: " + expectedError);
     }
-
-    @When("si tenta il recupero della notifica bonaria tramite IUN")
-    public void getInformalNotification() {
-        try {
-            informalNotificationResponse = pnPaB2bInternalInformalClientImpl.getSentInformalNotification(savedIun);
-            lastException = null;
-
-        } catch (Exception e) {
-            lastException = e;
-            informalNotificationResponse = null;
-        }
-    }
-
-    @Then("la notifica bonaria è recuperabile tramite IUN")
-    public void verifyNotificationRetrieved() {
-
-        assertNull(lastException, "Errore non atteso");
-        assertNotNull(informalNotificationResponse, "Response nulla");
-        assertEquals(savedIun, informalNotificationResponse.getIun());
-    }
-
 
     //*** TERMINAZIONE DELLA NOTIFICA
 
