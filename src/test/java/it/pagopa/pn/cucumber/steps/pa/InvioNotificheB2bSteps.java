@@ -1127,10 +1127,10 @@ public class InvioNotificheB2bSteps {
     public void presenceAttachmentAnalogicFlow(Integer numeroDocumenti, String tipologia) {
         logPaperEngageAttachmentsDump("presenceAttachmentAnalogicFlow tipologia=" + tipologia);
         if ("F24".equalsIgnoreCase(tipologia)) {
-            logPaperEngageDiagnosticContext();
-            logNotificationPaymentsDiagnostic(0);
-            logPaperEngageSafeStorageForAllAttachments();
-            logF24ShaVsPaperEngage(0);
+            // Solo generazione presigned (pn-test): niente download/body/multi-cx, per massimizzare
+            // la finestra utile (~5 min) prima della scadenza URL.
+            logPaperEngagePresignedUrlsOnly();
+            logF24DeliveryPresignedUrlsOnly(0);
         }
         List<String> attachmentsUri = Optional.ofNullable(documentiPec.get(0))
                 .map(ReceivedMessage::getPaperEngageRequest)
@@ -1290,6 +1290,154 @@ public class InvioNotificheB2bSteps {
         log.info("Payments diagnostic END: iun={}", iun);
     }
 
+    private static final String SAFE_STORAGE_PRESIGN_CX = "pn-test";
+
+    /**
+     * Diagnostica QA-16429 / PEC_4 (modalità URL-only): per ogni allegato del plico
+     * richiede il presigned con {@code getFile(cx=pn-test, metadataOnly=false)} e lo scrive
+     * subito su file/log, senza scaricare il body e senza provare altri cx-id.
+     */
+    private void logPaperEngagePresignedUrlsOnly() {
+        List<PaperEngageRequestAttachmentsInner> attachments = Optional.ofNullable(documentiPec)
+                .filter(list -> !list.isEmpty())
+                .map(list -> list.get(0).getPaperEngageRequest())
+                .map(PaperEngageRequest::getAttachments)
+                .orElse(List.of());
+        if (attachments.isEmpty()) {
+            log.warn("PaperEngage PRESIGN-ONLY: attachments assenti iun={}", sharedSteps.getNotificationIun());
+            return;
+        }
+
+        java.nio.file.Path outFile = resolveDiagnosticPdfDir().resolve("presigned-urls-paper.txt");
+        int ok = 0;
+        int fail = 0;
+        try {
+            java.nio.file.Files.createDirectories(outFile.getParent());
+            java.nio.file.Files.writeString(outFile, "", java.nio.charset.StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            log.warn("PaperEngage PRESIGN-ONLY: cannot init file {}: {}", outFile, e.getMessage());
+        }
+
+        log.info("PaperEngage PRESIGN-ONLY START: iun={}, attachments={}, cxId={}, outFile={}",
+                sharedSteps.getNotificationIun(), attachments.size(), SAFE_STORAGE_PRESIGN_CX, outFile.toAbsolutePath());
+
+        maybeSwitchSafeStorageApiKey(SAFE_STORAGE_PRESIGN_CX);
+        long started = System.currentTimeMillis();
+        for (PaperEngageRequestAttachmentsInner attachment : attachments) {
+            String fileKey = toSafeStorageFileKey(attachment.getUri());
+            try {
+                ResponseEntity<FileDownloadResponse> responseEntity =
+                        safeStoragePrivateClient.getFileWithHttpInfo(fileKey, SAFE_STORAGE_PRESIGN_CX, false, false);
+                FileDownloadResponse body = responseEntity != null ? responseEntity.getBody() : null;
+                String downloadUrl = Optional.ofNullable(body)
+                        .map(FileDownloadResponse::getDownload)
+                        .map(FileDownloadInfo::getUrl)
+                        .orElse(null);
+                String line = String.format(Locale.ROOT,
+                        "order=%s\tfileKey=%s\tpaperDocType=%s\tpaperSha=%s\tssDocType=%s\tssChecksum=%s\tssContentLength=%s\turl=%s%n",
+                        attachment.getOrder(),
+                        fileKey,
+                        attachment.getDocumentType(),
+                        attachment.getSha256(),
+                        body != null ? body.getDocumentType() : null,
+                        body != null ? body.getChecksum() : null,
+                        body != null ? body.getContentLength() : null,
+                        downloadUrl);
+                appendDiagnosticLine(outFile, line);
+                log.info("PaperEngage PRESIGN-ONLY URL: order={}, fileKey={}, ssDocType={}, hasUrl={}, downloadUrl={}",
+                        attachment.getOrder(), fileKey,
+                        body != null ? body.getDocumentType() : null,
+                        downloadUrl != null,
+                        downloadUrl);
+                if (downloadUrl != null) {
+                    ok++;
+                } else {
+                    fail++;
+                }
+            } catch (Exception e) {
+                fail++;
+                String status = e instanceof HttpStatusCodeException httpEx
+                        ? String.valueOf(httpEx.getStatusCode().value()) : null;
+                log.warn("PaperEngage PRESIGN-ONLY FAIL: order={}, fileKey={}, httpStatus={}, error={}",
+                        attachment.getOrder(), fileKey, status, e.getMessage());
+                appendDiagnosticLine(outFile, String.format(Locale.ROOT,
+                        "order=%s\tfileKey=%s\tERROR\thttpStatus=%s\tmsg=%s%n",
+                        attachment.getOrder(), fileKey, status, e.getMessage()));
+            }
+        }
+
+        log.info("PaperEngage PRESIGN-ONLY SUMMARY: iun={}, okUrl={}, fail={}, elapsedMs={}, outFile={}",
+                sharedSteps.getNotificationIun(), ok, fail, System.currentTimeMillis() - started, outFile.toAbsolutePath());
+        log.info("PaperEngage PRESIGN-ONLY >>> SCARICA SUBITO (~5 min) i file da: {}", outFile.toAbsolutePath());
+    }
+
+    /** Solo URL F24 delivery (senza download body). */
+    private void logF24DeliveryPresignedUrlsOnly(int recipientIdx) {
+        String iun = sharedSteps.getNotificationIun();
+        FullSentNotificationV29 sent = sharedSteps.getSentNotificationLastVersion();
+        if (sent == null || sent.getRecipients() == null || sent.getRecipients().size() <= recipientIdx) {
+            log.warn("F24 PRESIGN-ONLY: sent/recipient assenti iun={}", iun);
+            return;
+        }
+        List<NotificationPaymentItem> payments = sent.getRecipients().get(recipientIdx).getPayments();
+        if (payments == null) {
+            return;
+        }
+        java.nio.file.Path outFile = resolveDiagnosticPdfDir().resolve("presigned-urls-f24-delivery.txt");
+        try {
+            java.nio.file.Files.createDirectories(outFile.getParent());
+            java.nio.file.Files.writeString(outFile, "", java.nio.charset.StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            log.warn("F24 PRESIGN-ONLY: cannot init file {}: {}", outFile, e.getMessage());
+        }
+        int ok = 0;
+        int fail = 0;
+        log.info("F24 PRESIGN-ONLY START: iun={}, payments={}, outFile={}", iun, payments.size(), outFile.toAbsolutePath());
+        for (int attachmentIdx = 0; attachmentIdx < payments.size(); attachmentIdx++) {
+            if (payments.get(attachmentIdx).getF24() == null) {
+                continue;
+            }
+            try {
+                NotificationAttachmentDownloadMetadataResponse resp =
+                        downloadF24AttachmentWithRetry(iun, recipientIdx, attachmentIdx);
+                String url = resp != null ? resp.getUrl() : null;
+                String line = String.format(Locale.ROOT,
+                        "idx=%d\tfilename=%s\tapiSha=%s\turl=%s%n",
+                        attachmentIdx,
+                        resp != null ? resp.getFilename() : null,
+                        resp != null ? resp.getSha256() : null,
+                        url);
+                appendDiagnosticLine(outFile, line);
+                log.info("F24 PRESIGN-ONLY URL: idx={}, filename={}, hasUrl={}, downloadUrl={}",
+                        attachmentIdx, resp != null ? resp.getFilename() : null, url != null, url);
+                if (url != null) {
+                    ok++;
+                } else {
+                    fail++;
+                }
+            } catch (Exception e) {
+                fail++;
+                log.warn("F24 PRESIGN-ONLY FAIL: idx={}, error={}", attachmentIdx, e.getMessage());
+            }
+        }
+        log.info("F24 PRESIGN-ONLY SUMMARY: iun={}, okUrl={}, fail={}, outFile={}",
+                iun, ok, fail, outFile.toAbsolutePath());
+        log.info("F24 PRESIGN-ONLY >>> SCARICA SUBITO (~5 min) i file da: {}", outFile.toAbsolutePath());
+    }
+
+    private void appendDiagnosticLine(java.nio.file.Path outFile, String line) {
+        try {
+            java.nio.file.Files.writeString(
+                    outFile,
+                    line,
+                    java.nio.charset.StandardCharsets.UTF_8,
+                    java.nio.file.StandardOpenOption.CREATE,
+                    java.nio.file.StandardOpenOption.APPEND);
+        } catch (Exception e) {
+            log.warn("appendDiagnosticLine FAILED: file={}, error={}", outFile, e.getMessage());
+        }
+    }
+
     private static final List<String> SAFE_STORAGE_GETFILE_CX_CANDIDATES = List.of(
             "pn-delivery-push",
             "pn-delivery",
@@ -1303,7 +1451,10 @@ public class InvioNotificheB2bSteps {
      * Diagnostica QA-16429 / PEC_4: per ogni allegato del plico usa
      * {@link IPnSafeStoragePrivateClient#getFileWithHttpInfo} (metadataOnly=false) con più cx-id,
      * come nei test SafeStorage che ottengono il presigned download.
+     *
+     * @deprecated sostituito da {@link #logPaperEngagePresignedUrlsOnly()} per la run URL-only.
      */
+    @SuppressWarnings("unused")
     private void logPaperEngageSafeStorageForAllAttachments() {
         List<PaperEngageRequestAttachmentsInner> attachments = Optional.ofNullable(documentiPec)
                 .filter(list -> !list.isEmpty())
@@ -1432,7 +1583,7 @@ public class InvioNotificheB2bSteps {
                     log.info("PaperEngage SafeStorage getFile BODY: order={}, bestCx={}, paperSha={}, "
                                     + "ssDocType={}, ssChecksum={}, bytesLen={}, computedSha={}, computedMatchPaper={}, "
                                     + "pdfMagic={}, contentHasF24={}, contentAsciiHint={}, f24Hint={}, "
-                                    + "httpStatus={}, contentDisposition={}, httpHeaders={}",
+                                    + "httpStatus={}, contentDisposition={}, httpHeaders={}, savedPath={}, downloadUrl={}",
                             attachment.getOrder(),
                             bestCx,
                             attachment.getSha256(),
@@ -1447,7 +1598,17 @@ public class InvioNotificheB2bSteps {
                             f24Hint,
                             downloaded.probe.httpStatus,
                             downloaded.probe.contentDisposition,
-                            downloaded.probe.allHeaders);
+                            downloaded.probe.allHeaders,
+                            saveDiagnosticPdf(
+                                    "paper",
+                                    String.format(Locale.ROOT, "order-%02d_%s_%d_%s",
+                                            attachment.getOrder() != null ? attachment.getOrder().intValue() : -1,
+                                            sanitizeFileName(best.getDocumentType()),
+                                            bytes.length,
+                                            sanitizeFileName(fileKey)),
+                                    bytes,
+                                    downloadUrl),
+                            downloadUrl);
                 } catch (Exception downloadEx) {
                     log.warn("PaperEngage SafeStorage getFile BODY FAILED: order={}, bestCx={}, error={}",
                             attachment.getOrder(), bestCx, downloadEx.getMessage());
@@ -1459,7 +1620,7 @@ public class InvioNotificheB2bSteps {
         }
 
         log.info("PaperEngage SafeStorage getFile dump SUMMARY: iun={}, attachments={}, attachmentsWithAnyOk={}, "
-                        + "attachmentsWithDownloadUrl={}, f24HintCount={}, okByCx={}, failByCx={}, bySsDocumentType={}",
+                        + "attachmentsWithDownloadUrl={}, f24HintCount={}, okByCx={}, failByCx={}, bySsDocumentType={}, pdfDumpDir={}",
                 sharedSteps.getNotificationIun(),
                 attachments.size(),
                 attachmentsWithAnyOk,
@@ -1467,7 +1628,43 @@ public class InvioNotificheB2bSteps {
                 f24HintCount,
                 okByCx,
                 failByCx,
-                bySsDocumentType);
+                bySsDocumentType,
+                resolveDiagnosticPdfDir().toAbsolutePath());
+    }
+
+    private java.nio.file.Path resolveDiagnosticPdfDir() {
+        String base = System.getProperty("tmp.pec4.pdf.dir", "target/tmp-hotfix-pec4-pdfs");
+        String iun = Optional.ofNullable(sharedSteps.getNotificationIun()).orElse("unknown-iun");
+        return java.nio.file.Path.of(base, sanitizeFileName(iun));
+    }
+
+    private String saveDiagnosticPdf(String subfolder, String fileName, byte[] bytes, String downloadUrl) {
+        try {
+            java.nio.file.Path dir = resolveDiagnosticPdfDir().resolve(subfolder);
+            java.nio.file.Files.createDirectories(dir);
+            java.nio.file.Path file = dir.resolve(fileName.endsWith(".pdf") ? fileName : fileName + ".pdf");
+            java.nio.file.Files.write(file, bytes);
+            java.nio.file.Path urlsFile = dir.resolve("_presigned-urls.txt");
+            String line = file.getFileName() + "\t" + (downloadUrl == null ? "" : downloadUrl) + System.lineSeparator();
+            java.nio.file.Files.writeString(
+                    urlsFile,
+                    line,
+                    java.nio.charset.StandardCharsets.UTF_8,
+                    java.nio.file.StandardOpenOption.CREATE,
+                    java.nio.file.StandardOpenOption.APPEND);
+            log.info("PaperEngage diagnostic PDF saved: {}", file.toAbsolutePath());
+            return file.toAbsolutePath().toString();
+        } catch (Exception e) {
+            log.warn("PaperEngage diagnostic PDF save FAILED: fileName={}, error={}", fileName, e.getMessage());
+            return null;
+        }
+    }
+
+    private static String sanitizeFileName(String value) {
+        if (value == null || value.isBlank()) {
+            return "unknown";
+        }
+        return value.replaceAll("[^a-zA-Z0-9._-]+", "_");
     }
 
     private void maybeSwitchSafeStorageApiKey(String cxId) {
@@ -1664,13 +1861,22 @@ public class InvioNotificheB2bSteps {
                     String contentAsciiHint = extractAsciiHints(bytes, List.of("F24", "f24", "PAGOPA", "pagoPa"));
                     boolean pdfMagic = bytes.length >= 4
                             && bytes[0] == '%' && bytes[1] == 'P' && bytes[2] == 'D' && bytes[3] == 'F';
+                    String savedPath = saveDiagnosticPdf(
+                            "f24-delivery",
+                            String.format(Locale.ROOT, "idx-%02d_%s",
+                                    attachmentIdx,
+                                    sanitizeFileName(resp.getFilename() != null ? resp.getFilename() : "F24.pdf")),
+                            bytes,
+                            resp.getUrl());
                     log.info("F24 sha compare download body: attachmentIdx={}, apiSha={}, computedSha={}, "
                                     + "matchApiComputed={}, bytesLen={}, pdfMagic={}, contentHasF24={}, "
-                                    + "contentAsciiHint={}, filename={}, httpStatus={}, httpHeaders={}, contentDisposition={}",
+                                    + "contentAsciiHint={}, filename={}, httpStatus={}, httpHeaders={}, "
+                                    + "contentDisposition={}, savedPath={}, downloadUrl={}",
                             attachmentIdx, resp.getSha256(), computed,
                             Objects.equals(resp.getSha256(), computed), bytes.length, pdfMagic,
                             contentHasF24, contentAsciiHint, resp.getFilename(),
-                            probe.httpStatus, probe.allHeaders, probe.contentDisposition);
+                            probe.httpStatus, probe.allHeaders, probe.contentDisposition,
+                            savedPath, resp.getUrl());
                 } else {
                     log.info("F24 sha compare download: attachmentIdx={}, apiSha={}, url=null, retryAfter={}",
                             attachmentIdx, resp.getSha256(), resp.getRetryAfter());
