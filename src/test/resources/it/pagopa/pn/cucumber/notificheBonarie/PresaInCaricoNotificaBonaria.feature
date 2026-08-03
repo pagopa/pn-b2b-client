@@ -163,7 +163,7 @@ Feature: Sottomissione di una notifica bonaria.
       | SoricalFattOrd |
 
 
-  @informalNotificationsValidation @informalAsyncValidation @informalNotMVP #todo t bonarie
+  @informalNotificationsValidation @informalAsyncValidation @informalNotMVP
   Scenario Outline: [NOTIFICHE_BONARIE_CAMPAIGN_03_1_B] Come ente mittente invio una notifica bonaria indicando campagne con stati non validi, la nottifca viene rifiutata.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId           | <campaignId>     |
@@ -333,7 +333,7 @@ Feature: Sottomissione di una notifica bonaria.
       | recipientType       | PF                |
       | taxId               | FRMTTR76M06B715E  |
       | denomination        | Ettore Fieramosca |
-      | messageId           | ${IT-FR}          |
+      | messageId           | ${NEW-IT-FR}      |
       | additionalLanguages | FR                |
     When l'invio della notifica bonaria fallisce
     Then si riceve errore 400 "PN_DELIVERY_INVALIDPARAMETER_GROUP"
@@ -638,7 +638,7 @@ Feature: Sottomissione di una notifica bonaria.
       | recipientType       | PF                |
       | taxId               | FRMTTR76M06B715E  |
       | denomination        | Ettore Fieramosca |
-      | messageId           | ${IT-FR}          |
+      | messageId           | ${NEW-IT-FR}      |
       | additionalLanguages | FR, IT            |
     When l'invio della notifica bonaria fallisce
     Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
@@ -768,7 +768,7 @@ Feature: Sottomissione di una notifica bonaria.
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
-      | messageId     | ${IT}         |
+      | messageId     | ${NEW-IT}            |
       | email         | test@test.it      |
       | phone_number  | <phone>           |
     When l'invio della notifica bonaria fallisce
@@ -787,7 +787,7 @@ Feature: Sottomissione di una notifica bonaria.
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
-      | messageId     | ${IT}         |
+      | messageId     | ${NEW-IT}            |
       | email         | test@test.it      |
       | phone_number  | <phone>           |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
@@ -864,7 +864,7 @@ Feature: Sottomissione di una notifica bonaria.
       | recipientType       | PF                |
       | taxId               | FRMTTR76M06B715E  |
       | denomination        | Ettore Fieramosca |
-      | messageId           | ${IT-FR}          |
+      | messageId           | ${NEW-IT-FR}      |
       | additionalLanguages | FR                |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     Then la sottomissione della notifica bonaria è andata a buon fine
@@ -877,7 +877,7 @@ Feature: Sottomissione di una notifica bonaria.
       | recipientType       | PF                |
       | taxId               | FRMTTR76M06B715E  |
       | denomination        | Ettore Fieramosca |
-      | messageId           | ${IT-FR}          |
+      | messageId           | ${NEW-IT-FR}      |
       | additionalLanguages | NULL              |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     Then la sottomissione della notifica bonaria è andata a buon fine
@@ -930,7 +930,7 @@ Feature: Sottomissione di una notifica bonaria.
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
 
 
-  @informalNotificationsValidation @informalAsyncValidation @informalNotMVP #todo
+  @informalNotificationsValidation @informalAsyncValidation @informalNotMVP
   Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6_D] Come ente mittente tento invio una notifica bonaria senza indirizzo digitale per un campagna con canale digitale verso PF.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | QADigital         |
@@ -942,7 +942,7 @@ Feature: Sottomissione di una notifica bonaria.
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
 
 
-  @informalNotificationsValidation @informalAsyncValidation @informalNotMVP #todo
+  @informalNotificationsValidation @informalAsyncValidation @informalNotMVP
   Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6_D_PG2] Come ente mittente invio una notifica bonaria senza indirizzo digitale per un campagna NON digitale.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | CampAnalogic |
@@ -1006,7 +1006,6 @@ Feature: Sottomissione di una notifica bonaria.
       | messageId              | ${NEW-IT}             |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "REFUSED"
     Then la notifica bonaria è stata rifiutata per l'errore: "FILE_PDF_INVALID_ERROR"
-
 
 
   @informalNotificationsValidation @informalAsyncValidation
@@ -1239,7 +1238,7 @@ Feature: Sottomissione di una notifica bonaria.
       | recipientType | PF               |
       | taxId         | GLLGLL64B15G702I |
       | denomination  | Galileo Galilei  |
-      | messageId     | ${IT-FR}         |
+      | messageId     | ${NEW-IT-FR}     |
     And destinatario della notifica bonaria
       | recipientType | PG          |
       | denomination  | CucumberSpa |
@@ -1255,7 +1254,7 @@ Feature: Sottomissione di una notifica bonaria.
       | recipientType | PF               |
       | denomination  | utenza radd      |
       | taxId         | STTSGT90A01H501J |
-      | messageId     | ${IT-FR}         |
+      | messageId     | ${NEW-IT-FR}     |
     And destinatario della notifica bonaria
       | recipientType | PF               |
       | taxId         | LVLDAA85T50G702B |
@@ -1270,7 +1269,7 @@ Feature: Sottomissione di una notifica bonaria.
     And destinatario della notifica bonaria
       | denomination | Leonardo da Vinci |
       | taxId        | DVNLRD52D15M059P  |
-      | messageId    | ${IT-FR}          |
+      | messageId    | ${NEW-IT-FR}      |
     And destinatario della notifica bonaria
       | denomination | Giovanna D'Arco  |
       | taxId        | DRCGNN12A46A326K |
@@ -1522,3 +1521,27 @@ Feature: Sottomissione di una notifica bonaria.
       | additionalLanguages | FR             |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "REFUSED"
     Then la notifica bonaria è stata rifiutata per l'errore: "MESSAGE_LANGUAGE_MISMATCH"
+
+  @informalNotificationsValidation @informalAsyncValidation
+  Scenario: [NOTIFICHE_LANGUAGES_DE_1_A] Come ente mittente invio una notifica bonaria allegando
+  un messaggio multilingue e specificando la seconda lingia come lingua addizionale.
+    Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
+      | campaignId          | SoricalFattOrd    |
+      | recipientType       | PF                |
+      | taxId               | FRMTTR76M06B715E  |
+      | denomination        | Ettore Fieramosca |
+      | messageId           | ${NEW-IT-DE}      |
+      | additionalLanguages | DE                |
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
+
+  @informalNotificationsValidation @informalAsyncValidation
+  Scenario: [NOTIFICHE_LANGUAGES_SL_1_A] Come ente mittente invio una notifica bonaria allegando
+  un messaggio multilingue e specificando la seconda lingia come lingua addizionale.
+    Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
+      | campaignId          | SoricalFattOrd    |
+      | recipientType       | PF                |
+      | taxId               | FRMTTR76M06B715E  |
+      | denomination        | Ettore Fieramosca |
+      | messageId           | ${NEW-IT-SL}      |
+      | additionalLanguages | SL                |
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"

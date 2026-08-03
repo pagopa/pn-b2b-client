@@ -78,7 +78,6 @@ public class InformalMessageProvider {
     }
 
     public String createAndSaveMessageITFR(String cxId) {
-
         messageIdITFR = createMessageITFR(cxId);
         return messageIdITFR;
     }
@@ -88,6 +87,20 @@ public class InformalMessageProvider {
         if (messageIdITFR == null) {
             throw new IllegalStateException("Nessun messaggio IT-FR precedentemente creato");
         }
+        return messageIdITFR;
+    }
+
+    // ==========================================
+    // IT-DE/SL
+    // ==========================================
+
+    public String createAndSaveMessageITDE(String cxId) {
+        messageIdITFR = createMessageITDE(cxId);
+        return messageIdITFR;
+    }
+
+    public String createAndSaveMessageITSL(String cxId) {
+        messageIdITFR = createMessageITSL(cxId);
         return messageIdITFR;
     }
 
@@ -112,9 +125,26 @@ public class InformalMessageProvider {
         return pnPaB2bInternalInformalClientImpl.createMessage(cxId, request).getMessageId().toString();
     }
 
+    private String createMessageITDE(String cxId) {
+
+        NewMessageRequest request = new NewMessageRequest()
+                .primaryMessage(InformalMessageUtils.buildPrimaryMessage(InformalMessageTemplates.SORICAL_IT.getContent()))
+                .additionalMessage(InformalMessageUtils.buildAdditionalMessage(InformalMessageTemplates.SORICAL_DE.getContent()));
+
+        return pnPaB2bInternalInformalClientImpl.createMessage(cxId, request).getMessageId().toString();
+    }
+
+    private String createMessageITSL(String cxId) {
+
+        NewMessageRequest request = new NewMessageRequest()
+                .primaryMessage(InformalMessageUtils.buildPrimaryMessage(InformalMessageTemplates.SORICAL_IT.getContent()))
+                .additionalMessage(InformalMessageUtils.buildAdditionalMessage(InformalMessageTemplates.SORICAL_SL.getContent()));
+
+        return pnPaB2bInternalInformalClientImpl.createMessage(cxId, request).getMessageId().toString();
+    }
+
 
     private void verifyMessageCreated(String messageId, String cxId) {
-
         waitForMessageAvailability(UUID.fromString(messageId), cxId);
     }
 

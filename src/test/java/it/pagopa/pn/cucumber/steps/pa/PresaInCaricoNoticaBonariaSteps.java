@@ -84,7 +84,7 @@ public class PresaInCaricoNoticaBonariaSteps {
 
     private FullSentInformalNotificationV1 fullInformalNotificationResponse;
     private InformalTimelineElementV1 timelineElement;
-    private Destinatario recipient;
+    //private Destinatario recipient;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet recipientCxType;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.NotificationAttachmentDownloadMetadataResponse receivedAttachmentResponse;
 
@@ -415,6 +415,18 @@ public class PresaInCaricoNoticaBonariaSteps {
         }
     }
 
+    @When("si tenta il recupero allegato pagamento della notifica bonaria")
+    public void getAttachment() {
+        try {
+            attachmentResponse = pnPaB2bInternalInformalClientImpl.getSentInformalNotificationAttachment(savedIun, currentCxId, 0, 0);
+            lastException = null;
+
+        } catch (Exception e) {
+            lastException = e;
+            attachmentResponse = null;
+        }
+    }
+
     @When("si tenta il recupero allegato pagamento con recipient {int} e attachment {int}")
     public void getAttachmentCustom(int recipientIdx, int attachmentIdx) {
         try {
@@ -619,12 +631,14 @@ public class PresaInCaricoNoticaBonariaSteps {
     //***** WORKFLOW *****
     //*********************
 
-    @And("il destinatario legge la notifica bonaria")
-    public void recipientReadsInformalNotification() {
+    @And("il destinatario {destinatario} legge la notifica bonaria")
+    public void recipientReadsInformalNotification(
+            Destinatario destinatario) {
 
-        String recipientCxId = sharedSteps.getDestinatarioRegistry().getCxId(recipient);
-        FullReceivedInformalNotificationV1 fullReceivedInformalNotificationResponse = assertDoesNotThrow(() -> pnPaB2bInternalInformalClientImpl.getReceivedInformalNotification(recipientCxId, savedIun, recipientCxType));
+        String recipientCxId = sharedSteps.getDestinatarioRegistry().getCxId(destinatario);
 
+        FullReceivedInformalNotificationV1 fullReceivedInformalNotificationResponse =
+                assertDoesNotThrow(() -> pnPaB2bInternalInformalClientImpl.getReceivedInformalNotification(recipientCxId, savedIun, recipientCxType));
         try {
             Thread.sleep(sharedSteps.getWorkFlowWait());
         } catch (InterruptedException exc) {
@@ -649,10 +663,7 @@ public class PresaInCaricoNoticaBonariaSteps {
         Map<String, String> cleanedData = data.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().trim(), e -> e.getValue() != null ? e.getValue().trim() : null));
         InformalNotificationRecipientV1 recipient = recipientBuilder.build(cleanedData, currentCxId);
         informalNotificationRequestV1.getRecipients().add(recipient);
-
-        //this.recipientTaxId = recipient.getTaxId();
         this.recipientCxType = "PF".equalsIgnoreCase(recipient.getRecipientType().getValue()) ? it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet.PF : it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet.PG;
-        this.recipient = sharedSteps.getDestinatarioRegistry().getByTaxId(recipient.getTaxId());
     }
 
     @Then("si attende che venga prodotto l'elemento {string} della notifica bonaria")

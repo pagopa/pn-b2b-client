@@ -152,10 +152,12 @@ public class InformalRecipientBuilder {
         return switch (value) {
 
             case "${IT}" -> UUID.fromString(messageProvider.getOrCreateMessageIT(currentCxId));
-            case "${NEW-IT}" -> UUID.fromString(messageProvider.createAndSaveMessageIT(currentCxId));
-            case "${SAVED-IT}" -> UUID.fromString(messageProvider.getSavedMessageIT());
             case "${IT-FR}" -> UUID.fromString(messageProvider.getOrCreateMessageITFR(currentCxId));
+            case "${NEW-IT}" -> UUID.fromString(messageProvider.createAndSaveMessageIT(currentCxId));
             case "${NEW-IT-FR}" -> UUID.fromString(messageProvider.createAndSaveMessageITFR(currentCxId));
+            case "${NEW-IT-DE}" -> UUID.fromString(messageProvider.createAndSaveMessageITDE(currentCxId));
+            case "${NEW-IT-SL}" -> UUID.fromString(messageProvider.createAndSaveMessageITSL(currentCxId));
+            case "${SAVED-IT}" -> UUID.fromString(messageProvider.getSavedMessageIT());
             case "${SAVED-IT-FR}" -> UUID.fromString(messageProvider.getSavedMessageITFR());
 
             default -> UUID.fromString(value);
@@ -192,16 +194,10 @@ public class InformalRecipientBuilder {
             return null;
         }
         try {
-            return value.length() == 10
-                    ? LocalDate.parse(value)
-                    .atStartOfDay()
-                    .atOffset(ZoneOffset.UTC)
-                    : OffsetDateTime.parse(value);
+            return value.length() == 10 ? LocalDate.parse(value).atStartOfDay().atOffset(ZoneOffset.UTC) : OffsetDateTime.parse(value);
 
         } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException(
-                    "Invalid payment dueDate: " + value,
-                    e);
+            throw new IllegalArgumentException("Invalid payment dueDate: " + value, e);
         }
     }
 }

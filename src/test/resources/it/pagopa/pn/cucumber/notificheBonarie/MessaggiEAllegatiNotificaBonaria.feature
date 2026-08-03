@@ -25,7 +25,7 @@ Feature: Messaggi e allegati di una notifica bonaria.
 # ***********************************************
 
 
-#              CASO DI TEST 2.1  Creazione di nuovo un messaggio.
+# CASO DI TEST 2.1  Creazione di nuovo un messaggio.
 
   @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_MESSAGGI_02_1_A] Come ente mittente creo un nuovo messaggio con valori di default.
@@ -81,7 +81,7 @@ Feature: Messaggi e allegati di una notifica bonaria.
       | Add sub            | Add long             | NULL                  |
 
 
-#            CASO DI TEST 2.2  Errore sulla Creazione di un messaggio.
+#  CASO DI TEST 2.2  Errore sulla Creazione di un messaggio.
 
 
 #  @informalNotificationsMessageAttachment #tutte le pa sono abilitate
@@ -170,8 +170,7 @@ Feature: Messaggi e allegati di una notifica bonaria.
 
 
 
-
-                #  CASO DI TEST 3.2 Errore nel recupero di un messaggio.
+#  CASO DI TEST 3.2 Errore nel recupero di un messaggio.
 
   #@informalNotificationsMessageAttachment il client dell api accetta solo uuid quindi non si può passare malformato
   Scenario Outline: [NOTIFICHE_BONARIE_MESSAGGI_03_2_A] Come ente mittente ricevo un Errore nel recuperare un messaggio con un id non valido.
@@ -231,7 +230,7 @@ Feature: Messaggi e allegati di una notifica bonaria.
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
-      | messageId     | ${IT}             |
+      | messageId     | ${NEW-IT}             |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si tenta il recupero documento della notifica bonaria
     Then il download risulta correttamente effettuato
@@ -239,13 +238,13 @@ Feature: Messaggi e allegati di una notifica bonaria.
 
     #  CASO DI TEST 5.2 Corretto Download degli allegati di pagamento di una notifica.
   @informalNotificationsMessageAttachment
-  Scenario: [NOTIFICHE_BONARIE_05_4_] Come ente mittente Recupero l'allegato di pagamento di una notifica bonaria
+  Scenario: [NOTIFICHE_BONARIE_05_4] Come ente mittente Recupero l'allegato di pagamento di una notifica bonaria
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId    | SoricalFattOrd    |
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
-      | messageId     | ${IT}             |
+      | messageId     | ${NEW-IT}             |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si tenta il recupero allegato pagamento della notifica bonaria
     Then il download risulta correttamente effettuato
@@ -261,7 +260,7 @@ Feature: Messaggi e allegati di una notifica bonaria.
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
-      | messageId     | ${IT}             |
+      | messageId     | ${NEW-IT}             |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     Given mittente della notifica bonaria: "Comune_1"
     And si tenta il recupero documento della notifica bonaria
@@ -274,7 +273,7 @@ Feature: Messaggi e allegati di una notifica bonaria.
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
-      | messageId     | ${IT}             |
+      | messageId     | ${NEW-IT}             |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     Given mittente della notifica bonaria: "Comune_Root"
     And si tenta il recupero documento della notifica bonaria
@@ -287,7 +286,7 @@ Feature: Messaggi e allegati di una notifica bonaria.
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
-      | messageId     | ${IT}             |
+      | messageId     | ${NEW-IT}             |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     When si tenta il recupero documento con indice 5
     Then si riceve errore 404
@@ -311,7 +310,7 @@ Feature: Messaggi e allegati di una notifica bonaria.
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
-      | messageId     | ${IT}             |
+      | messageId     | ${NEW-IT}             |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     When si tenta il recupero allegato pagamento con IUN "fake"
     Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER_SIZE"
@@ -323,7 +322,7 @@ Feature: Messaggi e allegati di una notifica bonaria.
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
-      | messageId     | ${IT}             |
+      | messageId     | ${NEW-IT}             |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     When si tenta il recupero allegato pagamento con recipient 0 e attachment 5
     Then si riceve errore 404
@@ -336,7 +335,7 @@ Feature: Messaggi e allegati di una notifica bonaria.
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
-      | messageId     | ${IT}             |
+      | messageId     | ${NEW-IT}             |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     When si tenta il recupero allegato pagamento con recipient 5 e attachment 0
     Then si riceve errore 404
@@ -352,7 +351,7 @@ Feature: Messaggi e allegati di una notifica bonaria.
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
-      | messageId     | ${IT}             |
+      | messageId     | ${NEW-IT}             |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And il destinatario Ettore Fieramosca tenta il recupero dell'allegato di pagamento della notifica bonaria
     Then il download del destinatario risulta correttamente effettuato
@@ -367,9 +366,9 @@ Feature: Messaggi e allegati di una notifica bonaria.
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
-      | messageId     | ${IT}             |
+      | messageId     | ${NEW-IT}             |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
-    And il destinatario legge la notifica bonaria
+    And il destinatario Ettore Fieramosca legge la notifica bonaria
     And il destinatario Ettore Fieramosca tenta il recupero del documento della notifica bonaria
     Then il download del destinatario risulta correttamente effettuato
     And verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio

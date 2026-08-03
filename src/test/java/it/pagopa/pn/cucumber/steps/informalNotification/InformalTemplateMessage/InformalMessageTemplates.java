@@ -20,6 +20,32 @@ public enum InformalMessageTemplates {
             )
     ),
 
+    SORICAL_DE(
+            new InformalMessageContent(
+                    "DE",
+                    "Für Sie wurde eine neue Rechnung erstellt",
+                    """
+                    Sorical S.p.A. informiert Sie darüber, dass für den Vertrag Nr. 182140 eine neue Rechnung erstellt wurde.
+                    """,
+                    """
+                    SEND informiert Sie darüber, dass Sie eine Mitteilung von Sorical S.p.A. erhalten haben.
+                    """
+            )
+    ),
+
+    SORICAL_SL(
+            new InformalMessageContent(
+                    "SL",
+                    "Za vas je bil izdan nov račun",
+                    """
+                    Družba Sorical S.p.A. vas obvešča, da je bil za pogodbo št. 182140 izdan nov račun.
+                    """,
+                    """
+                    SEND vas obvešča, da ste prejeli sporočilo družbe Sorical S.p.A.
+                    """
+            )
+    ),
+
     SORICAL_FR(
             new InformalMessageContent(
                     "FR",
