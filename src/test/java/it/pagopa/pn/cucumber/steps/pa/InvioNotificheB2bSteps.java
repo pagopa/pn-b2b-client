@@ -18,11 +18,14 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.
 import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnSafeStoragePrivateClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalChannelsServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
+import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.FileDownloadInfo;
+import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.FileDownloadResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.NotificationUtilsV24;
@@ -35,6 +38,7 @@ import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -70,6 +74,9 @@ public class InvioNotificheB2bSteps {
     @Getter
     private final IPnPaB2bClient b2bClient;
     private final PnExternalServiceClientImpl safeStorageClient;
+    private final IPnSafeStoragePrivateClient safeStoragePrivateClient;
+    @Value("${pn.safeStorage.apikey}")
+    private String defaultSafeStorageApiKey;
     @Getter
     private final SharedSteps sharedSteps;
     @Getter
@@ -91,8 +98,13 @@ public class InvioNotificheB2bSteps {
     private RequestStatus cancellationResponse;
 
     @Autowired
-    public InvioNotificheB2bSteps(PnExternalServiceClientImpl safeStorageClient, SharedSteps sharedSteps, PnExternalChannelsServiceClientImpl pnExternalChannelsServiceClientImpl, JavaMailSender emailSender) {
+    public InvioNotificheB2bSteps(PnExternalServiceClientImpl safeStorageClient,
+                                  IPnSafeStoragePrivateClient safeStoragePrivateClient,
+                                  SharedSteps sharedSteps,
+                                  PnExternalChannelsServiceClientImpl pnExternalChannelsServiceClientImpl,
+                                  JavaMailSender emailSender) {
         this.safeStorageClient = safeStorageClient;
+        this.safeStoragePrivateClient = safeStoragePrivateClient;
         this.sharedSteps = sharedSteps;
 //        this.b2bUtils = sharedSteps.getB2bUtils();
         this.b2bClient = sharedSteps.getB2bClient();
@@ -1278,9 +1290,19 @@ public class InvioNotificheB2bSteps {
         log.info("Payments diagnostic END: iun={}", iun);
     }
 
+    private static final List<String> SAFE_STORAGE_GETFILE_CX_CANDIDATES = List.of(
+            "pn-delivery-push",
+            "pn-delivery",
+            "pn-test",
+            "pn-paper-channel",
+            "pn-external-channels",
+            "pn-service-desk"
+    );
+
     /**
-     * Diagnostica QA-16429 / PEC_4: per ogni allegato del plico chiama SafeStorage
-     * e scarica il PDF (metadati + headers + hint F24 nel contenuto).
+     * Diagnostica QA-16429 / PEC_4: per ogni allegato del plico usa
+     * {@link IPnSafeStoragePrivateClient#getFileWithHttpInfo} (metadataOnly=false) con più cx-id,
+     * come nei test SafeStorage che ottengono il presigned download.
      */
     private void logPaperEngageSafeStorageForAllAttachments() {
         List<PaperEngageRequestAttachmentsInner> attachments = Optional.ofNullable(documentiPec)
@@ -1293,120 +1315,168 @@ public class InvioNotificheB2bSteps {
             return;
         }
 
+        Map<String, Long> okByCx = new LinkedHashMap<>();
+        Map<String, Long> failByCx = new LinkedHashMap<>();
         Map<String, Long> bySsDocumentType = new LinkedHashMap<>();
-        Map<String, Long> bySsDocumentStatus = new LinkedHashMap<>();
-        Map<String, Long> byContentType = new LinkedHashMap<>();
-        int ok = 0;
-        int fail = 0;
+        int attachmentsWithAnyOk = 0;
+        int attachmentsWithDownloadUrl = 0;
         int f24HintCount = 0;
-        log.info("PaperEngage SafeStorage dump START: iun={}, attachments={}",
-                sharedSteps.getNotificationIun(), attachments.size());
+
+        log.info("PaperEngage SafeStorage getFile dump START: iun={}, attachments={}, cxCandidates={}, metadataOnly=false",
+                sharedSteps.getNotificationIun(), attachments.size(), SAFE_STORAGE_GETFILE_CX_CANDIDATES);
 
         for (PaperEngageRequestAttachmentsInner attachment : attachments) {
             String uri = attachment.getUri();
             String fileKey = toSafeStorageFileKey(uri);
+            boolean anyOk = false;
+            FileDownloadResponse best = null;
+            String bestCx = null;
+
+            // baseline: vecchio helper (cx fisso pn-delivery-push + metadataOnly=true)
             try {
-                PnExternalServiceClientImpl.SafeStorageResponse ss = safeStorageClient.safeStorageInfo(fileKey);
-                String ssDocType = ss != null ? ss.getDocumentType() : null;
-                String ssDocStatus = ss != null ? ss.getDocumentStatus() : null;
-                String ssChecksum = ss != null ? ss.getChecksum() : null;
-                String ssContentType = ss != null ? ss.getContentType() : null;
-                Integer ssContentLength = ss != null ? ss.getContentLength() : null;
-                String ssVersionId = ss != null ? ss.getVersionId() : null;
-                String ssRetentionUntil = ss != null ? ss.getRetentionUntil() : null;
-                String ssKey = ss != null ? ss.getKey() : null;
-                String downloadUrl = (ss != null && ss.getDownload() != null) ? ss.getDownload().getUrl() : null;
-                String downloadRetryAfter = (ss != null && ss.getDownload() != null) ? ss.getDownload().getRetryAfter() : null;
-                String urlPath = extractUrlPath(downloadUrl);
-                boolean checksumMatchPaper = ssChecksum != null && ssChecksum.equals(attachment.getSha256());
-
-                DownloadProbe probe = new DownloadProbe(null, null, null, null, null);
-                String computedSha = null;
-                Integer bytesLen = null;
-                boolean pdfMagic = false;
-                boolean contentHasF24 = false;
-                String contentAsciiHint = null;
-                if (downloadUrl != null) {
-                    try {
-                        DownloadBody body = downloadWithHeaders(downloadUrl);
-                        probe = body.probe;
-                        byte[] bytes = body.bytes;
-                        bytesLen = bytes.length;
-                        computedSha = B2bUtils.computeSha256(new ByteArrayInputStream(bytes));
-                        pdfMagic = bytes.length >= 4
-                                && bytes[0] == '%' && bytes[1] == 'P' && bytes[2] == 'D' && bytes[3] == 'F';
-                        contentHasF24 = bytesContainsAsciiIgnoreCase(bytes, "F24");
-                        contentAsciiHint = extractAsciiHints(bytes, List.of("F24", "f24", "PAGOPA", "pagoPa", "AAR"));
-                    } catch (Exception downloadEx) {
-                        log.warn("PaperEngage SafeStorage body download FAILED: order={}, error={}",
-                                attachment.getOrder(), downloadEx.getMessage());
-                    }
-                }
-
-                boolean f24Hint = containsIgnoreCase(fileKey, "F24")
-                        || containsIgnoreCase(ssDocType, "F24")
-                        || containsIgnoreCase(urlPath, "F24")
-                        || containsIgnoreCase(probe.contentDisposition, "F24")
-                        || containsIgnoreCase(downloadUrl, "F24")
-                        || containsIgnoreCase(probe.allHeaders, "F24")
-                        || contentHasF24;
-                if (f24Hint) {
-                    f24HintCount++;
-                }
-
-                bySsDocumentType.merge(ssDocType == null ? "null" : ssDocType, 1L, Long::sum);
-                bySsDocumentStatus.merge(ssDocStatus == null ? "null" : ssDocStatus, 1L, Long::sum);
-                byContentType.merge(ssContentType == null ? "null" : ssContentType, 1L, Long::sum);
-
-                log.info("PaperEngage SafeStorage attachment: order={}, paperDocType={}, paperSha={}, paperUri={}, "
-                                + "fileKey={}, ssKey={}, ssDocType={}, ssDocStatus={}, ssChecksum={}, ssContentType={}, "
-                                + "ssContentLength={}, ssVersionId={}, ssRetentionUntil={}, checksumMatchPaper={}, "
-                                + "downloadRetryAfter={}, urlPath={}, httpStatus={}, httpContentType={}, "
-                                + "httpContentLength={}, contentDisposition={}, httpHeaders={}, "
-                                + "bytesLen={}, computedSha={}, computedMatchPaper={}, pdfMagic={}, "
-                                + "contentHasF24={}, contentAsciiHint={}, f24Hint={}, downloadUrl={}, ssFull={}",
-                        attachment.getOrder(),
-                        attachment.getDocumentType(),
-                        attachment.getSha256(),
-                        uri,
-                        fileKey,
-                        ssKey,
-                        ssDocType,
-                        ssDocStatus,
-                        ssChecksum,
-                        ssContentType,
-                        ssContentLength,
-                        ssVersionId,
-                        ssRetentionUntil,
-                        checksumMatchPaper,
-                        downloadRetryAfter,
-                        urlPath,
-                        probe.httpStatus,
-                        probe.contentType,
-                        probe.contentLength,
-                        probe.contentDisposition,
-                        probe.allHeaders,
-                        bytesLen,
-                        computedSha,
-                        Objects.equals(computedSha, attachment.getSha256()),
-                        pdfMagic,
-                        contentHasF24,
-                        contentAsciiHint,
-                        f24Hint,
-                        downloadUrl,
-                        ss);
-                ok++;
+                PnExternalServiceClientImpl.SafeStorageResponse legacy = safeStorageClient.safeStorageInfo(fileKey);
+                log.info("PaperEngage SafeStorage LEGACY safeStorageInfo: order={}, fileKey={}, ssFull={}",
+                        attachment.getOrder(), fileKey, legacy);
             } catch (Exception e) {
-                fail++;
-                log.warn("PaperEngage SafeStorage attachment FAILED: order={}, uri={}, error={}",
-                        attachment.getOrder(), uri, e.getMessage());
+                log.info("PaperEngage SafeStorage LEGACY safeStorageInfo FAILED: order={}, fileKey={}, error={}",
+                        attachment.getOrder(), fileKey, e.getMessage());
+            }
+
+            for (String cxId : SAFE_STORAGE_GETFILE_CX_CANDIDATES) {
+                try {
+                    maybeSwitchSafeStorageApiKey(cxId);
+                    ResponseEntity<FileDownloadResponse> responseEntity =
+                            safeStoragePrivateClient.getFileWithHttpInfo(fileKey, cxId, false, false);
+                    FileDownloadResponse body = responseEntity != null ? responseEntity.getBody() : null;
+                    Integer httpStatus = responseEntity != null ? responseEntity.getStatusCodeValue() : null;
+                    String downloadUrl = Optional.ofNullable(body)
+                            .map(FileDownloadResponse::getDownload)
+                            .map(FileDownloadInfo::getUrl)
+                            .orElse(null);
+                    Object retryAfter = Optional.ofNullable(body)
+                            .map(FileDownloadResponse::getDownload)
+                            .map(FileDownloadInfo::getRetryAfter)
+                            .orElse(null);
+                    String ssDocType = body != null ? body.getDocumentType() : null;
+                    String ssChecksum = body != null ? body.getChecksum() : null;
+                    boolean checksumMatchPaper = ssChecksum != null && ssChecksum.equals(attachment.getSha256());
+
+                    okByCx.merge(cxId, 1L, Long::sum);
+                    anyOk = true;
+                    if (ssDocType != null) {
+                        bySsDocumentType.merge(ssDocType, 1L, Long::sum);
+                    }
+                    if (downloadUrl != null && best == null) {
+                        best = body;
+                        bestCx = cxId;
+                    }
+
+                    log.info("PaperEngage SafeStorage getFile OK: order={}, fileKey={}, cxId={}, httpStatus={}, "
+                                    + "ssDocType={}, ssDocStatus={}, ssChecksum={}, ssContentType={}, ssContentLength={}, "
+                                    + "ssVersionId={}, ssRetentionUntil={}, ssTags={}, checksumMatchPaper={}, "
+                                    + "hasDownloadUrl={}, downloadRetryAfter={}, urlPath={}, downloadUrl={}, bodyFull={}",
+                            attachment.getOrder(),
+                            fileKey,
+                            cxId,
+                            httpStatus,
+                            ssDocType,
+                            body != null ? body.getDocumentStatus() : null,
+                            ssChecksum,
+                            body != null ? body.getContentType() : null,
+                            body != null ? body.getContentLength() : null,
+                            body != null ? body.getVersionId() : null,
+                            body != null ? body.getRetentionUntil() : null,
+                            body != null ? body.getTags() : null,
+                            checksumMatchPaper,
+                            downloadUrl != null,
+                            retryAfter,
+                            extractUrlPath(downloadUrl),
+                            downloadUrl,
+                            body);
+                } catch (Exception e) {
+                    failByCx.merge(cxId, 1L, Long::sum);
+                    String status = null;
+                    if (e instanceof HttpStatusCodeException httpEx) {
+                        status = String.valueOf(httpEx.getStatusCode().value());
+                    }
+                    log.info("PaperEngage SafeStorage getFile FAIL: order={}, fileKey={}, cxId={}, httpStatus={}, error={}",
+                            attachment.getOrder(), fileKey, cxId, status, e.getMessage());
+                }
+            }
+
+            if (anyOk) {
+                attachmentsWithAnyOk++;
+            }
+
+            if (best != null && best.getDownload() != null && best.getDownload().getUrl() != null) {
+                attachmentsWithDownloadUrl++;
+                String downloadUrl = best.getDownload().getUrl();
+                try {
+                    DownloadBody downloaded = downloadWithHeaders(downloadUrl);
+                    byte[] bytes = downloaded.bytes;
+                    String computedSha = B2bUtils.computeSha256(new ByteArrayInputStream(bytes));
+                    boolean pdfMagic = bytes.length >= 4
+                            && bytes[0] == '%' && bytes[1] == 'P' && bytes[2] == 'D' && bytes[3] == 'F';
+                    boolean contentHasF24 = bytesContainsAsciiIgnoreCase(bytes, "F24");
+                    String contentAsciiHint = extractAsciiHints(bytes, List.of("F24", "f24", "PAGOPA", "pagoPa", "AAR"));
+                    boolean f24Hint = containsIgnoreCase(fileKey, "F24")
+                            || containsIgnoreCase(best.getDocumentType(), "F24")
+                            || containsIgnoreCase(extractUrlPath(downloadUrl), "F24")
+                            || containsIgnoreCase(downloaded.probe.contentDisposition, "F24")
+                            || containsIgnoreCase(downloadUrl, "F24")
+                            || containsIgnoreCase(downloaded.probe.allHeaders, "F24")
+                            || contentHasF24;
+                    if (f24Hint) {
+                        f24HintCount++;
+                    }
+                    log.info("PaperEngage SafeStorage getFile BODY: order={}, bestCx={}, paperSha={}, "
+                                    + "ssDocType={}, ssChecksum={}, bytesLen={}, computedSha={}, computedMatchPaper={}, "
+                                    + "pdfMagic={}, contentHasF24={}, contentAsciiHint={}, f24Hint={}, "
+                                    + "httpStatus={}, contentDisposition={}, httpHeaders={}",
+                            attachment.getOrder(),
+                            bestCx,
+                            attachment.getSha256(),
+                            best.getDocumentType(),
+                            best.getChecksum(),
+                            bytes.length,
+                            computedSha,
+                            Objects.equals(computedSha, attachment.getSha256()),
+                            pdfMagic,
+                            contentHasF24,
+                            contentAsciiHint,
+                            f24Hint,
+                            downloaded.probe.httpStatus,
+                            downloaded.probe.contentDisposition,
+                            downloaded.probe.allHeaders);
+                } catch (Exception downloadEx) {
+                    log.warn("PaperEngage SafeStorage getFile BODY FAILED: order={}, bestCx={}, error={}",
+                            attachment.getOrder(), bestCx, downloadEx.getMessage());
+                }
+            } else {
+                log.info("PaperEngage SafeStorage getFile BODY SKIP: order={}, fileKey={}, reason=no-download-url-from-any-cx",
+                        attachment.getOrder(), fileKey);
             }
         }
 
-        log.info("PaperEngage SafeStorage dump SUMMARY: iun={}, ok={}, fail={}, f24HintCount={}, "
-                        + "bySsDocumentType={}, bySsDocumentStatus={}, byContentType={}",
-                sharedSteps.getNotificationIun(), ok, fail, f24HintCount,
-                bySsDocumentType, bySsDocumentStatus, byContentType);
+        log.info("PaperEngage SafeStorage getFile dump SUMMARY: iun={}, attachments={}, attachmentsWithAnyOk={}, "
+                        + "attachmentsWithDownloadUrl={}, f24HintCount={}, okByCx={}, failByCx={}, bySsDocumentType={}",
+                sharedSteps.getNotificationIun(),
+                attachments.size(),
+                attachmentsWithAnyOk,
+                attachmentsWithDownloadUrl,
+                f24HintCount,
+                okByCx,
+                failByCx,
+                bySsDocumentType);
+    }
+
+    private void maybeSwitchSafeStorageApiKey(String cxId) {
+        // Allineato a SafeStorageSteps: per pn-delivery si usa la api-key dedicata.
+        if ("pn-delivery".equalsIgnoreCase(cxId)) {
+            safeStoragePrivateClient.setApiKey("pn-delivery_api_key");
+        } else if (defaultSafeStorageApiKey != null) {
+            safeStoragePrivateClient.setApiKey(defaultSafeStorageApiKey);
+        }
     }
 
     private static String toSafeStorageFileKey(String uri) {
