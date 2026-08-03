@@ -564,8 +564,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | details_attachments        | [{"documentType": "23L"}] |
 
   @paperTrackerRunMode890
-  Scenario: [PAPER_TRACKER_TEMPORARY_TEST_4_890_11] Per la sequence FAIL-Giacenza-lte10_890_NO23L sono previsti due RECAG012 e questo in timeline deve produrre la presenza di un solo elemento di tipo RECAG012A
-  e controllo la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs per il prodotto 890
+  Scenario: [PAPER_TRACKER_TEMPORARY_TEST_4_890_11] Per la sequence FAIL-Giacenza-lte10_890_NO23L sono previsti due RECAG012 e questo in timeline deve produrre la presenza di un solo elemento di tipo RECAG012A e controllo la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs per il prodotto 890
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
