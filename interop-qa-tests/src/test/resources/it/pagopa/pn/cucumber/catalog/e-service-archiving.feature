@@ -842,6 +842,7 @@ Feature: Archiviazione manuale di un e-service
     When l'utente è un "<role>" di "PA2"
     And l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     Then si ottiene response status code 403
+    And l'utente è un "admin" di "PA2"
     And la versione più recente dell'e-service è in stato "PUBLISHED"
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
