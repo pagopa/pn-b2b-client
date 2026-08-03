@@ -470,7 +470,7 @@ Feature: Archiviazione manuale di un descrittore
       | api,security |
 
   @happy-path
-  Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_CLONING_1.1] L'ente erogatore può clonare un descrittore in stato ARCHIVING di e-service diverso dal più recente
+  Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_CLONING_1.1] L'ente erogatore può clonare un descrittore in stato ARCHIVING
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -480,13 +480,21 @@ Feature: Archiviazione manuale di un descrittore
     Then si ottiene response status code 200
 
   @happy-path
-  Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_CLONING_1.2] L'ente erogatore può clonare un descrittore in stato ARCHIVING_SUSPENDED di e-service diverso dal più recente
+  Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_CLONING_1.2] L'ente erogatore può clonare un descrittore in stato ARCHIVING_SUSPENDED
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già sospeso quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
+    When l'utente tenta di clonare la vecchia versione dell'e-service
+    Then si ottiene response status code 200
+
+  @happy-path
+  Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_CLONING_1.3] L'ente erogatore può clonare un descrittore in stato ARCHIVED
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente tenta di clonare la vecchia versione dell'e-service
     Then si ottiene response status code 200
 
