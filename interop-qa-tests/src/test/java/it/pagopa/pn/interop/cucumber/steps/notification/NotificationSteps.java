@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.notification;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingService;
@@ -77,8 +78,12 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
         this.agreementCommonSteps = agreementCommonSteps;
         this.clientCreateStep = clientCreateStep;
         this.notificationStore = notificationStore;
-        this.notificationStore.concurrentSafeInitializeOnce();
         this.sharedStepsContext = sharedStepsContext;
+    }
+
+    @Given("vengono inizializzate le notifiche per tutte le utenze")
+    public void initializeNotificationsForAllUsers() {
+        this.notificationStore.concurrentSafeInitializeOnce();
     }
 
     @When("l'utente tenta di recuperare la lista di notifiche create")

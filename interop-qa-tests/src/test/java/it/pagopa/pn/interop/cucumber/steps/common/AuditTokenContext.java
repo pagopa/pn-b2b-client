@@ -31,7 +31,9 @@ public class AuditTokenContext {
     }
 
     public void setToken(TokenType tokenType, String accessToken) {
-        this.accessTokens2.put(tokenType, JWTUtils.decodeJwt(accessToken));
+        if(accessToken != null && !accessToken.isBlank()) {
+            this.accessTokens2.put(tokenType, JWTUtils.decodeJwt(accessToken));
+        }
     }
 
     public String getJwtId() {
