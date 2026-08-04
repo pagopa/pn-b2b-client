@@ -57,8 +57,8 @@ Feature: Verifica delle stampe a colori con successivo controllo manuale delle c
   @rasterScartoCON996 @workflowAnalogico
   Scenario: [B2B-LEGALFACT_RASTER_2] Viene inviata una notifica per la quale si riceve l’evento di CON996, in seguito ad un un secondo tentativo termini con l’evento di refinement
     Given viene generata una nuova notifica
-      | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo               |
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
       | denomination            | Test AR CON996           |
@@ -66,14 +66,9 @@ Feature: Verifica delle stampe a colori con successivo controllo manuale delle c
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@OK_PCRETRY_CON996_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | loadTimeline               | true     |
-      | details                    | NOT_NULL |
-      | details_deliveryDetailCode | CON996   |
-      | details_recIndex           | 0        |
-      | details_sentAttemptMade    | 0        |
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON996"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECRN001C" tentativo "ATTEMPT_1"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | loadTimeline               | true      |
       | details                    | NOT_NULL  |
       | details_recIndex           | 0         |
       | details_sentAttemptMade    | 1         |
