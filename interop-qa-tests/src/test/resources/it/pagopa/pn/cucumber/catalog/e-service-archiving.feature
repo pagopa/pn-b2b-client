@@ -1211,10 +1211,13 @@ Feature: Archiviazione manuale di un e-service
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template asincrono in modalità erogazione con tecnologia "REST" in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'utente crea una nuova versione dell'istanza del template con successo
     And l'utente specifica i metadati mancanti all'istanza del template asincrono con successo
     And l'utente tenta la pubblicazione di una nuova versione dell'istanza del template
     And si ottiene response status code 200
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
     And "PA1" ha già sospeso quell'e-service
     And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     And l'utente è un "<role>" di "PA1"
