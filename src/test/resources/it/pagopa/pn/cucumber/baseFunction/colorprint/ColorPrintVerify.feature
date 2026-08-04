@@ -77,6 +77,6 @@ Feature: Verifica delle stampe a colori con successivo controllo manuale delle c
       | details                    | NOT_NULL  |
       | details_recIndex           | 0         |
       | details_sentAttemptMade    | 1         |
-      | details_deliveryDetailCode | RECAG001C |
+      | details_deliveryDetailCode | RECRN001C |
       | details_responseStatus     | OK        |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
