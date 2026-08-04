@@ -344,7 +344,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     And la versione più recente dell'e-service è in stato "PUBLISHED"
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
-    # COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_5.1 usa un sottoinsieme strategico di combinazioni dei periodi di preavviso, sufficiente a garantire una buona copertura senza testare tutte le permutazioni possibili.
+    # M2M_V3_COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_3.1 usa un sottoinsieme strategico di combinazioni dei periodi di preavviso, sufficiente a garantire una buona copertura senza testare tutte le permutazioni possibili.
     Examples:
       | descriptorArchiving | eserviceArchiving |
       | 60                  | 30                |
