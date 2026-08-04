@@ -13,7 +13,7 @@ Feature: Generazione del voucher richiesta da un Ente
     Given "PA1" ha già associato la finalità a quel client
     Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
     When l'utente richiede la generazione del voucher con il parametro client_assertion_type diverso da quello atteso
-    Then la richiesta di generazione del Voucher non va a buon fine
+    Then si ottiene status code 400
 
   @nrt-minimal
   @voucher_generation_params_validation2
@@ -27,7 +27,8 @@ Feature: Generazione del voucher richiesta da un Ente
     Given "PA1" ha già associato la finalità a quel client
     Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
     When l'utente richiede la generazione del voucher con il parametro grant_type diverso da quello atteso
-    Then la richiesta di generazione del Voucher non va a buon fine per il parametro grant_type
+    Then si ottiene status code 400
+
 
   @nrt-minimal
   @voucher_generation_params_validation3
@@ -41,7 +42,7 @@ Feature: Generazione del voucher richiesta da un Ente
     Given "PA1" ha già associato la finalità a quel client
     Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
     When l'utente richiede la generazione del voucher valorizzando il parametro client_id con un valore diverso dal claim sub nella client assertion
-    Then la richiesta di generazione del Voucher non va a buon fine
+    Then si ottiene status code 400
 
   @nrt-minimal
   @voucher_generation_params_validation4
@@ -55,6 +56,6 @@ Feature: Generazione del voucher richiesta da un Ente
     Given "PA1" ha già associato la finalità a quel client
     Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
     When l'utente richiede la generazione del voucher inserendo una client assertion come JWT non valida
-    Then la richiesta di generazione del Voucher non va a buon fine
+    Then si ottiene status code 400
 
  

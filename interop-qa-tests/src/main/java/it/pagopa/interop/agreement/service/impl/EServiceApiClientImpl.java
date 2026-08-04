@@ -1,21 +1,10 @@
 package it.pagopa.interop.agreement.service.impl;
 
-import static it.pagopa.interop.utils.BlobFileCreationUtils.createTempFile;
-import static java.util.Objects.isNull;
-
 import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.Resource;
@@ -25,6 +14,16 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+import static it.pagopa.interop.utils.BlobFileCreationUtils.createTempFile;
+import static java.util.Objects.isNull;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -104,13 +103,17 @@ public class EServiceApiClientImpl implements IEServiceClient {
     }
 
     @Override
-    public ResponseEntity<Void> scheduleArchiveDescriptor(UUID eServiceId, UUID descriptorId) {
-        return eservicesApi.scheduleArchiveEserviceDescriptorWithHttpInfo(eServiceId, descriptorId);
+    public ResponseEntity<Void> scheduleArchiveDescriptor(UUID eServiceId, UUID descriptorId, GracePeriodDays gracePeriodDays) {
+        return eservicesApi.scheduleArchiveEserviceDescriptorWithHttpInfo(
+                eServiceId,
+                descriptorId,
+                new GracePeriodDaysSeed().gracePeriodDays(gracePeriodDays)
+        );
     }
 
     @Override
-    public ResponseEntity<Void> scheduleArchiveEService(UUID eServiceId, EServiceArchivingReasonSeed eserviceArchivingReasonSeed) {
-        return eservicesApi.scheduleArchiveEserviceWithHttpInfo(eServiceId, eserviceArchivingReasonSeed);
+    public ResponseEntity<Void> scheduleArchiveEService(UUID eServiceId, EServiceArchivingSeed eserviceArchivingSeed) {
+        return eservicesApi.scheduleArchiveEserviceWithHttpInfo(eServiceId, eserviceArchivingSeed);
     }
 
     @Override
@@ -325,6 +328,13 @@ public class EServiceApiClientImpl implements IEServiceClient {
             UUID eServiceId, UUID descriptorId,
             TemplateInstanceInterfaceRESTSeed templateInstanceInterfaceRESTSeed) {
         return this.eservicesApi.addEServiceTemplateInstanceInterfaceRestWithHttpInfo(eServiceId, descriptorId, templateInstanceInterfaceRESTSeed);
+    }
+
+    @Override
+    public ResponseEntity<CreatedResource> addEServiceTemplateInstanceInterfaceSoapWithHttpInfo(
+            UUID eServiceId, UUID descriptorId,
+            TemplateInstanceInterfaceSOAPSeed templateInstanceInterfaceSOAPSeed) {
+        return this.eservicesApi.addEServiceTemplateInstanceInterfaceSoapWithHttpInfo(eServiceId, descriptorId, templateInstanceInterfaceSOAPSeed);
     }
 
     @Override

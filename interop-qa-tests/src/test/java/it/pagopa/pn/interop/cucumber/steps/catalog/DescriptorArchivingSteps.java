@@ -7,6 +7,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ArchivingScope;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.GracePeriodDays;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -34,24 +35,24 @@ public class DescriptorArchivingSteps {
         this.archivingScheduleVerifier = new DescriptorArchivingScheduleVerifier(clientTokenConfigurator, sharedStepsContext);
     }
 
-    @When("l'utente archivia la vecchia versione con id {string} dell'e-service con id {string}")
-    public void archiveOldDescriptor(String descriptorId, String eServiceId) {
+    @When("l'utente avvia la messa in archiviazione della vecchia versione identificata da {string} per l'e-service {string} impostando {gracePeriodDays} giorni di preavviso")
+    public void archiveOldDescriptor(String descriptorId, String eServiceId, GracePeriodDays gracePeriodDays) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
         UUID resolvedDescriptorId = catalogResolver.resolveOldDescriptorId(descriptorId);
         UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
 
-        scheduleArchiveDescriptor(resolvedEServiceId, resolvedDescriptorId);
+        scheduleArchiveDescriptor(resolvedEServiceId, resolvedDescriptorId, gracePeriodDays);
     }
 
-    @When("l'utente archivia la versione più recente dell'e-service")
-    public void archiveLatestDescriptor() {
+    @When("l'utente avvia la messa in archiviazione della versione più recente dell'e-service impostando {gracePeriodDays} giorni di preavviso")
+    public void archiveLatestDescriptor(GracePeriodDays gracePeriodDays) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
 
-        scheduleArchiveDescriptor(eServiceId, descriptorId);
+        scheduleArchiveDescriptor(eServiceId, descriptorId, gracePeriodDays);
     }
 
     @When("l'utente annulla il processo di archiviazione della vecchia versione con id {string} dell'e-service con id {string}")
@@ -64,8 +65,8 @@ public class DescriptorArchivingSteps {
         cancelDescriptorArchiving(resolvedEServiceId, resolvedDescriptorId);
     }
 
-    @Given("l'utente ha già messo in archiviazione la vecchia versione con id {string} dell'e-service con id {string}")
-    public void oldDescriptorAlreadyInArchiving(String descriptorId, String eServiceId) {
+    @Given("l'utente ha già messo in archiviazione la vecchia versione identificata da {string} per l'e-service {string} impostando {gracePeriodDays} giorni di preavviso")
+    public void oldDescriptorAlreadyInArchiving(String descriptorId, String eServiceId, GracePeriodDays gracePeriodDays) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
         UUID resolvedDescriptorId = catalogResolver.resolveOldDescriptorId(descriptorId);
@@ -74,7 +75,7 @@ public class DescriptorArchivingSteps {
                 .getEServiceDescriptor(resolvedEServiceId, resolvedDescriptorId);
         EServiceDescriptorState expectedState = expectedArchivingState(oldDescriptor.getState());
 
-        scheduleArchiveDescriptor(resolvedEServiceId, resolvedDescriptorId);
+        scheduleArchiveDescriptor(resolvedEServiceId, resolvedDescriptorId, gracePeriodDays);
         if (httpCallExecutor.getResponseStatus() == null || !httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             throw new IllegalStateException("L'avvio dell'archiviazione della vecchia versione dell'e-service non ha avuto successo");
         }
@@ -83,11 +84,11 @@ public class DescriptorArchivingSteps {
         archivingScheduleVerifier.pollDescriptorArchivingSchedule(resolvedEServiceId, resolvedDescriptorId, ArchivingScope.DESCRIPTOR);
     }
 
-    private void scheduleArchiveDescriptor(UUID eServiceId, UUID descriptorId) {
-        archivingScheduleVerifier.registerDescriptorArchivingRequestTimestamp();
+    private void scheduleArchiveDescriptor(UUID eServiceId, UUID descriptorId, GracePeriodDays gracePeriodDays) {
+        archivingScheduleVerifier.registerDescriptorArchivingRequestTimestamp(gracePeriodDays);
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getEServiceClient()
-                        .scheduleArchiveDescriptor(eServiceId, descriptorId),
+                        .scheduleArchiveDescriptor(eServiceId, descriptorId, gracePeriodDays),
                 ResponseEntity::getStatusCode
         );
     }

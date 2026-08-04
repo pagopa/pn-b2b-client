@@ -344,6 +344,8 @@ public class BFFDataPreparationService {
                     httpCallExecutor.performCall(() -> attributeApiClient.createVerifiedAttribute(new AttributeSeed().description(DESCRIPTION_TEST).name(actualName)));
             case DECLARED ->
                     httpCallExecutor.performCall(() -> attributeApiClient.createDeclaredAttribute(new AttributeSeed().description(DESCRIPTION_TEST).name(actualName)));
+            case CERTIFIED_DISCRETE ->
+                    httpCallExecutor.performCall(() -> attributeApiClient.createCertifiedDiscreteAttribute(new AttributeSeed().description(DESCRIPTION_TEST).name(actualName)));
             default -> throw new IllegalArgumentException("Invalid attributeKind: " + attributeKind);
         }
         assertValidResponse();
@@ -560,11 +562,23 @@ public class BFFDataPreparationService {
     }
 
     public void updateTemplateInstanceDraftDescriptor(UUID eServiceId, UUID descriptorId) {
+        updateTemplateInstanceDraftDescriptor(eServiceId, descriptorId, false);
+    }
+
+    public void updateTemplateInstanceDraftDescriptor(UUID eServiceId, UUID descriptorId, boolean isAsync) {
         UpdateEServiceDescriptorTemplateInstanceSeed seed = new UpdateEServiceDescriptorTemplateInstanceSeed()
             .dailyCallsPerConsumer(10)
             .dailyCallsTotal(100)
             .addAudienceItem("some audience item")
             .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC);
+
+        if (isAsync) {
+            AsyncExchangePropertiesInstanceSeed asyncSeed = new AsyncExchangePropertiesInstanceSeed();
+            asyncSeed.setResponseTime(100);
+            asyncSeed.setResourceAvailableTime(100);
+            asyncSeed.setMaxResultSet(100);
+            seed.setAsyncExchangeProperties(asyncSeed);
+        }
 
         httpCallExecutor.performCall(() -> eServiceClient.updateDraftDescriptorTemplateInstanceWithHttpInfo(eServiceId, descriptorId, seed));
         assertValidResponse();
@@ -795,10 +809,13 @@ public class BFFDataPreparationService {
     }
 
     public void interpolateInterfaceToDescriptor(UUID eServiceId, UUID descriptorId) {
+        TemplateInstanceInterfaceServerUrlSeed serverUrl =
+            new TemplateInstanceInterfaceServerUrlSeed().url(URI.create("http://www.some.url.it"));
+
         TemplateInstanceInterfaceRESTSeed seed = new TemplateInstanceInterfaceRESTSeed()
             .contactName("Some contact name")
             .contactEmail("some@contact-email.it")
-            .addServerUrlsItem(new TemplateInstanceInterfaceServerUrlSeed().url(URI.create("http://www.some.url.it")));
+            .addServerUrlsItem(serverUrl);
         httpCallExecutor.performCall(() -> eServiceClient.addEServiceTemplateInstanceInterfaceRestWithHttpInfo(eServiceId, descriptorId, seed));
         assertValidResponse();
 
@@ -830,7 +847,10 @@ public class BFFDataPreparationService {
         assertValidResponse();
         pollingService.makePolling(
             () -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId),
-            res -> res.getState() == EServiceDescriptorState.PUBLISHED,
+            res -> {
+                sharedStepsContext.getEServicesCommonContext().setName(res.getEservice().getName());
+                return res.getState() == EServiceDescriptorState.PUBLISHED;
+            },
             ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
     }

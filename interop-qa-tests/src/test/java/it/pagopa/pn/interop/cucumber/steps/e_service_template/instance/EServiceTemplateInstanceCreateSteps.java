@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.instance;
 
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -154,12 +155,50 @@ public class EServiceTemplateInstanceCreateSteps {
         checkEServiceAndMutateState(expectedState);
     }
 
+    @Given("l'utente crea una nuova versione dell'istanza del template con successo")
+    public void createNewTemplateInstanceVersionSuccessfully() {
+        String userToken = sharedStepsContext.getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+
+        UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
+        UUID newDescriptorId = this.dataPreparationService.createNextDraftDescriptor(eServiceId);
+        sharedStepsContext.getEServiceTemplateStepContext().setLastEServiceDescriptorIdCreatedFromTemplate(newDescriptorId);
+
+        checkEServiceAndMutateState(EServiceDescriptorState.DRAFT);
+    }
+
+    @Given("l'utente specifica i metadati mancanti all'istanza del template {isAsynchronous} con successo")
+    public void putInterfaceMetadataSuccessfully(boolean isAsync) {
+        String userToken = sharedStepsContext.getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+
+        UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
+        UUID descriptorId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorIdCreatedFromTemplate();
+
+        dataPreparationService.interpolateInterfaceToDescriptor(eServiceId, descriptorId);
+        dataPreparationService.updateTemplateInstanceDraftDescriptor(eServiceId, descriptorId, isAsync);
+    }
+
+    @And("l'utente tenta la pubblicazione di una nuova versione dell'istanza del template")
+    public void attemptToPublishNewTemplateInstanceVersion() {
+        String userToken = sharedStepsContext.getUserToken();
+        clientTokenConfigurator.setBearerToken(userToken);
+
+        UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
+        UUID descriptorId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorIdCreatedFromTemplate();
+
+        sharedStepsContext.getDelayService().delayForSeconds(5);
+        httpCallExecutor.performCall(() -> eServiceClient.publishDescriptor(eServiceId, descriptorId));
+    }
+
     private void checkEServiceAndMutateState(EServiceDescriptorState expectedState) {
         checkEServiceCreated(EServiceDescriptorState.DRAFT);
         UUID lastEServiceIdCreatedFromTemplate = sharedStepsContext.getEServiceTemplateStepContext()
                 .getLastEServiceIdCreatedFromTemplate();
         UUID descriptorId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorIdCreatedFromTemplate();
         sharedStepsContext.getEServiceTemplateStepContext().setLastEServiceDescriptorIdCreatedFromTemplate(descriptorId);
+        sharedStepsContext.getEServicesCommonContext().setDescriptorId(descriptorId);
+        sharedStepsContext.getEServicesCommonContext().setEserviceId(lastEServiceIdCreatedFromTemplate);
         this.dataPreparationService.bringTemplateInstanceDescriptorToGivenState(
                 lastEServiceIdCreatedFromTemplate,
                 descriptorId,
@@ -322,6 +361,12 @@ public class EServiceTemplateInstanceCreateSteps {
                     .setLastEServiceIdCreatedFromTemplate(createdEServiceDescriptor.getId());
             this.sharedStepsContext.getEServiceTemplateStepContext()
                     .setLastEServiceDescriptorIdCreatedFromTemplate(createdEServiceDescriptor.getDescriptorId());
+            this.sharedStepsContext.getEServicesCommonContext()
+                    .setEserviceId(createdEServiceDescriptor.getId());
+            this.sharedStepsContext.getEServicesCommonContext()
+                    .setDescriptorId(createdEServiceDescriptor.getDescriptorId());
+            this.sharedStepsContext.getEServicesCommonContext()
+                    .setOldDescriptorId(null);
 
             this.sharedStepsContext.getEServiceTemplateStepContext()
                     .setLastEServiceCreatedFromTemplate(createdEServiceDescriptor);

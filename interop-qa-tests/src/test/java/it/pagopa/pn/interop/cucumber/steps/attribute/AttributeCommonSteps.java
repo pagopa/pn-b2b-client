@@ -63,7 +63,7 @@ public class AttributeCommonSteps {
             case CERTIFIED -> attributeCommonContext.getRequiredCertifiedAttributes().isEmpty() ? 0 : attributeCommonContext.getRequiredCertifiedAttributes().get(0).size();
             case DECLARED -> attributeCommonContext.getRequiredDeclaredAttributes().isEmpty() ? 0 : attributeCommonContext.getRequiredDeclaredAttributes().get(0).size();
             case VERIFIED -> attributeCommonContext.getRequiredVerifiedAttributes().isEmpty() ? 0 : attributeCommonContext.getRequiredVerifiedAttributes().get(0).size();
-            case CERTIFIED_DISCRETE -> throw new UnsupportedOperationException();
+            case CERTIFIED_DISCRETE -> attributeCommonContext.getRequiredCertifiedAttributes().isEmpty() ? 0 : attributeCommonContext.getRequiredCertifiedAttributes().get(0).size();
         };
 
         List<Attribute> createdAttributes = new ArrayList<>();
@@ -82,7 +82,7 @@ public class AttributeCommonSteps {
         List<UUID> attributeIds = createdAttributes.stream().map(Attribute::getId).toList();
 
         switch (attributeKind) {
-            case CERTIFIED -> {
+            case CERTIFIED, CERTIFIED_DISCRETE -> {
                 if (attributeCommonContext.getRequiredCertifiedAttributes().isEmpty()) {
                     attributeCommonContext.getRequiredCertifiedAttributes().add(new ArrayList<>(attributeIds));
                 } else {

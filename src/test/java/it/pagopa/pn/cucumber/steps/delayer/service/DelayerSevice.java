@@ -45,20 +45,28 @@ public class DelayerSevice {
     }
 
     public DelayerCountersSumEstimatesItem getCountersSumEstimates(String deliveryDate, String province, String product) {
-        try {
+        return callGetCountersSumEstimates(deliveryDate, province, product, false);
+    }
 
-            return lambdaClient.getCountersSumEstimates(deliveryDate, province, product)
+    public DelayerCountersSumEstimatesItem getCountersSumEstimates(String deliveryDate, String province, String product, boolean fromMock) {
+        return callGetCountersSumEstimates(deliveryDate, province, product, fromMock);
+    }
+
+    private DelayerCountersSumEstimatesItem callGetCountersSumEstimates(String deliveryDate, String province, String product, boolean fromMock) {
+        try {
+            return lambdaClient.getCountersSumEstimates(deliveryDate, province, product, fromMock)
                     .getItems()
                     .stream()
                     .filter(item -> item.getSk().equals(String.format("SUM_ESTIMATES~%s~%s", product, province)))
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException(
-                            "Nessun item trovato per deliveryDate %s con sk=SUM_ESTIMATES~%s~%s".formatted(deliveryDate, product, province)
+                            "Nessun item trovato per deliveryDate %s con province=%s e product=%s"
+                                    .formatted(deliveryDate, province, product)
                     ));
         } catch (Exception e) {
             throw new RuntimeException(
-                    "Errore durante GET_PRINT_CAPACITY_COUNTER per deliveryDate %s"
-                            .formatted(deliveryDate),
+                    "Errore durante GET_COUNTERS_SUM_ESTIMATES per deliveryDate %s, province %s e product %s"
+                            .formatted(deliveryDate, province, product),
                     e
             );
         }
@@ -422,6 +430,14 @@ public class DelayerSevice {
                     .as("L'operation deve restituire una lista di items non vuota altrimenti le stime non sono state elaborate")
                     .isGreaterThan(0);
             return senderLimitResponse.getItems().get(0).getWeeklyEstimate();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void insertMockSenderLimit(String filename) {
+        try {
+            lambdaClient.insertMockSenderLimits(filename);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

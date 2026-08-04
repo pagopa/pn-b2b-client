@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.notification;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingService;
@@ -77,8 +78,12 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
         this.agreementCommonSteps = agreementCommonSteps;
         this.clientCreateStep = clientCreateStep;
         this.notificationStore = notificationStore;
-        this.notificationStore.concurrentSafeInitializeOnce();
         this.sharedStepsContext = sharedStepsContext;
+    }
+
+    @Given("vengono inizializzate le notifiche per tutte le utenze")
+    public void initializeNotificationsForAllUsers() {
+        this.notificationStore.concurrentSafeInitializeOnce();
     }
 
     @When("l'utente tenta di recuperare la lista di notifiche create")
@@ -451,6 +456,7 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
             String label = textTemplate.substring(labelStartIndex, labelEndIndex);
             // Il valore deve essere risolto dalla funzione comune // sharedStepsContext
             String value = ".+";
+            int gracePeriod = 0;
             switch (label) {
                 case "agreementId": value = sharedStepsContext.getAgreementId().toString(); break;
                 case "eServiceName": value = sharedStepsContext.getEServicesCommonContext().getName(); break;
@@ -459,8 +465,15 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
                 case "oldDescriptorId": value = sharedStepsContext.getEServicesCommonContext().getOldDescriptorId().toString(); break;
                 case "producerName": value = sharedStepsContext.getEServicesCommonContext().getProducerName(); break;
                 case "TODAY": value = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")); break;
-                case "TODAY+GRACE_PERIOD":
-                    value = LocalDate.now().plusDays(2).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")); break;
+                case "TODAY+GRACE_PERIOD": gracePeriod = 2; break;
+                default:
+                    if (label.startsWith("TODAY+")) {
+                        gracePeriod = Integer.parseInt(label.substring("TODAY+".length())) + 1;
+                    }
+                    break;
+            }
+            if (gracePeriod > 0) {
+                value = LocalDate.now().plusDays(gracePeriod).format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
             }
             text.append(value);
             // Controlla se c'è un prossimo placeholder

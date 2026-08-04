@@ -16,6 +16,7 @@ import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.authorization.service.utils.voucher.AsyncVoucherService;
 import it.pagopa.interop.authorization.service.utils.voucher.VoucherService;
 import it.pagopa.interop.conf.InteropClientConfigs;
+import it.pagopa.interop.conf.UploadDocumentFilesProperties;
 import it.pagopa.interop.config.springconfig.InteropRestTemplateConfiguration;
 import it.pagopa.interop.config.springconfig.JwtTokenServiceConfiguration;
 import it.pagopa.interop.delegate.service.impl.*;
@@ -119,6 +120,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         DelegationApiClientImpl.class,
         ConfigFileReader.class,
         InteropClientConfigs.class,
+        UploadDocumentFilesProperties.class,
         TracingFileUtils.class,
         BlobFileCreator.class,
         TracingClientConfigs.class,
