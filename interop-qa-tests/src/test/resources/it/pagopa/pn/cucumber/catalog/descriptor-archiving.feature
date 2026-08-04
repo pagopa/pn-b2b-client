@@ -721,7 +721,6 @@ Feature: Archiviazione manuale di un descrittore
     And si ottiene response status code 200
     And la vecchia versione dell'e-service è in stato "SUSPENDED"
     And la versione più recente dell'e-service è in stato "PUBLISHED"
-    And "PA1" ha già sospeso quell'e-service
     And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     And l'utente è un "<role>" di "PA1"
     When l'utente annulla il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
