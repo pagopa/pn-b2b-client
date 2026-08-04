@@ -461,10 +461,11 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
                 case "producerName": value = sharedStepsContext.getEServicesCommonContext().getProducerName(); break;
                 case "TODAY": value = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")); break;
                 case "TODAY+GRACE_PERIOD": gracePeriod = 2; break;
-                case "TODAY+30": gracePeriod = 31; break;
-                case "TODAY+60": gracePeriod = 61; break;
-                case "TODAY+90": gracePeriod = 91; break;
-                case "TODAY+120": gracePeriod = 121; break;
+                default:
+                    if (label.startsWith("TODAY+")) {
+                        gracePeriod = Integer.parseInt(label.substring("TODAY+".length())) + 1;
+                    }
+                    break;
             }
             if (gracePeriod > 0) {
                 value = LocalDate.now().plusDays(gracePeriod).format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
