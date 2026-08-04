@@ -81,6 +81,7 @@ public class TemplateEngineSteps {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("context_recipientType", recipientType); // todo t mc.
         parameters.put("recipient_recipientType", recipientType); // todo t mc.
+        parameters.put("recipientType", recipientType);
         retrieveTemplate(templateTypeObject, language, BODY_CORRETTO, "semplice", parameters);
     }
 
@@ -170,9 +171,13 @@ public class TemplateEngineSteps {
         return count;
     }
 
-    private String getTextToRetrieve(String language, TemplateType templateType, String recipientType) {
-        String retrievedText = templateEngineStrategy.get(templateType).getTextToCheckLanguage(language, recipientType);
-        return retrievedText.replace("{%profile}", runProfile);
+    private List<String> getTextsToRetrieve(String language, TemplateType templateType, String recipientType) {
+        List<String> retrievedTexts = templateEngineStrategy.get(templateType).getTextsToCheckLanguage(language, recipientType);
+        List<String> texts = new ArrayList<>();
+        for (String retrievedText : retrievedTexts) {
+            texts.add(retrievedText.replace("{%profile}", runProfile));
+        }
+        return texts;
     }
 
     @And("controllo che nel file {string} contenga il (campo)(testo) {string} valorizzato (a)(con) {string}")
@@ -194,17 +199,18 @@ public class TemplateEngineSteps {
     @And("controllo che per il template {string} il file {string} sia in lingua {string}")
     public void controlloChePerIlTemplateIlFilePerUnaNotificaIlTestoSiaInLingua(String templateType, String fileType, String languange) {
         TemplateType templateTypeObject = TemplateType.fromValue(templateType.toUpperCase());
-        String textToFind = getTextToRetrieve(languange, templateTypeObject, recipientType);
+        List<String> textsToFind = getTextsToRetrieve(languange, templateTypeObject, recipientType);
+        String[] textsToFindArray = textsToFind.toArray(new String[0]);
         if (fileType.equals("pdf")) {
             assertThat(result.getFileTextRetrieved()).isNotNull();
             assertThat(result.retrieveFormattedText())
-                    .as("Checking if formatted text contains: " + textToFind)
-                    .contains(textToFind);
+                    .as("Checking if formatted text contains all of: " + textsToFind)
+                    .contains(textsToFindArray);
         } else {
             assertThat(result.getTemplateHtmlReturned()).isNotNull();
             assertThat(result.getTemplateHtmlReturned())
-                    .as("Checking if formatted text contains: " + textToFind)
-                    .contains(textToFind);
+                    .as("Checking if formatted text contains all of: " + textsToFind)
+                    .contains(textsToFindArray);
         }
     }
 
@@ -224,13 +230,25 @@ public class TemplateEngineSteps {
         }
     }
 
+    @And("il corpo del messaggio non contiene il testo {string}")
+    public void checkMessageNotContains(String message) {
+        assertMessageContent(false, message);
+    }
+
     @And("il corpo del messaggio contiene il testo {string}")
-    public void checkMessageContents(String message) {
+    public void checkMessageContains(String message) {
+        assertMessageContent(true, message);
+    }
+
+    public void assertMessageContent(boolean contains, String message) {
         Assertions.assertNotNull(result.getFileTextRetrieved(), "Nessun testo recuperato");
-
         String formattedText = result.retrieveFormattedText();
-
-        Assertions.assertTrue(formattedText.contains(message),
-                "Il corpo del messaggio non contiene il testo atteso: " + message);
+        if (contains) {
+            Assertions.assertTrue(formattedText.contains(message),
+                    "Il corpo del messaggio non contiene il testo atteso: " + message);
+        } else {
+            Assertions.assertFalse(formattedText.contains(message),
+                    "Il corpo del messaggio contiene il testo non atteso: " + message);
+        }
     }
 }

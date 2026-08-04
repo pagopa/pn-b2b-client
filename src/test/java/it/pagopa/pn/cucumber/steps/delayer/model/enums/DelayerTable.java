@@ -5,6 +5,7 @@ public enum DelayerTable {
     DelayerPaperDelivery("pn-DelayerPaperDelivery"),
     PaperDeliveryDriverCapacities("pn-PaperDeliveryDriverCapacities"),
     PaperDeliveryCounters("pn-PaperDeliveryCounters"),
+    PaperDeliveryCountersMock("pn-PaperDeliveryCountersMock"),
     PaperDeliveryDriverUsedCapacities("pn-PaperDeliveryDriverUsedCapacities"),
     PaperDeliverySenderLimit("pn-PaperDeliverySenderLimit"),
     PaperDeliveryUsedSenderLimit("pn-PaperDeliveryUsedSenderLimit"),

@@ -34,7 +34,8 @@ public class DynamoDbService {
                     queryWithoutFilters(tableName, "pk", attributeValues);
             case ONBOARD_INSTITUTIONS -> queryWithoutFilters(tableName, "id", attributeValues);
             case NOTIFICATION_REWORKS -> queryWithoutFilters(tableName, "iun", attributeValues);
-            case IO_CONNECTOR_REQUESTS -> queryWithoutFilters(tableName, "requestId", attributeValues);
+            case IO_CONNECTOR_REQUESTS, PAPER_REQUEST_ERROR ->
+                    queryWithoutFilters(tableName, "requestId", attributeValues);
             case NOTIFICATION_DELIVERY_COST -> queryWithoutFilters(tableName, List.of("pk", "sk"), attributeValues);
             case NOTIFICATIONS_METADATA -> queryWithoutFilters(tableName, "iun_recipientId", attributeValues);
             //query WITH sorting

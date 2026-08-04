@@ -18,6 +18,6 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         "Async", "f24", "version", "AOO_UO", "Annullamento", "raddTechnicalAnnex", "raddAlt",
         "validation", "RetentionAllegati", "apiKeyManager", "downtimeLogs", "recuperoDisservizi",
         "legalFact", "letturaDestinatario", "raddAnagrafica", "raddAttoIntero", "restApiValidation",
-        "appIo", "delegheTemporanee", "TracciamentoEventiPEO"})
+        "appIo", "delegheTemporanee", "TracciamentoEventiPEO", "indicizzazioneSafeStorage"})
 public class NrtTest_test {
 }

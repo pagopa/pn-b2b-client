@@ -11,9 +11,14 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Documents;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
 import java.util.List;
 import java.util.UUID;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
+import org.springframework.core.io.Resource;
+
+import java.util.List;
+import java.util.UUID;
 
 public interface IM2MAgreementClient extends SettableBearerToken {
     @Data
@@ -39,6 +44,8 @@ public interface IM2MAgreementClient extends SettableBearerToken {
     Agreements getAgreements(AgreementsListRequest listRequest);
     Purposes getAgreementPurposes(UUID agreementId);
     Purposes getAgreementPurposes(UUID agreementId, int limit, int offset);
+    Document uploadConsumerDocument(UUID agreementId, Resource document, String prettyName);
+    FileDownloadMultipart getConsumerDocument(UUID agreementId, UUID documentId);
     Documents getConsumerDocuments(UUID agreementId);
     Documents getConsumerDocuments(UUID agreementId, int offset, int limit);
 }

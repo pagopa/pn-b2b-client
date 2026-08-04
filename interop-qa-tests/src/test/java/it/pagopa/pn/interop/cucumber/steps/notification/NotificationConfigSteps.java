@@ -130,6 +130,7 @@ public class NotificationConfigSteps {
                 .eserviceTemplateStatusChangedToInstantiator(isActive)
                 .delegationApprovedRejectedToDelegator(isActive)
                 .eserviceNewVersionSubmittedToDelegator(isActive)
+                .eserviceStateChangedToProducer(isActive)
                 .eserviceNewVersionApprovedRejectedToDelegate(isActive)
                 .delegationSubmittedRevokedToDelegate(isActive)
                 .certifiedVerifiedAttributeAssignedRevokedToAssignee(isActive)
@@ -226,7 +227,7 @@ public class NotificationConfigSteps {
 
                 configClient.updateUserNotificationConfig(userSeed);
 
-                if (userSeed != null && expectedUserNotificationConfig != null &&!isInvalid) {
+                if (userSeed != null && expectedUserNotificationConfig != null && !isInvalid) {
                     expectedUserNotificationConfig.setEmailNotificationPreference(userSeed.getEmailNotificationPreference());
                 }
             }
