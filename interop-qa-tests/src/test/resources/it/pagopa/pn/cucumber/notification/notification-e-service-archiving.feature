@@ -1,4 +1,4 @@
-﻿@bff-notification
+@bff-notification
 @notification-manual-archiving-eservice
 Feature: Notifiche relative all'archiviazione manuale di un e-service
 
