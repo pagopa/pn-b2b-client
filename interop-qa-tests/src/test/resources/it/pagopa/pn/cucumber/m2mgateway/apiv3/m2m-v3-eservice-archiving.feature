@@ -1,4 +1,4 @@
-﻿@m2m-v3-manual-archiving-eservice
+@m2m-v3-manual-archiving-eservice
 Feature: (M2M v3) Archiviazione manuale di un e-service
 
   Scenario Outline: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_1.1] Un ente erogatore di un e-service con prima versione in stato PUBLISHED e seconda in stato DEPRECATED può avviare il processo di archiviazione manuale dell'e-service
