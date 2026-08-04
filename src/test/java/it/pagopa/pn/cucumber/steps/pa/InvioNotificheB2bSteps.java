@@ -1150,6 +1150,9 @@ public class InvioNotificheB2bSteps {
      * 1) uri / documentType già presenti su PaperEngage
      * 2) metadati SafeStorage (key, documentType, tags, url) via getFile
      * 3) solo in ultima istanza download PDF e ricerca testuale di "F24" (word boundary)
+     * <p>
+     * Sugli hint di key/uri/url si valuta solo il prefisso document-type
+     * (parte prima del primo {@code -}), così non si matchano hex casuali tipo {@code ...f24a...}.
      */
     private boolean isF24(PaperEngageRequestAttachmentsInner attachment) {
         if (attachment == null) {
@@ -1197,16 +1200,62 @@ public class InvioNotificheB2bSteps {
         return false;
     }
 
+    /**
+     * Cerca "F24" (case-insensitive) solo sul prefisso document-type della stringa,
+     * ottenuto con split sul primo {@code -} (es. {@code PN_CLEAN_PAPER_ATTACHMENT-f4614...pdf}
+     * → {@code PN_CLEAN_PAPER_ATTACHMENT}).
+     */
     private static boolean containsF24Hint(String... values) {
         if (values == null) {
             return false;
         }
         for (String value : values) {
-            if (value != null && value.toUpperCase(Locale.ROOT).contains("F24")) {
+            String prefix = extractDocumentTypePrefix(value);
+            if (prefix != null && prefix.toUpperCase(Locale.ROOT).contains("F24")) {
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * Estrae la prima parte del nome SafeStorage (document type), ignorando hash/query.
+     * Esempi:
+     * <ul>
+     *   <li>{@code PN_CLEAN_PAPER_ATTACHMENT-f4614de8....pdf} → {@code PN_CLEAN_PAPER_ATTACHMENT}</li>
+     *   <li>{@code safestorage://PN_AAR-abc...} → {@code PN_AAR}</li>
+     *   <li>{@code https://.../PN_AAR-abc.pdf?X-Amz-...} → {@code PN_AAR}</li>
+     *   <li>{@code ATTO} / {@code PN_AAR} → invariato</li>
+     * </ul>
+     */
+    private static String extractDocumentTypePrefix(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        String s = value.trim();
+        int query = s.indexOf('?');
+        if (query >= 0) {
+            s = s.substring(0, query);
+        }
+        if (s.startsWith("safestorage://")) {
+            s = s.substring("safestorage://".length());
+        } else {
+            int scheme = s.indexOf("://");
+            if (scheme >= 0) {
+                int slash = s.lastIndexOf('/');
+                s = slash >= 0 ? s.substring(slash + 1) : s.substring(scheme + 3);
+            } else {
+                int slash = s.lastIndexOf('/');
+                if (slash >= 0) {
+                    s = s.substring(slash + 1);
+                }
+            }
+        }
+        if (s.toLowerCase(Locale.ROOT).endsWith(".pdf")) {
+            s = s.substring(0, s.length() - 4);
+        }
+        int dash = s.indexOf('-');
+        return dash >= 0 ? s.substring(0, dash) : s;
     }
 
     private FileDownloadResponse getSafeStorageFileInfo(String safeStorageUri) {
