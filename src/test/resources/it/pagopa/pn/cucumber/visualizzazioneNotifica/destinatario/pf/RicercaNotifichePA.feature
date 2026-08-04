@@ -20,17 +20,14 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
       | viewed            | $NULL |
       | delivered         | $NULL |
       | desiredFeedback   | $NULL |
-#
-    Given mittente della notifica bonaria: "Comune_Multi"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | SoricalMessaMora |
-    And destinatario della notifica bonaria
+
+    Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
+      | campaignId    | SoricalMessaMora |
       | recipientType | PF               |
       | taxId         | FRMTTR76M06B715E |
       | denomination  | Mario Cucumber   |
-      | messageId     | ${IT}            |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+      | messageId     | ${NEW-IT}        |
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si verifica sulla tabella pn-NotificationsMetadata che per lo IUN ":informal_iun" e il destinatario con taxId ":informal_recipientId" di tipo "PF" gli attributi siano:
       | communicationType | INFORMAL         |
       | campaignId        | SoricalMessaMora |
@@ -205,11 +202,8 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
   @ricercaNotifiche
   Scenario: [MITTENTE_RICERCA_NOTIFICHE_BONARIE_2.A] Vengono inviate due notifiche bonarie con esiti differenti
   e si recuperano le notifiche inviate dal mittente filtrando per specifici criteri
-    Given mittente della notifica bonaria: "Comune_Multi"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | SoricalMessaMora |
-    And destinatario della notifica bonaria
-      | messageId       | ${IT}                   |
+    Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
+      | campaignId      | SoricalMessaMora        |
       | subject         | Test workflow           |
       | recipientType   | PF                      |
       | taxId           | FRMTTR76M06B715E        |
@@ -217,24 +211,22 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
       | email           | tullio.test@virgilio.it |
       | digitalDomicile | NULL                    |
       | phone_number    | NULL                    |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+      | messageId       | ${NEW-IT}               |
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     #Da aggiungere lo step per leggere gli eventi fino all'elemento di timeline della notifica "UNDELIVERABLE"
     #tramite API /received implementato in un nuovo branch
     And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
 
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | SoricalFattOrd |
-    And destinatario della notifica bonaria
-      | messageId       | ${IT}             |
+    Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
+      | campaignId      | SoricalFattOrd    |
+      | messageId       | ${NEW-IT}         |
       | subject         | Test workflow     |
       | recipientType   | PF                |
       | taxId           | FRMTTR76M06B715E  |
       | denomination    | Ettore Fieramosca |
       | email           | NULL              |
       | digitalDomicile | NULL              |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che la notifica bonaria passi in stato "UNDELIVERABLE"
     #Da aggiungere lo step per leggere gli eventi fino all'elemento di timeline della notifica "UNDELIVERABLE"
     #tramite API /received implementato in un nuovo branch
@@ -302,17 +294,14 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
       | campaignId | SoricalMessaMora              |
       | recipients | :informal_recipientId         |
 
-    Given mittente della notifica bonaria: "Comune_Multi"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | SoricalFattOrd |
-    And destinatario della notifica bonaria
-      | recipientType   | PG            |
-      | taxId           | 12666810299   |
-      | denomination    | GherkinSrlB2B |
-      | messageId       | ${IT}         |
-      | digitalDomicile | tu@gmail.com  |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
+      | campaignId      | SoricalFattOrd |
+      | recipientType   | PG             |
+      | taxId           | 12666810299    |
+      | denomination    | GherkinSrlB2B  |
+      | messageId       | ${NEW-IT}      |
+      | digitalDomicile | tu@gmail.com   |
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
 
     #    ricerca per specifica campagna e specifico IUN

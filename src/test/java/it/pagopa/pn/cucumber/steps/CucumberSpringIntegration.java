@@ -403,6 +403,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnRaddNetVpceClientImpl.class,
         DataPreparationRaddVpceService.class,
         PnNotificationCostClientImpl.class,
+        NotificationInformalUtilsV1.class,
+        PnPaB2bExternalInformalClientImpl.class,
         StimeMittentiContext.class,
         NotificationSearchParamMapper.class,
         NotificationSearchCriteriaMapper.class,

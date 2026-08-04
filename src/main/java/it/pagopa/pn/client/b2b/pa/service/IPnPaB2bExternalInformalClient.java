@@ -6,7 +6,6 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainforma
 import java.util.List;
 
     public interface IPnPaB2bExternalInformalClient {
-
         List<InformalPreLoadResponse> informalPresignedUploadRequest(String apiKey, List<InformalPreLoadRequest> requests);
     }
 

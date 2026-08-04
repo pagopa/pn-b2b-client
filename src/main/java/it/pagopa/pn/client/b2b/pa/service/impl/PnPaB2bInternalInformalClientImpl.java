@@ -15,6 +15,8 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainforma
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewMessageRequest;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.TerminationRequestStatus;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.api.RecipientReadInformalNotificationApi;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.FullReceivedInformalNotificationV1;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.api.InternalOnlyApi;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.model.InformalSentNotificationV1;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.model.LegalNotificationSearchResponse;
@@ -36,13 +38,13 @@ public class PnPaB2bInternalInformalClientImpl {
     private final SenderReadInformalNotificationB2BApi senderReadInformalNotificationB2BApi;
     private final NewInformalNotificationApi newInformalNotificationApi;
     private final InformalNotificationTerminationApi informalNotificationTerminationApi;
+    private final RecipientReadInformalNotificationApi recipientReadInformalNotificationApi;
     private final InternalOnlyApi internalOnlyApi;
     private final List<String> groups;
 
     public PnPaB2bInternalInformalClientImpl(
             RestTemplate restTemplate,
-            @Value("${pn.delivery.base-url}") String deliveryBasePathOrigin,
-            @Value("${pn.internal.pa-id}") String paId) {
+            @Value("${pn.delivery.base-url}") String deliveryBasePathOrigin) {
 
         this.operatorId = "TestMv";
         this.groups = Collections.emptyList();
@@ -50,6 +52,7 @@ public class PnPaB2bInternalInformalClientImpl {
         this.senderReadInformalNotificationB2BApi = new SenderReadInformalNotificationB2BApi(newInformalApiClient(restTemplate, deliveryBasePathOrigin));
         this.newInformalNotificationApi = new NewInformalNotificationApi(newInformalApiClient(restTemplate, deliveryBasePathOrigin));
         this.informalNotificationTerminationApi = new InformalNotificationTerminationApi();
+        this.recipientReadInformalNotificationApi = new RecipientReadInformalNotificationApi(newRecipientInformalApiClient(restTemplate, deliveryBasePathOrigin));
         this.internalOnlyApi = new InternalOnlyApi(newPrivateDeliveryApiClient(restTemplate, deliveryBasePathOrigin));
     }
 
@@ -58,8 +61,15 @@ public class PnPaB2bInternalInformalClientImpl {
         newApiClient.setBasePath(basePath);
         return newApiClient;
     }
+
     private static it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.ApiClient newPrivateDeliveryApiClient(RestTemplate restTemplate, String basePath) {
         it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.ApiClient client = new it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.ApiClient(restTemplate);
+        client.setBasePath(basePath);
+        return client;
+    }
+
+    private static it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.ApiClient newRecipientInformalApiClient(RestTemplate restTemplate, String basePath) {
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.ApiClient client = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.ApiClient(restTemplate);
         client.setBasePath(basePath);
         return client;
     }
@@ -101,12 +111,27 @@ public class PnPaB2bInternalInformalClientImpl {
                                                                       Integer size, String nextPagesKey) {
         return internalOnlyApi.searchNotificationsPrivate(startDate, endDate, recipientId, recipientIdOpaque, senderId, status, mandateId, cxType, size, nextPagesKey);
     }
+
     public List<InformalPreLoadResponse> informalPresignedUploadRequest(String cxId, List<InformalPreLoadRequest> requests) {
         return newInformalNotificationApi.informalPresignedUploadRequest(operatorId, CxTypeAuthFleet.PA, cxId, requests);
     }
 
     public FullSentInformalNotificationV1 getSentInformalNotificationSender(String cxId, String iun, Boolean retrieveMessage) {
-        return senderReadInformalNotificationB2BApi.getSentInformalNotificationV1(operatorId,CxTypeAuthFleet.PA, cxId,iun, groups, retrieveMessage);
+        return senderReadInformalNotificationB2BApi.getSentInformalNotificationV1(operatorId, CxTypeAuthFleet.PA, cxId, iun, groups, retrieveMessage);
     }
-}
 
+    public FullReceivedInformalNotificationV1 getReceivedInformalNotification(String cxId, String iun, it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet recipientType) {
+        return recipientReadInformalNotificationApi.getReceivedInformalNotificationV1(operatorId, recipientType, cxId, "WEB", iun, null, null, false);
+    }
+
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.NotificationAttachmentDownloadMetadataResponse getReceivedInformalNotificationDocument(String cxId, String iun, it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet recipientType, Integer docIdx) {
+        return recipientReadInformalNotificationApi.getReceivedInformalNotificationDocumentV1(operatorId, recipientType, cxId, "WEB", iun, docIdx, null, null
+        );
+    }
+
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.NotificationAttachmentDownloadMetadataResponse getReceivedInformalNotificationAttachment(String cxId, String iun, it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet recipientType, Integer attachmentIdx) {
+        return recipientReadInformalNotificationApi.getReceivedInformalNotificationAttachmentV1(operatorId, recipientType, cxId, "WEB", iun, "PAGOPA", null, null, attachmentIdx
+        );
+    }
+
+}

@@ -1,16 +1,5 @@
 Feature: Ricerca delle notifiche ricevute lato delegato
 
-
-#  Background:
-#    Given mittente della notifica bonaria: "Comune_Multi"
-#    And viene creata una nuova notifica bonaria con i seguenti parametri
-#      | campaignId | SoricalMessaMora |
-#    And destinatario della notifica bonaria
-#      | recipientType | PF               |
-#      | taxId         | FRMTTR76M06B715E |
-#      | denomination  | Mario Cucumber   |
-#      | messageId     | ${IT}            |
-
   #CASO DI TEST 5.1 - tutti i campi (obbligatori e opzionali) valorizzati correttamente
   #Nota: la response è tipizzata su LegalNotificationSearchResponse, quindi le notifiche bonarie
   #non possono mai comparire nell'elenco lato delegato: non serve un test dedicato, è garantito dal contratto API.
@@ -21,22 +10,14 @@ Feature: Ricerca delle notifiche ricevute lato delegato
     Given "CucumberSpaB2B" viene delegato da "GherkinSrlB2B"
     And "CucumberSpaB2B" accetta la delega "GherkinSrlB2B"
 
-
-    Given mittente della notifica bonaria: "Comune_Multi"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | SoricalMessaMora |
-    And destinatario della notifica bonaria
-      | recipientType   | PG            |
-      | taxId           | 12666810299   |
-      | denomination    | GherkinSrlB2B |
-      | messageId       | ${IT}         |
-      | digitalDomicile | tu@gmail.com  |
-
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
-
-
-
+    Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
+      | campaignId      | SoricalMessaMora |
+      | recipientType   | PG               |
+      | taxId           | 12666810299      |
+      | denomination    | GherkinSrlB2B    |
+      | messageId       | ${NEW-IT}        |
+      | digitalDomicile | tu@gmail.com     |
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
 
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |

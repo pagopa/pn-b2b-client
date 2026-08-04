@@ -16,27 +16,23 @@ public class PnPaB2bExternalInformalClientImpl implements IPnPaB2bExternalInform
     private final RestTemplate restTemplate;
     private final String basePath;
 
-    public PnPaB2bExternalInformalClientImpl(RestTemplate restTemplate, @Value("${pn.external.base-url}") String basePath) {
+    public PnPaB2bExternalInformalClientImpl(RestTemplate restTemplate, @Value("${pn.external.informal-base-url}") String basePath) {
 
         this.restTemplate = restTemplate;
-        this.basePath = basePath+"/informal/";
+        this.basePath = basePath;
     }
 
     @Override
     public List<InformalPreLoadResponse> informalPresignedUploadRequest(String apiKey, List<InformalPreLoadRequest> requests) {
-
         NewInformalNotificationApi api = new NewInformalNotificationApi(newExternalInformalApiClient(restTemplate, basePath, apiKey));
-
         return api.informalPresignedUploadRequest(requests);
     }
 
     private static it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.ApiClient newExternalInformalApiClient(RestTemplate restTemplate, String basePath, String apiKey) {
 
         var client = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.ApiClient(restTemplate);
-
         client.setBasePath(basePath);
         client.addDefaultHeader("x-api-key", apiKey);
-
         return client;
     }
 }

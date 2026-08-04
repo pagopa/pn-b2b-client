@@ -47,6 +47,8 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnServiceDeskClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesInternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.*;
+import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
@@ -165,6 +167,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 @Slf4j
 public class SharedSteps {
 
+    @Getter
     private final SenderInfoProvider senderInfoProvider;
 
     @Getter
@@ -247,6 +250,7 @@ public class SharedSteps {
 
     private boolean checkAuditLogDisabled;
 
+    @Getter
     private final DynamoDbService dynamoDbService;
 
     private final CacheManager<String, String> senderTaxIdCacheManager;

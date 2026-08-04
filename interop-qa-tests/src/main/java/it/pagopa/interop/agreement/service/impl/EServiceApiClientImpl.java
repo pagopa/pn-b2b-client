@@ -103,11 +103,11 @@ public class EServiceApiClientImpl implements IEServiceClient {
     }
 
     @Override
-    public ResponseEntity<Void> scheduleArchiveDescriptor(UUID eServiceId, UUID descriptorId) {
+    public ResponseEntity<Void> scheduleArchiveDescriptor(UUID eServiceId, UUID descriptorId, GracePeriodDays gracePeriodDays) {
         return eservicesApi.scheduleArchiveEserviceDescriptorWithHttpInfo(
                 eServiceId,
                 descriptorId,
-                new GracePeriodDaysSeed().gracePeriodDays(GracePeriodDays.NUMBER_60)
+                new GracePeriodDaysSeed().gracePeriodDays(gracePeriodDays)
         );
     }
 

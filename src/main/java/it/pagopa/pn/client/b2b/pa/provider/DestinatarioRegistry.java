@@ -170,4 +170,24 @@ public class DestinatarioRegistry {
                 .findFirst()
                 .orElse(null);
     }
+    public Destinatario getByTaxId(String taxId) {
+
+        return all.stream()
+                .filter(d -> taxId.equals(d.getTaxId()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Nessun destinatario configurato per taxId: " + taxId));
+    }
+
+    public Destinatario getByDenomination(String denomination) {
+
+        return all.stream()
+                .filter(d -> d.getDenomination() != null && d.getDenomination().trim().equalsIgnoreCase(denomination))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Destinatario non trovato: " + denomination));
+    }
+
+    public String getCxId(Destinatario destinatario) {
+
+        return destinatario.getRecipientType() + "-" + destinatario.getUid();
+    }
 }

@@ -4,19 +4,16 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
   @ricercaNotifiche @useB2B
   Scenario Outline: [RICERCA_RICEVUTE_1] Come destinatario <tipo> ricerco le notifiche ricevute con tutti i filtri valorizzati
     Given mittente della notifica bonaria: "Comune_Multi"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | SoricalMessaMora |
-    And destinatario della notifica bonaria
+    Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
+      | campaignId      | SoricalMessaMora  |
       | recipientType   | <tipo>            |
       | taxId           | <taxId>           |
       | denomination    | <destinatario>    |
-      | messageId       | ${IT}             |
+      | messageId       | ${NEW-IT}         |
       | subject         | Test workflow     |
       | email           | NULL              |
       | digitalDomicile | <digitalDomicile> |
-
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
 
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
@@ -82,17 +79,15 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
     Given "Mario Cucumber" rifiuta se presente la delega ricevuta "Mario Gherkin"
     And "Mario Cucumber" viene delegato da "Mario Gherkin" per comune "Comune_Multi"
     And "Mario Cucumber" accetta la delega "Mario Gherkin"
-    Given mittente della notifica bonaria: "Comune_Multi"
     # Viene creata una notifica bonaria
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | SoricalMessaMora |
-    And destinatario della notifica bonaria
+    Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
+      | campaignId    | SoricalMessaMora |
       | recipientType | PF               |
       | taxId         | CLMCST42R12D969Z |
       | denomination  | Mario Cucumber   |
-      | messageId     | ${IT}            |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+      | messageId     | ${NEW-IT}        |
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
+
     # Viene creata una notifica legale
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
@@ -141,17 +136,14 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
   ricevute dal delegato a partire dalla creazione della delega. Le notifiche bonarie non vengono restituite.
     Given "Mario Cucumber" rifiuta se presente la delega ricevuta "Mario Gherkin"
     And "Mario Cucumber" viene delegato da "Mario Gherkin" per comune "Comune_Multi"
-    Given mittente della notifica bonaria: "Comune_Multi"
-    And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | SoricalMessaMora |
-    And destinatario della notifica bonaria
+    Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
+      | campaignId    | SoricalMessaMora        |
       | recipientType | PF                      |
       | taxId         | CLMCST42R12D969Z        |
       | denomination  | Mario Gherkin           |
-      | messageId     | ${IT}                   |
+      | messageId     | ${NEW-IT}               |
       | email         | tullio.test@virgilio.it |
-    When viene inviata una nuova notifica bonaria
-    And si verifica che la notifica bonaria sia in stato "ACCEPTED"
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
 
     Given viene generata una nuova notifica
@@ -161,9 +153,7 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
       | payment_pagoPaForm | SI               |
       | payment_f24        | PAYMENT_F24_FLAT |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-
     And "Mario Cucumber" accetta la delega "Mario Gherkin"
-
     And "Mario Cucumber" visualizza l'elenco delle notifiche per comune "Comune_Multi"
       | startDate | $DATE_ADD(-1D) |
       | endDate   | $DATE_ADD(1D)  |

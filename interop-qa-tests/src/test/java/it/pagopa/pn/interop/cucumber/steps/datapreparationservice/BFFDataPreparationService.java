@@ -847,7 +847,10 @@ public class BFFDataPreparationService {
         assertValidResponse();
         pollingService.makePolling(
             () -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId),
-            res -> res.getState() == EServiceDescriptorState.PUBLISHED,
+            res -> {
+                sharedStepsContext.getEServicesCommonContext().setName(res.getEservice().getName());
+                return res.getState() == EServiceDescriptorState.PUBLISHED;
+            },
             ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
     }
