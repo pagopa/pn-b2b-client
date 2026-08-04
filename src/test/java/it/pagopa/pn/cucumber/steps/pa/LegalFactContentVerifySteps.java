@@ -19,13 +19,11 @@ import it.pagopa.pn.client.b2b.pa.parsing.dto.implDestinatario.PnDestinatarioAna
 import it.pagopa.pn.client.b2b.pa.parsing.dto.implResponse.PnParserLegalFactResponse;
 import it.pagopa.pn.client.b2b.pa.parsing.parser.IPnParserLegalFact;
 import it.pagopa.pn.client.b2b.pa.parsing.service.impl.PnParserService;
+import it.pagopa.common.util.PDFUtility;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.pdfbox.Loader;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,14 +31,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.HttpStatusCodeException;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.AAR_GENERATION;
@@ -159,25 +155,11 @@ public class LegalFactContentVerifySteps {
 
     public void checkPdfPagesFromBytes(int numPage) {
         byte[] source = B2bUtils.downloadFile(legalFactUrl);
-
-        PDDocument document = null;
-
         try {
-            document = Loader.loadPDF(source);
-            int numberOfPages = document.getNumberOfPages();
-
+            int numberOfPages = PDFUtility.getNumberOfPages(source);
             Assertions.assertTrue(numberOfPages <= numPage, "Il PDF contiene più di " + numPage + " pagine!");
-
-        } catch (IOException e) {
+        } catch (IllegalStateException e) {
             Assertions.fail("Errore durante la lettura del PDF: " + e.getMessage());
-        } finally {
-            if (document != null) {
-                try {
-                    document.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 
@@ -483,19 +465,14 @@ public class LegalFactContentVerifySteps {
         return legalFactDownloadMetadataResponse.get();
     }
 
-    // TODO: creare utility condivisa nel modulo common per estrazione/ricerca testo da PDF (PDFBox);
-    //       oggi duplicato anche in TemplateEngineSteps.isValidPdf e InvioNotificheB2bSteps.isF24FromPdfContent
     private boolean checkTypeAAR(byte[] source, String aarType) {
         Pattern pattern = Pattern.compile("\\((CAF)\\s");
-        try (final PDDocument document = Loader.loadPDF(source)) {
-            final PDFTextStripper pdfStripper = new PDFTextStripper();
-            pdfStripper.setSortByPosition(true);
-            String extractedText = pdfStripper.getText(document);
-            Matcher matcher = pattern.matcher(extractedText);
+        try {
+            boolean hasCafMarker = PDFUtility.matchesPattern(source, pattern);
             if (aarType.equals("AAR")) {  //if AAR then check ' CAF ' pattern NOT exist
-                return !matcher.find();
+                return !hasCafMarker;
             } else if (aarType.equals("AAR RADD")) { //if AAR RADD then check ' CAF ' pattern exist
-                return matcher.find();
+                return hasCafMarker;
             }
         } catch (Exception exception) {
             log.error("Error parsing PDF {}", exception);

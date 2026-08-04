@@ -25,6 +25,7 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.FileDownloadResponse;
+import it.pagopa.common.util.PDFUtility;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.NotificationUtilsV24;
@@ -32,9 +33,6 @@ import it.pagopa.pn.cucumber.utils.DataTest;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.pdfbox.Loader;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.text.PDFTextStripper;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
@@ -56,7 +54,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
-import java.util.regex.Pattern;
 
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_1;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MOST_RECENT;
@@ -1127,7 +1124,6 @@ public class InvioNotificheB2bSteps {
 
     /** Parallelismo per check F24 (I/O SafeStorage + parse PDF); pool dedicato, non common ForkJoinPool. */
     private static final int F24_CHECK_PARALLELISM = 8;
-    private static final Pattern F24_WORD_PATTERN = Pattern.compile("\\bF24\\b", Pattern.CASE_INSENSITIVE);
 
     @And("si verifica che il contenuto degli attachments da inviare in via cartacea abbia {int} attachment di tipo {string}")
     public void presenceAttachmentAnalogicFlow(Integer numeroDocumenti, String tipologia) {
@@ -1200,7 +1196,7 @@ public class InvioNotificheB2bSteps {
             if (hasF24InSafeStorageMetadata(fileInfo)) {
                 return true;
             }
-            return isF24FromPdfContent(downloadFromSafeStorage(fileInfo, attachment.getUri()));
+            return PDFUtility.containsText(downloadFromSafeStorage(fileInfo, attachment.getUri()), "F24", true);
         } catch (Exception e) {
             log.warn("isF24: impossibile verificare allegato uri={}: {}", attachment.getUri(), e.getMessage());
             return false;
@@ -1244,23 +1240,6 @@ public class InvioNotificheB2bSteps {
             }
         }
         return false;
-    }
-
-    // TODO: creare utility condivisa nel modulo common per estrazione/ricerca testo da PDF (PDFBox);
-    //       oggi duplicato anche in LegalFactContentVerifySteps.checkTypeAAR e TemplateEngineSteps.isValidPdf
-    private boolean isF24FromPdfContent(byte[] pdfContent) {
-        if (pdfContent == null || pdfContent.length == 0) {
-            return false;
-        }
-        try (PDDocument document = Loader.loadPDF(pdfContent)) {
-            PDFTextStripper pdfStripper = new PDFTextStripper();
-            pdfStripper.setSortByPosition(true);
-            String extractedText = pdfStripper.getText(document);
-            return extractedText != null && F24_WORD_PATTERN.matcher(extractedText).find();
-        } catch (Exception exception) {
-            log.warn("isF24FromPdfContent: errore parsing PDF: {}", exception.getMessage());
-            return false;
-        }
     }
 
     private FileDownloadResponse getSafeStorageFileInfo(String safeStorageUri) {

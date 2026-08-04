@@ -3,6 +3,7 @@ package it.pagopa.pn.cucumber.steps.templateEngine;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.common.util.PDFUtility;
 import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextFactory;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateEngineResult;
@@ -10,9 +11,6 @@ import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateRequestContext;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateType;
 import it.pagopa.pn.cucumber.steps.templateEngine.strategies.ITemplateEngineStrategy;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.pdfbox.Loader;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -131,18 +129,14 @@ public class TemplateEngineSteps {
         }
     }
 
-    // TODO: creare utility condivisa nel modulo common per estrazione/ricerca testo da PDF (PDFBox);
-    //       oggi duplicato anche in LegalFactContentVerifySteps.checkTypeAAR e InvioNotificheB2bSteps.isF24FromPdfContent
     public boolean isValidPdf(Resource resource) {
         try (InputStream is = resource.getInputStream()) {
-            byte[] pdfBytes = is.readAllBytes();
-            try (PDDocument document = Loader.loadPDF(pdfBytes)) {
-                PDFTextStripper textStripper = new PDFTextStripper();
-                textStripper.setSortByPosition(true);
-                String retrievedText = textStripper.getText(document);
-                result.setFileTextRetrieved(retrievedText);
-                return !retrievedText.isBlank();
+            String retrievedText = PDFUtility.extractText(is.readAllBytes());
+            if (retrievedText == null) {
+                return false;
             }
+            result.setFileTextRetrieved(retrievedText);
+            return !retrievedText.isBlank();
         } catch (IOException | RuntimeException e) {
             return false;
         }
