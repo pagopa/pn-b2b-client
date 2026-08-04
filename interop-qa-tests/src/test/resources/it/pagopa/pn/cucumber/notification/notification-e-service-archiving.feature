@@ -74,7 +74,7 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
     Il tuo e-service $DA_CONTESTO(eServiceName) sarà archiviato il giorno $DA_CONTESTO(TODAY).
     """
 
-  Scenario: [MANUAL_ARCHIVING_ESERVICE_SUSPENSION_NOTIFICATION_1.1] Erogatore e fruitore ricevono una notifica quando l'e-service in stato di archiviazione viene sospeso
+  Scenario: [MANUAL_ARCHIVING_ESERVICE_SUSPENSION_NOTIFICATION_1.1] Erogatore e fruitore ricevono una notifica quando l'e-service in stato di archiviazione viene sospeso e quando viene riattivato
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
