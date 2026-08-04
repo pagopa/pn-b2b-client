@@ -29,6 +29,16 @@ Feature: Listing attributi
       | Privato | support      |
       | Privato | api,security |
 
+    # 04/08/2026 In ottemperenza alla regola generale secondo cui "viewer" può accedere alle API a lui accessibili attraverso
+    # Web UI, ed essendo che questa api viene chiamata durante il processo di creazione di e-service o di una sua
+    # versione (nell'atto di definire gli attributi da associare all'e-service) a lui preclusa, si ha
+    # che questa API non è accessibile al ruolo viewer
+    #@nuovi-operatori-update
+    #Examples:
+    #  | ente    | ruolo  |
+    #  | GSP     | viewer |
+    #  | Privato | viewer |
+
   # NOTE 16/04/2025 adattamento dello scenario così che risultati funzionante nell'attuale
   # ambiente di QA
   #@attribute_listing1
