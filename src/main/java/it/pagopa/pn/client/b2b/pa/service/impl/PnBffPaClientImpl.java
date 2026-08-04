@@ -5,14 +5,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.e
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.pa.recipient.NotificationSentApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.sender.dashboard.SenderDashboardApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.info.BffAdditionalLanguages;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffDocumentDownloadMetadataResponse;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffDocumentType;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffFullNotificationV1;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNewNotificationRequest;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNewNotificationResponse;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationsResponse;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffRequestStatus;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationStatusV26;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.*;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.sender.dashboard.BffSenderDashboardDataResponse;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
 import org.springframework.beans.factory.annotation.Value;
@@ -88,34 +81,34 @@ public class PnBffPaClientImpl implements IPnWebPaClient {
     public boolean setBearerToken(BearerTokenType bearerToken) {
         switch (bearerToken) {
             case MVP_1 -> {
-                    this.notificationSentApi.setApiClient(newBffApiClient(restTemplate, basePath, bearerTokenCom1, userAgent));
-                    this.infoPaApi.setApiClient(newBffApiClient(restTemplate, basePath, bearerTokenCom1, userAgent));
-                    this.senderDashboardApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenCom1, userAgent));
+                this.notificationSentApi.setApiClient(newBffApiClient(restTemplate, basePath, bearerTokenCom1, userAgent));
+                this.infoPaApi.setApiClient(newBffApiClient(restTemplate, basePath, bearerTokenCom1, userAgent));
+                this.senderDashboardApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenCom1, userAgent));
             }
             case MVP_2 -> {
-                    this.notificationSentApi.setApiClient(newBffApiClient(restTemplate, basePath, bearerTokenCom2, userAgent));
-                    this.infoPaApi.setApiClient(newBffApiClient(restTemplate, basePath, bearerTokenCom2, userAgent));
-                    this.senderDashboardApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenCom2, userAgent));
+                this.notificationSentApi.setApiClient(newBffApiClient(restTemplate, basePath, bearerTokenCom2, userAgent));
+                this.infoPaApi.setApiClient(newBffApiClient(restTemplate, basePath, bearerTokenCom2, userAgent));
+                this.senderDashboardApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenCom2, userAgent));
             }
             case GA -> {
-                    this.notificationSentApi.setApiClient(newBffApiClient(restTemplate, basePath, bearerTokenGA, userAgent));
-                    this.infoPaApi.setApiClient(newBffApiClient(restTemplate, basePath, bearerTokenGA, userAgent));
-                    this.senderDashboardApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenGA, userAgent));
+                this.notificationSentApi.setApiClient(newBffApiClient(restTemplate, basePath, bearerTokenGA, userAgent));
+                this.infoPaApi.setApiClient(newBffApiClient(restTemplate, basePath, bearerTokenGA, userAgent));
+                this.senderDashboardApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenGA, userAgent));
             }
             case SON -> {
-                    this.notificationSentApi.setApiClient(newBffApiClient(restTemplate, basePath, bearerTokenSON, userAgent));
-                    this.infoPaApi.setApiClient(newBffApiClient(restTemplate, basePath, bearerTokenSON, userAgent));
-                    this.senderDashboardApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenSON, userAgent));
+                this.notificationSentApi.setApiClient(newBffApiClient(restTemplate, basePath, bearerTokenSON, userAgent));
+                this.infoPaApi.setApiClient(newBffApiClient(restTemplate, basePath, bearerTokenSON, userAgent));
+                this.senderDashboardApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenSON, userAgent));
             }
             case ROOT -> {
-                    this.notificationSentApi.setApiClient(newBffApiClient(restTemplate, basePath, bearerTokenROOT, userAgent));
-                    this.infoPaApi.setApiClient(newBffApiClient(restTemplate, basePath, bearerTokenROOT, userAgent));
-                    this.senderDashboardApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenROOT, userAgent));
+                this.notificationSentApi.setApiClient(newBffApiClient(restTemplate, basePath, bearerTokenROOT, userAgent));
+                this.infoPaApi.setApiClient(newBffApiClient(restTemplate, basePath, bearerTokenROOT, userAgent));
+                this.senderDashboardApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenROOT, userAgent));
             }
             case SUPPORT_1 -> {
-                    this.notificationSentApi.setApiClient(newBffApiClient(restTemplate, basePath, bearerTokenSupport1, userAgent));
-                    this.infoPaApi.setApiClient(newBffApiClient(restTemplate, basePath, bearerTokenSupport1, userAgent));
-                    this.senderDashboardApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenSupport1, userAgent));
+                this.notificationSentApi.setApiClient(newBffApiClient(restTemplate, basePath, bearerTokenSupport1, userAgent));
+                this.infoPaApi.setApiClient(newBffApiClient(restTemplate, basePath, bearerTokenSupport1, userAgent));
+                this.senderDashboardApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenSupport1, userAgent));
             }
             default -> throw new IllegalStateException("Unexpected value: " + bearerToken);
         }
@@ -128,8 +121,8 @@ public class PnBffPaClientImpl implements IPnWebPaClient {
     }
 
     @Override
-    public BffNotificationsResponse searchSentNotification(OffsetDateTime startDate, OffsetDateTime endDate, String recipientId, NotificationStatusV26 status, String subjectRegExp, String iunMatch, Integer size, String nextPagesKey) throws RestClientException {
-        BffNotificationsResponse response = this.notificationSentApi.searchSentNotificationsV1(startDate, endDate, recipientId, status, subjectRegExp, iunMatch, size, nextPagesKey);
+    public BffLegalNotificationsResponse searchSentNotification(OffsetDateTime startDate, OffsetDateTime endDate, String recipientId, NotificationStatusV26 status, String subjectRegExp, String iunMatch, Integer size, String nextPagesKey) throws RestClientException {
+        BffLegalNotificationsResponse response = this.notificationSentApi.searchSentNotificationsV1(startDate, endDate, recipientId, status, iunMatch, size, nextPagesKey);
         return response;
     }
 

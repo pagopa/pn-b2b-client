@@ -308,7 +308,7 @@
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
                             <!-- <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/develop/packages/api-clients/open-api/bffApi.yml</inputSpec> -->
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.20.0-RC3/packages/api-clients/open-api/bffApi.yml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.22.0-RC1/packages/api-clients/open-api/bffApi.yml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -332,40 +332,40 @@
                         </configuration>
                     </execution>
 
-                     <!-- authorizationServerApi -->
-                     <execution>
-                         <id>generate-authorization-server-api-client</id>
-                         <goals>
-                             <goal>generate</goal>
-                         </goals>
-                         <phase>process-resources</phase>
-                         <configuration>
-                             <typeMappings>
-                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
-                             </typeMappings>
-                             <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.20.0-RC1/packages/api-clients/open-api/authorizationServerApi.yml</inputSpec>
-                             <generatorName>java</generatorName>
-                             <library>resttemplate</library>
-                             <generateApiTests>false</generateApiTests>
-                             <generateModelTests>false</generateModelTests>
-                             <skipValidateSpec>true</skipValidateSpec>
-                             <configOptions>
-                                 <apiPackage>it.pagopa.interop.generated.openapi.clients.auth.api</apiPackage>
-                                 <modelPackage>it.pagopa.interop.generated.openapi.clients.auth.model</modelPackage>
-                                 <dateLibrary>java8</dateLibrary>
-                                 <annotationLibrary>none</annotationLibrary>
-                                 <documentationProvider>source</documentationProvider>
-                                 <openApiNullable>false</openApiNullable>
-                                 <useAbstractionForFiles>true</useAbstractionForFiles>
-                                 <useBeanValidation>false</useBeanValidation>
-                                 <additionalModelTypeAnnotations>
-                                     @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-                                 </additionalModelTypeAnnotations>
-                             </configOptions>
-                             <apiPackage>it.pagopa.interop.generated.openapi.clients.auth.api</apiPackage>
-                             <modelPackage>it.pagopa.interop.generated.openapi.clients.auth.model</modelPackage>
-                         </configuration>
-                     </execution>
+                    <!-- authorizationServerApi -->
+                    <execution>
+                        <id>generate-authorization-server-api-client</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <typeMappings>
+                                <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
+                            </typeMappings>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.22.0-RC1/packages/api-clients/open-api/authorizationServerApi.yml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <skipValidateSpec>true</skipValidateSpec>
+                            <configOptions>
+                                <apiPackage>it.pagopa.interop.generated.openapi.clients.auth.api</apiPackage>
+                                <modelPackage>it.pagopa.interop.generated.openapi.clients.auth.model</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                            <apiPackage>it.pagopa.interop.generated.openapi.clients.auth.api</apiPackage>
+                            <modelPackage>it.pagopa.interop.generated.openapi.clients.auth.model</modelPackage>
+                        </configuration>
+                    </execution>
 
                     <execution>
                         <id>generate-external-interop-tracing-client</id>
@@ -511,7 +511,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.20.0-RC3/packages/api-clients/open-api/m2mGatewayApi.yml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.22.0-RC1/packages/api-clients/open-api/m2mGatewayApi.yml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -537,77 +537,77 @@
                         </configuration>
                     </execution>
 
-                     <execution>
-                         <id>generate-m2mGateway-v3-client</id>
-                         <goals>
-                             <goal>generate</goal>
-                         </goals>
-                         <phase>process-resources</phase>
-                         <configuration>
-                             <typeMappings>
-                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
-                             </typeMappings>
-                             <!--<inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/release/2.10.0/packages/api-clients/open-api/m2mGatewayApi.yml</inputSpec> -->
-                             <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.20.0-RC3/packages/api-clients/open-api/m2mGatewayApiV3.yml</inputSpec>
-                             <generatorName>java</generatorName>
-                             <library>resttemplate</library>
-                             <generateApiTests>false</generateApiTests>
-                             <generateModelTests>false</generateModelTests>
-                             <configOptions>
-                                 <apiPackage>it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api</apiPackage>
-                                 <modelPackage>it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model</modelPackage>
-                                 <dateLibrary>java8</dateLibrary>
-                                 <annotationLibrary>none</annotationLibrary>
-                                 <documentationProvider>source</documentationProvider>
-                                 <openApiNullable>false</openApiNullable>
-                                 <useAbstractionForFiles>true</useAbstractionForFiles>
-                                 <useBeanValidation>false</useBeanValidation>
-                                 <additionalModelTypeAnnotations>
-                                     @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-                                 </additionalModelTypeAnnotations>
-                             </configOptions>
-                             <apiPackage>it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api</apiPackage>
-                             <modelPackage>it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model</modelPackage>
-                             <globalProperties>
-                                 <skipFormModel>false</skipFormModel>
-                             </globalProperties>
-                         </configuration>
-                     </execution>
+                    <execution>
+                        <id>generate-m2mGateway-v3-client</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <typeMappings>
+                                <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
+                            </typeMappings>
+                            <!--<inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/release/2.10.0/packages/api-clients/open-api/m2mGatewayApi.yml</inputSpec> -->
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.22.0-RC1/packages/api-clients/open-api/m2mGatewayApiV3.yml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <apiPackage>it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api</apiPackage>
+                                <modelPackage>it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                            <apiPackage>it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api</apiPackage>
+                            <modelPackage>it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model</modelPackage>
+                            <globalProperties>
+                                <skipFormModel>false</skipFormModel>
+                            </globalProperties>
+                        </configuration>
+                    </execution>
 
-                     <execution>
-                         <id>generate-tenant-process-client</id>
-                         <goals>
-                             <goal>generate</goal>
-                         </goals>
-                         <phase>process-resources</phase>
-                         <configuration>
-                             <typeMappings>
-                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
-                             </typeMappings>
-                             <!-- <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/develop/packages/api-clients/open-api/bffApi.yml</inputSpec> -->
-                             <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/develop/packages/api-clients/open-api/tenantApi.yml</inputSpec>
-                             <generatorName>java</generatorName>
-                             <library>resttemplate</library>
-                             <generateApiTests>false</generateApiTests>
-                             <generateModelTests>false</generateModelTests>
-                             <skipValidateSpec>true</skipValidateSpec>
-                             <configOptions>
-                                 <apiPackage>it.pagopa.interop.generated.openapi.clients.tenant-process.api</apiPackage>
-                                 <modelPackage>it.pagopa.interop.generated.openapi.clients.tenant-process.model</modelPackage>
-                                 <dateLibrary>java8</dateLibrary>
-                                 <annotationLibrary>none</annotationLibrary>
-                                 <documentationProvider>source</documentationProvider>
-                                 <openApiNullable>false</openApiNullable>
-                                 <useAbstractionForFiles>true</useAbstractionForFiles>
-                                 <useBeanValidation>false</useBeanValidation>
-                                 <additionalModelTypeAnnotations>
-                                     @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-                                 </additionalModelTypeAnnotations>
-                             </configOptions>
-                             <apiPackage>it.pagopa.interop.generated.openapi.clients.tenant-process.api</apiPackage>
-                             <modelPackage>it.pagopa.interop.generated.openapi.clients.tenant-process.model</modelPackage>
-                         </configuration>
-                     </execution>
+                    <execution>
+                        <id>generate-tenant-process-client</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <typeMappings>
+                                <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
+                            </typeMappings>
+                            <!-- <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/develop/packages/api-clients/open-api/bffApi.yml</inputSpec> -->
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.22.0-RC1/packages/api-clients/open-api/tenantApi.yml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <skipValidateSpec>true</skipValidateSpec>
+                            <configOptions>
+                                <apiPackage>it.pagopa.interop.generated.openapi.clients.tenant-process.api</apiPackage>
+                                <modelPackage>it.pagopa.interop.generated.openapi.clients.tenant-process.model</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                            <apiPackage>it.pagopa.interop.generated.openapi.clients.tenant-process.api</apiPackage>
+                            <modelPackage>it.pagopa.interop.generated.openapi.clients.tenant-process.model</modelPackage>
+                        </configuration>
+                    </execution>
 
                 </executions>
             </plugin>
@@ -663,42 +663,42 @@
                         </configuration>
                     </execution>
 
-                     <execution>
-                         <id>patch-linked-resource</id>
-                         <phase>process-resources</phase>
-                         <goals>
-                             <goal>replace</goal>
-                         </goals>
-                         <configuration>
-                             <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/LinkedResource.java</file>
-                             <regex>true</regex>
-                             <replacements>
-                                 <replacement>
-                                     <token>@JsonIgnoreProperties\([\s\S]*?value\s*=\s*"resourceKind"[\s\S]*?\)\s*\n?</token>
-                                     <value></value>
-                                 </replacement>
-                                 <replacement>
-                                     <token>JsonTypeInfo\.Id\.NAME</token>
-                                     <value>JsonTypeInfo.Id.NONE</value>
-                                 </replacement>
-                                 <replacement>
-                                     <token>ESERVICE_TEMPLATE\(String\.valueOf\("ESERVICE_TEMPLATE"\)\);</token>
-                                     <value><![CDATA[ESERVICE_TEMPLATE(String.valueOf("ESERVICE_TEMPLATE")),
+                    <execution>
+                        <id>patch-linked-resource</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/LinkedResource.java</file>
+                            <regex>true</regex>
+                            <replacements>
+                                <replacement>
+                                    <token>@JsonIgnoreProperties\([\s\S]*?value\s*=\s*"resourceKind"[\s\S]*?\)\s*\n?</token>
+                                    <value></value>
+                                </replacement>
+                                <replacement>
+                                    <token>JsonTypeInfo\.Id\.NAME</token>
+                                    <value>JsonTypeInfo.Id.NONE</value>
+                                </replacement>
+                                <replacement>
+                                    <token>ESERVICE_TEMPLATE\(String\.valueOf\("ESERVICE_TEMPLATE"\)\);</token>
+                                    <value><![CDATA[ESERVICE_TEMPLATE(String.valueOf("ESERVICE_TEMPLATE")),
     ESERVICE(String.valueOf("ESERVICE"));]]></value>
-                                 </replacement>
-                                 <replacement>
-                                     <token>@JsonInclude\(value = JsonInclude.Include.ALWAYS\)[\s\n\r]+public UUID getEservice</token>
-                                     <value>@JsonInclude(value = JsonInclude.Include.NON_NULL)
-                                         public UUID getEservice</value>
-                                 </replacement>
-                                 <replacement>
-                                     <token>@JsonInclude\(value = JsonInclude.Include.ALWAYS\)[\s\n\r]+public void setEservice</token>
-                                     <value>@JsonInclude(value = JsonInclude.Include.NON_NULL)
-                                         public void setEservice</value>
-                                 </replacement>
-                             </replacements>
-                         </configuration>
-                     </execution>
+                                </replacement>
+                                <replacement>
+                                    <token>@JsonInclude\(value = JsonInclude.Include.ALWAYS\)[\s\n\r]+public UUID getEservice</token>
+                                    <value>@JsonInclude(value = JsonInclude.Include.NON_NULL)
+                                        public UUID getEservice</value>
+                                </replacement>
+                                <replacement>
+                                    <token>@JsonInclude\(value = JsonInclude.Include.ALWAYS\)[\s\n\r]+public void setEservice</token>
+                                    <value>@JsonInclude(value = JsonInclude.Include.NON_NULL)
+                                        public void setEservice</value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </execution>
 
                     <execution>
                         <id>patch-linkable-resource</id>
@@ -741,115 +741,115 @@
                                     <token>ESERVICE_TEMPLATE\(String\.valueOf\("ESERVICE_TEMPLATE"\)\);</token>
                                     <value><![CDATA[ESERVICE_TEMPLATE(String.valueOf("ESERVICE_TEMPLATE")),
     ESERVICE(String.valueOf("ESERVICE"));]]></value>
-                                 </replacement>
-                                 <replacement>
-                                     <token>@JsonInclude\(value = JsonInclude.Include.ALWAYS\)[\s\n\r]+public UUID getEservice</token>
-                                     <value>@JsonInclude(value = JsonInclude.Include.NON_NULL)
-                                         public UUID getEservice</value>
-                                 </replacement>
-                                 <replacement>
-                                     <token>@JsonInclude\(value = JsonInclude.Include.ALWAYS\)[\s\n\r]+public void setEservice</token>
-                                     <value>@JsonInclude(value = JsonInclude.Include.NON_NULL)
-                                         public void setEservice</value>
-                                 </replacement>
-                             </replacements>
-                         </configuration>
-                     </execution>
+                                </replacement>
+                                <replacement>
+                                    <token>@JsonInclude\(value = JsonInclude.Include.ALWAYS\)[\s\n\r]+public UUID getEservice</token>
+                                    <value>@JsonInclude(value = JsonInclude.Include.NON_NULL)
+                                        public UUID getEservice</value>
+                                </replacement>
+                                <replacement>
+                                    <token>@JsonInclude\(value = JsonInclude.Include.ALWAYS\)[\s\n\r]+public void setEservice</token>
+                                    <value>@JsonInclude(value = JsonInclude.Include.NON_NULL)
+                                        public void setEservice</value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </execution>
 
-                     <!-- TODO: le patch al codice generato sono necessarie per far sì che il modello StandardCertifiedTenantAttribute estenda CertifiedTenantAttribute, in modo da poter essere trattati in maniera polimorfica.-->
+                    <!-- TODO: le patch al codice generato sono necessarie per far sì che il modello StandardCertifiedTenantAttribute estenda CertifiedTenantAttribute, in modo da poter essere trattati in maniera polimorfica.-->
 
-                     <execution>
-                         <id>patch-StandardCertifiedTenantAttribute</id>
-                         <phase>process-resources</phase>
-                         <goals>
-                             <goal>replace</goal>
-                         </goals>
-                         <configuration>
-                             <file>
-                                 ${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/StandardCertifiedTenantAttribute.java
-                             </file>
-                             <regex>true</regex>
-                             <replacements>
-                                 <replacement>
-                                     <token>public class StandardCertifiedTenantAttribute \{</token>
-                                     <value>public class StandardCertifiedTenantAttribute extends CertifiedTenantAttribute {
-                                     </value>
-                                 </replacement>
-                                 <replacement>
-                                     <token>/\*\*\s*\*\s*Get kind[\s\S]*?public\s+KindEnum\s+getKind\(\)\s*\{[\s\S]*?\}\s*\n?</token>
-                                     <value></value>
-                                 </replacement>
+                    <execution>
+                        <id>patch-StandardCertifiedTenantAttribute</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                        <configuration>
+                            <file>
+                                ${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/StandardCertifiedTenantAttribute.java
+                            </file>
+                            <regex>true</regex>
+                            <replacements>
+                                <replacement>
+                                    <token>public class StandardCertifiedTenantAttribute \{</token>
+                                    <value>public class StandardCertifiedTenantAttribute extends CertifiedTenantAttribute {
+                                    </value>
+                                </replacement>
+                                <replacement>
+                                    <token>/\*\*\s*\*\s*Get kind[\s\S]*?public\s+KindEnum\s+getKind\(\)\s*\{[\s\S]*?\}\s*\n?</token>
+                                    <value></value>
+                                </replacement>
 
-                                 <replacement>
-                                     <token>\s*public static final String JSON_PROPERTY_KIND = "kind";\s*@javax.annotation.Nonnull\s*private KindEnum kind;</token>
-                                     <value></value>
-                                 </replacement>
+                                <replacement>
+                                    <token>\s*public static final String JSON_PROPERTY_KIND = "kind";\s*@javax.annotation.Nonnull\s*private KindEnum kind;</token>
+                                    <value></value>
+                                </replacement>
 
-                                 <replacement>
-                                     <token>public\s+enum\s+KindEnum\s*\{[\s\S]*?(?=public\s+static\s+final\s+String\s+JSON_PROPERTY_ID\s*=\s*"id";)</token>
-                                     <value></value>
-                                 </replacement>
-                             </replacements>
-                         </configuration>
-                     </execution>
+                                <replacement>
+                                    <token>public\s+enum\s+KindEnum\s*\{[\s\S]*?(?=public\s+static\s+final\s+String\s+JSON_PROPERTY_ID\s*=\s*"id";)</token>
+                                    <value></value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </execution>
 
-                     <execution>
-                         <id>patch-certified-discrete-tenant-attribute</id>
-                         <phase>process-resources</phase>
-                         <goals>
-                             <goal>replace</goal>
-                         </goals>
-                         <configuration>
-                             <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/CertifiedDiscreteTenantAttribute.java</file>
-                             <regex>true</regex>
-                             <replacements>
-                                 <replacement>
-                                     <token>public class CertifiedDiscreteTenantAttribute \{</token>
-                                     <value>public class CertifiedDiscreteTenantAttribute extends CertifiedTenantAttribute {</value>
-                                 </replacement>
+                    <execution>
+                        <id>patch-certified-discrete-tenant-attribute</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/CertifiedDiscreteTenantAttribute.java</file>
+                            <regex>true</regex>
+                            <replacements>
+                                <replacement>
+                                    <token>public class CertifiedDiscreteTenantAttribute \{</token>
+                                    <value>public class CertifiedDiscreteTenantAttribute extends CertifiedTenantAttribute {</value>
+                                </replacement>
 
-                                 <replacement>
-                                     <token>/\*\*\s*\*\s*Get kind[\s\S]*?public\s+KindEnum\s+getKind\(\)\s*\{[\s\S]*?\}\s*\n?</token>
-                                     <value></value>
-                                 </replacement>
+                                <replacement>
+                                    <token>/\*\*\s*\*\s*Get kind[\s\S]*?public\s+KindEnum\s+getKind\(\)\s*\{[\s\S]*?\}\s*\n?</token>
+                                    <value></value>
+                                </replacement>
 
-                                 <replacement>
-                                     <token>\s*public static final String JSON_PROPERTY_KIND = "kind";\s*@javax.annotation.Nonnull\s*private KindEnum kind;</token>
-                                     <value></value>
-                                 </replacement>
+                                <replacement>
+                                    <token>\s*public static final String JSON_PROPERTY_KIND = "kind";\s*@javax.annotation.Nonnull\s*private KindEnum kind;</token>
+                                    <value></value>
+                                </replacement>
 
-                                 <replacement>
-                                     <token>public\s+enum\s+KindEnum\s*\{[\s\S]*?(?=public\s+static\s+final\s+String\s+JSON_PROPERTY_ID\s*=\s*"id";)</token>
-                                     <value></value>
-                                 </replacement>
-                             </replacements>
-                         </configuration>
-                     </execution>
+                                <replacement>
+                                    <token>public\s+enum\s+KindEnum\s*\{[\s\S]*?(?=public\s+static\s+final\s+String\s+JSON_PROPERTY_ID\s*=\s*"id";)</token>
+                                    <value></value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </execution>
 
-                     <execution>
-                         <id>patch-tenant-attribute</id>
-                         <phase>process-resources</phase>
-                         <goals>
-                             <goal>replace</goal>
-                         </goals>
-                         <configuration>
-                             <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/CertifiedTenantAttribute.java</file>
-                             <regex>true</regex>
-                             <replacements>
-                                 <replacement>
-                                     <token>CERTIFIED_DISCRETE\(String\.valueOf\("CERTIFIED_DISCRETE"\)\);</token>
-                                     <value><![CDATA[CERTIFIED_DISCRETE(String.valueOf("CERTIFIED_DISCRETE")),
+                    <execution>
+                        <id>patch-tenant-attribute</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/CertifiedTenantAttribute.java</file>
+                            <regex>true</regex>
+                            <replacements>
+                                <replacement>
+                                    <token>CERTIFIED_DISCRETE\(String\.valueOf\("CERTIFIED_DISCRETE"\)\);</token>
+                                    <value><![CDATA[CERTIFIED_DISCRETE(String.valueOf("CERTIFIED_DISCRETE")),
     CERTIFIED(String.valueOf("CERTIFIED"));]]></value>
-                                 </replacement>
-                                 <replacement>
-                                     <token>private KindEnum kind;</token>
-                                     <value>protected KindEnum kind;</value>
-                                 </replacement>
-                             </replacements>
-                         </configuration>
-                     </execution>
-                 </executions>
-             </plugin>
+                                </replacement>
+                                <replacement>
+                                    <token>private KindEnum kind;</token>
+                                    <value>protected KindEnum kind;</value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

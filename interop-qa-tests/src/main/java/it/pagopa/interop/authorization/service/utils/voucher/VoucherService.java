@@ -39,9 +39,7 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.DefaultResponseErrorHandler;
-import org.springframework.web.client.ResponseErrorHandler;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
@@ -137,6 +135,12 @@ public class VoucherService {
         return doVoucherRequest(request, headers);
     }
 
+    private byte[] getBodyFromResponse(ResponseEntity<Object> response) {
+        return response.getBody() != null
+                ? response.getBody().toString().getBytes(StandardCharsets.UTF_8)
+                : null;
+    }
+
     private Map<String, Object> doVoucherRequest(VoucherRequest request, HttpHeaders extraHeaders) {
         ResponseErrorHandler originalErrorHandler = restTemplate.getErrorHandler();
         try {
@@ -169,6 +173,28 @@ public class VoucherService {
 
             restTemplate.setErrorHandler(new NoOpResponseErrorHandler());
             ResponseEntity<Object> response = restTemplate.exchange(uri, HttpMethod.POST, requestEntity, Object.class);
+
+            if (response.getStatusCode().isError()) {
+                if (response.getStatusCode().is4xxClientError()) {
+                    throw new HttpClientErrorException(
+                            response.getStatusCode(),
+                            response.getStatusCode().getReasonPhrase(),
+                            response.getHeaders(),
+                            getBodyFromResponse(response),
+                            StandardCharsets.UTF_8
+                    );
+                } else if (response.getStatusCode().is5xxServerError()) {
+                    throw new HttpServerErrorException(
+                            response.getStatusCode(),
+                            response.getStatusCode().getReasonPhrase(),
+                            response.getHeaders(),
+                            getBodyFromResponse(response),
+                            StandardCharsets.UTF_8
+                    );
+                } else {
+                    throw new RuntimeException("Errore durante la richiesta al token di accesso: " + response.getStatusCode());
+                }
+            }
 
             Object responseBody = response.getBody();
             if (responseBody instanceof Map<?, ?> mapResponse) {

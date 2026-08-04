@@ -5,8 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.interop.authorization.domain.Auth;
 import it.pagopa.interop.authorization.domain.dpop.DpopHeaderPolicy;
 import it.pagopa.interop.common.interceptor.dpop.utils.AgidJwtSignatureVerifier;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -143,8 +145,17 @@ public class IntegrityValidationInterceptor implements ClientHttpRequestIntercep
 
         if (digestHeader == null || digestHeader.isBlank()) {
             if (failOnMissingDigest) {
+
+                HttpStatus httpStatus = null;
+                try {
+                    httpStatus = response.getStatusCode();
+                } catch (IOException e) {
+                    // throw new RuntimeException(e);
+                }
+
                 throw new IntegrityValidationException(
-                        "Missing Digest header for " + request.getMethod() + " " + request.getURI()
+                        "Missing Digest header for " + request.getMethod() + " " + request.getURI(),
+                        httpStatus
                 );
             }
             log.debug("Digest header missing for {} {}", request.getMethod(), request.getURI());
@@ -342,9 +353,22 @@ public class IntegrityValidationInterceptor implements ClientHttpRequestIntercep
         return node.has(field) ? node.get(field).asText() : null;
     }
 
+    @Getter
     public static class IntegrityValidationException extends RuntimeException {
-        public IntegrityValidationException(String message) { super(message); }
-        public IntegrityValidationException(String message, Throwable cause) { super(message, cause); }
+        private final HttpStatus httpStatus;
+
+        public IntegrityValidationException(String message) {
+            super(message);
+            this.httpStatus = null;
+        }
+        public IntegrityValidationException(String message, Throwable cause) {
+            super(message, cause);
+            this.httpStatus = null;
+        }
+        public IntegrityValidationException(String message, HttpStatus httpStatus) {
+            super(message);
+            this.httpStatus = httpStatus;
+        }
     }
 
     private static final class CachedBodyClientHttpResponse implements ClientHttpResponse {

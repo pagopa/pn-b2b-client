@@ -131,6 +131,7 @@ public interface IM2MEserviceClient extends IClient<EService, UUID> {
     @Builder
     class EServiceArchivingRequest {
         private String archivingReason;
+        private Integer gracePeriodDays;
     }
 
     EServices getAll(EserviceListRequest payload);
@@ -140,6 +141,12 @@ public interface IM2MEserviceClient extends IClient<EService, UUID> {
     ResponseEntity<EService> getWithHttpInfo(UUID id);
 
     Document uploadInterface(EServiceInterfaceUploadRequest body);
+
+    Document uploadAsyncExchangeCallbackInterface(EServiceInterfaceUploadRequest body);
+
+    void deleteEServiceDescriptorAsyncExchangeCallbackInterface(UUID eServiceId, UUID descriptorId);
+
+    FileDownloadMultipart downloadEServiceDescriptorAsyncExchangeCallbackInterface(UUID eServiceId, UUID descriptorId);
 
     EService createEService(EServiceCreateRequest body);
 

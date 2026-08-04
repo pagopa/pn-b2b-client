@@ -29,9 +29,9 @@ public interface IEServiceClient extends SettableBearerToken {
 
     ResponseEntity<Void> suspendDescriptor(UUID eServiceId, UUID descriptorId);
 
-    ResponseEntity<Void> scheduleArchiveDescriptor(UUID eServiceId, UUID descriptorId);
+    ResponseEntity<Void> scheduleArchiveDescriptor(UUID eServiceId, UUID descriptorId, GracePeriodDays gracePeriodDays);
 
-    ResponseEntity<Void> scheduleArchiveEService(UUID eServiceId, EServiceArchivingReasonSeed eserviceArchivingReasonSeed);
+    ResponseEntity<Void> scheduleArchiveEService(UUID eServiceId, EServiceArchivingSeed eserviceArchivingSeed);
 
     ResponseEntity<Void> cancelDescriptorArchiving(UUID eServiceId, UUID descriptorId);
 
@@ -79,7 +79,7 @@ public interface IEServiceClient extends SettableBearerToken {
 
     void updateEServicePersonalDataFlagAfterPublication(UUID eServiceId, EServicePersonalDataFlagUpdateSeed seed);
 
-    ResponseEntity<CreatedResource> createEServiceInstanceFromTemplateWithHttpInfo(
+    ResponseEntity<CreatedEServiceDescriptor> createEServiceInstanceFromTemplateWithHttpInfo(
             UUID templateId, InstanceEServiceSeed instanceEServiceSeed);
 
     ResponseEntity<EServiceTemplateInstances> getEServiceTemplateInstancesWithHttpInfo(
@@ -126,6 +126,9 @@ public interface IEServiceClient extends SettableBearerToken {
 
     ResponseEntity<CreatedResource> addEServiceTemplateInstanceInterfaceRestWithHttpInfo(
             UUID eServiceId, UUID descriptorId, TemplateInstanceInterfaceRESTSeed templateInstanceInterfaceRESTSeed);
+
+    ResponseEntity<CreatedResource> addEServiceTemplateInstanceInterfaceSoapWithHttpInfo(
+            UUID eServiceId, UUID descriptorId, TemplateInstanceInterfaceSOAPSeed templateInstanceInterfaceSOAPSeed);
 
     void editAgreementApprovalPolicy(UUID eServiceId, UUID descriptorId, AgreementApprovalPolicy policy);
 

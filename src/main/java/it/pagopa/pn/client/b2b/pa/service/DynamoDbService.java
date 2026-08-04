@@ -33,8 +33,9 @@ public class DynamoDbService {
             case PAYMENT_INFO, COST_COMPONENTS, COST_UPDATE_RESULT, USER_ATTRIBUTES ->
                     queryWithoutFilters(tableName, "pk", attributeValues);
             case ONBOARD_INSTITUTIONS -> queryWithoutFilters(tableName, "id", attributeValues);
-            case NOTIFICATION_REWORKS -> queryWithoutFilters(tableName, "iun", attributeValues);
-            case IO_CONNECTOR_REQUESTS -> queryWithoutFilters(tableName, "requestId", attributeValues);
+            case NOTIFICATION_REWORKS,NOTIFICATIONS -> queryWithoutFilters(tableName, "iun", attributeValues);
+            case IO_CONNECTOR_REQUESTS, PAPER_REQUEST_ERROR ->
+                    queryWithoutFilters(tableName, "requestId", attributeValues);
             case NOTIFICATION_DELIVERY_COST -> queryWithoutFilters(tableName, List.of("pk", "sk"), attributeValues);
             //query WITH sorting
             case BATCH_REQUESTS_WITH_INDEX_SEND_STATUS ->

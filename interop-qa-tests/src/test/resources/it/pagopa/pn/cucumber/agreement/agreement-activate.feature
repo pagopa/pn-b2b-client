@@ -3,75 +3,87 @@ Feature: Attivazione richiesta di fruizione
   Tutti gli utenti autorizzati di enti PA e GSP possono attivare una richiesta di fruizione
 
   @nrt-minimal
-  @agreement_activate1 @resource_intensive @certifiedAttribute
+  @agreement_activate1 @resource_intensive @certifiedAttribute @agreement-approve-unsuspend-refactor
   Scenario Outline: [AGREEMENT_ACTIVATE_01] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato PENDING (prima attivazione), con tutti gli attributi richiesti certificati, tutti gli attributi richiesti dichiarati dal fruitore, e tutti gli attributi richiesti verificati dall’erogatore, alla richiesta di attivazione da parte di un utente con sufficienti permessi dell’ente erogatore, va a buon fine
     Given l'utente è un "<ruolo>" di "<enteErogatore>"
-    Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
-    Given "<enteFruitore>" ha già dichiarato un attributo
-    Given "<enteFruitore>" ha già creato un attributo verificato
-    Given "<enteErogatore>" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
-    Given "<enteFruitore>" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
-    Given "<enteErogatore>" ha già verificato l'attributo verificato a "<enteFruitore>"
-    When l'utente richiede una operazione di attivazione di quella richiesta di fruizione
-    Then si ottiene status code <risultato>
+    And "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
+    And "<enteFruitore>" ha già dichiarato un attributo
+    And "<enteFruitore>" ha già creato un attributo verificato
+    And "<enteErogatore>" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
+    And "<enteFruitore>" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    And "<enteErogatore>" ha già verificato l'attributo verificato a "<enteFruitore>"
+    When l'utente richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code <statusCode>
 
     @happy-path
     Examples:
-      | enteFruitore | enteCertificatore | enteErogatore | ruolo | risultato |
-      | PA1          | PA2               | GSP           | admin | 200       |
-      | GSP          | PA2               | PA1           | admin | 200       |
+      | enteFruitore | enteCertificatore | enteErogatore | ruolo | statusCode |
+      | PA1          | PA2               | GSP           | admin | 200        |
+      | GSP          | PA2               | PA1           | admin | 200        |
 
     @sad-path
     Examples:
-      | enteFruitore | enteCertificatore | enteErogatore | ruolo        | risultato |
-      | PA1          | PA2               | GSP           | api          | 403       |
-      | PA1          | PA2               | GSP           | security     | 403       |
-      | PA1          | PA2               | GSP           | support      | 403       |
-      | PA1          | PA2               | GSP           | api,security | 403       |
-      | GSP          | PA2               | PA1           | api          | 403       |
-      | GSP          | PA2               | PA1           | security     | 403       |
-      | GSP          | PA2               | PA1           | support      | 403       |
-      | GSP          | PA2               | PA1           | api,security | 403       |
+      | enteFruitore | enteCertificatore | enteErogatore | ruolo        | statusCode |
+      | PA1          | PA2               | GSP           | api          | 403        |
+      | PA1          | PA2               | GSP           | security     | 403        |
+      | PA1          | PA2               | GSP           | support      | 403        |
+      | PA1          | PA2               | GSP           | api,security | 403        |
+      | GSP          | PA2               | PA1           | api          | 403        |
+      | GSP          | PA2               | PA1           | security     | 403        |
+      | GSP          | PA2               | PA1           | support      | 403        |
+      | GSP          | PA2               | PA1           | api,security | 403        |
 
     @sad-path
     @nuovi-operatori-update
     Examples:
-      | enteFruitore | enteCertificatore | enteErogatore | ruolo        | risultato |
-      | PA1          | PA2               | GSP           | reviewer     |       403 |
-      | PA1          | PA2               | GSP           | viewer       |       403 |
+      | enteFruitore | enteCertificatore | enteErogatore | ruolo    | statusCode |
+      | PA1          | PA2               | GSP           | reviewer | 403        |
+      | PA1          | PA2               | GSP           | viewer   | 403        |
 
   @happy-path @nrt-minimal
-  @agreement_activate2 @no-parallel @certifiedAttribute
+  @agreement_activate2 @no-parallel @certifiedAttribute @agreement-approve-unsuspend-refactor
   Scenario Outline: [AGREEMENT_ACTIVATE_02] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato SUSPENDED (riattivazione), con tutti gli attributi richiesti certificati, tutti gli attributi richiesti dichiarati dal fruitore, e tutti gli attributi richiesti verificati dall’erogatore, alla richiesta di attivazione da parte di un utente con sufficienti permessi dell’ente erogatore, va a buon fine.
-    Given l'utente è un "admin" di "<enteErogatore>"
-    Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
-    Given "<enteFruitore>" ha già dichiarato un attributo
-    Given "<enteFruitore>" ha già creato un attributo verificato
-    Given "<enteErogatore>" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC"
-    Given "<enteFruitore>" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
-    Given "<enteErogatore>" ha già verificato l'attributo verificato a "<enteFruitore>"
-    Given "<enteErogatore>" ha già approvato quella richiesta di fruizione
-    Given "<enteErogatore>" ha già sospeso quella richiesta di fruizione come PRODUCER
-    Given "<enteFruitore>" ha già sospeso quella richiesta di fruizione come CONSUMER
-    When l'utente richiede una operazione di attivazione di quella richiesta di fruizione
-    Then si ottiene status code 200
+    Given l'utente è un "<ruolo>" di "<enteErogatore>"
+    And "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
+    And "<enteFruitore>" ha già dichiarato un attributo
+    And "<enteFruitore>" ha già creato un attributo verificato
+    And "<enteErogatore>" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC"
+    And "<enteFruitore>" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    And "<enteErogatore>" ha già verificato l'attributo verificato a "<enteFruitore>"
+    And "<enteErogatore>" ha già approvato quella richiesta di fruizione
+    And "<enteErogatore>" ha già sospeso quella richiesta di fruizione come PRODUCER
+    And "<enteFruitore>" ha già sospeso quella richiesta di fruizione come CONSUMER
+    When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code <statusCode>
 
+    @happy-path
     Examples:
-      | enteFruitore | enteCertificatore | enteErogatore |
-      | PA1          | PA2               | GSP           |
+      | enteFruitore | enteCertificatore | enteErogatore | ruolo | statusCode |
+      | PA1          | PA2               | GSP           | admin | 200        |
+
+    @sad-path
+    Examples:
+      | enteFruitore | enteCertificatore | enteErogatore | ruolo        | statusCode |
+      | PA1          | PA2               | GSP           | api          | 403        |
+      | PA1          | PA2               | GSP           | security     | 403        |
+      | PA1          | PA2               | GSP           | support      | 403        |
+      | PA1          | PA2               | GSP           | api,security | 403        |
+      | PA1          | PA2               | GSP           | reviewer     | 403        |
+      | PA1          | PA2               | GSP           | viewer       | 403        |
 
   @happy-path @nrt-minimal
-  @agreement_activate3 @no-parallel
+  @agreement_activate3 @no-parallel @agreement-approve-unsuspend-refactor
   Scenario Outline: [AGREEMENT_ACTIVATE_03] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato PENDING o SUSPENDED; con tutti gli attributi richiesti certificati, i quali sono due gruppi di due, dei quali il fruitore ne possiede uno per gruppo; tutti gli attributi richiesti dichiarati dal fruitore, i quali sono due gruppi di due, dei quali il fruitore ne possiede uno per gruppo; tutti gli attributi richiesti verificati dall’erogatore, i quali sono due gruppi di due, dei quali il fruitore ne possiede uno per gruppo; alla richiesta di attivazione da parte di un utente con sufficienti permessi dell’ente erogatore, va a buon fine.
     Given l'utente è un "admin" di "<enteErogatore>"
-    Given due gruppi di due attributi certificati da "<enteCertificatore>", dei quali "<enteFruitore>" ne possiede uno per gruppo
-    Given "<enteErogatore>" crea due gruppi di due attributi verificati
-    Given due gruppi di due attributi dichiarati, dei quali "<enteFruitore>" ne possiede uno per gruppo
-    Given "<enteErogatore>" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
-    Given "<enteFruitore>" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
-    Given "<enteErogatore>" verifica un attributo per ogni gruppo di attributi verificati a "<enteFruitore>"
-    When l'utente richiede una operazione di attivazione di quella richiesta di fruizione
+    And due gruppi di due attributi certificati da "<enteCertificatore>", dei quali "<enteFruitore>" ne possiede uno per gruppo
+    And "<enteErogatore>" crea due gruppi di due attributi verificati
+    And due gruppi di due attributi dichiarati, dei quali "<enteFruitore>" ne possiede uno per gruppo
+    And "<enteErogatore>" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
+    And "<enteFruitore>" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    And "<enteErogatore>" verifica un attributo per ogni gruppo di attributi verificati a "<enteFruitore>"
+    When l'utente richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 200
+    And la richiesta di fruizione è in stato "ACTIVE"
 
     Examples:
       | enteFruitore | enteCertificatore | enteErogatore |
@@ -79,23 +91,26 @@ Feature: Attivazione richiesta di fruizione
 
   @sad-path
   @nrt-minimal
-  @agreement_activate4a
-  Scenario Outline: [AGREEMENT_ACTIVATE_04A] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato ACTIVE, ARCHIVED, alla richiesta di attivazione da parte di un utente con sufficienti permessi dell’ente erogatore, ottiene un errore
+  @agreement_activate4a @agreement-approve-unsuspend-refactor
+  Scenario Outline: [AGREEMENT_ACTIVATE_04A] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato ACTIVE, ARCHIVED o SUSPENDED, alla richiesta di attivazione da parte di un utente con sufficienti permessi dell’ente erogatore, ottiene un errore
     Given l'utente è un "admin" di "PA1"
-    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
-    Given "GSP" ha una richiesta di fruizione in stato "<statoAgreement>" per quell'e-service
-    When l'utente richiede una operazione di attivazione di quella richiesta di fruizione
-    Then si ottiene status code 400
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    And "GSP" ha una richiesta di fruizione in stato "<statoAgreement>" per quell'e-service
+    When l'utente richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 409
+    And la richiesta di fruizione è in stato "<statoAgreement>"
 
     Examples:
       | statoAgreement |
       | ACTIVE         |
       | ARCHIVED       |
+      | SUSPENDED      |
 
   @deleghe1
-  Scenario: Un delegato alla fruizione sospende ed attiva una finalità/richiesta di fruizione agendo come delegato e passando il delegationId
+  @agreement-approve-unsuspend-refactor
+  Scenario: [AGREEMENT_ACTIVATE_07] Un delegato alla fruizione sospende e riattiva una finalità/richiesta di fruizione agendo come delegato e passando il delegationId
     Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
-    Given l'ente delegato "PA1"
+    And l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     And l'ente delegante "PA2"
@@ -114,12 +129,13 @@ Feature: Attivazione richiesta di fruizione
     And l'utente è un "admin" dell'ente delegato
     When l'utente delegato riattiva la finalità in stato "SUSPENDED" per quell'e-service
     When l'ente delegato richiede una operazione di sospensione di quella richiesta di fruizione
-    And l'ente delegato ha già approvato quella richiesta di fruizione
+    And l'ente delegato ha già riattivato quella richiesta di fruizione come CONSUMER
 
   @deleghe1
-  Scenario: Un delegato sia all'erogazione che alla fruizione sospende ed approva una richiesta di fruizione passando il Delegation-id come discriminante per capire se agisce come delegato all'erogazione o alla fruizione - Delegato all'erogazione
+  @agreement-approve-unsuspend-refactor
+  Scenario: [AGREEMENT_ACTIVATE_08] Un delegato sia all'erogazione che alla fruizione sospende ed approva una richiesta di fruizione passando il Delegation-id come discriminante per capire se agisce come delegato all'erogazione o alla fruizione - Delegato all'erogazione
     Given "PA2" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione automatica
-    Given l'utente è un "admin" di "PA1"
+    And l'utente è un "admin" di "PA1"
     # CREAZIONE DELEGA IN FRUIZIONE VERSO PA1
     And l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
@@ -136,21 +152,22 @@ Feature: Attivazione richiesta di fruizione
     And l'ente "PA1" accetta la delega
     Given "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     When l'ente delegato richiede una operazione di sospensione di quella richiesta di fruizione
-    And l'ente delegato ha già approvato quella richiesta di fruizione
+    And l'ente delegato ha già riattivato quella richiesta di fruizione come PRODUCER
 
 
   @sad-path @nrt-minimal
-  @agreement_activate4b @no-parallel @certifiedAttribute
+  @agreement_activate4b @no-parallel @certifiedAttribute @agreement-approve-unsuspend-refactor
     #BUG: https://pagopa.atlassian.net/browse/PIN-7747
   Scenario Outline: [AGREEMENT_ACTIVATE_04B] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, alla richiesta di attivazione da parte di un utente con sufficienti permessi dell’ente erogatore, ottiene un errore
     Given l'utente è un "admin" di "<enteErogatore>"
-    Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
-    Given "<enteErogatore>" ha già creato un e-service in stato "PUBLISHED" che richiede quell'attributo certificato con approvazione automatica
-    Given "<enteFruitore>" ha una richiesta di fruizione in stato "DRAFT" per quell'e-service
-    Given "<enteCertificatore>" ha già revocato quell'attributo a "<enteFruitore>"
-    Given la richiesta di fruizione è passata in stato "MISSING_CERTIFIED_ATTRIBUTES"
-    When l'utente richiede una operazione di attivazione di quella richiesta di fruizione
-    Then si ottiene status code 400
+    And "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
+    And "<enteErogatore>" ha già creato un e-service in stato "PUBLISHED" che richiede quell'attributo certificato con approvazione automatica
+    And "<enteFruitore>" ha una richiesta di fruizione in stato "DRAFT" per quell'e-service
+    And "<enteCertificatore>" ha già revocato quell'attributo a "<enteFruitore>"
+    And la richiesta di fruizione è passata in stato "MISSING_CERTIFIED_ATTRIBUTES"
+    When l'utente richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 409
+    And la richiesta di fruizione è in stato "MISSING_CERTIFIED_ATTRIBUTES"
 
     Examples:
       | enteFruitore | enteCertificatore | enteErogatore |
@@ -158,41 +175,356 @@ Feature: Attivazione richiesta di fruizione
 
   @sad-path
   @nrt-minimal
-  @agreement_activate4c
+  @agreement_activate4c @agreement-approve-unsuspend-refactor
   Scenario: [AGREEMENT_ACTIVATE_04C] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato REJECTED, alla richiesta di attivazione da parte di un utente con sufficienti permessi dell’ente erogatore, ottiene un errore
     Given l'utente è un "admin" di "PA1"
-    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
-    Given "GSP" ha già creato e inviato una richiesta di fruizione per quell'e-service ed è in attesa di approvazione
-    Given "PA1" ha già rifiutato quella richiesta di fruizione
-    When l'utente richiede una operazione di attivazione di quella richiesta di fruizione
-    Then si ottiene status code 400
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
+    And "GSP" ha già creato e inviato una richiesta di fruizione per quell'e-service ed è in attesa di approvazione
+    And "PA1" ha già rifiutato quella richiesta di fruizione
+    When l'utente richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 409
+    And la richiesta di fruizione è in stato "REJECTED"
 
   @sad-path
   @nrt-minimal
-  @agreement_activate5
+  @agreement_activate5 @agreement-approve-unsuspend-refactor
   Scenario: [AGREEMENT_ACTIVATE_05] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato PENDING, alla richiesta di attivazione da parte di un utente con sufficienti permessi dell’ente fruitore, ottiene un errore
     Given l'utente è un "admin" di "PA1"
-    Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
-    Given "PA1" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
-    When l'utente richiede una operazione di attivazione di quella richiesta di fruizione
+    And "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
+    And "PA1" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    When l'utente richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 403
+    And la richiesta di fruizione è in stato "PENDING"
 
   @happy-path @nrt-minimal
-  @agreement_activate6 @no-parallel @certifiedAttribute
+  @agreement_activate6 @no-parallel @certifiedAttribute @agreement-approve-unsuspend-refactor
     #BUG: https://pagopa.atlassian.net/browse/PIN-7750
   Scenario Outline: [AGREEMENT_ACTIVATE_06] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato SUSPENDED (riattivazione), con uno o più attributi richiesti non posseduti dal fruitore, alla richiesta di attivazione da parte di un utente con sufficienti permessi dell’ente erogatore, va a buon fine ma la richiesta di fruizione resta in stato "SUSPENDED"
     Given l'utente è un "admin" di "<enteErogatore>"
-    Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
-    Given "<enteErogatore>" ha già creato un e-service in stato "PUBLISHED" che richiede quell'attributo certificato con approvazione automatica
-    Given "<enteFruitore>" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    Given "<enteCertificatore>" ha già revocato quell'attributo a "<enteFruitore>"
-    Given la richiesta di fruizione è passata in stato "SUSPENDED"
-    When l'utente richiede una operazione di attivazione di quella richiesta di fruizione
+    And "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
+    And "<enteErogatore>" ha già creato un e-service in stato "PUBLISHED" che richiede quell'attributo certificato con approvazione automatica
+    And "<enteFruitore>" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "<enteCertificatore>" ha già revocato quell'attributo a "<enteFruitore>"
+    And la richiesta di fruizione è passata in stato "SUSPENDED"
+    When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
     Then si ottiene status code 200
+    And la richiesta di fruizione è in stato "SUSPENDED"
 
     Examples:
       | enteFruitore | enteCertificatore | enteErogatore |
       | PA1          | PA2               | GSP           |
+
+  @sad-path
+  @agreement-approve-unsuspend-refactor
+  Scenario Outline: [AGREEMENTS_APPROVE_1] L'approvazione di una richiesta di fruizione con id non valido restituisce errore
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
+    And "PA2" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    When l'utente richiede una operazione di approvazione della richiesta di fruizione con id "<agreementId>"
+    Then si ottiene status code <statusCode>
+    And la richiesta di fruizione è in stato "PENDING"
+
+    Examples:
+      | agreementId | statusCode |
+      | %null       | 400        |
+      | %random     | 404        |
+
+  @happy-path
+  @agreement-approve-unsuspend-refactor
+  Scenario: [AGREEMENTS_APPROVE_2] Un delegato all'erogazione attiva una richiesta di fruizione in stato PENDING per conto dell'erogatore
+    Given "PA2" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
+    And l'ente delegato "PA1"
+    And l'ente "PA1" concede la disponibilità a ricevere deleghe
+    And l'ente delegante "PA2"
+    And l'ente "PA2" richiede la creazione di una delega per l'ente "PA1"
+    And l'ente "PA1" accetta la delega
+    And "GSP" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    When l'ente delegato con id della delega "%actual" richiede una operazione di approvazione di quella richiesta di fruizione
+    Then si ottiene status code 200
+    And l'utente è un "admin" di "PA1"
+    And la richiesta di fruizione è in stato "ACTIVE"
+
+  @sad-path
+  @agreement-approve-unsuspend-refactor
+  Scenario: [AGREEMENTS_APPROVE_3] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato PENDING, alla richiesta di attivazione da parte di un utente di un tenant non autorizzato, si ottiene un errore
+    Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
+    And "PA1" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    And l'utente è un "admin" di "PA3"
+    When l'utente richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 403
+    And l'utente è un "admin" di "PA1"
+    And la richiesta di fruizione è in stato "PENDING"
+
+  @sad-path
+  @agreement-approve-unsuspend-refactor
+  Scenario: [AGREEMENTS_APPROVE_4] Un ente delegato con delega in erogazione non ancora accettata non può approvare una richiesta di fruizione in stato PENDING per conto dell'erogatore
+    Given "PA2" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione manuale
+    And l'ente delegato "PA1"
+    And l'ente "PA1" concede la disponibilità a ricevere deleghe
+    And l'ente delegante "PA2"
+    And l'ente "PA2" richiede la creazione di una delega per l'ente "PA1"
+    And "GSP" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    When l'ente delegato con id della delega "%actual" richiede una operazione di approvazione di quella richiesta di fruizione
+    Then si ottiene status code 403
+    And l'utente è un "admin" di "GSP"
+    And la richiesta di fruizione è in stato "PENDING"
+
+  @happy-path
+  @agreement-approve-unsuspend-refactor
+  Scenario: [AGREEMENTS_APPROVE_5] L'approvazione di una richiesta di fruizione verso un e-service che non richiede attributi va a buon fine
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
+    And "PA2" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    When l'utente richiede una operazione di approvazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 200
+    And la richiesta di fruizione è in stato "ACTIVE"
+
+  @sad-path
+  @agreement-approve-unsuspend-refactor
+  Scenario: [AGREEMENTS_APPROVE_6] Un delegato all'erogazione con delega revocata NON può attivare una richiesta di fruizione in stato PENDING per conto dell'erogatore
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
+    And l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe
+    And l'ente "PA1" richiede la creazione di una delega per l'ente "PA2"
+    And l'ente "PA2" accetta la delega
+    And "PA3" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    And l'ente "PA1" con ruolo "admin" revoca la delega con successo
+    When l'ente delegato con id della delega "%actual" richiede una operazione di approvazione di quella richiesta di fruizione
+    Then si ottiene status code 403
+    And l'utente è un "admin" di "PA1"
+    And la richiesta di fruizione è in stato "PENDING"
+
+  @sad-path
+  @agreement-approve-unsuspend-refactor
+  Scenario: [AGREEMENTS_APPROVE_7] Una richiesta di fruizione in stato PENDING NON può essere approvata da un ente con delega in erogazione non valida
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
+    And l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe
+    And l'ente "PA1" richiede la creazione di una delega per l'ente "PA2"
+    And l'ente "PA2" accetta la delega
+    And "PA3" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    When l'ente delegato con id della delega "%random" richiede una operazione di approvazione di quella richiesta di fruizione
+    Then si ottiene status code 403
+    And l'utente è un "admin" di "PA2"
+    And la richiesta di fruizione è in stato "PENDING"
+
+  @sad-path
+  @agreement-approve-unsuspend-refactor
+  Scenario Outline: [AGREEMENTS_UNSUSPEND_1] La riattivazione di una richiesta di fruizione con id non valido restituisce errore
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già sospeso quella richiesta di fruizione come PRODUCER
+    When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "<agreementId>"
+    Then si ottiene status code <statusCode>
+    And la richiesta di fruizione è in stato "SUSPENDED"
+
+    Examples:
+      | agreementId | statusCode |
+      | %null       | 400        |
+      | %random     | 404        |
+
+  @sad-path
+  @agreement-approve-unsuspend-refactor
+  Scenario Outline: [AGREEMENTS_UNSUSPEND_2A] La riattivazione di una richiesta di fruizione in stato differente da SUSPENDED restituisce errore
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    And "PA2" ha una richiesta di fruizione in stato "<statoAgreement>" per quell'e-service
+    When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 409
+    And la richiesta di fruizione è in stato "<statoAgreement>"
+
+    Examples:
+      | statoAgreement |
+      | ACTIVE         |
+      | ARCHIVED       |
+
+  @sad-path
+  @agreement-approve-unsuspend-refactor
+  Scenario: [AGREEMENTS_UNSUSPEND_2B] La riattivazione di una richiesta di fruizione in stato PENDING restituisce errore
+    Given l'utente è un "admin" di "PA1"
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
+    And "PA2" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 409
+    And la richiesta di fruizione è in stato "PENDING"
+
+  @sad-path
+  @agreement-approve-unsuspend-refactor
+  Scenario: [AGREEMENTS_UNSUSPEND_3] La riattivazione di una richiesta di fruizione in stato REJECTED restituisce errore
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
+    And "GSP" ha già creato e inviato una richiesta di fruizione per quell'e-service ed è in attesa di approvazione
+    And "PA1" ha già rifiutato quella richiesta di fruizione
+    When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 409
+    And la richiesta di fruizione è in stato "REJECTED"
+
+  @sad-path
+  @agreement-approve-unsuspend-refactor
+  Scenario Outline: [AGREEMENTS_UNSUSPEND_4] La riattivazione di una richiesta di fruizione in stato MISSING_CERTIFIED_ATTRIBUTES restituisce errore
+    Given l'utente è un "admin" di "<enteErogatore>"
+    And "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
+    And "<enteErogatore>" ha già creato un e-service in stato "PUBLISHED" che richiede quell'attributo certificato con approvazione automatica
+    And "<enteFruitore>" ha una richiesta di fruizione in stato "DRAFT" per quell'e-service
+    And "<enteCertificatore>" ha già revocato quell'attributo a "<enteFruitore>"
+    And la richiesta di fruizione è passata in stato "MISSING_CERTIFIED_ATTRIBUTES"
+    When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 409
+    And la richiesta di fruizione è in stato "MISSING_CERTIFIED_ATTRIBUTES"
+
+    Examples:
+      | enteFruitore | enteCertificatore | enteErogatore |
+      | PA1          | PA2               | GSP           |
+
+  @happy-path
+  @agreement-approve-unsuspend-refactor
+  Scenario Outline: [AGREEMENTS_UNSUSPEND_5] Una richiesta di fruizione sospesa dal producer o dal consumer può essere riattivata e tornare ACTIVE
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "<suspendingTenant>" ha già sospeso quella richiesta di fruizione come <suspendedBy>
+    And l'utente è un "admin" di "<reactivatingTenant>"
+    When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 200
+    And la richiesta di fruizione è in stato "ACTIVE"
+
+    Examples:
+      | suspendingTenant | suspendedBy | reactivatingTenant |
+      | PA1              | PRODUCER    | PA1                |
+      | PA2              | CONSUMER    | PA2                |
+
+  @sad-path
+  @agreement-approve-unsuspend-refactor
+  Scenario Outline: [AGREEMENTS_UNSUSPEND_6] La riattivazione di una richiesta di fruizione da parte di un utente non autorizzato restituisce errore
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "<suspendingTenant>" ha già sospeso quella richiesta di fruizione come <suspendedBy>
+    And l'utente è un "<role>" di "<tenant>"
+    When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 403
+    And l'utente è un "admin" di "PA1"
+    And la richiesta di fruizione è in stato "SUSPENDED"
+
+    Examples:
+      | suspendingTenant | suspendedBy | tenant | role         |
+      | PA1              | PRODUCER    | PA1    | api          |
+      | PA1              | PRODUCER    | PA1    | security     |
+      | PA1              | PRODUCER    | PA1    | support      |
+      | PA1              | PRODUCER    | PA1    | api,security |
+      | PA2              | CONSUMER    | PA2    | api          |
+      | PA2              | CONSUMER    | PA2    | security     |
+      | PA2              | CONSUMER    | PA2    | support      |
+      | PA2              | CONSUMER    | PA2    | api,security |
+
+  @happy-path
+  @agreement-approve-unsuspend-refactor
+  Scenario: [AGREEMENTS_UNSUSPEND_7] Un delegato all'erogazione riattiva una richiesta di fruizione in stato SUSPENDED per conto dell'erogatore
+    Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione automatica
+    And l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe
+    And l'ente "PA1" richiede la creazione di una delega per l'ente "PA2"
+    And l'ente "PA2" accetta la delega
+    And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'ente delegato richiede una operazione di sospensione di quella richiesta di fruizione
+    When l'ente delegato con id della delega "%actual" richiede una operazione di riattivazione di quella richiesta di fruizione
+    Then si ottiene status code 200
+    And l'utente è un "admin" di "PA2"
+    And la richiesta di fruizione è in stato "ACTIVE"
+
+  @sad-path
+  @agreement-approve-unsuspend-refactor
+  Scenario: [AGREEMENTS_UNSUSPEND_8] Se una richiesta di fruizione viene sospesa dall'erogatore dell'e-service e il fruitore tenta di riattivarla, questa rimarrà in stato SUSPENDED
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già sospeso quella richiesta di fruizione come PRODUCER
+    And l'utente è un "admin" di "PA2"
+    When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 200
+    And la richiesta di fruizione è in stato "SUSPENDED"
+
+  @sad-path
+  @agreement-approve-unsuspend-refactor
+  Scenario: [AGREEMENTS_UNSUSPEND_9] Se una richiesta di fruizione viene sospesa dall'erogatore e dal fruitore dell'e-service e il fruitore tenta di riattivarla, questa rimarrà in stato SUSPENDED
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già sospeso quella richiesta di fruizione come PRODUCER
+    And "PA2" ha già sospeso quella richiesta di fruizione come CONSUMER
+    And l'utente è un "admin" di "PA2"
+    When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 200
+    And la richiesta di fruizione è in stato "SUSPENDED"
+
+  @sad-path
+  @agreement-approve-unsuspend-refactor
+  Scenario: [AGREEMENTS_UNSUSPEND_10] Se una richiesta di fruizione viene sospesa dal fruitore e l'erogatore dell'e-service tenta di riattivarla, questa rimarrà in stato SUSPENDED
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già sospeso quella richiesta di fruizione come CONSUMER
+    And l'utente è un "admin" di "PA1"
+    When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 200
+    And la richiesta di fruizione è in stato "SUSPENDED"
+
+  @sad-path
+  @agreement-approve-unsuspend-refactor
+  Scenario: [AGREEMENTS_UNSUSPEND_11] Se una richiesta di fruizione viene sospesa dal fruitore e dall'erogatore e l'erogatore dell'e-service tenta di riattivarla, questa rimarrà in stato SUSPENDED
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già sospeso quella richiesta di fruizione come PRODUCER
+    And "PA2" ha già sospeso quella richiesta di fruizione come CONSUMER
+    And l'utente è un "admin" di "PA1"
+    When l'utente richiede una operazione di riattivazione della richiesta di fruizione con id "%actual"
+    Then si ottiene status code 200
+    And la richiesta di fruizione è in stato "SUSPENDED"
+
+  @happy-path
+  @agreement-approve-unsuspend-refactor
+  Scenario: [AGREEMENTS_UNSUSPEND_12] Un delegato alla fruizione riattiva una richiesta di fruizione in stato SUSPENDED per conto del fruitore
+    Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione automatica
+    And l'ente delegante "PA2"
+    And l'ente delegato "PA3"
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
+    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+    And l'ente delegato accetta la delega in fruizione
+    And il delegato ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'ente delegato richiede una operazione di sospensione di quella richiesta di fruizione
+    When l'ente delegato con id della delega "%actual" richiede una operazione di riattivazione di quella richiesta di fruizione
+    Then si ottiene status code 200
+    And la richiesta di fruizione è in stato "ACTIVE"
+
+  @sad-path
+  @agreement-approve-unsuspend-refactor
+  Scenario: [AGREEMENTS_UNSUSPEND_13] Un delegato all'erogazione con delega revocata NON può riattivare una richiesta di fruizione in stato SUSPENDED per conto dell'erogatore
+    Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione automatica
+    And l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe
+    And l'ente "PA1" richiede la creazione di una delega per l'ente "PA2"
+    And l'ente "PA2" accetta la delega
+    And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'ente delegato richiede una operazione di sospensione di quella richiesta di fruizione
+    And l'ente "PA1" con ruolo "admin" revoca la delega con successo
+    When l'ente delegato con id della delega "%actual" richiede una operazione di riattivazione di quella richiesta di fruizione
+    Then si ottiene status code 403
+    And l'utente è un "admin" di "PA1"
+    And la richiesta di fruizione è in stato "SUSPENDED"
+
+  @sad-path
+  @agreement-approve-unsuspend-refactor
+  Scenario: [AGREEMENTS_UNSUSPEND_14] Una richiesta di fruizione sospesa dall'erogatore dell'e-service NON può essere riattivata da un ente con delega in erogazione non valida
+    Given "PA1" ha già creato e pubblicato 1 e-service delegabile in fruizione con approvazione automatica
+    And l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA3" ha già sospeso quella richiesta di fruizione come CONSUMER
+    When l'ente delegato con id della delega "%random" richiede una operazione di riattivazione di quella richiesta di fruizione
+    Then si ottiene status code 403
+    And l'utente è un "admin" di "PA1"
+    And la richiesta di fruizione è in stato "SUSPENDED"
 
   @certifiedDiscreteAttribute
   @certifiedDiscreteAttributeFlagOn
@@ -226,8 +558,8 @@ Feature: Attivazione richiesta di fruizione
     And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
     And l'utente "PA1" possiede almeno un attributo certificato discreto
     And "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000 e con i seguenti attributi:
-      | kind               | group | comparator | value                                | dailyCallsPerConsumer |
-      | CERTIFIED_DISCRETE | 0     | LTE        | $ATTR_CERT_DISCR_THRESHOLD(PA1,-100) |                       |
+      | kind               | group | comparator | value                               | dailyCallsPerConsumer |
+      | CERTIFIED_DISCRETE | 0     | LTE        | $ATTR_CERT_DISCR_THRESHOLD(PA1,-10) |                       |
     And si ottiene response status code 200
     And l'e-service è in stato "PUBLISHED"
     And l'utente è un "admin" di "PA1"
@@ -242,8 +574,8 @@ Feature: Attivazione richiesta di fruizione
     And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
     And l'utente "PA1" possiede almeno un attributo certificato discreto
     And "PA3" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000 e con i seguenti attributi:
-      | kind               | group | comparator | value                                | dailyCallsPerConsumer |
-      | CERTIFIED_DISCRETE | 0     | LTE        | $ATTR_CERT_DISCR_THRESHOLD(PA1,-100) |                       |
+      | kind               | group | comparator | value                               | dailyCallsPerConsumer |
+      | CERTIFIED_DISCRETE | 0     | LTE        | $ATTR_CERT_DISCR_THRESHOLD(PA1,-10) |                       |
     And si ottiene response status code 200
     And l'e-service è in stato "PUBLISHED"
     And l'utente è un "admin" di "PA2"
@@ -267,15 +599,15 @@ Feature: Attivazione richiesta di fruizione
     When l'utente crea una richiesta di fruizione
     Then si ottiene response status code <expectedResult>
     Examples:
-      | comparator1 | value1                               | comparator2 | value2                               | expectedResult |
+      | comparator1 | value1                              | comparator2 | value2                              | expectedResult |
       # Entrambi soddisfatti
-      | GT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,-100) | LT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,100)  | 200            |
+      | GT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,-10) | LT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,10)  | 200            |
       # Secondo non soddisfatto
-      | GT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,-100) | LT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,-100) | 400            |
+      | GT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,-10) | LT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,-10) | 400            |
       # Primo non soddisfatto
-      | GT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,100)  | LT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,100)  | 400            |
+      | GT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,10)  | LT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,10)  | 400            |
       # Nessuno dei due soddisfatto
-      | GT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,100)  | LT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,-100) | 400            |
+      | GT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,10)  | LT          | $ATTR_CERT_DISCR_THRESHOLD(PA1,-10) | 400            |
 
   @certifiedDiscreteAttribute
   @certifiedDiscreteAttributeFlagOn
@@ -303,9 +635,9 @@ Feature: Attivazione richiesta di fruizione
     And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
     And l'utente "PA1" possiede almeno un attributo certificato discreto
     And "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000 e con i seguenti attributi:
-      | kind               | group | comparator | value                                | dailyCallsPerConsumer |
-      | CERTIFIED_DISCRETE | 0     | GT         | $ATTR_CERT_DISCR_THRESHOLD(PA1,-100) |                       |
-      | CERTIFIED          | 0     |            |                                      | 200                   |
+      | kind               | group | comparator | value                               | dailyCallsPerConsumer |
+      | CERTIFIED_DISCRETE | 0     | GT         | $ATTR_CERT_DISCR_THRESHOLD(PA1,-10) |                       |
+      | CERTIFIED          | 0     |            |                                     | 200                   |
     And si ottiene response status code 200
     And l'e-service è in stato "PUBLISHED"
     And l'utente è un "admin" di "PA1"
@@ -320,9 +652,9 @@ Feature: Attivazione richiesta di fruizione
     And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
     And l'utente "PA1" possiede almeno un attributo certificato discreto
     And "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000 e con i seguenti attributi:
-      | kind               | group | comparator | value                                | dailyCallsPerConsumer |
-      | CERTIFIED_DISCRETE | 0     | GT         | $ATTR_CERT_DISCR_THRESHOLD(PA1,-100) |                       |
-      | CERTIFIED          | 0     |            |                                      | 200                   |
+      | kind               | group | comparator | value                               | dailyCallsPerConsumer |
+      | CERTIFIED_DISCRETE | 0     | GT         | $ATTR_CERT_DISCR_THRESHOLD(PA1,-10) |                       |
+      | CERTIFIED          | 0     |            |                                     | 200                   |
     And si ottiene response status code 200
     And l'e-service è in stato "PUBLISHED"
     And l'utente assegna a "PA1" l'attributo certificato precedentemente creato
@@ -338,9 +670,9 @@ Feature: Attivazione richiesta di fruizione
     And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
     And l'utente "PA1" possiede almeno un attributo certificato discreto
     And "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 1000 e con i seguenti attributi:
-      | kind               | group | comparator | value                                | dailyCallsPerConsumer |
-      | CERTIFIED_DISCRETE | 0     | GT         | $ATTR_CERT_DISCR_THRESHOLD(PA1,100)  |                       |
-      | CERTIFIED          | 0     |            |                                      | 200                   |
+      | kind               | group | comparator | value                               | dailyCallsPerConsumer |
+      | CERTIFIED_DISCRETE | 0     | GT         | $ATTR_CERT_DISCR_THRESHOLD(PA1,100) |                       |
+      | CERTIFIED          | 0     |            |                                     | 200                   |
     And si ottiene response status code 200
     And l'e-service è in stato "PUBLISHED"
     And l'utente è un "admin" di "PA1"
