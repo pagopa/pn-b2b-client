@@ -1,4 +1,4 @@
-﻿@manual-archiving-eservice
+@manual-archiving-eservice
 Feature: Archiviazione manuale di un e-service
 
   Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_1.1] Un ente erogatore di un e-service in stato PUBLISHED e seconda versione DEPRECATED, può avviare il processo di archiviazione manuale dell'e-service
