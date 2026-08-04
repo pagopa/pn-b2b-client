@@ -646,12 +646,12 @@ Feature: Archiviazione manuale di un descrittore
 
     Examples:
       | role         | gracePeriod |
-#      | admin        | 30          |
-#      | api          | 30          |
-#      | api,security | 30          |
+      | admin        | 30          |
+      | api          | 30          |
+      | api,security | 30          |
       | admin        | 60          |
-#      | admin        | 90          |
-#      | admin        | 120         |
+      | admin        | 90          |
+      | admin        | 120         |
 
   @happy-path
   Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_ASYNC_TEMPLATE_INSTANCE_1.2] Un ente erogatore di un e-service asincrono creato da template può avviare il processo di archiviazione manuale del primo e meno recente descrittore in stato SUSPENDED
@@ -687,16 +687,20 @@ Feature: Archiviazione manuale di un descrittore
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template asincrono in modalità erogazione con tecnologia "REST" in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'utente crea una nuova versione dell'istanza del template con successo
     And l'utente specifica i metadati mancanti all'istanza del template asincrono con successo
     And l'utente tenta la pubblicazione di una nuova versione dell'istanza del template
     And si ottiene response status code 200
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
     And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     And l'utente è un "<role>" di "PA1"
     When l'utente annulla il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And l'archiviazione manuale del singolo descrittore è stata annullata con successo
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
 
     Examples:
       | role         |
@@ -709,10 +713,14 @@ Feature: Archiviazione manuale di un descrittore
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template asincrono in modalità erogazione con tecnologia "REST" in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già sospeso quell'e-service
     And l'utente crea una nuova versione dell'istanza del template con successo
     And l'utente specifica i metadati mancanti all'istanza del template asincrono con successo
     And l'utente tenta la pubblicazione di una nuova versione dell'istanza del template
     And si ottiene response status code 200
+    And la vecchia versione dell'e-service è in stato "SUSPENDED"
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
     And "PA1" ha già sospeso quell'e-service
     And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     And l'utente è un "<role>" di "PA1"
