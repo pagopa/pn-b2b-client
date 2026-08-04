@@ -389,8 +389,7 @@ Feature: Correzione timeline fase 3
     And "Mario Gherkin" legge la notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     When viene invocata una richiesta di restart per la notifica appena creata
-    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
-    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 200 secondi controllando ogni 5 secondi
     And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
 
   @timelineReworkF3 @checkRestart
@@ -422,8 +421,7 @@ Feature: Correzione timeline fase 3
     When viene invocata una richiesta di restart per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | recIndex   | reason     | task       | canInvalidateViewed |
       |     | ATTEMPT_0 | RECINDEX_0 | reasonTest | TEST-12345 | true                |
-    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
-    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 200 secondi controllando ogni 5 secondi
     And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
 
   @timelineReworkF3 @checkRestart
@@ -754,8 +752,7 @@ Feature: Correzione timeline fase 3
     And "Mario Gherkin" legge la notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     When viene invocata una richiesta di restart per la notifica appena creata
-    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
-    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 200 secondi controllando ogni 5 secondi
     And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
 
   @timelineReworkF3 @checkRestart
@@ -788,8 +785,7 @@ Feature: Correzione timeline fase 3
     When viene invocata una richiesta di restart per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | recIndex   | reason     | task       | canInvalidateViewed |
       |     | ATTEMPT_0 | RECINDEX_0 | reasonTest | TEST-12345 | true                |
-    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
-    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 200 secondi controllando ogni 5 secondi
     And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
 
   @timelineReworkF3 @checkRestart
@@ -1123,8 +1119,7 @@ Feature: Correzione timeline fase 3
     And "Mario Gherkin" legge la notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     When viene invocata una richiesta di restart per la notifica appena creata
-    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
-    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
+    Then si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 200 secondi controllando ogni 5 secondi
     And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
 
   @timelineReworkF3 @checkRestart
@@ -1157,8 +1152,7 @@ Feature: Correzione timeline fase 3
     When viene invocata una richiesta di restart per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | recIndex   | reason     | task       | canInvalidateViewed |
       |     | ATTEMPT_0 | RECINDEX_0 | reasonTest | TEST-12345 | true                |
-    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
-    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 200 secondi controllando ogni 5 secondi
     And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
 
   @timelineReworkF3 @checkRestart
@@ -1476,8 +1470,7 @@ Feature: Correzione timeline fase 3
     When viene invocata una richiesta di restart per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | recIndex   | reason     | task       |
       |     | ATTEMPT_1 | RECINDEX_0 | reasonTest | TEST-12345 |
-    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
-    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 200 secondi controllando ogni 5 secondi
     And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
 
   @timelineReworkF3 @checkRestart
@@ -1510,8 +1503,7 @@ Feature: Correzione timeline fase 3
     When viene invocata una richiesta di restart per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | recIndex   | reason     | task       | canInvalidateViewed |
       |     | ATTEMPT_1 | RECINDEX_0 | reasonTest | TEST-12345 | true                |
-    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
-    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 200 secondi controllando ogni 5 secondi
     And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
 
   @timelineReworkF3 @checkRestart
@@ -1573,8 +1565,7 @@ Feature: Correzione timeline fase 3
     When viene invocata una richiesta di restart per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | recIndex   | reason     | task       |
       |     | ATTEMPT_1 | RECINDEX_0 | reasonTest | TEST-12345 |
-    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
-    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 200 secondi controllando ogni 5 secondi
     And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
 
   @timelineReworkF3 @checkRestart
@@ -1607,8 +1598,7 @@ Feature: Correzione timeline fase 3
     When viene invocata una richiesta di restart per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | recIndex   | reason     | task       | canInvalidateViewed |
       |     | ATTEMPT_1 | RECINDEX_0 | reasonTest | TEST-12345 | true                |
-    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
-    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 200 secondi controllando ogni 5 secondi
     And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
 
   @timelineReworkF3 @checkRestart

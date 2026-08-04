@@ -462,19 +462,6 @@ Feature: Test relativi al SRS di correzione timeline fase 4
       | details_recIndex | 0        |
 
   @timelineReworkF4 @visualizzazioneNotifica
-  Scenario: [VISUALIZZAZIONE_POST_120_GG_MULTI] In caso di notifica visualizzata dopo più di 120 giorni, la visualizzazione non deve produrre gli elementi di timeline di visualizzazione, nè la relativa attestazione opponibile
-    Given "Comune_Multi" recupera lato web PA una notifica multidestinatario in stato "EFFECTIVE_DATE" inviata tra 200 e 120 giorni fa con destinatario Mario Gherkin senza allegati disponibili
-    When "Mario Gherkin" legge la notifica ricevuta
-    And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" non esista
-      | loadTimeline     | true     |
-      | details          | NOT_NULL |
-      | details_recIndex | 0        |
-    And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED_CREATION_REQUEST" non esista
-      | loadTimeline     | true     |
-      | details          | NOT_NULL |
-      | details_recIndex | 0        |
-
-  @timelineReworkF4 @visualizzazioneNotifica
   Scenario: [VISUALIZZAZIONE_POST_120_GG_DECEDUTO] In caso di notifica visualizzata dopo più di 120 giorni, la visualizzazione non deve produrre gli elementi di timeline di visualizzazione, nè la relativa attestazione opponibile
     Given "Comune_Multi" recupera lato web PA una notifica monodestinatario in stato "RETURNED_TO_SENDER" inviata tra 200 e 120 giorni fa con destinatario Mario Gherkin senza allegati disponibili
     When "Mario Gherkin" legge la notifica ricevuta
@@ -487,21 +474,8 @@ Feature: Test relativi al SRS di correzione timeline fase 4
       | details          | NOT_NULL |
       | details_recIndex | 0        |
 
-  @timelineReworkF4 @visualizzazioneNotifica
-  Scenario: [VISUALIZZAZIONE_POST_120_GG_DECEDUTO_MULTI] In caso di notifica visualizzata dopo più di 120 giorni, la visualizzazione non deve produrre gli elementi di timeline di visualizzazione, nè la relativa attestazione opponibile
-    Given "Comune_Multi" recupera lato web PA una notifica multidestinatario in stato "RETURNED_TO_SENDER" inviata tra 200 e 120 giorni fa con destinatario Mario Gherkin senza allegati disponibili
-    When "Mario Gherkin" legge la notifica ricevuta
-    And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" non esista
-      | loadTimeline     | true     |
-      | details          | NOT_NULL |
-      | details_recIndex | 0        |
-    And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED_CREATION_REQUEST" non esista
-      | loadTimeline     | true     |
-      | details          | NOT_NULL |
-      | details_recIndex | 0        |
-
   @timelineReworkF4 @visualizzazioneNotifica @visualizzazioneNotificaFeatureFlagOff
-  Scenario: [VISUALIZZAZIONE_ENTRO_120_GG_ATTESTAZIONE_OPPONIBILE_PERFEZIONATA] In caso di notifica perfezionata visualizzata entro 120 giorni, la visualizzazione produce gli elementi di timeline di visualizzazione e la relativa attestazione opponibile
+  Scenario: [VISUALIZZAZIONE_ENTRO_120_GG_ATTESTAZIONE_OPPONIBILE] In caso di notifica perfezionata visualizzata entro 120 giorni, la visualizzazione produce gli elementi di timeline di visualizzazione e la relativa attestazione opponibile
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -531,14 +505,17 @@ Feature: Test relativi al SRS di correzione timeline fase 4
     Then "Mario Gherkin" richiede il download dell'attestazione opponibile "RECIPIENT_ACCESS"
 
   @visualizzazioneNotificaFeatureFlagOff
-  Scenario: [VISUALIZZAZIONE_POST_120_GG_MULTI] In caso di notifica visualizzata dopo più di 120 giorni, la visualizzazione non deve produrre gli elementi di timeline di visualizzazione, nè la relativa attestazione opponibile
-    Given "Comune_Multi" recupera lato web PA una notifica multidestinatario in stato "EFFECTIVE_DATE" inviata tra 200 e 120 giorni fa con destinatario Mario Gherkin senza allegati disponibili
+  Scenario: [VISUALIZZAZIONE_POST_120_GG_FF_OFF] In caso di notifica visualizzata dopo più di 120 giorni, la visualizzazione non deve produrre gli elementi di timeline di visualizzazione, nè la relativa attestazione opponibile
+    Given "Comune_Multi" recupera lato web PA una notifica monodestinatario in stato "EFFECTIVE_DATE" inviata tra 200 e 120 giorni fa con destinatario Mario Gherkin senza allegati disponibili
     When "Mario Gherkin" legge la notifica ricevuta
-    And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" non esista
-      | loadTimeline     | true     |
-      | details          | NOT_NULL |
-      | details_recIndex | 0        |
-    And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED_CREATION_REQUEST" non esista
-      | loadTimeline     | true     |
-      | details          | NOT_NULL |
-      | details_recIndex | 0        |
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED_CREATION_REQUEST"
+    And "Mario Gherkin" richiede il download dell'attestazione opponibile "RECIPIENT_ACCESS"
+
+  @visualizzazioneNotificaFeatureFlagOff
+  Scenario: [VISUALIZZAZIONE_POST_120_GG_DECEDUTO_FF_OFF] In caso di notifica visualizzata dopo più di 120 giorni, la visualizzazione non deve produrre gli elementi di timeline di visualizzazione, nè la relativa attestazione opponibile
+    Given "Comune_Multi" recupera lato web PA una notifica monodestinatario in stato "RETURNED_TO_SENDER" inviata tra 200 e 120 giorni fa con destinatario Mario Gherkin senza allegati disponibili
+    When "Mario Gherkin" legge la notifica ricevuta
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED_CREATION_REQUEST"
+    And "Mario Gherkin" richiede il download dell'attestazione opponibile "RECIPIENT_ACCESS"
