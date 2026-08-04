@@ -5,15 +5,17 @@ import org.junit.platform.suite.api.*;
 import static io.cucumber.junit.platform.engine.Constants.*;
 
 /**
- * TEMPORANEO — da cancellare a fine analisi QA-16429 (prefisso {@code Tmp_}).
+ * TEMPORANEO riusabile — un’unica classe per rilanci isolati durante review NRT/UAT
+ * (prefisso {@code Tmp_}). Da cancellare solo a chiusura analisi, non a ogni scenario.
  * <p>
- * Verifica migrazione PDF verso {@code it.pagopa.common.util.PDFUtility}:
+ * Per ogni sessione: aggiorna {@code @SelectClasspathResource}, filtro nome e tag.
+ * Stato attuale (QA-16429 / PDFUtility):
  * <ul>
  *   <li>{@code B2B-TIMELINE_HOTFIX-BUG-PEC_4} — {@code containsText(..., "F24", true)}</li>
  *   <li>{@code TEMPLATE-ENGINE_13} — {@code extractText} via {@code isValidPdf}</li>
  *   <li>{@code B2B-LEGALFACT_CONTENT_VERIFY_1} — {@code extractStructuredText} via {@code PnContentExtractor}</li>
  * </ul>
- * {@code matchesPattern}/{@code checkTypeAAR} ({@code RADD_WAVE_*}) fuori scope NRT UAT — da riesercitare in run RADD dedicata.
+ * Runner: {@code -Dtest=it.pagopa.pn.cucumber.Tmp_NrtReviewTest}
  */
 @Suite
 @IncludeEngines("cucumber")
@@ -31,5 +33,5 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 )
 @ExcludeTags({"ignore"})
 @IncludeTags({"workflowAnalogico", "templateEngine", "legalFact"})
-public class Tmp_HotfixBugPec4UatReviewTest {
+public class Tmp_NrtReviewTest {
 }
