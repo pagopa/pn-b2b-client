@@ -6,7 +6,7 @@ Feature: Archiviazione manuale di un e-service
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e <gracePeriod> giorni di preavviso
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
@@ -15,29 +15,41 @@ Feature: Archiviazione manuale di un e-service
 
     #quando il primo descrittore smetterà di essere il più recente, il suo stato passerà da PUBLISHED a DEPRECATED
     Examples:
-      | role         |
-      | admin        |
-      | api          |
-      | api,security |
+      | role         | gracePeriod |
+      | admin        | 30          |
+      | api          | 30          |
+      | api,security | 30          |
+      | admin        | 60          |
+      | admin        | 90          |
+      | admin        | 120         |
 
-  Scenario: [MANUAL_ARCHIVING_ESERVICE_1.2] Un ente erogatore di un e-service in stato SUSPENDED e seconda versione DEPRECATED, può avviare il processo di archiviazione manuale dell'e-service
-    Given l'utente è un "admin" di "PA1"
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_1.2] Un ente erogatore di un e-service in stato SUSPENDED e seconda versione DEPRECATED, può avviare il processo di archiviazione manuale dell'e-service
+    Given l'utente è un "<role>" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And "PA1" ha già sospeso quell'e-service
-    When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e <gracePeriod> giorni di preavviso
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
     And la versione più recente dell'e-service è in stato "ARCHIVING_SUSPENDED"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
+    Examples:
+      | role         | gracePeriod |
+      | admin        | 30          |
+      | api          | 30          |
+      | api,security | 30          |
+      | admin        | 60          |
+      | admin        | 90          |
+      | admin        | 120         |
+
   Scenario: [MANUAL_ARCHIVING_ESERVICE_1.3] Un descrittore con stato ARCHIVED a cui viene applicato il processo di archiviazione manuale dell'e-service, mantiene lo stato ARCHIVED
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "ARCHIVED"
     And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
@@ -45,9 +57,9 @@ Feature: Archiviazione manuale di un e-service
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
   Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_1.4] Un utente con ruolo non autorizzato NON può avviare il processo di archiviazione manuale dell'e-service
-    Given l'utente è un "<role>" di "PA1"
-    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
-    When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    Given l'utente è un "<role>" di "PA2"
+    And "PA2" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     Then si ottiene response status code 403
     And la versione più recente dell'e-service è in stato "PUBLISHED"
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
@@ -56,12 +68,14 @@ Feature: Archiviazione manuale di un e-service
       | role     |
       | security |
       | support  |
+      | reviewer |
+      | viewer   |
 
   Scenario: [MANUAL_ARCHIVING_ESERVICE_1.5] Un utente con token non valido NON può avviare il processo di archiviazione manuale dell'e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And viene impostato per l'utente un token non valido
-    When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     Then si ottiene response status code 401
 
   Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_1.6] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale dell'e-service se i parametri obbligatori non sono presenti o corretti
@@ -69,7 +83,7 @@ Feature: Archiviazione manuale di un e-service
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    When l'utente avvia il processo di archiviazione dell'e-service con id "<eserviceId>" e specificando la motivazione "<archivingReason>"
+    When l'utente avvia il processo di archiviazione dell'e-service "<eserviceId>" specificando la motivazione "<archivingReason>" e <gracePeriod> giorni di preavviso
     Then si ottiene response status code <statusCode>
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
@@ -77,19 +91,19 @@ Feature: Archiviazione manuale di un e-service
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
     Examples:
-      | eserviceId | archivingReason          | statusCode |
-      | %null      | QA test manual-archiving | 400        |
-      | %actual    | %null                    | 400        |
-      | %null      | %null                    | 400        |
-      | %actual    | %blank                   | 400        |
-      | %random    | QA test manual-archiving | 404        |
+      | eserviceId | archivingReason          | gracePeriod | statusCode |
+      | %null      | QA test manual-archiving | 60          | 400        |
+      | %actual    | %null                    | 60          | 400        |
+      | %null      | %null                    | 60          | 400        |
+      | %actual    | %blank                   | 60          | 400        |
+      | %random    | QA test manual-archiving | 60          | 404        |
 
   Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_1.7] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale dell'e-service se la stringa archivingReason non rispetta la lunghezza attesa
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione composta da <archivingReasonLength> caratteri
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando una motivazione di <archivingReasonLength> caratteri e 60 giorni di preavviso
     Then si ottiene response status code 400
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
@@ -102,24 +116,18 @@ Feature: Archiviazione manuale di un e-service
       | 9                     |
       | 251                   |
 
-  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_1.8] Un ente erogatore di un e-service in stato PUBLISHED e seconda versione SUSPENDED, può avviare il processo di archiviazione manuale dell'e-service
-    Given l'utente è un "<role>" di "PA1"
+  Scenario: [MANUAL_ARCHIVING_ESERVICE_1.8] Un ente erogatore di un e-service in stato PUBLISHED e seconda versione SUSPENDED, può avviare il processo di archiviazione manuale dell'e-service
+    Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già sospeso quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "ARCHIVING_SUSPENDED"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
     And la versione più recente dell'e-service è in stato "ARCHIVING"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
-
-    Examples:
-      | role         |
-      | admin        |
-      | api          |
-      | api,security |
 
   Scenario: [MANUAL_ARCHIVING_ESERVICE_1.9] Un ente erogatore di un e-service in stato SUSPENDED e seconda versione SUSPENDED, può avviare il processo di archiviazione manuale dell'e-service
     Given l'utente è un "admin" di "PA1"
@@ -128,18 +136,34 @@ Feature: Archiviazione manuale di un e-service
     And "PA1" ha già sospeso quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And "PA1" ha già sospeso quell'e-service
-    When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "ARCHIVING_SUSPENDED"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
     And la versione più recente dell'e-service è in stato "ARCHIVING_SUSPENDED"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_1.10] Un ente erogatore di un e-service in stato ARCHIVED e seconda versione ARCHIVED, NON può avviare il processo di archiviazione manuale dell'e-service
+    Given l'utente è un "admin" di "PA1"
+    When l'utente avvia il processo di archiviazione dell'e-service "<eserviceId>" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    Then si ottiene response status code 400
+    #versione più recente
+    And il descrittore con id "<secondDescriptorId>" dell'e-service con id "<eserviceId>" è in stato "ARCHIVED"
+    And il descrittore con id "<secondDescriptorId>" dell'e-service avente id "<eserviceId>" è stato correttamente archiviato tramite l'archiviazione manuale dell'intero e-service
+    #versione meno recente
+    And il descrittore con id "<firstDescriptorId>" dell'e-service con id "<eserviceId>" è in stato "ARCHIVED"
+    And il descrittore con id "<firstDescriptorId>" dell'e-service avente id "<eserviceId>" è stato correttamente archiviato tramite l'archiviazione manuale dell'intero e-service
+
+    #è possibile ottenere un e-service in stato ARCHIVED solo utilizzando e-service preparati dalla data preparation
+    Examples:
+      | firstDescriptorId                    | secondDescriptorId                   | eserviceId                           |
+      | 7b379f88-31a6-4e39-9553-f7ad74afde4f | abde2f2c-be8d-46d9-b626-e19b1e7f9490 | 785023e5-9a73-42e1-a6e2-b633baf1618c |
+
   Scenario: [MANUAL_ARCHIVING_ESERVICE_2.1] L'avvio del processo di archiviazione dell'e-service, causa l'eliminazione dell'ultimo descrittore in stato DRAFT, se presente
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA1" tenta la creazione di una versione in DRAFT per quell'e-service
-    When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     Then si ottiene response status code 204
     And l'ultimo descrittore in stato DRAFT è stato cancellato
     And la versione più recente dell'e-service è in stato "ARCHIVING"
@@ -161,7 +185,7 @@ Feature: Archiviazione manuale di un e-service
     And l'utente pubblica l'e-service
     And l'e-service è in stato "WAITING_FOR_APPROVAL"
     When l'utente è un "admin" di "PA1"
-    And l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     Then si ottiene response status code 409
     And la versione più recente dell'e-service è in stato "WAITING_FOR_APPROVAL"
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
@@ -173,7 +197,7 @@ Feature: Archiviazione manuale di un e-service
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     Given l'utente è un "admin" di "PA2"
     When l'utente richiede un'operazione di upgrade di quella richiesta di fruizione
     Then si ottiene response status code 400
@@ -188,7 +212,7 @@ Feature: Archiviazione manuale di un e-service
     And "PA2" ha già inserito l'utente con ruolo "admin" come membro di quel client
     And "PA2" ha già associato la finalità a quel client
     And un "admin" di "PA2" ha caricato una chiave pubblica nel client
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     When l'utente sospende quel descrittore in corso di archiviazione
     Then si ottiene response status code 204
     And la versione più recente dell'e-service è in stato "ARCHIVING_SUSPENDED"
@@ -205,10 +229,10 @@ Feature: Archiviazione manuale di un e-service
       | api,security |
 
   Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_SUSPENSION_1.2] Un utente con ruolo non autorizzato NON può sospendere un e-service in stato ARCHIVING
-    Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
-    When l'utente è un "<role>" di "PA1"
+    Given l'utente è un "admin" di "PA2"
+    And "PA2" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    When l'utente è un "<role>" di "PA2"
     And l'utente sospende quel descrittore in corso di archiviazione
     Then si ottiene response status code 403
     And la versione più recente dell'e-service è in stato "ARCHIVING"
@@ -217,6 +241,8 @@ Feature: Archiviazione manuale di un e-service
       | role     |
       | support  |
       | security |
+      | reviewer |
+      | viewer   |
 
   Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_SUSPENSION_1.3] Un ente erogatore di un e-service in stato ARCHIVING_SUSPENDED è in grado di riattivare l'e-service in questione e le richieste di fruizione attive possono generare nuovi voucher
     Given l'utente è un "<role>" di "PA1"
@@ -228,7 +254,7 @@ Feature: Archiviazione manuale di un e-service
     And "PA2" ha già associato la finalità a quel client
     And un "admin" di "PA2" ha caricato una chiave pubblica nel client
     And "PA1" ha già sospeso quell'e-service
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     When l'utente attiva il descrittore di quell'e-service
     Then si ottiene response status code 204
     And la versione più recente dell'e-service è in stato "ARCHIVING"
@@ -245,11 +271,11 @@ Feature: Archiviazione manuale di un e-service
       | api,security |
 
   Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_SUSPENSION_1.4] Un utente con ruolo non autorizzato NON può riattivare un e-service in stato ARCHIVING_SUSPENDED
-    Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
-    And "PA1" ha già sospeso quell'e-service
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
-    Given l'utente è un "<role>" di "PA1"
+    Given l'utente è un "admin" di "PA2"
+    And "PA2" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha già sospeso quell'e-service
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    Given l'utente è un "<role>" di "PA2"
     When l'utente attiva il descrittore di quell'e-service
     Then si ottiene response status code 403
     And la versione più recente dell'e-service è in stato "ARCHIVING_SUSPENDED"
@@ -259,13 +285,15 @@ Feature: Archiviazione manuale di un e-service
       | role     |
       | support  |
       | security |
+      | reviewer |
+      | viewer   |
 
   Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_CANCELLATION_1.1] L'ente erogatore di un e-service in stato ARCHIVING può annullare il processo di archiviazione manuale di un e-service in corso
     Given l'utente è un "<role>" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     When l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
@@ -279,13 +307,13 @@ Feature: Archiviazione manuale di un e-service
       | api          |
       | api,security |
 
-  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_CANCELLATION_1.2] L'ente erogatore di un e-service in stato SUSPENDED può annullare il processo di archiviazione manuale di un e-service in corso
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_CANCELLATION_1.2] L'ente erogatore di un e-service in stato ARCHIVING_SUSPENDED può annullare il processo di archiviazione manuale in corso dell'e-service
     Given l'utente è un "<role>" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And "PA1" ha già sospeso quell'e-service
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     When l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
@@ -304,7 +332,7 @@ Feature: Archiviazione manuale di un e-service
     #quando il primo descrittore smetterà di essere il più recente, il suo stato passerà da PUBLISHED ad ARCHIVED
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     When l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "ARCHIVED"
@@ -313,10 +341,10 @@ Feature: Archiviazione manuale di un e-service
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
   Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_CANCELLATION_1.4] Un utente con ruolo non autorizzato NON può annullare il processo di archiviazione manuale dell'e-service
-    Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
-    When l'utente è un "<role>" di "PA1"
+    Given l'utente è un "admin" di "PA2"
+    And "PA2" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    When l'utente è un "<role>" di "PA2"
     And l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
     Then si ottiene response status code 403
     And la versione più recente dell'e-service è in stato "ARCHIVING"
@@ -325,11 +353,13 @@ Feature: Archiviazione manuale di un e-service
       | role     |
       | security |
       | support  |
+      | reviewer |
+      | viewer   |
 
   Scenario: [MANUAL_ARCHIVING_ESERVICE_CANCELLATION_1.5] Un utente con token non valido NON può annullare il processo di archiviazione manuale dell'e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     And viene impostato per l'utente un token non valido
     When l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
     Then si ottiene response status code 401
@@ -339,7 +369,7 @@ Feature: Archiviazione manuale di un e-service
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     When l'utente annulla il processo di archiviazione dell'e-service con id "<eserviceId>"
     Then si ottiene response status code <statusCode>
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
@@ -358,7 +388,7 @@ Feature: Archiviazione manuale di un e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già sospeso quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     When l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "SUSPENDED"
@@ -377,7 +407,7 @@ Feature: Archiviazione manuale di un e-service
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     When "PA2" ha già archiviato quella richiesta di fruizione
     Then la vecchia versione dell'e-service è in stato "ARCHIVED"
     And la versione più recente dell'e-service è in stato "PUBLISHED"
@@ -387,7 +417,7 @@ Feature: Archiviazione manuale di un e-service
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     When "PA2" ha già archiviato quella richiesta di fruizione
     Then la vecchia versione dell'e-service è in stato "ARCHIVED"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
@@ -398,10 +428,10 @@ Feature: Archiviazione manuale di un e-service
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
-    And l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
-    And la versione più recente dell'e-service è in stato "ARCHIVING"
+    And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
+    And l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And la versione più recente dell'e-service è in stato "ARCHIVING"
     When "PA2" ha già archiviato quella richiesta di fruizione
     Then la vecchia versione dell'e-service è in stato "ARCHIVED"
     And la versione più recente dell'e-service è in stato "ARCHIVING"
@@ -412,7 +442,7 @@ Feature: Archiviazione manuale di un e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già sospeso quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     When "PA2" ha già archiviato quella richiesta di fruizione
     Then la vecchia versione dell'e-service è in stato "ARCHIVED"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
@@ -424,7 +454,7 @@ Feature: Archiviazione manuale di un e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già sospeso quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     When "PA2" ha già archiviato quella richiesta di fruizione
     Then la vecchia versione dell'e-service è in stato "ARCHIVED"
     And la versione più recente dell'e-service è in stato "ARCHIVING"
@@ -440,7 +470,7 @@ Feature: Archiviazione manuale di un e-service
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     When "PA2" ha già archiviato quella richiesta di fruizione
     And l'utente è un "admin" di "PA1"
     Then la versione più recente dell'e-service è in stato "ARCHIVING"
@@ -451,7 +481,7 @@ Feature: Archiviazione manuale di un e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già sospeso quell'e-service
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     When "PA2" ha già archiviato quella richiesta di fruizione
     And l'utente è un "admin" di "PA1"
     Then la versione più recente dell'e-service è in stato "ARCHIVING_SUSPENDED"
@@ -461,7 +491,7 @@ Feature: Archiviazione manuale di un e-service
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     And "PA2" ha già archiviato quella richiesta di fruizione
     When l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
     Then la vecchia versione dell'e-service è in stato "ARCHIVED"
@@ -473,7 +503,7 @@ Feature: Archiviazione manuale di un e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente è un "admin" di "PA3"
-    And l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     Then si ottiene response status code 403
     And l'utente è un "admin" di "PA1"
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
@@ -484,7 +514,7 @@ Feature: Archiviazione manuale di un e-service
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     When l'utente è un "admin" di "PA3"
     And l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
     Then si ottiene response status code 403
@@ -500,7 +530,7 @@ Feature: Archiviazione manuale di un e-service
     And l'ente "PA1" richiede la creazione di una delega per l'ente "PA3"
     And l'utente è un "admin" di "PA3"
     And l'utente accetta la delega
-    When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     Then si ottiene response status code 403
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And la versione più recente dell'e-service è in stato "PUBLISHED"
@@ -510,7 +540,7 @@ Feature: Archiviazione manuale di un e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And l'utente è un "admin" di "PA1"
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     And l'ente "PA3" concede la disponibilità a ricevere deleghe
     And l'ente "PA1" richiede la creazione di una delega per l'ente "PA3"
     And l'utente è un "admin" di "PA3"
@@ -529,37 +559,52 @@ Feature: Archiviazione manuale di un e-service
     And l'utente è un "admin" di "PA3"
     And l'utente accetta la delega
     And l'utente è un "admin" di "PA1"
-    When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     Then si ottiene response status code 409
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And la versione più recente dell'e-service è in stato "PUBLISHED"
 
-  Scenario: [COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_1.1] Un ente erogatore può avviare il processo di archiviazione dell'intero e-service anche se l'archiviazione di uno specifico descrittore in stato ARCHIVING di quell'e-service è già in corso
+  Scenario Outline: [COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_1.1] Un ente erogatore può avviare il processo di archiviazione dell'intero e-service anche se l'archiviazione di uno specifico descrittore in stato ARCHIVING di quell'e-service è già in corso
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
-    When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando <descriptorArchiving> giorni di preavviso
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e <eserviceArchiving> giorni di preavviso
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
     And la versione più recente dell'e-service è in stato "ARCHIVING"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
-  Scenario: [COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_1.2] Un ente erogatore può avviare il processo di archiviazione dell'intero e-service anche se l'archiviazione di uno specifico descrittore in stato ARCHIVING_SUSPENDED di quell'e-service è già in corso
+    # Gli scenari COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_1.1 e 1.2 usano un sottoinsieme strategico di combinazioni dei periodi di preavviso, sufficiente a garantire una buona copertura senza testare tutte le permutazioni possibili.
+    Examples:
+      | descriptorArchiving | eserviceArchiving |
+      | 30                  | 30                |
+      | 30                  | 60                |
+      | 60                  | 90                |
+      | 90                  | 120               |
+
+  Scenario Outline: [COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_1.2] Un ente erogatore può avviare il processo di archiviazione dell'intero e-service anche se l'archiviazione di uno specifico descrittore in stato ARCHIVING_SUSPENDED di quell'e-service è già in corso
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già sospeso quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
-    When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando <descriptorArchiving> giorni di preavviso
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e <eserviceArchiving> giorni di preavviso
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "ARCHIVING_SUSPENDED"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
     And la versione più recente dell'e-service è in stato "ARCHIVING"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    Examples:
+      | descriptorArchiving | eserviceArchiving |
+      | 30                  | 90                |
+      | 60                  | 60                |
+      | 60                  | 120               |
+      | 120                 | 120               |
 
   Scenario: [COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_2.1] Un ente erogatore può annullare il processo di archiviazione dello specifico descrittore in corso in stato ARCHIVING anche se è parallelamente in esecuzione l'archiviazione dell'intero e-service
   E' in corso un processo di archiviazione combinata. Ovvero archiviazione dell'intero e-service e del primo e meno recente descrittore contemporaneamente
@@ -568,14 +613,15 @@ Feature: Archiviazione manuale di un e-service
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
-    And l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
+    And l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     And la versione più recente dell'e-service è in stato "ARCHIVING"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
     When l'utente annulla il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And il vecchio descrittore eredita i dati di archiviazione dell'intero e-service dal descrittore più recente
     And la versione più recente dell'e-service è in stato "ARCHIVING"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
@@ -587,14 +633,15 @@ Feature: Archiviazione manuale di un e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già sospeso quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
-    And l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
+    And l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     And la versione più recente dell'e-service è in stato "ARCHIVING"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
     When l'utente annulla il processo di archiviazione della vecchia versione con id "%actual" dell'e-service con id "%actual"
     Then si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "ARCHIVING_SUSPENDED"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And il vecchio descrittore eredita i dati di archiviazione dell'intero e-service dal descrittore più recente
     And la versione più recente dell'e-service è in stato "ARCHIVING"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
@@ -605,8 +652,8 @@ Feature: Archiviazione manuale di un e-service
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
-    And l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
+    And l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     And la versione più recente dell'e-service è in stato "ARCHIVING"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
     When l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
@@ -624,8 +671,8 @@ Feature: Archiviazione manuale di un e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già sospeso quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    And l'utente ha già messo in archiviazione la vecchia versione con id "%actual" dell'e-service con id "%actual"
-    And l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
+    And l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     And la versione più recente dell'e-service è in stato "ARCHIVING"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
     When l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
@@ -640,13 +687,34 @@ Feature: Archiviazione manuale di un e-service
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
-    When l'utente archivia la vecchia versione con id "%actual" dell'e-service con id "%actual"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    When l'utente avvia la messa in archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     Then si ottiene response status code 400
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
     And la versione più recente dell'e-service è in stato "ARCHIVING"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+  Scenario Outline: [COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_5.1] Un ente erogatore, quando è già in corso l’archiviazione manuale di un singolo descrittore, non può avviare anche l’archiviazione dell’intero e-service se il tempo di preavviso scelto genera una data di archiviazione dell’e-service antecedente a quella già prevista per il descrittore.
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando <descriptorArchiving> giorni di preavviso
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e <eserviceArchiving> giorni di preavviso
+    Then si ottiene response status code 400
+    And la vecchia versione dell'e-service è in stato "ARCHIVING"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    # COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_5.1 usa un sottoinsieme strategico di combinazioni dei periodi di preavviso, sufficiente a garantire una buona copertura senza testare tutte le permutazioni possibili.
+    Examples:
+      | descriptorArchiving | eserviceArchiving |
+      | 60                  | 30                |
+      | 90                  | 60                |
+      | 90                  | 30                |
+      | 120                 | 90                |
 
   @happy-path
   Scenario Outline: [ARCHIVING_ESERVICE_BY_JOB_1.1] Raggiunta la data finale del tempo di preavviso per l'archiviazione di un e-service, questo risulterà correttamente archiviato
@@ -717,3 +785,439 @@ Feature: Archiviazione manuale di un e-service
       | firstDescriptorId                    | secondDescriptorId                   | eserviceId                           | firstDescriptorState | secondDescriptorState |
 #      firstDescriptorId=descrittore in Archived . secondDescriptorId=descrittore in Archiving
       | 50bc283a-4a63-445b-a042-2b545501c988 | 9900424b-c0da-49d8-92ef-6661a65d8898 | aaaff1d2-d964-41f8-b8ef-dcbd35ea6f4e | ARCHIVED             | ARCHIVING             |
+
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_TEMPLATE_INSTANCE_1.1] Un ente erogatore di un e-service creato da template in stato PUBLISHED e seconda versione DEPRECATED, può avviare il processo di archiviazione manuale dell'e-service
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    And l'utente effettua l'aggiunta di una versione in stato PUBLISHED all'e-service con successo
+    When l'utente è un "<role>" di "PA1"
+    And l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e <gracePeriod> giorni di preavviso
+    Then si ottiene response status code 204
+    And la vecchia versione dell'e-service è in stato "ARCHIVING"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And la versione più recente dell'e-service è in stato "ARCHIVING"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    Examples:
+      | role         | gracePeriod |
+      | admin        | 30          |
+      | api          | 30          |
+      | api,security | 30          |
+      | admin        | 60          |
+      | admin        | 90          |
+      | admin        | 120         |
+
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_TEMPLATE_INSTANCE_1.2] Un ente erogatore di un e-service creato da template in stato SUSPENDED e seconda versione DEPRECATED, può avviare il processo di archiviazione manuale dell'e-service
+    Given l'utente è un "<role>" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    And l'utente effettua l'aggiunta di una versione in stato SUSPENDED all'e-service con successo
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e <gracePeriod> giorni di preavviso
+    Then si ottiene response status code 204
+    And la vecchia versione dell'e-service è in stato "ARCHIVING"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And la versione più recente dell'e-service è in stato "ARCHIVING_SUSPENDED"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    Examples:
+      | role         | gracePeriod |
+      | admin        | 30          |
+      | api          | 30          |
+      | api,security | 30          |
+      | admin        | 60          |
+      | admin        | 90          |
+      | admin        | 120         |
+
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_TEMPLATE_INSTANCE_1.3] Un utente con ruolo non autorizzato NON può avviare il processo di archiviazione manuale di un e-service creato da template
+    Given l'utente è un "admin" di "PA2"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    When l'utente è un "<role>" di "PA2"
+    And l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    Then si ottiene response status code 403
+    And l'utente è un "admin" di "PA2"
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    Examples:
+      | role     |
+      | security |
+      | support  |
+      | reviewer |
+      | viewer   |
+
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_TEMPLATE_INSTANCE_CANCELLATION_1.1] L'ente erogatore di un e-service creato da template in stato ARCHIVING può annullare il processo di archiviazione manuale di un e-service in corso
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    And l'utente effettua l'aggiunta di una versione in stato PUBLISHED all'e-service con successo
+    And l'utente è un "<role>" di "PA1"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    When l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
+    Then si ottiene response status code 204
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
+    And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    Examples:
+      | role         |
+      | admin        |
+      | api          |
+      | api,security |
+
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_TEMPLATE_INSTANCE_CANCELLATION_1.2] L'ente erogatore di un e-service creato da template in stato ARCHIVING_SUSPENDED può annullare il processo di archiviazione manuale in corso dell'e-service
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    And l'utente effettua l'aggiunta di una versione in stato SUSPENDED all'e-service con successo
+    And l'utente è un "<role>" di "PA1"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    When l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
+    Then si ottiene response status code 204
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
+    And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And la versione più recente dell'e-service è in stato "SUSPENDED"
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    Examples:
+      | role         |
+      | admin        |
+      | api          |
+      | api,security |
+
+  Scenario Outline: [COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_FROM_TEMPLATE_1.1] Un ente erogatore può avviare il processo di archiviazione dell'intero e-service creato da template anche se l'archiviazione di uno specifico descrittore in stato ARCHIVING di quell'e-service è già in corso
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    And l'utente effettua l'aggiunta di una versione in stato PUBLISHED all'e-service con successo
+    And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando <descriptorArchiving> giorni di preavviso
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e <eserviceArchiving> giorni di preavviso
+    Then si ottiene response status code 204
+    And la vecchia versione dell'e-service è in stato "ARCHIVING"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
+    And la versione più recente dell'e-service è in stato "ARCHIVING"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    # Gli scenari COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_FROM_TEMPLATE_1.1 e 1.2 usano un sottoinsieme strategico di combinazioni dei periodi di preavviso, sufficiente a garantire una buona copertura senza testare tutte le permutazioni possibili.
+    Examples:
+      | descriptorArchiving | eserviceArchiving |
+      | 30                  | 30                |
+      | 30                  | 60                |
+      | 60                  | 90                |
+      | 90                  | 120               |
+
+  Scenario Outline: [COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_FROM_TEMPLATE_1.2] Un ente erogatore può avviare il processo di archiviazione dell'intero e-service creato da template anche se l'archiviazione di uno specifico descrittore in stato ARCHIVING_SUSPENDED di quell'e-service è già in corso
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già sospeso quell'e-service
+    And l'utente è un "admin" di "PA1"
+    And l'utente effettua l'aggiunta di una versione in stato PUBLISHED all'e-service con successo
+    And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando <descriptorArchiving> giorni di preavviso
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e <eserviceArchiving> giorni di preavviso
+    Then si ottiene response status code 204
+    And la vecchia versione dell'e-service è in stato "ARCHIVING_SUSPENDED"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
+    And la versione più recente dell'e-service è in stato "ARCHIVING"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    Examples:
+      | descriptorArchiving | eserviceArchiving |
+      | 30                  | 90                |
+      | 60                  | 60                |
+      | 60                  | 120               |
+      | 120                 | 120               |
+
+  Scenario: [COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_FROM_TEMPLATE_2.1] Un ente erogatore NON può avviare il processo di archiviazione dello specifico descrittore se l'archiviazione dell'intero e-service creato da template è già in corso
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    And l'utente effettua l'aggiunta di una versione in stato PUBLISHED all'e-service con successo
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    When l'utente avvia la messa in archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
+    Then si ottiene response status code 400
+    And la vecchia versione dell'e-service è in stato "ARCHIVING"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And la versione più recente dell'e-service è in stato "ARCHIVING"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+  Scenario Outline: [COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_FROM_TEMPLATE_3.1] Un ente erogatore quando è già in corso l’archiviazione manuale di un singolo descrittore, non può avviare anche l’archiviazione dell’intero e-service creato da TEMPLATE se il tempo di preavviso scelto genera una data di archiviazione dell’e-service antecedente a quella già prevista per il descrittore.
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    And l'utente effettua l'aggiunta di una versione in stato PUBLISHED all'e-service con successo
+    And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando <descriptorArchiving> giorni di preavviso
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e <eserviceArchiving> giorni di preavviso
+    Then si ottiene response status code 400
+    And la vecchia versione dell'e-service è in stato "ARCHIVING"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    # COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_FROM_TEMPLATE_3.1 usa un sottoinsieme strategico di combinazioni dei periodi di preavviso, sufficiente a garantire una buona copertura senza testare tutte le permutazioni possibili.
+    Examples:
+      | descriptorArchiving | eserviceArchiving |
+      | 60                  | 30                |
+      | 90                  | 60                |
+      | 90                  | 30                |
+      | 120                 | 90                |
+
+  @happy-path
+  Scenario: [MANUAL_ARCHIVING_ESERVICE_CLONING_1.1] L'ente erogatore può clonare un e-service in stato ARCHIVING
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    When l'utente clona quell'e-service
+    Then si ottiene response status code 200
+
+  @happy-path
+  Scenario: [MANUAL_ARCHIVING_ESERVICE_CLONING_1.2] L'ente erogatore può clonare un e-service in stato ARCHIVING_SUSPENDED
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "SUSPENDED"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    When l'utente clona quell'e-service
+    Then si ottiene response status code 200
+
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_ASYNC_1.1] Un ente erogatore di un e-service asincrono in stato PUBLISHED e seconda versione DEPRECATED, può avviare il processo di archiviazione manuale dell'e-service
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
+      | asyncExchangeProperties.responseTime          | 100  |
+      | asyncExchangeProperties.resourceAvailableTime | 100  |
+      | asyncExchangeProperties.confirmation          | true |
+      | asyncExchangeProperties.bulk                  | true |
+      | asyncExchangeProperties.maxResultSet          | 50   |
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service asincrono
+    And l'utente è un "<role>" di "PA1"
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e <gracePeriod> giorni di preavviso
+    Then si ottiene response status code 204
+    And la vecchia versione dell'e-service è in stato "ARCHIVING"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And la versione più recente dell'e-service è in stato "ARCHIVING"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    Examples:
+      | role         | gracePeriod |
+      | admin        | 30          |
+      | api          | 30          |
+      | api,security | 30          |
+      | admin        | 60          |
+      | admin        | 90          |
+      | admin        | 120         |
+
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_ASYNC_1.2] Un ente erogatore di un e-service asincrono in stato SUSPENDED e seconda versione DEPRECATED, può avviare il processo di archiviazione manuale dell'e-service
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
+      | asyncExchangeProperties.responseTime          | 100  |
+      | asyncExchangeProperties.resourceAvailableTime | 100  |
+      | asyncExchangeProperties.confirmation          | true |
+      | asyncExchangeProperties.bulk                  | true |
+      | asyncExchangeProperties.maxResultSet          | 50   |
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service asincrono
+    And "PA1" ha già sospeso quell'e-service
+    And l'utente è un "<role>" di "PA1"
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e <gracePeriod> giorni di preavviso
+    Then si ottiene response status code 204
+    And la vecchia versione dell'e-service è in stato "ARCHIVING"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And la versione più recente dell'e-service è in stato "ARCHIVING_SUSPENDED"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    Examples:
+      | role         | gracePeriod |
+      | admin        | 30          |
+      | api          | 30          |
+      | api,security | 30          |
+      | admin        | 60          |
+      | admin        | 90          |
+      | admin        | 120         |
+
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_ASYNC_1.3] Un utente con ruolo non autorizzato NON può avviare il processo di archiviazione manuale di un e-service asincrono
+    Given l'utente è un "<role>" di "PA2"
+    And "PA2" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
+      | asyncExchangeProperties.responseTime          | 100  |
+      | asyncExchangeProperties.resourceAvailableTime | 100  |
+      | asyncExchangeProperties.confirmation          | true |
+      | asyncExchangeProperties.bulk                  | true |
+      | asyncExchangeProperties.maxResultSet          | 50   |
+    And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già pubblicato una nuova versione per quell'e-service asincrono
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    Then si ottiene response status code 403
+    And l'utente è un "admin" di "PA2"
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    Examples:
+      | role     |
+      | security |
+      | support  |
+      | reviewer |
+      | viewer   |
+
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_ASYNC_CANCELLATION_1.1] L'ente erogatore di un e-service asincrono in stato ARCHIVING può annullare il processo di archiviazione manuale di un e-service in corso
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
+      | asyncExchangeProperties.responseTime          | 100  |
+      | asyncExchangeProperties.resourceAvailableTime | 100  |
+      | asyncExchangeProperties.confirmation          | true |
+      | asyncExchangeProperties.bulk                  | true |
+      | asyncExchangeProperties.maxResultSet          | 50   |
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service asincrono
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    And l'utente è un "<role>" di "PA1"
+    When l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
+    Then si ottiene response status code 204
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
+    And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    Examples:
+      | role         |
+      | admin        |
+      | api          |
+      | api,security |
+
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_ASYNC_CANCELLATION_1.2] L'ente erogatore di un e-service asincrono in stato ARCHIVING_SUSPENDED può annullare il processo di archiviazione manuale in corso dell'e-service
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
+      | asyncExchangeProperties.responseTime          | 100  |
+      | asyncExchangeProperties.resourceAvailableTime | 100  |
+      | asyncExchangeProperties.confirmation          | true |
+      | asyncExchangeProperties.bulk                  | true |
+      | asyncExchangeProperties.maxResultSet          | 50   |
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service asincrono
+    And "PA1" ha già sospeso quell'e-service
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    And l'utente è un "<role>" di "PA1"
+    When l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
+    Then si ottiene response status code 204
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
+    And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And la versione più recente dell'e-service è in stato "SUSPENDED"
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    Examples:
+      | role         |
+      | admin        |
+      | api          |
+      | api,security |
+
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_ASYNC_TEMPLATE_INSTANCE_1.1] Un ente erogatore di un e-service asincrono creato da template in stato PUBLISHED e seconda versione DEPRECATED, può avviare il processo di archiviazione manuale dell'e-service
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template asincrono in modalità erogazione con tecnologia "REST" in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And l'utente crea una nuova versione dell'istanza del template con successo
+    And l'utente specifica i metadati mancanti all'istanza del template asincrono con successo
+    And l'utente tenta la pubblicazione di una nuova versione dell'istanza del template
+    And si ottiene response status code 200
+    And l'utente è un "<role>" di "PA1"
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e <gracePeriod> giorni di preavviso
+    Then si ottiene response status code 204
+    And la vecchia versione dell'e-service è in stato "ARCHIVING"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And la versione più recente dell'e-service è in stato "ARCHIVING"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    Examples:
+      | role         | gracePeriod |
+      | admin        | 30          |
+      | api          | 30          |
+      | api,security | 30          |
+      | admin        | 60          |
+      | admin        | 90          |
+      | admin        | 120         |
+
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_ASYNC_TEMPLATE_INSTANCE_1.2] Un ente erogatore di un e-service asincrono creato da template in stato SUSPENDED e seconda versione DEPRECATED, può avviare il processo di archiviazione manuale dell'e-service
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template asincrono in modalità erogazione con tecnologia "REST" in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And l'utente crea una nuova versione dell'istanza del template con successo
+    And l'utente specifica i metadati mancanti all'istanza del template asincrono con successo
+    And l'utente tenta la pubblicazione di una nuova versione dell'istanza del template
+    And si ottiene response status code 200
+    And "PA1" ha già sospeso quell'e-service
+    And l'utente è un "<role>" di "PA1"
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e <gracePeriod> giorni di preavviso
+    Then si ottiene response status code 204
+    And la vecchia versione dell'e-service è in stato "ARCHIVING"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And la versione più recente dell'e-service è in stato "ARCHIVING_SUSPENDED"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    Examples:
+      | role         | gracePeriod |
+      | admin        | 30          |
+      | api          | 30          |
+      | api,security | 30          |
+      | admin        | 60          |
+      | admin        | 90          |
+      | admin        | 120         |
+
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_ASYNC_TEMPLATE_INSTANCE_CANCELLATION_1.1] L'ente erogatore di un e-service asincrono creato da template in stato ARCHIVING può annullare il processo di archiviazione manuale di un e-service in corso
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template asincrono in modalità erogazione con tecnologia "REST" in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And l'utente crea una nuova versione dell'istanza del template con successo
+    And l'utente specifica i metadati mancanti all'istanza del template asincrono con successo
+    And l'utente tenta la pubblicazione di una nuova versione dell'istanza del template
+    And si ottiene response status code 200
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    And l'utente è un "<role>" di "PA1"
+    When l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
+    Then si ottiene response status code 204
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
+    And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    Examples:
+      | role         |
+      | admin        |
+      | api          |
+      | api,security |
+
+  Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_ASYNC_TEMPLATE_INSTANCE_CANCELLATION_1.2] L'ente erogatore di un e-service asincrono creato da template in stato ARCHIVING_SUSPENDED può annullare il processo di archiviazione manuale in corso dell'e-service
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template asincrono in modalità erogazione con tecnologia "REST" in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And l'utente crea una nuova versione dell'istanza del template con successo
+    And l'utente specifica i metadati mancanti all'istanza del template asincrono con successo
+    And l'utente tenta la pubblicazione di una nuova versione dell'istanza del template
+    And si ottiene response status code 200
+    And "PA1" ha già sospeso quell'e-service
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    And l'utente è un "<role>" di "PA1"
+    When l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
+    Then si ottiene response status code 204
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
+    And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And la versione più recente dell'e-service è in stato "SUSPENDED"
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    Examples:
+      | role         |
+      | admin        |
+      | api          |
+      | api,security |
