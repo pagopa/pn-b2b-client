@@ -48,9 +48,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
@@ -1122,9 +1119,6 @@ public class InvioNotificheB2bSteps {
         }
     }
 
-    /** Parallelismo per check F24 (I/O SafeStorage + parse PDF); pool dedicato, non common ForkJoinPool. */
-    private static final int F24_CHECK_PARALLELISM = 8;
-
     @And("si verifica che il contenuto degli attachments da inviare in via cartacea abbia {int} attachment di tipo {string}")
     public void presenceAttachmentAnalogicFlow(Integer numeroDocumenti, String tipologia) {
         List<PaperEngageRequestAttachmentsInner> attachments = Optional.ofNullable(documentiPec.get(0))
@@ -1134,7 +1128,7 @@ public class InvioNotificheB2bSteps {
 
         long actualCount;
         if ("F24".equalsIgnoreCase(tipologia)) {
-            actualCount = countF24Attachments(attachments);
+            actualCount = attachments.stream().filter(this::isF24).count();
         } else {
             actualCount = attachments.stream()
                     .map(PaperEngageRequestAttachmentsInner::getUri)
@@ -1148,33 +1142,6 @@ public class InvioNotificheB2bSteps {
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() + " - Verifica Allegati Cartacei in errore.";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-        }
-    }
-
-    private long countF24Attachments(List<PaperEngageRequestAttachmentsInner> attachments) {
-        if (attachments.isEmpty()) {
-            return 0;
-        }
-        int parallelism = Math.min(F24_CHECK_PARALLELISM, attachments.size());
-        ExecutorService executor = Executors.newFixedThreadPool(parallelism);
-        try {
-            List<CompletableFuture<Boolean>> futures = attachments.stream()
-                    .map(attachment -> CompletableFuture.supplyAsync(() -> isF24(attachment), executor))
-                    .toList();
-            return futures.stream()
-                    .map(CompletableFuture::join)
-                    .filter(Boolean::booleanValue)
-                    .count();
-        } finally {
-            executor.shutdown();
-            try {
-                if (!executor.awaitTermination(5, TimeUnit.MINUTES)) {
-                    executor.shutdownNow();
-                }
-            } catch (InterruptedException e) {
-                executor.shutdownNow();
-                Thread.currentThread().interrupt();
-            }
         }
     }
 
