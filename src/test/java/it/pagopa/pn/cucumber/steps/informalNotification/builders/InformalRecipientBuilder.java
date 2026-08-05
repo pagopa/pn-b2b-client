@@ -157,6 +157,7 @@ public class InformalRecipientBuilder {
             case "${NEW-IT-FR}" -> UUID.fromString(messageProvider.createAndSaveMessageITFR(currentCxId));
             case "${NEW-IT-DE}" -> UUID.fromString(messageProvider.createAndSaveMessageITDE(currentCxId));
             case "${NEW-IT-SL}" -> UUID.fromString(messageProvider.createAndSaveMessageITSL(currentCxId));
+            case "${NEW-IT-EN}" -> UUID.fromString(messageProvider.createAndSaveMessageITEN(currentCxId));
             case "${SAVED-IT}" -> UUID.fromString(messageProvider.getSavedMessageIT());
             case "${SAVED-IT-FR}" -> UUID.fromString(messageProvider.getSavedMessageITFR());
 

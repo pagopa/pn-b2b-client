@@ -12,7 +12,7 @@ Feature: Messaggi e allegati di una notifica bonaria.
   Includo nella notifica allegati di pagamento e documenti.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | document             | DOC_1_PG;DOC_2_PG;DOC_3_PG |
-      | campaignId           | SoricalFattOrd             |
+      | campaignId           | FattOrd                    |
       | recipient_type       | PF                         |
       | payment_multy_number | 3                          |
       | attachment_key       | classpath:/pagopa.pdf      |
@@ -61,8 +61,8 @@ Feature: Messaggi e allegati di una notifica bonaria.
   Scenario: [NOTIFICHE_BONARIE_MESSAGGI_02_1_D] Come ente mittente creo un nuovo messaggio con valori di default con seconda lingua non specificata
     Given mittente della notifica bonaria: "Comune_Multi"
     Then si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie
-      | primary_subject                         | additional_language | additional_short_body                      | additional_long_body                                                             | additional_subject                                                       |
-      | È stata emessa una nuova fattura per te | FR                  | Une nouvelle facture a ete emise pour vous | Sorical S.p.A. vous informe qu une facture a ete emise pour le contrat n 182140. | SEND vous informe que vous avez reçu une communication de Sorical S.p.A. |
+      | primary_subject                         | additional_language | additional_short_body                      | additional_long_body                                                               | additional_subject                                                         |
+      | È stata emessa una nuova fattura per te | FR                  | Une nouvelle facture a ete emise pour vous | Riscuoti  S.p.A. vous informe qu une facture a ete emise pour le contrat n 182140. | SEND vous informe que vous avez reçu une communication de Riscuoti  S.p.A. |
     Then tento il recupero del messaggio precedentemente creato per le comunicazioni bonarie
     Then l'operazione è andata a buon fine
 
@@ -200,7 +200,8 @@ Feature: Messaggi e allegati di una notifica bonaria.
     Then tento il recupero del messaggio precedentemente creato per le comunicazioni bonarie
     And l'operazione è andata a buon fine
     Then mittente della notifica bonaria: "Comune_Root"
-    And il recupero del messaggio per le comunicazioni bonarie fallisce con errore "403"
+    And il recupero del messaggio per le comunicazioni bonarie fallisce
+    Then si riceve errore 404 "PN_DELIVERY_MESSAGE_NOT_FOUND"
 
   @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_MESSAGGI_03_2_B2] Come ente mittente creo un nuovo messaggio e tento il recupero tramite diverso ente attivo.
@@ -212,7 +213,8 @@ Feature: Messaggi e allegati di una notifica bonaria.
     Then tento il recupero del messaggio precedentemente creato per le comunicazioni bonarie
     And l'operazione è andata a buon fine
     Then mittente della notifica bonaria: "Comune_1"
-    And il recupero del messaggio per le comunicazioni bonarie fallisce con errore "403"
+    And il recupero del messaggio per le comunicazioni bonarie fallisce
+    Then si riceve errore 404 "PN_DELIVERY_MESSAGE_NOT_FOUND"
 
 
 
@@ -226,11 +228,11 @@ Feature: Messaggi e allegati di una notifica bonaria.
   @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_05_1] Come ente mittente Recupero i documenti di una notifica bonaria
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalFattOrd    |
+      | campaignId    | FattOrd           |
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
-      | messageId     | ${NEW-IT}             |
+      | messageId     | ${NEW-IT}         |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si tenta il recupero documento della notifica bonaria
     Then il download risulta correttamente effettuato
@@ -240,11 +242,11 @@ Feature: Messaggi e allegati di una notifica bonaria.
   @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_05_4] Come ente mittente Recupero l'allegato di pagamento di una notifica bonaria
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalFattOrd    |
+      | campaignId    | FattOrd           |
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
-      | messageId     | ${NEW-IT}             |
+      | messageId     | ${NEW-IT}         |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si tenta il recupero allegato pagamento della notifica bonaria
     Then il download risulta correttamente effettuato
@@ -256,11 +258,11 @@ Feature: Messaggi e allegati di una notifica bonaria.
   @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_05_3_A] come ente mittente tento il recupero del documento di una notifica non inviata da me ricevendo un errore
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalFattOrd    |
+      | campaignId    | FattOrd           |
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
-      | messageId     | ${NEW-IT}             |
+      | messageId     | ${NEW-IT}         |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     Given mittente della notifica bonaria: "Comune_1"
     And si tenta il recupero documento della notifica bonaria
@@ -269,11 +271,11 @@ Feature: Messaggi e allegati di una notifica bonaria.
   @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_05_3_A1] come ente mittente tento il recupero del documento di una notifica non inviata da me ricevendo un errore
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalFattOrd    |
+      | campaignId    | FattOrd           |
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
-      | messageId     | ${NEW-IT}             |
+      | messageId     | ${NEW-IT}         |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     Given mittente della notifica bonaria: "Comune_Root"
     And si tenta il recupero documento della notifica bonaria
@@ -282,11 +284,11 @@ Feature: Messaggi e allegati di una notifica bonaria.
   #@informalNotificationsMessageAttachment errore già noto con bug PN-20078
   Scenario: [NOTIFICHE_BONARIE_05_3_B] Come ente mittente tento il Recupero del documento con indice non valido ricevendo errore
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalFattOrd    |
+      | campaignId    | FattOrd           |
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
-      | messageId     | ${NEW-IT}             |
+      | messageId     | ${NEW-IT}         |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     When si tenta il recupero documento con indice 5
     Then si riceve errore 404
@@ -306,11 +308,11 @@ Feature: Messaggi e allegati di una notifica bonaria.
   @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_05_4_A] Come ente mittente tento il Recupero del allegato di pagamento con iun non valido ricevendo errore
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalFattOrd    |
+      | campaignId    | FattOrd           |
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
-      | messageId     | ${NEW-IT}             |
+      | messageId     | ${NEW-IT}         |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     When si tenta il recupero allegato pagamento con IUN "fake"
     Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER_SIZE"
@@ -318,11 +320,11 @@ Feature: Messaggi e allegati di una notifica bonaria.
   #@informalNotificationsMessageAttachment errore già noto con bug PN-20078
   Scenario: [NOTIFICHE_BONARIE_05_4_B] Come ente mittente tento il Recupero del allegato di pagamento con indice non valido ricevendo errore
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalFattOrd    |
+      | campaignId    | FattOrd           |
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
-      | messageId     | ${NEW-IT}             |
+      | messageId     | ${NEW-IT}         |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     When si tenta il recupero allegato pagamento con recipient 0 e attachment 5
     Then si riceve errore 404
@@ -331,11 +333,11 @@ Feature: Messaggi e allegati di una notifica bonaria.
   @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_05_4_C] Come ente mittente tento il Recupero del allegato di pagamento con indice non valido ricevendo errore
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalFattOrd    |
+      | campaignId    | FattOrd           |
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
-      | messageId     | ${NEW-IT}             |
+      | messageId     | ${NEW-IT}         |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     When si tenta il recupero allegato pagamento con recipient 5 e attachment 0
     Then si riceve errore 404
@@ -347,11 +349,11 @@ Feature: Messaggi e allegati di una notifica bonaria.
   @informalNotificationsMessageAttachment @informalAuditlog
   Scenario: [NOTIFICHE_BONARIE_DL_DESTINATARIO_1] Come ente mittente Recupero l'allegato di pagamento di una notifica bonaria
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalFattOrd    |
+      | campaignId    | FattOrd           |
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
-      | messageId     | ${NEW-IT}             |
+      | messageId     | ${NEW-IT}         |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And il destinatario Ettore Fieramosca tenta il recupero dell'allegato di pagamento della notifica bonaria
     Then il download del destinatario risulta correttamente effettuato
@@ -362,11 +364,11 @@ Feature: Messaggi e allegati di una notifica bonaria.
   @informalNotificationsMessageAttachment @informalAuditlog
   Scenario: [NOTIFICHE_BONARIE_DL_DESTINATARIO_2] Come ente mittente Recupero l'allegato di pagamento di una notifica bonaria
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalFattOrd    |
+      | campaignId    | FattOrd           |
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
-      | messageId     | ${NEW-IT}             |
+      | messageId     | ${NEW-IT}         |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And il destinatario Ettore Fieramosca legge la notifica bonaria
     And il destinatario Ettore Fieramosca tenta il recupero del documento della notifica bonaria

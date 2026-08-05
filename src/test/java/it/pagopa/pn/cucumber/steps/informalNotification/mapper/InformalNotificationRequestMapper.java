@@ -68,18 +68,22 @@ public class InformalNotificationRequestMapper {
 
     private List<NotificationDocument> buildDocuments(Map<String, String> data) {
 
-        String documentsToAdd = getValue(data, DOCUMENT.key);
+        if (!data.containsKey(DOCUMENT.key)) {
+            return List.of(buildDefaultDocument(data));
+        }
+        String documentsToAdd = data.get(DOCUMENT.key);
+
+        if ("NULL".equalsIgnoreCase(documentsToAdd)) {
+            return null;
+        }
+        if (documentsToAdd == null || documentsToAdd.trim().isEmpty()) {
+            return List.of(buildDefaultDocument(data));
+        }
         List<NotificationDocument> result = new ArrayList<>();
 
-        if (documentsToAdd == null) {
-            result.add(buildDefaultDocument(data));
-            return result;
-        }
         for (String doc : documentsToAdd.split(";")) {
-
             String path = getDocumentPath(doc);
-            NotificationDocument document = new NotificationDocument().contentType("application/pdf").ref(new NotificationAttachmentBodyRef().key(path));
-            result.add(document);
+            result.add(new NotificationDocument().contentType("application/pdf").ref(new NotificationAttachmentBodyRef().key(path)));
         }
         return result;
     }

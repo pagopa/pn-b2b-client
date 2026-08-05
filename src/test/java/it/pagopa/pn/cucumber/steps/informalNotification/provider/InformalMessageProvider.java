@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class InformalMessageProvider {
 
     private volatile String messageIdIT;
-    private volatile String messageIdITFR;
+    private volatile String messageIdMulti;
     private final Object lock = new Object();
     private final PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl;
 
@@ -67,27 +67,27 @@ public class InformalMessageProvider {
 
     public String getOrCreateMessageITFR(String cxId) {
 
-        if (messageIdITFR == null) {
+        if (messageIdMulti == null) {
             synchronized (lock) {
-                if (messageIdITFR == null) {
-                    messageIdITFR = createMessageITFR(cxId);
+                if (messageIdMulti == null) {
+                    messageIdMulti = createMessageITFR(cxId);
                 }
             }
         }
-        return messageIdITFR;
+        return messageIdMulti;
     }
 
     public String createAndSaveMessageITFR(String cxId) {
-        messageIdITFR = createMessageITFR(cxId);
-        return messageIdITFR;
+        messageIdMulti = createMessageITFR(cxId);
+        return messageIdMulti;
     }
 
     public String getSavedMessageITFR() {
 
-        if (messageIdITFR == null) {
+        if (messageIdMulti == null) {
             throw new IllegalStateException("Nessun messaggio IT-FR precedentemente creato");
         }
-        return messageIdITFR;
+        return messageIdMulti;
     }
 
     // ==========================================
@@ -95,13 +95,18 @@ public class InformalMessageProvider {
     // ==========================================
 
     public String createAndSaveMessageITDE(String cxId) {
-        messageIdITFR = createMessageITDE(cxId);
-        return messageIdITFR;
+        messageIdMulti = createMessageITDE(cxId);
+        return messageIdMulti;
     }
 
     public String createAndSaveMessageITSL(String cxId) {
-        messageIdITFR = createMessageITSL(cxId);
-        return messageIdITFR;
+        messageIdMulti = createMessageITSL(cxId);
+        return messageIdMulti;
+    }
+
+    public String createAndSaveMessageITEN(String cxId) {
+        messageIdMulti = createMessageITEN(cxId);
+        return messageIdMulti;
     }
 
     // ==========================================
@@ -111,7 +116,7 @@ public class InformalMessageProvider {
     private String createMessageIT(String cxId) {
 
         NewMessageRequest request = new NewMessageRequest()
-                .primaryMessage(InformalMessageUtils.buildPrimaryMessage(InformalMessageTemplates.SORICAL_IT.getContent()));
+                .primaryMessage(InformalMessageUtils.buildPrimaryMessage(InformalMessageTemplates.RISCUOTI_IT.getContent()));
 
         return pnPaB2bInternalInformalClientImpl.createMessage(cxId, request).getMessageId().toString();
     }
@@ -119,8 +124,8 @@ public class InformalMessageProvider {
     private String createMessageITFR(String cxId) {
 
         NewMessageRequest request = new NewMessageRequest()
-                .primaryMessage(InformalMessageUtils.buildPrimaryMessage(InformalMessageTemplates.SORICAL_IT.getContent()))
-                .additionalMessage(InformalMessageUtils.buildAdditionalMessage(InformalMessageTemplates.SORICAL_FR.getContent()));
+                .primaryMessage(InformalMessageUtils.buildPrimaryMessage(InformalMessageTemplates.RISCUOTI_IT.getContent()))
+                .additionalMessage(InformalMessageUtils.buildAdditionalMessage(InformalMessageTemplates.RISCUOTI_FR.getContent()));
 
         return pnPaB2bInternalInformalClientImpl.createMessage(cxId, request).getMessageId().toString();
     }
@@ -128,8 +133,8 @@ public class InformalMessageProvider {
     private String createMessageITDE(String cxId) {
 
         NewMessageRequest request = new NewMessageRequest()
-                .primaryMessage(InformalMessageUtils.buildPrimaryMessage(InformalMessageTemplates.SORICAL_IT.getContent()))
-                .additionalMessage(InformalMessageUtils.buildAdditionalMessage(InformalMessageTemplates.SORICAL_DE.getContent()));
+                .primaryMessage(InformalMessageUtils.buildPrimaryMessage(InformalMessageTemplates.RISCUOTI_IT.getContent()))
+                .additionalMessage(InformalMessageUtils.buildAdditionalMessage(InformalMessageTemplates.RISCUOTI_DE.getContent()));
 
         return pnPaB2bInternalInformalClientImpl.createMessage(cxId, request).getMessageId().toString();
     }
@@ -137,8 +142,17 @@ public class InformalMessageProvider {
     private String createMessageITSL(String cxId) {
 
         NewMessageRequest request = new NewMessageRequest()
-                .primaryMessage(InformalMessageUtils.buildPrimaryMessage(InformalMessageTemplates.SORICAL_IT.getContent()))
-                .additionalMessage(InformalMessageUtils.buildAdditionalMessage(InformalMessageTemplates.SORICAL_SL.getContent()));
+                .primaryMessage(InformalMessageUtils.buildPrimaryMessage(InformalMessageTemplates.RISCUOTI_IT.getContent()))
+                .additionalMessage(InformalMessageUtils.buildAdditionalMessage(InformalMessageTemplates.RISCUOTI_SL.getContent()));
+
+        return pnPaB2bInternalInformalClientImpl.createMessage(cxId, request).getMessageId().toString();
+    }
+
+    private String createMessageITEN(String cxId) {
+
+        NewMessageRequest request = new NewMessageRequest()
+                .primaryMessage(InformalMessageUtils.buildPrimaryMessage(InformalMessageTemplates.RISCUOTI_IT.getContent()))
+                .additionalMessage(InformalMessageUtils.buildAdditionalMessage(InformalMessageTemplates.RISCUOTI_EN.getContent()));
 
         return pnPaB2bInternalInformalClientImpl.createMessage(cxId, request).getMessageId().toString();
     }
