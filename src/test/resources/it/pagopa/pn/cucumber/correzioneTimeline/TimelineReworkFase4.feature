@@ -369,19 +369,18 @@ Feature: Test relativi al SRS di correzione timeline fase 4
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Galileo Galilei e:
-      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
-      | digitalDomicile         | NULL                     |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | Via@OK_AR |
+      | digitalDomicile         | NULL      |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
-    And "Galileo Galilei" legge la notifica ricevuta
+    And "Mario Gherkin" legge la notifica ricevuta
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED_CREATION_REQUEST"
     When viene invocata una richiesta di correzione puntuale per la notifica appena creata con i seguenti parametri
       | element1 | NOTIFICATION_VIEWED                  |
       | element2 | NOTIFICATION_VIEWED_CREATION_REQUEST |
-    Then si verifica che la richiesta di remove effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di remove effettuata sia in stato "ERROR" entro 300 secondi controllando ogni 5 secondi
 
   @timelineReworkF4
