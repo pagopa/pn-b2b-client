@@ -12,4 +12,6 @@ import java.util.List;
 public class PnPollingPaymentInfo {
     private List<PaymentInfoRequest> paymentInfoRequestList;
     private Integer previousAmount;
+    /** If set, polling succeeds only when current amount equals this value. */
+    private Integer expectedAmount;
 }

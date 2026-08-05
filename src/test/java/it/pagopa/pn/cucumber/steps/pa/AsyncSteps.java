@@ -24,6 +24,8 @@ import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
@@ -37,6 +39,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 @Slf4j
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class AsyncSteps {
     @Value("${pn.external.costo_base_notifica}")
     private Integer costoBaseNotifica;
@@ -46,6 +49,7 @@ public class AsyncSteps {
     private final PnPaymentInfoClientImpl pnPaymentInfoClientImpl;
     private final List<PaymentPositionModel> paymentPositionModel;
     private List<BffPaymentInfoItem> paymentInfoResponse;
+    private List<PaymentInfoRequest> lastPaymentInfoRequestList;
     private String deleteGpdResponse;
     private Integer amountGPD;
     private final List<Integer> amountNotifica;
@@ -134,13 +138,21 @@ public class AsyncSteps {
                 .creditorTaxId(Objects.requireNonNull(Objects.requireNonNull(positionUser.getPaymentOption()).get(0).getTransfer()).get(0).getOrganizationFiscalCode())
                 .noticeCode("3" + positionUser.getPaymentOption().get(0).getIuv());
         paymentInfoRequestList.add(paymentInfoRequest);
+        lastPaymentInfoRequestList = paymentInfoRequestList;
 
         log.info("User: " + positionUser);
         log.info("Messaggio json da allegare: " + paymentInfoRequest);
 
+        pollPaymentInfoAmount(paymentInfoRequestList, amountGPD, null);
+    }
+
+    private void pollPaymentInfoAmount(List<PaymentInfoRequest> paymentInfoRequestList,
+                                       Integer previousAmount,
+                                       Integer expectedAmount) {
         PnPollingPaymentInfo pollingPaymentInfo = new PnPollingPaymentInfo();
         pollingPaymentInfo.setPaymentInfoRequestList(paymentInfoRequestList);
-        pollingPaymentInfo.setPreviousAmount(amountGPD);
+        pollingPaymentInfo.setPreviousAmount(previousAmount);
+        pollingPaymentInfo.setExpectedAmount(expectedAmount);
 
         PnPollingServicePaymentInfo pollingService = (PnPollingServicePaymentInfo) sharedSteps.getPollingFactory()
                 .getPollingService(PnPollingStrategy.PAYMENT_INFO);
@@ -242,9 +254,14 @@ public class AsyncSteps {
 
     @And("viene effettuato il controllo del amount di GPD = {string}")
     public void vieneEffettuatoIlControlloDelAmountDiGPD(String amount) {
+        Integer expectedAmount = Integer.parseInt(amount);
         try {
+            if (lastPaymentInfoRequestList != null) {
+                // Attendere il valore atteso (es. rientro a 100 post-cancel), non solo un qualsiasi cambio
+                pollPaymentInfoAmount(lastPaymentInfoRequestList, amountGPD, expectedAmount);
+            }
             log.info("Amount GPD: " + amountGPD);
-            assertThat(amountGPD).as("L'amount GPD non coincide col valore atteso").isEqualTo(Integer.parseInt(amount));
+            assertThat(amountGPD).as("L'amount GPD non coincide col valore atteso").isEqualTo(expectedAmount);
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertionFailedErrorWithAmountGPDAndIUN(assertionFailedError, amountGPD);
         }

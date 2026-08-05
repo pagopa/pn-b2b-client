@@ -59,10 +59,23 @@ public class PnPollingServicePaymentInfo extends PnPollingTemplate<PnPollingResp
     @Override
     protected Predicate<PnPollingResponsePaymentInfo> checkCondition(String id, PnPollingParameter pnPollingParameter) {
         return response -> {
-            Integer previousAmount = pnPollingParameter.getPnPollingPaymentInfo().getPreviousAmount();
+            PnPollingPaymentInfo paymentInfo = pnPollingParameter.getPnPollingPaymentInfo();
+            Integer previousAmount = paymentInfo.getPreviousAmount();
+            Integer expectedAmount = paymentInfo.getExpectedAmount();
             Integer currentAmount = response.getAmount();
+            long elapsedMs = System.currentTimeMillis() - pollingStartedAt;
+
+            if (expectedAmount != null) {
+                if (Objects.equals(expectedAmount, currentAmount)) {
+                    log.info("GPD amount matched expected: elapsedMs={}, amount={}", elapsedMs, currentAmount);
+                    response.setResult(true);
+                    return true;
+                }
+                response.setResult(false);
+                return false;
+            }
+
             if (!Objects.equals(previousAmount, currentAmount)) {
-                long elapsedMs = System.currentTimeMillis() - pollingStartedAt;
                 log.info("GPD amount changed: elapsedMs={}, {} -> {}", elapsedMs, previousAmount, currentAmount);
                 response.setResult(true);
                 return true;
