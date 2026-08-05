@@ -512,28 +512,15 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | physicalAddress_address | via@FAIL-Giacenza-gt10_890   |
       | recipientType           | PG                           |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG012"
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL |
-      | details_recIndex           | 0        |
-      | details_deliveryDetailCode | CON080   |
-      | details_sentAttemptMade    | 0        |
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL |
-      | details_recIndex           | 0        |
-      | details_deliveryDetailCode | CON020   |
-      | details_sentAttemptMade    | 0        |
+    # gate a step (come WI1.1_9): non bruciare il budget FEEDBACK su Infocamere/prepare
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
+    And viene verificato che nell'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE" siano configurati i campi municipalityDetails e foreignState
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON080"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
     And abbia anche un valore per il campo "details_attachments[0]_url" compatibile con l'espressione regolare ".+PN_PRINTED.+\.pdf"
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL |
-      | details_recIndex           | 0        |
-      | details_deliveryDetailCode | RECAG010 |
-      | details_sentAttemptMade    | 0        |
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL  |
-      | details_recIndex           | 0         |
-      | details_deliveryDetailCode | RECAG011A |
-      | details_sentAttemptMade    | 0         |
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG010"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG011A"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG012"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
       | details                    | NOT_NULL                                                                                                                                                                                                        |
       | details_recIndex           | 0                                                                                                                                                                                                               |
@@ -541,7 +528,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | details_sentAttemptMade    | 0                                                                                                                                                                                                               |
       | details_physicalAddress    | {"at": "Presso", "address": "VIA@FAIL-GIACENZA-GT10_890", "addressDetails": "SCALA B", "zip": "87100", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "province": "CS", "foreignState": "ITALIA"} |
       | details_responseStatus     | OK                                                                                                                                                                                                              |
-    And viene verificato che nell'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE" siano configurati i campi municipalityDetails e foreignState
+
 
   @giacenza890Simplified
   Scenario: [B2B_GIACENZA_890_WI1.1_9] Mancata Consegna in Giacenza dopo i 10 giorni. In questo scenario viene simulato il perfezionamento dell’atto al 10° giorno.
