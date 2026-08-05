@@ -154,6 +154,13 @@ public class AsyncSteps {
         pollingPaymentInfo.setPreviousAmount(previousAmount);
         pollingPaymentInfo.setExpectedAmount(expectedAmount);
 
+        String notices = paymentInfoRequestList.stream()
+                .map(PaymentInfoRequest::getNoticeCode)
+                .reduce((a, b) -> a + "," + b)
+                .orElse("empty");
+        log.info("ASYNC GPD poll request iun={} noticeCodes=[{}] previousAmount={} expectedAmount={}",
+                sharedSteps.getNotificationIun(), notices, previousAmount, expectedAmount);
+
         PnPollingServicePaymentInfo pollingService = (PnPollingServicePaymentInfo) sharedSteps.getPollingFactory()
                 .getPollingService(PnPollingStrategy.PAYMENT_INFO);
         PnPollingResponsePaymentInfo pollingResponse = pollingService.waitForEvent(
@@ -165,6 +172,8 @@ public class AsyncSteps {
 
         paymentInfoResponse = pollingResponse.getPaymentInfoResponse();
         amountGPD = pollingResponse.getAmount();
+        log.info("ASYNC GPD poll done iun={} noticeCodes=[{}] resultAmount={} resultFlag={}",
+                sharedSteps.getNotificationIun(), notices, amountGPD, pollingResponse.getResult());
         Assertions.assertNotNull(paymentInfoResponse);
         Assertions.assertNotNull(amountGPD);
     }

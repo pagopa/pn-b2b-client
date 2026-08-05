@@ -7,6 +7,7 @@ import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingPaymentInfo;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponsePaymentInfo;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaymentInfoClient;
+import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey.ApiKeyType;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -29,6 +30,9 @@ public class PnPollingServicePaymentInfo extends PnPollingTemplate<PnPollingResp
     private List<BffPaymentInfoItem> lastPaymentInfoResponse;
     private Integer lastAmount;
     private long pollingStartedAt;
+    private int pollAttempt;
+    private Integer atMostMs;
+    private Integer pollIntervalMs;
 
     public PnPollingServicePaymentInfo(IPnPaymentInfoClient paymentInfoClient, TimingForPolling timingForPolling) {
         this.paymentInfoClient = paymentInfoClient;
@@ -39,8 +43,27 @@ public class PnPollingServicePaymentInfo extends PnPollingTemplate<PnPollingResp
     protected Callable<PnPollingResponsePaymentInfo> getPollingResponse(String id, PnPollingParameter pnPollingParameter) {
         if (pollingStartedAt == 0L) {
             pollingStartedAt = System.currentTimeMillis();
+            pollAttempt = 0;
+            TimingForPolling.TimingResult timing = timingForPolling.getTimingForPaymentInfo();
+            pollIntervalMs = timing.waiting();
+            atMostMs = timing.numCheck() * timing.waiting();
+            PnPollingPaymentInfo paymentInfo = pnPollingParameter.getPnPollingPaymentInfo();
+            String notices = paymentInfo == null || paymentInfo.getPaymentInfoRequestList() == null
+                    ? "null"
+                    : paymentInfo.getPaymentInfoRequestList().stream()
+                    .map(r -> r.getNoticeCode())
+                    .reduce((a, b) -> a + "," + b)
+                    .orElse("empty");
+            log.info("PAYMENT_INFO poll START atMostMs={}, pollIntervalMs={}, numCheck={}, previousAmount={}, expectedAmount={}, noticeCodes=[{}]",
+                    atMostMs,
+                    pollIntervalMs,
+                    timing.numCheck(),
+                    paymentInfo == null ? null : paymentInfo.getPreviousAmount(),
+                    paymentInfo == null ? null : paymentInfo.getExpectedAmount(),
+                    notices);
         }
         return () -> {
+            pollAttempt++;
             PnPollingPaymentInfo paymentInfo = Objects.requireNonNull(
                     pnPollingParameter.getPnPollingPaymentInfo(),
                     "pnPollingPaymentInfo is required for PAYMENT_INFO polling");
@@ -51,7 +74,18 @@ public class PnPollingServicePaymentInfo extends PnPollingTemplate<PnPollingResp
                 lastAmount = lastPaymentInfoResponse.get(0).getAmount();
                 response.setAmount(lastAmount);
             }
-            log.info("Risposta recupero posizione debitoria: {}", lastPaymentInfoResponse);
+            long elapsedMs = System.currentTimeMillis() - pollingStartedAt;
+            String notice = lastPaymentInfoResponse == null || lastPaymentInfoResponse.isEmpty()
+                    ? "null"
+                    : lastPaymentInfoResponse.get(0).getNoticeCode();
+            log.info("PAYMENT_INFO poll attempt={} elapsedMs={}/{} noticeCode={} amount={} previousAmount={} expectedAmount={}",
+                    pollAttempt,
+                    elapsedMs,
+                    atMostMs,
+                    notice,
+                    lastAmount,
+                    paymentInfo.getPreviousAmount(),
+                    paymentInfo.getExpectedAmount());
             return response;
         };
     }
@@ -87,6 +121,14 @@ public class PnPollingServicePaymentInfo extends PnPollingTemplate<PnPollingResp
 
     @Override
     protected PnPollingResponsePaymentInfo getException(Exception exception) {
+        long elapsedMs = pollingStartedAt == 0L ? 0L : System.currentTimeMillis() - pollingStartedAt;
+        log.warn("PAYMENT_INFO poll TIMEOUT/EXCEPTION elapsedMs={}/{} attempts={} lastAmount={} lastResponse={} cause={}",
+                elapsedMs,
+                atMostMs,
+                pollAttempt,
+                lastAmount,
+                lastPaymentInfoResponse,
+                exception.toString());
         PnPollingResponsePaymentInfo response = new PnPollingResponsePaymentInfo();
         response.setPaymentInfoResponse(lastPaymentInfoResponse);
         response.setAmount(lastAmount);
