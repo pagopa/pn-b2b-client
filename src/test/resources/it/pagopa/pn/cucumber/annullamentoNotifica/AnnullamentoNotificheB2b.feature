@@ -718,7 +718,7 @@ Feature: annullamento notifiche b2b
       | title_payment        | F24_STANDARD_GHERKIN |
       | apply_cost_f24       | SI                   |
       | payment_multy_number | 2                    |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata con polling EXTRA_RAPID
     When vengono letti gli eventi fino all'elemento di timeline della notifica annullata "NOTIFICATION_CANCELLATION_REQUEST"
     Then viene controllato che l'elemento di timeline della notifica "SEND_COURTESY_MESSAGE" non esiste
 
