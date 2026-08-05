@@ -110,8 +110,8 @@ public class PnB2bClientTimingConfigs {
         //TIMING FOR WEBHOOK
         WEBHOOK(150000, 500),
 
-        //TIMING FOR GPD / payment-info (numCheck * waitMillisExtraRapid ≈ atMost; UAT: 90 * 2000ms = 180s)
-        PAYMENT_INFO(90, 1),
+        //TIMING FOR GPD / payment-info
+        PAYMENT_INFO(150, 1),
 
         //TIMING FOR TRACING
         INTEROP_TRACING(3, 1),
