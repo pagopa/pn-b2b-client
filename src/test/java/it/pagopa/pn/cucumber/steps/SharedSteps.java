@@ -96,6 +96,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 @Slf4j
 public class SharedSteps {
 
+    @Getter
     private final SenderInfoProvider senderInfoProvider;
 
     @Getter

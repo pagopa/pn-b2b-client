@@ -467,6 +467,7 @@ public class AvanzamentoNotificheB2bSteps {
     public void readingEventUpToTheTimelineElementOfNotificationWithDeliveryDetailCodeVerifyTypeDoc(String timelineEventCategory, String deliveryDetailCode, String documentType) {
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder()
                 .deliveryDetailCode(deliveryDetailCode)
+                .documentType(documentType)
                 .build();
         B2bStepsInterface b2bStepsInterface = getB2bStepsInterface();
         b2bStepsInterface.waitForEventOrStatus(TIMELINE_RAPID, TIMELINE, timelineEventCategory, filters);

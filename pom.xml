@@ -709,7 +709,7 @@
                         </configuration>
                     </execution>
 
-                    <!--internal informal -->
+                    <!--internal INFORMAL -->
                     <execution>
                         <id>generate-internal-informal-client-b2b-pa</id>
                         <goals>
@@ -717,7 +717,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/refs/tags/v2.25.0/docs/openapi/api-internal-b2b-informal-pa.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/refs/heads/develop/docs/openapi/api-internal-b2b-informal-pa.yaml</inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
@@ -738,6 +738,102 @@
                             </configOptions>
                             <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.api</apiPackage>
                             <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model</modelPackage>
+                        </configuration>
+                    </execution>
+
+                    <!--internal web recipient INFORMAL -->
+                    <execution>
+                        <id>generate-internal-informal-web-recipient</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/refs/heads/develop/docs/openapi/api-internal-web-informal-recipient.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.api</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                            <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.api</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model</modelPackage>
+                        </configuration>
+                    </execution>
+
+                    <!--internal campaign INFORMAL -->
+                    <execution>
+                        <id>generate-internal-client-b2b-informal-campaign-pa</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/93c66346e2d1e489d564a1adec155e79dd57eb96/docs/openapi/api-internal-web-campaign.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformalcampaign.api</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformalcampaign.model</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                            <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformalcampaign.api</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformalcampaign.model</modelPackage>
+                        </configuration>
+                    </execution>
+
+                    <!--external delivery INFORMAL -->
+                    <execution>
+                        <id>generate-external-client-b2b-informal-pa</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/refs/heads/develop/docs/openapi/api-external-b2b-informal-pa-bundle.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.api</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                            <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.api</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model</modelPackage>
                         </configuration>
                     </execution>
 
