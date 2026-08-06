@@ -9,6 +9,7 @@ import it.pagopa.interop.common.enums.EntityIdType;
 import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient;
 import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient.EServiceDescriptorPatchRequest;
 import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient.EServiceDescriptorQuotasPatchRequest;
+import it.pagopa.interop.generated.openapi.clients.bff.model.GracePeriodDays;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.catalog.utils.CatalogResolver;
@@ -17,7 +18,6 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.assistant.ESe
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.assistant.EServiceDescriptorQuotasPatchOperationsAssistant;
 import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.api.Assertions;
-
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -146,24 +146,24 @@ public class EserviceDescriptorSteps extends AbstractCommonSteps<EServiceDescrip
         quotasPatchAssistant.patchResource(tenant, m2mRole);
     }
 
-    @When("l'utente avvia il processo di archiviazione della vecchia versione con id {string} dell'e-service con id {string}")
-    public void scheduleArchiveOldDescriptor(String descriptorId, String eServiceId) {
+    @When("l'utente avvia l'archiviazione della vecchia versione {string} dell'e-service {string} prevedendo {gracePeriodDays} giorni di preavviso")
+    public void scheduleArchiveOldDescriptor(String descriptorId, String eServiceId, GracePeriodDays gracePeriodDays) {
         UUID resolvedDescriptorId = catalogResolver.resolveOldDescriptorId(descriptorId);
         UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
 
-        registerDescriptorArchivingRequestTimestamp();
+        registerDescriptorArchivingRequestTimestamp(gracePeriodDays);
         sharedStepsContext.getHttpCallExecutor().performCall(
-            () -> client.scheduleArchiveEServiceDescriptor(resolvedEServiceId, resolvedDescriptorId));
+                () -> client.scheduleArchiveEServiceDescriptor(resolvedEServiceId, resolvedDescriptorId, gracePeriodDays.getValue()));
     }
 
-    @When("l'utente avvia il processo di archiviazione della versione più recente dell'e-service")
-    public void archiveLatestDescriptor() {
+    @When("l'utente avvia l'archiviazione della versione più recente dell'e-service prevedendo {gracePeriodDays} giorni di preavviso")
+    public void archiveLatestDescriptor(GracePeriodDays gracePeriodDays) {
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
 
-        registerDescriptorArchivingRequestTimestamp();
+        registerDescriptorArchivingRequestTimestamp(gracePeriodDays);
         sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> client.scheduleArchiveEServiceDescriptor(eServiceId, descriptorId));
+                () -> client.scheduleArchiveEServiceDescriptor(eServiceId, descriptorId, gracePeriodDays.getValue()));
     }
 
     @When("l'utente tenta di annullare il processo di archiviazione della vecchia versione con id {string} dell'e-service con id {string}")
@@ -200,8 +200,10 @@ public class EserviceDescriptorSteps extends AbstractCommonSteps<EServiceDescrip
         this.bindActual(sharedStepsContext, actualDescriptors);
     }
 
-    private void registerDescriptorArchivingRequestTimestamp() {
+    private void registerDescriptorArchivingRequestTimestamp(GracePeriodDays gracePeriodDays) {
         sharedStepsContext.getEServicesCommonContext()
                 .setDescriptorArchivingRequestTimestamp(OffsetDateTime.now(ZoneOffset.UTC));
+        sharedStepsContext.getEServicesCommonContext()
+                .setDescriptorArchivingGracePeriodDays(gracePeriodDays);
     }
 }

@@ -67,6 +67,14 @@ public class EServiceCloneSteps {
         );
     }
 
+    @When("l'utente tenta di clonare la vecchia versione dell'e-service")
+    public void tryCloneOldEserviceVersion() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getEServiceClient().cloneEServiceByDescriptor(eServicesCommonContext.getEserviceId(), eServicesCommonContext.getOldDescriptorId())
+        );
+    }
+
     @When("l'utente clona quell'e-service")
     public void cloneEservice() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());

@@ -2,27 +2,39 @@
 @notification-manual-archiving-eservice
 Feature: Notifiche relative all'archiviazione manuale di un e-service
 
-  Scenario: [MANUAL_ARCHIVING_ESERVICE_NOTIFICATION_1.1] L'utente erogatore riceve una notifica nel momento in cui avvia il processo di archiviazione dell'intero e-service
+  Scenario: [MANUAL_ARCHIVING_ESERVICE_NOTIFICATION_1.1] Erogatore e fruitore ricevono una notifica quando si avvia il processo di archiviazione dell'intero e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 30 giorni di preavviso
     Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
     """
     Il tuo e-service $DA_CONTESTO(eServiceName) è in fase di archiviazione, ma risulta ancora attivo. L'e-service sarà
-    archiviato il giorno $DA_CONTESTO(TODAY+GRACE_PERIOD).
+    archiviato il giorno $DA_CONTESTO(TODAY+30).
+    """
+    And l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
+    """
+    L'e-service $DA_CONTESTO(eServiceName) sarà archiviato il giorno $DA_CONTESTO(TODAY+30). Dopo questa data
+    non potrai più scambiare dati con l’e-service.
     """
 
-  Scenario: [MANUAL_ARCHIVING_ESERVICE_NOTIFICATION_1.2] L'utente fruitore riceve una notifica nel momento in cui viene avviato il processo di archiviazione dell'intero e-service per cui ha una richiesta di fruizione attiva
+  Scenario: [MANUAL_ARCHIVING_ESERVICE_NOTIFICATION_1.2] Erogatore e fruitore ricevono una notifica quando si avvia il processo di archiviazione dell'intero e-service istanza di un template
     Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
-    Then l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
+    And l'utente è un "admin" di "PA1"
+    And l'utente effettua l'aggiunta di una versione in stato PUBLISHED all'e-service con successo
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
     """
-    L'e-service $DA_CONTESTO(eServiceName) sarà archiviato il giorno $DA_CONTESTO(TODAY+GRACE_PERIOD). Dopo questa data
+    Il tuo e-service $DA_CONTESTO(eServiceName) è in fase di archiviazione, ma risulta ancora attivo. L'e-service sarà
+    archiviato il giorno $DA_CONTESTO(TODAY+60).
+    """
+    And l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
+    """
+    L'e-service $DA_CONTESTO(eServiceName) sarà archiviato il giorno $DA_CONTESTO(TODAY+60). Dopo questa data
     non potrai più scambiare dati con l’e-service.
     """
 
@@ -32,11 +44,11 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    When l'utente avvia il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     Then l'utente "admin" di "PA1" non ha ricevuto la notifica in-app
     """
     Il tuo e-service $DA_CONTESTO(eServiceName) è in fase di archiviazione, ma risulta ancora attivo. L'archiviazione
-    avverrà il giorno $DA_CONTESTO(TODAY+GRACE_PERIOD).
+    avverrà il giorno $DA_CONTESTO(TODAY+60).
     """
 
   @ignore
@@ -62,58 +74,70 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
     Il tuo e-service $DA_CONTESTO(eServiceName) sarà archiviato il giorno $DA_CONTESTO(TODAY).
     """
 
-  Scenario: [MANUAL_ARCHIVING_ESERVICE_SUSPENSION_NOTIFICATION_1.1] L'utente erogatore riceve una notifica nel momento in cui il suo e-service in stato di archiviazione viene sospeso
+  Scenario: [MANUAL_ARCHIVING_ESERVICE_SUSPENSION_NOTIFICATION_1.1] Erogatore e fruitore ricevono una notifica quando l'e-service in stato di archiviazione viene sospeso e quando viene riattivato
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 90 giorni di preavviso
     When l'utente sospende quel descrittore in corso di archiviazione
     Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
     """
     La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è al momento sospesa. L'e-service sarà archiviato il giorno
-    $DA_CONTESTO(TODAY+GRACE_PERIOD).
+    $DA_CONTESTO(TODAY+90).
     """
-
-  Scenario: [MANUAL_ARCHIVING_ESERVICE_SUSPENSION_NOTIFICATION_1.2] L'utente fruitore riceve una notifica nel momento in cui un e-service per cui ha una richiesta di fruizione attiva viene sospeso
-    Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
-    And l'utente sospende quel descrittore in corso di archiviazione
-    Then l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
+    And l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
     La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è al momento sospesa. L'archiviazione avverrà il giorno
-    $DA_CONTESTO(TODAY+GRACE_PERIOD).
+    $DA_CONTESTO(TODAY+90).
     """
 
-  Scenario: [MANUAL_ARCHIVING_ESERVICE_SUSPENSION_NOTIFICATION_1.3] L'utente erogatore riceve una notifica nel momento in cui il suo e-service, in stato di archiviazione e sospeso, viene riattivato
-    Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
-    And "PA1" ha già sospeso quell'e-service
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
     When l'utente attiva il descrittore di quell'e-service
     Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
     """
     La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è di nuovo attiva. L'e-service sarà archiviato il giorno
-    $DA_CONTESTO(TODAY+GRACE_PERIOD).
+    $DA_CONTESTO(TODAY+90).
     """
-
-  Scenario: [MANUAL_ARCHIVING_ESERVICE_SUSPENSION_NOTIFICATION_1.4] L'utente fruitore riceve una notifica quando viene riattivato un e-service sospeso per cui ha una richiesta di fruizione attiva
-    Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA1" ha già sospeso quell'e-service
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
-    When l'utente attiva il descrittore di quell'e-service
-    Then l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
+    And l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
     La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è di nuovo attiva. L'e-service sarà archiviato il giorno
-    $DA_CONTESTO(TODAY+GRACE_PERIOD).
+    $DA_CONTESTO(TODAY+90).
+    """
+
+  Scenario: [MANUAL_ARCHIVING_ESERVICE_SUSPENSION_NOTIFICATION_1.2] Erogatore e fruitore ricevono una notifica quando l'e-service istanza di un template in stato di archiviazione viene sospeso
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 120 giorni di preavviso
+    When l'utente sospende quel descrittore in corso di archiviazione
+    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
+    """
+    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è al momento sospesa. L'e-service sarà archiviato il giorno
+    $DA_CONTESTO(TODAY+120).
+    """
+    And l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
+    """
+    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è al momento sospesa. L'archiviazione avverrà il giorno
+    $DA_CONTESTO(TODAY+120).
+    """
+
+    When l'utente attiva il descrittore di quell'e-service
+    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
+    """
+    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è di nuovo attiva. L'e-service sarà archiviato il giorno
+    $DA_CONTESTO(TODAY+120).
+    """
+    And l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
+    """
+    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è di nuovo attiva. L'e-service sarà archiviato il giorno
+    $DA_CONTESTO(TODAY+120).
     """
 
   Scenario: [MANUAL_ARCHIVING_ESERVICE_CANCELLATION_NOTIFICATION_1.1] L'utente erogatore riceve una notifica quando annulla l'archiviazione in corso di un proprio e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     When l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
     Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
     """
@@ -124,7 +148,7 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     When l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
     Then l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """

@@ -55,7 +55,7 @@ public interface IM2MEserviceDescriptorClient extends IClient<EServiceDescriptor
     Document uploadDocument(UUID eserviceId, UUID descriptorId, Resource file, String prettyName);
     FileDownloadMultipart downloadDocument(UUID eserviceId, UUID descriptorId, UUID documentId);
     Documents getDocuments(UUID eserviceId, UUID descriptorId);
-    it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor scheduleArchiveEServiceDescriptor(UUID eserviceId, UUID descriptorId);
+    it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor scheduleArchiveEServiceDescriptor(UUID eserviceId, UUID descriptorId, Integer gracePeriodDays);
     it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor cancelEServiceDescriptorArchiving(UUID eserviceId, UUID descriptorId);
     it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor patchEServiceDescriptor(UUID eserviceId, UUID descriptorId, EServiceDescriptorPatchRequest body);
     it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor patchEServiceDescriptorQuotas(UUID eserviceId, UUID descriptorId, EServiceDescriptorQuotasPatchRequest body);

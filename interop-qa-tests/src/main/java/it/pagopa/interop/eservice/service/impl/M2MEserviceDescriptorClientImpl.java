@@ -200,7 +200,7 @@ public class M2MEserviceDescriptorClientImpl extends AbstractClient implements I
 
     @Override
     public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor scheduleArchiveEServiceDescriptor(
-        UUID eserviceId, UUID descriptorId) {
+        UUID eserviceId, UUID descriptorId, Integer gracePeriodDays) {
         throw new APIUnavailableException("Endpoint disponibile solo per M2M v3");
     }
 

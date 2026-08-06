@@ -12,6 +12,7 @@ import it.pagopa.interop.eservice.service.IM2MEserviceClient;
 import it.pagopa.interop.eservice.service.IM2MEserviceClient.*;
 import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient;
 import it.pagopa.interop.eservice.service.mapper.EserviceDescriptorDomainMapper;
+import it.pagopa.interop.generated.openapi.clients.bff.model.GracePeriodDays;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.DocumentMetadata;
@@ -154,28 +155,31 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         httpExecutor.performCall(() -> this.client.delete(eserviceId));
     }
 
-    @When("viene avviato processo di archiviazione dell'e-service con id {string} e specificando la motivazione {string}")
-    public void scheduleEServiceArchiving(String eServiceId, String archivingReason) {
+    @When("viene avviata l'archiviazione dell'e-service {string} indicando la motivazione {string} e un preavviso di {gracePeriodDays} giorni")
+    public void scheduleEServiceArchiving(String eServiceId, String archivingReason, GracePeriodDays gracePeriodDays) {
         UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
         String resolvedArchivingReason = catalogResolver.resolveArchivingReason(archivingReason);
 
-        scheduleArchiveEService(resolvedEServiceId, resolvedArchivingReason);
+        scheduleArchiveEService(resolvedEServiceId, resolvedArchivingReason, gracePeriodDays);
     }
 
-    @When("viene avviato il processo di archiviazione dell'e-service con id {string} e specificando la motivazione composta da {int} caratteri")
-    public void scheduleEServiceArchivingWithReasonLength(String eServiceId, int archivingReasonLength) {
+    @When("viene avviata l'archiviazione dell'e-service {string} indicando una motivazione di {int} caratteri e un preavviso di {gracePeriodDays} giorni")
+    public void scheduleEServiceArchivingWithReasonLength(String eServiceId, int archivingReasonLength, GracePeriodDays gracePeriodDays) {
         UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
         String archivingReason = RandomStringUtils.insecure().nextAlphanumeric(archivingReasonLength);
 
-        scheduleArchiveEService(resolvedEServiceId, archivingReason);
+        scheduleArchiveEService(resolvedEServiceId, archivingReason, gracePeriodDays);
     }
 
-    private void scheduleArchiveEService(UUID eServiceId, String archivingReason) {
+    private void scheduleArchiveEService(UUID eServiceId, String archivingReason, GracePeriodDays gracePeriodDays) {
         sharedStepsContext.getEServicesCommonContext()
-            .setDescriptorArchivingRequestTimestamp(OffsetDateTime.now(ZoneOffset.UTC));
+                .setEServiceArchivingRequestTimestamp(OffsetDateTime.now(ZoneOffset.UTC));
+        sharedStepsContext.getEServicesCommonContext()
+                .setEServiceArchivingGracePeriodDays(gracePeriodDays);
 
         EServiceArchivingRequest request = EServiceArchivingRequest.builder()
                 .archivingReason(archivingReason)
+                .gracePeriodDays(gracePeriodDays.getValue())
                 .build();
 
         httpExecutor.performCall(() -> client.scheduleArchiveEService(eServiceId, request));

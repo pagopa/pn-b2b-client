@@ -184,7 +184,7 @@ public class M2MV3EserviceClientImpl extends AbstractDPoPClient implements IM2MV
             ? null
             : new EServiceArchivingReasonSeed()
                 .archivingReason(body.getArchivingReason())
-                .gracePeriodDays(GracePeriodDays.NUMBER_60);
+                .gracePeriodDays(GracePeriodDays.fromValue(body.getGracePeriodDays()));
         return vMapper.mapToV2(eservicesApi.scheduleArchiveEservice(eServiceId, seed));
     }
 
