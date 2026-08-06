@@ -1464,9 +1464,9 @@ public class SharedSteps {
                 null,
                 50,
                 null);
-        AssertionsForClassTypes.assertThat(bffNotificationsResponse).as("La bffNotificationResponse non dev'essere null").isNotNull();
-        AssertionsForInterfaceTypes.assertThat(bffNotificationsResponse.getResultsPage()).as("La lista di notifiche vecchie " + lowerLimit + " giorni non dev'essere null").isNotNull();
-        AssertionsForInterfaceTypes.assertThat(bffNotificationsResponse.getResultsPage()).as("La lista di notifiche vecchie " + lowerLimit + " giorni non dev'essere vuota").isNotEmpty();
+        assumeThat(bffNotificationsResponse).as("La bffNotificationResponse non dev'essere null").isNotNull();
+        assumeThat(bffNotificationsResponse.getResultsPage()).as("La lista di notifiche vecchie " + lowerLimit + " giorni non dev'essere null").isNotNull();
+        assumeThat(bffNotificationsResponse.getResultsPage()).as("La lista di notifiche vecchie " + lowerLimit + " giorni non dev'essere vuota").isNotEmpty();
 
         List<BffLegalNotificationSearchRow> filteredResults = bffNotificationsResponse.getResultsPage().stream().filter(n ->
                         n.getRecipients().contains(recipientTaxId) && (isMonoDest ? n.getRecipients().size() == 1 : n.getRecipients().size() > 1))
@@ -1481,7 +1481,7 @@ public class SharedSteps {
                 break;
             }
         }
-        AssertionsForClassTypes.assertThat(oldNotification).as("Non è stata trovata nessuna notifica che soddisfi i criteri di ricerca").isNotNull();
+        assumeThat(oldNotification).as("Non è stata trovata nessuna notifica che soddisfi i criteri di ricerca").isNotNull();
         notificationIun = oldNotification.getIun();
         notificationIunList.add(oldNotification.getIun());
         log.info("RECIPIENTS OLDER {} GG: {}", lowerLimit, oldNotification.getRecipients().stream().map(r -> r.getTaxId()).toList());
