@@ -49,7 +49,7 @@ import it.pagopa.interop.tenant.service.impl.TenantsApiClientImpl;
 import it.pagopa.interop.tenant.service.impl.TenantsProcessApiClientImpl;
 import it.pagopa.interop.tracing.config.TracingClientConfigs;
 import it.pagopa.interop.tracing.service.impl.DevAbstractInteropTracingClient;
-import it.pagopa.interop.tracing.service.impl.QAAbstractInteropTracingClient;
+import it.pagopa.interop.tracing.service.impl.ExtraQaAbstractInteropTracingClient;
 import it.pagopa.interop.users.service.M2MV3UsersClient;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -126,7 +126,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         TracingClientConfigs.class,
         ProbingClientConfigs.class,
         DevAbstractInteropTracingClient.class,
-        QAAbstractInteropTracingClient.class,
+        ExtraQaAbstractInteropTracingClient.class,
         CommonUtils.class,
         VoucherService.class,
         AsyncVoucherService.class,
