@@ -4,9 +4,13 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.I
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.RestartAttemptRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.ReworkRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.UpdateReworkRequest;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Factory di sole request verso il client di rework/restart timeline.
@@ -55,14 +59,40 @@ final class ReworkRequestFactory {
         return restartAttemptRequest;
     }
 
-    static InvalidateTimelineElementsRequest defaultInvalidationRequest(List<String> timelineElementsId) {
-        return invalidationRequest("RECINDEX_0", timelineElementsId);
-    }
-
     static InvalidateTimelineElementsRequest invalidationRequest(String recIndex, List<String> timelineELementsId) {
         InvalidateTimelineElementsRequest invalidationRequest = new InvalidateTimelineElementsRequest();
         invalidationRequest.setRecIndex(recIndex);
         invalidationRequest.setTimelineElementIds(timelineELementsId);
+        log.info("INVALIDATION request built: %s", invalidationRequest);
+        return invalidationRequest;
+    }
+
+    static InvalidateTimelineElementsRequest invalidationRequest(Map<String, String> inputData, String recIndex, FullSentNotificationV29 fsn) {
+        List<String> timelineElementsId = new ArrayList<>();
+        inputData.forEach((key, value) -> {
+            if (key.contains("element")) {
+                String[] filters = value.split(";");
+                String category = filters[0];
+                String recIndexFilter = Arrays.stream(filters).toList().stream().filter(x -> x.contains("RECINDEX_")).findFirst().orElse(null);
+                String attemptFilter = Arrays.stream(filters).toList().stream().filter(x -> x.contains("ATTEMPT_")).findFirst().orElse(null);
+                String timelineElementId = fsn.getTimeline().stream().filter(x ->
+                                x.getCategory().getValue().equals(category)
+                                        && (recIndexFilter != null ? x.getElementId().contains(recIndexFilter) : true)
+                                        && (attemptFilter != null ? x.getElementId().contains(attemptFilter) : true))
+                        .map(te -> te.getElementId())
+                        .findFirst()
+                        .orElse(null);
+                if (timelineElementId != null) {
+                    timelineElementsId.add(timelineElementId);
+                }
+            }
+            if (key.contains("id") && value != null && !value.isEmpty()) {
+                timelineElementsId.add(value);
+            }
+        });
+        InvalidateTimelineElementsRequest invalidationRequest = new InvalidateTimelineElementsRequest();
+        invalidationRequest.setRecIndex(recIndex);
+        invalidationRequest.setTimelineElementIds(timelineElementsId);
         log.info("INVALIDATION request built: %s", invalidationRequest);
         return invalidationRequest;
     }

@@ -190,29 +190,7 @@ public class TimelineReworkSteps {
             String iun = getDataTableParams(inputData, "iun", sharedSteps.getNotificationIun());
             String recIndex = getDataTableParams(inputData, "recIndex", "RECINDEX_0");
             FullSentNotificationV29 fsn = sharedSteps.getSentNotificationLastVersion();
-            List<String> timelineElementsId = new ArrayList<>();
-            inputData.forEach((key, value) -> {
-                if (key.contains("element")) {
-                    String[] filters = value.split(";");
-                    String category = filters[0];
-                    String recIndexFilter = Arrays.stream(filters).toList().stream().filter(x -> x.contains("RECINDEX_")).findFirst().orElse(null);
-                    String attemptFilter = Arrays.stream(filters).toList().stream().filter(x -> x.contains("ATTEMPT_")).findFirst().orElse(null);
-                    String timelineElementId = fsn.getTimeline().stream().filter(x ->
-                                    x.getCategory().getValue().equals(category)
-                                            && (recIndexFilter != null ? x.getElementId().contains(recIndexFilter) : true)
-                                            && (attemptFilter != null ? x.getElementId().contains(attemptFilter) : true))
-                            .map(te -> te.getElementId())
-                            .findFirst()
-                            .orElse(null);
-                    if (timelineElementId != null) {
-                        timelineElementsId.add(timelineElementId);
-                    }
-                }
-                if (key.contains("id") && value != null && !value.isEmpty()) {
-                    timelineElementsId.add(value);
-                }
-            });
-            punctualCorrectionRequest = ReworkRequestFactory.invalidationRequest(recIndex, timelineElementsId);
+            punctualCorrectionRequest = ReworkRequestFactory.invalidationRequest(inputData, recIndex, fsn);
             removeElementsResponse = reworkTimelineClient.invalidateTimelineElements(iun, punctualCorrectionRequest);
             log.info("Successfully invalidated. Invalidation response: {}", removeElementsResponse);
         } catch (HttpStatusCodeException e) {
