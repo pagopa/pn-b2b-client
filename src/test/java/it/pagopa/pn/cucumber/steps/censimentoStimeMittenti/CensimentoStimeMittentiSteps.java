@@ -7,12 +7,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.model.ModuloCommessa;
 import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.model.StimeMittentiContext;
-import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
-import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClientV2;
-import it.pagopa.pn.cucumber.steps.delayer.client.PortfatLambdaClient;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerCountersSumEstimatesItem;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPresigneUrlDownload;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPresigneUrlUpload;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimit;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimits;
 import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSevice;
@@ -42,9 +37,6 @@ import java.util.function.Supplier;
 @Slf4j
 public class CensimentoStimeMittentiSteps {
 
-    private final DelayerLambdaClient lambdaClient;
-    private final DelayerLambdaClientV2 lambdaClientV2;
-    private final PortfatLambdaClient portfatLambdaClient;
     private final StimeMittentiContext context;
     private final ApplicationContext applicationContext;
     private final DelayerSevice delayerSevice;
@@ -75,7 +67,7 @@ public class CensimentoStimeMittentiSteps {
                     .pollInterval(Duration.ofSeconds(10))
                     .pollDelay(Duration.ZERO)
                     .until(() -> {
-                        DelayerSenderLimits actual = lambdaClientV2.getSenderLimitByProvinceWithTable(senderLimitTable, expectedSenderLimit.getDeliveryDate(), province);
+                        DelayerSenderLimits actual = delayerSevice.getSenderLimitByProvinceWithTable(senderLimitTable, expectedSenderLimit.getDeliveryDate(), province);
                         boolean found = isPresent(actual, expectedSenderLimit);
                         log.info("Trovati i seguenti limiti: {}", actual);
                         return shouldContain ? found : !found;
@@ -115,7 +107,7 @@ private boolean isPresent(DelayerSenderLimits actual, DelayerSenderLimit expecte
         List<LocalDate> mondays = DelayerSenderLimitUtils.getMondaysBetween(da, a, false, false);
 
         for (LocalDate monday : mondays) {
-            List<DelayerSenderLimit> limits = lambdaClient.pollSenderLimit(monday.toString(), provincia, null, attempt, sleepMillis);
+            List<DelayerSenderLimit> limits = delayerSevice.pollSenderLimit(monday.toString(), provincia, attempt, sleepMillis);
             context.actual.senderLimits.addAll(limits);
         }
     }
@@ -141,8 +133,7 @@ private boolean isPresent(DelayerSenderLimits actual, DelayerSenderLimit expecte
             String preloadUrlDownload = preloadZipFile(fileName, true);
             Assertions.assertThat(preloadUrlDownload).as("Presigned url download non generato correttamente").isNotNull();
             // viene invocata la lambda portfat che elabora il file e genera le stime mittenti
-            portfatLambdaClient.invokePortfatLambda(preloadUrlDownload);
-
+            delayerSevice.invokePortfatLambda(preloadUrlDownload);
         } catch (Exception e) {
             throw new RuntimeException("Errore durante il caricamento del file zip e l'invocazione della lambda portfat", e);
         }
@@ -166,14 +157,12 @@ private boolean isPresent(DelayerSenderLimits actual, DelayerSenderLimit expecte
         String preloadUrl = null;
         try {
             String sha256 = B2bUtils.computeSha256(applicationContext, String.format("classpath:/%s", fileName));
-            DelayerPresigneUrlUpload uploadResponse = lambdaClientV2.getPresignedUrlUpload(fileName, sha256);
-            preloadUrl = uploadResponse.getUploadUrl();
             // viene caricato il file zip su S3 tramite il presigned url ottenuto
+            preloadUrl = delayerSevice.getPresignedUploadUrl(fileName, sha256);
             B2bUtils.loadToPresigned(applicationContext, preloadUrl, null, null, String.format("classpath:/%s", fileName), "application/zip");
             if (withDownload) {
                 // viene ottenuto il presigned url per il download del file elaborato
-                DelayerPresigneUrlDownload downloadResponse = lambdaClientV2.getPresignedUrlDownload(fileName);
-                preloadUrl = downloadResponse.getDownloadUrl();
+                preloadUrl = delayerSevice.getPresignedDownloadUrl(fileName);
             }
         } catch (Exception e) {
             log.error("Errore durante il caricamento del file zip e l'invocazione della lambda portfat", e);

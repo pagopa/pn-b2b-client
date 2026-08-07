@@ -6,13 +6,8 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.*;
-import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
-import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
-import it.pagopa.pn.client.b2b.pa.service.IPnPrivateDeliveryPushExternalClient;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bInternalInformalClientImpl;
-import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.informalNotification.builders.InformalRecipientBuilder;
 import it.pagopa.pn.cucumber.steps.informalNotification.datatest.InformalDataTestV1;
@@ -49,15 +44,6 @@ public class PresaInCaricoNoticaBonariaSteps {
     @Getter
     private final SharedSteps sharedSteps;
     @Getter
-    private final IPnPaB2bClient b2bClient;
-    private final PnExternalServiceClientImpl externalClient;
-    @Getter
-    private final IPnPrivateDeliveryPushExternalClient pnPrivateDeliveryPushExternalClient;
-    @Getter
-    private final PnPollingFactory pnPollingFactory;
-    @Getter
-    private final TimingForPolling timingForPolling;
-    @Getter
     private final PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl;
 
     private InformalNotificationRequestV1 informalNotificationRequestV1;
@@ -83,14 +69,9 @@ public class PresaInCaricoNoticaBonariaSteps {
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.NotificationAttachmentDownloadMetadataResponse receivedAttachmentResponse;
 
     @Autowired
-    public PresaInCaricoNoticaBonariaSteps(NotificationInformalUtilsV1 notificationInformalUtilsV1, InformalNotificationRequestMapper informalNotificationRequestMapper, InformalRecipientBuilder recipientBuilder, PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl, SharedSteps sharedSteps, TimingForPolling timingForPolling, IPnPrivateDeliveryPushExternalClient pnPrivateDeliveryPushExternalClient) {
+    public PresaInCaricoNoticaBonariaSteps(NotificationInformalUtilsV1 notificationInformalUtilsV1, InformalNotificationRequestMapper informalNotificationRequestMapper, InformalRecipientBuilder recipientBuilder, PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl, SharedSteps sharedSteps) {
         this.sharedSteps = sharedSteps;
-        this.timingForPolling = timingForPolling;
-        this.pnPrivateDeliveryPushExternalClient = pnPrivateDeliveryPushExternalClient;
         this.pnPaB2bInternalInformalClientImpl = pnPaB2bInternalInformalClientImpl;
-        this.externalClient = sharedSteps.getPnExternalServiceClient();
-        this.b2bClient = sharedSteps.getB2bClient();
-        this.pnPollingFactory = sharedSteps.getPollingFactory();
         this.informalNotificationRequestMapper = informalNotificationRequestMapper;
         this.notificationInformalUtilsV1 = notificationInformalUtilsV1;
         this.recipientBuilder = recipientBuilder;
@@ -100,7 +81,6 @@ public class PresaInCaricoNoticaBonariaSteps {
 
     @And("mittente della notifica bonaria: {string}")
     public void setSenderInformal(String paName) {
-
         setSenderContext(paName);
     }
 
@@ -207,7 +187,6 @@ public class PresaInCaricoNoticaBonariaSteps {
                     doc.getRef().setKey("PN_NOTIFICATION_ATTACHMENT-c3bc9525a5ac4f45a4fb7e940b2b9815.pdf");
                 }
             });
-
             newInformalNotificationResponse = pnPaB2bInternalInformalClientImpl.sendNewInformalNotificationV1(currentCxId, informalNotificationRequestV1);
             savedNotificationRequestId = newInformalNotificationResponse.getNotificationRequestId();
             lastException = null;
@@ -464,7 +443,6 @@ public class PresaInCaricoNoticaBonariaSteps {
 
         AtomicReference<String> lastStatus = new AtomicReference<>(null);
         AtomicReference<FullSentInformalNotificationV1> lastNotification = new AtomicReference<>();
-
         InformalStatusPollingConfig.DefaultStatusValue config = InformalStatusPollingConfig.DefaultStatusValue.valueOf(expectedStatus);
 
         try {
@@ -525,10 +503,8 @@ public class PresaInCaricoNoticaBonariaSteps {
 
     @Then("la terminazione della notifica bonaria è accettata")
     public void verifyTerminationAccepted() {
-
         assertNull(lastException, "Errore non atteso durante la terminazione");
         assertNotNull(terminationStatus, "terminationStatus nullo");
-
         boolean accepted = terminationStatus.getDetails().stream().anyMatch(d -> "NOTIFICATION_TERMINATION_ACCEPTED".equals(d.getCode()));
         assertTrue(accepted, "Codice NOTIFICATION_TERMINATION_ACCEPTED non presente");
     }
@@ -564,9 +540,8 @@ public class PresaInCaricoNoticaBonariaSteps {
         assertTrue(responseBody.contains(expectedErrorCode), "Codice errore atteso non trovato: " + expectedErrorCode + "\nResponse body: " + responseBody);
     }
 
-    @When("il recupero del messaggio per le comunicazioni bonarie fallisce con errore {string}")
-    public void getInformalMessageExpectError(String messageIdString) {
-        UUID messageId = toUuid(messageIdString);
+    @When("il recupero del messaggio per le comunicazioni bonarie fallisce")
+    public void getInformalMessageExpectError() {
         try {
             messageResponse = pnPaB2bInternalInformalClientImpl.getMessage(messageId, currentCxId);
             fail("Atteso errore ma la richiesta è andata a buon fine");
@@ -582,7 +557,6 @@ public class PresaInCaricoNoticaBonariaSteps {
     public void verifyMessageRetrieved() {
         assertNull(lastException, "Errore non atteso");
         assertNotNull(messageResponse, "La response non deve essere null");
-
     }
 
     public UUID toUuid(String value) {
@@ -596,7 +570,6 @@ public class PresaInCaricoNoticaBonariaSteps {
     private void handleGroup(Map<String, String> data) {
 
         if (data.containsKey("group")) {
-
             String value = data.get("group");
 
             //NULL esplicito → null
@@ -635,7 +608,6 @@ public class PresaInCaricoNoticaBonariaSteps {
         }
     }
 
-
     @Given("l'ente mittente {string} compila una notifica bonaria con i seguenti dati:")
     public void createInformalNotification(String paName, Map<String, String> dataInput) {
 
@@ -651,7 +623,6 @@ public class PresaInCaricoNoticaBonariaSteps {
         Map<String, String> cleanedData = data.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().trim(), e -> e.getValue() != null ? e.getValue().trim() : null));
         InformalNotificationRecipientV1 recipient = recipientBuilder.build(cleanedData, currentCxId);
         informalNotificationRequestV1.getRecipients().add(recipient);
-        //this.recipientCxType = "PF".equalsIgnoreCase(recipient.getRecipientType().getValue()) ? it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet.PF : it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet.PG;
     }
 
     @Then("si attende che venga prodotto l'elemento {string} della notifica bonaria")
@@ -738,10 +709,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     }
 
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet toRecipientCxType(Destinatario destinatario) {
-
-        return "PF".equalsIgnoreCase(destinatario.getRecipientType())
-                ? it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet.PF
-                : it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet.PG;
+        return "PF".equalsIgnoreCase(destinatario.getRecipientType()) ? it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet.PF : it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet.PG;
     }
 }
 
