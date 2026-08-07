@@ -200,8 +200,10 @@ public class TracingSteps {
         httpCallExecutor.performCall(() -> interopTracingClient.submitTracingWithHttpInfo(tracingFileUtils.getCsvFile(fileType), currentTracing.getFormattedDate()));
         try {
             ResponseEntity responseEntity = (ResponseEntity)httpCallExecutor.getResponse();
+            if (responseEntity == null) throw new ClassCastException("Retrieved object is null");
+
             currentTracing.setCorrelationId(responseEntity.getHeaders().getFirst("x-correlation-id"));
-            currentTracing.setTracingId(((SubmitTracingResponse)responseEntity.getBody()).getTracingId().toString());
+            currentTracing.setTracingId(((SubmitTracingResponse) responseEntity.getBody()).getTracingId().toString());
             log.info(String.format("Tracing ID in response: %s", currentTracing.getTracingId()));
 
         } catch (ClassCastException e) {
@@ -306,6 +308,8 @@ public class TracingSteps {
         httpCallExecutor.performCall(() -> interopTracingClient.recoverTracingWithHttpInfo(UUID.fromString(tracingId), resource));
         try {
             ResponseEntity responseEntity = (ResponseEntity)httpCallExecutor.getResponse();
+            if (responseEntity == null) throw new ClassCastException("Retrieved object is null");
+
             currentTracing.setCorrelationId(responseEntity.getHeaders().getFirst("x-correlation-id"));
             RecoverTracingResponse response = (RecoverTracingResponse)responseEntity.getBody();
             currentTracing.setTracingId(response.getTracingId().toString());
@@ -343,6 +347,8 @@ public class TracingSteps {
         httpCallExecutor.performCall(() -> interopTracingClient.replaceTracingWithHttpInfo(tracingId, resource));
         try {
             ResponseEntity responseEntity = (ResponseEntity)httpCallExecutor.getResponse();
+            if (responseEntity == null) throw new ClassCastException("Retrieved object is null");
+
             currentTracing.setCorrelationId(responseEntity.getHeaders().getFirst("x-correlation-id"));
             currentTracing.incrementVersion();
 
