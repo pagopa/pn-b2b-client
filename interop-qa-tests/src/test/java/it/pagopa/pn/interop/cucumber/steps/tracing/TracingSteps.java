@@ -64,6 +64,10 @@ public class TracingSteps {
         return "/tracing_" + pstTestId + ".csv";
     }
 
+    public String getBucketNameOfCurrentEnv(String bucketName) {
+        return bucketName + "-" + envProfile.split("-")[1];
+    }
+
     private static final int OFFSET_VALUE = 0;
     private static final int LIMIT_VALUE = 50;
     private final IInteropTracingClient interopTracingClient;
@@ -434,7 +438,7 @@ public class TracingSteps {
 
     @Then("si attende che l'invio in ERROR sia registrato come header CSV non valido")
     public void verifyWrongCsvHeaderIsTrackedInTracingErrors() {
-        String bucketName = "tracing-errors-files-" + envProfile;
+        String bucketName = getBucketNameOfCurrentEnv("tracing-errors-files");
         TracingS3Client.PollingSpecification pollingSpec = getS3PollingSpecification();
 
         Assertions.assertTrue(isCsvTracingFilePresent(
@@ -464,23 +468,26 @@ public class TracingSteps {
 
     @Then("nessun file CSV di tracing viene arricchito")
     public void verifyNoNewEnrichedCsvTracingGenerated() {
+        String bucketName = getBucketNameOfCurrentEnv("tracing-enriched-files");
         Assertions.assertFalse(isCsvTracingFilePresent(
                 getS3PollingSpecification(4_000, 1_000, 2),
-                "tracing-enriched-files-" + envProfile, composeS3KeyWithTracing(currentTracing)
+                bucketName, composeS3KeyWithTracing(currentTracing)
         ));
     }
 
     @Then("si attende che il file di tracing venga ricevuto")
     public void verifyCsvTracingFileIsReceived() {
+        String bucketName = getBucketNameOfCurrentEnv("tracing-files");
         Assertions.assertTrue(isCsvTracingFilePresent(
-                getS3PollingSpecification(), "tracing-files-" + envProfile, composeS3KeyWithTracing(currentTracing)
+                getS3PollingSpecification(), bucketName, composeS3KeyWithTracing(currentTracing)
         ));
     }
 
     @Then("si attende che il file di tracing arricchito venga generato")
     public void verifyEnrichedCsvTracingFileIsGenerated() {
+        String bucketName = getBucketNameOfCurrentEnv("tracing-enriched-files");
         Assertions.assertTrue(isCsvTracingFilePresent(
-                getS3PollingSpecification(), "tracing-enriched-files-" + envProfile, composeS3KeyWithTracing(currentTracing)
+                getS3PollingSpecification(), bucketName, composeS3KeyWithTracing(currentTracing)
         ));
     }
 
@@ -489,15 +496,16 @@ public class TracingSteps {
         long timeoutMs = waitInMinutes * 60 * 1000L;
         long pollIntervalMs = 30_000;
         int deltaSeconds = 60;
+        String bucketName = getBucketNameOfCurrentEnv("tracing-enriched-files");
         Assertions.assertTrue(isCsvTracingFilePresent(
                 getS3PollingSpecification(timeoutMs, pollIntervalMs, deltaSeconds),
-                "tracing-enriched-files-" + envProfile, composeS3KeyWithTracing(currentTracing)
+                bucketName, composeS3KeyWithTracing(currentTracing)
         ));
     }
 
     @Then("si attende che il file di tracing venga arricchito con altri dati")
     public void verifyCsvUploadedFileIsEnriched() {
-        String bucketName = "tracing-enriched-files-" + envProfile;
+        String bucketName = getBucketNameOfCurrentEnv("tracing-enriched-files");
         String s3Key = composeS3KeyWithTracing(currentTracing);
         TracingS3Client.PollingSpecification pollingSpec = getS3PollingSpecification();
 
@@ -521,7 +529,8 @@ public class TracingSteps {
 
     @Then("si attende che il record con codice HTTP non valido sia tracciato negli errori")
     public void verifyWrongCsvRecordsAreTrackedInTracingErrors() {
-        String bucketName = "tracing-errors-files-" + envProfile;
+        
+        String bucketName = getBucketNameOfCurrentEnv("tracing-errors-files");
         TracingS3Client.PollingSpecification pollingSpec = getS3PollingSpecification();
 
         Assertions.assertTrue(isCsvTracingFilePresent(
@@ -551,7 +560,7 @@ public class TracingSteps {
 
     @Then("si attende che l'invio in WARNING sia registrato come purpose ID non conforme all'utenza")
     public void verifyWarningCsvRecordsAreTrackedInTracingErrors() {
-        String bucketName = "tracing-errors-files-" + envProfile;
+        String bucketName = getBucketNameOfCurrentEnv("tracing-errors-files");
         TracingS3Client.PollingSpecification pollingSpec = getS3PollingSpecification();
 
         Assertions.assertTrue(isCsvTracingFilePresent(
