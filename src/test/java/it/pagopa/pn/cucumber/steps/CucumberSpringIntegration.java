@@ -33,10 +33,10 @@ import it.pagopa.pn.client.b2b.pa.utils.DataPreparationRaddVpceService;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.model.StimeMittentiContext;
 import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
-import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClientV2;
 import it.pagopa.pn.cucumber.steps.delayer.client.PortfatLambdaClient;
 import it.pagopa.pn.cucumber.steps.delayer.loader.DelayerCsvLoader;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSuiteContext;
 import it.pagopa.pn.cucumber.steps.delayer.planner.DelayerPlanner;
 import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSevice;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
@@ -232,11 +232,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         TemplateEngineConfigBean.class,
         SchemaValidator.class,
         PaperTrackerSchemaValidatorProxy.class,
-        DelayerLambdaClientV2.class,
-        DelayerSevice.class,
         DelayerLambdaClient.class,
+        DelayerSevice.class,
         DelayerValidator.class,
         DelayerContext.class,
+        DelayerSuiteContext.class,
         DelayerPaperDeliveryUtils.class,
         DelayerCsvLoader.class,
         DelayerPlanner.class,

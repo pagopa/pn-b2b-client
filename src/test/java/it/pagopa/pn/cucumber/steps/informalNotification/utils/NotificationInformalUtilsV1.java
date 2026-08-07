@@ -47,11 +47,7 @@ public class NotificationInformalUtilsV1 extends B2bUtils {
         String sha256 = computeSha256(context, resourceName);
 
         InformalPreLoadRequest request = new InformalPreLoadRequest().preloadIdx("0").contentType(contentType).sha256(sha256);
-
         InformalPreLoadResponse response = externalInformalClient.informalPresignedUploadRequest(apiKey, List.of(request)).get(0);
-        //InformalPreLoadResponse response = internalInformalClient.informalPresignedUploadRequest("5b994d4a-0fa8-47ac-9c7b-354f1d44a1ce",List.of(request)).get(0);
-
-
         log.info("Informal preload resource={} sha256={} url={}", resourceName, sha256, response.getUrl());
 
         loadToPresigned(context, response.getUrl(), response.getSecret(), sha256, resourceName, contentType);
@@ -75,6 +71,9 @@ public class NotificationInformalUtilsV1 extends B2bUtils {
     // =========================================================
     private void preloadDocuments(InformalNotificationRequestV1 request, String paName) throws IOException {
 
+        if (request.getDocuments() == null) {
+            return;
+        }
         List<NotificationDocument> newDocs = new ArrayList<>();
 
         for (NotificationDocument doc : request.getDocuments()) {
@@ -100,11 +99,9 @@ public class NotificationInformalUtilsV1 extends B2bUtils {
     private void preloadPayments(InformalNotificationRequestV1 request, String PaName) throws IOException {
 
         for (InformalNotificationRecipientV1 recipient : request.getRecipients()) {
-
             if (recipient.getPayments() == null) continue;
 
             for (InformalNotificationPaymentItem payment : recipient.getPayments()) {
-
                 if (payment.getPagoPa() != null) {
                     payment.getPagoPa().setAttachment(preloadAttachment(payment.getPagoPa().getAttachment(), PaName));
                 }

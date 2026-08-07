@@ -161,8 +161,12 @@ public class EServiceTemplateInstanceCreateSteps {
         clientTokenConfigurator.setBearerToken(userToken);
 
         UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
+        UUID oldDescriptorId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorIdCreatedFromTemplate();
         UUID newDescriptorId = this.dataPreparationService.createNextDraftDescriptor(eServiceId);
         sharedStepsContext.getEServiceTemplateStepContext().setLastEServiceDescriptorIdCreatedFromTemplate(newDescriptorId);
+        sharedStepsContext.getEServicesCommonContext().setEserviceId(eServiceId);
+        sharedStepsContext.getEServicesCommonContext().setOldDescriptorId(oldDescriptorId);
+        sharedStepsContext.getEServicesCommonContext().setDescriptorId(newDescriptorId);
 
         checkEServiceAndMutateState(EServiceDescriptorState.DRAFT);
     }

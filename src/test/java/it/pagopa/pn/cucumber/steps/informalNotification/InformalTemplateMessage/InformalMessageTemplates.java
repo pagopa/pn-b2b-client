@@ -6,55 +6,69 @@ import lombok.Getter;
 @Getter
 public enum InformalMessageTemplates {
 
-    SORICAL_IT(
+    RISCUOTI_IT(
             new InformalMessageContent(
                     "IT",
                     "È stata emessa una nuova fattura per te",
                     """
-                    Sorical S.p.a. ti informa che è stata emessa una fattura per l'utenza n.182140.
+                    Riscuoti S.p.a. ti informa che è stata emessa una fattura per l'utenza n.1812121.
                     """,
                     """
                     SEND, ti informa che hai ricevuto
-                    una comunicazione da Sorical S.p.A.
+                    una comunicazione da Riscuoti  S.p.A.
                     """
             )
     ),
 
-    SORICAL_DE(
+    RISCUOTI_DE(
             new InformalMessageContent(
                     "DE",
                     "Für Sie wurde eine neue Rechnung erstellt",
                     """
-                    Sorical S.p.A. informiert Sie darüber, dass für den Vertrag Nr. 182140 eine neue Rechnung erstellt wurde.
+                    Riscuoti S.p.A. informiert Sie: Für Anschluss Nr.1812121 wurde eine Rechnung erstellt.
                     """,
                     """
-                    SEND informiert Sie darüber, dass Sie eine Mitteilung von Sorical S.p.A. erhalten haben.
+                    SEND informiert Sie über eine Mitteilung von Riscuoti S.p.A.
                     """
             )
     ),
 
-    SORICAL_SL(
+    RISCUOTI_EN(
+            new InformalMessageContent(
+                    "EN",
+                    "A new invoice has been issued for you",
+                    """
+                    Riscuoti S.p.A. informs you that a new invoice has been issued for customer account no. 1812121.
+                    """,
+                    """
+                    SEND informs you that you have received
+                    a communication from Riscuoti S.p.A.
+                    """
+            )
+    ),
+
+    RISCUOTI_SL(
             new InformalMessageContent(
                     "SL",
                     "Za vas je bil izdan nov račun",
                     """
-                    Družba Sorical S.p.A. vas obvešča, da je bil za pogodbo št. 182140 izdan nov račun.
+                    Družba Riscuoti S.p.A. vas obvešča, da je bil za pogodbo št. 1812121 izdan nov račun.
                     """,
                     """
-                    SEND vas obvešča, da ste prejeli sporočilo družbe Sorical S.p.A.
+                    SEND vas obvešča, da ste prejeli sporočilo družbe Riscuoti S.p.A.
                     """
             )
     ),
 
-    SORICAL_FR(
+    RISCUOTI_FR(
             new InformalMessageContent(
                     "FR",
                     "Une nouvelle facture a ete emise pour vous",
                     """
-                    Sorical S.p.A. vous informe qu une facture a ete emise pour le contrat n°182140.
+                    Riscuoti S.p.A. vous informe qu une facture a ete emise pour le contrat n°1812121.
                     """,
                     """
-                    SEND vous informe que vous avez reçu une communication de Sorical S.p.A.
+                    SEND vous informe que vous avez reçu une communication de Riscuoti S.p.A.
                     """
             )
     );
