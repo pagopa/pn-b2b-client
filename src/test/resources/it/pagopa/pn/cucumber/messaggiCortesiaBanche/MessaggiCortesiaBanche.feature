@@ -57,7 +57,8 @@ Feature: Messaggi di cortesia Banche
     Then si ottiene status code <statusCode>
     Examples:
       | retrievalId                                        | statusCode |
-      | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa | 200        |
+      #| YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa | 200        |
+      | 04984ea9-b00f-4eb6-9c55-ccaa9cacdceb-1786113759107 | 200        |
       |                                                    | 400        |
 
   @bankCourtesyMessageEnabled
@@ -66,7 +67,8 @@ Feature: Messaggi di cortesia Banche
     Then si ottiene status code <statusCode>
     Examples:
       | retrievalId                                        | statusCode |
-      | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa | 200        |
+      #| YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa | 200        |
+      | 04984ea9-b00f-4eb6-9c55-ccaa9cacdceb-1786113759107 | 200        |
       |                                                    | 400        |
 
   @bankCourtesyMessageEnabled
@@ -79,8 +81,10 @@ Feature: Messaggi di cortesia Banche
     Then si ottiene status code <statusCode>
     Examples:
       | retrievalId                                        | noticeCode         | paTaxId     | amount | statusCode |
-      | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa | 302000100000019421 | 77777777777 | 10     | 200        |
-      | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa | 302000100000019421 | 77777777777 |        | 200        |
+#      | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa | 302000100000019421 | 77777777777 | 10     | 200        |
+#      | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa | 302000100000019421 | 77777777777 |        | 200        |
+      | 04984ea9-b00f-4eb6-9c55-ccaa9cacdceb-1786113759107 | 302000100000019421 | 77777777777 | 10     | 200        |
+      | 04984ea9-b00f-4eb6-9c55-ccaa9cacdceb-1786113759107 | 302000100000019421 | 77777777777 |        | 200        |
       |                                                    | 302000100000019421 | 77777777777 | 10     | 400        |
       | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa |                    | 77777777777 | 10     | 400        |
       | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa | 302000100000019421 |             | 10     | 400        |
