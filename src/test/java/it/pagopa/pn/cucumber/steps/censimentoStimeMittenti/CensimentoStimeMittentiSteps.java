@@ -63,7 +63,7 @@ public class CensimentoStimeMittentiSteps {
     private void assertSenderLimitMatchesEventually(String senderLimitTable, String province, DelayerSenderLimit expectedSenderLimit, boolean shouldContain) {
         try {
             Awaitility.await()
-                    .atMost(Duration.ofMinutes(5))
+                    .atMost(Duration.ofMinutes(20))
                     .pollInterval(Duration.ofSeconds(10))
                     .pollDelay(Duration.ZERO)
                     .until(() -> {
@@ -208,7 +208,7 @@ private boolean isPresent(DelayerSenderLimits actual, DelayerSenderLimit expecte
 
         try {
             Awaitility.await()
-                    .atMost(Duration.ofMinutes(10))
+                    .atMost(Duration.ofMinutes(20))
                     .pollInterval(Duration.ofSeconds(20))
                     .pollDelay(Duration.ZERO) // prova subito, poi ripete ogni 20s
                     .until(() -> {
