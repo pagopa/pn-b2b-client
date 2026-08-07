@@ -100,7 +100,7 @@ public class IdentityServiceSelfcareImpl implements IdentityService {
         return tenantList.stream()
                 .filter(tenant -> tenantType.equals(tenant.getName()))
                 .map(Tenant::getOrganizationId)
-                .map(o -> o.get((this.runProfile.equals("extra-qa")) ? "qa" : this.runProfile))
+                .map(o -> o.get(this.runProfile))
                 .findAny()
                 .map(UUID::fromString)
                 .orElse(null);
