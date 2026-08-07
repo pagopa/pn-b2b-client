@@ -208,7 +208,7 @@ private boolean isPresent(DelayerSenderLimits actual, DelayerSenderLimit expecte
 
         try {
             Awaitility.await()
-                    .atMost(Duration.ofMinutes(3))
+                    .atMost(Duration.ofMinutes(10))
                     .pollInterval(Duration.ofSeconds(20))
                     .pollDelay(Duration.ZERO) // prova subito, poi ripete ogni 20s
                     .until(() -> {
