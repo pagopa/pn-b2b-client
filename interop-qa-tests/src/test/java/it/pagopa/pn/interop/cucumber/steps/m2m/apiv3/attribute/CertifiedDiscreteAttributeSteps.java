@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.attribute;
 
 import io.cucumber.java.en.When;
 import it.pagopa.interop.attribute.service.IM2MV3CertifiedDiscreteAttributeClient;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.CertifiedDiscreteAttribute;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.CertifiedDiscreteAttributeSeed;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -16,12 +17,22 @@ public class CertifiedDiscreteAttributeSteps extends AbstractCommonSteps<Certifi
 
     private final SharedStepsContext sharedStepsContext;
     private final IM2MV3CertifiedDiscreteAttributeClient client;
+    private final IHttpExecutor httpExecutor;
 
     public CertifiedDiscreteAttributeSteps(SharedStepsContext sharedStepsContext, ClientTokenConfigurator clientTokenConfigurator) {
         super("certifiedDiscreteAttribute", clientTokenConfigurator.getM2mV3CertifiedDiscreteAttributeClient(), sharedStepsContext);
         this.client = clientTokenConfigurator.getM2mV3CertifiedDiscreteAttributeClient();
         this.sharedStepsContext = sharedStepsContext;
         this.client.setHttpCallExecutor(sharedStepsContext.getHttpCallExecutor());
+        this.httpExecutor = sharedStepsContext.getHttpCallExecutor();
+    }
+
+    @When("viene effettuata la creazione dell'attributo certificato discreto con successo")
+    public void createCertifiedDiscreteAttributeSuccessfully(CertifiedDiscreteAttributeSeed payloadAttrCert) {
+        createCertifiedDiscreteAttribute(payloadAttrCert);
+        if(httpExecutor.getResponseStatus().isError()) {
+            throw new IllegalStateException("La creazione dell'attributo certificato non ha avuto successo. Visionare logs per maggiori dettagli.");
+        }
     }
 
     @When("viene effettuata la creazione dell'attributo certificato discreto")
@@ -33,6 +44,11 @@ public class CertifiedDiscreteAttributeSteps extends AbstractCommonSteps<Certifi
         published.add(result);
 
         attributeContext.setCertifiedDiscretePublished(published);
+    }
+
+    @When("si tenta la creazione dell'attributo certificato discreto senza passare parametri nella richiesta")
+    public void createCertifiedDiscreteAttributeWithoutParameters() {
+        client.tryCreationWithMissingData();
     }
 
     @Override
