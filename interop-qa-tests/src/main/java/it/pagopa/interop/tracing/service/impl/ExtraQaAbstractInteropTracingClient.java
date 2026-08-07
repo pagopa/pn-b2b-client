@@ -9,14 +9,14 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-@Profile("qa")
+@Profile("extra-qa")
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class QAAbstractInteropTracingClient extends AbstractInteropTracingClient {
+public class ExtraQaAbstractInteropTracingClient extends AbstractInteropTracingClient {
     private BearerTokenType bearerTokenSetted;
     private IdentityService identityService;
 
-    public QAAbstractInteropTracingClient(RestTemplate restTemplate, TracingClientConfigs tracingClientConfigs, @Qualifier("tracingIdentityService") IdentityService identityService) {
+    public ExtraQaAbstractInteropTracingClient(RestTemplate restTemplate, TracingClientConfigs tracingClientConfigs, @Qualifier("tracingIdentityService") IdentityService identityService) {
         super(restTemplate, tracingClientConfigs);
         this.bearerTokenSetted = BearerTokenType.TENANT_1;
         this.identityService = identityService;
