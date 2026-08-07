@@ -58,7 +58,7 @@ Feature: Messaggi di cortesia Banche
     Examples:
       | retrievalId                                        | statusCode |
       #| YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa | 200        |
-      | 04984ea9-b00f-4eb6-9c55-ccaa9cacdceb-1786113759107 | 200        |
+      | 907b4743-f61d-42c4-b53a-03472b1a0bc2-1786115760921 | 200        |
       |                                                    | 400        |
 
   @bankCourtesyMessageEnabled
@@ -68,7 +68,7 @@ Feature: Messaggi di cortesia Banche
     Examples:
       | retrievalId                                        | statusCode |
       #| YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa | 200        |
-      | 04984ea9-b00f-4eb6-9c55-ccaa9cacdceb-1786113759107 | 200        |
+      | 907b4743-f61d-42c4-b53a-03472b1a0bc2-1786115760921 | 200        |
       |                                                    | 400        |
 
   @bankCourtesyMessageEnabled
@@ -83,8 +83,8 @@ Feature: Messaggi di cortesia Banche
       | retrievalId                                        | noticeCode         | paTaxId     | amount | statusCode |
 #      | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa | 302000100000019421 | 77777777777 | 10     | 200        |
 #      | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa | 302000100000019421 | 77777777777 |        | 200        |
-      | 04984ea9-b00f-4eb6-9c55-ccaa9cacdceb-1786113759107 | 302000100000019421 | 77777777777 | 10     | 200        |
-      | 04984ea9-b00f-4eb6-9c55-ccaa9cacdceb-1786113759107 | 302000100000019421 | 77777777777 |        | 200        |
+      | 907b4743-f61d-42c4-b53a-03472b1a0bc2-1786115760921 | 302000100000019421 | 77777777777 | 10     | 200        |
+      | 907b4743-f61d-42c4-b53a-03472b1a0bc2-1786115760921 | 302000100000019421 | 77777777777 |        | 200        |
       |                                                    | 302000100000019421 | 77777777777 | 10     | 400        |
       | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa |                    | 77777777777 | 10     | 400        |
       | YTWY-GAWU-XAGD-202502-E-1~OK~13212-abvee1-3332-aaa | 302000100000019421 |             | 10     | 400        |
