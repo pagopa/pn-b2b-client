@@ -161,6 +161,9 @@ Feature: Censimento stime mittenti
     # Ripristino delle commesse originali
     Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_aprile_26.zip"
     Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_maggio_26.zip"
+    And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
+      | classpath:/modulo_commessa_ranking2nd_890.json |
+    Then si verifica che la tabella pn-PaperDeliverySenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
 
   @censimentoStimeMittenti
   Scenario: [TC_CENSIMENTO_RICARICO_MESE_CAVALLO] Verifica che il ricaricamento di una commessa dello stesso mese aggiorni originalEstimate e monthlyEstimate anche per la settimana a cavallo con il mese successivo
@@ -183,6 +186,10 @@ Feature: Censimento stime mittenti
     Then si verifica che la tabella pn-PaperDeliverySenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
     # Ripristino della commessa originale di giugno
     Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_giugno_26.zip"
+    And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
+      | classpath:/modulo_commessa_P1_giugno.json |
+      | classpath:/modulo_commessa_P1_luglio.json |
+    Then si verifica che la tabella pn-PaperDeliverySenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
 
   @censimentoStimeMittenti
   Scenario: [TC_CENSIMENTO_STIME_MOCK_1] Verifica che il caricamento di moduli commessa MOCK non influisca sulle tabelle reali
