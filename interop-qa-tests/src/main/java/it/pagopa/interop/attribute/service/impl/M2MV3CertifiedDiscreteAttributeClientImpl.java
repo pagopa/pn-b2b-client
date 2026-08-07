@@ -14,7 +14,13 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.util.Collections;
 import java.util.List;
@@ -88,5 +94,29 @@ public class M2MV3CertifiedDiscreteAttributeClientImpl extends AbstractDPoPClien
             () -> this.attributesApi.createCertifiedDiscreteAttribute(agreementPayload),
             res -> res
         )).orElse(null);
+    }
+
+    @Override
+    public void tryCreationWithMissingData() {
+
+        var apiClient = this.attributesApi.getApiClient();
+
+        final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
+        String localVarPostBody = null;
+        final HttpHeaders localVarHeaderParams = new HttpHeaders();
+        final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
+        final MultiValueMap<String, Object> localVarFormParams = new LinkedMultiValueMap<String, Object>();
+        final String[] localVarAccepts = {
+                "application/json", "application/problem+json"
+        };
+        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String[] localVarContentTypes = {
+            "application/json"
+        };
+        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+        String[] localVarAuthNames = new String[] { "DPoPAuth", "DPoPProofHeader" };
+        ParameterizedTypeReference<CertifiedDiscreteAttribute> localReturnType = new ParameterizedTypeReference<CertifiedDiscreteAttribute>() {};
+
+        apiClient.invokeAPI("/certifiedDiscreteAttributes", HttpMethod.POST, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
     }
 }

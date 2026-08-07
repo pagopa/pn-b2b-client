@@ -10,5 +10,8 @@ import java.util.UUID;
 
 public interface IM2MV3CertifiedDiscreteAttributeClient extends IClient<CertifiedDiscreteAttribute, UUID>,
     SettableHeaders, Authenticable {
+
     CertifiedDiscreteAttribute create(CertifiedDiscreteAttributeSeed agreementPayload);
+
+    void tryCreationWithMissingData();
 }
