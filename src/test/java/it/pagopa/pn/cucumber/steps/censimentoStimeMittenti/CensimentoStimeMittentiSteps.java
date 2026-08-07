@@ -88,7 +88,9 @@ private boolean isPresent(DelayerSenderLimits actual, DelayerSenderLimit expecte
     return actual.getItems().stream()
             .anyMatch(item -> item.getPk().equals(expected.getPk())
                     && item.getDeliveryDate().equals(expected.getDeliveryDate())
-                    && item.getWeeklyEstimate() == expected.getWeeklyEstimate());
+                    && item.getWeeklyEstimate() == expected.getWeeklyEstimate()
+                    && item.getMonthlyEstimate() == expected.getMonthlyEstimate()
+                    && item.getOriginalEstimate() == expected.getOriginalEstimate());
 }
 
     @Given("vengono recuperate le stime mittenti da {string} a {string} per la provincia {string}")

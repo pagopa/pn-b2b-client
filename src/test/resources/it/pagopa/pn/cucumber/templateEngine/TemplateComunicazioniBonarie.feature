@@ -201,7 +201,7 @@ Scenario Outline: [COMBO_TEMPLATE_ENGINE_8_8] Richiamare l’API per il recupero
     And il corpo del messaggio contiene il testo "body_primaryContent"
     And il corpo del messaggio contiene il testo "Puoi effettuare il pagamento direttamente tramite l&#39;app IO o SEND"
     And il corpo del messaggio contiene il testo "In ogni caso, qualora avessi bisogno di assistenza, contatta sender_denomination attraverso i suoi canali ufficiali."
-    And il corpo del messaggio contiene il testo "Paga ora"
+    And il corpo del messaggio contiene il testo "Paga su SEND"
 
   @templateEngine # /templates-engine-private/v1/templates/informal/email-communication-body
   Scenario: [COMBO_TEMPLATE_ENGINE_9_8] Richiamare l’API per il recupero del template di email body comunicazione bonaria - hasPayment false con checkoutUrl null e si verifica che non siano presenti i messaggi di pagamento nel corpo del messaggio
