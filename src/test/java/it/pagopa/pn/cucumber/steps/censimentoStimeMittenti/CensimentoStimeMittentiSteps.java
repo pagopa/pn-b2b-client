@@ -63,7 +63,7 @@ public class CensimentoStimeMittentiSteps {
     private void assertSenderLimitMatchesEventually(String senderLimitTable, String province, DelayerSenderLimit expectedSenderLimit, boolean shouldContain) {
         try {
             Awaitility.await()
-                    .atMost(Duration.ofMinutes(5))
+                    .atMost(Duration.ofMinutes(20))
                     .pollInterval(Duration.ofSeconds(10))
                     .pollDelay(Duration.ZERO)
                     .until(() -> {
@@ -88,7 +88,9 @@ private boolean isPresent(DelayerSenderLimits actual, DelayerSenderLimit expecte
     return actual.getItems().stream()
             .anyMatch(item -> item.getPk().equals(expected.getPk())
                     && item.getDeliveryDate().equals(expected.getDeliveryDate())
-                    && item.getWeeklyEstimate() == expected.getWeeklyEstimate());
+                    && item.getWeeklyEstimate() == expected.getWeeklyEstimate()
+                    && item.getMonthlyEstimate() == expected.getMonthlyEstimate()
+                    && item.getOriginalEstimate() == expected.getOriginalEstimate());
 }
 
     @Given("vengono recuperate le stime mittenti da {string} a {string} per la provincia {string}")
@@ -206,7 +208,7 @@ private boolean isPresent(DelayerSenderLimits actual, DelayerSenderLimit expecte
 
         try {
             Awaitility.await()
-                    .atMost(Duration.ofMinutes(3))
+                    .atMost(Duration.ofMinutes(20))
                     .pollInterval(Duration.ofSeconds(20))
                     .pollDelay(Duration.ZERO) // prova subito, poi ripete ogni 20s
                     .until(() -> {

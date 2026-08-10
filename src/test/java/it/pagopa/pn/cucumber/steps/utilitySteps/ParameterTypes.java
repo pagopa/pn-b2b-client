@@ -55,6 +55,11 @@ public class ParameterTypes {
         return value.equals("con");
     }
 
+    @ParameterType("monodestinatario|multidestinatario")
+    public static boolean monodest(String value) {
+        return value.equals("monodestinatario");
+    }
+
     @ParameterType("analogico|digitale")
     public static boolean isDigital(String value) {
         return value.equals("digitale");

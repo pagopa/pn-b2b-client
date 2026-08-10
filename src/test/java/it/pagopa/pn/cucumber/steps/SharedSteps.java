@@ -47,8 +47,6 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnServiceDeskClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesInternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.*;
-import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
@@ -81,6 +79,7 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 import java.io.IOException;
+import java.net.URI;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -94,6 +93,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.ADDRESS;
@@ -166,6 +167,8 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
 public class SharedSteps {
+
+    private static final Pattern TEST_CASE_ID_PATTERN = Pattern.compile("\\[([^\\[\\]]+)]");
 
     @Getter
     private final SenderInfoProvider senderInfoProvider;
@@ -366,10 +369,21 @@ public class SharedSteps {
     }
 
     @Before
-    public void injectScenarioNameInsideSfl4jMdc(Scenario scenario) {
+    public void injectScenarioNameInsideSlf4jMdc(Scenario scenario) {
         String scenarioName = scenario.getName();
         MDC.put(RestTemplateConfiguration.CUCUMBER_SCENARIO_NAME_MDC_ENTRY, scenarioName);
+        Matcher testCaseIdMatcher = TEST_CASE_ID_PATTERN.matcher(scenarioName);
+        if (testCaseIdMatcher.find()) {
+            MDC.put(RestTemplateConfiguration.CUCUMBER_TEST_CASE_ID_MDC_ENTRY, testCaseIdMatcher.group(1));
+        }
+        MDC.put(RestTemplateConfiguration.CUCUMBER_FEATURE_FILE_MDC_ENTRY, extractFeatureFileName(scenario.getUri()));
         log.info("START SCENARIO: {}", scenarioName);
+    }
+
+    private static String extractFeatureFileName(URI featureUri) {
+        String path = featureUri.getPath() != null ? featureUri.getPath() : featureUri.getSchemeSpecificPart();
+        int lastSlash = path.lastIndexOf('/');
+        return lastSlash >= 0 ? path.substring(lastSlash + 1) : path;
     }
 
     @Before("@integrationTest")
@@ -1510,7 +1524,7 @@ public class SharedSteps {
     /**
      * Step precedentemente adibito unicamente al recupero di una notifica vecchia 120 giorni, ora il range temporale è impostabile a piacimento
      */
-    @And("{string} recupera lato web PA una notifica inviata tra {int} e {int} giorni fa con destinatario {destinatario}")
+    @And("{string} recupera lato web PA una notifica perfezionata inviata tra {int} e {int} giorni fa con destinatario {destinatario}")
     public void retrieveNotification120DaysOldByIunWebPaSide(String paName, int limitA, int limitB, Destinatario recipient) {
         long upperLimit = Math.max(limitA, limitB);
         long lowerLimit = Math.min(limitB, limitA);
@@ -1520,15 +1534,63 @@ public class SharedSteps {
         BffLegalNotificationsResponse bffNotificationsResponse = webPaClient.searchSentNotification(
                 todayDate.minusDays(upperLimit),
                 todayDate.minusDays(lowerLimit),
-                recipientTaxId, null, null, null, 50, null);
+                recipientTaxId,
+                it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationStatusV26.EFFECTIVE_DATE,
+                null,
+                null,
+                50,
+                null);
         AssertionsForClassTypes.assertThat(bffNotificationsResponse).as("La bffNotificationResponse non dev'essere null").isNotNull();
         AssertionsForInterfaceTypes.assertThat(bffNotificationsResponse.getResultsPage()).as("La lista di notifiche vecchie " + lowerLimit + " giorni non dev'essere null").isNotNull();
         AssertionsForInterfaceTypes.assertThat(bffNotificationsResponse.getResultsPage()).as("La lista di notifiche vecchie " + lowerLimit + " giorni non dev'essere vuota").isNotEmpty();
-        BffLegalNotificationSearchRow result = bffNotificationsResponse.getResultsPage().stream().filter(
-                        n -> n.getRecipients().size() == 1 && n.getRecipients().contains(recipientTaxId))
+        BffLegalNotificationSearchRow result = bffNotificationsResponse.getResultsPage().stream().filter(n ->
+                        n.getRecipients().size() == 1 && n.getRecipients().contains(recipientTaxId))
                 .findFirst().orElse(null);
         AssertionsForClassTypes.assertThat(result).as("Nessuna notifica trovato con il solo destinatario " + recipientTaxId).isNotNull();
         FullSentNotificationV29 oldNotification = getSentNotificationLastVersionByIun(result.getIun());
+        notificationIun = oldNotification.getIun();
+        notificationIunList.add(oldNotification.getIun());
+        log.info("RECIPIENTS OLDER {} GG: {}", lowerLimit, oldNotification.getRecipients().stream().map(r -> r.getTaxId()).toList());
+        log.info("IUN OLDER {} GG: {}", lowerLimit, oldNotification.getIun());
+    }
+
+    /**
+     * Step precedentemente adibito unicamente al recupero di una notifica vecchia 120 giorni, ora il range temporale è impostabile a piacimento
+     */
+    @And("{string} recupera lato web PA una notifica {monodest} in stato {string} inviata tra {int} e {int} giorni fa con destinatario {destinatario} {with} allegati disponibili")
+    public void retrieveNotificationWithFilters(String paName, boolean isMonoDest, String status, int limitA, int limitB, Destinatario recipient, boolean withAttachments) {
+        long upperLimit = Math.max(limitA, limitB);
+        long lowerLimit = Math.min(limitB, limitA);
+        setPA(paName);
+        String recipientTaxId = recipient.getTaxId();
+        OffsetDateTime todayDate = now().atZoneSameInstant(ZoneId.of("UTC")).toOffsetDateTime();
+        BffLegalNotificationsResponse bffNotificationsResponse = webPaClient.searchSentNotification(
+                todayDate.minusDays(upperLimit),
+                todayDate.minusDays(lowerLimit),
+                recipientTaxId,
+                it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationStatusV26.valueOf(status.trim().toUpperCase()),
+                null,
+                null,
+                50,
+                null);
+        assumeThat(bffNotificationsResponse).as("La bffNotificationResponse non dev'essere null").isNotNull();
+        assumeThat(bffNotificationsResponse.getResultsPage()).as("La lista di notifiche vecchie " + lowerLimit + " giorni non dev'essere null").isNotNull();
+        assumeThat(bffNotificationsResponse.getResultsPage()).as("La lista di notifiche vecchie " + lowerLimit + " giorni non dev'essere vuota").isNotEmpty();
+
+        List<BffLegalNotificationSearchRow> filteredResults = bffNotificationsResponse.getResultsPage().stream().filter(n ->
+                        n.getRecipients().contains(recipientTaxId) && (isMonoDest ? n.getRecipients().size() == 1 : n.getRecipients().size() > 1))
+                .collect(Collectors.toList());
+
+        FullSentNotificationV29 oldNotification = null;
+        for (BffLegalNotificationSearchRow row : filteredResults) {
+            FullSentNotificationV29 fsn = getSentNotificationLastVersionByIun(row.getIun());
+            boolean documentsAvailable = Boolean.TRUE.equals(fsn.getDocumentsAvailable());
+            if (documentsAvailable == withAttachments) {
+                oldNotification = fsn;
+                break;
+            }
+        }
+        assumeThat(oldNotification).as("Non è stata trovata nessuna notifica che soddisfi i criteri di ricerca").isNotNull();
         notificationIun = oldNotification.getIun();
         notificationIunList.add(oldNotification.getIun());
         log.info("RECIPIENTS OLDER {} GG: {}", lowerLimit, oldNotification.getRecipients().stream().map(r -> r.getTaxId()).toList());

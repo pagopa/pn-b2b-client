@@ -30,6 +30,8 @@ import java.util.concurrent.TimeUnit;
 public class RestTemplateConfiguration {
 
     public static final String CUCUMBER_SCENARIO_NAME_MDC_ENTRY = "cucumber_scenario_name";
+    public static final String CUCUMBER_TEST_CASE_ID_MDC_ENTRY = "testCaseId";
+    public static final String CUCUMBER_FEATURE_FILE_MDC_ENTRY = "featureFile";
 
     @Bean(name = "customRestTemplate")
     @Primary

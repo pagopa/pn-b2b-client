@@ -1,11 +1,13 @@
 package it.pagopa.pn.cucumber.steps.pa.b2bVersions;
 
 import io.cucumber.datatable.DataTable;
+import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationPaymentItem;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationPriceResponse;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationPriceResponseV23;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryElementV26;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryInvalidatedElement;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusV26;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PaymentEventPagoPa;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PaymentEventsRequestPagoPa;
@@ -35,6 +37,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 import java.lang.reflect.InvocationTargetException;
 import java.time.Duration;
@@ -55,6 +59,7 @@ import static it.pagopa.pn.client.b2b.pa.domain.Costanti.DIGITAL_DELIVERY_CREATI
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.DIGITAL_FAILURE_WORKFLOW;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.DIGITAL_SUCCESS_WORKFLOW;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.LOAD_FROM_DELIVERY_PUSH;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.NOTIFICATION_TIMELINE_REWORKED;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.NOTIFICATION_VIEWED;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.REQUEST_REFUSED;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SCHEDULE_REFINEMENT;
@@ -443,6 +448,9 @@ public class B2bStepsV26 implements B2bStepsInterface {
                             .isNotNull();
                 });
                 log.info("TIMELINE_ELEMENT: {}", timelineElement);
+                if (category.equals(NOTIFICATION_TIMELINE_REWORKED)) {
+                    furtherChecks = TimelineElementCheck.CHECK_INVALIDATED_ELEMENTS_TIMESTAMP;
+                }
                 if (furtherChecks != null) {
                     performFurtherChecks(furtherChecks, filterParams);
                 }
@@ -913,6 +921,30 @@ public class B2bStepsV26 implements B2bStepsInterface {
                 });
 
             }
+            case CHECK_INVALIDATED_ELEMENTS_TIMESTAMP -> {
+                assertThat(timelineElement.getDetails()).as("I details dell'elemento %s non possono essere null", timelineElement.getElementId()).isNotNull();
+                List<NotificationStatusHistoryInvalidatedElement> invalidatedElements = timelineElement.getDetails().getInvalidatedTimelineAndStatusHistory();
+                QueryResponse fullDynamoTimeline = sharedSteps.getDynamoDbService().call(DynamoTableName.TIMELINE_FULL, Map.of(
+                        ":v_iun", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build()
+                ));
+                assertThat(fullDynamoTimeline).as("La timeline recuperata da Dynamo non dev'essere null").isNotNull();
+                assertThat(fullDynamoTimeline.items().size()).as("La timeline recuperata da Dynamo non contiene elementi").isGreaterThan(0);
+                for (NotificationStatusHistoryInvalidatedElement status : invalidatedElements) {
+                    assertThat(status.getRelatedTimelineElements()).as("La lista di elementi invalidati relativa allo status %s non dev'essere vuota", status).isNotEmpty();
+                    for (TimelineElementV28 el : status.getRelatedTimelineElements()) {
+                        Map<String, AttributeValue> invalidatedElement = fullDynamoTimeline.items().stream().filter(x ->
+                                        x.get("timelineElementId") != null
+                                                && x.get("timelineElementId").s().equals(el.getElementId()))
+                                .findFirst().orElse(null);
+                        assertThat(invalidatedElement).as("Non è stato trovato riscontro nella timeline dynamoDb dell'elemento %s", el.getElementId()).isNotNull();
+                        String businessTimestamp = invalidatedElement.get("businessTimestamp").s();
+                        log.info("BUSINESS TIMESTAMP OF {} : {}", el, businessTimestamp);
+                        assertThat(el.getEventTimestamp())
+                                .as("L'eventTimestamp dell'elemento invalidato %s non coincide con il business timestamp dell'elemento recuperato sulla timeline", el.getElementId())
+                                .isEqualTo(OffsetDateTime.parse(businessTimestamp));
+                    }
+                }
+            }
         }
     }
 
@@ -1134,8 +1166,8 @@ public class B2bStepsV26 implements B2bStepsInterface {
         OffsetDateTime expectedDate =
                 unitaTemporale == DAYS ? date1.plusDays(timeQuantity) :
                         unitaTemporale == HOURS ? date1.plusHours(timeQuantity) :
-                        unitaTemporale == MINUTES ? date1.plusMinutes(timeQuantity) :
-                                date1.plusSeconds(timeQuantity);
+                                unitaTemporale == MINUTES ? date1.plusMinutes(timeQuantity) :
+                                        date1.plusSeconds(timeQuantity);
         if (isSuperiore == null) {
             assertThat(date2)
                     .as("La data di " + code2 + " non è pari a quella di " + code1)
@@ -1159,7 +1191,7 @@ public class B2bStepsV26 implements B2bStepsInterface {
         List<TimelineElementV28> timeline = fullSentNotification.getTimeline();
 
         TimelineElementV28 reworkedElement = timeline.stream().filter(te -> te.getElementId().contains("REWORK_")).findFirst().orElse(null);
-        assertThat(reworkedElement).as("La timeline dovrebbe contenere almeno un elemento con Rework nel timelineElementId").isNotNull();
+        assertThat(reworkedElement).as("La fullSentNotification V29 dovrebbe contenere almeno un elemento con REWORK_ nel timelineElementId").isNotNull();
     }
 
     private String getProperty(String fieldPath, TimelineElementV28 lastTimelineElement) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
