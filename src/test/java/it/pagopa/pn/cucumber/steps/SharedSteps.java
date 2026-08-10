@@ -74,6 +74,7 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 import java.io.IOException;
+import java.net.URI;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -81,6 +82,8 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -95,6 +98,8 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
 public class SharedSteps {
+
+    private static final Pattern TEST_CASE_ID_PATTERN = Pattern.compile("\\[([^\\[\\]]+)]");
 
     @Getter
     private final SenderInfoProvider senderInfoProvider;
@@ -281,10 +286,21 @@ public class SharedSteps {
     }
 
     @Before
-    public void injectScenarioNameInsideSfl4jMdc(Scenario scenario) {
+    public void injectScenarioNameInsideSlf4jMdc(Scenario scenario) {
         String scenarioName = scenario.getName();
         MDC.put(RestTemplateConfiguration.CUCUMBER_SCENARIO_NAME_MDC_ENTRY, scenarioName);
+        Matcher testCaseIdMatcher = TEST_CASE_ID_PATTERN.matcher(scenarioName);
+        if (testCaseIdMatcher.find()) {
+            MDC.put(RestTemplateConfiguration.CUCUMBER_TEST_CASE_ID_MDC_ENTRY, testCaseIdMatcher.group(1));
+        }
+        MDC.put(RestTemplateConfiguration.CUCUMBER_FEATURE_FILE_MDC_ENTRY, extractFeatureFileName(scenario.getUri()));
         log.info("START SCENARIO: {}", scenarioName);
+    }
+
+    private static String extractFeatureFileName(URI featureUri) {
+        String path = featureUri.getPath() != null ? featureUri.getPath() : featureUri.getSchemeSpecificPart();
+        int lastSlash = path.lastIndexOf('/');
+        return lastSlash >= 0 ? path.substring(lastSlash + 1) : path;
     }
 
     @Before("@integrationTest")
