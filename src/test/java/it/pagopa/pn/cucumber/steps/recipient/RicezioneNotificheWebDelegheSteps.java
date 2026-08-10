@@ -64,8 +64,8 @@ import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_ROOT;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_SON;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.CUCUMBER_SPA;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.CUCUMBER_SPA_B2B;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.GHERKIN_SRL_B2B;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.GHERKIN_SRL;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.GHERKIN_SRL_B2B;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.MARIO_CUCUMBER;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.MARIO_GHERKIN;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.NOTIFICATION_VIEWED;
@@ -151,11 +151,14 @@ public class RicezioneNotificheWebDelegheSteps {
         return switch (user.trim().toLowerCase()) {
             case "mario cucumber" ->
                     createUserDto(MARIO_CUCUMBER, "Mario", "Cucumber", sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_CUCUMBER.getTaxId(), null, true);
-            case "mario gherkin" -> createUserDto(MARIO_GHERKIN, "Mario", "Gherkin", sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_GHERKIN.getTaxId(), null, true);
-            case "gherkinsrl" -> createUserDto(GHERKIN_SRL, "gherkin", "srl", sharedSteps.getDestinatarioRegistry().DESTINATARIO_GHERKIN_SRL.getTaxId(), GHERKIN_SRL, false);
+            case "mario gherkin" ->
+                    createUserDto(MARIO_GHERKIN, "Mario", "Gherkin", sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_GHERKIN.getTaxId(), null, true);
+            case "gherkinsrl" ->
+                    createUserDto(GHERKIN_SRL, "gherkin", "srl", sharedSteps.getDestinatarioRegistry().DESTINATARIO_GHERKIN_SRL.getTaxId(), GHERKIN_SRL, false);
             case "cucumberspa" ->
                     createUserDto(CUCUMBER_SPA, "cucumber", "spa", sharedSteps.getDestinatarioRegistry().DESTINATARIO_CUCUMBER_SPA.getTaxId(), CUCUMBER_SPA, false);
-            case "gherkinsrlb2b" -> createUserDto(GHERKIN_SRL_B2B, "gherkin", "srl", sharedSteps.getDestinatarioRegistry().DESTINATARIO_GHERKIN_SRL_B2B.getTaxId(), GHERKIN_SRL_B2B, false);
+            case "gherkinsrlb2b" ->
+                    createUserDto(GHERKIN_SRL_B2B, "gherkin", "srl", sharedSteps.getDestinatarioRegistry().DESTINATARIO_GHERKIN_SRL_B2B.getTaxId(), GHERKIN_SRL_B2B, false);
             case "cucumberspab2b" ->
                     createUserDto(CUCUMBER_SPA_B2B, "cucumber", "spa", sharedSteps.getDestinatarioRegistry().DESTINATARIO_CUCUMBER_SPA_B2B.getTaxId(), CUCUMBER_SPA_B2B, false);
             default -> throw new IllegalArgumentException();
@@ -733,17 +736,6 @@ public class RicezioneNotificheWebDelegheSteps {
                 "Numero totale di notifiche raccolte sfogliando tutte le pagine: atteso almeno " + minimumExpectedCount + ", trovate " + totalCollected);
     }
 
-    //TODO: insert recipientID da selfcare (si possono recuperare dai token)
-    private String getRecipientId(String recipientId) {
-        return switch (recipientId.toLowerCase().trim()) {
-            case "mario cucumber" -> "123";
-            case "mario gherkin" -> "345";
-            case "gherkinsrl" -> "789";
-            case "cucumberspa" -> "1011";
-            default -> throw new IllegalStateException("Unexpected value: " + recipientId);
-        };
-    }
-
     @And("Si verifica che il numero di notifiche restituite nella pagina sia {int}")
     public void verifyNumberOfNotification(Integer number) {
         Assertions.assertEquals(notificationSearchResponseCount, number);
@@ -843,20 +835,6 @@ public class RicezioneNotificheWebDelegheSteps {
         } catch (HttpStatusCodeException e) {
             this.notificationError = e;
         }
-    }
-
-
-    @And("{string} visualizza le deleghe")
-    public void visualizzaLeDeleghe(String user) {
-        setBearerToken(user);
-
-        List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
-        List<MandateDto> mandateDtos = Assertions.assertDoesNotThrow(() -> webMandateClient.listMandatesByDelegator1());
-
-        System.out.println("TOKEN SETTED (user: +" + user + ") : " + webMandateClient.getBearerTokenSetted());
-        System.out.println("MANDATE-LIST (user: +" + user + ") : " + mandateList);
-        System.out.println("TOKEN SETTED (user: +" + user + ") : " + webMandateClient.getBearerTokenSetted());
-        System.out.println("MANDATE-LIST-DELEGATOR (user: +" + user + ") : " + mandateDtos);
     }
 
     @And("viene creata una delega con i seguenti parametri errati:")

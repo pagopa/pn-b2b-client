@@ -23,7 +23,6 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
         key = GLUE_PROPERTY_NAME,
         value = "it.pagopa.pn.cucumber.steps"
 )
-// Imposta esecuzione sequenziale
 @ConfigurationParameter(
         key = EXECUTION_MODE_FEATURE_PROPERTY_NAME,
         value = "concurrent"

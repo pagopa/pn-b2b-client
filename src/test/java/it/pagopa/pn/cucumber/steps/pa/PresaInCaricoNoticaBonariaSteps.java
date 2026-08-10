@@ -187,6 +187,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     public void creaNotificheBonarie(int notificationNumber, String paName, String campaignId, Map<String, String> recipientData) {
         setSenderInformal(paName);
         Map<String, String> cleanedRecipientData = trimData(recipientData);
+        sendSharedContext.getInformalNotificationContext().getRecipient().setDestinatario(destinatarioRegistry.destinatario(cleanedRecipientData.get("denomination")));
         IntStream.range(0, notificationNumber)
                 .parallel()
                 .forEach(i -> createAndAwaitSingleInformalNotification(campaignId, cleanedRecipientData));
@@ -199,7 +200,6 @@ public class PresaInCaricoNoticaBonariaSteps {
         InformalNotificationRequestV1 request = informalNotificationRequestMapper.buildInformalNotificationRequest(creationData);
 
         request.getRecipients().add(recipientBuilder.build(new HashMap<>(recipientData), currentCxId));
-        sendSharedContext.getInformalNotificationContext().getRecipient().setDestinatario(destinatarioRegistry.destinatario(recipientData.get("denomination")));
 
         try {
             request = notificationInformalUtilsV1.preloadAndPrepare(request, paName);
@@ -803,6 +803,7 @@ public class PresaInCaricoNoticaBonariaSteps {
         Map<String, String> cleanedData = data.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().trim(), e -> e.getValue() != null ? e.getValue().trim() : null));
         InformalNotificationRecipientV1 recipient = recipientBuilder.build(cleanedData, currentCxId);
         informalNotificationRequestV1.getRecipients().add(recipient);
+        sendSharedContext.getInformalNotificationContext().getRecipient().setDestinatario(destinatarioRegistry.destinatario(data.get("denomination")));
         //this.recipientCxType = "PF".equalsIgnoreCase(recipient.getRecipientType().getValue()) ? it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet.PF : it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet.PG;
     }
 

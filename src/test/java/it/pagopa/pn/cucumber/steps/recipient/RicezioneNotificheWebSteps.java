@@ -749,7 +749,8 @@ public class RicezioneNotificheWebSteps {
                 for (String pageKey : Objects.requireNonNull(nextPagesKey)) {
                     searchParam.setNextPagesKey(pageKey);
                     notificationSearchResponse = webRecipientClient.searchReceivedNotification(recipient, searchParam);
-                    beenFound = resultsPage.stream().filter(elem -> Objects.requireNonNull(elem.getIun()).equals(sharedSteps.getNotificationIun())).findAny().orElse(null) != null;
+                    resultsPage = notificationSearchResponse.getResultsPage();
+                    beenFound = Objects.requireNonNull(resultsPage).stream().filter(elem -> Objects.requireNonNull(elem.getIun()).equals(sharedSteps.getNotificationIun())).findAny().orElse(null) != null;
                     if (beenFound) break;
                 }
                 if (beenFound) break;
@@ -779,7 +780,8 @@ public class RicezioneNotificheWebSteps {
                                     searchParam.startDate, searchParam.endDate, searchParam.mandateId,
                                     convertedStatus, searchParam.subjectRegExp,
                                     searchParam.iunMatch, searchParam.size, pageKey);
-                    beenFound = resultsPage.stream().filter(elem -> Objects.requireNonNull(elem.getIun()).equals(sharedSteps.getNotificationIun())).findAny().orElse(null) != null;
+                    resultsPage = notificationSearchResponse.getResultsPage();
+                    beenFound = Objects.requireNonNull(resultsPage).stream().filter(elem -> Objects.requireNonNull(elem.getIun()).equals(sharedSteps.getNotificationIun())).findAny().orElse(null) != null;
                     if (beenFound) break;
                 }//for
                 if (beenFound) break;
