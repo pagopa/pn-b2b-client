@@ -1,0 +1,63 @@
+{
+  "idEnte": "ranking2nd_890",
+  "contractId": "5678abcftrs43d23el4",
+  "periodo_riferimento": "07-2026",
+  "last_update": "2025-01-01T00:00:00Z",
+  "prodotti": [
+    {
+      "id": "AR",
+      "nome": "AR",
+      "valore_totale": 700,
+      "varianti": [
+        {
+          "codice": "NZ",
+          "nome": "NZ",
+          "valore_totale": 0,
+          "distribuzione": {
+            "regionale": []
+          }
+        },
+        {
+          "codice": "INT",
+          "nome": "INT",
+          "valore_totale": 700,
+          "distribuzione": null
+        }
+      ]
+    },
+    {
+      "id": "890",
+      "nome": "890",
+      "valore_totale": 31,
+      "varianti": [
+        {
+          "codice": "NZ",
+          "nome": "NZ",
+          "valore_totale": 31,
+          "distribuzione": {
+            "regionale": [
+              {
+                "regione": "regioneFakeP1",
+                "valore": 31,
+                "province": null
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "digitale",
+      "nome": "digitale",
+      "valore_totale": 1200,
+      "varianti": [
+        {
+          "codice": "PEC",
+          "nome": "PEC",
+          "valore_totale": 1200,
+          "distribuzione": null
+        }
+      ]
+    }
+  ]
+}

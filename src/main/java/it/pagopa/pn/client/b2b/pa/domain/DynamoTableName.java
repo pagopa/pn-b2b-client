@@ -4,7 +4,8 @@ import lombok.Getter;
 
 @Getter
 public enum DynamoTableName {
-    TIMELINE("pn-Timelines"),
+    TIMELINE("pn-Timelines"),//da usare per ricerche filtrate (iun + category)
+    TIMELINE_FULL("pn-Timelines"),//da usare per recuperare l'intera timeline (solo iun)
     PAYMENT_INFO("pn-PaymentInfo"),
     NOTIFICATION_DELIVERY_COST("pn-NotificationDeliveryCost"),
     ONBOARD_INSTITUTIONS("pn-OnboardInstitutions"),
@@ -16,7 +17,8 @@ public enum DynamoTableName {
     IO_CONNECTOR_REQUESTS("pn-IOConnectorRequests"),
     BATCH_REQUESTS_WITH_INDEX_SEND_STATUS("pn-batchRequests"),
     BATCH_REQUESTS_WITH_INDEX_STATUS("pn-batchRequests"),
-    PAPER_REQUEST_ERROR("pn-PaperRequestError");
+    PAPER_REQUEST_ERROR("pn-PaperRequestError"),
+    NOTIFICATIONS("pn-Notifications");
 
     private final String value;
 

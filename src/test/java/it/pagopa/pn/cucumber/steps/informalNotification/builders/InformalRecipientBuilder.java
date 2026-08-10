@@ -8,10 +8,11 @@ import it.pagopa.pn.cucumber.steps.informalNotification.provider.InformalMessage
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeParseException;
+import java.util.*;
 
 import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.*;
 
@@ -36,6 +37,9 @@ public class InformalRecipientBuilder {
         recipient.setMessageId(resolveMessageId(data, currentCxId));
         recipient.setTaxId(getValue(data, RECIPIENT_TAX_ID.key));
         recipient.setDenomination(getValue(data, RECIPIENT_DENOMINATION.key));
+
+        recipient.setAdditionalLanguages(buildAdditionalLanguages(data));
+
 
         // =========================
         // DIGITAL
@@ -64,6 +68,22 @@ public class InformalRecipientBuilder {
         // =========================
         recipient.setPayments(buildPayments(data));
         return recipient;
+    }
+
+    // =========================
+    // ADDITIONAL LENGUAGES
+    // =========================
+    private List<String> buildAdditionalLanguages(Map<String, String> data) {
+
+        String languages = getValue(data, RECIPIENT_ADDITIONAL_LANGUAGES.key);
+
+        if (languages == null) {
+            return null;
+        }
+        return Arrays.stream(languages.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isBlank())
+                .toList();
     }
 
     // =========================================================
@@ -102,9 +122,16 @@ public class InformalRecipientBuilder {
         for (int i = 0; i < paymentNumber; i++) {
 
             NotificationPaymentAttachment attachment = mapper.buildPaymentAttachment(data);
-
             PagoPaPaymentBase pagoPa = new PagoPaPaymentBase().noticeCode(generateNoticeCode(getValue(data, PAYMENT_NOTICE_CODE.key), i)).creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key)).attachment(attachment);
 
+            String amount = getValue(data, PAYMENT_AMOUNT.key);
+            if (amount != null) {
+                pagoPa.setAmount(Integer.valueOf(amount));
+            }
+            String dueDate = getValue(data, PAYMENT_DUE_DATE.key);
+            if (dueDate != null) {
+                pagoPa.setDueDate(parseDueDate(dueDate));
+            }
             InformalNotificationPaymentItem item = new InformalNotificationPaymentItem();
             item.setPagoPa(pagoPa);
             payments.add(item);
@@ -123,9 +150,16 @@ public class InformalRecipientBuilder {
             return null;
         }
         return switch (value) {
-            case "${IT}" -> UUID.fromString(messageProvider.getMessageIT(currentCxId));
 
-            case "${IT-FR}" -> UUID.fromString(messageProvider.getMessageITFR(currentCxId));
+            case "${IT}" -> UUID.fromString(messageProvider.getOrCreateMessageIT(currentCxId));
+            case "${IT-FR}" -> UUID.fromString(messageProvider.getOrCreateMessageITFR(currentCxId));
+            case "${NEW-IT}" -> UUID.fromString(messageProvider.createAndSaveMessageIT(currentCxId));
+            case "${NEW-IT-FR}" -> UUID.fromString(messageProvider.createAndSaveMessageITFR(currentCxId));
+            case "${NEW-IT-DE}" -> UUID.fromString(messageProvider.createAndSaveMessageITDE(currentCxId));
+            case "${NEW-IT-SL}" -> UUID.fromString(messageProvider.createAndSaveMessageITSL(currentCxId));
+            case "${NEW-IT-EN}" -> UUID.fromString(messageProvider.createAndSaveMessageITEN(currentCxId));
+            case "${SAVED-IT}" -> UUID.fromString(messageProvider.getSavedMessageIT());
+            case "${SAVED-IT-FR}" -> UUID.fromString(messageProvider.getSavedMessageITFR());
 
             default -> UUID.fromString(value);
         };
@@ -153,6 +187,19 @@ public class InformalRecipientBuilder {
             return cleaned + "0".repeat(18 - cleaned.length());
         }
         return NotificationInformalValue.generateRandomNumber();
+    }
+
+    private OffsetDateTime parseDueDate(String value) {
+
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        try {
+            return value.length() == 10 ? LocalDate.parse(value).atStartOfDay().atOffset(ZoneOffset.UTC) : OffsetDateTime.parse(value);
+
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Invalid payment dueDate: " + value, e);
+        }
     }
 }
 

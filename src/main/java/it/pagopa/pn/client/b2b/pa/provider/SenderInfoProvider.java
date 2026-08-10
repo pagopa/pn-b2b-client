@@ -3,6 +3,7 @@ package it.pagopa.pn.client.b2b.pa.provider;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -15,32 +16,36 @@ public class SenderInfoProvider {
     private final Map<String, PaInfo> paInfoMap;
 
     @Getter
+    @RequiredArgsConstructor
     public static class PaInfo {
         private final String paName;
         private final String senderId;
         private final SettableApiKey.ApiKeyType apiKeyType;
+        private final String apiKey;
         private final SettableBearerToken.BearerTokenType bearerTokenType;
-
-        public PaInfo(String paName, String senderId, SettableApiKey.ApiKeyType apiKeyType, SettableBearerToken.BearerTokenType bearerTokenType) {
-            this.paName = paName;
-            this.senderId = senderId;
-            this.apiKeyType = apiKeyType;
-            this.bearerTokenType = bearerTokenType;
-        }
     }
 
     public SenderInfoProvider(
+
             @Value("${pn.external.senderId}") String senderId1,
             @Value("${pn.external.senderId-2}") String senderId2,
             @Value("${pn.external.senderId-GA}") String senderIdGA,
             @Value("${pn.external.senderId-SON}") String senderIdSON,
-            @Value("${pn.external.senderId-ROOT}") String senderIdROOT) {
+            @Value("${pn.external.senderId-ROOT}") String senderIdROOT,
+
+            @Value("${pn.external.api-key}") String apiKeyMvp1,
+            @Value("${pn.external.api-key-2}") String apiKeyMvp2,
+            @Value("${pn.external.api-key-GA}") String apiKeyGa,
+            @Value("${pn.external.api-key-SON}") String apiKeySon,
+            @Value("${pn.external.api-key-ROOT}") String apiKeyRoot
+    ) {
 
         this.paInfoMap = new HashMap<>();
         paInfoMap.put("COMUNE_1", new PaInfo(
                 "COMUNE_1",
                 senderId1,
                 SettableApiKey.ApiKeyType.MVP_1,
+                apiKeyMvp1,
                 SettableBearerToken.BearerTokenType.MVP_1
         ));
 
@@ -48,6 +53,7 @@ public class SenderInfoProvider {
                 "COMUNE_2",
                 senderId2,
                 SettableApiKey.ApiKeyType.MVP_2,
+                apiKeyMvp2,
                 SettableBearerToken.BearerTokenType.MVP_2
         ));
 
@@ -55,6 +61,7 @@ public class SenderInfoProvider {
                 "COMUNE_MULTI",
                 senderIdGA,
                 SettableApiKey.ApiKeyType.GA,
+                apiKeyGa,
                 SettableBearerToken.BearerTokenType.GA
         ));
 
@@ -62,6 +69,7 @@ public class SenderInfoProvider {
                 "COMUNE_SON",
                 senderIdSON,
                 SettableApiKey.ApiKeyType.SON,
+                apiKeySon,
                 SettableBearerToken.BearerTokenType.SON
         ));
 
@@ -69,6 +77,7 @@ public class SenderInfoProvider {
                 "COMUNE_ROOT",
                 senderIdROOT,
                 SettableApiKey.ApiKeyType.ROOT,
+                apiKeyRoot,
                 SettableBearerToken.BearerTokenType.ROOT
         ));
     }
@@ -91,5 +100,10 @@ public class SenderInfoProvider {
 
     public SettableBearerToken.BearerTokenType getBearerTokenType(String paName) {
         return getPaInfo(paName).getBearerTokenType();
+    }
+
+    public String getApiKey(String paName) {
+        return getPaInfo(paName).getApiKey();
+
     }
 }

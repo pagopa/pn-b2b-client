@@ -87,7 +87,6 @@ public class M2MAuthSteps {
     }
 
     @Given("viene impostato per l'utente un token m2m non valido")
-    @Given("viene impostato per l'utente un token non valido")
     public void setExpiredM2MAuth() {
         ApiProfile.ApiMode mode = apiProfile.getApiMode();
         ApiProfile.ApiM2MVersion version = apiProfile.getApiM2MVersion();
@@ -109,9 +108,14 @@ public class M2MAuthSteps {
         }
 
         if (useBearer) {
-            clientTokenConfigurator.setBearerToken(INVALID_AUTH_TOKEN);
-            sharedStepsContext.setUserToken(INVALID_AUTH_TOKEN);
+            setExpiredBFFAuth();
         }
+    }
+
+    @Given("viene impostato per l'utente un token non valido")
+    public void setExpiredBFFAuth(){
+        clientTokenConfigurator.setBearerToken(INVALID_AUTH_TOKEN);
+        sharedStepsContext.setUserToken(INVALID_AUTH_TOKEN);
     }
 
     @Given("viene rimosso l'header di autenticazione DPoP")

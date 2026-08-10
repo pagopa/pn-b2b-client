@@ -54,7 +54,7 @@ Feature: Generazione del voucher m2m richiesta da un Ente
     Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
     Given "PA1" rimuove quella chiave dal client 
     When l'utente richiede la generazione del voucher M2M
-    Then la richiesta di generazione del Voucher non va a buon fine
+    Then si ottiene status code 400
 
 @voucher_generation_m2m5
 Scenario: [VOUCHER_GENERATION_M2M_5] La generazione del JWT fallisce quando una delle chiavi nel client viene rimossa
@@ -65,7 +65,7 @@ Scenario: [VOUCHER_GENERATION_M2M_5] La generazione del JWT fallisce quando una 
     Given un "admin" di "PA1" ha aggiunto una nuova chiave pubblica al client
     Given "PA1" rimuove quella chiave dal client
     When l'utente richiede la generazione del voucher M2M
-    Then la richiesta di generazione del Voucher non va a buon fine
+    Then si ottiene status code 400
 
 @voucher_generation_m2m6
 Scenario: [VOUCHER_GENERATION_M2M_6] La generazione del JWT fallisce quando la chiave non è associata a un client
@@ -74,7 +74,7 @@ Scenario: [VOUCHER_GENERATION_M2M_6] La generazione del JWT fallisce quando la c
     Given "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
     Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
     When l'utente richiede la generazione del voucher M2M con una chiave associata a nessun client
-    Then la richiesta di generazione del Voucher non va a buon fine
+    Then si ottiene status code 400
 
 @voucher_generation_m2m7
 Scenario: [VOUCHER_GENERATION_M2M_7] La generazione del JWT fallisce quando la chiave non è associata al client richiesto
@@ -86,7 +86,7 @@ Scenario: [VOUCHER_GENERATION_M2M_7] La generazione del JWT fallisce quando la c
     Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
     Given un "admin" di "PA1" ha caricato una chiave pubblica nel nuovo client
     When l'utente richiede la generazione del voucher M2M indicando il primo client ma con la chiave caricata nel secondo
-    Then la richiesta di generazione del Voucher non va a buon fine
+    Then si ottiene status code 400
 
 @voucher_generation_m2m8
 Scenario: [VOUCHER_GENERATION_M2M_8] La generazione del JWT fallisce quando il client viene cancellato
@@ -96,5 +96,5 @@ Scenario: [VOUCHER_GENERATION_M2M_8] La generazione del JWT fallisce quando il c
     Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
     Given "PA1" cancella quel client
     When l'utente richiede la generazione del voucher M2M
-    Then la richiesta di generazione del Voucher non va a buon fine
+    Then si ottiene status code 400
 
