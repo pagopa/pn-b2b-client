@@ -11,12 +11,12 @@ Feature: Ricerca delle notifiche ricevute lato delegato
     And "CucumberSpaB2B" accetta la delega "GherkinSrlB2B"
 
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | SoricalMessaMora |
-      | recipientType   | PG               |
-      | taxId           | 12666810299      |
-      | denomination    | GherkinSrlB2B    |
-      | messageId       | ${NEW-IT}        |
-      | digitalDomicile | tu@gmail.com     |
+      | campaignId      | MessaMora     |
+      | recipientType   | PG            |
+      | taxId           | 12666810299   |
+      | denomination    | GherkinSrlB2B |
+      | messageId       | ${NEW-IT}     |
+      | digitalDomicile | tu@gmail.com  |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
 
     When viene generata una nuova notifica

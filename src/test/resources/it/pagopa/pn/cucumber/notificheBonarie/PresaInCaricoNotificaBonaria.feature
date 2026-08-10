@@ -10,7 +10,7 @@ Feature: Sottomissione di una notifica bonaria.
   Scenario: [NOTIFICHE_LANGUAGES_01_1_A] Come ente mittente invio una notifica bonaria allegando
   un messaggio multilingue e specificando la seconda lingia come lingua addizionale.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId          | SoricalFattOrd    |
+      | campaignId          | FattOrd    |
       | recipientType       | PF                |
       | taxId               | FRMTTR76M06B715E  |
       | denomination        | Ettore Fieramosca |
@@ -23,7 +23,7 @@ Feature: Sottomissione di una notifica bonaria.
   Scenario: [NOTIFICHE_LANGUAGES_01_1_B] Come ente mittente invio una notifica bonaria allegando
   un messaggio multilingue e NON specificando nessuna addizionale.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId          | SoricalFattOrd            |
+      | campaignId          | FattOrd            |
       | recipientType       | PG                        |
       | taxId               | 20517490320               |
       | denomination        | Cucumber srl              |
@@ -37,7 +37,7 @@ Feature: Sottomissione di una notifica bonaria.
   Scenario Outline: [NOTIFICHE_LANGUAGES_01_3_A] Come ente mittente ricevo errore nel tentativo di inviare
   una notifica bonaria con allegato un messaggio e indicando una lingua non conforme
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId          | SoricalFattOrd        |
+      | campaignId          | FattOrd        |
       | recipientType       | PF                    |
       | taxId               | FRMTTR76M06B715E      |
       | denomination        | Ettore Fieramosca     |
@@ -56,7 +56,7 @@ Feature: Sottomissione di una notifica bonaria.
   Scenario: [NOTIFICHE_LANGUAGES_01_3_B] Come ente mittente ricevo errore nel tentativo di inviare
   una notifica bonaria con allegato un messaggio e indicando una lingua non presente nel messaggio
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId          | SoricalFattOrd |
+      | campaignId          | FattOrd |
       | recipientType       | PG             |
       | taxId               | 20517490320    |
       | denomination        | Cucumber srl   |
@@ -74,7 +74,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalAsyncValidation
   Scenario: [NOTIFICHE_AMOUNT_02_1_A] Come ente mittente invio una notifica bonaria definendo il campo amount e dueDate correttamente
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId       | SoricalFattOrd    |
+      | campaignId       | FattOrd    |
       | recipientType    | PF                |
       | taxId            | FRMTTR76M06B715E  |
       | denomination     | Ettore Fieramosca |
@@ -87,7 +87,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalAsyncValidation
   Scenario: [NOTIFICHE_AMOUNT_02_1_B] Come ente mittente invio una notifica bonaria definendo il campo amount e non definendo il campo dueDate
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId     | SoricalFattOrd    |
+      | campaignId     | FattOrd    |
       | recipientType  | PF                |
       | taxId          | FRMTTR76M06B715E  |
       | denomination   | Ettore Fieramosca |
@@ -99,7 +99,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalSyncValidation
   Scenario: [NOTIFICHE_AMOUNT_02_1_C] Come ente mittente ricevo un errore nel tentativo di invio una notifica bonaria senza definire il campo amount
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId          | SoricalFattOrd    |
+      | campaignId          | FattOrd    |
       | recipientType       | PF                |
       | taxId               | FRMTTR76M06B715E  |
       | denomination        | Ettore Fieramosca |
@@ -114,7 +114,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalSyncValidation     #validazione ripresa dalle legal + obbligo di rispettarer la firma del API
   Scenario Outline: [NOTIFICHE_AMOUNT_02_1_D] Come ente mittente ricevo un errore nel tentativo di invio una notifica bonaria definendo il campo amount con valori non conformi
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId     | SoricalFattOrd    |
+      | campaignId     | FattOrd    |
       | recipientType  | PF                |
       | taxId          | FRMTTR76M06B715E  |
       | denomination   | Ettore Fieramosca |
@@ -130,7 +130,7 @@ Feature: Sottomissione di una notifica bonaria.
   #@informalNotificationsValidation @informalAsyncValidation #obbligo di rispettare la firma del API
   Scenario Outline: [NOTIFICHE_AMOUNT_02_1_E] Come ente mittente invio una notifica bonaria....
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId       | SoricalFattOrd    |
+      | campaignId       | FattOrd    |
       | recipientType    | PF                |
       | taxId            | FRMTTR76M06B715E  |
       | denomination     | Ettore Fieramosca |
@@ -160,7 +160,7 @@ Feature: Sottomissione di una notifica bonaria.
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     Examples:
       | campaignId     |
-      | SoricalFattOrd |
+      | FattOrd |
 
 
   @informalNotificationsValidation @informalAsyncValidation @informalNotMVP
@@ -187,7 +187,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalAsyncValidation @informalIgnoreUAT
   Scenario: [NOTIFICHE_BONARIE_VAS_SM_01_1_F] Come ente mittente tento l'invio di una notifica bonaria senza indirizzo analogico che varrà recuperato dal VAS.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId       | SoricalMessaMora           |
+      | campaignId       | MessaMora           |
       | denomination     | PG Censito VAS             |
       | recipientType    | PG                         |
       | taxId            | 01113570442                |
@@ -207,7 +207,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalAsyncValidation @informalUAT
   Scenario: [NOTIFICHE_BONARIE_VAS_SM_01_1_UAT] Come ente mittente tento l'invio di una notifica bonaria senza indirizzo analogico che varrà recuperato dal VAS.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId       | SoricalMessaMora         |
+      | campaignId       | MessaMora         |
       | denomination     | PF censito vas           |
       | recipientType    | PF                       |
       | taxId            | DVNLRD52D15M059P         |
@@ -226,7 +226,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalAsyncValidation @informalIgnoreUAT
   Scenario: [NOTIFICHE_BONARIE_ASYNC_ANALOG_01_6_B] Come ente mittente tento l'invio di una notifica bonaria senza indirizzo analogico che NON varrà recuperato dal VAS.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId       | SoricalMessaMora         |
+      | campaignId       | MessaMora         |
       | denomination     | Leonardo Da Vinci no vas |
       | taxId            | DVNLRD52D15M059P         |
       | digitalDomicile  | NULL                     |
@@ -239,7 +239,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalAsyncValidation @informalUAT
   Scenario: [NOTIFICHE_BONARIE_ASYNC_ANALOG_01_6_B_UAT] Come ente mittente tento l'invio di una notifica bonaria senza indirizzo analogico che NON varrà recuperato dal VAS.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId       | SoricalMessaMora          |
+      | campaignId       | MessaMora          |
       | recipientType    | PG                        |
       | denomination     | Leonardo Da Vinci no vas  |
       | taxId            | 38868390881               |
@@ -253,7 +253,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalAsyncValidation @informalIgnoreUAT
   Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6_C] Come ente mittente invio una notifica bonaria senza indirizzo analogico e quello dei RN non postalizabile, la notifca viene rifiutata.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId       | SoricalMessaMora         |
+      | campaignId       | MessaMora         |
       | denomination     | Matteo Rossi             |
       | taxId            | XVRSFN76E31L781N         |
       | recipientType    | PF                       |
@@ -267,7 +267,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalAsyncValidation @informalUAT
   Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6_UAT] Come ente mittente invio una notifica bonaria senza indirizzo analogico e quello dei RN non postalizabile, la notifca viene rifiutata.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId       | SoricalMessaMora         |
+      | campaignId       | MessaMora         |
       | denomination     | Matteo Rossi             |
       | taxId            | KRSJSM88S03H501A         |
       | recipientType    | PF                       |
@@ -286,15 +286,16 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalAsyncValidation @informalAuditlog
   Scenario: [NOTIFICHE_BONARIE_AUDITLOG_04_1] Come ente mittente invio una notifica bonaria e vengono generati i corretti auditlog in pn-commons
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalFattOrd    |
+      | campaignId    | FattOrd    |
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
       | messageId     | ${NEW-IT}         |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
-      | iun    | auto            |
-      | param1 | AUD_COM_PRELOAD |
+    And verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 5 minuti riportante i seguenti dati nel messaggio
+      | param1 | AUD_COM_PRELOAD              |
+      | param2 | PN_COMMUNICATIONS_ATTACHMENT |
+      | param3 | SUCCESS                      |
 
 
 
@@ -305,7 +306,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalAsyncValidation
   Scenario: [NOTIFICHE_BONARIE_TAXONIMIC_06_1] Come ente mittente invio una notifica bonaria verso PF ottengo errore SPAM sul email e solo feddback negativi
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | SoricalFattOrd    |
+      | campaignId      | FattOrd    |
       | messageId       | ${NEW-IT}         |
       | subject         | Test workflow     |
       | recipientType   | PF                |
@@ -328,7 +329,7 @@ Feature: Sottomissione di una notifica bonaria.
     Given mittente della notifica bonaria: "Comune_Multi"
     And imposto un gruppo non attivo per "Comune_Multi"
     And viene creata una nuova notifica bonaria con i seguenti parametri
-      | campaignId | SoricalFattOrd |
+      | campaignId | FattOrd |
     And destinatario della notifica bonaria
       | recipientType       | PF                |
       | taxId               | FRMTTR76M06B715E  |
@@ -342,7 +343,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalSyncValidation
   Scenario: [NOTIFICHE_BONARIE_SM_03_1b] Come ente mittente invio una notifica bonaria con gruppo non esistente
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalFattOrd          |
+      | campaignId    | FattOrd          |
       | group         | 63f359bc72337440a40f111 |
       | recipientType | PF                      |
       | taxId         | FRMTTR76M06B715E        |
@@ -355,7 +356,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalSyncValidation
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_A] Come Ente mittente disattivo in whitelist invio una notifica bonaria e ricevo un errore.
     Given l'ente mittente "Comune_2" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalFattOrd    |
+      | campaignId    | FattOrd    |
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
@@ -367,7 +368,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalSyncValidation
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_A2] Come Ente mittente non censito in whitelist invio una notifica bonaria e ricevo un errore.
     Given l'ente mittente "Comune_Root" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalFattOrd    |
+      | campaignId    | FattOrd    |
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
@@ -393,7 +394,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalSyncValidation
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_E] Invio bonaria con lingua secondaria non supportata 1
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId          | SoricalFattOrd    |
+      | campaignId          | FattOrd    |
       | recipientType       | PF                |
       | taxId               | FRMTTR76M06B715E  |
       | denomination        | Ettore Fieramosca |
@@ -441,7 +442,7 @@ Feature: Sottomissione di una notifica bonaria.
   #"PhysicalAddressValidationCharsValue": "\\u0020-\\u007E\\u00A0-\\u00FF",,"PhysicalAddressValidationValue": "true","PhysicalAddressValidationLength": "500",
   Scenario Outline: [NOTIFICHE_BONARIE_SM_04_2_N] Validazione indirizzo fisico - errori formali
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId                    | SoricalFattOrd    |
+      | campaignId                    | FattOrd    |
       | recipientType                 | PF                |
       | taxId                         | FRMTTR76M06B715E  |
       | denomination                  | Ettore Fieramosca |
@@ -468,7 +469,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalSyncValidation
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_O] Invio con indirizzo nazionale senza provincia
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId                | SoricalFattOrd    |
+      | campaignId                | FattOrd    |
       | recipientType             | PF                |
       | taxId                     | FRMTTR76M06B715E  |
       | denomination              | Ettore Fieramosca |
@@ -483,7 +484,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalSyncValidation
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_OA] Come ente mittente tento l'invio di una notifica bonaria con taxi id mancante, ricevo un errore.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId                | SoricalFattOrd    |
+      | campaignId                | FattOrd    |
       | recipientType             | PF                |
       | taxId                     | NULL              |
       | denomination              | Ettore Fieramosca |
@@ -514,7 +515,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalSyncValidation
   Scenario Outline: [NOTIFICHE_BONARIE_SM_04_2_Q] Validazione denominazione e presso con caratteri esclusi
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId                | SoricalFattOrd   |
+      | campaignId                | FattOrd   |
       | recipientType             | PF               |
       | taxId                     | FRMTTR76M06B715E |
       | denomination              | <denomination>   |
@@ -543,7 +544,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalSyncValidation
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_R] Validazione denominazione troppo lunga
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId                | SoricalFattOrd   |
+      | campaignId                | FattOrd   |
       | recipientType             | PF               |
       | taxId                     | FRMTTR76M06B715E |
       | denomination              | 89_CHAR          |
@@ -560,7 +561,7 @@ Feature: Sottomissione di una notifica bonaria.
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_S] Invio bonaria con pagamento senza allegato
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | document             | DOC_1_PG          |
-      | campaignId           | SoricalFattOrd    |
+      | campaignId           | FattOrd    |
       | recipientType        | PF                |
       | taxId                | NULL              |
       | denomination         | Ettore Fieramosca |
@@ -574,7 +575,7 @@ Feature: Sottomissione di una notifica bonaria.
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_S2] Invio bonaria con pagamento senza allegato
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | document             | DOC_1_PG          |
-      | campaignId           | SoricalFattOrd    |
+      | campaignId           | FattOrd    |
       | recipientType        | PF                |
       | taxId                | FRMTTR76M06B715E  |
       | denomination         | Ettore Fieramosca |
@@ -587,7 +588,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalSyncValidation
   Scenario: [NOTIFICHE_BONARIE_06_1_B3] Come ente mittente creo una notifica bonaria e tento la visualizzazione da ente diverso , ricevendo un errore.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalFattOrd    |
+      | campaignId    | FattOrd    |
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
@@ -609,7 +610,7 @@ Feature: Sottomissione di una notifica bonaria.
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_DUP_KEY] Invio con fileKey duplicata tra allegati
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | document      | DOC_1_PG;DOC_1_PG |
-      | campaignId    | SoricalFattOrd    |
+      | campaignId    | FattOrd    |
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
@@ -622,7 +623,7 @@ Feature: Sottomissione di una notifica bonaria.
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_MAX_ATTACHMENTS] Invio con numero documenti superiore al limite
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | document      | DOC_1_PG;DOC_1_PG;DOC_1_PG;DOC_1_PG;DOC_1_PG;DOC_1_PG;DOC_1_PG;DOC_1_PG;DOC_1_PG;DOC_1_PG;DOC_1_PG;DOC_1_PG |
-      | campaignId    | SoricalFattOrd                                                                                              |
+      | campaignId    | FattOrd                                                                                              |
       | recipientType | PF                                                                                                          |
       | taxId         | FRMTTR76M06B715E                                                                                            |
       | denomination  | Ettore Fieramosca                                                                                           |
@@ -634,7 +635,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalSyncValidation
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_MULTI_LANG] Invio con più lingue aggiuntive
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId          | SoricalFattOrd    |
+      | campaignId          | FattOrd    |
       | recipientType       | PF                |
       | taxId               | FRMTTR76M06B715E  |
       | denomination        | Ettore Fieramosca |
@@ -647,7 +648,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalSyncValidation
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_NO_MESSAGE_ID] Invio senza messageId in one-to-one
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalFattOrd    |
+      | campaignId    | FattOrd    |
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
@@ -659,7 +660,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalSyncValidation
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_DOC_CONTENT_TYPE] Invio documento principale con contentType errato
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalFattOrd    |
+      | campaignId    | FattOrd    |
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
@@ -671,7 +672,7 @@ Feature: Sottomissione di una notifica bonaria.
    #@informalNotificationsValidation @informalSyncValidation errore dato nella prepare non oggetto delle bonarie
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_PAYMENT_NO_ATTACHMENT] Invio pagamento senza attachment
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId           | SoricalFattOrd    |
+      | campaignId           | FattOrd    |
       | recipientType        | PF                |
       | taxId                | FRMTTR76M06B715E  |
       | denomination         | Ettore Fieramosca |
@@ -685,7 +686,7 @@ Feature: Sottomissione di una notifica bonaria.
   #@informalNotificationsValidation @informalSyncValidation gestito in future release
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_GROUP_REQUIRED] Invio senza gruppo quando obbligatorio
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalFattOrd    |
+      | campaignId    | FattOrd    |
       | group         | NULL              |
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
@@ -699,7 +700,7 @@ Feature: Sottomissione di una notifica bonaria.
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_DUP_SHA] Invio con SHA duplicato tra documenti
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | document      | DOC_1_PG;DOC_1_PG |
-      | campaignId    | SoricalFattOrd    |
+      | campaignId    | FattOrd    |
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
@@ -711,7 +712,7 @@ Feature: Sottomissione di una notifica bonaria.
     # il sender taxid viene sempre recuperto da db e non più passato
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_C] Invio bonaria con senderTaxId custom
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId         | SoricalFattOrd    |
+      | campaignId         | FattOrd    |
       | senderTaxId        | 20517490320       |
       | senderDenomination | Comune di Test    |
       | recipientType      | PF                |
@@ -725,7 +726,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalSyncValidation
   Scenario Outline: [NOTIFICHE_BONARIE_SM_06_C1] Invio notifica bonaria con email non valida
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalFattOrd    |
+      | campaignId    | FattOrd    |
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
@@ -746,7 +747,7 @@ Feature: Sottomissione di una notifica bonaria.
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_D3] Invio bonaria verso 2 destinatari con stesso message id
   Nome Parametro Max numero destinatari: PN_DELIVERY_INFORMALNOTIFICATIONMAXRECIPIENTS.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId           | SoricalFattOrd    |
+      | campaignId           | FattOrd    |
       | recipientType        | PF                |
       | taxId                | FRMTTR76M06B715E  |
       | denomination         | Ettore Fieramosca |
@@ -764,11 +765,11 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalSyncValidation
   Scenario Outline: [NOTIFICHE_BONARIE_SM_06_B] Invio notifica bonaria con telefono non valido (<descrizione>)
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalFattOrd    |
+      | campaignId    | FattOrd    |
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
-      | messageId     | ${NEW-IT}            |
+      | messageId     | ${NEW-IT}         |
       | email         | test@test.it      |
       | phone_number  | <phone>           |
     When l'invio della notifica bonaria fallisce
@@ -783,11 +784,11 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalSyncValidation
   Scenario Outline: [NOTIFICHE_BONARIE_SM_06_C] Invio notifica bonaria con telefono valido (<descrizione>)
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalFattOrd    |
+      | campaignId    | FattOrd    |
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
-      | messageId     | ${NEW-IT}            |
+      | messageId     | ${NEW-IT}         |
       | email         | test@test.it      |
       | phone_number  | <phone>           |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
@@ -809,7 +810,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalAsyncValidation
   Scenario: [NOTIFICHE_BONARIE_SM_03_1] Come ente mittente invio una notifica bonaria con gruppo.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalFattOrd    |
+      | campaignId    | FattOrd    |
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
@@ -821,7 +822,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalSyncValidation
   Scenario: [NOTIFICHE_BONARIE_SM_06_A] Come ente mittente invio una notifica bonaria con telefono corretto.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalFattOrd    |
+      | campaignId    | FattOrd    |
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
@@ -835,7 +836,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalAsyncValidation
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_G3] Come mittente associato alla campagna tento l'invio di una notifica bonaria.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | SoricalFattOrd            |
+      | campaignId      | FattOrd            |
       | recipientType   | PF                        |
       | taxId           | FRMTTR76M06B715E          |
       | denomination    | Ettore Fieramosca         |
@@ -847,7 +848,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalAsyncValidation
   Scenario: [NOTIFICHE_BONARIE_SM_01_1_A] Come ente mittente invio una notifica bonaria con modalità one-to-many quindi con id della campagna valorizzato
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalFattOrd    |
+      | campaignId    | FattOrd    |
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
@@ -860,7 +861,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalAsyncValidation
   Scenario: [NOTIFICHE_BONARIE_SM_01_1_B] Come ente mittente invio una notifica bonaria con modalità one-to-one quindi con id messaggio, e seconda lingua specificata
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId          | SoricalFattOrd    |
+      | campaignId          | FattOrd    |
       | recipientType       | PF                |
       | taxId               | FRMTTR76M06B715E  |
       | denomination        | Ettore Fieramosca |
@@ -873,7 +874,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalAsyncValidation #bug fix PN-20248
   Scenario: [NOTIFICHE_BONARIE_SM_01_1_C] Come ente mittente invio una notifica bonaria con messaggio bilingue,  seconda lingua NON specificata
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId          | SoricalFattOrd    |
+      | campaignId          | FattOrd    |
       | recipientType       | PF                |
       | taxId               | FRMTTR76M06B715E  |
       | denomination        | Ettore Fieramosca |
@@ -886,7 +887,7 @@ Feature: Sottomissione di una notifica bonaria.
   #@informalNotificationsValidation @informalAsyncValidation #Multidestinatario disabilitato per il momento
   Scenario: [NOTIFICHE_BONARIE_SM_01_1_D] Come ente mittenste invio delle notifiche bonarie verso più destinatari con più pagamenti
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId           | SoricalFattOrd    |
+      | campaignId           | FattOrd    |
       | recipientType        | PF                |
       | taxId                | FRMTTR76M06B715E  |
       | denomination         | Ettore Fieramosca |
@@ -907,7 +908,7 @@ Feature: Sottomissione di una notifica bonaria.
   Scenario: [NOTIFICHE_BONARIE_SM_01_1_E] Come ente mittenste invio una notifica bonaria con un documento e senza pagamneti e allegati
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | document             | DOC_INFORMAL      |
-      | campaignId           | SoricalFattOrd    |
+      | campaignId           | FattOrd    |
       | recipientType        | PF                |
       | taxId                | FRMTTR76M06B715E  |
       | denomination         | Ettore Fieramosca |
@@ -921,7 +922,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalAsyncValidation
   Scenario: [NOTIFICHE_BONARIE_ASYNC_01_5] Come ente mittente invio una notifica bonaria con indirizzo digitale.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | SoricalFattOrd |
+      | campaignId      | FattOrd |
       | recipientType   | PG             |
       | taxId           | 20517490320    |
       | denomination    | ACME SPA       |
@@ -957,7 +958,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalAsyncValidation
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_L2] Invio con allegato pdf
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId             | SoricalFattOrd        |
+      | campaignId             | FattOrd        |
       | recipientType          | PF                    |
       | taxId                  | FRMTTR76M06B715E      |
       | denomination           | Ettore Fieramosca     |
@@ -970,7 +971,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalAsyncValidation
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_G] Lingua secondaria non presente nella campagna
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId          | SoricalFattOrd            |
+      | campaignId          | FattOrd            |
       | recipientType       | PF                        |
       | taxId               | FRMTTR76M06B715E          |
       | denomination        | Ettore Fieramosca         |
@@ -984,7 +985,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalSyncValidation
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_G2] Come mittente non associato alla campagna tento l'invio di una notifica bonaria.
     Given l'ente mittente "Comune_1" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | SoricalFattOrd            |
+      | campaignId      | FattOrd            |
       | recipientType   | PF                        |
       | taxId           | FRMTTR76M06B715E          |
       | denomination    | Ettore Fieramosca         |
@@ -997,7 +998,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalAsyncValidation
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_L] Invio con fileKey non coerente con contentType del pagamento
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId             | SoricalFattOrd        |
+      | campaignId             | FattOrd        |
       | recipientType          | PF                    |
       | taxId                  | FRMTTR76M06B715E      |
       | denomination           | Ettore Fieramosca     |
@@ -1011,7 +1012,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalAsyncValidation
   Scenario: [NOTIFICHE_BONARIE_ASYNC_01_4] Come ente mittente invio una notifica bonaria con messaggi id non esistente, la nottifca viene rifiutata.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId           | SoricalFattOrd                       |
+      | campaignId           | FattOrd                       |
       | recipientType        | PF                                   |
       | taxId                | FRMTTR76M06B715E                     |
       | payment_multy_number | 1                                    |
@@ -1035,7 +1036,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalAsyncValidation
   Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6_D_PG] Come ente mittente tento l'invio di una notifica bonaria senza indirizzo digitale per un campagna con canale digitale verso PG.Ottengo stato refused
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | SoricalFattOrd |
+      | campaignId      | FattOrd |
       | recipientType   | PG             |
       | taxId           | 20517490320    |
       | denomination    | Acme Spa       |
@@ -1048,7 +1049,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalAsyncValidation
   Scenario: [NOTIFICHE_BONARIE_ASYNC_ANALOG_01_6] Come ente mittente tento l'invio di una notifica bonaria senza indirizzo analogico per un campagna con canale analogico.Ottengo stato refused.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId       | SoricalMessaMora         |
+      | campaignId       | MessaMora         |
       | recipientType    | PF                       |
       | taxId            | XVRSFN76E31L781N         |
       | denomination     | xavier                   |
@@ -1060,7 +1061,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalAsyncValidation
   Scenario: [NOTIFICHE_BONARIE_ASYNC_01_6_A] Come ente mittente invio una notifica bonaria con indirizzo analogico non normaliozzabile, la notifca viene rifiutata
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId                    | SoricalMessaMora         |
+      | campaignId                    | MessaMora         |
       | denomination                  | Leonardo Da Vinci no vas |
       | taxId                         | DVNLRD52D15M059P         |
       | physical_address_zip          | 80100                    |
@@ -1078,7 +1079,7 @@ Feature: Sottomissione di una notifica bonaria.
   Scenario: [NOTIFICHE_BONARIE_SM_01_1_E2] Come ente mittenste invio una notifica bonaria con un documento oltre il limite di grandezza massimo.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | document      | DOC_110MB         |
-      | campaignId    | SoricalFattOrd    |
+      | campaignId    | FattOrd    |
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
@@ -1096,7 +1097,7 @@ Feature: Sottomissione di una notifica bonaria.
   #non necessario, api invocata in altri scenari
   Scenario: [NOTIFICHE_BONARIE_06_1_A] Verifica stato richiesta bonaria - OK
     Given l'ente mittente "Comune_1" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalFattOrd    |
+      | campaignId    | FattOrd    |
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
@@ -1108,7 +1109,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalAsyncValidation
   Scenario: [NOTIFICHE_BONARIE_06_1_B] Come ente mittente creo una notifica bonaria e tento la visualizzazione da ente diverso , ricevendo un errore.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalFattOrd    |
+      | campaignId    | FattOrd    |
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
@@ -1127,7 +1128,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalAsyncValidation @informalAuditlog
   Scenario: [NOTIFICHE_BONARIE_AUDITLOG_02_1] Come ente mittente invio una notifica bonaria e vengono generati i corretti auditlog in pn-delivery
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalFattOrd    |
+      | campaignId    | FattOrd    |
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
@@ -1150,7 +1151,7 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalAsyncValidation @informalAuditlog
   Scenario: [NOTIFICHE_BONARIE_WF_1_B] Come ente mittente invio una notifica bonaria e vengono generati i corretti log in pn-workflow-manager
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalFattOrd    |
+      | campaignId    | FattOrd    |
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
@@ -1163,7 +1164,7 @@ Feature: Sottomissione di una notifica bonaria.
     #@informalNotificationsValidation @informalAsyncValidation non presente nella specifica
   Scenario: [NOTIFICHE_BONARIE_WF_1] Come ente mittente invio una notifica bonaria e vengono generati i corretti auditlog in pn-workflow-manager
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalFattOrd    |
+      | campaignId    | FattOrd    |
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
@@ -1186,7 +1187,7 @@ Feature: Sottomissione di una notifica bonaria.
   Scenario: [NOTIFICHE_BONARIE_SOTTOMISSIONE_14A] Come ente mittente creo una nuova notifica bonaria utilizzando valori di default.
   Con whitelist vuota ricevo un errore 403 Forbidden.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalFattOrd    |
+      | campaignId    | FattOrd    |
       | recipientType | PF                |
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
@@ -1287,7 +1288,7 @@ Feature: Sottomissione di una notifica bonaria.
   Scenario: [NOTIFICHE_LANGUAGES_01_1_C] Come ente mittente invio una notifica bonaria allegando
   un messaggio multilingue e specificando Italiano come lingua addizionale.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId | SoricalFattOrd |
+      | campaignId | FattOrd |
     And destinatario della notifica bonaria
       | recipientType       | PF                |
       | taxId               | FRMTTR76M06B715E  |
@@ -1307,7 +1308,7 @@ Feature: Sottomissione di una notifica bonaria.
   Scenario: [NOTIFICHE_LANGUAGES_01_2_A] Come ente mittente invio una notifica bonaria multidestinatario
   allegando un messaggio multilingue indicando la lingua addizionale per un destinatario e italiana per l'altro
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId | SoricalFattOrd |
+      | campaignId | FattOrd |
     And destinatario della notifica bonaria
       | recipientType       | PF                |
       | taxId               | FRMTTR76M06B715E  |
@@ -1326,7 +1327,7 @@ Feature: Sottomissione di una notifica bonaria.
   Scenario: [NOTIFICHE_LANGUAGES_01_2_B] Come ente mittente invio una notifica bonaria multidestinatario
   allegando un messaggio multilingue indicando la lingua addizionale per entrambi
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId | SoricalFattOrd |
+      | campaignId | FattOrd |
     And destinatario della notifica bonaria
       | recipientType       | PF                |
       | taxId               | FRMTTR76M06B715E  |
@@ -1346,7 +1347,7 @@ Feature: Sottomissione di una notifica bonaria.
   Scenario: [NOTIFICHE_LANGUAGES_01_2_C] Come ente mittente invio una notifica bonaria multidestinatario
   allegando due diversi messaggi multilingue indicando la lingua addizionale per entrambi
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId | SoricalFattOrd |
+      | campaignId | FattOrd |
     And destinatario della notifica bonaria
       | recipientType       | PF                |
       | taxId               | FRMTTR76M06B715E  |
@@ -1366,7 +1367,7 @@ Feature: Sottomissione di una notifica bonaria.
   Scenario: [NOTIFICHE_LANGUAGES_01_2_D] Come ente mittente invio una notifica bonaria multidestinatario
   allegando un messaggio monolingua indicando la lingua italiana per uno e nessuna lingua per l'altro
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId | SoricalFattOrd |
+      | campaignId | FattOrd |
     And destinatario della notifica bonaria
       | recipientType       | PF                |
       | taxId               | FRMTTR76M06B715E  |
@@ -1385,7 +1386,7 @@ Feature: Sottomissione di una notifica bonaria.
   Scenario: [NOTIFICHE_LANGUAGES_01_1_C] Come ente mittente invio una notifica bonaria allegando
   un messaggio multilingue e specificando Italiano come lingua addizionale.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId | SoricalFattOrd |
+      | campaignId | FattOrd |
     And destinatario della notifica bonaria
       | recipientType       | PF                |
       | taxId               | FRMTTR76M06B715E  |
@@ -1405,7 +1406,7 @@ Feature: Sottomissione di una notifica bonaria.
   Scenario: [NOTIFICHE_LANGUAGES_01_2_A] Come ente mittente invio una notifica bonaria multidestinatario
   allegando un messaggio multilingue indicando la lingua addizionale per un destinatario e italiana per l'altro
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId | SoricalFattOrd |
+      | campaignId | FattOrd |
     And destinatario della notifica bonaria
       | recipientType       | PF                |
       | taxId               | FRMTTR76M06B715E  |
@@ -1425,7 +1426,7 @@ Feature: Sottomissione di una notifica bonaria.
   Scenario: [NOTIFICHE_LANGUAGES_01_2_B] Come ente mittente invio una notifica bonaria multidestinatario
   allegando un messaggio multilingue indicando la lingua addizionale per entrambi
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId | SoricalFattOrd |
+      | campaignId | FattOrd |
     And destinatario della notifica bonaria
       | recipientType       | PF                |
       | taxId               | FRMTTR76M06B715E  |
@@ -1445,7 +1446,7 @@ Feature: Sottomissione di una notifica bonaria.
   Scenario: [NOTIFICHE_LANGUAGES_01_2_C] Come ente mittente invio una notifica bonaria multidestinatario
   allegando due diversi messaggi multilingue indicando la lingua addizionale per entrambi
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId | SoricalFattOrd |
+      | campaignId | FattOrd |
     And destinatario della notifica bonaria
       | recipientType       | PF                |
       | taxId               | FRMTTR76M06B715E  |
@@ -1465,7 +1466,7 @@ Feature: Sottomissione di una notifica bonaria.
   Scenario: [NOTIFICHE_LANGUAGES_01_2_D] Come ente mittente invio una notifica bonaria multidestinatario
   allegando un messaggio monolingua indicando la lingua italiana per uno e nessuna lingua per l'altro
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId | SoricalFattOrd |
+      | campaignId | FattOrd |
     And destinatario della notifica bonaria
       | recipientType       | PF                |
       | taxId               | FRMTTR76M06B715E  |
@@ -1485,7 +1486,7 @@ Feature: Sottomissione di una notifica bonaria.
   Scenario: [NOTIFICHE_LANGUAGES_01_3_C] Come ente mittente invio una notifica bonaria multidestinatario
   allegando due messaggi multilingua diversi, indicando una lingua non presente per uno di loro
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId | SoricalFattOrd |
+      | campaignId | FattOrd |
     And destinatario della notifica bonaria
       | recipientType       | PF                |
       | taxId               | FRMTTR76M06B715E  |
@@ -1506,7 +1507,7 @@ Feature: Sottomissione di una notifica bonaria.
   Scenario: [NOTIFICHE_LANGUAGES_01_3_D] Come ente mittente invio una notifica bonaria multidestinatario
   allegando un messaggio multilingua, indicando una lingua non presente per uno di loro
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId | SoricalFattOrd |
+      | campaignId | FattOrd |
     And destinatario della notifica bonaria
       | recipientType       | PF                |
       | taxId               | FRMTTR76M06B715E  |
@@ -1526,7 +1527,7 @@ Feature: Sottomissione di una notifica bonaria.
   Scenario: [NOTIFICHE_LANGUAGES_DE_1_A] Come ente mittente invio una notifica bonaria allegando
   un messaggio multilingue e specificando la seconda lingia come lingua addizionale.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId          | SoricalFattOrd    |
+      | campaignId          | FattOrd    |
       | recipientType       | PF                |
       | taxId               | FRMTTR76M06B715E  |
       | denomination        | Ettore Fieramosca |
@@ -1538,10 +1539,25 @@ Feature: Sottomissione di una notifica bonaria.
   Scenario: [NOTIFICHE_LANGUAGES_SL_1_A] Come ente mittente invio una notifica bonaria allegando
   un messaggio multilingue e specificando la seconda lingia come lingua addizionale.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId          | SoricalFattOrd    |
+      | campaignId          | FattOrd    |
       | recipientType       | PF                |
       | taxId               | FRMTTR76M06B715E  |
       | denomination        | Ettore Fieramosca |
       | messageId           | ${NEW-IT-SL}      |
       | additionalLanguages | SL                |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
+
+
+  @informalNotificationsValidation @informalAsyncValidation
+  Scenario: [NOTIFICHE_BONARIE_SM_01_1_H] Come ente mittenste invio una notifica bonaria senza documento e senza pagamneti e allegati
+    Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
+      | document             | NULL              |
+      | campaignId           | FattOrd    |
+      | recipientType        | PF                |
+      | taxId                | FRMTTR76M06B715E  |
+      | denomination         | Ettore Fieramosca |
+      | payment_multy_number | 0                 |
+      | attachment_key       | NULL              |
+      | messageId            | ${NEW-IT}         |
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
+    Then la sottomissione della notifica bonaria è andata a buon fine

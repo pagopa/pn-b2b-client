@@ -5,7 +5,7 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
   Scenario Outline: [RICERCA_RICEVUTE_1] Come destinatario <tipo> ricerco le notifiche ricevute con tutti i filtri valorizzati
     Given mittente della notifica bonaria: "Comune_Multi"
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | SoricalMessaMora  |
+      | campaignId      | MessaMora         |
       | recipientType   | <tipo>            |
       | taxId           | <taxId>           |
       | denomination    | <destinatario>    |
@@ -81,7 +81,7 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
     And "Mario Cucumber" accetta la delega "Mario Gherkin"
     # Viene creata una notifica bonaria
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalMessaMora |
+      | campaignId    | MessaMora        |
       | recipientType | PF               |
       | taxId         | CLMCST42R12D969Z |
       | denomination  | Mario Cucumber   |
@@ -137,7 +137,7 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
     Given "Mario Cucumber" rifiuta se presente la delega ricevuta "Mario Gherkin"
     And "Mario Cucumber" viene delegato da "Mario Gherkin" per comune "Comune_Multi"
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalMessaMora        |
+      | campaignId    | MessaMora               |
       | recipientType | PF                      |
       | taxId         | CLMCST42R12D969Z        |
       | denomination  | Mario Gherkin           |

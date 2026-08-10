@@ -22,18 +22,18 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
       | desiredFeedback   | $NULL |
 
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId    | SoricalMessaMora |
+      | campaignId    | MessaMora        |
       | recipientType | PF               |
       | taxId         | FRMTTR76M06B715E |
       | denomination  | Mario Cucumber   |
       | messageId     | ${NEW-IT}        |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si verifica sulla tabella pn-NotificationsMetadata che per lo IUN ":informal_iun" e il destinatario con taxId ":informal_recipientId" di tipo "PF" gli attributi siano:
-      | communicationType | INFORMAL         |
-      | campaignId        | SoricalMessaMora |
-      | viewed            | BOOLEAN          |
-      | delivered         | BOOLEAN          |
-      | desiredFeedback   | BOOLEAN          |
+      | communicationType | INFORMAL  |
+      | campaignId        | MessaMora |
+      | viewed            | BOOLEAN   |
+      | delivered         | BOOLEAN   |
+      | desiredFeedback   | BOOLEAN   |
 
 
   #CASO DI TEST 2.1 - tutti i campi (obbligatori e opzionali) valorizzati correttamente
@@ -203,7 +203,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
   Scenario: [MITTENTE_RICERCA_NOTIFICHE_BONARIE_2.A] Vengono inviate due notifiche bonarie con esiti differenti
   e si recuperano le notifiche inviate dal mittente filtrando per specifici criteri
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | SoricalMessaMora        |
+      | campaignId      | MessaMora               |
       | subject         | Test workflow           |
       | recipientType   | PF                      |
       | taxId           | FRMTTR76M06B715E        |
@@ -218,7 +218,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
     And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
 
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | SoricalFattOrd    |
+      | campaignId      | FattOrd           |
       | messageId       | ${NEW-IT}         |
       | subject         | Test workflow     |
       | recipientType   | PF                |
@@ -234,17 +234,17 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
     And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
       | startDate  | $DATE_ADD(-1D)     |
       | endDate    | $DATE_ADD(1D)      |
-      | campaignId | SoricalMessaMora   |
+      | campaignId | MessaMora          |
       | senderId   | :informal_senderId |
       | size       | 50                 |
     And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
       | sentAt     | $DATE_ADD(-1D), $DATE_ADD(1D) |
-      | campaignId | SoricalMessaMora              |
+      | campaignId | MessaMora                     |
     #    ricerca per specifico stato
     And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
       | startDate  | $DATE_ADD(-1D)     |
       | endDate    | $DATE_ADD(1D)      |
-      | campaignId | SoricalMessaMora   |
+      | campaignId | MessaMora          |
       | status     | COMPLETED_REACHED  |
       | senderId   | :informal_senderId |
       | size       | 50                 |
@@ -256,7 +256,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
     And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
       | startDate  | $DATE_ADD(-1D)     |
       | endDate    | $DATE_ADD(1D)      |
-      | campaignId | SoricalFattOrd     |
+      | campaignId | FattOrd            |
       | status     | UNDELIVERABLE      |
       | senderId   | :informal_senderId |
       | size       | 50                 |
@@ -265,14 +265,14 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
     And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
       | sentAt             | $DATE_ADD(-1D), $DATE_ADD(1D) |
       | notificationStatus | UNDELIVERABLE                 |
-      | campaignId         | SoricalFattOrd                |
+      | campaignId         | FattOrd                       |
       | viewed             | false                         |
       | delivered          | false                         |
 #    ricerca per specifico esito
     And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
       | startDate  | $DATE_ADD(-1D)     |
       | endDate    | $DATE_ADD(1D)      |
-      | campaignId | SoricalMessaMora   |
+      | campaignId | MessaMora          |
       | senderId   | :informal_senderId |
       | delivered  | true               |
       | size       | 50                 |
@@ -284,23 +284,23 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
     And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
       | startDate   | $DATE_ADD(-1D)        |
       | endDate     | $DATE_ADD(1D)         |
-      | campaignId  | SoricalMessaMora      |
+      | campaignId  | MessaMora             |
       | recipientId | :informal_recipientId |
       | senderId    | :informal_senderId    |
       | size        | 50                    |
       | delivered   | true                  |
     And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
       | sentAt     | $DATE_ADD(-1D), $DATE_ADD(1D) |
-      | campaignId | SoricalMessaMora              |
+      | campaignId | MessaMora                     |
       | recipients | :informal_recipientId         |
 
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | SoricalFattOrd |
-      | recipientType   | PG             |
-      | taxId           | 12666810299    |
-      | denomination    | GherkinSrlB2B  |
-      | messageId       | ${NEW-IT}      |
-      | digitalDomicile | tu@gmail.com   |
+      | campaignId      | FattOrd       |
+      | recipientType   | PG            |
+      | taxId           | 12666810299   |
+      | denomination    | GherkinSrlB2B |
+      | messageId       | ${NEW-IT}     |
+      | digitalDomicile | tu@gmail.com  |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
 
@@ -308,7 +308,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
     And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
       | startDate  | $DATE_ADD(-1D)     |
       | endDate    | $DATE_ADD(1D)      |
-      | campaignId | SoricalFattOrd     |
+      | campaignId | FattOrd            |
       | iunMatch   | :informal_iun      |
       | senderId   | :informal_senderId |
       | size       | 50                 |
@@ -320,20 +320,20 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
     And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
       | startDate   | $DATE_ADD(-1D)        |
       | endDate     | $DATE_ADD(1D)         |
-      | campaignId  | SoricalFattOrd        |
+      | campaignId  | FattOrd               |
       | recipientId | :informal_recipientId |
       | senderId    | :informal_senderId    |
       | size        | 50                    |
       | delivered   | true                  |
     And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
       | sentAt     | $DATE_ADD(-1D), $DATE_ADD(1D) |
-      | campaignId | SoricalFattOrd                |
+      | campaignId | FattOrd                       |
       | recipients | :informal_recipientId         |
 #    ricerca per specifico gruppo
     And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
       | startDate         | $DATE_ADD(-1D)     |
       | endDate           | $DATE_ADD(1D)      |
-      | campaignId        | SoricalFattOrd     |
+      | campaignId        | FattOrd            |
       | xPagopaPnCxGroups | :informal_group    |
       | senderId          | :informal_senderId |
       | size              | 50                 |
@@ -346,7 +346,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
   #CASO DI TEST 3.2 - paginazione con più risultati
   @ricercaNotifiche
   Scenario: [MITTENTE_RICERCA_NOTIFICHE_BONARIE_2.C] Come mittente recupero le notifiche bonarie inviate sfogliando tutte le pagine dei risultati
-    Given vengono create 5 notifiche bonarie per la pa "Comune_Multi" con campagna "SoricalMessaMora"
+    Given vengono create 5 notifiche bonarie per la pa "Comune_Multi" con campagna "MessaMora"
       | recipientType | PF               |
       | taxId         | FRMTTR76M06B715E |
       | denomination  | Mario Cucumber   |
@@ -354,7 +354,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
     And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
       | startDate  | $DATE_ADD(-1D)     |
       | endDate    | $DATE_ADD(1D)      |
-      | campaignId | SoricalMessaMora   |
+      | campaignId | MessaMora          |
       | size       | 1                  |
       | senderId   | :informal_senderId |
       | delivered  | true               |
