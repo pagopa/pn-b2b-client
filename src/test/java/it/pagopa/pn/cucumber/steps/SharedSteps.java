@@ -86,7 +86,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 @Slf4j
 public class SharedSteps {
 
-    private static final Pattern TEST_CASE_ID_PATTERN = Pattern.compile("\\[[^\\[\\]]+]");
+    private static final Pattern TEST_CASE_ID_PATTERN = Pattern.compile("\\[([^\\[\\]]+)]");
 
     @Getter
     private final SenderInfoProvider senderInfoProvider;
@@ -278,7 +278,7 @@ public class SharedSteps {
         MDC.put(RestTemplateConfiguration.CUCUMBER_SCENARIO_NAME_MDC_ENTRY, scenarioName);
         Matcher testCaseIdMatcher = TEST_CASE_ID_PATTERN.matcher(scenarioName);
         if (testCaseIdMatcher.find()) {
-            MDC.put(RestTemplateConfiguration.CUCUMBER_TEST_CASE_ID_MDC_ENTRY, testCaseIdMatcher.group());
+            MDC.put(RestTemplateConfiguration.CUCUMBER_TEST_CASE_ID_MDC_ENTRY, testCaseIdMatcher.group(1));
         }
         MDC.put(RestTemplateConfiguration.CUCUMBER_FEATURE_FILE_MDC_ENTRY, extractFeatureFileName(scenario.getUri()));
         log.info("START SCENARIO: {}", scenarioName);

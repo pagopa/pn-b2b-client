@@ -3,13 +3,17 @@
     <!--
         Pattern derivato dal default di Spring Boot con tre differenze:
         - viene aggiunto [%X{testCaseId:-N/A}], valorizzato in SharedSteps#injectScenarioNameInsideSfl4jMdc
-          con l'id tra quadre presente nel nome dello Scenario (es. [TC_CENSIMENTO_STIME_MOCK_1]);
+          con l'id (senza le quadre, già presenti nel pattern) presente nel nome dello Scenario
+          (es. da "[TC_CENSIMENTO_STIME_MOCK_1] ..." viene estratto TC_CENSIMENTO_STIME_MOCK_1);
         - viene aggiunto [%X{featureFile:-N/A}], valorizzato con il solo nome del file .feature (senza path);
         - lo stacktrace (%wEx) viene "appiattito" su una singola riga sostituendo gli a-capo con "\n" testuale,
-          cosi' CodeBuild/CloudWatch non lo spezza in un log per riga.
+          cosi' CodeBuild/CloudWatch non lo spezza in un log per riga. Il successivo %nopex e' necessario perche'
+          logback riconosce i gestori di eccezione solo a livello "top" del pattern: annidato dentro %replace(...),
+          %wEx non viene rilevato, e senza %nopex logback aggiungerebbe comunque in coda un secondo stacktrace di
+          default, questa volta multi-riga e senza il prefisso [testCaseId][featureFile] su ogni riga.
     -->
     <property name="CONSOLE_LOG_PATTERN"
-              value="%d{yyyy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:-%5p} ${PID:- } --- [%X{testCaseId:-N/A}] [%X{featureFile:-N/A}] [%15.15t] %-40.40logger{39} : %m%n%replace(%wEx){'\R', '\\n'}"/>
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:-%5p} ${PID:- } --- [%X{testCaseId:-N/A}] [%X{featureFile:-N/A}] [%15.15t] %-40.40logger{39} : %m%n%replace(%wEx){'\R', '\\n'}%nopex"/>
 
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
 </configuration>
