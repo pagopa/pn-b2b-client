@@ -377,7 +377,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-tracing-core/refs/tags/1.0.0-RC8/packages/api/open-api/api-external-interop-v1.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-tracing-core/refs/heads/develop/packages/api/open-api/api-external-interop-v1.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
