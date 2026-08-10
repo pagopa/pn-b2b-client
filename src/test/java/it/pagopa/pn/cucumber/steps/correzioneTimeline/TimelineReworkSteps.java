@@ -31,6 +31,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.awaitility.core.ConditionTimeoutException;
 import org.junit.jupiter.api.Assertions;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpStatusCodeException;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
@@ -71,6 +72,10 @@ public class TimelineReworkSteps {
     private final DynamoDbService dynamoDbService;
     private final IPnNotificationCostClient notificationCostClient;
     private final IPnExternalRegistryPrivateUserApi externalRegistryPrivateUserApi;
+
+    @Value("${pn.ss.legalFactUrl}")
+    private String legalFactUrl;
+
     private ReworkResponse reworkResponse;
     private RestartAttemptResponse restartAttemptResponse;
     private InvalidateTimelineElementsResponse removeElementsResponse;
@@ -473,9 +478,8 @@ public class TimelineReworkSteps {
     private Map<String, Object> populateConsolidatoreMapCustom(Map<String, String> inputData) {
         String rawTimestamp = inputData.getOrDefault("timestamp", getOrInitNow());
         String validateTimestamp = rawTimestamp.equals("<null>") ? null : rawTimestamp;
-        String attachmentUri = ConsolidatoreRequestBuilder.attachmentUriFor(B2bUtils.getEnvironment(sharedSteps.getContext()));
         return ConsolidatoreRequestBuilder.buildConsolidatoreMap(
-                sharedSteps.getNotificationIun(), inputData, validateTimestamp, attachmentUri);
+                sharedSteps.getNotificationIun(), inputData, validateTimestamp, legalFactUrl);
     }
 
     private void checkRequestType(String requestType) {

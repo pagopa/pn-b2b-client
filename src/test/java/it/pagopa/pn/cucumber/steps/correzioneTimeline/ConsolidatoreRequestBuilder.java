@@ -1,7 +1,5 @@
 package it.pagopa.pn.cucumber.steps.correzioneTimeline;
 
-import it.pagopa.pn.cucumber.steps.utilitySteps.Environment;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,15 +10,6 @@ import java.util.Map;
  * il timestamp e l'ambiente vengono risolti dal chiamante e passati come parametri.
  */
 final class ConsolidatoreRequestBuilder {
-
-    static String attachmentUriFor(Environment env) {
-        return switch (env) {
-            case DEV -> "safestorage://PN_EXTERNAL_LEGAL_FACTS-970c9a266a3e44fa88ff66f4c3f4e5ae.pdf";
-            case TEST -> "safestorage://PN_EXTERNAL_LEGAL_FACTS-243648ce692946f987b86fb72b33d98a.pdf";
-            case UAT -> "safestorage://PN_EXTERNAL_LEGAL_FACTS-dd7dc6811b024202ac66044671f3e2ad.pdf";
-            case HOTFIX -> "safestorage://PN_EXTERNAL_LEGAL_FACTS-31ea166ced054f63952e736f04647f0a.pdf";
-        };
-    }
 
     static Map<String, Object> buildConsolidatoreMap(String iun,
                                                      Map<String, String> inputData,
