@@ -457,12 +457,12 @@ Feature: Sottomissione di una notifica bonaria.
     When l'invio della notifica bonaria fallisce
     Then si riceve errore 400 "<error>"
     Examples:
-      | address  | details   | zip   | city | error                                           |
-      #| Via Roma ### | scala A   | 00100 | Roma | PN_DELIVERY_PHYSICAL_ADDRESS_INVALID_CHARACTERS |
+      | address     | details   | zip   | city | error                                           |
+      | Via Roma 😃 | scala A   | 00100 | Roma | PN_DELIVERY_PHYSICAL_ADDRESS_INVALID_CHARACTERS |
             # caratteri non validi
-      | Via Roma | scala 😃  | 00100 | Roma | PN_DELIVERY_PHYSICAL_ADDRESS_INVALID_CHARACTERS |
+      | Via Roma    | scala 😃  | 00100 | Roma | PN_DELIVERY_PHYSICAL_ADDRESS_INVALID_CHARACTERS |
             # caratteri speciali city
-      | 501_CHAR | dettaglio | 00100 | Roma | PN_DELIVERY_PHYSICAL_ADDRESS_LENGTH_EXCEEDED    |
+      | 501_CHAR    | dettaglio | 00100 | Roma | PN_DELIVERY_PHYSICAL_ADDRESS_LENGTH_EXCEEDED    |
             # lunghezza > 500
 
 

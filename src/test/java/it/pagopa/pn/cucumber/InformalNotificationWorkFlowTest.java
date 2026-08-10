@@ -14,5 +14,4 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent")
 @IncludeTags({"informalNotMVP","informalNotificationsWorkFlow"})
 public class InformalNotificationWorkFlowTest {
-
 }
