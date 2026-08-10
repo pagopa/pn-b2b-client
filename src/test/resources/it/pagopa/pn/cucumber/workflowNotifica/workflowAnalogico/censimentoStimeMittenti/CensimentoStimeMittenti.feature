@@ -184,13 +184,6 @@ Feature: Censimento stime mittenti
       | classpath:/modulo_commessa_P1_giugno_modified.json |
       | classpath:/modulo_commessa_P1_luglio.json          |
     Then si verifica che la tabella pn-PaperDeliverySenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
-    # Ripristino della commessa originale di giugno
-#    Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_giugno_26.zip"
-#    Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_luglio_26.zip"
-#    And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
-#      | classpath:/modulo_commessa_P1_giugno.json |
-#      | classpath:/modulo_commessa_P1_luglio.json |
-#    Then si verifica che la tabella pn-PaperDeliverySenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
 
   @censimentoStimeMittenti
   Scenario: [TC_CENSIMENTO_STIME_MOCK_1] Verifica che il caricamento di moduli commessa MOCK non influisca sulle tabelle reali
@@ -204,7 +197,6 @@ Feature: Censimento stime mittenti
       | firstWeekNumberOfShipments  | 4 |
       | secondWeekNumberOfShipments | 3 |
     Then si verifica che la tabella pn-PaperDeliverySenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
-
     #Carico una commessa MOCK e ne verifico il corretto caricamento con i giusti limiti soltanto nella tabella MOCK e non in quella reale
     Given vengono caricati i moduli commessa mock tramite il seguente zip: "portfatt_modulo_commessa_mock_aprile_26.zip"
     Given vengono caricati i moduli commessa mock tramite il seguente zip: "portfatt_modulo_commessa_mock_maggio_26.zip"
@@ -221,10 +213,4 @@ Feature: Censimento stime mittenti
       | numberOfShipments           | 7 |
       | firstWeekNumberOfShipments  | 4 |
       | secondWeekNumberOfShipments | 3 |
-    #Allineo le commesse MOCK a quelle reali prima di chiudere il test
-#    Given vengono caricati i moduli commessa mock tramite il seguente zip: "portfatt_modulo_commessa_aprile_26.zip"
-#    Given vengono caricati i moduli commessa mock tramite il seguente zip: "portfatt_modulo_commessa_maggio_26.zip"
-#    And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
-#      | classpath:/modulo_commessa_ranking2nd_890.json |
-#    Then si verifica che la tabella pn-PaperDeliverySenderLimitMock contenga i nuovi limiti mittenti per la provincia "P1"
 
