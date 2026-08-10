@@ -132,7 +132,7 @@ Feature: Ricerca delle notifiche ricevute lato destinatario
 
 
   @deleghe4 @useB2B @ricercaNotifiche
-  Scenario: [RICERCA_RICEVUTE_3aaa] Un delegato riceve una notifica legale e la ricerca delle notifiche ricevute lato delegato restituisce le sole notifiche legali
+  Scenario: [RICERCA_RICEVUTE_3.A] Un delegato riceve una notifica legale e la ricerca delle notifiche ricevute lato delegato restituisce le sole notifiche legali
   ricevute dal delegato a partire dalla creazione della delega. Le notifiche bonarie non vengono restituite.
     Given "Mario Cucumber" rifiuta se presente la delega ricevuta "Mario Gherkin"
     And "Mario Cucumber" viene delegato da "Mario Gherkin" per comune "Comune_Multi"

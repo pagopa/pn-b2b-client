@@ -854,6 +854,7 @@ public class PresaInCaricoNoticaBonariaSteps {
 
         savedIun = statusResponse.getIun();
         sharedSteps.setNotificationIun(savedIun);
+        sendSharedContext.getInformalNotificationContext().setIun(savedIun);
         lastException = null;
     }
 
