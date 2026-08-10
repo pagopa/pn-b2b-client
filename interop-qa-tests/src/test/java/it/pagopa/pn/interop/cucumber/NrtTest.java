@@ -37,7 +37,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         "client_admin", "client", "catalog", "producer", "DPoPSuite", "tenant", "voucher", "dailyCallsThreshold",
         "e-service-async", "e-service-template-async", "voucher_async", "devToolsClientAssertion",
         "manual-archiving-eservice", "notification-manual-archiving-eservice", "certifiedDiscreteAttributeFlagOff",
-        "nuovi-operatori","crudNotification",
+        "nuovi-operatori","crudNotification", "document-url-description", "document-type-check",
 
         // M2M
         "m2m-agreements", "m2m-purposes", "m2m-attributes", "m2m-eservices", "m2m-agreements-parte2-luglio",
