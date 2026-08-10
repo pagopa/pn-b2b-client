@@ -811,6 +811,7 @@ public class PresaInCaricoNoticaBonariaSteps {
         this.paName = paName;
         SenderInfoProvider.PaInfo paInfo = sharedSteps.getSenderInfoProvider().getPaInfo(paName);
         this.currentCxId = paInfo.getSenderId();
+        sendSharedContext.getInformalNotificationContext().setSenderId(currentCxId);
 
         if (!COMUNE_ROOT.equalsIgnoreCase(paName)) {
             this.currentGroupId = sharedSteps.getGroupIdByPa(paName, GroupPosition.FIRST);
