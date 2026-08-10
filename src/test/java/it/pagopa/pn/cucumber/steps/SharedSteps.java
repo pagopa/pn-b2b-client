@@ -273,7 +273,7 @@ public class SharedSteps {
     }
 
     @Before
-    public void injectScenarioNameInsideSfl4jMdc(Scenario scenario) {
+    public void injectScenarioNameInsideSlf4jMdc(Scenario scenario) {
         String scenarioName = scenario.getName();
         MDC.put(RestTemplateConfiguration.CUCUMBER_SCENARIO_NAME_MDC_ENTRY, scenarioName);
         Matcher testCaseIdMatcher = TEST_CASE_ID_PATTERN.matcher(scenarioName);

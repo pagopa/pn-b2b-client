@@ -2,7 +2,7 @@
 <configuration>
     <!--
         Pattern derivato dal default di Spring Boot con tre differenze:
-        - viene aggiunto [%X{testCaseId:-N/A}], valorizzato in SharedSteps#injectScenarioNameInsideSfl4jMdc
+        - viene aggiunto [%X{testCaseId:-N/A}], valorizzato in SharedSteps#injectScenarioNameInsideSlf4jMdc
           con l'id (senza le quadre, già presenti nel pattern) presente nel nome dello Scenario
           (es. da "[TC_CENSIMENTO_STIME_MOCK_1] ..." viene estratto TC_CENSIMENTO_STIME_MOCK_1);
         - viene aggiunto [%X{featureFile:-N/A}], valorizzato con il solo nome del file .feature (senza path);
