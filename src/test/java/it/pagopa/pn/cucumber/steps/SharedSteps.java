@@ -149,6 +149,7 @@ import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SHA_256;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.TAXID_NOT_VALID;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.VALIDATION_STATUS;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.VALIDATION_STATUS_ACCEPTATION_SHORT;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.VALIDATION_STATUS_EXTRA_RAPID;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.VALIDATION_STATUS_NO_ACCEPTATION;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.WAITING_GPD;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.WAIT_DEFAULT;
@@ -628,8 +629,17 @@ public class SharedSteps {
 
     @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi ACCEPTED e successivamente annullata")
     public void laNotificaVieneInviataOkAndCancelled(String paName) {
+        laNotificaVieneInviataOkAndCancelled(paName, WAIT_EXTRA_RAPID, NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS);
+    }
+
+    @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi ACCEPTED e successivamente annullata con polling EXTRA_RAPID")
+    public void laNotificaVieneInviataOkAndCancelledExtraRapid(String paName) {
+        laNotificaVieneInviataOkAndCancelled(paName, WAIT_EXTRA_RAPID, NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS_EXTRA_RAPID);
+    }
+
+    private void laNotificaVieneInviataOkAndCancelled(String paName, int wait, String status, String pollingStrategy) {
         setPaAndSenderTaxId(paName);
-        getNotificationStepInterface().sendNotification(WAIT_EXTRA_RAPID, NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS);
+        getNotificationStepInterface().sendNotification(wait, status, pollingStrategy);
         Assertions.assertDoesNotThrow(() -> {
             RequestStatus resp = Assertions.assertDoesNotThrow(() -> b2bClient.notificationCancellation(notificationIun));
 
