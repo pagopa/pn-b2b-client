@@ -10,18 +10,20 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.Client;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientPurpose;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactClients;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeAdditionDetailsSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersion;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
+import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
+import org.apache.commons.collections4.IterableUtils;
 import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class ClientPurposeAddSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
@@ -123,9 +125,8 @@ public class ClientPurposeAddSteps {
         );
     }
 
-    @And("^\\[si fa pulizia dei client e delle finalità create per il test\\]$")
-    public void cleanupClientsAndPurposesCreatedForTest() {
-        String tenantType = sharedStepsContext.getTenantType();
+    @And("^\\[\"([^\"]+)\" elimina i client e archivia le finalità create per il test\\]$")
+    public void cleanupClientsAndArchivePurposesCreatedForTest(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
 
         List<UUID> createdClientIds = listScenarioClientIds();
@@ -137,7 +138,7 @@ public class ClientPurposeAddSteps {
             }
 
             Client client = (Client) httpCallExecutor.getResponse();
-            List<ClientPurpose> clientPurposes = client.getPurposes() == null ? List.of() : client.getPurposes();
+            List<ClientPurpose> clientPurposes = client.getPurposes();
 
             for (ClientPurpose clientPurpose : clientPurposes) {
                 dataPreparationService.deletePurposeFromClient(clientId, clientPurpose.getPurposeId());
@@ -146,9 +147,9 @@ public class ClientPurposeAddSteps {
             dataPreparationService.deleteClient(clientId);
         }
 
-        Set<UUID> createdPurposeIds = new LinkedHashSet<>(sharedStepsContext.getPurposeCommonContext().getPurposesIdsAsUUID());
+        List<UUID> createdPurposeIds = sharedStepsContext.getPurposeCommonContext().getPurposesIdsAsUUID();
         for (UUID purposeId : createdPurposeIds) {
-            deletePurposeWithPolling(purposeId);
+            archivePurposeWithPolling(purposeId);
         }
     }
 
@@ -167,11 +168,11 @@ public class ClientPurposeAddSteps {
             );
 
             List<CompactClient> results = page.getResults();
-            if (results == null || results.isEmpty()) {
+            if (IterableUtils.isEmpty(results)) {
                 break;
             }
 
-            clientIds.addAll(results.stream().map(CompactClient::getId).collect(Collectors.toList()));
+            clientIds.addAll(results.stream().map(CompactClient::getId).toList());
 
             if (results.size() < limit) {
                 break;
@@ -182,19 +183,35 @@ public class ClientPurposeAddSteps {
         return clientIds;
     }
 
-    private void deletePurposeWithPolling(UUID purposeId) {
-        httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().deletePurpose(purposeId));
-        if (httpCallExecutor.getResponseStatus() == HttpStatus.NOT_FOUND) {
-            return;
-        }
-        if (httpCallExecutor.getResponseStatus().isError()) {
-            throw new IllegalStateException("Errore durante la cancellazione della finalità " + purposeId);
+    private void archivePurposeWithPolling(UUID purposeId) {
+        IPurposeApiClient purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
+
+        Purpose purpose;
+        try {
+            purpose = purposeApiClient.getPurpose(purposeId);
+        } catch (Exception e) {
+            return; // finalità non trovata o non accessibile: nessuna azione necessaria
         }
 
+        UUID activeVersionId = purpose.getVersions().stream()
+                .filter(v -> PurposeVersionState.ACTIVE.equals(v.getState()))
+                .map(PurposeVersion::getId)
+                .findFirst()
+                .orElse(null);
+
+        if (activeVersionId == null) {
+            return; // nessuna versione attiva da archiviare
+        }
+
+        purposeApiClient.archivePurposeVersion(purposeId, activeVersionId);
+
+        final UUID versionIdToCheck = activeVersionId;
         pollingService.makePolling(
-                () -> httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().getPurpose(purposeId)),
-                status -> status == HttpStatus.NOT_FOUND,
-                "There was an error while deleting the purpose " + purposeId
+                () -> purposeApiClient.getPurpose(purposeId),
+                p -> p.getVersions().stream()
+                        .filter(v -> v.getId().equals(versionIdToCheck))
+                        .anyMatch(v -> PurposeVersionState.ARCHIVED.equals(v.getState())),
+                "Errore durante l'archiviazione della finalità " + purposeId
         );
     }
 

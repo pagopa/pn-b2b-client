@@ -165,16 +165,14 @@ Feature: Gestione dei clients attraverso APIs M2M V2
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
     And l'utente è un "admin" di "PA2"
-
-    # TODO verificare necessità ed eventualmente eliminare
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
 
     And "PA2" ha già creato 1 client "CONSUMER"
-    And "PA2" ha già creato 5 finalità in stato "ACTIVE" per quell'eservice
-    And l'utente associa le ultime 5 finalità create al client con successo
+    And "PA2" ha già creato 40 finalità in stato "ACTIVE" per quell'eservice
+    And l'utente associa le ultime 40 finalità create al client con successo
 
-    And "PA2" ha già creato 3 client "CONSUMER"
-    And l'utente associa l'ultima finalità agli ultimi 3 client creati con successo
+    And "PA2" ha già creato 10 client "CONSUMER"
+    And l'utente associa l'ultima finalità agli ultimi 10 client creati con successo
 
     And "PA2" ha già creato 1 client "CONSUMER"
     And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
@@ -183,7 +181,9 @@ Feature: Gestione dei clients attraverso APIs M2M V2
     When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And l'utente recupera tutte le finalità associate al primo client creato
     Then si ottiene status code 200
-    And vengono recuperate 5 finalità associate al client
-    And le finalità restituite sono tutte e sole le prime 5 finalità create
+    And vengono recuperate 40 finalità associate al client
+    And le finalità restituite sono tutte e sole le prime 40 finalità create
 
-    And [si fa pulizia dei client e delle finalità create per il test]
+    # Visto l'alto numero di finalità e client creati, si procede a pulire l'ambiente di test.
+    # Ci si limita ad archiviare le finalità perché non ne è consentita l'eliminazione una volta attivate.
+    And ["PA2" elimina i client e archivia le finalità create per il test]
