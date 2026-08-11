@@ -18,11 +18,14 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.
 import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnSafeStoragePrivateClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalChannelsServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
+import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.FileDownloadResponse;
+import it.pagopa.common.util.PDFUtility;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.NotificationUtilsV24;
@@ -35,6 +38,7 @@ import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -69,6 +73,7 @@ public class InvioNotificheB2bSteps {
     @Getter
     private final IPnPaB2bClient b2bClient;
     private final PnExternalServiceClientImpl safeStorageClient;
+    private final IPnSafeStoragePrivateClient safeStoragePrivateClient;
     @Getter
     private final SharedSteps sharedSteps;
     @Getter
@@ -90,8 +95,13 @@ public class InvioNotificheB2bSteps {
     private RequestStatus cancellationResponse;
 
     @Autowired
-    public InvioNotificheB2bSteps(PnExternalServiceClientImpl safeStorageClient, SharedSteps sharedSteps, PnExternalChannelsServiceClientImpl pnExternalChannelsServiceClientImpl, JavaMailSender emailSender) {
+    public InvioNotificheB2bSteps(PnExternalServiceClientImpl safeStorageClient,
+                                  IPnSafeStoragePrivateClient safeStoragePrivateClient,
+                                  SharedSteps sharedSteps,
+                                  PnExternalChannelsServiceClientImpl pnExternalChannelsServiceClientImpl,
+                                  JavaMailSender emailSender) {
         this.safeStorageClient = safeStorageClient;
+        this.safeStoragePrivateClient = safeStoragePrivateClient;
         this.sharedSteps = sharedSteps;
 //        this.b2bUtils = sharedSteps.getB2bUtils();
         this.b2bClient = sharedSteps.getB2bClient();
@@ -1111,21 +1121,165 @@ public class InvioNotificheB2bSteps {
 
     @And("si verifica che il contenuto degli attachments da inviare in via cartacea abbia {int} attachment di tipo {string}")
     public void presenceAttachmentAnalogicFlow(Integer numeroDocumenti, String tipologia) {
-        List<String> attachmentsUri = Optional.ofNullable(documentiPec.get(0))
+        List<PaperEngageRequestAttachmentsInner> attachments = Optional.ofNullable(documentiPec.get(0))
                 .map(ReceivedMessage::getPaperEngageRequest)
                 .map(PaperEngageRequest::getAttachments)
-                .orElse(List.of())
-                .stream()
-                .map(PaperEngageRequestAttachmentsInner::getUri)
-                .filter(uri -> uri.contains(tipologia))
-                .toList();
+                .orElse(List.of());
+
+        long actualCount;
+        if ("F24".equalsIgnoreCase(tipologia)) {
+            actualCount = attachments.stream().filter(this::isF24).count();
+        } else {
+            actualCount = attachments.stream()
+                    .map(PaperEngageRequestAttachmentsInner::getUri)
+                    .filter(uri -> uri != null && uri.contains(tipologia))
+                    .count();
+        }
+
         try {
-            Assertions.assertEquals(numeroDocumenti, attachmentsUri.size(),
-                    "Il numero di allegati di tipo '" + tipologia + "' è diverso da quello atteso. Expected: " + numeroDocumenti + ", Actual: " + attachmentsUri.size());
+            Assertions.assertEquals(numeroDocumenti.longValue(), actualCount,
+                    "Il numero di allegati di tipo '" + tipologia + "' è diverso da quello atteso. Expected: " + numeroDocumenti + ", Actual: " + actualCount);
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() + " - Verifica Allegati Cartacei in errore.";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
+    }
+
+    /**
+     * Riconosce un allegato F24 con cascade a costo crescente:
+     * 1) uri / documentType già presenti su PaperEngage
+     * 2) metadati SafeStorage (key, documentType, tags, url) via getFile
+     * 3) solo in ultima istanza download PDF e ricerca testuale di "F24" (word boundary)
+     * <p>
+     * Sugli hint di key/uri/url si valuta solo il prefisso document-type
+     * (parte prima del primo {@code -}), così non si matchano hex casuali tipo {@code ...f24a...}.
+     */
+    private boolean isF24(PaperEngageRequestAttachmentsInner attachment) {
+        if (attachment == null) {
+            return false;
+        }
+        if (containsF24Hint(attachment.getUri(), attachment.getDocumentType())) {
+            return true;
+        }
+        try {
+            FileDownloadResponse fileInfo = getSafeStorageFileInfo(attachment.getUri());
+            if (hasF24InSafeStorageMetadata(fileInfo)) {
+                return true;
+            }
+            return PDFUtility.containsText(downloadFromSafeStorage(fileInfo, attachment.getUri()), "F24", true);
+        } catch (Exception e) {
+            log.warn("isF24: impossibile verificare allegato uri={}: {}", attachment.getUri(), e.getMessage());
+            return false;
+        }
+    }
+
+    private static boolean hasF24InSafeStorageMetadata(FileDownloadResponse fileInfo) {
+        if (fileInfo == null) {
+            return false;
+        }
+        if (containsF24Hint(fileInfo.getKey(), fileInfo.getDocumentType())) {
+            return true;
+        }
+        if (fileInfo.getDownload() != null && containsF24Hint(fileInfo.getDownload().getUrl())) {
+            return true;
+        }
+        if (fileInfo.getTags() != null) {
+            for (Map.Entry<String, List<String>> entry : fileInfo.getTags().entrySet()) {
+                if (containsF24Hint(entry.getKey())) {
+                    return true;
+                }
+                if (entry.getValue() != null) {
+                    for (String tagValue : entry.getValue()) {
+                        if (containsF24Hint(tagValue)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Cerca "F24" (case-insensitive) solo sul prefisso document-type della stringa,
+     * ottenuto con split sul primo {@code -} (es. {@code PN_CLEAN_PAPER_ATTACHMENT-f4614...pdf}
+     * → {@code PN_CLEAN_PAPER_ATTACHMENT}).
+     */
+    private static boolean containsF24Hint(String... values) {
+        if (values == null) {
+            return false;
+        }
+        for (String value : values) {
+            String prefix = extractDocumentTypePrefix(value);
+            if (prefix != null && prefix.toUpperCase(Locale.ROOT).contains("F24")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Estrae la prima parte del nome SafeStorage (document type), ignorando hash/query.
+     * Esempi:
+     * <ul>
+     *   <li>{@code PN_CLEAN_PAPER_ATTACHMENT-f4614de8....pdf} → {@code PN_CLEAN_PAPER_ATTACHMENT}</li>
+     *   <li>{@code safestorage://PN_AAR-abc...} → {@code PN_AAR}</li>
+     *   <li>{@code https://.../PN_AAR-abc.pdf?X-Amz-...} → {@code PN_AAR}</li>
+     *   <li>{@code ATTO} / {@code PN_AAR} → invariato</li>
+     * </ul>
+     */
+    private static String extractDocumentTypePrefix(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        String s = value.trim();
+        int query = s.indexOf('?');
+        if (query >= 0) {
+            s = s.substring(0, query);
+        }
+        if (s.startsWith("safestorage://")) {
+            s = s.substring("safestorage://".length());
+        } else {
+            int scheme = s.indexOf("://");
+            if (scheme >= 0) {
+                int slash = s.lastIndexOf('/');
+                s = slash >= 0 ? s.substring(slash + 1) : s.substring(scheme + 3);
+            } else {
+                int slash = s.lastIndexOf('/');
+                if (slash >= 0) {
+                    s = s.substring(slash + 1);
+                }
+            }
+        }
+        if (s.toLowerCase(Locale.ROOT).endsWith(".pdf")) {
+            s = s.substring(0, s.length() - 4);
+        }
+        int dash = s.indexOf('-');
+        return dash >= 0 ? s.substring(0, dash) : s;
+    }
+
+    private FileDownloadResponse getSafeStorageFileInfo(String safeStorageUri) {
+        String fileKey = toSafeStorageFileKey(safeStorageUri);
+        ResponseEntity<FileDownloadResponse> responseEntity =
+                safeStoragePrivateClient.getFileWithHttpInfo(fileKey, "pn-test", false, false);
+        return responseEntity != null ? responseEntity.getBody() : null;
+    }
+
+    private static byte[] downloadFromSafeStorage(FileDownloadResponse fileInfo, String safeStorageUri) {
+        String downloadUrl = fileInfo != null && fileInfo.getDownload() != null ? fileInfo.getDownload().getUrl() : null;
+        if (downloadUrl == null || downloadUrl.isBlank()) {
+            throw new IllegalStateException("Presigned URL assente per uri=" + safeStorageUri);
+        }
+        return B2bUtils.downloadFile(downloadUrl);
+    }
+
+    private static String toSafeStorageFileKey(String uri) {
+        if (uri == null) {
+            return null;
+        }
+        String fileKey = uri.startsWith("safestorage://") ? uri.substring("safestorage://".length()) : uri;
+        int q = fileKey.indexOf('?');
+        return q >= 0 ? fileKey.substring(0, q) : fileKey;
     }
 
     @And("si verifica che il {int} documento arrivato sia di tipo {string}")
