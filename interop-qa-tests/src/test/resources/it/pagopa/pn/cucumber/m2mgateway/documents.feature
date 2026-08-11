@@ -1,4 +1,5 @@
 @m2mEservices
+@m2m-documents
 Feature: Gestione dei documenti attraverso APIs M2M V2
   @m2m-parte2-agosto-rilascio1
   Scenario: [M2MG_DOCUMENTS_01] Un utente con ruolo M2M-ADMIN può effettuare il caricamento di un'interfaccia di un e-service in stato DRAFT (Parte2#Scenario intorno a 47)
