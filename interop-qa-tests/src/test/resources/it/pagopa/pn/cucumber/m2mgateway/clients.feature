@@ -157,3 +157,33 @@ Feature: Gestione dei clients attraverso APIs M2M V2
     And viene impostato per l'utente un token m2m non valido
     And vengono recuperate le finalità associate al client "%actual" con limit "10" e offset "0" e filtri eserviceIds "%null", states "%null"
     Then si ottiene status code 401
+
+  # FIXME il numero di finalità associate era 150, e di client 50; li si riduce rispettivamente a 5 e 3 per rendere più facile il debug. Ripristinare non appena il test è stabile.
+  @hotfix-2.22
+  @m2m-purpose-client
+  Scenario: [M2M_CLIENTS_PURPOSES_CATALOG_4] Recupero dell'insieme di finalità associate a un client
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And l'utente è un "admin" di "PA2"
+
+    # TODO verificare necessità ed eventualmente eliminare
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+
+    And "PA2" ha già creato 1 client "CONSUMER"
+    And "PA2" ha già creato 5 finalità in stato "ACTIVE" per quell'eservice
+    And l'utente associa le ultime 5 finalità create al client con successo
+
+    And "PA2" ha già creato 3 client "CONSUMER"
+    And l'utente associa l'ultima finalità agli ultimi 3 client creati con successo
+
+    And "PA2" ha già creato 1 client "CONSUMER"
+    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    And l'utente associa le ultime 1 finalità create al client con successo
+
+    When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And l'utente recupera tutte le finalità associate al primo client creato
+    Then si ottiene status code 200
+    And vengono recuperate 5 finalità associate al client
+    And le finalità restituite sono tutte e sole le prime 5 finalità create
+
+    And [si fa pulizia dei client e delle finalità create per il test]

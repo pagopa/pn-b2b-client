@@ -15,9 +15,7 @@ import it.pagopa.pn.interop.cucumber.utility.StepParser;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static org.apache.commons.lang3.ObjectUtils.allNull;
@@ -32,6 +30,7 @@ public class ClientSteps {
     private final IM2MClientsClient clientsApis;
     private final IHttpExecutor httpCallExecutor;
     private final ClientResolver clientResolver;
+    private List<Purpose> retrievedClientPurposes = new ArrayList<>();
 
     public ClientSteps(ClientTokenConfigurator clientTokenConfigurator, SharedStepsContext sharedStepsContext) {
         this.sharedStepsContext = sharedStepsContext;
@@ -63,6 +62,36 @@ public class ClientSteps {
         httpCallExecutor.performCall(() -> clientsApis.getClientPurposes(clientId));
     }
 
+    @When("l'utente recupera tutte le finalità associate al primo client creato")
+    public void getAllPurposesForTrackedFirstClient() {
+        UUID trackedClientId = sharedStepsContext.getClientCommonContext().getTrackedFirstClientId();
+        assertThat(trackedClientId)
+                .as("Il primo client tracciato non è disponibile nello scenario")
+                .isNotNull();
+        retrieveAllClientPurposes(trackedClientId);
+    }
+
+    private void retrieveAllClientPurposes(UUID clientId) {
+        int offset = 0;
+        int limit = 50;
+        List<Purpose> allPurposes = new ArrayList<>();
+
+        while (true) {
+            Purposes page = clientsApis.getClientPurposes(clientId, offset, limit, null, null);
+            Assertions.assertThat(page).as("La response non deve essere null").isNotNull();
+
+            List<Purpose> currentPage = page.getResults();
+            allPurposes.addAll(currentPage);
+
+            if (currentPage.size() < limit) {
+                break;
+            }
+            offset += limit;
+        }
+
+        this.retrievedClientPurposes = allPurposes;
+    }
+
     @Then("le finalità associate al client sono state correttamente visualizzate")
     public void purposesVisualized() {
         List<PurposeSeed> createdPurposes = sharedStepsContext.getPurposeCommonContext()
@@ -73,6 +102,30 @@ public class ClientSteps {
         assertThat(returnedPurposes)
                 .isNotEmpty()
                 .allMatch(oneOfCreated, "each returned purpose match at least one created purpose");
+    }
+
+    @Then("vengono recuperate {int} finalità associate al client")
+    public void verifyRetrievedPurposesSize(int expectedSize) {
+        assertThat(retrievedClientPurposes)
+                .as("Numero di finalità recuperate inatteso")
+                .hasSize(expectedSize);
+    }
+
+    @Then("le finalità restituite sono tutte e sole le prime {int} finalità create")
+    public void verifyRetrievedPurposesAreAllAndOnlyExpected(int expectedSize) {
+        List<UUID> createdPurposeIds = sharedStepsContext.getPurposeCommonContext().getPurposesIdsAsUUID();
+        assertThat(createdPurposeIds)
+                .as("Le finalità create devono essere almeno %d", expectedSize)
+                .hasSizeGreaterThanOrEqualTo(expectedSize);
+
+        List<UUID> expectedPurposeIds = createdPurposeIds.subList(0, expectedSize);
+        List<UUID> actualPurposeIds = retrievedClientPurposes.stream()
+                .map(Purpose::getId)
+                .toList();
+
+        assertThat(actualPurposeIds)
+                .as("Le finalità restituite devono essere tutte e sole le prime %d finalità create (senza considerare l'ordine)", expectedSize)
+                .containsExactlyInAnyOrderElementsOf(expectedPurposeIds);
     }
 
     @When("vengono recuperate le finalità associate al client {string} con limit {string} e offset {string} e filtri eserviceIds {string}, states {string}")

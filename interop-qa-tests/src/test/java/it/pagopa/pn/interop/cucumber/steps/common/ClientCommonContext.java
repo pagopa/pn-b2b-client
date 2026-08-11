@@ -48,6 +48,9 @@ public class ClientCommonContext {
 
     private UUID adminId;
 
+    // Mantiene il primo client di riferimento per scenari che creano ulteriori batch di client.
+    private UUID trackedFirstClientId;
+
     private String newKeyId;
 
     public UUID getFirstUser() {
