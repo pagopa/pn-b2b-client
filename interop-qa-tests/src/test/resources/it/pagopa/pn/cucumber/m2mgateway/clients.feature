@@ -158,7 +158,7 @@ Feature: Gestione dei clients attraverso APIs M2M V2
     And vengono recuperate le finalità associate al client "%actual" con limit "10" e offset "0" e filtri eserviceIds "%null", states "%null"
     Then si ottiene status code 401
 
-  # FIXME il numero di finalità associate era 150, e di client 50; li si riduce rispettivamente a 5 e 3 per rendere più facile il debug. Ripristinare non appena il test è stabile.
+  # FIXME il numero di finalità associate era 150, e di client 50; li si riduce rispettivamente a 41 e 12 per rendere più facile il debug. Ripristinare non appena il test è stabile.
   @hotfix-2.22
   @m2m-purpose-client
   Scenario: [M2M_CLIENTS_PURPOSES_CATALOG_4] Recupero dell'insieme di finalità associate a un client
