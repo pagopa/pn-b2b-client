@@ -137,7 +137,14 @@ public class ClientPurposeAddSteps {
                 continue;
             }
 
-            Client client = (Client) httpCallExecutor.getResponse();
+            if (httpCallExecutor.getResponseStatus() == null || !httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+                throw new IllegalStateException("Errore nel recupero del client " + clientId + " (status=" + httpCallExecutor.getResponseStatus() + ")");
+            }
+
+            Object response = httpCallExecutor.getResponse();
+            if (!(response instanceof Client client)) {
+                throw new IllegalStateException("Response inattesa per getClient(" + clientId + "): " + (response != null ? response.getClass() : "null"));
+            }
             List<ClientPurpose> clientPurposes = client.getPurposes();
 
             for (ClientPurpose clientPurpose : clientPurposes) {
