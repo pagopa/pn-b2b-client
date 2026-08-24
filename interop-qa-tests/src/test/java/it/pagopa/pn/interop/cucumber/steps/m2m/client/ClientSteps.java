@@ -73,7 +73,7 @@ public class ClientSteps {
 
     private void retrieveAllClientPurposes(UUID clientId) {
         int offset = 0;
-        int limit = 50;
+        int limit = 5;
         List<Purpose> allPurposes = new ArrayList<>();
 
         while (true) {
@@ -126,6 +126,17 @@ public class ClientSteps {
         assertThat(actualPurposeIds)
                 .as("Le finalità restituite devono essere tutte e sole le prime %d finalità create (senza considerare l'ordine)", expectedSize)
                 .containsExactlyInAnyOrderElementsOf(expectedPurposeIds);
+    }
+
+    @Then("le finalità restituite sono ordinate correttamente")
+    public void verifyRetrievedPurposesAreOrdered() {
+        List<String> actualPurposeNames = retrievedClientPurposes.stream()
+                .map(Purpose::getTitle)
+                .toList();
+
+        assertThat(actualPurposeNames)
+                .as("Le finalità restituite devono essere ordinate alfabeticamente")
+                .isSorted();
     }
 
     @When("vengono recuperate le finalità associate al client {string} con limit {string} e offset {string} e filtri eserviceIds {string}, states {string}")

@@ -183,6 +183,7 @@ Feature: Gestione dei clients attraverso APIs M2M V2
     Then si ottiene status code 200
     And vengono recuperate 40 finalità associate al client
     And le finalità restituite sono tutte e sole le prime 40 finalità create
+    And le finalità restituite sono ordinate correttamente
 
     # Visto l'alto numero di finalità e client creati, si procede a pulire l'ambiente di test.
     # Ci si limita ad archiviare le finalità perché non ne è consentita l'eliminazione una volta attivate.
