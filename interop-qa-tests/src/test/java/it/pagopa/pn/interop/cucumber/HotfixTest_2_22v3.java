@@ -11,8 +11,8 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         @ConfigurationParameter(
                 key = PLUGIN_PROPERTY_NAME,
                 value = "pretty," +
-                        "json:target/cucumber-report-nrt-bff-m2mv2.json," +
-                        "html:target/cucumber-report-nrt-bff-m2mv2.html," +
+                        "json:target/cucumber-report-m2mv3.json," +
+                        "html:target/cucumber-report-m2mv3.html," +
                         "it.pagopa.pn.interop.cucumber.plugins.SetApiProfilePropsPlugin:" +
                         "api.m2m.version=V3;" +
                         "api.mode=RIGHT_FIT;" +
