@@ -127,6 +127,47 @@ public class EServiceApiClientImpl implements IEServiceClient {
     }
 
     @Override
+    public ResponseEntity<Void> submitDelegatedDescriptorArchiving(UUID eServiceId, UUID descriptorId, GracePeriodDays gracePeriodDays) {
+        return eservicesApi.submitDelegatedDescriptorArchivingWithHttpInfo(
+                eServiceId,
+                descriptorId,
+                new GracePeriodDaysSeed().gracePeriodDays(gracePeriodDays)
+        );
+    }
+
+    @Override
+    public ResponseEntity<Void> approveDelegatedDescriptorArchiving(UUID eServiceId, UUID descriptorId) {
+        return eservicesApi.approveDelegatedDescriptorArchivingWithHttpInfo(eServiceId, descriptorId);
+    }
+
+    @Override
+    public ResponseEntity<Void> rejectDelegatedDescriptorArchiving(UUID eServiceId, UUID descriptorId, String rejectionReason) {
+        return eservicesApi.rejectDelegatedDescriptorArchivingWithHttpInfo(
+                eServiceId,
+                descriptorId,
+                new RejectDelegatedDescriptorArchivingSeed().rejectionReason(rejectionReason)
+        );
+    }
+
+    @Override
+    public ResponseEntity<Void> submitDelegatedEServiceArchiving(UUID eServiceId, EServiceArchivingSeed eserviceArchivingSeed) {
+        return eservicesApi.submitDelegatedEServiceArchivingWithHttpInfo(eServiceId, eserviceArchivingSeed);
+    }
+
+    @Override
+    public ResponseEntity<Void> approveDelegatedEServiceArchiving(UUID eServiceId) {
+        return eservicesApi.approveDelegatedEServiceArchivingWithHttpInfo(eServiceId);
+    }
+
+    @Override
+    public ResponseEntity<Void> rejectDelegatedEServiceArchiving(UUID eServiceId, String rejectionReason) {
+        return eservicesApi.rejectDelegatedEServiceArchivingWithHttpInfo(
+                eServiceId,
+                new RejectDelegatedEServiceArchivingSeed().rejectionReason(rejectionReason)
+        );
+    }
+
+    @Override
     public CreatedResource createDescriptor(UUID eServiceId) {
         return eservicesApi.createDescriptor(eServiceId);
     }
