@@ -1266,6 +1266,31 @@ public class RicezioneNotificheWebSteps {
                 });
     }
 
+    @And("viene controllato che sia presente la pec verificate {string} inserita per il comune {string}")
+    public void waitedAndViewedPecDiPiattaformaDi(String pec, String pa) {
+        String senderId = getSenderIdPa(pa);
+
+        Awaitility.await()
+                .atMost(2, TimeUnit.MINUTES)
+                .pollInterval(5, TimeUnit.SECONDS)
+                .ignoreExceptions()
+                .untilAsserted(() -> {
+                    List<LegalCourtesyAddressWrapper> legalAddresses =
+                            this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
+
+                    Assertions.assertNotNull(legalAddresses, "Lista indirizzi nulla");
+                    Assertions.assertTrue(
+                            legalAddresses.stream()
+                                    .anyMatch(address ->
+                                            LegalChannelType.PEC.getValue().equals(address.getChannelType().getValue())
+                                                    && senderId.equals(address.getSenderId())
+                                                    && Boolean.TRUE.equals(address.getPecValid())
+                                                    && address.getValue().equals(pec)),
+                            "PEC NOT FOUND"
+                    );
+                });
+    }
+
     @And("viene rimossa se presente la pec per il comune {string}")
     public void vieneRimossaSePresenteLaPecDiPiattaformaDi(String pa) {
         String senderId = getSenderIdPa(pa);
