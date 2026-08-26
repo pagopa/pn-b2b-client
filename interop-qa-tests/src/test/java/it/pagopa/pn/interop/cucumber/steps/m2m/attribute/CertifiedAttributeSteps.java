@@ -10,6 +10,7 @@ import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAttribute;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.CertifiedDiscreteAttribute;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.AbstractCommonSteps;
@@ -53,9 +54,23 @@ public class CertifiedAttributeSteps extends AbstractCommonSteps<CertifiedAttrib
     }
 
     @Then("la risposta contiene almeno {int} attributo certificato")
-    public void listCheck(int expectedSize) {
+    public void listCheckCount(int expectedSize) {
         List<CertifiedAttribute> actual = sharedStepsContext.getAttributeCommonContext().getCertifiedActual();
         assertThat(actual).hasSizeGreaterThanOrEqualTo(expectedSize);
+    }
+
+    @Then("la risposta contiene esattamente l'attributo certificato discreto creato")
+    @Then("la risposta contiene esattamente i {int} attributi certificati discreti creati")
+    public void listCheck(int expectedSize) {
+        List<CertifiedDiscreteAttribute> published = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscretePublished();
+        List<CertifiedDiscreteAttribute> actual = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscreteActual();
+
+        assertThat(actual).hasSize(expectedSize);
+        assertThat(actual).hasSizeGreaterThanOrEqualTo(expectedSize);
+
+        published.forEach(attr -> {
+            assertThat(actual).anyMatch(attr::equals);
+        });
     }
 
     @Override
