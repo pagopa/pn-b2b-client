@@ -44,4 +44,20 @@ public class DelegatedArchivingSteps {
         );
     }
 
+    @When("l'utente delegante accetta la richiesta di archiviazione della vecchia versione identificata da {string} per l'e-service {string}")
+    public void approveDelegatedDescriptorArchiving(String descriptorId, String eServiceId) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID resolvedDescriptorId = catalogResolver.resolveOldDescriptorId(descriptorId);
+        UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
+
+        httpCallExecutor.performCall(
+                () -> clientTokenConfigurator.getEServiceClient().approveDelegatedDescriptorArchiving(
+                        resolvedEServiceId,
+                        resolvedDescriptorId
+                ),
+                ResponseEntity::getStatusCode
+        );
+    }
+
 }
