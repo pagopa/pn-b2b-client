@@ -1110,7 +1110,7 @@ public class B2bStepsV1 implements B2bStepsInterface {
         List<TimelineElement> timeline = fullSentNotification.getTimeline();
 
         TimelineElement reworkedElement = timeline.stream().filter(te -> te.getElementId().contains("REWORK_")).findFirst().orElse(null);
-        assertThat(reworkedElement).as("La timeline dovrebbe contenere almeno un elemento con Rework nel timelineElementId").isNotNull();
+        assertThat(reworkedElement).as("La fullSentNotification V1 dovrebbe contenere almeno un elemento con REWORK_ nel timelineElementId").isNotNull();
     }
 
     private String getProperty(String fieldPath, TimelineElement lastTimelineElement) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {

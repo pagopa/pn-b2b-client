@@ -13,26 +13,22 @@ import static io.cucumber.junit.platform.engine.Constants.*;
                 value = "pretty," +
                         "json:target/cucumber-report-nrt-bff-m2mv2.json," +
                         "html:target/cucumber-report-nrt-bff-m2mv2.html," +
-                        "it.pagopa.pn.interop.cucumber.plugins.SetTenantKindPropsPlugin," +
                         "it.pagopa.pn.interop.cucumber.plugins.SetApiProfilePropsPlugin:" +
                         "api.m2m.version=V2;" +
                         "api.mode=RIGHT_FIT;" +
                         "api.set=M2M;" +
-                        "api.bff.version=V1;"
+                        "api.bff.version=V1"
         ),
         @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.interop.cucumber.steps"),
 
         // abilita parallelismo JUnit
-        @ConfigurationParameter(key = "junit.jupiter.execution.parallel.enabled", value = "false"),
-        @ConfigurationParameter(key = "cucumber.execution.parallel.enabled", value = "false"),
-        @ConfigurationParameter(key = "junit.jupiter.execution.parallel.mode.default", value = "same_thread"),
-        @ConfigurationParameter(key = "junit.jupiter.execution.parallel.config.fixed.parallelism", value = "1"),
+        @ConfigurationParameter(key = "junit.jupiter.execution.parallel.enabled", value = "true"),
+        @ConfigurationParameter(key = "junit.jupiter.execution.parallel.mode.default", value = "concurrent"),
 
         // abilita parallelismo Cucumber
-        @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "same_thread"),
+        @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 })
-@ExcludeTags({"wait_for_fix", "ignore"})
-@IncludeTags({"debug"})
-// FIXME utile solo per operazioni di debug per la feature Adeguamento analisi del rischio, rimuovere
-public class DEBUG {
+@ExcludeTags({"wait_for_fix", "ignore", "adeguamento-analisi-rischio", "certifiedDiscreteAttributeFlagOn", "nuovi-operatori-off"})
+@IncludeTags({"m2m-documents"})
+public class M2MDocuments {
 }

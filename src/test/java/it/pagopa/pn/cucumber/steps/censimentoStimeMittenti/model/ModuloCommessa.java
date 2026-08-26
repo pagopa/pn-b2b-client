@@ -54,6 +54,7 @@ public class ModuloCommessa {
                         limit.setProductType(prodotto.getId());
                         limit.setDeliveryDate(lunedi.toString());
                         limit.setMonthlyEstimate(valoreTotale);
+                        limit.setOriginalEstimate(valoreTotale);
                         limit.setWeeklyEstimate(weeklyEstimate);
                         limit.setPaId(this.idEnte);
                         limit.setPk(this.idEnte + "~" + prodotto.getId() + "~" + provincia) ;
