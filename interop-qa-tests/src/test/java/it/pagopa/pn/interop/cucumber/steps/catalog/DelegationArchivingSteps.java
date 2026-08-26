@@ -11,13 +11,13 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.UUID;
 
-public class DelegatedArchivingSteps {
+public class DelegationArchivingSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final IHttpExecutor httpCallExecutor;
     private final CatalogResolver catalogResolver;
 
-    public DelegatedArchivingSteps(
+    public DelegationArchivingSteps(
             ClientTokenConfigurator clientTokenConfigurator,
             SharedStepsContext sharedStepsContext
     ) {
