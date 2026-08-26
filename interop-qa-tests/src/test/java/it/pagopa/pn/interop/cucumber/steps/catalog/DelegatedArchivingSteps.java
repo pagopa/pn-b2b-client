@@ -108,7 +108,7 @@ public class DelegatedArchivingSteps {
         );
     }
 
-    @When("l'utente rifiuta la richiesta di archiviazione delegata dell'e-service {string} con motivazione {string}")
+    @When("l'utente delegante rifiuta la richiesta di archiviazione delegata dell'e-service {string} con motivazione {string}")
     public void rejectDelegatedEServiceArchiving(String eServiceId, String rejectionReason) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
