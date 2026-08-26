@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 
 /**
  * Converte un oggetto in un'istanza di una classe "gemella" (stessa forma JSON, tipo Java diverso),
@@ -28,7 +27,10 @@ public final class JsonDeepCopyMapper {
             String json = OBJECT_MAPPER.writeValueAsString(obj);
             return OBJECT_MAPPER.readValue(json, toClass);
         } catch (JsonProcessingException exc) {
-            throw new PnB2bException(exc.getMessage());
+            throw new IllegalStateException(
+                    "Unable to deep copy object of type " + (obj == null ? "null" : obj.getClass().getName()) + " to " + toClass.getName(),
+                    exc
+            );
         }
     }
 }

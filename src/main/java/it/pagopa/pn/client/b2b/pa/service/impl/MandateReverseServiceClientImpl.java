@@ -48,7 +48,7 @@ public class MandateReverseServiceClientImpl implements IMandateReverseServiceCl
         try {
             return new ObjectMapper().readTree(response).get("mandateId").asText();
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Unable to parse createReverseMandate response: " + response, e);
         }
     }
 
