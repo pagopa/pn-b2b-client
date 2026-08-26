@@ -86,3 +86,35 @@ Feature: Listing catalogo e-services
     Given "PA2" ha già creato 10 e-services in catalogo in stato PUBLISHED o SUSPENDED e 1 in stato DRAFT
     When l'utente richiede una operazione di listing sul catalogo filtrando per la keyword "unknown"
     Then si ottiene status code 200 e la lista di 0 e-services dal catalogo
+
+  @happy-path
+  @nrt-minimal
+  Scenario: [CATALOG_LISTING_8] Verifica assenza di info template su e-service sincrono non creato da template
+
+  @happy-path
+  @nrt-minimal
+  Scenario: [CATALOG_LISTING_9] Verifica assenza di info template su e-service sincrono clonato
+
+  @happy-path
+  @nrt-minimal
+  Scenario: [CATALOG_LISTING_10] Verifica assenza di info template su e-service asincrono non creato da template
+
+  @happy-path
+  @nrt-minimal
+  Scenario: [CATALOG_LISTING_11] Verifica assenza di info template su e-service asincrono clonato
+
+  @happy-path
+  @nrt-minimal
+  Scenario: [CATALOG_LISTING_12] Verifica info template su e-service sincrono istanza di template
+
+  @happy-path
+  @nrt-minimal
+  Scenario: [CATALOG_LISTING_13] Verifica info template su e-service sincrono aggiornato tramite e-service template
+
+  @happy-path
+  @nrt-minimal
+  Scenario: [CATALOG_LISTING_14] Verifica info template su e-service asincrono istanza di template
+
+  @happy-path
+  @nrt-minimal
+  Scenario: [CATALOG_LISTING_15] Verifica info template su e-service asincrono aggiornato tramite e-service template
