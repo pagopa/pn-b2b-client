@@ -64,6 +64,11 @@ public class M2MDeclaredAttributeClientImpl extends AbstractClient implements
     }
 
     @Override
+    public List<DeclaredAttribute> getPage(int page, int size) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
     public UUID getId(DeclaredAttribute entity) {
         return entity == null ? null : entity.getId();
     }

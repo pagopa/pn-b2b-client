@@ -64,6 +64,11 @@ public class M2MVerifiedAttributeClientImpl extends AbstractClient implements
     }
 
     @Override
+    public List<VerifiedAttribute> getPage(int page, int size) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
     public UUID getId(VerifiedAttribute entity) {
         return entity == null ? null : entity.getId();
     }

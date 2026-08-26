@@ -9,6 +9,7 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.AttributesApi;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.CertifiedDiscreteAttribute;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.CertifiedDiscreteAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.CertifiedDiscreteAttributes;
 import it.pagopa.interop.utils.ApiClientUtils;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -69,9 +70,18 @@ public class M2MV3CertifiedDiscreteAttributeClientImpl extends AbstractDPoPClien
     @Override
     public List<CertifiedDiscreteAttribute> getAll() {
         return this.performOperation(SimpleOperation.of(
-                () -> attributesApi.getCertifiedDiscreteAttributes(0, 30),
-                res -> res.getResults()
+                () -> attributesApi.getCertifiedDiscreteAttributes(0, 50),
+                CertifiedDiscreteAttributes::getResults
         )).orElse(Collections.emptyList());
+    }
+
+    @Override
+    public List<CertifiedDiscreteAttribute> getPage(int page, int size) {
+        var offset = (page - 1) * size;
+        return this.performOperation(SimpleOperation.of(
+                () -> attributesApi.getCertifiedDiscreteAttributes(offset, size),
+                res -> res
+        )).map(CertifiedDiscreteAttributes::getResults).orElse(Collections.emptyList());
     }
 
     @Override
