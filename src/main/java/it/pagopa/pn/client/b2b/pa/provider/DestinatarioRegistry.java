@@ -1,13 +1,28 @@
-package it.pagopa.pn.cucumber.steps.utilitySteps;
+package it.pagopa.pn.client.b2b.pa.provider;
 
-import io.cucumber.java.ParameterType;
-import it.pagopa.pn.cucumber.utils.FiscalCodeGenerator;
+import it.pagopa.pn.client.b2b.pa.config.springconfig.RecipientConfig;
+import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
+import it.pagopa.pn.client.b2b.pa.utils.FiscalCodeGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.*;
 
+/**
+ * Fonte unica dei {@link Destinatario} di test (denominazione, tax-id, uid, tipo destinatario),
+ * costruiti a partire da {@link RecipientConfig} (config/taxids-{env}.properties).
+ * <p>
+ * E' un bean "main" cosi' puo' essere usato sia dai client B2B/internal (es.
+ * {@link it.pagopa.pn.client.b2b.pa.service.impl.MandateInternalClientImpl}, che deve risolvere
+ * lo uid della PG/PF attiva per costruire l'header {@code x-pagopa-pn-cx-id}) sia dagli step
+ * Cucumber. La conversione Gherkin "nome -> Destinatario" (annotazione {@code @ParameterType},
+ * disponibile solo in src/test) e' delegata a una classe separata in
+ * {@code it.pagopa.pn.cucumber.steps.utilitySteps}, che si limita a richiamare
+ * {@link #destinatario(String)} su questo bean.
+ */
+@Component
 public class DestinatarioRegistry {
 
     public final Destinatario DESTINATARIO_MARIO_GHERKIN;
@@ -20,8 +35,10 @@ public class DestinatarioRegistry {
     public final Destinatario DESTINATARIO_ALDA_MERINI;
     public final Destinatario DESTINATARIO_DINO_SAURO;
     public final Destinatario DESTINATARIO_GHERKIN_SPA;
+    public final Destinatario DESTINATARIO_CUCUMBER_SPA_B2B;
     public final Destinatario DESTINATARIO_CUCUMBER_SPA;
     public final Destinatario DESTINATARIO_GHERKIN_SRL;
+    public final Destinatario DESTINATARIO_GHERKIN_SRL_B2B;
     public final Destinatario DESTINATARIO_CUCUMBER_SRL;
     public final Destinatario DESTINATARIO_GHERKIN_ANALOGIC;
     public final Destinatario DESTINATARIO_CUCUMBER_ANALOGIC;
@@ -81,8 +98,16 @@ public class DestinatarioRegistry {
                 CUCUMBER_SPA, recipients.getCucumberSpa().getTaxId(),
                 recipients.getCucumberSpa().getUid(), PG, PEC);
 
+        DESTINATARIO_CUCUMBER_SPA_B2B = new Destinatario(
+                CUCUMBER_SPA_B2B, recipients.getCucumberSpa().getTaxId(),
+                recipients.getCucumberSpa().getUid(), PG, PEC);
+
         DESTINATARIO_GHERKIN_SRL = new Destinatario(
                 GHERKIN_SRL, recipients.getGherkinSrl().getTaxId(),
+                recipients.getGherkinSrl().getUid(), PG, PEC);
+
+        DESTINATARIO_GHERKIN_SRL_B2B = new Destinatario(
+                GHERKIN_SRL_B2B, recipients.getGherkinSrl().getTaxId(),
                 recipients.getGherkinSrl().getUid(), PG, PEC);
 
         DESTINATARIO_CUCUMBER_SRL = new Destinatario(
@@ -120,8 +145,8 @@ public class DestinatarioRegistry {
         all = List.of(
                 DESTINATARIO_MARIO_GHERKIN, DESTINATARIO_MARIO_CUCUMBER, DESTINATARIO_SIGNOR_CASUALE,
                 DESTINATARIO_CRISTOFORO_COLOMBO, DESTINATARIO_ETTORE_FIERAMOSCA, DESTINATARIO_LEONARDO_DA_VINCI,
-                DESTINATARIO_GALILEO_GALILEI, DESTINATARIO_GHERKIN_SPA, DESTINATARIO_CUCUMBER_SPA,
-                DESTINATARIO_GHERKIN_SRL, DESTINATARIO_CUCUMBER_SRL, DESTINATARIO_GHERKIN_ANALOGIC,
+                DESTINATARIO_GALILEO_GALILEI, DESTINATARIO_GHERKIN_SPA, DESTINATARIO_CUCUMBER_SPA, DESTINATARIO_CUCUMBER_SPA_B2B,
+                DESTINATARIO_GHERKIN_SRL, DESTINATARIO_GHERKIN_SRL_B2B, DESTINATARIO_CUCUMBER_SRL, DESTINATARIO_GHERKIN_ANALOGIC,
                 DESTINATARIO_CUCUMBER_ANALOGIC, DESTINATARIO_GHERKIN_IRREPERIBILE, DESTINATARIO_CUCUMBER_SOCIETY,
                 DESTINATARIO_SIGNOR_GENERATO, DESTINATARIO_NESSUNO, DESTINATARIO_ERRORE_D01, DESTINATARIO_INDIRIZZO_VALIDO_ANPR,
                 DESTINATARIO_ALDA_MERINI, DESTINATARIO_DINO_SAURO
@@ -139,28 +164,6 @@ public class DestinatarioRegistry {
         };
     }
 
-    @ParameterType(MARIO_GHERKIN + "|" +
-            MARIO_CUCUMBER + "|" +
-            SIGNOR_CASUALE + "|" +
-            ETTORE_FIERAMOSCA + "|" +
-            CRISTOFORO_COLOMBO + "|" +
-            LEONARDO_DA_VINCI + "|" +
-            GHERKIN_SPA + "|" +
-            CUCUMBER_SPA + "|" +
-            GHERKIN_SRL + "|" +
-            CUCUMBER_SRL + "|" +
-            GHERKIN_ANALOGIC + "|" +
-            CUCUMBER_ANALOGIC + "|" +
-            GHERKIN_IRREPERIBILE + "|" +
-            CUCUMBER_SOCIETY + "|" +
-            SIGNOR_GENERATO + "|" +
-            GALILEO_GALILEI + "|" +
-            NESSUNO + "|" +
-            UTENZA_CON_INDIRIZZO_NON_VALIDO + "|" +
-            UTENZA_CON_INDIRIZZO_VALIDO_ANPR + "|" +
-            ALDA_MERINI + "|" +
-            DINO_SAURO
-    )
     public Destinatario destinatario(String name) {
         return all.stream()
                 .filter(d -> d.getDenomination() != null && d.getDenomination().trim().equalsIgnoreCase(name))

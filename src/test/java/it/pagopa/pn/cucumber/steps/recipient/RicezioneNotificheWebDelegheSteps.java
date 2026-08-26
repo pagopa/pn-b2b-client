@@ -5,10 +5,13 @@ import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationAttachmentDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullNotificationSearchResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.LegalNotificationSearchResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.TimelineElementV28;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.NotificationStatusV26;
+import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
+import it.pagopa.pn.client.b2b.pa.domain.NotificationSearchParam;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV28;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebMandateClient;
@@ -19,10 +22,19 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnWebMandateExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotification;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.*;
+import it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.AcceptRequestDto;
+import it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.CxTypeAuthFleet;
+import it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.MandateDto;
+import it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.OrganizationIdDto;
+import it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.UpdateRequestDto;
+import it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.UserDto;
+import it.pagopa.pn.cucumber.steps.SendSharedContext;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.steps.common.MandateContext;
+import it.pagopa.pn.cucumber.utils.notificationsearch.NotificationSearchCriteriaMapper;
+import it.pagopa.pn.cucumber.utils.notificationsearch.NotificationSearchRowAssertions;
+import it.pagopa.pn.cucumber.utils.token.TokenResolver;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.jupiter.api.Assertions;
@@ -34,10 +46,29 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_1;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_2;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_MULTI;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_ROOT;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_SON;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.CUCUMBER_SPA;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.CUCUMBER_SPA_B2B;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.GHERKIN_SRL;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.GHERKIN_SRL_B2B;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.MARIO_CUCUMBER;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.MARIO_GHERKIN;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.NOTIFICATION_VIEWED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
@@ -49,8 +80,9 @@ public class RicezioneNotificheWebDelegheSteps {
     private IPnWebMandateClient webMandateClient;
     private IPnWebRecipientClient webRecipientClient;
     private final SharedSteps sharedSteps;
+    private final SendSharedContext sendSharedContext;
+    private final NotificationSearchCriteriaMapper notificationSearchCriteriaMapper;
     @Getter
-    @Setter
     private MandateDto mandateToSearch;
     private final SettableBearerToken.BearerTokenType baseUser = SettableBearerToken.BearerTokenType.USER_2;
     private final String verificationCode = "24411";
@@ -81,11 +113,25 @@ public class RicezioneNotificheWebDelegheSteps {
     }
 
     @Autowired
-    public RicezioneNotificheWebDelegheSteps(ApplicationContext context, PnWebMandateExternalClientImpl webMandateClient, SharedSteps sharedSteps) {
+    public RicezioneNotificheWebDelegheSteps(ApplicationContext context, PnWebMandateExternalClientImpl webMandateClient, SharedSteps sharedSteps,
+                                             NotificationSearchCriteriaMapper notificationSearchCriteriaMapper, SendSharedContext sendSharedContext) {
         this.context = context;
         this.webMandateClient = webMandateClient;
         this.sharedSteps = sharedSteps;
         this.webRecipientClient = sharedSteps.getWebRecipientClient();
+        this.notificationSearchCriteriaMapper = notificationSearchCriteriaMapper;
+        this.sendSharedContext = sendSharedContext;
+    }
+
+    /**
+     * Imposta la delega usata come riferimento per le ricerche successive, propagandone l'id a
+     * {@link SharedSteps} affinché sia risolvibile tramite il token dinamico {@code :mandateId}.
+     */
+    public void setMandateToSearch(MandateDto mandateToSearch) {
+        this.mandateToSearch = mandateToSearch;
+        String mandateId = mandateToSearch != null ? mandateToSearch.getMandateId() : null;
+        sendSharedContext.getMandateContext().setMandateId(mandateId);
+        sharedSteps.setMandateId(mandateToSearch != null ? mandateToSearch.getMandateId() : null);
     }
 
     private String getTaxIdByUser(String user) {
@@ -93,7 +139,9 @@ public class RicezioneNotificheWebDelegheSteps {
             case MARIO_CUCUMBER -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_CUCUMBER.getTaxId();
             case MARIO_GHERKIN -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_GHERKIN.getTaxId();
             case GHERKIN_SRL -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_GHERKIN_SRL.getTaxId();
+            case GHERKIN_SRL_B2B -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_GHERKIN_SRL_B2B.getTaxId();
             case CUCUMBER_SPA -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_CUCUMBER_SPA.getTaxId();
+            case CUCUMBER_SPA_B2B -> sharedSteps.getDestinatarioRegistry().DESTINATARIO_CUCUMBER_SPA_B2B.getTaxId();
             case "Utente errato" -> "asdasdasd";
             default -> throw new IllegalArgumentException();
         };
@@ -109,6 +157,10 @@ public class RicezioneNotificheWebDelegheSteps {
                     createUserDto(GHERKIN_SRL, "gherkin", "srl", sharedSteps.getDestinatarioRegistry().DESTINATARIO_GHERKIN_SRL.getTaxId(), GHERKIN_SRL, false);
             case "cucumberspa" ->
                     createUserDto(CUCUMBER_SPA, "cucumber", "spa", sharedSteps.getDestinatarioRegistry().DESTINATARIO_CUCUMBER_SPA.getTaxId(), CUCUMBER_SPA, false);
+            case "gherkinsrlb2b" ->
+                    createUserDto(GHERKIN_SRL_B2B, "gherkin", "srl", sharedSteps.getDestinatarioRegistry().DESTINATARIO_GHERKIN_SRL_B2B.getTaxId(), GHERKIN_SRL_B2B, false);
+            case "cucumberspab2b" ->
+                    createUserDto(CUCUMBER_SPA_B2B, "cucumber", "spa", sharedSteps.getDestinatarioRegistry().DESTINATARIO_CUCUMBER_SPA_B2B.getTaxId(), CUCUMBER_SPA_B2B, false);
             default -> throw new IllegalArgumentException();
         };
     }
@@ -116,20 +168,35 @@ public class RicezioneNotificheWebDelegheSteps {
     public boolean setBearerToken(String user) {
         return switch (user.trim()) {
             case MARIO_CUCUMBER -> {
-                setRequiredAPI(false);
+//                setRequiredAPI(false);
                 yield webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
             }
             case MARIO_GHERKIN -> {
-                setRequiredAPI(false);
+//                setRequiredAPI(false);
                 yield webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
             }
             case GHERKIN_SRL -> {
-                setRequiredAPI(isUseB2BFlag);
-                yield webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
+//                setRequiredAPI(false);
+                webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
+                yield webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
             }
             case CUCUMBER_SPA -> {
-                setRequiredAPI(isUseB2BFlag);
-                yield webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+//                setRequiredAPI(false);
+                webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+                yield webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+
+            }
+            case GHERKIN_SRL_B2B -> {
+//                setRequiredAPI(true);
+                webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_B2B_1);
+                yield webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_B2B_1);
+
+            }
+            case CUCUMBER_SPA_B2B -> {
+//                setRequiredAPI(true);
+                webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_B2B_2);
+                yield webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_B2B_2);
+
             }
             default -> throw new IllegalArgumentException();
         };
@@ -155,6 +222,11 @@ public class RicezioneNotificheWebDelegheSteps {
         Assertions.assertEquals(statusCode, this.notificationError.getStatusCode().value());
     }
 
+    @Then("si verifica che venga ritornato un errore di tipo {string}")
+    public void checkErrorType(String errorType) {
+        Assertions.assertTrue(this.notificationError.getStatusCode().getReasonPhrase().toUpperCase().contains(errorType.toUpperCase()));
+    }
+
     @And("{string} viene delegato da {string}")
     public void delegateUser(String delegate, String delegator) {
         setBearerToken(delegator);
@@ -171,6 +243,10 @@ public class RicezioneNotificheWebDelegheSteps {
         System.out.println("MANDATE: " + mandate);
         try {
             webMandateClient.createMandate(mandate);
+            MandateContext mandateContext = new MandateContext();
+            mandateContext.setDelegate(sharedSteps.getDestinatarioRegistry().destinatario(delegate));
+            mandateContext.setDelegator(sharedSteps.getDestinatarioRegistry().destinatario(delegator));
+            sendSharedContext.setMandateContext(mandateContext);
         } catch (HttpStatusCodeException e) {
             this.notificationError = e;
         }
@@ -238,6 +314,7 @@ public class RicezioneNotificheWebDelegheSteps {
         }
         if (mandateDto != null) {
             MandateDto finalMandateDto = mandateDto;
+//            setBearerToken(delegate);
             Assertions.assertDoesNotThrow(() -> webMandateClient.rejectMandate(finalMandateDto.getMandateId()));
 
         }
@@ -253,10 +330,26 @@ public class RicezioneNotificheWebDelegheSteps {
         MandateDto mandateDto = mandateList.stream().filter(mandate -> Objects.requireNonNull(mandate.getDelegator()).getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)).findFirst().orElse(null);
 
         Assertions.assertNotNull(mandateDto);
-        this.mandateToSearch = mandateDto;
+        setMandateToSearch(mandateDto);
+//        setBearerToken(delegate);
         Assertions.assertDoesNotThrow(() -> webMandateClient.acceptMandate(mandateDto.getMandateId(), new AcceptRequestDto().verificationCode(verificationCode)));
 
     }
+
+//    @And("{string} accetta la delega {string}")
+//    public void userAcceptsMandateOfAnotherUser(String delegate, String delegator) {
+//        setBearerToken(delegate);
+//        String delegatorTaxId = getTaxIdByUser(delegator);
+//
+//        List<MandateDto> mandateList = webMandateClient.searchMandatesByDelegate(delegatorTaxId, null);
+//        System.out.println("MANDATE-LIST: " + mandateList);
+//        MandateDto mandateDto = mandateList.stream().filter(mandate -> Objects.requireNonNull(mandate.getDelegator()).getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)).findFirst().orElse(null);
+//
+//        Assertions.assertNotNull(mandateDto);
+//        this.mandateToSearch = mandateDto;
+//        Assertions.assertDoesNotThrow(() -> webMandateClient.acceptMandate(mandateDto.getMandateId(), new AcceptRequestDto().verificationCode(verificationCode)));
+//
+//    }
 
     @And("{string} accetta la delega {string} associando un gruppo")
     public void userAcceptsMandateWithGroups(String delegate, String delegator) {
@@ -268,8 +361,7 @@ public class RicezioneNotificheWebDelegheSteps {
         MandateDto mandateDto = mandateList.stream().filter(mandate -> Objects.requireNonNull(mandate.getDelegator()).getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)).findFirst().orElse(null);
 
         Assertions.assertNotNull(mandateDto);
-        this.mandateToSearch = mandateDto;
-
+        setMandateToSearch(mandateDto);
         List<HashMap<String, String>> resp = sharedSteps.getPnExternalServiceClient().pgGroupInfo(webRecipientClient.getBearerTokenSetted());
         String gruppoAttivo = null;
         if (resp != null && !resp.isEmpty()) {
@@ -457,7 +549,7 @@ public class RicezioneNotificheWebDelegheSteps {
         }
 
         Assertions.assertNotNull(mandateDto);
-        this.mandateToSearch = mandateDto;
+        setMandateToSearch(mandateDto);
         webMandateClient.revokeMandate(mandateDto.getMandateId());
     }
 
@@ -476,7 +568,7 @@ public class RicezioneNotificheWebDelegheSteps {
         }
 
         Assertions.assertNotNull(mandateDto);
-        this.mandateToSearch = mandateDto;
+        setMandateToSearch(mandateDto);
         webMandateClient.rejectMandate(mandateDto.getMandateId());
     }
 
@@ -571,17 +663,25 @@ public class RicezioneNotificheWebDelegheSteps {
         Assertions.assertDoesNotThrow(() -> webRecipientClient.getFullReceivedNotification(sharedSteps.getNotificationIun(), null));
     }
 
-    private LegalNotificationSearchResponse notificationSearchResponse;
+    private Integer notificationSearchResponseCount;
+    private FullNotificationSearchResponse notificationSearchResponseFull;
+    private LegalNotificationSearchResponse notificationSearchResponseLegal;
+    private NotificationSearchParam lastDestinatarioSearchParam;
+    private Destinatario lastDestinatarioSearched;
 
     @And("{string} visualizza l'elenco delle notifiche per comune {string}")
-    public void notificationCanBeCorrectlyReadFromAtPa(String recipient, String paName, @Transpose RicezioneNotificheWebSteps.NotificationSearchParam searchParam) {
+    public void notificationCanBeCorrectlyReadFromAtPa(String recipient, String paName, @Transpose NotificationSearchParam searchParam) {
         sharedSteps.setPA(paName);
         sharedSteps.selectUser(recipient);
+//        setRequiredAPI(isUseB2BFlag);
         NotificationStatusV26 notificationStatus = searchParam.status != null ? NotificationStatusV26.valueOf(searchParam.status) : null;
+        notificationSearchResponseLegal = null;
+        lastDestinatarioSearchParam = searchParam;
+        lastDestinatarioSearched = sharedSteps.getDestinatarioRegistry().destinatario(recipient);
         try {
-            this.notificationSearchResponse = webRecipientClient.searchReceivedNotification(searchParam.startDate, searchParam.endDate, searchParam.mandateId /*mandateId = null by default*/,
-                    searchParam.senderId, notificationStatus, searchParam.subjectRegExp,
-                    searchParam.iunMatch, searchParam.size, null);
+            this.notificationSearchResponseFull = webRecipientClient.searchReceivedNotification(
+                    lastDestinatarioSearched, searchParam);
+            this.notificationSearchResponseCount = notificationSearchResponseFull.getResultsPage().size();
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
             this.notificationError = e;
@@ -589,35 +689,56 @@ public class RicezioneNotificheWebDelegheSteps {
     }
 
     @And("{string} visualizza l'elenco delle notifiche del delegante {string} per comune {string}")
-    public void notificationCanBeCorrectlyReadFromAtPa(String user, String recipient, String paName, @Transpose RicezioneNotificheWebSteps.NotificationSearchParam searchParam) {
+    public void notificationCanBeCorrectlyReadFromAtPa(String user, String recipient, String paName, @Transpose NotificationSearchParam searchParam) {
         sharedSteps.setPA(paName);
         sharedSteps.selectUser(user);
+//        setRequiredAPI(isUseB2BFlag);
         NotificationStatusV26 notificationStatus = searchParam.status != null ? NotificationStatusV26.valueOf(searchParam.status) : null;
+        notificationSearchResponseFull = null;
+        lastDestinatarioSearchParam = searchParam;
         try {
-            this.notificationSearchResponse = webRecipientClient.searchReceivedDelegatedNotification(
-                    searchParam.startDate, searchParam.endDate, getRecipientId(recipient),
-                    null, searchParam.senderId, notificationStatus,
-                    searchParam.iunMatch, searchParam.size, null);
+            sendSharedContext.getMandateContext().setDelegate(sharedSteps.getDestinatarioRegistry().destinatario(user));
+            sendSharedContext.getMandateContext().setDelegator(sharedSteps.getDestinatarioRegistry().destinatario(recipient));
+            lastDestinatarioSearched = sendSharedContext.getMandateContext().getDelegate();
+
+            this.notificationSearchResponseLegal = webRecipientClient.searchReceivedDelegatedNotification(
+                    lastDestinatarioSearched, searchParam);
+            this.notificationSearchResponseCount = notificationSearchResponseLegal.getResultsPage().size();
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
             this.notificationError = e;
         }
     }
 
-    //TODO: insert recipientID da selfcare (si possono recuperare dai token)
-    private String getRecipientId(String recipientId) {
-        return switch (recipientId.toLowerCase().trim()) {
-            case "mario cucumber" -> "123";
-            case "mario gherkin" -> "345";
-            case "gherkinsrl" -> "789";
-            case "cucumberspa" -> "1011";
-            default -> throw new IllegalStateException("Unexpected value: " + recipientId);
-        };
+    @And("si sfogliano tutte le pagine della ricerca lato destinatario e si verifica che vengano raccolte almeno {int} notifiche")
+    public void sfogliaTutteLePagineLatoDestinatario(int minimumExpectedCount) {
+        int totalCollected;
+        if (notificationSearchResponseFull != null) {
+            totalCollected = notificationSearchResponseFull.getResultsPage().size();
+            while (Boolean.TRUE.equals(notificationSearchResponseFull.getMoreResult())
+                    && notificationSearchResponseFull.getNextPagesKey() != null && !notificationSearchResponseFull.getNextPagesKey().isEmpty()) {
+                lastDestinatarioSearchParam.setNextPagesKey(notificationSearchResponseFull.getNextPagesKey().get(0));
+                notificationSearchResponseFull = webRecipientClient.searchReceivedNotification(lastDestinatarioSearched, lastDestinatarioSearchParam);
+                totalCollected += notificationSearchResponseFull.getResultsPage().size();
+            }
+        } else if (notificationSearchResponseLegal != null) {
+            totalCollected = notificationSearchResponseLegal.getResultsPage().size();
+            while (Boolean.TRUE.equals(notificationSearchResponseLegal.getMoreResult())
+                    && notificationSearchResponseLegal.getNextPagesKey() != null && !notificationSearchResponseLegal.getNextPagesKey().isEmpty()) {
+                lastDestinatarioSearchParam.setNextPagesKey(notificationSearchResponseLegal.getNextPagesKey().get(0));
+                notificationSearchResponseLegal = webRecipientClient.searchReceivedDelegatedNotification(lastDestinatarioSearched, lastDestinatarioSearchParam);
+                totalCollected += notificationSearchResponseLegal.getResultsPage().size();
+            }
+        } else {
+            throw new IllegalStateException("Nessuna risposta di ricerca notifiche disponibile per sfogliare le pagine.");
+        }
+        Assertions.assertTrue(totalCollected >= minimumExpectedCount,
+                "Numero totale di notifiche raccolte sfogliando tutte le pagine: atteso almeno " + minimumExpectedCount + ", trovate " + totalCollected);
     }
 
     @And("Si verifica che il numero di notifiche restituite nella pagina sia {int}")
     public void verifyNumberOfNotification(Integer number) {
-        Assertions.assertEquals(notificationSearchResponse.getResultsPage().size(), number);
+        Assertions.assertEquals(notificationSearchResponseCount, number);
     }
 
 
@@ -716,20 +837,6 @@ public class RicezioneNotificheWebDelegheSteps {
         }
     }
 
-
-    @And("{string} visualizza le deleghe")
-    public void visualizzaLeDeleghe(String user) {
-        setBearerToken(user);
-
-        List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
-        List<MandateDto> mandateDtos = Assertions.assertDoesNotThrow(() -> webMandateClient.listMandatesByDelegator1());
-
-        System.out.println("TOKEN SETTED (user: +" + user + ") : " + webMandateClient.getBearerTokenSetted());
-        System.out.println("MANDATE-LIST (user: +" + user + ") : " + mandateList);
-        System.out.println("TOKEN SETTED (user: +" + user + ") : " + webMandateClient.getBearerTokenSetted());
-        System.out.println("MANDATE-LIST-DELEGATOR (user: +" + user + ") : " + mandateDtos);
-    }
-
     @And("viene creata una delega con i seguenti parametri errati:")
     public void createMandateWithNotValidDate(Map<String, String> data) {
         setBearerToken(data.get("delegator"));
@@ -778,5 +885,21 @@ public class RicezioneNotificheWebDelegheSteps {
                 .fiscalCode(fiscalCode)
                 .companyName(companyName)
                 .person(isPerson);
+    }
+
+    @And("l'elenco delle notifiche recuperate devono rispettare i seguenti criteri:")
+    public void verifyNotificationSearchResponse(Map<String, String> criteria) {
+        List<?> resultsPage;
+        if (notificationSearchResponseFull != null) {
+            resultsPage = notificationSearchResponseFull.getResultsPage();
+        } else if (notificationSearchResponseLegal != null) {
+            resultsPage = notificationSearchResponseLegal.getResultsPage();
+        } else {
+            throw new IllegalStateException("Nessuna risposta di ricerca notifiche disponibile per la verifica dei criteri.");
+        }
+        Assertions.assertFalse(resultsPage.isEmpty(), "La pagina dei risultati della ricerca notifiche è vuota, impossibile verificare i criteri.");
+
+        Map<String, List<String>> resolvedCriteria = notificationSearchCriteriaMapper.build(criteria, new TokenResolver(sharedSteps, sendSharedContext));
+        NotificationSearchRowAssertions.assertAllRowsMatchCriteria(resultsPage, resolvedCriteria);
     }
 }
