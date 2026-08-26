@@ -78,4 +78,21 @@ public class DelegatedArchivingSteps {
         );
     }
 
+    @When("l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service {string} specificando la motivazione {string} e {gracePeriodDays} giorni di preavviso")
+    public void submitDelegatedEServiceArchiving(String eServiceId, String archivingReason, GracePeriodDays gracePeriodDays) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
+        String resolvedArchivingReason = catalogResolver.resolveArchivingReason(archivingReason);
+
+        httpCallExecutor.performCall(
+                () -> clientTokenConfigurator.getEServiceClient().submitDelegatedEServiceArchiving(
+                        resolvedEServiceId,
+                        new EServiceArchivingSeed()
+                                .archivingReason(resolvedArchivingReason)
+                                .gracePeriodDays(gracePeriodDays)
+                ),
+                ResponseEntity::getStatusCode
+        );
+    }
 }
