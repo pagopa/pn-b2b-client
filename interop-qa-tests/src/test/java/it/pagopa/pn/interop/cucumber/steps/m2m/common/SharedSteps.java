@@ -45,6 +45,11 @@ public class SharedSteps {
         resolveStep(stepClass).getAll();
     }
 
+    @When("l'utente tenta di recuperare la pagina {int} della lista di {entityType} con un limite di {int} elementi")
+    public void getCertifiedDiscreteAttribute(int pageIndex, Class<? extends ICommonSteps> stepClass, int pageSize) {
+        resolveStep(stepClass).getPage(pageIndex, pageSize);
+    }
+
     @When("l'utente tenta di recuperare {entityType} con un id {entityIdType}")
     public void getByIdType(Class<? extends ICommonSteps> stepClass, EntityIdType entityIdType) {
         resolveStep(stepClass).getByIdType(entityIdType);
