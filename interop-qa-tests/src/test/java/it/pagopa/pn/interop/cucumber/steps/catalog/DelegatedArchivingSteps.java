@@ -107,4 +107,20 @@ public class DelegatedArchivingSteps {
                 ResponseEntity::getStatusCode
         );
     }
+
+    @When("l'utente rifiuta la richiesta di archiviazione delegata dell'e-service {string} con motivazione {string}")
+    public void rejectDelegatedEServiceArchiving(String eServiceId, String rejectionReason) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
+        String resolvedRejectionReason = catalogResolver.resolveArchivingReason(rejectionReason);
+
+        httpCallExecutor.performCall(
+                () -> clientTokenConfigurator.getEServiceClient().rejectDelegatedEServiceArchiving(
+                        resolvedEServiceId,
+                        resolvedRejectionReason
+                ),
+                ResponseEntity::getStatusCode
+        );
+    }
 }
