@@ -95,4 +95,16 @@ public class DelegatedArchivingSteps {
                 ResponseEntity::getStatusCode
         );
     }
+
+    @When("l'utente delegante accetta la richiesta di archiviazione relativa all'e-service {string}")
+    public void approveDelegatedEServiceArchiving(String eServiceId) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
+
+        httpCallExecutor.performCall(
+                () -> clientTokenConfigurator.getEServiceClient().approveDelegatedEServiceArchiving(resolvedEServiceId),
+                ResponseEntity::getStatusCode
+        );
+    }
 }
