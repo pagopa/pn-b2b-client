@@ -95,15 +95,9 @@ Feature: Gestione degli attributi certificati discreti attraverso APIs M2M V3
       | Privato | admin | m2m-admin |
       | Privato | admin | m2m       |
 
-  # NEXT
   ### CASO DI TEST 1.3
 
-  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_5] La creazione di un attributo certificato discreto non va a buon fine se la richiesta http non è valida.
-    Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
-    When si tenta la creazione dell'attributo certificato discreto senza passare parametri nella richiesta
-    Then si ottiene lo status code 400
-
-  Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_6] La creazione di un attributo certificato discreto non va a buon fine se uno dei suoi attributi non è valido.
+  Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_CREATE_1] La creazione di un attributo certificato discreto non va a buon fine se uno dei suoi attributi non è valido.
     Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
     And viene effettuata la creazione dell'attributo certificato discreto
       | name   | description   | code   |
@@ -119,7 +113,20 @@ Feature: Gestione degli attributi certificati discreti attraverso APIs M2M V3
       |            |             | $SIZE(65) |
       |            |             | $EMPTY()  |
 
-  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_7] La creazione di un attributo certificato discreto non va a buon fine se ce n'è già uno con lo stesso nome.
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_CREATE_2] La creazione di un attributo certificato discreto non va a buon fine se la richiesta http non è valida.
+    Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
+    When si tenta la creazione dell'attributo certificato discreto senza passare parametri nella richiesta
+    Then si ottiene lo status code 400
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_CREATE_3] La creazione di un attributo certificato discreto non va a buon fine con token non valido.
+    Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
+    And viene impostato per l'utente un token m2m non valido
+    When viene effettuata la creazione dell'attributo certificato discreto
+      | name | description | code |
+      |      |             |      |
+    Then si ottiene lo status code 401
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_CREATE_4] La creazione di un attributo certificato discreto non va a buon fine se ce n'è già uno con lo stesso nome.
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene effettuata la creazione dell'attributo certificato discreto con successo
       | name            | description | code |
@@ -127,9 +134,9 @@ Feature: Gestione degli attributi certificati discreti attraverso APIs M2M V3
     When viene effettuata la creazione dell'attributo certificato discreto
       | name            | description | code |
       | ATTR-DISCRETE-1 |             |      |
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code 409
 
-  Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_8] La creazione di un attributo certificato discreto non è consentita alle utenze che non sono admin o che non appartengano agli enti certificatori.
+  Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_CREATE_5] La creazione di un attributo certificato discreto non è consentita alle utenze che non sono admin o che non appartengano agli enti certificatori.
     Given l'utente è un "admin" di "<ente>" con ruolo M2M <ruolo-m2m>
     And viene effettuata la creazione dell'attributo certificato discreto
       | name | description | code |
@@ -138,7 +145,7 @@ Feature: Gestione degli attributi certificati discreti attraverso APIs M2M V3
 
     Examples:
       | ente    | ruolo-m2m | risultato |
-      | PA1     | m2m-admin | 201       |
-      | PA1     | m2m       | 403       |
+      | GSP     | m2m-admin | 201       |
+      | GSP     | m2m       | 403       |
       | Privato | m2m-admin | 403       |
       | Privato | m2m       | 403       |
