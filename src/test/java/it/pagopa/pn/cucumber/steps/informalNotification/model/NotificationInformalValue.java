@@ -1,5 +1,7 @@
 package it.pagopa.pn.cucumber.steps.informalNotification.model;
 
+import it.pagopa.common.util.StringUtils;
+
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;

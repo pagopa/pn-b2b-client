@@ -1,4 +1,4 @@
-package it.pagopa.pn.cucumber.utils;
+package it.pagopa.pn.client.b2b.pa.utils;
 
 import java.util.HashMap;
 import java.util.Map;

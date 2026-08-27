@@ -139,8 +139,8 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente recuperata con una ricerca da "Mario Gherkin"
-      | startDate     | 01/01/2022 |
-      | subjectRegExp | cucumber   |
+      | startDate     | $DATE_ADD(-1D) |
+      | subjectRegExp | cucumber       |
 
   @SmokeTest @letturaDestinatario
   Scenario: [WEB-PF-RECIPIENT_14] Invio notifica digitale mono destinatario e recupero tramite ricerca API WEB_scenario positivo
@@ -150,7 +150,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then la notifica può essere correttamente recuperata con una ricerca da "Mario Gherkin"
-      | startDate     | 01/01/2022 |
-      | endDate       | 01/10/2030 |
-      | iunMatch      | ACTUAL     |
-      | subjectRegExp | cucumber   |
+      | startDate     | $DATE_ADD(-1D) |
+      | endDate       | $DATE_ADD(1D)  |
+      | iunMatch      | ACTUAL         |
+      | subjectRegExp | cucumber       |

@@ -1,9 +1,17 @@
-package it.pagopa.pn.cucumber.steps.utilitySteps;
+package it.pagopa.pn.client.b2b.pa.config.springconfig;
 
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+/**
+ * Dati anagrafici (tax-id, uid) delle utenze di test, letti dalle property {@code pn.recipient.*}
+ * caricate da {@link TaxIdConfiguration} a partire da {@code config/taxids-{env}.properties}.
+ * <p>
+ * Fonte dati grezza usata da {@link it.pagopa.pn.client.b2b.pa.provider.DestinatarioRegistry}
+ * per costruire gli oggetti {@link it.pagopa.pn.client.b2b.pa.domain.Destinatario}; non consumarla
+ * direttamente al di fuori di quel registro, per evitare due punti di accesso agli stessi dati.
+ */
 @Getter
 @Setter
 @ConfigurationProperties(prefix = "pn.recipient")
