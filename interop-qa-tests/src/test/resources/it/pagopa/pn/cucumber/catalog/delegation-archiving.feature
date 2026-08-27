@@ -447,3 +447,18 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And l'annullamento dell'archiviazione manuale del vecchio descrittore è fallita
     And la versione più recente dell'e-service è in stato "PUBLISHED"
+
+  @happy-path
+  Scenario: [DELEGATION_MANUAL_ARCHIVING_NEW_VERSION_PUBLICATION_1.1] In presenza di una richiesta di archiviazione in attesa, un ente delegato può richiedere la pubblicazione di una nuova versione dell'e-service
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    And l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
+    When l'utente crea una nuova versione dell'e-service
+    And l'utente delegato pubblica la versione dell'e-service
+    Then si ottiene response status code 204
+    And l'e-service è in stato "WAITING_FOR_APPROVAL"
