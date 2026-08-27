@@ -20,11 +20,18 @@ Feature: Gestione degli attributi certificati discreti attraverso APIs M2M V3
       | Privato | admin | m2m-admin |
       | Privato | admin | m2m       |
 
-  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_2] Il tentativo di recupero di un attributo certificato discreto con UUID non valido non va a buon fine.
-    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+  Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_2] Il tentativo di recupero di un attributo certificato discreto con UUID non valido non va a buon fine.
+    Given l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
     When l'utente tenta di recuperare certifiedDiscreteAttribute con un id invalido
     Then si ottiene lo status code 400
     And certifiedDiscreteAttribute non restituito
+
+    Examples:
+      | ente    | ruolo | ruoloM2M  |
+      | GSP     | admin | m2m-admin |
+      | GSP     | admin | m2m       |
+      | Privato | admin | m2m-admin |
+      | Privato | admin | m2m       |
 
   Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_3] Accesso negato al dettaglio di un attributo certificato discreto con token non valido.
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -74,7 +81,7 @@ Feature: Gestione degli attributi certificati discreti attraverso APIs M2M V3
     When l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
     And l'utente tenta di recuperare la pagina -1 della lista di certifiedDiscreteAttribute con un limite di -10 elementi
     Then si ottiene lo status code 400
-    
+
     Examples:
       | ente    | ruolo | ruoloM2M  |
       | GSP     | admin | m2m-admin |
