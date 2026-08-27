@@ -480,5 +480,36 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     When l'utente è un "admin" di "PA3"
     And l'utente richiede una operazione di archiviazione della richiesta di fruizione
-    Then la richiesta di archiviazione pendente del vecchio descrittore è stata eliminata
+    Then si ottiene response status code 204
+    And la richiesta di archiviazione pendente del vecchio descrittore è stata eliminata
     And la vecchia versione dell'e-service è in stato "ARCHIVED"
+
+  @happy-path
+  Scenario: [DELEGATION_MANUAL_ARCHIVING_REQUEST_REVOCATION_1.1] La revoca della delega elimina la richiesta di archiviazione in pending dell'e-service
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    And l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
+    When l'ente "PA1" con ruolo "admin" revoca la delega in erogazione con successo
+    Then si ottiene response status code 204
+    And la richiesta pendente di archiviazione dell'e-service è stata eliminata
+
+  @happy-path
+  Scenario: [DELEGATION_MANUAL_ARCHIVING_REQUEST_REVOCATION_1.2] La revoca della delega elimina la richiesta di archiviazione in pending del descrittore che non sia il più recente dell'e-service
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    And l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
+    When l'ente "PA1" con ruolo "admin" revoca la delega in erogazione con successo
+    Then si ottiene response status code 204
+    And la richiesta pendente di archiviazione del vecchio descrittore è stata eliminata
