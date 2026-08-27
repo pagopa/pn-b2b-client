@@ -59,7 +59,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @Data

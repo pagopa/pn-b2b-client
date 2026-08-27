@@ -1,7 +1,7 @@
 package it.pagopa.pn.client.b2b.pa.service;
 
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.*;
+import it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.*;
 import org.springframework.web.client.RestClientException;
 import java.util.List;
 

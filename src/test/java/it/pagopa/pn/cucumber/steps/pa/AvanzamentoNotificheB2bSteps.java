@@ -42,8 +42,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.PAYMENT;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.*;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.PAYMENT;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.PollingType.TIMELINE;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.checkTimelineElement.TimelineElementCheck.*;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
@@ -873,7 +873,6 @@ public class AvanzamentoNotificheB2bSteps {
                 .build();
         b2bStepsInterface.checkIfTimelineElementExists(timelineEventCategory, true, CHECK_RESPONSE_STATUS, checkFilters);
     }
-
 
     @Then("viene verificato che nell'elemento di timeline della notifica {string} siano configurati i campi municipalityDetails e foreignState")
     public void vieneVerificatoCheElementoTimelineSianoConfiguratiCampiMunicipalityDetailsForeignState(String timelineEventCategory) {

@@ -8,9 +8,9 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffDocumentDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffDocumentType;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffFullNotificationV1;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNewNotificationRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffLegalNotificationSearchRow;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffLegalNotificationsResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNewNotificationRequest;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnApiKeyManagerExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnBffPaClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;

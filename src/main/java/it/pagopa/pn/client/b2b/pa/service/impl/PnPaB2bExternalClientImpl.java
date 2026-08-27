@@ -1,10 +1,5 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.ApiClient;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api.*;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
@@ -452,15 +447,4 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         return this.notificationCancellationApi.notificationCancellation(iun);
     }
 
-    private <T> T deepCopy(Object obj, Class<T> toClass) {
-        ObjectMapper objMapper = JsonMapper.builder()
-                .addModule(new JavaTimeModule())
-                .build();
-        try {
-            String json = objMapper.writeValueAsString(obj);
-            return objMapper.readValue(json, toClass);
-        } catch (JsonProcessingException exc) {
-            throw new PnB2bException(exc.getMessage());
-        }
-    }
 }
