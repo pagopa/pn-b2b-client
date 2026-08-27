@@ -462,3 +462,23 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente delegato pubblica la versione dell'e-service
     Then si ottiene response status code 204
     And l'e-service è in stato "WAITING_FOR_APPROVAL"
+
+  @happy-path
+  Scenario: [DELEGATION_AUTOMATIC_ARCHIVING_DESCRIPTOR_1.1] L'archiviazione automatica di un descrittore elimina la relativa richiesta di archiviazione in pending
+  Il descrittore meno recente di un e-service in delega ha una richiesta di archiviazione ancora in pending.
+  Quando viene archiviata l'ultima richiesta di fruizione attiva verso il descrittore, questo passa
+  automaticamente allo stato ARCHIVED e la richiesta in pending viene eliminata.
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    And l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
+    When l'utente è un "admin" di "PA3"
+    And l'utente richiede una operazione di archiviazione della richiesta di fruizione
+    Then la richiesta di archiviazione pendente del vecchio descrittore è stata eliminata
+    And la vecchia versione dell'e-service è in stato "ARCHIVED"
