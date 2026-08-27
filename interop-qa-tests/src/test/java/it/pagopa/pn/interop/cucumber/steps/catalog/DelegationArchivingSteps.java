@@ -28,6 +28,7 @@ public class DelegationArchivingSteps {
     }
 
     @When("l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da {string} per l'e-service {string} impostando {gracePeriodDays} giorni di preavviso")
+    @When("l'utente invia al delegante una richiesta di archiviazione della vecchia versione identificata da {string} per l'e-service {string} impostando {gracePeriodDays} giorni di preavviso")
     public void submitDelegatedDescriptorArchiving(String descriptorId, String eServiceId, GracePeriodDays gracePeriodDays) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
@@ -79,6 +80,7 @@ public class DelegationArchivingSteps {
     }
 
     @When("l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service {string} specificando la motivazione {string} e {gracePeriodDays} giorni di preavviso")
+    @When("l'utente invia al delegante una richiesta di archiviazione dell'e-service {string} specificando la motivazione {string} e {gracePeriodDays} giorni di preavviso")
     public void submitDelegatedEServiceArchiving(String eServiceId, String archivingReason, GracePeriodDays gracePeriodDays) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
