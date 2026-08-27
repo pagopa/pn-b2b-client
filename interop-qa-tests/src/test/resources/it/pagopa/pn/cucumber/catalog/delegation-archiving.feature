@@ -290,6 +290,50 @@ Feature: Gestione deleghe per archiviazione manuale e-service
       | api          |
       | api,security |
 
+  @sad-path
+  Scenario Outline: [DELEGATION_MANUAL_ARCHIVING_3.3] Un utente appartente all'ente delegante ma con ruolo non ammesso NON può rifiutare la richiesta di archiviazione di un e-service inviata dall'ente delegato
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    And l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
+    And l'utente è un "<role>" di "PA1"
+    When l'utente delegante rifiuta la richiesta di archiviazione delegata dell'e-service "%actual" con motivazione "QA test rejection delegation manual archiving"
+    Then si ottiene response status code 403
+
+    Examples:
+      | role     |
+      | support  |
+      | security |
+      | reviewer |
+      | viewer   |
+
+  @sad-path
+  Scenario Outline: [DELEGATION_MANUAL_ARCHIVING_3.4] Un utente appartente all'ente delegato ma con ruolo non ammesso NON può rifiutare la richiesta di archiviazione del descrittore meno recente inviata dall'ente delegato
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    And l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
+    And l'utente è un "<role>" di "PA1"
+    When l'utente delegante rifiuta la richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" con motivazione "QA test rejection delegation manual archiving"
+    Then si ottiene response status code 403
+
+    Examples:
+      | role     |
+      | support  |
+      | security |
+      | reviewer |
+      | viewer   |
+
   @happy-path
   Scenario Outline: [DELEGATION_MANUAL_ARCHIVING_CANCELLATION_1.1] Un ente delegante può annullare il processo di archiviazione di un e-service con una delega in erogazione attiva
     Given l'ente delegante "PA1"
