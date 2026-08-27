@@ -70,8 +70,7 @@ Feature: Listing catalogo e-services
   @happy-path
   @nrt-minimal
   @catalog_listing6
-  Scenario: [CATALOG_LISTING_6] Restituisce gli e-service a catalogo che contengono la keyword "test" all'interno del nome,
-  con ricerca case insensitive
+  Scenario: [CATALOG_LISTING_6] Restituisce gli e-service a catalogo che contengono la keyword "test" all'interno del nome, con ricerca case insensitive
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato 2 e-services in catalogo in stato PUBLISHED o SUSPENDED e 1 in stato DRAFT
     Given "PA1" ha già creato e pubblicato un e-service contenente la keyword "test"
@@ -90,18 +89,190 @@ Feature: Listing catalogo e-services
   @happy-path
   @nrt-minimal
   Scenario: [CATALOG_LISTING_8] Verifica assenza di info template su e-service sincrono non creato da template
+    Verifica che le informazioni Template Reference non siano presenti nei descrittori di un e-service sincrono non
+    creato da un e-service template attraverso i possibili stati che un descrittore può avere sul catalogo.
+
+    Given l'utente è un "admin" di "PA1"
+    When "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e non trova riferimenti al template
+
+    When "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    And la vecchia versione dell'e-service è in stato "ARCHIVED"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura del vecchio descrittore e non trova riferimenti al template
+
+    Given "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    When l'utente sospende quel descrittore
+    And l'e-service è in stato "SUSPENDED"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e non trova riferimenti al template
+
+    Given l'utente è un "admin" di "PA1"
+    And l'utente attiva il descrittore di quell'e-service
+    When "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura del vecchio descrittore e non trova riferimenti al template
+
+    Given l'utente è un "admin" di "PA1"
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 30 giorni di preavviso
+    And l'e-service è in stato "ARCHIVING"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e non trova riferimenti al template
+
+    Given l'utente è un "admin" di "PA1"
+    When "PA1" ha già sospeso quell'e-service
+    And l'e-service è in stato "ARCHIVING_SUSPENDED"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e non trova riferimenti al template
 
   @happy-path
   @nrt-minimal
   Scenario: [CATALOG_LISTING_9] Verifica assenza di info template su e-service sincrono clonato
+  Verifica che le informazioni Template Reference non siano presenti nei descrittori di un e-service sincrono
+  clonato da un e-service non creato da template attraverso i possibili stati che un descrittore può avere sul catalogo.
+
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'utente clona quell'e-service
+    And l'utente pubblica l'e-service
+    And l'e-service è in stato "PUBLISHED"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e non trova riferimenti al template
+
+    When "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    And la vecchia versione dell'e-service è in stato "ARCHIVED"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura del vecchio descrittore e non trova riferimenti al template
+
+    Given "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    When l'utente sospende quel descrittore
+    And l'e-service è in stato "SUSPENDED"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e non trova riferimenti al template
+
+    Given l'utente è un "admin" di "PA1"
+    And l'utente attiva il descrittore di quell'e-service
+    When "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura del vecchio descrittore e non trova riferimenti al template
+
+    Given l'utente è un "admin" di "PA1"
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 30 giorni di preavviso
+    And l'e-service è in stato "ARCHIVING"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e non trova riferimenti al template
+
+    Given l'utente è un "admin" di "PA1"
+    When "PA1" ha già sospeso quell'e-service
+    And l'e-service è in stato "ARCHIVING_SUSPENDED"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e non trova riferimenti al template
 
   @happy-path
   @nrt-minimal
   Scenario: [CATALOG_LISTING_10] Verifica assenza di info template su e-service asincrono non creato da template
+  Verifica che le informazioni Template Reference non siano presenti nei descrittori di un e-service asincrono non
+  creato da un e-service template attraverso i possibili stati che un descrittore può avere sul catalogo.
+
+    Given l'utente è un "admin" di "PA1"
+    When "PA1" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
+      | asyncExchangeProperties.responseTime          | 10   |
+      | asyncExchangeProperties.resourceAvailableTime | 10   |
+      | asyncExchangeProperties.confirmation          | true |
+      | asyncExchangeProperties.bulk                  | true |
+      | asyncExchangeProperties.maxResultSet          | 50   |
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e non trova riferimenti al template
+
+    When "PA1" ha già pubblicato una nuova versione per quell'e-service asincrono
+    And l'utente è un "admin" di "PA1"
+    And la vecchia versione dell'e-service è in stato "ARCHIVED"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura del vecchio descrittore e non trova riferimenti al template
+
+    Given "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    When l'utente sospende quel descrittore
+    And l'e-service è in stato "SUSPENDED"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e non trova riferimenti al template
+
+    Given l'utente è un "admin" di "PA1"
+    And l'utente attiva il descrittore di quell'e-service
+    When "PA1" ha già pubblicato una nuova versione per quell'e-service asincrono
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura del vecchio descrittore e non trova riferimenti al template
+
+    Given l'utente è un "admin" di "PA1"
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 30 giorni di preavviso
+    And l'e-service è in stato "ARCHIVING"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e non trova riferimenti al template
+
+    Given l'utente è un "admin" di "PA1"
+    When "PA1" ha già sospeso quell'e-service
+    And l'e-service è in stato "ARCHIVING_SUSPENDED"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e non trova riferimenti al template
 
   @happy-path
   @nrt-minimal
   Scenario: [CATALOG_LISTING_11] Verifica assenza di info template su e-service asincrono clonato
+  Verifica che le informazioni Template Reference non siano presenti nei descrittori di un e-service asincrono
+  clonato da un e-service non creato da template attraverso i possibili stati che un descrittore può avere sul catalogo.
+
+    Given l'utente è un "admin" di "PA1"
+    When "PA1" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
+      | asyncExchangeProperties.responseTime          | 10   |
+      | asyncExchangeProperties.resourceAvailableTime | 10   |
+      | asyncExchangeProperties.confirmation          | true |
+      | asyncExchangeProperties.bulk                  | true |
+      | asyncExchangeProperties.maxResultSet          | 50   |
+    And l'utente clona quell'e-service
+    And l'utente pubblica l'e-service
+    And l'e-service è in stato "PUBLISHED"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e non trova riferimenti al template
+
+    When "PA1" ha già pubblicato una nuova versione per quell'e-service asincrono
+    And l'utente è un "admin" di "PA1"
+    And la vecchia versione dell'e-service è in stato "ARCHIVED"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura del vecchio descrittore e non trova riferimenti al template
+
+    Given "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    When l'utente sospende quel descrittore
+    And l'e-service è in stato "SUSPENDED"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e non trova riferimenti al template
+
+    Given l'utente è un "admin" di "PA1"
+    And l'utente attiva il descrittore di quell'e-service
+    When "PA1" ha già pubblicato una nuova versione per quell'e-service asincrono
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura del vecchio descrittore e non trova riferimenti al template
+
+    Given l'utente è un "admin" di "PA1"
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 30 giorni di preavviso
+    And l'e-service è in stato "ARCHIVING"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e non trova riferimenti al template
+
+    Given l'utente è un "admin" di "PA1"
+    When "PA1" ha già sospeso quell'e-service
+    And l'e-service è in stato "ARCHIVING_SUSPENDED"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e non trova riferimenti al template
 
   @happy-path
   @nrt-minimal
