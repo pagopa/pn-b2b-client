@@ -20,10 +20,18 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.pa.cache.CacheManager;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
+import it.pagopa.pn.client.b2b.pa.domain.Costanti;
+import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
 import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.DigitalAddress;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.DigitalAddressSource;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.RequestStatus;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV28;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.CourtesyDigitalAddress;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
+import it.pagopa.pn.client.b2b.pa.provider.DestinatarioRegistry;
 import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
@@ -46,9 +54,6 @@ import it.pagopa.pn.client.b2b.pa.wrapper.RecipientWrapper;
 import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationStepsInterface;
 import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
-import it.pagopa.pn.cucumber.steps.utilitySteps.Costanti;
-import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
-import it.pagopa.pn.cucumber.steps.utilitySteps.DestinatarioRegistry;
 import it.pagopa.pn.cucumber.utils.DataTest;
 import it.pagopa.pn.cucumber.utils.EventId;
 import it.pagopa.pn.cucumber.utils.GroupPosition;
@@ -80,14 +85,79 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.ADDRESS;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.ALDA_MERINI;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.ALLEGATO;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_1;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_2;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_MULTI;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_ROOT;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_SON;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.CRISTOFORO_COLOMBO;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.CUCUMBER_SPA;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.CUCUMBER_SPA_B2B;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.DINO_SAURO;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.DURATION_ANALOG_REFINEMENT_DEFAULT_FAILURE;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.DURATION_ANALOG_REFINEMENT_DEFAULT_SUCCESS;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.DURATION_DIGITAL_REFINEMENT_DEFAULT_FAILURE;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.DURATION_DIGITAL_REFINEMENT_DEFAULT_SUCCESS;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.DURATION_SECOND_NOTIFICATION_WORKFLOW_WAITING_TIME_DEFAULT;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.DURATION_TIME_TO_ADD_IN_NON_VISIBILITY_TIME_CASE_DEFAULT;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.DURATION_WAIT_READ_COURTESY_MESSAGE_DEFAULT;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.ETTORE_FIERAMOSCA;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.EXTENSION;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.FILE_NOTFOUND;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.FILE_PDF_INVALID_ERROR;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.FILE_SHA_ERROR;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.GALILEO_GALILEI;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.GHERKIN_SRL;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.GHERKIN_SRL_B2B;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.INVALID_PARAMETER_MAX_ATTACHMENT;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.LEONARDO_DA_VINCI;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.LUCIO_ANNEO_SENECA;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.MARIO_CREDENZIALI_SCADUTE;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.MARIO_CUCUMBER;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.MARIO_GHERKIN;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.MOST_RECENT;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.NOTIFICATION_INJECTION_ALLEGATO;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.NOTIFICATION_STATUS_ACCEPTED;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.NOTIFICATION_STATUS_CANCELLED;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.NOT_EQUAL_SHA;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.NOT_EQUAL_SHA_JSON;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.NOT_FOUND_ALLEGATO_JSON;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.NOT_FOUND_NO_PRELOAD;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.NOT_FOUND_ON_SAFE_STORAGE;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.NOT_VALID_ADDRESS;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.OVERSIZE_ALLEGATO;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.OVER_15_ALLEGATO;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SCHEDULING_DELTA_DEFAULT;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SEND_ANALOG_PROGRESS;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SHA_256;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.TAXID_NOT_VALID;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.VALIDATION_STATUS;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.VALIDATION_STATUS_ACCEPTATION_SHORT;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.VALIDATION_STATUS_EXTRA_RAPID;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.VALIDATION_STATUS_NO_ACCEPTATION;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.WAITING_GPD;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.WAIT_DEFAULT;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.WAIT_EXTRA_RAPID;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.WAIT_UPPER_BOUND;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.WORKFLOW_WAIT_DEFAULT;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.WORKFLOW_WAIT_UPPER_BOUND;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.WRONG_EXTENSION;
 import static java.time.OffsetDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -189,6 +259,8 @@ public class SharedSteps {
 
     private final CacheManager<String, String> senderTaxIdCacheManager;
 
+    private final SendSharedContext sendSharedContext;
+
     /**
      * Rappresenta la versione con cui è stata generata una notifica. Viene impostata al momento di preparazione della request.
      * Va da sè che gli step successivi (aggiunta di destinatari, invio, etc) dovranno anch'essi utilizzare tale versione, salvo diversamente specificato.
@@ -226,6 +298,16 @@ public class SharedSteps {
     @Setter
     private List<Destinatario> destinatariList = new ArrayList<>();
 
+    /**
+     * L'id dell'ultima delega (mandate) selezionata per la ricerca delle notifiche ricevute da un delegato.
+     * Viene valorizzato dagli step che gestiscono le deleghe (es. {@code RicezioneNotificheWebDelegheSteps})
+     * e serve a risolvere, tramite {@link it.pagopa.pn.cucumber.utils.token.TokenResolver}, i placeholder
+     * usati nei feature file per riferirsi a un valore generato dinamicamente (es. {@code :mandateId}).
+     */
+    @Getter
+    @Setter
+    private String mandateId;
+
     @Before("@useB2B")
     public void beforeMethod() {
         if (!(webRecipientClient instanceof B2BRecipientExternalClientImpl)) {
@@ -250,7 +332,8 @@ public class SharedSteps {
                        DynamoDbService dynamoDbService,
                        SenderInfoProvider senderInfoProvider,
                        @Qualifier("senderTaxIdCacheManager") CacheManager<String, String> senderTaxIdCacheManager,
-                       DestinatarioRegistry destinatarioRegistry
+                       DestinatarioRegistry destinatarioRegistry,
+                       SendSharedContext sendSharedContext
     ) {
         this.context = context;
         this.b2bClient = b2bClient;
@@ -272,6 +355,7 @@ public class SharedSteps {
         versionUsed = getNotificationVersion(MOST_RECENT);
         this.senderTaxIdCacheManager = senderTaxIdCacheManager;
         this.destinatarioRegistry = destinatarioRegistry;
+        this.sendSharedContext = sendSharedContext;
     }
 
     @BeforeAll
@@ -422,11 +506,13 @@ public class SharedSteps {
 
     @And("destinatario {destinatario}")
     public void addDestinatario(Destinatario destinatario) {
+        sendSharedContext.getLegalNotificationContext().getRecipient().setDestinatario(destinatario);
         getNotificationStepInterface().addRecipientToNotification(destinatario, new HashMap<>());
     }
 
     @And("destinatario {destinatario} e:")
     public void addDestinatarioWithParams(Destinatario destinatario, Map<String, String> data) {
+        sendSharedContext.getLegalNotificationContext().getRecipient().setDestinatario(destinatario);
         getNotificationStepInterface().addRecipientToNotification(destinatario, data);
     }
 
@@ -438,6 +524,7 @@ public class SharedSteps {
 
     @And("vengono create {int} notifiche con destinatario {destinatario} per la pa {string} e si aspetta che raggiungano l'elemento di timeline della notifica {string}")
     public void creaNotifiche(int notificationNumber, Destinatario destinatario, String pa, String timelineEvent, Map<String, String> data) throws IOException, InterruptedException {
+        sendSharedContext.getLegalNotificationContext().getRecipient().setDestinatario(destinatario);
         NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface();
         for (int i = 0; i < notificationNumber; i++) {
             prepareNotificationRequestWithVersion(MOST_RECENT, data);
@@ -1128,6 +1215,12 @@ public class SharedSteps {
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
                 iPnTosPrivacyClientImpl.setBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
+            }
+            case CUCUMBER_SPA_B2B -> {
+                webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_B2B_2);
+            }
+            case GHERKIN_SRL_B2B -> {
+                webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_B2B_1);
             }
             default -> throw new IllegalArgumentException("Invalid recipient name: " + recipient);
         }
