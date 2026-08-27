@@ -215,7 +215,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "admin" di "PA2"
     And l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
     And l'utente è un "<role>" di "PA1"
-    When l'utente delegante accetta la richiesta di archiviazione relativa all'e-service "%actual"
+    When l'utente accetta la richiesta di archiviazione relativa all'e-service "%actual"
     Then si ottiene response status code 403
 
     Examples:
@@ -238,7 +238,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "admin" di "PA2"
     And l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     And l'utente è un "<role>" di "PA1"
-    When l'utente delegante accetta la richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual"
+    When l'utente accetta la richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual"
     Then si ottiene response status code 403
 
     Examples:

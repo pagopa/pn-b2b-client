@@ -46,6 +46,7 @@ public class DelegationArchivingSteps {
     }
 
     @When("l'utente delegante accetta la richiesta di archiviazione della vecchia versione identificata da {string} per l'e-service {string}")
+    @When("l'utente accetta la richiesta di archiviazione della vecchia versione identificata da {string} per l'e-service {string}")
     public void approveDelegatedDescriptorArchiving(String descriptorId, String eServiceId) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
@@ -99,6 +100,7 @@ public class DelegationArchivingSteps {
     }
 
     @When("l'utente delegante accetta la richiesta di archiviazione relativa all'e-service {string}")
+    @When("l'utente accetta la richiesta di archiviazione relativa all'e-service {string}")
     public void approveDelegatedEServiceArchiving(String eServiceId) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
