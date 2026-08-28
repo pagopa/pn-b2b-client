@@ -79,4 +79,9 @@ public class M2MV3TenantClientImpl extends AbstractDPoPClient implements IM2MV3T
     public TenantCertifiedDiscreteAttributes getTenantCertifiedDiscreteAttributes(UUID tenantId, Integer offset, Integer limit) {
         return this.tenantsApi.getTenantCertifiedDiscreteAttributes(tenantId, offset, limit);
     }
+
+    @Override
+    public TenantCertifiedDiscreteAttribute revokeTenantCertifiedDiscreteAttribute(UUID tenantId, UUID attributeId) {
+        return this.tenantsApi.revokeTenantCertifiedDiscreteAttribute(tenantId, attributeId);
+    }
 }

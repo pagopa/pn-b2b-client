@@ -13,4 +13,6 @@ public interface IM2MV3TenantClient extends IM2MTenantClient, SettableHeaders, A
     TenantCertifiedDiscreteAttribute assignTenantCertifiedDiscreteAttribute(UUID tenantId, TenantCertifiedDiscreteAttributeSeed tenantCertifiedDiscreteAttributeSeed);
 
     TenantCertifiedDiscreteAttributes getTenantCertifiedDiscreteAttributes(UUID tenantId, Integer offset, Integer limit);
+
+    TenantCertifiedDiscreteAttribute revokeTenantCertifiedDiscreteAttribute(UUID tenantId, UUID attributeId);
 }
