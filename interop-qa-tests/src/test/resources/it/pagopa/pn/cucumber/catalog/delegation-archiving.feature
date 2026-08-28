@@ -880,6 +880,53 @@ Feature: Gestione deleghe per archiviazione manuale e-service
       | api,security |
 
   @happy-path
+  Scenario Outline: [DELEGATION_ARCHIVING_ESERVICE_ASYNC_TEMPLATE_INSTANCE_1.1] Un ente delegato può richiedere al delegante di avviare il processo di archiviazione di un e-service asincrono creato da template in delega
+    Given l'ente delegato "PA2"
+    And l'ente delegante "PA1"
+    And l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template asincrono in modalità erogazione con tecnologia "REST" in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato <descriptorState> a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And l'ente "PA1" ha una delega in erogazione attiva verso l'ente "PA2" per l'istanza dell'e-service template
+    And l'utente è un "<role>" di "PA2"
+    When l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
+    Then si ottiene response status code 204
+
+    Examples:
+      | descriptorState | role         |
+      | PUBLISHED       | admin        |
+      | PUBLISHED       | api          |
+      | PUBLISHED       | api,security |
+      | SUSPENDED       | admin        |
+      | SUSPENDED       | api          |
+      | SUSPENDED       | api,security |
+
+  @happy-path
+  Scenario Outline: [DELEGATION_ARCHIVING_ESERVICE_ASYNC_TEMPLATE_INSTANCE_1.2] Un ente delegato può richiedere al delegante di avviare il processo di archiviazione del descrittore meno recente di un e-service asincrono creato da template
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template asincrono in modalità erogazione con tecnologia "REST" in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    And l'utente crea una nuova versione dell'istanza del template con successo
+    And l'utente specifica i metadati mancanti all'istanza del template asincrono con successo
+    And l'utente tenta la pubblicazione di una nuova versione dell'istanza del template
+    And si ottiene response status code 200
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
+    And l'ente "PA1" ha una delega in erogazione attiva verso l'ente "PA2" per l'istanza dell'e-service template
+    And l'utente è un "<role>" di "PA2"
+    When l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
+    Then si ottiene response status code 204
+
+    Examples:
+      | role         |
+      | admin        |
+      | api          |
+      | api,security |
+
+  @happy-path
   Scenario Outline: [DELEGATION_MANUAL_ARCHIVING_CANCELLATION_1.1] Un ente delegante può annullare il processo di archiviazione di un e-service con una delega in erogazione attiva
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
