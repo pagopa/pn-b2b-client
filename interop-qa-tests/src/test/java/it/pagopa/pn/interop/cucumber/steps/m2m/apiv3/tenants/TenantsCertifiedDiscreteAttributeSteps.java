@@ -4,10 +4,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.service.IM2MV3TenantClient;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.common.enums.EntityIdType;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.CertifiedDiscreteAttribute;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.TenantCertifiedDiscreteAttribute;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.TenantCertifiedDiscreteAttributeSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.TenantCertifiedDiscreteAttributes;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.AttributeCommonContext;
@@ -76,6 +73,59 @@ public class TenantsCertifiedDiscreteAttributeSteps {
                 Objects::nonNull,
                 "Tenant certified discrete attribute not found"
         );
+    }
+
+    @When("l'utente tenta la modifica dell'attributo certificato discreto precedentemente associato a {string}, impostando il valore discreto a {int}")
+    public void modifyTenantCertifiedDiscreteAttribute(String tenantType, Integer discreteValue) {
+        UUID tenantId = identityService.getOrganizationId(tenantType);
+        CertifiedDiscreteAttribute lastCreated = this.getLastCreatedCertifiedDiscreteAttribute();
+        var seed = new UpdateTenantCertifiedDiscreteAttributeSeed();
+        seed.setCertifiedDiscreteValue(discreteValue);
+        assert lastCreated != null;
+        this.sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> this.tenantClient.replaceTenantCertifiedDiscreteAttribute(tenantId, lastCreated.getId(), seed)
+        );
+    }
+
+    @When("l'utente tenta la modifica dell'attributo certificato discreto precedentemente associato a {string}, impostando il valore discreto a {int}, utilizzando per l'ente un UUID {entityIdType}")
+    public void modifyTenantCertifiedDiscreteAttributeWithInvalidUuid(String tenantType, Integer discreteValue, EntityIdType entityIdType) {
+        UUID tenantId = getEntityId(entityIdType);
+        CertifiedDiscreteAttribute lastCreated = this.getLastCreatedCertifiedDiscreteAttribute();
+        var seed = new UpdateTenantCertifiedDiscreteAttributeSeed();
+        seed.setCertifiedDiscreteValue(discreteValue);
+        assert lastCreated != null;
+        this.sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> this.tenantClient.replaceTenantCertifiedDiscreteAttribute(tenantId, lastCreated.getId(), seed)
+        );
+    }
+
+    @When("l'utente tenta la modifica dell'attributo certificato discreto precedentemente associato a {string}, impostando il valore discreto a {int}, utilizzando un UUID {entityIdType}")
+    public void modifyTenantCertifiedDiscreteAttributeWithInvalidAttributeUuid(String tenantType, Integer discreteValue, EntityIdType entityIdType) {
+        UUID tenantId = identityService.getOrganizationId(tenantType);
+        var seed = new UpdateTenantCertifiedDiscreteAttributeSeed();
+        seed.setCertifiedDiscreteValue(discreteValue);
+        this.sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> this.tenantClient.replaceTenantCertifiedDiscreteAttribute(tenantId, getEntityId(entityIdType), seed)
+        );
+    }
+
+    @When("l'utente modifica a {string} l'attributo certificato discreto precedentemente associato, impostando il valore discreto a {int} con successo")
+    public void modifyTenantCertifiedDiscreteAttributeSuccessfully(String tenantType, Integer discreteValue) {
+        modifyTenantCertifiedDiscreteAttribute(tenantType, discreteValue);
+        assert sharedStepsContext.getHttpCallExecutor().getResponseStatus().is2xxSuccessful();
+
+        UUID tenantId = identityService.getOrganizationId(tenantType);
+        CertifiedDiscreteAttribute lastCreated = this.getLastCreatedCertifiedDiscreteAttribute();
+        TenantCertifiedDiscreteAttribute actual = sharedStepsContext.getPollingService().makePolling(
+                () -> {
+                    assert lastCreated != null;
+                    return findTenantCertifiedDiscreteAttribute(tenantId, lastCreated.getId());
+                },
+                res -> res.getDiscreteValue().equals(discreteValue),
+                "Tenant certified discrete attribute not updated"
+        );
+
+        assert actual.getDiscreteValue().equals(discreteValue);
     }
 
     @When("l'utente tenta di revocare a {string} l'attributo certificato discreto precedentemente associato")
