@@ -477,7 +477,6 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And la richiesta di archiviazione pendente dell'e-service è stata annullata con successo
     And la versione più recente dell'e-service è in stato "PUBLISHED"
 
-
   @sad-path
   Scenario: [DELEGATION_MANUAL_ARCHIVING_4.6] Un ente diverso dal delegato NON può annullare la richiesta di archiviazione del descrittore meno recente precedentemente inviata e ancora in pending
     Given l'ente delegante "PA1"
@@ -495,6 +494,48 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And la richiesta di archiviazione pendente del vecchio descrittore è stata annullata con successo
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And la versione più recente dell'e-service è in stato "PUBLISHED"
+
+  @happy-path
+  Scenario Outline: [DELEGATION_ARCHIVING_ESERVICE_TEMPLATE_INSTANCE_1.1] Un ente delegato può richiedere al delegante di avviare il processo di archiviazione di un e-service creato da template
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato <eserviceState> a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And l'ente "PA1" ha una delega in erogazione attiva verso l'ente "PA2" per l'istanza dell'e-service template
+    And l'utente è un "<role>" di "PA2"
+    When l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
+    Then si ottiene response status code 204
+
+    Examples:
+      | eserviceState | role         |
+      | PUBLISHED     | admin        |
+      | PUBLISHED     | api          |
+      | PUBLISHED     | api,security |
+      | SUSPENDED     | admin        |
+      | SUSPENDED     | api          |
+      | SUSPENDED     | api,security |
+
+  @happy-path
+  Scenario Outline: [DELEGATION_ARCHIVING_ESERVICE_TEMPLATE_INSTANCE_1.2] Un ente delegato può richiedere al delegante di avviare il processo di archiviazione del descrittore meno recente di un e-service creato da template
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    And l'utente effettua l'aggiunta di una versione in stato PUBLISHED all'e-service con successo
+    And l'ente "PA1" ha una delega in erogazione attiva verso l'ente "PA2" per l'istanza dell'e-service template
+    And l'utente è un "<role>" di "PA2"
+    When l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
+    Then si ottiene response status code 204
+
+    Examples:
+      | role         |
+      | admin        |
+      | api          |
+      | api,security |
 
   @happy-path
   Scenario Outline: [DELEGATION_MANUAL_ARCHIVING_CANCELLATION_1.1] Un ente delegante può annullare il processo di archiviazione di un e-service con una delega in erogazione attiva
@@ -667,7 +708,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "admin" di "PA2"
     When l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     Then si ottiene response status code 409
-    
+
   @happy-path
   Scenario: [DELEGATION_MANUAL_ARCHIVING_REQUEST_REVOCATION_1.5] Dopo la revoca della delega, il delegante può avviare l'archiviazione dell'e-service
     Given l'ente delegante "PA1"
