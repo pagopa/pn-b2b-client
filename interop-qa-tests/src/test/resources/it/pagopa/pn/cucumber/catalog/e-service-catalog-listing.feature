@@ -277,15 +277,221 @@ Feature: Listing catalogo e-services
   @happy-path
   @nrt-minimal
   Scenario: [CATALOG_LISTING_12] Verifica info template su e-service sincrono istanza di template
+  Verifica che le informazioni Template Reference siano presenti nei descrittori di un e-service sincrono creato da
+  un e-service template attraverso i possibili stati che un descrittore può avere sul catalogo.
+
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    When l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e trova riferimenti al template
+
+    Given l'utente è un "admin" di "PA1"
+    And l'utente crea una versione in bozza per quell'e-service istanza di template
+    And la versione più recente dell'e-service è in stato "DRAFT"
+    And l'utente specifica i metadati mancanti all'istanza del template sincrono con successo
+    When l'utente pubblica quel descrittore
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
+    And la vecchia versione dell'e-service è in stato "ARCHIVED"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura del vecchio descrittore e trova riferimenti al template
+
+    Given "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    When l'utente sospende quel descrittore
+    And l'e-service è in stato "SUSPENDED"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e trova riferimenti al template
+
+    Given l'utente è un "admin" di "PA1"
+    And l'utente attiva il descrittore di quell'e-service
+    And l'utente crea una versione in bozza per quell'e-service istanza di template
+    And la versione più recente dell'e-service è in stato "DRAFT"
+    And l'utente specifica i metadati mancanti all'istanza del template sincrono con successo
+    When l'utente pubblica quel descrittore
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura del vecchio descrittore e trova riferimenti al template
+
+    Given l'utente è un "admin" di "PA1"
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 30 giorni di preavviso
+    And l'e-service è in stato "ARCHIVING"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e trova riferimenti al template
+
+    Given l'utente è un "admin" di "PA1"
+    When "PA1" ha già sospeso quell'e-service
+    And l'e-service è in stato "ARCHIVING_SUSPENDED"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e trova riferimenti al template
 
   @happy-path
   @nrt-minimal
   Scenario: [CATALOG_LISTING_13] Verifica info template su e-service sincrono aggiornato tramite e-service template
+  Verifica che le informazioni Template Reference siano presenti nei descrittori di un e-service sincrono creato da
+  un e-service template e aggiornato tramite aggiornamento del template passando attraverso i possibili stati che
+  un descrittore può avere sul catalogo.
+
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED con suffisso "ref-test" a partire dal template con successo indicando tutte le specifiche
+    And l'utente effettua la creazione di una ulteriore versione nell'e-service template con successo
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+    And l'utente effettua delle modifiche alla versione dell'e-service template con successo
+    And l'utente tenta la pubblicazione della versione dell'e-service template
+    And la pubblicazione della versione dell'e-service template è stata effettuata correttamente
+    When l'utente tenta l'aggiornamento dell'istanza dell'e-service template all'ultima versione
+    And la versione più recente dell'e-service è in stato "DRAFT"
+    And l'utente tenta di associare un'interfaccia template instance "REST" con:
+      | contactName               | Mario Rossi            |
+      | contactEmail              | mario@example.it       |
+      | contactUrl                | https://example.it     |
+      | termsAndConditionsUrl     | https://tos.example.it |
+      | serverUrls[0].url         | https://api.example.it |
+      | serverUrls[0].description | API Server             |
+    And l'interfaccia template instance "REST" è stata registrata correttamente con i valori:
+      | contactName               | Mario Rossi            |
+      | contactEmail              | mario@example.it       |
+      | contactUrl                | https://example.it     |
+      | termsAndConditionsUrl     | https://tos.example.it |
+      | serverUrls[0].url         | https://api.example.it |
+      | serverUrls[0].description | API Server             |
+    And l'utente tenta la modifica del descriptor in stato DRAFT dell'istanza dell'e-service template
+    And il descriptor dell'istanza in stato DRAFT dell'e-service template è stato modificato correttamente
+    And l'utente pubblica quel descrittore
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e trova riferimenti al template
+
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di una ulteriore versione nell'e-service template con successo
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+    And l'utente effettua delle modifiche alla versione dell'e-service template con successo
+    And l'utente tenta la pubblicazione della versione dell'e-service template
+    And la pubblicazione della versione dell'e-service template è stata effettuata correttamente
+    And l'utente tenta l'aggiornamento dell'istanza dell'e-service template all'ultima versione
+    And la versione più recente dell'e-service è in stato "DRAFT"
+    And l'utente tenta di associare un'interfaccia template instance "REST" con:
+      | contactName               | Mario Rossi            |
+      | contactEmail              | mario@example.it       |
+      | contactUrl                | https://example.it     |
+      | termsAndConditionsUrl     | https://tos.example.it |
+      | serverUrls[0].url         | https://api.example.it |
+      | serverUrls[0].description | API Server             |
+    And l'interfaccia template instance "REST" è stata registrata correttamente con i valori:
+      | contactName               | Mario Rossi            |
+      | contactEmail              | mario@example.it       |
+      | contactUrl                | https://example.it     |
+      | termsAndConditionsUrl     | https://tos.example.it |
+      | serverUrls[0].url         | https://api.example.it |
+      | serverUrls[0].description | API Server             |
+    And l'utente tenta la modifica del descriptor in stato DRAFT dell'istanza dell'e-service template
+    And il descriptor dell'istanza in stato DRAFT dell'e-service template è stato modificato correttamente
+    When l'utente pubblica quel descrittore
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
+    And la vecchia versione dell'e-service è in stato "ARCHIVED"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura del vecchio descrittore e trova riferimenti al template
+
+    Given "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    When l'utente sospende quel descrittore
+    And l'e-service è in stato "SUSPENDED"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e trova riferimenti al template
+
+    Given l'utente è un "admin" di "PA1"
+    And l'utente attiva il descrittore di quell'e-service
+    And l'utente effettua la creazione di una ulteriore versione nell'e-service template con successo
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+    And l'utente effettua delle modifiche alla versione dell'e-service template con successo
+    And l'utente tenta la pubblicazione della versione dell'e-service template
+    And la pubblicazione della versione dell'e-service template è stata effettuata correttamente
+    And l'utente tenta l'aggiornamento dell'istanza dell'e-service template all'ultima versione
+    And la versione più recente dell'e-service è in stato "DRAFT"
+    And l'utente tenta di associare un'interfaccia template instance "REST" con:
+      | contactName               | Mario Rossi            |
+      | contactEmail              | mario@example.it       |
+      | contactUrl                | https://example.it     |
+      | termsAndConditionsUrl     | https://tos.example.it |
+      | serverUrls[0].url         | https://api.example.it |
+      | serverUrls[0].description | API Server             |
+    And l'interfaccia template instance "REST" è stata registrata correttamente con i valori:
+      | contactName               | Mario Rossi            |
+      | contactEmail              | mario@example.it       |
+      | contactUrl                | https://example.it     |
+      | termsAndConditionsUrl     | https://tos.example.it |
+      | serverUrls[0].url         | https://api.example.it |
+      | serverUrls[0].description | API Server             |
+    And l'utente tenta la modifica del descriptor in stato DRAFT dell'istanza dell'e-service template
+    And il descriptor dell'istanza in stato DRAFT dell'e-service template è stato modificato correttamente
+    When l'utente pubblica quel descrittore
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura del vecchio descrittore e trova riferimenti al template
+
+    Given l'utente è un "admin" di "PA1"
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 30 giorni di preavviso
+    And l'e-service è in stato "ARCHIVING"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e trova riferimenti al template
+
+    Given l'utente è un "admin" di "PA1"
+    When "PA1" ha già sospeso quell'e-service
+    And l'e-service è in stato "ARCHIVING_SUSPENDED"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e trova riferimenti al template
 
   @happy-path
   @nrt-minimal
   Scenario: [CATALOG_LISTING_14] Verifica info template su e-service asincrono istanza di template
+  Verifica che le informazioni Template Reference siano presenti nei descrittori di un e-service asincrono creato da
+  un e-service template attraverso i possibili stati che un descrittore può avere sul catalogo.
 
-  @happy-path
-  @nrt-minimal
-  Scenario: [CATALOG_LISTING_15] Verifica info template su e-service asincrono aggiornato tramite e-service template
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template asincrono in modalità erogazione con tecnologia "REST" in stato di PUBLISHED
+    When l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e trova riferimenti al template
+
+    Given l'utente è un "admin" di "PA1"
+    And l'utente crea una versione in bozza per quell'e-service istanza di template
+    And la versione più recente dell'e-service è in stato "DRAFT"
+    And l'utente specifica i metadati mancanti all'istanza del template asincrono con successo
+    When l'utente pubblica quel descrittore
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
+    And la vecchia versione dell'e-service è in stato "ARCHIVED"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura del vecchio descrittore e trova riferimenti al template
+
+    Given "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    When l'utente sospende quel descrittore
+    And l'e-service è in stato "SUSPENDED"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e trova riferimenti al template
+
+    Given l'utente è un "admin" di "PA1"
+    And l'utente attiva il descrittore di quell'e-service
+    And l'utente crea una versione in bozza per quell'e-service istanza di template
+    And la versione più recente dell'e-service è in stato "DRAFT"
+    And l'utente specifica i metadati mancanti all'istanza del template asincrono con successo
+    When l'utente pubblica quel descrittore
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura del vecchio descrittore e trova riferimenti al template
+
+    Given l'utente è un "admin" di "PA1"
+    When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 30 giorni di preavviso
+    And l'e-service è in stato "ARCHIVING"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e trova riferimenti al template
+
+    Given l'utente è un "admin" di "PA1"
+    When "PA1" ha già sospeso quell'e-service
+    And l'e-service è in stato "ARCHIVING_SUSPENDED"
+    And l'utente è un "admin" di "PA2"
+    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e trova riferimenti al template
