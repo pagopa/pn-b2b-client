@@ -121,7 +121,6 @@ Feature: Gestione di assegnazione degli attributi certificati discreti ai tenant
     And viene effettuata la creazione dell'attributo certificato discreto con successo
       | name | description | code |
       |      |             |      |
-    And viene impostato per l'utente un token m2m non valido
     And l'utente assegna a "PA1" l'attributo certificato discreto creato con un valore discreto di 100 con successo
     When l'utente revoca a "PA1" l'attributo certificato discreto precedentemente associato con successo
     Then si ottiene lo status code 200
@@ -131,9 +130,9 @@ Feature: Gestione di assegnazione degli attributi certificati discreti ai tenant
     And viene effettuata la creazione dell'attributo certificato discreto con successo
       | name | description | code |
       |      |             |      |
-    And viene impostato per l'utente un token m2m non valido
     And l'utente assegna a "PA1" l'attributo certificato discreto creato con un valore discreto di 100 con successo
     When l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
+    And viene impostato per l'utente un token m2m non valido
     And l'utente tenta di revocare a "PA1" l'attributo certificato discreto precedentemente associato
     Then si ottiene lo status code 403
 
