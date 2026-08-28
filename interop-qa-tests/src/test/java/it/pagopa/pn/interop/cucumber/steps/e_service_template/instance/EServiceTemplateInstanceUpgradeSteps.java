@@ -104,5 +104,16 @@ public class EServiceTemplateInstanceUpgradeSteps {
             this.lastEServiceIdUpdatedFromTemplate = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
             this.lastEServiceDescriptorIdUpdatedFromTemplate = response.getBody().getId();
         }
+
+        sharedStepsContext.getEServiceTemplateStepContext().setLastEServiceDescriptorIdCreatedFromTemplate(
+                this.lastEServiceDescriptorIdUpdatedFromTemplate
+        );
+        sharedStepsContext.getEServicesCommonContext().setOldDescriptorId(
+                sharedStepsContext.getEServicesCommonContext().getDescriptorId()
+        );
+        sharedStepsContext.getEServicesCommonContext().setDescriptorId(this.lastEServiceDescriptorIdUpdatedFromTemplate);
+        sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceCreatedFromTemplate().setDescriptorId(
+                this.lastEServiceDescriptorIdUpdatedFromTemplate
+        );
     }
 }
