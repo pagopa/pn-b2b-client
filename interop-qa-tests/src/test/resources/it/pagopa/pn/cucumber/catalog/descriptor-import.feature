@@ -25,6 +25,44 @@ Feature: Import di un descrittore
       | GSP  | api          |
       | GSP  | api,security |
 
+  @happy-path @no-parallel
+  Scenario Outline: [DESCRIPTOR_IMPORT_1_B1] La richiesta di import di un descrittore di un e-service da parte di un utente autorizzato, dato un pacchetto correttamente strutturato, contenente due documenti correttamente mappati nel file di configurazione, con nome dell'archivio e della main directory non coincidenti, va a buon fine e il descrittore viene correttamente creato in stato DRAFT con quei documenti
+    Given l'utente è un "admin" di "PA1"
+    Given l'utente ha già un pacchetto correttamente strutturato con un eservice <sincronia> in mode "DELIVER"
+    Given il nome del pacchetto viene modificato in "nome_pacchetto_non_coincidente.zip"
+    Given l'utente ha già richiesto una presignedURL per il caricamento del pacchetto
+    Given è già stato caricato il pacchetto nella presignedURL
+    When l'utente effettua una richiesta di import del descrittore
+    Then si ottiene status code 200
+    And il descrittore viene correttamente creato in stato DRAFT
+    And i due documenti risultano correttamente caricati
+
+    Examples:
+      | sincronia |
+      | sincrono  |
+
+    # 28/08/2026 Al momento non riproducibile a causa di un anomalia, rif. https://pagopaspa.slack.com/archives/C069AP16WG7/p1787912475573199
+#      | asincrono |
+
+  @happy-path @no-parallel
+  Scenario Outline: [DESCRIPTOR_IMPORT_1_B2] La richiesta di import di un descrittore di un e-service da parte di un utente autorizzato, dato un pacchetto correttamente strutturato, contenente due documenti correttamente mappati nel file di configurazione, con nome dell'archivio e della main directory non coincidenti, va a buon fine e il descrittore viene correttamente creato in stato DRAFT con quei documenti
+    Given l'utente è un "admin" di "PA1"
+    Given l'utente ha già un pacchetto correttamente strutturato con un eservice <sincronia> in mode "RECEIVE"
+    Given il nome del pacchetto viene modificato in "nome_pacchetto_non_coincidente.zip"
+    Given l'utente ha già richiesto una presignedURL per il caricamento del pacchetto
+    Given è già stato caricato il pacchetto nella presignedURL
+    When l'utente effettua una richiesta di import del descrittore
+    Then si ottiene status code 200
+    And il descrittore viene correttamente creato in stato DRAFT
+    And l'eservice contiene l'analisi del rischio
+
+    Examples:
+      | sincronia |
+      | sincrono  |
+
+    # 28/08/2026 Al momento non riproducibile a causa di un anomalia, rif. https://pagopaspa.slack.com/archives/C069AP16WG7/p1787912475573199
+#      | asincrono |
+
   @sad-path
   @nrt-minimal
   @descriptor_import2 @no-parallel
@@ -109,3 +147,27 @@ Feature: Import di un descrittore
     Given è già stato caricato il pacchetto nella presignedURL
     When l'utente effettua una richiesta di import del descrittore
     Then si ottiene status code 400
+
+  @happy-path @no-parallel
+  Scenario Outline: [DESCRIPTOR_IMPORT_8] La richiesta di import di un descrittore di un e-service da parte di un utente autorizzato NON va a buon fine se questo contiene un numero di cartelle diverso da 1
+    Given l'utente è un "admin" di "PA1"
+    Given l'utente ha già un pacchetto correttamente strutturato con un eservice <sincronia> in mode "<modalita>"
+    Given il contenuto del pacchetto viene modificato così che contenga <numero_cartelle> cartelle correttamente create
+    Given l'utente ha già richiesto una presignedURL per il caricamento del pacchetto
+    Given è già stato caricato il pacchetto nella presignedURL
+    When l'utente effettua una richiesta di import del descrittore
+    Then si ottiene status code 400
+
+    Examples:
+      | sincronia | modalita | numero_cartelle |
+      | sincrono  | DELIVER  | 0               |
+      | sincrono  | DELIVER  | 2               |
+      | sincrono  | RECEIVE  | 0               |
+      | sincrono  | RECEIVE  | 2               |
+
+  # 28/08/2026 Al momento non riproducibile a causa di un anomalia, rif. https://pagopaspa.slack.com/archives/C069AP16WG7/p1787912475573199
+#      | asincrono | DELIVER  | 0               |
+#      | asincrono | DELIVER  | 2               |
+#      | asincrono | RECEIVE  | 0               |
+#      | asincrono | RECEIVE  | 2               |
+
