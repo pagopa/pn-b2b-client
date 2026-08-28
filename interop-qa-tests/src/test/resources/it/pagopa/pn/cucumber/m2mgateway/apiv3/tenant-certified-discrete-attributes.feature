@@ -73,18 +73,48 @@ Feature: Gestione di assegnazione degli attributi certificati discreti ai tenant
       | admin | Privato | m2m-admin |
       | admin | Privato | m2m       |
 
-
-
-
   ### CASO DI TEST 2.2 Endpoint POST /tenants/{tenantId}/certifiedDiscreteAttributes
 
-  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_TENANTS_1] TODO
+  Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_TENANTS_CREATE_1] Gli attributi certificati discreti possono essere associati solo dagli utenti autorizzati.
     Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
     And viene effettuata la creazione dell'attributo certificato discreto con successo
       | name | description | code |
       |      |             |      |
-    When l'utente assegna a "PA1" l'attributo certificato discreto creato con un valore discreto di 100 con successo
-    And l'utente richiede l'elenco degli attributi certificati discreti di "PA1" e l'ultimo creato è associato con il valore discreto di 100
+    When l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
+    And l'utente assegna a "PA1" l'attributo certificato discreto creato con un valore discreto di 100
+    Then si ottiene lo status code 403
+
+    Examples:
+      | ruolo | ente    | ruoloM2M  |
+      | admin | GSP     | m2m       |
+      | admin | Privato | m2m-admin |
+      | admin | Privato | m2m       |
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_TENANTS_CREATE_2] L'assegnazione di un attributo certificato discreto non va a buon fine se l'UUID del certificato è invalido.
+    Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
+    And viene effettuata la creazione dell'attributo certificato discreto con successo
+      | name | description | code |
+      |      |             |      |
+    And l'utente assegna a "PA1" l'attributo certificato discreto creato con un valore discreto di 100, utilizzando per l'ente un UUID invalido
+    Then si ottiene lo status code 403
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_TENANTS_CREATE_3] L'assegnazione di un attributo certificato discreto non va a buon fine se l'UUID del certificato è inesistente.
+    Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
+    And viene effettuata la creazione dell'attributo certificato discreto con successo
+      | name | description | code |
+      |      |             |      |
+    When l'utente assegna a "PA1" l'attributo certificato discreto creato con un valore discreto di 100, utilizzando per l'ente un UUID inesistente
+    Then si ottiene lo status code 403
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_TENANTS_CREATE_3] L'assegnazione di un attributo certificato discreto non va a buon fine se il token di autenticazione non è valido.
+    Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
+    And viene effettuata la creazione dell'attributo certificato discreto con successo
+      | name | description | code |
+      |      |             |      |
+    And viene impostato per l'utente un token m2m non valido
+    When l'utente assegna a "PA1" l'attributo certificato discreto creato con un valore discreto di 100
+    Then si ottiene lo status code 403
+
 
 
   ### CASO DI TEST 2.3 - Endpoint DELETE /tenants/{tenantId}/certifiedDiscreteAttributes/{attributeId}

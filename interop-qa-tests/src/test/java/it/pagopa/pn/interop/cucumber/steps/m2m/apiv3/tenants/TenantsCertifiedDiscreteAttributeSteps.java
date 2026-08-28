@@ -31,7 +31,6 @@ public class TenantsCertifiedDiscreteAttributeSteps {
         this.sharedStepsContext = sharedStepsContext;
     }
 
-
     @When("l'utente assegna a {string} l'attributo certificato discreto creato con un valore discreto di {int}")
     public void assignTenantCertifiedDiscreteAttribute(String tenantType, Integer discreteValue) {
         UUID tenantId = identityService.getOrganizationId(tenantType);
@@ -46,6 +45,16 @@ public class TenantsCertifiedDiscreteAttributeSteps {
         sharedStepsContext.getHttpCallExecutor().performCall(
             () -> this.tenantClient.assignTenantCertifiedDiscreteAttribute(tenantId, seed)
         );
+    }
+
+    @When("l'utente assegna a {string} l'attributo certificato discreto creato con un valore discreto di {int}, utilizzando per l'ente un UUID {entityIdType}")
+    public void assignTenantCertifiedDiscreteAttributeWithInvalidUuid(String tenantType, Integer discreteValue, EntityIdType entityIdType) {
+        UUID tenantId = switch (entityIdType){
+            case INVALID_ID -> UUID.fromString("00000000-0000-4000-8000-abcdefabcdef");
+            case NON_EXISTENT_ID -> UUID.randomUUID();
+            default -> throw new IllegalStateException("Tipo di id non supportato: " + entityIdType.name());
+        };
+        // TODO
     }
 
     @When("l'utente assegna a {string} l'attributo certificato discreto creato con un valore discreto di {int} con successo")
