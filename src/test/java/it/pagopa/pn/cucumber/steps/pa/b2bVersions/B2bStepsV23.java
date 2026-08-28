@@ -120,14 +120,6 @@ public class B2bStepsV23 implements B2bStepsInterface {
     }
 
     @Override
-    public void readEventsUpToTimelineElement(String timelineEventCategory) {
-        verifyTestCompatibilityWithVersion(timelineEventCategory, true);
-        WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder().build();
-        waitForEventOrStatus(TIMELINE_SLOW, TIMELINE, timelineEventCategory, filters);
-        checkIfTimelineElementExists(timelineEventCategory, true, null, null);
-    }
-
-    @Override
     public void readEventsUpToTimelineElementFromDeliveryPush(String timelineEventCategory, AbstractDataTest dataTest, boolean existCheck) {
         TimingForPolling timingForPolling = b2bSteps.getTimingForPolling();
         // calc how much time wait
@@ -167,18 +159,6 @@ public class B2bStepsV23 implements B2bStepsInterface {
                                 .isNull();
                     }
                 });
-    }
-
-    @Override
-    public void readEventsUpToStatus(String status, boolean exists) {
-        if (exists) {
-            verifyTestCompatibilityWithVersion(status, false);
-        }
-        WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder()
-                .statusHistory(status)
-                .build();
-        waitForEventOrStatus(STATUS_RAPID, STATUS, status, filters);
-        checkIfStatusExists(exists);
     }
 
     @Override
