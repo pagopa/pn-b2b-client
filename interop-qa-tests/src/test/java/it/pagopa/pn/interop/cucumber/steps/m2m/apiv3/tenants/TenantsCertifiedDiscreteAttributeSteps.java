@@ -43,18 +43,22 @@ public class TenantsCertifiedDiscreteAttributeSteps {
         seed.setCertifiedDiscreteValue(discreteValue);
 
         sharedStepsContext.getHttpCallExecutor().performCall(
-            () -> this.tenantClient.assignTenantCertifiedDiscreteAttribute(tenantId, seed)
+                () -> this.tenantClient.assignTenantCertifiedDiscreteAttribute(tenantId, seed)
         );
     }
 
     @When("l'utente assegna a {string} l'attributo certificato discreto creato con un valore discreto di {int}, utilizzando per l'ente un UUID {entityIdType}")
     public void assignTenantCertifiedDiscreteAttributeWithInvalidUuid(String tenantType, Integer discreteValue, EntityIdType entityIdType) {
-        UUID tenantId = switch (entityIdType){
-            case INVALID_ID -> UUID.fromString("00000000-0000-4000-8000-abcdefabcdef");
-            case NON_EXISTENT_ID -> UUID.randomUUID();
-            default -> throw new IllegalStateException("Tipo di id non supportato: " + entityIdType.name());
-        };
-        // TODO
+        CertifiedDiscreteAttribute lastCreated = getLastCreatedCertifiedDiscreteAttribute();
+
+        TenantCertifiedDiscreteAttributeSeed seed = new TenantCertifiedDiscreteAttributeSeed();
+        assert lastCreated != null;
+        seed.setId(lastCreated.getId());
+        seed.setCertifiedDiscreteValue(discreteValue);
+
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> this.tenantClient.assignTenantCertifiedDiscreteAttribute(getEntityId(entityIdType), seed)
+        );
     }
 
     @When("l'utente assegna a {string} l'attributo certificato discreto creato con un valore discreto di {int} con successo")
@@ -74,6 +78,54 @@ public class TenantsCertifiedDiscreteAttributeSteps {
         );
     }
 
+    @When("l'utente tenta di revocare a {string} l'attributo certificato discreto precedentemente associato")
+    public void revokeTenantCertifiedDiscreteAttribute(String tenantType) {
+        UUID tenantId = identityService.getOrganizationId(tenantType);
+        CertifiedDiscreteAttribute lastCreated = this.getLastCreatedCertifiedDiscreteAttribute();
+        assert lastCreated != null;
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> this.tenantClient.revokeTenantCertifiedDiscreteAttribute(tenantId, lastCreated.getId())
+        );
+    }
+
+    @When("l'utente revoca a {string} l'attributo certificato discreto precedentemente associato con successo")
+    public void revokeTenantCertifiedDiscreteAttributeSuccessfully(String tenantType) {
+        this.revokeTenantCertifiedDiscreteAttribute(tenantType);
+        assert sharedStepsContext.getHttpCallExecutor().getResponseStatus().is2xxSuccessful();
+
+        UUID tenantId = identityService.getOrganizationId(tenantType);
+        CertifiedDiscreteAttribute lastCreated = this.getLastCreatedCertifiedDiscreteAttribute();
+        sharedStepsContext.getPollingService().makePolling(
+                () -> {
+                    assert lastCreated != null;
+                    return findTenantCertifiedDiscreteAttribute(tenantId, lastCreated.getId());
+                },
+                res -> {
+                    assert res.getRevokedAt() != null;
+                    return ! res.getRevokedAt().isEmpty();
+                },
+                "Tenant certified discrete attribute not revoked"
+        );
+    }
+
+    @When("l'utente tenta di revocare a {string} l'attributo certificato discreto precedentemente associato, utilizzando per l'ente un UUID {entityIdType}")
+    public void revokeTenantCertifiedDiscreteAttributeWithInvalidTenantUuid(String tenantType, EntityIdType entityIdType) {
+        UUID tenantId = getEntityId(entityIdType);
+        CertifiedDiscreteAttribute lastCreated = this.getLastCreatedCertifiedDiscreteAttribute();
+        assert lastCreated != null;
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> this.tenantClient.revokeTenantCertifiedDiscreteAttribute(tenantId, lastCreated.getId())
+        );
+    }
+
+    @When("l'utente tenta di revocare a {string} l'attributo certificato discreto precedentemente associato, utilizzando un UUID {entityIdType}")
+    public void revokeTenantCertifiedDiscreteAttributeWithInvalidAttributeUuid(String tenantType, EntityIdType entityIdType) {
+        UUID tenantId = getEntityId(entityIdType);
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> this.tenantClient.revokeTenantCertifiedDiscreteAttribute(tenantId, getEntityId(entityIdType))
+        );
+    }
+
     @When("l'utente richiede l'elenco degli attributi certificati discreti di {string} e l'ultimo creato è associato con il valore discreto di {int}")
     public void getTenantCertifiedDiscreteAttributes(String tenantType, Integer discreteValue) {
         UUID tenantId = identityService.getOrganizationId(tenantType);
@@ -89,12 +141,7 @@ public class TenantsCertifiedDiscreteAttributeSteps {
 
     @When("l'utente richiede l'elenco degli attributi certificati discreti di {string} utilizzando un UUID {entityIdType}")
     public void getTenantCertifiedDiscreteAttributesWithInvalidUuid(String tenantType, EntityIdType entityIdType) {
-        UUID tenantId = switch (entityIdType){
-            case INVALID_ID -> UUID.fromString("00000000-0000-4000-8000-abcdefabcdef");
-            case NON_EXISTENT_ID -> UUID.randomUUID();
-            default -> throw new IllegalStateException("Tipo di id non supportato: " + entityIdType.name());
-        };
-        this.tenantClient.getTenantCertifiedDiscreteAttributes(tenantId, 0, 50);
+        this.tenantClient.getTenantCertifiedDiscreteAttributes(getEntityId(entityIdType), 0, 50);
     }
 
     /**
@@ -113,6 +160,14 @@ public class TenantsCertifiedDiscreteAttributeSteps {
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> this.tenantClient.getTenantCertifiedDiscreteAttributes(tenantId, offset, pageSize)
         );
+    }
+
+    private UUID getEntityId(EntityIdType entityIdType) {
+        return switch (entityIdType) {
+            case INVALID_ID -> UUID.fromString("00000000-0000-4000-8000-abcdefabcdef");
+            case NON_EXISTENT_ID -> UUID.randomUUID();
+            default -> throw new IllegalStateException("Tipo di id non supportato: " + entityIdType.name());
+        };
     }
 
     private CertifiedDiscreteAttribute getLastCreatedCertifiedDiscreteAttribute() {
