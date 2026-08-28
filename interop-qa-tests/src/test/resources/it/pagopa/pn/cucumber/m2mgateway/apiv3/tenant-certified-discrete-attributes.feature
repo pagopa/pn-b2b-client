@@ -188,5 +188,75 @@ Feature: Gestione di assegnazione degli attributi certificati discreti ai tenant
     When l'utente tenta di revocare a "PA1" l'attributo certificato discreto precedentemente associato
     Then si ottiene lo status code 403
 
-
   ### CASO DI TEST 2.4 - Endpoint PATCH /tenants/{tenantId}/certifiedDiscreteAttributes/{attributeId}
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_TENANTS_PATCH_1] L'aggiornamento di un attributo certificato discreto va a buon fine se l'utente è autorizzato.
+    Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
+    And viene effettuata la creazione dell'attributo certificato discreto con successo
+      | name | description | code |
+      |      |             |      |
+    And l'utente assegna a "PA1" l'attributo certificato discreto creato con un valore discreto di 100 con successo
+    When l'utente modifica a "PA1" l'attributo certificato discreto precedentemente associato, impostando il valore discreto a 200 con successo
+    Then si ottiene lo status code 200
+
+  Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_TENANTS_PATCH_2] L'aggiornamento di un attributo certificato discreto non va a buon fine se l'utente non è autorizzato.
+    Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
+    And viene effettuata la creazione dell'attributo certificato discreto con successo
+       | name | description | code |
+       |      |             |      |
+    And l'utente assegna a "PA1" l'attributo certificato discreto creato con un valore discreto di 100 con successo
+    When l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
+    And l'utente tenta la modifica dell'attributo certificato discreto precedentemente associato a "PA1", impostando il valore discreto a 200
+    Then si ottiene lo status code 403
+
+    Examples:
+      | ruolo | ente    | ruoloM2M  |
+      | admin | GSP     | m2m       |
+      | admin | Privato | m2m-admin |
+      | admin | Privato | m2m       |
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_TENANTS_PATCH_3] L'aggiornamento di un attributo certificato discreto non va a buon fine se l'UUID dell'ente è invalido.
+    Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
+    And viene effettuata la creazione dell'attributo certificato discreto con successo
+      | name | description | code |
+      |      |             |      |
+    And l'utente assegna a "PA1" l'attributo certificato discreto creato con un valore discreto di 100 con successo
+    When l'utente tenta la modifica dell'attributo certificato discreto precedentemente associato a "PA1", impostando il valore discreto a 200, utilizzando per l'ente un UUID invalido
+    Then si ottiene lo status code 403
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_TENANTS_PATCH_4] L'aggiornamento di un attributo certificato discreto non va a buon fine se l'UUID dell'attributo è invalido.
+    Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
+    And viene effettuata la creazione dell'attributo certificato discreto con successo
+      | name | description | code |
+      |      |             |      |
+    And l'utente assegna a "PA1" l'attributo certificato discreto creato con un valore discreto di 100 con successo
+    When l'utente tenta la modifica dell'attributo certificato discreto precedentemente associato a "PA1", impostando il valore discreto a 200, utilizzando un UUID invalido
+    Then si ottiene lo status code 403
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_TENANTS_PATCH_5] L'aggiornamento di un attributo certificato discreto non va a buon fine se l'UUID dell'ente non esiste.
+    Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
+    And viene effettuata la creazione dell'attributo certificato discreto con successo
+      | name | description | code |
+      |      |             |      |
+    And l'utente assegna a "PA1" l'attributo certificato discreto creato con un valore discreto di 100 con successo
+    When l'utente tenta la modifica dell'attributo certificato discreto precedentemente associato a "PA1", impostando il valore discreto a 200, utilizzando per l'ente un UUID inesistente
+    Then si ottiene lo status code 403
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_TENANTS_PATCH_6] L'aggiornamento di un attributo certificato discreto non va a buon fine se l'UUID dell'attributo non esiste.
+    Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
+    And viene effettuata la creazione dell'attributo certificato discreto con successo
+      | name | description | code |
+      |      |             |      |
+    And l'utente assegna a "PA1" l'attributo certificato discreto creato con un valore discreto di 100 con successo
+    When l'utente tenta la modifica dell'attributo certificato discreto precedentemente associato a "PA1", impostando il valore discreto a 200, utilizzando un UUID inesistente
+    Then si ottiene lo status code 403
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_TENANTS_PATCH_7] La revoca di un attributo certificato discreto non va a buon fine se il token di autenticazione non è valido.
+    Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
+    And viene effettuata la creazione dell'attributo certificato discreto con successo
+      | name | description | code |
+      |      |             |      |
+    And l'utente assegna a "PA1" l'attributo certificato discreto creato con un valore discreto di 100 con successo
+    And viene impostato per l'utente un token m2m non valido
+    When l'utente tenta la modifica dell'attributo certificato discreto precedentemente associato a "PA1", impostando il valore discreto a 200
+    Then si ottiene lo status code 403
