@@ -34,7 +34,7 @@ Feature: Gestione degli attributi certificati discreti degli e-services attraver
       | Privato | admin | m2m-admin |
       | Privato | admin | m2m       |
 
-  Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_GET_3] Il recupero degli attributi certificati discreti assegnati all'e-service non va a buon fine se l'ID dell'e-service non è valido.
+  Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_GET_3] Il recupero degli attributi certificati discreti assegnati all'e-service non va a buon fine se l'ID dell'e-service non esiste.
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente aggiunge i seguenti attributi al descrittore dell'e-service:
