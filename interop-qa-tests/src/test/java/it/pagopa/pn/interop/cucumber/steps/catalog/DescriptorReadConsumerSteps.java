@@ -121,7 +121,5 @@ public class DescriptorReadConsumerSteps {
                 log.info("Not found template reference as expected");
             }
         }
-        // TODO rimuovere questa riga di log di controllo temporaneo dello stato
-        log.info("Stato descrittore: " + obj.getState().toString());
     }
 }
