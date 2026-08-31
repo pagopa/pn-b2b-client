@@ -495,7 +495,7 @@ Feature: Archiviazione manuale di un descrittore
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
   @happy-path
-  Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_CLONING_1.3] L'ente erogatore può clonare un descrittore in stato ARCHIVED
+  Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_CLONING_1.3] L'ente erogatore può clonare un descrittore archiviato automaticamente per l'assenza di richieste di fruizione attive
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
