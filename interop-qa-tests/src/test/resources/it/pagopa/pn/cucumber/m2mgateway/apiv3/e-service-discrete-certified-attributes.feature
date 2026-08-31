@@ -92,5 +92,5 @@ Feature: Gestione degli attributi certificati discreti degli e-services attraver
       | group | kind               | code  | comparator | value |
       | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
     When viene impostato per l'utente un token non valido
-    And l'utente tenta di recuperare gli attributi certificati discreti del descrittore dell'eservice specificando un ID inesistente per l'e-service
-    Then si ottiene lo status code 400
+    And l'utente tenta di recuperare gli attributi certificati discreti del descrittore dell'eservice
+    Then si ottiene lo status code 403
