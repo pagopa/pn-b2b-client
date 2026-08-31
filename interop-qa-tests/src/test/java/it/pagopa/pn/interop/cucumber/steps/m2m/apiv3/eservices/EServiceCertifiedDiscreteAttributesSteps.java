@@ -192,10 +192,9 @@ public class EServiceCertifiedDiscreteAttributesSteps {
 
     private UUID generateId(EntityIdType entityIdType) {
         return switch (entityIdType){
-            case INVALID_ID -> UUID.fromString("12345-not-a-valid-uuid");
+            case INVALID_ID -> UUID.fromString("0-0-0-0-0");
             case NON_EXISTENT_ID -> UUID.randomUUID();
             default -> throw new IllegalStateException("Tipo di id non supportato: " + entityIdType.name());
         };
     }
-
 }

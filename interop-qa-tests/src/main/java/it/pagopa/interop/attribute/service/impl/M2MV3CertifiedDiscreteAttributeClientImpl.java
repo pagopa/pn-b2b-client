@@ -92,8 +92,8 @@ public class M2MV3CertifiedDiscreteAttributeClientImpl extends AbstractDPoPClien
     @Override
     public UUID generateId(EntityIdType type) {
         return switch (type){
-            case INVALID_ID -> UUID.fromString("00000000-0000-4000-8000-abcdefabcdef"); // La classe UUID non permette di formare un UUID malformato
-            case NON_EXISTENT_ID -> UUID.fromString("00000000-0000-4000-8000-abcdefabcdef");
+            case INVALID_ID -> UUID.fromString("0-0-0-0-0");
+            case NON_EXISTENT_ID -> UUID.randomUUID();
             default -> throw new IllegalStateException("Tipo di id non supportato: " + type.name());
         };
     }
