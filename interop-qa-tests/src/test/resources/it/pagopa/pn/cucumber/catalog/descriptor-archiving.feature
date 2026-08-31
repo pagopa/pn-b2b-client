@@ -478,6 +478,7 @@ Feature: Archiviazione manuale di un descrittore
     And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     When l'utente tenta di clonare la vecchia versione dell'e-service
     Then si ottiene response status code 200
+    And l'e-service è stato clonato con successo
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
   @happy-path
@@ -490,6 +491,7 @@ Feature: Archiviazione manuale di un descrittore
     And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     When l'utente tenta di clonare la vecchia versione dell'e-service
     Then si ottiene response status code 200
+    And l'e-service è stato clonato con successo
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
   @happy-path
@@ -499,6 +501,7 @@ Feature: Archiviazione manuale di un descrittore
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente tenta di clonare la vecchia versione dell'e-service
     Then si ottiene response status code 200
+    And l'e-service è stato clonato con successo
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
   @happy-path
