@@ -469,7 +469,7 @@ Feature: Archiviazione manuale di un descrittore
       | api          |
       | api,security |
 
-  @happy-path
+  @happy-path @manual-archiving-cloning
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_CLONING_1.1] L'ente erogatore può clonare un descrittore in stato ARCHIVING
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -482,7 +482,7 @@ Feature: Archiviazione manuale di un descrittore
     And l'e-service è in stato "DRAFT"
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
-  @happy-path
+  @happy-path @manual-archiving-cloning
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_CLONING_1.2] L'ente erogatore può clonare un descrittore in stato ARCHIVING_SUSPENDED
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -496,7 +496,7 @@ Feature: Archiviazione manuale di un descrittore
     And l'e-service è in stato "DRAFT"
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
-  @happy-path
+  @happy-path @manual-archiving-cloning
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_CLONING_1.3] L'ente erogatore può clonare un descrittore archiviato automaticamente per l'assenza di richieste di fruizione attive
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -507,7 +507,7 @@ Feature: Archiviazione manuale di un descrittore
     And l'e-service è in stato "DRAFT"
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
-  @happy-path
+  @happy-path @manual-archiving-cloning
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_CLONING_1.4] L'ente erogatore può clonare un descrittore archiviato al termine del processo di archiviazione manuale
     Given l'utente è un "admin" di "PA1"
     When l'utente tenta di clonare il descrittore con id "3c63c85f-7dac-4cdb-a9fe-586442624677" dell'e-service con id "ee9dbc42-289f-400d-86f8-51e8fb704933"
