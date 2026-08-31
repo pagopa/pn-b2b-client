@@ -75,6 +75,17 @@ public class EServiceCloneSteps {
         );
     }
 
+    @When("l'utente tenta di clonare il descrittore con id {string} dell'e-service con id {string}")
+    public void tryCloneEServiceDescriptor(String descriptorId, String eServiceId) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getEServiceClient().cloneEServiceByDescriptor(
+                        UUID.fromString(eServiceId),
+                        UUID.fromString(descriptorId)
+                )
+        );
+    }
+
     @When("l'utente clona quell'e-service")
     public void cloneEservice() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
