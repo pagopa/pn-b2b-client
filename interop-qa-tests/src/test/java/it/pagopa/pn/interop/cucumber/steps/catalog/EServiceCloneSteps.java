@@ -89,6 +89,23 @@ public class EServiceCloneSteps {
             return;
         }
 
+        loadClonedEServiceFromResponse();
+    }
+
+    @Then("l'e-service è stato clonato con successo")
+    public void verifyEServiceClonedSuccessfully() {
+        HttpStatus responseStatus = sharedStepsContext.getHttpCallExecutor().getResponseStatus();
+        Assertions.assertThat(responseStatus)
+                .as("La clonazione dell'e-service deve restituire uno status HTTP")
+                .isNotNull();
+        Assertions.assertThat(responseStatus.is2xxSuccessful())
+                .as("La clonazione dell'e-service deve avere successo, status ricevuto: %s", responseStatus)
+                .isTrue();
+
+        loadClonedEServiceFromResponse();
+    }
+
+    private void loadClonedEServiceFromResponse() {
         UUID eserviceId = ((CreatedEServiceDescriptor) sharedStepsContext.getHttpCallExecutor().getResponse()).getId();
         UUID descriptorId = ((CreatedEServiceDescriptor) sharedStepsContext.getHttpCallExecutor().getResponse()).getDescriptorId();
 
