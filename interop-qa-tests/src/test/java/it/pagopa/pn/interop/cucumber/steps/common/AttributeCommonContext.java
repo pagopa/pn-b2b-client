@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptorCertifiedDiscreteAttribute;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.IterableUtils;
@@ -58,6 +59,7 @@ public class AttributeCommonContext {
 
     List<CertifiedDiscreteAttribute> certifiedDiscretePublished = new ArrayList<>();
     List<CertifiedDiscreteAttribute> certifiedDiscreteActual = new ArrayList<>();
+    List<List<CertifiedDiscreteAttribute>> certifiedDiscreteAssigned = new ArrayList<>();
 
     List<DeclaredAttribute> declaredPublished = new ArrayList<>();
     List<DeclaredAttribute> declaredActual = new ArrayList<>();
