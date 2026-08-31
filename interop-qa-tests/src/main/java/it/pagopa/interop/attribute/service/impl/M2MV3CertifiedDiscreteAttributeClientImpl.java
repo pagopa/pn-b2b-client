@@ -99,9 +99,9 @@ public class M2MV3CertifiedDiscreteAttributeClientImpl extends AbstractDPoPClien
     }
 
     @Override
-    public CertifiedDiscreteAttribute create(CertifiedDiscreteAttributeSeed agreementPayload) {
+    public CertifiedDiscreteAttribute create(CertifiedDiscreteAttributeSeed payload) {
         return this.performOperation(SimpleOperation.of(
-            () -> this.attributesApi.createCertifiedDiscreteAttribute(agreementPayload),
+            () -> this.attributesApi.createCertifiedDiscreteAttribute(payload),
             res -> res
         )).orElse(null);
     }
