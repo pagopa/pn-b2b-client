@@ -1010,6 +1010,39 @@ Feature: Archiviazione manuale di un e-service
     And l'e-service è in stato "DRAFT"
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
+  @happy-path
+  Scenario: [MANUAL_ARCHIVING_ESERVICE_ASYNC_CLONING_1.1] L'ente erogatore può clonare un e-service asincrono in stato ARCHIVING
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
+      | asyncExchangeProperties.responseTime           | 100  |
+      | asyncExchangeProperties.resourceAvailableTime | 100  |
+      | asyncExchangeProperties.confirmation           | true |
+      | asyncExchangeProperties.bulk                   | true |
+      | asyncExchangeProperties.maxResultSet           | 50   |
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    When l'utente tenta di clonare quell'e-service
+    Then si ottiene response status code 200
+    And l'e-service è stato clonato con successo
+    And l'e-service è in stato "DRAFT"
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+  @happy-path
+  Scenario: [MANUAL_ARCHIVING_ESERVICE_ASYNC_CLONING_1.2] L'ente erogatore può clonare un e-service asincrono in stato ARCHIVING_SUSPENDED
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
+      | asyncExchangeProperties.responseTime           | 100  |
+      | asyncExchangeProperties.resourceAvailableTime | 100  |
+      | asyncExchangeProperties.confirmation           | true |
+      | asyncExchangeProperties.bulk                   | true |
+      | asyncExchangeProperties.maxResultSet           | 50   |
+    And "PA1" ha già sospeso quell'e-service
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    When l'utente tenta di clonare quell'e-service
+    Then si ottiene response status code 200
+    And l'e-service è stato clonato con successo
+    And l'e-service è in stato "DRAFT"
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
   Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_ASYNC_1.1] Un ente erogatore di un e-service asincrono in stato PUBLISHED e seconda versione DEPRECATED, può avviare il processo di archiviazione manuale dell'e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
