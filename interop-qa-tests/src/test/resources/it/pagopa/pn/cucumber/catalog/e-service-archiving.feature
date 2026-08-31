@@ -994,7 +994,14 @@ Feature: Archiviazione manuale di un e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "SUSPENDED"
     And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
-    When l'utente clona quell'e-service
+    When l'utente tenta di clonare quell'e-service
+    Then si ottiene response status code 200
+    And l'e-service è stato clonato con successo
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+  Scenario: [MANUAL_ARCHIVING_ESERVICE_CLONING_1.3] L'ente erogatore può clonare un e-service in stato ARCHIVED
+    Given l'utente è un "admin" di "PA1"
+    When l'utente tenta di clonare il descrittore con id "3c63c85f-7dac-4cdb-a9fe-586442624677" dell'e-service con id "45d822b9-066c-4a77-b4a1-331135496907"
     Then si ottiene response status code 200
     And l'e-service è stato clonato con successo
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
