@@ -95,39 +95,39 @@ Feature: Listing catalogo e-services
     Given l'utente è un "admin" di "PA1"
     When "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e non trova riferimenti al template
+    Then l'utente legge da catalogo l'ultimo descrittore e-service senza riferimenti al template
 
     When "PA1" ha già pubblicato una nuova versione per quell'e-service
     And l'utente è un "admin" di "PA1"
     And la vecchia versione dell'e-service è in stato "ARCHIVED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura del vecchio descrittore e non trova riferimenti al template
+    Then l'utente legge da catalogo il vecchio descrittore e-service senza riferimenti al template
 
     Given "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'utente è un "admin" di "PA1"
     When l'utente sospende quel descrittore
     And l'e-service è in stato "SUSPENDED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e non trova riferimenti al template
+    Then l'utente legge da catalogo l'ultimo descrittore e-service senza riferimenti al template
 
     Given l'utente è un "admin" di "PA1"
     And l'utente attiva il descrittore di quell'e-service
     When "PA1" ha già pubblicato una nuova versione per quell'e-service
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura del vecchio descrittore e non trova riferimenti al template
+    Then l'utente legge da catalogo il vecchio descrittore e-service senza riferimenti al template
 
     Given l'utente è un "admin" di "PA1"
     When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 30 giorni di preavviso
     And l'e-service è in stato "ARCHIVING"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e non trova riferimenti al template
+    Then l'utente legge da catalogo l'ultimo descrittore e-service senza riferimenti al template
 
     Given l'utente è un "admin" di "PA1"
     When "PA1" ha già sospeso quell'e-service
     And l'e-service è in stato "ARCHIVING_SUSPENDED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e non trova riferimenti al template
+    Then l'utente legge da catalogo l'ultimo descrittore e-service senza riferimenti al template
 
   @happy-path
   @nrt-minimal
@@ -141,39 +141,39 @@ Feature: Listing catalogo e-services
     And l'utente pubblica l'e-service
     And l'e-service è in stato "PUBLISHED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e non trova riferimenti al template
+    Then l'utente legge da catalogo l'ultimo descrittore e-service senza riferimenti al template
 
     When "PA1" ha già pubblicato una nuova versione per quell'e-service
     And l'utente è un "admin" di "PA1"
     And la vecchia versione dell'e-service è in stato "ARCHIVED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura del vecchio descrittore e non trova riferimenti al template
+    Then l'utente legge da catalogo il vecchio descrittore e-service senza riferimenti al template
 
     Given "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'utente è un "admin" di "PA1"
     When l'utente sospende quel descrittore
     And l'e-service è in stato "SUSPENDED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e non trova riferimenti al template
+    Then l'utente legge da catalogo l'ultimo descrittore e-service senza riferimenti al template
 
     Given l'utente è un "admin" di "PA1"
     And l'utente attiva il descrittore di quell'e-service
     When "PA1" ha già pubblicato una nuova versione per quell'e-service
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura del vecchio descrittore e non trova riferimenti al template
+    Then l'utente legge da catalogo il vecchio descrittore e-service senza riferimenti al template
 
     Given l'utente è un "admin" di "PA1"
     When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 30 giorni di preavviso
     And l'e-service è in stato "ARCHIVING"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e non trova riferimenti al template
+    Then l'utente legge da catalogo l'ultimo descrittore e-service senza riferimenti al template
 
     Given l'utente è un "admin" di "PA1"
     When "PA1" ha già sospeso quell'e-service
     And l'e-service è in stato "ARCHIVING_SUSPENDED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e non trova riferimenti al template
+    Then l'utente legge da catalogo l'ultimo descrittore e-service senza riferimenti al template
 
   @happy-path
   @nrt-minimal
@@ -189,39 +189,39 @@ Feature: Listing catalogo e-services
       | asyncExchangeProperties.bulk                  | true |
       | asyncExchangeProperties.maxResultSet          | 50   |
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e non trova riferimenti al template
+    Then l'utente legge da catalogo l'ultimo descrittore e-service senza riferimenti al template
 
     When "PA1" ha già pubblicato una nuova versione per quell'e-service asincrono
     And l'utente è un "admin" di "PA1"
     And la vecchia versione dell'e-service è in stato "ARCHIVED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura del vecchio descrittore e non trova riferimenti al template
+    Then l'utente legge da catalogo il vecchio descrittore e-service senza riferimenti al template
 
     Given "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'utente è un "admin" di "PA1"
     When l'utente sospende quel descrittore
     And l'e-service è in stato "SUSPENDED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e non trova riferimenti al template
+    Then l'utente legge da catalogo l'ultimo descrittore e-service senza riferimenti al template
 
     Given l'utente è un "admin" di "PA1"
     And l'utente attiva il descrittore di quell'e-service
     When "PA1" ha già pubblicato una nuova versione per quell'e-service asincrono
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura del vecchio descrittore e non trova riferimenti al template
+    Then l'utente legge da catalogo il vecchio descrittore e-service senza riferimenti al template
 
     Given l'utente è un "admin" di "PA1"
     When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 30 giorni di preavviso
     And l'e-service è in stato "ARCHIVING"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e non trova riferimenti al template
+    Then l'utente legge da catalogo l'ultimo descrittore e-service senza riferimenti al template
 
     Given l'utente è un "admin" di "PA1"
     When "PA1" ha già sospeso quell'e-service
     And l'e-service è in stato "ARCHIVING_SUSPENDED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e non trova riferimenti al template
+    Then l'utente legge da catalogo l'ultimo descrittore e-service senza riferimenti al template
 
   @happy-path
   @nrt-minimal
@@ -240,39 +240,39 @@ Feature: Listing catalogo e-services
     And l'utente pubblica l'e-service
     And l'e-service è in stato "PUBLISHED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e non trova riferimenti al template
+    Then l'utente legge da catalogo l'ultimo descrittore e-service senza riferimenti al template
 
     When "PA1" ha già pubblicato una nuova versione per quell'e-service asincrono
     And l'utente è un "admin" di "PA1"
     And la vecchia versione dell'e-service è in stato "ARCHIVED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura del vecchio descrittore e non trova riferimenti al template
+    Then l'utente legge da catalogo il vecchio descrittore e-service senza riferimenti al template
 
     Given "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'utente è un "admin" di "PA1"
     When l'utente sospende quel descrittore
     And l'e-service è in stato "SUSPENDED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e non trova riferimenti al template
+    Then l'utente legge da catalogo l'ultimo descrittore e-service senza riferimenti al template
 
     Given l'utente è un "admin" di "PA1"
     And l'utente attiva il descrittore di quell'e-service
     When "PA1" ha già pubblicato una nuova versione per quell'e-service asincrono
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura del vecchio descrittore e non trova riferimenti al template
+    Then l'utente legge da catalogo il vecchio descrittore e-service senza riferimenti al template
 
     Given l'utente è un "admin" di "PA1"
     When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 30 giorni di preavviso
     And l'e-service è in stato "ARCHIVING"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e non trova riferimenti al template
+    Then l'utente legge da catalogo l'ultimo descrittore e-service senza riferimenti al template
 
     Given l'utente è un "admin" di "PA1"
     When "PA1" ha già sospeso quell'e-service
     And l'e-service è in stato "ARCHIVING_SUSPENDED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e non trova riferimenti al template
+    Then l'utente legge da catalogo l'ultimo descrittore e-service senza riferimenti al template
 
   @happy-path
   @nrt-minimal
@@ -282,9 +282,10 @@ Feature: Listing catalogo e-services
 
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente tenta delle modifiche alla versione dell'e-service template
     When l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e trova riferimenti al template
+    Then l'utente legge da catalogo l'ultimo descrittore e-service con riferimenti al template
 
     Given l'utente è un "admin" di "PA1"
     And l'utente crea una versione in bozza per quell'e-service istanza di template
@@ -294,14 +295,14 @@ Feature: Listing catalogo e-services
     And la versione più recente dell'e-service è in stato "PUBLISHED"
     And la vecchia versione dell'e-service è in stato "ARCHIVED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura del vecchio descrittore e trova riferimenti al template
+    Then l'utente legge da catalogo il vecchio descrittore e-service con riferimenti al template
 
     Given "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'utente è un "admin" di "PA1"
     When l'utente sospende quel descrittore
     And l'e-service è in stato "SUSPENDED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e trova riferimenti al template
+    Then l'utente legge da catalogo l'ultimo descrittore e-service con riferimenti al template
 
     Given l'utente è un "admin" di "PA1"
     And l'utente attiva il descrittore di quell'e-service
@@ -312,19 +313,19 @@ Feature: Listing catalogo e-services
     And la versione più recente dell'e-service è in stato "PUBLISHED"
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura del vecchio descrittore e trova riferimenti al template
+    Then l'utente legge da catalogo il vecchio descrittore e-service con riferimenti al template
 
     Given l'utente è un "admin" di "PA1"
     When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 30 giorni di preavviso
     And l'e-service è in stato "ARCHIVING"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e trova riferimenti al template
+    Then l'utente legge da catalogo l'ultimo descrittore e-service con riferimenti al template
 
     Given l'utente è un "admin" di "PA1"
     When "PA1" ha già sospeso quell'e-service
     And l'e-service è in stato "ARCHIVING_SUSPENDED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e trova riferimenti al template
+    Then l'utente legge da catalogo l'ultimo descrittore e-service con riferimenti al template
 
   @happy-path
   @nrt-minimal
@@ -340,7 +341,10 @@ Feature: Listing catalogo e-services
     And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
     And l'utente effettua delle modifiche alla versione dell'e-service template con successo
     And l'utente tenta la pubblicazione della versione dell'e-service template
-    And la pubblicazione della versione dell'e-service template è stata effettuata correttamente
+    When la pubblicazione della versione dell'e-service template è stata effettuata correttamente
+    Then l'utente legge da catalogo l'ultimo descrittore e-service con riferimenti al template e dati:
+      | isNewTemplateVersionAvailable | true |
+
     When l'utente tenta l'aggiornamento dell'istanza dell'e-service template all'ultima versione
     And la versione più recente dell'e-service è in stato "DRAFT"
     And l'utente tenta di associare un'interfaccia template instance "REST" con:
@@ -362,7 +366,7 @@ Feature: Listing catalogo e-services
     And l'utente pubblica quel descrittore
     And la versione più recente dell'e-service è in stato "PUBLISHED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e trova riferimenti al template
+    Then l'utente legge da catalogo l'ultimo descrittore e-service con riferimenti al template
 
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di una ulteriore versione nell'e-service template con successo
@@ -392,14 +396,16 @@ Feature: Listing catalogo e-services
     And la versione più recente dell'e-service è in stato "PUBLISHED"
     And la vecchia versione dell'e-service è in stato "ARCHIVED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura del vecchio descrittore e trova riferimenti al template
+    Then l'utente legge da catalogo il vecchio descrittore e-service con riferimenti al template
+      | isNewTemplateVersionAvailable | true |
 
     Given "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'utente è un "admin" di "PA1"
     When l'utente sospende quel descrittore
     And l'e-service è in stato "SUSPENDED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e trova riferimenti al template
+    Then l'utente legge da catalogo l'ultimo descrittore e-service con riferimenti al template
+      | isNewTemplateVersionAvailable | true |
 
     Given l'utente è un "admin" di "PA1"
     And l'utente attiva il descrittore di quell'e-service
@@ -430,19 +436,22 @@ Feature: Listing catalogo e-services
     And la versione più recente dell'e-service è in stato "PUBLISHED"
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura del vecchio descrittore e trova riferimenti al template
+    Then l'utente legge da catalogo il vecchio descrittore e-service con riferimenti al template
+      | isNewTemplateVersionAvailable | true |
 
     Given l'utente è un "admin" di "PA1"
     When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 30 giorni di preavviso
     And l'e-service è in stato "ARCHIVING"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e trova riferimenti al template
+    Then l'utente legge da catalogo l'ultimo descrittore e-service con riferimenti al template
+      | isNewTemplateVersionAvailable | true |
 
     Given l'utente è un "admin" di "PA1"
     When "PA1" ha già sospeso quell'e-service
     And l'e-service è in stato "ARCHIVING_SUSPENDED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e trova riferimenti al template
+    Then l'utente legge da catalogo l'ultimo descrittore e-service con riferimenti al template
+      | isNewTemplateVersionAvailable | true |
 
   @happy-path
   @nrt-minimal
@@ -454,7 +463,7 @@ Feature: Listing catalogo e-services
     And l'utente effettua la creazione di un e-service template asincrono in modalità erogazione con tecnologia "REST" in stato di PUBLISHED
     When l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e trova riferimenti al template
+    Then l'utente legge da catalogo l'ultimo descrittore e-service con riferimenti al template
 
     Given l'utente è un "admin" di "PA1"
     And l'utente crea una versione in bozza per quell'e-service istanza di template
@@ -464,14 +473,14 @@ Feature: Listing catalogo e-services
     And la versione più recente dell'e-service è in stato "PUBLISHED"
     And la vecchia versione dell'e-service è in stato "ARCHIVED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura del vecchio descrittore e trova riferimenti al template
+    Then l'utente legge da catalogo il vecchio descrittore e-service con riferimenti al template
 
     Given "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'utente è un "admin" di "PA1"
     When l'utente sospende quel descrittore
     And l'e-service è in stato "SUSPENDED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e trova riferimenti al template
+    Then l'utente legge da catalogo l'ultimo descrittore e-service con riferimenti al template
 
     Given l'utente è un "admin" di "PA1"
     And l'utente attiva il descrittore di quell'e-service
@@ -482,16 +491,16 @@ Feature: Listing catalogo e-services
     And la versione più recente dell'e-service è in stato "PUBLISHED"
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura del vecchio descrittore e trova riferimenti al template
+    Then l'utente legge da catalogo il vecchio descrittore e-service con riferimenti al template
 
     Given l'utente è un "admin" di "PA1"
     When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 30 giorni di preavviso
     And l'e-service è in stato "ARCHIVING"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e trova riferimenti al template
+    Then l'utente legge da catalogo l'ultimo descrittore e-service con riferimenti al template
 
     Given l'utente è un "admin" di "PA1"
     When "PA1" ha già sospeso quell'e-service
     And l'e-service è in stato "ARCHIVING_SUSPENDED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente fruitore richiede la lettura dell'ultimo descrittore e trova riferimenti al template
+    Then l'utente legge da catalogo l'ultimo descrittore e-service con riferimenti al template
