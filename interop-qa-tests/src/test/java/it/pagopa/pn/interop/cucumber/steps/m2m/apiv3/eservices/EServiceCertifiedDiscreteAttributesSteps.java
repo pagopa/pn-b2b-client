@@ -134,10 +134,17 @@ public class EServiceCertifiedDiscreteAttributesSteps {
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
 
         httpExecutor.performCall(() -> this.eServiceAttributeClient.getEServiceDescriptorCertifiedDiscreteAttributes(
-                eServiceId,
-                descriptorId,
-                0,
-                50
+                eServiceId, descriptorId, 0, 50
+        ));
+    }
+
+    @Given("l'utente tenta di recuperare gli attributi certificati discreti del descrittore dell'eservice specificando un ID {entityIdType} per il descrittore dell'e-service")
+    public void getCertifiedDiscreteAttributesWithInvalidDescriptorId(EntityIdType entityIdType) {
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = generateId(entityIdType);
+
+        httpExecutor.performCall(() -> this.eServiceAttributeClient.getEServiceDescriptorCertifiedDiscreteAttributes(
+                eServiceId, descriptorId, 0, 50
         ));
     }
 
