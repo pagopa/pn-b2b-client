@@ -3,6 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.eservices;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.attribute.service.IM2MV3CertifiedDiscreteAttributeClient;
 import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.common.enums.EntityIdType;
 import it.pagopa.interop.eservice.service.IM2MV3EServiceAttributeClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.*;
@@ -127,6 +128,19 @@ public class EServiceCertifiedDiscreteAttributesSteps {
         });
     }
 
+    @Given("l'utente tenta di recuperare gli attributi certificati discreti del descrittore dell'eservice specificando un ID {entityIdType} per l'e-service")
+    public void getCertifiedDiscreteAttributesWithInvalidEServiceId(EntityIdType entityIdType) {
+        UUID eServiceId = generateId(entityIdType);
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+
+        httpExecutor.performCall(() -> this.eServiceAttributeClient.getEServiceDescriptorCertifiedDiscreteAttributes(
+                eServiceId,
+                descriptorId,
+                0,
+                50
+        ));
+    }
+
     private List<EServiceDescriptorCertifiedDiscreteAttribute> fetchAllCertifiedDiscreteAttributes(UUID eServiceId, UUID descriptorId) {
         List<EServiceDescriptorCertifiedDiscreteAttribute> allAttributes = new ArrayList<>();
         int offset = 0;
@@ -175,4 +189,13 @@ public class EServiceCertifiedDiscreteAttributesSteps {
         seed.setDescription("description of %s".formatted(attrName));
         return certifiedDiscreteAttributeClient.create(seed);
     }
+
+    private UUID generateId(EntityIdType entityIdType) {
+        return switch (entityIdType){
+            case INVALID_ID -> UUID.fromString("12345-not-a-valid-uuid");
+            case NON_EXISTENT_ID -> UUID.randomUUID();
+            default -> throw new IllegalStateException("Tipo di id non supportato: " + entityIdType.name());
+        };
+    }
+
 }
