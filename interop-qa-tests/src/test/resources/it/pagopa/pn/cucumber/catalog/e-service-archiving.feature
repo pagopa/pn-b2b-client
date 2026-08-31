@@ -984,8 +984,9 @@ Feature: Archiviazione manuale di un e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
-    When l'utente clona quell'e-service
+    When l'utente tenta di clonare quell'e-service
     Then si ottiene response status code 200
+    And l'e-service è stato clonato con successo
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
   @happy-path
@@ -995,6 +996,7 @@ Feature: Archiviazione manuale di un e-service
     And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     When l'utente clona quell'e-service
     Then si ottiene response status code 200
+    And l'e-service è stato clonato con successo
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
   Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_ASYNC_1.1] Un ente erogatore di un e-service asincrono in stato PUBLISHED e seconda versione DEPRECATED, può avviare il processo di archiviazione manuale dell'e-service
