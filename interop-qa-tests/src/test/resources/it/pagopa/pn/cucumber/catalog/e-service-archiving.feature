@@ -987,6 +987,7 @@ Feature: Archiviazione manuale di un e-service
     When l'utente tenta di clonare quell'e-service
     Then si ottiene response status code 200
     And l'e-service è stato clonato con successo
+    And l'e-service è in stato "DRAFT"
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
   @happy-path
@@ -997,6 +998,7 @@ Feature: Archiviazione manuale di un e-service
     When l'utente tenta di clonare quell'e-service
     Then si ottiene response status code 200
     And l'e-service è stato clonato con successo
+    And l'e-service è in stato "DRAFT"
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
   @happy-path
@@ -1005,6 +1007,7 @@ Feature: Archiviazione manuale di un e-service
     When l'utente tenta di clonare il descrittore con id "3c63c85f-7dac-4cdb-a9fe-586442624677" dell'e-service con id "45d822b9-066c-4a77-b4a1-331135496907"
     Then si ottiene response status code 200
     And l'e-service è stato clonato con successo
+    And l'e-service è in stato "DRAFT"
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
   Scenario Outline: [MANUAL_ARCHIVING_ESERVICE_ASYNC_1.1] Un ente erogatore di un e-service asincrono in stato PUBLISHED e seconda versione DEPRECATED, può avviare il processo di archiviazione manuale dell'e-service

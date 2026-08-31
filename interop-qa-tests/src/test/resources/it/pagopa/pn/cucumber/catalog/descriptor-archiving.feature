@@ -479,6 +479,7 @@ Feature: Archiviazione manuale di un descrittore
     When l'utente tenta di clonare la vecchia versione dell'e-service
     Then si ottiene response status code 200
     And l'e-service è stato clonato con successo
+    And l'e-service è in stato "DRAFT"
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
   @happy-path
@@ -492,6 +493,7 @@ Feature: Archiviazione manuale di un descrittore
     When l'utente tenta di clonare la vecchia versione dell'e-service
     Then si ottiene response status code 200
     And l'e-service è stato clonato con successo
+    And l'e-service è in stato "DRAFT"
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
   @happy-path
@@ -502,6 +504,7 @@ Feature: Archiviazione manuale di un descrittore
     When l'utente tenta di clonare la vecchia versione dell'e-service
     Then si ottiene response status code 200
     And l'e-service è stato clonato con successo
+    And l'e-service è in stato "DRAFT"
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
   @happy-path
@@ -510,6 +513,7 @@ Feature: Archiviazione manuale di un descrittore
     When l'utente tenta di clonare il descrittore con id "3c63c85f-7dac-4cdb-a9fe-586442624677" dell'e-service con id "ee9dbc42-289f-400d-86f8-51e8fb704933"
     Then si ottiene response status code 200
     And l'e-service è stato clonato con successo
+    And l'e-service è in stato "DRAFT"
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
   @happy-path
