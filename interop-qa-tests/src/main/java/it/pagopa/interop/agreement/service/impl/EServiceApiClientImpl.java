@@ -136,6 +136,11 @@ public class EServiceApiClientImpl implements IEServiceClient {
     }
 
     @Override
+    public ResponseEntity<Void> cancelDelegatedDescriptorArchivingRequest(UUID eServiceId, UUID descriptorId) {
+        return eservicesApi.cancelDelegatedDescriptorArchivingWithHttpInfo(eServiceId, descriptorId);
+    }
+
+    @Override
     public ResponseEntity<Void> approveDelegatedDescriptorArchiving(UUID eServiceId, UUID descriptorId) {
         return eservicesApi.approveDelegatedDescriptorArchivingWithHttpInfo(eServiceId, descriptorId);
     }
@@ -152,6 +157,11 @@ public class EServiceApiClientImpl implements IEServiceClient {
     @Override
     public ResponseEntity<Void> submitDelegatedEServiceArchiving(UUID eServiceId, EServiceArchivingSeed eserviceArchivingSeed) {
         return eservicesApi.submitDelegatedEServiceArchivingWithHttpInfo(eServiceId, eserviceArchivingSeed);
+    }
+
+    @Override
+    public ResponseEntity<Void> cancelDelegatedEServiceArchivingRequest(UUID eServiceId) {
+        return eservicesApi.cancelDelegatedEServiceArchivingWithHttpInfo(eServiceId);
     }
 
     @Override
