@@ -270,7 +270,7 @@ public class EServiceCertifiedDiscreteAttributesSteps {
     }
 
     @Given("l'utente tenta di rimuovere l'attributo certificato discreto {int} associato al gruppo {int} dell'e-service")
-    private void removeCertifiedDiscreteAttributeFromGroup(int attributeIndex, int groupIndex) {
+    public void removeCertifiedDiscreteAttributeFromGroup(int attributeIndex, int groupIndex) {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
 
