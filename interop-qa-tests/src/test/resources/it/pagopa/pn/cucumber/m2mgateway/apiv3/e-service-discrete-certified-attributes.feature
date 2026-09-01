@@ -317,3 +317,51 @@ Feature: Gestione degli attributi certificati discreti degli e-services attraver
     When viene impostato per l'utente un token m2m non valido
     And l'utente tenta di rimuovere l'attributo certificato discreto 0 associato al gruppo -1 dell'e-service
     Then si ottiene lo status code 403
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_DELETE_5] L'operazione di rimozione di un attributo certificato discreto da un gruppo di un e-service non va a buon fine se l'utente non possiede la ownership.
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente aggiunge i seguenti attributi al descrittore dell'e-service:
+      | group | kind               | code  | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
+      | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
+    And l'utente pubblica l'e-service
+    When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And l'utente tenta di rimuovere l'attributo certificato discreto 0 associato al gruppo -1 dell'e-service
+    Then si ottiene lo status code 403
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_DELETE_6] L'operazione di rimozione di un attributo certificato discreto da un gruppo di un e-service non va a buon fine se l'ID dell'e-service non esiste.
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente aggiunge i seguenti attributi al descrittore dell'e-service:
+      | group | kind               | code  | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
+      | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
+    And l'utente pubblica l'e-service
+    When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And l'utente tenta di rimuovere l'attributo certificato discreto 0 associato al gruppo 0 dell'e-service specificando un ID inesistente per l'e-service
+    Then si ottiene lo status code 403
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_DELETE_7] L'operazione di rimozione di un attributo certificato discreto da un gruppo di un e-service non va a buon fine se l'ID del descrittore dell'e-service non esiste.
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente aggiunge i seguenti attributi al descrittore dell'e-service:
+      | group | kind               | code  | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
+      | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
+    And l'utente pubblica l'e-service
+    When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And l'utente tenta di rimuovere l'attributo certificato discreto 0 associato al gruppo 0 dell'e-service specificando un ID inesistente per il descrittore dell'e-service
+    Then si ottiene lo status code 403
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_DELETE_8] L'operazione di rimozione di un attributo certificato discreto da un gruppo di un e-service non va a buon fine se l'ID dell'attributo associato non esiste.
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente aggiunge i seguenti attributi al descrittore dell'e-service:
+      | group | kind               | code  | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
+      | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
+    And l'utente pubblica l'e-service
+    When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And l'utente tenta di rimuovere l'attributo certificato discreto 0 associato al gruppo 0 dell'e-service specificando un ID inesistente per l'attributo precedentemente associato
+    Then si ottiene lo status code 403
