@@ -7,7 +7,7 @@ Feature: Gestione degli attributi certificati discreti degli e-services attraver
       | group | kind               | code  | comparator | value |
       | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
     When l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
-    Then la configurazione degli attributi certificati discreti del descrittore dell'eservice corrisponde a quella attesa
+    Then la configurazione degli attributi certificati discreti del descrittore dell'e-service corrisponde a quella attesa
 
     Examples:
       | ente    | ruolo | ruoloM2M  |
@@ -23,7 +23,7 @@ Feature: Gestione degli attributi certificati discreti degli e-services attraver
       | group | kind               | code  | comparator | value |
       | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
     When l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
-    And l'utente tenta di recuperare gli attributi certificati discreti del descrittore dell'eservice specificando un ID invalido per l'e-service
+    And l'utente tenta di recuperare gli attributi certificati discreti del descrittore dell'e-service specificando un ID invalido per l'e-service
     Then si ottiene lo status code 400
 
     Examples:
@@ -40,7 +40,7 @@ Feature: Gestione degli attributi certificati discreti degli e-services attraver
       | group | kind               | code  | comparator | value |
       | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
     When l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
-    And l'utente tenta di recuperare gli attributi certificati discreti del descrittore dell'eservice specificando un ID inesistente per l'e-service
+    And l'utente tenta di recuperare gli attributi certificati discreti del descrittore dell'e-service specificando un ID inesistente per l'e-service
     Then si ottiene lo status code 400
 
     Examples:
@@ -57,7 +57,7 @@ Feature: Gestione degli attributi certificati discreti degli e-services attraver
       | group | kind               | code  | comparator | value |
       | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
     When l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
-    And l'utente tenta di recuperare gli attributi certificati discreti del descrittore dell'eservice specificando un ID invalido per il descrittore dell'e-service
+    And l'utente tenta di recuperare gli attributi certificati discreti del descrittore dell'e-service specificando un ID invalido per il descrittore dell'e-service
     Then si ottiene lo status code 400
 
     Examples:
@@ -74,7 +74,7 @@ Feature: Gestione degli attributi certificati discreti degli e-services attraver
       | group | kind               | code  | comparator | value |
       | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
     When l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
-    And l'utente tenta di recuperare gli attributi certificati discreti del descrittore dell'eservice specificando un ID inesistente per il descrittore dell'e-service
+    And l'utente tenta di recuperare gli attributi certificati discreti del descrittore dell'e-service specificando un ID inesistente per il descrittore dell'e-service
     Then si ottiene lo status code 400
 
     Examples:
@@ -91,7 +91,7 @@ Feature: Gestione degli attributi certificati discreti degli e-services attraver
       | group | kind               | code  | comparator | value |
       | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
     When viene impostato per l'utente un token m2m non valido
-    And l'utente tenta di recuperare gli attributi certificati discreti del descrittore dell'eservice
+    And l'utente tenta di recuperare gli attributi certificati discreti del descrittore dell'e-service
     Then si ottiene lo status code 403
 
   Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_UPDATE_1] L'operazione di associazione di un attibuto certificato discreto ad un e-service non va a buon fine se non si specifica alcun parametro.
@@ -136,4 +136,22 @@ Feature: Gestione degli attributi certificati discreti degli e-services attraver
       |      |             |      |
     When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And l'utente tenta di associare l'attributo certificato discreto creato
+    Then si ottiene lo status code 403
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_UOPDATE_6] L'operazione di associazione di un attributo certificato discreto ad un e-service non va a buon fine l'ID specificato per l'e-service non esiste.
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene effettuata la creazione dell'attributo certificato discreto con successo
+      | name | description | code |
+      |      |             |      |
+    When l'utente tenta di associare l'attributo certificato discreto creato specificando un e-service ID inesistente
+    Then si ottiene lo status code 403
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_UOPDATE_7] L'operazione di associazione di un attributo certificato discreto ad un e-service non va a buon fine l'ID specificato per il descrittpre dell'e-service non esiste.
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene effettuata la creazione dell'attributo certificato discreto con successo
+      | name | description | code |
+      |      |             |      |
+    When l'utente tenta di associare l'attributo certificato discreto creato specificando un descriptor ID inesistente
     Then si ottiene lo status code 403
