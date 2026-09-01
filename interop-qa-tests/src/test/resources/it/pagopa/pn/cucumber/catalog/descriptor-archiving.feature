@@ -510,7 +510,7 @@ Feature: Archiviazione manuale di un descrittore
   @happy-path @manual-archiving-cloning
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_CLONING_1.4] L'ente erogatore può clonare un descrittore archiviato al termine del processo di archiviazione manuale
     Given l'utente è un "admin" di "PA1"
-    When l'utente tenta di clonare il descrittore con id "3c63c85f-7dac-4cdb-a9fe-586442624677" dell'e-service con id "ee9dbc42-289f-400d-86f8-51e8fb704933"
+    When l'utente tenta di clonare il descrittore con id "ee9dbc42-289f-400d-86f8-51e8fb704933" dell'e-service con id "45d822b9-066c-4a77-b4a1-331135496907"
     Then si ottiene response status code 200
     And l'e-service è stato clonato con successo
     And l'e-service è in stato "DRAFT"
