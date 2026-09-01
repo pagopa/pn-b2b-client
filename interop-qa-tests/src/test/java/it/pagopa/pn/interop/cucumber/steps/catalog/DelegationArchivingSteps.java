@@ -45,6 +45,22 @@ public class DelegationArchivingSteps {
         );
     }
 
+    @When("l'utente delegato annulla la richiesta di archiviazione della vecchia versione identificata da {string} per l'e-service {string}")
+        public void cancelDelegatedDescriptorArchivingRequest(String descriptorId, String eServiceId) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID resolvedDescriptorId = catalogResolver.resolveOldDescriptorId(descriptorId);
+        UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
+
+        httpCallExecutor.performCall(
+                () -> clientTokenConfigurator.getEServiceClient().cancelDelegatedDescriptorArchivingRequest(
+                        resolvedEServiceId,
+                        resolvedDescriptorId
+                ),
+                ResponseEntity::getStatusCode
+        );
+    }
+
     @When("l'utente delegante accetta la richiesta di archiviazione della vecchia versione identificata da {string} per l'e-service {string}")
     @When("l'utente accetta la richiesta di archiviazione della vecchia versione identificata da {string} per l'e-service {string}")
     public void approveDelegatedDescriptorArchiving(String descriptorId, String eServiceId) {
@@ -96,6 +112,19 @@ public class DelegationArchivingSteps {
                                 .archivingReason(resolvedArchivingReason)
                                 .gracePeriodDays(gracePeriodDays)
                 ),
+                ResponseEntity::getStatusCode
+        );
+    }
+
+    @When("l'utente delegato annulla la richiesta di archiviazione dell'e-service {string}")
+        public void cancelDelegatedEServiceArchivingRequest(String eServiceId) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
+
+        httpCallExecutor.performCall(
+                () -> clientTokenConfigurator.getEServiceClient()
+                        .cancelDelegatedEServiceArchivingRequest(resolvedEServiceId),
                 ResponseEntity::getStatusCode
         );
     }
