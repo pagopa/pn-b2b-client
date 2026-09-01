@@ -274,7 +274,11 @@ public class EServiceCertifiedDiscreteAttributesSteps {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
         List<List<CertifiedDiscreteAttribute>> assignedAttributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscreteAssigned();
-        UUID attributeId = assignedAttributes.get(groupIndex).get(attributeIndex).getId();
+        UUID attributeId = (groupIndex >= 0 && groupIndex < assignedAttributes.size()) ?
+            assignedAttributes.get(groupIndex).get(attributeIndex).getId() :
+            // This is a special case where the group index is out of bounds,
+            // but we need to retrieve a valid attribute ID.
+            assignedAttributes.get(0).get(0).getId();
 
         httpExecutor.performCall(
                 () -> this.eServiceAttributeClient.deleteEServiceDescriptorCertifiedDiscreteAttributeFromGroup(
