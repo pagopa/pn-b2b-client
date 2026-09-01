@@ -203,7 +203,7 @@ public class DescriptorImportSteps {
      */
     private String normalizeZipBaseName(String packageName) {
         String normalizedName = packageName == null ? "" : packageName.trim();
-        if (normalizedName.toLowerCase().endsWith(ZIP_EXTENSION)) {
+        if (normalizedName.toLowerCase(java.util.Locale.ROOT).endsWith(ZIP_EXTENSION)) {
             normalizedName = normalizedName.substring(0, normalizedName.length() - ZIP_EXTENSION.length());
         }
 
