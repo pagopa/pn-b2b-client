@@ -36,7 +36,8 @@ public class EServiceCertifiedDiscreteAttributesSteps {
     }
 
     /**
-     * Aggiunge gli  al descrittore dell'e-service.
+     * Aggiunge gli attributi al descrittore dell'e-service.
+     *
      * @param attributesSpec Lista di attributi da aggiungere al descrittore dell'e-service. Il campo group è a base zero.
      */
     @Given("l'utente aggiunge i seguenti attributi al descrittore dell'e-service:")
@@ -155,8 +156,8 @@ public class EServiceCertifiedDiscreteAttributesSteps {
         attributesGroupSeed.addAttributesItem(attributeSeed);
 
         httpExecutor.performCall(
-            () -> this.eServiceAttributeClient.createEServiceDescriptorCertifiedDiscreteAttributesGroup(
-            eServiceId, descriptorId, attributesGroupSeed)
+                () -> this.eServiceAttributeClient.createEServiceDescriptorCertifiedDiscreteAttributesGroup(
+                        eServiceId, descriptorId, attributesGroupSeed)
         );
     }
 
@@ -215,16 +216,6 @@ public class EServiceCertifiedDiscreteAttributesSteps {
         });
     }
 
-    @Given("l'utente tenta di recuperare gli attributi certificati discreti del descrittore dell'e-service")
-    public void getCertifiedDiscreteAttributes() {
-        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
-        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
-
-        httpExecutor.performCall(() -> this.eServiceAttributeClient.getEServiceDescriptorCertifiedDiscreteAttributes(
-                eServiceId, descriptorId, 0, 50
-        ));
-    }
-
     @Given("l'utente tenta di associare l'attributo certificato discreto creato specificando un e-service ID {entityIdType}")
     public void associateCertifiedDiscreteAttributeWithInvalidEServiceId(EntityIdType entityIdType) {
         UUID eServiceId = generateId(entityIdType);
@@ -248,6 +239,16 @@ public class EServiceCertifiedDiscreteAttributesSteps {
         associateLastCertifiedDiscreteAttributePublished(eServiceId, descriptorId, groupIndex);
     }
 
+    @Given("l'utente tenta di recuperare gli attributi certificati discreti del descrittore dell'e-service")
+    public void getCertifiedDiscreteAttributes() {
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+
+        httpExecutor.performCall(() -> this.eServiceAttributeClient.getEServiceDescriptorCertifiedDiscreteAttributes(
+                eServiceId, descriptorId, 0, 50
+        ));
+    }
+
     @Given("l'utente tenta di recuperare gli attributi certificati discreti del descrittore dell'e-service specificando un ID {entityIdType} per l'e-service")
     public void getCertifiedDiscreteAttributesWithInvalidEServiceId(EntityIdType entityIdType) {
         UUID eServiceId = generateId(entityIdType);
@@ -266,6 +267,25 @@ public class EServiceCertifiedDiscreteAttributesSteps {
         httpExecutor.performCall(() -> this.eServiceAttributeClient.getEServiceDescriptorCertifiedDiscreteAttributes(
                 eServiceId, descriptorId, 0, 50
         ));
+    }
+
+    @Given("l'utente tenta di rimuovere l'attributo certificato discreto {int} associato al gruppo {int} dell'e-service")
+    private void removeCertifiedDiscreteAttributeFromGroup(int attributeIndex, int groupIndex) {
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+
+        var assignedAttributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscreteAssigned();
+        var attribute = assignedAttributes.get(groupIndex).get(attributeIndex);
+
+        httpExecutor.performCall(
+                () -> this.eServiceAttributeClient.deleteEServiceDescriptorCertifiedDiscreteAttributeFromGroup(
+                        eServiceId, descriptorId, groupIndex, attribute.getId()
+                )
+        );
+
+        if (httpExecutor.getResponseStatus().is2xxSuccessful()) {
+            assignedAttributes.get(groupIndex).remove(attributeIndex);
+        }
     }
 
     private List<EServiceDescriptorCertifiedDiscreteAttribute> fetchAllCertifiedDiscreteAttributes(UUID eServiceId, UUID descriptorId) {
