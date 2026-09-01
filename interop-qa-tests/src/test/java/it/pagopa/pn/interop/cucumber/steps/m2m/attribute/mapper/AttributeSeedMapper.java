@@ -17,8 +17,7 @@ public class AttributeSeedMapper<T> {
 
     /**
      * Questo metodo crea un oggetto specifico di tipo T utilizzando una funzione di mappatura configurabile.
-     * Il metodo genera valori predefiniti per i campi mancanti o vuoti e, soltanto per il nome, supporta la macro
-     * $SIZE per definire una lunghezza prestabilita.
+     * Il metodo genera valori predefiniti per i campi mancanti o vuoti e supporta le macro $SIZE(...) e $EMPTY().
      *
      * @param entry una map containing the attribute details, where keys represent attribute properties
      *              (e.g., "name", "description", "code") and values represent their corresponding values.
