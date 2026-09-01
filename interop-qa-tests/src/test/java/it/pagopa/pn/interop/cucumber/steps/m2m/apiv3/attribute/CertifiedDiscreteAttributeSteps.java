@@ -38,12 +38,7 @@ public class CertifiedDiscreteAttributeSteps extends AbstractCommonSteps<Certifi
     @When("viene effettuata la creazione dell'attributo certificato discreto")
     public void createCertifiedDiscreteAttribute(CertifiedDiscreteAttributeSeed payloadAttrCert) {
         CertifiedDiscreteAttribute result = client.create(payloadAttrCert);
-        var attributeContext = sharedStepsContext.getAttributeCommonContext();
-
-        List<CertifiedDiscreteAttribute> published = new ArrayList<>();
-        published.add(result);
-
-        attributeContext.setCertifiedDiscretePublished(published);
+        sharedStepsContext.getAttributeCommonContext().getCertifiedDiscretePublished().add(result);
     }
 
     @When("si tenta la creazione dell'attributo certificato discreto senza passare parametri nella richiesta")
