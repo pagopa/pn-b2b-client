@@ -118,7 +118,7 @@ Feature: Gestione degli attributi certificati discreti degli e-services attraver
     When l'utente tenta di associare un attributo certificato discreto specificando un ID inesistente per l'attributo
     Then si ottiene lo status code 403
 
-  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_UOPDATE_4] L'operazione di associazione di un attributo certificato discreto ad un e-service non va a buon fine se il token di autenticazione non è valido.
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_UPDATE_4] L'operazione di associazione di un attributo certificato discreto ad un e-service non va a buon fine se il token di autenticazione non è valido.
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene effettuata la creazione dell'attributo certificato discreto con successo
@@ -128,7 +128,7 @@ Feature: Gestione degli attributi certificati discreti degli e-services attraver
     And l'utente tenta di associare l'attributo certificato discreto creato all'e-service
     Then si ottiene lo status code 403
 
-  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_UOPDATE_5] L'operazione di associazione di un attributo certificato discreto ad un e-service non va a buon fine se l'utente non possiede la ownership.
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_UPDATE_5] L'operazione di associazione di un attributo certificato discreto ad un e-service non va a buon fine se l'utente non possiede la ownership.
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene effettuata la creazione dell'attributo certificato discreto con successo
@@ -138,7 +138,7 @@ Feature: Gestione degli attributi certificati discreti degli e-services attraver
     And l'utente tenta di associare l'attributo certificato discreto creato all'e-service
     Then si ottiene lo status code 403
 
-  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_UOPDATE_6] L'operazione di associazione di un attributo certificato discreto ad un e-service non va a buon fine l'ID specificato per l'e-service non esiste.
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_UPDATE_6] L'operazione di associazione di un attributo certificato discreto ad un e-service non va a buon fine l'ID specificato per l'e-service non esiste.
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene effettuata la creazione dell'attributo certificato discreto con successo
