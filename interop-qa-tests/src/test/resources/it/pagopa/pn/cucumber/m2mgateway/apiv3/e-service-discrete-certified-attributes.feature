@@ -127,3 +127,13 @@ Feature: Gestione degli attributi certificati discreti degli e-services attraver
     When viene impostato per l'utente un token m2m non valido
     And l'utente tenta di associare l'attributo certificato discreto creato
     Then si ottiene lo status code 403
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_UOPDATE_5] L'operazione di associazione di un attributo certificato discreto ad un e-service non va a buon fine se l'utente non possiede la ownership.
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene effettuata la creazione dell'attributo certificato discreto con successo
+      | name | description | code |
+      |      |             |      |
+    When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And l'utente tenta di associare l'attributo certificato discreto creato
+    Then si ottiene lo status code 403
