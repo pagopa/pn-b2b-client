@@ -147,7 +147,7 @@ Feature: Gestione degli attributi certificati discreti degli e-services attraver
     When l'utente tenta di associare l'attributo certificato discreto creato specificando un e-service ID inesistente
     Then si ottiene lo status code 403
 
-  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_UOPDATE_7] L'operazione di associazione di un attributo certificato discreto ad un e-service non va a buon fine l'ID specificato per il descrittpre dell'e-service non esiste.
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_UPDATE_7] L'operazione di associazione di un attributo certificato discreto ad un e-service non va a buon fine l'ID specificato per il descrittore dell'e-service non esiste.
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene effettuata la creazione dell'attributo certificato discreto con successo
