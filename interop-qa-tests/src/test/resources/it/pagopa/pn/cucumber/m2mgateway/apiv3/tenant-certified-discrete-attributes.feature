@@ -42,7 +42,7 @@ Feature: Gestione di assegnazione degli attributi certificati discreti ai tenant
       | Privato | admin | m2m-admin |
       | Privato | admin | m2m       |
 
-  Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_TENANTS_4] Il tentativo di recuperare gli attributi certificati discreti associati a un ente fallisce se il relativo UUID non è esiste.
+  Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_TENANTS_4] Il tentativo di recuperare gli attributi certificati discreti associati a un ente fallisce se il relativo UUID non esiste.
     Given l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
     When l'utente richiede l'elenco degli attributi certificati discreti di "PA1" utilizzando un UUID inesistente
     Then si ottiene lo status code 400
