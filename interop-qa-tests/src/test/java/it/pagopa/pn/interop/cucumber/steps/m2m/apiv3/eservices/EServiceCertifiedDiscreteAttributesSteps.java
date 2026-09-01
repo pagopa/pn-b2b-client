@@ -241,6 +241,13 @@ public class EServiceCertifiedDiscreteAttributesSteps {
         associateLastCertifiedDiscreteAttributePublished(eServiceId, descriptorId, null);
     }
 
+    @Given("l'utente tenta di associare l'attributo certificato discreto creato al gruppo {int} dell'e-service specificando un ID {entityIdType} per il descrittore dell'e-service")
+    public void associateCertifiedDiscreteAttributeToGroupWithInvalidEServiceId(int groupIndex, EntityIdType entityIdType) {
+        UUID eServiceId = generateId(entityIdType);
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+        associateLastCertifiedDiscreteAttributePublished(eServiceId, descriptorId, groupIndex);
+    }
+
     @Given("l'utente tenta di recuperare gli attributi certificati discreti del descrittore dell'e-service specificando un ID {entityIdType} per l'e-service")
     public void getCertifiedDiscreteAttributesWithInvalidEServiceId(EntityIdType entityIdType) {
         UUID eServiceId = generateId(entityIdType);
