@@ -41,7 +41,7 @@ Feature: Import di un descrittore
       | sincronia |
       | sincrono  |
 
-    # 28/08/2026 Al momento non riproducibile a causa di un anomalia, rif. https://pagopaspa.slack.com/archives/C069AP16WG7/p1787912475573199
+    # 28/08/2026 Al momento non riproducibile a causa di un'anomalia, rif. https://pagopaspa.slack.com/archives/C069AP16WG7/p1787912475573199
 #      | asincrono |
 
   @happy-path @no-parallel
