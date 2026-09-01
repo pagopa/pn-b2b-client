@@ -289,3 +289,31 @@ Feature: Gestione degli attributi certificati discreti degli e-services attraver
       | ente    | ruolo | ruoloM2M |
       | PA1     | admin | m2m      |
       | Privato | admin | m2m      |
+
+  Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_DELETE_3] L'operazione di rimozione di un attributo certificato discreto da un gruppo di un e-service non va a buon fine se l'indice del gruppo non è valido.
+    Given "<ente>" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
+    And l'utente aggiunge i seguenti attributi al descrittore dell'e-service:
+      | group | kind               | code  | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
+      | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
+    And l'utente pubblica l'e-service
+    When l'utente tenta di rimuovere l'attributo certificato discreto 0 associato al gruppo -1 dell'e-service
+    Then si ottiene lo status code 400
+
+    Examples:
+      | ente    | ruolo | ruoloM2M  |
+      | PA1     | admin | m2m-admin |
+      | Privato | admin | m2m-admin |
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_DELETE_4] L'operazione di rimozione di un attributo certificato discreto da un gruppo di un e-service non va a buon fine se l'utente non è autorizzato.
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente aggiunge i seguenti attributi al descrittore dell'e-service:
+      | group | kind               | code  | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
+      | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
+    And l'utente pubblica l'e-service
+    When viene impostato per l'utente un token m2m non valido
+    And l'utente tenta di rimuovere l'attributo certificato discreto 0 associato al gruppo -1 dell'e-service
+    Then si ottiene lo status code 403
