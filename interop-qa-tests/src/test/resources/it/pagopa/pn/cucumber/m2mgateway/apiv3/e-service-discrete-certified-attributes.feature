@@ -1,7 +1,6 @@
 Feature: Gestione degli attributi certificati discreti degli e-services attraverso APIs M2M V3
 
   Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_GET_1] Il recupero degli attributi certificati discreti assegnati all'e-service va a buon fine.
-
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente aggiunge i seguenti attributi al descrittore dell'e-service:
@@ -26,7 +25,7 @@ Feature: Gestione degli attributi certificati discreti degli e-services attraver
     When l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
     And l'utente tenta di recuperare gli attributi certificati discreti del descrittore dell'eservice specificando un ID invalido per l'e-service
     Then si ottiene lo status code 400
-  
+
     Examples:
       | ente    | ruolo | ruoloM2M  |
       | PA1     | admin | m2m-admin |
@@ -91,6 +90,40 @@ Feature: Gestione degli attributi certificati discreti degli e-services attraver
     And l'utente aggiunge i seguenti attributi al descrittore dell'e-service:
       | group | kind               | code  | comparator | value |
       | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
-    When viene impostato per l'utente un token non valido
+    When viene impostato per l'utente un token m2m non valido
     And l'utente tenta di recuperare gli attributi certificati discreti del descrittore dell'eservice
+    Then si ottiene lo status code 403
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_UPDATE_1] L'operazione di associazione di un attibuto certificato discreto ad un e-service non va a buon fine se non si specifica alcun parametro.
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di associare un attributo certificato discreto senza specificare alcun parametro
+    Then si ottiene lo status code 400
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_UPDATE_2] L'operazione di associazione di un attibuto certificato discreto ad un e-service non va a buon fine se non si specificano i parametri necessari.
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene effettuata la creazione dell'attributo certificato discreto con successo
+      | name | description | code |
+      |      |             |      |
+    When l'utente tenta di associare l'attributo certificato discreto creato senza specificare i parametri necessari
+    Then si ottiene lo status code 400
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_UPDATE_3] L'operazione di associazione di un attibuto certificato discreto ad un e-service  non va a buon fine se l'ID utilizzato per l'attibuto è inesistente.
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene effettuata la creazione dell'attributo certificato discreto con successo
+      | name | description | code |
+      |      |             |      |
+    When l'utente tenta di associare un attributo certificato discreto specificare un ID inesistente per l'attributo
+    Then si ottiene lo status code 403
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_UOPDATE_4] L'operazione di associazione di un attributo certificato discreto ad un e-service non va a buon fine se il token di autenticazione non è valido.
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene effettuata la creazione dell'attributo certificato discreto con successo
+      | name | description | code |
+      |      |             |      |
+    When viene impostato per l'utente un token m2m non valido
+    And l'utente tenta di associare l'attributo certificato discreto creato
     Then si ottiene lo status code 403
