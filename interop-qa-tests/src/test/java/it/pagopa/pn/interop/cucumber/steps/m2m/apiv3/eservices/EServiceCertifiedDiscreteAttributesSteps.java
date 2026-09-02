@@ -168,7 +168,7 @@ public class EServiceCertifiedDiscreteAttributesSteps {
 
         EServiceDescriptorCertifiedDiscreteAttributesGroupSeed attributesGroupSeed = new EServiceDescriptorCertifiedDiscreteAttributesGroupSeed();
         EServiceDescriptorCertifiedDiscreteAttributesGroupSeedAttributesInner attributeSeed = new EServiceDescriptorCertifiedDiscreteAttributesGroupSeedAttributesInner();
-        attributeSeed.setId(UUID.randomUUID());
+        attributeSeed.setId(generateId(entityIdType));
         attributeSeed.setDiscreteConfig(new EServiceAttributeCertifiedDiscreteConfigSeed());
         attributesGroupSeed.addAttributesItem(attributeSeed);
 
