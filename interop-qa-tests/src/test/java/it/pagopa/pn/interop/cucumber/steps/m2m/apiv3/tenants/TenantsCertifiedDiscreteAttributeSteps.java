@@ -191,7 +191,9 @@ public class TenantsCertifiedDiscreteAttributeSteps {
 
     @When("l'utente richiede l'elenco degli attributi certificati discreti di {string} utilizzando un UUID {entityIdType}")
     public void getTenantCertifiedDiscreteAttributesWithInvalidUuid(String tenantType, EntityIdType entityIdType) {
-        this.tenantClient.getTenantCertifiedDiscreteAttributes(getEntityId(entityIdType), 0, 50);
+        sharedStepsContext.getHttpCallExecutor().performCall(
+            () ->this.tenantClient.getTenantCertifiedDiscreteAttributes(getEntityId(entityIdType), 0, 50)
+        );
     }
 
     /**
