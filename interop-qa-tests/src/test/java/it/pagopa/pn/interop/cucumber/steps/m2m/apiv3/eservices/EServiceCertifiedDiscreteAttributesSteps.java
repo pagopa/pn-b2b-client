@@ -394,7 +394,7 @@ public class EServiceCertifiedDiscreteAttributesSteps {
         attributeSeed.setDiscreteConfig(configSeed);
         attributesGroupSeed.addAttributesItem(attributeSeed);
 
-        if (groupIndex != null) {
+        if (groupIndex == null) {
             httpExecutor.performCall(
                     () -> this.eServiceAttributeClient.createEServiceDescriptorCertifiedDiscreteAttributesGroup(
                             eServiceId, descriptorId, attributesGroupSeed)
