@@ -1,4 +1,4 @@
-Feature: Gestione degli attributi certificati discreti degli e-services attraverso APIs M2M V3
+Feature: Gestione degli attributi certificati discreti degli e-service attraverso APIs M2M V3
 
   Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_GET_1] Il recupero degli attributi certificati discreti assegnati all'e-service va a buon fine.
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
@@ -163,7 +163,6 @@ Feature: Gestione degli attributi certificati discreti degli e-services attraver
       | group | kind               | code  | comparator | value |
       | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
       | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
-    And l'utente pubblica l'e-service
     When l'utente tenta di associare l'attributo certificato discreto creato al gruppo 1 dell'e-service
     Then la configurazione degli attributi certificati discreti del descrittore dell'e-service corrisponde a quella attesa
 
@@ -179,7 +178,6 @@ Feature: Gestione degli attributi certificati discreti degli e-services attraver
       | group | kind               | code  | comparator | value |
       | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
       | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
-    And l'utente pubblica l'e-service
     When l'utente tenta di associare l'attributo certificato discreto creato al gruppo 1 dell'e-service
     Then si ottiene lo status code 403
 
@@ -195,7 +193,6 @@ Feature: Gestione degli attributi certificati discreti degli e-services attraver
       | group | kind               | code  | comparator | value |
       | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
       | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
-    And l'utente pubblica l'e-service
     When l'utente tenta di associare l'attributo certificato discreto creato al gruppo <gruppo> dell'e-service
     Then si ottiene lo status code 400
 
@@ -213,7 +210,6 @@ Feature: Gestione degli attributi certificati discreti degli e-services attraver
       | group | kind               | code  | comparator | value |
       | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
       | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
-    And l'utente pubblica l'e-service
     When l'utente tenta di associare l'attributo certificato discreto creato al gruppo 0 dell'e-service specificando un ID inesistente per il descrittore dell'e-service
     Then si ottiene lo status code 400
 
@@ -229,7 +225,6 @@ Feature: Gestione degli attributi certificati discreti degli e-services attraver
       | group | kind               | code  | comparator | value |
       | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
       | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
-    And l'utente pubblica l'e-service
     When viene impostato per l'utente un token m2m non valido
     And l'utente tenta di associare l'attributo certificato discreto creato al gruppo 0 dell'e-service
     Then si ottiene lo status code 403
@@ -241,7 +236,6 @@ Feature: Gestione degli attributi certificati discreti degli e-services attraver
       | group | kind               | code  | comparator | value |
       | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
       | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
-    And l'utente pubblica l'e-service
     When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And l'utente tenta di associare l'attributo certificato discreto creato al gruppo 0 dell'e-service
     Then si ottiene lo status code 403
@@ -253,7 +247,6 @@ Feature: Gestione degli attributi certificati discreti degli e-services attraver
       | group | kind               | code  | comparator | value |
       | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
       | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
-    And l'utente pubblica l'e-service
     And l'utente tenta di associare l'attributo certificato discreto creato al gruppo 0 dell'e-service
     When l'utente tenta di associare l'attributo certificato discreto creato al gruppo 0 dell'e-service
     Then si ottiene lo status code 403
@@ -265,7 +258,6 @@ Feature: Gestione degli attributi certificati discreti degli e-services attraver
       | group | kind               | code  | comparator | value |
       | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
       | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
-    And l'utente pubblica l'e-service
     When l'utente tenta di rimuovere l'attributo certificato discreto 0 associato al gruppo 0 dell'e-service
     Then la configurazione degli attributi certificati discreti del descrittore dell'e-service corrisponde a quella attesa
 
@@ -281,7 +273,6 @@ Feature: Gestione degli attributi certificati discreti degli e-services attraver
       | group | kind               | code  | comparator | value |
       | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
       | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
-    And l'utente pubblica l'e-service
     When l'utente tenta di rimuovere l'attributo certificato discreto 0 associato al gruppo 0 dell'e-service
     Then si ottiene lo status code 400
 
@@ -297,7 +288,6 @@ Feature: Gestione degli attributi certificati discreti degli e-services attraver
       | group | kind               | code  | comparator | value |
       | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
       | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
-    And l'utente pubblica l'e-service
     When l'utente tenta di rimuovere l'attributo certificato discreto 0 associato al gruppo -1 dell'e-service
     Then si ottiene lo status code 400
 
@@ -313,7 +303,6 @@ Feature: Gestione degli attributi certificati discreti degli e-services attraver
       | group | kind               | code  | comparator | value |
       | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
       | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
-    And l'utente pubblica l'e-service
     When viene impostato per l'utente un token m2m non valido
     And l'utente tenta di rimuovere l'attributo certificato discreto 0 associato al gruppo -1 dell'e-service
     Then si ottiene lo status code 403
@@ -325,7 +314,6 @@ Feature: Gestione degli attributi certificati discreti degli e-services attraver
       | group | kind               | code  | comparator | value |
       | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
       | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
-    And l'utente pubblica l'e-service
     When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And l'utente tenta di rimuovere l'attributo certificato discreto 0 associato al gruppo -1 dell'e-service
     Then si ottiene lo status code 403
@@ -337,7 +325,6 @@ Feature: Gestione degli attributi certificati discreti degli e-services attraver
       | group | kind               | code  | comparator | value |
       | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
       | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
-    And l'utente pubblica l'e-service
     When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And l'utente tenta di rimuovere l'attributo certificato discreto 0 associato al gruppo 0 dell'e-service specificando un ID inesistente per l'e-service
     Then si ottiene lo status code 403
@@ -349,7 +336,6 @@ Feature: Gestione degli attributi certificati discreti degli e-services attraver
       | group | kind               | code  | comparator | value |
       | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
       | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
-    And l'utente pubblica l'e-service
     When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And l'utente tenta di rimuovere l'attributo certificato discreto 0 associato al gruppo 0 dell'e-service specificando un ID inesistente per il descrittore dell'e-service
     Then si ottiene lo status code 403
@@ -361,7 +347,6 @@ Feature: Gestione degli attributi certificati discreti degli e-services attraver
       | group | kind               | code  | comparator | value |
       | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
       | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
-    And l'utente pubblica l'e-service
     When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And l'utente tenta di rimuovere l'attributo certificato discreto 0 associato al gruppo 0 dell'e-service specificando un ID inesistente per l'attributo precedentemente associato
     Then si ottiene lo status code 403
