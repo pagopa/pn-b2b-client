@@ -59,7 +59,6 @@ public class CertifiedAttributeSteps extends AbstractCommonSteps<CertifiedAttrib
         assertThat(actual).hasSizeGreaterThanOrEqualTo(expectedSize);
     }
 
-    @Then("la risposta contiene esattamente l'attributo certificato discreto creato")
     @Then("la risposta contiene esattamente i {int} attributi certificati discreti creati")
     public void listCheck(int expectedSize) {
         List<CertifiedDiscreteAttribute> published = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscretePublished();
