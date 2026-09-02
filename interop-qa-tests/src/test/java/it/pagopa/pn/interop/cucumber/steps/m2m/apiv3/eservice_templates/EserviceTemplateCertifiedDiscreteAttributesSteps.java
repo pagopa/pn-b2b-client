@@ -158,6 +158,31 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
         ));
     }
 
+    /**
+     *
+     * @param groupIndex is a zero-based index of the group to associate the attribute to e-service template
+     */
+    @When("l'utente tenta di associare l'attributo certificato discreto creato al gruppo {int} del template e-service")
+    public void associateCertifiedDiscreteAttributeToGroup(int groupIndex) {
+        EServiceTemplateInfo templateInfo = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
+        UUID templateId = templateInfo.getId();
+        UUID versionId = templateInfo.getLastVersionId();
+
+        this.associateLastCertifiedDiscreteAttributePublished(templateId, versionId, groupIndex);
+
+        if (httpExecutor.getResponseStatus().is2xxSuccessful()) {
+            // Update group in context
+            List<CertifiedDiscreteAttribute> publishedAttributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscretePublished();
+            CertifiedDiscreteAttribute certifiedDiscreteAttribute = publishedAttributes.get(publishedAttributes.size() - 1);
+            List<List<CertifiedDiscreteAttribute>> assignedAttributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscreteAssigned();
+
+            while (assignedAttributes.size() <= groupIndex) {
+                assignedAttributes.add(new ArrayList<>());
+            }
+            assignedAttributes.get(groupIndex).add(certifiedDiscreteAttribute);
+        }
+    }
+
     private CertifiedDiscreteAttribute createCertifiedDiscreteAttribute(EServiceAttributeSpec attributeSpec) {
         CertifiedDiscreteAttributeSeed seed = new CertifiedDiscreteAttributeSeed();
         int millis = Instant.now().get(ChronoField.MILLI_OF_SECOND);
@@ -202,5 +227,33 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
         }
 
         return allAttributes;
+    }
+
+    private void associateLastCertifiedDiscreteAttributePublished(UUID templateId, UUID versionId, Integer groupIndex) {
+        List<CertifiedDiscreteAttribute> publishedAttributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscretePublished();
+        CertifiedDiscreteAttribute lastPublishedAttribute = publishedAttributes.get(publishedAttributes.size() - 1);
+
+        EServiceTemplateVersionCertifiedDiscreteAttributesGroupSeed attributesGroupSeed = new EServiceTemplateVersionCertifiedDiscreteAttributesGroupSeed();
+        EServiceDescriptorCertifiedDiscreteAttributesGroupSeedAttributesInner attributeSeed = new EServiceDescriptorCertifiedDiscreteAttributesGroupSeedAttributesInner();
+        attributeSeed.setId(lastPublishedAttribute.getId());
+        EServiceAttributeCertifiedDiscreteConfigSeed configSeed = new EServiceAttributeCertifiedDiscreteConfigSeed();
+        configSeed.setComparator(AttributeCertifiedDiscreteComparator.GT);
+        configSeed.setThreshold(100);
+        attributeSeed.setDiscreteConfig(configSeed);
+        attributesGroupSeed.addAttributesItem(attributeSeed);
+
+        if (groupIndex == null) {
+            httpExecutor.performCall(
+                    () -> this.eServiceTemplateAttributeClient.createEServiceTemplateVersionCertifiedDiscreteAttributesGroup(
+                            templateId, versionId, attributesGroupSeed
+                    )
+            );
+        } else {
+            httpExecutor.performCall(
+                    () -> this.eServiceTemplateAttributeClient.assignEServiceTemplateVersionCertifiedDiscreteAttributesToGroup(
+                            templateId, versionId, groupIndex, attributesGroupSeed
+                    )
+            );
+        }
     }
 }

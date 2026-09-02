@@ -44,3 +44,24 @@ Feature: Gestione degli attributi certificati discreti degli e-service template 
     And l'utente tenta di recuperare gli attributi certificati discreti del template e-service
     Then si ottiene lo status code 403
 
+  Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_TEMPLATE_CREATE_1] L'operazione di associazione di un attributo certificato discreto su un nuovo gruppo di un e-service template non va a buon fine se l'utente non è autorizzato.
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente tenta la creazione dell'e-service template con la configurazione predefinita
+    And l'utente crea e aggiunge i seguenti attributi all'e-service template creato:
+      | group | kind               | code  | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
+    When l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
+    And l'utente tenta di associare l'attributo certificato discreto creato al gruppo 0 del template e-service
+    Then si ottiene lo status code 403
+
+    Examples:
+      | ente    | ruolo | ruoloM2M |
+      | PA1     | admin | m2m      |
+      | Privato | admin | m2m      |
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_TEMPLATE_CREATE_2] L'operazione di associazione di un attributo certificato discreto ad un template e-service non va a buon fine se il token di autenticazione non è valido.
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente tenta la creazione dell'e-service template con la configurazione predefinita
+    When viene impostato per l'utente un token m2m non valido
+    And l'utente tenta di associare l'attributo certificato discreto creato al gruppo 1 del template e-service
+    Then si ottiene lo status code 403
