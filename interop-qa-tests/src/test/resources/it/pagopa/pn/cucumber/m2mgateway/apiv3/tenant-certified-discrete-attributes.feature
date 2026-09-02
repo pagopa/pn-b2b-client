@@ -157,7 +157,7 @@ Feature: Gestione di assegnazione degli attributi certificati discreti ai tenant
       | name | description | code |
       |      |             |      |
     And l'utente assegna a "PA1" l'attributo certificato discreto creato con un valore discreto di 100 con successo
-    When l'utente tenta di revocare a "PA1" l'attributo certificato discreto precedentemente associato, utilizzando un UUID invalido
+    When l'utente tenta di revocare a "PA1" l'attributo certificato discreto precedentemente associato, utilizzando per l'attributo un UUID invalido
     Then si ottiene lo status code 403
 
   Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_TENANTS_DELETE_5] La revoca di un attributo certificato discreto non va a buon fine se l'UUID dell'ente non esiste.
@@ -175,7 +175,7 @@ Feature: Gestione di assegnazione degli attributi certificati discreti ai tenant
       | name | description | code |
       |      |             |      |
     And l'utente assegna a "PA1" l'attributo certificato discreto creato con un valore discreto di 100 con successo
-    When l'utente tenta di revocare a "PA1" l'attributo certificato discreto precedentemente associato, utilizzando un UUID inesistente
+    When l'utente tenta di revocare a "PA1" l'attributo certificato discreto precedentemente associato, utilizzando per l'attributo un UUID inesistente
     Then si ottiene lo status code 403
 
   Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_TENANTS_DELETE_7] La revoca di un attributo certificato discreto non va a buon fine se il token di autenticazione non è valido.

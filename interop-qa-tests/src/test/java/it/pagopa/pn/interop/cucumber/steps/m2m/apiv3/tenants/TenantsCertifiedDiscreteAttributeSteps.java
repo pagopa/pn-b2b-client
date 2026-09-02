@@ -168,9 +168,9 @@ public class TenantsCertifiedDiscreteAttributeSteps {
         );
     }
 
-    @When("l'utente tenta di revocare a {string} l'attributo certificato discreto precedentemente associato, utilizzando un UUID {entityIdType}")
+    @When("l'utente tenta di revocare a {string} l'attributo certificato discreto precedentemente associato, utilizzando per l'attributo un UUID {entityIdType}")
     public void revokeTenantCertifiedDiscreteAttributeWithInvalidAttributeUuid(String tenantType, EntityIdType entityIdType) {
-        UUID tenantId = getEntityId(entityIdType);
+        UUID tenantId = identityService.getOrganizationId(tenantType);
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> this.tenantClient.revokeTenantCertifiedDiscreteAttribute(tenantId, getEntityId(entityIdType))
         );
