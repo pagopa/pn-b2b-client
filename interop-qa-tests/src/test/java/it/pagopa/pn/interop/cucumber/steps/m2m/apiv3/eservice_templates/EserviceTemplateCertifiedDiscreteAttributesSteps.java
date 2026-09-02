@@ -217,7 +217,7 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
         }
     }
 
-    @When("l'utente tenta di associare l'attributo certificato discreto creato al gruppo {int} del template e-service utilizzando per il template un ID {entityIdType}")
+    @When("l'utente tenta di associare l'attributo certificato discreto creato al gruppo {int} di attributi certificati discreti del template e-service utilizzando per il template un ID {entityIdType}")
     public void associateCertifiedDiscreteAttributeToGroupWithInvalidTemplateId(int groupIndex, EntityIdType entityIdType) {
         EServiceTemplateInfo templateInfo = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
         UUID templateId = generateId(entityIdType);
@@ -225,7 +225,7 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
         this.associateLastCertifiedDiscreteAttributePublished(templateId, versionId, groupIndex);
     }
 
-    @When("l'utente tenta di associare l'attributo certificato discreto creato al gruppo {int} del template e-service utilizzando per la versione del template un ID {entityIdType}")
+    @When("l'utente tenta di associare l'attributo certificato discreto creato al gruppo {int} di attributi certificati discreti del template e-service utilizzando per la versione del template un ID {entityIdType}")
     public void associateCertifiedDiscreteAttributeToGroupWithInvalidVersionId(int groupIndex, EntityIdType entityIdType) {
         EServiceTemplateInfo templateInfo = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
         UUID templateId = templateInfo.getId();
@@ -233,7 +233,7 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
         this.associateLastCertifiedDiscreteAttributePublished(templateId, versionId, groupIndex);
     }
 
-    @When("l'utente tenta di associare l'attributo certificato discreto creato al template e-service senza specificare i parametri necessari")
+    @When("l'utente tenta di associare l'attributo certificato discreto creato ad un nuovo gruppo di attributi certificati discreti del template e-service senza specificare i parametri necessari")
     public void associateCertifiedDiscreteAttributeWithMissingParameters() {
         List<CertifiedDiscreteAttribute> publishedAttributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscretePublished();
 
@@ -252,6 +252,28 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
             () -> this.eServiceTemplateAttributeClient.createEServiceTemplateVersionCertifiedDiscreteAttributesGroup(
                     templateId, versionId, attributesGroupSeed
             )
+        );
+    }
+
+    @When("l'utente tenta di associare l'attributo certificato discreto creato al gruppo {int} degli attributi certificati discreti del template e-service senza specificare i parametri necessari")
+    public void associateCertifiedDiscreteAttributeToGroupWithMissingParameters(int groupIndex) {
+        List<CertifiedDiscreteAttribute> publishedAttributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscretePublished();
+
+        EServiceTemplateInfo templateInfo = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
+        UUID templateId = templateInfo.getId();
+        UUID versionId = templateInfo.getLastVersionId();
+        CertifiedDiscreteAttribute lastPublishedAttribute = publishedAttributes.get(publishedAttributes.size() - 1);
+
+        EServiceTemplateVersionCertifiedDiscreteAttributesGroupSeed attributesGroupSeed = new EServiceTemplateVersionCertifiedDiscreteAttributesGroupSeed();
+        EServiceDescriptorCertifiedDiscreteAttributesGroupSeedAttributesInner attributeSeed = new EServiceDescriptorCertifiedDiscreteAttributesGroupSeedAttributesInner();
+        attributeSeed.setId(lastPublishedAttribute.getId());
+        attributeSeed.setDiscreteConfig(new EServiceAttributeCertifiedDiscreteConfigSeed());
+        attributesGroupSeed.addAttributesItem(attributeSeed);
+
+        httpExecutor.performCall(
+                () -> this.eServiceTemplateAttributeClient.assignEServiceTemplateVersionCertifiedDiscreteAttributesToGroup(
+                        templateId, versionId, groupIndex, attributesGroupSeed
+                )
         );
     }
 
