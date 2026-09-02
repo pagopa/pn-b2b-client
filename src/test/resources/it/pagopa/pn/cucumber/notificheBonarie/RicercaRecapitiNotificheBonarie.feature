@@ -238,7 +238,80 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
 # ***********************************************
 
   @informalNotificationsSearchDigitalAddress @
-  Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PF_04_1_A] Come ente mittente invio una notifica bonaria verso PG tramite sercQ e ASSENZA di un telefono censito. Il servizio invierà un messaggio di cortesia solo su email
+  Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PF_04_1_A] Come ente mittente invio una notifica bonaria verso PF CON PEC speciale e CON RECAPITO di piattaforma. TOS ACCETTATI. Il servizio utilizza la pec speciale.
 
   @informalNotificationsSearchDigitalAddress @
-  Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PG_04_1_A] Come ente mittente invio una notifica bonaria verso PG tramite sercQ e ASSENZA di un telefono censito. Il servizio invierà un messaggio di cortesia solo su email
+  Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PG_04_1_A] Come ente mittente invio una notifica bonaria verso PG CON PEC speciale e CON RECAPITO di piattaforma. TOS ACCETTATI. Il servizio utilizza la pec speciale.
+
+  @informalNotificationsSearchDigitalAddress @
+  Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PF_04_1_B] Come ente mittente invio una notifica bonaria verso PF SENZA PEC speciale e CON RECAPITO di piattaforma. TOS ACCETTATI. Il servizio non validerà la notifica.
+
+  @informalNotificationsSearchDigitalAddress @
+  Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PG_04_1_B] Come ente mittente invio una notifica bonaria verso PG SENZA PEC speciale e CON RECAPITO di piattaforma. TOS ACCETTATI. Il servizio non validerà la notifica.
+
+  @informalNotificationsSearchDigitalAddress @
+  Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PF_04_1_C] Come ente mittente invio una notifica bonaria verso PF SENZA PEC speciale e CON RECAPITO di piattaforma. TOS RIFIUTATI. Il servizio non validerà la notifica.
+
+  @informalNotificationsSearchDigitalAddress @
+  Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PG_04_1_C] Come ente mittente invio una notifica bonaria verso PG SENZA PEC speciale e CON RECAPITO di piattaforma. TOS RIFIUTATI. Il servizio non validerà la notifica.
+
+  @informalNotificationsSearchDigitalAddress @
+  Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PF_04_1_D] Come ente mittente invio una notifica bonaria verso PF CON PEC speciale e CON RECAPITO di piattaforma. TOS RIFIUTATI. Il servizio non validerà la notifica.
+
+  @informalNotificationsSearchDigitalAddress @
+  Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PG_04_1_D] Come ente mittente invio una notifica bonaria verso PG CON PEC speciale e CON RECAPITO di piattaforma. TOS RIFIUTATI. Il servizio non validerà la notifica.
+
+
+
+
+
+
+  @informalNotificationsSearchDigitalAddress @
+  Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PF_04_2_A] Come ente mittente invio una notifica bonaria verso PF SENZA EMAIL speciale e CON EMAIL di piattaforma. Il servizio skippa il canale email
+
+  @informalNotificationsSearchDigitalAddress @
+  Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PG_04_2_A] Come ente mittente invio una notifica bonaria verso PG SENZA EMAIL speciale e CON EMAIL di piattaforma. Il servizio skippa il canale email
+
+  @informalNotificationsSearchDigitalAddress @
+  Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PF_04_2_B] Come ente mittente invio una notifica bonaria verso PF SENZA EMAIL speciale e SENZA EMAIL di piattaforma. Il servizio skippa il canale email
+
+  @informalNotificationsSearchDigitalAddress @
+  Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PG_04_2_B] Come ente mittente invio una notifica bonaria verso PG SENZA EMAIL speciale e SENZA EMAIL di piattaforma. Il servizio skippa il canale email
+
+  @informalNotificationsSearchDigitalAddress @
+  Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PF_04_2_C] Come ente mittente invio una notifica bonaria verso PF CON EMAIL speciale e SENZA EMAIL di piattaforma. Il servizio utilizza l'email speciale.
+
+  @informalNotificationsSearchDigitalAddress @
+  Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PG_04_2_C] Come ente mittente invio una notifica bonaria verso PG CON EMAIL speciale e SENZA EMAIL di piattaforma. Il servizio utilizza l'email speciale.
+
+  @informalNotificationsSearchDigitalAddress @
+  Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PF_04_2_C] Come ente mittente invio una notifica bonaria verso PF CON EMAIL speciale e CON EMAIL di piattaforma. Il servizio utilizza l'email speciale.
+
+  @informalNotificationsSearchDigitalAddress @
+  Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PG_04_2_C] Come ente mittente invio una notifica bonaria verso PG CON EMAIL speciale e CON EMAIL di piattaforma. Il servizio utilizza l'email speciale.
+
+
+
+  @informalNotificationsSearchDigitalAddress @
+  Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PF_04_3_A] Come ente mittente invio una notifica bonaria verso PF SENZA SMS speciale e CON SMS di piattaforma. Il servizio skippa il canale SMS
+
+  @informalNotificationsSearchDigitalAddress @
+  Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PG_04_3_A] Come ente mittente invio una notifica bonaria verso PG SENZA SMS speciale e CON SMS di piattaforma. Il servizio skippa il canale SMS
+
+  @informalNotificationsSearchDigitalAddress @
+  Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PF_04_3_B] Come ente mittente invio una notifica bonaria verso PF SENZA SMS speciale e SENZA SMS di piattaforma. Il servizio skippa il canale SMS
+
+  @informalNotificationsSearchDigitalAddress @
+  Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PG_04_3_B] Come ente mittente invio una notifica bonaria verso PG SENZA SMS speciale e SENZA SMS di piattaforma. Il servizio skippa il canale SMS
+
+  @informalNotificationsSearchDigitalAddress @
+  Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PF_04_3_C] Come ente mittente invio una notifica bonaria verso PF CON SMS speciale e SENZA SMS di piattaforma. Il servizio utilizza l'SMS speciale.
+
+  @informalNotificationsSearchDigitalAddress @
+  Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PG_04_3_C] Come ente mittente invio una notifica bonaria verso PG CON SMS speciale e SENZA SMS di piattaforma. Il servizio utilizza l'SMS speciale.
+
+  @informalNotificationsSearchDigitalAddress @
+  Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PF_04_3_C] Come ente mittente invio una notifica bonaria verso PF CON SMS speciale e CON SMS di piattaforma. Il servizio utilizza l'SMS speciale.
+
+  @informalNotificationsSearchDigitalAddress @
+  Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PG_04_3_C] Come ente mittente invio una notifica bonaria verso PG CON SMS speciale e CON SMS di piattaforma. Il servizio utilizza l'SMS speciale.
