@@ -14,7 +14,6 @@ import java.util.Map;
 
 @Getter
 @Setter
-@Component
 @ScenarioScope(proxyMode = ScopedProxyMode.NO)
 public class IoMockScenarioContext {
 
@@ -25,12 +24,19 @@ public class IoMockScenarioContext {
     private JsonNode responseJson;
     private boolean isTransparentRouting;
 
-    // Campi per la gestione sequenze e messaggi (Flussi 2 e 3)
+    // Campi per la gestione sequenze e messaggi (Flussi 2, 3 e 4)
     private String createdMessageId;
     private long submitTimestamp;
     private String sequenceName;
     private Map<String, String> requestHeaders;
     private String rawPayloadString;
+
+    // Campi dedicati al Polling Stato Messaggio (Flusso 3) e Routing (Flusso 4)
+    private String queriedFiscalCode;
+    private String queriedMessageId;
+    private String polledStatus;
+    private String polledReadStatus;
+    private String polledPaymentStatus;
 
     public IoMockScenarioContext() {
         resetContext();
@@ -49,5 +55,10 @@ public class IoMockScenarioContext {
         createdMessageId = null;
         submitTimestamp = 0L;
         sequenceName = null;
+        queriedFiscalCode = null;
+        queriedMessageId = null;
+        polledStatus = null;
+        polledReadStatus = null;
+        polledPaymentStatus = null;
     }
 }

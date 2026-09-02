@@ -23,7 +23,6 @@ import java.util.regex.Pattern;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-@Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class IOMockMessagesSteps {
 
@@ -115,6 +114,7 @@ public class IOMockMessagesSteps {
     // WHEN STEPS
     //-----------------------------------------------------------------------------------------
 
+    @Given("viene richiesta la sottomissione del messaggio")
     @When("viene richiesta la sottomissione del messaggio")
     public void invokeSubmitMessageEndpoint() {
         commonSteps.invokeEndpoint("POST /messages");
@@ -124,6 +124,7 @@ public class IOMockMessagesSteps {
     // THEN & AND STEPS
     //-----------------------------------------------------------------------------------------
 
+    @Given("il messaggio viene preso in carico e viene generato un identificativo conforme per la sequenza {string}")
     @Then("il messaggio viene preso in carico e viene generato un identificativo conforme per la sequenza {string}")
     public void verifyIoMessageIdFormat(String expectedSequenceName) {
         JsonNode responseJson = context.getResponseJson();

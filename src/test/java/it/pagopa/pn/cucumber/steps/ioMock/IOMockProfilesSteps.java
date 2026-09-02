@@ -18,7 +18,6 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-@Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class IOMockProfilesSteps {
 
