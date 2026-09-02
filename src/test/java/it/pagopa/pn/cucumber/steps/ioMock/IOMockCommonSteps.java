@@ -1,7 +1,7 @@
 package it.pagopa.pn.cucumber.steps.ioMock;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.cucumber.steps.ioMock.context.IoMockScenarioContext;
@@ -15,8 +15,6 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -49,26 +47,10 @@ public class IOMockCommonSteps {
         HttpMethod method = HttpMethod.valueOf(parts[0].trim());
         String path = parts[1].trim();
 
-        executeHttpRequest(method, path, null);
+        executeHttpRequest(method, path);
     }
 
-    @When("l'utente invia una richiesta POST a {string} con payload:")
-    public void invokePostWithDocstringPayload(String path, String docstringPayload) {
-        context.setRawPayloadString(docstringPayload);
-        executeHttpRequest(HttpMethod.POST, path, docstringPayload);
-    }
-
-    @When("invoco endpoint {string} con payload:")
-    public void invokeEndpointWithDocstringPayload(String endpointMethodAndPath, String docstringPayload) {
-        String[] parts = endpointMethodAndPath.split(" ");
-        HttpMethod method = HttpMethod.valueOf(parts[0].trim());
-        String path = parts[1].trim();
-
-        context.setRawPayloadString(docstringPayload);
-        executeHttpRequest(method, path, docstringPayload);
-    }
-
-    private void executeHttpRequest(HttpMethod method, String path, String rawPayload) {
+    private void executeHttpRequest(HttpMethod method, String path) {
         String url = ioMockBaseUrl + (path.startsWith("/") ? path : "/" + path);
 
         HttpHeaders headers = new HttpHeaders();
@@ -79,14 +61,7 @@ public class IOMockCommonSteps {
             context.getRequestHeaders().forEach(headers::add);
         }
 
-        HttpEntity<?> entity;
-        if (rawPayload != null && !rawPayload.isBlank()) {
-            entity = new HttpEntity<>(rawPayload, headers);
-        } else if (context.getRawPayloadString() != null && !context.getRawPayloadString().isBlank()) {
-            entity = new HttpEntity<>(context.getRawPayloadString(), headers);
-        } else {
-            entity = new HttpEntity<>(context.getRequestPayload(), headers);
-        }
+        HttpEntity<?> entity = new HttpEntity<>(context.getRequestPayload(), headers);
 
         try {
             log.info("Sending {} request to {} with headers: {} and body: {}", method, url, headers, entity.getBody());
@@ -128,7 +103,7 @@ public class IOMockCommonSteps {
     }
 
     //-----------------------------------------------------------------------------------------
-    // COMMON THEN STEPS (Status Code and Common Asserts)
+    // COMMON THEN STEPS
     //-----------------------------------------------------------------------------------------
 
     @Then("verifico che lo status code della risposta sia {int}")
@@ -145,18 +120,7 @@ public class IOMockCommonSteps {
                 .isIn(expectedStatusCode1, expectedStatusCode2);
     }
 
-    @Then("verifico che lo status code sia {string}")
-    public void verifyStatusCodeString(String expectedStatusCode) {
-        try {
-            int code = Integer.parseInt(expectedStatusCode);
-            assertThat(context.getActualStatusCode()).isEqualTo(code);
-        } catch (NumberFormatException e) {
-            HttpStatus expectedStatus = HttpStatus.valueOf(expectedStatusCode.replace(" ", "_"));
-            assertThat(context.getActualStatusCode()).isEqualTo(expectedStatus.value());
-        }
-    }
-
-    @And("verifico che la richiesta sia stata inoltrata in modo trasparente a IO reale")
+    @Then("la richiesta viene instradata con successo verso l'ambiente reale di IO")
     public void verifyTransparentRoutingToRealIO() {
         assertThat(context.getActualStatusCode())
                 .as("Lo status code deve essere 200 OK o 201 Created")

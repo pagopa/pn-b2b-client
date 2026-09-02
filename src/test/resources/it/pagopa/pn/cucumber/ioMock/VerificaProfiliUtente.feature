@@ -1,48 +1,47 @@
 @ioMock @profiles
-Feature: Verifica e Routing Profili Utente su POST /profiles (Mock IO e Lambda Router)
-  Verifica della raggiungibilità e instradamento su POST /profiles tramite Lambda Router e Mock microservice basato su parametri SSM (Deny-list MapIoConnectorMockSenderNotAllowed, Whitelist MapIoConnectorMockRealTaxIdsWhitelist, Standard, 404 e 400)
+Feature: Verifica e Routing dei Profili Utente App IO
+  Come connettore IO di SEND
+  Voglio verificare la raggiungibilità dei destinatari su App IO
+  Per instradare correttamente le comunicazioni verso il Mock o l'ambiente reale
 
   @MOCK_IO_ROUTER_PROFILE_01_1_A
-  Scenario: [MOCK_IO_ROUTER_PROFILE_01_1_A] Verifica profilo con codice fiscale in Deny-list SSM MapIoConnectorMockSenderNotAllowed (Mock)
-    Given preparo una richiesta di verifica profilo con codice fiscale "DENYLIST_CF_001"
-    When invoco endpoint "POST /profiles"
-    Then verifico che lo status code della risposta sia 200
-    And verifico che il body della risposta contenga "sender_allowed" impostato a false
+  Scenario: [MOCK_IO_ROUTER_PROFILE_01_1_A] Destinatario non abilitato alla ricezione su IO (Mock)
+    Given un destinatario con codice fiscale in blacklist "DENYLIST_CF_001"
+    When viene richiesta la verifica del profilo utente
+    Then il profilo risulta non abilitato alla ricezione dei messaggi
 
   @MOCK_IO_ROUTER_PROFILE_01_1_B
-  Scenario: [MOCK_IO_ROUTER_PROFILE_01_1_B] Routing trasparente a IO reale per codice fiscale in Whitelist SSM MapIoConnectorMockRealTaxIdsWhitelist
-    Given preparo una richiesta di verifica profilo con codice fiscale "WHITELIST_CF_001"
-    When invoco endpoint "POST /profiles"
-    Then verifico che lo status code della risposta sia 200
-    And verifico che la richiesta sia stata inoltrata in modo trasparente a IO reale
+  Scenario: [MOCK_IO_ROUTER_PROFILE_01_1_B] Destinatario abilitato per inoltro trasparente verso IO reale
+    Given un destinatario abilitato al routing reale "WHITELIST_CF_001"
+    When viene richiesta la verifica del profilo utente
+    Then la richiesta viene instradata con successo verso l'ambiente reale di IO
 
   @MOCK_IO_ROUTER_PROFILE_01_1_C
-  Scenario: [MOCK_IO_ROUTER_PROFILE_01_1_C] Verifica profilo per codice fiscale standard non presente in lista (Mock)
-    Given preparo una richiesta di verifica profilo con codice fiscale "STANDAR_CF_00001"
-    When invoco endpoint "POST /profiles"
-    Then verifico che lo status code della risposta sia 200
-    And verifico che il body della risposta contenga "sender_allowed" impostato a true
+  Scenario: [MOCK_IO_ROUTER_PROFILE_01_1_C] Destinatario standard abilitato alla ricezione su IO (Mock)
+    Given un destinatario con codice fiscale ordinario "STANDAR_CF_00001"
+    When viene richiesta la verifica del profilo utente
+    Then il profilo risulta abilitato alla ricezione dei messaggi
 
   @MOCK_IO_ROUTER_PROFILE_01_1_D
-  Scenario: [MOCK_IO_ROUTER_PROFILE_01_1_D] Risposta 404 Not Found per destinatario non registrato su App IO
-    Given preparo una richiesta di verifica profilo con codice fiscale "NOT_REGISTERED_CF_001"
-    When invoco endpoint "POST /profiles"
-    Then verifico che lo status code della risposta sia 404
+  Scenario: [MOCK_IO_ROUTER_PROFILE_01_1_D] Destinatario non registrato su App IO
+    Given un destinatario non registrato ad App IO "NOT_REGISTERED_CF_001"
+    When viene richiesta la verifica del profilo utente
+    Then il profilo utente risulta non registrato
 
   @MOCK_IO_ROUTER_PROFILE_01_2_A
-  Scenario: [MOCK_IO_ROUTER_PROFILE_01_2_A] Errore 400 Bad Request per richiesta priva del campo obbligatorio fiscal_code
-    Given preparo una richiesta di verifica profilo senza il campo "fiscal_code"
-    When invoco endpoint "POST /profiles"
-    Then verifico che lo status code della risposta sia 400
+  Scenario: [MOCK_IO_ROUTER_PROFILE_01_2_A] Richiesta priva del campo obbligatorio codice fiscale
+    Given una richiesta di verifica profilo priva del campo "fiscal_code"
+    When viene richiesta la verifica del profilo utente
+    Then la richiesta di verifica profilo viene rifiutata per errore di validazione formale
 
   @MOCK_IO_ROUTER_PROFILE_01_2_B
-  Scenario: [MOCK_IO_ROUTER_PROFILE_01_2_B] Errore 400 Bad Request per richiesta con campi non previsti da OpenAPI
-    Given preparo una richiesta di verifica profilo contenente campi non definiti nelle specifiche OpenAPI
-    When invoco endpoint "POST /profiles"
-    Then verifico che lo status code della risposta sia 400
+  Scenario: [MOCK_IO_ROUTER_PROFILE_01_2_B] Richiesta con campi non previsti dalle specifiche
+    Given una richiesta di verifica profilo contenente campi non previsti dalle specifiche
+    When viene richiesta la verifica del profilo utente
+    Then la richiesta di verifica profilo viene rifiutata per errore di validazione formale
 
   @MOCK_IO_ROUTER_PROFILE_01_2_C
-  Scenario: [MOCK_IO_ROUTER_PROFILE_01_2_C] Errore 400 Bad Request per richiesta con fiscal_code malformato o non valido
-    Given preparo una richiesta di verifica profilo con codice fiscale ""
-    When invoco endpoint "POST /profiles"
-    Then verifico che lo status code della risposta sia 400
+  Scenario: [MOCK_IO_ROUTER_PROFILE_01_2_C] Richiesta con codice fiscale vuoto o non valido
+    Given un destinatario con codice fiscale ordinario ""
+    When viene richiesta la verifica del profilo utente
+    Then la richiesta di verifica profilo viene rifiutata per errore di validazione formale

@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -41,7 +42,7 @@ public class IOMockMessagesSteps {
     }
 
     //-----------------------------------------------------------------------------------------
-    // GIVEN STEPS (Payload & Request Preparation)
+    // GIVEN STEPS
     //-----------------------------------------------------------------------------------------
 
     @Given("una sequenza valida censita a sistema {string}")
@@ -53,63 +54,38 @@ public class IOMockMessagesSteps {
         context.setRequestPayload(payload);
     }
 
-    @Given("preparo una richiesta di invio messaggio per la sequenza {string}")
-    public void prepareMessageRequestForSequence(String sequenceName) {
-        context.setSequenceName(sequenceName);
-        Map<String, Object> payload = IoMockMessagePayloadBuilder.builder()
-                .withSequence(sequenceName)
-                .buildMap();
-        context.setRequestPayload(payload);
-    }
-
-    @Given("preparo una richiesta di invio messaggio con subject {string}")
-    public void prepareMessageRequestWithSubject(String subject) {
-        Map<String, Object> payload = IoMockMessagePayloadBuilder.builder()
-                .withSubject(subject)
-                .buildMap();
-        context.setRequestPayload(payload);
-    }
-
-    @Given("preparo una richiesta di invio messaggio con subject ordinario privo di marker")
+    @Given("una richiesta di invio messaggio con subject ordinario privo di marker")
     public void prepareMessageRequestWithoutMarker() {
         Map<String, Object> payload = IoMockMessagePayloadBuilder.builder()
                 .withSubject("Notifica ordinaria senza marker")
                 .buildMap();
         context.setRequestPayload(payload);
-        // Header di autenticazione IO reale
         if (context.getRequestHeaders() == null) {
             context.setRequestHeaders(new HashMap<>());
         }
         context.getRequestHeaders().put("Ocp-Apim-Subscription-Key", "sub-key-io-collaudo-test-12345");
     }
 
-    @Given("imposto l'header di richiesta {string} a {string}")
-    public void setRequestHeader(String headerName, String headerValue) {
-        if (context.getRequestHeaders() == null) {
-            context.setRequestHeaders(new HashMap<>());
+    @Given("una richiesta di invio messaggio priva del campo obbligatorio {string}")
+    public void prepareMessageRequestMissingFieldByDotNotation(String fieldName) {
+        if (fieldName.contains(".")) {
+            String[] parts = fieldName.split("\\.");
+            if ("content".equalsIgnoreCase(parts[0])) {
+                Map<String, Object> payload = IoMockMessagePayloadBuilder.builder()
+                        .withoutContentField(parts[1])
+                        .buildMap();
+                context.setRequestPayload(payload);
+                return;
+            }
         }
-        context.getRequestHeaders().put(headerName, headerValue);
-    }
-
-    @Given("preparo una richiesta di invio messaggio senza il campo {string}")
-    public void prepareMessageRequestMissingField(String fieldName) {
         Map<String, Object> payload = IoMockMessagePayloadBuilder.builder()
                 .withoutField(fieldName)
                 .buildMap();
         context.setRequestPayload(payload);
     }
 
-    @Given("preparo una richiesta di invio messaggio senza il sotto-campo {string} in {string}")
-    public void prepareMessageRequestMissingSubField(String subFieldName, String parentField) {
-        Map<String, Object> payload = IoMockMessagePayloadBuilder.builder()
-                .withoutContentField(subFieldName)
-                .buildMap();
-        context.setRequestPayload(payload);
-    }
-
-    @Given("preparo una richiesta di invio messaggio contenente campi non definiti nelle specifiche OpenAPI")
+    @Given("una richiesta di invio messaggio contenente campi non definiti nelle specifiche OpenAPI")
     public void prepareMessageRequestWithExtraFields() {
-        // Invio tramite mappa non tipizzata per bypassare filtri DTO
         Map<String, Object> payload = IoMockMessagePayloadBuilder.builder()
                 .withExtraField("unauthorized_custom_property", "unexpected_value_123")
                 .withExtraField("extra_nested_object", Map.of("foo", "bar"))
@@ -118,7 +94,7 @@ public class IOMockMessagesSteps {
         context.setRequestPayload(payload);
     }
 
-    @Given("preparo una richiesta di invio messaggio con codice fiscale formalmente non valido {string}")
+    @Given("una richiesta di invio messaggio con codice fiscale formalmente non valido {string}")
     public void prepareMessageRequestWithInvalidFiscalCode(String invalidFiscalCode) {
         Map<String, Object> payload = IoMockMessagePayloadBuilder.builder()
                 .withFiscalCode(invalidFiscalCode)
@@ -126,7 +102,7 @@ public class IOMockMessagesSteps {
         context.setRequestPayload(payload);
     }
 
-    @Given("preparo una richiesta di invio messaggio con marker di sequenza non censita {string}")
+    @Given("una richiesta di invio messaggio con marker di sequenza non censita {string}")
     public void prepareMessageRequestWithUnknownSequence(String unknownSequenceName) {
         context.setSequenceName(unknownSequenceName);
         Map<String, Object> payload = IoMockMessagePayloadBuilder.builder()
@@ -139,16 +115,16 @@ public class IOMockMessagesSteps {
     // WHEN STEPS
     //-----------------------------------------------------------------------------------------
 
-    @When("invoco endpoint POST per l'invio del messaggio")
+    @When("viene richiesta la sottomissione del messaggio")
     public void invokeSubmitMessageEndpoint() {
         commonSteps.invokeEndpoint("POST /messages");
     }
 
     //-----------------------------------------------------------------------------------------
-    // THEN & AND STEPS (Assertions)
+    // THEN & AND STEPS
     //-----------------------------------------------------------------------------------------
 
-    @Then("l'ID restituito deve essere un ioMessageId conforme per la sequenza {string}")
+    @Then("il messaggio viene preso in carico e viene generato un identificativo conforme per la sequenza {string}")
     public void verifyIoMessageIdFormat(String expectedSequenceName) {
         JsonNode responseJson = context.getResponseJson();
         assertThat(responseJson)
@@ -185,8 +161,8 @@ public class IOMockMessagesSteps {
         // 4. Parsabilità del timestamp submitMillis e coerenza temporale
         long submitMillis = Long.parseLong(timestampStr);
         long now = System.currentTimeMillis();
-        long minAllowed = now - 60_000L; // fino a 60 secondi nel passato
-        long maxAllowed = now + 5_000L;  // tolleranza 5 secondi nel futuro per clock drift
+        long minAllowed = now - 60_000L;
+        long maxAllowed = now + 5_000L;
 
         assertThat(submitMillis)
                 .as("Il timestamp submitMillis (%d) non è coerente con il tempo corrente (%d). Range consentito: [%d, %d]",
@@ -204,8 +180,8 @@ public class IOMockMessagesSteps {
         context.setSubmitTimestamp(submitMillis);
     }
 
-    @Then("verifico che l'ID restituito non contenga il prefisso {string}")
-    public void verifyMessageIdDoesNotContainPrefix(String forbiddenPrefix) {
+    @And("l'identificativo restituito non contiene il prefisso di mock")
+    public void verifyMessageIdDoesNotContainMockPrefix() {
         JsonNode responseJson = context.getResponseJson();
         assertThat(responseJson)
                 .as("Il body della risposta non contiene un JSON valido")
@@ -217,24 +193,35 @@ public class IOMockMessagesSteps {
 
         String messageId = responseJson.get("id").asText();
         assertThat(messageId)
-                .as("L'ID restituito (%s) non deve contenere il prefisso del mock (%s)", messageId, forbiddenPrefix)
-                .doesNotStartWith(forbiddenPrefix);
+                .as("L'ID restituito (%s) non deve contenere il prefisso del mock (MOCK-)", messageId)
+                .doesNotStartWith("MOCK-");
     }
 
-    @And("verifico che gli header originali tra cui {string} siano stati preservati")
-    public void verifyOriginalHeadersPreserved(String headerName) {
-        assertThat(context.getRequestHeaders())
-                .as("Gli header di richiesta originali non sono stati configurati")
-                .containsKey(headerName);
-
-        String originalHeaderVal = context.getRequestHeaders().get(headerName);
-        assertThat(originalHeaderVal)
-                .as("Il valore dell'header originale %s non deve essere nullo", headerName)
-                .isNotBlank();
+    @Then("la richiesta viene rifiutata per errore di validazione formale")
+    public void verifyRequestValidationFailed() {
+        assertThat(context.getActualStatusCode())
+                .as("Lo status code atteso è 400 Bad Request")
+                .isEqualTo(HttpStatus.BAD_REQUEST.value());
+        verifySchemaValidationError();
     }
 
-    @And("verifico che il body della risposta contenga i dettagli di errore di validazione schema")
-    public void verifySchemaValidationError() {
+    @Then("la richiesta viene rifiutata per errore nel formato del destinatario")
+    public void verifyRecipientFormatValidationFailed() {
+        assertThat(context.getActualStatusCode())
+                .as("Lo status code atteso è 400 Bad Request")
+                .isEqualTo(HttpStatus.BAD_REQUEST.value());
+        verifyRecipientFormatError();
+    }
+
+    @Then("la richiesta viene rifiutata per sequenza non censita a sistema")
+    public void verifyUnknownSequenceValidationFailed() {
+        assertThat(context.getActualStatusCode())
+                .as("Lo status code atteso è 400 Bad Request")
+                .isEqualTo(HttpStatus.BAD_REQUEST.value());
+        verifyUnknownSequenceError();
+    }
+
+    private void verifySchemaValidationError() {
         String body = context.getResponseBody();
         assertThat(body)
                 .as("Il body della risposta di errore 400 non deve essere vuoto")
@@ -251,8 +238,7 @@ public class IOMockMessagesSteps {
         }
     }
 
-    @And("verifico che il body della risposta contenga l'errore di formato del destinatario")
-    public void verifyRecipientFormatError() {
+    private void verifyRecipientFormatError() {
         String body = context.getResponseBody();
         assertThat(body)
                 .as("Il body della risposta di errore 400 non deve essere vuoto")
@@ -270,8 +256,7 @@ public class IOMockMessagesSteps {
         }
     }
 
-    @And("verifico che il body della risposta contenga l'errore di sequenza non configurata a sistema")
-    public void verifyUnknownSequenceError() {
+    private void verifyUnknownSequenceError() {
         String body = context.getResponseBody();
         assertThat(body)
                 .as("Il body della risposta di errore 400 non deve essere vuoto")
