@@ -36,12 +36,12 @@ public class EServiceCertifiedDiscreteAttributesSteps {
     }
 
     /**
-     * Aggiunge gli attributi al descrittore dell'e-service.
+     * Crea e aggiunge gli attributi al descrittore dell'e-service.
      *
      * @param attributesSpec Lista di attributi da aggiungere al descrittore dell'e-service. Il campo group è a base zero.
      */
-    @Given("l'utente aggiunge i seguenti attributi al descrittore dell'e-service:")
-    public void addAttributesToEServiceDescriptor(List<EServiceAttributeSpec> attributesSpec) {
+    @Given("l'utente crea e aggiunge i seguenti attributi al descrittore dell'e-service:")
+    public void createAndAddAttributesToEServiceDescriptor(List<EServiceAttributeSpec> attributesSpec) {
 
         List<List<CertifiedDiscreteAttribute>> assignedAttributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscreteAssigned();
 
