@@ -158,6 +158,40 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
         ));
     }
 
+    @When("l'utente tenta di associare l'attributo certificato discreto creato ad un nuovo gruppo di attributi del template e-service")
+    public void associateCertifiedDiscreteAttributeToTemplate() {
+        EServiceTemplateInfo templateInfo = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
+        UUID templateId = templateInfo.getId();
+        UUID versionId = templateInfo.getLastVersionId();
+
+        this.associateLastCertifiedDiscreteAttributePublished(templateId, versionId, null);
+
+        if (httpExecutor.getResponseStatus().is2xxSuccessful()) {
+            // Update group in context
+            List<CertifiedDiscreteAttribute> publishedAttributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscretePublished();
+            CertifiedDiscreteAttribute certifiedDiscreteAttribute = publishedAttributes.get(publishedAttributes.size() - 1);
+            List<List<CertifiedDiscreteAttribute>> assignedAttributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscreteAssigned();
+            assignedAttributes.add(new ArrayList<>());
+            assignedAttributes.get(assignedAttributes.size() - 1).add(certifiedDiscreteAttribute);
+        }
+    }
+
+    @When("l'utente tenta di associare l'attributo certificato discreto creato ad un nuovo gruppo di attributi del template e-service utilizzando per il template un ID {entityIdType}")
+    public void associateCertifiedDiscreteAttributeToTemplateWithInvalidTemplateId(EntityIdType entityIdType) {
+        EServiceTemplateInfo templateInfo = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
+        UUID templateId = generateId(entityIdType);
+        UUID versionId = templateInfo.getLastVersionId();
+        this.associateLastCertifiedDiscreteAttributePublished(templateId, versionId, null);
+    }
+
+    @When("l'utente tenta di associare l'attributo certificato discreto creato ad un nuovo gruppo di attributi del template e-service utilizzando per la versione del template un ID {entityIdType}")
+    public void associateCertifiedDiscreteAttributeToTemplateWithInvalidVersionId(EntityIdType entityIdType) {
+        EServiceTemplateInfo templateInfo = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
+        UUID templateId = templateInfo.getId();
+        UUID versionId = generateId(entityIdType);
+        this.associateLastCertifiedDiscreteAttributePublished(templateId, versionId, null);
+    }
+
     /**
      *
      * @param groupIndex is a zero-based index of the group to associate the attribute to e-service template
@@ -181,6 +215,44 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
             }
             assignedAttributes.get(groupIndex).add(certifiedDiscreteAttribute);
         }
+    }
+
+    @When("l'utente tenta di associare l'attributo certificato discreto creato al gruppo {int} del template e-service utilizzando per il template un ID {entityIdType}")
+    public void associateCertifiedDiscreteAttributeToGroupWithInvalidTemplateId(int groupIndex, EntityIdType entityIdType) {
+        EServiceTemplateInfo templateInfo = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
+        UUID templateId = generateId(entityIdType);
+        UUID versionId = templateInfo.getLastVersionId();
+        this.associateLastCertifiedDiscreteAttributePublished(templateId, versionId, groupIndex);
+    }
+
+    @When("l'utente tenta di associare l'attributo certificato discreto creato al gruppo {int} del template e-service utilizzando per la versione del template un ID {entityIdType}")
+    public void associateCertifiedDiscreteAttributeToGroupWithInvalidVersionId(int groupIndex, EntityIdType entityIdType) {
+        EServiceTemplateInfo templateInfo = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
+        UUID templateId = templateInfo.getId();
+        UUID versionId = generateId(entityIdType);
+        this.associateLastCertifiedDiscreteAttributePublished(templateId, versionId, groupIndex);
+    }
+
+    @When("l'utente tenta di associare l'attributo certificato discreto creato al template e-service senza specificare i parametri necessari")
+    public void associateCertifiedDiscreteAttributeWithMissingParameters() {
+        List<CertifiedDiscreteAttribute> publishedAttributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscretePublished();
+
+        EServiceTemplateInfo templateInfo = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
+        UUID templateId = templateInfo.getId();
+        UUID versionId = templateInfo.getLastVersionId();
+        CertifiedDiscreteAttribute lastPublishedAttribute = publishedAttributes.get(publishedAttributes.size() - 1);
+
+        EServiceTemplateVersionCertifiedDiscreteAttributesGroupSeed attributesGroupSeed = new EServiceTemplateVersionCertifiedDiscreteAttributesGroupSeed();
+        EServiceDescriptorCertifiedDiscreteAttributesGroupSeedAttributesInner attributeSeed = new EServiceDescriptorCertifiedDiscreteAttributesGroupSeedAttributesInner();
+        attributeSeed.setId(lastPublishedAttribute.getId());
+        attributeSeed.setDiscreteConfig(new EServiceAttributeCertifiedDiscreteConfigSeed());
+        attributesGroupSeed.addAttributesItem(attributeSeed);
+
+        httpExecutor.performCall(
+            () -> this.eServiceTemplateAttributeClient.createEServiceTemplateVersionCertifiedDiscreteAttributesGroup(
+                    templateId, versionId, attributesGroupSeed
+            )
+        );
     }
 
     private CertifiedDiscreteAttribute createCertifiedDiscreteAttribute(EServiceAttributeSpec attributeSpec) {
@@ -255,5 +327,13 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
                     )
             );
         }
+    }
+
+    private UUID generateId(EntityIdType entityIdType) {
+        return switch (entityIdType){
+            case INVALID_ID -> UUID.fromString("0-0-0-0-0");
+            case NON_EXISTENT_ID -> UUID.randomUUID();
+            default -> throw new IllegalStateException("Tipo di id non supportato: " + entityIdType.name());
+        };
     }
 }
