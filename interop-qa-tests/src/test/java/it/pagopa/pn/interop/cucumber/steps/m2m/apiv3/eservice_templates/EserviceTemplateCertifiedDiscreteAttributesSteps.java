@@ -1,8 +1,10 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.eservice_templates;
 
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.attribute.service.IM2MV3CertifiedDiscreteAttributeClient;
 import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.common.enums.EntityIdType;
 import it.pagopa.interop.e_service_template.IM2MV3EServiceTemplateAttributeClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.*;
@@ -40,7 +42,7 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
     *
     * @param attributesSpec Lista di attributi da aggiungere all'ultima versione del template e-service. Il campo group è a base zero.
     */
-    @When("l'utente aggiunge i seguenti attributi all'e-service template creato:")
+    @When("l'utente crea e aggiunge i seguenti attributi all'e-service template creato:")
     public void addAttributesToEServiceTemplate(List<EServiceAttributeSpec> attributesSpec) {
 
         List<List<CertifiedDiscreteAttribute>> assignedAttributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscreteAssigned();
@@ -99,11 +101,11 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
     @When("la configurazione degli attributi certificati discreti del template e-service corrisponde a quella attesa")
     public void checkCertifiedDiscreteAttributesAgainstExpected() {
         EServiceTemplateInfo templateInfo = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
-        UUID templateEServiceId = templateInfo.getId();
-        UUID templateVersionId = templateInfo.getLastVersionId();
+        UUID templateId = templateInfo.getId();
+        UUID versionId = templateInfo.getLastVersionId();
         AttributeCommonContext context = sharedStepsContext.getAttributeCommonContext();
 
-        List<EServiceTemplateVersionCertifiedDiscreteAttribute> actualAttributes = fetchAllCertifiedDiscreteAttributes(templateEServiceId, templateVersionId);
+        List<EServiceTemplateVersionCertifiedDiscreteAttribute> actualAttributes = fetchAllCertifiedDiscreteAttributes(templateId, versionId);
 
         Map<Integer, List<UUID>> expectedIdsByGroup = new TreeMap<>();
             for (int groupIndex = 0; groupIndex < context.getCertifiedDiscreteAssigned().size(); groupIndex++) {
@@ -133,6 +135,27 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
                 Assertions.assertTrue(actualIds.containsAll(expectedIds),
                         "Attributes in group " + groupIndex + " do not match the expected ones");
             });
+    }
+
+    @When("l'utente tenta di recuperare gli attributi certificati discreti del template e-service")
+    public void getCertifiedDiscreteAttributes() {
+        EServiceTemplateInfo templateInfo = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
+        UUID templateId = templateInfo.getId();
+        UUID versionId = templateInfo.getLastVersionId();
+
+        httpExecutor.performCall(() -> this.eServiceTemplateAttributeClient.getEServiceTemplateVersionCertifiedDiscreteAttributes(
+                templateId, versionId, 0, 50
+        ));
+    }
+
+    @When("l'utente tenta di recuperare gli attributi certificati discreti del template e-service specificando un ID {entityIdType} per il template")
+    public void getCertifiedDiscreteAttributesWithInvalidTemplateId(EntityIdType entityIdType) {
+        EServiceTemplateInfo templateInfo = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
+        UUID templateId = templateInfo.getId();
+        UUID versionId = templateInfo.getLastVersionId();
+        httpExecutor.performCall(() -> this.eServiceTemplateAttributeClient.getEServiceTemplateVersionCertifiedDiscreteAttributes(
+                templateId, versionId, 0, 50
+        ));
     }
 
     private CertifiedDiscreteAttribute createCertifiedDiscreteAttribute(EServiceAttributeSpec attributeSpec) {
