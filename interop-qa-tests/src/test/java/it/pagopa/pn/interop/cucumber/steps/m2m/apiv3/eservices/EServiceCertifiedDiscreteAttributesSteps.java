@@ -1,6 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.eservices;
 
-import io.cucumber.java.en.Given;
+import io.cucumber.java.en.When;
 import it.pagopa.interop.attribute.service.IM2MV3CertifiedDiscreteAttributeClient;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.common.enums.EntityIdType;
@@ -40,7 +40,7 @@ public class EServiceCertifiedDiscreteAttributesSteps {
      *
      * @param attributesSpec Lista di attributi da aggiungere al descrittore dell'e-service. Il campo group è a base zero.
      */
-    @Given("l'utente crea e aggiunge i seguenti attributi al descrittore dell'e-service:")
+    @When("l'utente crea e aggiunge i seguenti attributi al descrittore dell'e-service:")
     public void createAndAddAttributesToEServiceDescriptor(List<EServiceAttributeSpec> attributesSpec) {
 
         List<List<CertifiedDiscreteAttribute>> assignedAttributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscreteAssigned();
@@ -95,7 +95,7 @@ public class EServiceCertifiedDiscreteAttributesSteps {
         });
     }
 
-    @Given("l'utente tenta di associare l'attributo certificato discreto creato all'e-service")
+    @When("l'utente tenta di associare l'attributo certificato discreto creato all'e-service")
     public void associateCertifiedDiscreteAttribute() {
 
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
@@ -108,7 +108,7 @@ public class EServiceCertifiedDiscreteAttributesSteps {
      *
      * @param groupIndex is a zero-based index of the group to associate the attribute to e-service descriptor
      */
-    @Given("l'utente tenta di associare l'attributo certificato discreto creato al gruppo {int} dell'e-service")
+    @When("l'utente tenta di associare l'attributo certificato discreto creato al gruppo {int} dell'e-service")
     public void associateCertifiedDiscreteAttributeToGroup(int groupIndex) {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
@@ -128,7 +128,7 @@ public class EServiceCertifiedDiscreteAttributesSteps {
         }
     }
 
-    @Given("l'utente tenta di associare un attributo certificato discreto all'e-service senza specificare alcun parametro")
+    @When("l'utente tenta di associare un attributo certificato discreto all'e-service senza specificare alcun parametro")
     public void associateCertifiedDiscreteAttributeWithoutParameters() {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
@@ -141,7 +141,7 @@ public class EServiceCertifiedDiscreteAttributesSteps {
         );
     }
 
-    @Given("l'utente tenta di associare l'attributo certificato discreto creato all'e-service senza specificare i parametri necessari")
+    @When("l'utente tenta di associare l'attributo certificato discreto creato all'e-service senza specificare i parametri necessari")
     public void associateCertifiedDiscreteAttributeWithMissingParameters() {
         List<CertifiedDiscreteAttribute> publishedAttributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscretePublished();
 
@@ -161,7 +161,7 @@ public class EServiceCertifiedDiscreteAttributesSteps {
         );
     }
 
-    @Given("l'utente tenta di associare un attributo certificato discreto specificando un ID {entityIdType} per l'attributo")
+    @When("l'utente tenta di associare un attributo certificato discreto specificando un ID {entityIdType} per l'attributo")
     public void associateCertifiedDiscreteAttributeWithInvalidAttributeId(EntityIdType entityIdType) {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
@@ -178,7 +178,7 @@ public class EServiceCertifiedDiscreteAttributesSteps {
         );
     }
 
-    @Given("la configurazione degli attributi certificati discreti del descrittore dell'e-service corrisponde a quella attesa")
+    @When("la configurazione degli attributi certificati discreti del descrittore dell'e-service corrisponde a quella attesa")
     public void checkCertifiedDiscreteAttributesAgainstExpected() {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
@@ -216,7 +216,7 @@ public class EServiceCertifiedDiscreteAttributesSteps {
         });
     }
 
-    @Given("l'utente tenta di associare l'attributo certificato discreto creato specificando un e-service ID {entityIdType}")
+    @When("l'utente tenta di associare l'attributo certificato discreto creato specificando un e-service ID {entityIdType}")
     public void associateCertifiedDiscreteAttributeWithInvalidEServiceId(EntityIdType entityIdType) {
         UUID eServiceId = generateId(entityIdType);
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
@@ -224,7 +224,7 @@ public class EServiceCertifiedDiscreteAttributesSteps {
         associateLastCertifiedDiscreteAttributePublished(eServiceId, descriptorId, null);
     }
 
-    @Given("l'utente tenta di associare l'attributo certificato discreto creato specificando un descriptor ID {entityIdType}")
+    @When("l'utente tenta di associare l'attributo certificato discreto creato specificando un descriptor ID {entityIdType}")
     public void associateCertifiedDiscreteAttributeWithInvalidDescriptorId(EntityIdType entityIdType) {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = generateId(entityIdType);
@@ -232,14 +232,14 @@ public class EServiceCertifiedDiscreteAttributesSteps {
         associateLastCertifiedDiscreteAttributePublished(eServiceId, descriptorId, null);
     }
 
-    @Given("l'utente tenta di associare l'attributo certificato discreto creato al gruppo {int} dell'e-service specificando un ID {entityIdType} per il descrittore dell'e-service")
+    @When("l'utente tenta di associare l'attributo certificato discreto creato al gruppo {int} dell'e-service specificando un ID {entityIdType} per il descrittore dell'e-service")
     public void associateCertifiedDiscreteAttributeToGroupWithInvalidEServiceId(int groupIndex, EntityIdType entityIdType) {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = generateId(entityIdType);
         associateLastCertifiedDiscreteAttributePublished(eServiceId, descriptorId, groupIndex);
     }
 
-    @Given("l'utente tenta di recuperare gli attributi certificati discreti del descrittore dell'e-service")
+    @When("l'utente tenta di recuperare gli attributi certificati discreti del descrittore dell'e-service")
     public void getCertifiedDiscreteAttributes() {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
@@ -249,7 +249,7 @@ public class EServiceCertifiedDiscreteAttributesSteps {
         ));
     }
 
-    @Given("l'utente tenta di recuperare gli attributi certificati discreti del descrittore dell'e-service specificando un ID {entityIdType} per l'e-service")
+    @When("l'utente tenta di recuperare gli attributi certificati discreti del descrittore dell'e-service specificando un ID {entityIdType} per l'e-service")
     public void getCertifiedDiscreteAttributesWithInvalidEServiceId(EntityIdType entityIdType) {
         UUID eServiceId = generateId(entityIdType);
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
@@ -259,7 +259,7 @@ public class EServiceCertifiedDiscreteAttributesSteps {
         ));
     }
 
-    @Given("l'utente tenta di recuperare gli attributi certificati discreti del descrittore dell'e-service specificando un ID {entityIdType} per il descrittore dell'e-service")
+    @When("l'utente tenta di recuperare gli attributi certificati discreti del descrittore dell'e-service specificando un ID {entityIdType} per il descrittore dell'e-service")
     public void getCertifiedDiscreteAttributesWithInvalidDescriptorId(EntityIdType entityIdType) {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = generateId(entityIdType);
@@ -269,7 +269,7 @@ public class EServiceCertifiedDiscreteAttributesSteps {
         ));
     }
 
-    @Given("l'utente tenta di rimuovere l'attributo certificato discreto {int} associato al gruppo {int} dell'e-service")
+    @When("l'utente tenta di rimuovere l'attributo certificato discreto {int} associato al gruppo {int} dell'e-service")
     public void removeCertifiedDiscreteAttributeFromGroup(int attributeIndex, int groupIndex) {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
@@ -291,7 +291,7 @@ public class EServiceCertifiedDiscreteAttributesSteps {
         }
     }
 
-    @Given("l'utente tenta di rimuovere l'attributo certificato discreto {int} associato al gruppo {int} dell'e-service specificando un ID {entityIdType} per l'e-service")
+    @When("l'utente tenta di rimuovere l'attributo certificato discreto {int} associato al gruppo {int} dell'e-service specificando un ID {entityIdType} per l'e-service")
     public void removeCertifiedDiscreteAttributeFromGroupWithInvalidEServiceId(int attributeIndex, int groupIndex, EntityIdType entityIdType) {
         UUID eServiceId = generateId(entityIdType);
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
@@ -305,7 +305,7 @@ public class EServiceCertifiedDiscreteAttributesSteps {
         );
     }
 
-    @Given("l'utente tenta di rimuovere l'attributo certificato discreto {int} associato al gruppo {int} dell'e-service specificando un ID {entityIdType} per il descrittore dell'e-service")
+    @When("l'utente tenta di rimuovere l'attributo certificato discreto {int} associato al gruppo {int} dell'e-service specificando un ID {entityIdType} per il descrittore dell'e-service")
     public void removeCertifiedDiscreteAttributeFromGroupWithInvalidDescriptorId(int attributeIndex, int groupIndex, EntityIdType entityIdType) {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = generateId(entityIdType);
@@ -319,7 +319,7 @@ public class EServiceCertifiedDiscreteAttributesSteps {
         );
     }
 
-    @Given("l'utente tenta di rimuovere l'attributo certificato discreto {int} associato al gruppo {int} dell'e-service specificando un ID {entityIdType} per l'attributo precedentemente associato")
+    @When("l'utente tenta di rimuovere l'attributo certificato discreto {int} associato al gruppo {int} dell'e-service specificando un ID {entityIdType} per l'attributo precedentemente associato")
     public void removeCertifiedDiscreteAttributeFromGroupWithInvalidEServiceAndDescriptorId(int attributeIndex, int groupIndex, EntityIdType entityIdType) {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
