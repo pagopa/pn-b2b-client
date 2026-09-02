@@ -29,6 +29,8 @@ public class IoMockScenarioContext {
     private String createdMessageId;
     private long submitTimestamp;
     private String sequenceName;
+    private Map<String, String> requestHeaders;
+    private String rawPayloadString;
 
     public IoMockScenarioContext() {
         resetContext();
@@ -37,6 +39,8 @@ public class IoMockScenarioContext {
     @Before
     public void resetContext() {
         requestPayload = new HashMap<>();
+        requestHeaders = new HashMap<>();
+        rawPayloadString = null;
         responseEntity = null;
         actualStatusCode = 0;
         responseBody = null;

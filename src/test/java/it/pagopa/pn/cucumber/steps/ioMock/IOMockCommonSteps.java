@@ -49,15 +49,47 @@ public class IOMockCommonSteps {
         HttpMethod method = HttpMethod.valueOf(parts[0].trim());
         String path = parts[1].trim();
 
+        executeHttpRequest(method, path, null);
+    }
+
+    @When("l'utente invia una richiesta POST a {string} con payload:")
+    public void invokePostWithDocstringPayload(String path, String docstringPayload) {
+        context.setRawPayloadString(docstringPayload);
+        executeHttpRequest(HttpMethod.POST, path, docstringPayload);
+    }
+
+    @When("invoco endpoint {string} con payload:")
+    public void invokeEndpointWithDocstringPayload(String endpointMethodAndPath, String docstringPayload) {
+        String[] parts = endpointMethodAndPath.split(" ");
+        HttpMethod method = HttpMethod.valueOf(parts[0].trim());
+        String path = parts[1].trim();
+
+        context.setRawPayloadString(docstringPayload);
+        executeHttpRequest(method, path, docstringPayload);
+    }
+
+    private void executeHttpRequest(HttpMethod method, String path, String rawPayload) {
         String url = ioMockBaseUrl + (path.startsWith("/") ? path : "/" + path);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(context.getRequestPayload(), headers);
+        // Applica header configurati nel context
+        if (context.getRequestHeaders() != null) {
+            context.getRequestHeaders().forEach(headers::add);
+        }
+
+        HttpEntity<?> entity;
+        if (rawPayload != null && !rawPayload.isBlank()) {
+            entity = new HttpEntity<>(rawPayload, headers);
+        } else if (context.getRawPayloadString() != null && !context.getRawPayloadString().isBlank()) {
+            entity = new HttpEntity<>(context.getRawPayloadString(), headers);
+        } else {
+            entity = new HttpEntity<>(context.getRequestPayload(), headers);
+        }
 
         try {
-            log.info("Sending {} request to {} with body: {}", method, url, context.getRequestPayload());
+            log.info("Sending {} request to {} with headers: {} and body: {}", method, url, headers, entity.getBody());
             ResponseEntity<String> response = restTemplate.exchange(url, method, entity, String.class);
             context.setResponseEntity(response);
             context.setActualStatusCode(response.getStatusCodeValue());
@@ -69,7 +101,11 @@ public class IOMockCommonSteps {
 
             if (response.getBody() != null && !response.getBody().isBlank()) {
                 try {
-                    context.setResponseJson(objectMapper.readTree(response.getBody()));
+                    JsonNode jsonNode = objectMapper.readTree(response.getBody());
+                    context.setResponseJson(jsonNode);
+                    if (jsonNode.hasNonNull("id")) {
+                        context.setCreatedMessageId(jsonNode.get("id").asText());
+                    }
                 } catch (Exception e) {
                     log.warn("Response body is not JSON: {}", response.getBody());
                 }
@@ -102,6 +138,13 @@ public class IOMockCommonSteps {
                 .isEqualTo(expectedStatusCode);
     }
 
+    @Then("verifico che lo status code della risposta sia {int} o {int}")
+    public void verifyStatusCodeOneOf(int expectedStatusCode1, int expectedStatusCode2) {
+        assertThat(context.getActualStatusCode())
+                .as("Status code della risposta atteso: %d o %d, ma ottenuto: %d", expectedStatusCode1, expectedStatusCode2, context.getActualStatusCode())
+                .isIn(expectedStatusCode1, expectedStatusCode2);
+    }
+
     @Then("verifico che lo status code sia {string}")
     public void verifyStatusCodeString(String expectedStatusCode) {
         try {
@@ -115,7 +158,11 @@ public class IOMockCommonSteps {
 
     @And("verifico che la richiesta sia stata inoltrata in modo trasparente a IO reale")
     public void verifyTransparentRoutingToRealIO() {
-        assertThat(context.getActualStatusCode()).as("Lo status code deve essere 200 OK").isEqualTo(HttpStatus.OK.value());
-        assertThat(context.isTransparentRouting()).as("La richiesta non è stata instradata al backend IO reale").isTrue();
+        assertThat(context.getActualStatusCode())
+                .as("Lo status code deve essere 200 OK o 201 Created")
+                .isIn(HttpStatus.OK.value(), HttpStatus.CREATED.value());
+        assertThat(context.isTransparentRouting())
+                .as("La richiesta non è stata instradata al backend IO reale")
+                .isTrue();
     }
 }
