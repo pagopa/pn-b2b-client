@@ -44,18 +44,25 @@ public class IOMockProfilesSteps {
         context.setRequestPayload(payload);
     }
 
-    @Given("una richiesta di verifica profilo priva del campo {string}")
-    public void prepareProfileRequestMissingField(String fieldName) {
+    @Given("una richiesta di verifica profilo con payload non conforme {string}")
+    public void prepareProfileRequestWithAnomaly(String anomalyType) {
         Map<String, Object> payload = new HashMap<>();
-        context.setRequestPayload(payload);
-    }
-
-    @Given("una richiesta di verifica profilo contenente campi non previsti dalle specifiche")
-    public void prepareProfileRequestWithExtraFields() {
-        Map<String, Object> payload = new HashMap<>();
-        payload.put("fiscal_code", "STANDAR_CF_00001");
-        payload.put("unknown_extra_field", "unexpected_value");
-        payload.put("invalid_parameter", 12345);
+        switch (anomalyType) {
+            case "SENZA_FISCAL_CODE":
+                // Payload privo di fiscal_code
+                break;
+            case "CAMPI_NON_PREVISTI":
+                payload.put("fiscal_code", "STANDAR_CF_00001");
+                payload.put("unknown_extra_field", "unexpected_value");
+                payload.put("invalid_parameter", 12345);
+                break;
+            case "FISCAL_CODE_VUOTO":
+                payload.put("fiscal_code", "");
+                break;
+            default:
+                payload.put("fiscal_code", StringUtils.resolveValue(anomalyType));
+                break;
+        }
         context.setRequestPayload(payload);
     }
 

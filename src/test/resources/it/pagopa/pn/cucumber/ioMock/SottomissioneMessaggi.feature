@@ -18,23 +18,18 @@ Feature: Sottomissione del Messaggio e Generazione dell'Identificativo
     And l'identificativo restituito non contiene il prefisso di mock
 
   @MOCK_IO_SUBMIT_02_2_A
-  Scenario Outline: [MOCK_IO_SUBMIT_02_2_A] Rifiuto sottomissione per richiesta priva di campo obbligatorio
-    Given una richiesta di invio messaggio priva del campo obbligatorio "<campo_mancante>"
+  Scenario Outline: [MOCK_IO_SUBMIT_02_2_A] Rifiuto sottomissione per payload non conforme alle specifiche OpenAPI
+    Given una richiesta di invio messaggio non conforme per "<tipo_anomalia>"
     When viene richiesta la sottomissione del messaggio
     Then la richiesta viene rifiutata per errore di validazione formale
 
     Examples:
-      | campo_mancante   |
-      | fiscal_code      |
-      | content          |
-      | content.subject  |
-      | content.markdown |
-
-  @MOCK_IO_SUBMIT_02_2_A_EXTRA
-  Scenario: [MOCK_IO_SUBMIT_02_2_A_EXTRA] Rifiuto sottomissione per payload contenente campi non ammessi dalle specifiche
-    Given una richiesta di invio messaggio contenente campi non definiti nelle specifiche OpenAPI
-    When viene richiesta la sottomissione del messaggio
-    Then la richiesta viene rifiutata per errore di validazione formale
+      | tipo_anomalia      |
+      | SENZA_FISCAL_CODE  |
+      | SENZA_CONTENT      |
+      | SENZA_SUBJECT      |
+      | SENZA_MARKDOWN     |
+      | CAMPI_NON_PREVISTI |
 
   @MOCK_IO_SUBMIT_02_2_B
   Scenario Outline: [MOCK_IO_SUBMIT_02_2_B] Rifiuto sottomissione per codice fiscale destinatario formalmente non valido
@@ -44,7 +39,6 @@ Feature: Sottomissione del Messaggio e Generazione dell'Identificativo
 
     Examples:
       | invalid_fiscal_code       |
-      |                           |
       | INVALID_CF_FORMAT         |
       | 12345                     |
       | RSSMRA80A01H5010_TOO_LONG |

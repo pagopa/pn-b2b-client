@@ -121,19 +121,6 @@ public class IOMockCommonSteps {
     // COMMON THEN STEPS
     //-----------------------------------------------------------------------------------------
 
-    @Then("verifico che lo status code della risposta sia {int}")
-    public void verifyStatusCode(int expectedStatusCode) {
-        assertThat(context.getActualStatusCode())
-                .as("Status code della risposta non corrispondente")
-                .isEqualTo(expectedStatusCode);
-    }
-
-    @Then("verifico che lo status code della risposta sia {int} o {int}")
-    public void verifyStatusCodeOneOf(int expectedStatusCode1, int expectedStatusCode2) {
-        assertThat(context.getActualStatusCode())
-                .as("Status code della risposta atteso: %d o %d, ma ottenuto: %d", expectedStatusCode1, expectedStatusCode2, context.getActualStatusCode())
-                .isIn(expectedStatusCode1, expectedStatusCode2);
-    }
 
     @Then("la richiesta viene instradata con successo verso l'ambiente reale di IO")
     public void verifyTransparentRoutingToRealIO() {

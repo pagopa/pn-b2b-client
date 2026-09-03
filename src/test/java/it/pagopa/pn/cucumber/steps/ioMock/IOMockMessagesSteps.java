@@ -65,31 +65,33 @@ public class IOMockMessagesSteps {
         context.getRequestHeaders().put("Ocp-Apim-Subscription-Key", "sub-key-io-collaudo-test-12345");
     }
 
-    @Given("una richiesta di invio messaggio priva del campo obbligatorio {string}")
-    public void prepareMessageRequestMissingFieldByDotNotation(String fieldName) {
-        if (fieldName.contains(".")) {
-            String[] parts = fieldName.split("\\.");
-            if ("content".equalsIgnoreCase(parts[0])) {
-                Map<String, Object> payload = IoMockMessagePayloadBuilder.builder()
-                        .withoutContentField(parts[1])
+    @Given("una richiesta di invio messaggio non conforme per {string}")
+    public void prepareMessageRequestWithAnomaly(String anomalyType) {
+        Map<String, Object> payload;
+        switch (anomalyType) {
+            case "SENZA_FISCAL_CODE":
+                payload = IoMockMessagePayloadBuilder.builder().withoutField("fiscal_code").buildMap();
+                break;
+            case "SENZA_CONTENT":
+                payload = IoMockMessagePayloadBuilder.builder().withoutField("content").buildMap();
+                break;
+            case "SENZA_SUBJECT":
+                payload = IoMockMessagePayloadBuilder.builder().withoutContentField("subject").buildMap();
+                break;
+            case "SENZA_MARKDOWN":
+                payload = IoMockMessagePayloadBuilder.builder().withoutContentField("markdown").buildMap();
+                break;
+            case "CAMPI_NON_PREVISTI":
+                payload = IoMockMessagePayloadBuilder.builder()
+                        .withExtraField("unauthorized_custom_property", "unexpected_value_123")
+                        .withExtraField("extra_nested_object", Map.of("foo", "bar"))
+                        .withExtraContentField("extra_content_field", "not_allowed")
                         .buildMap();
-                context.setRequestPayload(payload);
-                return;
-            }
+                break;
+            default:
+                payload = IoMockMessagePayloadBuilder.builder().withoutField(anomalyType).buildMap();
+                break;
         }
-        Map<String, Object> payload = IoMockMessagePayloadBuilder.builder()
-                .withoutField(fieldName)
-                .buildMap();
-        context.setRequestPayload(payload);
-    }
-
-    @Given("una richiesta di invio messaggio contenente campi non definiti nelle specifiche OpenAPI")
-    public void prepareMessageRequestWithExtraFields() {
-        Map<String, Object> payload = IoMockMessagePayloadBuilder.builder()
-                .withExtraField("unauthorized_custom_property", "unexpected_value_123")
-                .withExtraField("extra_nested_object", Map.of("foo", "bar"))
-                .withExtraContentField("extra_content_field", "not_allowed")
-                .buildMap();
         context.setRequestPayload(payload);
     }
 
@@ -114,7 +116,6 @@ public class IOMockMessagesSteps {
     // WHEN STEPS
     //-----------------------------------------------------------------------------------------
 
-    @Given("viene richiesta la sottomissione del messaggio")
     @When("viene richiesta la sottomissione del messaggio")
     public void invokeSubmitMessageEndpoint() {
         commonSteps.invokeEndpoint("POST /messages");
@@ -124,7 +125,6 @@ public class IOMockMessagesSteps {
     // THEN & AND STEPS
     //-----------------------------------------------------------------------------------------
 
-    @Given("il messaggio viene preso in carico e viene generato un identificativo conforme per la sequenza {string}")
     @Then("il messaggio viene preso in carico e viene generato un identificativo conforme per la sequenza {string}")
     public void verifyIoMessageIdFormat(String expectedSequenceName) {
         JsonNode responseJson = context.getResponseJson();

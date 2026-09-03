@@ -29,19 +29,13 @@ Feature: Verifica e Routing dei Profili Utente App IO
     Then il profilo utente risulta non registrato
 
   @MOCK_IO_ROUTER_PROFILE_01_2_A
-  Scenario: [MOCK_IO_ROUTER_PROFILE_01_2_A] Richiesta priva del campo obbligatorio codice fiscale
-    Given una richiesta di verifica profilo priva del campo "fiscal_code"
+  Scenario Outline: [MOCK_IO_ROUTER_PROFILE_01_2_A] Rifiuto verifica profilo per anomalia o formato non conforme
+    Given una richiesta di verifica profilo con payload non conforme "<tipo_anomalia>"
     When viene richiesta la verifica del profilo utente
     Then la richiesta di verifica profilo viene rifiutata per errore di validazione formale
 
-  @MOCK_IO_ROUTER_PROFILE_01_2_B
-  Scenario: [MOCK_IO_ROUTER_PROFILE_01_2_B] Richiesta con campi non previsti dalle specifiche
-    Given una richiesta di verifica profilo contenente campi non previsti dalle specifiche
-    When viene richiesta la verifica del profilo utente
-    Then la richiesta di verifica profilo viene rifiutata per errore di validazione formale
-
-  @MOCK_IO_ROUTER_PROFILE_01_2_C
-  Scenario: [MOCK_IO_ROUTER_PROFILE_01_2_C] Richiesta con codice fiscale vuoto o non valido
-    Given un destinatario con codice fiscale ordinario ""
-    When viene richiesta la verifica del profilo utente
-    Then la richiesta di verifica profilo viene rifiutata per errore di validazione formale
+    Examples:
+      | tipo_anomalia      |
+      | SENZA_FISCAL_CODE  |
+      | CAMPI_NON_PREVISTI |
+      | FISCAL_CODE_VUOTO  |
