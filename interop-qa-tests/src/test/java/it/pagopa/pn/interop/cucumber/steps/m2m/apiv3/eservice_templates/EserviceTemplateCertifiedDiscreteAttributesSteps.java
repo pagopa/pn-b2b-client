@@ -319,16 +319,55 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
     @When("l'utente tenta la rimozione di un attributo certificato discreto da un gruppo di attributi certificati discreti del template e-service non valido")
     public void removeCertifiedDiscreteAttributeFromInvalidGroup() {
         List<List<CertifiedDiscreteAttribute>> attributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscreteAssigned();
-
         EServiceTemplateInfo templateInfo = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
         UUID templateId = templateInfo.getId();
         UUID versionId = templateInfo.getLastVersionId();
         // Almeno un attributo deve essere associato al primo gruppo
         UUID attributeId = attributes.get(0).get(0).getId();
-
         httpExecutor.performCall(
                 () -> this.eServiceTemplateAttributeClient.deleteEServiceTemplateVersionCertifiedDiscreteAttributeFromGroup(
                         templateId, versionId, -1, attributeId
+                )
+        );
+    }
+
+    @When("l'utente tenta la rimozione dell'attibuto certificato {int} discreto dal gruppo di attributi certificati discreti {int} del template e-service utilizzando per il template un ID {entityIdType}")
+    public void removeCertifiedDiscreteAttributeFromGroupWithInvalidTemplateId(int attributeIndex, int groupIndex, EntityIdType entityIdType) {
+        List<List<CertifiedDiscreteAttribute>> attributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscreteAssigned();
+        EServiceTemplateInfo templateInfo = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
+        UUID templateId = generateId(entityIdType);
+        UUID versionId = templateInfo.getLastVersionId();
+        UUID attributeId = attributes.get(groupIndex).get(attributeIndex).getId();
+        httpExecutor.performCall(
+                () -> this.eServiceTemplateAttributeClient.deleteEServiceTemplateVersionCertifiedDiscreteAttributeFromGroup(
+                        templateId, versionId, groupIndex, attributeId
+                )
+        );
+    }
+
+    @When("l'utente tenta la rimozione dell'attibuto certificato {int} discreto dal gruppo di attributi certificati discreti {int} del template e-service utilizzando per la version del template un ID {entityIdType}")
+    public void removeCertifiedDiscreteAttributeFromGroupWithInvalidVersionId(int attributeIndex, int groupIndex, EntityIdType entityIdType) {
+        List<List<CertifiedDiscreteAttribute>> attributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscreteAssigned();
+        EServiceTemplateInfo templateInfo = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
+        UUID templateId = templateInfo.getId();
+        UUID versionId = generateId(entityIdType);
+        UUID attributeId = attributes.get(groupIndex).get(attributeIndex).getId();
+        httpExecutor.performCall(
+                () -> this.eServiceTemplateAttributeClient.deleteEServiceTemplateVersionCertifiedDiscreteAttributeFromGroup(
+                        templateId, versionId, groupIndex, attributeId
+                )
+        );
+    }
+
+    @When("l'utente tenta la rimozione dell'attributo certificato {int} discreto dal gruppo di attributi certificati discreti {int} del template e-service utilizzando per l'attributo un ID inesistente")
+    public void removeCertifiedDiscreteAttributeFromGroupWithMissingParameters(int attributeIndex, int groupIndex, EntityIdType entityIdType) {
+        EServiceTemplateInfo templateInfo = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
+        UUID templateId = templateInfo.getId();
+        UUID versionId = templateInfo.getLastVersionId();
+        UUID attributeId = generateId(entityIdType);
+        httpExecutor.performCall(
+                () -> this.eServiceTemplateAttributeClient.deleteEServiceTemplateVersionCertifiedDiscreteAttributeFromGroup(
+                        templateId, versionId, groupIndex, attributeId
                 )
         );
     }
