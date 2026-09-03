@@ -255,3 +255,12 @@ Feature: Gestione degli attributi certificati discreti degli e-service template 
       | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 25    |
     When l'utente tenta la rimozione di un attributo certificato discreto da un gruppo di attributi certificati discreti del template e-service non valido
     Then si ottiene lo status code 403
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_TEMPLATE_DELETE_4] La rimozione di un attributo certificato discreto da un gruppo di attributi di un template e-service non va a buon fine se il token di autenticazione non è valido.
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente crea e aggiunge i seguenti attributi all'e-service template creato:
+      | group | kind               | code  | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
+    When viene impostato per l'utente un token m2m non valido
+    And l'utente tenta la rimozione dell'attibuto certificato 0 discreto dal gruppo di attributi certificati discreti 0 del template e-service
+    Then si ottiene lo status code 403
