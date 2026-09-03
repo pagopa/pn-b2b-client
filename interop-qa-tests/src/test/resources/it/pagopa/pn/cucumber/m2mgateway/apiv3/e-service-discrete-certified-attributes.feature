@@ -62,7 +62,7 @@ Feature: Gestione degli attributi certificati discreti degli e-service attravers
     And l'utente tenta di recuperare gli attributi certificati discreti del descrittore dell'e-service
     Then si ottiene lo status code 403
 
-  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_UPDATE_1] L'operazione di associazione di un attibuto certificato discreto ad un e-service non va a buon fine se non si specifica alcun parametro.
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_UPDATE_1] L'operazione di associazione di un attributo certificato discreto ad un e-service non va a buon fine se non si specifica alcun parametro.
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di associare un attributo certificato discreto all'e-service senza specificare alcun parametro
