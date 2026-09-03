@@ -316,6 +316,23 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
         }
     }
 
+    @When("l'utente tenta la rimozione di un attributo certificato discreto da un gruppo di attributi certificati discreti del template e-service non valido")
+    public void removeCertifiedDiscreteAttributeFromInvalidGroup() {
+        List<List<CertifiedDiscreteAttribute>> attributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscreteAssigned();
+
+        EServiceTemplateInfo templateInfo = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
+        UUID templateId = templateInfo.getId();
+        UUID versionId = templateInfo.getLastVersionId();
+        // Almeno un attributo deve essere associato al primo gruppo
+        UUID attributeId = attributes.get(0).get(0).getId();
+
+        httpExecutor.performCall(
+                () -> this.eServiceTemplateAttributeClient.deleteEServiceTemplateVersionCertifiedDiscreteAttributeFromGroup(
+                        templateId, versionId, -1, attributeId
+                )
+        );
+    }
+
     private CertifiedDiscreteAttribute createCertifiedDiscreteAttribute(EServiceAttributeSpec attributeSpec) {
         CertifiedDiscreteAttributeSeed seed = new CertifiedDiscreteAttributeSeed();
         int millis = Instant.now().get(ChronoField.MILLI_OF_SECOND);

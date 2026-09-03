@@ -245,3 +245,13 @@ Feature: Gestione degli attributi certificati discreti degli e-service template 
       | ente    | ruolo | ruoloM2M  |
       | PA1     | admin | m2m       |
       | Privato | admin | m2m       |
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_TEMPLATE_DELETE_3] La rimozione di un attributo certificato discreto da un gruppo di attributi di un tempate e-service non va a buon fine se l'indice del gruppo non è valido.
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente tenta la creazione dell'e-service template con la configurazione predefinita
+    And l'utente crea e aggiunge i seguenti attributi all'e-service template creato:
+      | group | kind               | code  | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
+      | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 25    |
+    When l'utente tenta la rimozione di un attributo certificato discreto da un gruppo di attributi certificati discreti del template e-service non valido
+    Then si ottiene lo status code 403
