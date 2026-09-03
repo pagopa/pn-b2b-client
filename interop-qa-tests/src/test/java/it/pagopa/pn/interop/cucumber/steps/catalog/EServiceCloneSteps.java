@@ -117,9 +117,14 @@ public class EServiceCloneSteps {
     }
 
     private void loadClonedEServiceFromResponse() {
-        UUID eserviceId = ((CreatedEServiceDescriptor) sharedStepsContext.getHttpCallExecutor().getResponse()).getId();
-        UUID descriptorId = ((CreatedEServiceDescriptor) sharedStepsContext.getHttpCallExecutor().getResponse()).getDescriptorId();
+        Object rawResponse = sharedStepsContext.getHttpCallExecutor().getResponse();
+        Assertions.assertThat(rawResponse)
+                .as("La clonazione dell'e-service deve restituire un payload di tipo CreatedEServiceDescriptor")
+                .isInstanceOf(CreatedEServiceDescriptor.class);
 
+        CreatedEServiceDescriptor created = (CreatedEServiceDescriptor) rawResponse;
+        UUID eserviceId = created.getId();
+        UUID descriptorId = created.getDescriptorId();
         HttpStatus status = sharedStepsContext.getPollingService().makePolling(
                 () -> sharedStepsContext.getHttpCallExecutor().performCall(() -> producerClient.getProducerEServiceDescriptor(eserviceId, descriptorId)),
                 res -> res != HttpStatus.NOT_FOUND && sharedStepsContext.getHttpCallExecutor().getResponse() != null,
