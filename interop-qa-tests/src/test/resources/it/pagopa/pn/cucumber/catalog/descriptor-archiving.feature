@@ -469,7 +469,7 @@ Feature: Archiviazione manuale di un descrittore
       | api          |
       | api,security |
 
-  @happy-path @manual-archiving-cloning
+  @happy-path
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_CLONING_1.1] L'ente erogatore può clonare un descrittore in stato ARCHIVING
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -482,7 +482,7 @@ Feature: Archiviazione manuale di un descrittore
     And l'e-service è in stato "DRAFT"
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
-  @happy-path @manual-archiving-cloning
+  @happy-path
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_CLONING_1.2] L'ente erogatore può clonare un descrittore in stato ARCHIVING_SUSPENDED
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -496,7 +496,7 @@ Feature: Archiviazione manuale di un descrittore
     And l'e-service è in stato "DRAFT"
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
-  @happy-path @manual-archiving-cloning
+  @happy-path
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_CLONING_1.3] L'ente erogatore può clonare un descrittore archiviato automaticamente per l'assenza di richieste di fruizione attive
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -507,7 +507,7 @@ Feature: Archiviazione manuale di un descrittore
     And l'e-service è in stato "DRAFT"
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
-  @happy-path @manual-archiving-cloning
+  @happy-path
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_CLONING_1.4] L'ente erogatore può clonare un descrittore precedentemente in stato ARCHIVING e poi archiviato automaticamente a seguito dell'archiviazione dell'ultima richiesta di fruizione attiva
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -520,7 +520,7 @@ Feature: Archiviazione manuale di un descrittore
     And l'e-service è in stato "DRAFT"
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
-  @happy-path @manual-archiving-cloning
+  @happy-path
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_ASYNC_CLONING_1.1] L'ente erogatore può clonare un descrittore in stato ARCHIVED
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
