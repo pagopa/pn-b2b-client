@@ -10,7 +10,15 @@ import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceWebhookV29;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebhookB2bClient;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.*;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.NotificationStatusV26;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.ProgressResponseElementV29;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.StreamCreationRequestV29;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.StreamListElement;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.StreamMetadataResponseV29;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.StreamRequestV29;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.TimelineElementCategoryV28;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.TimelineElementDetailsV28;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.TimelineElementV28;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps;
 import lombok.Data;
@@ -25,13 +33,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.*;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.NOT_NULL_P_R_E;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SEND_DIGITAL_FEEDBACK;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.STREAM_EVENT_TYPE_STATUS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @Data
 @Slf4j
-public class WebhookStepsV29 implements WebhookStepsInterface {
+public class WebhookStepsV30 implements WebhookStepsInterface {
 
     private ResponseEntity<List<ProgressResponseElementV29>> consumeResponseWithHttpInfo;
     private ProgressResponseElementV29 progressResponseElement;
@@ -46,18 +56,18 @@ public class WebhookStepsV29 implements WebhookStepsInterface {
     private final StreamVersion streamVersion;
     private boolean waitForAccepted;//solo per versioni dalla 27 in su
 
-    public WebhookStepsV29(AvanzamentoNotificheWebhookB2bSteps webhookSteps) {
+    public WebhookStepsV30(AvanzamentoNotificheWebhookB2bSteps webhookSteps) {
         this.webhookSteps = webhookSteps;
         webhookClient = webhookSteps.getWebhookB2bClient();
         sharedSteps = webhookSteps.getSharedSteps();
         b2bClient = webhookSteps.getB2bClient();
-        streamVersion = StreamVersion.V29;
+        streamVersion = StreamVersion.V30;
         progressResponseElementList = new LinkedList<>();
     }
 
     @Override
     public Object getFullSentNotification() {
-        return b2bClient.getSentNotificationV28(sharedSteps.getNotificationIun());
+        return b2bClient.getSentNotificationV29(sharedSteps.getNotificationIun());
     }
 
     private FullSentNotificationV29 getFullSentNotificationVersioned() {

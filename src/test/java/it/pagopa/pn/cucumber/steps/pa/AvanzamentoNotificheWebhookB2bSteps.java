@@ -137,7 +137,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     private StreamVersion getStreamVersion(String version) {
         if (version.trim().equalsIgnoreCase(MOST_RECENT)) {
-            return StreamVersion.V29;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
+            return StreamVersion.V30;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
         }
         return StreamVersion.valueOf(version.trim().toUpperCase());
     }
