@@ -216,7 +216,7 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
         }
     }
 
-    @When("l'utente tenta di associare gli attributi certificati discreto creati al gruppo {int} del template e-service")
+    @When("l'utente tenta di associare gli attributi certificati discreti creati al gruppo {int} del template e-service")
     public void associateCertifiedDiscreteAttributesToGroup(int groupIndex) {
         EServiceTemplateInfo templateInfo = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
         UUID templateId = templateInfo.getId();

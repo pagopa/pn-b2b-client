@@ -220,7 +220,7 @@ Feature: Gestione degli attributi certificati discreti degli e-service template 
       | CAD2 |             | CAD2 |
     And l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
     And l'utente tenta la creazione dell'e-service template con la configurazione predefinita
-    And l'utente tenta di associare gli attributi certificati discreto creati al gruppo 0 del template e-service
+    And l'utente tenta di associare gli attributi certificati discreti creati al gruppo 0 del template e-service
     When l'utente tenta la rimozione dell'attibuto certificato 0 discreto dal gruppo di attributi certificati discreti 0 del template e-service
     Then la configurazione degli attributi certificati discreti del template e-service corrisponde a quella attesa
 
@@ -239,7 +239,7 @@ Feature: Gestione degli attributi certificati discreti degli e-service template 
       | CAD2 |             | CAD2 |
     And l'utente è un "<ruolo>" di "<ente>" con ruolo M2M m2m-admin
     And l'utente tenta la creazione dell'e-service template con la configurazione predefinita
-    And l'utente tenta di associare gli attributi certificati discreto creati al gruppo 0 del template e-service
+    And l'utente tenta di associare gli attributi certificati discreti creati al gruppo 0 del template e-service
     When l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
     And l'utente tenta la rimozione dell'attibuto certificato 0 discreto dal gruppo di attributi certificati discreti 0 del template e-service
     Then si ottiene lo status code 403
