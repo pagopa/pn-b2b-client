@@ -478,6 +478,9 @@ Feature: Archiviazione manuale di un descrittore
     And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     When l'utente tenta di clonare la vecchia versione dell'e-service
     Then si ottiene response status code 200
+    And l'e-service è stato clonato con successo
+    And l'e-service è in stato "DRAFT"
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
   @happy-path
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_CLONING_1.2] L'ente erogatore può clonare un descrittore in stato ARCHIVING_SUSPENDED
@@ -489,14 +492,49 @@ Feature: Archiviazione manuale di un descrittore
     And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     When l'utente tenta di clonare la vecchia versione dell'e-service
     Then si ottiene response status code 200
+    And l'e-service è stato clonato con successo
+    And l'e-service è in stato "DRAFT"
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
   @happy-path
-  Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_CLONING_1.3] L'ente erogatore può clonare un descrittore in stato ARCHIVED
+  Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_CLONING_1.3] L'ente erogatore può clonare un descrittore archiviato automaticamente per l'assenza di richieste di fruizione attive
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente tenta di clonare la vecchia versione dell'e-service
     Then si ottiene response status code 200
+    And l'e-service è stato clonato con successo
+    And l'e-service è in stato "DRAFT"
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
+
+  @happy-path
+  Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_CLONING_1.4] L'ente erogatore può clonare un descrittore precedentemente in stato ARCHIVING e poi archiviato automaticamente a seguito dell'archiviazione dell'ultima richiesta di fruizione attiva
+    Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And "PA2" ha già archiviato quella richiesta di fruizione
+    And l'utente è un "admin" di "PA1"
+    When l'utente tenta di clonare la vecchia versione dell'e-service
+    Then si ottiene response status code 200
+    And l'e-service è stato clonato con successo
+    And l'e-service è in stato "DRAFT"
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
+
+  @happy-path
+  Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_ASYNC_CLONING_1.1] L'ente erogatore può clonare un descrittore in stato ARCHIVED
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
+      | asyncExchangeProperties.responseTime          | 100  |
+      | asyncExchangeProperties.resourceAvailableTime | 100  |
+      | asyncExchangeProperties.confirmation          | true |
+      | asyncExchangeProperties.bulk                  | true |
+      | asyncExchangeProperties.maxResultSet          | 50   |
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service asincrono
+    When l'utente tenta di clonare la vecchia versione dell'e-service
+    Then si ottiene response status code 200
+    And l'e-service è stato clonato con successo
+    And l'e-service è in stato "DRAFT"
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
 
   @happy-path
   Scenario Outline: [MANUAL_ARCHIVING_DESCRIPTOR_ASYNC_1.1] Un ente erogatore di un e-service asincrono può avviare il processo di archiviazione manuale del primo e meno recente descrittore in stato DEPRECATED
