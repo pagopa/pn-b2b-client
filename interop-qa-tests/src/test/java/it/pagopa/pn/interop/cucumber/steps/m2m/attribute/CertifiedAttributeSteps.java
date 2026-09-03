@@ -65,7 +65,6 @@ public class CertifiedAttributeSteps extends AbstractCommonSteps<CertifiedAttrib
         List<CertifiedDiscreteAttribute> actual = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscreteActual();
 
         assertThat(actual).hasSize(expectedSize);
-        assertThat(actual).hasSizeGreaterThanOrEqualTo(expectedSize);
 
         published.forEach(attr -> {
             assertThat(actual).anyMatch(attr::equals);
