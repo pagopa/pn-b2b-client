@@ -151,7 +151,7 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
     @When("l'utente tenta di recuperare gli attributi certificati discreti del template e-service specificando un ID {entityIdType} per il template")
     public void getCertifiedDiscreteAttributesWithInvalidTemplateId(EntityIdType entityIdType) {
         EServiceTemplateInfo templateInfo = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
-        UUID templateId = templateInfo.getId();
+        UUID templateId = generateId(entityIdType);
         UUID versionId = templateInfo.getLastVersionId();
         httpExecutor.performCall(() -> this.eServiceTemplateAttributeClient.getEServiceTemplateVersionCertifiedDiscreteAttributes(
                 templateId, versionId, 0, 50
