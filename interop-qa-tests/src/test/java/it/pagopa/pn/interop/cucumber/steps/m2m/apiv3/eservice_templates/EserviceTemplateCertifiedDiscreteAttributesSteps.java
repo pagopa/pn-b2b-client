@@ -1,6 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.eservice_templates;
 
-import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.attribute.service.IM2MV3CertifiedDiscreteAttributeClient;
 import it.pagopa.interop.common.IHttpExecutor;
@@ -164,7 +163,7 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
         UUID templateId = templateInfo.getId();
         UUID versionId = templateInfo.getLastVersionId();
 
-        this.associateLastCertifiedDiscreteAttributePublished(templateId, versionId, null);
+        this.associateOrCreateLastCertifiedDiscreteAttributePublished(templateId, versionId, null);
 
         if (httpExecutor.getResponseStatus().is2xxSuccessful()) {
             // Update group in context
@@ -181,7 +180,7 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
         EServiceTemplateInfo templateInfo = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
         UUID templateId = generateId(entityIdType);
         UUID versionId = templateInfo.getLastVersionId();
-        this.associateLastCertifiedDiscreteAttributePublished(templateId, versionId, null);
+        this.associateOrCreateLastCertifiedDiscreteAttributePublished(templateId, versionId, null);
     }
 
     @When("l'utente tenta di associare l'attributo certificato discreto creato ad un nuovo gruppo di attributi del template e-service utilizzando per la versione del template un ID {entityIdType}")
@@ -189,7 +188,7 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
         EServiceTemplateInfo templateInfo = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
         UUID templateId = templateInfo.getId();
         UUID versionId = generateId(entityIdType);
-        this.associateLastCertifiedDiscreteAttributePublished(templateId, versionId, null);
+        this.associateOrCreateLastCertifiedDiscreteAttributePublished(templateId, versionId, null);
     }
 
     /**
@@ -202,7 +201,7 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
         UUID templateId = templateInfo.getId();
         UUID versionId = templateInfo.getLastVersionId();
 
-        this.associateLastCertifiedDiscreteAttributePublished(templateId, versionId, groupIndex);
+        this.associateOrCreateLastCertifiedDiscreteAttributePublished(templateId, versionId, groupIndex);
 
         if (httpExecutor.getResponseStatus().is2xxSuccessful()) {
             // Update group in context
@@ -217,12 +216,32 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
         }
     }
 
+    @When("l'utente tenta di associare gli attributi certificati discreto creati al gruppo {int} del template e-service")
+    public void associateCertifiedDiscreteAttributesToGroup(int groupIndex) {
+        EServiceTemplateInfo templateInfo = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
+        UUID templateId = templateInfo.getId();
+        UUID versionId = templateInfo.getLastVersionId();
+
+        List<CertifiedDiscreteAttribute> publishedAttributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscretePublished();
+
+        List<List<CertifiedDiscreteAttribute>> assignedAttributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscreteAssigned();
+        while (assignedAttributes.size() <= groupIndex) {
+            assignedAttributes.add(new ArrayList<>());
+        }
+
+        publishedAttributes.forEach(attr -> {
+            this.associateOrCreateLastCertifiedDiscreteAttributePublished(templateId, versionId, groupIndex);
+            Assertions.assertTrue(httpExecutor.getResponseStatus().is2xxSuccessful());
+            assignedAttributes.get(groupIndex).add(attr);
+        });
+    }
+
     @When("l'utente tenta di associare l'attributo certificato discreto creato al gruppo {int} di attributi certificati discreti del template e-service utilizzando per il template un ID {entityIdType}")
     public void associateCertifiedDiscreteAttributeToGroupWithInvalidTemplateId(int groupIndex, EntityIdType entityIdType) {
         EServiceTemplateInfo templateInfo = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
         UUID templateId = generateId(entityIdType);
         UUID versionId = templateInfo.getLastVersionId();
-        this.associateLastCertifiedDiscreteAttributePublished(templateId, versionId, groupIndex);
+        this.associateOrCreateLastCertifiedDiscreteAttributePublished(templateId, versionId, groupIndex);
     }
 
     @When("l'utente tenta di associare l'attributo certificato discreto creato al gruppo {int} di attributi certificati discreti del template e-service utilizzando per la versione del template un ID {entityIdType}")
@@ -230,7 +249,7 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
         EServiceTemplateInfo templateInfo = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
         UUID templateId = templateInfo.getId();
         UUID versionId = generateId(entityIdType);
-        this.associateLastCertifiedDiscreteAttributePublished(templateId, versionId, groupIndex);
+        this.associateOrCreateLastCertifiedDiscreteAttributePublished(templateId, versionId, groupIndex);
     }
 
     @When("l'utente tenta di associare l'attributo certificato discreto creato ad un nuovo gruppo di attributi certificati discreti del template e-service senza specificare i parametri necessari")
@@ -275,6 +294,26 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
                         templateId, versionId, groupIndex, attributesGroupSeed
                 )
         );
+    }
+
+    @When("l'utente tenta la rimozione dell'attibuto certificato {int} discreto dal gruppo di attributi certificati discreti {int} del template e-service")
+    public void removeCertifiedDiscreteAttributeFromGroup(int attributeIndex, int groupIndex) {
+        List<List<CertifiedDiscreteAttribute>> attributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscreteAssigned();
+
+        EServiceTemplateInfo templateInfo = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
+        UUID templateId = templateInfo.getId();
+        UUID versionId = templateInfo.getLastVersionId();
+        UUID attributeId = attributes.get(groupIndex).get(attributeIndex).getId();
+
+        httpExecutor.performCall(
+                () -> this.eServiceTemplateAttributeClient.deleteEServiceTemplateVersionCertifiedDiscreteAttributeFromGroup(
+                        templateId, versionId, groupIndex, attributeId
+                )
+        );
+
+        if (httpExecutor.getResponseStatus().is2xxSuccessful()) {
+            attributes.get(groupIndex).remove(attributeIndex);
+        }
     }
 
     private CertifiedDiscreteAttribute createCertifiedDiscreteAttribute(EServiceAttributeSpec attributeSpec) {
@@ -323,13 +362,18 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
         return allAttributes;
     }
 
-    private void associateLastCertifiedDiscreteAttributePublished(UUID templateId, UUID versionId, Integer groupIndex) {
+    private void associateOrCreateLastCertifiedDiscreteAttributePublished(UUID templateId, UUID versionId, Integer groupIndex) {
         List<CertifiedDiscreteAttribute> publishedAttributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscretePublished();
         CertifiedDiscreteAttribute lastPublishedAttribute = publishedAttributes.get(publishedAttributes.size() - 1);
+        associateOrCreateCertifiedDiscreteAttributePublished(templateId, versionId, groupIndex, lastPublishedAttribute.getId());
+    }
+
+    private void associateOrCreateCertifiedDiscreteAttributePublished(UUID templateId, UUID versionId, Integer groupIndex, UUID attributeId) {
+        List<CertifiedDiscreteAttribute> publishedAttributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscretePublished();
 
         EServiceTemplateVersionCertifiedDiscreteAttributesGroupSeed attributesGroupSeed = new EServiceTemplateVersionCertifiedDiscreteAttributesGroupSeed();
         EServiceDescriptorCertifiedDiscreteAttributesGroupSeedAttributesInner attributeSeed = new EServiceDescriptorCertifiedDiscreteAttributesGroupSeedAttributesInner();
-        attributeSeed.setId(lastPublishedAttribute.getId());
+        attributeSeed.setId(attributeId);
         EServiceAttributeCertifiedDiscreteConfigSeed configSeed = new EServiceAttributeCertifiedDiscreteConfigSeed();
         configSeed.setComparator(AttributeCertifiedDiscreteComparator.GT);
         configSeed.setThreshold(100);
