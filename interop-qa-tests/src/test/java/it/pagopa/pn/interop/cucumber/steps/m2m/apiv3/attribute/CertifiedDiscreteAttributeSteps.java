@@ -8,10 +8,10 @@ import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.CertifiedD
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.AbstractCommonSteps;
+import it.pagopa.pn.interop.cucumber.steps.m2m.common.ICommonSteps;
+import org.junit.jupiter.api.Assertions;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class CertifiedDiscreteAttributeSteps extends AbstractCommonSteps<CertifiedDiscreteAttribute, UUID> {
 
@@ -44,6 +44,14 @@ public class CertifiedDiscreteAttributeSteps extends AbstractCommonSteps<Certifi
     @When("si tenta la creazione dell'attributo certificato discreto senza passare parametri nella richiesta")
     public void createCertifiedDiscreteAttributeWithoutParameters() {
         client.tryCreationWithMissingData();
+    }
+
+    @When("l'utente tenta di recuperare un attributo certificato discreto con un l'id dell'attributo dichiarato creato, senza ottenere alcun risultato")
+    public void getByIdOfDifferentAttributeKind() {
+        var declaredAttributes = sharedStepsContext.getAttributeCommonContext().getDeclaredPublished();
+        UUID attributeId = declaredAttributes.get(declaredAttributes.size() - 1).getId();
+        CertifiedDiscreteAttribute actual = client.get(attributeId);
+        Assertions.assertNull(actual);
     }
 
     @Override

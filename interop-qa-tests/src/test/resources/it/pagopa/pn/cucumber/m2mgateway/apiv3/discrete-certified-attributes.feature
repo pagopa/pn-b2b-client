@@ -31,6 +31,23 @@ Feature: Gestione degli attributi certificati discreti attraverso APIs M2M V3
       | Privato | admin | m2m-admin |
       | Privato | admin | m2m       |
 
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_FUNC_READ_1] Il tentativo di recupero di un attributo certificato discreto con UUID non valido non va a buon fine.
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene effettuata la creazione dell'attributo dichiarato
+      | name | description | code |
+      |      |             |      |
+    When l'utente tenta di recuperare un attributo certificato discreto con un l'id dell'attributo dichiarato creato, senza ottenere alcun risultato
+    Then si ottiene lo status code 404
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_FUNC_READ_2] Il tentativo di recupero di un attributo certificato discreto creato da un altro ente certificatore va a buon fine.
+    Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
+    And viene effettuata la creazione dell'attributo dichiarato
+      | name | description | code |
+      |      |             |      |
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m
+    And l'utente tenta di recuperare il record di certifiedDiscreteAttribute creato
+    Then certifiedDiscreteAttribute viene restituito e combacia con il record creato
+
   Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_3] Accesso negato al dettaglio di un attributo certificato discreto con token non valido.
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene effettuata la creazione dell'attributo certificato discreto con successo
