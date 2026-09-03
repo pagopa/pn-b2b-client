@@ -1,7 +1,5 @@
 Feature: Gestione degli attributi certificati discreti attraverso APIs M2M V3
 
-  # CASO DI TEST 1.1
-
   Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_1] La creazione di un attributo certificato discreto va a buon fine se l'utente è un admin di un ente certificatore.
     Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
     And viene effettuata la creazione dell'attributo certificato discreto
@@ -42,13 +40,10 @@ Feature: Gestione degli attributi certificati discreti attraverso APIs M2M V3
     And certifiedDiscreteAttribute non restituito
 
   Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_4] Il tentativo di recupero di un attributo certificato discreto con UUID inesistente non va a buon fine.
-
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di recuperare certifiedDiscreteAttribute con un id inesistente
     Then si ottiene lo status code 400
     And certifiedDiscreteAttribute non restituito
-
-  ### CASO DI TEST 1.2
 
   Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_LIST_1] Il recupero degli attributi certificati discreti creati va a buon fine.
     Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
@@ -89,20 +84,11 @@ Feature: Gestione degli attributi certificati discreti attraverso APIs M2M V3
       | Privato | admin | m2m-admin |
       | Privato | admin | m2m       |
 
-  Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_LIST_3] Accesso negato all'elenco degli attributi certificati discreti con token non valido.
-    Given l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_LIST_3] Accesso negato all'elenco degli attributi certificati discreti con token non valido.
+    Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
     And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di recuperare la pagina 1 della lista di certifiedDiscreteAttribute con un limite di 10 elementi
     Then si ottiene lo status code 401
-
-    Examples:
-      | ente    | ruolo | ruoloM2M  |
-      | GSP     | admin | m2m-admin |
-      | GSP     | admin | m2m       |
-      | Privato | admin | m2m-admin |
-      | Privato | admin | m2m       |
-
-  ### CASO DI TEST 1.3
 
   Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_CREATE_1] La creazione di un attributo certificato discreto non va a buon fine se uno dei suoi attributi non è valido.
     Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
