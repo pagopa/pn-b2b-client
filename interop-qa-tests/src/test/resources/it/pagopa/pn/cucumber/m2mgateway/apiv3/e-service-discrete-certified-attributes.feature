@@ -143,16 +143,13 @@ Feature: Gestione degli attributi certificati discreti degli e-service attravers
       | Privato | admin | m2m-admin |
 
   Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_UPDATE_GROUP_2] L'operazione di associazione di un attributo certificato discreto su un nuovo gruppo di un e-service non va a buon fine se l'utente non è autorizzato.
-    Given "<ente>" ha già creato un e-service con un descrittore in stato "DRAFT"
-    And l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
-    And l'utente crea e aggiunge i seguenti attributi al descrittore dell'e-service:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
-      | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene effettuata la creazione dell'attributo certificato discreto con successo
       | name | description | code |
       |      |             |      |
-    When l'utente tenta di associare l'attributo certificato discreto creato al gruppo 1 dell'e-service
+    And "<ente>" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
+    When l'utente tenta di associare l'attributo certificato discreto creato al gruppo 0 dell'e-service
     Then si ottiene lo status code 403
 
     Examples:
@@ -160,16 +157,13 @@ Feature: Gestione degli attributi certificati discreti degli e-service attravers
       | PA1     | admin | m2m      |
       | Privato | admin | m2m      |
 
-  Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_UPDATE_GROUP_3] L'operazione di associazione di un attributo certificato discreto su un gruppo con indice non valido di un e-service non va a buon fine.
-    Given "<ente>" ha già creato un e-service con un descrittore in stato "DRAFT"
-    And l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
-    And l'utente crea e aggiunge i seguenti attributi al descrittore dell'e-service:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
-      | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
+  Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_UPDATE_GROUP_3] L'operazione di associazione di un attributo certificato discreto su un gruppo con indice non valido non va a buon fine.
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene effettuata la creazione dell'attributo certificato discreto con successo
       | name | description | code |
       |      |             |      |
+    And "<ente>" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
     When l'utente tenta di associare l'attributo certificato discreto creato al gruppo <gruppo> dell'e-service
     Then si ottiene lo status code 400
 
@@ -181,12 +175,12 @@ Feature: Gestione degli attributi certificati discreti degli e-service attravers
       | Privato | admin | m2m-admin | 2      |
 
   Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_UPDATE_GROUP_4] L'operazione di associazione di un attributo certificato discreto su un gruppo di un e-service non va a buon fine se l'ID dell'e-service non esiste.
-    Given "<ente>" ha già creato un e-service con un descrittore in stato "DRAFT"
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene effettuata la creazione dell'attributo certificato discreto con successo
+      | name | description | code |
+      |      |             |      |
+    And "<ente>" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
-    And l'utente crea e aggiunge i seguenti attributi al descrittore dell'e-service:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
-      | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
     When l'utente tenta di associare l'attributo certificato discreto creato al gruppo 0 dell'e-service specificando un ID inesistente per il descrittore dell'e-service
     Then si ottiene lo status code 400
 
@@ -238,12 +232,13 @@ Feature: Gestione degli attributi certificati discreti degli e-service attravers
     Then si ottiene lo status code 403
 
   Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_DELETE_1] L'operazione di rimozione di un attributo certificato discreto da un gruppo di un e-service va a buon fine se l'utente è autorizzato.
-    Given "<ente>" ha già creato un e-service con un descrittore in stato "DRAFT"
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene effettuata la creazione dell'attributo certificato discreto con successo
+      | name | description | code |
+      |      |             |      |
     And l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
-    And l'utente crea e aggiunge i seguenti attributi al descrittore dell'e-service:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
-      | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
+    And "<ente>" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente tenta di associare l'attributo certificato discreto creato al gruppo 0 dell'e-service
     When l'utente tenta di rimuovere l'attributo certificato discreto 0 associato al gruppo 0 dell'e-service
     Then la configurazione degli attributi certificati discreti del descrittore dell'e-service corrisponde a quella attesa
 
@@ -253,14 +248,16 @@ Feature: Gestione degli attributi certificati discreti degli e-service attravers
       | Privato | admin | m2m-admin |
 
   Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_DELETE_2] L'operazione di rimozione di un attributo certificato discreto da un gruppo di un e-service non va a buon fine se l'utente non è autorizzato.
-    Given "<ente>" ha già creato un e-service con un descrittore in stato "DRAFT"
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene effettuata la creazione dell'attributo certificato discreto con successo
+      | name | description | code |
+      |      |             |      |
+    And l'utente è un "<ruolo>" di "<ente>" con ruolo M2M m2m-admin
+    And "<ente>" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente tenta di associare l'attributo certificato discreto creato al gruppo 0 dell'e-service
     And l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
-    And l'utente crea e aggiunge i seguenti attributi al descrittore dell'e-service:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
-      | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
     When l'utente tenta di rimuovere l'attributo certificato discreto 0 associato al gruppo 0 dell'e-service
-    Then si ottiene lo status code 400
+    Then si ottiene lo status code 403
 
     Examples:
       | ente    | ruolo | ruoloM2M |
@@ -268,12 +265,13 @@ Feature: Gestione degli attributi certificati discreti degli e-service attravers
       | Privato | admin | m2m      |
 
   Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_DELETE_3] L'operazione di rimozione di un attributo certificato discreto da un gruppo di un e-service non va a buon fine se l'indice del gruppo non è valido.
-    Given "<ente>" ha già creato un e-service con un descrittore in stato "DRAFT"
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene effettuata la creazione dell'attributo certificato discreto con successo
+      | name | description | code |
+      |      |             |      |
     And l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
-    And l'utente crea e aggiunge i seguenti attributi al descrittore dell'e-service:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
-      | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
+    And "<ente>" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente tenta di associare l'attributo certificato discreto creato al gruppo 0 dell'e-service
     When l'utente tenta di rimuovere l'attributo certificato discreto 0 associato al gruppo -1 dell'e-service
     Then si ottiene lo status code 400
 
