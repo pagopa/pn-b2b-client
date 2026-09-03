@@ -29,6 +29,9 @@ public class InformalDataTestV1 {
             String deliveryDetailFailureCause = data.get("details_deliveryDetailFailureCause");
             String channel = data.get("details_channel");
             String deliveryDetailCode = data.get("details_deliveryDetailCode");
+            String digitalAddress = data.get("details_digitalAddress");
+            String isAvailable = data.get("details_isAvailable");
+            String isTosAccepted = data.get("details_isTosAccepted");
 
             InformalDataTestV1 result = new InformalDataTestV1();
 
@@ -36,11 +39,17 @@ public class InformalDataTestV1 {
                     .recIndex(recIndex != null ? Integer.valueOf(recIndex) : null)
                     .responseStatus(responseStatus != null ? ResponseStatus.valueOf(responseStatus) : null)
                     .digitalAddressSource(digitalAddressSource != null ? DigitalAddressSource.valueOf(digitalAddressSource) : null)
+                  //  .digitalAddress(digitalAddress) // todo t bonarie
+                  //  .isAvailable(isAvailable != null ? Boolean.valueOf(isAvailable) : null)
+                  //  .isTosAccepted(isTosAccepted != null ? Boolean.valueOf(isTosAccepted) : null)
                     .sentAttemptMade(sentAttemptMade != null ? Integer.valueOf(sentAttemptMade) : null)
-                    .sourceElementId(sourceElementId != null ? sourceElementId : null)
-                    .channel(channel != null ? channel : null)
-                    .deliveryDetail(deliveryDetailCode != null || deliveryDetailFailureCause != null ? new AnalogDeliveryDetail()
-                            .code(deliveryDetailCode).failureCause(deliveryDetailFailureCause) : null);
+                    .sourceElementId(sourceElementId)
+                    .channel(channel)
+                    .deliveryDetail(
+                            deliveryDetailCode != null || deliveryDetailFailureCause != null ? new AnalogDeliveryDetail()
+                                    .code(deliveryDetailCode)
+                                    .failureCause(deliveryDetailFailureCause) : null
+                    );
 
             InformalTimelineElementV1 element = new InformalTimelineElementV1().details(details);
 

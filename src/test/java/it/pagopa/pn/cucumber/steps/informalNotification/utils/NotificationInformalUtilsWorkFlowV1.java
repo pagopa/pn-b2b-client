@@ -48,6 +48,16 @@ public class NotificationInformalUtilsWorkFlowV1 {
         if (expectedDetails.getChannel() != null) {
             assertEquals(expectedDetails.getChannel(), actualDetails.getChannel());
         }
+        if (expectedDetails.getChannel() != null) {
+            assertEquals(expectedDetails.getChannel(), actualDetails.getChannel());
+        }
+//todo t bonarie
+//        if (expectedDetails.getIsAvailable() != null) {
+//            assertEquals(expectedDetails.getIsAvailable(), actualDetails.getIsAvailable());
+//        }
+//        if (expectedDetails.getIsTosAccepted() != null) {
+//            assertEquals(expectedDetails.getIsTosAccepted(), actualDetails.getIsTosAccepted());
+//        }
         if (expectedDetails.getDeliveryDetail() != null && expectedDetails.getDeliveryDetail().getFailureCause() != null) {
             assertEquals(expectedDetails.getDeliveryDetail().getFailureCause(), actualDetails.getDeliveryDetail().getFailureCause());
         }
@@ -129,7 +139,7 @@ public class NotificationInformalUtilsWorkFlowV1 {
             FullSentInformalNotificationV1 notification = lastNotification.get();
 
             throw new AssertionError("""
-                        Elemento timeline non trovato. Categoria attesa: %s Ultima FullSentInformalNotificationV1: %s """.formatted(category, notification), e);
+                    Elemento timeline non trovato. Categoria attesa: %s Ultima FullSentInformalNotificationV1: %s """.formatted(category, notification), e);
         }
         return foundElement.get();
     }
