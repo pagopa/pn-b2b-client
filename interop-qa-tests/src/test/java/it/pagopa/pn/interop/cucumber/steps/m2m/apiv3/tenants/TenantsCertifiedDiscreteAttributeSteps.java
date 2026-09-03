@@ -234,9 +234,6 @@ public class TenantsCertifiedDiscreteAttributeSteps {
         TenantCertifiedDiscreteAttribute foundAttribute = null;
 
         while (foundAttribute == null) {
-
-            // TODO use httpexecutor?
-
             TenantCertifiedDiscreteAttributes attributes = this.tenantClient.getTenantCertifiedDiscreteAttributes(tenantId, offset, limit);
             List<TenantCertifiedDiscreteAttribute> pageResults = attributes.getResults();
 

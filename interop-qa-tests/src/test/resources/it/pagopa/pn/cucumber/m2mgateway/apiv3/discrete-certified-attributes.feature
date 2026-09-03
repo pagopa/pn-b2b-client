@@ -1,6 +1,6 @@
 Feature: Gestione degli attributi certificati discreti attraverso APIs M2M V3
 
-  Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_1] La creazione di un attributo certificato discreto va a buon fine se l'utente è un admin di un ente certificatore.
+  Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_1] La creazione di un attributo certificato discreto va a buon fine se l'utente è un admin di un ente certificatore e può essere consultato anche da enti non certificatori.
     Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
     And viene effettuata la creazione dell'attributo certificato discreto
       | name | description | code |
