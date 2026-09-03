@@ -1,8 +1,8 @@
 Feature: Gestione degli attributi certificati discreti degli e-service attraverso APIs M2M V3
 
   Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_GET_1] Il recupero degli attributi certificati discreti assegnati all'e-service va a buon fine.
-    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
-    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente crea e aggiunge i seguenti attributi al descrittore dell'e-service:
       | group | kind               | code  | comparator | value |
       | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
