@@ -54,7 +54,7 @@ public class SharedSteps {
      */
 
     @When("l'utente tenta di recuperare la pagina {int} della lista di {entityType} con un limite di {int} elementi")
-    public void getCertifiedDiscreteAttribute(int pageIndex, Class<? extends ICommonSteps> stepClass, int pageSize) {
+    public void getCertifiedDiscreteAttributesPage(int pageIndex, Class<? extends ICommonSteps> stepClass, int pageSize) {
         resolveStep(stepClass).getPage(pageIndex, pageSize);
     }
 
