@@ -137,9 +137,9 @@ Feature: Gestione degli attributi certificati discreti degli e-service template 
     Then si ottiene lo status code 403
 
     Examples:
-      | ente    | ruolo | ruoloM2M  |
-      | PA1     | admin | m2m |
-      | Privato | admin | m2m |
+      | ente    | ruolo | ruoloM2M |
+      | PA1     | admin | m2m      |
+      | Privato | admin | m2m      |
 
   Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_TEMPLATE_UPDATE_3] L'operazione di associazione di un attributo certificato discreto ad un gruppo di un template e-service non va a buon fine se il token di autenticazione non è valido.
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -206,3 +206,42 @@ Feature: Gestione degli attributi certificati discreti degli e-service template 
       |      |             |      |
     When l'utente tenta di associare l'attributo certificato discreto creato al gruppo 0 degli attributi certificati discreti del template e-service senza specificare i parametri necessari
     Then si ottiene lo status code 403
+
+  Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_TEMPLATE_DELETE_1] La rimozione di un attributo certificato discreto da un gruppo di attributi di un tempate e-service va a buon fine se l'utente è autorizzato.
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene effettuata la creazione dell'attributo certificato discreto con successo
+      | name | description | code |
+      | CAD1 |             | CAD1 |
+    And viene effettuata la creazione dell'attributo certificato discreto con successo
+      | name | description | code |
+      | CAD2 |             | CAD2 |
+    And l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
+    And l'utente tenta la creazione dell'e-service template con la configurazione predefinita
+    And l'utente tenta di associare gli attributi certificati discreto creati al gruppo 0 del template e-service
+    When l'utente tenta la rimozione dell'attibuto certificato 0 discreto dal gruppo di attributi certificati discreti 0 del template e-service
+    Then la configurazione degli attributi certificati discreti del template e-service corrisponde a quella attesa
+
+    Examples:
+      | ente    | ruolo | ruoloM2M  |
+      | PA1     | admin | m2m-admin |
+      | Privato | admin | m2m-admin |
+
+  Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_TEMPLATE_DELETE_2] La rimozione di un attributo certificato discreto da un gruppo di attributi di un tempate e-service non va a buon fine se l'utente non è autorizzato.
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene effettuata la creazione dell'attributo certificato discreto con successo
+      | name | description | code |
+      | CAD1 |             | CAD1 |
+    And viene effettuata la creazione dell'attributo certificato discreto con successo
+      | name | description | code |
+      | CAD2 |             | CAD2 |
+    And l'utente è un "<ruolo>" di "<ente>" con ruolo M2M m2m-admin
+    And l'utente tenta la creazione dell'e-service template con la configurazione predefinita
+    And l'utente tenta di associare gli attributi certificati discreto creati al gruppo 0 del template e-service
+    When l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
+    And l'utente tenta la rimozione dell'attibuto certificato 0 discreto dal gruppo di attributi certificati discreti 0 del template e-service
+    Then si ottiene lo status code 403
+
+    Examples:
+      | ente    | ruolo | ruoloM2M  |
+      | PA1     | admin | m2m       |
+      | Privato | admin | m2m       |
