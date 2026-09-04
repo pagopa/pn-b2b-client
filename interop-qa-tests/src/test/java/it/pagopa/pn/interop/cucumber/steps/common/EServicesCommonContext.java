@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.common;
 
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AsyncExchangeProperties;
 import it.pagopa.interop.generated.openapi.clients.bff.model.GracePeriodDays;
 import it.pagopa.pn.interop.cucumber.steps.DocumentMetadata;
 import lombok.Getter;
@@ -43,8 +44,11 @@ public class EServicesCommonContext {
 
     private UUID interfaceId;
     private String interfaceName;
+    private String interfaceUploadPath;
     private UUID callbackInterfaceId;
     private String callbackInterfaceName;
+    private String callbackInterfaceUploadPath;
+    private AsyncExchangeProperties asyncExchangeProperties;
     private UUID oldDescriptorId;
     private String name;
     private String description;
