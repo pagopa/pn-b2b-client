@@ -60,6 +60,7 @@ public class AttributeCommonContext {
     List<CertifiedDiscreteAttribute> certifiedDiscretePublished = new ArrayList<>();
     List<CertifiedDiscreteAttribute> certifiedDiscreteActual = new ArrayList<>();
     List<List<CertifiedDiscreteAttribute>> certifiedDiscreteAssigned = new ArrayList<>();
+    List<CertifiedDiscreteAttribute> certifiedDiscreteRevoked = new ArrayList<>();
 
     List<DeclaredAttribute> declaredPublished = new ArrayList<>();
     List<DeclaredAttribute> declaredActual = new ArrayList<>();

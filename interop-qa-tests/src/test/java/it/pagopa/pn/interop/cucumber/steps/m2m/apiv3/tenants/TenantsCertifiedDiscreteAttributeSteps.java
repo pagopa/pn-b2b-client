@@ -10,9 +10,8 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.AttributeCommonContext;
 import org.junit.jupiter.api.Assertions;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class TenantsCertifiedDiscreteAttributeSteps {
 
@@ -61,7 +60,8 @@ public class TenantsCertifiedDiscreteAttributeSteps {
     @When("l'utente assegna a {string} l'attributo certificato discreto creato con un valore discreto di {int} con successo")
     public void assignTenantCertifiedDiscreteAttributeSuccessfully(String tenantType, Integer discreteValue) {
         this.assignTenantCertifiedDiscreteAttribute(tenantType, discreteValue);
-        assert sharedStepsContext.getHttpCallExecutor().getResponseStatus().is2xxSuccessful();
+
+        Assertions.assertTrue(sharedStepsContext.getHttpCallExecutor().getResponseStatus().is2xxSuccessful());
 
         UUID tenantId = identityService.getOrganizationId(tenantType);
         CertifiedDiscreteAttribute lastCreated = this.getLastCreatedCertifiedDiscreteAttribute();
@@ -73,6 +73,21 @@ public class TenantsCertifiedDiscreteAttributeSteps {
                 Objects::nonNull,
                 "Tenant certified discrete attribute not found"
         );
+    }
+
+    @When("l'utente assegna a {string} gli attributi certificati discreti creati")
+    public void assignTenantCertifiedDiscreteAttributes(String tenantType) {
+        UUID tenantId = identityService.getOrganizationId(tenantType);
+        List<CertifiedDiscreteAttribute> certifiedDiscretePublished = this.attributeCommonContext.getCertifiedDiscretePublished();
+
+        certifiedDiscretePublished.forEach(attribute -> {
+            TenantCertifiedDiscreteAttributeSeed seed = new TenantCertifiedDiscreteAttributeSeed();
+            seed.setId(attribute.getId());
+            seed.setCertifiedDiscreteValue(100);
+            sharedStepsContext.getHttpCallExecutor().performCall(
+                    () -> this.tenantClient.assignTenantCertifiedDiscreteAttribute(tenantId, seed)
+            );
+        });
     }
 
     @When("l'utente tenta la modifica dell'attributo certificato discreto precedentemente associato a {string}, impostando il valore discreto a {int}")
@@ -128,6 +143,7 @@ public class TenantsCertifiedDiscreteAttributeSteps {
         assert actual.getDiscreteValue().equals(discreteValue);
     }
 
+    @When("l'utente tenta di revocare a {string} l'ultimo attributo certificato discreto precedentemente associato")
     @When("l'utente tenta di revocare a {string} l'attributo certificato discreto precedentemente associato")
     public void revokeTenantCertifiedDiscreteAttribute(String tenantType) {
         UUID tenantId = identityService.getOrganizationId(tenantType);
@@ -136,6 +152,9 @@ public class TenantsCertifiedDiscreteAttributeSteps {
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> this.tenantClient.revokeTenantCertifiedDiscreteAttribute(tenantId, lastCreated.getId())
         );
+        if (sharedStepsContext.getHttpCallExecutor().getResponseStatus().is2xxSuccessful()) {
+            attributeCommonContext.getCertifiedDiscreteRevoked().add(lastCreated);
+        }
     }
 
     @When("l'utente revoca a {string} l'attributo certificato discreto precedentemente associato con successo")
@@ -156,6 +175,7 @@ public class TenantsCertifiedDiscreteAttributeSteps {
                 },
                 "Tenant certified discrete attribute not revoked"
         );
+        attributeCommonContext.getCertifiedDiscreteRevoked().add(lastCreated);
     }
 
     @When("l'utente tenta di revocare a {string} l'attributo certificato discreto precedentemente associato, utilizzando per l'ente un UUID {entityIdType}")
@@ -214,6 +234,11 @@ public class TenantsCertifiedDiscreteAttributeSteps {
         );
     }
 
+    @When("l'utente richiede l'elenco degli attributi certificati discreti di {string} e il sistema restituisce correttamente gli attributi associati e quelli revocati")
+    public void getTenantCertifiedDiscreteAttributesWithRevoked(String tenantType) {
+        checkTenantCertifiedDiscreteAttributes(identityService.getOrganizationId(tenantType));
+    }
+
     private UUID getEntityId(EntityIdType entityIdType) {
         return switch (entityIdType) {
             case INVALID_ID -> UUID.fromString("00000000-0000-4000-8000-abcdefabcdef");
@@ -249,5 +274,46 @@ public class TenantsCertifiedDiscreteAttributeSteps {
         }
 
         return foundAttribute;
+    }
+
+    private void checkTenantCertifiedDiscreteAttributes(UUID tenantId) {
+        var revoked = attributeCommonContext.getCertifiedDiscreteRevoked();
+        var associated = attributeCommonContext.getCertifiedDiscretePublished();
+
+        Set<UUID> expectedAttributeIds = associated.stream()
+            .map(CertifiedDiscreteAttribute::getId)
+            .collect(Collectors.toSet());
+        expectedAttributeIds.addAll(revoked.stream()
+            .map(CertifiedDiscreteAttribute::getId)
+            .collect(Collectors.toSet()));
+        Map<UUID, TenantCertifiedDiscreteAttribute> actualAttributes = new HashMap<>();
+
+        int offset = 0;
+        final int pageSize = 50;
+        int pageResultSize;
+
+        do {
+            TenantCertifiedDiscreteAttributes attributes = this.tenantClient.getTenantCertifiedDiscreteAttributes(tenantId, offset, pageSize);
+            List<TenantCertifiedDiscreteAttribute> pageResults = attributes.getResults();
+            pageResults.forEach(attribute -> actualAttributes.put(attribute.getId(), attribute));
+            pageResultSize = pageResults.size();
+            offset += pageResultSize;
+        } while (pageResultSize == pageSize);
+
+        Assertions.assertTrue(
+            sharedStepsContext.getHttpCallExecutor().getResponseStatus().is2xxSuccessful(),
+            "La richiesta di listing degli attributi certificati discreti non è andata a buon fine"
+        );
+        Assertions.assertTrue(
+            actualAttributes.keySet().containsAll(expectedAttributeIds),
+            "La lista paginata non contiene tutti gli attributi certificati discreti associati, inclusi quelli revocati"
+        );
+        revoked.forEach(attribute -> {
+            TenantCertifiedDiscreteAttribute actualAttribute = actualAttributes.get(attribute.getId());
+            Assertions.assertNotNull(actualAttribute.getRevokedAt(),
+                "L'attributo certificato discreto revocato non contiene revokedAt");
+            Assertions.assertFalse(actualAttribute.getRevokedAt().isEmpty(),
+                "L'attributo certificato discreto revocato contiene revokedAt vuoto");
+        });
     }
 }
