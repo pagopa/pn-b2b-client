@@ -1,7 +1,5 @@
 Feature: Gestione di assegnazione degli attributi certificati discreti ai tenant attraverso APIs M2M V3
 
-  ### CASO DI TEST 2.1 GET /tenants/{tenantId}/certifiedDiscreteAttributes
-
   Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_TENANTS_1] L'elenco di un attributo certificato discreto associato ad un ente va a buon fine.
     Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
     And viene effettuata la creazione dell'attributo certificato discreto con successo
@@ -72,8 +70,6 @@ Feature: Gestione di assegnazione degli attributi certificati discreti ai tenant
       | admin | Privato | m2m-admin |
       | admin | Privato | m2m       |
 
-  ### CASO DI TEST 2.2 Endpoint POST /tenants/{tenantId}/certifiedDiscreteAttributes
-
   Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_TENANTS_CREATE_1] Gli attributi certificati discreti possono essere associati solo dagli utenti autorizzati.
     Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
     And viene effettuata la creazione dell'attributo certificato discreto con successo
@@ -113,8 +109,6 @@ Feature: Gestione di assegnazione degli attributi certificati discreti ai tenant
     And viene impostato per l'utente un token m2m non valido
     When l'utente assegna a "PA1" l'attributo certificato discreto creato con un valore discreto di 100
     Then si ottiene lo status code 403
-
-  ### CASO DI TEST 2.3 - Endpoint DELETE /tenants/{tenantId}/certifiedDiscreteAttributes/{attributeId}
 
   Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_TENANTS_DELETE_1] L'operazione di revoca di un attributo certificato discreto va a buon fine se l'utente è autorizzato.
     Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
@@ -187,8 +181,6 @@ Feature: Gestione di assegnazione degli attributi certificati discreti ai tenant
     And viene impostato per l'utente un token m2m non valido
     When l'utente tenta di revocare a "PA1" l'attributo certificato discreto precedentemente associato
     Then si ottiene lo status code 403
-
-  ### CASO DI TEST 2.4 - Endpoint PATCH /tenants/{tenantId}/certifiedDiscreteAttributes/{attributeId}
 
   Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_TENANTS_PATCH_1] L'aggiornamento di un attributo certificato discreto va a buon fine se l'utente è autorizzato.
     Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
