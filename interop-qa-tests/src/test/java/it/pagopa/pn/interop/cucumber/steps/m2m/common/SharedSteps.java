@@ -40,6 +40,7 @@ public class SharedSteps {
         resolveStep(stepClass).getByFirstExpectedId();
     }
 
+    @When("l'utente tenta di recuperare la lista completa di {entityType}")
     @When("l'utente tenta di recuperare la lista di {entityType}")
     public void getAll(Class<? extends ICommonSteps> stepClass) {
         resolveStep(stepClass).getAll();

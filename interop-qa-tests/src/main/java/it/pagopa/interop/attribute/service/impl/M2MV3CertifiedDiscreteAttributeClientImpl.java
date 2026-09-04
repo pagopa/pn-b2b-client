@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -69,10 +70,39 @@ public class M2MV3CertifiedDiscreteAttributeClientImpl extends AbstractDPoPClien
 
     @Override
     public List<CertifiedDiscreteAttribute> getAll() {
-        return this.performOperation(SimpleOperation.of(
-                () -> attributesApi.getCertifiedDiscreteAttributes(0, 50),
-                CertifiedDiscreteAttributes::getResults
-        )).orElse(Collections.emptyList());
+        final int pageSize = 50;
+        int offset = 0;
+        List<CertifiedDiscreteAttribute> attributes = new ArrayList<>();
+
+        while (true) {
+            final int requestOffset = offset;
+            var page = this.performOperation(SimpleOperation.of(
+                () -> attributesApi.getCertifiedDiscreteAttributes(requestOffset, pageSize),
+                    res -> res
+            )).orElse(null);
+
+            if (page == null || page.getResults().isEmpty()) {
+                break;
+            }
+
+            attributes.addAll(page.getResults());
+
+            if (attributes.size() >= page.getPagination().getTotalCount()) {
+                break;
+            }
+
+            if (page.getResults().size() < pageSize) {
+                break;
+            }
+
+            int nextOffset = offset + pageSize;
+            if (nextOffset <= offset) {
+                break;
+            }
+            offset = nextOffset;
+        }
+
+        return attributes;
     }
 
     @Override
