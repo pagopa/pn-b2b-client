@@ -234,3 +234,105 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details_recIndex             | 0        |
       | details_sentAttemptMade      | 0        |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
+
+  @PFinipec
+  Scenario: [Ricerca_domicilio_digitale_PF_INAD_1] Invio Notifica mono destinatario a PF con recupero del solo domicilio digitale personale su INAD
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario
+      | denomination    | Test digitale ok |
+      | taxId           | RNORNO80A41F979F |
+      | digitalDomicile | NULL             |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+    Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
+    And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
+      | loadTimeline           | true                                                        |
+      | legalFactsIds          | [{"category": "DIGITAL_DELIVERY"}]                          |
+      | details                | NOT_NULL                                                    |
+      | details_digitalAddress | {"address": "example@OK-personalPecSuccess", "type": "PEC"} |
+      | details_recIndex       | 0                                                           |
+
+#da modificare solamente CF che abbia solo pec professionale su INAD
+  @PFinipec
+  Scenario: [Ricerca_domicilio_digitale_PF_INAD_2] Invio Notifica mono destinatario a PF con recupero del solo domicilio digitale professionale su INAD
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario
+      | denomination    | Test digitale ok |
+      | taxId           | RNORNO80A41F979F |
+      | digitalDomicile | NULL             |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+    Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
+    And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
+      | loadTimeline           | true                                                   |
+      | legalFactsIds          | [{"category": "DIGITAL_DELIVERY"}]                     |
+      | details                | NOT_NULL                                               |
+      | details_digitalAddress | {"address": "example@OK-pecSuccess.it", "type": "PEC"} |
+      | details_recIndex       | 0                                                      |
+
+#    modificare solo cf che abbia su INAD personale e professionale, il personale deve andare in kO e il professionale in eventuale OK, ma non sarà raggiunto
+  @PFinipec
+  Scenario: [Ricerca_domicilio_digitale_PF_INAD_3] Invio Notifica mono destinatario a PF con recupero di domicili digitali su INAD - personale in KO - flusso analogico
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario
+      | denomination    | Test digitale ok |
+      | taxId           | RNORNO80A41F979F |
+      | digitalDomicile | NULL             |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+    Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
+    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+
+#    modificare cf che non abbia domicili digitali su INAD
+  @PFinipec
+  Scenario: [Ricerca_domicilio_digitale_PF_INAD_4] Invio Notifica mono destinatario a PF con recupero domicili digitali su INAD fallito - segue flusso analogico
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario
+      | denomination    | Test digitale ok |
+      | taxId           | RNORNO80A41F979F |
+      | digitalDomicile | NULL             |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+    #aggiungere step per timeout da INAD
+    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+
+    #modificare CF che non abbia domicili digitali su INAD ma si su INIPEC
+  @PFinipec
+  Scenario: [Ricerca_domicilio_digitale_PF_INAD_INIPEC_1] Invio Notifica mono destinatario a PF con recupero dei domicili digitali in IniPec – INAD non trovato
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario
+      | denomination    | Test digitale ok |
+      | taxId           | RNORNO80A41F979F |
+      | digitalDomicile | NULL             |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+    #lo step deve controllare inipec e non nr , verificare uguaglianza dello step sulcampo nella PUBLIC_REGISTRY_RESPONSE Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
+    And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
+      | loadTimeline           | true                                                   |
+      | legalFactsIds          | [{"category": "DIGITAL_DELIVERY"}]                     |
+      | details                | NOT_NULL                                               |
+      | details_digitalAddress | {"address": "example@OK-pecSuccess.it", "type": "PEC"} |
+      | details_recIndex       | 0                                                      |
+
+    #modificare cf che non abbia alcun recapito digitale ne in INAD ne in INIPEC
+  @PFinipec
+  Scenario: [Ricerca_
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario
+      | denomination    | Test digitale ok |
+      | taxId           | RNORNO80A41F979F |
+      | digitalDomicile | NULL             |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+
+
