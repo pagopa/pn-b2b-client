@@ -230,7 +230,7 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
         }
 
         publishedAttributes.forEach(attr -> {
-            this.associateOrCreateLastCertifiedDiscreteAttributePublished(templateId, versionId, groupIndex);
+            this.associateOrCreateCertifiedDiscreteAttributePublished(templateId, versionId, groupIndex, attr.getId());
             Assertions.assertTrue(httpExecutor.getResponseStatus().is2xxSuccessful());
             assignedAttributes.get(groupIndex).add(attr);
         });
