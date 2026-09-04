@@ -1,6 +1,6 @@
 Feature: Gestione degli attributi certificati discreti attraverso APIs M2M V3
 
-  Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_1] La creazione di un attributo certificato discreto va a buon fine se l'utente è un admin di un ente certificatore e può essere consultato anche da enti non certificatori.
+  Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_1] La creazione di un attributo certificato discreto va a buon fine se l'utente è un admin di un ente certificatore e l'attributo può essere consultato anche da enti non certificatori.
     Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
     And viene effettuata la creazione dell'attributo certificato discreto
       | name | description | code |
@@ -136,14 +136,26 @@ Feature: Gestione degli attributi certificati discreti attraverso APIs M2M V3
       |      |             |      |
     Then si ottiene lo status code 401
 
-  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_CREATE_4] La creazione di un attributo certificato discreto non va a buon fine se ce n'è già uno con lo stesso nome.
-    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+  Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_CREATE_4a] La creazione di un attributo certificato discreto non va a buon fine se ce n'è già uno con lo stesso nome.
+    Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
     And viene effettuata la creazione dell'attributo certificato discreto con successo
-      | name            | description | code |
-      | ATTR-DISCRETE-1 |             |      |
-    When viene effettuata la creazione dell'attributo certificato discreto
-      | name            | description | code |
-      | ATTR-DISCRETE-1 |             |      |
+      | name | description | code |
+      |      |             |      |
+    When l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
+    And viene effettuata la creazione dell'attributo certificato discreto utilizzando il nome dell'attributo certificato discreto creato in precedenza
+    Then si ottiene lo status code 409
+
+    Examples:
+      | ente | ruolo | ruoloM2M  |
+      | GSP  | admin | m2m-admin |
+      | PA1  | admin | m2m-admin |
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_CREATE_4b] La creazione di un attributo certificato discreto non va a buon fine se ce n'è già uno con lo stesso codice per lo stesso emittente.
+    Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
+    And viene effettuata la creazione dell'attributo certificato discreto con successo
+      | name | description | code |
+      |      |             |      |
+    When viene effettuata la creazione dell'attributo certificato discreto utilizzando il codice dell'attributo certificato discreto creato in precedenza
     Then si ottiene lo status code 409
 
   Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_CREATE_5] La creazione di un attributo certificato discreto non è consentita alle utenze che non sono admin o che non appartengano agli enti certificatori.

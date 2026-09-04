@@ -7,6 +7,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.CertifiedD
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.CertifiedDiscreteAttributeSeed;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.m2m.attribute.mapper.CertifiedDiscreteAttributeSeedMapper;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.AbstractCommonSteps;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.ICommonSteps;
 import org.junit.jupiter.api.Assertions;
@@ -44,6 +45,22 @@ public class CertifiedDiscreteAttributeSteps extends AbstractCommonSteps<Certifi
     public void createCertifiedDiscreteAttribute(CertifiedDiscreteAttributeSeed payloadAttrCert) {
         CertifiedDiscreteAttribute result = client.create(payloadAttrCert);
         sharedStepsContext.getAttributeCommonContext().getCertifiedDiscretePublished().add(result);
+    }
+
+    @When("viene effettuata la creazione dell'attributo certificato discreto utilizzando il nome dell'attributo certificato discreto creato in precedenza")
+    public void createCertifiedDiscreteAttributeWithSameName() {
+        var publishedAttributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscretePublished();
+        var previousAttribute = publishedAttributes.get(publishedAttributes.size() - 1);
+        CertifiedDiscreteAttributeSeedMapper mapper = new CertifiedDiscreteAttributeSeedMapper();
+        createCertifiedDiscreteAttribute(mapper.mapAttributeSeed(Map.of("name", previousAttribute.getName())));
+    }
+
+    @When("viene effettuata la creazione dell'attributo certificato discreto utilizzando il codice dell'attributo certificato discreto creato in precedenza")
+    public void createCertifiedDiscreteAttributeWithSameCode() {
+        var publishedAttributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscretePublished();
+        var previousAttribute = publishedAttributes.get(publishedAttributes.size() - 1);
+        CertifiedDiscreteAttributeSeedMapper mapper = new CertifiedDiscreteAttributeSeedMapper();
+        createCertifiedDiscreteAttribute(mapper.mapAttributeSeed(Map.of("code", previousAttribute.getCode())));
     }
 
     @When("si tenta la creazione dell'attributo certificato discreto senza passare parametri nella richiesta")
