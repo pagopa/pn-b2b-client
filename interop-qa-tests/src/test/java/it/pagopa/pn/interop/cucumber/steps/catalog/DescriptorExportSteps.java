@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.catalog;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
@@ -15,6 +16,7 @@ import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPrepara
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -28,8 +30,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class DescriptorExportSteps {
     private final String configurationFileName = "configuration.json";
@@ -84,73 +84,66 @@ public class DescriptorExportSteps {
 
     private void verifyPackageFormattedCorrectly(boolean expectAsyncChecks) throws IOException {
         String interfacePath = descriptorPath + "/interface";
-        String interfacePrettyNamePath = interfacePath + "/prettyName";
-        String interfaceFilePath = interfacePath + "/path";
-        String interfacePrettyName = "Interfaccia";
-        String callbackInterfacePrettyNamePath = callbackInterfacePath + "/prettyName";
-        String callbackInterfaceFilePath = callbackInterfacePath + "/path";
-        String callbackInterfacePrettyName = "Interfaccia Callback";
 
         String packageRoot = readExportedPackage();
         Assertions.assertNotNull(configJson, "configuration.json not found in exported package");
 
-        Assertions.assertEquals(JsonNodeType.OBJECT, configJson.at(descriptorPath).getNodeType(),
-                "descriptor not found in configuration.json");
+        SoftAssertions softly = new SoftAssertions();
 
-        Assertions.assertEquals(JsonNodeType.OBJECT, configJson.at(interfacePath).getNodeType(),
-                "interface not found in configuration.json");
-
-        Assertions.assertEquals(interfacePrettyName, configJson.at(interfacePrettyNamePath).textValue(),
-                "Unexpected interface prettyName in configuration.json");
-
-        String interfaceFile = configJson.at(interfaceFilePath).textValue();
-        Assertions.assertNotNull(interfaceFile, "Interface path not found in configuration.json");
-
-        String interfaceEntryName = resolveEntryName(packageRoot, interfaceFile);
-        Assertions.assertNotNull(interfaceEntryName, "Interface not found in zip!");
+        softly.assertThat(configJson.at(descriptorPath).getNodeType())
+                .as("descriptor node in configuration.json (%s)", descriptorPath)
+                .isEqualTo(JsonNodeType.OBJECT);
 
         String uploadedInterfacePath = sharedStepsContext.getEServicesCommonContext().getInterfaceUploadPath();
-        Assertions.assertNotNull(uploadedInterfacePath, "Uploaded interface path not available in test context");
-
-        verifyEntryContentMatchesUploadedFile(interfaceEntryName, uploadedInterfacePath,
-                "Interface content is not coherent with uploaded interface file");
+        String interfaceEntryName = assertInterfaceEntry(
+                softly,
+                packageRoot,
+                interfacePath,
+                "Interfaccia",
+                uploadedInterfacePath,
+                "interface"
+        );
 
         JsonNode asyncExchangeNode = configJson.at(asyncExchangePath);
 
         if (expectAsyncChecks) {
-            Assertions.assertTrue(asyncExchangeNode.isBoolean() && asyncExchangeNode.booleanValue(),
-                    "asyncExchange flag is not true in configuration.json");
+            softly.assertThat(asyncExchangeNode.isBoolean() && asyncExchangeNode.booleanValue())
+                    .as("asyncExchange flag in configuration.json (%s)", asyncExchangePath)
+                    .isTrue();
 
-            verifyAsyncExchangeProperties();
-
-            Assertions.assertEquals(JsonNodeType.OBJECT, configJson.at(callbackInterfacePath).getNodeType(),
-                    "asyncExchangeCallbackInterface not found in configuration.json");
-
-            Assertions.assertEquals(callbackInterfacePrettyName, configJson.at(callbackInterfacePrettyNamePath).textValue(),
-                    "Unexpected callback interface prettyName in configuration.json");
-
-            String callbackInterfaceFile = configJson.at(callbackInterfaceFilePath).textValue();
-            Assertions.assertNotNull(callbackInterfaceFile, "Callback interface path not found in configuration.json");
-
-            String callbackInterfaceEntryName = resolveEntryName(packageRoot, callbackInterfaceFile);
-            Assertions.assertNotNull(callbackInterfaceEntryName, "Callback interface not found in zip!");
-            Assertions.assertNotEquals(interfaceEntryName, callbackInterfaceEntryName,
-                    "Interface and callback interface are mapped to the same package entry");
+            verifyAsyncExchangeProperties(softly);
 
             String callbackUploadPath = sharedStepsContext.getEServicesCommonContext().getCallbackInterfaceUploadPath();
-            Assertions.assertNotNull(callbackUploadPath, "Uploaded callback interface path not available in test context");
-            verifyEntryContentMatchesUploadedFile(callbackInterfaceEntryName, callbackUploadPath,
-                    "Callback interface content is not coherent with uploaded callback interface file");
+            String callbackInterfaceEntryName = assertInterfaceEntry(
+                    softly,
+                    packageRoot,
+                    callbackInterfacePath,
+                    "Interfaccia Callback",
+                    callbackUploadPath,
+                    "callback interface"
+            );
+
+            if (interfaceEntryName != null && callbackInterfaceEntryName != null) {
+                softly.assertThat(callbackInterfaceEntryName)
+                        .as("callback interface entry must differ from interface entry")
+                        .isNotEqualTo(interfaceEntryName);
+            }
         } else {
-            Assertions.assertTrue(asyncExchangeNode.isMissingNode() || asyncExchangeNode.isNull() || asyncExchangeNode.isBoolean(),
-                    "asyncExchange node in configuration.json is unexpectedly not boolean");
-            Assertions.assertFalse(asyncExchangeNode.isBoolean() && asyncExchangeNode.booleanValue(),
-                    "asyncExchange flag is unexpectedly true in configuration.json");
-            Assertions.assertFalse(hasValuedFields(configJson.at(asyncExchangePropertiesPath)),
-                    "asyncExchangeProperties unexpectedly valued in configuration.json");
-            Assertions.assertFalse(hasValuedFields(configJson.at(callbackInterfacePath)),
-                    "asyncExchangeCallbackInterface unexpectedly valued in configuration.json");
+            softly.assertThat(asyncExchangeNode.getNodeType())
+                    .as("asyncExchange node in configuration.json (%s) must be absent, null or boolean", asyncExchangePath)
+                    .isIn(JsonNodeType.MISSING, JsonNodeType.NULL, JsonNodeType.BOOLEAN);
+            softly.assertThat(asyncExchangeNode.isBoolean() && asyncExchangeNode.booleanValue())
+                    .as("asyncExchange flag in configuration.json (%s) must not be true", asyncExchangePath)
+                    .isFalse();
+            softly.assertThat(hasValuedFields(configJson.at(asyncExchangePropertiesPath)))
+                    .as("asyncExchangeProperties in configuration.json (%s) must not contain valued fields", asyncExchangePropertiesPath)
+                    .isFalse();
+            softly.assertThat(hasValuedFields(configJson.at(callbackInterfacePath)))
+                    .as("asyncExchangeCallbackInterface in configuration.json (%s) must not contain valued fields", callbackInterfacePath)
+                    .isFalse();
         }
+
+        softly.assertAll();
     }
 
     private String readExportedPackage() throws IOException {
@@ -204,39 +197,94 @@ public class DescriptorExportSteps {
                 .anyMatch(field -> !field.getValue().isNull());
     }
 
+    private String assertInterfaceEntry(SoftAssertions softly,
+                                        String packageRoot,
+                                        String interfacePath,
+                                        String expectedPrettyName,
+                                        String uploadedFilePath,
+                                        String interfaceDescription) {
+        String prettyNamePath = interfacePath + "/prettyName";
+        String filePathPath = interfacePath + "/path";
+
+        softly.assertThat(configJson.at(interfacePath).getNodeType())
+                .as("%s node in configuration.json (%s)", interfaceDescription, interfacePath)
+                .isEqualTo(JsonNodeType.OBJECT);
+
+        softly.assertThat(configJson.at(prettyNamePath).textValue())
+                .as("%s prettyName in configuration.json (%s)", interfaceDescription, prettyNamePath)
+                .isEqualTo(expectedPrettyName);
+
+        String interfaceFilePath = configJson.at(filePathPath).textValue();
+        softly.assertThat(interfaceFilePath)
+                .as("%s path in configuration.json (%s)", interfaceDescription, filePathPath)
+                .isNotNull();
+
+        String entryName = resolveEntryName(packageRoot, interfaceFilePath);
+        softly.assertThat(entryName)
+                .as("%s entry in zip (declared path: %s)", interfaceDescription, interfaceFilePath)
+                .isNotNull();
+
+        softly.assertThat(uploadedFilePath)
+                .as("uploaded %s path in test context", interfaceDescription)
+                .isNotNull();
+
+        if (entryName != null && uploadedFilePath != null) {
+            try {
+                verifyEntryContentMatchesUploadedFile(
+                        entryName,
+                        uploadedFilePath,
+                        "%s content is not coherent with uploaded file".formatted(interfaceDescription)
+                );
+            } catch (IOException e) {
+                softly.fail("Unable to compare %s content".formatted(interfaceDescription), e);
+            }
+        }
+
+        return entryName;
+    }
+
     private void verifyEntryContentMatchesUploadedFile(String entryName, String uploadedFilePath, String assertionMessage) throws IOException {
         byte[] exportedFile = zipEntryContents.get(entryName);
         byte[] expectedFile = Files.readAllBytes(Path.of(uploadedFilePath));
         Assertions.assertArrayEquals(expectedFile, exportedFile, assertionMessage);
     }
 
-    private void verifyAsyncExchangeProperties() {
-        AsyncExchangeProperties expectedAsyncProperties = sharedStepsContext.getEServicesCommonContext().getAsyncExchangeProperties();
-        if (expectedAsyncProperties == null) {
-            expectedAsyncProperties = clientTokenConfigurator.getProducerClient().getProducerEServiceDescriptor(
-                    sharedStepsContext.getEServicesCommonContext().getEserviceId(),
-                    sharedStepsContext.getEServicesCommonContext().getDescriptorId()
-            ).getAsyncExchangeProperties();
+    private void verifyAsyncExchangeProperties(SoftAssertions softly) {
+        AsyncExchangeProperties expectedAsyncProperties;
+        try {
+            expectedAsyncProperties = sharedStepsContext.getEServicesCommonContext().getAsyncExchangeProperties();
+            if (expectedAsyncProperties == null) {
+                expectedAsyncProperties = clientTokenConfigurator.getProducerClient().getProducerEServiceDescriptor(
+                        sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                        sharedStepsContext.getEServicesCommonContext().getDescriptorId()
+                ).getAsyncExchangeProperties();
+            }
+        } catch (Exception e) {
+            softly.fail("Unable to retrieve expected asyncExchangeProperties from context/producer descriptor", e);
+            return;
         }
 
-        Assertions.assertNotNull(expectedAsyncProperties,
-                "Expected asyncExchangeProperties not available in test context nor in producer descriptor");
+        softly.assertThat(expectedAsyncProperties)
+                .as("expected asyncExchangeProperties from context/producer descriptor")
+                .isNotNull();
 
         JsonNode asyncExchangePropertiesNode = configJson.at(asyncExchangePropertiesPath);
-        Assertions.assertEquals(JsonNodeType.OBJECT, asyncExchangePropertiesNode.getNodeType(),
-                "asyncExchangeProperties not found in configuration.json");
+        softly.assertThat(asyncExchangePropertiesNode.getNodeType())
+                .as("asyncExchangeProperties node in configuration.json (%s)", asyncExchangePropertiesPath)
+                .isEqualTo(JsonNodeType.OBJECT);
 
-        AsyncExchangeProperties exportedAsyncProperties;
-        try {
-            exportedAsyncProperties = objectMapper.treeToValue(asyncExchangePropertiesNode, AsyncExchangeProperties.class);
-        } catch (Exception e) {
-            throw new IllegalStateException("Unable to deserialize asyncExchangeProperties from configuration.json", e);
+        if (expectedAsyncProperties == null || !asyncExchangePropertiesNode.isObject()) {
+            return;
         }
 
-        assertThat(exportedAsyncProperties)
-                .as("Exported asyncExchangeProperties")
-                .usingRecursiveComparison()
-                .isEqualTo(expectedAsyncProperties);
+        try {
+            AsyncExchangeProperties exportedAsyncProperties = objectMapper.treeToValue(asyncExchangePropertiesNode, AsyncExchangeProperties.class);
+            softly.assertThat(exportedAsyncProperties)
+                    .as("exported asyncExchangeProperties")
+                    .isEqualTo(expectedAsyncProperties);
+        } catch (JsonProcessingException e) {
+            softly.fail("Unable to deserialize asyncExchangeProperties from configuration.json", e);
+        }
     }
 
     @Then("il documento di configurazione contiene anche l’analisi del rischio compilata dall’erogatore")
@@ -245,8 +293,14 @@ public class DescriptorExportSteps {
         Assertions.assertNotNull(configJson, "configuration.json not read yet: run the package verification step first");
 
         JsonNode riskAnalysis = configJson.at(riskAnalysisPath);
-        Assertions.assertEquals(JsonNodeType.ARRAY, riskAnalysis.getNodeType(), "RiskAnalysis not found");
-        Assertions.assertFalse(riskAnalysis.isEmpty(), "RiskAnalysis not found");
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(riskAnalysis.getNodeType())
+                .as("riskAnalysis node in configuration.json (%s)", riskAnalysisPath)
+                .isEqualTo(JsonNodeType.ARRAY);
+        softly.assertThat(riskAnalysis.size())
+                .as("riskAnalysis entries in configuration.json (%s)", riskAnalysisPath)
+                .isPositive();
+        softly.assertAll();
     }
 
     @Then("il pacchetto contiene anche i documenti che sono mappati nel documento di configurazione")
@@ -255,17 +309,23 @@ public class DescriptorExportSteps {
         Assertions.assertNotNull(configJson, "configuration.json not read yet: run the package verification step first");
 
         JsonNode docs = configJson.at(docsPath);
-        Assertions.assertEquals(JsonNodeType.ARRAY, docs.getNodeType(), "Descriptor docs not found in configuration.json");
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(docs.getNodeType())
+                .as("descriptor docs node in configuration.json (%s)", docsPath)
+                .isEqualTo(JsonNodeType.ARRAY);
 
-        List<String> paths = new ArrayList<>();
         docs.forEach(doc -> {
-            JsonNode pathNode = doc.at("/path");
-            if (pathNode != null && pathNode.isTextual()) {
-                paths.add(pathNode.asText());
+            String path = doc.at("/path").textValue();
+            softly.assertThat(path)
+                    .as("document path in configuration.json (%s)", docsPath)
+                    .isNotNull();
+            if (path != null) {
+                softly.assertThat(zipEntries.stream().anyMatch(entryName -> entryName.endsWith(path)))
+                        .as("document path %s must be present in zip entries", path)
+                        .isTrue();
             }
         });
-
-        paths.forEach(p -> Assertions.assertTrue(zipEntries.stream().anyMatch(entryName -> entryName.endsWith(p))));
+        softly.assertAll();
     }
 
     @Given("l'utente ha già aggiunto un documento al descrittore")
