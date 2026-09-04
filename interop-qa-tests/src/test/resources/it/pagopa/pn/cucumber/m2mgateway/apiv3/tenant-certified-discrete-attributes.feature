@@ -243,7 +243,7 @@ Feature: Gestione di assegnazione degli attributi certificati discreti ai tenant
     When l'utente tenta la modifica dell'attributo certificato discreto precedentemente associato a "PA1", impostando il valore discreto a 200, utilizzando un UUID inesistente
     Then si ottiene lo status code 403
 
-  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_TENANTS_PATCH_7] La revoca di un attributo certificato discreto non va a buon fine se il token di autenticazione non è valido.
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_TENANTS_PATCH_7] L'aggiornamento di un attributo certificato discreto non va a buon fine se il token di autenticazione non è valido.
     Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
     And viene effettuata la creazione dell'attributo certificato discreto con successo
       | name | description | code |
@@ -252,3 +252,14 @@ Feature: Gestione di assegnazione degli attributi certificati discreti ai tenant
     And viene impostato per l'utente un token m2m non valido
     When l'utente tenta la modifica dell'attributo certificato discreto precedentemente associato a "PA1", impostando il valore discreto a 200
     Then si ottiene lo status code 403
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_FUNC_ASSIGN] La revoca di un attributo certificato discreto assegnato a un ente non influisce sugli altri attributi.
+    Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
+    And viene effettuata la creazione degli attributi certificati discreti
+      | name | description | code |
+      |      |             |      |
+      |      |             |      |
+      |      |             |      |
+    And l'utente assegna a "PA1" gli attributi certificati discreti creati
+    When l'utente tenta di revocare a "PA1" l'ultimo attributo certificato discreto precedentemente associato
+    Then l'utente richiede l'elenco degli attributi certificati discreti di "PA1" e il sistema restituisce correttamente gli attributi associati e quelli revocati
