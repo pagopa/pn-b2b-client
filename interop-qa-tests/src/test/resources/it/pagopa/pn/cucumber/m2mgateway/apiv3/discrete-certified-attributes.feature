@@ -75,8 +75,8 @@ Feature: Gestione degli attributi certificati discreti attraverso APIs M2M V3
       |      |             |      |
     When l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
     And l'utente tenta di recuperare la pagina 1 della lista di certifiedDiscreteAttribute con un limite di 30 elementi
-    Then si ottiene lo status code 200
-    And la risposta contiene esattamente i 3 attributi certificati discreti creati
+    And si ottiene lo status code 200
+    Then la risposta contiene esattamente i 3 attributi certificati discreti creati
 
     Examples:
       | ente    | ruolo | ruoloM2M  |
@@ -159,3 +159,43 @@ Feature: Gestione degli attributi certificati discreti attraverso APIs M2M V3
       | GSP     | m2m       | 403       |
       | Privato | m2m-admin | 403       |
       | Privato | m2m       | 403       |
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_FUNC_LIST_1] La lista di attributi certificati discreti contiene soltanto l'elenco degli attributi del tipo richiesto.
+    Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
+    And viene effettuata la creazione dell'attributo verificato
+      | name | description | code |
+      |      |             |      |
+    And viene effettuata la creazione dell'attributo dichiarato
+      | name | description | code |
+      |      |             |      |
+    And viene effettuata la creazione dell'attributo certificato
+      | name | description | code |
+      |      |             |      |
+    And viene effettuata la creazione dell'attributo certificato discreto
+      | name | description | code |
+      |      |             |      |
+    When l'utente tenta di recuperare la pagina 1 della lista di certifiedDiscreteAttribute con un limite di 10 elementi
+    Then la risposta contiene esattamente l'attributo certificato discreto creato
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_FUNC_LIST_2] La lista di attributi certificati discreti contiene esattamente il numero di attributi richiesti.
+    Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
+    And viene effettuata la creazione degli attributi certificati discreti
+      | name | description | code |
+      |      |             |      |
+      |      |             |      |
+      |      |             |      |
+      |      |             |      |
+      |      |             |      |
+    When l'utente tenta di recuperare la pagina 1 della lista di certifiedDiscreteAttribute con un limite di 2 elementi
+    Then la risposta contiene 2 elementi
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_FUNC_LIST_3] La richiesta della lista di attributi certificati discreti fatta da un ente non certificatore contiene gli attributi certificati discreti creati dagli enti certificatori.
+    Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
+    And viene effettuata la creazione degli attributi certificati discreti
+      | name | description | code |
+      |      |             |      |
+      |      |             |      |
+      |      |             |      |
+    And l'utente è un "admin" di "PA3" con ruolo M2M m2m-admin
+    When l'utente tenta di recuperare la lista completa di certifiedDiscreteAttribute
+    Then la risposta contiene esattamente i 3 attributi certificati discreti creati
