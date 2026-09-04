@@ -20,6 +20,9 @@ public class EServiceAttributeRequestConfig {
         String kindValue = row.get("kind");
         AttributeKind kind = kindValue != null ? AttributeKind.fromValue(kindValue) : null;
 
+        String codeValue = row.get("code");
+        String code = (codeValue != null && !codeValue.isBlank()) ? codeValue : null;
+
         String groupValue = row.get("group");
         Integer group = (groupValue != null && !groupValue.isBlank()) ? Integer.valueOf(groupValue) : null;
 
@@ -46,6 +49,6 @@ public class EServiceAttributeRequestConfig {
 
         Integer dailyCallsPerConsumer = (row.get("dailyCallsPerConsumer") != null && !row.get("dailyCallsPerConsumer").isBlank()) ? Integer.valueOf(row.get("dailyCallsPerConsumer")) : null;
 
-        return new EServiceAttributeSpec(kind, group, comparator, value, dailyCallsPerConsumer);
+        return new EServiceAttributeSpec(kind, group, code, comparator, value, dailyCallsPerConsumer);
     }
 }
