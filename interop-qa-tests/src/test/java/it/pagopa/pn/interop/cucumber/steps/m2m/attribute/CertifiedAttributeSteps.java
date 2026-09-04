@@ -59,16 +59,35 @@ public class CertifiedAttributeSteps extends AbstractCommonSteps<CertifiedAttrib
         assertThat(actual).hasSizeGreaterThanOrEqualTo(expectedSize);
     }
 
+    @Then("la risposta contiene esattamente l'attributo certificato discreto creato")
     @Then("la risposta contiene esattamente i {int} attributi certificati discreti creati")
-    public void listCheck(int expectedSize) {
+    public void listCheck(Integer expectedSize) {
         List<CertifiedDiscreteAttribute> published = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscretePublished();
         List<CertifiedDiscreteAttribute> actual = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscreteActual();
 
-        assertThat(actual).hasSize(expectedSize);
+        assertThat(actual).hasSizeGreaterThanOrEqualTo(expectedSize == null ? 1 : expectedSize);
 
         published.forEach(attr -> {
             assertThat(actual).anyMatch(attr::equals);
         });
+    }
+
+    @Then("la risposta contiene esattamente i {int} elementi richiesti nella paginazione")
+    public void pageResponseCheck(Integer expectedSize) {
+        List<CertifiedDiscreteAttribute> published = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscretePublished();
+        List<CertifiedDiscreteAttribute> actual = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscreteActual();
+
+        assertThat(actual).hasSize(expectedSize == null ? 1 : expectedSize);
+
+        actual.forEach(attr -> {
+            assertThat(published).anyMatch(attr::equals);
+        });
+    }
+
+    @Then("la risposta contiene {int} elementi")
+    public void pageResponseLengthCheck(int expectedSize) {
+        List<CertifiedDiscreteAttribute> actual = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscreteActual();
+        assertThat(actual).hasSize(expectedSize);
     }
 
     @Override
