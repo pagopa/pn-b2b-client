@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.catalog;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -90,6 +91,69 @@ public class DescriptorExportSteps {
         String callbackInterfaceFilePath = callbackInterfacePath + "/path";
         String callbackInterfacePrettyName = "Interfaccia Callback";
 
+        String packageRoot = readExportedPackage();
+        Assertions.assertNotNull(configJson, "configuration.json not found in exported package");
+
+        Assertions.assertEquals(JsonNodeType.OBJECT, configJson.at(descriptorPath).getNodeType(),
+                "descriptor not found in configuration.json");
+
+        Assertions.assertEquals(JsonNodeType.OBJECT, configJson.at(interfacePath).getNodeType(),
+                "interface not found in configuration.json");
+
+        Assertions.assertEquals(interfacePrettyName, configJson.at(interfacePrettyNamePath).textValue(),
+                "Unexpected interface prettyName in configuration.json");
+
+        String interfaceFile = configJson.at(interfaceFilePath).textValue();
+        Assertions.assertNotNull(interfaceFile, "Interface path not found in configuration.json");
+
+        String interfaceEntryName = resolveEntryName(packageRoot, interfaceFile);
+        Assertions.assertNotNull(interfaceEntryName, "Interface not found in zip!");
+
+        String uploadedInterfacePath = sharedStepsContext.getEServicesCommonContext().getInterfaceUploadPath();
+        Assertions.assertNotNull(uploadedInterfacePath, "Uploaded interface path not available in test context");
+
+        verifyEntryContentMatchesUploadedFile(interfaceEntryName, uploadedInterfacePath,
+                "Interface content is not coherent with uploaded interface file");
+
+        JsonNode asyncExchangeNode = configJson.at(asyncExchangePath);
+
+        if (expectAsyncChecks) {
+            Assertions.assertTrue(asyncExchangeNode.isBoolean() && asyncExchangeNode.booleanValue(),
+                    "asyncExchange flag is not true in configuration.json");
+
+            verifyAsyncExchangeProperties();
+
+            Assertions.assertEquals(JsonNodeType.OBJECT, configJson.at(callbackInterfacePath).getNodeType(),
+                    "asyncExchangeCallbackInterface not found in configuration.json");
+
+            Assertions.assertEquals(callbackInterfacePrettyName, configJson.at(callbackInterfacePrettyNamePath).textValue(),
+                    "Unexpected callback interface prettyName in configuration.json");
+
+            String callbackInterfaceFile = configJson.at(callbackInterfaceFilePath).textValue();
+            Assertions.assertNotNull(callbackInterfaceFile, "Callback interface path not found in configuration.json");
+
+            String callbackInterfaceEntryName = resolveEntryName(packageRoot, callbackInterfaceFile);
+            Assertions.assertNotNull(callbackInterfaceEntryName, "Callback interface not found in zip!");
+            Assertions.assertNotEquals(interfaceEntryName, callbackInterfaceEntryName,
+                    "Interface and callback interface are mapped to the same package entry");
+
+            String callbackUploadPath = sharedStepsContext.getEServicesCommonContext().getCallbackInterfaceUploadPath();
+            Assertions.assertNotNull(callbackUploadPath, "Uploaded callback interface path not available in test context");
+            verifyEntryContentMatchesUploadedFile(callbackInterfaceEntryName, callbackUploadPath,
+                    "Callback interface content is not coherent with uploaded callback interface file");
+        } else {
+            Assertions.assertTrue(asyncExchangeNode.isMissingNode() || asyncExchangeNode.isNull() || asyncExchangeNode.isBoolean(),
+                    "asyncExchange node in configuration.json is unexpectedly not boolean");
+            Assertions.assertFalse(asyncExchangeNode.isBoolean() && asyncExchangeNode.booleanValue(),
+                    "asyncExchange flag is unexpectedly true in configuration.json");
+            Assertions.assertFalse(hasValuedFields(configJson.at(asyncExchangePropertiesPath)),
+                    "asyncExchangeProperties unexpectedly valued in configuration.json");
+            Assertions.assertFalse(hasValuedFields(configJson.at(callbackInterfacePath)),
+                    "asyncExchangeCallbackInterface unexpectedly valued in configuration.json");
+        }
+    }
+
+    private String readExportedPackage() throws IOException {
         zipEntries.clear();
         zipEntryContents.clear();
         configJson = null;
@@ -106,62 +170,12 @@ public class DescriptorExportSteps {
                 zipEntryContents.put(entryName, entryContent);
 
                 if (isConfigurationEntry(entryName)) {
-                    String json = new String(entryContent, StandardCharsets.UTF_8);
-                    configJson = objectMapper.readTree(json);
+                    configJson = objectMapper.readTree(new String(entryContent, StandardCharsets.UTF_8));
                     packageRoot = entryName.substring(0, entryName.length() - configurationFileName.length());
                 }
             }
         }
-        Assertions.assertNotNull(configJson, "Configuration.json not found");
-
-        JsonNode descriptorConfig = getObjectAt(configJson, descriptorPath);
-        Assertions.assertNotNull(descriptorConfig, "descriptor not found in configuration.json");
-
-        JsonNode interfaceConfig = getObjectAt(configJson, interfacePath);
-        Assertions.assertNotNull(interfaceConfig, "interface not found in configuration.json");
-        Assertions.assertEquals(interfacePrettyName, getTextAt(configJson, interfacePrettyNamePath),
-                "Unexpected interface prettyName in configuration.json");
-
-        String interfaceEntryName = resolveEntryName(packageRoot, getTextAt(configJson, interfaceFilePath));
-        Assertions.assertNotNull(interfaceEntryName, "Interface not found in zip!");
-
-        String uploadedInterfacePath = sharedStepsContext.getEServicesCommonContext().getInterfaceUploadPath();
-        Assertions.assertNotNull(uploadedInterfacePath, "Uploaded interface path not available in test context");
-        verifyEntryContentMatchesUploadedFile(interfaceEntryName, uploadedInterfacePath,
-                "Interface content is not coherent with uploaded interface file");
-
-        if (expectAsyncChecks) {
-            Assertions.assertTrue(getBooleanAt(configJson, asyncExchangePath),
-                    "asyncExchange flag is not true in configuration.json");
-
-            verifyAsyncExchangeProperties();
-
-            JsonNode callbackInterfaceConfig = getObjectAt(configJson, callbackInterfacePath);
-            Assertions.assertNotNull(callbackInterfaceConfig,
-                    "asyncExchangeCallbackInterface not found in configuration.json");
-            Assertions.assertEquals(callbackInterfacePrettyName, getTextAt(configJson, callbackInterfacePrettyNamePath),
-                    "Unexpected callback interface prettyName in configuration.json");
-
-            String callbackInterfaceFile = getTextAt(configJson, callbackInterfaceFilePath);
-            Assertions.assertNotNull(callbackInterfaceFile, "Callback interface path not found in configuration.json");
-
-            String callbackInterfaceEntryName = resolveEntryName(packageRoot, callbackInterfaceFile);
-            Assertions.assertNotNull(callbackInterfaceEntryName, "Callback interface not found in zip!");
-            Assertions.assertNotEquals(interfaceEntryName, callbackInterfaceEntryName,
-                    "Interface and callback interface are mapped to the same package entry");
-
-            String callbackUploadPath = sharedStepsContext.getEServicesCommonContext().getCallbackInterfaceUploadPath();
-            Assertions.assertNotNull(callbackUploadPath, "Uploaded callback interface path not available in test context");
-            verifyEntryContentMatchesUploadedFile(callbackInterfaceEntryName, callbackUploadPath,
-                    "Callback interface content is not coherent with uploaded callback interface file");
-        } else {
-            Assertions.assertFalse(getBooleanAt(configJson, asyncExchangePath),
-                    "asyncExchange flag is unexpectedly true in configuration.json");
-            Assertions.assertFalse(hasValuedFields(getObjectAt(configJson, asyncExchangePropertiesPath)),
-                    "asyncExchangeProperties unexpectedly valued in configuration.json");
-            Assertions.assertFalse(hasValuedFields(getObjectAt(configJson, callbackInterfacePath)),
-                    "asyncExchangeCallbackInterface unexpectedly valued in configuration.json");
-        }
+        return packageRoot;
     }
 
     private boolean isConfigurationEntry(String entryName) {
@@ -185,29 +199,6 @@ public class DescriptorExportSteps {
         return path.replace('\\', '/').replaceAll("^\\./", "");
     }
 
-    private JsonNode getObjectAt(JsonNode parent, String jsonPointerPath) {
-        JsonNode node = getNodeAt(parent, jsonPointerPath);
-        return (node != null && node.isObject()) ? node : null;
-    }
-
-    private String getTextAt(JsonNode parent, String jsonPointerPath) {
-        JsonNode node = getNodeAt(parent, jsonPointerPath);
-        return (node != null && node.isTextual()) ? node.asText() : null;
-    }
-
-    private boolean getBooleanAt(JsonNode parent, String jsonPointerPath) {
-        JsonNode node = getNodeAt(parent, jsonPointerPath);
-        return node != null && node.isBoolean() && node.asBoolean();
-    }
-
-    private JsonNode getNodeAt(JsonNode parent, String jsonPointerPath) {
-        if (parent == null) {
-            return null;
-        }
-        JsonNode node = parent.at(jsonPointerPath);
-        return (node == null || node.isMissingNode()) ? null : node;
-    }
-
     private boolean hasValuedFields(JsonNode jsonNode) {
         return jsonNode != null && jsonNode.isObject() && jsonNode.properties().stream()
                 .anyMatch(field -> !field.getValue().isNull());
@@ -220,8 +211,6 @@ public class DescriptorExportSteps {
     }
 
     private void verifyAsyncExchangeProperties() {
-        JsonNode asyncExchangeProperties = getObjectAt(configJson, asyncExchangePropertiesPath);
-
         AsyncExchangeProperties expectedAsyncProperties = sharedStepsContext.getEServicesCommonContext().getAsyncExchangeProperties();
         if (expectedAsyncProperties == null) {
             expectedAsyncProperties = clientTokenConfigurator.getProducerClient().getProducerEServiceDescriptor(
@@ -232,11 +221,14 @@ public class DescriptorExportSteps {
 
         Assertions.assertNotNull(expectedAsyncProperties,
                 "Expected asyncExchangeProperties not available in test context nor in producer descriptor");
-        Assertions.assertNotNull(asyncExchangeProperties, "asyncExchangeProperties not found in configuration.json");
+
+        JsonNode asyncExchangePropertiesNode = configJson.at(asyncExchangePropertiesPath);
+        Assertions.assertEquals(JsonNodeType.OBJECT, asyncExchangePropertiesNode.getNodeType(),
+                "asyncExchangeProperties not found in configuration.json");
 
         AsyncExchangeProperties exportedAsyncProperties;
         try {
-            exportedAsyncProperties = objectMapper.treeToValue(asyncExchangeProperties, AsyncExchangeProperties.class);
+            exportedAsyncProperties = objectMapper.treeToValue(asyncExchangePropertiesNode, AsyncExchangeProperties.class);
         } catch (Exception e) {
             throw new IllegalStateException("Unable to deserialize asyncExchangeProperties from configuration.json", e);
         }
@@ -247,23 +239,27 @@ public class DescriptorExportSteps {
                 .isEqualTo(expectedAsyncProperties);
     }
 
-
     @Then("il documento di configurazione contiene anche l’analisi del rischio compilata dall’erogatore")
     public void verifyConfigurationDocumentContainsRiskAnanlysis() {
         String riskAnalysisPath = "/riskAnalysis";
-        JsonNode riskAnalysis = getNodeAt(configJson, riskAnalysisPath);
-        Assertions.assertNotNull(riskAnalysis, "RiskAnalysis not found");
-        Assertions.assertTrue(riskAnalysis.isArray() && !riskAnalysis.isEmpty(), "RiskAnalysis not found");
+        Assertions.assertNotNull(configJson, "configuration.json not read yet: run the package verification step first");
+
+        JsonNode riskAnalysis = configJson.at(riskAnalysisPath);
+        Assertions.assertEquals(JsonNodeType.ARRAY, riskAnalysis.getNodeType(), "RiskAnalysis not found");
+        Assertions.assertFalse(riskAnalysis.isEmpty(), "RiskAnalysis not found");
     }
 
     @Then("il pacchetto contiene anche i documenti che sono mappati nel documento di configurazione")
     public void verifyPackageContainsAllRequiredDocuments() {
         String docsPath = descriptorPath + "/docs";
+        Assertions.assertNotNull(configJson, "configuration.json not read yet: run the package verification step first");
+
+        JsonNode docs = configJson.at(docsPath);
+        Assertions.assertEquals(JsonNodeType.ARRAY, docs.getNodeType(), "Descriptor docs not found in configuration.json");
+
         List<String> paths = new ArrayList<>();
-        JsonNode docs = getNodeAt(configJson, docsPath);
-        Assertions.assertNotNull(docs, "Descriptor docs not found in configuration.json");
         docs.forEach(doc -> {
-            JsonNode pathNode = doc.get("path");
+            JsonNode pathNode = doc.at("/path");
             if (pathNode != null && pathNode.isTextual()) {
                 paths.add(pathNode.asText());
             }
