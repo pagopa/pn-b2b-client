@@ -559,6 +559,8 @@ public class EServiceTemplateTestAssistant {
             pollingStopPredicate,
             "There was an error while retrieving the e-service template"
         );
+        EServiceDoc templateInterface = ((EServiceTemplateVersionDetails)httpCallExecutor.getResponse()).getInterface();
+        sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().setTemplateInterface(templateInterface);
     }
 
     public void checkEServiceTemplateVersion(Predicate<EServiceTemplateVersionDetails> versionIsAsExpected, String errorMsg) {
