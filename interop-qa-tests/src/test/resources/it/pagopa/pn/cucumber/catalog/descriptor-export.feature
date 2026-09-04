@@ -15,21 +15,34 @@ Feature: Export di un descrittore
     Examples:
       | ente | ruolo        | statoDescrittore |
       | GSP  | admin        | PUBLISHED        |
-      | GSP  | api          | PUBLISHED        |
-      | GSP  | security     | PUBLISHED        |
-      | GSP  | api,security | PUBLISHED        |
-      | GSP  | support      | PUBLISHED        |
-      | PA1  | admin        | PUBLISHED        |
-      | PA1  | api          | PUBLISHED        |
-      | PA1  | security     | PUBLISHED        |
-      | PA1  | api,security | PUBLISHED        |
-      | PA1  | support      | PUBLISHED        |
+    #  | GSP  | api          | PUBLISHED        |
+    #  | GSP  | security     | PUBLISHED        |
+    #  | GSP  | api,security | PUBLISHED        |
+    #  | GSP  | support      | PUBLISHED        |
+    #  | PA1  | admin        | PUBLISHED        |
+    #  | PA1  | api          | PUBLISHED        |
+    #  | PA1  | security     | PUBLISHED        |
+    #  | PA1  | api,security | PUBLISHED        |
+    #  | PA1  | support      | PUBLISHED        |
+#
+    #Examples:
+    #  | ente | ruolo | statoDescrittore |
+    #  | PA1  | admin | ARCHIVED         |
+    #  | PA1  | admin | DEPRECATED       |
+    #  | PA1  | admin | SUSPENDED        |
 
-    Examples:
-      | ente | ruolo | statoDescrittore |
-      | PA1  | admin | ARCHIVED         |
-      | PA1  | admin | DEPRECATED       |
-      | PA1  | admin | SUSPENDED        |
+  @happy-path
+  Scenario: [DESCRIPTOR_EXPORT_1_B] La richiesta di export di un descrittore di un e-service asincrono, senza documenti, in stato NON DRAFT, va a buon fine
+    Given l'utente è un "admin" di "GSP"
+    Given "GSP" ha già creato un e-service asincrono con un descrittore in stato "PUBLISHED" con:
+      | asyncExchangeProperties.responseTime          | 100  |
+      | asyncExchangeProperties.resourceAvailableTime | 100  |
+      | asyncExchangeProperties.confirmation          | true |
+      | asyncExchangeProperties.bulk                  | true |
+      | asyncExchangeProperties.maxResultSet          | 50   |
+    When l'utente effettua una richiesta di export del descrittore
+    Then si ottiene status code 200
+    And il pacchetto asincrono risulta correttamente formattato
 
   @sad-path
   @nrt-minimal

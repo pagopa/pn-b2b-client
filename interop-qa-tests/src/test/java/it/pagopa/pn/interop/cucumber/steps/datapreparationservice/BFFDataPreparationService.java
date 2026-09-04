@@ -547,10 +547,13 @@ public class BFFDataPreparationService {
                 .dailyCallsPerConsumer(descriptor.getDailyCallsPerConsumer())
                 .dailyCallsTotal(descriptor.getDailyCallsTotal())
                 .audience(descriptor.getAudience())
-                .voucherLifespan(descriptor.getVoucherLifespan());
+                .voucherLifespan(descriptor.getVoucherLifespan())
+                .asyncExchangeProperties(descriptor.getAsyncExchangeProperties());
 
         UpdateEServiceDescriptorSeed descriptorSeed = mergeDescriptorSeed(currentDescriptorSeed, partialDescriptorSeed)
             .audience(List.of("pagopa.it"));
+
+        sharedStepsContext.getEServicesCommonContext().setAsyncExchangeProperties(descriptorSeed.getAsyncExchangeProperties());
 
         httpCallExecutor.performCall(() -> eServiceClient.updateDraftDescriptor(eServiceId, descriptorId, descriptorSeed));
         assertValidResponse();
@@ -781,7 +784,8 @@ public class BFFDataPreparationService {
     }
 
     public UUID addInterfaceToDescriptor(UUID eServiceId, UUID descriptorId) {
-        Resource resource = blobFileCreator.createBlobFile("src/main/resources/origin-interface.yaml", "interface.yaml");
+        String interfaceUploadPath = "src/main/resources/origin-interface.yaml";
+        Resource resource = blobFileCreator.createBlobFile(interfaceUploadPath, "interface.yaml");
         httpCallExecutor.performCall(() -> eServiceClient.createEServiceDocument(eServiceId, descriptorId, "INTERFACE", "Interfaccia", resource));
         assertValidResponse();
 
@@ -791,11 +795,15 @@ public class BFFDataPreparationService {
                 ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
 
+        sharedStepsContext.getEServicesCommonContext().setInterfaceUploadPath(interfaceUploadPath);
+
         return ((CreatedResource) httpCallExecutor.getResponse()).getId();
     }
 
     public UUID addCallbackInterfaceToDescriptor(UUID eServiceId, UUID descriptorId) {
-        Resource resource = blobFileCreator.createBlobFile("src/main/resources/origin-interface.yaml", "interface.yaml");
+        // volutamente diverso dal file usato per l'interfaccia principale
+        String callbackInterfaceUploadPath = "src/main/resources/interface1.yaml";
+        Resource resource = blobFileCreator.createBlobFile(callbackInterfaceUploadPath, "interface.yaml");
         httpCallExecutor.performCall(() -> eServiceClient.createEServiceDocument(eServiceId, descriptorId, "ASYNC_EXCHANGE_CALLBACK_INTERFACE", "Interfaccia Callback", resource));
         assertValidResponse();
 
@@ -804,6 +812,8 @@ public class BFFDataPreparationService {
                 res -> res.getInterface() != null,
                 ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
+
+        sharedStepsContext.getEServicesCommonContext().setCallbackInterfaceUploadPath(callbackInterfaceUploadPath);
 
         return ((CreatedResource) httpCallExecutor.getResponse()).getId();
     }
