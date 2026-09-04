@@ -62,7 +62,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 09006 | 1086  | PIMENTEL                | CA       | notifica analogica RECAPITISTA |
       | 09007 | 1086  | SAMATZAI                | CA       | notifica analogica RECAPITISTA |
       | 09008 | 1086  | USSANA                  | CA       | notifica analogica RECAPITISTA |
-      | 08014 | 1079  | SEULO                   | NU       | notifica analogica RECAPITISTA |
+      | 08014 | 1086  | SEULO                   | NU       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoSettembre26
@@ -120,7 +120,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 09006 | 1188  | PIMENTEL                | CA       | notifica analogica RECAPITISTA |
       | 09007 | 1188  | SAMATZAI                | CA       | notifica analogica RECAPITISTA |
       | 09008 | 1188  | USSANA                  | CA       | notifica analogica RECAPITISTA |
-      | 08014 | 1079  | SEULO                   | NU       | notifica analogica RECAPITISTA |
+      | 08014 | 1188  | SEULO                   | NU       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoSettembre26
@@ -180,7 +180,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 09006 | 1205  | PIMENTEL                | CA       | notifica analogica RECAPITISTA |
       | 09007 | 1205  | SAMATZAI                | CA       | notifica analogica RECAPITISTA |
       | 09008 | 1205  | USSANA                  | CA       | notifica analogica RECAPITISTA |
-      | 08014 | 1079  | SEULO                   | NU       | notifica analogica RECAPITISTA |
+      | 08014 | 1205  | SEULO                   | NU       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoSettembre26
@@ -237,7 +237,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 09006 | 1209  | PIMENTEL                | CA       | notifica analogica RECAPITISTA |
       | 09007 | 1209  | SAMATZAI                | CA       | notifica analogica RECAPITISTA |
       | 09008 | 1209  | USSANA                  | CA       | notifica analogica RECAPITISTA |
-      | 08014 | 1079  | SEULO                   | NU       | notifica analogica RECAPITISTA |
+      | 08014 | 1209  | SEULO                   | NU       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoSettembre26
@@ -295,7 +295,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 09006 | 1239  | PIMENTEL                | CA       | notifica analogica RECAPITISTA |
       | 09007 | 1239  | SAMATZAI                | CA       | notifica analogica RECAPITISTA |
       | 09008 | 1239  | USSANA                  | CA       | notifica analogica RECAPITISTA |
-      | 08014 | 1079  | SEULO                   | NU       | notifica analogica RECAPITISTA |
+      | 08014 | 1239  | SEULO                   | NU       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoSettembre26
@@ -353,7 +353,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 09006 | 1329  | PIMENTEL                | CA       | notifica analogica RECAPITISTA |
       | 09007 | 1329  | SAMATZAI                | CA       | notifica analogica RECAPITISTA |
       | 09008 | 1329  | USSANA                  | CA       | notifica analogica RECAPITISTA |
-      | 08014 | 1079  | SEULO                   | NU       | notifica analogica RECAPITISTA |
+      | 08014 | 1329  | SEULO                   | NU       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoSettembre26
@@ -411,7 +411,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 09006 | 1427  | PIMENTEL                | CA       | notifica analogica RECAPITISTA |
       | 09007 | 1427  | SAMATZAI                | CA       | notifica analogica RECAPITISTA |
       | 09008 | 1427  | USSANA                  | CA       | notifica analogica RECAPITISTA |
-      | 08014 | 1079  | SEULO                   | NU       | notifica analogica RECAPITISTA |
+      | 08014 | 1427  | SEULO                   | NU       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoSettembre26
@@ -469,7 +469,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 09006 | 1431  | PIMENTEL                | CA       | notifica analogica RECAPITISTA |
       | 09007 | 1431  | SAMATZAI                | CA       | notifica analogica RECAPITISTA |
       | 09008 | 1431  | USSANA                  | CA       | notifica analogica RECAPITISTA |
-      | 08014 | 1079  | SEULO                   | NU       | notifica analogica RECAPITISTA |
+      | 08014 | 1431  | SEULO                   | NU       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoSettembre26
@@ -527,7 +527,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 09006 | 1495  | PIMENTEL                | CA       | notifica analogica RECAPITISTA |
       | 09007 | 1495  | SAMATZAI                | CA       | notifica analogica RECAPITISTA |
       | 09008 | 1495  | USSANA                  | CA       | notifica analogica RECAPITISTA |
-      | 08014 | 1079  | SEULO                   | NU       | notifica analogica RECAPITISTA |
+      | 08014 | 1495  | SEULO                   | NU       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoSettembre26
@@ -584,7 +584,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 09006 | 1612  | PIMENTEL                | CA       | notifica analogica RECAPITISTA |
       | 09007 | 1612  | SAMATZAI                | CA       | notifica analogica RECAPITISTA |
       | 09008 | 1612  | USSANA                  | CA       | notifica analogica RECAPITISTA |
-      | 08014 | 1079  | SEULO                   | NU       | notifica analogica RECAPITISTA |
+      | 08014 | 1612  | SEULO                   | NU       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoSettembre26
@@ -641,7 +641,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 09006 | 2050  | PIMENTEL                | CA       | notifica analogica RECAPITISTA |
       | 09007 | 2050  | SAMATZAI                | CA       | notifica analogica RECAPITISTA |
       | 09008 | 2050  | USSANA                  | CA       | notifica analogica RECAPITISTA |
-      | 08014 | 1079  | SEULO                   | NU       | notifica analogica RECAPITISTA |
+      | 08014 | 2050  | SEULO                   | NU       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoSettembre26
@@ -698,7 +698,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 09006 | 2054  | PIMENTEL                | CA       | notifica analogica RECAPITISTA |
       | 09007 | 2054  | SAMATZAI                | CA       | notifica analogica RECAPITISTA |
       | 09008 | 2054  | USSANA                  | CA       | notifica analogica RECAPITISTA |
-      | 08014 | 1079  | SEULO                   | NU       | notifica analogica RECAPITISTA |
+      | 08014 | 2054  | SEULO                   | NU       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoSettembre26
@@ -756,7 +756,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 09006 | 2730  | PIMENTEL                | CA       | notifica analogica RECAPITISTA |
       | 09007 | 2730  | SAMATZAI                | CA       | notifica analogica RECAPITISTA |
       | 09008 | 2730  | USSANA                  | CA       | notifica analogica RECAPITISTA |
-      | 08014 | 1079  | SEULO                   | NU       | notifica analogica RECAPITISTA |
+      | 08014 | 2730  | SEULO                   | NU       | notifica analogica RECAPITISTA |
 
 
 
