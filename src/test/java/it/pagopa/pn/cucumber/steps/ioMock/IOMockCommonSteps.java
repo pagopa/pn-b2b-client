@@ -68,7 +68,7 @@ public class IOMockCommonSteps {
         }
 
         try {
-            log.info("Sending {} request to {} with headers: {} and body: {}", method, url, headers, entity.getBody());
+            log.info("Sending {} request to IO Mock", method);
             ResponseEntity<String> response = restTemplate.exchange(url, method, entity, String.class);
             context.setResponseEntity(response);
             context.setActualStatusCode(response.getStatusCodeValue());
@@ -87,11 +87,11 @@ public class IOMockCommonSteps {
                         context.setCreatedMessageId(jsonNode.get("id").asText());
                     }
                 } catch (Exception e) {
-                    log.warn("Response body is not JSON: {}", response.getBody());
+                    log.warn("Response body is not JSON");
                 }
             }
         } catch (HttpStatusCodeException e) {
-            log.info("HTTP exception: {} - {}", e.getStatusCode(), e.getResponseBodyAsString());
+            log.info("HTTP exception: {}", e.getStatusCode());
             context.setActualStatusCode(e.getRawStatusCode());
             context.setResponseBody(e.getResponseBodyAsString());
 
@@ -108,7 +108,7 @@ public class IOMockCommonSteps {
                 try {
                     context.setResponseJson(objectMapper.readTree(e.getResponseBodyAsString()));
                 } catch (Exception ex) {
-                    log.warn("Error parsing error response JSON: {}", e.getResponseBodyAsString());
+                    log.warn("Error parsing error response JSON");
                 }
             }
         } catch (Exception e) {

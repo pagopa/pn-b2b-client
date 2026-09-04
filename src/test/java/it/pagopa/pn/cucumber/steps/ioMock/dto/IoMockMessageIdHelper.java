@@ -17,14 +17,14 @@ public final class IoMockMessageIdHelper {
         // Private constructor for utility class
     }
 
-    public static String buildMockId(String sequenceName, long submitMillis, String randToken) {
-        return String.format("MOCK-%s-%d-%s", sequenceName, submitMillis, randToken);
+    public static String buildMockId(String sequenceName, long submitMillis, String randomSuffix) {
+        return String.format("MOCK-%s-%d-%s", sequenceName, submitMillis, randomSuffix);
     }
 
     public static String buildMockIdWithOffset(String sequenceName, long offsetMillisAgo) {
         long submitMillis = System.currentTimeMillis() - offsetMillisAgo;
-        String randToken = UUID.randomUUID().toString().replace("-", "").substring(0, 12);
-        return buildMockId(sequenceName, submitMillis, randToken);
+        String randomSuffix = UUID.randomUUID().toString().replace("-", "").substring(0, 12);
+        return buildMockId(sequenceName, submitMillis, randomSuffix);
     }
 
     public static String buildMockIdForT0(String sequenceName) {
@@ -59,8 +59,8 @@ public final class IoMockMessageIdHelper {
         }
         String sequence = matcher.group(1);
         long submitMillis = Long.parseLong(matcher.group(2));
-        String randToken = matcher.group(3);
-        return new MockIdComponents(sequence, submitMillis, randToken);
+        String randomSuffix = matcher.group(3);
+        return new MockIdComponents(sequence, submitMillis, randomSuffix);
     }
 
     public static SnapshotState calculateCumulativeState(long submitMillis, long currentMillis) {
@@ -85,7 +85,11 @@ public final class IoMockMessageIdHelper {
     public static class MockIdComponents {
         private final String sequenceName;
         private final long submitMillis;
-        private final String randToken;
+        private final String randomSuffix;
+
+        public String getRandToken() {
+            return randomSuffix;
+        }
     }
 
     @Getter

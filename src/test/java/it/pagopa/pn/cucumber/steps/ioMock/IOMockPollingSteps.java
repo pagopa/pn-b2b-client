@@ -9,7 +9,6 @@ import it.pagopa.common.util.StringUtils;
 import it.pagopa.pn.cucumber.steps.ioMock.context.IoMockScenarioContext;
 import it.pagopa.pn.cucumber.steps.ioMock.dto.IoMockMessageIdHelper;
 import it.pagopa.pn.cucumber.steps.ioMock.dto.IoMockMessagePayloadBuilder;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -20,7 +19,6 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Slf4j
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class IOMockPollingSteps {
 
@@ -53,7 +51,6 @@ public class IOMockPollingSteps {
                 .isTrue();
 
         String messageId = responseJson.get("id").asText();
-        log.info("Messaggio sottomesso con successo a T0, ioMessageId: {}", messageId);
         context.setCreatedMessageId(messageId);
         context.setQueriedMessageId(messageId);
         context.setSubmitTimestamp(System.currentTimeMillis());
@@ -76,7 +73,6 @@ public class IOMockPollingSteps {
                 messageId = IoMockMessageIdHelper.buildMockIdForT0(sequenceName);
                 break;
         }
-        log.info("Impostato messageId per finestra temporale {}: {}", timeWindow, messageId);
         context.setQueriedMessageId(messageId);
         context.setSequenceName(sequenceName);
     }
@@ -84,7 +80,6 @@ public class IOMockPollingSteps {
     @Given("un messaggio inviato per la sequenza {string} con tempo trascorso compreso tra 5 e 15 secondi")
     public void prepareMessageWithT1Offset(String sequenceName) {
         String syntheticId = IoMockMessageIdHelper.buildMockIdForT1(sequenceName);
-        log.info("Generato synthetic ioMessageId per T1: {}", syntheticId);
         context.setQueriedMessageId(syntheticId);
         context.setSequenceName(sequenceName);
     }
@@ -92,7 +87,6 @@ public class IOMockPollingSteps {
     @Given("un messaggio inviato per la sequenza {string} con tempo trascorso superiore a 15 secondi")
     public void prepareMessageWithT2Offset(String sequenceName) {
         String syntheticId = IoMockMessageIdHelper.buildMockIdForT2(sequenceName);
-        log.info("Generato synthetic ioMessageId per T2: {}", syntheticId);
         context.setQueriedMessageId(syntheticId);
         context.setSequenceName(sequenceName);
     }
@@ -100,7 +94,6 @@ public class IOMockPollingSteps {
     @Given("una richiesta di stato messaggio con identificativo standard privo di prefisso mock {string}")
     public void preparePollingRequestWithStandardRealId(String standardMessageId) {
         String resolvedId = StringUtils.resolveValue(standardMessageId);
-        log.info("Impostato identificativo reale/standard per test routing trasparente: {}", resolvedId);
         context.setQueriedMessageId(resolvedId);
 
         if (context.getRequestHeaders() == null) {
@@ -127,7 +120,6 @@ public class IOMockPollingSteps {
     @Given("una richiesta di stato messaggio con identificativo mock avente sequenza non censita {string}")
     public void preparePollingRequestWithUnknownSequence(String unknownSequenceName) {
         String mockIdWithUnknownSeq = IoMockMessageIdHelper.buildMockIdForT0(unknownSequenceName);
-        log.info("Generato ioMessageId con sequence non censita: {}", mockIdWithUnknownSeq);
         context.setQueriedMessageId(mockIdWithUnknownSeq);
         context.setSequenceName(unknownSequenceName);
         if (context.getQueriedFiscalCode() == null) {
@@ -154,7 +146,6 @@ public class IOMockPollingSteps {
 
         context.setQueriedMessageId(messageId);
         String path = "/messages/" + resolvedFiscalCode + "/" + messageId;
-        log.info("Invocazione GET per polling stato messaggio: {}", path);
         commonSteps.executeHttpRequest(HttpMethod.GET, path);
     }
 

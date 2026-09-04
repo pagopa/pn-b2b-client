@@ -8,7 +8,6 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.cucumber.steps.ioMock.context.IoMockScenarioContext;
 import it.pagopa.pn.cucumber.steps.ioMock.dto.IoMockMessagePayloadBuilder;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -22,7 +21,6 @@ import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Slf4j
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class IOMockMessagesSteps {
 
@@ -137,7 +135,6 @@ public class IOMockMessagesSteps {
                 .isTrue();
 
         String messageId = responseJson.get("id").asText();
-        log.info("Verifica ioMessageId generato: {}", messageId);
 
         // 1. Verifica prefisso iniziale
         assertThat(messageId)
@@ -152,7 +149,7 @@ public class IOMockMessagesSteps {
 
         String actualSequence = matcher.group(1);
         String timestampStr = matcher.group(2);
-        String randToken = matcher.group(3);
+        String randomSuffix = matcher.group(3);
 
         // 3. Corrispondenza del token sequenza intermedio
         assertThat(actualSequence)
@@ -171,8 +168,8 @@ public class IOMockMessagesSteps {
                 .isBetween(minAllowed, maxAllowed);
 
         // 5. Presenza della stringa randomica finale alfanumerica
-        assertThat(randToken)
-                .as("Il token random finale non deve essere vuoto")
+        assertThat(randomSuffix)
+                .as("Il suffisso random finale non deve essere vuoto")
                 .isNotBlank();
 
         // Salvataggio nel contesto per step successivi

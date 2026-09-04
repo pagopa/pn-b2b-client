@@ -25,7 +25,7 @@ class IoMockPollingUnitTest {
         IoMockMessageIdHelper.MockIdComponents components = IoMockMessageIdHelper.parseMockId(idT0);
         assertThat(components.getSequenceName()).isEqualTo("std_read_paid");
         assertThat(components.getSubmitMillis()).isBetween(before - 2_000L, after);
-        assertThat(components.getRandToken()).isNotBlank();
+        assertThat(components.getRandomSuffix()).isNotBlank();
 
         IoMockMessageIdHelper.SnapshotState state = IoMockMessageIdHelper.calculateCumulativeState(components.getSubmitMillis(), after);
         assertThat(state.getStatus()).isEqualTo("PROCESSED");
@@ -73,7 +73,7 @@ class IoMockPollingUnitTest {
     @ValueSource(strings = {
             "MOCK-std_read_paid-1725267600000-abc123XYZ",
             "MOCK-OK_READ_THEN_PAID-1725267600000-550e8400e29b41d4a716446655440000",
-            "MOCK-custom_seq_1-0-token_1"
+            "MOCK-custom_seq_1-0-suffix_1"
     })
     @DisplayName("Verifica validità sintattica per ID mock ben formati")
     void testValidMockIds(String validId) {
