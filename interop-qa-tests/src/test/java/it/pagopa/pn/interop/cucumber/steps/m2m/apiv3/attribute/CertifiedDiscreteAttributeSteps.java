@@ -35,6 +35,11 @@ public class CertifiedDiscreteAttributeSteps extends AbstractCommonSteps<Certifi
         }
     }
 
+    @When("viene effettuata la creazione degli attributi certificati discreti")
+    public void createCertifiedDiscreteAttributes(List<CertifiedDiscreteAttributeSeed> payloadAttrCert) {
+        payloadAttrCert.forEach(this::createCertifiedDiscreteAttribute);
+    }
+
     @When("viene effettuata la creazione dell'attributo certificato discreto")
     public void createCertifiedDiscreteAttribute(CertifiedDiscreteAttributeSeed payloadAttrCert) {
         CertifiedDiscreteAttribute result = client.create(payloadAttrCert);
