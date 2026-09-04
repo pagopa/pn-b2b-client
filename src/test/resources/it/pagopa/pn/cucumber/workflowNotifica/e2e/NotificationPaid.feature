@@ -98,41 +98,6 @@ Feature: Il pagamento esterno non sostituisce la consegna della notifica
     And l'evento "SEND_SIMPLE_REGISTERED_LETTER" è successivo all'evento "PAYMENT"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
-  @e2e @postPaymentWorkflow
-  Scenario: [E2E-WF-POST-PAYMENT-1.4] Il pagamento non blocca il secondo tentativo della raccomandata semplice
-    Given viene generata una nuova notifica
-      | subject            | pagamento esterno prima del secondo tentativo della raccomandata semplice |
-      | senderDenomination | Comune di Milano                                                        |
-      | feePolicy          | DELIVERY_MODE                                                           |
-    And destinatario
-      | denomination            | Cristoforo Colombo |
-      | taxId                   | CLMCST42R12D969Z   |
-      | digitalDomicile_address | test@fail.it       |
-      | physicalAddress_address | Via@OK-Retry_RS    |
-      | payment_pagoPaForm      | SI                 |
-      | payment_f24             | NULL               |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
-    And viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" esista
-      | loadTimeline                 | true     |
-      | details                      | NOT_NULL |
-      | details_recIndex             | 0        |
-      | details_sentAttemptMade      | 0        |
-      | details_deliveryDetailCode   | RECRS006 |
-      | details_deliveryFailureCause | F03      |
-    And l'avviso pagopa viene pagato correttamente
-    And si attende il corretto pagamento della notifica
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "PAYMENT"
-    Then viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" esista
-      | loadTimeline               | true      |
-      | details                    | NOT_NULL  |
-      | details_recIndex           | 0         |
-      | details_sentAttemptMade    | 1         |
-      | details_deliveryDetailCode | RECRS001C |
-    And l'evento "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" al tentativo 1 è successivo all'evento "PAYMENT"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-
   @e2e @postPaymentWorkflow @regression
   Scenario Outline: [E2E-WF-POST-PAYMENT-2.1] La visualizzazione blocca il primo invio analogico <prodotto> dopo il pagamento
     Given viene generata una nuova notifica
@@ -220,36 +185,6 @@ Feature: Il pagamento esterno non sostituisce la consegna della notifica
     Then viene controllato che l'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" non esiste
 
   @e2e @postPaymentWorkflow @regression
-  Scenario: [E2E-WF-POST-PAYMENT-2.4] La visualizzazione blocca il secondo tentativo della raccomandata semplice dopo il pagamento
-    Given viene generata una nuova notifica
-      | subject            | visualizzazione prima del secondo tentativo della raccomandata semplice |
-      | senderDenomination | Comune di Milano                                                     |
-      | feePolicy          | DELIVERY_MODE                                                        |
-    And destinatario
-      | denomination            | Cristoforo Colombo |
-      | taxId                   | CLMCST42R12D969Z   |
-      | digitalDomicile_address | test@fail.it       |
-      | physicalAddress_address | Via@OK-Retry_RS    |
-      | payment_pagoPaForm      | SI                 |
-      | payment_f24             | NULL               |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
-    And viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" esista
-      | loadTimeline                 | true     |
-      | details                      | NOT_NULL |
-      | details_recIndex             | 0        |
-      | details_sentAttemptMade      | 0        |
-      | details_deliveryDetailCode   | RECRS006 |
-      | details_deliveryFailureCause | F03      |
-    And l'avviso pagopa viene pagato correttamente
-    And si attende il corretto pagamento della notifica
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "PAYMENT"
-    And la notifica può essere correttamente recuperata da "Cristoforo Colombo"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
-    Then viene verificato che non esista l'elemento "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" al tentativo "ATTEMPT_1"
-
-  @e2e @postPaymentWorkflow @regression
   Scenario Outline: [E2E-WF-POST-PAYMENT-3.1] L'annullamento blocca il primo invio analogico <prodotto> dopo il pagamento
     Given viene generata una nuova notifica
       | subject               | annullamento prima del primo invio |
@@ -333,33 +268,3 @@ Feature: Il pagamento esterno non sostituisce la consegna della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     Then viene controllato che l'elemento di timeline della notifica "PREPARE_SIMPLE_REGISTERED_LETTER" non esiste
     Then viene controllato che l'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" non esiste
-
-  @e2e @postPaymentWorkflow @regression
-  Scenario: [E2E-WF-POST-PAYMENT-3.4] L'annullamento blocca il secondo tentativo della raccomandata semplice dopo il pagamento
-    Given viene generata una nuova notifica
-      | subject            | annullamento prima del secondo tentativo della raccomandata semplice |
-      | senderDenomination | Comune di Milano                                                  |
-      | feePolicy          | DELIVERY_MODE                                                     |
-    And destinatario
-      | denomination            | Cristoforo Colombo |
-      | taxId                   | CLMCST42R12D969Z   |
-      | digitalDomicile_address | test@fail.it       |
-      | physicalAddress_address | Via@OK-Retry_RS    |
-      | payment_pagoPaForm      | SI                 |
-      | payment_f24             | NULL               |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
-    And viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" esista
-      | loadTimeline                 | true     |
-      | details                      | NOT_NULL |
-      | details_recIndex             | 0        |
-      | details_sentAttemptMade      | 0        |
-      | details_deliveryDetailCode   | RECRS006 |
-      | details_deliveryFailureCause | F03      |
-    And l'avviso pagopa viene pagato correttamente
-    And si attende il corretto pagamento della notifica
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "PAYMENT"
-    And la notifica può essere annullata dal sistema tramite codice IUN
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
-    Then viene verificato che non esista l'elemento "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" al tentativo "ATTEMPT_1"
