@@ -375,8 +375,9 @@ public class EServiceCertifiedDiscreteAttributesSteps {
         CertifiedDiscreteAttributeSeed seed = new CertifiedDiscreteAttributeSeed();
         int millis = Instant.now().get(ChronoField.MILLI_OF_SECOND);
         String attrName = "attribute-%d-%s".formatted(sharedStepsContext.getTestSeed() + millis, attributeSpec.getKind());
+        String attrCode = "code-%d-%s".formatted(sharedStepsContext.getTestSeed() + millis, attributeSpec.getKind());
         seed.setName(attrName);
-        seed.setCode(attributeSpec.getCode());
+        seed.setCode(attrCode);
         seed.setDescription("description of %s".formatted(attrName));
         return certifiedDiscreteAttributeClient.create(seed);
     }

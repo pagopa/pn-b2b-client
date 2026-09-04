@@ -3,9 +3,10 @@ Feature: Gestione degli attributi certificati discreti degli e-service attravers
   Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_GET_1] Il recupero degli attributi certificati discreti assegnati all'e-service va a buon fine.
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    # TODO usare valori random per code
     And l'utente crea e aggiunge i seguenti attributi al descrittore dell'e-service:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
     When l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
     Then la configurazione degli attributi certificati discreti del descrittore dell'e-service corrisponde a quella attesa
 
@@ -20,8 +21,8 @@ Feature: Gestione degli attributi certificati discreti degli e-service attravers
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente crea e aggiunge i seguenti attributi al descrittore dell'e-service:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
     When l'utente tenta di recuperare gli attributi certificati discreti del descrittore dell'e-service specificando un ID invalido per l'e-service
     Then si ottiene lo status code 400
 
@@ -29,8 +30,8 @@ Feature: Gestione degli attributi certificati discreti degli e-service attravers
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente crea e aggiunge i seguenti attributi al descrittore dell'e-service:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
     When l'utente tenta di recuperare gli attributi certificati discreti del descrittore dell'e-service specificando un ID inesistente per l'e-service
     Then si ottiene lo status code 400
 
@@ -38,8 +39,8 @@ Feature: Gestione degli attributi certificati discreti degli e-service attravers
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente crea e aggiunge i seguenti attributi al descrittore dell'e-service:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
     When l'utente tenta di recuperare gli attributi certificati discreti del descrittore dell'e-service specificando un ID invalido per il descrittore dell'e-service
     Then si ottiene lo status code 400
 
@@ -47,8 +48,8 @@ Feature: Gestione degli attributi certificati discreti degli e-service attravers
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente crea e aggiunge i seguenti attributi al descrittore dell'e-service:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
     When l'utente tenta di recuperare gli attributi certificati discreti del descrittore dell'e-service specificando un ID inesistente per il descrittore dell'e-service
     Then si ottiene lo status code 400
 
@@ -56,8 +57,8 @@ Feature: Gestione degli attributi certificati discreti degli e-service attravers
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente crea e aggiunge i seguenti attributi al descrittore dell'e-service:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
     When viene impostato per l'utente un token m2m non valido
     And l'utente tenta di recuperare gli attributi certificati discreti del descrittore dell'e-service
     Then si ottiene lo status code 403
@@ -190,9 +191,9 @@ Feature: Gestione degli attributi certificati discreti degli e-service attravers
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente crea e aggiunge i seguenti attributi al descrittore dell'e-service:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
-      | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 15    |
     And viene effettuata la creazione dell'attributo certificato discreto con successo
       | name | description | code |
       |      |             |      |
@@ -204,9 +205,9 @@ Feature: Gestione degli attributi certificati discreti degli e-service attravers
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente crea e aggiunge i seguenti attributi al descrittore dell'e-service:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
-      | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 15    |
     And viene effettuata la creazione dell'attributo certificato discreto con successo
       | name | description | code |
       |      |             |      |
@@ -218,9 +219,9 @@ Feature: Gestione degli attributi certificati discreti degli e-service attravers
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente crea e aggiunge i seguenti attributi al descrittore dell'e-service:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
-      | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 15    |
     And viene effettuata la creazione dell'attributo certificato discreto con successo
       | name | description | code |
       |      |             |      |
@@ -281,9 +282,9 @@ Feature: Gestione degli attributi certificati discreti degli e-service attravers
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente crea e aggiunge i seguenti attributi al descrittore dell'e-service:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
-      | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 15    |
     When viene impostato per l'utente un token m2m non valido
     And l'utente tenta di rimuovere l'attributo certificato discreto 0 associato al gruppo -1 dell'e-service
     Then si ottiene lo status code 403
@@ -292,9 +293,9 @@ Feature: Gestione degli attributi certificati discreti degli e-service attravers
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente crea e aggiunge i seguenti attributi al descrittore dell'e-service:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
-      | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 15    |
     When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And l'utente tenta di rimuovere l'attributo certificato discreto 0 associato al gruppo -1 dell'e-service
     Then si ottiene lo status code 403
@@ -303,9 +304,9 @@ Feature: Gestione degli attributi certificati discreti degli e-service attravers
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente crea e aggiunge i seguenti attributi al descrittore dell'e-service:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
-      | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 15    |
     When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And l'utente tenta di rimuovere l'attributo certificato discreto 0 associato al gruppo 0 dell'e-service specificando un ID inesistente per l'e-service
     Then si ottiene lo status code 403
@@ -314,9 +315,9 @@ Feature: Gestione degli attributi certificati discreti degli e-service attravers
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente crea e aggiunge i seguenti attributi al descrittore dell'e-service:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
-      | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 15    |
     When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And l'utente tenta di rimuovere l'attributo certificato discreto 0 associato al gruppo 0 dell'e-service specificando un ID inesistente per il descrittore dell'e-service
     Then si ottiene lo status code 403
@@ -325,9 +326,9 @@ Feature: Gestione degli attributi certificati discreti degli e-service attravers
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente crea e aggiunge i seguenti attributi al descrittore dell'e-service:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
-      | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 15    |
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 15    |
     When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And l'utente tenta di rimuovere l'attributo certificato discreto 0 associato al gruppo 0 dell'e-service specificando un ID inesistente per l'attributo precedentemente associato
     Then si ottiene lo status code 403

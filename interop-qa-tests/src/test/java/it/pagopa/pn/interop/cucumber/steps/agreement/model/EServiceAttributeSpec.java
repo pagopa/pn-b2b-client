@@ -8,7 +8,6 @@ import lombok.Value;
 public class EServiceAttributeSpec {
     AttributeKind kind;
     Integer group;
-    String code;
     AttributeCertifiedDiscreteComparator comparator;
     Integer value;
     Integer dailyCallsPerConsumer;

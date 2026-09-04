@@ -4,8 +4,8 @@ Feature: Gestione degli attributi certificati discreti degli e-service template 
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente tenta la creazione dell'e-service template con la configurazione predefinita
     And l'utente crea e aggiunge i seguenti attributi all'e-service template creato:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
+      | group | kind               |  comparator | value |
+      | 0     | CERTIFIED_DISCRETE |  LTE        | 10    |
     When l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
     Then la configurazione degli attributi certificati discreti del template e-service corrisponde a quella attesa
 
@@ -20,8 +20,8 @@ Feature: Gestione degli attributi certificati discreti degli e-service template 
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente tenta la creazione dell'e-service template con la configurazione predefinita
     And l'utente crea e aggiunge i seguenti attributi all'e-service template creato:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
     When l'utente tenta di recuperare gli attributi certificati discreti del template e-service specificando un ID invalido per il template
     Then si ottiene lo status code 400
 
@@ -29,8 +29,8 @@ Feature: Gestione degli attributi certificati discreti degli e-service template 
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente tenta la creazione dell'e-service template con la configurazione predefinita
     And l'utente crea e aggiunge i seguenti attributi all'e-service template creato:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
     When l'utente tenta di recuperare gli attributi certificati discreti del template e-service specificando un ID inesistente per il template
     Then si ottiene lo status code 400
 
@@ -38,8 +38,8 @@ Feature: Gestione degli attributi certificati discreti degli e-service template 
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente tenta la creazione dell'e-service template con la configurazione predefinita
     And l'utente crea e aggiunge i seguenti attributi all'e-service template creato:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
     When viene impostato per l'utente un token m2m non valido
     And l'utente tenta di recuperare gli attributi certificati discreti del template e-service
     Then si ottiene lo status code 403
@@ -147,8 +147,8 @@ Feature: Gestione degli attributi certificati discreti degli e-service template 
   Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_TEMPLATE_UPDATE_3] L'operazione di associazione di un attributo certificato discreto ad un gruppo di un template e-service non va a buon fine se il token di autenticazione non è valido.
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente crea e aggiunge i seguenti attributi all'e-service template creato:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
     And viene effettuata la creazione dell'attributo certificato discreto con successo
       | name | description | code |
       |      |             |      |
@@ -159,8 +159,8 @@ Feature: Gestione degli attributi certificati discreti degli e-service template 
   Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_TEMPLATE_UPDATE_4] L'operazione di associazione di un attributo certificato discreto ad un gruppo di un template e-service non va a buon fine se l'utente non è autorizzato.
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente crea e aggiunge i seguenti attributi all'e-service template creato:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
     And viene effettuata la creazione dell'attributo certificato discreto con successo
       | name | description | code |
       |      |             |      |
@@ -178,8 +178,8 @@ Feature: Gestione degli attributi certificati discreti degli e-service template 
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente tenta la creazione dell'e-service template con la configurazione predefinita
     And l'utente crea e aggiunge i seguenti attributi all'e-service template creato:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
     And viene effettuata la creazione dell'attributo certificato discreto con successo
       | name | description | code |
       |      |             |      |
@@ -190,8 +190,8 @@ Feature: Gestione degli attributi certificati discreti degli e-service template 
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente tenta la creazione dell'e-service template con la configurazione predefinita
     And l'utente crea e aggiunge i seguenti attributi all'e-service template creato:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
     And viene effettuata la creazione dell'attributo certificato discreto con successo
       | name | description | code |
       |      |             |      |
@@ -202,8 +202,8 @@ Feature: Gestione degli attributi certificati discreti degli e-service template 
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente tenta la creazione dell'e-service template con la configurazione predefinita
     And l'utente crea e aggiunge i seguenti attributi all'e-service template creato:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
     And viene effettuata la creazione dell'attributo certificato discreto con successo
       | name | description | code |
       |      |             |      |
@@ -253,17 +253,17 @@ Feature: Gestione degli attributi certificati discreti degli e-service template 
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente tenta la creazione dell'e-service template con la configurazione predefinita
     And l'utente crea e aggiunge i seguenti attributi all'e-service template creato:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
-      | 0     | CERTIFIED_DISCRETE | CD002 | LTE        | 25    |
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 25    |
     When l'utente tenta la rimozione di un attributo certificato discreto da un gruppo di attributi certificati discreti del template e-service non valido
     Then si ottiene lo status code 403
 
   Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_TEMPLATE_DELETE_4] La rimozione di un attributo certificato discreto da un gruppo di attributi di un template e-service non va a buon fine se il token di autenticazione non è valido.
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente crea e aggiunge i seguenti attributi all'e-service template creato:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
     When viene impostato per l'utente un token m2m non valido
     And l'utente tenta la rimozione dell'attibuto certificato 0 discreto dal gruppo di attributi certificati discreti 0 del template e-service
     Then si ottiene lo status code 403
@@ -271,8 +271,8 @@ Feature: Gestione degli attributi certificati discreti degli e-service template 
   Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_TEMPLATE_DELETE_5] La rimozione di un attributo certificato discreto da un gruppo di attributi di un template e-service non va a buon fine se l'utente non è autorizzato.
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente crea e aggiunge i seguenti attributi all'e-service template creato:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
     When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And l'utente tenta la rimozione dell'attibuto certificato 0 discreto dal gruppo di attributi certificati discreti 0 del template e-service
     Then si ottiene lo status code 403
@@ -280,8 +280,8 @@ Feature: Gestione degli attributi certificati discreti degli e-service template 
   Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_TEMPLATE_DELETE_6] La rimozione di un attributo certificato discreto da un gruppo di attributi di un template e-service non va a buon fine se l'ID del template non esiste.
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente crea e aggiunge i seguenti attributi all'e-service template creato:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
     When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And l'utente tenta la rimozione dell'attibuto certificato 0 discreto dal gruppo di attributi certificati discreti 0 del template e-service utilizzando per il template un ID inesistente
     Then si ottiene lo status code 403
@@ -289,8 +289,8 @@ Feature: Gestione degli attributi certificati discreti degli e-service template 
   Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_TEMPLATE_DELETE_7] La rimozione di un attributo certificato discreto da un gruppo di attributi di un template e-service non va a buon fine se l'ID della versione del template non esiste.
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente crea e aggiunge i seguenti attributi all'e-service template creato:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
     When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And l'utente tenta la rimozione dell'attibuto certificato 0 discreto dal gruppo di attributi certificati discreti 0 del template e-service utilizzando per la version del template un ID inesistente
     Then si ottiene lo status code 403
@@ -298,8 +298,8 @@ Feature: Gestione degli attributi certificati discreti degli e-service template 
   Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_TEMPLATE_DELETE_8] La rimozione di un attributo certificato discreto da un gruppo di attributi di un template e-service non va a buon fine se l'ID dell'attributo non esiste.
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente crea e aggiunge i seguenti attributi all'e-service template creato:
-      | group | kind               | code  | comparator | value |
-      | 0     | CERTIFIED_DISCRETE | CD001 | LTE        | 10    |
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
     When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And l'utente tenta la rimozione dell'attributo certificato 0 discreto dal gruppo di attributi certificati discreti 0 del template e-service utilizzando per l'attributo un ID inesistente
     Then si ottiene lo status code 403
