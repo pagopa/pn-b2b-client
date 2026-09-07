@@ -16,6 +16,7 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
+import it.pagopa.pn.interop.cucumber.utility.PreconditionValidator.Precondition;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
@@ -34,7 +35,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.OffsetDateTime;
 import java.util.*;
-import java.util.function.BooleanSupplier;
+
+import static it.pagopa.pn.interop.cucumber.utility.PreconditionValidator.checkPrecondition;
+import static it.pagopa.pn.interop.cucumber.utility.PreconditionValidator.checkPreconditions;
 
 public class DescriptorExportSteps {
     /**
@@ -291,10 +294,8 @@ public class DescriptorExportSteps {
         // Step 2: recupero del riferimento atteso dal contesto scenario.
         // Questo e il punto da aggiornare se cambia la source of truth dei metadati caricati.
         List<DocumentMetadata> expectedDocuments = sharedStepsContext.getEServicesCommonContext().getDocumentsMetadata();
-        checkPreconditions("verifyDocumentsAgainstContext", List.of(
-                new Precondition(() -> expectedDocuments != null,
-                        "expected descriptor docs metadata in test context must not be null")
-        ));
+        checkPrecondition(new Precondition(() -> expectedDocuments != null,
+                "expected descriptor docs metadata in test context must not be null"));
 
         if (!docsNode.isArray()) {
             return;
@@ -377,10 +378,11 @@ public class DescriptorExportSteps {
                             "document %s content is not coherent with uploaded file".formatted(expectedPrettyName)
                     );
                 } catch (IOException e) {
-                    throw new IllegalStateException(buildPreconditionFailureMessage(
-                            "verifyDocumentsAgainstContext",
-                            List.of("unable to compare document " + expectedPrettyName + " content: " + e.getMessage())
-                    ), e);
+                    throw new IllegalStateException(
+                            "verifyDocumentsAgainstContext failed: unable to compare document "
+                                    + expectedPrettyName + " content: " + e.getMessage(),
+                            e
+                    );
                 }
             }
         }
@@ -418,10 +420,9 @@ public class DescriptorExportSteps {
                                         String expectedPrettyName,
                                         String uploadedFilePath,
                                         String interfaceDescription) {
-        checkPreconditions("assertInterfaceEntry - " + interfaceDescription, List.of(
+        checkPrecondition("assertInterfaceEntry - " + interfaceDescription,
                 new Precondition(() -> uploadedFilePath != null,
-                        "uploaded " + interfaceDescription + " path in test context must not be null")
-        ));
+                        "uploaded " + interfaceDescription + " path in test context must not be null"));
 
         String prettyNamePath = interfacePath + "/prettyName";
         String filePathPath = interfacePath + "/path";
@@ -452,10 +453,12 @@ public class DescriptorExportSteps {
                         "%s content is not coherent with uploaded file".formatted(interfaceDescription)
                 );
             } catch (IOException e) {
-                throw new IllegalStateException(buildPreconditionFailureMessage(
-                        "assertInterfaceEntry - " + interfaceDescription,
-                        List.of("unable to compare " + interfaceDescription + " content: " + e.getMessage())
-                ), e);
+                throw new IllegalStateException(
+                        "assertInterfaceEntry - " + interfaceDescription
+                                + " failed: unable to compare " + interfaceDescription
+                                + " content: " + e.getMessage(),
+                        e
+                );
             }
         }
 
@@ -572,52 +575,6 @@ public class DescriptorExportSteps {
         }
     }
 
-    private record Precondition(BooleanSupplier precondition, String errorMsg) {}
-
-    private void checkPreconditions(String context, List<Precondition> preconditions) {
-        if (preconditions == null || preconditions.isEmpty()) {
-            return;
-        }
-
-        List<String> violations = new ArrayList<>();
-        for (Precondition precondition : preconditions) {
-            if (precondition == null) {
-                violations.add("precondition definition must not be null");
-                continue;
-            }
-
-            boolean satisfied;
-            try {
-                satisfied = precondition.precondition() != null && precondition.precondition().getAsBoolean();
-            } catch (RuntimeException e) {
-                violations.add(precondition.errorMsg() + " (evaluation error: " + e.getMessage() + ")");
-                continue;
-            }
-
-            if (!satisfied) {
-                violations.add(precondition.errorMsg());
-            }
-        }
-
-        if (!violations.isEmpty()) {
-            throw new IllegalStateException(buildPreconditionFailureMessage(context, violations));
-        }
-    }
-
-    private String buildPreconditionFailureMessage(String context, List<String> violations) {
-        StringBuilder message = new StringBuilder(context)
-                .append(" failed with ")
-                .append(violations.size())
-                .append(" precondition(s):");
-
-        for (int i = 0; i < violations.size(); i++) {
-            message.append(System.lineSeparator())
-                    .append(i + 1)
-                    .append(") ")
-                    .append(violations.get(i));
-        }
-        return message.toString();
-    }
 
     private byte[] downloadFile(URI fileUrl) {
 //        fileUrl = fileUrl.replace("%2F", "/");

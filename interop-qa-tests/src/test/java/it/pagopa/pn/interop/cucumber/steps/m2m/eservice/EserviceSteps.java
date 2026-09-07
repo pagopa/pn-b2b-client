@@ -23,6 +23,7 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.*;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.helpers.EServiceSeedFactory;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.DocumentMapper;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
+import it.pagopa.pn.interop.cucumber.utility.PreconditionValidator.Precondition;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -40,11 +41,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static it.pagopa.pn.interop.cucumber.utility.StepParser.nullableBoolean;
+import static it.pagopa.pn.interop.cucumber.utility.PreconditionValidator.checkPrecondition;
+import static it.pagopa.pn.interop.cucumber.utility.PreconditionValidator.checkPreconditions;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.assertj.core.api.Assertions.within;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -296,10 +298,8 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         List<DocumentMetadata> expectedDocumentsMetadata = sharedStepsContext.getEServicesCommonContext()
                 .getDocumentsMetadata();
 
-        checkPreconditions("checkDocumentsMetadata", List.of(
-                new Precondition(() -> expectedDocumentsMetadata != null,
-                        "expected documents metadata in test context must not be null")
-        ));
+        checkPrecondition(new Precondition(() -> expectedDocumentsMetadata != null,
+                "expected documents metadata in test context must not be null"));
 
         List<Precondition> expectedDocumentPreconditions = new ArrayList<>();
         for (int i = 0; i < expectedDocumentsMetadata.size(); i++) {
@@ -394,49 +394,6 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         });
     }
 
-    private record Precondition(BooleanSupplier precondition, String errorMsg) {}
-
-    private void checkPreconditions(String context, List<Precondition> preconditions) {
-        List<String> violations = new ArrayList<>();
-        for (Precondition precondition : preconditions) {
-            if (precondition == null) {
-                violations.add("precondition definition must not be null");
-                continue;
-            }
-
-            boolean satisfied;
-            try {
-                satisfied = precondition.precondition() != null && precondition.precondition().getAsBoolean();
-            } catch (RuntimeException e) {
-                violations.add(precondition.errorMsg() + " (evaluation error: " + e.getMessage() + ")");
-                continue;
-            }
-
-            if (!satisfied) {
-                violations.add(precondition.errorMsg());
-            }
-        }
-
-        if (!violations.isEmpty()) {
-            throw new IllegalStateException(buildPreconditionFailureMessage(context, violations));
-        }
-    }
-
-    private String buildPreconditionFailureMessage(String context, List<String> violations) {
-        StringBuilder errorMsg = new StringBuilder("[TEST_PRECONDITION] ")
-                .append(context)
-                .append(" failed with ")
-                .append(violations.size())
-                .append(" precondition(s):");
-
-        for (int i = 0; i < violations.size(); i++) {
-            errorMsg.append(System.lineSeparator())
-                    .append(i + 1)
-                    .append(") ")
-                    .append(violations.get(i));
-        }
-        return errorMsg.toString();
-    }
 
     @Then("è presente un'interfaccia per l'e-service")
     public void interfaceExistsCheck() {
