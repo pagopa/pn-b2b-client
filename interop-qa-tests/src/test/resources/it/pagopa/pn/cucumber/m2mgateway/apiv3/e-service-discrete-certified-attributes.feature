@@ -1,5 +1,29 @@
 Feature: Gestione degli attributi certificati discreti degli e-service attraverso APIs M2M V3
 
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_FUNC_GET_1] Il recupero degli attributi certificati discreti assegnati all'e-service va a buon fine se l'e-service è stato pubblicato.
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente crea e aggiunge i seguenti attributi al descrittore dell'e-service:
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
+      | 0     | CERTIFIED_DISCRETE | EQ         | 100   |
+      | 1     | CERTIFIED_DISCRETE | GT         | 80    |
+      | 1     | CERTIFIED_DISCRETE | EQ         | 100   |
+    And "PA1" ha già caricato un'interfaccia per quel descrittore
+    When l'utente pubblica l'e-service
+    Then la configurazione degli attributi certificati discreti del descrittore dell'e-service corrisponde a quella attesa
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_FUNC_GET_2] Il recupero degli attributi certificati discreti assegnati all'e-service va a buon fine se l'e-service è stato pubblicato.
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente crea e aggiunge i seguenti attributi al descrittore dell'e-service:
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 15    |
+    And "PA1" porta il descrittore dell'e-service in stato "DEPRECATED"
+    When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    Then la configurazione degli attributi certificati discreti del descrittore dell'e-service corrisponde a quella attesa
+
   Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_GET_1] Il recupero degli attributi certificati discreti assegnati all'e-service va a buon fine.
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
