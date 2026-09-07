@@ -57,7 +57,7 @@ Feature: Import di un descrittore
     Examples:
       | sincronia |
       | sincrono  |
-      # Caso asincrono non trattati poiché non è possibile avere un eservice asincrono in modalità RECEIVE
+      # Caso asincrono non trattato poiché non è possibile avere un eservice asincrono in modalità RECEIVE
 
   @sad-path
   @nrt-minimal
@@ -144,7 +144,7 @@ Feature: Import di un descrittore
     When l'utente effettua una richiesta di import del descrittore
     Then si ottiene status code 400
 
-  @happy-path @no-parallel
+  @sad-path @no-parallel
   Scenario Outline: [DESCRIPTOR_IMPORT_8] La richiesta di import di un descrittore di un e-service da parte di un utente autorizzato NON va a buon fine se questo contiene un numero di cartelle diverso da 1
     Given l'utente è un "admin" di "PA1"
     Given l'utente ha già un pacchetto correttamente strutturato con un eservice <sincronia> in mode "<modalita>"
