@@ -166,13 +166,10 @@ public class TenantsCertifiedDiscreteAttributeSteps {
         CertifiedDiscreteAttribute lastCreated = this.getLastCreatedCertifiedDiscreteAttribute();
         sharedStepsContext.getPollingService().makePolling(
                 () -> {
-                    assert lastCreated != null;
+                    Assertions.assertNotNull(lastCreated, "Nessun attributo certificato discreto creato");
                     return findTenantCertifiedDiscreteAttribute(tenantId, lastCreated.getId());
                 },
-                res -> {
-                    assert res.getRevokedAt() != null;
-                    return ! res.getRevokedAt().isEmpty();
-                },
+                res -> res != null && res.getRevokedAt() != null && !res.getRevokedAt().isEmpty(),
                 "Tenant certified discrete attribute not revoked"
         );
         attributeCommonContext.getCertifiedDiscreteRevoked().add(lastCreated);
