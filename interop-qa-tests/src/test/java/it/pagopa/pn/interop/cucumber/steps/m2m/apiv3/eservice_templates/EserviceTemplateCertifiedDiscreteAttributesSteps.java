@@ -426,8 +426,6 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
     }
 
     private void associateOrCreateCertifiedDiscreteAttributePublished(UUID templateId, UUID versionId, Integer groupIndex, UUID attributeId) {
-        List<CertifiedDiscreteAttribute> publishedAttributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscretePublished();
-
         EServiceTemplateVersionCertifiedDiscreteAttributesGroupSeed attributesGroupSeed = new EServiceTemplateVersionCertifiedDiscreteAttributesGroupSeed();
         EServiceDescriptorCertifiedDiscreteAttributesGroupSeedAttributesInner attributeSeed = new EServiceDescriptorCertifiedDiscreteAttributesGroupSeedAttributesInner();
         attributeSeed.setId(attributeId);
@@ -438,12 +436,14 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
         attributesGroupSeed.addAttributesItem(attributeSeed);
 
         if (groupIndex == null) {
+            // Se il gruppo non è stato specificato, crea un nuovo gruppo
             httpExecutor.performCall(
                     () -> this.eServiceTemplateAttributeClient.createEServiceTemplateVersionCertifiedDiscreteAttributesGroup(
                             templateId, versionId, attributesGroupSeed
                     )
             );
         } else {
+            // altrimenti, associa gli attributi al gruppo indicato
             httpExecutor.performCall(
                     () -> this.eServiceTemplateAttributeClient.assignEServiceTemplateVersionCertifiedDiscreteAttributesToGroup(
                             templateId, versionId, groupIndex, attributesGroupSeed

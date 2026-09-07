@@ -13,16 +13,43 @@ Feature: Gestione degli attributi certificati discreti degli e-service attravers
     When l'utente pubblica l'e-service
     Then la configurazione degli attributi certificati discreti del descrittore dell'e-service corrisponde a quella attesa
 
-  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_FUNC_GET_2] Il recupero degli attributi certificati discreti assegnati all'e-service va a buon fine se l'e-service è stato pubblicato.
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_FUNC_GET_2] Il recupero degli attributi certificati discreti assegnati all'e-service va a buon fine se l'e-service è stato deprecato.
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente crea e aggiunge i seguenti attributi al descrittore dell'e-service:
       | group | kind               | comparator | value |
       | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
       | 0     | CERTIFIED_DISCRETE | LTE        | 15    |
-    And "PA1" porta il descrittore dell'e-service in stato "DEPRECATED"
-    When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When "PA1" porta il descrittore dell'e-service in stato "DEPRECATED"
     Then la configurazione degli attributi certificati discreti del descrittore dell'e-service corrisponde a quella attesa
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_FUNC_CREATE_GROUP_1] L'operazione di assegnazione ad un nuovo gruppo di un attributo certificato discreto va a buon fine per un e-service in stato DRAFT.
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente crea e aggiunge i seguenti attributi al descrittore dell'e-service:
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 15    |
+    And viene effettuata la creazione dell'attributo certificato discreto con successo
+      | name | description | code |
+      |      |             |      |
+    When l'utente tenta di associare l'attributo certificato discreto creato al gruppo 1 dell'e-service
+    Then la configurazione degli attributi certificati discreti del descrittore dell'e-service corrisponde a quella attesa
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_FUNC_CREATE_GROUP_2] L'operazione di assegnazione ad un nuovo gruppo di un attributo certificato discreto non va a buon fine per un e-service in stato PUBLISHED.
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente crea e aggiunge i seguenti attributi al descrittore dell'e-service:
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 15    |
+    And "PA1" ha già caricato un'interfaccia per quel descrittore
+    And l'utente pubblica l'e-service
+    And viene effettuata la creazione dell'attributo certificato discreto con successo
+      | name | description | code |
+      |      |             |      |
+    When l'utente tenta di associare l'attributo certificato discreto creato al gruppo 1 dell'e-service
+    Then si ottiene lo status code 409
 
   Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_GET_1] Il recupero degli attributi certificati discreti assegnati all'e-service va a buon fine.
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -358,3 +385,6 @@ Feature: Gestione degli attributi certificati discreti degli e-service attravers
     When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And l'utente tenta di rimuovere l'attributo certificato discreto 0 associato al gruppo 0 dell'e-service specificando un ID inesistente per l'attributo precedentemente associato
     Then si ottiene lo status code 403
+
+
+    # 3.2
