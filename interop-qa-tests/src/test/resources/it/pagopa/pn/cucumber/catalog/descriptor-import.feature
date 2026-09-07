@@ -40,9 +40,7 @@ Feature: Import di un descrittore
     Examples:
       | sincronia |
       | sincrono  |
-
-    # 28/08/2026 Al momento non riproducibile a causa di un'anomalia, rif. https://pagopaspa.slack.com/archives/C069AP16WG7/p1787912475573199
-#      | asincrono |
+      | asincrono |
 
   @happy-path @no-parallel
   Scenario Outline: [DESCRIPTOR_IMPORT_1_B2] La richiesta di import di un descrittore di un e-service da parte di un utente autorizzato, dato un pacchetto correttamente strutturato, contenente due documenti correttamente mappati nel file di configurazione, con nome dell'archivio e della main directory non coincidenti, va a buon fine e il descrittore viene correttamente creato in stato DRAFT con quei documenti
@@ -59,9 +57,7 @@ Feature: Import di un descrittore
     Examples:
       | sincronia |
       | sincrono  |
-
-    # 28/08/2026 Al momento non riproducibile a causa di un anomalia, rif. https://pagopaspa.slack.com/archives/C069AP16WG7/p1787912475573199
-#      | asincrono |
+      # Caso asincrono non trattati poiché non è possibile avere un eservice asincrono in modalità RECEIVE
 
   @sad-path
   @nrt-minimal
@@ -164,10 +160,7 @@ Feature: Import di un descrittore
       | sincrono  | DELIVER  | 2               |
       | sincrono  | RECEIVE  | 0               |
       | sincrono  | RECEIVE  | 2               |
-
-  # 28/08/2026 Al momento non riproducibile a causa di un anomalia, rif. https://pagopaspa.slack.com/archives/C069AP16WG7/p1787912475573199
-#      | asincrono | DELIVER  | 0               |
-#      | asincrono | DELIVER  | 2               |
-#      | asincrono | RECEIVE  | 0               |
-#      | asincrono | RECEIVE  | 2               |
+      | asincrono | DELIVER  | 0               |
+      | asincrono | DELIVER  | 2               |
+      # Caso asincrono non trattati poiché non è possibile avere un eservice asincrono in modalità RECEIVE
 
