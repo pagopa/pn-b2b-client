@@ -548,7 +548,7 @@ public class EServiceTemplateTestAssistant {
         if (httpCallExecutor.getResponseStatus().isError()) {
             return;
         }
-        pollingService.makePolling(
+        ResponseEntity<EServiceTemplateVersionDetails> res = pollingService.makePolling(
             /* NOTE: in questa chiamata NON si sta usando HttpCallExecutor perché la chiamata
              * "principale" - quella il cui esito dovrà eventualmente essere verificato dai
              * test - è quella appena effettuata, non questa, che serve solo ad attendere
@@ -559,8 +559,9 @@ public class EServiceTemplateTestAssistant {
             pollingStopPredicate,
             "There was an error while retrieving the e-service template"
         );
-        EServiceDoc templateInterface = ((EServiceTemplateVersionDetails)httpCallExecutor.getResponse()).getInterface();
-        sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().setTemplateInterface(templateInterface);
+        sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().setTemplateInterface(
+                res.getBody().getInterface()
+        );
     }
 
     public void checkEServiceTemplateVersion(Predicate<EServiceTemplateVersionDetails> versionIsAsExpected, String errorMsg) {
