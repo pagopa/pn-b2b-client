@@ -293,14 +293,19 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
 
     @Then("i metadati dei documenti ottenuti sono coerenti con quelli caricati")
     public void checkDocumentsMetadata() {
+        // Step 1: raccolta dati reali (Interop API) e attesi (contesto scenario).
         List<Document> actualDocuments = ((Documents) httpExecutor.getResponse()).getResults();
         List<DocumentMetadata> actualDocumentsMetadata = documentMapper.map(actualDocuments);
         List<DocumentMetadata> expectedDocumentsMetadata = sharedStepsContext.getEServicesCommonContext()
                 .getDocumentsMetadata();
 
+        // Step 2: precondizione minima sul setup test.
+        // Se manca il riferimento atteso in contesto, il test non puo procedere in modo affidabile.
         checkPrecondition(new Precondition(() -> expectedDocumentsMetadata != null,
                 "expected documents metadata in test context must not be null"));
 
+        // Step 3: precondizioni puntuali sui documenti attesi (id, name, prettyName, createdAt).
+        // Questi controlli intercettano errori di setup prima dei confronti di prodotto.
         List<Precondition> expectedDocumentPreconditions = new ArrayList<>();
         for (int i = 0; i < expectedDocumentsMetadata.size(); i++) {
             int documentIndex = i + 1;
@@ -331,6 +336,8 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         }
         checkPreconditions("checkDocumentsMetadata", expectedDocumentPreconditions);
 
+        // Step 4: verifiche di prodotto con soft assertions.
+        // Si raccolgono tutti i mismatch in un unico report finale.
         assertSoftly(softly -> {
             softly.assertThat(actualDocumentsMetadata)
                     .as("Verifica che i metadati dei documenti caricati siano presenti")
@@ -344,6 +351,7 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
                     .as("Verifica che il numero di documenti restituiti coincida con quello atteso")
                     .hasSameSizeAs(expectedDocumentsMetadata);
 
+            // Step 5: indicizzazione dei documenti reali per id, per confronti stabili e leggibili.
             Map<UUID, DocumentMetadata> actualDocumentsById = new HashMap<>();
             actualDocumentsMetadata.forEach(actualDocument -> {
                 softly.assertThat(actualDocument)
@@ -361,6 +369,8 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
                 }
             });
 
+            // Step 6: confronto documento per documento sui campi restituiti dall'API.
+            // uploadPath non viene confrontato perché non è parte della response.
             for (DocumentMetadata expectedDocument : expectedDocumentsMetadata) {
                 DocumentMetadata actualDocument = actualDocumentsById.get(expectedDocument.getId());
 
@@ -385,6 +395,7 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
                         .as("Verifica che createdAt sia valorizzato per il documento con id %s", expectedDocument.getId())
                         .isNotNull();
 
+                // Step 7: confronto temporale tollerante per evitare falsi negativi dovuti a jitter.
                 if (actualDocument.getCreatedAt() != null) {
                     softly.assertThat(actualDocument.getCreatedAt())
                             .as("Verifica che createdAt del documento con id %s sia vicino al valore atteso", expectedDocument.getId())

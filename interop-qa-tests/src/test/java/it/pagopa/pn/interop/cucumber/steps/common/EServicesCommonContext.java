@@ -81,10 +81,6 @@ public class EServicesCommonContext {
         this.verifiedAttributesIds.addAll(attributesIds);
     }
 
-    public EServiceSeed getEServiceSeed() {
-        return eServiceSeed;
-    }
-
     public void setEServiceSeed(EServiceSeed eServiceSeed) {
         this.eServiceSeed = eServiceSeed == null ? new EServiceSeed() : eServiceSeed;
         this.name = this.eServiceSeed.getName();

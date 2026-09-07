@@ -106,20 +106,25 @@ public class DescriptorExportSteps {
     }
 
     private void verifyPackageFormattedCorrectly(boolean expectAsyncChecks) throws IOException {
+        // Step 1: definizione dei path base e lettura del pacchetto esportato.
+        // Se configuration.json non viene trovato, il test si interrompe subito.
         String interfacePath = descriptorPath + "/interface";
 
         String packageRoot = readExportedPackage();
         Assertions.assertNotNull(configJson, "configuration.json not found in exported package");
 
+        // Step 2: inizializzazione accumulator delle assertion e validazione nodo descriptor.
         SoftAssertions softly = new SoftAssertions();
 
         softly.assertThat(configJson.at(descriptorPath).getNodeType())
                 .as("descriptor node in configuration.json (%s)", descriptorPath)
                 .isEqualTo(JsonNodeType.OBJECT);
 
+        // Step 3: verifica campi di configurazione (root + descriptor) rispetto ai seed in contesto.
         verifyTopLevelConfigurationFields(softly);
         verifyDescriptorConfigurationFields(softly);
 
+        // Step 4: verifica dell'interfaccia principale (metadata + contenuto file nello zip).
         String uploadedInterfacePath = sharedStepsContext.getEServicesCommonContext().getInterfaceUploadPath();
         String interfaceEntryName = assertInterfaceEntry(
                 softly,
@@ -132,6 +137,9 @@ public class DescriptorExportSteps {
 
         JsonNode asyncExchangeNode = configJson.at(asyncExchangePath);
 
+        // Step 5: branch async/sync.
+        // - async: flag true, proprieta async e callback interface valorizzati e coerenti.
+        // - sync: i campi async devono essere assenti/null/non valorizzati.
         if (expectAsyncChecks) {
             softly.assertThat(asyncExchangeNode.isBoolean() && asyncExchangeNode.booleanValue())
                     .as("asyncExchange flag in configuration.json (%s)", asyncExchangePath)
@@ -169,8 +177,10 @@ public class DescriptorExportSteps {
                     .isFalse();
         }
 
+        // Step 6: verifica documenti descriptor (mapping config -> zip + confronto contenuto file).
         verifyDocumentsAgainstContext(softly, packageRoot);
 
+        // Step 7: emissione unica dei fallimenti raccolti.
         softly.assertAll();
     }
 
