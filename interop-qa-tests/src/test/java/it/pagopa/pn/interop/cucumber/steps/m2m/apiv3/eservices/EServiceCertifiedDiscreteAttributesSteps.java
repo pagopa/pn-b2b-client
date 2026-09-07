@@ -216,6 +216,14 @@ public class EServiceCertifiedDiscreteAttributesSteps {
         });
     }
 
+    @When("nel descrittore dell'e-service non è presente alcun gruppo di attributi certificati discreti")
+    public void eServiceHasNoCertifiedDiscreteAttributesGroup() {
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+        List<EServiceDescriptorCertifiedDiscreteAttribute> actualAttributes = fetchAllCertifiedDiscreteAttributes(eServiceId, descriptorId);
+        Assertions.assertTrue(actualAttributes.isEmpty(), "Expected no certified discrete attributes group");
+    }
+
     @When("l'utente tenta di associare l'attributo certificato discreto creato specificando un e-service ID {entityIdType}")
     public void associateCertifiedDiscreteAttributeWithInvalidEServiceId(EntityIdType entityIdType) {
         UUID eServiceId = generateId(entityIdType);

@@ -311,6 +311,39 @@ Feature: Gestione degli attributi certificati discreti degli e-service attravers
       | PA1     | admin | m2m-admin |
       | Privato | admin | m2m-admin |
 
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_FUNC_DELETE_1] La rimozione di un attributo certificato discreto da un gruppo di un e-service contenente più attributi va a buon fine.
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente crea e aggiunge i seguenti attributi al descrittore dell'e-service:
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 15    |
+    When l'utente tenta di rimuovere l'attributo certificato discreto 0 associato al gruppo 0 dell'e-service
+    Then la configurazione degli attributi certificati discreti del descrittore dell'e-service corrisponde a quella attesa
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_FUNC_DELETE_2] La rimozione dell’unico attributo discreto certificato da un gruppo di un e-service comporta anche l’eliminazione del relativo gruppo di appartenenza.
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente crea e aggiunge i seguenti attributi al descrittore dell'e-service:
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
+    When l'utente tenta di rimuovere l'attributo certificato discreto 0 associato al gruppo 0 dell'e-service
+    Then nel descrittore dell'e-service non è presente alcun gruppo di attributi certificati discreti
+
+  Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_FUNC_DELETE_3] La rimozione di un attributo certificato discreto da un gruppo di un e-service che non è in stato bozza non va a buon fine.
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    And l'utente crea e aggiunge i seguenti attributi al descrittore dell'e-service:
+      | group | kind               | comparator | value |
+      | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
+    When "PA1" porta il descrittore dell'e-service in stato "<statoDescrittore>"
+    Then si ottiene lo status code 409
+
+    Examples:
+      | statoDescrittore |
+      | PUBLISHED        |
+      | SUSPENDED        |
+      | DEPRECATED       |
+      | ARCHIVED         |
+
   Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_DELETE_2] L'operazione di rimozione di un attributo certificato discreto da un gruppo di un e-service non va a buon fine se l'utente non è autorizzato.
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene effettuata la creazione dell'attributo certificato discreto con successo
@@ -352,7 +385,7 @@ Feature: Gestione degli attributi certificati discreti degli e-service attravers
       | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
       | 0     | CERTIFIED_DISCRETE | LTE        | 15    |
     When viene impostato per l'utente un token m2m non valido
-    And l'utente tenta di rimuovere l'attributo certificato discreto 0 associato al gruppo -1 dell'e-service
+    And l'utente tenta di rimuovere l'attributo certificato discreto 0 associato al gruppo 0 dell'e-service
     Then si ottiene lo status code 403
 
   Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_DELETE_5] L'operazione di rimozione di un attributo certificato discreto da un gruppo di un e-service non va a buon fine se l'utente non possiede la ownership.
@@ -363,7 +396,7 @@ Feature: Gestione degli attributi certificati discreti degli e-service attravers
       | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
       | 0     | CERTIFIED_DISCRETE | LTE        | 15    |
     When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    And l'utente tenta di rimuovere l'attributo certificato discreto 0 associato al gruppo -1 dell'e-service
+    And l'utente tenta di rimuovere l'attributo certificato discreto 0 associato al gruppo 0 dell'e-service
     Then si ottiene lo status code 403
 
   Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_DELETE_6] L'operazione di rimozione di un attributo certificato discreto da un gruppo di un e-service non va a buon fine se l'ID dell'e-service non esiste.
