@@ -8,12 +8,15 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AsyncExchangeProperties;
 import it.pagopa.interop.generated.openapi.clients.bff.model.FileResource;
+import it.pagopa.pn.interop.cucumber.steps.DocumentMetadata;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.assertj.core.api.SoftAssertions;
@@ -29,9 +32,25 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.OffsetDateTime;
 import java.util.*;
 
 public class DescriptorExportSteps {
+    /**
+     * Campi di {@link EServiceSeed} confrontati con la radice del configuration.json.
+     * Il naming è 1:1 fra seed e file esportato, quindi il nome del campo è anche il JSON pointer relativo.
+     */
+    private static final List<String> E_SERVICE_SEED_FIELDS = List.of(
+            "name", "description", "technology", "mode", "isConsumerDelegable", "isClientAccessDelegable");
+
+    /**
+     * Campi di {@link UpdateEServiceDescriptorSeed} confrontati con il nodo {@code /descriptor} del configuration.json.
+     * {@code attributes} e {@code asyncExchangeProperties} sono esclusi: il primo non è esportato con la stessa forma,
+     * il secondo ha una verifica dedicata.
+     */
+    private static final List<String> DESCRIPTOR_SEED_FIELDS = List.of(
+            "audience", "voucherLifespan", "dailyCallsPerConsumer", "dailyCallsTotal", "agreementApprovalPolicy");
+
     private final String configurationFileName = "configuration.json";
     private final String descriptorPath = "/descriptor";
     private final String asyncExchangePath = "/asyncExchange";
@@ -46,6 +65,7 @@ public class DescriptorExportSteps {
     private final BlobFileCreator blobFileCreator;
     private final BFFDataPreparationService dataPreparationService;
     private JsonNode configJson = null;
+    private String packageRoot = null;
     private final List<String> zipEntries = new ArrayList<>();
     private final Map<String, byte[]> zipEntryContents = new HashMap<>();
 
@@ -93,6 +113,9 @@ public class DescriptorExportSteps {
         softly.assertThat(configJson.at(descriptorPath).getNodeType())
                 .as("descriptor node in configuration.json (%s)", descriptorPath)
                 .isEqualTo(JsonNodeType.OBJECT);
+
+        verifyTopLevelConfigurationFields(softly);
+        verifyDescriptorConfigurationFields(softly);
 
         String uploadedInterfacePath = sharedStepsContext.getEServicesCommonContext().getInterfaceUploadPath();
         String interfaceEntryName = assertInterfaceEntry(
@@ -143,6 +166,8 @@ public class DescriptorExportSteps {
                     .isFalse();
         }
 
+        verifyDocumentsAgainstContext(softly, packageRoot);
+
         softly.assertAll();
     }
 
@@ -150,7 +175,7 @@ public class DescriptorExportSteps {
         zipEntries.clear();
         zipEntryContents.clear();
         configJson = null;
-        String packageRoot = null;
+        packageRoot = null;
 
         URI fileUrl = ((FileResource) httpCallExecutor.getResponse()).getUrl();
         try (InputStream byteStream = new ByteArrayInputStream(downloadFile(fileUrl));
@@ -169,6 +194,169 @@ public class DescriptorExportSteps {
             }
         }
         return packageRoot;
+    }
+
+    private void verifyTopLevelConfigurationFields(SoftAssertions softly) {
+        assertMatchesSeed(softly,
+                "",
+                sharedStepsContext.getEServicesCommonContext().getEServiceSeed(),
+                "e-service seed",
+                E_SERVICE_SEED_FIELDS);
+    }
+
+    private void verifyDescriptorConfigurationFields(SoftAssertions softly) {
+        assertMatchesSeed(softly,
+                descriptorPath,
+                sharedStepsContext.getEServicesCommonContext().getDescriptorSeed(
+                        sharedStepsContext.getEServicesCommonContext().getDescriptorId()),
+                "descriptor seed",
+                DESCRIPTOR_SEED_FIELDS);
+    }
+
+    /**
+     * Confronta in blocco i campi indicati fra il seed usato in fase di creazione (source of truth in contesto)
+     * e il corrispondente nodo del configuration.json esportato, sfruttando il naming 1:1 fra i due modelli.
+     * Il confronto avviene su {@link JsonNode}, quindi verifica contemporaneamente tipo e valore.
+     */
+    private void assertMatchesSeed(SoftAssertions softly, String basePointer, Object seed, String seedDescription, List<String> fields) {
+        softly.assertThat(seed).as("expected %s in test context", seedDescription).isNotNull();
+        if (seed == null) {
+            return;
+        }
+
+        JsonNode expectedSeedNode = objectMapper.valueToTree(seed);
+        fields.forEach(field -> {
+            String pointer = basePointer + "/" + field;
+            JsonNode expectedNode = expectedSeedNode.at("/" + field);
+            JsonNode actualNode = configJson.at(pointer);
+
+            softly.assertThat(isValued(expectedNode))
+                    .as("expected value for %s must be valued in the %s (test context)", pointer, seedDescription)
+                    .isTrue();
+            softly.assertThat(isValued(actualNode))
+                    .as("%s must be present and valued in configuration.json", pointer)
+                    .isTrue();
+
+            if (isValued(expectedNode) && isValued(actualNode)) {
+                softly.assertThat(jsonEquals(expectedNode, actualNode))
+                        .as("%s in configuration.json: expected %s but was %s", pointer, expectedNode, actualNode)
+                        .isTrue();
+            }
+        });
+    }
+
+    private boolean isValued(JsonNode node) {
+        return node != null && !node.isMissingNode() && !node.isNull();
+    }
+
+    /**
+     * Uguaglianza fra nodi tollerante rispetto alla rappresentazione numerica (es. {@code IntNode} vs {@code LongNode})
+     * e all'ordinamento degli array, irrilevante per i campi di configurazione confrontati (es. {@code audience}).
+     */
+    private boolean jsonEquals(JsonNode expected, JsonNode actual) {
+        if (expected.isArray() && actual.isArray()) {
+            return expected.size() == actual.size() && toNodeSet(expected).equals(toNodeSet(actual));
+        }
+        if (expected.isNumber() && actual.isNumber()) {
+            return expected.decimalValue().compareTo(actual.decimalValue()) == 0;
+        }
+        return expected.equals(actual);
+    }
+
+    private Set<JsonNode> toNodeSet(JsonNode arrayNode) {
+        Set<JsonNode> nodes = new HashSet<>();
+        arrayNode.forEach(nodes::add);
+        return nodes;
+    }
+
+    private void verifyDocumentsAgainstContext(SoftAssertions softly, String packageRoot) {
+        // Step 1: validazione strutturale del nodo docs nel configuration.json.
+        // Se il nodo non e un array, il metodo registra il problema e interrompe i controlli successivi.
+        String docsPath = descriptorPath + "/docs";
+        JsonNode docsNode = configJson.at(docsPath);
+        softly.assertThat(docsNode.getNodeType())
+                .as("descriptor docs node in configuration.json (%s)", docsPath)
+                .isEqualTo(JsonNodeType.ARRAY);
+
+        // Step 2: recupero del riferimento atteso dal contesto scenario.
+        // Questo e il punto da aggiornare se cambia la source of truth dei metadati caricati.
+        List<DocumentMetadata> expectedDocuments = sharedStepsContext.getEServicesCommonContext().getDocumentsMetadata();
+        softly.assertThat(expectedDocuments)
+                .as("expected descriptor docs metadata in test context")
+                .isNotNull();
+        if (expectedDocuments == null || !docsNode.isArray()) {
+            return;
+        }
+
+        // Step 3: controllo di cardinalita (numero documenti esportati vs numero documenti attesi).
+        softly.assertThat(docsNode.size())
+                .as("descriptor docs entries count in configuration.json (%s)", docsPath)
+                .isEqualTo(expectedDocuments.size());
+
+        // Step 4: indicizzazione dei documenti esportati per prettyName.
+        // Se in futuro il matching dovesse avvenire su un altro campo (es. id/path), intervenire qui.
+        Map<String, JsonNode> docsByPrettyName = new HashMap<>();
+        docsNode.forEach(doc -> {
+            String prettyName = doc.at("/prettyName").textValue();
+            String path = doc.at("/path").textValue();
+
+            softly.assertThat(prettyName)
+                    .as("document prettyName in configuration.json (%s)", docsPath)
+                    .isNotNull();
+            softly.assertThat(path)
+                    .as("document path in configuration.json (%s)", docsPath)
+                    .isNotNull();
+
+            if (prettyName != null) {
+                docsByPrettyName.put(prettyName, doc);
+            }
+        });
+
+        // Step 5: verifica puntuale di ogni documento atteso:
+        // - presenza entry in configuration.json
+        // - risoluzione del file nello zip
+        // - confronto contenuto file esportato vs file originale caricato
+        for (DocumentMetadata expectedDocument : expectedDocuments) {
+            softly.assertThat(expectedDocument.getPrettyName())
+                    .as("expected document prettyName in test context")
+                    .isNotNull();
+            softly.assertThat(expectedDocument.getUploadPath())
+                    .as("expected uploaded document path in test context for prettyName %s", expectedDocument.getPrettyName())
+                    .isNotNull();
+
+            String expectedPrettyName = expectedDocument.getPrettyName();
+            if (expectedPrettyName == null) {
+                continue;
+            }
+
+            JsonNode configuredDocument = docsByPrettyName.get(expectedPrettyName);
+            softly.assertThat(configuredDocument)
+                    .as("document with prettyName %s in configuration.json", expectedPrettyName)
+                    .isNotNull();
+            if (configuredDocument == null) {
+                continue;
+            }
+
+            String configuredPath = configuredDocument.at("/path").textValue();
+            String entryName = resolveEntryName(packageRoot, configuredPath);
+            softly.assertThat(entryName)
+                    .as("document entry in zip for prettyName %s (declared path: %s)", expectedPrettyName, configuredPath)
+                    .isNotNull();
+
+            if (entryName != null && expectedDocument.getUploadPath() != null) {
+                try {
+                    // Step 6: confronto byte-to-byte del contenuto.
+                    // Se serve una policy diversa (hash, normalizzazione, ecc.), intervenire in questo punto.
+                    verifyEntryContentMatchesUploadedFile(
+                            entryName,
+                            expectedDocument.getUploadPath(),
+                            "document %s content is not coherent with uploaded file".formatted(expectedPrettyName)
+                    );
+                } catch (IOException e) {
+                    softly.fail("Unable to compare document %s content".formatted(expectedPrettyName), e);
+                }
+            }
+        }
     }
 
     private boolean isConfigurationEntry(String entryName) {
@@ -250,18 +438,19 @@ public class DescriptorExportSteps {
     }
 
     private void verifyAsyncExchangeProperties(SoftAssertions softly) {
-        AsyncExchangeProperties expectedAsyncProperties;
-        try {
-            expectedAsyncProperties = sharedStepsContext.getEServicesCommonContext().getAsyncExchangeProperties();
-            if (expectedAsyncProperties == null) {
+        UpdateEServiceDescriptorSeed expectedDescriptorSeed = sharedStepsContext.getEServicesCommonContext().getDescriptorSeed(
+                sharedStepsContext.getEServicesCommonContext().getDescriptorId());
+        AsyncExchangeProperties expectedAsyncProperties = expectedDescriptorSeed == null ? null : expectedDescriptorSeed.getAsyncExchangeProperties();
+        if (expectedAsyncProperties == null) {
+            try {
                 expectedAsyncProperties = clientTokenConfigurator.getProducerClient().getProducerEServiceDescriptor(
                         sharedStepsContext.getEServicesCommonContext().getEserviceId(),
                         sharedStepsContext.getEServicesCommonContext().getDescriptorId()
                 ).getAsyncExchangeProperties();
+            } catch (Exception e) {
+                softly.fail("Unable to retrieve expected asyncExchangeProperties from context/producer descriptor", e);
+                return;
             }
-        } catch (Exception e) {
-            softly.fail("Unable to retrieve expected asyncExchangeProperties from context/producer descriptor", e);
-            return;
         }
 
         softly.assertThat(expectedAsyncProperties)
@@ -305,26 +494,9 @@ public class DescriptorExportSteps {
 
     @Then("il pacchetto contiene anche i documenti che sono mappati nel documento di configurazione")
     public void verifyPackageContainsAllRequiredDocuments() {
-        String docsPath = descriptorPath + "/docs";
         Assertions.assertNotNull(configJson, "configuration.json not read yet: run the package verification step first");
-
-        JsonNode docs = configJson.at(docsPath);
         SoftAssertions softly = new SoftAssertions();
-        softly.assertThat(docs.getNodeType())
-                .as("descriptor docs node in configuration.json (%s)", docsPath)
-                .isEqualTo(JsonNodeType.ARRAY);
-
-        docs.forEach(doc -> {
-            String path = doc.at("/path").textValue();
-            softly.assertThat(path)
-                    .as("document path in configuration.json (%s)", docsPath)
-                    .isNotNull();
-            if (path != null) {
-                softly.assertThat(zipEntries.stream().anyMatch(entryName -> entryName.endsWith(path)))
-                        .as("document path %s must be present in zip entries", path)
-                        .isTrue();
-            }
-        });
+        verifyDocumentsAgainstContext(softly, packageRoot);
         softly.assertAll();
     }
 
@@ -332,15 +504,41 @@ public class DescriptorExportSteps {
     public void userAddDocumentDescriptor() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         UUID uuid = UUID.randomUUID();
+        String prettyName = "Documento QA extra - " + uuid;
         Resource textDoc = blobFileCreator.createBlobTempFileWithExtension("Document " + uuid, "txt",
             "Some random text - %s".formatted(uuid).getBytes(
                 StandardCharsets.UTF_8));
-        dataPreparationService.addDocumentToDescriptor(
+        UUID documentId = dataPreparationService.addDocumentToDescriptor(
                 sharedStepsContext.getEServicesCommonContext().getEserviceId(),
                 sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
-                null,
+                prettyName,
                 textDoc
         );
+
+        List<DocumentMetadata> documentsMetadata = sharedStepsContext.getEServicesCommonContext().getDocumentsMetadata();
+        if (documentsMetadata == null) {
+            documentsMetadata = new ArrayList<>();
+            sharedStepsContext.getEServicesCommonContext().setDocumentsMetadata(documentsMetadata);
+        } else if (!(documentsMetadata instanceof ArrayList)) {
+            documentsMetadata = new ArrayList<>(documentsMetadata);
+            sharedStepsContext.getEServicesCommonContext().setDocumentsMetadata(documentsMetadata);
+        }
+
+        documentsMetadata.add(DocumentMetadata.builder()
+                .id(documentId)
+                .name(textDoc.getFilename())
+                .prettyName(prettyName)
+                .uploadPath(extractUploadPath(textDoc))
+                .createdAt(OffsetDateTime.now())
+                .build());
+    }
+
+    private String extractUploadPath(Resource resource) {
+        try {
+            return resource.getFile().getPath();
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to resolve uploaded document path", e);
+        }
     }
 
     private byte[] downloadFile(URI fileUrl) {

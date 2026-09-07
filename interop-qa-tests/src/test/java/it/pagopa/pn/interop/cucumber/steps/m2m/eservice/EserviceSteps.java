@@ -31,9 +31,9 @@ import org.jeasy.random.randomizers.text.StringRandomizer;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 
-import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -43,6 +43,7 @@ import java.util.stream.Collectors;
 
 import static it.pagopa.pn.interop.cucumber.utility.StepParser.nullableBoolean;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.assertj.core.api.Assertions.within;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
@@ -292,20 +293,65 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         List<DocumentMetadata> expectedDocumentsMetadata = sharedStepsContext.getEServicesCommonContext()
                 .getDocumentsMetadata();
 
-        assertSoftly(softly -> softly.assertThat(actualDocumentsMetadata)
-                .as("Verifica che i metadati dei documenti caricati siano coerenti")
-                .usingFieldByFieldElementComparator()
-                .usingComparatorForElementFieldsWithType(
-                        (timestamp1, timestamp2) -> {
-                            Duration actualAndExpectedDifference = Duration.between(timestamp1, timestamp2).abs();
-                            Duration acceptedDelay = Duration.ofSeconds(10);
+        assertSoftly(softly -> {
+            softly.assertThat(actualDocumentsMetadata)
+                    .as("Verifica che i metadati dei documenti caricati siano presenti")
+                    .isNotNull();
+            softly.assertThat(expectedDocumentsMetadata)
+                    .as("Verifica che i metadati attesi in contesto siano presenti")
+                    .isNotNull();
 
-                            // Se i timestamp di creazione sono divisi da un delay ragionevole, allora
-                            // si considerano "uguali", per la riuscita del test
-                            return actualAndExpectedDifference.compareTo(acceptedDelay) < 0 ? 0 : 1;
-                        },
-                        OffsetDateTime.class)
-                .containsExactlyInAnyOrderElementsOf(expectedDocumentsMetadata));
+            if (actualDocumentsMetadata == null || expectedDocumentsMetadata == null) {
+                return;
+            }
+
+            softly.assertThat(actualDocumentsMetadata)
+                    .as("Verifica che il numero di documenti restituiti coincida con quello atteso")
+                    .hasSameSizeAs(expectedDocumentsMetadata);
+
+            Map<UUID, DocumentMetadata> actualDocumentsById = actualDocumentsMetadata.stream()
+                    .collect(Collectors.toMap(DocumentMetadata::getId, metadata -> metadata));
+
+            for (DocumentMetadata expectedDocument : expectedDocumentsMetadata) {
+                softly.assertThat(expectedDocument.getId())
+                        .as("Verifica che il documento atteso abbia un id")
+                        .isNotNull();
+
+                DocumentMetadata actualDocument = expectedDocument.getId() == null
+                        ? null
+                        : actualDocumentsById.get(expectedDocument.getId());
+
+                softly.assertThat(actualDocument)
+                        .as("Verifica che sia presente il documento con id %s", expectedDocument.getId())
+                        .isNotNull();
+
+                if (actualDocument == null) {
+                    continue;
+                }
+
+                softly.assertThat(actualDocument.getName())
+                        .as("Verifica il name del documento con id %s", expectedDocument.getId())
+                        .isEqualTo(expectedDocument.getName());
+                softly.assertThat(actualDocument.getPrettyName())
+                        .as("Verifica il prettyName del documento con id %s", expectedDocument.getId())
+                        .isEqualTo(expectedDocument.getPrettyName());
+
+                // uploadPath non viene restituito dalle API M2M: non va confrontato puntualmente.
+
+                softly.assertThat(actualDocument.getCreatedAt())
+                        .as("Verifica che createdAt sia valorizzato per il documento con id %s", expectedDocument.getId())
+                        .isNotNull();
+                softly.assertThat(expectedDocument.getCreatedAt())
+                        .as("Verifica che createdAt atteso sia valorizzato per il documento con id %s", expectedDocument.getId())
+                        .isNotNull();
+
+                if (actualDocument.getCreatedAt() != null && expectedDocument.getCreatedAt() != null) {
+                    softly.assertThat(actualDocument.getCreatedAt())
+                            .as("Verifica che createdAt del documento con id %s sia vicino al valore atteso", expectedDocument.getId())
+                            .isCloseTo(expectedDocument.getCreatedAt(), within(10, ChronoUnit.SECONDS));
+                }
+            }
+        });
     }
 
     @Then("è presente un'interfaccia per l'e-service")

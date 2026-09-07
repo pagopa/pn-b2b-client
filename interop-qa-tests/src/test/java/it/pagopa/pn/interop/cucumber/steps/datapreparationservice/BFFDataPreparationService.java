@@ -436,6 +436,7 @@ public class BFFDataPreparationService {
                 .isClientAccessDelegable(false)
                 .personalData(false);
         EServiceSeed eServiceSeed = merge(defaultEserviceSeed, partialEserviceSeed);
+        sharedStepsContext.getEServicesCommonContext().setEServiceSeed(eServiceSeed);
 
         httpCallExecutor.performCall(() -> eServiceClient.createEService(eServiceSeed));
         assertValidResponse();
@@ -447,10 +448,6 @@ public class BFFDataPreparationService {
                 res -> res != HttpStatus.NOT_FOUND,
                 ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
-
-        ProducerEServiceDescriptor producerEServiceDescriptor = (ProducerEServiceDescriptor) httpCallExecutor.getResponse();
-        sharedStepsContext.getEServicesCommonContext().setName(producerEServiceDescriptor.getEservice().getName());
-        sharedStepsContext.getEServicesCommonContext().setDescription(producerEServiceDescriptor.getEservice().getDescription());
 
         updateDraftDescriptor(eserviceId, descriptorId, partialDescriptorSeed);
         return new EServiceDescriptor(eserviceId, descriptorId);
@@ -466,6 +463,7 @@ public class BFFDataPreparationService {
                 .isClientAccessDelegable(isClientAccessDelegable)
                 .personalData(false);
         EServiceSeed eServiceSeed = merge(defaultEserviceSeed, partialEserviceSeed);
+        sharedStepsContext.getEServicesCommonContext().setEServiceSeed(eServiceSeed);
 
         httpCallExecutor.performCall(() -> eServiceClient.createEService(eServiceSeed));
         assertValidResponse();
@@ -509,6 +507,7 @@ public class BFFDataPreparationService {
                 .isClientAccessDelegable(false);
         EServiceSeed eServiceSeed = merge(defaultEserviceSeed, partialEserviceSeed);
         eServiceSeed.setPersonalData(personalData);
+        sharedStepsContext.getEServicesCommonContext().setEServiceSeed(eServiceSeed);
 
         httpCallExecutor.performCall(() -> eServiceClient.createEService(eServiceSeed));
         assertValidResponse();
@@ -557,6 +556,7 @@ public class BFFDataPreparationService {
 
         httpCallExecutor.performCall(() -> eServiceClient.updateDraftDescriptor(eServiceId, descriptorId, descriptorSeed));
         assertValidResponse();
+        sharedStepsContext.getEServicesCommonContext().setDescriptorSeed(descriptorId, descriptorSeed);
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
@@ -626,7 +626,7 @@ public class BFFDataPreparationService {
 
                 return docId;
             }
-        ).stream().map(Document::getMetadata).toList();
+        ).stream().map(Document::getMetadata).collect(java.util.stream.Collectors.toCollection(ArrayList::new));
 
         resultBuilder.descriptorId(descriptorId);
         resultBuilder.documentsMetadata(documentsMetadata);
@@ -701,12 +701,21 @@ public class BFFDataPreparationService {
                 .id(documentId)
                 .name(tempFileResource.getFilename())
                 .prettyName(prettyName)
+                .uploadPath(extractUploadPath(tempFileResource))
                 .createdAt(OffsetDateTime.now())
                 .build();
             documents.add(Document.of(metadata, tempFileResource));
         }
 
         return documents;
+    }
+
+    private String extractUploadPath(Resource resource) {
+        try {
+            return resource.getFile().getPath();
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to resolve uploaded document path", e);
+        }
     }
 
     public Map<String, Object> bringTemplateInstanceDescriptorToGivenState(UUID eServiceId, UUID descriptorId, EServiceDescriptorState descriptorState, boolean withDocument) {
