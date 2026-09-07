@@ -3,10 +3,12 @@ Feature: Gestione degli attributi certificati discreti degli e-service attravers
   Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_GET_1] Il recupero degli attributi certificati discreti assegnati all'e-service va a buon fine.
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
-    # TODO usare valori random per code
     And l'utente crea e aggiunge i seguenti attributi al descrittore dell'e-service:
       | group | kind               | comparator | value |
       | 0     | CERTIFIED_DISCRETE | LTE        | 10    |
+      | 0     | CERTIFIED_DISCRETE | EQ         | 100   |
+      | 1     | CERTIFIED_DISCRETE | GT         | 80    |
+      | 1     | CERTIFIED_DISCRETE | EQ         | 100   |
     When l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
     Then la configurazione degli attributi certificati discreti del descrittore dell'e-service corrisponde a quella attesa
 
