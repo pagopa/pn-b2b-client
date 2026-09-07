@@ -13,20 +13,62 @@ public final class PreconditionValidator {
         throw new AssertionError("Utility class");
     }
 
+    /**
+     * Rappresenta una precondizione composta da:
+     * <ul>
+     *   <li>una condizione booleana valutata lazy ({@link BooleanSupplier})</li>
+     *   <li>un messaggio descrittivo da includere in caso di fallimento</li>
+     * </ul>
+     */
     public record Precondition(BooleanSupplier precondition, String errorMsg) {}
 
+    /**
+     * Valida una singola precondizione senza contesto esplicito.
+     *
+     * @param precondition precondizione da validare
+     * @throws IllegalStateException se la precondizione non e soddisfatta
+     */
     public static void checkPrecondition(Precondition precondition) {
         checkPreconditions(null, Collections.singletonList(precondition));
     }
 
+    /**
+     * Valida una singola precondizione con contesto esplicito, utile per
+     * identificare rapidamente il punto del test in cui e avvenuto il fallimento.
+     *
+     * @param context etichetta del contesto (es. nome metodo/fase)
+     * @param precondition precondizione da validare
+     * @throws IllegalStateException se la precondizione non e soddisfatta
+     */
     public static void checkPrecondition(String context, Precondition precondition) {
         checkPreconditions(context, Collections.singletonList(precondition));
     }
 
+    /**
+     * Valida una lista di precondizioni senza contesto esplicito.
+     *
+     * @param preconditions lista di precondizioni da validare
+     * @throws IllegalStateException se almeno una precondizione non e soddisfatta
+     */
     public static void checkPreconditions(List<Precondition> preconditions) {
         checkPreconditions(null, preconditions);
     }
 
+    /**
+     * Valida una lista di precondizioni e, in caso di fallimento, lancia
+     * una {@link IllegalStateException} con il dettaglio completo delle violazioni.
+     *
+     * <p>Comportamento:</p>
+     * <ul>
+     *   <li>se la lista e nulla o vuota, non fa nulla</li>
+     *   <li>raccoglie tutte le violazioni in un unico messaggio</li>
+     *   <li>se la valutazione di una condizione genera eccezione, la segnala come violation</li>
+     * </ul>
+     *
+     * @param context etichetta del contesto (opzionale)
+     * @param preconditions lista di precondizioni da validare
+     * @throws IllegalStateException se almeno una precondizione non e soddisfatta
+     */
     public static void checkPreconditions(String context, List<Precondition> preconditions) {
         if (preconditions == null || preconditions.isEmpty()) {
             return;
