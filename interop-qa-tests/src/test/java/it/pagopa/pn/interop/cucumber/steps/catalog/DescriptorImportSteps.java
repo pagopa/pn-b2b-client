@@ -170,9 +170,7 @@ public class DescriptorImportSteps {
             case "DELIVER" -> Boolean.TRUE.equals(isAsync)
                     ? "exportedAsyncWithDocument"
                     : "exportedWithDocument";
-            case "RECEIVE" -> Boolean.TRUE.equals(isAsync)
-                    ? "exportedAsyncWithRiskAnalysis"
-                    : "exportedWithRiskAnalysis";
+            case "RECEIVE" -> "exportedWithRiskAnalysis";
             default -> throw new IllegalArgumentException("Invalid eservice mode: " + eserviceMode);
         };
     }
