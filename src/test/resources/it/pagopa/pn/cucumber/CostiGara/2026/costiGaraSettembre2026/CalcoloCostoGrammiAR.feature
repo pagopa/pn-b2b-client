@@ -1,4 +1,4 @@
-Feature: calcolo costo notifica in base hai grammi con notfiche AR
+Feature: calcolo costo notifica in base ai grammi con notfiche AR
 
   Background:
     Given viene rimossa se presente la pec di piattaforma di "Mario Gherkin"
