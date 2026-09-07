@@ -112,6 +112,7 @@ Feature: Listing catalogo e-services
 
     Given l'utente è un "admin" di "PA1"
     And l'utente attiva il descrittore di quell'e-service
+    And l'e-service è in stato "PUBLISHED"
     When "PA1" ha già pubblicato una nuova versione per quell'e-service
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And l'utente è un "admin" di "PA2"
@@ -158,6 +159,7 @@ Feature: Listing catalogo e-services
 
     Given l'utente è un "admin" di "PA1"
     And l'utente attiva il descrittore di quell'e-service
+    And l'e-service è in stato "PUBLISHED"
     When "PA1" ha già pubblicato una nuova versione per quell'e-service
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And l'utente è un "admin" di "PA2"
@@ -206,6 +208,7 @@ Feature: Listing catalogo e-services
 
     Given l'utente è un "admin" di "PA1"
     And l'utente attiva il descrittore di quell'e-service
+    And l'e-service è in stato "PUBLISHED"
     When "PA1" ha già pubblicato una nuova versione per quell'e-service asincrono
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And l'utente è un "admin" di "PA2"
@@ -257,6 +260,7 @@ Feature: Listing catalogo e-services
 
     Given l'utente è un "admin" di "PA1"
     And l'utente attiva il descrittore di quell'e-service
+    And l'e-service è in stato "PUBLISHED"
     When "PA1" ha già pubblicato una nuova versione per quell'e-service asincrono
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And l'utente è un "admin" di "PA2"
@@ -306,6 +310,7 @@ Feature: Listing catalogo e-services
 
     Given l'utente è un "admin" di "PA1"
     And l'utente attiva il descrittore di quell'e-service
+    And l'e-service è in stato "PUBLISHED"
     And l'utente crea una versione in bozza per quell'e-service istanza di template
     And la versione più recente dell'e-service è in stato "DRAFT"
     And l'utente specifica i metadati mancanti all'istanza del template sincrono con successo
