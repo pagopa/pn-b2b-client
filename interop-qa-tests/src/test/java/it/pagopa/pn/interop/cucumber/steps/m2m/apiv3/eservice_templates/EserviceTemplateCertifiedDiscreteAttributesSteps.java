@@ -136,6 +136,18 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
             });
     }
 
+    @When("nel template e-service non è presente alcun gruppo di attributi certificati discreti")
+    public void noCertifiedDiscreteAttributesGroup() {
+        EServiceTemplateInfo templateInfo = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
+        UUID templateId = templateInfo.getId();
+        UUID versionId = templateInfo.getLastVersionId();
+        AttributeCommonContext context = sharedStepsContext.getAttributeCommonContext();
+
+        List<EServiceTemplateVersionCertifiedDiscreteAttribute> actualAttributes = fetchAllCertifiedDiscreteAttributes(templateId, versionId);
+
+        Assertions.assertTrue(actualAttributes.isEmpty(), "Expected no certified discrete attributes group");
+    }
+
     @When("l'utente tenta di recuperare gli attributi certificati discreti del template e-service")
     public void getCertifiedDiscreteAttributes() {
         EServiceTemplateInfo templateInfo = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
@@ -296,7 +308,7 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
         );
     }
 
-    @When("l'utente tenta la rimozione dell'attibuto certificato {int} discreto dal gruppo di attributi certificati discreti {int} del template e-service")
+    @When("l'utente tenta la rimozione dell'attibuto certificato discreto {int} dal gruppo di attributi certificati discreti {int} del template e-service")
     public void removeCertifiedDiscreteAttributeFromGroup(int attributeIndex, int groupIndex) {
         List<List<CertifiedDiscreteAttribute>> attributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscreteAssigned();
 
@@ -359,7 +371,7 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
         );
     }
 
-    @When("l'utente tenta la rimozione dell'attributo certificato {int} discreto dal gruppo di attributi certificati discreti {int} del template e-service utilizzando per l'attributo un ID inesistente")
+    @When("l'utente tenta la rimozione dell'attributo certificato {int} discreto dal gruppo di attributi certificati discreti {int} del template e-service utilizzando per l'attributo un ID {entityIdType}")
     public void removeCertifiedDiscreteAttributeFromGroupWithMissingParameters(int attributeIndex, int groupIndex, EntityIdType entityIdType) {
         EServiceTemplateInfo templateInfo = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
         UUID templateId = templateInfo.getId();
