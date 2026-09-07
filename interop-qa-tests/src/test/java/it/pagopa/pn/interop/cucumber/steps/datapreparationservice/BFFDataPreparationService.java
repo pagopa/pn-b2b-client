@@ -712,7 +712,7 @@ public class BFFDataPreparationService {
 
     private String extractUploadPath(Resource resource) {
         try {
-            return resource.getFile().getPath();
+            return resource.getFile().toPath().toAbsolutePath().normalize().toString();
         } catch (IOException e) {
             throw new RuntimeException("Unable to resolve uploaded document path", e);
         }
