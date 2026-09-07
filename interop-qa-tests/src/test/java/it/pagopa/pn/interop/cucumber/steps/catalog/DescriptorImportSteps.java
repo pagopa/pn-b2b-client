@@ -397,7 +397,7 @@ public class DescriptorImportSteps {
         try {
             File folderPath = getPackageFolder();
             File configFile = new File(folderPath, "configuration.json");
-            File notAllowedFile = new File(String.format("%s/notAllowedFile.txt", folderPath.getPath()));
+            File notAllowedFile = new File(folderPath, "notAllowedFile.txt");
             // Handle notAllowedFile.txt
             if (notAllowedFiles) {
                 FileUtils.write(notAllowedFile, "", StandardCharsets.UTF_8);
