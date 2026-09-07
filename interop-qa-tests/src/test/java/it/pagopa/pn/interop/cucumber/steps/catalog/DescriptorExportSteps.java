@@ -383,6 +383,7 @@ public class DescriptorExportSteps {
                     // Step 6: confronto byte-to-byte del contenuto.
                     // Se serve una policy diversa (hash, normalizzazione, ecc.), intervenire in questo punto.
                     verifyEntryContentMatchesUploadedFile(
+                            softly,
                             entryName,
                             expectedDocument.getUploadPath(),
                             "document %s content is not coherent with uploaded file".formatted(expectedPrettyName)
@@ -458,6 +459,7 @@ public class DescriptorExportSteps {
         if (entryName != null) {
             try {
                 verifyEntryContentMatchesUploadedFile(
+                        softly,
                         entryName,
                         uploadedFilePath,
                         "%s content is not coherent with uploaded file".formatted(interfaceDescription)
@@ -475,10 +477,15 @@ public class DescriptorExportSteps {
         return entryName;
     }
 
-    private void verifyEntryContentMatchesUploadedFile(String entryName, String uploadedFilePath, String assertionMessage) throws IOException {
+    private void verifyEntryContentMatchesUploadedFile(SoftAssertions softly,
+                                                       String entryName,
+                                                       String uploadedFilePath,
+                                                       String assertionMessage) throws IOException {
         byte[] exportedFile = zipEntryContents.get(entryName);
         byte[] expectedFile = Files.readAllBytes(Path.of(uploadedFilePath));
-        Assertions.assertArrayEquals(expectedFile, exportedFile, assertionMessage);
+        softly.assertThat(exportedFile)
+                .as(assertionMessage)
+                .containsExactly(expectedFile);
     }
 
     private void verifyAsyncExchangeProperties(SoftAssertions softly) {
@@ -579,7 +586,7 @@ public class DescriptorExportSteps {
 
     private String extractUploadPath(Resource resource) {
         try {
-            return resource.getFile().getPath();
+            return resource.getFile().toPath().toAbsolutePath().normalize().toString();
         } catch (IOException e) {
             throw new RuntimeException("Unable to resolve uploaded document path", e);
         }

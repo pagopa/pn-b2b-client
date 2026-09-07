@@ -81,16 +81,23 @@ public final class PreconditionValidator {
                 continue;
             }
 
+            String safeErrorMsg = normalizeErrorMessage(precondition.errorMsg());
+            BooleanSupplier condition = precondition.precondition();
+            if (condition == null) {
+                violations.add(safeErrorMsg + " (missing boolean condition)");
+                continue;
+            }
+
             boolean satisfied;
             try {
-                satisfied = precondition.precondition() != null && precondition.precondition().getAsBoolean();
+                satisfied = condition.getAsBoolean();
             } catch (RuntimeException e) {
-                violations.add(precondition.errorMsg() + " (evaluation error: " + e.getMessage() + ")");
+                violations.add(safeErrorMsg + " (evaluation error: " + e.getMessage() + ")");
                 continue;
             }
 
             if (!satisfied) {
-                violations.add(precondition.errorMsg());
+                violations.add(safeErrorMsg);
             }
         }
 
@@ -116,6 +123,12 @@ public final class PreconditionValidator {
                     .append(violations.get(i));
         }
         return message.toString();
+    }
+
+    private static String normalizeErrorMessage(String errorMsg) {
+        return isNotBlank(errorMsg)
+                ? errorMsg
+                : "precondition failed (missing error message)";
     }
 }
 
