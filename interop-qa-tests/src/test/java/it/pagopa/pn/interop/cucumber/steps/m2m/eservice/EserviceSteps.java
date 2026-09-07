@@ -34,10 +34,13 @@ import org.springframework.http.HttpStatus;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -293,15 +296,47 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         List<DocumentMetadata> expectedDocumentsMetadata = sharedStepsContext.getEServicesCommonContext()
                 .getDocumentsMetadata();
 
+        checkPreconditions("checkDocumentsMetadata", List.of(
+                new Precondition(() -> expectedDocumentsMetadata != null,
+                        "expected documents metadata in test context must not be null")
+        ));
+
+        List<Precondition> expectedDocumentPreconditions = new ArrayList<>();
+        for (int i = 0; i < expectedDocumentsMetadata.size(); i++) {
+            int documentIndex = i + 1;
+            DocumentMetadata expectedDocument = expectedDocumentsMetadata.get(i);
+            expectedDocumentPreconditions.add(new Precondition(
+                    () -> expectedDocument != null,
+                    "expected document metadata at index " + documentIndex + " must not be null"
+            ));
+
+            if (expectedDocument != null) {
+                expectedDocumentPreconditions.add(new Precondition(
+                        () -> expectedDocument.getId() != null,
+                        "expected document id at index " + documentIndex + " must not be null"
+                ));
+                expectedDocumentPreconditions.add(new Precondition(
+                        () -> expectedDocument.getName() != null,
+                        "expected document name at index " + documentIndex + " must not be null"
+                ));
+                expectedDocumentPreconditions.add(new Precondition(
+                        () -> expectedDocument.getPrettyName() != null,
+                        "expected document prettyName at index " + documentIndex + " must not be null"
+                ));
+                expectedDocumentPreconditions.add(new Precondition(
+                        () -> expectedDocument.getCreatedAt() != null,
+                        "expected document createdAt at index " + documentIndex + " must not be null"
+                ));
+            }
+        }
+        checkPreconditions("checkDocumentsMetadata", expectedDocumentPreconditions);
+
         assertSoftly(softly -> {
             softly.assertThat(actualDocumentsMetadata)
                     .as("Verifica che i metadati dei documenti caricati siano presenti")
                     .isNotNull();
-            softly.assertThat(expectedDocumentsMetadata)
-                    .as("Verifica che i metadati attesi in contesto siano presenti")
-                    .isNotNull();
 
-            if (actualDocumentsMetadata == null || expectedDocumentsMetadata == null) {
+            if (actualDocumentsMetadata == null) {
                 return;
             }
 
@@ -309,17 +344,25 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
                     .as("Verifica che il numero di documenti restituiti coincida con quello atteso")
                     .hasSameSizeAs(expectedDocumentsMetadata);
 
-            Map<UUID, DocumentMetadata> actualDocumentsById = actualDocumentsMetadata.stream()
-                    .collect(Collectors.toMap(DocumentMetadata::getId, metadata -> metadata));
+            Map<UUID, DocumentMetadata> actualDocumentsById = new HashMap<>();
+            actualDocumentsMetadata.forEach(actualDocument -> {
+                softly.assertThat(actualDocument)
+                        .as("Verifica che il documento reale non sia nullo")
+                        .isNotNull();
+                if (actualDocument == null) {
+                    return;
+                }
+
+                softly.assertThat(actualDocument.getId())
+                        .as("Verifica che il documento reale abbia un id")
+                        .isNotNull();
+                if (actualDocument.getId() != null) {
+                    actualDocumentsById.put(actualDocument.getId(), actualDocument);
+                }
+            });
 
             for (DocumentMetadata expectedDocument : expectedDocumentsMetadata) {
-                softly.assertThat(expectedDocument.getId())
-                        .as("Verifica che il documento atteso abbia un id")
-                        .isNotNull();
-
-                DocumentMetadata actualDocument = expectedDocument.getId() == null
-                        ? null
-                        : actualDocumentsById.get(expectedDocument.getId());
+                DocumentMetadata actualDocument = actualDocumentsById.get(expectedDocument.getId());
 
                 softly.assertThat(actualDocument)
                         .as("Verifica che sia presente il documento con id %s", expectedDocument.getId())
@@ -341,17 +384,58 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
                 softly.assertThat(actualDocument.getCreatedAt())
                         .as("Verifica che createdAt sia valorizzato per il documento con id %s", expectedDocument.getId())
                         .isNotNull();
-                softly.assertThat(expectedDocument.getCreatedAt())
-                        .as("Verifica che createdAt atteso sia valorizzato per il documento con id %s", expectedDocument.getId())
-                        .isNotNull();
 
-                if (actualDocument.getCreatedAt() != null && expectedDocument.getCreatedAt() != null) {
+                if (actualDocument.getCreatedAt() != null) {
                     softly.assertThat(actualDocument.getCreatedAt())
                             .as("Verifica che createdAt del documento con id %s sia vicino al valore atteso", expectedDocument.getId())
                             .isCloseTo(expectedDocument.getCreatedAt(), within(10, ChronoUnit.SECONDS));
                 }
             }
         });
+    }
+
+    private record Precondition(BooleanSupplier precondition, String errorMsg) {}
+
+    private void checkPreconditions(String context, List<Precondition> preconditions) {
+        List<String> violations = new ArrayList<>();
+        for (Precondition precondition : preconditions) {
+            if (precondition == null) {
+                violations.add("precondition definition must not be null");
+                continue;
+            }
+
+            boolean satisfied;
+            try {
+                satisfied = precondition.precondition() != null && precondition.precondition().getAsBoolean();
+            } catch (RuntimeException e) {
+                violations.add(precondition.errorMsg() + " (evaluation error: " + e.getMessage() + ")");
+                continue;
+            }
+
+            if (!satisfied) {
+                violations.add(precondition.errorMsg());
+            }
+        }
+
+        if (!violations.isEmpty()) {
+            throw new IllegalStateException(buildPreconditionFailureMessage(context, violations));
+        }
+    }
+
+    private String buildPreconditionFailureMessage(String context, List<String> violations) {
+        StringBuilder errorMsg = new StringBuilder("[TEST_PRECONDITION] ")
+                .append(context)
+                .append(" failed with ")
+                .append(violations.size())
+                .append(" precondition(s):");
+
+        for (int i = 0; i < violations.size(); i++) {
+            errorMsg.append(System.lineSeparator())
+                    .append(i + 1)
+                    .append(") ")
+                    .append(violations.get(i));
+        }
+        return errorMsg.toString();
     }
 
     @Then("è presente un'interfaccia per l'e-service")

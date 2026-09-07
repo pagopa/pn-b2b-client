@@ -34,6 +34,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.OffsetDateTime;
 import java.util.*;
+import java.util.function.BooleanSupplier;
 
 public class DescriptorExportSteps {
     /**
@@ -68,7 +69,6 @@ public class DescriptorExportSteps {
     private String packageRoot = null;
     private final List<String> zipEntries = new ArrayList<>();
     private final Map<String, byte[]> zipEntryContents = new HashMap<>();
-
 
     public DescriptorExportSteps(ClientTokenConfigurator clientTokenConfigurator,
                                  SharedStepsContext sharedStepsContext,
@@ -219,25 +219,35 @@ public class DescriptorExportSteps {
      * Il confronto avviene su {@link JsonNode}, quindi verifica contemporaneamente tipo e valore.
      */
     private void assertMatchesSeed(SoftAssertions softly, String basePointer, Object seed, String seedDescription, List<String> fields) {
-        softly.assertThat(seed).as("expected %s in test context", seedDescription).isNotNull();
-        if (seed == null) {
-            return;
-        }
+        checkPreconditions("assertMatchesSeed - " + seedDescription, List.of(
+                new Precondition(() -> seed != null,
+                        "expected " + seedDescription + " in test context must not be null"),
+                new Precondition(() -> fields != null && !fields.isEmpty(),
+                        "fields list for " + seedDescription + " must not be null or empty")
+        ));
 
         JsonNode expectedSeedNode = objectMapper.valueToTree(seed);
+
+        List<Precondition> expectedValuePreconditions = new ArrayList<>();
+        fields.forEach(field -> {
+            String pointer = basePointer + "/" + field;
+            expectedValuePreconditions.add(new Precondition(
+                    () -> isValued(expectedSeedNode.at("/" + field)),
+                    "expected value for " + pointer + " must be valued in the " + seedDescription + " (test context)"
+            ));
+        });
+        checkPreconditions("assertMatchesSeed - " + seedDescription, expectedValuePreconditions);
+
         fields.forEach(field -> {
             String pointer = basePointer + "/" + field;
             JsonNode expectedNode = expectedSeedNode.at("/" + field);
             JsonNode actualNode = configJson.at(pointer);
 
-            softly.assertThat(isValued(expectedNode))
-                    .as("expected value for %s must be valued in the %s (test context)", pointer, seedDescription)
-                    .isTrue();
             softly.assertThat(isValued(actualNode))
                     .as("%s must be present and valued in configuration.json", pointer)
                     .isTrue();
 
-            if (isValued(expectedNode) && isValued(actualNode)) {
+            if (isValued(actualNode)) {
                 softly.assertThat(jsonEquals(expectedNode, actualNode))
                         .as("%s in configuration.json: expected %s but was %s", pointer, expectedNode, actualNode)
                         .isTrue();
@@ -281,12 +291,36 @@ public class DescriptorExportSteps {
         // Step 2: recupero del riferimento atteso dal contesto scenario.
         // Questo e il punto da aggiornare se cambia la source of truth dei metadati caricati.
         List<DocumentMetadata> expectedDocuments = sharedStepsContext.getEServicesCommonContext().getDocumentsMetadata();
-        softly.assertThat(expectedDocuments)
-                .as("expected descriptor docs metadata in test context")
-                .isNotNull();
-        if (expectedDocuments == null || !docsNode.isArray()) {
+        checkPreconditions("verifyDocumentsAgainstContext", List.of(
+                new Precondition(() -> expectedDocuments != null,
+                        "expected descriptor docs metadata in test context must not be null")
+        ));
+
+        if (!docsNode.isArray()) {
             return;
         }
+
+        List<Precondition> expectedDocumentPreconditions = new ArrayList<>();
+        for (int i = 0; i < expectedDocuments.size(); i++) {
+            int documentIndex = i + 1;
+            DocumentMetadata expectedDocument = expectedDocuments.get(i);
+            expectedDocumentPreconditions.add(new Precondition(
+                    () -> expectedDocument != null,
+                    "expected document metadata at index " + documentIndex + " must not be null"
+            ));
+
+            if (expectedDocument != null) {
+                expectedDocumentPreconditions.add(new Precondition(
+                        () -> expectedDocument.getPrettyName() != null,
+                        "expected document prettyName at index " + documentIndex + " must not be null"
+                ));
+                expectedDocumentPreconditions.add(new Precondition(
+                        () -> expectedDocument.getUploadPath() != null,
+                        "expected uploaded document path at index " + documentIndex + " must not be null"
+                ));
+            }
+        }
+        checkPreconditions("verifyDocumentsAgainstContext", expectedDocumentPreconditions);
 
         // Step 3: controllo di cardinalita (numero documenti esportati vs numero documenti attesi).
         softly.assertThat(docsNode.size())
@@ -317,17 +351,7 @@ public class DescriptorExportSteps {
         // - risoluzione del file nello zip
         // - confronto contenuto file esportato vs file originale caricato
         for (DocumentMetadata expectedDocument : expectedDocuments) {
-            softly.assertThat(expectedDocument.getPrettyName())
-                    .as("expected document prettyName in test context")
-                    .isNotNull();
-            softly.assertThat(expectedDocument.getUploadPath())
-                    .as("expected uploaded document path in test context for prettyName %s", expectedDocument.getPrettyName())
-                    .isNotNull();
-
             String expectedPrettyName = expectedDocument.getPrettyName();
-            if (expectedPrettyName == null) {
-                continue;
-            }
 
             JsonNode configuredDocument = docsByPrettyName.get(expectedPrettyName);
             softly.assertThat(configuredDocument)
@@ -343,7 +367,7 @@ public class DescriptorExportSteps {
                     .as("document entry in zip for prettyName %s (declared path: %s)", expectedPrettyName, configuredPath)
                     .isNotNull();
 
-            if (entryName != null && expectedDocument.getUploadPath() != null) {
+            if (entryName != null) {
                 try {
                     // Step 6: confronto byte-to-byte del contenuto.
                     // Se serve una policy diversa (hash, normalizzazione, ecc.), intervenire in questo punto.
@@ -353,7 +377,10 @@ public class DescriptorExportSteps {
                             "document %s content is not coherent with uploaded file".formatted(expectedPrettyName)
                     );
                 } catch (IOException e) {
-                    softly.fail("Unable to compare document %s content".formatted(expectedPrettyName), e);
+                    throw new IllegalStateException(buildPreconditionFailureMessage(
+                            "verifyDocumentsAgainstContext",
+                            List.of("unable to compare document " + expectedPrettyName + " content: " + e.getMessage())
+                    ), e);
                 }
             }
         }
@@ -391,6 +418,11 @@ public class DescriptorExportSteps {
                                         String expectedPrettyName,
                                         String uploadedFilePath,
                                         String interfaceDescription) {
+        checkPreconditions("assertInterfaceEntry - " + interfaceDescription, List.of(
+                new Precondition(() -> uploadedFilePath != null,
+                        "uploaded " + interfaceDescription + " path in test context must not be null")
+        ));
+
         String prettyNamePath = interfacePath + "/prettyName";
         String filePathPath = interfacePath + "/path";
 
@@ -412,11 +444,7 @@ public class DescriptorExportSteps {
                 .as("%s entry in zip (declared path: %s)", interfaceDescription, interfaceFilePath)
                 .isNotNull();
 
-        softly.assertThat(uploadedFilePath)
-                .as("uploaded %s path in test context", interfaceDescription)
-                .isNotNull();
-
-        if (entryName != null && uploadedFilePath != null) {
+        if (entryName != null) {
             try {
                 verifyEntryContentMatchesUploadedFile(
                         entryName,
@@ -424,7 +452,10 @@ public class DescriptorExportSteps {
                         "%s content is not coherent with uploaded file".formatted(interfaceDescription)
                 );
             } catch (IOException e) {
-                softly.fail("Unable to compare %s content".formatted(interfaceDescription), e);
+                throw new IllegalStateException(buildPreconditionFailureMessage(
+                        "assertInterfaceEntry - " + interfaceDescription,
+                        List.of("unable to compare " + interfaceDescription + " content: " + e.getMessage())
+                ), e);
             }
         }
 
@@ -539,6 +570,53 @@ public class DescriptorExportSteps {
         } catch (IOException e) {
             throw new RuntimeException("Unable to resolve uploaded document path", e);
         }
+    }
+
+    private record Precondition(BooleanSupplier precondition, String errorMsg) {}
+
+    private void checkPreconditions(String context, List<Precondition> preconditions) {
+        if (preconditions == null || preconditions.isEmpty()) {
+            return;
+        }
+
+        List<String> violations = new ArrayList<>();
+        for (Precondition precondition : preconditions) {
+            if (precondition == null) {
+                violations.add("precondition definition must not be null");
+                continue;
+            }
+
+            boolean satisfied;
+            try {
+                satisfied = precondition.precondition() != null && precondition.precondition().getAsBoolean();
+            } catch (RuntimeException e) {
+                violations.add(precondition.errorMsg() + " (evaluation error: " + e.getMessage() + ")");
+                continue;
+            }
+
+            if (!satisfied) {
+                violations.add(precondition.errorMsg());
+            }
+        }
+
+        if (!violations.isEmpty()) {
+            throw new IllegalStateException(buildPreconditionFailureMessage(context, violations));
+        }
+    }
+
+    private String buildPreconditionFailureMessage(String context, List<String> violations) {
+        StringBuilder message = new StringBuilder(context)
+                .append(" failed with ")
+                .append(violations.size())
+                .append(" precondition(s):");
+
+        for (int i = 0; i < violations.size(); i++) {
+            message.append(System.lineSeparator())
+                    .append(i + 1)
+                    .append(") ")
+                    .append(violations.get(i));
+        }
+        return message.toString();
     }
 
     private byte[] downloadFile(URI fileUrl) {
