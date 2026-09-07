@@ -306,6 +306,6 @@ Feature: Gestione di assegnazione degli attributi certificati discreti ai tenant
     And viene effettuata la creazione dell'attributo certificato discreto con successo
       | name | description | code |
       |      |             |      |
-    And l'utente tenta di revocare a "PA1" l'ultimo attributo certificato discreto precedentemente associato
+    And l'utente revoca a "PA1" l'attributo certificato discreto precedentemente associato con successo
     When l'utente tenta di revocare a "PA1" l'ultimo attributo certificato discreto precedentemente associato
     Then si ottiene lo status code 409
