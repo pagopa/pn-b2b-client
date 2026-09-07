@@ -89,8 +89,8 @@ Feature: Listing catalogo e-services
   @happy-path
   @nrt-minimal
   Scenario: [CATALOG_LISTING_8] Verifica assenza di info template su e-service sincrono non creato da template
-    Verifica che le informazioni Template Reference non siano presenti nei descrittori di un e-service sincrono non
-    creato da un e-service template attraverso i possibili stati che un descrittore può avere sul catalogo.
+  Verifica che le informazioni Template Reference non siano presenti nei descrittori di un e-service sincrono non
+  creato da un e-service template attraverso i possibili stati che un descrittore può avere sul catalogo.
 
     Given l'utente è un "admin" di "PA1"
     When "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
