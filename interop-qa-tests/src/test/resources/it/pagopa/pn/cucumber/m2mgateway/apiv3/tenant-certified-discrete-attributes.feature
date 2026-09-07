@@ -310,3 +310,13 @@ Feature: Gestione di assegnazione degli attributi certificati discreti ai tenant
     And l'utente revoca a "PA1" l'attributo certificato discreto precedentemente associato con successo
     When l'utente tenta di revocare a "PA1" l'ultimo attributo certificato discreto precedentemente associato
     Then si ottiene lo status code 409
+
+  Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_FUNC_UDPATE_1] L'operazione di aggiornamento di un attributo certificato discreto non va a buon fine se lo stesso è già stato revocato all'ente.
+    Given l'utente è un "admin" di "GSP" con ruolo M2M m2m-admin
+    And viene effettuata la creazione dell'attributo certificato discreto con successo
+      | name | description | code |
+      |      |             |      |
+    And l'utente assegna a "PA1" l'attributo certificato discreto precedentemente creato con un valore discreto di 100
+    And l'utente revoca a "PA1" l'attributo certificato discreto precedentemente associato con successo
+    When l'utente tenta la modifica dell'attributo certificato discreto precedentemente associato a "PA1", impostando il valore discreto a 200
+    Then si ottiene lo status code 409
