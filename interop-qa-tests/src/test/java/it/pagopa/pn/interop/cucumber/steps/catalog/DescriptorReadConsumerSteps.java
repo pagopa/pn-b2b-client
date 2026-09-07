@@ -71,6 +71,9 @@ public class DescriptorReadConsumerSteps {
             Object templateRefObj;
             Method method = obj.getClass().getMethod("getTemplateRef");
             templateRefObj = method.invoke(obj);
+            if (templateRefObj == null) {
+                throw new NoSuchFieldException("templateRef is null");
+            }
 
             method = templateRefObj.getClass().getMethod("getTemplateId");
             String actualTemplateId = (String)method.invoke(templateRefObj);
