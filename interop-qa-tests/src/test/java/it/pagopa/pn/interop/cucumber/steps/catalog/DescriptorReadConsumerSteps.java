@@ -76,14 +76,14 @@ public class DescriptorReadConsumerSteps {
             }
 
             method = templateRefObj.getClass().getMethod("getTemplateId");
-            String actualTemplateId = (String)method.invoke(templateRefObj);
+            String actualTemplateId = method.invoke(templateRefObj).toString();
             Assertions.assertEquals(
                     actualTemplateId,
                     sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId().toString()
             );
 
             method = templateRefObj.getClass().getMethod("getTemplateVersionId");
-            String actualTemplateVersionId = (String)method.invoke(templateRefObj);
+            String actualTemplateVersionId = method.invoke(templateRefObj).toString();
             Assertions.assertEquals(
                     actualTemplateVersionId,
                     sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId().toString()
@@ -98,7 +98,7 @@ public class DescriptorReadConsumerSteps {
 
             method = templateRefObj.getClass().getMethod("getTemplateInterface");
             Object actualTemplateInterface = method.invoke(templateRefObj);
-            Assertions.assertNotNull(actualTemplateInterface);
+            Assertions.assertNotNull(actualTemplateInterface, "templateInterface is null");
 
             EServiceDoc expectedInterface =
                     sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getTemplateInterface();
@@ -113,7 +113,7 @@ public class DescriptorReadConsumerSteps {
 
             method = templateRefObj.getClass().getMethod("getInterfaceMetadata");
             Object actualInterfaceMetadata = method.invoke(templateRefObj);
-            Assertions.assertNotNull(actualInterfaceMetadata);
+            Assertions.assertNotNull(actualInterfaceMetadata, "interfaceMetadata is null");
 
             method = actualInterfaceMetadata.getClass().getMethod("getContactName");
             String contactName = (String)method.invoke(actualInterfaceMetadata);
