@@ -804,7 +804,7 @@ public class BFFDataPreparationService {
                 ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
 
-        sharedStepsContext.getEServicesCommonContext().setInterfaceUploadPath(interfaceUploadPath);
+        sharedStepsContext.getEServicesCommonContext().setInterfaceUploadPath(extractUploadPath(resource));
 
         return ((CreatedResource) httpCallExecutor.getResponse()).getId();
     }
@@ -822,7 +822,7 @@ public class BFFDataPreparationService {
                 ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
 
-        sharedStepsContext.getEServicesCommonContext().setCallbackInterfaceUploadPath(callbackInterfaceUploadPath);
+        sharedStepsContext.getEServicesCommonContext().setCallbackInterfaceUploadPath(extractUploadPath(resource));
 
         return ((CreatedResource) httpCallExecutor.getResponse()).getId();
     }
