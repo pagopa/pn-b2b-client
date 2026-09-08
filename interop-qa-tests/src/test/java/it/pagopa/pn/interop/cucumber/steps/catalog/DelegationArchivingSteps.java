@@ -79,7 +79,6 @@ public class DelegationArchivingSteps {
     }
 
     @When("l'utente delegante rifiuta la richiesta di archiviazione della vecchia versione identificata da {string} per l'e-service {string} con motivazione {string}")
-    @When("l'utente delegante rifiuta la richiesta di archiviazione della vecchia versione identificata da {string} per l'e-service {string} con motivazione {string}")
     public void rejectDelegatedDescriptorArchiving(String descriptorId, String eServiceId, String rejectionReason) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
