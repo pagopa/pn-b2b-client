@@ -818,7 +818,7 @@ public class BFFDataPreparationService {
 
         pollingService.makePolling(
                 () -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId),
-                res -> res.getInterface() != null,
+                res -> res.getAsyncExchangeCallbackInterface() != null,
                 ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
 
