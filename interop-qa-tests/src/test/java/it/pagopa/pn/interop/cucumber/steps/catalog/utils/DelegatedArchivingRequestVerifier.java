@@ -29,7 +29,6 @@ public class DelegatedArchivingRequestVerifier {
     }
 
     public void registerEServiceArchivingRequest(
-            UUID descriptorId,
             GracePeriodDays gracePeriodDays,
             String archivingReason
     ) {
@@ -37,7 +36,21 @@ public class DelegatedArchivingRequestVerifier {
         expectedRequest.setRequestedAt(OffsetDateTime.now(ZoneOffset.UTC));
         expectedRequest.setGracePeriodDays(gracePeriodDays);
         expectedRequest.setArchivingReason(archivingReason);
-        expectedRequest.setDescriptorId(descriptorId);
+        sharedStepsContext.getEServicesCommonContext()
+                .setExpectedDelegatedArchivingRequest(expectedRequest);
+    }
+
+    public void registerDescriptorArchivingRequest(
+            UUID descriptorId,
+            GracePeriodDays gracePeriodDays
+    ) {
+        ExpectedDelegatedArchivingRequest expectedRequest = new ExpectedDelegatedArchivingRequest();
+        expectedRequest.setRequestedAt(OffsetDateTime.now(ZoneOffset.UTC));
+        expectedRequest.setGracePeriodDays(gracePeriodDays);
+        expectedRequest.setDescriptorId(Objects.requireNonNull(
+                descriptorId,
+                "L'ID del vecchio descrittore è obbligatorio"
+        ));
         sharedStepsContext.getEServicesCommonContext()
                 .setExpectedDelegatedArchivingRequest(expectedRequest);
     }
@@ -49,10 +62,25 @@ public class DelegatedArchivingRequestVerifier {
                 "Nessuna richiesta di archiviazione è stata registrata"
         );
 
+        UUID latestDescriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
         sharedStepsContext.getPollingService().makePolling(
-                () -> getDelegatedArchivingRequest(eServiceId, expectedRequest.getDescriptorId()),
+                () -> getDelegatedArchivingRequest(eServiceId, latestDescriptorId),
                 request -> isExpectedPendingEServiceRequest(request, expectedRequest, expectedRequesterId),
                 "L'e-service non contiene la richiesta di archiviazione in stato pending attesa"
+        );
+    }
+
+    public void pollPendingDescriptorArchivingRequest(UUID eServiceId) {
+        UUID expectedRequesterId = sharedStepsContext.getDelegationCommonContext().getDelegateId();
+        ExpectedDelegatedArchivingRequest expectedRequest = Objects.requireNonNull(
+                sharedStepsContext.getEServicesCommonContext().getExpectedDelegatedArchivingRequest(),
+                "Nessuna richiesta di archiviazione è stata registrata"
+        );
+
+        sharedStepsContext.getPollingService().makePolling(
+                () -> getDelegatedArchivingRequest(eServiceId, expectedRequest.getDescriptorId()),
+                request -> isExpectedPendingDescriptorRequest(request, expectedRequest, expectedRequesterId),
+                "Il descrittore non contiene la richiesta di archiviazione in stato pending attesa"
         );
     }
 
@@ -72,12 +100,30 @@ public class DelegatedArchivingRequestVerifier {
             ExpectedDelegatedArchivingRequest expectedRequest,
             UUID expectedRequesterId
     ) {
+        return hasExpectedPendingFields(request, expectedRequest, expectedRequesterId)
+                && Objects.equals(expectedRequest.getArchivingReason(), request.getArchivingReason());
+    }
+
+    private boolean isExpectedPendingDescriptorRequest(
+            DelegatedArchivingRequest request,
+            ExpectedDelegatedArchivingRequest expectedRequest,
+            UUID expectedRequesterId
+    ) {
+        return hasExpectedPendingFields(request, expectedRequest, expectedRequesterId)
+                && request.getDescriptorId() != null
+                && Objects.equals(expectedRequest.getDescriptorId(), request.getDescriptorId())
+                && request.getArchivingReason() == null;
+    }
+
+    private boolean hasExpectedPendingFields(
+            DelegatedArchivingRequest request,
+            ExpectedDelegatedArchivingRequest expectedRequest,
+            UUID expectedRequesterId
+    ) {
         return request != null
                 && isRequestedAtWithinTolerance(request.getRequestedAt(), expectedRequest.getRequestedAt())
                 && Objects.equals(expectedRequesterId, request.getRequesterId())
                 && Objects.equals(expectedRequest.getGracePeriodDays(), request.getGracePeriodDays())
-                && Objects.equals(expectedRequest.getArchivingReason(), request.getArchivingReason())
-                && Objects.equals(expectedRequest.getDescriptorId(), request.getDescriptorId())
                 && request.getAcceptedAt() == null
                 && request.getRejectedAt() == null
                 && request.getRejectionReason() == null;

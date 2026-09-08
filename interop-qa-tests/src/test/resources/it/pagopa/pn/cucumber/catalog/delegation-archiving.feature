@@ -36,6 +36,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "<role>" di "PA2"
     When l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     Then si ottiene response status code 204
+    And la richiesta di archiviazione delegata del vecchio descrittore è in stato pending
 
     Examples:
       | role         |

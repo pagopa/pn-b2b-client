@@ -42,6 +42,11 @@ public class DelegationArchivingSteps {
         UUID resolvedDescriptorId = catalogResolver.resolveOldDescriptorId(descriptorId);
         UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
 
+        delegatedArchivingRequestVerifier.registerDescriptorArchivingRequest(
+                resolvedDescriptorId,
+                gracePeriodDays
+        );
+
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getEServiceClient().submitDelegatedDescriptorArchiving(
                         resolvedEServiceId,
@@ -110,10 +115,8 @@ public class DelegationArchivingSteps {
 
         UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
         String resolvedArchivingReason = catalogResolver.resolveArchivingReason(archivingReason);
-        UUID latestDescriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
 
         delegatedArchivingRequestVerifier.registerEServiceArchivingRequest(
-                latestDescriptorId,
                 gracePeriodDays,
                 resolvedArchivingReason
         );
@@ -135,6 +138,14 @@ public class DelegationArchivingSteps {
 
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         delegatedArchivingRequestVerifier.pollPendingEServiceArchivingRequest(eServiceId);
+    }
+
+    @Then("la richiesta di archiviazione delegata del vecchio descrittore è in stato pending")
+    public void oldDescriptorDelegatedArchivingRequestIsPending() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        delegatedArchivingRequestVerifier.pollPendingDescriptorArchivingRequest(eServiceId);
     }
 
     @When("l'utente delegato annulla la richiesta di archiviazione dell'e-service {string}")
