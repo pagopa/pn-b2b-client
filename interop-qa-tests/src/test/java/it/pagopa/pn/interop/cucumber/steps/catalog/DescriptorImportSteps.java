@@ -170,7 +170,12 @@ public class DescriptorImportSteps {
             case "DELIVER" -> Boolean.TRUE.equals(isAsync)
                     ? "exportedAsyncWithDocument"
                     : "exportedWithDocument";
-            case "RECEIVE" -> "exportedWithRiskAnalysis";
+            case "RECEIVE" -> {
+                if (Boolean.TRUE.equals(isAsync)) {
+                    throw new IllegalArgumentException("Asynchronous e-service in RECEIVE mode is not supported");
+                }
+                yield "exportedWithRiskAnalysis";
+            }
             default -> throw new IllegalArgumentException("Invalid eservice mode: " + eserviceMode);
         };
     }
@@ -207,6 +212,11 @@ public class DescriptorImportSteps {
 
         if (normalizedName.isEmpty()) {
             throw new IllegalArgumentException("Il nome del pacchetto non può essere vuoto: " + packageName);
+        }
+
+        // Disabilita path traversal / separatori di directory: lo step deve accettare solo un filename
+        if (normalizedName.contains("/") || normalizedName.contains("\\") || normalizedName.contains("..")) {
+            throw new IllegalArgumentException("Il nome del pacchetto deve essere un filename (senza path): " + packageName);
         }
 
         return normalizedName;
