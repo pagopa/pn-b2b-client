@@ -49,6 +49,6 @@ public class EServiceAttributeRequestConfig {
 
         Integer dailyCallsPerConsumer = (row.get("dailyCallsPerConsumer") != null && !row.get("dailyCallsPerConsumer").isBlank()) ? Integer.valueOf(row.get("dailyCallsPerConsumer")) : null;
 
-        return new EServiceAttributeSpec(kind, group, code, comparator, value, dailyCallsPerConsumer);
+        return new EServiceAttributeSpec(kind, group, comparator, value, dailyCallsPerConsumer);
     }
 }
