@@ -10,6 +10,11 @@ import it.pagopa.pn.cucumber.utils.datatestVersions.AbstractDataTest;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.STATUS_RAPID;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.TIMELINE_SLOW;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.PollingType.STATUS;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.PollingType.TIMELINE;
+
 public interface B2bStepsInterface {
 
     /**
@@ -29,14 +34,28 @@ public interface B2bStepsInterface {
     /**
      * Per notifiche andate in ACCEPTED usare questo metodo (lettura timeline da b2b)
      */
-    void readEventsUpToTimelineElement(String timelineEventCategory);
+    default void readEventsUpToTimelineElement(String timelineEventCategory) {
+        verifyTestCompatibilityWithVersion(timelineEventCategory, true);
+        WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder().build();
+        waitForEventOrStatus(TIMELINE_SLOW, TIMELINE, timelineEventCategory, filters);
+        checkIfTimelineElementExists(timelineEventCategory, true, null, null);
+    }
 
     /**
      * Per notifiche andate in REFUSED usare questo metodo (lettura timeline da delivery-push)
      */
     void readEventsUpToTimelineElementFromDeliveryPush(String timelineEventCategory, AbstractDataTest dataTest, boolean existCheck);
 
-    void readEventsUpToStatus(String status, boolean exists);
+    default void readEventsUpToStatus(String status, boolean exists) {
+        if (exists) {
+            verifyTestCompatibilityWithVersion(status, false);
+        }
+        WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder()
+                .statusHistory(status)
+                .build();
+        waitForEventOrStatus(STATUS_RAPID, STATUS, status, filters);
+        checkIfStatusExists(exists);
+    }
 
     void checkNotificationCost(String cost);
 
