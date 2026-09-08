@@ -12,6 +12,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "<role>" di "PA2"
     When l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
     Then si ottiene response status code 204
+    And la richiesta di archiviazione delegata dell'e-service è in stato pending
 
     Examples:
       | descriptorState | role         |

@@ -1,12 +1,14 @@
 package it.pagopa.pn.interop.cucumber.steps.catalog;
 
 import io.cucumber.java.en.When;
+import io.cucumber.java.en.Then;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceArchivingSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.GracePeriodDays;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.catalog.utils.CatalogResolver;
+import it.pagopa.pn.interop.cucumber.steps.catalog.utils.DelegatedArchivingRequestVerifier;
 import org.springframework.http.ResponseEntity;
 
 import java.util.UUID;
@@ -16,6 +18,7 @@ public class DelegationArchivingSteps {
     private final SharedStepsContext sharedStepsContext;
     private final IHttpExecutor httpCallExecutor;
     private final CatalogResolver catalogResolver;
+    private final DelegatedArchivingRequestVerifier delegatedArchivingRequestVerifier;
 
     public DelegationArchivingSteps(
             ClientTokenConfigurator clientTokenConfigurator,
@@ -25,6 +28,10 @@ public class DelegationArchivingSteps {
         this.sharedStepsContext = sharedStepsContext;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.catalogResolver = new CatalogResolver(sharedStepsContext);
+        this.delegatedArchivingRequestVerifier = new DelegatedArchivingRequestVerifier(
+                clientTokenConfigurator,
+                sharedStepsContext
+        );
     }
 
     @When("l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da {string} per l'e-service {string} impostando {gracePeriodDays} giorni di preavviso")
@@ -46,7 +53,7 @@ public class DelegationArchivingSteps {
     }
 
     @When("l'utente delegato annulla la richiesta di archiviazione della vecchia versione identificata da {string} per l'e-service {string}")
-        public void cancelDelegatedDescriptorArchivingRequest(String descriptorId, String eServiceId) {
+    public void cancelDelegatedDescriptorArchivingRequest(String descriptorId, String eServiceId) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
         UUID resolvedDescriptorId = catalogResolver.resolveOldDescriptorId(descriptorId);
@@ -103,6 +110,13 @@ public class DelegationArchivingSteps {
 
         UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
         String resolvedArchivingReason = catalogResolver.resolveArchivingReason(archivingReason);
+        UUID latestDescriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+
+        delegatedArchivingRequestVerifier.registerEServiceArchivingRequest(
+                latestDescriptorId,
+                gracePeriodDays,
+                resolvedArchivingReason
+        );
 
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getEServiceClient().submitDelegatedEServiceArchiving(
@@ -115,8 +129,16 @@ public class DelegationArchivingSteps {
         );
     }
 
+    @Then("la richiesta di archiviazione delegata dell'e-service è in stato pending")
+    public void eServiceDelegatedArchivingRequestIsPending() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        delegatedArchivingRequestVerifier.pollPendingEServiceArchivingRequest(eServiceId);
+    }
+
     @When("l'utente delegato annulla la richiesta di archiviazione dell'e-service {string}")
-        public void cancelDelegatedEServiceArchivingRequest(String eServiceId) {
+    public void cancelDelegatedEServiceArchivingRequest(String eServiceId) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
         UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
