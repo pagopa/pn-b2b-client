@@ -1,3 +1,5 @@
+@certifiedDiscreteAttributeM2Mv3
+@certifiedDiscreteAttributeFlagOn
 Feature: Gestione degli attributi certificati discreti attraverso APIs M2M V3
 
   Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_1] La creazione di un attributo certificato discreto va a buon fine se l'utente è un admin di un ente certificatore e l'attributo può essere consultato anche da enti non certificatori.

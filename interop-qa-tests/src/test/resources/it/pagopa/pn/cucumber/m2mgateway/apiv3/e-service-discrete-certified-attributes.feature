@@ -1,3 +1,5 @@
+@certifiedDiscreteAttributeM2Mv3
+@certifiedDiscreteAttributeFlagOn
 Feature: Gestione degli attributi certificati discreti degli e-service attraverso APIs M2M V3
 
   Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_FUNC_GET_1] Il recupero degli attributi certificati discreti assegnati all'e-service va a buon fine se l'e-service è stato pubblicato.

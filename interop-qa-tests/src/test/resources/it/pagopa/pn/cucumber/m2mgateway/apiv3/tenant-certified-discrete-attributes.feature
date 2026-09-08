@@ -1,3 +1,5 @@
+@certifiedDiscreteAttributeM2Mv3
+@certifiedDiscreteAttributeFlagOn
 Feature: Gestione di assegnazione degli attributi certificati discreti ai tenant attraverso APIs M2M V3
 
   Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_TENANTS_1] L'elenco di un attributo certificato discreto associato ad un ente va a buon fine.

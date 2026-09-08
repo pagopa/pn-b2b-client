@@ -1,3 +1,5 @@
+@certifiedDiscreteAttributeM2Mv3
+@certifiedDiscreteAttributeFlagOn
 Feature: Gestione degli attributi certificati discreti degli e-service template attraverso APIs M2M V3
 
   Scenario Outline: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_ESERVICE_TEMPLATE_GET_1] Il recupero degli attributi certificati discreti assegnati al template e-service va a buon fine se il template è in stato pubblicato.
