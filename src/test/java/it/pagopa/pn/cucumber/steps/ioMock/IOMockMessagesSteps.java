@@ -24,8 +24,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class IOMockMessagesSteps {
 
-    private static final String IO_MESSAGE_ID_REGEX = "^MOCK-([A-Za-z0-9_]+)-(\\d+)-([A-Za-z0-9_]+)$";
-    private static final Pattern IO_MESSAGE_ID_PATTERN = Pattern.compile(IO_MESSAGE_ID_REGEX);
+    private static final String IO_MESSAGE_ID_REGEX = it.pagopa.pn.cucumber.steps.ioMock.dto.IoMockMessageIdHelper.IO_MESSAGE_ID_REGEX;
+    private static final Pattern IO_MESSAGE_ID_PATTERN = it.pagopa.pn.cucumber.steps.ioMock.dto.IoMockMessageIdHelper.IO_MESSAGE_ID_PATTERN;
 
     private final IoMockScenarioContext context;
     private final IOMockCommonSteps commonSteps;

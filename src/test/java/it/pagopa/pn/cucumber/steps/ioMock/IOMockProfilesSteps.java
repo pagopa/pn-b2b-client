@@ -52,7 +52,7 @@ public class IOMockProfilesSteps {
                 // Payload privo di fiscal_code
                 break;
             case "CAMPI_NON_PREVISTI":
-                payload.put("fiscal_code", "STANDAR_CF_00001");
+                payload.put("fiscal_code", StringUtils.resolveValue("STANDAR_CF_00001"));
                 payload.put("unknown_extra_field", "unexpected_value");
                 payload.put("invalid_parameter", 12345);
                 break;

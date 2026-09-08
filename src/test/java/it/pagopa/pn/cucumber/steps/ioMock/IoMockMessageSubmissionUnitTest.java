@@ -1,6 +1,6 @@
 package it.pagopa.pn.cucumber.steps.ioMock;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import it.pagopa.pn.cucumber.steps.ioMock.dto.IoMockMessageIdHelper;
 import it.pagopa.pn.cucumber.steps.ioMock.dto.IoMockMessagePayloadBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,9 +13,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class IoMockMessageSubmissionUnitTest {
 
-    private static final String IO_MESSAGE_ID_REGEX = "^MOCK-([A-Za-z0-9_]+)-(\\d+)-([A-Za-z0-9_]+)$";
-    private static final Pattern IO_MESSAGE_ID_PATTERN = Pattern.compile(IO_MESSAGE_ID_REGEX);
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private static final String IO_MESSAGE_ID_REGEX = IoMockMessageIdHelper.IO_MESSAGE_ID_REGEX;
+    private static final Pattern IO_MESSAGE_ID_PATTERN = IoMockMessageIdHelper.IO_MESSAGE_ID_PATTERN;
 
     @Test
     @DisplayName("IoMockMessagePayloadBuilder default values conform to OpenAPI spec (feature_level_type = ADVANCED)")

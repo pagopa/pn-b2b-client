@@ -109,7 +109,9 @@ public class IoMockMessagePayloadBuilder {
             if (includeMarkdown) {
                 contentMap.put("markdown", markdown);
             }
-            contentMap.put("payment_data", paymentData);
+            if (paymentData != null) {
+                contentMap.put("payment_data", paymentData);
+            }
             contentMap.putAll(extraContentFields);
 
             payload.put("content", contentMap);
