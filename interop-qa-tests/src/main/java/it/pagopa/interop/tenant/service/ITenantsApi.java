@@ -12,6 +12,8 @@ public interface ITenantsApi extends SettableBearerToken {
 
     void addCertifiedDiscreteAttribute(UUID tenantId, CertifiedDiscreteTenantAttributeSeed certifiedDiscreteTenantAttributeSeed);
 
+    void updateCertifiedDiscreteAttribute(UUID tenantId, UUID attributeId, UpdateCertifiedDiscreteTenantAttributeSeed updateCertifiedDiscreteTenantAttributeSeed);
+
     CertifiedAttributesResponse getCertifiedAttributes(UUID tenantId);
 
     void addDeclaredAttribute(DeclaredTenantAttributeSeed declaredTenantAttributeSeed);
