@@ -32,15 +32,15 @@ public class AttributeSeedMapper<T> {
 
         // Imposta la descrizione: se assente, imposta una descrizione di default
         String description = entry.get("description");
-        String actualDescription = (description == null || description.isBlank())
+        String actualDescription = resolveStringValue(description == null || description.isBlank()
                 ? "Descrizione automatica per attributo: " + actualName
-                : description;
+                : description);
 
         // Recupera e imposta il codice (generato automaticamente se richiesto)
         String code = entry.get("code");
-        String actualCode = (code == null || code.isBlank())
+        String actualCode = resolveStringValue(code == null || code.isBlank()
                 ? generateUniqueAttributeCode()
-                : code;
+                : code);
         AttributePrototype attributePrototype = AttributePrototype.of(actualName, actualDescription,
             actualCode);
         return this.prototypeMapper.apply(attributePrototype);
@@ -75,7 +75,6 @@ public class AttributeSeedMapper<T> {
 
     private String generateUniqueAttributeCode() {
         final String prefix = "unique_code";
-        long timestamp = System.currentTimeMillis();
-        return prefix + "_" + timestamp;
+        return generateRandomString(50, prefix);
     }
 }
