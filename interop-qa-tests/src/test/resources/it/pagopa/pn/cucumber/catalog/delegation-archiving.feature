@@ -1352,3 +1352,19 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
     And la versione più recente dell'e-service è in stato "PUBLISHED"
+
+  @happy-path
+  Scenario Outline: [DELEGATION_ARCHIVING_STATE_1.1] Un e-service in stato ARCHIVING o ARCHIVING_SUSPENDED può essere dato in delega in erogazione
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And "PA1" ha già creato un e-service con un descrittore in stato "<eserviceState>"
+    And l'utente è un "admin" di "PA1"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual archiving" e 60 giorni di preavviso
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    When l'utente richiede la creazione di una delega in erogazione per l'ente "PA2"
+    Then si ottiene response status code 200
+
+    Examples:
+      | eserviceState |
+      | PUBLISHED     |
+      | SUSPENDED     |
