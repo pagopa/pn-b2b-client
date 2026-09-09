@@ -8,11 +8,7 @@ import lombok.Data;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.context.ApplicationContext;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.*;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
@@ -137,12 +133,14 @@ public class DataTestV25 extends AbstractDataTest {
             case SEND_DIGITAL_FEEDBACK -> {
                 if (expected != null) {
                     assertThat(actual.getResponseStatus()).as(error + EQUALITY_RESPONSE_STATUS).isNotNull();
+                    Optional.ofNullable(actual.getDeliveryDetailCode()).ifPresent(
+                            t -> assertThat(t).as(error + EQUALITY_DELIVERY_DETAIL_CODE).isEqualTo(expected.getDeliveryDetailCode()));
                     Optional.ofNullable(expected.getResponseStatus()).map(ResponseStatus::getValue).ifPresent(
-                            t -> assertThat(t).as(error + EQUALITY_RESPONSE_STATUS_VALUE).isEqualTo(expected.getResponseStatus().getValue()));
+                            t -> assertThat(t).as(error + EQUALITY_RESPONSE_STATUS_VALUE).isEqualTo(actual.getResponseStatus().getValue()));
                     Optional.ofNullable(expected.getDigitalAddress()).ifPresent(
-                            t -> assertThat(t).as(error + EQUALITY_DIGITAL_ADDRESS).isEqualTo(expected.getDigitalAddress()));
+                            t -> assertThat(t).as(error + EQUALITY_DIGITAL_ADDRESS).isEqualTo(actual.getDigitalAddress()));
                     Optional.ofNullable(expected.getSendingReceipts()).map(List::size).ifPresent(
-                            t -> assertThat(t).as(error + EQUALITY_SENDING_RECEIPTS_SIZE).isEqualTo(expected.getSendingReceipts().size()));
+                            t -> assertThat(t).as(error + EQUALITY_SENDING_RECEIPTS_SIZE).isEqualTo(actual.getSendingReceipts().size()));
                     for (int i = 0; i < actual.getSendingReceipts().size(); i++) {
                         assertThat(actual.getSendingReceipts().get(i)).as("Il sendingReceipt non dev'essere null").isNotNull();
                         assertThat(actual.getSendingReceipts().get(i).getId()).as("L'ID del sendingReceipt non dev'essere null").isNotNull();

@@ -234,3 +234,26 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details_recIndex             | 0        |
       | details_sentAttemptMade      | 0        |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
+
+
+  @mailRejected
+  Scenario: Controllo di ko permanente PF
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario
+      | denomination            | Test errore PnSpapiPermanentErrorException |
+      | taxId                   | DSRDNI00A01A225I                           |
+      | digitalDomicile_address | -indirizzo@gmail.com                       |
+    Then la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+    And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
+      | legalFactsIds                | [{"category": "SEND_DIGITAL_FEEDBACK"}]            |
+      | details_digitalAddressSource | SPECIAL                                            |
+      | details                      | NOT_NULL                                           |
+      | details_digitalAddress       | {"address": "-indirizzo@gmail.com", "type": "PEC"} |
+      | details_deliveryDetailCode   | C011                                               |
+      | details_recIndex             | 0                                                  |
+
+
+
+
