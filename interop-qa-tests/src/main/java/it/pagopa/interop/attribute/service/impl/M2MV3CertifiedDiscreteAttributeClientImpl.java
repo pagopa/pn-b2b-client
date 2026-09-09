@@ -22,6 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpStatusCodeException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -137,7 +138,7 @@ public class M2MV3CertifiedDiscreteAttributeClientImpl extends AbstractDPoPClien
     }
 
     @Override
-    public void tryCreationWithMissingData() {
+    public int tryCreationWithMissingData() {
 
         var apiClient = this.attributesApi.getApiClient();
 
@@ -157,6 +158,10 @@ public class M2MV3CertifiedDiscreteAttributeClientImpl extends AbstractDPoPClien
         String[] localVarAuthNames = new String[] { "DPoPAuth", "DPoPProofHeader" };
         ParameterizedTypeReference<CertifiedDiscreteAttribute> localReturnType = new ParameterizedTypeReference<CertifiedDiscreteAttribute>() {};
 
-        apiClient.invokeAPI("/certifiedDiscreteAttributes", HttpMethod.POST, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType);
+        try {
+            return apiClient.invokeAPI("/certifiedDiscreteAttributes", HttpMethod.POST, Collections.<String, Object>emptyMap(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarCookieParams, localVarFormParams, localVarAccept, localVarContentType, localVarAuthNames, localReturnType).getStatusCode().value();
+        } catch (HttpStatusCodeException exception) {
+            return exception.getStatusCode().value();
+        }
     }
 }

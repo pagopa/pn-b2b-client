@@ -13,5 +13,5 @@ public interface IM2MV3CertifiedDiscreteAttributeClient extends IClient<Certifie
 
     CertifiedDiscreteAttribute create(CertifiedDiscreteAttributeSeed payload);
 
-    void tryCreationWithMissingData();
+    int tryCreationWithMissingData();
 }
