@@ -45,6 +45,8 @@ public class EServiceCertifiedDiscreteAttributesSteps {
 
         List<List<CertifiedDiscreteAttribute>> assignedAttributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscreteAssigned();
 
+        List<CertifiedDiscreteAttribute> publishedAttributes = new ArrayList<>();
+
         Map<Integer, EServiceDescriptorCertifiedDiscreteAttributesGroupSeed> groups = new TreeMap<>();
 
         attributesSpec.stream()
@@ -59,6 +61,8 @@ public class EServiceCertifiedDiscreteAttributesSteps {
 
             CertifiedDiscreteAttribute certifiedDiscreteAttribute = this.createCertifiedDiscreteAttribute(attributeSpec);
             Assertions.assertNotNull(certifiedDiscreteAttribute, "Certified discrete attribute must be created before attaching it to the e-service descriptor");
+
+            publishedAttributes.add(certifiedDiscreteAttribute);
 
             EServiceAttributeCertifiedDiscreteConfigSeed configSeed = new EServiceAttributeCertifiedDiscreteConfigSeed();
             configSeed.setComparator(
@@ -93,6 +97,8 @@ public class EServiceCertifiedDiscreteAttributesSteps {
 
             EServiceDescriptorCertifiedDiscreteAttributesGroup attributesGroup = (EServiceDescriptorCertifiedDiscreteAttributesGroup) httpExecutor.getResponse();
         });
+
+        sharedStepsContext.getAttributeCommonContext().getCertifiedDiscretePublished().addAll(publishedAttributes);
     }
 
     @When("l'utente tenta di associare l'attributo certificato discreto creato all'e-service")
