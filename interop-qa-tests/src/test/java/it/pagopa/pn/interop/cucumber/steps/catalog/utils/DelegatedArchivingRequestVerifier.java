@@ -15,7 +15,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class DelegatedArchivingRequestVerifier {
-    private static final Duration REQUESTED_AT_TOLERANCE = Duration.ofSeconds(3);
+    private static final Duration TIMESTAMP_TOLERANCE = Duration.ofSeconds(3);
 
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
@@ -55,6 +55,18 @@ public class DelegatedArchivingRequestVerifier {
                 .setExpectedDelegatedArchivingRequest(expectedRequest);
     }
 
+    public void registerArchivingRequestRejection(String rejectionReason) {
+        ExpectedDelegatedArchivingRequest expectedRequest = Objects.requireNonNull(
+                sharedStepsContext.getEServicesCommonContext().getExpectedDelegatedArchivingRequest(),
+                "Nessuna richiesta di archiviazione è stata registrata"
+        );
+        expectedRequest.setDecisionAt(OffsetDateTime.now(ZoneOffset.UTC));
+        expectedRequest.setRejectionReason(Objects.requireNonNull(
+                rejectionReason,
+                "La motivazione del rifiuto è obbligatoria"
+        ));
+    }
+
     public void pollPendingEServiceArchivingRequest(UUID eServiceId) {
         UUID expectedRequesterId = sharedStepsContext.getDelegationCommonContext().getDelegateId();
         ExpectedDelegatedArchivingRequest expectedRequest = Objects.requireNonNull(
@@ -81,6 +93,33 @@ public class DelegatedArchivingRequestVerifier {
                 () -> getDelegatedArchivingRequest(eServiceId, expectedRequest.getDescriptorId()),
                 request -> isExpectedPendingDescriptorRequest(request, expectedRequest, expectedRequesterId),
                 "Il descrittore non contiene la richiesta di archiviazione in stato pending attesa"
+        );
+    }
+
+    public void pollRejectedEServiceArchivingRequest(UUID eServiceId) {
+        ExpectedDelegatedArchivingRequest expectedRequest = Objects.requireNonNull(
+                sharedStepsContext.getEServicesCommonContext().getExpectedDelegatedArchivingRequest(),
+                "Nessuna richiesta di archiviazione è stata registrata"
+        );
+        UUID latestDescriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+
+        sharedStepsContext.getPollingService().makePolling(
+                () -> getDelegatedArchivingRequest(eServiceId, latestDescriptorId),
+                request -> isExpectedRejectedRequest(request, expectedRequest),
+                "La richiesta di archiviazione dell'e-service non risulta rifiutata come atteso"
+        );
+    }
+
+    public void pollRejectedDescriptorArchivingRequest(UUID eServiceId) {
+        ExpectedDelegatedArchivingRequest expectedRequest = Objects.requireNonNull(
+                sharedStepsContext.getEServicesCommonContext().getExpectedDelegatedArchivingRequest(),
+                "Nessuna richiesta di archiviazione è stata registrata"
+        );
+
+        sharedStepsContext.getPollingService().makePolling(
+                () -> getDelegatedArchivingRequest(eServiceId, expectedRequest.getDescriptorId()),
+                request -> isExpectedRejectedRequest(request, expectedRequest),
+                "La richiesta di archiviazione del descrittore non risulta rifiutata come atteso"
         );
     }
 
@@ -121,7 +160,7 @@ public class DelegatedArchivingRequestVerifier {
             UUID expectedRequesterId
     ) {
         return request != null
-                && isRequestedAtWithinTolerance(request.getRequestedAt(), expectedRequest.getRequestedAt())
+                && isTimestampWithinTolerance(request.getRequestedAt(), expectedRequest.getRequestedAt())
                 && Objects.equals(expectedRequesterId, request.getRequesterId())
                 && Objects.equals(expectedRequest.getGracePeriodDays(), request.getGracePeriodDays())
                 && request.getAcceptedAt() == null
@@ -129,19 +168,32 @@ public class DelegatedArchivingRequestVerifier {
                 && request.getRejectionReason() == null;
     }
 
-    private boolean isRequestedAtWithinTolerance(String requestedAt, OffsetDateTime expectedRequestedAt) {
-        if (requestedAt == null || requestedAt.isBlank() || expectedRequestedAt == null) {
+    private boolean isExpectedRejectedRequest(
+            DelegatedArchivingRequest request,
+            ExpectedDelegatedArchivingRequest expectedRequest
+    ) {
+        return request != null
+                && isTimestampWithinTolerance(request.getRejectedAt(), expectedRequest.getDecisionAt())
+                && Objects.equals(expectedRequest.getRejectionReason(), request.getRejectionReason())
+                && request.getAcceptedAt() == null;
+    }
+
+    private boolean isTimestampWithinTolerance(
+            String timestamp,
+            OffsetDateTime expectedTimestamp
+    ) {
+        if (timestamp == null || timestamp.isBlank() || expectedTimestamp == null) {
             return false;
         }
 
         try {
-            OffsetDateTime actualRequestedAt = OffsetDateTime.parse(requestedAt);
+            OffsetDateTime actualTimestamp = OffsetDateTime.parse(timestamp);
             Duration delta = Duration.between(
-                    expectedRequestedAt.toInstant(),
-                    actualRequestedAt.toInstant()
+                    expectedTimestamp.toInstant(),
+                    actualTimestamp.toInstant()
             ).abs();
-            return ZoneOffset.UTC.equals(actualRequestedAt.getOffset())
-                    && delta.compareTo(REQUESTED_AT_TOLERANCE) <= 0;
+            return ZoneOffset.UTC.equals(actualTimestamp.getOffset())
+                    && delta.compareTo(TIMESTAMP_TOLERANCE) <= 0;
         } catch (DateTimeParseException e) {
             return false;
         }

@@ -259,6 +259,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "<role>" di "PA1"
     When l'utente delegante rifiuta la richiesta di archiviazione delegata dell'e-service "%actual" con motivazione "QA test rejection delegation manual archiving"
     Then si ottiene response status code 204
+    And la richiesta di archiviazione delegata dell'e-service è stata rifiutata con successo
 
     Examples:
       | role         |
@@ -281,6 +282,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "<role>" di "PA1"
     When l'utente delegante rifiuta la richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" con motivazione "QA test rejection delegation manual archiving"
     Then si ottiene response status code 204
+    And la richiesta di archiviazione delegata del vecchio descrittore è stata rifiutata con successo
 
     Examples:
       | role         |
