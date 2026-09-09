@@ -712,7 +712,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/refs/tags/v2.26.0/docs/openapi/api-internal-b2b-informal-pa.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/4519f0ebb6545037ddd0e14617f3afc48444a5e3/docs/openapi/api-internal-b2b-informal-pa.yaml</inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
