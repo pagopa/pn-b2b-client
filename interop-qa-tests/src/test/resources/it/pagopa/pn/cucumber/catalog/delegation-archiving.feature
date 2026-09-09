@@ -1368,3 +1368,21 @@ Feature: Gestione deleghe per archiviazione manuale e-service
       | eserviceState |
       | PUBLISHED     |
       | SUSPENDED     |
+
+  @sad-path
+  Scenario Outline: [DELEGATION_ARCHIVING_STATE_1.2] Un e-service in stato ARCHIVING o ARCHIVING_SUSPENDED può essere dato in delega in fruizione
+    Given "PA1" ha già creato un e-service con un descrittore in stato "<eserviceState>" e impostando delega amministrativa a "true" e delega tecnica a "true"
+    And l'utente è un "admin" di "PA1"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual archiving" e 60 giorni di preavviso
+    And l'ente delegante "PA3"
+    And l'ente delegato "PA2"
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
+    When l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+    Then si ottiene response status code 200
+    And l'utente è un "admin" di "PA1"
+
+    Examples:
+      | eserviceState |
+      | PUBLISHED     |
+      | SUSPENDED     |
