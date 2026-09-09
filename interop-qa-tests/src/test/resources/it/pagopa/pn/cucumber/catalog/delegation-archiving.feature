@@ -1369,7 +1369,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
       | PUBLISHED     |
       | SUSPENDED     |
 
-  @sad-path
+  @happy-path
   Scenario Outline: [DELEGATION_ARCHIVING_STATE_1.2] Un e-service in stato ARCHIVING o ARCHIVING_SUSPENDED può essere dato in delega in fruizione
     Given "PA1" ha già creato un e-service con un descrittore in stato "<eserviceState>" e impostando delega amministrativa a "true" e delega tecnica a "true"
     And l'utente è un "admin" di "PA1"
@@ -1386,3 +1386,20 @@ Feature: Gestione deleghe per archiviazione manuale e-service
       | eserviceState |
       | PUBLISHED     |
       | SUSPENDED     |
+
+  @sad-path
+  Scenario Outline: [DELEGATION_ARCHIVING_CLONING_1.1] Ente delegato e delegante NON possono duplicare un e-service in delega in erogazione in stato PUBLISHED
+    Given l'ente delegato "PA2"
+    And l'ente delegante "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "<tenant>"
+    When l'utente tenta di clonare quell'e-service
+    Then si ottiene response status code 403
+
+    Examples:
+      | tenant |
+      | PA1    |
+      | PA1    |
