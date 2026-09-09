@@ -1403,3 +1403,25 @@ Feature: Gestione deleghe per archiviazione manuale e-service
       | tenant |
       | PA1    |
       | PA1    |
+
+  @sad-path
+  Scenario Outline: [DELEGATION_ARCHIVING_CLONING_1.2] Ente delegato e delegante NON possono duplicare un e-service in delega in erogazione in stato ARCHIVING o ARCHIVING_SUSPENDED
+    Given l'ente delegato "PA2"
+    And l'ente delegante "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "<eserviceState>"
+    And l'utente è un "admin" di "PA1"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "<tenant>"
+    When l'utente tenta di clonare quell'e-service
+    Then si ottiene response status code 403
+
+    Examples:
+      | tenant | eserviceState |
+      | PA1    | PUBLISHED     |
+      | PA1    | SUSPENDED     |
+      | PA2    | PUBLISHED     |
+      | PA2    | SUSPENDED     |
+
