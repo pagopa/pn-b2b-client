@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.catalog;
 
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import io.cucumber.java.en.Then;
 import it.pagopa.interop.common.IHttpExecutor;
@@ -32,6 +33,28 @@ public class DelegationArchivingSteps {
                 clientTokenConfigurator,
                 sharedStepsContext
         );
+    }
+
+    @Given("l'utente ha già inviato la richiesta di archiviazione per l'e-service {string} specificando la motivazione {string} e {gracePeriodDays} giorni di preavviso")
+    public void delegatedEServiceArchivingRequestAlreadySubmitted(
+            String eServiceId,
+            String archivingReason,
+            GracePeriodDays gracePeriodDays
+    ) {
+        submitDelegatedEServiceArchiving(eServiceId, archivingReason, gracePeriodDays);
+        assertDelegatedArchivingRequestSubmitted();
+        eServiceDelegatedArchivingRequestIsPending();
+    }
+
+    @Given("l'utente ha già inviato la richiesta di archiviazione per il vecchio descrittore {string} dell'e-service {string} specificando {gracePeriodDays} giorni di preavviso")
+    public void delegatedOldDescriptorArchivingRequestAlreadySubmitted(
+            String descriptorId,
+            String eServiceId,
+            GracePeriodDays gracePeriodDays
+    ) {
+        submitDelegatedDescriptorArchiving(descriptorId, eServiceId, gracePeriodDays);
+        assertDelegatedArchivingRequestSubmitted();
+        oldDescriptorDelegatedArchivingRequestIsPending();
     }
 
     @When("l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da {string} per l'e-service {string} impostando {gracePeriodDays} giorni di preavviso")
@@ -147,6 +170,12 @@ public class DelegationArchivingSteps {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         delegatedArchivingRequestVerifier.pollPendingDescriptorArchivingRequest(eServiceId);
     }
+
+        private void assertDelegatedArchivingRequestSubmitted() {
+                if (httpCallExecutor.getResponseStatus() == null || !httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+                        throw new IllegalStateException("L'invio della richiesta di archiviazione delegata non ha avuto successo");
+                }
+        }
 
     @When("l'utente delegato annulla la richiesta di archiviazione dell'e-service {string}")
     public void cancelDelegatedEServiceArchivingRequest(String eServiceId) {
