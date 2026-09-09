@@ -41,6 +41,11 @@ public class CertifiedDiscreteAttributeSteps extends AbstractCommonSteps<Certifi
         payloadAttrCert.forEach(this::createCertifiedDiscreteAttribute);
     }
 
+    @When("viene effettuata la creazione degli attributi certificati discreti con successo")
+    public void createCertifiedDiscreteAttributesSuccessfully(List<CertifiedDiscreteAttributeSeed> payloadAttrCert) {
+        payloadAttrCert.forEach(this::createCertifiedDiscreteAttributeSuccessfully);
+    }
+
     @When("viene effettuata la creazione dell'attributo certificato discreto")
     public void createCertifiedDiscreteAttribute(CertifiedDiscreteAttributeSeed payloadAttrCert) {
         CertifiedDiscreteAttribute result = client.create(payloadAttrCert);
@@ -63,9 +68,10 @@ public class CertifiedDiscreteAttributeSteps extends AbstractCommonSteps<Certifi
         createCertifiedDiscreteAttribute(mapper.mapAttributeSeed(Map.of("code", previousAttribute.getCode())));
     }
 
-    @When("si tenta la creazione dell'attributo certificato discreto senza passare parametri nella richiesta")
-    public void createCertifiedDiscreteAttributeWithoutParameters() {
-        client.tryCreationWithMissingData();
+    @When("si tenta la creazione dell'attributo certificato discreto senza passare parametri nella richiesta e si ottiene lo status code {int}")
+    public void createCertifiedDiscreteAttributeWithoutParameters(int expectedStatusCode) {
+        int responseCode = client.tryCreationWithMissingData();
+        Assertions.assertEquals(expectedStatusCode, responseCode);
     }
 
     @When("l'utente tenta di recuperare un attributo certificato discreto con un l'id dell'attributo dichiarato creato, senza ottenere alcun risultato")
