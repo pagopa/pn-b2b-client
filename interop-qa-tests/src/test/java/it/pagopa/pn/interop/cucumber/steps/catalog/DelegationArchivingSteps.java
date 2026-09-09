@@ -207,6 +207,22 @@ public class DelegationArchivingSteps {
                 delegatedArchivingRequestVerifier.pollRejectedDescriptorArchivingRequest(eServiceId);
         }
 
+        @Then("la richiesta di archiviazione pendente dell'e-service è stata annullata con successo")
+        public void pendingEServiceArchivingRequestIsCancelled() {
+                clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+                UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+                delegatedArchivingRequestVerifier.pollWithoutPendingEServiceArchivingRequest(eServiceId);
+        }
+
+        @Then("la richiesta di archiviazione pendente del vecchio descrittore è stata annullata con successo")
+        public void pendingOldDescriptorArchivingRequestIsCancelled() {
+                clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+                UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+                delegatedArchivingRequestVerifier.pollWithoutPendingDescriptorArchivingRequest(eServiceId);
+        }
+
         private void assertDelegatedArchivingRequestSubmitted() {
                 if (httpCallExecutor.getResponseStatus() == null || !httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
                         throw new IllegalStateException("L'invio della richiesta di archiviazione delegata non ha avuto successo");

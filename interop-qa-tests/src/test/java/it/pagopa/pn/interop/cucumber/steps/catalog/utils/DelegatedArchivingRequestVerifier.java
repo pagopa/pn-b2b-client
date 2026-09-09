@@ -123,6 +123,29 @@ public class DelegatedArchivingRequestVerifier {
         );
     }
 
+    public void pollWithoutPendingEServiceArchivingRequest(UUID eServiceId) {
+        UUID latestDescriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+
+        sharedStepsContext.getPollingService().makePolling(
+                () -> getDelegatedArchivingRequest(eServiceId, latestDescriptorId),
+                this::hasNoPendingArchivingRequest,
+                "L'e-service contiene ancora una richiesta di archiviazione in stato pending"
+        );
+    }
+
+    public void pollWithoutPendingDescriptorArchivingRequest(UUID eServiceId) {
+        ExpectedDelegatedArchivingRequest expectedRequest = Objects.requireNonNull(
+                sharedStepsContext.getEServicesCommonContext().getExpectedDelegatedArchivingRequest(),
+                "Nessuna richiesta di archiviazione è stata registrata"
+        );
+
+        sharedStepsContext.getPollingService().makePolling(
+                () -> getDelegatedArchivingRequest(eServiceId, expectedRequest.getDescriptorId()),
+                this::hasNoPendingArchivingRequest,
+                "Il descrittore contiene ancora una richiesta di archiviazione in stato pending"
+        );
+    }
+
     private DelegatedArchivingRequest getDelegatedArchivingRequest(
             UUID eServiceId,
             UUID descriptorId
@@ -177,6 +200,15 @@ public class DelegatedArchivingRequestVerifier {
                 && Objects.equals(expectedRequest.getRejectionReason(), request.getRejectionReason())
                 && request.getAcceptedAt() == null;
     }
+
+        private boolean hasNoPendingArchivingRequest(DelegatedArchivingRequest request) {
+                return request == null
+                                || (request.getRejectedAt() != null
+                                && !request.getRejectedAt().isBlank()
+                                && request.getRejectionReason() != null
+                                && !request.getRejectionReason().isBlank()
+                                && request.getAcceptedAt() == null);
+        }
 
     private boolean isTimestampWithinTolerance(
             String timestamp,
