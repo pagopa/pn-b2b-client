@@ -179,6 +179,32 @@ public class M2MV3EserviceClientImpl extends AbstractDPoPClient implements IM2MV
     }
 
     @Override
+    public EService submitDelegatedEServiceArchiving(UUID eServiceId, DelegatedEServiceArchivingRequest body) {
+        DelegateEServiceArchivingSeed seed = body == null
+            ? null
+            : new DelegateEServiceArchivingSeed()
+                .archivingReason(body.getArchivingReason())
+                .gracePeriodDays(body.getGracePeriodDays() == null
+                    ? null
+                    : DelegateGracePeriodDays.fromValue(body.getGracePeriodDays()));
+
+        return vMapper.mapToV2(eservicesApi.submitDelegatedEServiceArchiving(eServiceId, seed));
+    }
+
+    @Override
+    public EService approveDelegatedEServiceArchiving(UUID eServiceId) {
+        return vMapper.mapToV2(eservicesApi.approveDelegatedEServiceArchiving(eServiceId));
+    }
+
+    @Override
+    public EService rejectDelegatedEServiceArchiving(UUID eServiceId, String rejectionReason) {
+        return vMapper.mapToV2(eservicesApi.rejectDelegatedEServiceArchiving(
+            eServiceId,
+            new RejectDelegatedEServiceArchivingSeed().rejectionReason(rejectionReason)
+        ));
+    }
+
+    @Override
     public EService scheduleArchiveEService(UUID eServiceId, EServiceArchivingRequest body) {
         EServiceArchivingReasonSeed seed = body == null
             ? null

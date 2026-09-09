@@ -15,8 +15,11 @@ import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.EservicesApi
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptorAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptorDraftUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptorQuotasUpdateSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.DelegateGracePeriodDays;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.DelegateGracePeriodDaysSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.GracePeriodDays;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.GracePeriodDaysSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.RejectDelegatedDescriptorArchivingSeed;
 import it.pagopa.interop.utils.ApiClientUtils;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -209,6 +212,34 @@ public class M2MV3EserviceDescriptorClientImpl extends AbstractDPoPClient implem
     @Override
     public Documents getDocuments(UUID eserviceId, UUID descriptorId) {
         return vMapper.mapToV2(this.eservicesApi.getEServiceDescriptorDocuments(eserviceId, descriptorId, 0, 50));
+    }
+
+    @Override
+    public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor submitDelegatedDescriptorArchiving(
+        UUID eServiceId, UUID descriptorId, Integer gracePeriodDays) {
+        return vMapper.mapToV2(eservicesApi.submitDelegatedDescriptorArchiving(
+            eServiceId,
+            descriptorId,
+            new DelegateGracePeriodDaysSeed().gracePeriodDays(gracePeriodDays == null
+                ? null
+                : DelegateGracePeriodDays.fromValue(gracePeriodDays))
+        ));
+    }
+
+    @Override
+    public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor approveDelegatedDescriptorArchiving(
+        UUID eServiceId, UUID descriptorId) {
+        return vMapper.mapToV2(eservicesApi.approveDelegatedDescriptorArchiving(eServiceId, descriptorId));
+    }
+
+    @Override
+    public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor rejectDelegatedDescriptorArchiving(
+        UUID eServiceId, UUID descriptorId, String rejectionReason) {
+        return vMapper.mapToV2(eservicesApi.rejectDelegatedDescriptorArchiving(
+            eServiceId,
+            descriptorId,
+            new RejectDelegatedDescriptorArchivingSeed().rejectionReason(rejectionReason)
+        ));
     }
 
     @Override
