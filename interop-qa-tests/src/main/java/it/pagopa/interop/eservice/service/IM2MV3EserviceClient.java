@@ -18,6 +18,8 @@ public interface IM2MV3EserviceClient extends IM2MEserviceClient, SettableHeader
 
 	EService submitDelegatedEServiceArchiving(UUID eServiceId, DelegatedEServiceArchivingRequest body);
 
+	EService cancelDelegatedEServiceArchiving(UUID eServiceId);
+
 	EService approveDelegatedEServiceArchiving(UUID eServiceId);
 
 	EService rejectDelegatedEServiceArchiving(UUID eServiceId, String rejectionReason);

@@ -48,6 +48,14 @@ public class M2MV3DelegationArchivingSteps {
             () -> eServiceClient.submitDelegatedEServiceArchiving(resolvedEServiceId, request));
     }
 
+    @When("l'utente delegato annulla via M2M v3 la richiesta di archiviazione dell'e-service {string}")
+    public void cancelDelegatedEServiceArchiving(String eServiceId) {
+        UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
+
+        httpExecutor.performCall(
+            () -> eServiceClient.cancelDelegatedEServiceArchiving(resolvedEServiceId));
+    }
+
     @When("l'utente delegante accetta via M2M v3 la richiesta di archiviazione relativa all'e-service {string}")
     @When("l'utente accetta via M2M v3 la richiesta di archiviazione relativa all'e-service {string}")
     public void approveDelegatedEServiceArchiving(String eServiceId) {
@@ -85,6 +93,18 @@ public class M2MV3DelegationArchivingSteps {
                 resolvedEServiceId,
                 resolvedDescriptorId,
                 gracePeriodDays == null ? null : gracePeriodDays.getValue()
+            ));
+    }
+
+    @When("l'utente delegato annulla via M2M v3 la richiesta di archiviazione della vecchia versione identificata da {string} per l'e-service {string}")
+    public void cancelDelegatedDescriptorArchiving(String descriptorId, String eServiceId) {
+        UUID resolvedDescriptorId = catalogResolver.resolveOldDescriptorId(descriptorId);
+        UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
+
+        httpExecutor.performCall(
+            () -> descriptorClient.cancelDelegatedDescriptorArchiving(
+                resolvedEServiceId,
+                resolvedDescriptorId
             ));
     }
 

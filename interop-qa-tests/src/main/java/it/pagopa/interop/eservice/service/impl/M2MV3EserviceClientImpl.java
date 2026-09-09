@@ -192,6 +192,11 @@ public class M2MV3EserviceClientImpl extends AbstractDPoPClient implements IM2MV
     }
 
     @Override
+    public EService cancelDelegatedEServiceArchiving(UUID eServiceId) {
+        return vMapper.mapToV2(eservicesApi.cancelDelegatedEServiceArchiving(eServiceId));
+    }
+
+    @Override
     public EService approveDelegatedEServiceArchiving(UUID eServiceId) {
         return vMapper.mapToV2(eservicesApi.approveDelegatedEServiceArchiving(eServiceId));
     }

@@ -227,6 +227,12 @@ public class M2MV3EserviceDescriptorClientImpl extends AbstractDPoPClient implem
     }
 
     @Override
+    public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor cancelDelegatedDescriptorArchiving(
+        UUID eServiceId, UUID descriptorId) {
+        return vMapper.mapToV2(eservicesApi.cancelDelegatedDescriptorArchiving(eServiceId, descriptorId));
+    }
+
+    @Override
     public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor approveDelegatedDescriptorArchiving(
         UUID eServiceId, UUID descriptorId) {
         return vMapper.mapToV2(eservicesApi.approveDelegatedDescriptorArchiving(eServiceId, descriptorId));

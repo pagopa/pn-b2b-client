@@ -20,6 +20,8 @@ public interface IM2MV3EserviceDescriptorClient extends IM2MEserviceDescriptorCl
 
     EServiceDescriptor submitDelegatedDescriptorArchiving(UUID eServiceId, UUID descriptorId, Integer gracePeriodDays);
 
+    EServiceDescriptor cancelDelegatedDescriptorArchiving(UUID eServiceId, UUID descriptorId);
+
     EServiceDescriptor approveDelegatedDescriptorArchiving(UUID eServiceId, UUID descriptorId);
 
     EServiceDescriptor rejectDelegatedDescriptorArchiving(UUID eServiceId, UUID descriptorId, String rejectionReason);
