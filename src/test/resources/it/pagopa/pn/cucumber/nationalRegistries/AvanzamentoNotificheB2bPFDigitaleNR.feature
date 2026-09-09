@@ -241,18 +241,30 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
     And destinatario
-      | denomination    | Test digitale ok |
-      | taxId           | RNORNO80A41F979F |
-      | digitalDomicile | NULL             |
+      | denomination    | Test digitale ok INAD |
+      | taxId           | PPPPLT80A01H501V      |
+      | digitalDomicile | NULL                  |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
+    Then  viene verificato che l'elemento di timeline "GET_ADDRESS" esista
+      | loadTimeline                 | true     |
+      | details                      | NOT_NULL |
+      | details_recIndex             | 0        |
+      | details_digitalAddressSource | SPECIAL  |
+      | details_sentAttemptMade      | 0        |
+      | details_isAvailable          | true     |
+    And viene verificato che l'elemento di timeline "GET_ADDRESS" non esista
+      | details                      | NOT_NULL |
+      | details_recIndex             | 0        |
+      | details_digitalAddressSource | PLATFORM |
+      | details_sentAttemptMade      | 0        |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
-      | loadTimeline           | true                                                        |
-      | legalFactsIds          | [{"category": "DIGITAL_DELIVERY"}]                          |
-      | details                | NOT_NULL                                                    |
-      | details_digitalAddress | {"address": "example@OK-personalPecSuccess", "type": "PEC"} |
-      | details_recIndex       | 0                                                           |
+      | loadTimeline           | true                                         |
+      | legalFactsIds          | [{"category": "DIGITAL_DELIVERY"}]           |
+      | details                | NOT_NULL                                     |
+      | details_digitalAddress | {"address": "example@pec.it", "type": "PEC"} |
+      | details_recIndex       | 0                                            |
 
 #da modificare solamente CF che abbia solo pec professionale su INAD
   @PFinipec
