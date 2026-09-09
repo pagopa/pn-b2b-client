@@ -245,7 +245,7 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | denomination            | Test errore PnSpapiPermanentErrorException |
       | taxId                   | DSRDNI00A01A225I                           |
       | digitalDomicile_address | -indirizzo@gmail.com                       |
-    Then la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
       | legalFactsIds                | [{"category": "SEND_DIGITAL_FEEDBACK"}]            |
       | details_digitalAddressSource | SPECIAL                                            |
