@@ -1425,3 +1425,21 @@ Feature: Gestione deleghe per archiviazione manuale e-service
       | PA2    | PUBLISHED     |
       | PA2    | SUSPENDED     |
 
+  @sad-path
+  Scenario Outline: [DELEGATION_ARCHIVING_CLONING_1.3] Ente delegato e delegante NON possono duplicare descrittore di un e-service in delega in erogazione in stato DEPRECATED
+    Given l'ente delegato "PA2"
+    And l'ente delegante "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "<tenant>"
+    When l'utente tenta di clonare la vecchia versione dell'e-service
+    Then si ottiene response status code 403
+
+    Examples:
+      | tenant |
+      | PA1    |
+      | PA2    |
