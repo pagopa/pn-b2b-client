@@ -133,8 +133,8 @@ public class DataTestV25 extends AbstractDataTest {
             case SEND_DIGITAL_FEEDBACK -> {
                 if (expected != null) {
                     assertThat(actual.getResponseStatus()).as(error + EQUALITY_RESPONSE_STATUS).isNotNull();
-                    Optional.ofNullable(actual.getDeliveryDetailCode()).ifPresent(
-                            t -> assertThat(t).as(error + EQUALITY_DELIVERY_DETAIL_CODE).isEqualTo(expected.getDeliveryDetailCode()));
+                    Optional.ofNullable(expected.getDeliveryDetailCode()).ifPresent(
+                            t -> assertThat(actual.getDeliveryDetailCode()).as(error + EQUALITY_DELIVERY_DETAIL_CODE).isEqualTo(t));
                     Optional.ofNullable(expected.getResponseStatus()).map(ResponseStatus::getValue).ifPresent(
                             t -> assertThat(t).as(error + EQUALITY_RESPONSE_STATUS_VALUE).isEqualTo(actual.getResponseStatus().getValue()));
                     Optional.ofNullable(expected.getDigitalAddress()).ifPresent(
