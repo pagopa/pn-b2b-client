@@ -32,6 +32,32 @@ Feature: (M2M v3) Gestione deleghe per archiviazione manuale e-service
     When l'utente delegato invia via M2M v3 al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     Then si ottiene response status code 200
 
+  @sad-path
+  Scenario: [M2M_V3_DELEGATION_MANUAL_ARCHIVING_1.3] Un utente con ruolo m2m NON può richiedere via M2M v3 al delegante di avviare il processo di archiviazione di un e-service in delega
+    Given l'ente delegato "PA2"
+    And l'ente delegante "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "<descriptorState>"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m
+    When l'utente delegato invia via M2M v3 al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
+    Then si ottiene response status code 403
+
+  @sad-path
+  Scenario: [M2M_V3_DELEGATION_MANUAL_ARCHIVING_1.4] Un utente con ruolo m2m NON può richiedere via M2M v3 al delegante di avviare il processo di archiviazione del descrittore meno recente di un e-service in delega
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m
+    When l'utente delegato invia via M2M v3 al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
+    Then si ottiene response status code 403
+
   @happy-path
   Scenario: [M2M_V3_DELEGATION_MANUAL_ARCHIVING_2.1] Un ente delegante può accettare via M2M v3 la richiesta di archiviazione di un e-service inviata dall'ente delegato
     Given l'ente delegante "PA1"
