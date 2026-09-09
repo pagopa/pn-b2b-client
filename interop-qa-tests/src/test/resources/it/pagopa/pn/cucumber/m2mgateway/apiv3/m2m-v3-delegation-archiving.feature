@@ -32,7 +32,7 @@ Feature: (M2M v3) Gestione deleghe per archiviazione manuale e-service
     Then si ottiene response status code 200
 
   @sad-path
-  Scenario: [M2M_V3_DELEGATION_MANUAL_ARCHIVING_2.5] Un utente M2M senza ruolo m2m-admin NON può accettare la richiesta di archiviazione di un e-service inviata dall'ente delegato
+  Scenario: [M2M_V3_DELEGATION_MANUAL_ARCHIVING_2.3] Un utente con ruolo m2m NON può accettare la richiesta di archiviazione di un e-service inviata dall'ente delegato
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -46,7 +46,7 @@ Feature: (M2M v3) Gestione deleghe per archiviazione manuale e-service
     Then si ottiene response status code 403
 
   @sad-path
-  Scenario: [M2M_V3_DELEGATION_MANUAL_ARCHIVING_2.6] Un utente M2M senza ruolo m2m-admin NON può accettare la richiesta di archiviazione del descrittore meno recente inviata dall'ente delegato
+  Scenario: [M2M_V3_DELEGATION_MANUAL_ARCHIVING_2.4] Un utente con ruolo m2m NON può accettare la richiesta di archiviazione del descrittore meno recente inviata dall'ente delegato
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -92,7 +92,7 @@ Feature: (M2M v3) Gestione deleghe per archiviazione manuale e-service
     Then si ottiene response status code 200
 
   @sad-path
-  Scenario: [M2M_V3_DELEGATION_MANUAL_ARCHIVING_3.3] Un utente M2M senza ruolo m2m-admin NON può rifiutare la richiesta di archiviazione di un e-service inviata dall'ente delegato
+  Scenario: [M2M_V3_DELEGATION_MANUAL_ARCHIVING_3.3] Un utente con ruolo m2m NON può rifiutare la richiesta di archiviazione di un e-service inviata dall'ente delegato
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -106,7 +106,7 @@ Feature: (M2M v3) Gestione deleghe per archiviazione manuale e-service
     Then si ottiene response status code 403
 
   @sad-path
-  Scenario: [M2M_V3_DELEGATION_MANUAL_ARCHIVING_3.4] Un utente M2M senza ruolo m2m-admin NON può rifiutare la richiesta di archiviazione del descrittore meno recente inviata dall'ente delegato
+  Scenario: [M2M_V3_DELEGATION_MANUAL_ARCHIVING_3.4] Un utente con ruolo m2m NON può rifiutare la richiesta di archiviazione del descrittore meno recente inviata dall'ente delegato
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
