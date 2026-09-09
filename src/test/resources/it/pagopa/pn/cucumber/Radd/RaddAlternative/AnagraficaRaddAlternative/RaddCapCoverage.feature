@@ -13,7 +13,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
  # UAT -> username: "admin@uat.pagopa.it" , password: "Admin-uatcognito1" , clientId/poolId: "29anv4akm6uur60810ge0enn47"
  #     -> xPagopaPnCxId/parentId: ""
 
- # HOTFIX -> username: "admin@hotfix.pagopa.it" , password: "Admin-hotfixcognito1" , clientId/poolId: ""
+ # HOTFIX -> username: "admin@hotfix.pagopa.it" , password: "Admin-hotfixcognito1" , clientId/poolId: "680p8kfo0a7q89vn18gvpaigll"
  #     -> xPagopaPnCxId/parentId: ""
 
 
