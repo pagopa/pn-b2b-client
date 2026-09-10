@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.cucumber.java.After;
+import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -201,6 +202,31 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         });
     }
 
+    private enum WebhookExtraField {
+        WAIT_FOR_ACCEPTED("waitForAccepted", 27),
+        COMMUNICATION_TYPE("communicationType", 30);
+
+        private String fieldName;
+        private int introducingVersion;
+
+        WebhookExtraField(String fieldName, int introducingVersion) {
+            this.fieldName = fieldName;
+            this.introducingVersion = introducingVersion;
+        }
+
+        private static WebhookExtraField fromFieldName(String fieldName) {
+            return Arrays.stream(values())
+                    .filter(f -> f.fieldName.equals(fieldName))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("Unknown fieldName: " + fieldName));
+        }
+    }
+
+    @ParameterType("waitForAccepted|communicationType")
+    public static WebhookExtraField webhookExtraField(String fieldName) {
+        return WebhookExtraField.fromFieldName(fieldName);
+    }
+
     //versioni 23 e 27 only?
     @And("viene verificato che il campo legalFactIds sia valorizzato nel EventStream con la versione {string}")
     public void vieneVerificatoCheIlCampoLegalFactIdsSiaValorizzato(String version) {
@@ -330,14 +356,18 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         updateStreamByGroupsPA(streamVersion, pa, true);
     }
 
-    @Given("(allo)(agli) stream versione {string} si setta il campo waitForAccepted introdotto con la versione {int} a {string}")
-    public void setWaitForAccepted(String version, int introducingVersion, String waitForAccepted) {
+    @Given("(allo)(agli) stream versione {string} si setta il campo {webhookExtraField} a {string}")
+    public void setWebhookExtraField(String version, WebhookExtraField extraField, String extraFieldValue) {
         StreamVersion streamVersion = getStreamVersion(version);
         assumeThat(streamVersion.getValue())
-                .as("Test skipped: questo step deve comparire solo nei file feature dalla versione  " + introducingVersion + " in poi")
-                .isGreaterThanOrEqualTo(introducingVersion);
+                .as("Test skipped: questo step deve comparire solo nei file feature dalla versione  " + extraField.introducingVersion + " in poi")
+                .isGreaterThanOrEqualTo(extraField.introducingVersion);
         WebhookStepsInterface webhookStepsInterface = getWebhookStep(streamVersion);
-        webhookStepsInterface.setValueForWaitForAccepted(Boolean.parseBoolean(waitForAccepted));
+        switch (extraField) {
+            case WAIT_FOR_ACCEPTED ->
+                    webhookStepsInterface.setValueForWaitForAccepted(Boolean.parseBoolean(extraFieldValue));
+            case COMMUNICATION_TYPE -> System.out.println("TODO MATTEO set communicationType");
+        }
     }
 
     private void updateStreamByGroupsPA(StreamVersion streamVersion, String pa, boolean groupOfPa) {

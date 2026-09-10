@@ -185,6 +185,7 @@ public class WebhookStepsV30 implements WebhookStepsInterface {
         streamRequest.setTitle("Update Stream " + streamVersion);
         streamRequest.setEventType(StreamRequestV29.EventTypeEnum.TIMELINE);
         streamRequest.setWaitForAccepted(waitForAccepted);
+        //TODO MATTEO: set communicationType
         for (StreamMetadataResponseV29 eventStream : eventStreamList) {
             StreamMetadataResponseV29 result = webhookClient.updateEventStreamV29(eventStream.getStreamId(), streamRequest);
             assertThat(result).as("Il risultato dell'operazione di update stream con id " + eventStream.getStreamId() + " non dev'essere null").isNotNull();
@@ -329,6 +330,7 @@ public class WebhookStepsV30 implements WebhookStepsInterface {
                 request.setReplacedStreamId(streamIdToReplace);
             }
             request.setWaitForAccepted(waitForAccepted);
+            //TODO MATTEO: set communicationType
             StreamMetadataResponseV29 eventStream = webhookClient.createEventStreamV29(request);
             if (streamIdToReplace != null) {
                 eventStreamList = new LinkedList<>();
@@ -473,6 +475,11 @@ public class WebhookStepsV30 implements WebhookStepsInterface {
     @Override
     public void setValueForWaitForAccepted(boolean bool) {
         waitForAccepted = bool;
+    }
+
+    @Override
+    public void setValueForCommunicationType(String communicationType) {
+        //TODO MATTEO set communicationType
     }
 
     @Override
