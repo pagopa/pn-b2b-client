@@ -1231,14 +1231,17 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA1" tenta la creazione di una versione in DRAFT per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    And l'utente aggiorna alcuni parametri di quel descrittore
+    And "PA1" ha già caricato un'interfaccia per quel descrittore
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
     And l'utente è un "admin" di "PA2"
-    And l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
-    When l'utente crea una nuova versione dell'e-service
-    And l'utente delegato pubblica la versione dell'e-service
-    Then si ottiene response status code 204
+    And l'utente ha già inviato la richiesta di archiviazione per l'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
+    And l'utente pubblica l'e-service
+    Then si ottiene response status code 200
     And l'e-service è in stato "WAITING_FOR_APPROVAL"
 
   @happy-path
