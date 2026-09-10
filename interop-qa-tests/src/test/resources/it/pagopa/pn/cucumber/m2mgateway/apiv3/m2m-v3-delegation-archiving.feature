@@ -322,3 +322,37 @@ Feature: (M2M v3) Gestione deleghe per archiviazione manuale e-service
     And viene impostato per l'utente un token m2m non valido
     When l'utente delegato invia via M2M v3 al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     Then si ottiene response status code 401
+
+  @sad-path
+  Scenario Outline: [M2M_V3_DELEGATION_MANUAL_ARCHIVING_CONTRACT_2.1] Specificando parametri errati o mancanti, un ente delegante NON può accettare via M2M v3 la richiesta di archiviazione di un e-service inviata dall'ente delegato
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    And l'utente ha già inviato la richiesta di archiviazione per l'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente delegante accetta via M2M v3 la richiesta di archiviazione relativa all'e-service "<eServiceId>"
+    Then si ottiene response status code <statusCode>
+
+    Examples:
+      | eServiceId | statusCode |
+      | %null      | 400        |
+      | %random    | 404        |
+
+  @sad-path
+  Scenario: [M2M_V3_DELEGATION_MANUAL_ARCHIVING_CONTRACT_2.2] Un ente delegante NON può accettare via M2M v3 la richiesta di archiviazione di un e-service inviata dall'ente delegato se il token di accesso utilizzato non è valido
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    And l'utente ha già inviato la richiesta di archiviazione per l'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene impostato per l'utente un token m2m non valido
+    When l'utente delegante accetta via M2M v3 la richiesta di archiviazione relativa all'e-service "%actual"
+    Then si ottiene response status code 401
