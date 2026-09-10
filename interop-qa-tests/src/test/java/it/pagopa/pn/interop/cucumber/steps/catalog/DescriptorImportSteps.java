@@ -390,24 +390,31 @@ public class DescriptorImportSteps {
     }
 
     /**
-     * Metodo di supporto condiviso da tutti gli step "Given" che preparano un pacchetto: legge il configuration.json
-     * della cartella template (identificata da {@link #folderName}), applica eventuali normalizzazioni di base
-     * (nome e-service valorizzato, path del documento "unknown" corretto), applica poi le modifiche specifiche
-     * passate da updateConfig, riscrive il file e ricompatta la cartella in uno zip.
+     * Metodo di supporto condiviso da tutti gli step "Given" che preparano un pacchetto: copia la cartella template
+     * (identificata da {@link #folderName}) in una directory temporanea dedicata allo scenario, legge il
+     * configuration.json della copia, applica eventuali normalizzazioni di base (nome e-service valorizzato, path del
+     * documento "unknown" corretto), applica poi le modifiche specifiche passate da updateConfig e ricompatta la copia
+     * in uno zip.
      * <p>
-     * Se notAllowedFiles è true, aggiunge nella cartella un file non dichiarato nel configuration.json
-     * (notAllowedFile.txt), per simulare pacchetti con contenuti non previsti; altrimenti lo rimuove se presente,
-     * per garantire uno stato pulito tra scenari differenti.
+     * Se notAllowedFiles è true, aggiunge nella copia un file non dichiarato nel configuration.json
+     * (notAllowedFile.txt), per simulare pacchetti con contenuti non previsti; altrimenti lo rimuove se presente.
+     * Le risorse originali su classpath restano immutate.
      *
      * @param updateConfig    modifiche puntuali da applicare al JSON di configurazione dopo le normalizzazioni di base
      * @param notAllowedFiles se true include nel pacchetto un file non previsto dal configuration.json
      */
     private void updateAndZipConfig(Consumer<JsonObject> updateConfig, boolean notAllowedFiles) {
         zipFileName = folderName;
+        File stagingFolder = null;
         try {
-            File folderPath = getPackageFolder();
-            File configFile = new File(folderPath, "configuration.json");
-            File notAllowedFile = new File(folderPath, "notAllowedFile.txt");
+            File templateFolder = getPackageFolder();
+            // Isola le modifiche per scenario evitando mutazioni su risorse condivise del classpath.
+            stagingFolder = Files.createTempDirectory("descriptor-import-").toFile();
+            File workingFolder = new File(stagingFolder, folderName);
+            FileUtils.copyDirectory(templateFolder, workingFolder);
+
+            File configFile = new File(workingFolder, "configuration.json");
+            File notAllowedFile = new File(workingFolder, "notAllowedFile.txt");
             // Handle notAllowedFile.txt
             if (notAllowedFiles) {
                 FileUtils.write(notAllowedFile, "", StandardCharsets.UTF_8);
@@ -440,9 +447,11 @@ public class DescriptorImportSteps {
                     new GsonBuilder().setPrettyPrinting().create().toJson(configJson),
                     StandardCharsets.UTF_8);
 
-            createZipFromFolder(folderPath, getZipBaseName());
+            createZipFromFolder(workingFolder, getZipBaseName());
         } catch (Exception e) {
             throw new RuntimeException("Errore durante l'aggiornamento del file JSON o la compressione della cartella", e);
+        } finally {
+            FileUtils.deleteQuietly(stagingFolder);
         }
     }
 
