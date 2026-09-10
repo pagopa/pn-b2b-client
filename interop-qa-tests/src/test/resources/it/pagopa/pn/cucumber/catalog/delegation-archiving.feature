@@ -1658,3 +1658,28 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And viene impostato per l'utente un token non valido
     When l'utente delegante rifiuta la richiesta di archiviazione delegata dell'e-service "%actual" con motivazione "QA test rejection delegation archiving"
     Then si ottiene response status code 401
+
+  @sad-path
+  Scenario Outline: [DELEGATION_MANUAL_ARCHIVING_CONTRACT_3.3] Specificando parametri errati o mancanti, un ente delegante NON può rifiutare la richiesta di archiviazione del descrittore meno recente inviata dall'ente delegato
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    And l'utente ha già inviato la richiesta di archiviazione per il vecchio descrittore "%actual" dell'e-service "%actual" specificando 60 giorni di preavviso
+    And l'utente è un "admin" di "PA1"
+    When l'utente delegante rifiuta la richiesta di archiviazione della vecchia versione identificata da "<descriptorId>" per l'e-service "<eServiceId>" con motivazione "<rejectionReason>"
+    Then si ottiene response status code <statusCode>
+
+    Examples:
+      | eServiceId | descriptorId | rejectionReason                        | statusCode |
+      | %null      | %actual      | QA test rejection delegation archiving | 400        |
+      | %random    | %actual      | QA test rejection delegation archiving | 404        |
+      | %actual    | %null        | QA test rejection delegation archiving | 400        |
+      | %actual    | %random      | QA test rejection delegation archiving | 404        |
+      | %actual    | %actual      | %null                                  | 400        |
+      | %actual    | %actual      | %blank                                 | 400        |
