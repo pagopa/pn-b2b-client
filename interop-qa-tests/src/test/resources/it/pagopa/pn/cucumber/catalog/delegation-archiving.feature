@@ -1512,3 +1512,40 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And viene impostato per l'utente un token non valido
     When l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
     Then si ottiene response status code 401
+
+
+  @sad-path
+  Scenario Outline: [DELEGATION_MANUAL_ARCHIVING_CONTRACT_1.4] Specificando parametri errati o mancanti, un ente delegato NON può richiedere al delegante di avviare il processo di archiviazione del descrittore meno recente dell'e-service in delega
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    When l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da "<descriptorId>" per l'e-service "<eServiceId>" impostando 60 giorni di preavviso
+    Then si ottiene response status code <statusCode>
+
+    Examples:
+      | eServiceId | descriptorId | statusCode |
+      | %null      | %actual      | 400        |
+      | %random    | %actual      | 404        |
+      | %actual    | %null        | 400        |
+      | %actual    | %random      | 404        |
+
+  @sad-path
+  Scenario: [DELEGATION_MANUAL_ARCHIVING_CONTRACT_1.5] un ente delegato NON può richiedere al delegante di avviare il processo di archiviazione del descrittore meno recente dell'e-service in delega se il token di accesso utilizzato non è valido
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    And viene impostato per l'utente un token non valido
+    When l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
+    Then si ottiene response status code 401
