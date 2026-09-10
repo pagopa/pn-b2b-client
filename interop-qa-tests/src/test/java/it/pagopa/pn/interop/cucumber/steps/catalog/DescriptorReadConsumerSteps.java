@@ -48,16 +48,25 @@ public class DescriptorReadConsumerSteps {
 
     @When("^l'utente legge da catalogo i?l'? ?(ultimo|vecchio) descrittore e-service (senza|con) riferimenti al(|la precedente versione del) template$")
     public void readEServiceDescriptorFromCatalogueAndCheckTemplateInfo(String descriptorQualifier, String templateRefWith, String prevTemplateVersion) {
-        UUID expectedTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId();
-        if (descriptorQualifier.equals("vecchio")) {
+         if (descriptorQualifier.equals("vecchio")) {
             requireOldDescriptorRead();
-            expectedTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getOldVersionId();
         } else {
             requireLastDescriptorRead();
-            if (!prevTemplateVersion.isEmpty()) {
+        }
+
+        // La versione del template viene recuperata solo se è atteso templateRef
+        UUID expectedTemplateVersionId = null;
+        if (templateRefWith.equals("con")) {
+            expectedTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId();
+            if (descriptorQualifier.equals("vecchio")) {
                 expectedTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getOldVersionId();
+            } else {
+                if (!prevTemplateVersion.isEmpty()) {
+                    expectedTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getOldVersionId();
+                }
             }
         }
+
         CatalogEServiceDescriptor obj = ((CatalogEServiceDescriptor)httpCallExecutor.getResponse());
         Assertions.assertNotNull(obj, "Response of e-service descriptor from catalog is null");
 
