@@ -10,6 +10,7 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.catalog.utils.CatalogResolver;
 import it.pagopa.pn.interop.cucumber.steps.catalog.utils.DelegatedArchivingRequestVerifier;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.http.ResponseEntity;
 
 import java.util.UUID;
@@ -174,6 +175,16 @@ public class DelegationArchivingSteps {
                 ResponseEntity::getStatusCode
         );
     }
+
+        @When("l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service {string} specificando una motivazione di {int} caratteri e {gracePeriodDays} giorni di preavviso")
+        public void submitDelegatedEServiceArchivingWithReasonLength(
+                        String eServiceId,
+                        int archivingReasonLength,
+                        GracePeriodDays gracePeriodDays
+        ) {
+                String archivingReason = RandomStringUtils.insecure().nextAlphanumeric(archivingReasonLength);
+                submitDelegatedEServiceArchiving(eServiceId, archivingReason, gracePeriodDays);
+        }
 
     @Then("la richiesta di archiviazione delegata dell'e-service è in stato pending")
     public void eServiceDelegatedArchivingRequestIsPending() {

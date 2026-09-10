@@ -1463,3 +1463,52 @@ Feature: Gestione deleghe per archiviazione manuale e-service
       | tenant |
       | PA1    |
       | PA2    |
+
+  @sad-path
+  Scenario Outline: [DELEGATION_MANUAL_ARCHIVING_CONTRACT_1.1] Specificando parametri errati o mancanti, un ente delegato NON può richiedere al delegante di avviare il processo di archiviazione di un e-service in delega
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    When l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "<eServiceId>" specificando la motivazione "<archivingReason>" e 60 giorni di preavviso
+    Then si ottiene response status code <statusCode>
+
+    Examples:
+      | eServiceId | archivingReason                     | statusCode |
+      | %null      | QA test delegation manual archiving | 400        |
+      | %random    | QA test delegation manual archiving | 404        |
+      | %actual    | %null                               | 400        |
+      | %actual    | %blank                              | 400        |
+
+  @sad-path
+  Scenario Outline: [DELEGATION_MANUAL_ARCHIVING_CONTRACT_1.2] Inserendo una motivazione di archivazione con lunghezza errata, un ente delegato NON può richiedere al delegante di avviare il processo di archiviazione di un e-service in delega
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    When l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "%actual" specificando una motivazione di <archivingReasonLength> caratteri e 60 giorni di preavviso
+    Then si ottiene response status code 400
+
+    Examples:
+      | archivingReasonLength |
+      | 9                     |
+      | 251                   |
+
+  @sad-path
+  Scenario: [DELEGATION_MANUAL_ARCHIVING_CONTRACT_1.3] Un ente delegato NON può richiedere al delegante di avviare il processo di archiviazione di un e-service in delega se il token di accesso utilizzato non è valido
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    And viene impostato per l'utente un token non valido
+    When l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
+    Then si ottiene response status code 401

@@ -47,10 +47,7 @@ public class DelegatedArchivingRequestVerifier {
         ExpectedDelegatedArchivingRequest expectedRequest = new ExpectedDelegatedArchivingRequest();
         expectedRequest.setRequestedAt(OffsetDateTime.now(ZoneOffset.UTC));
         expectedRequest.setGracePeriodDays(gracePeriodDays);
-        expectedRequest.setDescriptorId(Objects.requireNonNull(
-                descriptorId,
-                "L'ID del vecchio descrittore è obbligatorio"
-        ));
+        expectedRequest.setDescriptorId(descriptorId);
         sharedStepsContext.getEServicesCommonContext()
                 .setExpectedDelegatedArchivingRequest(expectedRequest);
     }
@@ -61,10 +58,7 @@ public class DelegatedArchivingRequestVerifier {
                 "Nessuna richiesta di archiviazione è stata registrata"
         );
         expectedRequest.setDecisionAt(OffsetDateTime.now(ZoneOffset.UTC));
-        expectedRequest.setRejectionReason(Objects.requireNonNull(
-                rejectionReason,
-                "La motivazione del rifiuto è obbligatoria"
-        ));
+        expectedRequest.setRejectionReason(rejectionReason);
     }
 
     public void pollPendingEServiceArchivingRequest(UUID eServiceId) {
