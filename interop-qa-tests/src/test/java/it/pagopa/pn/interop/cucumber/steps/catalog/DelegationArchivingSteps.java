@@ -47,34 +47,34 @@ public class DelegationArchivingSteps {
         eServiceDelegatedArchivingRequestIsPending();
     }
 
-        @Given("l'utente ha già inviato la richiesta di archiviazione per il vecchio descrittore {string} dell'e-service {string} specificando {gracePeriodDays} giorni di preavviso")
-        public void delegatedOldDescriptorArchivingRequestAlreadySubmitted(
-                        String descriptorId,
-                        String eServiceId,
-                        GracePeriodDays gracePeriodDays
-        ) {
-                submitDelegatedDescriptorArchiving(descriptorId, eServiceId, gracePeriodDays);
-                assertDelegatedArchivingRequestSubmitted();
-                oldDescriptorDelegatedArchivingRequestIsPending();
-        }
+    @Given("l'utente ha già inviato la richiesta di archiviazione per il vecchio descrittore {string} dell'e-service {string} specificando {gracePeriodDays} giorni di preavviso")
+    public void delegatedOldDescriptorArchivingRequestAlreadySubmitted(
+            String descriptorId,
+            String eServiceId,
+            GracePeriodDays gracePeriodDays
+    ) {
+        submitDelegatedDescriptorArchiving(descriptorId, eServiceId, gracePeriodDays);
+        assertDelegatedArchivingRequestSubmitted();
+        oldDescriptorDelegatedArchivingRequestIsPending();
+    }
 
-        @Given("l'utente ha già rifiutato la richiesta di archiviazione per l'e-service {string} con motivazione {string}")
-        public void delegatedEServiceArchivingRequestAlreadyRejected(String eServiceId, String rejectionReason) {
-                rejectDelegatedEServiceArchiving(eServiceId, rejectionReason);
-                assertDelegatedArchivingRequestRejected();
-                eServiceDelegatedArchivingRequestIsRejected();
-        }
+    @Given("l'utente ha già rifiutato la richiesta di archiviazione per l'e-service {string} con motivazione {string}")
+    public void delegatedEServiceArchivingRequestAlreadyRejected(String eServiceId, String rejectionReason) {
+        rejectDelegatedEServiceArchiving(eServiceId, rejectionReason);
+        assertDelegatedArchivingRequestRejected();
+        eServiceDelegatedArchivingRequestIsRejected();
+    }
 
-        @Given("l'utente ha già rifiutato la richiesta di archiviazione per il vecchio descrittore {string} dell'e-service {string} con motivazione {string}")
-        public void delegatedOldDescriptorArchivingRequestAlreadyRejected(
-                        String descriptorId,
-                        String eServiceId,
-                        String rejectionReason
-        ) {
-                rejectDelegatedDescriptorArchiving(descriptorId, eServiceId, rejectionReason);
-                assertDelegatedArchivingRequestRejected();
-                oldDescriptorDelegatedArchivingRequestIsRejected();
-        }
+    @Given("l'utente ha già rifiutato la richiesta di archiviazione per il vecchio descrittore {string} dell'e-service {string} con motivazione {string}")
+    public void delegatedOldDescriptorArchivingRequestAlreadyRejected(
+            String descriptorId,
+            String eServiceId,
+            String rejectionReason
+    ) {
+        rejectDelegatedDescriptorArchiving(descriptorId, eServiceId, rejectionReason);
+        assertDelegatedArchivingRequestRejected();
+        oldDescriptorDelegatedArchivingRequestIsRejected();
+    }
 
     @When("l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da {string} per l'e-service {string} impostando {gracePeriodDays} giorni di preavviso")
     @When("l'utente invia al delegante una richiesta di archiviazione della vecchia versione identificata da {string} per l'e-service {string} impostando {gracePeriodDays} giorni di preavviso")
@@ -176,15 +176,15 @@ public class DelegationArchivingSteps {
         );
     }
 
-        @When("l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service {string} specificando una motivazione di {int} caratteri e {gracePeriodDays} giorni di preavviso")
-        public void submitDelegatedEServiceArchivingWithReasonLength(
-                        String eServiceId,
-                        int archivingReasonLength,
-                        GracePeriodDays gracePeriodDays
-        ) {
-                String archivingReason = RandomStringUtils.insecure().nextAlphanumeric(archivingReasonLength);
-                submitDelegatedEServiceArchiving(eServiceId, archivingReason, gracePeriodDays);
-        }
+    @When("l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service {string} specificando una motivazione di {int} caratteri e {gracePeriodDays} giorni di preavviso")
+    public void submitDelegatedEServiceArchivingWithReasonLength(
+            String eServiceId,
+            int archivingReasonLength,
+            GracePeriodDays gracePeriodDays
+    ) {
+        String archivingReason = RandomStringUtils.insecure().nextAlphanumeric(archivingReasonLength);
+        submitDelegatedEServiceArchiving(eServiceId, archivingReason, gracePeriodDays);
+    }
 
     @Then("la richiesta di archiviazione delegata dell'e-service è in stato pending")
     public void eServiceDelegatedArchivingRequestIsPending() {
@@ -194,57 +194,57 @@ public class DelegationArchivingSteps {
         delegatedArchivingRequestVerifier.pollPendingEServiceArchivingRequest(eServiceId);
     }
 
-        @Then("la richiesta di archiviazione delegata del vecchio descrittore è in stato pending")
-        public void oldDescriptorDelegatedArchivingRequestIsPending() {
-                clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+    @Then("la richiesta di archiviazione delegata del vecchio descrittore è in stato pending")
+    public void oldDescriptorDelegatedArchivingRequestIsPending() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
-                UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
-                delegatedArchivingRequestVerifier.pollPendingDescriptorArchivingRequest(eServiceId);
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        delegatedArchivingRequestVerifier.pollPendingDescriptorArchivingRequest(eServiceId);
+    }
+
+    @Then("la richiesta di archiviazione delegata dell'e-service è stata rifiutata con successo")
+    public void eServiceDelegatedArchivingRequestIsRejected() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        delegatedArchivingRequestVerifier.pollRejectedEServiceArchivingRequest(eServiceId);
+    }
+
+    @Then("la richiesta di archiviazione delegata del vecchio descrittore è stata rifiutata con successo")
+    public void oldDescriptorDelegatedArchivingRequestIsRejected() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        delegatedArchivingRequestVerifier.pollRejectedDescriptorArchivingRequest(eServiceId);
+    }
+
+    @Then("la richiesta di archiviazione pendente dell'e-service è stata annullata con successo")
+    public void pendingEServiceArchivingRequestIsCancelled() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        delegatedArchivingRequestVerifier.pollWithoutPendingEServiceArchivingRequest(eServiceId);
+    }
+
+    @Then("la richiesta di archiviazione pendente del vecchio descrittore è stata annullata con successo")
+    public void pendingOldDescriptorArchivingRequestIsCancelled() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        delegatedArchivingRequestVerifier.pollWithoutPendingDescriptorArchivingRequest(eServiceId);
+    }
+
+    private void assertDelegatedArchivingRequestSubmitted() {
+        if (httpCallExecutor.getResponseStatus() == null || !httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            throw new IllegalStateException("L'invio della richiesta di archiviazione delegata non ha avuto successo");
         }
+    }
 
-        @Then("la richiesta di archiviazione delegata dell'e-service è stata rifiutata con successo")
-        public void eServiceDelegatedArchivingRequestIsRejected() {
-                clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-
-                UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
-                delegatedArchivingRequestVerifier.pollRejectedEServiceArchivingRequest(eServiceId);
+    private void assertDelegatedArchivingRequestRejected() {
+        if (httpCallExecutor.getResponseStatus() == null || !httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            throw new IllegalStateException("Il rifiuto della richiesta di archiviazione delegata non ha avuto successo");
         }
-
-        @Then("la richiesta di archiviazione delegata del vecchio descrittore è stata rifiutata con successo")
-        public void oldDescriptorDelegatedArchivingRequestIsRejected() {
-                clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-
-                UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
-                delegatedArchivingRequestVerifier.pollRejectedDescriptorArchivingRequest(eServiceId);
-        }
-
-        @Then("la richiesta di archiviazione pendente dell'e-service è stata annullata con successo")
-        public void pendingEServiceArchivingRequestIsCancelled() {
-                clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-
-                UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
-                delegatedArchivingRequestVerifier.pollWithoutPendingEServiceArchivingRequest(eServiceId);
-        }
-
-        @Then("la richiesta di archiviazione pendente del vecchio descrittore è stata annullata con successo")
-        public void pendingOldDescriptorArchivingRequestIsCancelled() {
-                clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-
-                UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
-                delegatedArchivingRequestVerifier.pollWithoutPendingDescriptorArchivingRequest(eServiceId);
-        }
-
-        private void assertDelegatedArchivingRequestSubmitted() {
-                if (httpCallExecutor.getResponseStatus() == null || !httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
-                        throw new IllegalStateException("L'invio della richiesta di archiviazione delegata non ha avuto successo");
-                }
-        }
-
-        private void assertDelegatedArchivingRequestRejected() {
-                if (httpCallExecutor.getResponseStatus() == null || !httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
-                        throw new IllegalStateException("Il rifiuto della richiesta di archiviazione delegata non ha avuto successo");
-                }
-        }
+    }
 
     @When("l'utente delegato annulla la richiesta di archiviazione dell'e-service {string}")
     public void cancelDelegatedEServiceArchivingRequest(String eServiceId) {
