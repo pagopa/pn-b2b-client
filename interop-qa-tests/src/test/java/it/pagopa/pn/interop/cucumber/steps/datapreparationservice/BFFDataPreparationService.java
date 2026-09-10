@@ -816,8 +816,6 @@ public class BFFDataPreparationService {
             .contactName("Some contact name")
             .contactEmail("some@contact-email.it")
             .addServerUrlsItem(serverUrl);
-        sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().setContactName("Some contact name");
-        sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().setContactEmail("some@contact-email.it");
         httpCallExecutor.performCall(() -> eServiceClient.addEServiceTemplateInstanceInterfaceRestWithHttpInfo(eServiceId, descriptorId, seed));
         assertValidResponse();
 
