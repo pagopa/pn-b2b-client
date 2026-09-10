@@ -136,11 +136,11 @@ public class DataTestV25 extends AbstractDataTest {
                     Optional.ofNullable(expected.getDeliveryDetailCode()).ifPresent(
                             t -> assertThat(actual.getDeliveryDetailCode()).as(error + EQUALITY_DELIVERY_DETAIL_CODE).isEqualTo(t));
                     Optional.ofNullable(expected.getResponseStatus()).map(ResponseStatus::getValue).ifPresent(
-                            t -> assertThat(t).as(error + EQUALITY_RESPONSE_STATUS_VALUE).isEqualTo(actual.getResponseStatus().getValue()));
+                            t -> assertThat(actual.getResponseStatus().getValue()).as(error + EQUALITY_RESPONSE_STATUS_VALUE).isEqualTo(t));
                     Optional.ofNullable(expected.getDigitalAddress()).ifPresent(
-                            t -> assertThat(t).as(error + EQUALITY_DIGITAL_ADDRESS).isEqualTo(actual.getDigitalAddress()));
+                            t -> assertThat(actual.getDigitalAddress()).as(error + EQUALITY_DIGITAL_ADDRESS).isEqualTo(t));
                     Optional.ofNullable(expected.getSendingReceipts()).map(List::size).ifPresent(
-                            t -> assertThat(t).as(error + EQUALITY_SENDING_RECEIPTS_SIZE).isEqualTo(actual.getSendingReceipts().size()));
+                            t -> assertThat(actual.getSendingReceipts().size()).as(error + EQUALITY_SENDING_RECEIPTS_SIZE).isEqualTo(t));
                     for (int i = 0; i < actual.getSendingReceipts().size(); i++) {
                         assertThat(actual.getSendingReceipts().get(i)).as("Il sendingReceipt non dev'essere null").isNotNull();
                         assertThat(actual.getSendingReceipts().get(i).getId()).as("L'ID del sendingReceipt non dev'essere null").isNotNull();
