@@ -1718,3 +1718,18 @@ Feature: Gestione deleghe per archiviazione manuale e-service
       | eServiceId | statusCode |
       | %null      | 400        |
       | %random    | 404        |
+
+  @sad-path
+  Scenario: [DELEGATION_MANUAL_ARCHIVING_CONTRACT_4.2] L'ente delegato NON può annullare la richiesta di archiviazione dell'e-service precedentemente inviata e ancora in pending se il token di accesso utilizzato non è valido
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    And l'utente ha già inviato la richiesta di archiviazione per l'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
+    And viene impostato per l'utente un token non valido
+    When l'utente delegato annulla la richiesta di archiviazione dell'e-service "%actual"
+    Then si ottiene response status code 401
+
