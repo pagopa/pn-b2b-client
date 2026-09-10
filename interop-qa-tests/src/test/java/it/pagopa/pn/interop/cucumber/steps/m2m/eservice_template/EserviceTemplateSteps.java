@@ -85,7 +85,7 @@ public class EserviceTemplateSteps {
         this.eServiceTemplateSeedFactory = eServiceTemplateSeedFactory;
     }
 
-    private void setCreatedEServiceTemplateInCommonContext(EServiceTemplate eServiceTemplate) {
+    private void setCreatedEServiceTemplateInCommonContext(EServiceTemplate eServiceTemplate, EServiceTemplateVersion eServiceTemplateVersion) {
         EServiceTemplateInfo eServiceTemplateInfo = new EServiceTemplateInfo(
                 eServiceTemplate.getName(),
                 eServiceTemplate.getIntendedTarget(),
@@ -93,7 +93,7 @@ public class EserviceTemplateSteps {
                 null,
                 null,
                 eServiceTemplate.getId(),
-                null,
+                eServiceTemplateVersion.getId(),
                 null,
                 false
         );
@@ -105,10 +105,24 @@ public class EserviceTemplateSteps {
         EServiceTemplateSeed eServiceTemplateSeed = eServiceTemplateSeedFactory.defaultEServiceTemplateSeed();
         httpCallExecutor.performCall(() -> dataPreparationService.createEServiceTemplate(eServiceTemplateSeed));
 
-        if (httpCallExecutor.getResponseStatus() == HttpStatus.CREATED || httpCallExecutor.getResponseStatus() == HttpStatus.OK) {
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             EServiceTemplate eServiceTemplate = (EServiceTemplate) httpCallExecutor.getResponse();
-            this.setCreatedEServiceTemplateInCommonContext(eServiceTemplate);
+            httpCallExecutor.performCall(() -> dataPreparationService.getEServiceTemplateVersions(eServiceTemplate.getId()));
+            EServiceTemplateVersion eServiceTemplateVersion = ((EServiceTemplateVersions) httpCallExecutor.getResponse()).getResults().get(0);
+            this.setCreatedEServiceTemplateInCommonContext(eServiceTemplate, eServiceTemplateVersion);
         }
+    }
+
+    @When("l'utente tenta la creazione dell'e-service template con la configurazione predefinita e con la descrizione della versione impostata a {string}")
+    public void createEServiceTemplateWithVersionDescription(String versionDescriptionContent) {
+        EServiceTemplateSeed eServiceTemplateSeed = eServiceTemplateSeedFactory.defaultEServiceTemplateSeed();
+        String value = switch (versionDescriptionContent) {
+            case "%null%" -> null;
+            case "%empty%" -> "";
+            default -> versionDescriptionContent;
+        };
+        eServiceTemplateSeed.getVersion().setDescription(value);
+        httpCallExecutor.performCall(() -> dataPreparationService.createEServiceTemplate(eServiceTemplateSeed));
     }
 
     @When("l'utente tenta la creazione del template e-service con la seguente configurazione:")
@@ -124,9 +138,11 @@ public class EserviceTemplateSteps {
 
         httpCallExecutor.performCall(() -> dataPreparationService.createEServiceTemplate(eServiceTemplateSeed));
 
-        if (httpCallExecutor.getResponseStatus() == HttpStatus.CREATED || httpCallExecutor.getResponseStatus() == HttpStatus.OK) {
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             EServiceTemplate eServiceTemplate = (EServiceTemplate) httpCallExecutor.getResponse();
-            this.setCreatedEServiceTemplateInCommonContext(eServiceTemplate);
+            httpCallExecutor.performCall(() -> dataPreparationService.getEServiceTemplateVersions(eServiceTemplate.getId()));
+            EServiceTemplateVersion eServiceTemplateVersion = ((EServiceTemplateVersions) httpCallExecutor.getResponse()).getResults().get(0);
+            this.setCreatedEServiceTemplateInCommonContext(eServiceTemplate, eServiceTemplateVersion);
         }
     }
 
