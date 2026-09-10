@@ -1,6 +1,15 @@
 Feature: Monitoraggio delle campagne per le notifiche bonarie.
 
 
+
+ # STEP :
+Given vengono salvati i dati statistici attuali della campagna "TEST_CAMPAIGN"
+
+Then il contatore "totalCount" della campagna "TEST_CAMPAIGN" risulta incrementato di 1
+
+
+
+
   @informalNotificationsMonitorCampaign
   Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_1_A] Come ente mittente sottometto una notifica bonaria che verrà INVIATA su canale ANALOGICO, il contatore del monitoraggio si incrementa correttamente.
     # call monitor
