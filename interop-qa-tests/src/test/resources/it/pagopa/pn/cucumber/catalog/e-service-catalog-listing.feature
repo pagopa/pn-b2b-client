@@ -286,7 +286,6 @@ Feature: Listing catalogo e-services
 
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
-    And l'utente tenta delle modifiche alla versione dell'e-service template
     When l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
     And l'utente è un "admin" di "PA2"
     Then l'utente legge da catalogo l'ultimo descrittore e-service con riferimenti al template
@@ -347,8 +346,7 @@ Feature: Listing catalogo e-services
     And l'utente effettua delle modifiche alla versione dell'e-service template con successo
     And l'utente tenta la pubblicazione della versione dell'e-service template
     When la pubblicazione della versione dell'e-service template è stata effettuata correttamente
-    Then l'utente legge da catalogo l'ultimo descrittore e-service con riferimenti al template e dati:
-      | isNewTemplateVersionAvailable | true |
+    Then l'utente legge da catalogo l'ultimo descrittore e-service con riferimenti alla precedente versione del template
 
     When l'utente tenta l'aggiornamento dell'istanza dell'e-service template all'ultima versione
     And la versione più recente dell'e-service è in stato "DRAFT"
@@ -402,7 +400,6 @@ Feature: Listing catalogo e-services
     And la vecchia versione dell'e-service è in stato "ARCHIVED"
     And l'utente è un "admin" di "PA2"
     Then l'utente legge da catalogo il vecchio descrittore e-service con riferimenti al template
-      | isNewTemplateVersionAvailable | true |
 
     Given "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'utente è un "admin" di "PA1"
@@ -410,7 +407,6 @@ Feature: Listing catalogo e-services
     And l'e-service è in stato "SUSPENDED"
     And l'utente è un "admin" di "PA2"
     Then l'utente legge da catalogo l'ultimo descrittore e-service con riferimenti al template
-      | isNewTemplateVersionAvailable | true |
 
     Given l'utente è un "admin" di "PA1"
     And l'utente attiva il descrittore di quell'e-service
@@ -442,21 +438,18 @@ Feature: Listing catalogo e-services
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And l'utente è un "admin" di "PA2"
     Then l'utente legge da catalogo il vecchio descrittore e-service con riferimenti al template
-      | isNewTemplateVersionAvailable | true |
 
     Given l'utente è un "admin" di "PA1"
     When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 30 giorni di preavviso
     And l'e-service è in stato "ARCHIVING"
     And l'utente è un "admin" di "PA2"
     Then l'utente legge da catalogo l'ultimo descrittore e-service con riferimenti al template
-      | isNewTemplateVersionAvailable | true |
 
     Given l'utente è un "admin" di "PA1"
     When "PA1" ha già sospeso quell'e-service
     And l'e-service è in stato "ARCHIVING_SUSPENDED"
     And l'utente è un "admin" di "PA2"
     Then l'utente legge da catalogo l'ultimo descrittore e-service con riferimenti al template
-      | isNewTemplateVersionAvailable | true |
 
   @happy-path
   @nrt-minimal
