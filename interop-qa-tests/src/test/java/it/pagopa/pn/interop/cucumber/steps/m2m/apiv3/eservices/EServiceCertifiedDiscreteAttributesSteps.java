@@ -37,6 +37,7 @@ public class EServiceCertifiedDiscreteAttributesSteps {
 
     /**
      * Crea e aggiunge gli attributi al descrittore dell'e-service.
+     * L'utente deve essere un ente certificatore.
      *
      * @param attributesSpec Lista di attributi da aggiungere al descrittore dell'e-service. Il campo group è a base zero.
      */
@@ -120,21 +121,9 @@ public class EServiceCertifiedDiscreteAttributesSteps {
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
 
         this.associateLastCertifiedDiscreteAttributePublished(eServiceId, descriptorId, groupIndex);
-
-        if (httpExecutor.getResponseStatus().is2xxSuccessful()) {
-            // Update group in context
-            List<CertifiedDiscreteAttribute> publishedAttributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscretePublished();
-            CertifiedDiscreteAttribute certifiedDiscreteAttribute = publishedAttributes.get(publishedAttributes.size() - 1);
-            List<List<CertifiedDiscreteAttribute>> assignedAttributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscreteAssigned();
-
-            while (assignedAttributes.size() <= groupIndex) {
-                assignedAttributes.add(new ArrayList<>());
-            }
-            assignedAttributes.get(groupIndex).add(certifiedDiscreteAttribute);
-        }
     }
 
-    @When("l'utente tenta di associare un attributo certificato discreto all'e-service senza specificare alcun parametro")
+    @When("l’utente tenta di associare un attributo certificato discreto all'e-service senza specificarne alcuno")
     public void associateCertifiedDiscreteAttributeWithoutParameters() {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
@@ -147,7 +136,7 @@ public class EServiceCertifiedDiscreteAttributesSteps {
         );
     }
 
-    @When("l'utente tenta di associare l'attributo certificato discreto creato all'e-service senza specificare i parametri necessari")
+    @When("l'utente tenta di associare l'attributo certificato discreto creato all'e-service senza specificare tutti i parametri necessari")
     public void associateCertifiedDiscreteAttributeWithMissingParameters() {
         List<CertifiedDiscreteAttribute> publishedAttributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscretePublished();
 
@@ -175,7 +164,10 @@ public class EServiceCertifiedDiscreteAttributesSteps {
         EServiceDescriptorCertifiedDiscreteAttributesGroupSeed attributesGroupSeed = new EServiceDescriptorCertifiedDiscreteAttributesGroupSeed();
         EServiceDescriptorCertifiedDiscreteAttributesGroupSeedAttributesInner attributeSeed = new EServiceDescriptorCertifiedDiscreteAttributesGroupSeedAttributesInner();
         attributeSeed.setId(generateId(entityIdType));
-        attributeSeed.setDiscreteConfig(new EServiceAttributeCertifiedDiscreteConfigSeed());
+        var discreteConfigSeed = new EServiceAttributeCertifiedDiscreteConfigSeed();
+        discreteConfigSeed.setComparator(AttributeCertifiedDiscreteComparator.GT);
+        discreteConfigSeed.setThreshold(100);
+        attributeSeed.setDiscreteConfig(discreteConfigSeed);
         attributesGroupSeed.addAttributesItem(attributeSeed);
 
         httpExecutor.performCall(
@@ -302,6 +294,9 @@ public class EServiceCertifiedDiscreteAttributesSteps {
 
         if (httpExecutor.getResponseStatus().is2xxSuccessful()) {
             assignedAttributes.get(groupIndex).remove(attributeIndex);
+            if (assignedAttributes.get(groupIndex).isEmpty()) {
+                assignedAttributes.remove(groupIndex);
+            }
         }
     }
 
@@ -396,29 +391,47 @@ public class EServiceCertifiedDiscreteAttributesSteps {
         return certifiedDiscreteAttributeClient.create(seed);
     }
 
-    private void associateLastCertifiedDiscreteAttributePublished(UUID eServiceId, UUID descriptorId, Integer groupIndex) {
-        List<CertifiedDiscreteAttribute> publishedAttributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscretePublished();
-        CertifiedDiscreteAttribute lastPublishedAttribute = publishedAttributes.get(publishedAttributes.size() - 1);
-
+    private EServiceDescriptorCertifiedDiscreteAttributesGroupSeed createEServiceDescriptorCertifiedDiscreteAttributesGroupSeed(
+            CertifiedDiscreteAttribute attribute
+    ) {
         EServiceDescriptorCertifiedDiscreteAttributesGroupSeed attributesGroupSeed = new EServiceDescriptorCertifiedDiscreteAttributesGroupSeed();
         EServiceDescriptorCertifiedDiscreteAttributesGroupSeedAttributesInner attributeSeed = new EServiceDescriptorCertifiedDiscreteAttributesGroupSeedAttributesInner();
-        attributeSeed.setId(lastPublishedAttribute.getId());
+        attributeSeed.setId(attribute.getId());
         EServiceAttributeCertifiedDiscreteConfigSeed configSeed = new EServiceAttributeCertifiedDiscreteConfigSeed();
         configSeed.setComparator(AttributeCertifiedDiscreteComparator.GT);
         configSeed.setThreshold(100);
         attributeSeed.setDiscreteConfig(configSeed);
         attributesGroupSeed.addAttributesItem(attributeSeed);
+        return attributesGroupSeed;
+    }
+
+    private void associateLastCertifiedDiscreteAttributePublished(UUID eServiceId, UUID descriptorId, Integer groupIndex) {
+        var context = sharedStepsContext.getAttributeCommonContext();
+        List<CertifiedDiscreteAttribute> publishedAttributes = context.getCertifiedDiscretePublished();
+        CertifiedDiscreteAttribute lastPublishedAttribute = publishedAttributes.get(publishedAttributes.size() - 1);
+
+        EServiceDescriptorCertifiedDiscreteAttributesGroupSeed attributesGroupSeed = createEServiceDescriptorCertifiedDiscreteAttributesGroupSeed(lastPublishedAttribute);
 
         if (groupIndex == null) {
             httpExecutor.performCall(
                     () -> this.eServiceAttributeClient.createEServiceDescriptorCertifiedDiscreteAttributesGroup(
                             eServiceId, descriptorId, attributesGroupSeed)
             );
+            if (httpExecutor.getResponseStatus().is2xxSuccessful()) {
+                // Create a new group
+                var newGroup = new ArrayList<CertifiedDiscreteAttribute>();
+                newGroup.add(lastPublishedAttribute);
+                context.getCertifiedDiscreteAssigned().add(newGroup);
+            }
         } else {
             httpExecutor.performCall(
                     () -> this.eServiceAttributeClient.assignEServiceDescriptorCertifiedDiscreteAttributesToGroup(
                             eServiceId, descriptorId, groupIndex, attributesGroupSeed)
             );
+            if (httpExecutor.getResponseStatus().is2xxSuccessful()) {
+                // Update existing group
+                context.getCertifiedDiscreteAssigned().get(groupIndex).add(lastPublishedAttribute);
+            }
         }
     }
 
