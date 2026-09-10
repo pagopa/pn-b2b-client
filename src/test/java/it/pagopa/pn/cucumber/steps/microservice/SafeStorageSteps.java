@@ -40,6 +40,7 @@ public class SafeStorageSteps {
 
     private static final String DEFAULT_CLIENT_ID = "pn-test";
     private static final ZoneId ITALY_TIME_ZONE = ZoneId.of("Europe/Rome");
+    private static final Duration PRESIGNED_URL_REQUEST_TIMEOUT = Duration.ofSeconds(30);
 
     private final ApplicationContext context;
     private final IPnSafeStoragePrivateClient safeStorageClient;
@@ -354,7 +355,11 @@ public class SafeStorageSteps {
         assertThat(downloadUrl).as("La presigned-url deve essere stata acquisita").isNotBlank();
 
         HttpClient httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(downloadUrl)).GET().build();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(downloadUrl))
+                .timeout(PRESIGNED_URL_REQUEST_TIMEOUT)
+                .GET()
+                .build();
         try {
             HttpResponse<Void> response = httpClient.send(request, HttpResponse.BodyHandlers.discarding());
             safeStorageStepsPojo.setIssuedDownloadStatusCode(response.statusCode());
