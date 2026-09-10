@@ -12,7 +12,7 @@ Feature: avanzamento notifiche webhook b2b V28
       | denomination | Galileo galileo  |
       | taxId        | GLLGLL64B15G702I |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V28"
-    And allo stream versione "V28" si setta il campo waitForAccepted introdotto con la versione 27 a "true"
+    And allo stream versione "V28" si setta il campo waitForAccepted a "true"
     And Viene creata una nuova apiKey per il comune "Comune_1" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
