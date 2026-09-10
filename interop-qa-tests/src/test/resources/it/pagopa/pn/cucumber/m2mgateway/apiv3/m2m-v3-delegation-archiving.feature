@@ -274,3 +274,15 @@ Feature: (M2M v3) Gestione deleghe per archiviazione manuale e-service
       | 9                     |
       | 251                   |
 
+  @sad-path
+  Scenario: [M2M_V3_DELEGATION_MANUAL_ARCHIVING_CONTRACT_1.3] Un ente delegato NON può richiedere via M2M v3 al delegante di avviare il processo di archiviazione di un e-service in delega se il token di accesso utilizzato non è valido
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And viene impostato per l'utente un token m2m non valido
+    When l'utente delegato invia via M2M v3 al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
+    Then si ottiene response status code 401
