@@ -364,9 +364,8 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 .isGreaterThanOrEqualTo(extraField.introducingVersion);
         WebhookStepsInterface webhookStepsInterface = getWebhookStep(streamVersion);
         switch (extraField) {
-            case WAIT_FOR_ACCEPTED ->
-                    webhookStepsInterface.setValueForWaitForAccepted(Boolean.parseBoolean(extraFieldValue));
-            case COMMUNICATION_TYPE -> System.out.println("TODO MATTEO set communicationType");
+            case WAIT_FOR_ACCEPTED -> webhookStepsInterface.setValueForWaitForAccepted(extraFieldValue);
+            case COMMUNICATION_TYPE -> webhookStepsInterface.setValueForCommunicationType(extraFieldValue);
         }
     }
 

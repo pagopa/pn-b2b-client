@@ -77,7 +77,7 @@ public interface WebhookStepsInterface {
 
     <T> void verifyAssertionsTimeline(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream, T progressResponseElement);
 
-    default void setValueForWaitForAccepted(boolean waitForAccepted) {
+    default void setValueForWaitForAccepted(String waitForAccepted) {
         // waitForAccepted introdotto a partire dalla V27
     }
 
