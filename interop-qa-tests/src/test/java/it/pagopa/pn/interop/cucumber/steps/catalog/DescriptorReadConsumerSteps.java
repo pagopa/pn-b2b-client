@@ -46,7 +46,7 @@ public class DescriptorReadConsumerSteps {
         );
     }
 
-    @When("^l'utente legge da catalogo i?l'? ?(ultimo|vecchio) descrittore e-service (senza|con) riferimenti al(|la precedente versione del) template$")
+    @When("^l'utente legge da catalogo i?l'? ?(ultimo|vecchio) descrittore e-service (senza|con) riferimenti al(|la precedente versione) template$")
     public void readEServiceDescriptorFromCatalogueAndCheckTemplateInfo(String descriptorQualifier, String templateRefWith, String prevTemplateVersion) {
          if (descriptorQualifier.equals("vecchio")) {
             requireOldDescriptorRead();
@@ -58,12 +58,8 @@ public class DescriptorReadConsumerSteps {
         UUID expectedTemplateVersionId = null;
         if (templateRefWith.equals("con")) {
             expectedTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId();
-            if (descriptorQualifier.equals("vecchio")) {
+            if (!prevTemplateVersion.isEmpty()) {
                 expectedTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getOldVersionId();
-            } else {
-                if (!prevTemplateVersion.isEmpty()) {
-                    expectedTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getOldVersionId();
-                }
             }
         }
 
