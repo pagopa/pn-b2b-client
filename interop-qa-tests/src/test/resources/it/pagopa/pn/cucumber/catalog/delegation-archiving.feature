@@ -1622,3 +1622,25 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And viene impostato per l'utente un token non valido
     When l'utente delegante accetta la richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual"
     Then si ottiene response status code 401
+
+  @sad-path
+  Scenario Outline: [DELEGATION_MANUAL_ARCHIVING_CONTRACT_3.1] Specificando parametri errati o mancanti, un ente delegante NON può rifiutare la richiesta di archiviazione di un e-service inviata dall'ente delegato
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    And l'utente ha già inviato la richiesta di archiviazione per l'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
+    And l'utente è un "admin" di "PA1"
+    When l'utente delegante rifiuta la richiesta di archiviazione delegata dell'e-service "<eServiceId>" con motivazione "<rejectionReason>"
+    Then si ottiene response status code <statusCode>
+
+    Examples:
+      | eServiceId | rejectionReason                        | statusCode |
+      | %null      | QA test rejection delegation archiving | 400        |
+      | %random    | QA test rejection delegation archiving | 404        |
+      | %actual    | %null                                  | 400        |
+      | %actual    | %blank                                 | 400        |
+
