@@ -8,16 +8,16 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AsyncExchangeProperties;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.FileResource;
-import it.pagopa.pn.interop.cucumber.steps.DocumentMetadata;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
+import it.pagopa.pn.interop.cucumber.steps.DocumentMetadata;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.PreconditionValidator.Precondition;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.assertj.core.api.SoftAssertions;
@@ -35,9 +35,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.OffsetDateTime;
 import java.util.*;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import static it.pagopa.pn.interop.cucumber.utility.PreconditionValidator.checkPrecondition;
 import static it.pagopa.pn.interop.cucumber.utility.PreconditionValidator.checkPreconditions;
+import static it.pagopa.pn.interop.cucumber.utility.ResourceUtils.extractUploadPath;
 
 public class DescriptorExportSteps {
     /**
@@ -421,8 +424,19 @@ public class DescriptorExportSteps {
     }
 
     private boolean hasValuedFields(JsonNode jsonNode) {
-        return jsonNode != null && jsonNode.isObject() && jsonNode.properties().stream()
-                .anyMatch(field -> !field.getValue().isNull());
+        if (jsonNode == null || !jsonNode.isObject()) {
+            return false;
+        }
+
+        /* 10/09/2026 Si usa il metodo fields() nonostante nelle nuove versioni sia deprecato,
+        * poiché al momento nel classpath è presente più di una versione di Jackson, e quale
+        * considerare non è indicato esplicitamente. Si opta quindi per il metodo fields() per aver
+        * maggiore compatibilità. Analisi completa in interop-qa-tests/docs/JACKSON_DEPENDENCY_RESOLUTION.md */
+        Stream<Map.Entry<String, JsonNode>> jsonFields = StreamSupport.stream(
+                Spliterators.spliteratorUnknownSize(jsonNode.fields(), Spliterator.ORDERED),
+                false
+        );
+        return jsonFields.anyMatch(entry -> !entry.getValue().isNull());
     }
 
     private String assertInterfaceEntry(SoftAssertions softly,
@@ -584,13 +598,6 @@ public class DescriptorExportSteps {
                 .build());
     }
 
-    private String extractUploadPath(Resource resource) {
-        try {
-            return resource.getFile().toPath().toAbsolutePath().normalize().toString();
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to resolve uploaded document path", e);
-        }
-    }
 
 
     private byte[] downloadFile(URI fileUrl) {

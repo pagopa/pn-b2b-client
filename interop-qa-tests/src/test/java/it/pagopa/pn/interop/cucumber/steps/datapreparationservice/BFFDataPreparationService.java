@@ -50,6 +50,7 @@ import java.util.function.BiFunction;
 
 import static it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState.PUBLISHED;
 import static it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode.RECEIVE;
+import static it.pagopa.pn.interop.cucumber.utility.ResourceUtils.extractUploadPath;
 import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNullElse;
 import static org.apache.commons.collections4.IterableUtils.size;
@@ -708,14 +709,6 @@ public class BFFDataPreparationService {
         }
 
         return documents;
-    }
-
-    private String extractUploadPath(Resource resource) {
-        try {
-            return resource.getFile().toPath().toAbsolutePath().normalize().toString();
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to resolve uploaded document path", e);
-        }
     }
 
     public Map<String, Object> bringTemplateInstanceDescriptorToGivenState(UUID eServiceId, UUID descriptorId, EServiceDescriptorState descriptorState, boolean withDocument) {
