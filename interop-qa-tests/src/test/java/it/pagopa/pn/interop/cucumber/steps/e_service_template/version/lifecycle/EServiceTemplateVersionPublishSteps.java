@@ -77,7 +77,18 @@ public class EServiceTemplateVersionPublishSteps {
                         eServiceTemplateId,
                         eServiceTemplateVersionId),
                     ResponseEntity::getStatusCode),
-                res -> nonNull(res.getBody()) && res.getBody().getState() == EServiceTemplateVersionState.PUBLISHED,
+                res -> {
+                    int versionsCount = res.getBody().getEserviceTemplate().getVersions().size();
+                    if (versionsCount > 1) {
+                        sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().setOldVersionId(
+                                res.getBody().getEserviceTemplate().getVersions().get(versionsCount - 2).getId()
+                        );
+                    }
+                    sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().setLastVersionId(
+                            res.getBody().getEserviceTemplate().getVersions().get(versionsCount - 1).getId()
+                    );
+                    return nonNull(res.getBody()) && res.getBody().getState() == EServiceTemplateVersionState.PUBLISHED;
+                },
                 "La versione dell'e-service template non è stata pubblicata correttamente"
             );
         } catch (PollingPredicateException e) {
