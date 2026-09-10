@@ -346,7 +346,7 @@ Feature: Listing catalogo e-services
     And l'utente effettua delle modifiche alla versione dell'e-service template con successo
     And l'utente tenta la pubblicazione della versione dell'e-service template
     When la pubblicazione della versione dell'e-service template è stata effettuata correttamente
-    Then l'utente legge da catalogo l'ultimo descrittore e-service con riferimenti alla precedente versione del template
+    Then l'utente legge da catalogo l'ultimo descrittore e-service con riferimenti alla precedente versione template
 
     When l'utente tenta l'aggiornamento dell'istanza dell'e-service template all'ultima versione
     And la versione più recente dell'e-service è in stato "DRAFT"
@@ -399,7 +399,7 @@ Feature: Listing catalogo e-services
     And la versione più recente dell'e-service è in stato "PUBLISHED"
     And la vecchia versione dell'e-service è in stato "ARCHIVED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente legge da catalogo il vecchio descrittore e-service con riferimenti al template
+    Then l'utente legge da catalogo il vecchio descrittore e-service con riferimenti alla precedente versione template
 
     Given "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'utente è un "admin" di "PA1"
@@ -437,7 +437,7 @@ Feature: Listing catalogo e-services
     And la versione più recente dell'e-service è in stato "PUBLISHED"
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And l'utente è un "admin" di "PA2"
-    Then l'utente legge da catalogo il vecchio descrittore e-service con riferimenti al template
+    Then l'utente legge da catalogo il vecchio descrittore e-service con riferimenti alla precedente versione template
 
     Given l'utente è un "admin" di "PA1"
     When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 30 giorni di preavviso
@@ -482,6 +482,7 @@ Feature: Listing catalogo e-services
 
     Given l'utente è un "admin" di "PA1"
     And l'utente attiva il descrittore di quell'e-service
+    And l'e-service è in stato "PUBLISHED"
     And l'utente crea una versione in bozza per quell'e-service istanza di template
     And la versione più recente dell'e-service è in stato "DRAFT"
     And l'utente specifica i metadati mancanti all'istanza del template asincrono con successo
