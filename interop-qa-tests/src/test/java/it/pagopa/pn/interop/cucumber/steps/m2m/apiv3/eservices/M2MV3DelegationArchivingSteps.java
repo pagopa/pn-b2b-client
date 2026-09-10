@@ -10,6 +10,7 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.catalog.utils.CatalogResolver;
 import java.util.UUID;
+import org.apache.commons.lang3.RandomStringUtils;
 
 public class M2MV3DelegationArchivingSteps {
     private final IHttpExecutor httpExecutor;
@@ -46,6 +47,16 @@ public class M2MV3DelegationArchivingSteps {
 
         httpExecutor.performCall(
             () -> eServiceClient.submitDelegatedEServiceArchiving(resolvedEServiceId, request));
+    }
+
+    @When("l'utente delegato invia via M2M v3 al delegante una richiesta di archiviazione dell'e-service {string} specificando una motivazione di {int} caratteri e {gracePeriodDays} giorni di preavviso")
+    public void submitDelegatedEServiceArchivingWithReasonLength(
+        String eServiceId,
+        int archivingReasonLength,
+        GracePeriodDays gracePeriodDays
+    ) {
+        String archivingReason = RandomStringUtils.insecure().nextAlphanumeric(archivingReasonLength);
+        submitDelegatedEServiceArchiving(eServiceId, archivingReason, gracePeriodDays);
     }
 
     @When("l'utente delegato annulla via M2M v3 la richiesta di archiviazione dell'e-service {string}")
