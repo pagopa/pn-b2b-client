@@ -141,3 +141,9 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
       | PA4     | GSP         |
       | GSP2    | PA          |
       | Privato | PA          |
+
+  @adeguamento-analisi-rischio
+  Scenario: [RISK_ANALYSIS_NO_PA_COMPILE_1] Analisi rischio specificando misure tecniche per dati particolari e giudiziari in finalità fruizione (No PA)
+  Si verifica che compilando l'analisi del rischio con le misure tecniche e organizzative per i dati particolari e i
+  dati giudiziari, che si attivano trattando dati personali, i nuovi campi siano obbligatori per enti non PA durante la
+  pubblicazione di una finalità per fruizione di dati.
