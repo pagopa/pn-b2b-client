@@ -1550,7 +1550,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     Then si ottiene response status code 401
 
   @sad-path
-  Scenario Outline: [DELEGATION_MANUAL_ARCHIVING_CONTRACT_2.1] Specificando parametri errati o mancanti, un ente delegante può accettare la richiesta di archiviazione di un e-service inviata dall'ente delegato
+  Scenario Outline: [DELEGATION_MANUAL_ARCHIVING_CONTRACT_2.1] Specificando parametri errati o mancanti, un ente delegante NON può accettare la richiesta di archiviazione di un e-service inviata dall'ente delegato
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -1584,7 +1584,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     Then si ottiene response status code 401
 
   @sad-path
-  Scenario Outline: [DELEGATION_MANUAL_ARCHIVING_CONTRACT_2.3] Specificando parametri errati o mancanti, un ente delegante può accettare la richiesta di archiviazione del descrittore meno recente inviata dall'ente delegato
+  Scenario Outline: [DELEGATION_MANUAL_ARCHIVING_CONTRACT_2.3] Specificando parametri errati o mancanti, un ente delegante NON può accettare la richiesta di archiviazione del descrittore meno recente inviata dall'ente delegato
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
