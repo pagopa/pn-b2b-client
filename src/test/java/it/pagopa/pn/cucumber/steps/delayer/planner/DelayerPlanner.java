@@ -167,12 +167,21 @@ public class DelayerPlanner {
                 .filter(n -> !n.isInformalCommunication())
                 .toList();
 
-        List<DelayerPaperDelivery> toEvaluateNormally = notifications.stream()
-                .filter(n -> !((n.isRS() && !n.isInformalCommunication()) || n.isSecondAttempt()))
+        // 2bis. Separa i residui prioritari (skipSenderLimit=true): stesso bypass di RS/secondi tentativi,
+        // ma non consumano il limite garantito del mittente sulla settimana di elaborazione corrente.
+        List<DelayerPaperDelivery> residuiPrioritari = notifications.stream()
+                .filter(n -> !n.isRS() && !n.isSecondAttempt() && !n.isInformalCommunication())
+                .filter(n -> Boolean.TRUE.equals(n.getSkipSenderLimit()))
                 .toList();
 
-        // 3. RS e secondi tentativi vanno direttamente alla valutazione successiva
+        List<DelayerPaperDelivery> toEvaluateNormally = notifications.stream()
+                .filter(n -> !((n.isRS() && !n.isInformalCommunication()) || n.isSecondAttempt()))
+                .filter(n -> !Boolean.TRUE.equals(n.getSkipSenderLimit()))
+                .toList();
+
+        // 3. RS, secondi tentativi e residui prioritari vanno direttamente alla valutazione successiva
         passedSenderLimit.addAll(utils.deepCopyAndUpdateKeys(rsOrSecondAttempt, WorkflowSteps.EVALUATE_SENDER_PRIORITY, context.expectedDeliveryDate));
+        passedSenderLimit.addAll(utils.deepCopyAndUpdateKeys(residuiPrioritari, WorkflowSteps.EVALUATE_SENDER_PRIORITY, context.expectedDeliveryDate));
 
         //4. Gli 890 e gli RS INFORMAL (comunicazioni bonarie) vengono processati per mittente censito e non
         toEvaluateNormally = sortByPriority(toEvaluateNormally);

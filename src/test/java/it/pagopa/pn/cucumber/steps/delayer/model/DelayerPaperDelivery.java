@@ -36,6 +36,8 @@ public class DelayerPaperDelivery {
     private String senderPriority;
     private String virtualNotificationSentAt;
     private boolean isInformalCommunication;
+    private Boolean skipSenderLimit;
+    private Boolean delayed;
 
     public DelayerPaperDelivery(List<String> header, List<String> csvLine) {
         if (header == null || csvLine == null || header.size() != csvLine.size()) {
@@ -67,6 +69,8 @@ public class DelayerPaperDelivery {
             communicationType = "LEGAL";
         }
         this.isInformalCommunication = communicationType.equalsIgnoreCase("INFORMAL");
+        this.skipSenderLimit = parseNullableBoolean(getField(rowMap, "skipSenderLimit"));
+        this.delayed = parseNullableBoolean(getField(rowMap, "delayed"));
     }
 
     public DelayerPaperDelivery(JsonNode tableRecord) {
@@ -93,6 +97,11 @@ public class DelayerPaperDelivery {
             communicationType = "LEGAL";
         }
         this.isInformalCommunication = communicationType.equalsIgnoreCase("INFORMAL");
+        this.skipSenderLimit = parseNullableBoolean(getField(tableRecord, "skipSenderLimit"));
+    }
+
+    private Boolean parseNullableBoolean(String value) {
+        return value == null ? null : Boolean.valueOf(value);
     }
 
     public DelayerPaperDelivery(DelayerPaperDelivery source) {
@@ -112,6 +121,8 @@ public class DelayerPaperDelivery {
         this.senderPriority = source.senderPriority;
         this.virtualNotificationSentAt = source.virtualNotificationSentAt;
         this.isInformalCommunication = source.isInformalCommunication;
+        this.skipSenderLimit = source.skipSenderLimit;
+        this.delayed = source.delayed;
     }
 
     private String requireField(JsonNode node, String fieldName, boolean nullable) {
@@ -151,6 +162,7 @@ public class DelayerPaperDelivery {
     public boolean isSecondAttempt() {
         return Integer.parseInt(this.getAttempt()) == 1;
     }
+
     public int getSenderPriorityValue() {
         if (this.senderPriority == null || this.senderPriority.isBlank()) {
             return 0;
