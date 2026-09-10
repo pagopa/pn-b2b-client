@@ -15,6 +15,7 @@ public class EServiceTemplateSeedFactory {
 
     public VersionSeedForEServiceTemplateCreation defaultVersionSeedForEServiceTemplateCreation() {
         return new VersionSeedForEServiceTemplateCreation()
+                .description("Version description")
                 .voucherLifespan(86400);
     }
 
