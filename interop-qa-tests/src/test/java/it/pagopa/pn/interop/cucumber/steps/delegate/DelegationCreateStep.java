@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.delegate;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
@@ -319,6 +320,26 @@ public class DelegationCreateStep {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         String delegatorTenant = sharedStepsContext.getTenantType();
         createDelegate(delegatorTenant, tenantType, producerDelegationsApiClient::createProducerDelegation);
+    }
+
+    @When("l'ente delegante tenta di inoltrare una richiesta di delega in erogazione all'ente delegato per l'e-service {string}")
+    public void delegatingTenantTriesToRequestProducerDelegationForEService(String eServiceId) {
+        tryToCreateDelegationForEService(eServiceId, producerDelegationsApiClient::createProducerDelegation);
+    }
+
+    @When("l'ente delegante tenta di inoltrare una richiesta di delega in fruizione all'ente delegato per l'e-service {string}")
+    public void delegatingTenantTriesToRequestConsumerDelegationForEService(String eServiceId) {
+        tryToCreateDelegationForEService(eServiceId, consumerDelegationsApiClient::createConsumerDelegation);
+    }
+
+    private void tryToCreateDelegationForEService(
+        String eServiceId,
+        Function<DelegationSeed, CreatedResource> delegationCreator
+    ) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        UUID delegateId = sharedStepsContext.getDelegationCommonContext().getDelegateId();
+        httpCallExecutor.performCall(() -> delegationCreator.apply(
+            new DelegationSeed().eserviceId(UUID.fromString(eServiceId)).delegateId(delegateId)));
     }
 
     @And("la delega è stata creata correttamente")

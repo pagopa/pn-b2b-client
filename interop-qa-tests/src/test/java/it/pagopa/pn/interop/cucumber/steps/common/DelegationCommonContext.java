@@ -18,6 +18,7 @@ public class DelegationCommonContext {
 
     private String delegatorTenant;
     private String delegateTenant;
+    private String delegateTenantType;
 
     private OffsetDateTime createdAt;
     private OffsetDateTime activatedAt;
