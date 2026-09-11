@@ -299,6 +299,8 @@ Feature: (M2M v3) Gestione deleghe per archiviazione manuale e-service
     Given l'ente delegato "PA2"
     And l'ente delegante "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
@@ -310,7 +312,7 @@ Feature: (M2M v3) Gestione deleghe per archiviazione manuale e-service
     And si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    When l'utente delegato invia via M2M v3 al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "QA test manual archiving" impostando 60 giorni di preavviso
+    When l'utente delegato invia via M2M v3 al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     Then si ottiene response status code 200
     And lo storico M2M v3 delle richieste di archiviazione del vecchio descrittore coincide con quello atteso:
       | state    | count |
