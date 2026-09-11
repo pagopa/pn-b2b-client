@@ -8,11 +8,13 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bInternalInformalClientImpl
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.time.Duration;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.jsoup.helper.Validate.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 public class MonitoraggioCampagneNoticaBonariaSteps {
@@ -40,14 +42,40 @@ public class MonitoraggioCampagneNoticaBonariaSteps {
 
         int initialValue = getCounter(initialCampaignStatistics.getStats(), counterName);
 
-        await()
-                .atMost(Duration.ofMinutes(2))
-                .pollInterval(Duration.ofSeconds(5))
-                .until(() -> {
-                    finalCampaignStatistics = pnPaB2bInternalInformalClientImpl.getCampaignStatistics(campaignId);
-                    int currentValue = getCounter(finalCampaignStatistics.getStats(), counterName);
-                    return currentValue == initialValue + increment;
-                });
+        await().atMost(Duration.ofMinutes(2)).pollInterval(Duration.ofSeconds(5)).until(() -> {
+            finalCampaignStatistics = pnPaB2bInternalInformalClientImpl.getCampaignStatistics(campaignId);
+            int currentValue = getCounter(finalCampaignStatistics.getStats(), counterName);
+            return currentValue == initialValue + increment;
+        });
+    }
+
+
+    @Then("il recupero dei dati statistici della campagna {string} fallisce con errore {int}")
+    public void getCampaignStatisticsExpectError(String campaignId, int expectedStatus) {
+
+        try {
+            pnPaB2bInternalInformalClientImpl.getCampaignStatistics(campaignId);
+            fail("Atteso errore " + expectedStatus + " ma la richiesta è andata a buon fine");
+
+        } catch (HttpClientErrorException ex) {
+            assertEquals(expectedStatus, ex.getStatusCode().value());
+
+        } catch (Exception e) {
+            fail("Eccezione inattesa: " + e.getClass().getName());
+        }
+    }
+
+    @Then("il recupero dei dati statistici della campagna {string} fallisce con errore {int} {string}")
+    public void getCampaignStatisticsExpectError(String campaignId, int expectedStatus, String expectedErrorCode) {
+
+        try {
+            pnPaB2bInternalInformalClientImpl.getCampaignStatistics(campaignId);
+            fail("Atteso errore ma la richiesta è andata a buon fine");
+
+        } catch (HttpClientErrorException ex) {
+            assertEquals(expectedStatus, ex.getStatusCode().value());
+            assertTrue(ex.getResponseBodyAsString().contains(expectedErrorCode), "Codice errore atteso non trovato");
+        }
     }
 
     private Integer getCounter(CampaignStats stats, String counterName) {

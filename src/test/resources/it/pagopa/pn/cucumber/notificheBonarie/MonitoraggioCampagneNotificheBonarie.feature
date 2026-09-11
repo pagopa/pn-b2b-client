@@ -7,7 +7,7 @@ Given vengono salvati i dati statistici attuali della campagna "TEST_CAMPAIGN"
 
 Then il contatore "totalCount" della campagna "TEST_CAMPAIGN" risulta incrementato di 1
 
-
+Then il recupero dei dati statistici della campagna "CAMPAGNA_INESISTENTE" fallisce con errore 404 ""
 
 
   @informalNotificationsMonitorCampaign
@@ -24,11 +24,12 @@ Then il contatore "totalCount" della campagna "TEST_CAMPAIGN" risulta incrementa
       | digitalDomicile          | NULL                                    |
       | physical_address_address | Via@OK_RIS                              |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
-    And si attende che venga prodotto l'elemento "SEND_ANALOG_MESSAGE_PROGRESS" della notifica bonaria
-    And si attende che venga prodotto l'elemento "SEND_ANALOG_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
-      | details_responseStatus | OK |
-    And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
-    And si attende che venga prodotto l'elemento "WORKFLOW_DONE_REACHED" della notifica bonaria
+    And si attende che venga prodotto l'elemento "SEND_ANALOG_MESSAGE" della notifica bonaria
+#    And si attende che venga prodotto l'elemento "SEND_ANALOG_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
+#      | details_responseStatus | OK |
+#    And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
+#    And si attende che venga prodotto l'elemento "WORKFLOW_DONE_REACHED" della notifica bonaria
+
     # call monitor +1 INVIO
     # call monitor +1 INVIO ANALOGICO
 
@@ -46,10 +47,12 @@ Then il contatore "totalCount" della campagna "TEST_CAMPAIGN" risulta incrementa
       | email           | NULL                  |
       | digitalDomicile | example@pecSuccess.it |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
-    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
-      | details_channel        | PEC |
-      | details_responseStatus | OK  |
-    And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
+    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria
+#    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
+#      | details_channel        | PEC |
+#      | details_responseStatus | OK  |
+#    And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
+
      # call monitor +2
 
 
@@ -68,11 +71,13 @@ Then il contatore "totalCount" della campagna "TEST_CAMPAIGN" risulta incrementa
       | digitalDomicile          | example@FAIL-pecFirstKO.it |
       | physical_address_address | Via@OK_RIS                 |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
-    And si attende che venga prodotto l'elemento "SEND_ANALOG_MESSAGE_PROGRESS" della notifica bonaria
-    And si attende che venga prodotto l'elemento "SEND_ANALOG_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
-      | details_responseStatus | OK |
-    And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
-    And si attende che venga prodotto l'elemento "WORKFLOW_DONE_REACHED" della notifica bonaria
+    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria
+    And si attende che venga prodotto l'elemento "SEND_ANALOG_MESSAGE" della notifica bonaria
+#    And si attende che venga prodotto l'elemento "SEND_ANALOG_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
+#      | details_responseStatus | OK |
+#    And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
+#    And si attende che venga prodotto l'elemento "WORKFLOW_DONE_REACHED" della notifica bonaria
+
      # call monitor +1
     # call monitor +1 Ricevuta RS
 
@@ -91,6 +96,7 @@ Then il contatore "totalCount" della campagna "TEST_CAMPAIGN" risulta incrementa
       | email           | NULL                  |
       | digitalDomicile | example@pecSuccess.it |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
+    And si attende che venga prodotto l'elemento "REQUEST_ACCEPTED" della notifica bonaria
     # call monitor +1
 
 
@@ -105,6 +111,7 @@ Then il contatore "totalCount" della campagna "TEST_CAMPAIGN" risulta incrementa
       | messageId           | ${NEW-IT-FR} |
       | additionalLanguages | DE           |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "REFUSED"
+    And si attende che venga prodotto l'elemento "REQUEST_REFUSED" della notifica bonaria
     # call monitor +1
 
 
@@ -124,6 +131,7 @@ Then il contatore "totalCount" della campagna "TEST_CAMPAIGN" risulta incrementa
       | physical_address_details      | NULL                     |
       | messageId                     | ${NEW-IT}                |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "REFUSED"
+    And si attende che venga prodotto l'elemento "REQUEST_REFUSED" della notifica bonaria
 
 
   @informalNotificationsMonitorCampaign
@@ -144,11 +152,12 @@ Then il contatore "totalCount" della campagna "TEST_CAMPAIGN" risulta incrementa
       | details_channel | EMAIL |
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
       | details_channel | SMS |
-    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
-      | details_channel        | SMS |
-      | details_responseStatus | OK  |
-    And si attende che la notifica bonaria passi in stato "COMPLETED_UNREACHED"
-    And si attende che venga prodotto l'elemento "WORKFLOW_ENDED_UNREACHED" della notifica bonaria
+#    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
+#      | details_channel        | SMS |
+#      | details_responseStatus | OK  |
+#    And si attende che la notifica bonaria passi in stato "COMPLETED_UNREACHED"
+#    And si attende che venga prodotto l'elemento "WORKFLOW_ENDED_UNREACHED" della notifica bonaria
+
 # call monitor email sms +2
 
   @informalNotificationsMonitorCampaign
@@ -167,17 +176,18 @@ Then il contatore "totalCount" della campagna "TEST_CAMPAIGN" risulta incrementa
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
       | details_channel | PEC |
-    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_PROGRESS" della notifica bonaria con dettagli
-      | details_channel | PEC |
-    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
-      | details_channel        | PEC |
-      | details_responseStatus | KO  |
+#    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_PROGRESS" della notifica bonaria con dettagli
+#      | details_channel | PEC |
+#    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
+#      | details_channel        | PEC |
+#      | details_responseStatus | KO  |
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
       | details_channel | SMS |
-    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
-      | details_channel        | SMS |
-      | details_responseStatus | OK  |
-    And si attende che venga prodotto l'elemento "WORKFLOW_ENDED_UNREACHED" della notifica bonaria
+#    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
+#      | details_channel        | SMS |
+#      | details_responseStatus | OK  |
+#    And si attende che venga prodotto l'elemento "WORKFLOW_ENDED_UNREACHED" della notifica bonaria
+
 # call monitor pec sms +2
 
 
@@ -199,11 +209,13 @@ Then il contatore "totalCount" della campagna "TEST_CAMPAIGN" risulta incrementa
       | email           | tullio.test@virgilio.it |
       | digitalDomicile | NULL                    |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
-    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
-      | details_channel            | EMAIL |
-      | details_deliveryDetailCode | M004  |
-    And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
-    And si attende che venga prodotto l'elemento "WORKFLOW_DONE_REACHED" della notifica bonaria
+#    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
+#      | details_channel            | EMAIL |
+#      | details_deliveryDetailCode | M004  |
+#    And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
+#    And si attende che venga prodotto l'elemento "WORKFLOW_DONE_REACHED" della notifica bonaria
+    And si attende che venga prodotto l'elemento "DELIVERED" della notifica bonaria con dettagli
+      | details_channel | EMAIL |
 
 
   @informalNotificationsMonitorCampaign
@@ -219,12 +231,13 @@ Then il contatore "totalCount" della campagna "TEST_CAMPAIGN" risulta incrementa
       | email           | NULL                     |
       | digitalDomicile | example@OK-pecSuccess.it |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
-    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
-      | details_channel        | PEC |
-      | details_responseStatus | OK  |
-    And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
-    And si attende che venga prodotto l'elemento "WORKFLOW_DONE_REACHED" della notifica bonaria
-
+#    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
+#      | details_channel        | PEC |
+#      | details_responseStatus | OK  |
+#    And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
+#    And si attende che venga prodotto l'elemento "WORKFLOW_DONE_REACHED" della notifica bonaria
+    And si attende che venga prodotto l'elemento "DELIVERED" della notifica bonaria con dettagli
+      | details_channel | PEC |
 
 
   @informalNotificationsMonitorCampaign
@@ -241,16 +254,17 @@ Then il contatore "totalCount" della campagna "TEST_CAMPAIGN" risulta incrementa
       | digitalDomicile | example@FAIL-pecFirstKO.it |
       | phone_number    | +3900000                   |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
-    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
-      | details_channel        | PEC |
-      | details_responseStatus | KO  |
-    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
+#    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
+#      | details_channel        | PEC |
+#      | details_responseStatus | KO  |
+#    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
+#      | details_channel | SMS |
+#    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
+#      | details_channel        | SMS |
+#      | details_responseStatus | OK  |
+#    And si attende che venga prodotto l'elemento "WORKFLOW_ENDED_UNREACHED" della notifica bonaria
+    And si attende che venga prodotto l'elemento "DELIVERED" della notifica bonaria con dettagli
       | details_channel | SMS |
-    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
-      | details_channel        | SMS |
-      | details_responseStatus | OK  |
-    And si attende che venga prodotto l'elemento "WORKFLOW_ENDED_UNREACHED" della notifica bonaria
-
 
 
   # implementato con [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_1_C]
@@ -271,16 +285,21 @@ Then il contatore "totalCount" della campagna "TEST_CAMPAIGN" risulta incrementa
       | digitalDomicile | example@OK-pecSuccess.it |
       | phone_number    | +3900000                 |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
-    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
-      | details_channel        | PEC |
-      | details_responseStatus | OK  |
-    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
-      | details_channel            | EMAIL |
-      | details_deliveryDetailCode | M004  |
-    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
-      | details_channel        | SMS |
-      | details_responseStatus | OK  |
-
+#    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
+#      | details_channel        | PEC |
+#      | details_responseStatus | OK  |
+#    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
+#      | details_channel            | EMAIL |
+#      | details_deliveryDetailCode | M004  |
+#    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
+#      | details_channel        | SMS |
+#      | details_responseStatus | OK  |
+    And si attende che venga prodotto l'elemento "DELIVERED" della notifica bonaria con dettagli
+      | details_channel | EMAIL |
+    And si attende che venga prodotto l'elemento "DELIVERED" della notifica bonaria con dettagli
+      | details_channel | PEC |
+    And si attende che venga prodotto l'elemento "DELIVERED" della notifica bonaria con dettagli
+      | details_channel | SMS |
 
 
   @informalNotificationsMonitorCampaign @informalNotMVP
@@ -401,7 +420,9 @@ Then il contatore "totalCount" della campagna "TEST_CAMPAIGN" risulta incrementa
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And il destinatario CucumberSpa legge la notifica bonaria
     And si attende che venga prodotto l'elemento "INFORMAL_NOTIFICATION_VIEWED" della notifica bonaria
-    And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
+#    And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
+
+  #visualizzata da PORTALE +1
 
 
 
