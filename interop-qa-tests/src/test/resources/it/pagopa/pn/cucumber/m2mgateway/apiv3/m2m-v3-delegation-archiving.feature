@@ -263,6 +263,19 @@ Feature: (M2M v3) Gestione deleghe per archiviazione manuale e-service
     Then si ottiene response status code 403
 
   @sad-path
+  Scenario: [M2M_V3_GET_ESERVICE_DELEGATION_ARCHIVING_REQUESTS_1.1] Visualizzazione non consentita delle richieste di archiviazione da parte di un ente che non è né delegato né delegante
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    And l'utente ha già inviato la richiesta di archiviazione per l'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
+    When l'utente è un "admin" di "PA3" con ruolo M2M m2m-admin
+    Then l'e-service viene visualizzato senza il campo relativo alle richieste di archiviazione
+
+  @sad-path
   Scenario Outline: [M2M_V3_DELEGATION_MANUAL_ARCHIVING_CONTRACT_1.1] Specificando parametri errati o mancanti, un ente delegato NON può richiedere via M2M v3 al delegante di avviare il processo di archiviazione di un e-service in delega
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
