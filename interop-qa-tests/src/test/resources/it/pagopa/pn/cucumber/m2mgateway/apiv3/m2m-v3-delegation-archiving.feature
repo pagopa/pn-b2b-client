@@ -303,7 +303,7 @@ Feature: (M2M v3) Gestione deleghe per archiviazione manuale e-service
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
     And l'utente è un "admin" di "PA2"
-    And l'utente ha già inviato la richiesta di archiviazione per il vecchio descrittore "%actual" dell'e-service "QA test manual archiving" specificando 60 giorni di preavviso
+    And l'utente ha già inviato la richiesta di archiviazione per il vecchio descrittore "%actual" dell'e-service "%actual" specificando 60 giorni di preavviso
 #     TODO: da sostituire con il Given
     And l'utente è un "admin" di "PA1"
     And l'utente ha già rifiutato la richiesta di archiviazione per il vecchio descrittore "%actual" dell'e-service "%actual" con motivazione "QA test"
