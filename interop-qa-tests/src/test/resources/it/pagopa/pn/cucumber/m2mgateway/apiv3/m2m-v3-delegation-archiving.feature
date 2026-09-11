@@ -247,7 +247,7 @@ Feature: (M2M v3) Gestione deleghe per archiviazione manuale e-service
     Then si ottiene response status code 403
 
   @sad-path
-  Scenario: [M2M_V3_DELEGATION_MANUAL_ARCHIVING_4.4] Un utente con ruolo m2m NON può annullare via M2M v3 la richiesta di archiviazione del descrittore meno recente precedentemente inviata e ancora in pending
+  Scenario: [M2M_V3_DELEGATION_MANUAL_ARCHIVING_4.4] Un utente con ruolo m2m NON può annullare via M2M v3 la richiesta di archiviazione di un descrittore diverso dal più recente precedentemente inviata e ancora in pending
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -261,6 +261,35 @@ Feature: (M2M v3) Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m
     When l'utente delegato annulla via M2M v3 la richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual"
     Then si ottiene response status code 403
+
+  @happy-path
+  Scenario: [M2M_V3_DELEGATION_MANUAL_ARCHIVING_5.1] Un ente delegato può inviare via M2M v3 una richiesta di archiviazione dell'e-service al delegante a seguito dell'annullamento del processo di archiviazione
+  Verifichiamo che l’ente delegato all’erogazione possa inviare una nuova richiesta
+  di archiviazione dell’e-service dopo l’accettazione della richiesta precedente e l'annullamento
+  del processo di archiviazione da parte dell'ente delegante
+    Given l'ente delegato "PA2"
+    And l'ente delegante "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    And l'utente ha già inviato la richiesta di archiviazione per l'e-service "%actual" specificando la motivazione "QA test manual archiving" e 60 giorni di preavviso
+#     TODO: da sostituire con il Given
+    And l'utente è un "admin" di "PA1"
+    And l'utente delegante accetta la richiesta di archiviazione relativa all'e-service "%actual"
+    And si ottiene response status code 204
+    And l'e-service è in stato "ARCHIVING"
+    And l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
+    And si ottiene response status code 204
+    And l'e-service è in stato "PUBLISHED"
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente delegato invia via M2M v3 al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
+    Then si ottiene response status code 200
+    And lo storico M2M v3 delle richieste di archiviazione dell'e-service coincide con quello atteso:
+      | state    | count |
+      | PENDING  | 1     |
+      | ACCEPTED | 1     |
 
   @sad-path
   Scenario: [M2M_V3_GET_ESERVICE_DELEGATION_ARCHIVING_REQUESTS_1.1] Visualizzazione non consentita delle richieste di archiviazione da parte di un ente che non è né delegato né delegante
