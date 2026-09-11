@@ -1565,6 +1565,45 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel | PEC |
 
 
+
+  Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PF_10_1_A] Come destinatario vedo i nuovi elementi in timeline a seguito del recupero recapito dai registri.
+
+  Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PF_10_1_B] Come destinatario vedo i nuovi elementi in timeline a seguito del recupero recapito sercQ dalla piattaforma.
+
+
+
+  Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PF_11_1_A] Come ente mittente invio una notifica bonaria verso PF utilizzando il canale Email e sms di piattaforma mentre il recupero della pec di piattaforma è inibito.
+
+  Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PF_11_1_B] Come ente mittente invio una notifica bonaria verso PF utilizzando il canale Email e sms di piattaforma mentre il recupero della pec di piattaforma è inibito.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # ***********************************************
 # **** Verifica del Comportamento del servizio con Feature-flag: OFF
 # ***********************************************
