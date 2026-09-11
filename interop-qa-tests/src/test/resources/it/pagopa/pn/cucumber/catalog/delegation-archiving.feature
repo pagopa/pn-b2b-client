@@ -1231,18 +1231,40 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
-    And "PA1" tenta la creazione di una versione in DRAFT per quell'e-service
-    And l'utente è un "admin" di "PA1"
-    And l'utente aggiorna alcuni parametri di quel descrittore
-    And "PA1" ha già caricato un'interfaccia per quel descrittore
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
     And l'utente è un "admin" di "PA2"
     And l'utente ha già inviato la richiesta di archiviazione per l'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
-    And l'utente pubblica l'e-service
+    And "PA2" tenta la creazione di una versione in DRAFT per quell'e-service
+    And l'utente aggiorna alcuni parametri di quel descrittore
+    And "PA2" ha già caricato un'interfaccia per quel descrittore
+    When l'utente pubblica l'e-service
     Then si ottiene response status code 200
     And l'e-service è in stato "WAITING_FOR_APPROVAL"
+
+  @happy-path
+  Scenario: [DELEGATION_MANUAL_ARCHIVING_NEW_VERSION_PUBLICATION_2.1] L’approvazione della nuova versione in stato `WAITING_FOR_APPROVAL` e successivamente della richiesta di archiviazione archivia correttamente l’e-service
+  Verifichiamo che, dopo l’accettazione della pubblicazione di una nuova versione di un e-service
+  e la successiva richiesta di archiviazione da parte del delegante,
+  il processo di archiviazione dell’intero e-service venga avviato correttamente.
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    And l'utente ha già inviato la richiesta di archiviazione per l'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
+    And "PA2" tenta la creazione di una versione in DRAFT per quell'e-service
+    And l'utente aggiorna alcuni parametri di quel descrittore
+    And "PA2" ha già caricato un'interfaccia per quel descrittore
+    And l'utente pubblica l'e-service
+    And l'e-service è in stato "WAITING_FOR_APPROVAL"
+    And "PA1" approva la pubblicazione dell'e-service
+    When l'utente delegante accetta la richiesta di archiviazione relativa all'e-service "%actual"
+    Then si ottiene response status code 200
+    And l'e-service è in stato "ARCHIVING"
 
   @happy-path
   Scenario: [DELEGATION_AUTOMATIC_ARCHIVING_DESCRIPTOR_1.1] L'archiviazione automatica di un descrittore elimina la relativa richiesta di archiviazione in pending
