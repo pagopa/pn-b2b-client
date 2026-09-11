@@ -1925,7 +1925,6 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     When l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     Then si ottiene response status code 409
 
-
   @sad-path
   Scenario: [DELEGATION_ARCHIVING_SINGLE_PENDING_REQUEST_1.2] In presenza di una richiesta pending per un singolo descrittore diverso dal più recente, il delegato NON può richiedere l'archiviazione dell'intero e-service
     Given l'ente delegante "PA1"
@@ -1939,4 +1938,19 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "admin" di "PA2"
     And l'utente ha già inviato la richiesta di archiviazione per il vecchio descrittore "%actual" dell'e-service "%actual" specificando 60 giorni di preavviso
     When l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
+    Then si ottiene response status code 409
+
+  @sad-path
+  Scenario: [DELEGATION_ARCHIVING_SINGLE_PENDING_REQUEST_1.3] In presenza di una richiesta pending per un singolo descrittore diverso dal più recente, il delegato NON può inviarne una nuova per lo stesso descrittore
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    And l'utente ha già inviato la richiesta di archiviazione per il vecchio descrittore "%actual" dell'e-service "%actual" specificando 60 giorni di preavviso
+    When l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     Then si ottiene response status code 409
