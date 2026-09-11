@@ -135,6 +135,11 @@ public class M2MEserviceDescriptorClientImpl extends AbstractClient implements I
     }
 
     @Override
+    public List<it.pagopa.interop.agreement.domain.EServiceDescriptor> getPage(int page, int size) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
     public Pair<UUID, UUID> getId(EServiceDescriptor entity) {
         return Pair.of(entity.getEServiceId(), entity.getDescriptorId());
     }

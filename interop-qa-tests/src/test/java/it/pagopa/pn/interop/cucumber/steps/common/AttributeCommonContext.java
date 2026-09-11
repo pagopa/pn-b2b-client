@@ -4,18 +4,19 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DeclaredAttribute;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.VerifiedAttribute;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAttribute;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.CertifiedDiscreteAttribute;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptorCertifiedDiscreteAttribute;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-@Slf4j
 @Getter
 @Setter
 @Component
@@ -55,6 +56,11 @@ public class AttributeCommonContext {
     //--M2M--
     List<CertifiedAttribute> certifiedPublished = new ArrayList<>();
     List<CertifiedAttribute> certifiedActual = new ArrayList<>();
+
+    List<CertifiedDiscreteAttribute> certifiedDiscretePublished = new ArrayList<>();
+    List<CertifiedDiscreteAttribute> certifiedDiscreteActual = new ArrayList<>();
+    List<List<CertifiedDiscreteAttribute>> certifiedDiscreteAssigned = new ArrayList<>();
+    List<CertifiedDiscreteAttribute> certifiedDiscreteRevoked = new ArrayList<>();
 
     List<DeclaredAttribute> declaredPublished = new ArrayList<>();
     List<DeclaredAttribute> declaredActual = new ArrayList<>();

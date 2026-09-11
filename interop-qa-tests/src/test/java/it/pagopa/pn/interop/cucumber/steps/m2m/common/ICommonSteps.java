@@ -11,6 +11,7 @@ public interface ICommonSteps {
     void verifyByHttpStatus(int expectedStatusCode);
     void getBy(Map<String,String> filters);
     void getAll();
+    void getPage(int page, int size);
     void getByFirstExpectedId();
     void getByIdType(EntityIdType entityIdType);
     void exsist(String presence);

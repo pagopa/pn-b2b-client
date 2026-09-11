@@ -60,6 +60,11 @@ public class M2MV3DeclaredAttributeClientImpl extends AbstractDPoPClient impleme
     }
 
     @Override
+    public List<DeclaredAttribute> getPage(int page, int size) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
     public UUID getId(DeclaredAttribute entity) {
         return entity == null ? null : entity.getId();
     }
