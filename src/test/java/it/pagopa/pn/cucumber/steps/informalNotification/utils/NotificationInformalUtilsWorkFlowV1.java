@@ -39,17 +39,33 @@ public class NotificationInformalUtilsWorkFlowV1 {
         if (expectedDetails.getSentAttemptMade() != null) {
             assertEquals(expectedDetails.getSentAttemptMade(), actualDetails.getSentAttemptMade());
         }
-        if (expectedDetails.getDigitalAddress() != null) {
-            assertEquals(expectedDetails.getDigitalAddress(), actualDetails.getDigitalAddress());
-        }
         if (expectedDetails.getSourceElementId() != null) {
             assertEquals(expectedDetails.getSourceElementId(), actualDetails.getSourceElementId());
         }
         if (expectedDetails.getChannel() != null) {
             assertEquals(expectedDetails.getChannel(), actualDetails.getChannel());
         }
+        if (expectedDetails.getChannel() != null) {
+            assertEquals(expectedDetails.getChannel(), actualDetails.getChannel());
+        }
+//todo t bonarie
+        if (expectedDetails.getIsAvailable() != null) {
+            assertEquals(expectedDetails.getIsAvailable(), actualDetails.getIsAvailable());
+        }
+        if (expectedDetails.getIsTosAccepted() != null) {
+            assertEquals(expectedDetails.getIsTosAccepted(), actualDetails.getIsTosAccepted());
+        }
         if (expectedDetails.getDeliveryDetail() != null && expectedDetails.getDeliveryDetail().getFailureCause() != null) {
             assertEquals(expectedDetails.getDeliveryDetail().getFailureCause(), actualDetails.getDeliveryDetail().getFailureCause());
+        }
+        if (expectedDetails.getDigitalAddress() != null) {
+
+            if (expectedDetails.getDigitalAddress().getAddress() != null) {
+                assertEquals(expectedDetails.getDigitalAddress().getAddress(), actualDetails.getDigitalAddress().getAddress());
+            }
+            if (expectedDetails.getDigitalAddress().getType() != null) {
+                assertEquals(expectedDetails.getDigitalAddress().getType(), actualDetails.getDigitalAddress().getType());
+            }
         }
     }
 
@@ -129,7 +145,7 @@ public class NotificationInformalUtilsWorkFlowV1 {
             FullSentInformalNotificationV1 notification = lastNotification.get();
 
             throw new AssertionError("""
-                        Elemento timeline non trovato. Categoria attesa: %s Ultima FullSentInformalNotificationV1: %s """.formatted(category, notification), e);
+                    Elemento timeline non trovato. Categoria attesa: %s Ultima FullSentInformalNotificationV1: %s """.formatted(category, notification), e);
         }
         return foundElement.get();
     }

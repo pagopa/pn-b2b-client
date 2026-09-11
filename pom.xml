@@ -712,7 +712,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/refs/tags/v2.26.0/docs/openapi/api-internal-b2b-informal-pa.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/4519f0ebb6545037ddd0e14617f3afc48444a5e3/docs/openapi/api-internal-b2b-informal-pa.yaml</inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
@@ -797,6 +797,38 @@
                             </configOptions>
                             <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformalcampaign.api</apiPackage>
                             <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformalcampaign.model</modelPackage>
+                        </configuration>
+                    </execution>
+
+                    <!--internal MONITOR campaign INFORMAL -->
+                    <execution>
+                        <id>generate-internal-client-b2b-informal-statistics-campaign-pa</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-workflow-manager/05ed762478edb127d857220bedb9664d792534fe/docs/openapi/campaigns-api-internal.yaml</inputSpec>
+                            <auth>Authorization:Bearer ${github.token}</auth>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformalmonitorcampaign.api</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformalmonitorcampaign.model</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                            <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformalmonitorcampaign.api</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformalmonitorcampaign.model</modelPackage>
                         </configuration>
                     </execution>
 
