@@ -28,6 +28,7 @@ public class RiskAnalysisDataFromJson {
         private List<String> knowsDataQuantity;
         private List<String> deliveryMethod;
         private List<String> policyProvided;
+        private List<String> reasonPolicyNotProvided;
         private List<String> confirmPricipleIntegrityAndDiscretion;
         private List<String> doneDpia;
         private List<String> dataDownload;
