@@ -149,10 +149,22 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
   pubblicazione di una finalità per fruizione di dati.
 
     Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "PUBLISHED"
+    And "PA1" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "PUBLISHED" e flag dati personali a "true"
     And l'utente è un "admin" di "Privato"
     And "Privato" ha già creato una richiesta di fruizione in stato "ACTIVE" con un documento allegato
-    And "Privato" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
-    When compila l'analisi del rischio della finalità specificando:
-    | question         | answer      |
-    | usesPersonalData | YES         |
+    And "Privato" ha già creato 1 finalità in stato "DRAFT" per quell'eservice specificando nell'analisi del rischio:
+    | purpose                 | INSTITUTIONAL |
+    | institutionalPurpose    | This is a test |
+    | usesPersonalData        | YES |
+    | personalDataTypes       | WITH_NON_IDENTIFYING_DATA |
+    | legalBasis              | CONSENT |
+    | knowsDataQuantity       | NO |
+    | deliveryMethod          | CLEARTEXT |
+    | policyProvided          | NO |
+    | reasonPolicyNotProvided | This is a test |
+    | confirmPricipleIntegrityAndDiscretion | true |
+    | doneDpia                | NO |
+    | dataDownload            | NO |
+    | purposePursuit          | MERE_CORRECTNESS |
+    | checkedExistenceMereCorrectnessInteropCatalogue | true |
+    | declarationConfirmGDPR  | true |
