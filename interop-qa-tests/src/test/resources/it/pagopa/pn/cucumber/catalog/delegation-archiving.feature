@@ -1445,7 +1445,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
       | SUSPENDED     |
 
   @happy-path
-  Scenario Outline: [DELEGATION_ARCHIVING_STATE_1.2] Un e-service in stato ARCHIVING o ARCHIVING_SUSPENDED può essere dato in delega in fruizione
+  Scenario Outline: [DELEGATION_ARCHIVING_STATE_2.1] Un e-service in stato ARCHIVING o ARCHIVING_SUSPENDED può essere dato in delega in fruizione
     Given "PA1" ha già creato un e-service con un descrittore in stato "<eserviceState>" e impostando delega amministrativa a "true" e delega tecnica a "true"
     And l'utente è un "admin" di "PA1"
     And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual archiving" e 60 giorni di preavviso
