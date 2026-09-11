@@ -898,6 +898,13 @@ public class BFFDataPreparationService {
         return new RiskAnalysis(String.format("finalità_test_%d", new Random().nextInt()), new RiskAnalysisFormSeed().version(version).answers(riskAnalysisAttributes.toMap()));
     }
 
+    public RiskAnalysis getRiskAnalysisSpecifyingAnswers(RiskAnalysisDataFromJson.RiskAnalysisAttributes riskAnalysisAttributes) {
+        httpCallExecutor.performCall(purposeApiClient::retrieveLatestRiskAnalysisConfiguration);
+        assertValidResponse();
+        String version = ((RiskAnalysisFormConfig) httpCallExecutor.getResponse()).getVersion();
+        return new RiskAnalysis(String.format("finalità_test_%d", new Random().nextInt()), new RiskAnalysisFormSeed().version(version).answers(riskAnalysisAttributes.toMap()));
+    }
+
     public CreatedEserviceVersion createPurposeWithGivenState(int testSeed, EServiceMode eServiceMode, PurposeVersionState purposeState, TEServiceMode teServiceMode) {
         return createPurposeWithGivenState(testSeed, eServiceMode, purposeState, teServiceMode, null);
     }

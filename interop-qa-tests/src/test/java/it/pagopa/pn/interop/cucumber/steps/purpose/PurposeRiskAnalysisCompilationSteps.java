@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.purpose;
 
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -8,12 +9,15 @@ import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
+import it.pagopa.interop.purpose.domain.RiskAnalysisDataFromJson;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.RiskAnalysisCommonContext.AssignedReviewerActorRef;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -168,6 +172,45 @@ public class PurposeRiskAnalysisCompilationSteps {
         Consumer<RiskAnalysis> institutionalPurposeVariation = riskAnalysis ->
                 riskAnalysis.getRiskAnalysisForm().getAnswers().put("institutionalPurpose", List.of("purpose variata"));
         compilesRiskAnalysisViaGenericEndpoint(institutionalPurposeVariation);
+    }
+
+    @When("compila l'analisi del rischio della finalità specificando:")
+    public void compilesRiskAnalysisSpecifyingAnswers(DataTable answersTable) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+
+        RiskAnalysisDataFromJson.RiskAnalysisAttributes riskAnalysisAttributes =
+                new RiskAnalysisDataFromJson.RiskAnalysisAttributes();
+
+        List<List<String>> answers = answersTable.asLists().stream().skip(1).toList();
+        for (List<String> answer : answers) {
+            String id = answer.get(0);       // es: "usesPersonalData"
+            String rawValue = answer.get(1); // es: "NO"
+            List<String> values = Arrays.stream(rawValue.split(";")).map(String::trim).toList();
+
+            riskAnalysisAttributes.setUsesPersonalData(values);
+
+            String methodName = "set" + Character.toUpperCase(id.charAt(0)) + id.substring(1);
+            try {
+                Method setter = riskAnalysisAttributes.getClass().getMethod(methodName, List.class);
+                setter.invoke(riskAnalysisAttributes, values);
+
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException("Method not found for RiskAnalysisAttributes: " + methodName, e);
+
+            } catch (Exception e) {
+                throw new RuntimeException("Error while invoking: " + methodName, e);
+            }
+        }
+        compiledRiskAnalysis = dataPreparationService.getRiskAnalysisSpecifyingAnswers(riskAnalysisAttributes);
+
+        PurposeUpdateContent updateContent = new PurposeUpdateContent()
+                .title("RA custom answers")
+                .description("Risk analysis with custom answers")
+                .dailyCalls(50)
+                .isFreeOfCharge(true)
+                .riskAnalysisForm(compiledRiskAnalysis.getRiskAnalysisForm());
+        httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().updatePurpose(purposeId, updateContent));
     }
 
     private void compilesRiskAnalysisViaGenericEndpoint(Consumer<RiskAnalysis> riskAnalysisModifier) {
