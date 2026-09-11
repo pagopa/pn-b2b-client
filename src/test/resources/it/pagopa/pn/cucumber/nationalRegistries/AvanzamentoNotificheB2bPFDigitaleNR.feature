@@ -416,17 +416,57 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details_digitalAddress | {"address": "DRCDVD87M07E243W@pec.it", "type": "PEC"} |
       | details_recIndex       | 0                                                     |
 
-#
-#  @PFinipec
-#  Scenario: [Ricerca_
-#    Given viene generata una nuova notifica
-#      | subject            | invio notifica con cucumber |
-#      | senderDenomination | Comune di milano            |
-#    And destinatario
-#      | denomination    | Test digitale ok |
-#      | taxId           | RNORNO80A41F979F |
-#      | digitalDomicile | NULL             |
-#    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
-#    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+
+  @PFinipec
+  Scenario: [Ricerca_domicilio_digitale_PF_INAD_INIPEC_4] Invio Notifica mono destinatario a PF senza recupero di domicili digitali nè in IniPec nè in INAD
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario
+      | denomination    | Test inipec-inad - analogico |
+      | taxId           | MRGVPC67R10H501Y             |
+      | digitalDomicile | NULL                         |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+    Then viene verificato che l'elemento di timeline "GET_ADDRESS" esista
+      | details                      | NOT_NULL |
+      | details_recIndex             | 0        |
+      | details_digitalAddressSource | PLATFORM |
+      | details_sentAttemptMade      | 0        |
+      | details_isAvailable          | false    |
+    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
+      | loadTimeline                 | true     |
+      | details                      | NOT_NULL |
+      | details_recIndex             | 0        |
+      | details_digitalAddressSource | SPECIAL  |
+      | details_sentAttemptMade      | 0        |
+      | details_isAvailable          | false    |
+    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
+      | loadTimeline                 | true     |
+      | details                      | NOT_NULL |
+      | details_recIndex             | 0        |
+      | details_digitalAddressSource | GENERAL  |
+      | details_sentAttemptMade      | 0        |
+      | details_isAvailable          | false    |
+    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
+      | details                      | NOT_NULL |
+      | details_recIndex             | 0        |
+      | details_digitalAddressSource | PLATFORM |
+      | details_sentAttemptMade      | 1        |
+      | details_isAvailable          | false    |
+    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
+      | loadTimeline                 | true     |
+      | details                      | NOT_NULL |
+      | details_recIndex             | 0        |
+      | details_digitalAddressSource | SPECIAL  |
+      | details_sentAttemptMade      | 1        |
+      | details_isAvailable          | false    |
+    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
+      | loadTimeline                 | true     |
+      | details                      | NOT_NULL |
+      | details_recIndex             | 0        |
+      | details_digitalAddressSource | GENERAL  |
+      | details_sentAttemptMade      | 1        |
+      | details_isAvailable          | false    |
+    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
 
 
