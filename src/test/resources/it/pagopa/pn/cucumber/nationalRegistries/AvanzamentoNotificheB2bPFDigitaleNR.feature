@@ -246,18 +246,26 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | digitalDomicile | NULL                  |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
-    Then  viene verificato che l'elemento di timeline "GET_ADDRESS" esista
+    Then viene verificato che l'elemento di timeline "GET_ADDRESS" esista
+      | details                      | NOT_NULL |
+      | details_recIndex             | 0        |
+      | details_digitalAddressSource | PLATFORM |
+      | details_sentAttemptMade      | 0        |
+      | details_isAvailable          | false    |
+    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | loadTimeline                 | true     |
       | details                      | NOT_NULL |
       | details_recIndex             | 0        |
       | details_digitalAddressSource | SPECIAL  |
       | details_sentAttemptMade      | 0        |
-      | details_isAvailable          | true     |
-    And viene verificato che l'elemento di timeline "GET_ADDRESS" non esista
+      | details_isAvailable          | false    |
+    Then viene verificato che l'elemento di timeline "GET_ADDRESS" esista
+      | loadTimeline                 | true     |
       | details                      | NOT_NULL |
       | details_recIndex             | 0        |
-      | details_digitalAddressSource | PLATFORM |
+      | details_digitalAddressSource | GENERAL  |
       | details_sentAttemptMade      | 0        |
+      | details_isAvailable          | true     |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
       | loadTimeline           | true                                         |
@@ -266,7 +274,6 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details_digitalAddress | {"address": "example@pec.it", "type": "PEC"} |
       | details_recIndex       | 0                                            |
 
-#da modificare solamente CF che abbia solo pec professionale su INAD
   @PFinipec
   Scenario: [Ricerca_domicilio_digitale_PF_INAD_2] Invio Notifica mono destinatario a PF con recupero del solo domicilio digitale professionale su INAD
     Given viene generata una nuova notifica
@@ -274,17 +281,36 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | senderDenomination | Comune di milano            |
     And destinatario
       | denomination    | Test digitale ok |
-      | taxId           | RNORNO80A41F979F |
+      | taxId           | WDSTKB60E09L538U |
       | digitalDomicile | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
+    Then viene verificato che l'elemento di timeline "GET_ADDRESS" esista
+      | details                      | NOT_NULL |
+      | details_recIndex             | 0        |
+      | details_digitalAddressSource | PLATFORM |
+      | details_sentAttemptMade      | 0        |
+      | details_isAvailable          | false    |
+    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
+      | loadTimeline                 | true     |
+      | details                      | NOT_NULL |
+      | details_recIndex             | 0        |
+      | details_digitalAddressSource | SPECIAL  |
+      | details_sentAttemptMade      | 0        |
+      | details_isAvailable          | false    |
+    Then viene verificato che l'elemento di timeline "GET_ADDRESS" esista
+      | loadTimeline                 | true     |
+      | details                      | NOT_NULL |
+      | details_recIndex             | 0        |
+      | details_digitalAddressSource | GENERAL  |
+      | details_sentAttemptMade      | 0        |
+      | details_isAvailable          | true     |
     And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
-      | loadTimeline           | true                                                   |
-      | legalFactsIds          | [{"category": "DIGITAL_DELIVERY"}]                     |
-      | details                | NOT_NULL                                               |
-      | details_digitalAddress | {"address": "example@OK-pecSuccess.it", "type": "PEC"} |
-      | details_recIndex       | 0                                                      |
+      | loadTimeline           | true                                                    |
+      | legalFactsIds          | [{"category": "DIGITAL_DELIVERY"}]                      |
+      | details                | NOT_NULL                                                |
+      | details_digitalAddress | {"address": "WDSTKB60E09L538U@nopec.it", "type": "PEC"} |
+      | details_recIndex       | 0                                                       |
 
 #    modificare solo cf che abbia su INAD personale e professionale, il personale deve andare in kO e il professionale in eventuale OK, ma non sarà raggiunto
   @PFinipec
