@@ -820,6 +820,19 @@ Feature: Test API M2M of e-service template
     Then si ottiene lo status code 409
     And l'e-service non ha subito modifiche
 
+  @e-service-template-m2m-version-create
+  Scenario Outline: [ESERVICE_TEMPLATE_CREATE_VERSION_DESCRIPTION_1] La creazione di un e-service template non va a buon fine se la descrizione della sua versione contiene meno di 10 caratteri
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta la creazione dell'e-service template con la configurazione predefinita e con la descrizione della versione impostata a "<descrizione>"
+    Then si ottiene lo status code <risultato>
+
+    Examples:
+      | descrizione | risultato |
+      | %null%      | 400       |
+      | %empty%     | 400       |
+      | 123456789   | 400       |
+      | 1234567890  | 201       |
+
   @eservice_description_max_length
   @happy-path
   Scenario: [ESERVICE_TEMPLATE_CREATE_DESCRIPTION_MAX_LENGTH_5] La creazione di un e-service template va a buon fine utilizzando la dimensione massima consentita per la descrizione
