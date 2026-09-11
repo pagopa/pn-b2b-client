@@ -591,8 +591,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
     And si ottiene response status code 204
     And l'e-service è in stato "PUBLISHED"
-    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
-    When l'utente delegato invia via M2M v3 al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
+    And l'utente è un "admin" di "PA2"
     When l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
     Then si ottiene response status code 204
     And la richiesta di archiviazione delegata dell'e-service è in stato pending
@@ -605,17 +604,19 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     Given l'ente delegato "PA2"
     And l'ente delegante "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
     And l'utente è un "admin" di "PA2"
-    And l'utente ha già inviato la richiesta di archiviazione per il vecchio descrittore "%actual" dell'e-service "QA test manual archiving" specificando 60 giorni di preavviso
+    And l'utente ha già inviato la richiesta di archiviazione per il vecchio descrittore "%actual" dell'e-service "%actual" specificando 60 giorni di preavviso
 #     TODO: da sostituire con il Given
     And l'utente è un "admin" di "PA1"
     And l'utente ha già rifiutato la richiesta di archiviazione per il vecchio descrittore "%actual" dell'e-service "%actual" con motivazione "QA test"
     And si ottiene response status code 204
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
-    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And l'utente è un "admin" di "PA2"
     When l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     Then si ottiene response status code 204
     And la richiesta di archiviazione delegata del vecchio descrittore è in stato pending
