@@ -94,6 +94,19 @@ public class EServiceTemplateCreateSteps {
         testAssistant.mutateLastVersionState(desiredState);
     }
 
+    @When("l'utente effettua la creazione di un e-service template con la descrizione della versione impostata a {string}")
+    public void createEServiceTemplateWithDescription(String versionDescriptionContent) {
+        EServiceTemplateSeed templateSeed = this.getEServiceTemplateSeed(EServiceMode.DELIVER);
+        String versionDescription = switch (versionDescriptionContent) {
+            case "%null%" -> null;
+            case "%empty%" -> "";
+            default -> versionDescriptionContent;
+        };
+        assert templateSeed.getVersion() != null;
+        templateSeed.getVersion().setDescription(versionDescription);
+        this.createEServiceTemplate(templateSeed);
+    }
+
     @When("l'utente effettua la creazione di un e-service template {isAsynchronous} in modalità {eServiceMode} con tecnologia {string} in stato di {eServiceTemplateVersionState}")
     public void createEServiceTemplate(Boolean isAsync, EServiceMode eServiceMode, String technology, EServiceTemplateVersionState desiredState) {
         EServiceTechnology technology1 = EServiceTechnology.fromValue(technology);
@@ -283,6 +296,7 @@ public class EServiceTemplateCreateSteps {
     private EServiceTemplateSeed getEServiceTemplateSeed(EServiceMode eServiceMode, Boolean flagPersonalData) {
         String templateName = testAssistant.buildEServiceTemplateName();
         VersionSeedForEServiceTemplateCreation version = new VersionSeedForEServiceTemplateCreation()
+                .description("Descrizione della versione del servizio associato al template " + templateName)
                 .voucherLifespan(86400);
         return new EServiceTemplateSeed()
                 .intendedTarget("Audience description per il template " + templateName)
