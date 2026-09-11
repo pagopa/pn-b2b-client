@@ -49,6 +49,25 @@ public class DescriptorCreationSteps {
         );
     }
 
+    @When("l'utente crea una versione in bozza per quell'e-service istanza di template")
+    public void userCreatesDraftDescriptorForEServiceFromTemplate() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getEServiceClient().createDescriptor(
+                        sharedStepsContext.getEServicesCommonContext().getEserviceId()
+                )
+        );
+        sharedStepsContext.getEServiceTemplateStepContext().setLastEServiceIdCreatedFromTemplate(
+                sharedStepsContext.getEServicesCommonContext().getEserviceId()
+        );
+        UUID draftDescriptorId = ((CreatedResource)sharedStepsContext.getHttpCallExecutor().getResponse()).getId();
+        sharedStepsContext.getEServiceTemplateStepContext().setLastEServiceDescriptorIdCreatedFromTemplate(draftDescriptorId);
+        sharedStepsContext.getEServicesCommonContext().setOldDescriptorId(
+                sharedStepsContext.getEServicesCommonContext().getDescriptorId()
+        );
+        sharedStepsContext.getEServicesCommonContext().setDescriptorId(draftDescriptorId);
+    }
+
     @Then("si ottiene status code 200 e il descrittore contiene i campi del precedente")
     public void verifyStatusCodeAndDescriptor() {
         ProducerEServiceDescriptor descriptor = clientTokenConfigurator.getProducerClient().getProducerEServiceDescriptor(

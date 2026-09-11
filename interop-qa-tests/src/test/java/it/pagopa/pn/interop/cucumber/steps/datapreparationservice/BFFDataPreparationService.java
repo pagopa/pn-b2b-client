@@ -871,7 +871,10 @@ public class BFFDataPreparationService {
         assertValidResponse();
         pollingService.makePolling(
                 () -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId),
-                res -> res.getState() == EServiceDescriptorState.SUSPENDED,
+                res -> (
+                        res.getState() == EServiceDescriptorState.SUSPENDED ||
+                        res.getState() == EServiceDescriptorState.ARCHIVING_SUSPENDED
+                ),
                 ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
     }

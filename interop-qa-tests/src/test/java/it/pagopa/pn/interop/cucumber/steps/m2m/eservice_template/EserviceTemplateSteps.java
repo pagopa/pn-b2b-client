@@ -95,6 +95,7 @@ public class EserviceTemplateSteps {
                 eServiceTemplate.getId(),
                 null,
                 null,
+                null,
                 false
         );
         sharedStepsContext.getEServiceTemplateStepContext().getTemplatesManaged().add(eServiceTemplateInfo);

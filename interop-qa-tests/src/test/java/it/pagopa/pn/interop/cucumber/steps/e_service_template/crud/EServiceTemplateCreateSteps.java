@@ -265,6 +265,7 @@ public class EServiceTemplateCreateSteps {
                 templateSeed.getMode(),
                 creationResponse.getId(),
                 creationResponse.getVersionId(),
+                null,
                 templateSeed.getPersonalData(),
                 templateSeed.getAsyncExchange()
                 ));
@@ -283,7 +284,8 @@ public class EServiceTemplateCreateSteps {
     private EServiceTemplateSeed getEServiceTemplateSeed(EServiceMode eServiceMode, Boolean flagPersonalData) {
         String templateName = testAssistant.buildEServiceTemplateName();
         VersionSeedForEServiceTemplateCreation version = new VersionSeedForEServiceTemplateCreation()
-                .voucherLifespan(86400);
+                .voucherLifespan(86400)
+                .description("Nuova versione");
         return new EServiceTemplateSeed()
                 .intendedTarget("Audience description per il template " + templateName)
                 .name(templateName)

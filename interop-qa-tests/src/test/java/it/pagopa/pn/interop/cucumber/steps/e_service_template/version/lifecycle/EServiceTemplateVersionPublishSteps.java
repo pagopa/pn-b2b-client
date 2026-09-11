@@ -10,6 +10,7 @@ import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CompactEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -77,7 +78,26 @@ public class EServiceTemplateVersionPublishSteps {
                         eServiceTemplateId,
                         eServiceTemplateVersionId),
                     ResponseEntity::getStatusCode),
-                res -> nonNull(res.getBody()) && res.getBody().getState() == EServiceTemplateVersionState.PUBLISHED,
+                res -> {
+                    boolean isPublished = nonNull(res.getBody()) && res.getBody().getState() == EServiceTemplateVersionState.PUBLISHED;
+                    if (isPublished) {
+                        int versionsCount = res.getBody().getEserviceTemplate().getVersions().size();
+                        // Le versioni non sono in ordine di creazione, non ci si può affidare all'ordine in lista, ma va controllato 'version'
+                        for (int i = 0; i < versionsCount; i++) {
+                            CompactEServiceTemplateVersion unorderedVersion = res.getBody().getEserviceTemplate().getVersions().get(i);
+                            if (unorderedVersion.getVersion() == versionsCount) {
+                                sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().setLastVersionId(
+                                        unorderedVersion.getId()
+                                );
+                            } else if (unorderedVersion.getVersion() == versionsCount - 1) {
+                                sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().setOldVersionId(
+                                        unorderedVersion.getId()
+                                );
+                            }
+                        }
+                    }
+                    return isPublished;
+                },
                 "La versione dell'e-service template non è stata pubblicata correttamente"
             );
         } catch (PollingPredicateException e) {
