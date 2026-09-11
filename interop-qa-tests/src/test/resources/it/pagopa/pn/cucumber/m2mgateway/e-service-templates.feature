@@ -821,7 +821,7 @@ Feature: Test API M2M of e-service template
     And l'e-service non ha subito modifiche
 
   @e-service-template-m2m-version-create
-  Scenario Outline: [ESERVICE_TEMPLATE_CREATE_VERSION_DESCRIPTION_1] La creazione di un e-service template non va a buon fine se la descrizione della sua versione non contiene meno di 10 caratteri
+  Scenario Outline: [ESERVICE_TEMPLATE_CREATE_VERSION_DESCRIPTION_1] La creazione di un e-service template non va a buon fine se la descrizione della sua versione contiene meno di 10 caratteri
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta la creazione dell'e-service template con la configurazione predefinita e con la descrizione della versione impostata a "<descrizione>"
     Then si ottiene lo status code <risultato>
