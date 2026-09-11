@@ -1,5 +1,6 @@
 package it.pagopa.pn.cucumber.steps.utilitySteps;
 
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -18,10 +19,14 @@ import software.amazon.awssdk.services.cloudwatchlogs.model.FilterLogEventsRespo
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 import static org.awaitility.Awaitility.await;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -139,5 +144,50 @@ public class AwsServiceSteps {
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
+    }
+
+    @Then("verifico che su DynamoDB {is} presente l'elemento {string} nella tabella pn-paperTrackerError esclusivamente con category:")
+    public void checkPaperTrackerErrorInDynamoDB(boolean isPresent, String element, List<String> categories) {
+        String trackingId = String.format("%s.IUN_%s.RECINDEX_0.ATTEMPT_0.PCRETRY_0", element, sharedSteps.getNotificationIun());
+        QueryResponse queryResponse = dynamoDbService.call(DynamoTableName.PAPER_TRACKER_ERROR, Map.of(
+                ":v_trackingId", AttributeValue.builder().s(trackingId).build()
+        ));
+        log.info("Elementi trovati con trackingId {}: {}", trackingId, queryResponse.count());
+        try {
+            if (isPresent) {
+                assertThat(queryResponse.items().size()).as("La response non contiene nessun elemento con category " + element).isGreaterThan(0);
+                log.info("Sono presenti {} elementi", queryResponse.items().size());
+                for (Map<String, AttributeValue> item : queryResponse.items()) {
+                    item.forEach((key, value) -> {
+                        Object val = extractValue(value);
+                        if ("category".equalsIgnoreCase(key)) {
+                            assertThat(val)
+                                    .as("Il valore di category deve essere una String")
+                                    .isInstanceOf(String.class);
+
+                            assertThat(categories)
+                                    .as("Category non prevista: %s", val)
+                                    .contains((String) val);
+                        }
+                        log.info("{}: {}", key, val);
+                    });
+                }
+            } else {
+                assertThat(queryResponse.items().size()).as("La response non deve contenere nessun elemento con category " + element).isEqualTo(0);
+            }
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
+    }
+
+    private Object extractValue(AttributeValue value) {
+        if (value.s() != null)
+            return value.s();
+        else if (value.n() != null)
+            return value.n();
+        else if (value.bool() != null)
+            return value.bool();
+        else
+            return value.toString();
     }
 }
