@@ -12,6 +12,9 @@ Feature: (M2M v3) Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente delegato invia via M2M v3 al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
     Then si ottiene response status code 200
+    And lo storico M2M v3 delle richieste di archiviazione dell'e-service coincide con quello atteso:
+      | state   | count |
+      | PENDING | 1     |
 
     Examples:
       | descriptorState |
@@ -31,6 +34,9 @@ Feature: (M2M v3) Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente delegato invia via M2M v3 al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     Then si ottiene response status code 200
+    And lo storico M2M v3 delle richieste di archiviazione del vecchio descrittore coincide con quello atteso:
+      | state   | count |
+      | PENDING | 1     |
 
   @sad-path
   Scenario: [M2M_V3_DELEGATION_MANUAL_ARCHIVING_1.3] Un utente con ruolo m2m NON può richiedere via M2M v3 al delegante di avviare il processo di archiviazione di un e-service in delega
@@ -71,6 +77,9 @@ Feature: (M2M v3) Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente delegante accetta via M2M v3 la richiesta di archiviazione relativa all'e-service "%actual"
     Then si ottiene response status code 200
+    And lo storico M2M v3 delle richieste di archiviazione dell'e-service coincide con quello atteso:
+      | state    | count |
+      | ACCEPTED | 1     |
 
   @happy-path
   Scenario: [M2M_V3_DELEGATION_MANUAL_ARCHIVING_2.2] Un ente delegante può accettare via M2M v3 la richiesta di archiviazione del descrittore meno recente inviata dall'ente delegato
@@ -87,6 +96,9 @@ Feature: (M2M v3) Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente delegante accetta via M2M v3 la richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual"
     Then si ottiene response status code 200
+    And lo storico M2M v3 delle richieste di archiviazione del vecchio descrittore coincide con quello atteso:
+      | state    | count |
+      | ACCEPTED | 1     |
 
   @sad-path
   Scenario: [M2M_V3_DELEGATION_MANUAL_ARCHIVING_2.3] Un utente con ruolo m2m NON può accettare la richiesta di archiviazione di un e-service inviata dall'ente delegato
@@ -131,6 +143,9 @@ Feature: (M2M v3) Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente delegante rifiuta via M2M v3 la richiesta di archiviazione delegata dell'e-service "%actual" con motivazione "QA test rejection delegation manual archiving"
     Then si ottiene response status code 200
+    And lo storico M2M v3 delle richieste di archiviazione dell'e-service coincide con quello atteso:
+      | state    | count |
+      | REJECTED | 1     |
 
   @happy-path
   Scenario: [M2M_V3_DELEGATION_MANUAL_ARCHIVING_3.2] Un ente delegante può rifiutare via M2M v3 la richiesta di archiviazione del descrittore meno recente inviata dall'ente delegato
@@ -147,6 +162,9 @@ Feature: (M2M v3) Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente delegante rifiuta via M2M v3 la richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" con motivazione "QA test rejection delegation manual archiving"
     Then si ottiene response status code 200
+    And lo storico M2M v3 delle richieste di archiviazione del vecchio descrittore coincide con quello atteso:
+      | state    | count |
+      | REJECTED | 1     |
 
   @sad-path
   Scenario: [M2M_V3_DELEGATION_MANUAL_ARCHIVING_3.3] Un utente con ruolo m2m NON può rifiutare la richiesta di archiviazione di un e-service inviata dall'ente delegato
@@ -191,6 +209,9 @@ Feature: (M2M v3) Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente delegato annulla via M2M v3 la richiesta di archiviazione dell'e-service "%actual"
     Then si ottiene response status code 200
+    And lo storico M2M v3 delle richieste di archiviazione dell'e-service coincide con quello atteso:
+      | state   | count |
+      | PENDING | 0     |
 
   @happy-path
   Scenario: [M2M_V3_DELEGATION_MANUAL_ARCHIVING_4.2] L'ente delegato può annullare via M2M v3 la richiesta di archiviazione del descrittore meno recente precedentemente inviata e ancora in pending
@@ -207,6 +228,9 @@ Feature: (M2M v3) Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     When l'utente delegato annulla via M2M v3 la richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual"
     Then si ottiene response status code 200
+    And lo storico M2M v3 delle richieste di archiviazione del vecchio descrittore coincide con quello atteso:
+      | state   | count |
+      | PENDING | 0     |
 
   @sad-path
   Scenario: [M2M_V3_DELEGATION_MANUAL_ARCHIVING_4.3] Un utente con ruolo m2m NON può annullare via M2M v3 la richiesta di archiviazione dell'e-service precedentemente inviata e ancora in pending
