@@ -1345,8 +1345,8 @@
                             <goal>generate</goal>
                         </goals>
                         <phase>process-resources</phase>
-                        <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/refs/tags/v2.26.0-RC.2/docs/openapi/api-internal-web-informal-pa.yaml</inputSpec>
+                        <configuration>    <!--todo t stato-->
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/3a5e5ce80def42bd64faf586ad6d357d2d40fba6/docs/openapi/api-internal-web-informal-pa.yaml</inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <skipValidateSpec>true</skipValidateSpec>
                             <generatorName>java</generatorName>
