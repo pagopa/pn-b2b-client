@@ -296,3 +296,106 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-06T15:16:35.246856627Z\",\"errorCategory\":\"OCR_VALIDATION\",\"details\":{\"cause\":\"OCR_KO\",\"message\":\"validazione fallita\",\"additionalDetails\":{\"ocrDataResultPayload\":{\"predictedRefinementType\":\"\",\"validationType\":\"ai\",\"description\":\"validazione fallita\",\"validationStatus\":\"KO\"}}},\"flowThrow\":\"DEMAT_VALIDATION\",\"eventThrow\":\"RECRN002C\",\"eventIdThrow\":\"2f428c7d-99f5-490c-a9fd-d6132c1589a2\",\"productType\":\"AR\",\"type\":\"ERROR\"}"
     And si verifica che non sia presente nessun retry per il tracking
+
+  # ====================================================================================================================
+  # SCENARIO 3 - Orchestrazione della Logica di Retry (PCRETRY+1)
+  # CASO DI TEST 3.1: Generazione nuovo tentativo con progressivo PCRETRY_1 mantenendo indirizzo e destinatario;
+  # l'evento KO sale come PROGRESS in timeline. Doppio retry consecutivo fino al secondo retry (PCRETRY_2).
+  # CASO DI TEST 3.2: Blocco tentativi al superamento limite (4 retry massimi) con MAX_RETRY_REACHED_ERROR; nessun retry
+  # se la causale di KO e' diversa da M10 (es. deceduta/irreperibile assoluto).
+  # ====================================================================================================================
+
+  @paperTrackerM10 @paperTrackerARRunMode
+  Scenario: [MOCK_RECAPITO_M10_03_1_A] Generazione primo retry analogico (PCRETRY_1) per Raccomandata A/R con successo al secondo tentativo
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | Via@OK-Retry_AR_M10 |
+      | digitalDomicile         | NULL                |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
+    And si verifica che la risposta tracking per la sequence "OK-Retry_AR_M10" contenga tutti gli elementi attesi e che sia strutturalmente valida
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                      | NOT_NULL  |
+      | details_recIndex             | 0         |
+      | details_sentAttemptMade      | 0         |
+      | details_deliveryDetailCode   | RECRN002C |
+      | details_deliveryFailureCause | M10       |
+    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "OK-Retry_AR_M10"
+    And si verifica che la risposta dell'API attempts contenga finalDematFound e paperDeliveryTimestamp
+
+  @paperTrackerM10 @paperTrackerRunMode890
+  Scenario: [MOCK_RECAPITO_M10_03_1_B] Generazione primo retry analogico (PCRETRY_1) per Atti Giudiziari (890) con successo al secondo tentativo
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | Via@OK-Retry_890_M10 |
+      | digitalDomicile         | NULL                 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And genera la key da utilizzare per invocare l'API per il prodotto: "890"
+    And si verifica che la risposta tracking per la sequence "OK-Retry_890_M10" contenga tutti gli elementi attesi e che sia strutturalmente valida
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                      | NOT_NULL  |
+      | details_recIndex             | 0         |
+      | details_sentAttemptMade      | 0         |
+      | details_deliveryDetailCode   | RECAG003C |
+      | details_deliveryFailureCause | M10       |
+    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "OK-Retry_890_M10"
+    And si verifica che la risposta dell'API attempts contenga finalDematFound e paperDeliveryTimestamp
+
+  @paperTrackerM10 @paperTrackerARRunMode
+  Scenario: [MOCK_RECAPITO_M10_03_1_C] Doppio retry consecutivo (PCRETRY_1 e PCRETRY_2) per Raccomandata A/R con successo al terzo tentativo
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | Via@OK-DoubleRetry_AR_M10 |
+      | digitalDomicile         | NULL                      |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
+    And si verifica che la risposta tracking per la sequence "OK-DoubleRetry_AR_M10" contenga tutti gli elementi attesi e che sia strutturalmente valida
+    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "OK-DoubleRetry_AR_M10"
+    And si verifica che la risposta dell'API attempts contenga finalDematFound e paperDeliveryTimestamp
+
+  @paperTrackerM10 @trackerErrors
+  Scenario: [MOCK_RECAPITO_M10_03_2_A] Blocco dei tentativi di retry al superamento del limite massimo consentito (MAX_RETRY_REACHED_ERROR)
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | Via@FAIL_AR-M10-MAX-PCRETRY |
+      | digitalDomicile         | NULL                        |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
+    Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_4\",\"created\":\"2026-03-11T12:30:13.838822572Z\",\"errorCategory\":\"MAX_RETRY_REACHED_ERROR\",\"details\":{\"message\":\"Retry not found for trackingId: PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_4\",\"additionalDetails\":null},\"flowThrow\":\"RETRY_PHASE\",\"eventThrow\":\"RECRN002C\",\"eventIdThrow\":\"bf6522f1-5d37-4d80-a5af-e0a1b86638b0\",\"productType\":\"AR\",\"type\":\"ERROR\"}"
+    And si verifica che non sia presente nessun retry per il tracking
+
+  @paperTrackerM10 @paperTrackerARRunMode
+  Scenario: [MOCK_RECAPITO_M10_03_2_B] Esclusione della logica di retry analogico per causale di KO differente da M10
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | Via@FAIL_DECEDUTO_SLOW_AR |
+      | digitalDomicile         | NULL                      |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
+    And si verifica che la risposta tracking per la sequence "FAIL_DECEDUTO_SLOW_AR" contenga tutti gli elementi attesi e che sia strutturalmente valida
+    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "FAIL_DECEDUTO_SLOW_AR"
+    And si verifica che non sia presente nessun retry per il tracking
+
