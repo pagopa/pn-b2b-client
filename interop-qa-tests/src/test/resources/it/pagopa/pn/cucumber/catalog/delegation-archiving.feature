@@ -1508,6 +1508,14 @@ Feature: Gestione deleghe per archiviazione manuale e-service
       | PUBLISHED     |
       | SUSPENDED     |
 
+  @sad-path
+  Scenario: [DELEGATION_ARCHIVING_STATE_1.2] Un e-service in stato ARCHIVED NON può essere dato in delega in erogazione
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    When l'ente delegante tenta di inoltrare una richiesta di delega in erogazione all'ente delegato per l'e-service "45d822b9-066c-4a77-b4a1-331135496907"
+    Then si ottiene response status code 400
+
   @happy-path
   Scenario Outline: [DELEGATION_ARCHIVING_STATE_2.1] Un e-service in stato ARCHIVING o ARCHIVING_SUSPENDED può essere dato in delega in fruizione
     Given "PA1" ha già creato un e-service con un descrittore in stato "<eserviceState>" e impostando delega amministrativa a "true" e delega tecnica a "true"
