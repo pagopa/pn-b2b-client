@@ -78,7 +78,6 @@ public enum NotificationValue {
     DETAILS_DIGITAL_ADDRESS("details_digitalAddress", null, false),
     DETAILS_FOUND_ADDRESS("details_foundAddress", null, false),
     DETAILS_REFUSAL_REASONS("details_refusalReasons", null, false),
-    DETAILS_NUMBER_OF_RECIPIENTS("details_numberOfRecipients", null, false),
     DETAILS_GENERATED_AAR_URL("details_generatedAarUrl", null, false),
     DETAILS_RESPONSE_STATUS("details_responseStatus", null, false),
     DETAILS_DIGITAL_ADDRESS_SOURCE("details_digitalAddressSource", null, false),

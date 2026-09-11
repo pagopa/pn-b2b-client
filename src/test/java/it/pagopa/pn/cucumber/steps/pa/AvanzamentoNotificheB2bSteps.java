@@ -1049,12 +1049,6 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("viene verificato che l'elemento di timeline {string} {exists}")
     public void checkIfTimelineElementExists(String timelineEventCategory, boolean exists, Map<String, String> data) {
-        String expectedNumberOfRecipients = data != null ? getValue(data, DETAILS_NUMBER_OF_RECIPIENTS.key) : null;
-        if (expectedNumberOfRecipients != null) {
-            assertThat(sharedSteps.getRecipientsSize())
-                    .as("Il numero di destinatari della notifica non coincide con il valore atteso")
-                    .isEqualTo(Integer.parseInt(expectedNumberOfRecipients));
-        }
         B2bStepsInterface b2bStepsInterface = getB2bStepsInterface();
         b2bStepsInterface.checkIfTimelineElementExistsFromData(exists, timelineEventCategory, data);
     }

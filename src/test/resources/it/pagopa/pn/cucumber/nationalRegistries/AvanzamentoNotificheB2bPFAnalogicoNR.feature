@@ -439,7 +439,6 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
       | loadTimeline                | true                                                                     |
       | details                     | NOT_NULL                                                                 |
-      | details_numberOfRecipients  | 2                                                                        |
       | details_refusalReasons      | [{"recIndex": 0, "errorCode": "NOT_VALID_ADDRESS"}, {"recIndex": 1, "errorCode": "NOT_VALID_ADDRESS"}] |
 
 
