@@ -571,6 +571,33 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And la versione più recente dell'e-service è in stato "PUBLISHED"
 
   @happy-path
+  Scenario: [DELEGATION_MANUAL_ARCHIVING_5.1] Un ente delegato può inviare una richiesta di archiviazione dell'e-service al delegante a seguito dell'annullamento del processo di archiviazione
+  Verifichiamo che l’ente delegato all’erogazione possa inviare una nuova richiesta
+  di archiviazione dell’e-service dopo l’accettazione della richiesta precedente e l'annullamento
+  del processo di archiviazione da parte dell'ente delegante
+    Given l'ente delegato "PA2"
+    And l'ente delegante "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    And l'utente ha già inviato la richiesta di archiviazione per l'e-service "%actual" specificando la motivazione "QA test manual archiving" e 60 giorni di preavviso
+#     TODO: da sostituire con il Given
+    And l'utente è un "admin" di "PA1"
+    And l'utente delegante accetta la richiesta di archiviazione relativa all'e-service "%actual"
+    And si ottiene response status code 204
+    And l'e-service è in stato "ARCHIVING"
+    And l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
+    And si ottiene response status code 204
+    And l'e-service è in stato "PUBLISHED"
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    When l'utente delegato invia via M2M v3 al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
+    When l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
+    Then si ottiene response status code 204
+    And la richiesta di archiviazione delegata dell'e-service è in stato pending
+
+  @happy-path
   Scenario Outline: [DELEGATION_ARCHIVING_ESERVICE_TEMPLATE_INSTANCE_1.1] Un ente delegato può richiedere al delegante di avviare il processo di archiviazione di un e-service creato da template
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
