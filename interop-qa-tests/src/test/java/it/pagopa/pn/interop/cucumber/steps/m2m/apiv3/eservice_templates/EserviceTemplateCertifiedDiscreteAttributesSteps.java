@@ -12,12 +12,14 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.agreement.model.EServiceAttributeSpec;
 import it.pagopa.pn.interop.cucumber.steps.common.AttributeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 
 import java.time.Instant;
 import java.time.temporal.ChronoField;
 import java.util.*;
 
+@Slf4j
 public class EserviceTemplateCertifiedDiscreteAttributesSteps {
 
     private final IHttpExecutor httpExecutor;
@@ -184,6 +186,8 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
             List<List<CertifiedDiscreteAttribute>> assignedAttributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscreteAssigned();
             assignedAttributes.add(new ArrayList<>());
             assignedAttributes.get(assignedAttributes.size() - 1).add(certifiedDiscreteAttribute);
+            log.debug("Certified discrete attribute {} associated to template {}", certifiedDiscreteAttribute.getId(), templateId);
+            log.debug("Assigned attributes: {}", assignedAttributes);
         }
     }
 
@@ -228,6 +232,12 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
         }
     }
 
+    @When("l'utente tenta di associare l'attributo certificato discreto creato al gruppo {int} del template e-service con successo")
+    public void associateCertifiedDiscreteAttributeToGroupSuccessfully(int groupIndex) {
+        associateCertifiedDiscreteAttributeToGroup(groupIndex);
+        Assertions.assertTrue(httpExecutor.getResponseStatus().is2xxSuccessful());
+    }
+
     @When("l'utente tenta di associare gli attributi certificati discreti creati al gruppo {int} del template e-service")
     public void associateCertifiedDiscreteAttributesToGroup(int groupIndex) {
         EServiceTemplateInfo templateInfo = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
@@ -247,6 +257,29 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
             assignedAttributes.get(groupIndex).add(attr);
         });
     }
+
+    @When("l'utente tenta di associare gli attributi certificati discreti creati ad un nuovo gruppo del template e-service")
+    public void associateCertifiedDiscreteAttributesToNewGroup() {
+
+        EServiceTemplateInfo templateInfo = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
+        UUID templateId = templateInfo.getId();
+        UUID versionId = templateInfo.getLastVersionId();
+
+        List<CertifiedDiscreteAttribute> publishedAttributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscretePublished();
+
+        List<List<CertifiedDiscreteAttribute>> assignedAttributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscreteAssigned();
+
+        assignedAttributes.add(new ArrayList<>());
+        int groupIndex = assignedAttributes.size() - 1;
+
+        publishedAttributes.forEach(attr -> {
+            this.associateOrCreateCertifiedDiscreteAttributePublished(templateId, versionId, null, attr.getId());
+            Assertions.assertTrue(httpExecutor.getResponseStatus().is2xxSuccessful());
+            assignedAttributes.get(groupIndex).add(attr);
+        });
+    }
+
+
 
     @When("l'utente tenta di associare l'attributo certificato discreto creato al gruppo {int} di attributi certificati discreti del template e-service utilizzando per il template un ID {entityIdType}")
     public void associateCertifiedDiscreteAttributeToGroupWithInvalidTemplateId(int groupIndex, EntityIdType entityIdType) {
@@ -308,7 +341,7 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
         );
     }
 
-    @When("l'utente tenta la rimozione dell'attibuto certificato discreto {int} dal gruppo di attributi certificati discreti {int} del template e-service")
+    @When("l'utente tenta la rimozione dell'attributo certificato discreto {int} dal gruppo di attributi certificati discreti {int} del template e-service")
     public void removeCertifiedDiscreteAttributeFromGroup(int attributeIndex, int groupIndex) {
         List<List<CertifiedDiscreteAttribute>> attributes = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscreteAssigned();
 
@@ -325,6 +358,9 @@ public class EserviceTemplateCertifiedDiscreteAttributesSteps {
 
         if (httpExecutor.getResponseStatus().is2xxSuccessful()) {
             attributes.get(groupIndex).remove(attributeIndex);
+            if (attributes.get(groupIndex).isEmpty()) {
+                attributes.remove(groupIndex);
+            }
         }
     }
 
