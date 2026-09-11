@@ -1975,3 +1975,24 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And la versione più recente dell'e-service è in stato "ARCHIVING"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+
+  @sad-path
+  Scenario: [DELEGATION_MANUAL_ARCHIVING_COMBINED_PROCESS_1.2] Il delegato NON può richiedere l'archiviazione dell'intero e-service con un tempo di preavviso antecedente a quello di un suo descrittore con archiviazione già in corso
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    When l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 30 giorni di preavviso
+    Then si ottiene response status code 400
+    And la richiesta di archiviazione delegata dell'e-service non è stata creata
+    And la vecchia versione dell'e-service è in stato "ARCHIVING"
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
