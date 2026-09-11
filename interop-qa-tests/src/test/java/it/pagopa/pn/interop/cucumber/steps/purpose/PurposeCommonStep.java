@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.purpose;
 
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -9,9 +10,9 @@ import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.purpose.domain.CreatedEserviceVersion;
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
+import it.pagopa.interop.purpose.domain.RiskAnalysisDataFromJson;
 import it.pagopa.interop.purpose.domain.TEServiceMode;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
@@ -23,10 +24,9 @@ import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.UUID;
+
+import java.lang.reflect.Method;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Slf4j
@@ -71,6 +71,37 @@ public class PurposeCommonStep {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         UUID consumerId = identityService.getOrganizationId(tenantType);
         createFinalizationWithGivenStatus(consumerId, tenantType, n, purposeVersionState, null);
+    }
+
+    @Given("{string} ha già creato {int} finalità in stato {string} per quell'eservice specificando nell'analisi del rischio:")
+    public void tenantHasAlreadyCreateFinalizationWithStatus(String tenantType, int n, String purposeVersionState, DataTable answersTable) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        UUID consumerId = identityService.getOrganizationId(tenantType);
+
+        RiskAnalysisDataFromJson.RiskAnalysisAttributes riskAnalysisAttributes =
+                new RiskAnalysisDataFromJson.RiskAnalysisAttributes();
+
+        List<List<String>> answers = answersTable.asLists().stream().toList();
+        for (List<String> answer : answers) {
+            String id = answer.get(0);       // es: "usesPersonalData"
+            String rawValue = answer.get(1); // es: "NO"
+            List<String> values = Arrays.stream(rawValue.split(";")).map(String::trim).toList();
+
+            String methodName = "set" + Character.toUpperCase(id.charAt(0)) + id.substring(1);
+            try {
+                Method setter = riskAnalysisAttributes.getClass().getMethod(methodName, List.class);
+                setter.invoke(riskAnalysisAttributes, values);
+
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException("Method not found for RiskAnalysisAttributes: " + methodName, e);
+
+            } catch (Exception e) {
+                throw new RuntimeException("Error while invoking: " + methodName, e);
+            }
+        }
+        RiskAnalysis compiledRiskAnalysis = dataPreparationService.getRiskAnalysisSpecifyingAnswers(riskAnalysisAttributes);
+
+        createFinalizationWithGivenStatus(consumerId, tenantType, n, purposeVersionState, null, compiledRiskAnalysis);
     }
 
     @Given("{string} ha già creato {int} finalità in stato {string} per quell'eservice con flagPersonalData impostato a {string}")
@@ -175,6 +206,10 @@ public class PurposeCommonStep {
 
     public void createFinalizationWithGivenStatus(UUID consumerId, String tenantType, int n, String purposeVersionState, DelegationRef delegationRef) {
         RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(tenantType, true);
+        createFinalizationWithGivenStatus(consumerId, tenantType, n, purposeVersionState, delegationRef, riskAnalysis);
+    }
+
+    public void createFinalizationWithGivenStatus(UUID consumerId, String tenantType, int n, String purposeVersionState, DelegationRef delegationRef, RiskAnalysis riskAnalysis) {
         PurposeCommonContext purposeCommonContext = sharedStepsContext.getPurposeCommonContext();
         for (int index = 0; index < n; index++) {
             dataPreparationService.createPurposeWithGivenState(ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE),
