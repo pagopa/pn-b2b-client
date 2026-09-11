@@ -1360,6 +1360,27 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'e-service è in stato "ARCHIVING"
 
   @happy-path
+  Scenario: [DELEGATION_MANUAL_ARCHIVING_NEW_VERSION_CANCELLATION_1.2] L'invio di una richiesta di archiviazione dell'e-service NON elimina l'ultima versione dell'e-service in stato `WAITING_FOR_APPROVAL`
+  Verifichiamo che, in presenza di una richiesta di pubblicazione in corso,
+  l’avvio del processo di archiviazione dell’e-service comporti l’eliminazione della nuova versione ancora in attesa di pubblicazione.
+    Given l'ente delegante "PA1"
+    And l'ente delegato "PA2"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    And "PA2" tenta la creazione di una versione in DRAFT per quell'e-service
+    And l'utente aggiorna alcuni parametri di quel descrittore
+    And "PA2" ha già caricato un'interfaccia per quel descrittore
+    And l'utente pubblica l'e-service
+    And l'e-service è in stato "WAITING_FOR_APPROVAL"
+    When l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
+    Then si ottiene response status code 200
+    And l'e-service è in stato "WAITING_FOR_APPROVAL"
+    And la richiesta di archiviazione delegata dell'e-service è in stato pending
+
+  @happy-path
   Scenario: [DELEGATION_AUTOMATIC_ARCHIVING_DESCRIPTOR_1.1] L'archiviazione automatica di un descrittore elimina la relativa richiesta di archiviazione in pending
   Il descrittore meno recente di un e-service in delega ha una richiesta di archiviazione ancora in pending.
   Quando viene archiviata l'ultima richiesta di fruizione attiva verso il descrittore, questo passa
