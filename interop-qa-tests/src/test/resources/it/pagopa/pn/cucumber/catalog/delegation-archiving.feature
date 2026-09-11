@@ -570,6 +570,25 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And la versione più recente dell'e-service è in stato "PUBLISHED"
 
+  @sad-path
+  Scenario: [DELEGATION_MANUAL_ARCHIVING_4.7] Un ente diverso dal delegato NON può annullare la richiesta di archiviazione dell'e-service già precedentemente accettata
+    Given l'ente delegato "PA2"
+    And l'ente delegante "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    And l'utente ha già inviato la richiesta di archiviazione per l'e-service "%actual" specificando la motivazione "QA test manual archiving" e 60 giorni di preavviso
+#     TODO: da sostituire con il Given
+    And l'utente è un "admin" di "PA1"
+    And l'utente delegante accetta la richiesta di archiviazione relativa all'e-service "%actual"
+    And si ottiene response status code 204
+    And l'e-service è in stato "ARCHIVING"
+    And l'utente è un "admin" di "PA2"
+    When l'utente delegato annulla la richiesta di archiviazione dell'e-service "%actual"
+    Then si ottiene response status code 409
+
   @happy-path
   Scenario: [DELEGATION_MANUAL_ARCHIVING_5.1] Un ente delegato può inviare una richiesta di archiviazione dell'e-service al delegante a seguito dell'annullamento del processo di archiviazione
   Verifichiamo che l’ente delegato all’erogazione possa inviare una nuova richiesta
