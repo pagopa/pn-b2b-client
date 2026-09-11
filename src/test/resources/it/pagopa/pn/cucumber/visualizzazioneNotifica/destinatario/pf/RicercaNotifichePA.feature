@@ -343,6 +343,67 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
       | group  | CONSISTENT                    |
 
 
+  #todo t stato
+
+  @ricercaNotifiche
+  Scenario: [MITTENTE_RICERCA_NOTIFICHE_BONARIE_2.A2] Vengono inviate due notifiche bonarie con esiti differenti
+  e si recuperano le notifiche inviate dal mittente filtrando per lista di stati
+    Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
+      | campaignId      | Reminder                       |
+      | messageId       | ${NEW-IT}                      |
+      | subject         | Test workflow                  |
+      | recipientType   | PF                             |
+      | taxId           | FRMTTR76M06B715E               |
+      | denomination    | Ettore Fieramosca              |
+      | email           | bounce@simulator.amazonses.com |
+      | digitalDomicile | NULL                           |
+      | phone_number    | +3900000                       |
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
+    And si attende che la notifica bonaria passi in stato "COMPLETED_UNREACHED"
+
+    Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
+      | campaignId      | Reminder                          |
+      | messageId       | ${NEW-IT}                         |
+      | subject         | Test workflow                     |
+      | recipientType   | PF                                |
+      | taxId           | FRMTTR76M06B715E                  |
+      | denomination    | Ettore Fieramosca                 |
+      | email           | complaint@simulator.amazonses.com |
+      | digitalDomicile | NULL                              |
+      | phone_number    | +39001                            |
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
+    And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
+
+    #    ricerca per specifico stato
+    And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
+      | startDate  | $DATE_ADD(-1D)                        |
+      | endDate    | $DATE_ADD(1D)                         |
+      | campaignId | MessaMora                             |
+      | status     | COMPLETED_REACHED;COMPLETED_UNREACHED |
+      | senderId   | :informal_senderId                    |
+      | size       | 50                                    |
+      | delivered  | true                                  |
+    And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
+      | sentAt             | $DATE_ADD(-1D), $DATE_ADD(1D)         |
+      | notificationStatus | COMPLETED_REACHED;COMPLETED_UNREACHED |
+
+    #    ricerca per specifico stato
+    And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
+      | startDate  | $DATE_ADD(-1D)            |
+      | endDate    | $DATE_ADD(1D)             |
+      | campaignId | MessaMora                 |
+      | status     | COMPLETED_REACHED;REFUSED |
+      | senderId   | :informal_senderId        |
+      | size       | 50                        |
+      | delivered  | true                      |
+    And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
+      | sentAt             | $DATE_ADD(-1D), $DATE_ADD(1D) |
+      | notificationStatus | COMPLETED_REACHED             |
+
+
+
+
+
   #CASO DI TEST 3.2 - paginazione con più risultati
   @ricercaNotifiche
   Scenario: [MITTENTE_RICERCA_NOTIFICHE_BONARIE_2.C] Come mittente recupero le notifiche bonarie inviate sfogliando tutte le pagine dei risultati

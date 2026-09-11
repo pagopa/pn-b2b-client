@@ -25,7 +25,9 @@ public class NotificationSearchParam {
     public OffsetDateTime endDate;
     public String mandateId;
     public String senderId;
-    public String status;
+    //todo t stato
+    public List<String> status;
+    //public String status;
     public String subjectRegExp;
     public String iunMatch;
     public String recipientId;

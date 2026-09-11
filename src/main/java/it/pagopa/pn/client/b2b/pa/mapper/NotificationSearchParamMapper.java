@@ -5,6 +5,7 @@ import it.pagopa.pn.client.b2b.pa.domain.NotificationSearchParam;
 import org.springframework.stereotype.Component;
 
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.UnaryOperator;
@@ -44,7 +45,10 @@ public class NotificationSearchParamMapper {
         searchParam.xPagopaPnCxId = resolveWithDefault(data, "xPagopaPnCxId", NotificationSearchParam.RESOLVE_FROM_CALLER, dynamicValueResolver);
         searchParam.mandateId = resolveWithDefault(data, "mandateId", null, dynamicValueResolver);
         searchParam.senderId = resolveWithDefault(data, "senderId", null, dynamicValueResolver);
-        searchParam.status = resolveWithDefault(data, "status", null, dynamicValueResolver);
+        //searchParam.status = resolveWithDefault(data, "status", null, dynamicValueResolver);
+        //todo t stato
+        searchParam.status = resolveStatuses(resolveWithDefault(data, "status", null, dynamicValueResolver));
+
         searchParam.subjectRegExp = resolveWithDefault(data, "subjectRegExp", null, dynamicValueResolver);
         searchParam.recipientId = resolveWithDefault(data, "recipientId", null, dynamicValueResolver);
         searchParam.xPagopaPnCxGroups = resolveGroups(resolveWithDefault(data, "xPagopaPnCxGroups", null, dynamicValueResolver));
@@ -78,6 +82,10 @@ public class NotificationSearchParamMapper {
 
     private List<String> resolveGroups(String value) {
         return value == null ? null : List.of(value.split(";"));
+    }
+
+    private List<String> resolveStatuses(String value) {
+        return value == null ? null : Arrays.stream(value.split(";")).map(String::trim).toList();
     }
 }
 
