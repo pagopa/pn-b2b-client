@@ -186,6 +186,12 @@ public class M2MV3DelegationArchivingSteps {
         );
     }
 
+    @Then("l'e-service viene visualizzato senza il campo relativo alle richieste di archiviazione")
+    public void eServiceIsVisibleWithoutDelegationArchivingRequests() {
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        delegatedArchivingRequestVerifier.verifyEServiceVisibleWithoutDelegationArchivingRequests(eServiceId);
+    }
+
     private Map<RequestState, Integer> parseExpectedCounts(DataTable dataTable) {
         Map<RequestState, Integer> expectedCounts = new EnumMap<>(RequestState.class);
 

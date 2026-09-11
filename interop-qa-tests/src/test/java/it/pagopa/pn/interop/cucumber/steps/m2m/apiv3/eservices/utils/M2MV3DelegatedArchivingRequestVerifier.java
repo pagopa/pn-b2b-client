@@ -4,7 +4,10 @@ import it.pagopa.interop.eservice.service.IM2MV3EserviceClient;
 import it.pagopa.interop.eservice.service.IM2MV3EserviceDescriptorClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DelegatedDescriptorArchivingRequest;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DelegatedEServiceArchivingRequest;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import org.assertj.core.api.Assertions;
+import org.springframework.http.HttpStatus;
 
 import java.util.EnumMap;
 import java.util.List;
@@ -46,6 +49,23 @@ public class M2MV3DelegatedArchivingRequestVerifier {
                         && matchesDescriptorHistory(descriptor.getDelegatedArchivingRequest(), expectedCounts),
                 "Lo storico M2M v3 delle richieste di archiviazione del descrittore non coincide con quello atteso"
         );
+    }
+
+    public void verifyEServiceVisibleWithoutDelegationArchivingRequests(UUID expectedEServiceId) {
+        EService eService = eServiceClient.get(expectedEServiceId);
+
+        Assertions.assertThat(sharedStepsContext.getHttpCallExecutor().getResponseStatus())
+                .as("Il recupero dell'e-service non ha avuto successo")
+                .isEqualTo(HttpStatus.OK);
+        Assertions.assertThat(eService)
+                .as("L'ente dovrebbe poter visualizzare l'e-service")
+                .isNotNull();
+        Assertions.assertThat(eService.getId())
+                .as("L'e-service visualizzato dovrebbe essere quello richiesto")
+                .isEqualTo(expectedEServiceId);
+        Assertions.assertThat(eService.getDelegatedArchivingRequest())
+                .as("L'ente utilizzato non dovrebbe poter visualizzare il campo relativo alle richieste di archiviazione dell'e-service")
+                .isNull();
     }
 
     private boolean matchesEServiceHistory(
