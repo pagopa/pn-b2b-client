@@ -332,44 +332,101 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
     And destinatario
-      | denomination    | Test digitale ok |
-      | taxId           | RNORNO80A41F979F |
-      | digitalDomicile | NULL             |
+      | denomination    | Test digitale KO - segue analogico |
+      | taxId           | TYXYHK14A01A001Q                   |
+      | digitalDomicile | NULL                               |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
-    #aggiungere step per timeout da INAD
+    Then viene verificato che l'elemento di timeline "GET_ADDRESS" esista
+      | details                      | NOT_NULL |
+      | details_recIndex             | 0        |
+      | details_digitalAddressSource | PLATFORM |
+      | details_sentAttemptMade      | 0        |
+      | details_isAvailable          | false    |
+    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
+      | loadTimeline                 | true     |
+      | details                      | NOT_NULL |
+      | details_recIndex             | 0        |
+      | details_digitalAddressSource | SPECIAL  |
+      | details_sentAttemptMade      | 0        |
+      | details_isAvailable          | false    |
+#    primo tentativo recupero su INAD
+    Then viene verificato che l'elemento di timeline "GET_ADDRESS" esista
+      | loadTimeline                 | true     |
+      | details                      | NOT_NULL |
+      | details_recIndex             | 0        |
+      | details_digitalAddressSource | GENERAL  |
+      | details_sentAttemptMade      | 0        |
+      | details_isAvailable          | false    |
+    #    secondo tentativo recupero su INAD
+    Then viene verificato che l'elemento di timeline "GET_ADDRESS" esista
+      | loadTimeline                 | true     |
+      | details                      | NOT_NULL |
+      | details_recIndex             | 0        |
+      | details_digitalAddressSource | GENERAL  |
+      | details_sentAttemptMade      | 1        |
+      | details_isAvailable          | false    |
+#    fallimento invio digitale
+    And viene verificato che l'elemento di timeline "DIGITAL_FAILURE_WORKFLOW" esista
+      | loadTimeline     | true                               |
+      | legalFactsIds    | [{"category": "DIGITAL_DELIVERY"}] |
+      | details          | NOT_NULL                           |
+      | details_recIndex | 0                                  |
+#    inizio invio analogico
+    And viene verificato che l'elemento di timeline "SCHEDULE_ANALOG_WORKFLOW" esista
+      | loadTimeline | true |
     And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
 
-    #modificare CF che non abbia domicili digitali su INAD ma si su INIPEC
+
   @PFinipec
   Scenario: [Ricerca_domicilio_digitale_PF_INAD_INIPEC_1] Invio Notifica mono destinatario a PF con recupero dei domicili digitali in IniPec – INAD non trovato
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
     And destinatario
-      | denomination    | Test digitale ok |
-      | taxId           | RNORNO80A41F979F |
-      | digitalDomicile | NULL             |
+      | denomination    | Test digitale ok INIPEC |
+      | taxId           | DRCDVD87M07E243W        |
+      | digitalDomicile | NULL                    |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     #lo step deve controllare inipec e non nr , verificare uguaglianza dello step sulcampo nella PUBLIC_REGISTRY_RESPONSE Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
+    Then viene verificato che l'elemento di timeline "GET_ADDRESS" esista
+      | details                      | NOT_NULL |
+      | details_recIndex             | 0        |
+      | details_digitalAddressSource | PLATFORM |
+      | details_sentAttemptMade      | 0        |
+      | details_isAvailable          | false    |
+    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
+      | loadTimeline                 | true     |
+      | details                      | NOT_NULL |
+      | details_recIndex             | 0        |
+      | details_digitalAddressSource | SPECIAL  |
+      | details_sentAttemptMade      | 0        |
+      | details_isAvailable          | false    |
+#    primo tentativo recupero su INAD
+    Then viene verificato che l'elemento di timeline "GET_ADDRESS" esista
+      | loadTimeline                 | true     |
+      | details                      | NOT_NULL |
+      | details_recIndex             | 0        |
+      | details_digitalAddressSource | GENERAL  |
+      | details_sentAttemptMade      | 0        |
+      | details_isAvailable          | false    |
     And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
-      | loadTimeline           | true                                                   |
-      | legalFactsIds          | [{"category": "DIGITAL_DELIVERY"}]                     |
-      | details                | NOT_NULL                                               |
-      | details_digitalAddress | {"address": "example@OK-pecSuccess.it", "type": "PEC"} |
-      | details_recIndex       | 0                                                      |
+      | loadTimeline           | true                                                  |
+      | legalFactsIds          | [{"category": "DIGITAL_DELIVERY"}]                    |
+      | details                | NOT_NULL                                              |
+      | details_digitalAddress | {"address": "DRCDVD87M07E243W@pec.it", "type": "PEC"} |
+      | details_recIndex       | 0                                                     |
 
-    #modificare cf che non abbia alcun recapito digitale ne in INAD ne in INIPEC
-  @PFinipec
-  Scenario: [Ricerca_
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
-    And destinatario
-      | denomination    | Test digitale ok |
-      | taxId           | RNORNO80A41F979F |
-      | digitalDomicile | NULL             |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
-    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+#
+#  @PFinipec
+#  Scenario: [Ricerca_
+#    Given viene generata una nuova notifica
+#      | subject            | invio notifica con cucumber |
+#      | senderDenomination | Comune di milano            |
+#    And destinatario
+#      | denomination    | Test digitale ok |
+#      | taxId           | RNORNO80A41F979F |
+#      | digitalDomicile | NULL             |
+#    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+#    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
 
 
