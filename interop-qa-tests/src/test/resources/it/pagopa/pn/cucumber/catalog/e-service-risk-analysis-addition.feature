@@ -153,10 +153,11 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
     And l'utente è un "admin" di "Privato"
     And "Privato" ha già creato una richiesta di fruizione in stato "ACTIVE" con un documento allegato
     And "Privato" ha già creato 1 finalità in stato "DRAFT" per quell'eservice specificando nell'analisi del rischio:
-    | purpose                 | INSTITUTIONAL |
-    | institutionalPurpose    | This is a test |
+    # Il tipo di dati personali non sono particolari, né giudiziari, quindi accetta la compilazione senza le misure tecniche
     | usesPersonalData        | YES |
     | personalDataTypes       | WITH_NON_IDENTIFYING_DATA |
+    | purpose                 | INSTITUTIONAL |
+    | institutionalPurpose    | This is a test |
     | legalBasis              | CONSENT |
     | knowsDataQuantity       | NO |
     | deliveryMethod          | CLEARTEXT |
@@ -168,3 +169,21 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
     | purposePursuit          | MERE_CORRECTNESS |
     | checkedExistenceMereCorrectnessInteropCatalogue | true |
     | declarationConfirmGDPR  | true |
+
+    And "Privato" ha già creato 1 finalità in stato "DRAFT" per quell'eservice specificando nell'analisi del rischio:
+    # Il tipo di dati personali sono particolari e giudiziari, quindi non accetta la compilazione senza le misure tecniche
+      | usesPersonalData        | YES |
+      | personalDataTypes       | GDPR_ART_9 ; GDPR_ART_10 |
+      | purpose                 | INSTITUTIONAL |
+      | institutionalPurpose    | This is a test |
+      | legalBasis              | CONSENT |
+      | knowsDataQuantity       | NO |
+      | deliveryMethod          | CLEARTEXT |
+      | policyProvided          | NO |
+      | reasonPolicyNotProvided | This is a test |
+      | confirmPricipleIntegrityAndDiscretion | true |
+      | doneDpia                | NO |
+      | dataDownload            | NO |
+      | purposePursuit          | MERE_CORRECTNESS |
+      | checkedExistenceMereCorrectnessInteropCatalogue | true |
+      | declarationConfirmGDPR  | true |
