@@ -261,6 +261,11 @@ public class WebhookStepsV30 implements WebhookStepsInterface {
                 .as("Lo streamId dello stream recuperato tramite id " + streamId + " non dev'essere null")
                 .isNotNull();
         assertThat(eventStream.getWaitForAccepted()).as("Il valore di waitForAccepted non coincide con quanto atteso").isEqualTo(waitForAccepted);
+        if (communicationType != null) {
+            assertThat(eventStream.getCommunicationType()).as("Il valore di communicationType non coincide con quanto atteso").isEqualTo(communicationType);
+        } else {
+            assertThat(eventStream.getCommunicationType()).as("In caso di communicationType null, lo stream creato dovrebbe avere LEGAL come communicationType di default").isEqualTo(CommunicationType.LEGAL);
+        }
         log.info("EVENTSTREAM: {}", eventStream);
     }
 

@@ -1,9 +1,30 @@
 Feature: aggiornamento stream
 
   #--------------AGGIORNAMENTO DI UNO STREAM------------
-  @webhookV30 @precondition @cleanWebhook @webhook2
+
+  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  Scenario Outline: [STREAM_UPDATE_DIFFERENT_COMMUNICATION_TYPE] Aggiornamento di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey con stesso gruppo.
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
+    And allo stream versione "V30" si setta il campo communicationType a "<typeOriginal>"
+    And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
+    And viene impostata l'apikey appena generata
+    And viene aggiornata la apiKey utilizzata per gli stream
+    And si crea il nuovo stream con versione "V30" per il "Comune_Multi" con un gruppo disponibile "FIRST"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V30"
+    When allo stream versione "V30" si setta il campo communicationType a "<typeReplaced>"
+    And si aggiorna lo stream creato con versione "V30" e apiKey aggiornata
+    Then l'operazione ha prodotto un errore con status code "403"
+    And viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata
+    Examples:
+      | typeOriginal | typeReplaced |
+      | INFORMAL     | LEGAL        |
+      | LEGAL        | INFORMAL     |
+
+  @webhookV30Informal @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_87] Aggiornamento di uno stream notifica con gruppo, con eventType "STATUS"  con gruppo non appartenente alla PA.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
+    And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -14,9 +35,10 @@ Feature: aggiornamento stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30 @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_87_1] Aggiornamento di uno stream notifica senza gruppo, con eventType "STATUS"  con gruppo non appartenente alla PA.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
+    And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -27,9 +49,10 @@ Feature: aggiornamento stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30 @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_87_2] Aggiornamento di uno stream notifica senza gruppo, con eventType "STATUS"  con gruppo che appartenente alla PA.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
+    And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -40,9 +63,10 @@ Feature: aggiornamento stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30 @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_88] Aggiornamento di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey con gruppo diverso.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
+    And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -57,9 +81,10 @@ Feature: aggiornamento stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30 @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_89] Aggiornamento di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey con stesso gruppo.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
+    And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -71,10 +96,11 @@ Feature: aggiornamento stream
     And l'apiKey viene cancellata
 
   # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
-  @webhookV30 @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_89waitForAccepted] Aggiornamento di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey con stesso gruppo.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo waitForAccepted a "true"
+    And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -86,9 +112,10 @@ Feature: aggiornamento stream
     And l'apiKey viene cancellata
 
 
-  @webhookV30 @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_42] Aggiornamento di uno stream notifica da due gruppi ad un gruppo, con eventType "STATUS".
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
+    And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con due gruppi
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -99,9 +126,10 @@ Feature: aggiornamento stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30 @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_43] Aggiornamento di uno stream notifica da un gruppo a più gruppi, con eventType "STATUS".
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
+    And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -113,10 +141,11 @@ Feature: aggiornamento stream
     And l'apiKey viene cancellata
 
   # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
-  @webhookV30 @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_43waitForAccepted] Aggiornamento di uno stream notifica da un gruppo a più gruppi, con eventType "STATUS".
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo waitForAccepted a "true"
+    And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -127,9 +156,10 @@ Feature: aggiornamento stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30 @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_91] Aggiornamento di uno stream notifica con gruppo, con eventType "TIMELINE"  utilizzando un apikey master.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
+    And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -144,9 +174,10 @@ Feature: aggiornamento stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30 @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_92] Aggiornamento di uno stream notifica con gruppo, con eventType "TIMELINE"  utilizzando un apikey con gruppo non appartenente alla PA.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
+    And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -157,9 +188,10 @@ Feature: aggiornamento stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30 @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_93] Aggiornamento di uno stream notifica con gruppo, con eventType "TIMELINE"  utilizzando un apikey con gruppo diverso.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
+    And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -174,9 +206,10 @@ Feature: aggiornamento stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30 @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_94] Aggiornamento di uno stream notifica con gruppo, con eventType "TIMELINE"  utilizzando un apikey con stesso gruppo.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
+    And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -187,9 +220,10 @@ Feature: aggiornamento stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30 @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_95] Aggiornamento di uno stream notifica senza gruppo, con eventType "STATUS"  utilizzando un apikey master.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
+    And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -200,9 +234,10 @@ Feature: aggiornamento stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30 @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_97] Aggiornamento di uno stream notifica senza gruppo, con eventType "STATUS"  utilizzando un apikey con gruppo.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
+    And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -218,9 +253,10 @@ Feature: aggiornamento stream
     And l'apiKey viene cancellata
 
 
-  @webhookV30 @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_190] Aggiornamento di uno stream notifica senza gruppo, con eventType "TIMELINE"  utilizzando un apikey master.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
+    And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -232,9 +268,10 @@ Feature: aggiornamento stream
     And l'apiKey viene cancellata
 
 
-  @webhookV30 @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_100] Aggiornamento di uno stream notifica senza gruppo, con eventType "TIMELINE"  utilizzando un apikey con gruppo.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
+    And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -250,9 +287,10 @@ Feature: aggiornamento stream
     And l'apiKey viene cancellata
 
 
-  @webhookV30 @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_154] Aggiornamento di uno stream notifica con gruppi appartenenti ad un sottinsieme dei gruppi dell'apikey utilizzata.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
+    And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con due gruppi
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -263,9 +301,10 @@ Feature: aggiornamento stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30 @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_155] Aggiornamento di uno stream notifica con gruppi appartenenti ad un sottinsieme dei gruppi dell'apikey utilizzata.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
+    And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con due gruppi
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -279,9 +318,10 @@ Feature: aggiornamento stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30 @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_121] Aggiornamento per una PA di uno stream che non esiste per la stessa PA
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
+    And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -294,9 +334,10 @@ Feature: aggiornamento stream
     And l'apiKey viene cancellata
 
     #DA VERIFICARE SE CORRETTO IL 400....
-  @webhookV30 @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.5.138] Aggiornamento di uno stream notifica V28 senza gruppo, con  la versione V10.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
+    And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -307,7 +348,7 @@ Feature: aggiornamento stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30 @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.5.140] Aggiornamento di uno stream notifica V10 senza gruppo, con  la versione V28.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
