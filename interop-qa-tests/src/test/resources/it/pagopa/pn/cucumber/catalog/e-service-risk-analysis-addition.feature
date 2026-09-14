@@ -151,8 +151,8 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "PUBLISHED" e flag dati personali a "true"
     And l'utente è un "admin" di "Privato"
-    And "Privato" ha già creato una richiesta di fruizione in stato "ACTIVE" con un documento allegato
-    And "Privato" ha già creato 1 finalità in stato "DRAFT" per quell'eservice specificando nell'analisi del rischio:
+    When "Privato" ha già creato una richiesta di fruizione in stato "ACTIVE" con un documento allegato
+    Then "Privato" crea 1 finalità in stato "DRAFT" per quell'eservice specificando nell'analisi del rischio:
     # Il tipo di dati personali non sono particolari, né giudiziari, quindi accetta la compilazione senza le misure tecniche
     | usesPersonalData        | YES |
     | personalDataTypes       | WITH_NON_IDENTIFYING_DATA |
@@ -170,10 +170,35 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
     | checkedExistenceMereCorrectnessInteropCatalogue | true |
     | declarationConfirmGDPR  | true |
 
-    And "Privato" ha già creato 1 finalità in stato "DRAFT" per quell'eservice specificando nell'analisi del rischio:
+    When "Privato" tenta di creare 1 finalità in stato "DRAFT" per quell'eservice specificando nell'analisi del rischio:
     # Il tipo di dati personali sono particolari e giudiziari, quindi non accetta la compilazione senza le misure tecniche
       | usesPersonalData        | YES |
       | personalDataTypes       | GDPR_ART_9 ; GDPR_ART_10 |
+      | purpose                 | INSTITUTIONAL |
+      | institutionalPurpose    | This is a test |
+      | legalBasis              | CONSENT |
+      | knowsDataQuantity       | NO |
+      | deliveryMethod          | CLEARTEXT |
+      | policyProvided          | NO |
+      | reasonPolicyNotProvided | This is a test |
+      | confirmPricipleIntegrityAndDiscretion | true |
+      | doneDpia                | NO |
+      | dataDownload            | NO |
+      | purposePursuit          | MERE_CORRECTNESS |
+      | checkedExistenceMereCorrectnessInteropCatalogue | true |
+      | declarationConfirmGDPR  | true |
+    Then la precedente creazione di finalità risulta malformata e riporta gli errori:
+    """
+    Expected field dataProtectionMeasures not found in form
+    Expected field dataProtectionMeasuresParticular not found in form
+    """
+
+    Then "Privato" crea 1 finalità in stato "DRAFT" per quell'eservice specificando nell'analisi del rischio:
+    # Il tipo di dati personali sono particolari e giudiziari, quindi accetta la compilazione con le misure tecniche
+      | usesPersonalData        | YES |
+      | personalDataTypes       | GDPR_ART_9 ; GDPR_ART_10 |
+      | dataProtectionMeasuresParticular | Un esempio di misura presa |
+      | dataProtectionMeasures  | Un altro esempio di misura presa |
       | purpose                 | INSTITUTIONAL |
       | institutionalPurpose    | This is a test |
       | legalBasis              | CONSENT |
