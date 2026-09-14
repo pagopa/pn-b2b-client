@@ -49,7 +49,7 @@ public class DelegationArchivingSteps {
             GracePeriodDays gracePeriodDays
     ) {
         submitDelegatedEServiceArchiving(eServiceId, archivingReason, gracePeriodDays);
-        assertDelegatedArchivingRequestSubmitted();
+        assertDelegatedArchivingRequestSucceeded("L'invio della richiesta di archiviazione non ha avuto successo");
         eServiceDelegatedArchivingRequestIsPending();
     }
 
@@ -60,14 +60,14 @@ public class DelegationArchivingSteps {
             GracePeriodDays gracePeriodDays
     ) {
         submitDelegatedDescriptorArchiving(descriptorId, eServiceId, gracePeriodDays);
-        assertDelegatedArchivingRequestSubmitted();
+        assertDelegatedArchivingRequestSucceeded("L'invio della richiesta di archiviazione non ha avuto successo");
         oldDescriptorDelegatedArchivingRequestIsPending();
     }
 
     @Given("l'utente ha già rifiutato la richiesta di archiviazione per l'e-service {string} con motivazione {string}")
     public void delegatedEServiceArchivingRequestAlreadyRejected(String eServiceId, String rejectionReason) {
         rejectDelegatedEServiceArchiving(eServiceId, rejectionReason);
-        assertDelegatedArchivingRequestRejected();
+        assertDelegatedArchivingRequestSucceeded("Il rifiuto della richiesta di archiviazione non ha avuto successo");
         eServiceDelegatedArchivingRequestIsRejected();
     }
 
@@ -78,28 +78,28 @@ public class DelegationArchivingSteps {
             String rejectionReason
     ) {
         rejectDelegatedDescriptorArchiving(descriptorId, eServiceId, rejectionReason);
-        assertDelegatedArchivingRequestRejected();
+        assertDelegatedArchivingRequestSucceeded("Il rifiuto della richiesta di archiviazione non ha avuto successo");
         oldDescriptorDelegatedArchivingRequestIsRejected();
     }
 
     @Given("l'utente ha già annullato la richiesta di archiviazione per l'e-service {string}")
     public void delegatedEServiceArchivingRequestAlreadyCancelled(String eServiceId) {
         cancelDelegatedEServiceArchivingRequest(eServiceId);
-        assertDelegatedArchivingRequestCancelled();
+        assertDelegatedArchivingRequestSucceeded("L'annullamento della richiesta di archiviazione non ha avuto successo");
         pendingEServiceArchivingRequestIsCancelled();
     }
 
     @Given("l'utente ha già annullato la richiesta di archiviazione per il vecchio descrittore {string} dell'e-service {string}")
     public void delegatedOldDescriptorArchivingRequestAlreadyCancelled(String descriptorId, String eServiceId) {
         cancelDelegatedDescriptorArchivingRequest(descriptorId, eServiceId);
-        assertDelegatedArchivingRequestCancelled();
+        assertDelegatedArchivingRequestSucceeded("L'annullamento della richiesta di archiviazione non ha avuto successo");
         pendingOldDescriptorArchivingRequestIsCancelled();
     }
 
     @Given("l'utente ha già accettato la richiesta di archiviazione per l'e-service {string}")
     public void delegatedEServiceArchivingRequestAlreadyApproved(String eServiceId) {
         approveDelegatedEServiceArchiving(eServiceId);
-        assertDelegatedArchivingRequestApproved();
+        assertDelegatedArchivingRequestSucceeded("L'accettazione della richiesta di archiviazione non ha avuto successo");
         pendingEServiceArchivingRequestIsCancelled();
         eServiceCatalogListingSteps.checkEServiceState("ARCHIVING");
     }
@@ -107,7 +107,7 @@ public class DelegationArchivingSteps {
     @Given("l'utente ha già accettato la richiesta di archiviazione per il vecchio descrittore {string} dell'e-service {string}")
     public void delegatedOldDescriptorArchivingRequestAlreadyApproved(String descriptorId, String eServiceId) {
         approveDelegatedDescriptorArchiving(descriptorId, eServiceId);
-        assertDelegatedArchivingRequestApproved();
+        assertDelegatedArchivingRequestSucceeded("L'accettazione della richiesta di archiviazione non ha avuto successo");
         pendingOldDescriptorArchivingRequestIsCancelled();
         descriptorArchivingSteps.oldEServiceVersionIsInState("ARCHIVING");
     }
@@ -274,27 +274,9 @@ public class DelegationArchivingSteps {
         delegatedArchivingRequestVerifier.pollWithoutPendingDescriptorArchivingRequest(eServiceId);
     }
 
-    private void assertDelegatedArchivingRequestSubmitted() {
+    private void assertDelegatedArchivingRequestSucceeded(String errorMessage) {
         if (httpCallExecutor.getResponseStatus() == null || !httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
-            throw new IllegalStateException("L'invio della richiesta di archiviazione non ha avuto successo");
-        }
-    }
-
-    private void assertDelegatedArchivingRequestRejected() {
-        if (httpCallExecutor.getResponseStatus() == null || !httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
-            throw new IllegalStateException("Il rifiuto della richiesta di archiviazione non ha avuto successo");
-        }
-    }
-
-    private void assertDelegatedArchivingRequestCancelled() {
-        if (httpCallExecutor.getResponseStatus() == null || !httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
-            throw new IllegalStateException("L'annullamento della richiesta di archiviazione non ha avuto successo");
-        }
-    }
-
-    private void assertDelegatedArchivingRequestApproved() {
-        if (httpCallExecutor.getResponseStatus() == null || !httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
-            throw new IllegalStateException("L'accettazione della richiesta di archiviazione non ha avuto successo");
+            throw new IllegalStateException(errorMessage);
         }
     }
 
