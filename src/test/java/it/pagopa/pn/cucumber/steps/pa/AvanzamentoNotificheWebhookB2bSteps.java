@@ -250,9 +250,13 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     @When("si crea(no) i(l) nuov(o)(i) stream per il {string} con versione {string} e filtro di timeline {string}")
     public void createStreamWithFilteredTimeline(String pa, String version, String filter) {
+        String[] filterValues = new String[]{filter};
+        if (filter.contains(",")) {
+            filterValues = filter.split(",");
+        }
         setPaWebhook(pa);
         StreamVersion streamVersion = getStreamVersion(version);
-        createStream(pa, streamVersion, null, false, List.of(filter), false, null);
+        createStream(pa, streamVersion, null, false, Arrays.asList(filterValues), false, null);
     }
 
     @When("si crea(no) i(l) nuov(o)(i) stream per il {string} con versione {string} e filtro status {string}")
@@ -272,7 +276,8 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         setPaWebhook(pa);
         updateApiKeyForStream();
         StreamVersion streamVersion = getStreamVersion(version);
-        createStream(pa, streamVersion, getGroupForStream(position, pa), false, List.of("DEFAULT"), false, null);
+//        createStream(pa, streamVersion, getGroupForStream(position, pa), false, List.of("DEFAULT"), false, null);//TODO MATTEO STREAM TEST
+        createStream(pa, streamVersion, getGroupForStream(position, pa), false, null, false, null);
     }
 
     @And("si crea il nuovo stream con versione {string} per il {string} \\(caso errato)")

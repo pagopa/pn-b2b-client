@@ -588,3 +588,37 @@ Feature: verifica creazione stream
     Then l'operazione ha prodotto un errore con status code "404"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
+
+  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  Scenario Outline: [STREAM_STATUS_FILTER_DEFAULT_LEGAL] La creazione di uno stream con eventType status e filtro impostato a DEFAULT non è più permessa
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "<apiVersion>"
+    And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
+    And viene impostata l'apikey appena generata
+    And viene aggiornata la apiKey utilizzata per gli stream
+    And si crea il nuovo stream per il "Comune_Multi" con versione "<apiVersion>" e filtro status "DEFAULT"
+    Then l'operazione ha prodotto un errore con status code "400"
+    And viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata
+    Examples:
+      | apiVersion |
+      | V10        |
+      | V23        |
+      | V24        |
+      | V25        |
+      | V26        |
+      | V27        |
+      | V28        |
+      | V29        |
+      | V30        |
+
+  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  Scenario: [STREAM_STATUS_FILTER_DEFAULT_INFORMAL] La creazione di uno stream con eventType status e filtro impostato a DEFAULT non è più permessa
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
+    And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
+    And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
+    And viene impostata l'apikey appena generata
+    And viene aggiornata la apiKey utilizzata per gli stream
+    When si crea il nuovo stream con versione "v30" per il "Comune_Multi" con un gruppo disponibile "FIRST"
+    Then l'operazione ha prodotto un errore con status code "400"
+    And viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata

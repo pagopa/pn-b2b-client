@@ -487,7 +487,6 @@ public class WebhookStepsV30 implements WebhookStepsInterface {
     @Override
     public void setValueForCommunicationType(String communicationType) {
         this.communicationType = CommunicationType.valueOf(communicationType);
-
     }
 
     @Override
