@@ -1417,7 +1417,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
     When l'ente "PA1" con ruolo "admin" revoca la delega in erogazione con successo
     Then si ottiene response status code 204
-    And la richiesta pendente di archiviazione dell'e-service è stata eliminata
+    And la richiesta di archiviazione pendente dell'e-service è stata eliminata
 
   @happy-path
   Scenario: [DELEGATION_MANUAL_ARCHIVING_REQUEST_REVOCATION_1.2] La revoca della delega elimina la richiesta di archiviazione in pending del descrittore che non sia il più recente dell'e-service
@@ -1433,7 +1433,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     When l'ente "PA1" con ruolo "admin" revoca la delega in erogazione con successo
     Then si ottiene response status code 204
-    And la richiesta pendente di archiviazione del vecchio descrittore è stata eliminata
+    And la richiesta di archiviazione pendente del vecchio descrittore è stata eliminata
 
   @sad-path
   Scenario: [DELEGATION_MANUAL_ARCHIVING_REQUEST_REVOCATION_1.3] Un ente con delega revocata NON può richiedere l'archiviazione dell'e-service

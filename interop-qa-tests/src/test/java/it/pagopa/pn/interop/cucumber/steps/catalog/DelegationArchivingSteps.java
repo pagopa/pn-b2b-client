@@ -219,6 +219,7 @@ public class DelegationArchivingSteps {
     }
 
     @Then("la richiesta di archiviazione pendente dell'e-service è stata annullata con successo")
+    @Then("la richiesta di archiviazione pendente dell'e-service è stata eliminata")
     @Then("la richiesta di archiviazione dell'e-service non è stata creata")
     public void pendingEServiceArchivingRequestIsCancelled() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
@@ -228,6 +229,7 @@ public class DelegationArchivingSteps {
     }
 
     @Then("la richiesta di archiviazione pendente del vecchio descrittore è stata annullata con successo")
+    @Then("la richiesta di archiviazione pendente del vecchio descrittore è stata eliminata")
     @Then("la richiesta di archiviazione del vecchio descrittore non è stata creata")
     public void pendingOldDescriptorArchivingRequestIsCancelled() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
