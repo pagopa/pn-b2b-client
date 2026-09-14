@@ -204,6 +204,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "<role>" di "PA1"
     When l'utente delegante accetta la richiesta di archiviazione relativa all'e-service "%actual"
     Then si ottiene response status code 204
+    And la richiesta di archiviazione dell'e-service non è presente
 
     Examples:
       | role         |
@@ -226,6 +227,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "<role>" di "PA1"
     When l'utente delegante accetta la richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual"
     Then si ottiene response status code 204
+    And la richiesta di archiviazione del vecchio descrittore non è presente
 
     Examples:
       | role         |
@@ -648,6 +650,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "<role>" di "PA2"
     When l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
     Then si ottiene response status code 204
+    And la richiesta di archiviazione dell'e-service è in stato pending
 
     Examples:
       | eserviceState | role         |
@@ -672,6 +675,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "<role>" di "PA2"
     When l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     Then si ottiene response status code 204
+    And la richiesta di archiviazione del vecchio descrittore è in stato pending
 
     Examples:
       | role         |
@@ -692,6 +696,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "<role>" di "PA1"
     When l'utente delegante accetta la richiesta di archiviazione relativa all'e-service "%actual"
     Then si ottiene response status code 204
+    And la richiesta di archiviazione dell'e-service non è presente
 
     Examples:
       | role         |
@@ -715,6 +720,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "<role>" di "PA1"
     When l'utente delegante accetta la richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual"
     Then si ottiene response status code 204
+    And la richiesta di archiviazione del vecchio descrittore non è presente
 
     Examples:
       | role         |
@@ -735,6 +741,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "<role>" di "PA1"
     When l'utente delegante rifiuta la richiesta di archiviazione dell'e-service "%actual" con motivazione "QA test rejection delegation manual archiving"
     Then si ottiene response status code 204
+    And la richiesta di archiviazione dell'e-service è stata rifiutata con successo
 
     Examples:
       | role         |
@@ -758,6 +765,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "<role>" di "PA1"
     When l'utente delegante rifiuta la richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" con motivazione "QA test rejection delegation manual archiving"
     Then si ottiene response status code 204
+    And la richiesta di archiviazione del vecchio descrittore è stata rifiutata con successo
 
     Examples:
       | role         |
@@ -827,6 +835,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "<role>" di "PA2"
     When l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
     Then si ottiene response status code 204
+    And la richiesta di archiviazione dell'e-service è in stato pending
 
     Examples:
       | eserviceState | role         |
@@ -855,6 +864,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "<role>" di "PA2"
     When l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     Then si ottiene response status code 204
+    And la richiesta di archiviazione del vecchio descrittore è in stato pending
 
     Examples:
       | role         |
@@ -880,6 +890,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "<role>" di "PA1"
     When l'utente delegante accetta la richiesta di archiviazione relativa all'e-service "%actual"
     Then si ottiene response status code 204
+    And la richiesta di archiviazione dell'e-service non è presente
 
     Examples:
       | role         |
@@ -907,6 +918,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "<role>" di "PA1"
     When l'utente delegante accetta la richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual"
     Then si ottiene response status code 204
+    And la richiesta di archiviazione del vecchio descrittore non è presente
 
     Examples:
       | role         |
@@ -932,6 +944,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "<role>" di "PA1"
     When l'utente delegante rifiuta la richiesta di archiviazione dell'e-service "%actual" con motivazione "QA test rejection delegation manual archiving"
     Then si ottiene response status code 204
+    And la richiesta di archiviazione dell'e-service è stata rifiutata con successo
 
     Examples:
       | role         |
@@ -959,6 +972,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "<role>" di "PA1"
     When l'utente delegante rifiuta la richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" con motivazione "QA test rejection delegation manual archiving"
     Then si ottiene response status code 204
+    And la richiesta di archiviazione del vecchio descrittore è stata rifiutata con successo
 
     Examples:
       | role         |
@@ -1032,6 +1046,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "<role>" di "PA2"
     When l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
     Then si ottiene response status code 204
+    And la richiesta di archiviazione dell'e-service è in stato pending
 
     Examples:
       | descriptorState | role         |
@@ -1061,6 +1076,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "<role>" di "PA2"
     When l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     Then si ottiene response status code 204
+    And la richiesta di archiviazione del vecchio descrittore è in stato pending
 
     Examples:
       | role         |
@@ -1081,6 +1097,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "<role>" di "PA1"
     When l'utente delegante accetta la richiesta di archiviazione relativa all'e-service "%actual"
     Then si ottiene response status code 204
+    And la richiesta di archiviazione dell'e-service non è presente
 
     Examples:
       | role         |
@@ -1109,6 +1126,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "<role>" di "PA1"
     When l'utente delegante accetta la richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual"
     Then si ottiene response status code 204
+    And la richiesta di archiviazione del vecchio descrittore non è presente
 
     Examples:
       | role         |
@@ -1129,6 +1147,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "<role>" di "PA1"
     When l'utente delegante rifiuta la richiesta di archiviazione dell'e-service "%actual" con motivazione "QA test rejection delegation manual archiving"
     Then si ottiene response status code 204
+    And la richiesta di archiviazione dell'e-service è stata rifiutata con successo
 
     Examples:
       | role         |
@@ -1157,6 +1176,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "<role>" di "PA1"
     When l'utente delegante rifiuta la richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" con motivazione "QA test rejection delegation manual archiving"
     Then si ottiene response status code 204
+    And la richiesta di archiviazione del vecchio descrittore è stata rifiutata con successo
 
     Examples:
       | role         |
@@ -1331,6 +1351,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And "PA1" approva la pubblicazione dell'e-service
     When l'utente delegante accetta la richiesta di archiviazione relativa all'e-service "%actual"
     Then si ottiene response status code 200
+    And la richiesta di archiviazione dell'e-service non è presente
     And l'e-service è in stato "ARCHIVING"
 
   @happy-path
@@ -1353,6 +1374,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'e-service è in stato "WAITING_FOR_APPROVAL"
     When l'utente delegante accetta la richiesta di archiviazione relativa all'e-service "%actual"
     Then si ottiene response status code 200
+    And la richiesta di archiviazione dell'e-service non è presente
     And l'ultimo descrittore in stato WAITING_FOR_APPROVAL è stato cancellato
     And l'e-service è in stato "ARCHIVING"
 
@@ -1985,6 +2007,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "admin" di "PA1"
     When l'utente delegante accetta la richiesta di archiviazione relativa all'e-service "%actual"
     Then si ottiene response status code 204
+    And la richiesta di archiviazione dell'e-service non è presente
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And la versione più recente dell'e-service è in stato "ARCHIVING"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
