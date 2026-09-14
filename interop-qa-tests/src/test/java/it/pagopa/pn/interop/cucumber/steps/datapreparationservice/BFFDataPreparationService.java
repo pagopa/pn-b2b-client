@@ -564,11 +564,15 @@ public class BFFDataPreparationService {
     }
 
     public MutateDescriptorResult bringDescriptorToGivenState(UUID eServiceId, UUID descriptorId, EServiceDescriptorState descriptorState, boolean withDocument) {
-        return bringDescriptorToGivenState(eServiceId, descriptorId, descriptorState, withDocument ? 1 : 0, null, null, false);
+        return bringDescriptorToGivenState(eServiceId, descriptorId, descriptorState, withDocument ? 1 : 0, null, null, false, true);
     }
 
     public MutateDescriptorResult bringDescriptorToGivenState(UUID eServiceId, UUID descriptorId, EServiceDescriptorState descriptorState, boolean withDocument, boolean addCallbackInterface) {
-        return bringDescriptorToGivenState(eServiceId, descriptorId, descriptorState, withDocument ? 1 : 0, null, null, addCallbackInterface);
+        return bringDescriptorToGivenState(eServiceId, descriptorId, descriptorState, withDocument ? 1 : 0, null, null, addCallbackInterface, true);
+    }
+
+    public MutateDescriptorResult tryToBringDescriptorToGivenState(UUID eServiceId, UUID descriptorId, EServiceDescriptorState descriptorState, boolean withDocument) {
+        return bringDescriptorToGivenState(eServiceId, descriptorId, descriptorState, withDocument ? 1 : 0, null, null, false, false);
     }
 
     public MutateDescriptorResult bringDescriptorToGivenState(
@@ -578,7 +582,8 @@ public class BFFDataPreparationService {
         int documents,
         @Nullable String documentNamePrefix,
         @Nullable String documentPrettyNamePrefix,
-        @Nullable Boolean addCallbackInterface
+        @Nullable Boolean addCallbackInterface,
+        boolean successRequired
     ) {
         MutateDescriptorResult.MutateDescriptorResultBuilder resultBuilder = MutateDescriptorResult.builder();
 
@@ -615,7 +620,12 @@ public class BFFDataPreparationService {
         }
 
         // 3. Publish Descriptor
-        publishDescriptor(eServiceId, descriptorId);
+        if (successRequired) {
+            publishDescriptor(eServiceId, descriptorId);
+        } else {
+            tryToPublishDescriptor(eServiceId, descriptorId);
+            if (httpCallExecutor.getResponseStatus().isError()) return null;
+        }
         if (descriptorState == EServiceDescriptorState.PUBLISHED) return resultBuilder.build();
 
         // 4. Suspend Descriptor
@@ -813,6 +823,12 @@ public class BFFDataPreparationService {
             res -> res.getState() == EServiceDescriptorState.PUBLISHED,
             ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
+    }
+
+    public void tryToPublishDescriptor(UUID eServiceId, UUID descriptorId) {
+        updateDraftDescriptor(eServiceId, descriptorId,
+                new UpdateEServiceDescriptorSeed().audience(List.of("pagopa.it")));
+        httpCallExecutor.performCall(() -> eServiceClient.publishDescriptor(eServiceId, descriptorId));
     }
 
     public void publishTemplateInstanceDescriptor(UUID eServiceId, UUID descriptorId) {
