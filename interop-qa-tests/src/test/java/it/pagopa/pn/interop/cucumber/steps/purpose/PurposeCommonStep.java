@@ -4,6 +4,7 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
@@ -74,12 +75,43 @@ public class PurposeCommonStep {
     }
 
     @Given("{string} ha già creato {int} finalità in stato {string} per quell'eservice specificando nell'analisi del rischio:")
+    @When("{string} crea {int} finalità in stato {string} per quell'eservice specificando nell'analisi del rischio:")
     public void tenantHasAlreadyCreateFinalizationWithStatus(String tenantType, int n, String purposeVersionState, DataTable answersTable) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         UUID consumerId = identityService.getOrganizationId(tenantType);
 
+        RiskAnalysis compiledRiskAnalysis = getRiskAnalysisFromAnswersDataTable(answersTable);
+        createFinalizationWithGivenStatus(consumerId, tenantType, n, purposeVersionState, null, compiledRiskAnalysis);
+    }
+
+    @When("{string} tenta di creare {int} finalità in stato {string} per quell'eservice specificando nell'analisi del rischio:")
+    public void tenantTryToCreatePurpose(String tenantType, int n, String purposeVersionState, DataTable answersTable) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        UUID consumerId = identityService.getOrganizationId(tenantType);
+
+        RiskAnalysis compiledRiskAnalysis = getRiskAnalysisFromAnswersDataTable(answersTable);
+        createFinalizationWithGivenStatus(consumerId, tenantType, n, purposeVersionState, null, compiledRiskAnalysis, false);
+    }
+
+    @Then("la precedente creazione di finalità risulta malformata e riporta gli errori:")
+    public void previousPurposeCreationIsMalformed(String errors) {
+        Assertions.assertEquals(
+                400, sharedStepsContext.getHttpCallExecutor().getResponseStatus().value(),
+                "The request code is not 400 Bad Request as expected"
+        );
+        String[] errorList = errors.split("\n");
+        for (String error : errorList) {
+            Assertions.assertTrue(
+                    sharedStepsContext.getHttpCallExecutor().getErrorMessage().contains(error),
+                    "Error Not Found: " + error
+            );
+            log.info("Found Error: " + error);
+        }
+    }
+
+    private RiskAnalysis getRiskAnalysisFromAnswersDataTable(DataTable answersTable) {
         RiskAnalysisDataFromJson.RiskAnalysisAttributes riskAnalysisAttributes =
-                new RiskAnalysisDataFromJson.RiskAnalysisAttributes();
+            new RiskAnalysisDataFromJson.RiskAnalysisAttributes();
 
         List<List<String>> answers = answersTable.asLists().stream().toList();
         for (List<String> answer : answers) {
@@ -99,9 +131,7 @@ public class PurposeCommonStep {
                 throw new RuntimeException("Error while invoking: " + methodName, e);
             }
         }
-        RiskAnalysis compiledRiskAnalysis = dataPreparationService.getRiskAnalysisSpecifyingAnswers(riskAnalysisAttributes);
-
-        createFinalizationWithGivenStatus(consumerId, tenantType, n, purposeVersionState, null, compiledRiskAnalysis);
+        return dataPreparationService.getRiskAnalysisSpecifyingAnswers(riskAnalysisAttributes);
     }
 
     @Given("{string} ha già creato {int} finalità in stato {string} per quell'eservice con flagPersonalData impostato a {string}")
@@ -210,6 +240,10 @@ public class PurposeCommonStep {
     }
 
     public void createFinalizationWithGivenStatus(UUID consumerId, String tenantType, int n, String purposeVersionState, DelegationRef delegationRef, RiskAnalysis riskAnalysis) {
+        createFinalizationWithGivenStatus(consumerId, tenantType, n, purposeVersionState, delegationRef, riskAnalysis, true);
+    }
+
+    public void createFinalizationWithGivenStatus(UUID consumerId, String tenantType, int n, String purposeVersionState, DelegationRef delegationRef, RiskAnalysis riskAnalysis, boolean successRequired) {
         PurposeCommonContext purposeCommonContext = sharedStepsContext.getPurposeCommonContext();
         for (int index = 0; index < n; index++) {
             dataPreparationService.createPurposeWithGivenState(ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE),
@@ -219,7 +253,8 @@ public class PurposeCommonStep {
                             .consumerId(consumerId)
                             .riskAnalysisFormSeed(riskAnalysis.getRiskAnalysisForm())
                             .build(),
-                    delegationRef);
+                    delegationRef,
+                    successRequired);
 
             purposeCommonContext.getPurposesIds().add(purposeCommonContext.getPurposeId());
             purposeCommonContext.getCurrentVersionIds().add(purposeCommonContext.getVersionId());
