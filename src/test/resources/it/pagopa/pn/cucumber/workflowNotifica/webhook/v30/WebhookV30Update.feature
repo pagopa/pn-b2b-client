@@ -1,320 +1,320 @@
 Feature: aggiornamento stream
 
   #--------------AGGIORNAMENTO DI UNO STREAM------------
-  @webhookV27 @precondition @cleanWebhook @webhook2
+  @webhookV30 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_87] Aggiornamento di uno stream notifica con gruppo, con eventType "STATUS"  con gruppo non appartenente alla PA.
-    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V27"
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream con versione "V27" per il "Comune_Multi" con un gruppo disponibile "FIRST"
-    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V27"
-    When si aggiorna lo stream creato con versione "V27" con un gruppo che non appartiene al comune "Comune_Multi"
+    And si crea il nuovo stream con versione "V30" per il "Comune_Multi" con un gruppo disponibile "FIRST"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V30"
+    When si aggiorna lo stream creato con versione "V30" con un gruppo che non appartiene al comune "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "403"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV27 @precondition @cleanWebhook @webhook2
+  @webhookV30 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_87_1] Aggiornamento di uno stream notifica senza gruppo, con eventType "STATUS"  con gruppo non appartenente alla PA.
-    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V27"
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream per il "Comune_Multi" con versione "V27"
-    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V27"
-    When si aggiorna lo stream creato con versione "V27" con un gruppo che non appartiene al comune "Comune_Multi"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V30"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V30"
+    When si aggiorna lo stream creato con versione "V30" con un gruppo che non appartiene al comune "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "403"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV27 @precondition @cleanWebhook @webhook2
+  @webhookV30 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_87_2] Aggiornamento di uno stream notifica senza gruppo, con eventType "STATUS"  con gruppo che appartenente alla PA.
-    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V27"
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream per il "Comune_Multi" con versione "V27"
-    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V27"
-    When si aggiorna lo stream creato con versione "V27" con un gruppo che non appartiene al comune "Comune_Multi"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V30"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V30"
+    When si aggiorna lo stream creato con versione "V30" con un gruppo che non appartiene al comune "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "403"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV27 @precondition @cleanWebhook @webhook2
+  @webhookV30 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_88] Aggiornamento di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey con gruppo diverso.
-    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V27"
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream con versione "V27" per il "Comune_Multi" con un gruppo disponibile "FIRST"
-    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V27"
+    And si crea il nuovo stream con versione "V30" per il "Comune_Multi" con un gruppo disponibile "FIRST"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V30"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con gruppo differente dallo stream
     And viene impostata l'apikey appena generata
-    When si aggiorna lo stream creato con versione "V27" e apiKey aggiornata
+    When si aggiorna lo stream creato con versione "V30" e apiKey aggiornata
     Then l'operazione ha prodotto un errore con status code "403"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV27 @precondition @cleanWebhook @webhook2
+  @webhookV30 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_89] Aggiornamento di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey con stesso gruppo.
-    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V27"
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream con versione "V27" per il "Comune_Multi" con un gruppo disponibile "FIRST"
-    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V27"
-    When si aggiorna lo stream creato con versione "V27" e apiKey aggiornata
+    And si crea il nuovo stream con versione "V30" per il "Comune_Multi" con un gruppo disponibile "FIRST"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V30"
+    When si aggiorna lo stream creato con versione "V30" e apiKey aggiornata
     Then l'operazione non ha prodotto errori
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
   # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
-  @webhookV27 @precondition @cleanWebhook @webhook2
+  @webhookV30 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_89waitForAccepted] Aggiornamento di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey con stesso gruppo.
-    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V27"
-    And allo stream versione "V27" si setta il campo waitForAccepted a "true"
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
+    And allo stream versione "V30" si setta il campo waitForAccepted a "true"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream con versione "V27" per il "Comune_Multi" con un gruppo disponibile "FIRST"
-    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V27"
-    When si aggiorna lo stream creato con versione "V27" e apiKey aggiornata
+    And si crea il nuovo stream con versione "V30" per il "Comune_Multi" con un gruppo disponibile "FIRST"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V30"
+    When si aggiorna lo stream creato con versione "V30" e apiKey aggiornata
     Then l'operazione non ha prodotto errori
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
 
-  @webhookV27 @precondition @cleanWebhook @webhook2
+  @webhookV30 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_42] Aggiornamento di uno stream notifica da due gruppi ad un gruppo, con eventType "STATUS".
-    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V27"
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con due gruppi
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    When si crea il nuovo stream con versione "V27" per il "Comune_Multi" con un gruppo disponibile "UGUALI"
-    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V27"
-    When si "rimuove" un gruppo allo stream creato con versione "V27" per il comune "Comune_Multi" e apiKey aggiornata
+    When si crea il nuovo stream con versione "V30" per il "Comune_Multi" con un gruppo disponibile "UGUALI"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V30"
+    When si "rimuove" un gruppo allo stream creato con versione "V30" per il comune "Comune_Multi" e apiKey aggiornata
     Then l'operazione ha prodotto un errore con status code "403"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV27 @precondition @cleanWebhook @webhook2
+  @webhookV30 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_43] Aggiornamento di uno stream notifica da un gruppo a più gruppi, con eventType "STATUS".
-    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V27"
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    When si crea il nuovo stream con versione "V27" per il "Comune_Multi" con un gruppo disponibile "UGUALI"
-    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V27"
-    When si "aggiunge" un gruppo allo stream creato con versione "V27" per il comune "Comune_Multi" e apiKey aggiornata
+    When si crea il nuovo stream con versione "V30" per il "Comune_Multi" con un gruppo disponibile "UGUALI"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V30"
+    When si "aggiunge" un gruppo allo stream creato con versione "V30" per il comune "Comune_Multi" e apiKey aggiornata
     Then l'operazione non ha prodotto errori
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
   # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
-  @webhookV27 @precondition @cleanWebhook @webhook2
+  @webhookV30 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_43waitForAccepted] Aggiornamento di uno stream notifica da un gruppo a più gruppi, con eventType "STATUS".
-    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V27"
-    And allo stream versione "V27" si setta il campo waitForAccepted a "true"
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
+    And allo stream versione "V30" si setta il campo waitForAccepted a "true"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    When si crea il nuovo stream con versione "V27" per il "Comune_Multi" con un gruppo disponibile "UGUALI"
-    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V27"
-    When si "aggiunge" un gruppo allo stream creato con versione "V27" per il comune "Comune_Multi" e apiKey aggiornata
+    When si crea il nuovo stream con versione "V30" per il "Comune_Multi" con un gruppo disponibile "UGUALI"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V30"
+    When si "aggiunge" un gruppo allo stream creato con versione "V30" per il comune "Comune_Multi" e apiKey aggiornata
     Then l'operazione non ha prodotto errori
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV27 @precondition @cleanWebhook @webhook2
+  @webhookV30 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_91] Aggiornamento di uno stream notifica con gruppo, con eventType "TIMELINE"  utilizzando un apikey master.
-    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V27"
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream con versione "V27" per il "Comune_Multi" con un gruppo disponibile "FIRST"
-    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V27"
+    And si crea il nuovo stream con versione "V30" per il "Comune_Multi" con un gruppo disponibile "FIRST"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V30"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
-    When si "stesso" un gruppo allo stream creato con versione "V27" per il comune "Comune_Multi" e apiKey aggiornata
+    When si "stesso" un gruppo allo stream creato con versione "V30" per il comune "Comune_Multi" e apiKey aggiornata
     Then l'operazione non ha prodotto errori
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV27 @precondition @cleanWebhook @webhook2
+  @webhookV30 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_92] Aggiornamento di uno stream notifica con gruppo, con eventType "TIMELINE"  utilizzando un apikey con gruppo non appartenente alla PA.
-    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V27"
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream con versione "V27" per il "Comune_Multi" con un gruppo disponibile "FIRST"
-    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V27"
-    When si aggiorna lo stream creato con versione "V27" con un gruppo che non appartiene al comune "Comune_Multi"
+    And si crea il nuovo stream con versione "V30" per il "Comune_Multi" con un gruppo disponibile "FIRST"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V30"
+    When si aggiorna lo stream creato con versione "V30" con un gruppo che non appartiene al comune "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "403"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV27 @precondition @cleanWebhook @webhook2
+  @webhookV30 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_93] Aggiornamento di uno stream notifica con gruppo, con eventType "TIMELINE"  utilizzando un apikey con gruppo diverso.
-    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V27"
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream con versione "V27" per il "Comune_Multi" con un gruppo disponibile "FIRST"
-    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V27"
+    And si crea il nuovo stream con versione "V30" per il "Comune_Multi" con un gruppo disponibile "FIRST"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V30"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con gruppo differente dallo stream
     And viene impostata l'apikey appena generata
-    When si aggiorna lo stream creato con versione "V27" e apiKey aggiornata
+    When si aggiorna lo stream creato con versione "V30" e apiKey aggiornata
     Then l'operazione ha prodotto un errore con status code "403"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV27 @precondition @cleanWebhook @webhook2
+  @webhookV30 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_94] Aggiornamento di uno stream notifica con gruppo, con eventType "TIMELINE"  utilizzando un apikey con stesso gruppo.
-    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V27"
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream con versione "V27" per il "Comune_Multi" con un gruppo disponibile "FIRST"
-    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V27"
-    When si aggiorna lo stream creato con versione "V27" e apiKey aggiornata
+    And si crea il nuovo stream con versione "V30" per il "Comune_Multi" con un gruppo disponibile "FIRST"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V30"
+    When si aggiorna lo stream creato con versione "V30" e apiKey aggiornata
     Then l'operazione non ha prodotto errori
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV27 @precondition @cleanWebhook @webhook2
+  @webhookV30 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_95] Aggiornamento di uno stream notifica senza gruppo, con eventType "STATUS"  utilizzando un apikey master.
-    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V27"
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream per il "Comune_Multi" con versione "V27"
-    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V27"
-    When si aggiorna lo stream creato con versione "V27" e apiKey aggiornata
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V30"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V30"
+    When si aggiorna lo stream creato con versione "V30" e apiKey aggiornata
     Then l'operazione non ha prodotto errori
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV27 @precondition @cleanWebhook @webhook2
+  @webhookV30 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_97] Aggiornamento di uno stream notifica senza gruppo, con eventType "STATUS"  utilizzando un apikey con gruppo.
-    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V27"
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream per il "Comune_Multi" con versione "V27"
-    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V27"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V30"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V30"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
-    When si aggiorna lo stream creato con versione "V27" e apiKey aggiornata
+    When si aggiorna lo stream creato con versione "V30" e apiKey aggiornata
     Then l'operazione ha prodotto un errore con status code "403"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
 
-  @webhookV27 @precondition @cleanWebhook @webhook2
+  @webhookV30 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_190] Aggiornamento di uno stream notifica senza gruppo, con eventType "TIMELINE"  utilizzando un apikey master.
-    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V27"
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream per il "Comune_Multi" con versione "V27"
-    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V27"
-    When si aggiorna lo stream creato con versione "V27" e apiKey aggiornata
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V30"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V30"
+    When si aggiorna lo stream creato con versione "V30" e apiKey aggiornata
     Then l'operazione non ha prodotto errori
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
 
-  @webhookV27 @precondition @cleanWebhook @webhook2
+  @webhookV30 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_100] Aggiornamento di uno stream notifica senza gruppo, con eventType "TIMELINE"  utilizzando un apikey con gruppo.
-    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V27"
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream per il "Comune_Multi" con versione "V27"
-    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V27"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V30"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V30"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
-    When si aggiorna lo stream creato con versione "V27" e apiKey aggiornata
+    When si aggiorna lo stream creato con versione "V30" e apiKey aggiornata
     Then l'operazione ha prodotto un errore con status code "403"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
 
-  @webhookV27 @precondition @cleanWebhook @webhook2
+  @webhookV30 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_154] Aggiornamento di uno stream notifica con gruppi appartenenti ad un sottinsieme dei gruppi dell'apikey utilizzata.
-    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V27"
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con due gruppi
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream con versione "V27" per il "Comune_Multi" con un gruppo disponibile "LAST"
-    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V27"
-    When si aggiorna lo stream creato con versione "V27" e apiKey aggiornata
+    And si crea il nuovo stream con versione "V30" per il "Comune_Multi" con un gruppo disponibile "LAST"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V30"
+    When si aggiorna lo stream creato con versione "V30" e apiKey aggiornata
     Then l'operazione non ha prodotto errori
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV27 @precondition @cleanWebhook @webhook2
+  @webhookV30 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_155] Aggiornamento di uno stream notifica con gruppi appartenenti ad un sottinsieme dei gruppi dell'apikey utilizzata.
-    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V27"
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con due gruppi
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream con versione "V27" per il "Comune_Multi" con un gruppo disponibile "UGUALI"
+    And si crea il nuovo stream con versione "V30" per il "Comune_Multi" con un gruppo disponibile "UGUALI"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
-    When si aggiorna lo stream creato con versione "V27" e apiKey aggiornata
+    When si aggiorna lo stream creato con versione "V30" e apiKey aggiornata
     Then l'operazione ha prodotto un errore con status code "403"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV27 @precondition @cleanWebhook @webhook2
+  @webhookV30 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_121] Aggiornamento per una PA di uno stream che non esiste per la stessa PA
-    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V27"
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream per il "Comune_Multi" con versione "V27"
-    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V27"
-    When si cancella lo stream creato per il "Comune_Multi" con versione "V27"
-    Then si aggiorna lo stream che non esiste e apiKey aggiornata con versione "V27"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V30"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V30"
+    When si cancella lo stream creato per il "Comune_Multi" con versione "V30"
+    Then si aggiorna lo stream che non esiste e apiKey aggiornata con versione "V30"
     And l'operazione ha prodotto un errore con status code "404"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
     #DA VERIFICARE SE CORRETTO IL 400....
-  @webhookV27 @precondition @cleanWebhook @webhook2
-  Scenario: [B2B-STREAM_ES1.5.138] Aggiornamento di uno stream notifica V27 senza gruppo, con  la versione V10.
-    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V27"
+  @webhookV30 @precondition @cleanWebhook @webhook2
+  Scenario: [B2B-STREAM_ES1.5.138] Aggiornamento di uno stream notifica V28 senza gruppo, con  la versione V10.
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream per il "Comune_Multi" con versione "V27"
-    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V27"
-    When si aggiorna lo stream creato con versione "V27" invocando la versione "V10" - Cross Versioning
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V30"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V30"
+    When si aggiorna lo stream creato con versione "V30" invocando la versione "V10" - Cross Versioning
     Then l'operazione ha prodotto un errore con status code "400"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV27 @precondition @cleanWebhook @webhook2
-  Scenario: [B2B-STREAM_ES1.5.140] Aggiornamento di uno stream notifica V10 senza gruppo, con  la versione V27.
+  @webhookV30 @precondition @cleanWebhook @webhook2
+  Scenario: [B2B-STREAM_ES1.5.140] Aggiornamento di uno stream notifica V10 senza gruppo, con  la versione V28.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V10"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
-    When si aggiorna lo stream creato con versione "V10" invocando la versione "V27" - Cross Versioning
+    When si aggiorna lo stream creato con versione "V10" invocando la versione "V30" - Cross Versioning
     Then l'operazione ha prodotto un errore con status code "403"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
