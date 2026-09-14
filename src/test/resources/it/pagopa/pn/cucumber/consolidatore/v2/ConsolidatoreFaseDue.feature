@@ -33,58 +33,52 @@ Feature: Gara Consolidatore/Recapito FASE 2
 
 
   @consolidatoreFase2
-  Scenario: [CON_F_TWO_04_01_A] Verifica nuovi eventi REC016, REC018, CON09B per AR
+  Scenario: [CON_F_TWO_04_01_A] Verifica nuovi eventi REC016, REC018, CON09B, REC991 per AR
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
-      | physicalAddress_address | Via@OK-AR_REC016_REC018_CON09B |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "REC016"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "REC018"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON09B"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
+      | physicalAddress_address | Via@OK-AR_REC016_REC018_CON09B_REC991 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
+    Then si verifica che il deliveryDetailCode "REC016" non è presente in timeline
+    And si verifica che il deliveryDetailCode "REC018" non è presente in timeline
+    And si verifica che il deliveryDetailCode "CON09B" non è presente in timeline
+    And si verifica che il deliveryDetailCode "REC991" non è presente in timeline
 
   @consolidatoreFase2
-  Scenario: [CON_F_TWO_04_01_B] Verifica nuovi eventi REC016, REC018, CON09B per 890
+  Scenario: [CON_F_TWO_04_01_B] Verifica nuovi eventi REC016, REC018, CON09B, REC991 per 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
-      | physicalAddress_address | Via@OK-890_REC016_REC018_CON09B |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "REC016"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "REC018"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON09B"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
+      | physicalAddress_address | Via@OK-890_REC016_REC018_CON09B_REC991 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
+    Then si verifica che il deliveryDetailCode "REC016" non è presente in timeline
+    And si verifica che il deliveryDetailCode "REC018" non è presente in timeline
+    And si verifica che il deliveryDetailCode "CON09B" non è presente in timeline
+    And si verifica che il deliveryDetailCode "REC991" non è presente in timeline
 
   @consolidatoreFase2
-  Scenario: [CON_F_TWO_04_01_C] Verifica nuovi eventi REC991 AR
+  Scenario: [CON_F_TWO_04_01_C] Verifica nuovo evento RECAG010A per 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
-      | physicalAddress_address | Via@OFAIL-AR_REC991 |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "REC991"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
-
-  @consolidatoreFase2
-  Scenario: [CON_F_TWO_04_01_B] Verifica nuovi eventi REC016, REC018, CON09B per 890
-    Given viene generata una nuova notifica
-      | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo               |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL       |
-      | physicalAddress_address | Via@OK-890_REC016_REC018_CON09B |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "REC016"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "REC018"
+      | physicalAddress_address | Via@OK-890_RECAG010A_COERENTE |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL  |
+      | details_recIndex           | 0         |
+      | details_deliveryDetailCode | RECAG005C |
+      | details_sentAttemptMade    | 0         |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON09B"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
+    Then si verifica che il deliveryDetailCode "RECAG010A" non è presente in timeline
 
 
   @consolidatoreFase2
@@ -100,9 +94,14 @@ Feature: Gara Consolidatore/Recapito FASE 2
       | stato                | <stato>                |
     When invoco la normalizzazione sincrona
     Then lo status code della response è <statusCode>
-
+    And il codice errore di normalizzazione è "<nErroreNorm>"
     Examples:
-      | id     | provincia | cap   | localita | localitaAggiuntiva | indirizzo  | indirizzoAggiuntivo | stato | statusCode |
-      | ID-001 | RM        | 00100 | ROMA     | CENTRO             | VIA ROMA 1 | SCALA A              | IT    | 200        |
+      | id     | provincia | cap   | localita              | localitaAggiuntiva        | indirizzo          | indirizzoAggiuntivo | stato  | statusCode | nErroreNorm |
+      | test01 | PI        | 56022 | CASTELFRANCO DI SOTTO | LOCALITA' VILLA CAMPANILE | VIA ULIVI 85       |                     | ITALIA | 200        | null        |
+      | test02 | PI        | 56022 |                       |                            | VIA ULIVI 85       |                     | ITALIA | 200        | 101         |
+      | test03 | PI        | 56022 | CASTELFRANCO DI SOTTO | LOCALITA' VILLA CAMPANILE |                    |                     | ITALIA | 200        | 421         |
+      | test04 | PI        | 56022 | LOCALITA INESISTENTE  |                            | VIA ULIVI 85       |                     | ITALIA | 200        | 102         |
+      | test05 | PI        | 56022 | CASTELFRANCO DI SOTTO | LOCALITA' VILLA CAMPANILE | VIA INESISTENTE 99 |                     | ITALIA | 200        | 422         |
+      | test06 | PI        | 56022 | CASTELFRANCO DI SOTTO | LOCALITA' VILLA CAMPANILE | VIA DELL'UNITÀ 85  |                     | ITALIA | 200        | 999         |
 
 
