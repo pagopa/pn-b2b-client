@@ -80,7 +80,9 @@ public class PurposeCommonStep {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         UUID consumerId = identityService.getOrganizationId(tenantType);
 
-        RiskAnalysis compiledRiskAnalysis = getRiskAnalysisFromAnswersDataTable(answersTable);
+        RiskAnalysis compiledRiskAnalysis = dataPreparationService.getRiskAnalysisSpecifyingAnswers(
+                getRiskAnalysisFromAnswersDataTable(answersTable)
+        );
         createFinalizationWithGivenStatus(consumerId, tenantType, n, purposeVersionState, null, compiledRiskAnalysis);
     }
 
@@ -89,7 +91,9 @@ public class PurposeCommonStep {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         UUID consumerId = identityService.getOrganizationId(tenantType);
 
-        RiskAnalysis compiledRiskAnalysis = getRiskAnalysisFromAnswersDataTable(answersTable);
+        RiskAnalysis compiledRiskAnalysis = dataPreparationService.getRiskAnalysisSpecifyingAnswers(
+                getRiskAnalysisFromAnswersDataTable(answersTable)
+        );
         createFinalizationWithGivenStatus(consumerId, tenantType, n, purposeVersionState, null, compiledRiskAnalysis, false);
     }
 
@@ -109,7 +113,7 @@ public class PurposeCommonStep {
         }
     }
 
-    private RiskAnalysis getRiskAnalysisFromAnswersDataTable(DataTable answersTable) {
+    public static RiskAnalysisDataFromJson.RiskAnalysisAttributes getRiskAnalysisFromAnswersDataTable(DataTable answersTable) {
         RiskAnalysisDataFromJson.RiskAnalysisAttributes riskAnalysisAttributes =
             new RiskAnalysisDataFromJson.RiskAnalysisAttributes();
 
@@ -131,7 +135,7 @@ public class PurposeCommonStep {
                 throw new RuntimeException("Error while invoking: " + methodName, e);
             }
         }
-        return dataPreparationService.getRiskAnalysisSpecifyingAnswers(riskAnalysisAttributes);
+        return riskAnalysisAttributes;
     }
 
     @Given("{string} ha già creato {int} finalità in stato {string} per quell'eservice con flagPersonalData impostato a {string}")
