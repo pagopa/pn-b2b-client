@@ -499,32 +499,6 @@ public class BFFDataPreparationService {
         return new EServiceDescriptor(eserviceId, descriptorId);
     }
 
-    public EServiceDescriptor createEServiceAndDraftDescriptorWithCustomPersonalData(EServiceSeed partialEserviceSeed, UpdateEServiceDescriptorSeed partialDescriptorSeed, Boolean personalData) {
-        EServiceSeed defaultEserviceSeed = new EServiceSeed()
-                .name(String.format("e-service %d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)))
-                .description("Descrizione e-service")
-                .technology(EServiceTechnology.REST)
-                .mode(EServiceMode.DELIVER)
-                .isConsumerDelegable(false)
-                .isClientAccessDelegable(false);
-        EServiceSeed eServiceSeed = merge(defaultEserviceSeed, partialEserviceSeed);
-        eServiceSeed.setPersonalData(personalData);
-
-        httpCallExecutor.performCall(() -> eServiceClient.createEService(eServiceSeed));
-        assertValidResponse();
-        UUID eserviceId = ((CreatedEServiceDescriptor) httpCallExecutor.getResponse()).getId();
-        UUID descriptorId = ((CreatedEServiceDescriptor) httpCallExecutor.getResponse()).getDescriptorId();
-
-        pollingService.makePolling(
-                () -> httpCallExecutor.performCall(() -> producerClient.getProducerEServiceDescriptor(eserviceId, descriptorId)),
-                res -> res != HttpStatus.NOT_FOUND,
-                ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
-        );
-
-        updateDraftDescriptor(eserviceId, descriptorId, partialDescriptorSeed);
-        return new EServiceDescriptor(eserviceId, descriptorId);
-    }
-
     public void updateDraftDescriptor(UUID eServiceId, UUID descriptorId, UpdateEServiceDescriptorSeed partialDescriptorSeed) {
         ProducerEServiceDescriptor descriptor = producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId);
 
@@ -590,11 +564,15 @@ public class BFFDataPreparationService {
     }
 
     public MutateDescriptorResult bringDescriptorToGivenState(UUID eServiceId, UUID descriptorId, EServiceDescriptorState descriptorState, boolean withDocument) {
-        return bringDescriptorToGivenState(eServiceId, descriptorId, descriptorState, withDocument ? 1 : 0, null, null, false);
+        return bringDescriptorToGivenState(eServiceId, descriptorId, descriptorState, withDocument ? 1 : 0, null, null, false, true);
     }
 
     public MutateDescriptorResult bringDescriptorToGivenState(UUID eServiceId, UUID descriptorId, EServiceDescriptorState descriptorState, boolean withDocument, boolean addCallbackInterface) {
-        return bringDescriptorToGivenState(eServiceId, descriptorId, descriptorState, withDocument ? 1 : 0, null, null, addCallbackInterface);
+        return bringDescriptorToGivenState(eServiceId, descriptorId, descriptorState, withDocument ? 1 : 0, null, null, addCallbackInterface, true);
+    }
+
+    public MutateDescriptorResult tryToBringDescriptorToGivenState(UUID eServiceId, UUID descriptorId, EServiceDescriptorState descriptorState, boolean withDocument) {
+        return bringDescriptorToGivenState(eServiceId, descriptorId, descriptorState, withDocument ? 1 : 0, null, null, false, false);
     }
 
     public MutateDescriptorResult bringDescriptorToGivenState(
@@ -604,7 +582,8 @@ public class BFFDataPreparationService {
         int documents,
         @Nullable String documentNamePrefix,
         @Nullable String documentPrettyNamePrefix,
-        @Nullable Boolean addCallbackInterface
+        @Nullable Boolean addCallbackInterface,
+        boolean successRequired
     ) {
         MutateDescriptorResult.MutateDescriptorResultBuilder resultBuilder = MutateDescriptorResult.builder();
 
@@ -641,7 +620,12 @@ public class BFFDataPreparationService {
         }
 
         // 3. Publish Descriptor
-        publishDescriptor(eServiceId, descriptorId);
+        if (successRequired) {
+            publishDescriptor(eServiceId, descriptorId);
+        } else {
+            tryToPublishDescriptor(eServiceId, descriptorId);
+            if (httpCallExecutor.getResponseStatus().isError()) return null;
+        }
         if (descriptorState == EServiceDescriptorState.PUBLISHED) return resultBuilder.build();
 
         // 4. Suspend Descriptor
@@ -841,6 +825,12 @@ public class BFFDataPreparationService {
         );
     }
 
+    public void tryToPublishDescriptor(UUID eServiceId, UUID descriptorId) {
+        updateDraftDescriptor(eServiceId, descriptorId,
+                new UpdateEServiceDescriptorSeed().audience(List.of("pagopa.it")));
+        httpCallExecutor.performCall(() -> eServiceClient.publishDescriptor(eServiceId, descriptorId));
+    }
+
     public void publishTemplateInstanceDescriptor(UUID eServiceId, UUID descriptorId) {
         updateTemplateInstanceDraftDescriptor(eServiceId, descriptorId);
         httpCallExecutor.performCall(() -> eServiceClient.publishDescriptor(eServiceId, descriptorId));
@@ -898,11 +888,22 @@ public class BFFDataPreparationService {
         return new RiskAnalysis(String.format("finalità_test_%d", new Random().nextInt()), new RiskAnalysisFormSeed().version(version).answers(riskAnalysisAttributes.toMap()));
     }
 
+    public RiskAnalysis getRiskAnalysisSpecifyingAnswers(RiskAnalysisDataFromJson.RiskAnalysisAttributes riskAnalysisAttributes) {
+        httpCallExecutor.performCall(purposeApiClient::retrieveLatestRiskAnalysisConfiguration);
+        assertValidResponse();
+        String version = ((RiskAnalysisFormConfig) httpCallExecutor.getResponse()).getVersion();
+        return new RiskAnalysis(String.format("finalità_test_%d", new Random().nextInt()), new RiskAnalysisFormSeed().version(version).answers(riskAnalysisAttributes.toMap()));
+    }
+
     public CreatedEserviceVersion createPurposeWithGivenState(int testSeed, EServiceMode eServiceMode, PurposeVersionState purposeState, TEServiceMode teServiceMode) {
-        return createPurposeWithGivenState(testSeed, eServiceMode, purposeState, teServiceMode, null);
+        return createPurposeWithGivenState(testSeed, eServiceMode, purposeState, teServiceMode, null, true);
     }
 
     public CreatedEserviceVersion createPurposeWithGivenState(int testSeed, EServiceMode eServiceMode, PurposeVersionState purposeState, TEServiceMode teServiceMode, DelegationRef delegationRef) {
+        return createPurposeWithGivenState(testSeed, eServiceMode, purposeState, teServiceMode, delegationRef, true);
+    }
+
+    public CreatedEserviceVersion createPurposeWithGivenState(int testSeed, EServiceMode eServiceMode, PurposeVersionState purposeState, TEServiceMode teServiceMode, DelegationRef delegationRef, boolean successRequired) {
         // 1. Define default values
         String title = String.format("purpose title - QA - %d - %d", testSeed, ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
         String description = "description of the purpose - QA";
@@ -944,6 +945,8 @@ public class BFFDataPreparationService {
             httpCallExecutor.performCall(() -> purposeApiClient.createPurpose(purposeSeed));
             if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
                 sharedStepsContext.getPurposeCommonContext().addCreatedPurpose(purposeSeed);
+            } else {
+                if (!successRequired) return null;
             }
         }
         assertValidResponse();
