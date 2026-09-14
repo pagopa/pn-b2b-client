@@ -70,3 +70,10 @@ Feature: Attivazione di un descrittore
       | GSP2    | PA          |
       | Privato | PA          |
 
+  @only-change-tenant
+  Scenario Outline: [CHANGE_TENANT] Fake Test to change tenant
+    Given l'utente è un "admin" di "<ente>"
+    Then il tenant kind dell'ente "<ente>" viene impostato a "<kind>"
+    Examples:
+      | ente    | kind        |
+      | PA4     | PRIVATE     |
