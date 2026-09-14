@@ -880,10 +880,14 @@ public class BFFDataPreparationService {
     }
 
     public CreatedEserviceVersion createPurposeWithGivenState(int testSeed, EServiceMode eServiceMode, PurposeVersionState purposeState, TEServiceMode teServiceMode) {
-        return createPurposeWithGivenState(testSeed, eServiceMode, purposeState, teServiceMode, null);
+        return createPurposeWithGivenState(testSeed, eServiceMode, purposeState, teServiceMode, null, true);
     }
 
     public CreatedEserviceVersion createPurposeWithGivenState(int testSeed, EServiceMode eServiceMode, PurposeVersionState purposeState, TEServiceMode teServiceMode, DelegationRef delegationRef) {
+        return createPurposeWithGivenState(testSeed, eServiceMode, purposeState, teServiceMode, delegationRef, true);
+    }
+
+    public CreatedEserviceVersion createPurposeWithGivenState(int testSeed, EServiceMode eServiceMode, PurposeVersionState purposeState, TEServiceMode teServiceMode, DelegationRef delegationRef, boolean successRequired) {
         // 1. Define default values
         String title = String.format("purpose title - QA - %d - %d", testSeed, ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
         String description = "description of the purpose - QA";
@@ -925,6 +929,8 @@ public class BFFDataPreparationService {
             httpCallExecutor.performCall(() -> purposeApiClient.createPurpose(purposeSeed));
             if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
                 sharedStepsContext.getPurposeCommonContext().addCreatedPurpose(purposeSeed);
+            } else {
+                if (!successRequired) return null;
             }
         }
         assertValidResponse();
