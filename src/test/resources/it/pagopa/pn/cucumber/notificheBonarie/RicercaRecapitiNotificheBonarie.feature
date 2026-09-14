@@ -138,6 +138,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_isAvailable          | true    |
       | details_isTosAccepted        | xx      |
     And si attende che venga prodotto l'elemento "PUBLIC_REGISTRY_CALL" della notifica bonaria
+    And si attende che venga prodotto l'elemento "PUBLIC_REGISTRY_RESPONSE" della notifica bonaria
 
 
   @informalNotificationsSearchDigitalAddress @mockNR
@@ -357,13 +358,14 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
 #todo xxx
   @informalNotificationsSearchDigitalAddress @addressBook1
   Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PG_01_6] Come ente mittente invio una notifica bonaria verso PG SENZA pec speciale, SENZA indirizzo di piattaforma, con config RN NON attiva.Il canale è skippato.
-
+    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
+      | details_channel | PEC |
 
 
   #todo xxx
   @informalNotificationsSearchDigitalAddress @addressBook2
-  Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PG_01_6] Come ente mittente invio una notifica bonaria verso PG SENZA pec speciale, SENZA indirizzo di piattaforma, con config RN NON attiva.Il canale è skippato.
-
+  Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PG_01_6] Come ente mittente invio una notifica bonaria verso PG SENZA pec speciale, SENZA indirizzo di piattaforma, con config RN NON attiva.La notifica è rifiutata.
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "REFUSED"
 
 
 
@@ -833,8 +835,11 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | false   |
       | details_isTosAccepted        | false   |
-    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
-      | details_channel | PEC |
+    And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
+      | details_channel              | PEC     |
+      | details_digitalAddressSource | GENERAL |
+#    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
+#      | details_channel | PEC |
     Then viene disabilitato il servizio SERCQ SEND per la PA "default"
     And viene verificato che Sercq sia "disabilitato" per la PA "default"
 
@@ -872,8 +877,11 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | true    |
       | details_isTosAccepted        | false   |
-    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
-      | details_channel | PEC |
+    And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
+      | details_channel              | PEC     |
+      | details_digitalAddressSource | GENERAL |
+#    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
+#      | details_channel | PEC |
     And viene disabilitato il servizio SERCQ SEND come indirizzo di "default"
     And viene verificato che Sercq sia "disabilitato" come indirizzo di "default"
 
@@ -905,6 +913,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | false    |
       | details_isTosAccepted        | false    |
+     #indirizzo assente senza tos
     And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
       | details_channel              | PEC     |
       | details_digitalAddressSource | SPECIAL |
@@ -942,6 +951,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | false    |
       | details_isTosAccepted        | false    |
+    #indirizzo assente senza tos
     And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
       | details_channel              | PEC     |
       | details_digitalAddressSource | SPECIAL |
@@ -1463,9 +1473,11 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
 
 # ***********************************************
 # **** 9 - Rimozione del canale digitale dalla piattaforma a seguito del suo recupero.
+  # NB. Questi test saranno eseguiti isolati, in seguito a modifica dei tempi di produzione del messaggio di cortesia,
+  # possibile con il supporto dei DEV.
 # ***********************************************
 
-  @informalNotificationsSearchDigitalAddress @addressBook1
+  @informalNotificationsSearchDigitalAddress @addressBook1 @informalRunAlone
   Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PF_09_1_A] Come ente mittente invio una notifica bonaria verso PF SENZA pec speciale e con pec di piattaforma, il destinatario rimuove la pec ma il flusso non varia il percorso.
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -1497,7 +1509,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel | PEC |
 
 
-  @informalNotificationsSearchDigitalAddress @addressBook1
+  @informalNotificationsSearchDigitalAddress @addressBook1 @informalRunAlone
   Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PF_09_1_B] Come ente mittente invio una notifica bonaria verso PF CON pec speciale e con pec di piattaforma, il destinatario rimuove la pec ma il flusso non varia il percorso.
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -1529,7 +1541,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel | PEC |
 
 
-  @informalNotificationsSearchDigitalAddress @addressBook1
+  @informalNotificationsSearchDigitalAddress @addressBook1 @informalRunAlone
   Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PF_09_1_C] Come ente mittente invio una notifica bonaria verso PF CON pec speciale e con pec di piattaforma, il destinatario rimuove la pec ma il flusso non varia il percorso.
     Given si predispone addressbook per l'utente "Galileo Galilei"
     Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
