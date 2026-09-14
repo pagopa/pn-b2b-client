@@ -108,4 +108,46 @@ public class TenantAssignCertifiedAttributeSteps {
             Assertions.assertEquals(discreteValue, discrCertAttr.getDiscreteValue());
         }
     }
+
+    @When("l'utente tenta la modifica dell'attributo certificato discreto precedentemente creato con un valore discreto di {int} a {string}")
+    public void updateCertifiedAttribute(Integer discreteValue, String tenantType) {
+        UUID tenantId = identityService.getOrganizationId(tenantType);
+        UUID attributeId = sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes().get(0).get(
+                sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes().get(0).size() - 1
+        );
+        UpdateCertifiedDiscreteTenantAttributeSeed seed = new UpdateCertifiedDiscreteTenantAttributeSeed();
+        seed.setCertifiedDiscreteValue(discreteValue);
+
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getTenantsApi().updateCertifiedDiscreteAttribute(tenantId, attributeId, seed)
+        );
+    }
+
+    @When("l'attributo certificato discreto è assegnato a {string} e ha il valore discreto di {int}")
+    public void checkTenantCertifiedAttribute(String tenantType, Integer discreteValue) {
+        UUID tenantId = identityService.getOrganizationId(tenantType);
+        UUID attributeId = sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes().get(0).get(
+                sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes().get(0).size() - 1
+        );
+
+        sharedStepsContext.getPollingService().makePolling(
+            () -> sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getTenantsApi().getCertifiedAttributes(tenantId)
+            ),
+            res -> res.is2xxSuccessful()
+                && ((CertifiedAttributesResponse) sharedStepsContext.getHttpCallExecutor().getResponse())
+                    .getAttributes().stream()
+                    .anyMatch(attr -> attr.getId().equals(attributeId)),
+                "There was an error while retrieving the attributes"
+        );
+
+        CertifiedAttributesResponse attrs = clientTokenConfigurator.getTenantsApi().getCertifiedAttributes(tenantId);
+        CertifiedDiscreteTenantAttribute discrCertAttr = attrs.getAttributes().stream()
+            .filter(attr2 -> attr2.getId().equals(attributeId))
+            .findFirst()
+            .map(CertifiedDiscreteTenantAttribute.class::cast)
+            .orElse(null);
+        Assertions.assertNotNull(discrCertAttr);
+        Assertions.assertEquals(discreteValue, discrCertAttr.getDiscreteValue());
+    }
 }
