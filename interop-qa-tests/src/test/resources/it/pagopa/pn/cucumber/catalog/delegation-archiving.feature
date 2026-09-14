@@ -133,7 +133,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "admin" di "PA2"
     When l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
     Then si ottiene response status code 400
-    And la richiesta di archiviazione dell'e-service non è stata creata
+    And la richiesta di archiviazione dell'e-service non è presente
 
     Examples:
       | eserviceState |
@@ -155,7 +155,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "admin" di "PA2"
     When l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     Then si ottiene response status code 400
-    And la richiesta di archiviazione del vecchio descrittore non è stata creata
+    And la richiesta di archiviazione del vecchio descrittore non è presente
 
   @sad-path
   Scenario: [DELEGATION_MANUAL_ARCHIVING_1.9] Un ente delegato NON può richiedere al delegante di avviare il processo di archiviazione di un descrittore diverso dal meno recente in stato ARCHIVING_SUSPENDED
@@ -173,7 +173,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "admin" di "PA2"
     When l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     Then si ottiene response status code 400
-    And la richiesta di archiviazione del vecchio descrittore non è stata creata
+    And la richiesta di archiviazione del vecchio descrittore non è presente
 
   @sad-path
   Scenario: [DELEGATION_MANUAL_ARCHIVING_1.10] Un ente delegato NON può richiedere al delegante di avviare il processo di archiviazione di un descrittore diverso dal meno recente in stato ARCHIVED
@@ -189,7 +189,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "admin" di "PA2"
     When l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     Then si ottiene response status code 400
-    And la richiesta di archiviazione del vecchio descrittore non è stata creata
+    And la richiesta di archiviazione del vecchio descrittore non è presente
 
   @happy-path
   Scenario Outline: [DELEGATION_MANUAL_ARCHIVING_2.1] Un ente delegante può accettare la richiesta di archiviazione di un e-service inviata dall'ente delegato
@@ -2011,7 +2011,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "admin" di "PA2"
     When l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 30 giorni di preavviso
     Then si ottiene response status code 400
-    And la richiesta di archiviazione dell'e-service non è stata creata
+    And la richiesta di archiviazione dell'e-service non è presente
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And la versione più recente dell'e-service è in stato "PUBLISHED"
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
@@ -2031,6 +2031,6 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "admin" di "PA2"
     When l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 30 giorni di preavviso
     Then si ottiene response status code 400
-    And la richiesta di archiviazione del vecchio descrittore non è stata creata
+    And la richiesta di archiviazione del vecchio descrittore non è presente
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And la versione più recente dell'e-service è in stato "ARCHIVING"
