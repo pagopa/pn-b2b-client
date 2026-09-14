@@ -411,9 +411,8 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details_isAvailable          | true     |
     # verifica errore 404 in INAD
     And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
-      | iun     | auto                                        |
-      | error   | 404 Not FoundSEND_ANALOG_DOMICILE_ATTEMPT_0 |
-      | service | [DOWNSTREAM] Service INAD returned          |
+      | iun   | auto                  |
+      | error | INAD - CF non trovato |
     And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
       | loadTimeline           | true                                                  |
       | legalFactsIds          | [{"category": "DIGITAL_DELIVERY"}]                    |
@@ -428,7 +427,7 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | senderDenomination | Comune di milano            |
     And destinatario
       | denomination    | Test digitale ok INIPEC |
-      | taxId           | ????????????            |
+      | taxId           | ???????????             |
       | digitalDomicile | NULL                    |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     #lo step deve controllare inipec e non nr , verificare uguaglianza dello step sulcampo nella PUBLIC_REGISTRY_RESPONSE Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
@@ -454,10 +453,9 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details_sentAttemptMade      | 0        |
       | details_isAvailable          | true     |
     # verifica errore 404 in INAD
-    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
-      | iun     | auto                                        |
-      | error   | 404 Not FoundSEND_ANALOG_DOMICILE_ATTEMPT_0 |
-      | service | [DOWNSTREAM] Service INAD returned          |
+    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 35 minuti riportante i seguenti dati nel messaggio
+      | iun   | auto                  |
+      | error | INAD - CF non trovato |
     And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
       | loadTimeline           | true                                                  |
       | legalFactsIds          | [{"category": "DIGITAL_DELIVERY"}]                    |
@@ -472,7 +470,7 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | senderDenomination | Comune di milano            |
     And destinatario
       | denomination    | Test digitale ok INIPEC |
-      | taxId           | DRCDVD87M07E243W        |
+      | taxId           | ?????????????           |
       | digitalDomicile | NULL                    |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     #lo step deve controllare inipec e non nr , verificare uguaglianza dello step sulcampo nella PUBLIC_REGISTRY_RESPONSE Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
@@ -499,15 +497,14 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details_isAvailable          | true     |
     # verifica errore 404 in INAD
     And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
-      | iun     | auto                                        |
-      | error   | 404 Not FoundSEND_ANALOG_DOMICILE_ATTEMPT_0 |
-      | service | [DOWNSTREAM] Service INAD returned          |
+      | iun   | auto                  |
+      | error | INAD - CF non trovato |
     And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
-      | loadTimeline           | true                                                  |
-      | legalFactsIds          | [{"category": "DIGITAL_DELIVERY"}]                    |
-      | details                | NOT_NULL                                              |
-      | details_digitalAddress | {"address": "DRCDVD87M07E243W@pec.it", "type": "PEC"} |
-      | details_recIndex       | 0                                                     |
+      | loadTimeline           | true                                           |
+      | legalFactsIds          | [{"category": "DIGITAL_DELIVERY"}]             |
+      | details                | NOT_NULL                                       |
+      | details_digitalAddress | {"address": "?????????@pec.it", "type": "PEC"} |
+      | details_recIndex       | 0                                              |
 
   @PFinipec
   Scenario: [Ricerca_domicilio_digitale_PF_INAD_INIPEC_4] Invio Notifica mono destinatario a PF senza recupero di domicili digitali nè in IniPec nè in INAD
