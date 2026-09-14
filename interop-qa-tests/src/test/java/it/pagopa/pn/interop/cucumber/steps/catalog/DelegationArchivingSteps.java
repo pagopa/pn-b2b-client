@@ -21,10 +21,14 @@ public class DelegationArchivingSteps {
     private final IHttpExecutor httpCallExecutor;
     private final CatalogResolver catalogResolver;
     private final DelegatedArchivingRequestVerifier delegatedArchivingRequestVerifier;
+    private final DescriptorArchivingSteps descriptorArchivingSteps;
+    private final EServiceCatalogListingSteps eServiceCatalogListingSteps;
 
     public DelegationArchivingSteps(
             ClientTokenConfigurator clientTokenConfigurator,
-            SharedStepsContext sharedStepsContext
+            SharedStepsContext sharedStepsContext,
+            DescriptorArchivingSteps descriptorArchivingSteps,
+            EServiceCatalogListingSteps eServiceCatalogListingSteps
     ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
@@ -34,6 +38,8 @@ public class DelegationArchivingSteps {
                 clientTokenConfigurator,
                 sharedStepsContext
         );
+        this.descriptorArchivingSteps = descriptorArchivingSteps;
+        this.eServiceCatalogListingSteps = eServiceCatalogListingSteps;
     }
 
     @Given("l'utente ha già inviato la richiesta di archiviazione per l'e-service {string} specificando la motivazione {string} e {gracePeriodDays} giorni di preavviso")
@@ -74,6 +80,36 @@ public class DelegationArchivingSteps {
         rejectDelegatedDescriptorArchiving(descriptorId, eServiceId, rejectionReason);
         assertDelegatedArchivingRequestRejected();
         oldDescriptorDelegatedArchivingRequestIsRejected();
+    }
+
+    @Given("l'utente ha già annullato la richiesta di archiviazione per l'e-service {string}")
+    public void delegatedEServiceArchivingRequestAlreadyCancelled(String eServiceId) {
+        cancelDelegatedEServiceArchivingRequest(eServiceId);
+        assertDelegatedArchivingRequestCancelled();
+        pendingEServiceArchivingRequestIsCancelled();
+    }
+
+    @Given("l'utente ha già annullato la richiesta di archiviazione per il vecchio descrittore {string} dell'e-service {string}")
+    public void delegatedOldDescriptorArchivingRequestAlreadyCancelled(String descriptorId, String eServiceId) {
+        cancelDelegatedDescriptorArchivingRequest(descriptorId, eServiceId);
+        assertDelegatedArchivingRequestCancelled();
+        pendingOldDescriptorArchivingRequestIsCancelled();
+    }
+
+    @Given("l'utente ha già accettato la richiesta di archiviazione per l'e-service {string}")
+    public void delegatedEServiceArchivingRequestAlreadyApproved(String eServiceId) {
+        approveDelegatedEServiceArchiving(eServiceId);
+        assertDelegatedArchivingRequestApproved();
+        pendingEServiceArchivingRequestIsCancelled();
+        eServiceCatalogListingSteps.checkEServiceState("ARCHIVING");
+    }
+
+    @Given("l'utente ha già accettato la richiesta di archiviazione per il vecchio descrittore {string} dell'e-service {string}")
+    public void delegatedOldDescriptorArchivingRequestAlreadyApproved(String descriptorId, String eServiceId) {
+        approveDelegatedDescriptorArchiving(descriptorId, eServiceId);
+        assertDelegatedArchivingRequestApproved();
+        pendingOldDescriptorArchivingRequestIsCancelled();
+        descriptorArchivingSteps.oldEServiceVersionIsInState("ARCHIVING");
     }
 
     @When("l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da {string} per l'e-service {string} impostando {gracePeriodDays} giorni di preavviso")
@@ -247,6 +283,18 @@ public class DelegationArchivingSteps {
     private void assertDelegatedArchivingRequestRejected() {
         if (httpCallExecutor.getResponseStatus() == null || !httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             throw new IllegalStateException("Il rifiuto della richiesta di archiviazione non ha avuto successo");
+        }
+    }
+
+    private void assertDelegatedArchivingRequestCancelled() {
+        if (httpCallExecutor.getResponseStatus() == null || !httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            throw new IllegalStateException("L'annullamento della richiesta di archiviazione non ha avuto successo");
+        }
+    }
+
+    private void assertDelegatedArchivingRequestApproved() {
+        if (httpCallExecutor.getResponseStatus() == null || !httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            throw new IllegalStateException("L'accettazione della richiesta di archiviazione non ha avuto successo");
         }
     }
 
