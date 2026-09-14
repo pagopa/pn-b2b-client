@@ -200,7 +200,7 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
     And l'ente "PA2" accetta la delega in erogazione con successo
     And l'utente è un "admin" di "PA2"
     And l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "Richiesta di archiviazione" e 30 giorni di preavviso
-    When l'utente delegante rifiuta la richiesta di archiviazione delegata dell'e-service "%actual" con motivazione "Test di rifiuto di archiviazione"
+    When l'utente delegante rifiuta la richiesta di archiviazione dell'e-service "%actual" con motivazione "Test di rifiuto di archiviazione"
     Then l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
     """
     L'ente delegante $DA_CONTESTO(producerName) ha rifiutato la tua richiesta di archiviazione
