@@ -37,6 +37,8 @@ public class RiskAnalysisDataFromJson {
         private List<String> usesThirdPartyData;
         private List<String> declarationConfirmGDPR;
         private List<String> isRequestOnBehalfOfThirdParties;
+        private List<String> dataProtectionMeasuresParticular;
+        private List<String> dataProtectionMeasures;
 
         public Map<String, List<String>> toMap() {
             Map<String, List<String>> map = new HashMap<>();
