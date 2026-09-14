@@ -1,0 +1,13 @@
+requestId;notificationSentAt;prepareRequestDate;productType;senderPaId;province;cap;attempt;iun;unifiedDeliveryDriver;senderPriority;delayed;skipSenderLimit
+tcResiduoBuonoRitardo_1;2026-09-07T08:00:01Z;2026-09-07T08:00:01Z;890;ranking2nd_890;P1;CAP1_P1;0;AUTJ-PUKM-KDAJ-260921-T-1;driverRanking2nd_890;100;false;false
+tcResiduoBuonoRitardo_2;2026-09-07T08:00:02Z;2026-09-07T08:00:02Z;890;ranking2nd_890;P1;CAP1_P1;0;AUTJ-PUKM-KDAJ-260921-T-1;driverRanking2nd_890;1;false;false
+tcResiduoBuonoRitardo_3;2026-09-01T08:00:01Z;2026-09-01T08:00:01Z;890;ranking2nd_890;P1;CAP1_P1;0;AUTJ-PUKM-KDAJ-260921-T-1;driverRanking2nd_890;50;true;true
+tcResiduoBuonoRitardo_4;2026-09-07T08:00:03Z;2026-09-07T08:00:03Z;890;ranking2nd_890;P1;CAP1_P1;0;AUTJ-PUKM-KDAJ-260921-T-1;driverRanking2nd_890;70;false;false
+tcResiduoBuonoRitardo_5;2026-09-07T08:00:04Z;2026-09-07T08:00:04Z;890;ranking2nd_890;P1;CAP1_P1;0;AUTJ-PUKM-KDAJ-260921-T-1;driverRanking2nd_890;0;false;false
+tcResiduoBuonoRitardo_6;2026-09-07T08:00:05Z;2026-09-07T08:00:05Z;890;ranking2nd_890;P1;CAP1_P1;0;AUTJ-PUKM-KDAJ-260921-T-1;driverRanking2nd_890;0;false;false
+tcResiduoBuonoRitardo_7;2026-09-07T08:00:06Z;2026-09-07T08:00:06Z;890;ranking2nd_890;P1;CAP1_P1;0;AUTJ-PUKM-KDAJ-260921-T-1;driverRanking2nd_890;0;false;false
+tcResiduoBuonoRitardo_8;2026-09-07T08:00:07Z;2026-09-07T08:00:07Z;890;ranking2nd_890;P1;CAP1_P1;0;AUTJ-PUKM-KDAJ-260921-T-1;driverRanking2nd_890;0;false;false
+tcResiduoBuonoRitardo_9;2026-09-07T08:00:08Z;2026-09-07T08:00:08Z;890;ranking2nd_890;P1;CAP1_P1;0;AUTJ-PUKM-KDAJ-260921-T-1;driverRanking2nd_890;0;false;false
+tcResiduoBuonoRitardo_10;2026-09-07T08:00:09Z;2026-09-07T08:00:09Z;890;ranking2nd_890;P1;CAP1_P1;0;AUTJ-PUKM-KDAJ-260921-T-1;driverRanking2nd_890;0;false;false
+tcResiduoBuonoRitardo_11;2026-09-07T08:00:10Z;2026-09-07T08:00:10Z;890;ranking2nd_890;P1;CAP1_P1;0;AUTJ-PUKM-KDAJ-260921-T-1;driverRanking2nd_890;0;false;false
+tcResiduoBuonoRitardo_12;2026-09-07T08:00:11Z;2026-09-07T08:00:11Z;890;ranking2nd_890;P1;CAP1_P1;0;AUTJ-PUKM-KDAJ-260921-T-1;driverRanking2nd_890;0;false;false

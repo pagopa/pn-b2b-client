@@ -26,7 +26,7 @@ public class DelayerSevice {
     public static final int POLLING_MAX_MINUTES = 90;
     public static final String[] CSV_FILES = new String[]{"tcRankingMerged.csv", "tcSenderUnknow.csv", "tcSplitSender.csv", "tcZeroDriver.csv", "tcProvCapNonCensite.csv",
             "spedizioni_3000.csv", "tcWeeklyPrintCapacity.csv", "tcSenderUnknow_5010.csv", "notificationCancelled.csv", "tcSenderPriority.csv", "tcSenderPriorityFrozenW1.csv", "tcSenderPriorityFrozenW2.csv",
-            "tcResiduoBuonoRitardo.csv"};
+            "tcResiduoBuonoRitardo.csv", "tcSenderPriorityDelayedNuova.csv", "tcSenderPriorityDelayedElaborata.csv"};
 
     private final DelayerLambdaClient lambdaClient;
     private final PortfatLambdaClient portfatLambdaClient;

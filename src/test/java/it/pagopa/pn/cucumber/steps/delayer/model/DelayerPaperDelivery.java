@@ -38,6 +38,7 @@ public class DelayerPaperDelivery {
     private boolean isInformalCommunication;
     private Boolean skipSenderLimit;
     private Boolean delayed;
+    private String previousStep;
 
     public DelayerPaperDelivery(List<String> header, List<String> csvLine) {
         if (header == null || csvLine == null || header.size() != csvLine.size()) {
@@ -71,6 +72,7 @@ public class DelayerPaperDelivery {
         this.isInformalCommunication = communicationType.equalsIgnoreCase("INFORMAL");
         this.skipSenderLimit = parseNullableBoolean(getField(rowMap, "skipSenderLimit"));
         this.delayed = parseNullableBoolean(getField(rowMap, "delayed"));
+        this.previousStep = getField(rowMap, "previousStep");
     }
 
     public DelayerPaperDelivery(JsonNode tableRecord) {
@@ -98,6 +100,7 @@ public class DelayerPaperDelivery {
         }
         this.isInformalCommunication = communicationType.equalsIgnoreCase("INFORMAL");
         this.skipSenderLimit = parseNullableBoolean(getField(tableRecord, "skipSenderLimit"));
+        this.previousStep = getField(tableRecord, "previousStep");
     }
 
     private Boolean parseNullableBoolean(String value) {
@@ -123,6 +126,7 @@ public class DelayerPaperDelivery {
         this.isInformalCommunication = source.isInformalCommunication;
         this.skipSenderLimit = source.skipSenderLimit;
         this.delayed = source.delayed;
+        this.previousStep = source.previousStep;
     }
 
     private String requireField(JsonNode node, String fieldName, boolean nullable) {

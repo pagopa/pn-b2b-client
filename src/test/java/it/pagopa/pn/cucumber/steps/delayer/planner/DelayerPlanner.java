@@ -1,19 +1,31 @@
 package it.pagopa.pn.cucumber.steps.delayer.planner;
 
+import io.cucumber.spring.ScenarioScope;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDelivery;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
-import io.cucumber.spring.ScenarioScope;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.*;
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.extractSeed;
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.getCapDeliveryDriverKey;
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.getNextMondayFromDate;
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.getSenderKey;
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.getUnifiedDeliveryDriverKey;
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.sortByPriority;
 
 @Component
 @ScenarioScope
@@ -330,7 +342,21 @@ public class DelayerPlanner {
 
     private DelayerPaperDelivery freezeNotification(DelayerPaperDelivery notification) {
         String deliveryDate = getNextMondayFromDate(context.expectedDeliveryDate, 1);
-        return utils.deepCopyAndUpdateKeys(List.of(notification), WorkflowSteps.EVALUATE_SENDER_LIMIT, deliveryDate).get(0);
+        DelayerPaperDelivery frozen = utils.deepCopyAndUpdateKeys(List.of(notification), WorkflowSteps.EVALUATE_SENDER_LIMIT, deliveryDate).get(0);
+
+        // Una spedizione congelata per capacità di recapito o
+        // di stampa (non per limite mittente) eredita skipSenderLimit=true per la settimana successiva se,
+        // nella settimana appena valutata, il mittente aveva ancora quota residua sul proprio limite garantito.
+        // Si applica solo ai primi tentativi LEGAL: RS, secondi tentativi e INFORMAL restano invariati.
+        if (!frozen.isRS() && !frozen.isSecondAttempt() && !frozen.isInformalCommunication()) {
+            String senderKey = getSenderKey(frozen);
+            if (context.senderLimitMap.containsKey(senderKey)) {
+                Integer residualQuota = utils.getSenderLimit(senderKey);
+                frozen.setSkipSenderLimit(residualQuota != null && residualQuota > 0);
+            }
+        }
+
+        return frozen;
     }
 
     private List<DelayerPaperDelivery> collectAllFrozen(Map<String, List<DelayerPaperDelivery>> frozenByStep) {
@@ -366,9 +392,21 @@ public class DelayerPlanner {
 
         reassigned.addAll(technicalPriorityNotifications);
 
+        // Le nuove spedizioni ritardate (delayed=true e previousStep=null) non vengono riordinate:
+        // devono mantenere la posizione originaria. Quelle già elaborate (previousStep valorizzato)
+        // partecipano invece normalmente al riordino.
+        List<DelayerPaperDelivery> newDelayedNotifications = notifications.stream()
+                .filter(n -> !(n.isRS() || n.isSecondAttempt()))
+                .filter(DelayerPlanner::isNewDelayed)
+                .map(DelayerPaperDelivery::new)
+                .toList();
+
+        reassigned.addAll(newDelayedNotifications);
+
         // La senderPriority vale solo per le spedizioni normali / primi tentativi.
         List<DelayerPaperDelivery> normalNotifications = notifications.stream()
                 .filter(n -> !(n.isRS() || n.isSecondAttempt()))
+                .filter(n -> !isNewDelayed(n))
                 .toList();
 
         Map<String, List<DelayerPaperDelivery>> bySender = normalNotifications.stream()
@@ -382,9 +420,18 @@ public class DelayerPlanner {
 
             // Slot temporali originari del singolo sender.
             // Usiamo getEffectiveNotificationSentAt() per non perdere un eventuale slot virtuale già presente.
-            List<String> originalTimeSlots = senderNotifications.stream()
+            // Allo slot è associato anche skipSenderLimit: il privilegio di residuo prioritario appartiene
+            // alla posizione in coda, non alla singola spedizione, quindi segue lo slot nel riordino.
+            List<DelayerPaperDelivery> notificationsBySlot = senderNotifications.stream()
+                    .sorted(Comparator.comparing(DelayerPaperDelivery::getEffectiveNotificationSentAt))
+                    .toList();
+
+            List<String> originalTimeSlots = notificationsBySlot.stream()
                     .map(DelayerPaperDelivery::getEffectiveNotificationSentAt)
-                    .sorted()
+                    .toList();
+
+            List<Boolean> originalSkipSenderLimits = notificationsBySlot.stream()
+                    .map(DelayerPaperDelivery::getSkipSenderLimit)
                     .toList();
 
             // Riordino interno allo stesso sender:
@@ -401,6 +448,7 @@ public class DelayerPlanner {
             for (int i = 0; i < senderPrioritySorted.size(); i++) {
                 DelayerPaperDelivery copy = new DelayerPaperDelivery(senderPrioritySorted.get(i));
                 copy.setVirtualNotificationSentAt(originalTimeSlots.get(i));
+                copy.setSkipSenderLimit(originalSkipSenderLimits.get(i));
                 reassigned.add(copy);
             }
         }
@@ -417,6 +465,14 @@ public class DelayerPlanner {
                 ));
 
         return sorted;
+    }
+
+    /**
+     * Nuova spedizione ritardata: arrivata in ritardo in fase di ingestion e non ancora elaborata
+     * in nessuno step precedente. Va esclusa dal riordino per senderPriority.
+     */
+    private static boolean isNewDelayed(DelayerPaperDelivery n) {
+        return Boolean.TRUE.equals(n.getDelayed()) && n.getPreviousStep() == null;
     }
 
 }

@@ -196,6 +196,7 @@ public class DelayerValidator {
                     if (step.getIndex() > 0) {
                         map.put("unifiedDeliveryDriver", n.getUnifiedDeliveryDriver());
                     }
+                    map.put("skipSenderLimit", String.valueOf(n.getSkipSenderLimit()));
                     return map;
                 }).toList();
     }

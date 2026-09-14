@@ -7,6 +7,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import io.cucumber.spring.ScenarioScope;
 import it.pagopa.pn.cucumber.steps.delayer.loader.DelayerCsvLoader;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerCountersPrintItem;
@@ -22,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
-import io.cucumber.spring.ScenarioScope;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,8 +37,14 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static it.pagopa.pn.cucumber.steps.delayer.model.DelayerSuiteContext.GATE_TIMEOUT;
-import static it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps.*;
-import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.*;
+import static it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps.EVALUATE_PRINT_CAPACITY;
+import static it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps.SENT_TO_PREPARE_PHASE_2;
+import static it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps.valueOf;
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.calculateLimitByComparativo;
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.extractSeed;
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.getCurrentMonday;
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.getNextMonday;
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.hasSeedInRequestId;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -429,7 +435,7 @@ public class DelayerSteps {
 
     @And("sposto la simulazione in avanti di {int} settimane")
     public void moveForward(int nWeeks) {
-        var frozen = new ArrayList<>(context.expectedPianification.values().stream().findAny().map(m->m.get("FROZEN")).orElse(Collections.emptyList()));
+        var frozen = new ArrayList<>(context.expectedPianification.values().stream().findAny().map(m -> m.get("FROZEN")).orElse(Collections.emptyList()));
         context.resetContext();
         context.expectedDeliveryDate = getNextMonday(nWeeks);
         context.actualCsv.addAll(frozen);
@@ -490,6 +496,40 @@ public class DelayerSteps {
     }
 
 
+    @Then("verifica che dopo il riordino per priorità mittente le spedizioni siano:")
+    public void checkSenderPriorityReassignment(DataTable dataTable) throws Exception {
+        SoftAssertions softly = new SoftAssertions();
+
+        for (Map<String, String> row : dataTable.asMaps(String.class, String.class)) {
+            String requestId = row.get("requestId");
+            List<DelayerPaperDelivery> found = service.pollByRequestId(requestId, 1, 200);
+
+            softly.assertThat(found)
+                    .as("Nessun record trovato in pn-DelayerPaperDelivery per requestId '%s'", requestId)
+                    .isNotEmpty();
+
+            if (found.isEmpty()) continue;
+
+            DelayerPaperDelivery actual = found.get(0);
+
+            String expectedVirtual = row.get("virtualNotificationSentAt");
+            if (expectedVirtual != null && !expectedVirtual.isBlank()) {
+                softly.assertThat(actual.getVirtualNotificationSentAt())
+                        .as("virtualNotificationSentAt per requestId '%s'", requestId)
+                        .isEqualTo(expectedVirtual);
+            }
+
+            String expectedSkip = row.get("skipSenderLimit");
+            if (expectedSkip != null && !expectedSkip.isBlank()) {
+                softly.assertThat(actual.getSkipSenderLimit())
+                        .as("skipSenderLimit per requestId '%s'", requestId)
+                        .isEqualTo(Boolean.valueOf(expectedSkip));
+            }
+        }
+
+        softly.assertAll();
+    }
+
     @Then("viene verificato che il limite garantito per la pa: {string} relativo a provincia: {string}, prodotto: {string} sia corretto")
     public void checkSenderLimitForPA(String paId, String province, String product) {
         Assertions.assertThat(context.expectedDeliveryDate)
@@ -525,5 +565,11 @@ public class DelayerSteps {
 
     }
 
-
+    @And("viene verificato che il contatore EXCLUDE sia pari a: {int} per la provincia {string} e prodotto {string}")
+    public void checkExcludeCounter(int expectedResult, String province, String product) {
+        int excludeCounter = service.getCountersExclude(context.expectedDeliveryDate, province, product);
+        Assertions.assertThat(excludeCounter)
+                .as("Confronto di actual ed expected del contatore EXCLUDE per deliveryDate=%s, province=%s, product=%s", context.expectedDeliveryDate, province, product)
+                .isEqualTo(expectedResult);
+    }
 }

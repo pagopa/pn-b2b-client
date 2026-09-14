@@ -434,11 +434,12 @@
         | tcSenderPriorityFrozen_ |
 
     @delayer17
-    Scenario: [DELAYER-TC17][CASO 1.1] Verifica che un residuo per ritardo non imputabile all'ente su commessa zero del nuovo mese venga pianificato come residuo prioritario
-     #Given vengono puliti i dati dalle tabelle target
+    Scenario: [DELAYER-TC17] Verifica che una spedizione arrivata al delayer in ritardo e caricata dall'ente in una settimana in cui c'è ancora
+    disponibilità di recapito e di stampa venga pianificata come residuo prioritario e gestita prima delle altre spedizioni
+      Given vengono puliti i dati dalle tabelle target
       Given il CSV "tcResiduoBuonoRitardo.csv" contiene 12 notifiche distribuite tra i seguenti test case:
-        | seed                   | quantita |
-        | tcResiduoBuonoRitardo_ | 12       |
+        | seed                   | quantita | deliveryWeek |
+        | tcResiduoBuonoRitardo_ | 12       | 2026-09-14   |
       And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
         | senderId              | comparative | limit |
         | ranking2nd_890~890~P1 | esattamente | 7     |
@@ -446,17 +447,11 @@
         | unifiedDeliveryDriverId      | comparative | limit |
         | driverRanking2nd_890~P1      | esattamente | 10    |
         | driverRanking2nd_890~CAP1_P1 | esattamente | 10    |
-      #And il CSV "tcResiduoBuonoRitardo.csv" è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
+      And il CSV "tcResiduoBuonoRitardo.csv" è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
+      And viene verificato che il contatore EXCLUDE sia pari a: 2 per la provincia "P1" e prodotto "890"
       And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
-      #When viene avviata la step function BatchWorkflowStateMachine
+      When viene avviata la step function BatchWorkflowStateMachine con deliveryDate: "2026-09-14"
       And vengono recuperate le notifiche al workflow step "EVALUATE_SENDER_LIMIT"
-      ###################### l'ordinamento viene effettuato a partire dallo step EVALUATE_DRIVER_CAPACITY, quindi non è necessario verificare l'ordinamento in questo step
-#      And verifica che il processo fino al workflow step "EVALUATE_SENDER_LIMIT" abbia rispettato i criteri di ranking per almeno un test case:
-#        | categoria           | ordinamentoCampo   |
-#        | RS                  | prepareRequestDate |
-#        | SECONDO_TENTATIVO   | prepareRequestDate |
-#        | RESIDUO_PRIORITARIO | prepareRequestDate |
-#        | ALTRO               | notificationSentAt |
       And vengono recuperate le notifiche al workflow step "EVALUATE_DRIVER_CAPACITY"
       And verifica che il processo fino al workflow step "EVALUATE_DRIVER_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
         | categoria           | ordinamentoCampo   |
@@ -464,6 +459,7 @@
         | SECONDO_TENTATIVO   | prepareRequestDate |
         | RESIDUO_PRIORITARIO | prepareRequestDate |
         | ALTRO               | notificationSentAt |
+      Then verifica che non esistano notifiche al workflow step "EVALUATE_RESIDUAL_CAPACITY" per il seed "tcResiduoBuonoRitardo_11"
       Then verifica che non esistano notifiche al workflow step "EVALUATE_RESIDUAL_CAPACITY" per il seed "tcResiduoBuonoRitardo_12"
       And vengono recuperate le notifiche al workflow step "EVALUATE_PRINT_CAPACITY"
       And verifica che il processo fino al workflow step "EVALUATE_PRINT_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
@@ -474,13 +470,72 @@
         | ALTRO               | notificationSentAt |
       And verifica la corretta pianificazione di ogni test case
 
-
-    Scenario: [DELAYER-TC17][CASO 1.2] Verifica che un residuo per ritardo non imputabile all'ente relativo alla settimana precedente NON venga pianificato come residuo prioritario
-    se l'ente aveva già raggiunto il limite garantito della settimana precedente. In questo caso, la spedizione viene trattata secondo flusso ordinario.
+    @delayer18
+    Scenario: [DELAYER-TC18] Verifica che una spedizione rimandata alla settimana successiva per superamento della capacità di stampa venga pianificata come residuo prioritario
       Given vengono puliti i dati dalle tabelle target
-      Given il CSV "tcResiduoBuonoRitardo.csv" contiene 3 notifiche distribuite tra i seguenti test case:
-        | seed                   | quantita |
-        | tcResiduoBuonoRitardo_ | 3        |
+      Given il CSV "tcSenderPriorityDelayedNuova.csv" contiene 4 notifiche distribuite tra i seguenti test case:
+        | seed                     | quantita |
+        | tcSenderPriorityDelayed_ | 4        |
+      And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
+        | senderId              | comparative | limit |
+        | ranking2nd_890~890~P1 | esattamente | 7     |
+      And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
+        | unifiedDeliveryDriverId      | comparative | limit |
+        | driverRanking2nd_890~P1      | esattamente | 10    |
+        | driverRanking2nd_890~CAP1_P1 | esattamente | 10    |
+#      And si presuppone che la capacità di stampa giornaliera sia esattamente 3
+      And viene impostata la capacità di stampa settimanale in modo che sia esattamente 3
+      And il CSV "tcSenderPriorityDelayedNuova.csv" è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
+      And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
+      When viene avviata la step function BatchWorkflowStateMachine
+      And vengono recuperate le notifiche al workflow step "EVALUATE_DRIVER_CAPACITY"
+      And verifica che il processo fino al workflow step "EVALUATE_DRIVER_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
+        | categoria           | ordinamentoCampo   |
+        | RS                  | prepareRequestDate |
+        | SECONDO_TENTATIVO   | prepareRequestDate |
+        | RESIDUO_PRIORITARIO | prepareRequestDate |
+        | ALTRO               | notificationSentAt |
+      And vengono simulate internamente le operazioni di DelayerToPaperChannelStateMachine
+      And vengono avviate le 1 esecuzioni della step function DelayerToPaperChannelStateMachine
+      And verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
+      And verifica la corretta pianificazione di ogni test case
+
+
+    @delayer19
+    #Verifica il job EVALUATE_SENDER_PRIORITY: il riordino per senderPriority all'interno dello stesso
+    #mittente scambia lo slot temporale (virtualNotificationSentAt) e, insieme ad esso, skipSenderLimit.
+    Scenario: [DELAYER-TC19] Verifica lo scambio di skipSenderLimit nel riordino per senderPriority e l'esclusione delle nuove spedizioni ritardate
+      Given vengono puliti i dati dalle tabelle target
+      Given il CSV "tcSenderPriorityDelayedElaborata.csv" contiene 12 notifiche distribuite tra i seguenti test case:
+        | seed                   | quantita | deliveryWeek |
+        | tcResiduoBuonoRitardo_ | 12       | 2026-09-14   |
+      And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
+        | senderId              | comparative | limit |
+        | ranking2nd_890~890~P1 | esattamente | 7     |
+      And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
+        | unifiedDeliveryDriverId      | comparative | limit |
+        | driverRanking2nd_890~P1      | esattamente | 10    |
+        | driverRanking2nd_890~CAP1_P1 | esattamente | 10    |
+      And il CSV "tcSenderPriorityDelayedElaborata.csv" è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
+      And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
+      When viene avviata la step function BatchWorkflowStateMachine con deliveryDate: "2026-09-14"
+      And vengono recuperate le notifiche al workflow step "EVALUATE_DRIVER_CAPACITY"
+      And verifica che il processo fino al workflow step "EVALUATE_DRIVER_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
+        | seed                   |
+        | tcResiduoBuonoRitardo_ |
+      Then verifica che dopo il riordino per priorità mittente le spedizioni siano:
+        | requestId               | virtualNotificationSentAt | skipSenderLimit |
+        | tcResiduoBuonoRitardo_1 | 2026-09-01T08:00:01Z      | true            |
+        | tcResiduoBuonoRitardo_3 | 2026-09-07T08:00:02Z      | false           |
+      And verifica la corretta pianificazione di ogni test case
+
+    @delayer20
+    Scenario: [DELAYER-TC20] Verifica che con il feature flag ad OFF, una spedizione arrivata al delayer in ritardo e caricata dall'ente in una settimana in cui c'è ancora
+    disponibilità di recapito e di stampa NON venga pianificata come residuo prioritario
+      Given vengono puliti i dati dalle tabelle target
+      Given il CSV "tcResiduoBuonoRitardo.csv" contiene 12 notifiche distribuite tra i seguenti test case:
+        | seed                   | quantita | deliveryWeek |
+        | tcResiduoBuonoRitardo_ | 12       | 2026-09-14   |
       And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
         | senderId              | comparative | limit |
         | ranking2nd_890~890~P1 | esattamente | 7     |
@@ -489,16 +544,10 @@
         | driverRanking2nd_890~P1      | esattamente | 10    |
         | driverRanking2nd_890~CAP1_P1 | esattamente | 10    |
       And il CSV "tcResiduoBuonoRitardo.csv" è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
+      And viene verificato che il contatore EXCLUDE sia pari a: 2 per la provincia "P1" e prodotto "890"
       And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
-      When viene avviata la step function BatchWorkflowStateMachine
+      When viene avviata la step function BatchWorkflowStateMachine con deliveryDate: "2026-09-14"
       And vengono recuperate le notifiche al workflow step "EVALUATE_SENDER_LIMIT"
-      ###################### l'ordinamento viene effettuato a partire dallo step EVALUATE_DRIVER_CAPACITY, quindi non è necessario verificare l'ordinamento in questo step
-#      And verifica che il processo fino al workflow step "EVALUATE_SENDER_LIMIT" abbia rispettato i criteri di ranking per almeno un test case:
-#        | categoria           | ordinamentoCampo   |
-#        | RS                  | prepareRequestDate |
-#        | SECONDO_TENTATIVO   | prepareRequestDate |
-#        | RESIDUO_PRIORITARIO | prepareRequestDate |
-#        | ALTRO               | notificationSentAt |
       And vengono recuperate le notifiche al workflow step "EVALUATE_DRIVER_CAPACITY"
       And verifica che il processo fino al workflow step "EVALUATE_DRIVER_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
         | categoria           | ordinamentoCampo   |
@@ -513,151 +562,4 @@
         | SECONDO_TENTATIVO   | prepareRequestDate |
         | RESIDUO_PRIORITARIO | prepareRequestDate |
         | ALTRO               | notificationSentAt |
-      And verifica che il processo fino al workflow step "EVALUATE_PRINT_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
-        | categoria           | ordinamentoCampo   |
-        | RS                  | prepareRequestDate |
-        | SECONDO_TENTATIVO   | prepareRequestDate |
-        | RESIDUO_PRIORITARIO | prepareRequestDate |
-        | ALTRO               | notificationSentAt |
       And verifica la corretta pianificazione di ogni test case
-
-
-    Scenario: [DELAYER-TC17][CASO 1.3] Residuo prioritario per posticipo da vincolo di capacità di recapito
-      Given vengono puliti i dati dalle tabelle target
-      Given il CSV "<csv>" contiene 14 notifiche distribuite tra i seguenti test case:
-        | seed           | quantita |
-        | tcSplitSender_ | 14       |
-      And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
-        | senderId                   | comparative | limit |
-        | splitSender1CAP1_P9~RS~P9  | almeno      | 0     |
-        | splitSender1CAP1_P9~AR~P9  | almeno      | 0     |
-        | splitSender1CAP1_P9~890~P9 | almeno      | 10    |
-        | splitSender1CAP2_P9~RS~P9  | almeno      | 0     |
-        | splitSender1CAP2_P9~AR~P9  | almeno      | 0     |
-        | splitSender1CAP2_P9~890~P9 | almeno      | 4     |
-      And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
-        | unifiedDeliveryDriverId     | comparative | limit |
-        | splitDriver1CAP1_P9~P9      | esattamente | 11    |
-        | splitDriver1CAP1_P9~CAP1_P9 | esattamente | 7     |
-        | splitDriver1CAP1_P9~CAP2_P9 | esattamente | 4     |
-      And si verifica che la capacità disponibile settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
-        | unifiedDeliveryDriverId     | comparative | limit |
-        | splitDriver1CAP1_P9~P9      | almeno      | 11    |
-        | splitDriver1CAP1_P9~CAP1_P9 | almeno      | 7     |
-        | splitDriver1CAP1_P9~CAP2_P9 | almeno      | 4     |
-      And il CSV "CSV" è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
-      And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
-      When viene avviata la step function BatchWorkflowStateMachine
-
-      And vengono recuperate le notifiche al workflow step "EVALUATE_PRINT_CAPACITY"
-      And verifica che il processo fino al workflow step "EVALUATE_PRINT_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
-        | seed                      |
-        | tcSenderPriorityFrozenW1_ |
-
-      And vengono recuperate le notifiche al workflow step "EVALUATE_PRINT_CAPACITY"
-      Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
-
-
-      And sposto la simulazione in avanti di 1 settimane
-      Given il CSV "tcSenderPriorityFrozenW2.csv" contiene 4 notifiche distribuite tra i seguenti test case:
-        | seed                    | quantita | deliveryWeek |
-        | tcSenderPriorityFrozen_ | 5        | NEXT_MONDAY  |
-      And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
-        | senderId                   | comparative | limit |
-        | splitSender1CAP1_P9~RS~P9  | almeno      | 0     |
-        | splitSender1CAP1_P9~AR~P9  | almeno      | 0     |
-        | splitSender1CAP1_P9~890~P9 | almeno      | 10    |
-        | splitSender1CAP2_P9~RS~P9  | almeno      | 0     |
-        | splitSender1CAP2_P9~AR~P9  | almeno      | 0     |
-        | splitSender1CAP2_P9~890~P9 | almeno      | 4     |
-      And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
-        | unifiedDeliveryDriverId     | comparative | limit |
-        | splitDriver1CAP1_P9~P9      | esattamente | 11    |
-        | splitDriver1CAP1_P9~CAP1_P9 | esattamente | 7     |
-        | splitDriver1CAP1_P9~CAP2_P9 | esattamente | 4     |
-      And si verifica che la capacità disponibile settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
-        | unifiedDeliveryDriverId     | comparative | limit |
-        | splitDriver1CAP1_P9~P9      | almeno      | 11    |
-        | splitDriver1CAP1_P9~CAP1_P9 | almeno      | 7     |
-        | splitDriver1CAP1_P9~CAP2_P9 | almeno      | 4     |
-      And il CSV "tcSenderPriorityFrozenW2.csv" è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
-      And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
-      When viene avviata la step function BatchWorkflowStateMachine con deliveryDate in avanti di 1 settimane
-      And vengono recuperate le notifiche al workflow step "EVALUATE_SENDER_LIMIT"
-      And verifica che il processo fino al workflow step "EVALUATE_SENDER_LIMIT" abbia rispettato i criteri di ranking per almeno un test case:
-        | categoria           | ordinamentoCampo   |
-        | RS                  | prepareRequestDate |
-        | SECONDO_TENTATIVO   | prepareRequestDate |
-        | RESIDUO_PRIORITARIO | prepareRequestDate |
-        | ALTRO               | notificationSentAt |
-      Then verifica che non esistano notifiche al workflow step "EVALUATE_RESIDUAL_CAPACITY" per il seed "tcResiduoBuonoRitardo_"
-
-
-    Scenario: [DELAYER-TC17][CASO 1.3] Residuo prioritario per posticipo da vincolo di capacità di stampa
-      Given vengono puliti i dati dalle tabelle target
-      Given il CSV "<csv>" contiene 14 notifiche distribuite tra i seguenti test case:
-        | seed           | quantita |
-        | tcSplitSender_ | 14       |
-      And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
-        | senderId                   | comparative | limit |
-        | splitSender1CAP1_P9~RS~P9  | almeno      | 0     |
-        | splitSender1CAP1_P9~AR~P9  | almeno      | 0     |
-        | splitSender1CAP1_P9~890~P9 | almeno      | 10    |
-        | splitSender1CAP2_P9~RS~P9  | almeno      | 0     |
-        | splitSender1CAP2_P9~AR~P9  | almeno      | 0     |
-        | splitSender1CAP2_P9~890~P9 | almeno      | 4     |
-      And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
-        | unifiedDeliveryDriverId     | comparative | limit |
-        | splitDriver1CAP1_P9~P9      | esattamente | 11    |
-        | splitDriver1CAP1_P9~CAP1_P9 | esattamente | 7     |
-        | splitDriver1CAP1_P9~CAP2_P9 | esattamente | 4     |
-      And si verifica che la capacità disponibile settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
-        | unifiedDeliveryDriverId     | comparative | limit |
-        | splitDriver1CAP1_P9~P9      | almeno      | 11    |
-        | splitDriver1CAP1_P9~CAP1_P9 | almeno      | 7     |
-        | splitDriver1CAP1_P9~CAP2_P9 | almeno      | 4     |
-      And si presuppone che la capacità di stampa giornaliera sia esattamente 2
-      And il CSV "CSV" è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
-      And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
-      When viene avviata la step function BatchWorkflowStateMachine
-
-
-      And vengono recuperate le notifiche al workflow step "EVALUATE_PRINT_CAPACITY"
-      Then verifica che le opportune notifiche siano state congelate e ricaricate con workflow step "EVALUATE_SENDER_LIMIT" e deliveryDate alla settimana seguente per almeno un test case
-
-
-      And sposto la simulazione in avanti di 1 settimane
-      Given il CSV "tcSenderPriorityFrozenW2.csv" contiene 4 notifiche distribuite tra i seguenti test case:
-        | seed                    | quantita | deliveryWeek |
-        | tcSenderPriorityFrozen_ | 5        | NEXT_MONDAY  |
-      And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
-        | senderId                   | comparative | limit |
-        | splitSender1CAP1_P9~RS~P9  | almeno      | 0     |
-        | splitSender1CAP1_P9~AR~P9  | almeno      | 0     |
-        | splitSender1CAP1_P9~890~P9 | almeno      | 10    |
-        | splitSender1CAP2_P9~RS~P9  | almeno      | 0     |
-        | splitSender1CAP2_P9~AR~P9  | almeno      | 0     |
-        | splitSender1CAP2_P9~890~P9 | almeno      | 4     |
-      And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
-        | unifiedDeliveryDriverId     | comparative | limit |
-        | splitDriver1CAP1_P9~P9      | esattamente | 11    |
-        | splitDriver1CAP1_P9~CAP1_P9 | esattamente | 7     |
-        | splitDriver1CAP1_P9~CAP2_P9 | esattamente | 4     |
-      And si verifica che la capacità disponibile settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
-        | unifiedDeliveryDriverId     | comparative | limit |
-        | splitDriver1CAP1_P9~P9      | almeno      | 11    |
-        | splitDriver1CAP1_P9~CAP1_P9 | almeno      | 7     |
-        | splitDriver1CAP1_P9~CAP2_P9 | almeno      | 4     |
-      And si presuppone che la capacità di stampa giornaliera sia esattamente 2
-      And il CSV "tcSenderPriorityFrozenW2.csv" è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
-      And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
-      When viene avviata la step function BatchWorkflowStateMachine con deliveryDate in avanti di 1 settimane
-      And vengono recuperate le notifiche al workflow step "EVALUATE_SENDER_LIMIT"
-      And verifica che il processo fino al workflow step "EVALUATE_SENDER_LIMIT" abbia rispettato i criteri di ranking per almeno un test case:
-        | categoria           | ordinamentoCampo   |
-        | RS                  | prepareRequestDate |
-        | SECONDO_TENTATIVO   | prepareRequestDate |
-        | RESIDUO_PRIORITARIO | prepareRequestDate |
-        | ALTRO               | notificationSentAt |
-      Then verifica che non esistano notifiche al workflow step "EVALUATE_RESIDUAL_CAPACITY" per il seed "tcResiduoBuonoRitardo_"
-
