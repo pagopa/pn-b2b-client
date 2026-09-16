@@ -1,0 +1,257 @@
+﻿ID TEST,ERROR LOG,KEYS,COMPONENTS,RESULT,PROCEDURE,BUG SUITE,BUG PRODOTTO
+[AGREEMENT_ACTIVATE_04A],"failed: org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
+at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
+at ✽.si ottiene status code 409(classpath:it/pagopa/pn/cucumber/agreement/agreement-activate.feature:100)
+",,,Il test fallisce visto lo status code ricevuto non conforme a quello atteso.,Analisi dei logEsecuzione del test in locale,,PIN-10649
+[AGREEMENT_ACTIVATE_04A],"failed: org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
+at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
+at ✽.si ottiene status code 409(classpath:it/pagopa/pn/cucumber/agreement/agreement-activate.feature:100)
+",,,Il test fallisce visto lo status code ricevuto non conforme a quello atteso.,Analisi dei logEsecuzione del test in locale,,PIN-10649
+[AGREEMENT_ACTIVATE_04A],"failed: org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
+at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
+at ✽.si ottiene status code 409(classpath:it/pagopa/pn/cucumber/agreement/agreement-activate.feature:100)
+",,,Il test fallisce visto lo status code ricevuto non conforme a quello atteso.,Analisi dei logEsecuzione del test in locale,,PIN-10649
+[AGREEMENT_ACTIVATE_04B],"failed: org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
+at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
+at ✽.si ottiene status code 409(classpath:it/pagopa/pn/cucumber/agreement/agreement-activate.feature:169)
+",,,Il test fallisce visto lo status code ricevuto non conforme a quello atteso.,Analisi dei logEsecuzione del test in locale,,PIN-10649
+[AGREEMENT_ACTIVATE_04C],"failed: org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
+at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
+at ✽.si ottiene status code 409(classpath:it/pagopa/pn/cucumber/agreement/agreement-activate.feature:185)
+",,,Il test fallisce visto lo status code ricevuto non conforme a quello atteso.,Analisi dei logEsecuzione del test in locale,,PIN-10649
+[AGREEMENTS_UNSUSPEND_2A],"failed: org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
+at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
+at ✽.si ottiene status code 409(classpath:it/pagopa/pn/cucumber/agreement/agreement-activate.feature:336)
+",,,Il test fallisce visto lo status code ricevuto non conforme a quello atteso.,Analisi dei logEsecuzione del test in locale,,PIN-10632
+[AGREEMENTS_UNSUSPEND_2A],"failed: org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
+at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
+at ✽.si ottiene status code 409(classpath:it/pagopa/pn/cucumber/agreement/agreement-activate.feature:336)
+",,,Il test fallisce visto lo status code ricevuto non conforme a quello atteso.,Analisi dei logEsecuzione del test in locale,,PIN-10632
+[AGREEMENTS_UNSUSPEND_2B],"failed: org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
+at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
+at ✽.si ottiene status code 409(classpath:it/pagopa/pn/cucumber/agreement/agreement-activate.feature:351)
+",,,Il test fallisce visto lo status code ricevuto non conforme a quello atteso.,Analisi dei logEsecuzione del test in locale,,PIN-10632
+[AGREEMENTS_UNSUSPEND_3],"failed: org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
+at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
+at ✽.si ottiene status code 409(classpath:it/pagopa/pn/cucumber/agreement/agreement-activate.feature:362)
+",,,Il test fallisce visto lo status code ricevuto non conforme a quello atteso.,Analisi dei logEsecuzione del test in locale,,PIN-10632
+[AGREEMENTS_UNSUSPEND_4],"failed: org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
+at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
+at ✽.si ottiene status code 409(classpath:it/pagopa/pn/cucumber/agreement/agreement-activate.feature:375)
+",,,Il test fallisce visto lo status code ricevuto non conforme a quello atteso.,Analisi dei logEsecuzione del test in locale,,PIN-10632
+[DESCRIPTOR_ACTIVATION_2],"failed: org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
+at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
+at ✽.si ottiene status code 409(classpath:it/pagopa/pn/cucumber/catalog/descriptor-activation.feature:48)
+",,,"Error code ottenuto difforme da quello atteso: la riattivazione di un e-service in stato non SUSPENDED dovrebbe concludersi con 409, non 400",Presa visione del risultato e ri-esecuzione del test in locale,,PIN-9599
+[DESCRIPTOR_ACTIVATION_2],"failed: org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
+at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
+at ✽.si ottiene status code 409(classpath:it/pagopa/pn/cucumber/catalog/descriptor-activation.feature:48)
+",,,"Error code ottenuto difforme da quello atteso: la riattivazione di un e-service in stato non SUSPENDED dovrebbe concludersi con 409, non 400",Presa visione del risultato e ri-esecuzione del test in locale,,PIN-9599
+[DESCRIPTOR_ACTIVATION_2],"failed: org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
+at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
+at ✽.si ottiene status code 409(classpath:it/pagopa/pn/cucumber/catalog/descriptor-activation.feature:48)
+",,,"Error code ottenuto difforme da quello atteso: la riattivazione di un e-service in stato non SUSPENDED dovrebbe concludersi con 409, non 400",Presa visione del risultato e ri-esecuzione del test in locale,,PIN-9599
+[DESCRIPTOR_ACTIVATION_2],"failed: org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
+at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
+at ✽.si ottiene status code 409(classpath:it/pagopa/pn/cucumber/catalog/descriptor-activation.feature:48)
+",,,"Error code ottenuto difforme da quello atteso: la riattivazione di un e-service in stato non SUSPENDED dovrebbe concludersi con 409, non 400",Presa visione del risultato e ri-esecuzione del test in locale,,PIN-9599
+[INTEROP-EST-080],"failed: org.opentest4j.AssertionFailedError: [Check HTTP response status risultante da ultima call effettuata attraverso HttpCallExecutor] 
+expected: 404
+but was : 403
+at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:500)
+at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.accuratelyVerifyStatusCode(ClientCommonSteps.java:149)
+at ✽.si ottiene response status code 404(classpath:it/pagopa/pn/cucumber/e-service-template/e-service-template.feature:1357)
+",,,Restituito codice d'errore errato,Problema già noto in precedenza,,PIN-8052
+[INTEROP-EST-193],"failed: java.lang.AssertionError: Il nuovo e-service non è stato creato correttamente
+at it.pagopa.pn.interop.cucumber.steps.e_service_template.instance.EServiceTemplateInstanceCreateSteps.checkEServiceCreated(EServiceTemplateInstanceCreateSteps.java:246)
+at it.pagopa.pn.interop.cucumber.steps.e_service_template.instance.EServiceTemplateInstanceCreateSteps.checkEServiceAndMutateState(EServiceTemplateInstanceCreateSteps.java:158)
+at it.pagopa.pn.interop.cucumber.steps.e_service_template.instance.EServiceTemplateInstanceCreateSteps.createEServiceFromTemplateMinimalSpecSuccessfully(EServiceTemplateInstanceCreateSteps.java:142)
+at ✽.l'utente effettua la creazione di un nuovo e-service in stato DRAFT a partire dal template con successo indicando solo le specifiche strettamente necessarie(classpath:it/pagopa/pn/cucumber/e-service-template/e-service-template.feature:2977)
+",,,Il descrittore dell’e-service non è stato creato in tempo correttamente. Si ritiene che l’alta mole di test abbia congestionato il sistema in modo tale da ritardare la corretta creazione dell’e-service.,Ri-esecuzione del test in locale,,
+[M2M_DELEGATIONS_CONSUMER_01],"failed: java.lang.IllegalStateException: La richiesta di delega non è stata eseguita correttamente: 403 Forbidden: ""{""type"":""about:blank"",""title"":""Tenant not allowed to delegation"",""status"":403,""detail"":""Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedConsumer"",""correlationId"":""9c95fa8c-441e-4d9e-8f5f-0ff09b8cd738"",""errors"":[{""code"":""010-0007"",""detail"":""Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedConsumer""}]}""
+at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.checkDelegation(DelegationCreateStep.java:307)
+at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.givenConsumerDelegatingTenantHasRequestedDelegationSuccessfully(DelegationCreateStep.java:135)
+at ✽.l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato con successo(classpath:it/pagopa/pn/cucumber/m2mgateway/delegations-consumer-fruizione.feature:31)
+",,,"Il test fallisce vista la concorrenza sui dati che coinvolge Tenant, deleghe e la rispettiva revoca/attivazione. Il test è stato eseguito in locale con successo.",Analisi dei logEsecuzione in locale,,
+[M2M_DELEGATIONS_CONSUMER_01],"failed: java.lang.IllegalStateException: La richiesta di delega non è stata eseguita correttamente: 403 Forbidden: ""{""type"":""about:blank"",""title"":""Tenant not allowed to delegation"",""status"":403,""detail"":""Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedConsumer"",""correlationId"":""08321c39-bc1f-4885-b9c3-864ff63db752"",""errors"":[{""code"":""010-0007"",""detail"":""Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedConsumer""}]}""
+at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.checkDelegation(DelegationCreateStep.java:307)
+at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.givenConsumerDelegatingTenantHasRequestedDelegationSuccessfully(DelegationCreateStep.java:135)
+at ✽.l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato con successo(classpath:it/pagopa/pn/cucumber/m2mgateway/delegations-consumer-fruizione.feature:31)
+",,,"Il test fallisce vista la concorrenza sui dati che coinvolge Tenant, deleghe e la rispettiva revoca/attivazione. Il test è stato eseguito in locale con successo.",Analisi dei logEsecuzione in locale,,
+[M2MG_DOCUMENTS_07_B],"failed: java.lang.IllegalArgumentException: Error during polling: 404 Not Found: ""{""type"":""about:blank"",""title"":""EService not found"",""status"":404,""detail"":""EService 3314ec77-8d04-44d0-a727-859211e38488 not found"",""correlationId"":""84210d40-b5cb-49b5-ba75-3b5450b7e433"",""errors"":[{""code"":""001-0005"",""detail"":""EService 3314ec77-8d04-44d0-a727-859211e38488 not found""}]}""
+at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:38)
+at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:17)
+at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCommonStep.buildWFAEService(DelegationCommonStep.java:163)
+at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCommonStep.createWFAEService(DelegationCommonStep.java:92)
+at ✽.""PA1"" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando ""PA2"" come delegato(classpath:it/pagopa/pn/cucumber/m2mgateway/documents.feature:56)
+",,,Il test fallisce visto il carico generato dagli NRT ed il tempo di generazione del documento superiore al tempo di polling. Il test è stato eseguito in locale con successo,Analisi dei logEsecuzione in locale,,
+[INTEROP-EST-M2M-PATCH_01],"failed: org.opentest4j.AssertionFailedError: expected: <200> but was: <500>
+at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCommonStep.thenStatusCodeIs(DelegationCommonStep.java:172)
+at ✽.si ottiene lo status code 200(classpath:it/pagopa/pn/cucumber/m2mgateway/e-service-templates.feature:138)
+",,,Il test fallisce visto il carico generato dagli NRT ed il tempo di generazione del documento superiore al tempo di polling. Il test è stato eseguito in locale con successo,Analisi dei logEsecuzione in locale,,
+[INTEROP-EST-M2M-DELETE_05_A],"failed: org.opentest4j.AssertionFailedError: expected: <404> but was: <403>
+at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCommonStep.thenStatusCodeIs(DelegationCommonStep.java:173)
+at ✽.si ottiene lo status code 404(classpath:it/pagopa/pn/cucumber/m2mgateway/e-service-templates.feature:518)
+",,,Restituito codice d'errore errato,Problema già noto in precedenza,,PIN-8052
+[M2M_ESERVICES_VERIFIED_ATTRIBUTES_ADD_02_A],"failed: java.lang.IllegalArgumentException: Error during polling: 404 Not Found: ""{""type"":""about:blank"",""title"":""EService not found"",""status"":404,""detail"":""EService deb48fc5-a3b0-4413-aef6-71722594f90f not found"",""correlationId"":""b6b02943-fa7c-4c68-8fa0-bc0fa729c22f"",""errors"":[{""code"":""001-0005"",""detail"":""EService deb48fc5-a3b0-4413-aef6-71722594f90f not found""}]}""
+at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:38)
+at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:17)
+at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCommonStep.buildWFAEService(DelegationCommonStep.java:163)
+at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCommonStep.bringDescriptorToStateWFA(DelegationCommonStep.java:97)
+at ✽.""PA1"" porta il descrittore dell'e-service in stato WAITING_FOR_APPROVAL usando ""PA2"" come delegato(classpath:it/pagopa/pn/cucumber/m2mgateway/eservices-verified-attributes.feature:43)
+",,,Il test fallisce visto il carico generato dagli NRT ed il tempo di generazione del documento superiore al tempo di polling. Nei log non sono presenti 500 e 504. Il test è stato eseguito in locale con successo,Analisi dei logEsecuzione in locale,,
+[M2MG_ESERVICES_28],"failed: org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
+at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCommonStep.thenStatusCodeIs(DelegationCommonStep.java:173)
+at ✽.si ottiene lo status code 409(classpath:it/pagopa/pn/cucumber/m2mgateway/eservices.feature:272)
+",,,"Error code ottenuto difforme da quello atteso: la riattivazione di un e-service in stato non SUSPENDED dovrebbe concludersi con 409, non 400",Presa visione del risultato e ri-esecuzione del test in locale,,PIN-9599
+[M2MG_ESERVICES_29_A],"failed: org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
+at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCommonStep.thenStatusCodeIs(DelegationCommonStep.java:173)
+at ✽.si ottiene lo status code 409(classpath:it/pagopa/pn/cucumber/m2mgateway/eservices.feature:279)
+",,,"Error code ottenuto difforme da quello atteso: la riattivazione di un e-service in stato non SUSPENDED dovrebbe concludersi con 409, non 400",Presa visione del risultato e ri-esecuzione del test in locale,,PIN-9599
+[M2MG_ESERVICES_29_A],"failed: org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
+at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCommonStep.thenStatusCodeIs(DelegationCommonStep.java:173)
+at ✽.si ottiene lo status code 409(classpath:it/pagopa/pn/cucumber/m2mgateway/eservices.feature:279)
+",,,"Error code ottenuto difforme da quello atteso: la riattivazione di un e-service in stato non SUSPENDED dovrebbe concludersi con 409, non 400",Presa visione del risultato e ri-esecuzione del test in locale,,PIN-9599
+[M2MG_ESERVICES_29_A],"failed: org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
+at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCommonStep.thenStatusCodeIs(DelegationCommonStep.java:173)
+at ✽.si ottiene lo status code 409(classpath:it/pagopa/pn/cucumber/m2mgateway/eservices.feature:279)
+",,,"Error code ottenuto difforme da quello atteso: la riattivazione di un e-service in stato non SUSPENDED dovrebbe concludersi con 409, non 400",Presa visione del risultato e ri-esecuzione del test in locale,,PIN-9599
+[M2MG_ESERVICES_29_A],"failed: org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
+at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCommonStep.thenStatusCodeIs(DelegationCommonStep.java:173)
+at ✽.si ottiene lo status code 409(classpath:it/pagopa/pn/cucumber/m2mgateway/eservices.feature:279)
+",,,"Error code ottenuto difforme da quello atteso: la riattivazione di un e-service in stato non SUSPENDED dovrebbe concludersi con 409, non 400",Presa visione del risultato e ri-esecuzione del test in locale,,PIN-9599
+[M2MG_ESERVICES_29_B],"failed: org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
+at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCommonStep.thenStatusCodeIs(DelegationCommonStep.java:173)
+at ✽.si ottiene lo status code 409(classpath:it/pagopa/pn/cucumber/m2mgateway/eservices.feature:292)
+",,,"Error code ottenuto difforme da quello atteso: la riattivazione di un e-service in stato non SUSPENDED dovrebbe concludersi con 409, non 400",Presa visione del risultato e ri-esecuzione del test in locale,,PIN-9599
+[M2M_E-SERVICE_EVENTS_04],"failed: java.lang.IllegalStateException: La richiesta di delega non è stata eseguita correttamente: 403 Forbidden: ""{""type"":""about:blank"",""title"":""Tenant not allowed to delegation"",""status"":403,""detail"":""Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer"",""correlationId"":""b159f0cd-d6a5-46d3-a0ea-8e59f07e72de"",""errors"":[{""code"":""010-0007"",""detail"":""Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer""}]}""
+at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.checkDelegation(DelegationCreateStep.java:307)
+at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.createDelegateSuccessfully(DelegationCreateStep.java:283)
+at ✽.l'ente ""PA1"" richiede la creazione di una delega in erogazione per l'ente ""PA2"" con successo(classpath:it/pagopa/pn/cucumber/m2mgateway/events.feature:58)
+",,,"Il test fallisce vista la concorrenza sui dati che coinvolge Tenant, deleghe e la rispettiva revoca/attivazione. Il test è stato eseguito in locale con successo.",Analisi dei logEsecuzione in locale,,
+[M2M_E-SERVICE_EVENTS_05],"failed: java.lang.IllegalStateException: La richiesta di delega non è stata eseguita correttamente: 403 Forbidden: ""{""type"":""about:blank"",""title"":""Tenant not allowed to delegation"",""status"":403,""detail"":""Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer"",""correlationId"":""e0455a77-768a-481b-a0a8-0eee1646042b"",""errors"":[{""code"":""010-0007"",""detail"":""Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer""}]}""
+at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.checkDelegation(DelegationCreateStep.java:307)
+at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.createDelegateSuccessfully(DelegationCreateStep.java:283)
+at ✽.l'ente ""PA1"" richiede la creazione di una delega in erogazione per l'ente ""PA2"" con successo(classpath:it/pagopa/pn/cucumber/m2mgateway/events.feature:79)
+",,,"Il test fallisce vista la concorrenza sui dati che coinvolge Tenant, deleghe e la rispettiva revoca/attivazione. Il test è stato eseguito in locale con successo.",Analisi dei logEsecuzione in locale,,
+[M2M_E-SERVICE_EVENTS_06],"failed: java.lang.IllegalStateException: La richiesta di delega non è stata eseguita correttamente: 403 Forbidden: ""{""type"":""about:blank"",""title"":""Tenant not allowed to delegation"",""status"":403,""detail"":""Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer"",""correlationId"":""245f586e-2928-4c10-80c1-eb630acf594d"",""errors"":[{""code"":""010-0007"",""detail"":""Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer""}]}""
+at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.checkDelegation(DelegationCreateStep.java:307)
+at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.createDelegateSuccessfully(DelegationCreateStep.java:283)
+at ✽.l'ente ""PA1"" richiede la creazione di una delega in erogazione per l'ente ""PA2"" con successo(classpath:it/pagopa/pn/cucumber/m2mgateway/events.feature:104)
+",,,"Il test fallisce vista la concorrenza sui dati che coinvolge Tenant, deleghe e la rispettiva revoca/attivazione. Il test è stato eseguito in locale con successo.",Analisi dei logEsecuzione in locale,,
+[M2M_E-SERVICE_EVENTS_07],"failed: java.lang.IllegalStateException: La richiesta di delega non è stata eseguita correttamente: 403 Forbidden: ""{""type"":""about:blank"",""title"":""Tenant not allowed to delegation"",""status"":403,""detail"":""Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer"",""correlationId"":""be3fdf70-c4a5-497b-befb-4fed43a8c3c7"",""errors"":[{""code"":""010-0007"",""detail"":""Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer""}]}""
+at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.checkDelegation(DelegationCreateStep.java:307)
+at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.createDelegateSuccessfully(DelegationCreateStep.java:283)
+at ✽.l'ente ""PA1"" richiede la creazione di una delega in erogazione per l'ente ""PA2"" con successo(classpath:it/pagopa/pn/cucumber/m2mgateway/events.feature:132)
+",,,"Il test fallisce vista la concorrenza sui dati che coinvolge Tenant, deleghe e la rispettiva revoca/attivazione. Il test è stato eseguito in locale con successo.",Analisi dei logEsecuzione in locale,,
+[M2M_E-SERVICE_EVENTS_10],"failed: java.lang.IllegalStateException: La richiesta di delega non è stata eseguita correttamente: 403 Forbidden: ""{""type"":""about:blank"",""title"":""Tenant not allowed to delegation"",""status"":403,""detail"":""Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer"",""correlationId"":""3c624f18-d058-44b4-bb68-5fdcb9799461"",""errors"":[{""code"":""010-0007"",""detail"":""Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer""}]}""
+at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.checkDelegation(DelegationCreateStep.java:307)
+at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.createDelegateSuccessfully(DelegationCreateStep.java:283)
+at ✽.l'ente ""PA1"" richiede la creazione di una delega in erogazione per l'ente ""PA2"" con successo(classpath:it/pagopa/pn/cucumber/m2mgateway/events.feature:194)
+",,,"Il test fallisce vista la concorrenza sui dati che coinvolge Tenant, deleghe e la rispettiva revoca/attivazione. Il test è stato eseguito in locale con successo.",Analisi dei logEsecuzione in locale,,
+[M2M_E-SERVICE_EVENTS_11],"failed: java.lang.IllegalStateException: La richiesta di delega non è stata eseguita correttamente: 403 Forbidden: ""{""type"":""about:blank"",""title"":""Tenant not allowed to delegation"",""status"":403,""detail"":""Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer"",""correlationId"":""6c8483d5-4004-4230-8ed7-79e57e22f6b6"",""errors"":[{""code"":""010-0007"",""detail"":""Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer""}]}""
+at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.checkDelegation(DelegationCreateStep.java:307)
+at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.createDelegateSuccessfully(DelegationCreateStep.java:283)
+at ✽.l'ente ""PA1"" richiede la creazione di una delega in erogazione per l'ente ""PA2"" con successo(classpath:it/pagopa/pn/cucumber/m2mgateway/events.feature:221)
+",,,"Il test fallisce vista la concorrenza sui dati che coinvolge Tenant, deleghe e la rispettiva revoca/attivazione. Il test è stato eseguito in locale con successo.",Analisi dei logEsecuzione in locale,,
+[M2M_E-SERVICE_EVENTS_13],"failed: java.lang.IllegalStateException: La richiesta di delega non è stata eseguita correttamente: 403 Forbidden: ""{""type"":""about:blank"",""title"":""Tenant not allowed to delegation"",""status"":403,""detail"":""Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer"",""correlationId"":""c7e5ce9a-08ab-4dbd-a179-29031200dd02"",""errors"":[{""code"":""010-0007"",""detail"":""Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer""}]}""
+at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.checkDelegation(DelegationCreateStep.java:307)
+at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.createDelegateSuccessfully(DelegationCreateStep.java:283)
+at ✽.l'ente ""PA1"" richiede la creazione di una delega in erogazione per l'ente ""PA2"" con successo(classpath:it/pagopa/pn/cucumber/m2mgateway/events.feature:262)
+",,,"Il test fallisce vista la concorrenza sui dati che coinvolge Tenant, deleghe e la rispettiva revoca/attivazione. Il test è stato eseguito in locale con successo.","Analisi dei log
+Esecuzione in locale",,
+[M2M_PURPOSES_DOCUMENT_1],"failed: it.pagopa.interop.authorization.service.utils.PollingPredicateException: Eventual consistency error: Errore durante il recupero dell'analisi del rischio
+at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:42)
+at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:17)
+at it.pagopa.pn.interop.cucumber.steps.m2m.purpose.PurposesSteps.downloadPurposeDocument(PurposesSteps.java:369)
+at ✽.l'utente tenta di ottenere il documento dell'analisi del rischio correlato alla finalità(classpath:it/pagopa/pn/cucumber/m2mgateway/purposes.feature:718)
+",,,Il test fallisce visto il carico generato dagli NRT ed il tempo di generazione del documento superiore al tempo di polling. Nei log non sono presenti 500 e 504. Il test è stato eseguito in locale con successo,Analisi dei logEsecuzione in locale,,
+[M2M_PURPOSES_DOCUMENT_1],"failed: it.pagopa.interop.authorization.service.utils.PollingPredicateException: Eventual consistency error: Errore durante il recupero dell'analisi del rischio
+at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:42)
+at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:17)
+at it.pagopa.pn.interop.cucumber.steps.m2m.purpose.PurposesSteps.downloadPurposeDocument(PurposesSteps.java:369)
+at ✽.l'utente tenta di ottenere il documento dell'analisi del rischio correlato alla finalità(classpath:it/pagopa/pn/cucumber/m2mgateway/purposes.feature:718)
+",,,Il test fallisce visto il carico generato dagli NRT ed il tempo di generazione del documento superiore al tempo di polling. Nei log non sono presenti 500 e 504. Il test è stato eseguito in locale con successo,Analisi dei logEsecuzione in locale,,
+[AUTOMATIC_ARCHIVING_DESCRIPTOR_NOTIFICATION_1.1],"failed: it.pagopa.interop.authorization.service.utils.PollingPredicateException: Eventual consistency error: Not Found expected notification: ""La versione 1 dell'e-service e-service 366373337 è stata archiviata il giorno 21/07/2026 perché senza fruitori. Da ora non è più attiva."" with DeepLink /erogazione/e-service/ba065af0-4dff-4e6f-9ee3-5fe1ce5f3a32/999b8658-c285-432e-a7ce-a12cfa956c9b
+at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:68)
+at it.pagopa.pn.interop.cucumber.steps.notification.NotificationSteps.checkInAppNotificationBody(NotificationSteps.java:401)
+at ✽.l'utente ""admin"" di ""PA1"" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE_PRIMO_DESCRITTORE(classpath:it/pagopa/pn/cucumber/notification/notification-descriptor-archiving.feature:11)
+",,,Il test fallisce per il carico dei test di NRT che ha provocato un rallentamento e il fallimento del polling per recuperare la notifica. Il test è stato eseguito in isolamento in locale senza problematiche.,"Analisi dei log ed esecuzione in locale.
+",,
+[MANUAL_ARCHIVING_DESCRIPTOR_NOTIFICATION_1.1],"failed: it.pagopa.interop.authorization.service.utils.PollingPredicateException: Eventual consistency error: Not Found expected notification: ""La versione 1 dell'e-service e-service 1464222792 è in fase di archiviazione ma è ancora attiva. L'archiviazione avverrà il giorno 23/07/2026."" with DeepLink /erogazione/e-service/1f19e2e0-474e-4e30-a2af-e02401bdc5cf/5f50deaf-efd1-40cf-9e2a-65e33a8c9858
+at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:68)
+at it.pagopa.pn.interop.cucumber.steps.notification.NotificationSteps.checkInAppNotificationBody(NotificationSteps.java:401)
+at ✽.l'utente ""admin"" di ""PA1"" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE_PRIMO_DESCRITTORE(classpath:it/pagopa/pn/cucumber/notification/notification-descriptor-archiving.feature:23)
+",,,Il test fallisce per il carico dei test di NRT che ha provocato un rallentamento e il fallimento del polling per recuperare la notifica. Il test è stato eseguito in isolamento in locale senza problematiche.,"Analisi dei log ed esecuzione in locale.
+",,
+[MANUAL_ARCHIVING_DESCRIPTOR_CANCELLATION_NOTIFICATION_1.1],"failed: it.pagopa.interop.authorization.service.utils.PollingPredicateException: Eventual consistency error: Not Found expected notification: ""La versione 1 dell'e-service e-service 967321 non è più in fase di archiviazione."" with DeepLink /erogazione/e-service/9536821b-73ed-4027-9916-9c063bcb2c2e/17740954-0f93-48b5-b557-1b9a51bef684
+at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:68)
+at it.pagopa.pn.interop.cucumber.steps.notification.NotificationSteps.checkInAppNotificationBody(NotificationSteps.java:401)
+at ✽.l'utente ""admin"" di ""PA1"" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE_PRIMO_DESCRITTORE(classpath:it/pagopa/pn/cucumber/notification/notification-descriptor-archiving.feature:84)
+",,,Difformità tra notifica restituita e notifica ricevuta,"Analisi dei log ed esecuzione in locale.
+",,PIN-10495
+[MANUAL_ARCHIVING_DESCRIPTOR_SUSPENSION_NOTIFICATION_1.2],"failed: it.pagopa.interop.authorization.service.utils.PollingPredicateException: Eventual consistency error: Not Found expected notification: ""La versione 1 dell'e-service e-service 636889836 è al momento sospesa. L'archiviazione avverrà il giorno 23/07/2026. È disponibile una nuova versione."" with DeepLink /catalogo-e-service/3269ac6a-e7bb-4a1a-8db6-174cd64f6aec/658b1ce6-593c-4d27-a87a-7f96699badfa
+at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:68)
+at it.pagopa.pn.interop.cucumber.steps.notification.NotificationSteps.checkInAppNotificationBody(NotificationSteps.java:401)
+at ✽.l'utente ""admin"" di ""PA2"" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE_PRIMO_DESCRITTORE(classpath:it/pagopa/pn/cucumber/notification/notification-descriptor-archiving.feature:122)
+",,,Difformità tra notifica restituita e notifica ricevuta,"Analisi dei log ed esecuzione in locale.
+",,PIN-10495
+[MANUAL_ARCHIVING_DESCRIPTOR_SUSPENSION_NOTIFICATION_1.4],"failed: it.pagopa.interop.authorization.service.utils.PollingPredicateException: Eventual consistency error: Not Found expected notification: ""La versione 1 dell'e-service e-service 570751322 è di nuovo attiva. L'archiviazione avverrà il giorno 23/07/2026. È disponibile una nuova versione."" with DeepLink /catalogo-e-service/a97c0aab-9336-4096-bc59-c81ca126f802/a70001dc-3cd2-4f2c-bcd7-1e66a1a963a4
+at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:68)
+at it.pagopa.pn.interop.cucumber.steps.notification.NotificationSteps.checkInAppNotificationBody(NotificationSteps.java:401)
+at ✽.l'utente ""admin"" di ""PA2"" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE_PRIMO_DESCRITTORE(classpath:it/pagopa/pn/cucumber/notification/notification-descriptor-archiving.feature:150)
+",,,Difformità tra notifica restituita e notifica ricevuta,"Analisi dei log ed esecuzione in locale.
+",,PIN-10495
+[MANUAL_ARCHIVING_ESERVICE_NOTIFICATION_1.1],"failed: it.pagopa.interop.authorization.service.utils.PollingPredicateException: Eventual consistency error: Not Found expected notification: ""Il tuo e-service e-service 307477750 è in fase di archiviazione, ma risulta ancora attivo. L'e-service sarà archiviato il giorno 23/07/2026."" with DeepLink /erogazione/e-service/70763570-6e75-4870-b1df-2e684723e499/a62997c5-54b2-4f2f-8d0c-bcac8959fa56
+at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:68)
+at it.pagopa.pn.interop.cucumber.steps.notification.NotificationSteps.checkInAppNotificationBody(NotificationSteps.java:401)
+at ✽.l'utente ""admin"" di ""PA1"" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE(classpath:it/pagopa/pn/cucumber/notification/notification-e-service-archiving.feature:11)
+",,,Il test fallisce per il carico dei test di NRT che ha provocato un rallentamento e il fallimento del polling per recuperare la notifica. Il test è stato eseguito in isolamento in locale senza problematiche.,"Analisi dei log ed esecuzione in locale.
+",,
+[MANUAL_ARCHIVING_ESERVICE_CANCELLATION_NOTIFICATION_1.1],"failed: it.pagopa.interop.authorization.service.utils.PollingPredicateException: Eventual consistency error: Not Found expected notification: ""L'e-service e-service 1300669195 non è più in fase di archiviazione."" with DeepLink /erogazione/e-service/39863a8b-c419-4a42-85b1-e701a78cf598/582db42a-8379-412a-8a88-bf9e153d779d
+at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:68)
+at it.pagopa.pn.interop.cucumber.steps.notification.NotificationSteps.checkInAppNotificationBody(NotificationSteps.java:401)
+at ✽.l'utente ""admin"" di ""PA1"" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE(classpath:it/pagopa/pn/cucumber/notification/notification-e-service-archiving.feature:118)
+",,,Difformità tra notifica restituita e notifica ricevuta,"Analisi dei log ed esecuzione in locale.
+",,PIN-10495
+[PURPOSE_TEMPLATE_ARCHIVIATION_NO_CREATOR],"failed: org.opentest4j.AssertionFailedError: expected: <403> but was: <404>
+at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCommonStep.thenStatusCodeIs(DelegationCommonStep.java:173)
+at ✽.si ottiene lo status code 403(classpath:it/pagopa/pn/cucumber/purpose-template/purpose-template-archiviation.feature:50)
+",,,Error code ottenuto difforme da quello atteso,Presa visione del risultato e ri-esecuzione del test in locale,,PIN-9494
+[PURPOSE_TEMPLATE_REACTIVATION_NO_CREATOR],"failed: org.opentest4j.AssertionFailedError: expected: <403> but was: <404>
+at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCommonStep.thenStatusCodeIs(DelegationCommonStep.java:173)
+at ✽.si ottiene lo status code 403(classpath:it/pagopa/pn/cucumber/purpose-template/purpose-template-reactivation.feature:50)
+",,,Error code ottenuto difforme da quello atteso,Presa visione del risultato e ri-esecuzione del test in locale,,PIN-9494
+[PURPOSE_TEMPLATE_SUSPENSION_NO_CREATOR],"failed: org.opentest4j.AssertionFailedError: expected: <403> but was: <404>
+at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCommonStep.thenStatusCodeIs(DelegationCommonStep.java:173)
+at ✽.si ottiene lo status code 403(classpath:it/pagopa/pn/cucumber/purpose-template/purpose-template-suspension.feature:50)
+",,,Error code ottenuto difforme da quello atteso,Presa visione del risultato e ri-esecuzione del test in locale,,PIN-9494
+[COMB_NON_AMMESSE_27_1_DRAFT],"failed: org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
+at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
+at ✽.si ottiene status code 409(classpath:it/pagopa/pn/cucumber/purpose/combinazioni-non-ammesse-nuovi-operatori.feature:201)
+",,,Http status riscontrato difforme da quello atteso,Presa visione dell’errore (anomalia già nota),,PIN-10441
+[COMB_NON_AMMESSE_27_1_ASSIGNED],"failed: org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
+at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
+at ✽.si ottiene status code 409(classpath:it/pagopa/pn/cucumber/purpose/combinazioni-non-ammesse-nuovi-operatori.feature:214)
+",,,Http status riscontrato difforme da quello atteso,Presa visione dell’errore (anomalia già nota),,PIN-10441
+[COMB_NON_AMMESSE_27_1_SUBMITTED],"failed: org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
+at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
+at ✽.si ottiene status code 409(classpath:it/pagopa/pn/cucumber/purpose/combinazioni-non-ammesse-nuovi-operatori.feature:229)
+",,,Http status riscontrato difforme da quello atteso,Presa visione dell’errore (anomalia già nota),,PIN-10441
+[COMB_NON_AMMESSE_27_1_REJECTED],"failed: org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
+at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
+at ✽.si ottiene status code 409(classpath:it/pagopa/pn/cucumber/purpose/combinazioni-non-ammesse-nuovi-operatori.feature:245)
+",,,Http status riscontrato difforme da quello atteso,Presa visione dell’errore (anomalia già nota),,PIN-10441
+[PURPOSE_RISK_ANALYSIS_DOCUMENT_DOWNLOAD_2],"failed: it.pagopa.interop.authorization.service.utils.PollingPredicateException: Eventual consistency error: Non è stato prodotto alcun documento di analisi del rischio nel tempo limite
+at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:42)
+at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:17)
+at it.pagopa.pn.interop.cucumber.steps.purpose.PurposeRiskAnalysisDocumentDownloadSteps.userDownloadRiskAnalysis(PurposeRiskAnalysisDocumentDownloadSteps.java:54)
+at ✽.l'utente scarica il documento di analisi del rischio(classpath:it/pagopa/pn/cucumber/purpose/purpose-risk-analysis-document-download.feature:44)
+",,,L’esecuzione è fallita a causa dell’alto volume di traffico generato dai test verso il sistema. Test rieseguito in isolamento con successo.,"Analisi dei log ed esecuzione in locale.
+",,
+[PURPOSE_THRESHOLD_9],"failed: it.pagopa.interop.authorization.service.utils.PollingPredicateException: Eventual consistency error: Unexpected status code for getRemainingDailyCalls
+at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:42)
+at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:17)
+at it.pagopa.pn.interop.cucumber.steps.attribute.AttributeCommonSteps.getRemainingDailyCalls(AttributeCommonSteps.java:349)
+at ✽.l'utente cerca di recuperare le soglie rimanenti per la finalità con ID ""%actual"" e si ottiene uno status code 403(classpath:it/pagopa/pn/cucumber/purpose/purpose-threshold.feature:251)
+",,,Il ruolo reviewer legge le soglie di carico quando non dovrebbe. Dettagli in ticket.,Esecuzione test e presa visione del risultato,,PIN-10457
