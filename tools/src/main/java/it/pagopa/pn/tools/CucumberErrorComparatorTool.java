@@ -76,14 +76,20 @@ public class CucumberErrorComparatorTool {
         private final String rawErrorLog;
         private final ErrorTuple errorTuple;
         private final String result;
+        private final String procedure;
+        private final String bugSuite;
+        private final String bugProdotto;
         private final String sourceFile;
 
-        public TestExecutionRecord(String rawLine, String testId, String rawErrorLog, ErrorTuple errorTuple, String result, String sourceFile) {
+        public TestExecutionRecord(String rawLine, String testId, String rawErrorLog, ErrorTuple errorTuple, String result, String procedure, String bugSuite, String bugProdotto, String sourceFile) {
             this.rawLine = rawLine;
             this.testId = testId;
             this.rawErrorLog = rawErrorLog;
             this.errorTuple = errorTuple;
             this.result = result;
+            this.procedure = procedure;
+            this.bugSuite = bugSuite;
+            this.bugProdotto = bugProdotto;
             this.sourceFile = sourceFile;
         }
 
@@ -91,6 +97,9 @@ public class CucumberErrorComparatorTool {
         public String getRawErrorLog() { return rawErrorLog; }
         public ErrorTuple getErrorTuple() { return errorTuple; }
         public String getResult() { return result; }
+        public String getProcedure() { return procedure; }
+        public String getBugSuite() { return bugSuite; }
+        public String getBugProdotto() { return bugProdotto; }
         public String getSourceFile() { return sourceFile; }
     }
 
@@ -99,27 +108,33 @@ public class CucumberErrorComparatorTool {
         private final String status;
         private final ErrorTuple targetTuple;
         private final String matchedResult;
+        private final String matchedProcedure;
+        private final String matchedBugSuite;
+        private final String matchedBugProdotto;
         private final String matchedSourceFile;
         private final String matchedRawErrorLog;
-        private final String notes;
 
-        public ComparisonResult(String testId, String status, ErrorTuple targetTuple, String matchedResult, String matchedSourceFile, String matchedRawErrorLog, String notes) {
+        public ComparisonResult(String testId, String status, ErrorTuple targetTuple, String matchedResult, String matchedProcedure, String matchedBugSuite, String matchedBugProdotto, String matchedSourceFile, String matchedRawErrorLog) {
             this.testId = testId;
             this.status = status;
             this.targetTuple = targetTuple;
             this.matchedResult = matchedResult;
+            this.matchedProcedure = matchedProcedure;
+            this.matchedBugSuite = matchedBugSuite;
+            this.matchedBugProdotto = matchedBugProdotto;
             this.matchedSourceFile = matchedSourceFile;
             this.matchedRawErrorLog = matchedRawErrorLog;
-            this.notes = notes;
         }
 
         public String getTestId() { return testId; }
         public String getStatus() { return status; }
         public ErrorTuple getTargetTuple() { return targetTuple; }
         public String getMatchedResult() { return matchedResult; }
+        public String getMatchedProcedure() { return matchedProcedure; }
+        public String getMatchedBugSuite() { return matchedBugSuite; }
+        public String getMatchedBugProdotto() { return matchedBugProdotto; }
         public String getMatchedSourceFile() { return matchedSourceFile; }
         public String getMatchedRawErrorLog() { return matchedRawErrorLog; }
-        public String getNotes() { return notes; }
     }
 
     public static void main(String[] args) {
@@ -129,31 +144,20 @@ public class CucumberErrorComparatorTool {
 
         String inputTestId = null;
         String inputErrorLog = null;
-        String inputResult = null;
         String folderPathStr = "tools-resources";
 
-        // Gestione parametri da riga di comando: ID, ERROR_LOG, [RESULT], [DB_FOLDER]
+        // Gestione parametri da riga di comando: ID, ERROR_LOG, [DB_FOLDER]
         if (args.length >= 2) {
             inputTestId = args[0];
             inputErrorLog = args[1];
             if (args.length >= 3) {
-                if (Files.isDirectory(Paths.get(args[2]))) {
-                    folderPathStr = args[2];
-                } else {
-                    inputResult = args[2];
-                    if (args.length >= 4) {
-                        folderPathStr = args[3];
-                    }
-                }
+                folderPathStr = args[2];
             }
         } else {
             // Modalità interattiva
             Scanner scanner = new Scanner(System.in);
             System.out.print(ANSI_YELLOW + "Inserisci l'ID TEST (es. [AGREEMENT_ACTIVATE_04A]): " + ANSI_RESET);
             inputTestId = scanner.nextLine().trim();
-
-            System.out.print(ANSI_YELLOW + "Inserisci il RESULT attuale dell'input (opzionale, premi INVIO per saltare): " + ANSI_RESET);
-            inputResult = scanner.nextLine().trim();
 
             System.out.println(ANSI_YELLOW + "Inserisci il testo dell'ERROR LOG (premi INVIO due volte per confermare):" + ANSI_RESET);
             StringBuilder sbLog = new StringBuilder();
@@ -192,9 +196,6 @@ public class CucumberErrorComparatorTool {
 
             System.out.println(ANSI_YELLOW + "\n[INPUT RICEVUTO]:" + ANSI_RESET);
             System.out.println(ANSI_BOLD + "ID TEST: " + ANSI_RESET + ANSI_PURPLE + inputTestId + ANSI_RESET);
-            if (inputResult != null && !inputResult.isEmpty()) {
-                System.out.println(ANSI_BOLD + "RESULT Input Fornito: " + ANSI_RESET + ANSI_YELLOW + "\"" + inputResult + "\"" + ANSI_RESET);
-            }
             
             ErrorTuple inputTuple = extractErrorTuple(inputTestId, inputErrorLog);
             System.out.println(ANSI_BOLD + "Tupla Estratta dall'Input:" + ANSI_RESET);
@@ -237,6 +238,9 @@ public class CucumberErrorComparatorTool {
         int testIdColIndex = 0;
         int errorLogColIndex = 1;
         int resultColIndex = 4;
+        int procedureColIndex = 5;
+        int bugSuiteColIndex = 6;
+        int bugProdottoColIndex = 7;
 
         List<String> headers = records.get(0);
         for (int i = 0; i < headers.size(); i++) {
@@ -247,6 +251,12 @@ public class CucumberErrorComparatorTool {
                 errorLogColIndex = i;
             } else if (h.contains("RESULT") || h.contains("RISULTATO") || h.contains("NOTE")) {
                 resultColIndex = i;
+            } else if (h.contains("PROCEDURE") || h.contains("PROCEDURA")) {
+                procedureColIndex = i;
+            } else if (h.contains("BUG SUITE") || h.contains("BUG_SUITE")) {
+                bugSuiteColIndex = i;
+            } else if (h.contains("BUG PRODOTTO") || h.contains("BUG_PRODOTTO")) {
+                bugProdottoColIndex = i;
             }
         }
 
@@ -257,11 +267,14 @@ public class CucumberErrorComparatorTool {
             String rawTestId = row.get(testIdColIndex).trim().replaceAll("^\"|\"$", "");
             String rawErrorLog = (row.size() > errorLogColIndex) ? row.get(errorLogColIndex).trim().replaceAll("^\"|\"$", "") : "";
             String resultVal = (row.size() > resultColIndex) ? row.get(resultColIndex).trim().replaceAll("^\"|\"$", "") : "";
+            String procedureVal = (row.size() > procedureColIndex) ? row.get(procedureColIndex).trim().replaceAll("^\"|\"$", "") : "";
+            String bugSuiteVal = (row.size() > bugSuiteColIndex) ? row.get(bugSuiteColIndex).trim().replaceAll("^\"|\"$", "") : "";
+            String bugProdottoVal = (row.size() > bugProdottoColIndex) ? row.get(bugProdottoColIndex).trim().replaceAll("^\"|\"$", "") : "";
 
             if (rawTestId.isEmpty()) continue;
 
             ErrorTuple tuple = extractErrorTuple(rawTestId, rawErrorLog);
-            recordList.add(new TestExecutionRecord(String.join(",", row), rawTestId, rawErrorLog, tuple, resultVal, filePath.getFileName().toString()));
+            recordList.add(new TestExecutionRecord(String.join(",", row), rawTestId, rawErrorLog, tuple, resultVal, procedureVal, bugSuiteVal, bugProdottoVal, filePath.getFileName().toString()));
         }
 
         return recordList;
@@ -381,6 +394,7 @@ public class CucumberErrorComparatorTool {
         return result;
     }
 
+
     /**
      * Esegue il matching di un singolo ID TEST + Tupla estratta contro tutti i CSV del DB.
      */
@@ -404,26 +418,28 @@ public class CucumberErrorComparatorTool {
         }
 
         if (isExactTupleMatch) {
-            String note = "Coincidenza al 100% della Tupla d'Errore trovata nel file DB: " + matchedDbRecord.getSourceFile();
             return new ComparisonResult(
                     inputTestId,
                     "STESSO ERRORE",
                     inputTuple,
                     matchedDbRecord.getResult(),
+                    matchedDbRecord.getProcedure(),
+                    matchedDbRecord.getBugSuite(),
+                    matchedDbRecord.getBugProdotto(),
                     matchedDbRecord.getSourceFile(),
-                    matchedDbRecord.getRawErrorLog(),
-                    note
+                    matchedDbRecord.getRawErrorLog()
             );
         } else if (matchedDbRecord != null) {
-            String note = "ID TEST trovato nel file DB " + matchedDbRecord.getSourceFile() + " ma la Tupla d'Errore non coincide.";
             return new ComparisonResult(
                     inputTestId,
                     "ERRORE DIVERGENTE",
                     inputTuple,
                     matchedDbRecord.getResult(),
+                    matchedDbRecord.getProcedure(),
+                    matchedDbRecord.getBugSuite(),
+                    matchedDbRecord.getBugProdotto(),
                     matchedDbRecord.getSourceFile(),
-                    matchedDbRecord.getRawErrorLog(),
-                    note
+                    matchedDbRecord.getRawErrorLog()
             );
         } else {
             return new ComparisonResult(
@@ -433,7 +449,9 @@ public class CucumberErrorComparatorTool {
                     "",
                     "",
                     "",
-                    "Nessun ID TEST o Tupla d'Errore corrispondente trovato in alcun file del DB"
+                    "",
+                    "",
+                    ""
             );
         }
     }
@@ -447,11 +465,21 @@ public class CucumberErrorComparatorTool {
             System.out.println(ANSI_BOLD + "ID TEST: " + ANSI_RESET + ANSI_PURPLE + res.getTestId() + ANSI_RESET);
             System.out.println(ANSI_BOLD + "Stato Matching: " + ANSI_RESET + ANSI_GREEN + res.getStatus() + ANSI_RESET);
             System.out.println(ANSI_BOLD + "File DB Matched: " + ANSI_RESET + ANSI_BLUE + res.getMatchedSourceFile() + ANSI_RESET);
-            System.out.println(ANSI_BOLD + "RESULT da Copiare: " + ANSI_RESET + ANSI_YELLOW + ANSI_BOLD + "\"" + res.getMatchedResult() + "\"" + ANSI_RESET);
             System.out.println(ANSI_BOLD + "ERROR LOG Trovato nel DB: " + ANSI_RESET);
             System.out.println(ANSI_CYAN + "-------------------------------------------------" + ANSI_RESET);
             System.out.println(res.getMatchedRawErrorLog());
             System.out.println(ANSI_CYAN + "-------------------------------------------------" + ANSI_RESET);
+            
+            // Stampa RESULT, PROCEDURE, BUG SUITE e BUG PRODOTTO dopo l'Error Log
+            System.out.println(ANSI_BOLD + "RESULT: " + ANSI_RESET + ANSI_YELLOW + ANSI_BOLD + (res.getMatchedResult().isEmpty() ? "N/A" : "\"" + res.getMatchedResult() + "\"") + ANSI_RESET);
+            System.out.println(ANSI_BOLD + "PROCEDURE: " + ANSI_RESET + ANSI_CYAN + (res.getMatchedProcedure().isEmpty() ? "N/A" : "\"" + res.getMatchedProcedure() + "\"") + ANSI_RESET);
+            if (!res.getMatchedBugSuite().isEmpty()) {
+                System.out.println(ANSI_BOLD + "BUG SUITE: " + ANSI_RESET + ANSI_RED + "\"" + res.getMatchedBugSuite() + "\"" + ANSI_RESET);
+            }
+            if (!res.getMatchedBugProdotto().isEmpty()) {
+                System.out.println(ANSI_BOLD + "BUG PRODOTTO: " + ANSI_RESET + ANSI_RED + ANSI_BOLD + "\"" + res.getMatchedBugProdotto() + "\"" + ANSI_RESET);
+            }
+
         } else if ("ERRORE DIVERGENTE".equalsIgnoreCase(res.getStatus())) {
             System.out.println(ANSI_BOLD + "ID TEST: " + ANSI_RESET + ANSI_PURPLE + res.getTestId() + ANSI_RESET);
             System.out.println(ANSI_BOLD + "Stato Matching: " + ANSI_RESET + ANSI_RED + res.getStatus() + ANSI_RESET);
@@ -460,6 +488,15 @@ public class CucumberErrorComparatorTool {
             System.out.println(ANSI_CYAN + "-------------------------------------------------" + ANSI_RESET);
             System.out.println(res.getMatchedRawErrorLog());
             System.out.println(ANSI_CYAN + "-------------------------------------------------" + ANSI_RESET);
+
+            System.out.println(ANSI_BOLD + "RESULT (Storico DB): " + ANSI_RESET + ANSI_YELLOW + (res.getMatchedResult().isEmpty() ? "N/A" : "\"" + res.getMatchedResult() + "\"") + ANSI_RESET);
+            System.out.println(ANSI_BOLD + "PROCEDURE (Storico DB): " + ANSI_RESET + ANSI_CYAN + (res.getMatchedProcedure().isEmpty() ? "N/A" : "\"" + res.getMatchedProcedure() + "\"") + ANSI_RESET);
+            if (!res.getMatchedBugSuite().isEmpty()) {
+                System.out.println(ANSI_BOLD + "BUG SUITE (Storico DB): " + ANSI_RESET + ANSI_RED + "\"" + res.getMatchedBugSuite() + "\"" + ANSI_RESET);
+            }
+            if (!res.getMatchedBugProdotto().isEmpty()) {
+                System.out.println(ANSI_BOLD + "BUG PRODOTTO (Storico DB): " + ANSI_RESET + ANSI_RED + ANSI_BOLD + "\"" + res.getMatchedBugProdotto() + "\"" + ANSI_RESET);
+            }
         } else {
             System.out.println(ANSI_BOLD + "ID TEST: " + ANSI_RESET + ANSI_PURPLE + res.getTestId() + ANSI_RESET);
             System.out.println(ANSI_BOLD + "Stato Matching: " + ANSI_RESET + ANSI_YELLOW + res.getStatus() + ANSI_RESET);
