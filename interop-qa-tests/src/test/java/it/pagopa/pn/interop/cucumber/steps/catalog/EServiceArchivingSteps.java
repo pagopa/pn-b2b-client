@@ -137,6 +137,7 @@ public class EServiceArchivingSteps {
         UUID descriptorUUID = UUID.fromString(descriptorId);
 
         // verifichiamo che l'attributo archivingSchedule sia valorizzato in tutti i suoi campi; sul solo campo scope controlliamo anche che il valore coincida con quello atteso
+        //un controllo più approfondito sui valori dell'attributo archivingSchedule viene fatto nello step identificato dal metodo latestDescriptorHasArchivingScheduleWithEServiceScope
         archivingScheduleVerifier.pollDescriptorPopulatedArchivingSchedule(eServiceUUID, descriptorUUID, ArchivingScope.ESERVICE);
     }
 
