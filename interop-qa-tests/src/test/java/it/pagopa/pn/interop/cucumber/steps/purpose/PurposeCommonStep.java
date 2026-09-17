@@ -97,7 +97,7 @@ public class PurposeCommonStep {
         createFinalizationWithGivenStatus(consumerId, tenantType, n, purposeVersionState, null, compiledRiskAnalysis, false);
     }
 
-    @Then("la precedente creazione di finalità risulta malformata e riporta gli errori:")
+    @Then("la precedente richiesta risulta malformata e riporta gli errori:")
     public void previousPurposeCreationIsMalformed(String errors) {
         Assertions.assertEquals(
                 400, sharedStepsContext.getHttpCallExecutor().getResponseStatus().value(),
