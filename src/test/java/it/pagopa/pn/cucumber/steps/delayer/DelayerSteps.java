@@ -275,7 +275,10 @@ public class DelayerSteps {
 
     @And("vengono simulate internamente le operazioni di BatchWorkflowStateMachine")
     public void runSimulation() {
-        skipSenderLimitService.resolveOnFirstStepFunction(context.actualCsv, context.expectedDeliveryDate);
+        // Il passaggio false→true vale solo per la settimana successiva se la spedizione viene
+        // rimandata: è gestito da DelayerSkipSenderLimitService.resolveOnFreeze al congelamento,
+        // non qui — altrimenti si applicherebbe anche a spedizioni ordinarie di questa settimana
+        // che non sono affatto in ritardo, dando loro una priorità che non spetta ancora.
         context.expectedPianification.replaceAll((seed, oldStepMap) ->
                 planner.simulateAlgorithm(SENT_TO_PREPARE_PHASE_2, seed)
         );

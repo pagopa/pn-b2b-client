@@ -10,7 +10,6 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import org.springframework.stereotype.Service;
@@ -22,10 +21,10 @@ import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtil
  * Calcola skipSenderLimit interrogando il backend reale (pn-PaperDeliverySenderLimit/pn-PaperDeliveryUsedSenderLimit),
  * nei due momenti in cui il valore può cambiare:
  * - al caricamento del CSV, sulla base della commessa della settimana di deposito (notificationSentAt);
- * - durante l'esecuzione, quando una spedizione non ha superato il controllo iniziale ma può comunque
- *   recuperare il bypass: sia alla prima step function, sia quando viene congelata per capacità di
- *   recapito/stampa, la settimana di riferimento è sempre la stessa, X-1 rispetto alla settimana di
- *   elaborazione corrente — la stessa data usata per il controllo del limite garantito.
+ * - al congelamento per capacità di recapito/stampa (non per limite mittente): il passaggio da false a
+ *   true vale solo per la settimana di ricarico, mai per la valutazione corrente — chi è già true
+ *   dall'ingestion ha priorità da subito, chi è ancora false resta tale finché non viene effettivamente
+ *   rimandato alla settimana successiva.
  */
 @Service
 @ScenarioScope
@@ -54,34 +53,22 @@ public class DelayerSkipSenderLimitService {
     }
 
     /**
-     * Da richiamare quando viene eseguita la prima step function: per le spedizioni con skipSenderLimit
-     * ancora false (RS/secondi tentativi esclusi, già true), controlla la commessa della settimana X-1
-     * (la settimana precedente a quella di elaborazione corrente) e, se c'è ancora quota, valorizza
-     * skipSenderLimit a true in modo stabile.
-     */
-    public void resolveOnFirstStepFunction(List<DelayerPaperDelivery> notifications, String currentWeek) {
-        applyResidualCapacityFallback(notifications, currentWeek);
-    }
-
-    /**
      * Da richiamare quando una spedizione viene congelata per capacità di recapito o di stampa (non per
-     * limite mittente): stessa settimana di riferimento X-1 del controllo alla prima step function — è la
-     * stessa data usata per il controllo del limite garantito, non la settimana appena valutata.
+     * limite mittente): agisce solo sulla copia che verrà ricaricata la settimana successiva (mai
+     * sull'originale di questa settimana), controllando la commessa della settimana X-1 rispetto alla
+     * settimana di elaborazione corrente — la stessa data usata per il controllo del limite garantito.
      */
     public void resolveOnFreeze(DelayerPaperDelivery notification, String currentWeek) {
-        applyResidualCapacityFallback(List.of(notification), currentWeek);
-    }
-
-    private void applyResidualCapacityFallback(List<DelayerPaperDelivery> notifications, String currentWeek) {
+        if (notification.isRS() || notification.isSecondAttempt() || notification.isInformalCommunication()) {
+            return;
+        }
+        if (Boolean.TRUE.equals(notification.getSkipSenderLimit())) {
+            return;
+        }
         String weekToCheck = getPreviousMondayFromDate(currentWeek, 1);
-        notifications.stream()
-                .filter(n -> !n.isRS() && !n.isSecondAttempt() && !n.isInformalCommunication())
-                .filter(n -> !Boolean.TRUE.equals(n.getSkipSenderLimit()))
-                .forEach(n -> {
-                    if (hasResidualCapacity(getSenderKey(n), weekToCheck)) {
-                        n.setSkipSenderLimit(true);
-                    }
-                });
+        if (hasResidualCapacity(getSenderKey(notification), weekToCheck)) {
+            notification.setSkipSenderLimit(true);
+        }
     }
 
     private boolean hasResidualCapacity(String senderKey, String monday) {
