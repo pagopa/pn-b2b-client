@@ -548,7 +548,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
       | viewer   |
 
   @sad-path
-  Scenario: [DELEGATION_MANUAL_ARCHIVING_4.5] Un ente diverso dal delegato NON può annullare la richiesta di archiviazione dell'e-service precedentemente inviata e ancora in pending
+  Scenario Outline: [DELEGATION_MANUAL_ARCHIVING_4.5] Un ente diverso dal delegato NON può annullare la richiesta di archiviazione dell'e-service precedentemente inviata e ancora in pending
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -557,14 +557,20 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'ente "PA2" accetta la delega in erogazione con successo
     And l'utente è un "admin" di "PA2"
     And l'utente ha già inviato la richiesta di archiviazione per l'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
-    And l'utente è un "admin" di "PA1"
+    And l'utente è un "admin" di "<tenant>"
     When l'utente delegato annulla la richiesta di archiviazione dell'e-service "%actual"
     Then si ottiene response status code 403
+    And l'utente è un "admin" di "PA2"
     And la richiesta di archiviazione dell'e-service è stata inviata correttamente ed è in stato pending
     And la versione più recente dell'e-service è in stato "PUBLISHED"
 
+    Examples:
+      | tenant |
+      | PA1    |
+      | PA3    |
+
   @sad-path
-  Scenario: [DELEGATION_MANUAL_ARCHIVING_4.6] Un ente diverso dal delegato NON può annullare la richiesta di archiviazione del descrittore meno recente precedentemente inviata e ancora in pending
+  Scenario Outline: [DELEGATION_MANUAL_ARCHIVING_4.6] Un ente diverso dal delegato NON può annullare la richiesta di archiviazione del descrittore meno recente precedentemente inviata e ancora in pending
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -575,15 +581,21 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'ente "PA2" accetta la delega in erogazione con successo
     And l'utente è un "admin" di "PA2"
     And l'utente ha già inviato la richiesta di archiviazione per il vecchio descrittore "%actual" dell'e-service "%actual" specificando 60 giorni di preavviso
-    And l'utente è un "admin" di "PA1"
+    And l'utente è un "admin" di "<tenant>"
     When l'utente delegato annulla la richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual"
     Then si ottiene response status code 403
+    And l'utente è un "admin" di "PA2"
     And la richiesta di archiviazione del vecchio descrittore è stata inviata correttamente ed è in stato pending
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And la versione più recente dell'e-service è in stato "PUBLISHED"
 
+    Examples:
+      | tenant |
+      | PA1    |
+      | PA3    |
+
   @sad-path
-  Scenario: [DELEGATION_MANUAL_ARCHIVING_4.7] Un ente diverso dal delegato NON può annullare la richiesta di archiviazione dell'e-service già precedentemente accettata
+  Scenario: [DELEGATION_MANUAL_ARCHIVING_4.7] L'ente delegante NON può annullare la richiesta di archiviazione dell'e-service già precedentemente accettata
     Given l'ente delegato "PA2"
     And l'ente delegante "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
