@@ -41,6 +41,28 @@ Feature: connettore app IO per invio messaggi di cortesia per comunicazioni bona
       | markdown       |
       | TUTTI          |
 
+  @comunicazione-orchestratore-io @eventbridge
+  Scenario: [IO_CONNECTOR_3.1.5] Errore di validazione a valle lato IO e pubblicazione evento su EventBridge
+    Given viene generata una richiesta per la presa in carico con markdown che eccede la lunghezza massima consentita
+    When come orchestratore SEND richiedo l'invio del messaggio verso IO
+    Then verifico che si ottenga una response di "OK"
+    And verifico che su DynamoDB la richiesta evolva nello stato "FAILED"
+    And verifico la presenza nei log di "/aws/ecs/pn-io-connector" negli ultimi 2 minuti dell'evento EventBridge con causale "SEND_FAILED"
+
+  @comunicazione-orchestratore-io @multi-service
+  Scenario: [IO_CONNECTOR_3.1.6] Invio messaggio con nuovo serviceId censito nel secret e presenza di allegati
+    Given viene generata una richiesta valida con senderServiceId: "02NEWSERVICEIDBONARIE0001"
+    And alla richiesta viene associato un allegato PDF valido
+    When come orchestratore SEND richiedo l'invio del messaggio verso IO
+    Then verifico che si ottenga una response di "OK"
+    And verifico che in tabella pn-IOConnectorRequests esista un record per requestId con il senderServiceId "02NEWSERVICEIDBONARIE0001"
+
+  @comunicazione-orchestratore-io @multi-service
+  Scenario: [IO_CONNECTOR_3.1.7] Rifiuto invio messaggio con serviceId non censito nel secret
+    Given viene generata una richiesta valida con senderServiceId: "SERVICE_NOT_CONFIGURED"
+    When come orchestratore SEND richiedo l'invio del messaggio verso IO
+    Then verifico che si ottenga una response di "BAD REQUEST"
+
 
 
   #----- SCENARIO 4 --------------------------------------
@@ -88,4 +110,12 @@ Feature: connettore app IO per invio messaggi di cortesia per comunicazioni bona
       | TEST-POLLING_REQ-20260603-PAYMENT_2 | $NULL                                   |
       | $NULL                               | $EMPTY                                  |
       | $EMPTY                              | $NULL                                   |
+
+  @comunicazione-orchestratore-io @multi-service @attachments
+  Scenario: [IO_CONNECTOR_5.1.4] Recupero dettagli e apertura allegato da app IO per messaggio con nuovo serviceId
+    Given come app IO tento il recupero dettagli del messaggio inviato con nuovo serviceId e CF destinatario: "PF-ef4f3181-c2a9-4924-9307-d107af8f0c34"
+    Then verifico che si ottenga una response di "OK"
+    And verifico che la lista dettagli allegati sia non vuota
+    And verifico che il link dell'allegato permetta il download del documento PDF
+
 
