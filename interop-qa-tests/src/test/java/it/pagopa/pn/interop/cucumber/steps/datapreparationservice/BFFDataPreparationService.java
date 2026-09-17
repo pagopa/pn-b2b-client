@@ -111,6 +111,33 @@ public class BFFDataPreparationService {
         return false;
     }
 
+    public static RiskAnalysisFormTemplateSeed generateRiskAnalysisFormTemplateSeedFromFormSeed(RiskAnalysisFormSeed formSeed) {
+        RiskAnalysisFormTemplateSeed formTemplateSeed = new RiskAnalysisFormTemplateSeed();
+        formTemplateSeed.setVersion(formSeed.getVersion());
+
+        List<String> fieldsRequiringSuggestedValues = List.of(
+                "institutionalPurpose", "reasonPolicyNotProvided",
+                "dataProtectionMeasuresParticular", "dataProtectionMeasures"
+        );
+
+        Map<String, RiskAnalysisTemplateAnswerSeed> templateAnswers = new HashMap<>();
+        for (Map.Entry<String, List<String>> entry : formSeed.getAnswers().entrySet()) {
+            RiskAnalysisTemplateAnswerSeed seed = new RiskAnalysisTemplateAnswerSeed();
+            seed.setEditable(false);
+            if (fieldsRequiringSuggestedValues.contains(entry.getKey())) {
+                seed.setValues(List.of());
+                seed.setSuggestedValues(entry.getValue());
+            } else {
+                seed.setValues(entry.getValue());
+                seed.setSuggestedValues(List.of());
+            }
+            templateAnswers.put(entry.getKey(), seed);
+        }
+        formTemplateSeed.setAnswers(templateAnswers);
+
+        return formTemplateSeed;
+    }
+
     public BFFDataPreparationService(
             ClientTokenConfigurator clientTokenConfigurator,
             RiskAnalysisDataInitializer riskAnalysisDataInitializer,
