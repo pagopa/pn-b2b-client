@@ -1215,6 +1215,56 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
+    @And("l'evento {string} è successivo all'evento {string}")
+    public void checkOrdineEventiSenzaArrotondamento(String eventoSuccessivo, String eventoPrecedente) {
+        try {
+            FullSentNotificationV29 notification = sharedSteps.getSentNotificationLastVersion();
+            TimelineElementV28 successivo = notification.getTimeline().stream()
+                    .filter(element -> element.getCategory() != null
+                            && eventoSuccessivo.equals(element.getCategory().getValue()))
+                    .findFirst()
+                    .orElseThrow(() -> new AssertionError("Evento non trovato: " + eventoSuccessivo));
+            TimelineElementV28 precedente = notification.getTimeline().stream()
+                    .filter(element -> element.getCategory() != null
+                            && eventoPrecedente.equals(element.getCategory().getValue()))
+                    .findFirst()
+                    .orElseThrow(() -> new AssertionError("Evento non trovato: " + eventoPrecedente));
+
+            assertThat(successivo.getEventTimestamp())
+                    .as("L'evento %s deve avvenire dopo %s", eventoSuccessivo, eventoPrecedente)
+                    .isAfter(precedente.getEventTimestamp());
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
+    }
+
+    @And("l'evento {string} al tentativo {int} è successivo all'evento {string}")
+    public void checkOrdineEventoPerTentativo(String eventoSuccessivo, Integer tentativo, String eventoPrecedente) {
+        try {
+            FullSentNotificationV29 notification = sharedSteps.getSentNotificationLastVersion();
+            TimelineElementV28 successivo = notification.getTimeline().stream()
+                    .filter(element -> element.getCategory() != null
+                            && eventoSuccessivo.equals(element.getCategory().getValue()))
+                    .filter(element -> element.getDetails() != null
+                            && tentativo.equals(element.getDetails().getSentAttemptMade()))
+                    .findFirst()
+                    .orElseThrow(() -> new AssertionError(
+                            "Evento non trovato: " + eventoSuccessivo + " al tentativo " + tentativo));
+            TimelineElementV28 precedente = notification.getTimeline().stream()
+                    .filter(element -> element.getCategory() != null
+                            && eventoPrecedente.equals(element.getCategory().getValue()))
+                    .findFirst()
+                    .orElseThrow(() -> new AssertionError("Evento non trovato: " + eventoPrecedente));
+
+            assertThat(successivo.getEventTimestamp())
+                    .as("L'evento %s del tentativo %s deve avvenire dopo %s",
+                            eventoSuccessivo, tentativo, eventoPrecedente)
+                    .isAfter(precedente.getEventTimestamp());
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
+    }
+
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} e verifica indirizzo secondo tentativo {string}")
     public void readingEventUpToTheTimelineElementOfNotificationWithVerifyPhysicalAddress(String timelineEventCategory, String attempt) {
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder()
