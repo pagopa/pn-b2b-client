@@ -229,6 +229,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     When l'utente delegante accetta la richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual"
     Then si ottiene response status code 204
     And la richiesta di archiviazione del vecchio descrittore non è presente
+    And il vecchio descrittore con id "%actual" dell'e-service avente id "%actual" è in fase di archiviazione tramite l'archiviazione manuale del singolo descrittore
 
     Examples:
       | role         |
