@@ -509,6 +509,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "<role>" di "PA2"
     When l'utente delegato annulla la richiesta di archiviazione dell'e-service "%actual"
     Then si ottiene response status code 403
+    And l'utente è un "admin" di "PA2"
     And la richiesta di archiviazione dell'e-service è stata inviata correttamente ed è in stato pending
     And la versione più recente dell'e-service è in stato "PUBLISHED"
 
@@ -534,6 +535,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "<role>" di "PA2"
     When l'utente delegato annulla la richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual"
     Then si ottiene response status code 403
+    And l'utente è un "admin" di "PA2"
     And la richiesta di archiviazione del vecchio descrittore è stata inviata correttamente ed è in stato pending
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And la versione più recente dell'e-service è in stato "PUBLISHED"
