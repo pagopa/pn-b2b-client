@@ -498,10 +498,10 @@ public class PaperTrackerSteps {
 
     @And("si verifica che non sia presente nessun retry per il tracking")
     public void verifyNoRetryTriggered() {
-        FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
-        boolean hasRetry = fullSentNotification.getTimeline().stream()
-                .map(TimelineElementV28::getElementId)
-                .anyMatch(id -> id.contains("PCRETRY_1") || id.contains("ATTEMPT_1"));
+        TrackingsRequest request = new TrackingsRequest().trackingIds(trackingKeys);
+        TrackingsResponse response = paperTrackerClient.retrieveTrackerEvents(request);
+        boolean hasRetry = response != null && response.getTrackings() != null && response.getTrackings().stream()
+                .anyMatch(t -> t.getTrackingId() != null && !t.getTrackingId().endsWith(".PCRETRY_0"));
         assertThat(hasRetry).as("Non deve essere generato alcun retry per la notifica").isFalse();
     }
 }

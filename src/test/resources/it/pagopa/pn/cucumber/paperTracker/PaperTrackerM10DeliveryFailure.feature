@@ -25,7 +25,7 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
       | details_sentAttemptMade      | 0         |
       | details_deliveryDetailCode   | RECRS002C |
       | details_deliveryFailureCause | M10       |
-    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "FAIL_RS-M10"
+    And si verifica che non ci siano outputs per i trackingId richiesti
     And si verifica che non ci siano errori per i trackingId richiesti
 
   @paperTrackerM10 @paperTrackerARRunMode
@@ -49,7 +49,7 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
       | details_deliveryDetailCode   | RECRN002C |
       | details_responseStatus       | KO        |
       | details_deliveryFailureCause | M10       |
-    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "FAIL_AR-M10"
+    And si verifica che non ci siano outputs per i trackingId richiesti
     And si verifica che non ci siano errori per i trackingId richiesti
 
   @paperTrackerM10 @paperTrackerRunMode890
@@ -73,7 +73,7 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
       | details_deliveryDetailCode   | RECAG003C |
       | details_responseStatus       | KO        |
       | details_deliveryFailureCause | M10       |
-    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "FAIL_890-M10"
+    And si verifica che non ci siano outputs per i trackingId richiesti
     And si verifica che non ci siano errori per i trackingId richiesti
 
   @paperTrackerM10 @paperTrackerARRunMode
@@ -99,7 +99,7 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
       | details_deliveryDetailCode   | RECRI004C |
       | details_responseStatus       | KO        |
       | details_deliveryFailureCause | M10       |
-    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "FAIL_RIR-M10"
+    And si verifica che non ci siano outputs per i trackingId richiesti
     And si verifica che non ci siano errori per i trackingId richiesti
 
   @paperTrackerM10 @paperTrackerRISRunMode
@@ -127,7 +127,7 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
       | details_sentAttemptMade      | 0          |
       | details_deliveryDetailCode   | RECRSI004C |
       | details_deliveryFailureCause | M10        |
-    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "FAIL_RIS-M10"
+    And si verifica che non ci siano outputs per i trackingId richiesti
     And si verifica che non ci siano errori per i trackingId richiesti
 
   # ====================================================================================================================
@@ -184,7 +184,7 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
       | details_deliveryDetailCode   | RECRN002C |
       | details_responseStatus       | KO        |
       | details_deliveryFailureCause | M10       |
-    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "FAIL_AR-M10"
+    And si verifica che non ci siano outputs per i trackingId richiesti
     And si verifica che non ci siano errori per i trackingId richiesti
 
   @paperTrackerM10 @paperTrackerAR @ocrDRY
@@ -247,7 +247,7 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si verifica che la risposta tracking per la sequence "OK-DoubleRetry_AR_M10" contenga tutti gli elementi attesi e che sia strutturalmente valida
-    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "OK-DoubleRetry_AR_M10"
+    And si verifica che non ci siano outputs per i trackingId richiesti
     And si verifica che la risposta dell'API attempts contenga finalDematFound e paperDeliveryTimestamp
 
   @paperTrackerM10 @trackerErrors
