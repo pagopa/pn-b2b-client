@@ -98,7 +98,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
 
     Examples:
       | tenant |
-      | PA2    |
+      | PA1    |
       | PA3    |
 
   @sad-path
