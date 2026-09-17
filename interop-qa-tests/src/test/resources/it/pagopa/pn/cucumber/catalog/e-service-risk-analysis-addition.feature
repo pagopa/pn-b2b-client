@@ -279,3 +279,141 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
       | purposePursuit          | MERE_CORRECTNESS |
       | checkedExistenceMereCorrectnessInteropCatalogue | true |
       | declarationConfirmGDPR  | true |
+
+  @adeguamento-analisi-rischio-gdpr-art-9-10
+  Scenario: [RISK_ANALYSIS_NO_PA_COMPILE_3] Analisi rischio specificando misure tecniche per dati particolari e giudiziari in finalità fruizione e-service da template (No PA)
+  Si verifica che compilando l'analisi del rischio con le misure tecniche e organizzative per i dati particolari e i
+  dati giudiziari, che si attivano trattando dati personali, i nuovi campi siano obbligatori per enti non PA durante la
+  pubblicazione di una finalità per fruizione di dati da un e-service istanza di template.
+
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con flagPersonalData impostato a "true"
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    When "Privato" ha già creato una richiesta di fruizione in stato "ACTIVE" con un documento allegato
+    Then "Privato" crea 1 finalità in stato "DRAFT" per quell'eservice specificando nell'analisi del rischio:
+    # Il tipo di dati personali non sono particolari, né giudiziari, quindi accetta la compilazione senza le misure tecniche
+      | usesPersonalData        | YES |
+      | personalDataTypes       | WITH_NON_IDENTIFYING_DATA |
+      | purpose                 | INSTITUTIONAL |
+      | institutionalPurpose    | This is a test |
+      | legalBasis              | CONSENT |
+      | knowsDataQuantity       | NO |
+      | deliveryMethod          | CLEARTEXT |
+      | policyProvided          | NO |
+      | reasonPolicyNotProvided | This is a test |
+      | confirmPricipleIntegrityAndDiscretion | true |
+      | doneDpia                | NO |
+      | dataDownload            | NO |
+      | purposePursuit          | MERE_CORRECTNESS |
+      | checkedExistenceMereCorrectnessInteropCatalogue | true |
+      | declarationConfirmGDPR  | true |
+
+    When "Privato" tenta di creare 1 finalità in stato "DRAFT" per quell'eservice specificando nell'analisi del rischio:
+    # Il tipo di dati personali sono particolari e giudiziari, quindi non accetta la compilazione senza le misure tecniche
+      | usesPersonalData        | YES |
+      | personalDataTypes       | GDPR_ART_9 ; GDPR_ART_10 |
+      | purpose                 | INSTITUTIONAL |
+      | institutionalPurpose    | This is a test |
+      | legalBasis              | CONSENT |
+      | knowsDataQuantity       | NO |
+      | deliveryMethod          | CLEARTEXT |
+      | policyProvided          | NO |
+      | reasonPolicyNotProvided | This is a test |
+      | confirmPricipleIntegrityAndDiscretion | true |
+      | doneDpia                | NO |
+      | dataDownload            | NO |
+      | purposePursuit          | MERE_CORRECTNESS |
+      | checkedExistenceMereCorrectnessInteropCatalogue | true |
+      | declarationConfirmGDPR  | true |
+    Then la precedente creazione di finalità risulta malformata e riporta gli errori:
+    """
+    Expected field dataProtectionMeasures not found in form
+    Expected field dataProtectionMeasuresParticular not found in form
+    """
+
+    Then "Privato" crea 1 finalità in stato "DRAFT" per quell'eservice specificando nell'analisi del rischio:
+    # Il tipo di dati personali sono particolari e giudiziari, quindi accetta la compilazione con le misure tecniche
+      | usesPersonalData        | YES |
+      | personalDataTypes       | GDPR_ART_9 ; GDPR_ART_10 |
+      | dataProtectionMeasuresParticular | Un esempio di misura presa |
+      | dataProtectionMeasures  | Un altro esempio di misura presa |
+      | purpose                 | INSTITUTIONAL |
+      | institutionalPurpose    | This is a test |
+      | legalBasis              | CONSENT |
+      | knowsDataQuantity       | NO |
+      | deliveryMethod          | CLEARTEXT |
+      | policyProvided          | NO |
+      | reasonPolicyNotProvided | This is a test |
+      | confirmPricipleIntegrityAndDiscretion | true |
+      | doneDpia                | NO |
+      | dataDownload            | NO |
+      | purposePursuit          | MERE_CORRECTNESS |
+      | checkedExistenceMereCorrectnessInteropCatalogue | true |
+      | declarationConfirmGDPR  | true |
+
+  @adeguamento-analisi-rischio-gdpr-art-9-10
+  Scenario: [RISK_ANALYSIS_NO_PA_COMPILE_4] Analisi rischio specificando misure tecniche per dati particolari e giudiziari durante pubblicazione template e-service in ricezione (No PA)
+  Si verifica che compilando l'analisi del rischio con le misure tecniche e organizzative per i dati particolari e i
+  dati giudiziari, che si attivano trattando dati personali, i nuovi campi siano obbligatori per enti non PA durante la
+  pubblicazione di un template e-service in modalità ricezione dati.
+
+    Given l'utente è un "admin" di "Privato"
+    Then l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED specificando nell'analisi del rischio:
+    # Il tipo di dati personali non sono particolari, né giudiziari, quindi accetta la compilazione senza le misure tecniche
+      | usesPersonalData        | YES |
+      | personalDataTypes       | WITH_NON_IDENTIFYING_DATA |
+      | purpose                 | INSTITUTIONAL |
+      | institutionalPurpose    | This is a test |
+      | legalBasis              | CONSENT |
+      | knowsDataQuantity       | NO |
+      | deliveryMethod          | CLEARTEXT |
+      | policyProvided          | NO |
+      | reasonPolicyNotProvided | This is a test |
+      | confirmPricipleIntegrityAndDiscretion | true |
+      | doneDpia                | NO |
+      | dataDownload            | NO |
+      | purposePursuit          | MERE_CORRECTNESS |
+      | checkedExistenceMereCorrectnessInteropCatalogue | true |
+      | declarationConfirmGDPR  | true |
+
+    When l'utente tenta di creare un e-service template in modalità ricezione in stato di PUBLISHED specificando nell'analisi del rischio:
+    # Il tipo di dati personali sono particolari e giudiziari, quindi non accetta la compilazione senza le misure tecniche
+      | usesPersonalData        | YES |
+      | personalDataTypes       | GDPR_ART_9 ; GDPR_ART_10 |
+      | purpose                 | INSTITUTIONAL |
+      | institutionalPurpose    | This is a test |
+      | legalBasis              | CONSENT |
+      | knowsDataQuantity       | NO |
+      | deliveryMethod          | CLEARTEXT |
+      | policyProvided          | NO |
+      | reasonPolicyNotProvided | This is a test |
+      | confirmPricipleIntegrityAndDiscretion | true |
+      | doneDpia                | NO |
+      | dataDownload            | NO |
+      | purposePursuit          | MERE_CORRECTNESS |
+      | checkedExistenceMereCorrectnessInteropCatalogue | true |
+      | declarationConfirmGDPR  | true |
+    Then la precedente creazione di finalità risulta malformata e riporta gli errori:
+    """
+    Risk Analysis did not pass validation
+    """
+
+    Then l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED specificando nell'analisi del rischio:
+    # Il tipo di dati personali sono particolari e giudiziari, quindi accetta la compilazione con le misure tecniche
+      | usesPersonalData        | YES |
+      | personalDataTypes       | GDPR_ART_9 ; GDPR_ART_10 |
+      | dataProtectionMeasuresParticular | Un esempio di misura presa |
+      | dataProtectionMeasures  | Un altro esempio di misura presa |
+      | purpose                 | INSTITUTIONAL |
+      | institutionalPurpose    | This is a test |
+      | legalBasis              | CONSENT |
+      | knowsDataQuantity       | NO |
+      | deliveryMethod          | CLEARTEXT |
+      | policyProvided          | NO |
+      | reasonPolicyNotProvided | This is a test |
+      | confirmPricipleIntegrityAndDiscretion | true |
+      | doneDpia                | NO |
+      | dataDownload            | NO |
+      | purposePursuit          | MERE_CORRECTNESS |
+      | checkedExistenceMereCorrectnessInteropCatalogue | true |
+      | declarationConfirmGDPR  | true |
