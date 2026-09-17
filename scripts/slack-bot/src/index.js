@@ -24,7 +24,7 @@ const BEARER_TOKEN_PA_1 = 'token'
  * @returns {string}
  */
 exports.handler = async (event) => {
-    console.log("Contollo accesso ai test di compilazione");
+    console.log("Controllo accesso ai test di compilazione");
     const token = event.headers?.Authorization || event.headers?.authorization;
     
     try {
