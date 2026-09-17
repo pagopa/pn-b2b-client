@@ -123,6 +123,13 @@ public class EserviceTemplateSteps {
         };
         eServiceTemplateSeed.getVersion().setDescription(value);
         httpCallExecutor.performCall(() -> dataPreparationService.createEServiceTemplate(eServiceTemplateSeed));
+
+        if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
+            EServiceTemplate eServiceTemplate = (EServiceTemplate) httpCallExecutor.getResponse();
+            httpCallExecutor.performCall(() -> dataPreparationService.getEServiceTemplateVersions(eServiceTemplate.getId()));
+            EServiceTemplateVersion eServiceTemplateVersion = ((EServiceTemplateVersions) httpCallExecutor.getResponse()).getResults().get(0);
+            this.setCreatedEServiceTemplateInCommonContext(eServiceTemplate, eServiceTemplateVersion);
+        }
     }
 
     @When("l'utente tenta la creazione del template e-service con la seguente configurazione:")
@@ -168,6 +175,19 @@ public class EserviceTemplateSteps {
             }
             default -> throw new IllegalArgumentException("L'e-service template deve essere in uno stato valido: DRAFT o PUBLISHED");
         }
+    }
+
+    @When("l'utente modifica il personal data flag dell'e-service template con {bool}")
+    public void modifyPersonalDataFlag(boolean personalDataFlag) {
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext()
+            .getLastTemplateManaged()
+            .getId();
+
+        var request = EServiceTemplatePatchRequest.builder()
+                .personalData(personalDataFlag)
+                .build();
+
+        httpCallExecutor.performCall(() -> m2mEServiceTemplateClient.patchEServiceTemplate(eServiceTemplateId, request));
     }
 
     @When("l'utente tenta di recuperare i metadati dei documenti associati all'e-service template")

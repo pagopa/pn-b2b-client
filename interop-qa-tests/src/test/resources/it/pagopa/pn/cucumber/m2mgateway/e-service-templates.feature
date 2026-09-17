@@ -833,6 +833,18 @@ Feature: Test API M2M of e-service template
       | 123456789   | 400       |
       | 1234567890  | 201       |
 
+  # https://pagopa.atlassian.net/browse/PIN-10919
+  @e-service-template-m2m-version-create
+  Scenario: [ESERVICE_TEMPLATE_CREATE_VERSION_DESCRIPTION_1b] La creazione di un template e-service con la descrizione della versione a null e successiva creazione di un e-service produce va a buon fine.
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente tenta la creazione dell'e-service template con la configurazione predefinita e con la descrizione della versione impostata a "%null%"
+    And l'utente modifica il personal data flag dell'e-service template con false
+    And l'utente è un "admin" di "PA1"
+    And l'utente effettua l'aggiunta di un documento di tipo INTERFACE alla versione dell'e-service template con successo
+    And l'utente effettua la pubblicazione dell'e-service template
+    When l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED con suffisso "SUF" a partire dal template con successo indicando tutte le specifiche
+    Then il nuovo e-service è stato creato correttamente in stato PUBLISHED
+
   @eservice_description_max_length
   @happy-path
   Scenario: [ESERVICE_TEMPLATE_CREATE_DESCRIPTION_MAX_LENGTH_5] La creazione di un e-service template va a buon fine utilizzando la dimensione massima consentita per la descrizione
