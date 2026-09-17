@@ -1126,7 +1126,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <!--<inputSpec>https://raw.githubusercontent.com/pagopa/pn-stream/6558ba4a8bfcd26b5c2d8c4bae1b10baa4c7e705/docs/openapi/pn-stream-api-external-bundle.yaml</inputSpec>-->
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-stream/refs/heads/feature/PN-20832-epic/docs/openapi/pn-stream-api-external-bundle.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-stream/refs/heads/develop/docs/openapi/pn-stream-api-external-bundle.yaml</inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>

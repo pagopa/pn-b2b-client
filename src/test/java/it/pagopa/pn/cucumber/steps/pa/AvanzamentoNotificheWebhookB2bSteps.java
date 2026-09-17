@@ -248,19 +248,8 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         createStream(pa, streamVersion, null, false, null, false, null);
     }
 
-    @When("si crea(no) i(l) nuov(o)(i) stream per il {string} con versione {string} e filtro di timeline {string}")
-    public void createStreamWithFilteredTimeline(String pa, String version, String filter) {
-        String[] filterValues = new String[]{filter};
-        if (filter.contains(",")) {
-            filterValues = filter.split(",");
-        }
-        setPaWebhook(pa);
-        StreamVersion streamVersion = getStreamVersion(version);
-        createStream(pa, streamVersion, null, false, Arrays.asList(filterValues), false, null);
-    }
-
-    @When("si crea(no) i(l) nuov(o)(i) stream per il {string} con versione {string} e filtro status {string}")
-    public void createStreamWithFilteredStatus(String pa, String version, String filter) {
+    @When("si crea(no) i(l) nuov(o)(i) stream per il {string} con versione {string} e filtro (timeline)(status) {string}")
+    public void createStreamWithFilters(String pa, String version, String filter) {
         String[] filterValues = new String[]{filter};
         if (filter.contains(",")) {
             filterValues = filter.split(",");

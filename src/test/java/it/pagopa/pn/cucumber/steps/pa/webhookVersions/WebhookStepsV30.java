@@ -187,7 +187,6 @@ public class WebhookStepsV30 implements WebhookStepsInterface {
         streamRequest.setTitle("Update Stream " + streamVersion);
         streamRequest.setEventType(StreamRequestV30.EventTypeEnum.TIMELINE);
         streamRequest.setWaitForAccepted(waitForAccepted);
-        streamRequest.setCommunicationType(communicationType);
         for (StreamMetadataResponseV30 eventStream : eventStreamList) {
             StreamMetadataResponseV30 result = webhookClient.updateEventStreamV30(eventStream.getStreamId(), streamRequest);
             assertThat(result).as("Il risultato dell'operazione di update stream con id " + eventStream.getStreamId() + " non dev'essere null").isNotNull();
@@ -261,11 +260,7 @@ public class WebhookStepsV30 implements WebhookStepsInterface {
                 .as("Lo streamId dello stream recuperato tramite id " + streamId + " non dev'essere null")
                 .isNotNull();
         assertThat(eventStream.getWaitForAccepted()).as("Il valore di waitForAccepted non coincide con quanto atteso").isEqualTo(waitForAccepted);
-        if (communicationType != null) {
-            assertThat(eventStream.getCommunicationType()).as("Il valore di communicationType non coincide con quanto atteso").isEqualTo(communicationType);
-        } else {
-            assertThat(eventStream.getCommunicationType()).as("In caso di communicationType null, lo stream creato dovrebbe avere LEGAL come communicationType di default").isEqualTo(CommunicationType.LEGAL);
-        }
+        assertThat(eventStream.getCommunicationType()).as("Il valore di communicationType non coincide con quanto atteso").isEqualTo(communicationType);
         log.info("EVENTSTREAM: {}", eventStream);
     }
 
