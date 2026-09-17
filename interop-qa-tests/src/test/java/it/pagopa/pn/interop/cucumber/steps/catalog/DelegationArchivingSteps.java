@@ -222,7 +222,7 @@ public class DelegationArchivingSteps {
         submitDelegatedEServiceArchiving(eServiceId, archivingReason, gracePeriodDays);
     }
 
-    @Then("la richiesta di archiviazione dell'e-service è in stato pending")
+    @Then("la richiesta di archiviazione dell'e-service è stata inviata correttamente ed è in stato pending")
     public void eServiceDelegatedArchivingRequestIsPending() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
@@ -230,7 +230,7 @@ public class DelegationArchivingSteps {
         delegatedArchivingRequestVerifier.pollPendingEServiceArchivingRequest(eServiceId);
     }
 
-    @Then("la richiesta di archiviazione del vecchio descrittore è in stato pending")
+    @Then("la richiesta di archiviazione del vecchio descrittore è stata inviata correttamente ed è in stato pending")
     public void oldDescriptorDelegatedArchivingRequestIsPending() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
