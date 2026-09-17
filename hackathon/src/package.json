@@ -1,0 +1,19 @@
+{
+  "name": "src",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node slackApp.js",
+    "test": "node --test test/*.test.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@slack/bolt": "^5.1.0",
+    "axios": "^1.8.3",
+    "dotenv": "^16.4.7",
+    "pdf-lib": "^1.17.1",
+    "properties-reader": "^2.3.0"
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "paProtocolNumber": null,
+  "subject": "soggetto passato statico",
+  "_abstract": "Abstract della notifica",
+  "recipients": [
+    {
+      "recipientType": "PF",
+      "taxId": "CLMCST42R12D969Z",
+      "denomination": "Mario Gherkin",
+      "digitalDomicile": {
+        "type": "PEC",
+        "address": "notifichedigitali-dev@pec.pagopa.it"
+      },
+      "physicalAddress": {
+        "at": "Presso",
+        "address": "Via senza nome",
+        "addressDetails": "scala b",
+        "zip": "87100",
+        "municipality": "Cosenza",
+        "municipalityDetails": "Cosenza",
+        "province": "CS",
+        "foreignState": "ITALIA"
+      },
+      "payments": [
+        {
+          "pagoPa": {
+            "noticeCode": null,
+            "creditorTaxId": "77777777777",
+            "applyCost": false,
+            "attachment": {
+              "digests": null,
+              "contentType": "application/pdf",
+              "ref": {
+                "key": "./AvvisoPagoPA.pdf",
+                "versionToken": null
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "documents": [
+    {
+      "digests": {
+        "sha256" : null
+      },
+      "contentType": "application/pdf",
+      "ref": {
+        "key": "./sample.pdf",
+        "versionToken": null
+      }
+    }
+  ],
+  "notificationFeePolicy": "FLAT_RATE",
+  "physicalCommunicationType": "REGISTERED_LETTER_890",
+  "senderDenomination": "Comune di palermo",
+  "senderTaxId": "80016350821",
+  "group": null,
+  "taxonomyCode": "010202N",
+  "paFee": 0,
+  "vat": 0,
+  "pagoPaIntMode": "NONE"
+}
