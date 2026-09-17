@@ -281,15 +281,15 @@ Feature: Gestione deleghe per archiviazione manuale e-service
 
   @sad-path
   Scenario Outline: [DELEGATION_MANUAL_ARCHIVING_2.5] Un utente appartente all'ente delegante ma con ruolo non ammesso NON può accettare la richiesta di archiviazione di un e-service inviata dall'ente delegato
-    Given l'ente delegante "PA1"
-    And l'ente delegato "PA2"
-    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
-    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    Given l'ente delegante "PA2"
+    And l'ente delegato "PA1"
+    And "PA2" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'ente "PA1" concede la disponibilità a ricevere deleghe in erogazione
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
-    And l'ente "PA2" accetta la delega in erogazione con successo
-    And l'utente è un "admin" di "PA2"
+    And l'ente "PA1" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA1"
     And l'utente ha già inviato la richiesta di archiviazione per l'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
-    And l'utente è un "<role>" di "PA1"
+    And l'utente è un "<role>" di "PA2"
     When l'utente accetta la richiesta di archiviazione relativa all'e-service "%actual"
     Then si ottiene response status code 403
 
@@ -302,17 +302,17 @@ Feature: Gestione deleghe per archiviazione manuale e-service
 
   @sad-path
   Scenario Outline: [DELEGATION_MANUAL_ARCHIVING_2.6] Un utente appartente all'ente delegante ma con ruolo non ammesso NON può accettare la richiesta di archiviazione del descrittore meno recente inviata dall'ente delegato
-    Given l'ente delegante "PA1"
-    And l'ente delegato "PA2"
-    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    Given l'ente delegante "PA2"
+    And l'ente delegato "PA1"
+    And "PA2" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And "PA2" ha già pubblicato una nuova versione per quell'e-service
+    And l'ente "PA1" concede la disponibilità a ricevere deleghe in erogazione
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
-    And l'ente "PA2" accetta la delega in erogazione con successo
-    And l'utente è un "admin" di "PA2"
+    And l'ente "PA1" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA1"
     And l'utente ha già inviato la richiesta di archiviazione per il vecchio descrittore "%actual" dell'e-service "%actual" specificando 60 giorni di preavviso
-    And l'utente è un "<role>" di "PA1"
+    And l'utente è un "<role>" di "PA2"
     When l'utente accetta la richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual"
     Then si ottiene response status code 403
 
