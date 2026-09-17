@@ -5,6 +5,7 @@ import io.cucumber.java.en.When;
 import io.cucumber.java.en.Then;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceArchivingSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.GracePeriodDays;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -98,18 +99,34 @@ public class DelegationArchivingSteps {
 
     @Given("l'utente ha già accettato la richiesta di archiviazione per l'e-service {string}")
     public void delegatedEServiceArchivingRequestAlreadyApproved(String eServiceId) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+        EServiceDescriptorState initialState = clientTokenConfigurator.getEServiceClient()
+                .getEServiceDescriptor(resolvedEServiceId, descriptorId).getState();
+
         approveDelegatedEServiceArchiving(eServiceId);
         assertDelegatedArchivingRequestSucceeded("L'accettazione della richiesta di archiviazione non ha avuto successo");
         pendingEServiceArchivingRequestIsCancelled();
-        eServiceCatalogListingSteps.checkEServiceState("ARCHIVING");
+        eServiceCatalogListingSteps.checkEServiceState(
+                initialState == EServiceDescriptorState.SUSPENDED ? "ARCHIVING_SUSPENDED" : "ARCHIVING"
+        );
     }
 
     @Given("l'utente ha già accettato la richiesta di archiviazione per il vecchio descrittore {string} dell'e-service {string}")
     public void delegatedOldDescriptorArchivingRequestAlreadyApproved(String descriptorId, String eServiceId) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
+        UUID resolvedDescriptorId = catalogResolver.resolveOldDescriptorId(descriptorId);
+        EServiceDescriptorState initialState = clientTokenConfigurator.getEServiceClient()
+                .getEServiceDescriptor(resolvedEServiceId, resolvedDescriptorId).getState();
+
         approveDelegatedDescriptorArchiving(descriptorId, eServiceId);
         assertDelegatedArchivingRequestSucceeded("L'accettazione della richiesta di archiviazione non ha avuto successo");
         pendingOldDescriptorArchivingRequestIsCancelled();
-        descriptorArchivingSteps.oldEServiceVersionIsInState("ARCHIVING");
+        descriptorArchivingSteps.oldEServiceVersionIsInState(
+                initialState == EServiceDescriptorState.SUSPENDED ? "ARCHIVING_SUSPENDED" : "ARCHIVING"
+        );
     }
 
     @When("l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da {string} per l'e-service {string} impostando {gracePeriodDays} giorni di preavviso")
