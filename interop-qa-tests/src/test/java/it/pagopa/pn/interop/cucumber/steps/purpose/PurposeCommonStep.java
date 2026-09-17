@@ -121,6 +121,8 @@ public class PurposeCommonStep {
         for (List<String> answer : answers) {
             String id = answer.get(0);       // es: "usesPersonalData"
             String rawValue = answer.get(1); // es: "NO"
+            if (rawValue.equals("null")) continue;
+
             List<String> values = Arrays.stream(rawValue.split(";")).map(String::trim).toList();
 
             String methodName = "set" + Character.toUpperCase(id.charAt(0)) + id.substring(1);
