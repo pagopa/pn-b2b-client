@@ -138,6 +138,7 @@ public class M2MEServiceTemplateClientImpl implements IM2MEServiceTemplateClient
             .mode(patchRequest.getMode())
             .intendedTarget(patchRequest.getIntendedTarget())
             .isSignalHubEnabled(patchRequest.getIsSignalHubEnabled())
+            .personalData(patchRequest.getPersonalData())
         );
     }
 
