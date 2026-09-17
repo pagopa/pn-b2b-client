@@ -1249,8 +1249,16 @@ public class BFFDataPreparationService {
     }
 
     public UUID addRiskAnalysisToEService(UUID eServiceId, EServiceRiskAnalysisSeed eServiceRiskAnalysisSeed) {
+        return addRiskAnalysisToEService(eServiceId, eServiceRiskAnalysisSeed, true);
+    }
+
+    public UUID addRiskAnalysisToEService(UUID eServiceId, EServiceRiskAnalysisSeed eServiceRiskAnalysisSeed, boolean successRequired) {
         httpCallExecutor.performCall(() -> eServiceClient.addRiskAnalysisToEService(eServiceId, eServiceRiskAnalysisSeed));
-        assertValidResponse();
+        if (successRequired) {
+            assertValidResponse();
+        } else {
+            if (httpCallExecutor.getResponseStatus().isError()) return null;
+        }
 
         pollingService.makePolling(
                 () -> httpCallExecutor.performCall(

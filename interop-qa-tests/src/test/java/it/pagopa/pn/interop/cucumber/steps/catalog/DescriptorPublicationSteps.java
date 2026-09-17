@@ -154,8 +154,10 @@ public class DescriptorPublicationSteps {
                     sharedStepsContext.getEServicesCommonContext().getEserviceId(),
                     new EServiceRiskAnalysisSeed()
                             .name(riskAnalysis.getName())
-                            .riskAnalysisForm(riskAnalysis.getRiskAnalysisForm())
+                            .riskAnalysisForm(riskAnalysis.getRiskAnalysisForm()),
+                    successRequired
             );
+            if (!successRequired && sharedStepsContext.getHttpCallExecutor().getResponseStatus().isError()) return;
             sharedStepsContext.getRiskAnalysisCommonContext().setRiskAnalysisId(riskAnalysisId);
         }
         dataPreparationService.tryToBringDescriptorToGivenState(
