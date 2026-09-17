@@ -1,15 +1,12 @@
 package it.pagopa.pn.cucumber.steps.delayer.model;
 
-import io.cucumber.spring.ScenarioScope;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
+import io.cucumber.spring.ScenarioScope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 @ScenarioScope(proxyMode = ScopedProxyMode.NO)

@@ -4,6 +4,7 @@ import io.cucumber.spring.ScenarioScope;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDelivery;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
+import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSkipSenderLimitService;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
@@ -34,6 +35,7 @@ public class DelayerPlanner {
 
     private final DelayerContext context;
     private final DelayerPaperDeliveryUtils utils;
+    private final DelayerSkipSenderLimitService skipSenderLimitService;
 
     public Map<String, List<DelayerPaperDelivery>> simulateAlgorithm(WorkflowSteps endAt, String seed) {
         Map<String, List<DelayerPaperDelivery>> groupedByStep = initWorkflowMap();
@@ -341,32 +343,23 @@ public class DelayerPlanner {
     }
 
     private DelayerPaperDelivery freezeNotification(DelayerPaperDelivery notification) {
-        String deliveryDate = getNextMondayFromDate(context.expectedDeliveryDate, 1);
+        String currentWeek = context.expectedDeliveryDate;
+        String deliveryDate = getNextMondayFromDate(currentWeek, 1);
         DelayerPaperDelivery frozen = utils.deepCopyAndUpdateKeys(List.of(notification), WorkflowSteps.EVALUATE_SENDER_LIMIT, deliveryDate).get(0);
 
-        // Una spedizione congelata per capacità di recapito o
-        // di stampa (non per limite mittente) eredita skipSenderLimit=true per la settimana successiva se,
-        // nella settimana appena valutata, il mittente aveva ancora quota residua sul proprio limite garantito.
-        // Si applica solo ai primi tentativi LEGAL: RS, secondi tentativi e INFORMAL restano invariati.
-        if (!frozen.isRS() && !frozen.isSecondAttempt() && !frozen.isInformalCommunication()) {
-            String senderKey = getSenderKey(frozen);
-            if (context.senderLimitMap.containsKey(senderKey)) {
-                Integer residualQuota = utils.getSenderLimit(senderKey);
-                frozen.setSkipSenderLimit(residualQuota != null && residualQuota > 0);
-            }
-        }
+        // Congelata per capacità di recapito o di stampa (non per limite mittente): se non è già residuo
+        // prioritario, verifica sul backend reale la quota residua sulla settimana X-1 (stessa data usata
+        // per il controllo del limite garantito), non la settimana appena valutata.
+        skipSenderLimitService.resolveOnFreeze(frozen, currentWeek);
 
         return frozen;
     }
 
     private List<DelayerPaperDelivery> collectAllFrozen(Map<String, List<DelayerPaperDelivery>> frozenByStep) {
-        String deliveryDate = getNextMondayFromDate(context.expectedDeliveryDate, 1);
-
-        List<DelayerPaperDelivery> toFreeze = frozenByStep.values().stream()
+        return frozenByStep.values().stream()
                 .flatMap(List::stream)
+                .map(this::freezeNotification)
                 .toList();
-
-        return utils.deepCopyAndUpdateKeys(toFreeze, WorkflowSteps.EVALUATE_SENDER_LIMIT, deliveryDate);
     }
 
     private Map<String, List<DelayerPaperDelivery>> initWorkflowMap() {
@@ -392,21 +385,9 @@ public class DelayerPlanner {
 
         reassigned.addAll(technicalPriorityNotifications);
 
-        // Le nuove spedizioni ritardate (delayed=true e previousStep=null) non vengono riordinate:
-        // devono mantenere la posizione originaria. Quelle già elaborate (previousStep valorizzato)
-        // partecipano invece normalmente al riordino.
-        List<DelayerPaperDelivery> newDelayedNotifications = notifications.stream()
-                .filter(n -> !(n.isRS() || n.isSecondAttempt()))
-                .filter(DelayerPlanner::isNewDelayed)
-                .map(DelayerPaperDelivery::new)
-                .toList();
-
-        reassigned.addAll(newDelayedNotifications);
-
         // La senderPriority vale solo per le spedizioni normali / primi tentativi.
         List<DelayerPaperDelivery> normalNotifications = notifications.stream()
                 .filter(n -> !(n.isRS() || n.isSecondAttempt()))
-                .filter(n -> !isNewDelayed(n))
                 .toList();
 
         Map<String, List<DelayerPaperDelivery>> bySender = normalNotifications.stream()
@@ -465,14 +446,6 @@ public class DelayerPlanner {
                 ));
 
         return sorted;
-    }
-
-    /**
-     * Nuova spedizione ritardata: arrivata in ritardo in fase di ingestion e non ancora elaborata
-     * in nessuno step precedente. Va esclusa dal riordino per senderPriority.
-     */
-    private static boolean isNewDelayed(DelayerPaperDelivery n) {
-        return Boolean.TRUE.equals(n.getDelayed()) && n.getPreviousStep() == null;
     }
 
 }

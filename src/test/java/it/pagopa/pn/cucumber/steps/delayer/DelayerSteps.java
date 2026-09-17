@@ -17,6 +17,7 @@ import it.pagopa.pn.cucumber.steps.delayer.model.enums.ParallelScenarioPhase;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
 import it.pagopa.pn.cucumber.steps.delayer.planner.DelayerPlanner;
 import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSevice;
+import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSkipSenderLimitService;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
 import it.pagopa.pn.cucumber.steps.delayer.validator.DelayerValidator;
 import lombok.RequiredArgsConstructor;
@@ -58,6 +59,7 @@ public class DelayerSteps {
     private final DelayerSevice service;
     private final DelayerValidator validator;
     private final DelayerPaperDeliveryUtils utils;
+    private final DelayerSkipSenderLimitService skipSenderLimitService;
     private final Map<String, Integer> availableCapacityByDriver = new HashMap<>();
 
     private String parallelScenarioId;
@@ -273,6 +275,7 @@ public class DelayerSteps {
 
     @And("vengono simulate internamente le operazioni di BatchWorkflowStateMachine")
     public void runSimulation() {
+        skipSenderLimitService.resolveOnFirstStepFunction(context.actualCsv, context.expectedDeliveryDate);
         context.expectedPianification.replaceAll((seed, oldStepMap) ->
                 planner.simulateAlgorithm(SENT_TO_PREPARE_PHASE_2, seed)
         );

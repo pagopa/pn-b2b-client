@@ -3,21 +3,7 @@ package it.pagopa.pn.cucumber.steps.delayer.client;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerCountersExclude;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerCountersPrint;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerCountersSumEstimates;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerDeclaredCapacity;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDelivery;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDeliverys;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPayload;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPresigneUrlDownload;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPresigneUrlUpload;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerResidualPapers;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimits;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerStatusExecution;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerUsedCapacity;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerUsedSenderLimit;
-import it.pagopa.pn.cucumber.steps.delayer.model.FirstStepFunctionResponseWrapper;
+import it.pagopa.pn.cucumber.steps.delayer.model.*;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.DelayerCounterType;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.DelayerOperation;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.DelayerTable;
@@ -28,11 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
