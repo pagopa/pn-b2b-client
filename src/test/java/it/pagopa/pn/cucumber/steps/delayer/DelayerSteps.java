@@ -292,7 +292,10 @@ public class DelayerSteps {
         suiteContext.awaitAllAtLeast(ParallelScenarioPhase.BATCH_REQUESTED, GATE_TIMEOUT);
 
         synchronized (suiteContext) {
-            if (suiteContext.batchExecutionArn == null) {
+            // Il riuso dell'esecuzione è pensato solo per gli scenari paralleli censiti (es: @delayer1-5,
+            // via DelayerSuiteContext.configure). Al di fuori di quella suite ogni scenario deve avviare
+            // sempre una propria esecuzione.
+            if (!DelayerSuiteContext.isSuiteConfigured() || suiteContext.batchExecutionArn == null) {
                 suiteContext.batchExecutionArn =
                         service.runBatchWorkflowStateMachine(context.printCapacity, deliveryWeek);
             }
@@ -320,7 +323,9 @@ public class DelayerSteps {
         suiteContext.awaitAllAtLeast(ParallelScenarioPhase.PHASE2_REQUESTED, GATE_TIMEOUT);
 
         synchronized (suiteContext) {
-            if (suiteContext.phase2ExecutionArn == null) {
+            // Stessa guardia di runFirstStepFunctionWithFixedDeliveryDate: riuso solo se la suite
+            // parallela è effettivamente censita, altrimenti ogni scenario riparte da zero.
+            if (!DelayerSuiteContext.isSuiteConfigured() || suiteContext.phase2ExecutionArn == null) {
                 suiteContext.phase2ExecutionArn = service.runDelayerToPaperChannel().getExecutionArn();
             }
             context.currentExecutionArn = suiteContext.phase2ExecutionArn;
