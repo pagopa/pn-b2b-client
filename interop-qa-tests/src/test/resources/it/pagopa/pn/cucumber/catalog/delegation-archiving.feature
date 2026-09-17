@@ -714,6 +714,8 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "<role>" di "PA1"
     When l'utente delegante accetta la richiesta di archiviazione relativa all'e-service "%actual"
     Then si ottiene response status code 204
+    And l'e-service è in stato "ARCHIVING"
+    And il descrittore con id "%actual" dell'e-service avente id "%actual" è in fase di archiviazione tramite l'archiviazione manuale dell'intero e-service
     And la richiesta di archiviazione dell'e-service non è presente
 
     Examples:
@@ -738,6 +740,8 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "<role>" di "PA1"
     When l'utente delegante accetta la richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual"
     Then si ottiene response status code 204
+    And la vecchia versione dell'e-service è in stato "ARCHIVING"
+    And il vecchio descrittore con id "%actual" dell'e-service avente id "%actual" è in fase di archiviazione tramite l'archiviazione manuale del singolo descrittore
     And la richiesta di archiviazione del vecchio descrittore non è presente
 
     Examples:
