@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.datapreparationservice;
 
+import io.cucumber.datatable.DataTable;
 import it.pagopa.interop.agreement.domain.ClientType;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.agreement.service.IAgreementClient;
@@ -100,6 +101,14 @@ public class BFFDataPreparationService {
         DEFAULT_CLIENT_SEED.setName(String.format("client %d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)));
         DEFAULT_CLIENT_SEED.setDescription("Descrizione client");
         DEFAULT_CLIENT_SEED.setMembers(List.of());
+    }
+
+    public static boolean isExpectedPersonalData(DataTable answersTable) {
+        List<List<String>> answers = answersTable.asLists().stream().toList();
+        for (List<String> answer : answers) {
+            if ("usesPersonalData".equals(answer.get(0)) && "YES".equals(answer.get(1))) return true;
+        }
+        return false;
     }
 
     public BFFDataPreparationService(

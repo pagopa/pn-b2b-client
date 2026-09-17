@@ -18,12 +18,10 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 
+import static it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService.isExpectedPersonalData;
 import static it.pagopa.pn.interop.cucumber.steps.purpose.PurposeCommonStep.getRiskAnalysisFromAnswersDataTable;
 
 @Slf4j
@@ -137,12 +135,7 @@ public class DescriptorPublicationSteps {
     private void createEServiceWithModeAndSpecifiedRiskAnalysis(String tenantType, String mode, String eServiceDescriptorState, DataTable answersTable, boolean successRequired) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
 
-        // L'uso dei dati personali da parte dell'e-service sarà coerente rispetto all'analisi del rischio
-        boolean personalDataFlag = false;
-        List<List<String>> answers = answersTable.asLists().stream().toList();
-        for (List<String> answer : answers) {
-            if ("usesPersonalData".equals(answer.get(0)) && "YES".equals(answer.get(1))) personalDataFlag = true;
-        }
+        boolean personalDataFlag = isExpectedPersonalData(answersTable);
         RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysisSpecifyingAnswers(
                 getRiskAnalysisFromAnswersDataTable(answersTable)
         );
