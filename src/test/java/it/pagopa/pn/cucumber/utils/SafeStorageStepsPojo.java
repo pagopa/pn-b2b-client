@@ -32,6 +32,13 @@ public class SafeStorageStepsPojo {
     private FileCreationResponse fileCreationResponse;
     private FileDownloadResponse fileDownloadResponse;
     private String resourcePath;
+    //disponibilita documenti
+    private Integer fileMetadataUpdateStatusCode;
+    private Integer fileDownloadStatusCode;
+    private String issuedDownloadUrl;
+    private Integer issuedDownloadStatusCode;
+    private Integer informationAccessStatusCodeBeforeExpiration;
+    private Integer informationAccessStatusCode;
 
     public SafeStorageStepsPojo() {
         this.createdFiles = new LinkedList<>();
