@@ -626,7 +626,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "admin" di "PA1"
     And l'utente ha già accettato la richiesta di archiviazione per l'e-service "%actual"
     And l'utente annulla il processo di archiviazione dell'e-service con id "%actual"
-    And si ottiene response status code 204
+    And l'archiviazione manuale dell'e-service è stata annullata con successo
     And l'e-service è in stato "PUBLISHED"
     And l'utente è un "admin" di "PA2"
     When l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso

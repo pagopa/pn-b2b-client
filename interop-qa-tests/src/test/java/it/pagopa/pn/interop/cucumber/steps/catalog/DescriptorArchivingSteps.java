@@ -161,6 +161,7 @@ public class DescriptorArchivingSteps {
 
     @And("il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore")
     @And("il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service")
+    @Then("l'archiviazione manuale dell'e-service è stata annullata con successo")
     public void latestDescriptorHasNoArchivingSchedule() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
