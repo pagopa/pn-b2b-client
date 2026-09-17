@@ -143,37 +143,23 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
       | Privato | PA          |
 
   @adeguamento-analisi-rischio-gdpr-art-9-10
-  Scenario: [RISK_ANALYSIS_NO_PA_COMPILE_1] Analisi rischio specificando misure tecniche per dati particolari e giudiziari in finalità fruizione (No PA)
-  Si verifica che compilando l'analisi del rischio con le misure tecniche e organizzative per i dati particolari e i
-  dati giudiziari, che si attivano trattando dati personali, i nuovi campi siano obbligatori per enti non PA durante la
-  pubblicazione di una finalità per fruizione di dati.
+  Scenario Outline: [RA_GDPR_ART_9_10_COMPILE_1] Richiesta non soddisfatta misure tecniche compilando analisi rischio con dati particolari e giudiziari in finalità fruizione
+  Si verifica che compilando l'analisi del rischio, avendo selezionato dati particolari e dati giudiziari nei dati
+  personali, i campi liberi per le misure tecniche e organizzative siano obbligatori per enti non PA e da non
+  specificare per enti PA. L'analisi del rischio è compilata durante la creazione di una finalità per fruizione dati.
+  La richiesta dei campi liberi non viene soddisfatta e si verifica errore.
 
-    Given l'utente è un "admin" di "PA1"
-    And "PA1" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "PUBLISHED" e flag dati personali a "true"
-    And l'utente è un "admin" di "Privato"
-    When "Privato" ha già creato una richiesta di fruizione in stato "ACTIVE" con un documento allegato
-    Then "Privato" crea 1 finalità in stato "DRAFT" per quell'eservice specificando nell'analisi del rischio:
-    # Il tipo di dati personali non sono particolari, né giudiziari, quindi accetta la compilazione senza le misure tecniche
-    | usesPersonalData        | YES |
-    | personalDataTypes       | WITH_NON_IDENTIFYING_DATA |
-    | purpose                 | INSTITUTIONAL |
-    | institutionalPurpose    | This is a test |
-    | legalBasis              | CONSENT |
-    | knowsDataQuantity       | NO |
-    | deliveryMethod          | CLEARTEXT |
-    | policyProvided          | NO |
-    | reasonPolicyNotProvided | This is a test |
-    | confirmPricipleIntegrityAndDiscretion | true |
-    | doneDpia                | NO |
-    | dataDownload            | NO |
-    | purposePursuit          | MERE_CORRECTNESS |
-    | checkedExistenceMereCorrectnessInteropCatalogue | true |
-    | declarationConfirmGDPR  | true |
-
-    When "Privato" tenta di creare 1 finalità in stato "DRAFT" per quell'eservice specificando nell'analisi del rischio:
-    # Il tipo di dati personali sono particolari e giudiziari, quindi non accetta la compilazione senza le misure tecniche
+    Given l'utente è un "admin" di "<erogatore>"
+    And "<erogatore>" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "PUBLISHED" e flag dati personali a "true"
+    And "<fruitore>" ha già creato una richiesta di fruizione in stato "ACTIVE" con un documento allegato
+    When "<fruitore>" tenta di creare 1 finalità in stato "DRAFT" per quell'eservice specificando nell'analisi del rischio:
+    # Non PA: Il tipo di dati personali sono particolari e giudiziari, quindi non accetta la compilazione senza le misure tecniche
+    # PA: Il tipo di dati personali sono particolari e giudiziari, quindi non accetta la compilazione con le misure tecniche
       | usesPersonalData        | YES |
       | personalDataTypes       | GDPR_ART_9 ; GDPR_ART_10 |
+      | confirmPricipleIntegrityAndDiscretion | true |
+      | dataProtectionMeasuresParticular | <misureDatiParticolari> |
+      | dataProtectionMeasures           | <misureDatiGiudiziari>  |
       | purpose                 | INSTITUTIONAL |
       | institutionalPurpose    | This is a test |
       | legalBasis              | CONSENT |
@@ -181,24 +167,114 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
       | deliveryMethod          | CLEARTEXT |
       | policyProvided          | NO |
       | reasonPolicyNotProvided | This is a test |
-      | confirmPricipleIntegrityAndDiscretion | true |
       | doneDpia                | NO |
       | dataDownload            | NO |
       | purposePursuit          | MERE_CORRECTNESS |
       | checkedExistenceMereCorrectnessInteropCatalogue | true |
+      | isRequestOnBehalfOfThirdParties | <richiestaDiTerzi> |
       | declarationConfirmGDPR  | true |
-    Then la precedente creazione di finalità risulta malformata e riporta gli errori:
+    Then la precedente richiesta risulta malformata e riporta gli errori:
     """
-    Expected field dataProtectionMeasures not found in form
-    Expected field dataProtectionMeasuresParticular not found in form
+    <esito> field dataProtectionMeasures
+    <esito> field dataProtectionMeasuresParticular
     """
 
-    Then "Privato" crea 1 finalità in stato "DRAFT" per quell'eservice specificando nell'analisi del rischio:
+    Examples:
+      | erogatore | fruitore | richiestaDiTerzi | misureDatiParticolari | misureDatiGiudiziari | esito      |
+      | PA1       | Privato  | null             | null                  | null                 | Expected   |
+      | PA1       | PA2      | NO               | Misura 1              | Misura 2             | Unexpected |
+
+  @adeguamento-analisi-rischio-gdpr-art-9-10
+  Scenario Outline: [RA_GDPR_ART_9_10_COMPILE_2] Richiesta soddisfatta misure tecniche compilando analisi rischio con dati particolari e giudiziari in finalità fruizione
+  Si verifica che compilando l'analisi del rischio, avendo selezionato dati particolari e dati giudiziari nei dati
+  personali, i campi liberi per le misure tecniche e organizzative siano obbligatori per enti non PA e da non
+  specificare per enti PA. L'analisi del rischio è compilata durante la creazione di una finalità per fruizione dati.
+  La richiesta dei campi liberi viene soddisfatta.
+
+    Given l'utente è un "admin" di "<erogatore>"
+    And "<erogatore>" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "PUBLISHED" e flag dati personali a "true"
+    And "<fruitore>" ha già creato una richiesta di fruizione in stato "ACTIVE" con un documento allegato
+    Then "<fruitore>" crea 1 finalità in stato "DRAFT" per quell'eservice specificando nell'analisi del rischio:
+    # Non PA: Il tipo di dati personali sono particolari e giudiziari, quindi accetta la compilazione con le misure tecniche
+    # PA: Il tipo di dati personali sono particolari e giudiziari, quindi accetta la compilazione senza le misure tecniche
+      | usesPersonalData        | YES |
+      | personalDataTypes       | GDPR_ART_9 ; GDPR_ART_10 |
+      | confirmPricipleIntegrityAndDiscretion | true |
+      | dataProtectionMeasuresParticular | <misureDatiParticolari> |
+      | dataProtectionMeasures           | <misureDatiGiudiziari>  |
+      | purpose                 | INSTITUTIONAL |
+      | institutionalPurpose    | This is a test |
+      | legalBasis              | CONSENT |
+      | knowsDataQuantity       | NO |
+      | deliveryMethod          | CLEARTEXT |
+      | policyProvided          | NO |
+      | reasonPolicyNotProvided | This is a test |
+      | doneDpia                | NO |
+      | dataDownload            | NO |
+      | purposePursuit          | MERE_CORRECTNESS |
+      | checkedExistenceMereCorrectnessInteropCatalogue | true |
+      | isRequestOnBehalfOfThirdParties | <richiestaDiTerzi> |
+      | declarationConfirmGDPR  | true |
+
+    Examples:
+      | erogatore | fruitore | richiestaDiTerzi | misureDatiParticolari | misureDatiGiudiziari |
+      | PA1       | Privato  | null             | Misura 1              | Misura 2             |
+      | PA1       | PA2      | NO               | null                  | null                 |
+
+  @adeguamento-analisi-rischio-gdpr-art-9-10
+  Scenario Outline: [RA_GDPR_ART_9_10_COMPILE_3] Richiesta non soddisfatta misure tecniche compilando analisi rischio con dati particolari e giudiziari durante pubblicazione e-service ricezione
+  Si verifica che compilando l'analisi del rischio, avendo selezionato dati particolari e dati giudiziari nei dati
+  personali, i campi liberi per le misure tecniche e organizzative siano obbligatori per enti non PA e da non
+  specificare per enti PA. L'analisi del rischio è compilata durante la pubblicazione di un e-service in modalità
+  ricezione dati. La richiesta dei campi liberi non viene soddisfatta e si verifica errore.
+
+    Given l'utente è un "admin" di "<erogatore>"
+    When "<erogatore>" tenta di creare un e-service in modalità "RECEIVE" con un descrittore in stato "PUBLISHED" specificando nell'analisi del rischio:
+    # Non PA: Il tipo di dati personali sono particolari e giudiziari, quindi non accetta la compilazione senza le misure tecniche
+    # PA: Il tipo di dati personali sono particolari e giudiziari, quindi non accetta la compilazione con le misure tecniche
+      | usesPersonalData        | YES |
+      | personalDataTypes       | GDPR_ART_9 ; GDPR_ART_10 |
+      | confirmPricipleIntegrityAndDiscretion | true |
+      | dataProtectionMeasuresParticular | <misureDatiParticolari> |
+      | dataProtectionMeasures           | <misureDatiGiudiziari>  |
+      | purpose                 | INSTITUTIONAL |
+      | institutionalPurpose    | This is a test |
+      | legalBasis              | CONSENT |
+      | knowsDataQuantity       | NO |
+      | deliveryMethod          | CLEARTEXT |
+      | policyProvided          | NO |
+      | reasonPolicyNotProvided | This is a test |
+      | doneDpia                | NO |
+      | dataDownload            | NO |
+      | purposePursuit          | MERE_CORRECTNESS |
+      | checkedExistenceMereCorrectnessInteropCatalogue | true |
+      | isRequestOnBehalfOfThirdParties | <richiestaDiTerzi> |
+      | declarationConfirmGDPR  | true |
+    Then la precedente richiesta risulta malformata e riporta gli errori:
+    """
+    <erroreAnalisiRischio>
+    """
+
+    Examples:
+      | erogatore | richiestaDiTerzi | misureDatiParticolari | misureDatiGiudiziari | erroreAnalisiRischio                  |
+      | GSP       | null             | null                  | null                 | Risk Analysis did not pass validation |
+      | PA1       | NO               | Misura 1              | Misura 2             | Risk analysis validation failed       |
+
+  @adeguamento-analisi-rischio-gdpr-art-9-10
+  Scenario Outline: [RA_GDPR_ART_9_10_COMPILE_4] Richiesta soddisfatta misure tecniche compilando analisi rischio con dati particolari e giudiziari durante pubblicazione e-service ricezione
+  Si verifica che compilando l'analisi del rischio, avendo selezionato dati particolari e dati giudiziari nei dati
+  personali, i campi liberi per le misure tecniche e organizzative siano obbligatori per enti non PA e da non
+  specificare per enti PA. L'analisi del rischio è compilata durante la pubblicazione di un e-service in modalità
+  ricezione dati. La richiesta dei campi liberi viene soddisfatta.
+
+    Given l'utente è un "admin" di "<erogatore>"
+    Then "<erogatore>" crea un e-service in modalità "RECEIVE" con un descrittore in stato "PUBLISHED" specificando nell'analisi del rischio:
     # Il tipo di dati personali sono particolari e giudiziari, quindi accetta la compilazione con le misure tecniche
       | usesPersonalData        | YES |
       | personalDataTypes       | GDPR_ART_9 ; GDPR_ART_10 |
-      | dataProtectionMeasuresParticular | Un esempio di misura presa |
-      | dataProtectionMeasures  | Un altro esempio di misura presa |
+      | confirmPricipleIntegrityAndDiscretion | true |
+      | dataProtectionMeasuresParticular | <misureDatiParticolari> |
+      | dataProtectionMeasures           | <misureDatiGiudiziari>  |
       | purpose                 | INSTITUTIONAL |
       | institutionalPurpose    | This is a test |
       | legalBasis              | CONSENT |
@@ -206,112 +282,37 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
       | deliveryMethod          | CLEARTEXT |
       | policyProvided          | NO |
       | reasonPolicyNotProvided | This is a test |
-      | confirmPricipleIntegrityAndDiscretion | true |
       | doneDpia                | NO |
       | dataDownload            | NO |
       | purposePursuit          | MERE_CORRECTNESS |
       | checkedExistenceMereCorrectnessInteropCatalogue | true |
+      | isRequestOnBehalfOfThirdParties | <richiestaDiTerzi> |
       | declarationConfirmGDPR  | true |
+
+    Examples:
+      | erogatore | richiestaDiTerzi | misureDatiParticolari | misureDatiGiudiziari |
+      | GSP       | null             | Misura 1              | Misura 2             |
+      | PA1       | NO               | null                  | null                 |
 
   @adeguamento-analisi-rischio-gdpr-art-9-10
-  Scenario: [RISK_ANALYSIS_NO_PA_COMPILE_2] Analisi rischio specificando misure tecniche per dati particolari e giudiziari durante pubblicazione e-service ricezione (No PA)
-  Si verifica che compilando l'analisi del rischio con le misure tecniche e organizzative per i dati particolari e i
-  dati giudiziari, che si attivano trattando dati personali, i nuovi campi siano obbligatori per enti non PA durante la
-  pubblicazione di un e-service in modalità ricezione dati.
+  Scenario Outline: [RA_GDPR_ART_9_10_COMPILE_5] Richiesta non soddisfatta misure tecniche compilando analisi rischio con dati particolari e giudiziari in finalità fruizione e-service da template
+  Si verifica che compilando l'analisi del rischio, avendo selezionato dati particolari e dati giudiziari nei dati
+  personali, i campi liberi per le misure tecniche e organizzative siano obbligatori per enti non PA e da non
+  specificare per enti PA. L'analisi del rischio è compilata durante la creazione di una finalità per fruizione dati da
+  un e-service istanza di template. La richiesta dei campi liberi non viene soddisfatta e si verifica errore.
 
-    Given l'utente è un "admin" di "Privato"
-    Then "Privato" crea un e-service in modalità "RECEIVE" con un descrittore in stato "PUBLISHED" specificando nell'analisi del rischio:
-    # Il tipo di dati personali non sono particolari, né giudiziari, quindi accetta la compilazione senza le misure tecniche
-      | usesPersonalData        | YES |
-      | personalDataTypes       | WITH_NON_IDENTIFYING_DATA |
-      | purpose                 | INSTITUTIONAL |
-      | institutionalPurpose    | This is a test |
-      | legalBasis              | CONSENT |
-      | knowsDataQuantity       | NO |
-      | deliveryMethod          | CLEARTEXT |
-      | policyProvided          | NO |
-      | reasonPolicyNotProvided | This is a test |
-      | confirmPricipleIntegrityAndDiscretion | true |
-      | doneDpia                | NO |
-      | dataDownload            | NO |
-      | purposePursuit          | MERE_CORRECTNESS |
-      | checkedExistenceMereCorrectnessInteropCatalogue | true |
-      | declarationConfirmGDPR  | true |
-
-    When "Privato" tenta di creare un e-service in modalità "RECEIVE" con un descrittore in stato "PUBLISHED" specificando nell'analisi del rischio:
-    # Il tipo di dati personali sono particolari e giudiziari, quindi non accetta la compilazione senza le misure tecniche
-      | usesPersonalData        | YES |
-      | personalDataTypes       | GDPR_ART_9 ; GDPR_ART_10 |
-      | purpose                 | INSTITUTIONAL |
-      | institutionalPurpose    | This is a test |
-      | legalBasis              | CONSENT |
-      | knowsDataQuantity       | NO |
-      | deliveryMethod          | CLEARTEXT |
-      | policyProvided          | NO |
-      | reasonPolicyNotProvided | This is a test |
-      | confirmPricipleIntegrityAndDiscretion | true |
-      | doneDpia                | NO |
-      | dataDownload            | NO |
-      | purposePursuit          | MERE_CORRECTNESS |
-      | checkedExistenceMereCorrectnessInteropCatalogue | true |
-      | declarationConfirmGDPR  | true |
-    Then la precedente creazione di finalità risulta malformata e riporta gli errori:
-    """
-    Risk Analysis did not pass validation
-    """
-
-    Then "Privato" crea un e-service in modalità "RECEIVE" con un descrittore in stato "PUBLISHED" specificando nell'analisi del rischio:
-    # Il tipo di dati personali sono particolari e giudiziari, quindi accetta la compilazione con le misure tecniche
-      | usesPersonalData        | YES |
-      | personalDataTypes       | GDPR_ART_9 ; GDPR_ART_10 |
-      | dataProtectionMeasuresParticular | Un esempio di misura presa |
-      | dataProtectionMeasures  | Un altro esempio di misura presa |
-      | purpose                 | INSTITUTIONAL |
-      | institutionalPurpose    | This is a test |
-      | legalBasis              | CONSENT |
-      | knowsDataQuantity       | NO |
-      | deliveryMethod          | CLEARTEXT |
-      | policyProvided          | NO |
-      | reasonPolicyNotProvided | This is a test |
-      | confirmPricipleIntegrityAndDiscretion | true |
-      | doneDpia                | NO |
-      | dataDownload            | NO |
-      | purposePursuit          | MERE_CORRECTNESS |
-      | checkedExistenceMereCorrectnessInteropCatalogue | true |
-      | declarationConfirmGDPR  | true |
-
-  @adeguamento-analisi-rischio-gdpr-art-9-10
-  Scenario: [RISK_ANALYSIS_NO_PA_COMPILE_3] Analisi rischio specificando misure tecniche per dati particolari e giudiziari in finalità fruizione e-service da template (No PA)
-  Si verifica che compilando l'analisi del rischio con le misure tecniche e organizzative per i dati particolari e i
-  dati giudiziari, che si attivano trattando dati personali, i nuovi campi siano obbligatori per enti non PA durante la
-  pubblicazione di una finalità per fruizione di dati da un e-service istanza di template.
-
-    Given l'utente è un "admin" di "PA1"
+    Given l'utente è un "admin" di "<erogatore>"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con flagPersonalData impostato a "true"
     And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
-    When "Privato" ha già creato una richiesta di fruizione in stato "ACTIVE" con un documento allegato
-    Then "Privato" crea 1 finalità in stato "DRAFT" per quell'eservice specificando nell'analisi del rischio:
-    # Il tipo di dati personali non sono particolari, né giudiziari, quindi accetta la compilazione senza le misure tecniche
-      | usesPersonalData        | YES |
-      | personalDataTypes       | WITH_NON_IDENTIFYING_DATA |
-      | purpose                 | INSTITUTIONAL |
-      | institutionalPurpose    | This is a test |
-      | legalBasis              | CONSENT |
-      | knowsDataQuantity       | NO |
-      | deliveryMethod          | CLEARTEXT |
-      | policyProvided          | NO |
-      | reasonPolicyNotProvided | This is a test |
-      | confirmPricipleIntegrityAndDiscretion | true |
-      | doneDpia                | NO |
-      | dataDownload            | NO |
-      | purposePursuit          | MERE_CORRECTNESS |
-      | checkedExistenceMereCorrectnessInteropCatalogue | true |
-      | declarationConfirmGDPR  | true |
-
-    When "Privato" tenta di creare 1 finalità in stato "DRAFT" per quell'eservice specificando nell'analisi del rischio:
-    # Il tipo di dati personali sono particolari e giudiziari, quindi non accetta la compilazione senza le misure tecniche
+    And "<fruitore>" ha già creato una richiesta di fruizione in stato "ACTIVE" con un documento allegato
+    When "<fruitore>" tenta di creare 1 finalità in stato "DRAFT" per quell'eservice specificando nell'analisi del rischio:
+    # Non PA: Il tipo di dati personali sono particolari e giudiziari, quindi non accetta la compilazione senza le misure tecniche
+    # PA: Il tipo di dati personali sono particolari e giudiziari, quindi non accetta la compilazione con le misure tecniche
       | usesPersonalData        | YES |
       | personalDataTypes       | GDPR_ART_9 ; GDPR_ART_10 |
+      | confirmPricipleIntegrityAndDiscretion | true       |
+      | dataProtectionMeasuresParticular | <misureDatiParticolari> |
+      | dataProtectionMeasures           | <misureDatiGiudiziari>  |
       | purpose                 | INSTITUTIONAL |
       | institutionalPurpose    | This is a test |
       | legalBasis              | CONSENT |
@@ -319,67 +320,42 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
       | deliveryMethod          | CLEARTEXT |
       | policyProvided          | NO |
       | reasonPolicyNotProvided | This is a test |
-      | confirmPricipleIntegrityAndDiscretion | true |
       | doneDpia                | NO |
       | dataDownload            | NO |
       | purposePursuit          | MERE_CORRECTNESS |
       | checkedExistenceMereCorrectnessInteropCatalogue | true |
+      | isRequestOnBehalfOfThirdParties | <richiestaDiTerzi> |
       | declarationConfirmGDPR  | true |
-    Then la precedente creazione di finalità risulta malformata e riporta gli errori:
+    Then la precedente richiesta risulta malformata e riporta gli errori:
     """
-    Expected field dataProtectionMeasures not found in form
-    Expected field dataProtectionMeasuresParticular not found in form
+    <esito> field dataProtectionMeasures
+    <esito> field dataProtectionMeasuresParticular
     """
 
-    Then "Privato" crea 1 finalità in stato "DRAFT" per quell'eservice specificando nell'analisi del rischio:
-    # Il tipo di dati personali sono particolari e giudiziari, quindi accetta la compilazione con le misure tecniche
-      | usesPersonalData        | YES |
-      | personalDataTypes       | GDPR_ART_9 ; GDPR_ART_10 |
-      | dataProtectionMeasuresParticular | Un esempio di misura presa |
-      | dataProtectionMeasures  | Un altro esempio di misura presa |
-      | purpose                 | INSTITUTIONAL |
-      | institutionalPurpose    | This is a test |
-      | legalBasis              | CONSENT |
-      | knowsDataQuantity       | NO |
-      | deliveryMethod          | CLEARTEXT |
-      | policyProvided          | NO |
-      | reasonPolicyNotProvided | This is a test |
-      | confirmPricipleIntegrityAndDiscretion | true |
-      | doneDpia                | NO |
-      | dataDownload            | NO |
-      | purposePursuit          | MERE_CORRECTNESS |
-      | checkedExistenceMereCorrectnessInteropCatalogue | true |
-      | declarationConfirmGDPR  | true |
+    Examples:
+      | erogatore | fruitore | richiestaDiTerzi | misureDatiParticolari | misureDatiGiudiziari | esito      |
+      | PA1       | Privato  | null             | null                  | null                 | Expected   |
+      | PA1       | PA2      | NO               | Misura 1              | Misura 2             | Unexpected |
 
   @adeguamento-analisi-rischio-gdpr-art-9-10
-  Scenario: [RISK_ANALYSIS_NO_PA_COMPILE_4] Analisi rischio specificando misure tecniche per dati particolari e giudiziari durante pubblicazione template e-service in ricezione (No PA)
-  Si verifica che compilando l'analisi del rischio con le misure tecniche e organizzative per i dati particolari e i
-  dati giudiziari, che si attivano trattando dati personali, i nuovi campi siano obbligatori per enti non PA durante la
-  pubblicazione di un template e-service in modalità ricezione dati.
+  Scenario Outline: [RA_GDPR_ART_9_10_COMPILE_6] Richiesta soddisfatta misure tecniche compilando analisi rischio con dati particolari e giudiziari in finalità fruizione e-service da template
+  Si verifica che compilando l'analisi del rischio, avendo selezionato dati particolari e dati giudiziari nei dati
+  personali, i campi liberi per le misure tecniche e organizzative siano obbligatori per enti non PA e da non
+  specificare per enti PA. L'analisi del rischio è compilata durante la creazione di una finalità per fruizione dati da
+  un e-service istanza di template. La richiesta dei campi liberi viene soddisfatta.
 
-    Given l'utente è un "admin" di "Privato"
-    Then l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED specificando nell'analisi del rischio:
-    # Il tipo di dati personali non sono particolari, né giudiziari, quindi accetta la compilazione senza le misure tecniche
-      | usesPersonalData        | YES |
-      | personalDataTypes       | WITH_NON_IDENTIFYING_DATA |
-      | purpose                 | INSTITUTIONAL |
-      | institutionalPurpose    | This is a test |
-      | legalBasis              | CONSENT |
-      | knowsDataQuantity       | NO |
-      | deliveryMethod          | CLEARTEXT |
-      | policyProvided          | NO |
-      | reasonPolicyNotProvided | This is a test |
-      | confirmPricipleIntegrityAndDiscretion | true |
-      | doneDpia                | NO |
-      | dataDownload            | NO |
-      | purposePursuit          | MERE_CORRECTNESS |
-      | checkedExistenceMereCorrectnessInteropCatalogue | true |
-      | declarationConfirmGDPR  | true |
-
-    When l'utente tenta di creare un e-service template in modalità ricezione in stato di PUBLISHED specificando nell'analisi del rischio:
-    # Il tipo di dati personali sono particolari e giudiziari, quindi non accetta la compilazione senza le misure tecniche
+    Given l'utente è un "admin" di "<erogatore>"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con flagPersonalData impostato a "true"
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And "<fruitore>" ha già creato una richiesta di fruizione in stato "ACTIVE" con un documento allegato
+    Then "<fruitore>" crea 1 finalità in stato "DRAFT" per quell'eservice specificando nell'analisi del rischio:
+    # Non PA: Il tipo di dati personali sono particolari e giudiziari, quindi accetta la compilazione con le misure tecniche
+    # PA: Il tipo di dati personali sono particolari e giudiziari, quindi accetta la compilazione senza le misure tecniche
       | usesPersonalData        | YES |
       | personalDataTypes       | GDPR_ART_9 ; GDPR_ART_10 |
+      | confirmPricipleIntegrityAndDiscretion | true       |
+      | dataProtectionMeasuresParticular | <misureDatiParticolari> |
+      | dataProtectionMeasures           | <misureDatiGiudiziari>  |
       | purpose                 | INSTITUTIONAL |
       | institutionalPurpose    | This is a test |
       | legalBasis              | CONSENT |
@@ -387,23 +363,72 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
       | deliveryMethod          | CLEARTEXT |
       | policyProvided          | NO |
       | reasonPolicyNotProvided | This is a test |
-      | confirmPricipleIntegrityAndDiscretion | true |
       | doneDpia                | NO |
       | dataDownload            | NO |
       | purposePursuit          | MERE_CORRECTNESS |
       | checkedExistenceMereCorrectnessInteropCatalogue | true |
+      | isRequestOnBehalfOfThirdParties | <richiestaDiTerzi> |
       | declarationConfirmGDPR  | true |
-    Then la precedente creazione di finalità risulta malformata e riporta gli errori:
+
+    Examples:
+      | erogatore | fruitore | richiestaDiTerzi | misureDatiParticolari | misureDatiGiudiziari |
+      | PA1       | Privato  | null             | Misura 1              | Misura 2            |
+      | PA1       | PA2      | NO               | null                  | null                |
+
+  @adeguamento-analisi-rischio-gdpr-art-9-10
+  Scenario Outline: [RA_GDPR_ART_9_10_COMPILE_7] Richiesta non soddisfatta misure tecniche compilando analisi rischio con dati particolari e giudiziari durante pubblicazione template e-service in ricezione
+  Si verifica che compilando l'analisi del rischio, avendo selezionato dati particolari e dati giudiziari nei dati
+  personali, i campi liberi per le misure tecniche e organizzative siano obbligatori per enti non PA e da non
+  specificare per enti PA. L'analisi del rischio è compilata durante la pubblicazione di un template e-service in
+  modalità ricezione dati. La richiesta dei campi liberi non viene soddisfatta e si verifica errore.
+
+    Given l'utente è un "admin" di "<erogatore>"
+    When l'utente tenta di creare un e-service template in modalità ricezione in stato di PUBLISHED specificando nell'analisi del rischio:
+    # Non PA: Il tipo di dati personali sono particolari e giudiziari, quindi non accetta la compilazione senza le misure tecniche
+    # PA: Il tipo di dati personali sono particolari e giudiziari, quindi non accetta la compilazione con le misure tecniche
+      | usesPersonalData        | YES |
+      | personalDataTypes       | GDPR_ART_9 ; GDPR_ART_10 |
+      | confirmPricipleIntegrityAndDiscretion | true |
+      | dataProtectionMeasuresParticular | <misureDatiParticolari> |
+      | dataProtectionMeasures           | <misureDatiGiudiziari>  |
+      | purpose                 | INSTITUTIONAL |
+      | institutionalPurpose    | This is a test |
+      | legalBasis              | CONSENT |
+      | knowsDataQuantity       | NO |
+      | deliveryMethod          | CLEARTEXT |
+      | policyProvided          | NO |
+      | reasonPolicyNotProvided | This is a test |
+      | doneDpia                | NO |
+      | dataDownload            | NO |
+      | purposePursuit          | MERE_CORRECTNESS |
+      | checkedExistenceMereCorrectnessInteropCatalogue | true |
+      | isRequestOnBehalfOfThirdParties | <richiestaDiTerzi> |
+      | declarationConfirmGDPR  | true |
+    Then la precedente richiesta risulta malformata e riporta gli errori:
     """
-    Risk Analysis did not pass validation
+    <erroreAnalisiRischio>
     """
 
+    Examples:
+      | erogatore | richiestaDiTerzi | misureDatiParticolari | misureDatiGiudiziari | erroreAnalisiRischio                  |
+      | GSP       | null             | null                  | null                 | Risk Analysis did not pass validation |
+      | PA1       | NO               | Misura 1              | Misura 2             | Risk analysis validation failed       |
+
+  @adeguamento-analisi-rischio-gdpr-art-9-10
+  Scenario Outline: [RA_GDPR_ART_9_10_COMPILE_8] Richiesta soddisfatta misure tecniche compilando analisi rischio con dati particolari e giudiziari durante pubblicazione template e-service in ricezione
+  Si verifica che compilando l'analisi del rischio, avendo selezionato dati particolari e dati giudiziari nei dati
+  personali, i campi liberi per le misure tecniche e organizzative siano obbligatori per enti non PA e da non
+  specificare per enti PA. L'analisi del rischio è compilata durante la pubblicazione di un template e-service in
+  modalità ricezione dati. La richiesta dei campi liberi viene soddisfatta.
+
+    Given l'utente è un "admin" di "<erogatore>"
     Then l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED specificando nell'analisi del rischio:
     # Il tipo di dati personali sono particolari e giudiziari, quindi accetta la compilazione con le misure tecniche
       | usesPersonalData        | YES |
       | personalDataTypes       | GDPR_ART_9 ; GDPR_ART_10 |
-      | dataProtectionMeasuresParticular | Un esempio di misura presa |
-      | dataProtectionMeasures  | Un altro esempio di misura presa |
+      | confirmPricipleIntegrityAndDiscretion | true |
+      | dataProtectionMeasuresParticular | <misureDatiParticolari> |
+      | dataProtectionMeasures           | <misureDatiGiudiziari>  |
       | purpose                 | INSTITUTIONAL |
       | institutionalPurpose    | This is a test |
       | legalBasis              | CONSENT |
@@ -411,9 +436,14 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
       | deliveryMethod          | CLEARTEXT |
       | policyProvided          | NO |
       | reasonPolicyNotProvided | This is a test |
-      | confirmPricipleIntegrityAndDiscretion | true |
       | doneDpia                | NO |
       | dataDownload            | NO |
       | purposePursuit          | MERE_CORRECTNESS |
       | checkedExistenceMereCorrectnessInteropCatalogue | true |
+      | isRequestOnBehalfOfThirdParties | <richiestaDiTerzi> |
       | declarationConfirmGDPR  | true |
+
+    Examples:
+      | erogatore | richiestaDiTerzi | misureDatiParticolari | misureDatiGiudiziari |
+      | GSP       | null             | Misura 1              | Misura 2             |
+      | PA1       | NO               | null                  | null                 |
