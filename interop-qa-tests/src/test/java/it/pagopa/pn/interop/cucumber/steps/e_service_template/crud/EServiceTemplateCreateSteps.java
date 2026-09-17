@@ -278,6 +278,7 @@ public class EServiceTemplateCreateSteps {
                 templateSeed.getMode(),
                 creationResponse.getId(),
                 creationResponse.getVersionId(),
+                null,
                 templateSeed.getPersonalData(),
                 templateSeed.getAsyncExchange()
                 ));
