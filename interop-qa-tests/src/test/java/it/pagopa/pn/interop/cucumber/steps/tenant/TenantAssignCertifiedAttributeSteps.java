@@ -123,6 +123,52 @@ public class TenantAssignCertifiedAttributeSteps {
         );
     }
 
+    @When("l'utente tenta di modificare l'attributo certificato discreto di {string} utilizzando un ID inesistente per l'attributo")
+    public void updateTenantCertifiedAttributeWithInvalidAttributeId(String tenantType) {
+        UUID tenantId = identityService.getOrganizationId(tenantType);
+        UUID attributeId = UUID.randomUUID();
+
+        var seed = new UpdateCertifiedDiscreteTenantAttributeSeed();
+        seed.setCertifiedDiscreteValue(100);
+
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getTenantsApi().updateCertifiedDiscreteAttribute(tenantId, attributeId, seed)
+        );
+    }
+
+    @When("l'utente tenta di modificare l'attributo certificato discreto di {string} utilizzando un ID inesistente per il tenant")
+    public void updateTenantCertifiedAttributeWithInvalidTenantId(String tenantType) {
+        UUID tenantId = UUID.randomUUID();
+        UUID attributeId = sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes().get(0).get(
+                sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes().get(0).size() - 1
+        );
+
+        var seed = new UpdateCertifiedDiscreteTenantAttributeSeed();
+        seed.setCertifiedDiscreteValue(100);
+
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getTenantsApi().updateCertifiedDiscreteAttribute(tenantId, attributeId, seed)
+        );
+    }
+
+    @When("l'utente tenta di modificare l'attributo certificato discreto di {string} utilizzando l'ID dell'attributo certificato creato")
+    public void updateTenantCertifiedAttributeWithInvaildAttributeKind(String tenantType) {
+        UUID tenantId = UUID.randomUUID();
+        var certifiedAttribute = sharedStepsContext.getAttributeCommonContext().getCreatedAttributes().get(
+                sharedStepsContext.getAttributeCommonContext().getCreatedAttributes().size() - 1
+        );
+        Assertions.assertEquals(AttributeKind.CERTIFIED, certifiedAttribute.getKind());
+
+        UUID attributeId = certifiedAttribute.getId();
+
+        var seed = new UpdateCertifiedDiscreteTenantAttributeSeed();
+        seed.setCertifiedDiscreteValue(100);
+
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getTenantsApi().updateCertifiedDiscreteAttribute(tenantId, attributeId, seed)
+        );
+    }
+
     @When("l'attributo certificato discreto è assegnato a {string} e ha il valore discreto di {int}")
     public void checkTenantCertifiedAttribute(String tenantType, Integer discreteValue) {
         UUID tenantId = identityService.getOrganizationId(tenantType);
@@ -137,11 +183,14 @@ public class TenantAssignCertifiedAttributeSteps {
             res -> res.is2xxSuccessful()
                 && ((CertifiedAttributesResponse) sharedStepsContext.getHttpCallExecutor().getResponse())
                     .getAttributes().stream()
-                    .anyMatch(attr -> attr.getId().equals(attributeId)),
+                                .anyMatch(attr -> attr.getId().equals(attributeId)
+                                        && attr instanceof CertifiedDiscreteTenantAttribute
+                                        && discreteValue.equals(((CertifiedDiscreteTenantAttribute) attr).getDiscreteValue())),
                 "There was an error while retrieving the attributes"
         );
 
-        CertifiedAttributesResponse attrs = clientTokenConfigurator.getTenantsApi().getCertifiedAttributes(tenantId);
+        CertifiedAttributesResponse attrs = (CertifiedAttributesResponse) sharedStepsContext.getHttpCallExecutor().getResponse();
+
         CertifiedDiscreteTenantAttribute discrCertAttr = attrs.getAttributes().stream()
             .filter(attr2 -> attr2.getId().equals(attributeId))
             .findFirst()
