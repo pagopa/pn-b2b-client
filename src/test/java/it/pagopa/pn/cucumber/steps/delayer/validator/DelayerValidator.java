@@ -144,12 +144,6 @@ public class DelayerValidator {
                 FROZEN_POLLING_MAX_MINUTES
         );
 
-        if (frozenExpected.size() != actualFrozen.size()) {
-            validSeeds.forEach(seed -> registerFailureIfAbsent(seed,
-                    "Mismatch congelati - attesi: %d, trovati: %d".formatted(frozenExpected.size(), actualFrozen.size())));
-            return;
-        }
-
         frozenExpected.forEach(expectedDelivery ->
                 actualFrozen.stream()
                         .filter(actualDelivery -> actualDelivery.getRequestId().equals(expectedDelivery.getRequestId()))
@@ -162,16 +156,58 @@ public class DelayerValidator {
                 expectedDelivery.setSk(utils.calculateSk(WorkflowSteps.EVALUATE_SENDER_LIMIT, expectedDelivery))
         );
 
-        Set<Map<String, String>> expectedSet = toComparableMapList(frozenExpected, step).stream().collect(Collectors.toSet());
-        Set<Map<String, String>> actualSet = toComparableMapList(actualFrozen, step).stream().collect(Collectors.toSet());
+        List<String> problems = diffFrozen(frozenExpected, actualFrozen, step);
 
-        Set<Map<String, String>> missing = new HashSet<>(expectedSet);
-        missing.removeAll(actualSet);
-
-        if (!missing.isEmpty()) {
+        if (!problems.isEmpty()) {
             validSeeds.forEach(seed ->
-                    registerFailureIfAbsent(seed, "Differenze tra congelati attesi e trovati: " + missing));
+                    registerFailureIfAbsent(seed, "Differenze tra congelati attesi e trovati (attesi: %d, trovati: %d) -> %s"
+                            .formatted(frozenExpected.size(), actualFrozen.size(), problems)));
         }
+    }
+
+    /**
+     * Confronto campo-per-campo per requestId, sul modello di DelayerPaperDeliveryUtils.compare():
+     * a differenza del confronto per set-equality precedente, segnala esattamente quale campo diverge
+     * (es. prepareRequestDate expected=..., actual=...) invece di limitarsi a dire "non trovato".
+     */
+    private List<String> diffFrozen(List<DelayerPaperDelivery> expected, List<DelayerPaperDelivery> actual, WorkflowSteps step) {
+        Map<String, Map<String, String>> expectedByReqId = toComparableMapList(expected, step).stream()
+                .collect(Collectors.toMap(m -> m.get("requestId"), m -> m, (a, b) -> a, LinkedHashMap::new));
+        Map<String, Map<String, String>> actualByReqId = toComparableMapList(actual, step).stream()
+                .collect(Collectors.toMap(m -> m.get("requestId"), m -> m, (a, b) -> a, LinkedHashMap::new));
+
+        List<String> problems = new ArrayList<>();
+
+        expectedByReqId.forEach((requestId, expectedMap) -> {
+            Map<String, String> actualMap = actualByReqId.get(requestId);
+            if (actualMap == null) {
+                problems.add("Atteso congelato ma non trovato tra i reali (requestId=" + requestId + ")");
+                return;
+            }
+
+            Set<String> keys = new LinkedHashSet<>();
+            keys.addAll(expectedMap.keySet());
+            keys.addAll(actualMap.keySet());
+
+            List<String> diffs = new ArrayList<>();
+            for (String key : keys) {
+                String expectedValue = expectedMap.get(key);
+                String actualValue = actualMap.get(key);
+                if (!Objects.equals(expectedValue, actualValue)) {
+                    diffs.add(key + " [expected=" + expectedValue + ", actual=" + actualValue + "]");
+                }
+            }
+
+            if (!diffs.isEmpty()) {
+                problems.add("Differenze per requestId=" + requestId + " -> " + diffs);
+            }
+        });
+
+        actualByReqId.keySet().stream()
+                .filter(requestId -> !expectedByReqId.containsKey(requestId))
+                .forEach(requestId -> problems.add("Trovato tra i congelati reali ma non atteso (requestId=" + requestId + ")"));
+
+        return problems;
     }
 
     private void registerFailureIfAbsent(String seed, String message) {

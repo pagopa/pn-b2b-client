@@ -1,10 +1,10 @@
 package it.pagopa.pn.cucumber.steps.delayer.utils;
 
+import io.cucumber.spring.ScenarioScope;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDelivery;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
 import lombok.RequiredArgsConstructor;
-import io.cucumber.spring.ScenarioScope;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -12,7 +12,16 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -384,6 +393,7 @@ public class DelayerPaperDeliveryUtils {
     public static List<DelayerPaperDelivery> sortByPriority(List<DelayerPaperDelivery> notifiche) {
         List<DelayerPaperDelivery> rs = new ArrayList<>();
         List<DelayerPaperDelivery> secondi = new ArrayList<>();
+        List<DelayerPaperDelivery> residuiPrioritari = new ArrayList<>();
         List<DelayerPaperDelivery> altri = new ArrayList<>();
         List<DelayerPaperDelivery> comunicazioniBonarie = new ArrayList<>();
 
@@ -396,6 +406,8 @@ public class DelayerPaperDeliveryUtils {
                 comunicazioniBonarie.add(n);
             } else if (att == 1) {
                 secondi.add(n);
+            } else if (Boolean.TRUE.equals(n.getSkipSenderLimit())) {
+                residuiPrioritari.add(n);
             } else {
                 altri.add(n);
             }
@@ -409,12 +421,15 @@ public class DelayerPaperDeliveryUtils {
 
         rs.sort(byPrepare);
         secondi.sort(byPrepare);
+        // Come RS/secondi tentativi: ordine tecnico per data di presa in carico, non per senderPriority.
+        residuiPrioritari.sort(byPrepare);
         altri.sort(bySenderPriorityAndNotification);
         comunicazioniBonarie.sort(byPrepare);
 
         List<DelayerPaperDelivery> ordinati = new ArrayList<>();
         ordinati.addAll(rs);
         ordinati.addAll(secondi);
+        ordinati.addAll(residuiPrioritari);
         ordinati.addAll(altri);
         ordinati.addAll(comunicazioniBonarie);
         return ordinati;
@@ -480,7 +495,7 @@ public class DelayerPaperDeliveryUtils {
                 return String.join("~", priority, date, requestId);
             }
 
-            case  SENT_TO_PREPARE_PHASE_2 -> {
+            case SENT_TO_PREPARE_PHASE_2 -> {
                 String priority = calculatePriority(n);
                 String date = n.getPrepareRequestDate();
                 return String.join("~", priority, date, requestId);
@@ -491,6 +506,12 @@ public class DelayerPaperDeliveryUtils {
     }
 
     public String calculatePriority(DelayerPaperDelivery n) {
+//         I residui prioritari (skipSenderLimit=true) hanno la stessa coppia productType/attempt di un primo
+//         tentativo ordinario, quindi vanno intercettati prima di ricadere sulla mappa di priorità standard.
+        if (Boolean.TRUE.equals(n.getSkipSenderLimit()) && !n.isRS() && !n.isSecondAttempt() && !n.isInformalCommunication()) {
+            return "3";
+        }
+
         String key = String.format("PRODUCT_%s.ATTEMPT_%d.%s", n.getProductType(), Integer.parseInt(n.getAttempt()),
                 n.isInformalCommunication() ? "INFORMAL" : "LEGAL");
 
