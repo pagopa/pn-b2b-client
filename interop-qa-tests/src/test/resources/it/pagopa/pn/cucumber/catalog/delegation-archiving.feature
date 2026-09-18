@@ -1631,7 +1631,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     Examples:
       | tenant |
       | PA1    |
-      | PA1    |
+      | PA2    |
 
   @sad-path
   Scenario Outline: [DELEGATION_ARCHIVING_CLONING_1.2] Ente delegato e delegante NON possono duplicare un e-service in delega in erogazione in stato ARCHIVING o ARCHIVING_SUSPENDED
