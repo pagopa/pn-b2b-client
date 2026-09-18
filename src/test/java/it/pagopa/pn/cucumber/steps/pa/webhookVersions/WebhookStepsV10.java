@@ -64,8 +64,6 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
         return (FullSentNotificationV23) getFullSentNotification();
     }
 
-    //TODO MATTEO: controllare per possibili metodi non implementati
-
     @Override
     public void initializeStreamRequest(String action, String pa) {
         streamRequest = new StreamCreationRequest();

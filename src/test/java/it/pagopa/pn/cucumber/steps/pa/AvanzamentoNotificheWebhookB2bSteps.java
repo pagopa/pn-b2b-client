@@ -265,7 +265,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         setPaWebhook(pa);
         updateApiKeyForStream();
         StreamVersion streamVersion = getStreamVersion(version);
-//        createStream(pa, streamVersion, getGroupForStream(position, pa), false, List.of("DEFAULT"), false, null);//TODO MATTEO STREAM TEST
         createStream(pa, streamVersion, getGroupForStream(position, pa), false, null, false, null);
     }
 
@@ -734,7 +733,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
     //V10 only
-    //TODO MATTEO: non sono convinto dell'implementazione di questo step, a me sembra che invece controlli proprio che sia uguale nel verifyAssertions
     @Then("Si verifica che l'elemento di timeline {string} dello stream con versione {string} di {string} non abbia il timestamp uguale a quella della notifica")
     public void readStreamTimelineElementAndVerify(String timelineEventCategory, String version, String pa) {
         //Il controllo viene effettuato

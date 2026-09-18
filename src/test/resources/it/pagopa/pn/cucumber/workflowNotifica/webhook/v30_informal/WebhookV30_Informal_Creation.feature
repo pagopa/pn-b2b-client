@@ -58,7 +58,7 @@ Feature: verifica creazione stream
 
 
   #https://pagopa.atlassian.net/browse/PN-19952
-  # Test che verifica che se viene creato uno stream con waitForAccepted a true e filtro timeline impostato su REQUEST_ACCEPTED allora lo stream viene creato con successo
+  # Test che verifica che se viene creato uno stream con waitForAccepted a true e filtro timeline con REQUEST_ACCEPTED allora lo stream viene creato con successo
   @webhookV30Informal @precondition @cleanWebhook @webhook2
   Scenario Outline: [B2B-STREAM_PN_19952_2_OK] Creazione di uno stream con waitForAccepted a true e filtro timeline impostato. Si verifica che lo stream venga creato con successo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V30"
@@ -77,7 +77,6 @@ Feature: verifica creazione stream
     Examples:
       | filter                               |
       | REQUEST_ACCEPTED                     |
-      | SEND_ANALOG_MESSAGE                  |
       | SEND_ANALOG_MESSAGE,REQUEST_ACCEPTED |
 
   @webhookV30Informal @precondition @cleanWebhook @webhook2
@@ -219,7 +218,7 @@ Feature: verifica creazione stream
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    When si creano i nuovi stream per il "Comune_Multi" con versione "V30" e filtro status "DEFAULT"
+    When si creano i nuovi stream per il "Comune_Multi" con versione "V30"
     Then lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V30"
     And si cancellano gli stream creati per il "Comune_Multi" con versione "V30"
     And viene verificata la corretta cancellazione con versione "V30"
