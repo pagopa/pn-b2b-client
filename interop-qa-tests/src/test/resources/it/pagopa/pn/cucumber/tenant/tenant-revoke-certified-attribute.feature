@@ -33,13 +33,12 @@ Feature: Revoca di un attributo certificato posseduto da uno specifico aderente
 
   @certifiedDiscreteAttribute
   @certifiedDiscreteAttributeFlagOn
-  Scenario Outline: [TENANT_REVOKE_CERTIFIED_DISCRETE_ATTRIBUTE_1] Verifica che solo l'admin di un ente certificatore possa
-  revocare un attributo certificato discreto.
+  Scenario Outline: [TENANT_REVOKE_CERTIFIED_DISCRETE_ATTRIBUTE_1] Verifica che solo l'admin di un ente certificatore possa revocare un attributo certificato discreto.
     Given l'utente è un "admin" di "GSP"
     And GSP ha già creato 1 attributo CERTIFIED_DISCRETE
     And l'utente assegna a "PA1" l'attributo certificato discreto precedentemente creato con un valore discreto di 100
     When l'utente è un "<ruolo>" di "<ente>"
-    And l'utente revoca a "PA1" l'attributo certificato discreto precedentemente creato e assegnato
+    And l'utente tenta di revocare a "PA1" l'attributo certificato discreto precedentemente creato e assegnato
     Then si ottiene status code <statusCode>
 
     Examples:
@@ -60,7 +59,7 @@ Feature: Revoca di un attributo certificato posseduto da uno specifico aderente
     Given l'utente è un "admin" di "GSP"
     And GSP ha già creato 1 attributo CERTIFIED_DISCRETE
     And si ottiene status code 200
-    When l'utente revoca a "PA1" l'attributo certificato discreto precedentemente creato ma non associato
+    When l'utente tenta di revocare a "PA1" l'attributo certificato discreto precedentemente creato ma non associato
     Then si ottiene status code 404
 
   @certifiedDiscreteAttribute
@@ -70,7 +69,7 @@ Feature: Revoca di un attributo certificato posseduto da uno specifico aderente
     Given l'utente è un "admin" di "GSP"
     And GSP ha già creato 1 attributo CERTIFIED_DISCRETE
     And l'utente assegna a "PA1" l'attributo certificato discreto precedentemente creato con un valore discreto di 100
-    When l'utente revoca l'attributo certificato discreto precedentemente creato ad un ente non esistente
+    When l'utente tenta di revocare l'attributo certificato discreto precedentemente creato ad un ente non esistente
     Then si ottiene lo status code 404
 
   @certifiedDiscreteAttribute
@@ -82,5 +81,5 @@ Feature: Revoca di un attributo certificato posseduto da uno specifico aderente
     And l'utente assegna a "PA1" l'attributo certificato discreto precedentemente creato con un valore discreto di 100
     And l'utente revoca a "PA1" l'attributo certificato discreto precedentemente creato e assegnato
     And si ottiene lo status code 200
-    When l'utente revoca a "PA1" l'attributo certificato discreto precedentemente creato e assegnato
+    When l'utente tenta di revocare a "PA1" l'attributo certificato discreto precedentemente creato e assegnato
     Then si ottiene lo status code 409

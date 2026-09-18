@@ -23,6 +23,9 @@ import static java.util.Objects.isNull;
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class HttpCallExecutor implements IHttpExecutor {
+
+    private final String ONGOING_OPERATION_CONFLICT_ERROR = "Request conflicts with an ongoing operation on the same resource";
+
     private HttpStatus responseStatus;
     private String errorMessage;
     private Object response;
@@ -87,6 +90,12 @@ public class HttpCallExecutor implements IHttpExecutor {
             errorMessage = e.getMessage();
         }
         return responseStatus;
+    }
+
+    @Override
+    public Boolean ongoingOperationConflict() {
+        return errorMessage != null &&
+                errorMessage.contains(ONGOING_OPERATION_CONFLICT_ERROR);
     }
 
     public void setRawResponse(int statusCode, Object rawBody) {
