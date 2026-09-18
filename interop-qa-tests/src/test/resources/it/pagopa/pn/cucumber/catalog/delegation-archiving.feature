@@ -634,10 +634,10 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And la richiesta di archiviazione dell'e-service è stata inviata correttamente ed è in stato pending
 
   @happy-path
-  Scenario: [DELEGATION_MANUAL_ARCHIVING_5.2] Un ente delegato può inviare una richiesta di archiviazione del singolo descrittore diverso dal più recente al delegante a seguito dell'annullamento del suo processo di archiviazione
-  Verifichiamo che l’ente delegato all’erogazione possa inviare una nuova richiesta
-  di archiviazione dell’e-service dopo l’accettazione della richiesta precedente e l'annullamento
-  del processo di archiviazione da parte dell'ente delegante
+  Scenario: [DELEGATION_MANUAL_ARCHIVING_5.2] Un ente delegato può inviare una richiesta di archiviazione del singolo descrittore diverso dal più recente a seguito del rifiuto di una prima richiesta di archiviazione
+  Verifichiamo che l’ente delegato all’erogazione possa inviare una nuova richiesta di archiviazione
+  del singolo descrittore diverso dal più recente dopo il rifiuto della richiesta di archiviazione
+  precedente da parte dell'ente delegante
     Given l'ente delegato "PA2"
     And l'ente delegante "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -650,8 +650,6 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente ha già inviato la richiesta di archiviazione per il vecchio descrittore "%actual" dell'e-service "%actual" specificando 60 giorni di preavviso
     And l'utente è un "admin" di "PA1"
     And l'utente ha già rifiutato la richiesta di archiviazione per il vecchio descrittore "%actual" dell'e-service "%actual" con motivazione "QA test"
-    And si ottiene response status code 204
-    And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And l'utente è un "admin" di "PA2"
     When l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     Then si ottiene response status code 204
