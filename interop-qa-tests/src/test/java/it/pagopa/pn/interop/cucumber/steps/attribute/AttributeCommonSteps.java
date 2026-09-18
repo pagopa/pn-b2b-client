@@ -367,12 +367,25 @@ public class AttributeCommonSteps {
 
     private void hasCertifiedDiscreteAttribute(String tenantType, boolean hasAttribute) {
 
+        final int maxDiscreteValue = 1_000_000_000;
+
         UUID tenantId = identityService.getOrganizationId(tenantType);
         Tenant tenant = clientTokenConfigurator.getTenantsApi().getTenant(tenantId);
 
         Optional<CertifiedTenantAttribute> discreteAttrOptional = tenant.getAttributes().getCertified()
                 .stream()
-                .filter(attr -> Objects.equals(attr.getKind().getValue(), AttributeKind.CERTIFIED_DISCRETE.getValue()))
+                .filter(attr -> Objects.equals(attr.getKind().getValue(), AttributeKind.CERTIFIED_DISCRETE.getValue())
+                        // DEBITO TECNICO: nella prima versione della funzionalità degli attributi certificati discreti
+                        // non era possibile crearne di nuovi: l’unico attributo disponibile era quello ISTAT, aggiunto
+                        // automaticamente dal sistema.
+                        // Nelle versioni successive è stata introdotta la possibilità di creare attributi certificati discreti.
+                        // Tra gli scenari di test, alcuni verificano il valore massimo dell’attributo discreto.
+                        // Di conseguenza, negli scenari preesistenti, se l’attributo recuperato rientra tra questi, quelli
+                        // che utilizzano valori calcolati (ad esempio, valore discreto + 1) vanno in errore, poiché il
+                        // valore risultante non è consentito.
+                        && attr.getDiscreteValue() < maxDiscreteValue
+                        && attr.getRevocationTimestamp() == null
+                )
                 .findFirst();
 
         CertifiedDiscreteTenantAttribute discreteAttr = (CertifiedDiscreteTenantAttribute) discreteAttrOptional.orElse(null);
