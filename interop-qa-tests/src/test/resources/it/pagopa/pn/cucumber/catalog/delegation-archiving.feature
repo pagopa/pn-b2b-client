@@ -1510,8 +1510,8 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
-    And l'utente è un "admin" di "PA2"
     And l'ente "PA1" con ruolo "admin" revoca la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
     When l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
     Then si ottiene response status code 409
 
