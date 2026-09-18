@@ -495,4 +495,13 @@ public class PaperTrackerSteps {
         String consolidatorHandlingTimestamp = trackingsResponse.getTrackings().get(lastPcRetryIndex).getEvents().stream().filter(e -> e.getStatusCode().equals("P000")).map(PaperEvent::getStatusTimestamp).findFirst().orElse(null);
         Assertions.assertEquals(consolidatorHandlingTimestamp, trackingsResponse.getTrackings().get(lastPcRetryIndex).getPaperStatus().getPaperDeliveryTimestamp());
     }
+
+    @And("si verifica che non sia presente nessun retry per il tracking")
+    public void verifyNoRetryTriggered() {
+        TrackingsRequest request = new TrackingsRequest().trackingIds(trackingKeys);
+        TrackingsResponse response = paperTrackerClient.retrieveTrackerEvents(request);
+        boolean hasRetry = response != null && response.getTrackings() != null && response.getTrackings().stream()
+                .anyMatch(t -> t.getTrackingId() != null && !t.getTrackingId().endsWith(".PCRETRY_0"));
+        assertThat(hasRetry).as("Non deve essere generato alcun retry per la notifica").isFalse();
+    }
 }
