@@ -1270,6 +1270,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'utente è un "admin" di "PA1"
     And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
@@ -1293,6 +1294,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'utente è un "admin" di "PA1"
     And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
