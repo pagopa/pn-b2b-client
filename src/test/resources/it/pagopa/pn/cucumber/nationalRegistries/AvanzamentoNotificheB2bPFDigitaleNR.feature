@@ -237,7 +237,7 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
 
 
   @mailRejected
-  Scenario: Controllo di ko permanente PF
+  Scenario: [mailRejected_1] Controllo di ko permanente PF
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -253,8 +253,10 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details_digitalAddress       | {"address": "-indirizzo@gmail.com", "type": "PEC"} |
       | details_deliveryDetailCode   | C011                                               |
       | details_recIndex             | 0                                                  |
+    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
 
-  Scenario: Controllo di ko permanente PG
+  @mailRejected
+  Scenario: [mailRejected_2] Controllo di ko permanente PG
     Given si predispone addressbook per l'utente "CucumberSpa"
     And vengono rimossi eventuali recapiti presenti per l'utente
     Given viene generata una nuova notifica
@@ -273,5 +275,5 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details_digitalAddress       | {"address": "-indirizzo@gmail.com", "type": "PEC"} |
       | details_deliveryDetailCode   | C011                                               |
       | details_recIndex             | 0                                                  |
-
+    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
 
