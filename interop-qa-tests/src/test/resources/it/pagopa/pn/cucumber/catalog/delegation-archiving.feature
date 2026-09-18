@@ -1358,8 +1358,10 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "admin" di "PA2"
     And l'utente ha già inviato la richiesta di archiviazione per l'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
     And "PA2" tenta la creazione di una versione in DRAFT per quell'e-service
-    And l'utente aggiorna alcuni parametri di quel descrittore
     And "PA2" ha già caricato un'interfaccia per quel descrittore
+    And l'utente aggiorna alcuni parametri di quel descrittore
+    And si ottiene response status code 200
+    And l'e-service è in stato "DRAFT"
     When l'utente pubblica l'e-service
     Then si ottiene response status code 200
     And l'e-service è in stato "WAITING_FOR_APPROVAL"
@@ -1378,8 +1380,10 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "admin" di "PA2"
     And l'utente ha già inviato la richiesta di archiviazione per l'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
     And "PA2" tenta la creazione di una versione in DRAFT per quell'e-service
-    And l'utente aggiorna alcuni parametri di quel descrittore
     And "PA2" ha già caricato un'interfaccia per quel descrittore
+    And l'utente aggiorna alcuni parametri di quel descrittore
+    And si ottiene response status code 200
+    And l'e-service è in stato "DRAFT"
     And l'utente pubblica l'e-service
     And l'e-service è in stato "WAITING_FOR_APPROVAL"
     And "PA1" approva la pubblicazione dell'e-service
@@ -1402,8 +1406,10 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "admin" di "PA2"
     And l'utente ha già inviato la richiesta di archiviazione per l'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
     And "PA2" tenta la creazione di una versione in DRAFT per quell'e-service
-    And l'utente aggiorna alcuni parametri di quel descrittore
     And "PA2" ha già caricato un'interfaccia per quel descrittore
+    And l'utente aggiorna alcuni parametri di quel descrittore
+    And si ottiene response status code 200
+    And l'e-service è in stato "DRAFT"
     And l'utente pubblica l'e-service
     And l'e-service è in stato "WAITING_FOR_APPROVAL"
     When l'utente delegante accetta la richiesta di archiviazione relativa all'e-service "%actual"
@@ -1424,8 +1430,10 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'ente "PA2" accetta la delega in erogazione con successo
     And l'utente è un "admin" di "PA2"
     And "PA2" tenta la creazione di una versione in DRAFT per quell'e-service
-    And l'utente aggiorna alcuni parametri di quel descrittore
     And "PA2" ha già caricato un'interfaccia per quel descrittore
+    And l'utente aggiorna alcuni parametri di quel descrittore
+    And si ottiene response status code 200
+    And l'e-service è in stato "DRAFT"
     And l'utente pubblica l'e-service
     And l'e-service è in stato "WAITING_FOR_APPROVAL"
     When l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
