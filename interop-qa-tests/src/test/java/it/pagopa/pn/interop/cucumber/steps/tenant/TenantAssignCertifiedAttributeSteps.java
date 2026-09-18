@@ -31,11 +31,16 @@ public class TenantAssignCertifiedAttributeSteps {
         UUID lastAttributeId = sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes().get(0).get(
                 sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes().get(0).size() - 1
         );
-        sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getTenantsApi().addCertifiedAttribute(
-                        tenantId,
-                        new CertifiedTenantAttributeSeed().id(lastAttributeId)
-                )
+
+        sharedStepsContext.getPollingService().makePolling(
+                () -> sharedStepsContext.getHttpCallExecutor().performCall(
+                        () -> clientTokenConfigurator.getTenantsApi().addCertifiedAttribute(
+                                tenantId,
+                                new CertifiedTenantAttributeSeed().id(lastAttributeId)
+                        )
+                ),
+                HttpStatus::is2xxSuccessful,
+                "There was an error while assigning the certified attribute"
         );
 
         if(sharedStepsContext.getHttpCallExecutor().getResponseStatus().is2xxSuccessful()){
@@ -53,14 +58,52 @@ public class TenantAssignCertifiedAttributeSteps {
         UUID tenantId = identityService.getOrganizationId(tenantType);
         sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes().forEach(attributeIDs -> {
             attributeIDs.forEach(attributeId -> {
-                sharedStepsContext.getHttpCallExecutor().performCall(
-                        () -> clientTokenConfigurator.getTenantsApi().addCertifiedAttribute(
-                                tenantId,
-                                new CertifiedTenantAttributeSeed().id(attributeId)
-                        )
+
+                sharedStepsContext.getPollingService().makePolling(
+                        () -> sharedStepsContext.getHttpCallExecutor().performCall(
+                                () -> clientTokenConfigurator.getTenantsApi().addCertifiedAttribute(
+                                        tenantId,
+                                        new CertifiedTenantAttributeSeed().id(attributeId)
+                                )
+                        ),
+                        HttpStatus::is2xxSuccessful,
+                        "There was an error assigning the certified attribute"
                 );
             });
         });
+    }
+
+    @When("l'utente tenta di assegnare a {string} l'attributo certificato discreto precedentemente creato con un valore discreto di {int}")
+    public void tryToAssignCertifiedDiscreteAttribute(String tenantType, Integer discreteValue) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        UUID tenantId = identityService.getOrganizationId(tenantType);
+        UUID lastAttributeId = sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes().get(0).get(
+                sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes().get(0).size() - 1
+        );
+
+        sharedStepsContext.getPollingService().makePolling(
+                () -> sharedStepsContext.getHttpCallExecutor().performCall(
+                        () -> clientTokenConfigurator.getAttributeApiClient().getAttributeById(lastAttributeId)),
+                res -> {
+                    return res.is2xxSuccessful() || !sharedStepsContext.getHttpCallExecutor().ongoingOperationConflict();
+                },
+                "Impossibile recuperare l'attributo");
+
+        sharedStepsContext.getPollingService().makePolling(
+                () -> sharedStepsContext.getHttpCallExecutor().performCall(
+                        () -> clientTokenConfigurator.getTenantsApi().addCertifiedDiscreteAttribute(
+                                tenantId,
+                                new CertifiedDiscreteTenantAttributeSeed()
+                                        .id(lastAttributeId)
+                                        .certifiedDiscreteValue(discreteValue)
+                        )
+                ),
+                res -> {
+                    return res.is2xxSuccessful() || !sharedStepsContext.getHttpCallExecutor().ongoingOperationConflict();
+                },
+                "Error while assigning certified discrete attribute"
+        );
+
     }
 
     @When("l'utente assegna a {string} l'attributo certificato discreto precedentemente creato con un valore discreto di {int}")
@@ -77,13 +120,17 @@ public class TenantAssignCertifiedAttributeSteps {
                 res -> res != HttpStatus.INTERNAL_SERVER_ERROR,
                 "Impossibile recuperare l'attributo");
 
-        sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getTenantsApi().addCertifiedDiscreteAttribute(
-                        tenantId,
-                        new CertifiedDiscreteTenantAttributeSeed()
-                                .id(lastAttributeId)
-                                .certifiedDiscreteValue(discreteValue)
-                )
+        sharedStepsContext.getPollingService().makePolling(
+                () -> sharedStepsContext.getHttpCallExecutor().performCall(
+                        () -> clientTokenConfigurator.getTenantsApi().addCertifiedDiscreteAttribute(
+                                tenantId,
+                                new CertifiedDiscreteTenantAttributeSeed()
+                                        .id(lastAttributeId)
+                                        .certifiedDiscreteValue(discreteValue)
+                        )
+                ),
+                res -> res.is2xxSuccessful() || !sharedStepsContext.getHttpCallExecutor().ongoingOperationConflict(),
+                "There was an error while retrieving the attributes"
         );
 
         if(sharedStepsContext.getHttpCallExecutor().getResponseStatus().is2xxSuccessful()){
@@ -98,7 +145,7 @@ public class TenantAssignCertifiedAttributeSteps {
                     "There was an error while retrieving the attributes"
             );
 
-            CertifiedAttributesResponse attrs = clientTokenConfigurator.getTenantsApi().getCertifiedAttributes(tenantId);
+            CertifiedAttributesResponse attrs = (CertifiedAttributesResponse) sharedStepsContext.getHttpCallExecutor().getResponse();
             CertifiedDiscreteTenantAttribute discrCertAttr = attrs.getAttributes().stream()
                     .filter(attr2 -> attr2.getId().equals(lastAttributeId))
                     .findFirst()
@@ -118,8 +165,12 @@ public class TenantAssignCertifiedAttributeSteps {
         UpdateCertifiedDiscreteTenantAttributeSeed seed = new UpdateCertifiedDiscreteTenantAttributeSeed();
         seed.setCertifiedDiscreteValue(discreteValue);
 
-        sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getTenantsApi().updateCertifiedDiscreteAttribute(tenantId, attributeId, seed)
+        sharedStepsContext.getPollingService().makePolling(
+                () -> sharedStepsContext.getHttpCallExecutor().performCall(
+                        () -> clientTokenConfigurator.getTenantsApi().updateCertifiedDiscreteAttribute(tenantId, attributeId, seed)
+                ),
+                res -> res.is2xxSuccessful() || !sharedStepsContext.getHttpCallExecutor().ongoingOperationConflict(),
+                "There was an error updating the certified discrete attribute"
         );
     }
 
@@ -131,8 +182,12 @@ public class TenantAssignCertifiedAttributeSteps {
         var seed = new UpdateCertifiedDiscreteTenantAttributeSeed();
         seed.setCertifiedDiscreteValue(100);
 
-        sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getTenantsApi().updateCertifiedDiscreteAttribute(tenantId, attributeId, seed)
+        sharedStepsContext.getPollingService().makePolling(
+                () -> sharedStepsContext.getHttpCallExecutor().performCall(
+                        () -> clientTokenConfigurator.getTenantsApi().updateCertifiedDiscreteAttribute(tenantId, attributeId, seed)
+                ),
+                HttpStatus::is4xxClientError,
+                "There was an error while updating the attribute"
         );
     }
 
@@ -146,8 +201,12 @@ public class TenantAssignCertifiedAttributeSteps {
         var seed = new UpdateCertifiedDiscreteTenantAttributeSeed();
         seed.setCertifiedDiscreteValue(100);
 
-        sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getTenantsApi().updateCertifiedDiscreteAttribute(tenantId, attributeId, seed)
+        sharedStepsContext.getPollingService().makePolling(
+                () -> sharedStepsContext.getHttpCallExecutor().performCall(
+                        () -> clientTokenConfigurator.getTenantsApi().updateCertifiedDiscreteAttribute(tenantId, attributeId, seed)
+                ),
+                HttpStatus::is4xxClientError,
+                "There was an error while updating the attribute"
         );
     }
 
@@ -164,8 +223,12 @@ public class TenantAssignCertifiedAttributeSteps {
         var seed = new UpdateCertifiedDiscreteTenantAttributeSeed();
         seed.setCertifiedDiscreteValue(100);
 
-        sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getTenantsApi().updateCertifiedDiscreteAttribute(tenantId, attributeId, seed)
+        sharedStepsContext.getPollingService().makePolling(
+                () -> sharedStepsContext.getHttpCallExecutor().performCall(
+                        () -> clientTokenConfigurator.getTenantsApi().updateCertifiedDiscreteAttribute(tenantId, attributeId, seed)
+                ),
+                HttpStatus::is4xxClientError,
+                "There was an error while updating the attribute"
         );
     }
 
