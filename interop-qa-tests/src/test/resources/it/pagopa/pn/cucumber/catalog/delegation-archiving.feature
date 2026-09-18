@@ -1387,10 +1387,13 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente pubblica l'e-service
     And l'e-service è in stato "WAITING_FOR_APPROVAL"
     And "PA1" approva la pubblicazione dell'e-service
+    And l'e-service è in stato "PUBLISHED"
+    And l'utente è un "admin" di "PA1"
     When l'utente delegante accetta la richiesta di archiviazione relativa all'e-service "%actual"
-    Then si ottiene response status code 200
+    Then si ottiene response status code 204
     And la richiesta di archiviazione dell'e-service non è presente
     And l'e-service è in stato "ARCHIVING"
+    And la vecchia versione dell'e-service è in stato "ARCHIVED"
 
   @happy-path
   Scenario: [DELEGATION_MANUAL_ARCHIVING_NEW_VERSION_CANCELLATION_1.1] L'accettazione di una richiesta di archiviazione dell'e-service elimina l'ultima versione dell'e-service in stato `WAITING_FOR_APPROVAL`
