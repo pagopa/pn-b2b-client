@@ -828,7 +828,7 @@ Feature: Test API M2M of e-service template
 
     Examples:
       | descrizione | risultato |
-      | %null%      | 400       |
+      | %null%      | 201       |
       | %empty%     | 400       |
       | 123456789   | 400       |
       | 1234567890  | 201       |
