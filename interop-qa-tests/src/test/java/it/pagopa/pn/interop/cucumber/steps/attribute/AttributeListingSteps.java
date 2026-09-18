@@ -140,6 +140,8 @@ public class AttributeListingSteps {
                     "Error while retreiving attribute listing"
             );
 
+            Assertions.assertTrue(httpCallExecutor.getResponseStatus().is2xxSuccessful(), "Expected 2xx successful status code for attribute listing");
+
             Attributes response = (Attributes) httpCallExecutor.getResponse();
             allAttributes.addAll(response.getResults());
             totalCount = response.getPagination().getTotalCount();
