@@ -142,7 +142,7 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
       | GSP2    | PA          |
       | Privato | PA          |
 
-  @adeguamento-analisi-rischio-gdpr-art-9-10
+  @adeguamento-analisi-rischio @adeguamento-analisi-rischio-gdpr-art-9-10
   Scenario Outline: [RA_GDPR_ART_9_10_COMPILE_1] Richiesta non soddisfatta misure tecniche compilando analisi rischio con dati particolari e giudiziari in finalità fruizione
   Si verifica che compilando l'analisi del rischio, avendo selezionato dati particolari e dati giudiziari nei dati
   personali, i campi liberi per le misure tecniche e organizzative siano obbligatori per enti non PA e da non
@@ -184,7 +184,7 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
       | PA1       | Privato  | null             | null                  | null                 | Expected   |
       | PA1       | PA2      | NO               | Misura 1              | Misura 2             | Unexpected |
 
-  @adeguamento-analisi-rischio-gdpr-art-9-10
+  @adeguamento-analisi-rischio @adeguamento-analisi-rischio-gdpr-art-9-10
   Scenario Outline: [RA_GDPR_ART_9_10_COMPILE_2] Richiesta soddisfatta misure tecniche compilando analisi rischio con dati particolari e giudiziari in finalità fruizione
   Si verifica che compilando l'analisi del rischio, avendo selezionato dati particolari e dati giudiziari nei dati
   personali, i campi liberi per le misure tecniche e organizzative siano obbligatori per enti non PA e da non
@@ -221,7 +221,7 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
       | PA1       | Privato  | null             | Misura 1              | Misura 2             |
       | PA1       | PA2      | NO               | null                  | null                 |
 
-  @adeguamento-analisi-rischio-gdpr-art-9-10
+  @adeguamento-analisi-rischio @adeguamento-analisi-rischio-gdpr-art-9-10
   Scenario Outline: [RA_GDPR_ART_9_10_COMPILE_3] Richiesta non soddisfatta misure tecniche compilando analisi rischio con dati particolari e giudiziari durante pubblicazione e-service ricezione
   Si verifica che compilando l'analisi del rischio, avendo selezionato dati particolari e dati giudiziari nei dati
   personali, i campi liberi per le misure tecniche e organizzative siano obbligatori per enti non PA e da non
@@ -260,7 +260,7 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
       | GSP       | null             | null                  | null                 | Risk Analysis did not pass validation |
       | PA1       | NO               | Misura 1              | Misura 2             | Risk analysis validation failed       |
 
-  @adeguamento-analisi-rischio-gdpr-art-9-10
+  @adeguamento-analisi-rischio @adeguamento-analisi-rischio-gdpr-art-9-10
   Scenario Outline: [RA_GDPR_ART_9_10_COMPILE_4] Richiesta soddisfatta misure tecniche compilando analisi rischio con dati particolari e giudiziari durante pubblicazione e-service ricezione
   Si verifica che compilando l'analisi del rischio, avendo selezionato dati particolari e dati giudiziari nei dati
   personali, i campi liberi per le misure tecniche e organizzative siano obbligatori per enti non PA e da non
@@ -294,7 +294,7 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
       | GSP       | null             | Misura 1              | Misura 2             |
       | PA1       | NO               | null                  | null                 |
 
-  @adeguamento-analisi-rischio-gdpr-art-9-10
+  @adeguamento-analisi-rischio @adeguamento-analisi-rischio-gdpr-art-9-10
   Scenario Outline: [RA_GDPR_ART_9_10_COMPILE_5] Richiesta non soddisfatta misure tecniche compilando analisi rischio con dati particolari e giudiziari in finalità fruizione e-service da template
   Si verifica che compilando l'analisi del rischio, avendo selezionato dati particolari e dati giudiziari nei dati
   personali, i campi liberi per le misure tecniche e organizzative siano obbligatori per enti non PA e da non
@@ -337,7 +337,7 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
       | PA1       | Privato  | null             | null                  | null                 | Expected   |
       | PA1       | PA2      | NO               | Misura 1              | Misura 2             | Unexpected |
 
-  @adeguamento-analisi-rischio-gdpr-art-9-10
+  @adeguamento-analisi-rischio @adeguamento-analisi-rischio-gdpr-art-9-10
   Scenario Outline: [RA_GDPR_ART_9_10_COMPILE_6] Richiesta soddisfatta misure tecniche compilando analisi rischio con dati particolari e giudiziari in finalità fruizione e-service da template
   Si verifica che compilando l'analisi del rischio, avendo selezionato dati particolari e dati giudiziari nei dati
   personali, i campi liberi per le misure tecniche e organizzative siano obbligatori per enti non PA e da non
@@ -375,7 +375,7 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
       | PA1       | Privato  | null             | Misura 1              | Misura 2            |
       | PA1       | PA2      | NO               | null                  | null                |
 
-  @adeguamento-analisi-rischio-gdpr-art-9-10
+  @adeguamento-analisi-rischio @adeguamento-analisi-rischio-gdpr-art-9-10
   Scenario Outline: [RA_GDPR_ART_9_10_COMPILE_7] Richiesta non soddisfatta misure tecniche compilando analisi rischio con dati particolari e giudiziari durante pubblicazione template e-service in ricezione
   Si verifica che compilando l'analisi del rischio, avendo selezionato dati particolari e dati giudiziari nei dati
   personali, i campi liberi per le misure tecniche e organizzative siano obbligatori per enti non PA e da non
@@ -414,7 +414,7 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
       | GSP       | null             | null                  | null                 | Risk Analysis did not pass validation |
       | PA1       | NO               | Misura 1              | Misura 2             | Risk analysis validation failed       |
 
-  @adeguamento-analisi-rischio-gdpr-art-9-10
+  @adeguamento-analisi-rischio @adeguamento-analisi-rischio-gdpr-art-9-10
   Scenario Outline: [RA_GDPR_ART_9_10_COMPILE_8] Richiesta soddisfatta misure tecniche compilando analisi rischio con dati particolari e giudiziari durante pubblicazione template e-service in ricezione
   Si verifica che compilando l'analisi del rischio, avendo selezionato dati particolari e dati giudiziari nei dati
   personali, i campi liberi per le misure tecniche e organizzative siano obbligatori per enti non PA e da non
@@ -448,7 +448,7 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
       | GSP       | null             | Misura 1              | Misura 2             |
       | PA1       | NO               | null                  | null                 |
 
-  @adeguamento-analisi-rischio-gdpr-art-9-10
+  @adeguamento-analisi-rischio @adeguamento-analisi-rischio-gdpr-art-9-10
   Scenario Outline: [RA_GDPR_ART_9_10_COMPILE_9] Richiesta non soddisfatta misure tecniche compilando analisi rischio con dati particolari e giudiziari durante creazione template finalità
   Si verifica che compilando l'analisi del rischio, avendo selezionato dati particolari e dati giudiziari nei dati
   personali, i campi liberi per le misure tecniche e organizzative siano obbligatori per enti non PA e da non
@@ -487,7 +487,7 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
       | Privato   | null             | null                  | null                 |
       | PA1       | NO               | Misura 1              | Misura 2             |
 
-  @adeguamento-analisi-rischio-gdpr-art-9-10
+  @adeguamento-analisi-rischio @adeguamento-analisi-rischio-gdpr-art-9-10
   Scenario Outline: [RA_GDPR_ART_9_10_COMPILE_10] Richiesta soddisfatta misure tecniche compilando analisi rischio con dati particolari e giudiziari durante creazione template finalità
   Si verifica che compilando l'analisi del rischio, avendo selezionato dati particolari e dati giudiziari nei dati
   personali, i campi liberi per le misure tecniche e organizzative siano obbligatori per enti non PA e da non
