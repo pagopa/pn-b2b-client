@@ -211,7 +211,7 @@ public class TenantAssignCertifiedAttributeSteps {
     }
 
     @When("l'utente tenta di modificare l'attributo certificato discreto di {string} utilizzando l'ID dell'attributo certificato creato")
-    public void updateTenantCertifiedAttributeWithInvaildAttributeKind(String tenantType) {
+    public void updateTenantCertifiedAttributeWithInvalidAttributeKind(String tenantType) {
         UUID tenantId = identityService.getOrganizationId(tenantType);
         var certifiedAttribute = sharedStepsContext.getAttributeCommonContext().getCreatedAttributes().get(
                 sharedStepsContext.getAttributeCommonContext().getCreatedAttributes().size() - 1
