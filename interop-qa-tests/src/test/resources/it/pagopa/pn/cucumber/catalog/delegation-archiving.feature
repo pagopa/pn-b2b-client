@@ -1585,7 +1585,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'ente delegato "PA2"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     When l'ente delegante tenta di inoltrare una richiesta di delega in erogazione all'ente delegato per l'e-service "45d822b9-066c-4a77-b4a1-331135496907"
-    Then si ottiene response status code 400
+    Then si ottiene response status code 409
 
   @happy-path
   Scenario Outline: [DELEGATION_ARCHIVING_STATE_2.1] Un e-service in stato ARCHIVING o ARCHIVING_SUSPENDED può essere concesso in delega in fruizione
