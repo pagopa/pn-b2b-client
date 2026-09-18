@@ -459,7 +459,6 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | taxId           | PPPPLT80A01H501V        |
       | digitalDomicile | NULL                    |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
-    #lo step deve controllare inipec e non nr , verificare uguaglianza dello step sulcampo nella PUBLIC_REGISTRY_RESPONSE Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
     Then viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | details                      | NOT_NULL |
       | details_recIndex             | 0        |
@@ -489,7 +488,6 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | iun  | auto                         |
       | log1 | pushing message for clientId |
       | log4 | from source: INIPEC          |
-#    controllare ortografia "INIPEC"
     And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
       | loadTimeline           | true                                         |
       | legalFactsIds          | [{"category": "DIGITAL_DELIVERY"}]           |
