@@ -691,7 +691,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente effettua l'aggiunta di una versione in stato PUBLISHED all'e-service con successo
     And l'ente "PA1" ha una delega in erogazione attiva verso l'ente "PA2" per l'istanza dell'e-service template
     And l'utente è un "<role>" di "PA2"
-    When l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
+    When l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 120 giorni di preavviso
     Then si ottiene response status code 204
     And la richiesta di archiviazione del vecchio descrittore è stata inviata correttamente ed è in stato pending
 
@@ -855,7 +855,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
     And l'utente è un "<role>" di "PA2"
-    When l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
+    When l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 30 giorni di preavviso
     Then si ottiene response status code 204
     And la richiesta di archiviazione dell'e-service è stata inviata correttamente ed è in stato pending
 
@@ -884,7 +884,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
     And l'utente è un "<role>" di "PA2"
-    When l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
+    When l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 90 giorni di preavviso
     Then si ottiene response status code 204
     And la richiesta di archiviazione del vecchio descrittore è stata inviata correttamente ed è in stato pending
 
@@ -936,7 +936,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
     And l'utente è un "admin" di "PA2"
-    And l'utente ha già inviato la richiesta di archiviazione per il vecchio descrittore "%actual" dell'e-service "%actual" specificando 60 giorni di preavviso
+    And l'utente ha già inviato la richiesta di archiviazione per il vecchio descrittore "%actual" dell'e-service "%actual" specificando 30 giorni di preavviso
     And l'utente è un "<role>" di "PA1"
     When l'utente delegante accetta la richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual"
     Then si ottiene response status code 204
