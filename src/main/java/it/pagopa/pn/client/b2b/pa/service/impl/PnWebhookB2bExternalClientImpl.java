@@ -458,6 +458,56 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
         return eventsApi.consumeEventStreamV29WithHttpInfo(streamId, lastEventId);
     }
 
+    //V30
+    @Override
+    public StreamMetadataResponseV30 createEventStreamV30(StreamCreationRequestV30 streamCreationRequestV30) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        return streamsApi.createEventStreamV30(streamCreationRequestV30);
+    }
+
+    @Override
+    public StreamMetadataResponseV30 disableEventStreamV30(UUID streamId) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        return streamsApi.disableEventStreamV30(streamId);
+    }
+
+    @Override
+    public List<StreamListElement> listEventStreamsV30() throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        return streamsApi.listEventStreamsV30();
+    }
+
+    @Override
+    public void deleteEventStreamV30(UUID streamId) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        streamsApi.removeEventStreamV30(streamId);
+    }
+
+    @Override
+    public StreamMetadataResponseV30 retrieveEventStreamV30(UUID streamId) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        return streamsApi.retrieveEventStreamV30(streamId);
+
+    }
+
+    @Override
+    public StreamMetadataResponseV30 updateEventStreamV30(UUID streamId, StreamRequestV30 streamRequestV30) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        return streamsApi.updateEventStreamV30(streamId, streamRequestV30);
+    }
+
+    @Override
+    public List<ProgressResponseElementV30> consumeEventStreamV30(UUID streamId, String lastEventId) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        return eventsApi.consumeEventStreamV30(streamId, lastEventId);
+    }
+
+    @Override
+    public ResponseEntity<List<ProgressResponseElementV30>> consumeEventStreamHttpV30(UUID streamId, String lastEventId) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        return eventsApi.consumeEventStreamV30WithHttpInfo(streamId, lastEventId);
+    }
+
 
     @Override
     public boolean setApiKeys(ApiKeyType apiKey) {

@@ -25,7 +25,7 @@ Feature: verifica creazione stream
   Scenario: [B2B-STREAM_ES1.1_1waitForAccepted] Creazione per una PA di 10 nuovi stream notifica con eventType TIMELINE e senza gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V28"
     And si predispongono 10 nuovi stream denominati "stream-test" con eventType "TIMELINE" con versione "V28"
-    And agli stream versione "V28" si setta il campo waitForAccepted introdotto con la versione 27 a "true"
+    And agli stream versione "V28" si setta il campo waitForAccepted a "true"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -100,7 +100,7 @@ Feature: verifica creazione stream
   Scenario: [B2B-STREAM_ES1.1_3waitForAccepted] Creazione per una PA di 10 nuovi stream notifica con eventType TIMELINE con gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V28"
     And si predispongono 10 nuovi stream denominati "stream-test" con eventType "TIMELINE" con versione "V28"
-    And agli stream versione "V28" si setta il campo waitForAccepted introdotto con la versione 27 a "true"
+    And agli stream versione "V28" si setta il campo waitForAccepted a "true"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -145,7 +145,7 @@ Feature: verifica creazione stream
   Scenario: [B2B-STREAM_ES1.1_5waitForAccepted] Creazione per una PA di 10 nuovi stream notifica con eventType STATUS e senza gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V28"
     And si predispongono 10 nuovi stream denominati "stream-test" con eventType "STATUS" con versione "V28"
-    And agli stream versione "V28" si setta il campo waitForAccepted introdotto con la versione 27 a "true"
+    And agli stream versione "V28" si setta il campo waitForAccepted a "true"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -189,7 +189,7 @@ Feature: verifica creazione stream
   Scenario: [B2B-STREAM_ES1.1_7waitForAccepted] Creazione per una PA di 10 nuovi stream notifica con eventType TIMELINE con gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V28"
     And si predispongono 10 nuovi stream denominati "stream-test" con eventType "STATUS" con versione "V28"
-    And agli stream versione "V28" si setta il campo waitForAccepted introdotto con la versione 27 a "true"
+    And agli stream versione "V28" si setta il campo waitForAccepted a "true"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -230,7 +230,7 @@ Feature: verifica creazione stream
   @webhookV28 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_9waitForAccepted] Creazione di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey master.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V28"
-    And allo stream versione "V28" si setta il campo waitForAccepted introdotto con la versione 27 a "true"
+    And allo stream versione "V28" si setta il campo waitForAccepted a "true"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -279,7 +279,7 @@ Feature: verifica creazione stream
   @webhookV28 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_13waitForAccepted] Creazione di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey con stesso gruppo.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V28"
-    And allo stream versione "V28" si setta il campo waitForAccepted introdotto con la versione 27 a "true"
+    And allo stream versione "V28" si setta il campo waitForAccepted a "true"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -329,7 +329,7 @@ Feature: verifica creazione stream
   @webhookV28 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_18waitForAccepted] Creazione di uno stream notifica con gruppo, con eventType "TIMELINE"  utilizzando un apikey con stesso gruppo.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V28"
-    And allo stream versione "V28" si setta il campo waitForAccepted introdotto con la versione 27 a "true"
+    And allo stream versione "V28" si setta il campo waitForAccepted a "true"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -357,7 +357,7 @@ Feature: verifica creazione stream
   @webhookV28 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_19waitForAccepted] Creazione di uno stream notifica senza gruppo, con eventType "STATUS"  utilizzando un apikey master.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V28"
-    And allo stream versione "V28" si setta il campo waitForAccepted introdotto con la versione 27 a "true"
+    And allo stream versione "V28" si setta il campo waitForAccepted a "true"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -396,7 +396,7 @@ Feature: verifica creazione stream
   @webhookV28 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_22waitForAccepted] Creazione di uno stream notifica senza gruppo, con eventType "TIMELINE"  utilizzando un apikey master.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V28"
-    And allo stream versione "V28" si setta il campo waitForAccepted introdotto con la versione 27 a "true"
+    And allo stream versione "V28" si setta il campo waitForAccepted a "true"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -434,7 +434,7 @@ Feature: verifica creazione stream
   @webhookV28 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_25waitForAccepted] Creazione di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey master.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V28"
-    And allo stream versione "V28" si setta il campo waitForAccepted introdotto con la versione 27 a "true"
+    And allo stream versione "V28" si setta il campo waitForAccepted a "true"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -461,7 +461,7 @@ Feature: verifica creazione stream
   @webhookV28 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_148waitForAccepted] Creazione di uno stream notifica con gruppi appartenenti ad un sottinsieme dei gruppi dell'apikey utilizzata.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V28"
-    And allo stream versione "V28" si setta il campo waitForAccepted introdotto con la versione 27 a "true"
+    And allo stream versione "V28" si setta il campo waitForAccepted a "true"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con due gruppi
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream

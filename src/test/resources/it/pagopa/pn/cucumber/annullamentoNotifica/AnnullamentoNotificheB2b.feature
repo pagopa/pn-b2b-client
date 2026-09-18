@@ -883,7 +883,7 @@ Feature: annullamento notifiche b2b
       | senderDenomination | Comune di palermo           |
     And destinatario Mario Gherkin
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
-    And si crea il nuovo stream per il "Comune_Multi" con versione "V10" e filtro di timeline "NOTIFICATION_CANCELLED"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V10" e filtro timeline "NOTIFICATION_CANCELLED"
     #And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere annullata dal sistema tramite codice IUN
@@ -906,7 +906,7 @@ Feature: annullamento notifiche b2b
       | senderDenomination | Comune di palermo           |
     And destinatario Mario Gherkin
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
-    And si crea il nuovo stream per il "Comune_2" con versione "V10" e filtro di timeline "NOTIFICATION_CANCELLED"
+    And si crea il nuovo stream per il "Comune_2" con versione "V10" e filtro timeline "NOTIFICATION_CANCELLED"
     #And si crea il nuovo stream per il "Comune_2" con versione "V10"
     And la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere annullata dal sistema tramite codice IUN
@@ -936,7 +936,7 @@ Feature: annullamento notifiche b2b
       | senderDenomination | Comune di palermo           |
     And destinatario Mario Gherkin
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
-    And si crea il nuovo stream per il "Comune_Multi" con versione "V10" e filtro di timeline "NOTIFICATION_CANCELLED"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V10" e filtro timeline "NOTIFICATION_CANCELLED"
     #And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SEND_DIGITAL_DOMICILE" con la versione "V10"

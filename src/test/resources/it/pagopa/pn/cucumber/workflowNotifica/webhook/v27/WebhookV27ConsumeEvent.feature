@@ -12,7 +12,7 @@ Feature: avanzamento notifiche webhook b2b V27
       | denomination | Galileo galileo  |
       | taxId        | GLLGLL64B15G702I |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V27"
-    And allo stream versione "V27" si setta il campo waitForAccepted introdotto con la versione 27 a "true"
+    And allo stream versione "V27" si setta il campo waitForAccepted a "true"
     And Viene creata una nuova apiKey per il comune "Comune_1" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -345,7 +345,7 @@ Feature: avanzamento notifiche webhook b2b V27
       | senderDenomination | Comune di Palermo           |
     And destinatario Mario Gherkin
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
-    And si crea il nuovo stream per il "Comune_1" con versione "V10" e filtro di timeline "NOTIFICATION_RADD_RETRIEVED"
+    And si crea il nuovo stream per il "Comune_1" con versione "V10" e filtro timeline "NOTIFICATION_RADD_RETRIEVED"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V10"
     And Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
     And L'operatore scansione il qrCode per recuperare gli atti da radd alternative

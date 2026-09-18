@@ -1,7 +1,13 @@
 package it.pagopa.pn.cucumber;
 
 import io.cucumber.junit.platform.engine.Constants;
-import org.junit.platform.suite.api.*;
+import org.junit.platform.suite.api.ConfigurationParameter;
+import org.junit.platform.suite.api.ConfigurationParameters;
+import org.junit.platform.suite.api.ExcludeTags;
+import org.junit.platform.suite.api.IncludeEngines;
+import org.junit.platform.suite.api.IncludeTags;
+import org.junit.platform.suite.api.SelectClasspathResource;
+import org.junit.platform.suite.api.Suite;
 
 @Suite
 @IncludeEngines("cucumber")
@@ -14,6 +20,6 @@ import org.junit.platform.suite.api.*;
         @ConfigurationParameter(key = Constants.EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 })
 @ExcludeTags({"ignore"})
-@IncludeTags({"webhookV30", "webhookLatestVersion"})
-public class WebhookLatestVersionTest {
+@IncludeTags({"webhookV29"})
+public class WebhookV29Test {
 }
