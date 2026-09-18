@@ -447,3 +447,77 @@ Feature: Aggiunta di un'analisi del rischio ad un e-service
       | erogatore | richiestaDiTerzi | misureDatiParticolari | misureDatiGiudiziari |
       | GSP       | null             | Misura 1              | Misura 2             |
       | PA1       | NO               | null                  | null                 |
+
+  @adeguamento-analisi-rischio-gdpr-art-9-10
+  Scenario Outline: [RA_GDPR_ART_9_10_COMPILE_9] Richiesta non soddisfatta misure tecniche compilando analisi rischio con dati particolari e giudiziari durante creazione template finalità
+  Si verifica che compilando l'analisi del rischio, avendo selezionato dati particolari e dati giudiziari nei dati
+  personali, i campi liberi per le misure tecniche e organizzative siano obbligatori per enti non PA e da non
+  specificare per enti PA. L'analisi del rischio è compilata durante la pubblicazione di un template finalità.
+  La richiesta dei campi liberi non viene soddisfatta e si verifica errore.
+
+    Given l'utente è un "admin" di "<erogatore>"
+    When si tenta di creare un nuovo purpose template specificando nell'analisi del rischio:
+    # Non PA: Il tipo di dati personali sono particolari e giudiziari, quindi non accetta la compilazione senza le misure tecniche
+    # PA: Il tipo di dati personali sono particolari e giudiziari, quindi non accetta la compilazione con le misure tecniche
+      | usesPersonalData        | YES |
+      | personalDataTypes       | GDPR_ART_9 ; GDPR_ART_10 |
+      | confirmPricipleIntegrityAndDiscretion | true |
+      | dataProtectionMeasuresParticular | <misureDatiParticolari> |
+      | dataProtectionMeasures           | <misureDatiGiudiziari>  |
+      | purpose                 | INSTITUTIONAL |
+      | institutionalPurpose    | This is a test |
+      | legalBasis              | CONSENT |
+      | knowsDataQuantity       | NO |
+      | deliveryMethod          | CLEARTEXT |
+      | policyProvided          | NO |
+      | reasonPolicyNotProvided | This is a test |
+      | doneDpia                | NO |
+      | dataDownload            | NO |
+      | purposePursuit          | MERE_CORRECTNESS |
+      | checkedExistenceMereCorrectnessInteropCatalogue | true |
+      | isRequestOnBehalfOfThirdParties | <richiestaDiTerzi> |
+      | declarationConfirmGDPR  | true |
+    Then la precedente richiesta risulta malformata e riporta gli errori:
+    """
+    Risk analysis template validation failed
+    """
+
+    Examples:
+      | erogatore | richiestaDiTerzi | misureDatiParticolari | misureDatiGiudiziari |
+      | Privato   | null             | null                  | null                 |
+      | PA1       | NO               | Misura 1              | Misura 2             |
+
+  @adeguamento-analisi-rischio-gdpr-art-9-10
+  Scenario Outline: [RA_GDPR_ART_9_10_COMPILE_10] Richiesta soddisfatta misure tecniche compilando analisi rischio con dati particolari e giudiziari durante creazione template finalità
+  Si verifica che compilando l'analisi del rischio, avendo selezionato dati particolari e dati giudiziari nei dati
+  personali, i campi liberi per le misure tecniche e organizzative siano obbligatori per enti non PA e da non
+  specificare per enti PA. L'analisi del rischio è compilata durante la pubblicazione di un template finalità.
+  La richiesta dei campi liberi viene soddisfatta.
+
+    Given l'utente è un "admin" di "<erogatore>"
+    Then viene creato un nuovo purpose template specificando nell'analisi del rischio:
+    # Non PA: Il tipo di dati personali sono particolari e giudiziari, quindi accetta la compilazione con le misure tecniche
+    # PA: Il tipo di dati personali sono particolari e giudiziari, quindi accetta la compilazione senza le misure tecniche
+      | usesPersonalData        | YES |
+      | personalDataTypes       | GDPR_ART_9 ; GDPR_ART_10 |
+      | confirmPricipleIntegrityAndDiscretion | true |
+      | dataProtectionMeasuresParticular | <misureDatiParticolari> |
+      | dataProtectionMeasures           | <misureDatiGiudiziari>  |
+      | purpose                 | INSTITUTIONAL |
+      | institutionalPurpose    | This is a test |
+      | legalBasis              | CONSENT |
+      | knowsDataQuantity       | NO |
+      | deliveryMethod          | CLEARTEXT |
+      | policyProvided          | NO |
+      | reasonPolicyNotProvided | This is a test |
+      | doneDpia                | NO |
+      | dataDownload            | NO |
+      | purposePursuit          | MERE_CORRECTNESS |
+      | checkedExistenceMereCorrectnessInteropCatalogue | true |
+      | isRequestOnBehalfOfThirdParties | <richiestaDiTerzi> |
+      | declarationConfirmGDPR  | true |
+
+    Examples:
+      | erogatore | richiestaDiTerzi | misureDatiParticolari | misureDatiGiudiziari |
+      | Privato   | null             | Misura 1              | Misura 2             |
+      | PA1       | NO               | null                  | null                 |
