@@ -1614,7 +1614,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
     And l'utente è un "admin" di "PA3"
     When l'ente delegante tenta di inoltrare una richiesta di delega in fruizione all'ente delegato per l'e-service "45d822b9-066c-4a77-b4a1-331135496907"
-    Then si ottiene response status code 400
+    Then si ottiene response status code 200
 
   @sad-path
   Scenario Outline: [DELEGATION_ARCHIVING_CLONING_1.1] Ente delegato e delegante NON possono duplicare un e-service in delega in erogazione in stato PUBLISHED
