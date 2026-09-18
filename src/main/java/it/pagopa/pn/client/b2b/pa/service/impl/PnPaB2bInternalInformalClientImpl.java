@@ -4,17 +4,9 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainforma
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.api.MessagesApi;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.api.NewInformalNotificationApi;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.api.SenderReadInformalNotificationB2BApi;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.CxTypeAuthFleet;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.FullSentInformalNotificationV1;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalNotificationRequestV1;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalPreLoadRequest;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalPreLoadResponse;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.MessageResponse;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewInformalNotificationRequestStatusResponseV1;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewInformalNotificationResponse;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewMessageRequest;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NotificationAttachmentDownloadMetadataResponse;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.TerminationRequestStatus;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformalmonitorcampaign.api.CampaignStatisticsApi;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformalmonitorcampaign.model.CampaignStatisticsResponse;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.api.RecipientReadInformalNotificationApi;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.FullReceivedInformalNotificationV1;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.api.InternalOnlyApi;
@@ -40,6 +32,7 @@ public class PnPaB2bInternalInformalClientImpl {
     private final InformalNotificationTerminationApi informalNotificationTerminationApi;
     private final RecipientReadInformalNotificationApi recipientReadInformalNotificationApi;
     private final InternalOnlyApi internalOnlyApi;
+    private final CampaignStatisticsApi campaignStatisticsApi;
     private final List<String> groups;
 
     public PnPaB2bInternalInformalClientImpl(
@@ -54,6 +47,7 @@ public class PnPaB2bInternalInformalClientImpl {
         this.informalNotificationTerminationApi = new InformalNotificationTerminationApi();
         this.recipientReadInformalNotificationApi = new RecipientReadInformalNotificationApi(newRecipientInformalApiClient(restTemplate, deliveryBasePathOrigin));
         this.internalOnlyApi = new InternalOnlyApi(newPrivateDeliveryApiClient(restTemplate, deliveryBasePathOrigin));
+        this.campaignStatisticsApi = new CampaignStatisticsApi(newcampaignStatisticsApiClient(restTemplate, deliveryBasePathOrigin));
     }
 
     private static it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.ApiClient newInformalApiClient(RestTemplate restTemplate, String basePath) {
@@ -73,6 +67,13 @@ public class PnPaB2bInternalInformalClientImpl {
         client.setBasePath(basePath);
         return client;
     }
+
+    private static it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformalmonitorcampaign.ApiClient newcampaignStatisticsApiClient(RestTemplate restTemplate, String basePath) {
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformalmonitorcampaign.ApiClient client = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformalmonitorcampaign.ApiClient(restTemplate);
+        client.setBasePath(basePath);
+        return client;
+    }
+
 
     public MessageResponse createMessage(String cxId, NewMessageRequest request) {
         return messagesApi.newMessage(operatorId, CxTypeAuthFleet.PA, cxId, request, groups);
@@ -133,5 +134,9 @@ public class PnPaB2bInternalInformalClientImpl {
         return recipientReadInformalNotificationApi.getReceivedInformalNotificationAttachmentV1(operatorId, recipientType, cxId, "WEB", iun, "PAGOPA", null, null, attachmentIdx
         );
     }
+    public CampaignStatisticsResponse getCampaignStatistics(String campaignId) {
+        return campaignStatisticsApi.getCampaignStatistics(campaignId);
+    }
+
 
 }
