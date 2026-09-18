@@ -1363,7 +1363,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And si ottiene response status code 200
     And l'e-service è in stato "DRAFT"
     When l'utente pubblica l'e-service
-    Then si ottiene response status code 200
+    Then si ottiene response status code 204
     And l'e-service è in stato "WAITING_FOR_APPROVAL"
 
   @happy-path
