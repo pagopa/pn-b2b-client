@@ -137,7 +137,7 @@ public class AttributeListingSteps {
                             )
                     ),
                     res -> res.is2xxSuccessful() || !sharedStepsContext.getHttpCallExecutor().ongoingOperationConflict(),
-                    "Error while retreiving attribute listing"
+                    "Error while retrieving attribute listing"
             );
 
             Assertions.assertTrue(httpCallExecutor.getResponseStatus().is2xxSuccessful(), "Expected 2xx successful status code for attribute listing");
