@@ -1462,7 +1462,8 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente ha già inviato la richiesta di archiviazione per il vecchio descrittore "%actual" dell'e-service "%actual" specificando 60 giorni di preavviso
     When l'utente è un "admin" di "PA3"
     And l'utente richiede una operazione di archiviazione della richiesta di fruizione
-    Then si ottiene response status code 204
+    Then si ottiene status code 204
+    And l'utente è un "admin" di "PA1"
     And la richiesta di archiviazione pendente del vecchio descrittore è stata eliminata
     And la vecchia versione dell'e-service è in stato "ARCHIVED"
 
@@ -1477,7 +1478,9 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "admin" di "PA2"
     And l'utente ha già inviato la richiesta di archiviazione per l'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
     When l'ente "PA1" con ruolo "admin" revoca la delega in erogazione con successo
-    Then si ottiene response status code 204
+    Then si ottiene status code 204
+    And l'utente è un "admin" di "PA1"
+    And l'e-service è in stato "PUBLISHED"
     And la richiesta di archiviazione pendente dell'e-service è stata eliminata
 
   @happy-path
@@ -1493,7 +1496,10 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "admin" di "PA2"
     And l'utente ha già inviato la richiesta di archiviazione per il vecchio descrittore "%actual" dell'e-service "%actual" specificando 60 giorni di preavviso
     When l'ente "PA1" con ruolo "admin" revoca la delega in erogazione con successo
-    Then si ottiene response status code 204
+    Then si ottiene status code 204
+    And l'utente è un "admin" di "PA1"
+    And l'e-service è in stato "PUBLISHED"
+    And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And la richiesta di archiviazione pendente del vecchio descrittore è stata eliminata
 
   @sad-path
