@@ -95,7 +95,7 @@ public class DescriptorPublicationSteps {
     public void createEServiceWithModeAndStateAndPersonaDataFlag(String tenantType, String mode, String eServiceDescriptorState, String personalDataFlag) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
-                new EServiceSeed().mode(EServiceMode.fromValue(mode)).personalData(personalDataFlag.equalsIgnoreCase("true")),
+                new EServiceSeed().mode(EServiceMode.fromValue(mode)).personalData(personalDataFlag.equals("undefined") ? null : personalDataFlag.equalsIgnoreCase("true")),
                 new UpdateEServiceDescriptorSeed()
         );
         EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
