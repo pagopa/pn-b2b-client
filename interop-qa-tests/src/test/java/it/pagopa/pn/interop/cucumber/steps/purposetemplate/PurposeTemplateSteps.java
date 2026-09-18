@@ -242,7 +242,7 @@ public class PurposeTemplateSteps {
         purposeTemplateCreationRequest.setPurposeFreeOfChargeReason("Sono una Pubblica Amministrazione");
 
         if (answersTable == null) {
-            if (answersTable != null) {
+            if (handlePersonalDataValue != null) {
                 RiskAnalysisFormTemplateSeed riskAnalysisForm = new RiskAnalysisFormTemplateSeed()
                         .version(getPurposeTemplateVersion())
                         .answers(getRiskAnalysysTemplateFormAnswerMap(purposeTemplateCreationRequest.getHandlesPersonalData()));
