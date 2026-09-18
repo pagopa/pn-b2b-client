@@ -1415,16 +1415,17 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'e-service è in stato "DRAFT"
     And l'utente pubblica l'e-service
     And l'e-service è in stato "WAITING_FOR_APPROVAL"
+    And l'utente è un "admin" di "PA1"
     When l'utente delegante accetta la richiesta di archiviazione relativa all'e-service "%actual"
-    Then si ottiene response status code 200
-    And la richiesta di archiviazione dell'e-service non è presente
+    Then si ottiene response status code 204
     And l'ultimo descrittore in stato WAITING_FOR_APPROVAL è stato cancellato
     And l'e-service è in stato "ARCHIVING"
+    And la richiesta di archiviazione dell'e-service non è presente
 
   @happy-path
   Scenario: [DELEGATION_MANUAL_ARCHIVING_NEW_VERSION_CANCELLATION_1.2] L'invio di una richiesta di archiviazione dell'e-service NON elimina l'ultima versione dell'e-service in stato `WAITING_FOR_APPROVAL`
   Verifichiamo che, in presenza di una richiesta di pubblicazione in corso,
-  l’avvio del processo di archiviazione dell’e-service comporti l’eliminazione della nuova versione ancora in attesa di pubblicazione.
+  l’avvio del processo di archiviazione dell’e-service NON comporti l’eliminazione della nuova versione ancora in attesa di pubblicazione.
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -1440,7 +1441,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente pubblica l'e-service
     And l'e-service è in stato "WAITING_FOR_APPROVAL"
     When l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
-    Then si ottiene response status code 200
+    Then si ottiene response status code 204
     And l'e-service è in stato "WAITING_FOR_APPROVAL"
     And la richiesta di archiviazione dell'e-service è stata inviata correttamente ed è in stato pending
 
