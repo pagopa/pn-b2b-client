@@ -1571,6 +1571,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente è un "admin" di "PA1"
     And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual archiving" e 60 giorni di preavviso
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'utente è un "admin" di "PA1"
     When l'utente richiede la creazione di una delega in erogazione per l'ente "PA2"
     Then si ottiene response status code 200
 
@@ -1584,6 +1585,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'utente è un "admin" di "PA1"
     When l'ente delegante tenta di inoltrare una richiesta di delega in erogazione all'ente delegato per l'e-service "45d822b9-066c-4a77-b4a1-331135496907"
     Then si ottiene response status code 409
 
@@ -1596,9 +1598,9 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'ente delegato "PA2"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
+    And l'utente è un "admin" dell'ente delegante
     When l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
     Then si ottiene response status code 200
-    And l'utente è un "admin" di "PA1"
 
     Examples:
       | eserviceState |
@@ -1606,10 +1608,11 @@ Feature: Gestione deleghe per archiviazione manuale e-service
       | SUSPENDED     |
 
   @happy-path
-  Scenario: [DELEGATION_ARCHIVING_STATE_2.2] Un e-service in stato ARCIVHED può essere concesso in delega in fruizione
-    Given l'ente delegante "PA1"
-    And l'ente delegato "PA2"
+  Scenario: [DELEGATION_ARCHIVING_STATE_2.2] Un e-service in stato ARCHIVED può essere concesso in delega in fruizione
+    Given l'ente delegante "PA3"
+    And l'ente delegato "PA4"
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
+    And l'utente è un "admin" di "PA3"
     When l'ente delegante tenta di inoltrare una richiesta di delega in fruizione all'ente delegato per l'e-service "45d822b9-066c-4a77-b4a1-331135496907"
     Then si ottiene response status code 400
 
