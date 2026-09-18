@@ -541,6 +541,21 @@ public class DelayerSteps {
         softly.assertAll();
     }
 
+    /**
+     * Verifica mirata per singolo requestId (esatto, non un prefisso di seed): interroga GET_BY_REQUEST_ID
+     * e controlla che il pk sia presente per lo step atteso.
+     */
+    @Then("verifica che la spedizione con requestId {string} sia al workflow step {string}")
+    public void checkNotificationAtWorkflowStep(String requestId, String expectedStep) throws Exception {
+        List<DelayerPaperDelivery> found = service.pollByRequestId(requestId, 1, 200);
+        Assertions.assertThat(found)
+                .as("Nessun record trovato in pn-DelayerPaperDelivery per requestId '%s'", requestId)
+                .isNotEmpty();
+        Assertions.assertThat(found.stream().filter(d -> d.getPk().endsWith(expectedStep)))
+                .as("Workflow step per requestId '%s'", requestId)
+                .isNotNull();
+    }
+
     @Then("viene verificato che il limite garantito per la pa: {string} relativo a provincia: {string}, prodotto: {string} sia corretto")
     public void checkSenderLimitForPA(String paId, String province, String product) {
         Assertions.assertThat(context.expectedDeliveryDate)

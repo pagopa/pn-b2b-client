@@ -29,10 +29,6 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
         value = "same_thread"
 )
 @ExcludeTags({"ignore"})
-@IncludeTags({
-        "delayer17",
-        "delayer18",
-        "delayer19"
-})
-public class DelayerSkipSenderLimitTest {
+@IncludeTags({"delayerSkipSenderLimitFlagOff"})
+public class DelayerSkipSenderLimitFlagOffTest {
 }
