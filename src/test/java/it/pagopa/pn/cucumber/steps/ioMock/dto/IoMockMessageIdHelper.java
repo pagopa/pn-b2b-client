@@ -28,18 +28,23 @@ public final class IoMockMessageIdHelper {
     }
 
     public static String buildMockIdForT0(String sequenceName) {
-        // T0: elapsed < 5s (offset 1 secondo nel passato)
-        return buildMockIdWithOffset(sequenceName, 1_000L);
+        // T0: elapsed < 30s (offset 2 secondi nel passato)
+        return buildMockIdWithOffset(sequenceName, 2_000L);
     }
 
     public static String buildMockIdForT1(String sequenceName) {
-        // T1: 5s <= elapsed < 15s (offset 8 secondi nel passato)
-        return buildMockIdWithOffset(sequenceName, 8_000L);
+        // T1: 30s <= elapsed < 60s (offset 40 secondi nel passato)
+        return buildMockIdWithOffset(sequenceName, 40_000L);
     }
 
     public static String buildMockIdForT2(String sequenceName) {
-        // T2: elapsed >= 15s (offset 20 secondi nel passato)
-        return buildMockIdWithOffset(sequenceName, 20_000L);
+        // T2: 60s <= elapsed < 90s (offset 70 secondi nel passato)
+        return buildMockIdWithOffset(sequenceName, 70_000L);
+    }
+
+    public static String buildMockIdForT3(String sequenceName) {
+        // T3: elapsed >= 90s (offset 100 secondi nel passato)
+        return buildMockIdWithOffset(sequenceName, 100_000L);
     }
 
     public static boolean isValidMockId(String messageId) {
@@ -65,14 +70,18 @@ public final class IoMockMessageIdHelper {
 
     public static SnapshotState calculateCumulativeState(long submitMillis, long currentMillis) {
         long elapsed = currentMillis - submitMillis;
-        String status = "PROCESSED";
+        String status = elapsed < 30_000L ? "ACCEPTED" : "PROCESSED";
         String readStatus = null;
         String paymentStatus = null;
 
-        if (elapsed >= 5_000L) {
+        if (elapsed >= 30_000L && elapsed < 60_000L) {
+            readStatus = "UNREAD";
+            paymentStatus = "NOT_PAID";
+        } else if (elapsed >= 60_000L && elapsed < 90_000L) {
             readStatus = "READ";
-        }
-        if (elapsed >= 15_000L) {
+            paymentStatus = "NOT_PAID";
+        } else if (elapsed >= 90_000L) {
+            readStatus = "READ";
             paymentStatus = "PAID";
         }
 

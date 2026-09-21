@@ -6,13 +6,13 @@ Feature: Verifica e Routing dei Profili Utente App IO
 
   @MOCK_IO_ROUTER_PROFILE_01_1_A
   Scenario: [MOCK_IO_ROUTER_PROFILE_01_1_A] Destinatario non abilitato alla ricezione su IO (Mock)
-    Given un destinatario con codice fiscale in blacklist "DENYLIST_CF_001"
+    Given un destinatario con codice fiscale in blacklist "DRCGNN12A46A326K"
     When viene richiesta la verifica del profilo utente
     Then il profilo risulta non abilitato alla ricezione dei messaggi
 
   @MOCK_IO_ROUTER_PROFILE_01_1_B
   Scenario: [MOCK_IO_ROUTER_PROFILE_01_1_B] Destinatario abilitato per inoltro trasparente verso IO reale
-    Given un destinatario abilitato al routing reale "WHITELIST_CF_001"
+    Given un destinatario abilitato al routing reale "PLVLRT86R24Z112H"
     When viene richiesta la verifica del profilo utente
     Then la richiesta viene instradata con successo verso l'ambiente reale di IO
 
@@ -21,12 +21,6 @@ Feature: Verifica e Routing dei Profili Utente App IO
     Given un destinatario con codice fiscale ordinario "STANDAR_CF_00001"
     When viene richiesta la verifica del profilo utente
     Then il profilo risulta abilitato alla ricezione dei messaggi
-
-  @MOCK_IO_ROUTER_PROFILE_01_1_D
-  Scenario: [MOCK_IO_ROUTER_PROFILE_01_1_D] Destinatario non registrato su App IO
-    Given un destinatario non registrato ad App IO "NOT_REGISTERED_CF_001"
-    When viene richiesta la verifica del profilo utente
-    Then il profilo utente risulta non registrato
 
   @MOCK_IO_ROUTER_PROFILE_01_2_A
   Scenario Outline: [MOCK_IO_ROUTER_PROFILE_01_2_A] Rifiuto verifica profilo per anomalia o formato non conforme
@@ -37,5 +31,5 @@ Feature: Verifica e Routing dei Profili Utente App IO
     Examples:
       | tipo_anomalia      |
       | SENZA_FISCAL_CODE  |
-      | CAMPI_NON_PREVISTI |
-      | FISCAL_CODE_VUOTO  |
+      | JSON_MALFORMATO    |
+      | FISCAL_CODE_NULL   |

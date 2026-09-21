@@ -49,15 +49,13 @@ public class IOMockProfilesSteps {
         Map<String, Object> payload = new HashMap<>();
         switch (anomalyType) {
             case "SENZA_FISCAL_CODE":
-                // Payload privo di fiscal_code
+                // Payload JSON vuoto {}
                 break;
-            case "CAMPI_NON_PREVISTI":
-                payload.put("fiscal_code", StringUtils.resolveValue("STANDAR_CF_00001"));
-                payload.put("unknown_extra_field", "unexpected_value");
-                payload.put("invalid_parameter", 12345);
-                break;
-            case "FISCAL_CODE_VUOTO":
-                payload.put("fiscal_code", "");
+            case "JSON_MALFORMATO":
+                context.setRawPayloadString("{ invalid_json_payload: ");
+                return;
+            case "FISCAL_CODE_NULL":
+                payload.put("fiscal_code", null);
                 break;
             default:
                 payload.put("fiscal_code", StringUtils.resolveValue(anomalyType));

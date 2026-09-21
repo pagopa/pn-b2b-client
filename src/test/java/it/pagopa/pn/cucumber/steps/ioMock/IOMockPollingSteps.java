@@ -60,14 +60,20 @@ public class IOMockPollingSteps {
     public void prepareMessageForTimeWindow(String sequenceName, String timeWindow) {
         String messageId;
         switch (timeWindow) {
+            case "T0_ELAPSED_LESS_30S":
             case "T0_ELAPSED_LESS_5S":
                 prepareMessageSubmittedSuccessfully(sequenceName);
                 return;
+            case "T1_ELAPSED_30_60S":
             case "T1_ELAPSED_5_15S":
                 messageId = IoMockMessageIdHelper.buildMockIdForT1(sequenceName);
                 break;
-            case "T2_ELAPSED_OVER_15S":
+            case "T2_ELAPSED_60_90S":
                 messageId = IoMockMessageIdHelper.buildMockIdForT2(sequenceName);
+                break;
+            case "T3_ELAPSED_OVER_90S":
+            case "T2_ELAPSED_OVER_15S":
+                messageId = IoMockMessageIdHelper.buildMockIdForT3(sequenceName);
                 break;
             default:
                 messageId = IoMockMessageIdHelper.buildMockIdForT0(sequenceName);
@@ -77,16 +83,23 @@ public class IOMockPollingSteps {
         context.setSequenceName(sequenceName);
     }
 
-    @Given("un messaggio inviato per la sequenza {string} con tempo trascorso compreso tra 5 e 15 secondi")
+    @Given("un messaggio inviato per la sequenza {string} con tempo trascorso compreso tra 30 e 60 secondi")
     public void prepareMessageWithT1Offset(String sequenceName) {
         String syntheticId = IoMockMessageIdHelper.buildMockIdForT1(sequenceName);
         context.setQueriedMessageId(syntheticId);
         context.setSequenceName(sequenceName);
     }
 
-    @Given("un messaggio inviato per la sequenza {string} con tempo trascorso superiore a 15 secondi")
+    @Given("un messaggio inviato per la sequenza {string} con tempo trascorso compreso tra 60 e 90 secondi")
     public void prepareMessageWithT2Offset(String sequenceName) {
         String syntheticId = IoMockMessageIdHelper.buildMockIdForT2(sequenceName);
+        context.setQueriedMessageId(syntheticId);
+        context.setSequenceName(sequenceName);
+    }
+
+    @Given("un messaggio inviato per la sequenza {string} con tempo trascorso superiore a 90 secondi")
+    public void prepareMessageWithT3Offset(String sequenceName) {
+        String syntheticId = IoMockMessageIdHelper.buildMockIdForT3(sequenceName);
         context.setQueriedMessageId(syntheticId);
         context.setSequenceName(sequenceName);
     }
@@ -109,6 +122,7 @@ public class IOMockPollingSteps {
         context.setSequenceName(sequenceName);
     }
 
+    @Given("una richiesta di stato messaggio con identificativo mock non numerico {string}")
     @Given("una richiesta di stato messaggio con identificativo mock non valido {string}")
     public void preparePollingRequestWithInvalidMockId(String invalidId) {
         context.setQueriedMessageId(invalidId);
@@ -127,7 +141,6 @@ public class IOMockPollingSteps {
         }
     }
 
-    @Given("viene richiesto lo stato del messaggio per il destinatario {string}")
     @When("viene richiesto lo stato del messaggio per il destinatario {string}")
     public void queryMessageStatusForRecipient(String fiscalCode) {
         String resolvedFiscalCode = StringUtils.resolveValue(fiscalCode);
@@ -271,19 +284,19 @@ public class IOMockPollingSteps {
     @Then("la richiesta di stato messaggio viene rifiutata per identificativo non conforme o sequenza non censita")
     public void verifyInvalidMockIdError() {
         assertThat(context.getActualStatusCode())
-                .as("Lo status code atteso per identificativo mock malformato o non censito e' 400 Bad Request")
+                .as("Lo status code atteso per identificativo mock malformato e' 400 Bad Request")
                 .isEqualTo(HttpStatus.BAD_REQUEST.value());
 
-        verifyErrorPayloadContainsKeywords("id", "messageid", "invalid", "corrupt", "pattern", "bad request", "validation", "timestamp", "format", "sequence", "unknown", "not found");
+        verifyErrorPayloadContainsKeywords("id", "messageid", "invalid", "corrupt", "pattern", "bad request", "validation", "timestamp", "format");
     }
 
     @Then("la richiesta di stato messaggio viene rifiutata per sequenza non censita a sistema")
     public void verifyUnknownSequenceError() {
         assertThat(context.getActualStatusCode())
-                .as("Lo status code atteso per sequenza non censita e' 400 Bad Request")
-                .isEqualTo(HttpStatus.BAD_REQUEST.value());
+                .as("Lo status code atteso per sequenza non censita e' 404 Not Found")
+                .isEqualTo(HttpStatus.NOT_FOUND.value());
 
-        verifyErrorPayloadContainsKeywords("sequence", "unknown", "not found", "not configured", "invalid", "bad request");
+        verifyErrorPayloadContainsKeywords("sequence", "unknown", "not found", "not configured", "invalid", "handled error", "message_not_found");
     }
 
     private void verifyErrorPayloadContainsKeywords(String... keywords) {

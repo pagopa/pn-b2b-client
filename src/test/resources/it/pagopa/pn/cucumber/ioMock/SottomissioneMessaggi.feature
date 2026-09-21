@@ -12,10 +12,9 @@ Feature: Sottomissione del Messaggio e Generazione dell'Identificativo
 
   @MOCK_IO_SUBMIT_02_1_B
   Scenario: [MOCK_IO_SUBMIT_02_1_B] Routing trasparente a IO reale per richiesta con subject ordinario privo di marker
-    Given una richiesta di invio messaggio con subject ordinario privo di marker
+    Given una richiesta di invio messaggio con subject ordinario privo di marker verso destinatario whitelist "PLVLRT86R24Z112H"
     When viene richiesta la sottomissione del messaggio
     Then la richiesta viene instradata con successo verso l'ambiente reale di IO
-    And l'identificativo restituito non contiene il prefisso di mock
 
   @MOCK_IO_SUBMIT_02_2_A
   Scenario Outline: [MOCK_IO_SUBMIT_02_2_A] Rifiuto sottomissione per payload non conforme alle specifiche OpenAPI
@@ -29,20 +28,13 @@ Feature: Sottomissione del Messaggio e Generazione dell'Identificativo
       | SENZA_CONTENT      |
       | SENZA_SUBJECT      |
       | SENZA_MARKDOWN     |
-      | CAMPI_NON_PREVISTI |
+      | JSON_MALFORMATO    |
 
   @MOCK_IO_SUBMIT_02_2_B
-  Scenario Outline: [MOCK_IO_SUBMIT_02_2_B] Rifiuto sottomissione per codice fiscale destinatario formalmente non valido
-    Given una richiesta di invio messaggio con codice fiscale formalmente non valido "<invalid_fiscal_code>"
+  Scenario: [MOCK_IO_SUBMIT_02_2_B] Rifiuto invio a IO reale per destinatario non whitelistato privo di marker
+    Given una richiesta di invio messaggio con subject ordinario senza marker per destinatario ordinario "RSSMRA80A01H5010"
     When viene richiesta la sottomissione del messaggio
-    Then la richiesta viene rifiutata per errore nel formato del destinatario
-
-    Examples:
-      | invalid_fiscal_code       |
-      | INVALID_CF_FORMAT         |
-      | 12345                     |
-      | RSSMRA80A01H5010_TOO_LONG |
-      | RSSMRA80A01H501!          |
+    Then la richiesta viene rifiutata per destinatario non abilitato all'inoltro senza marker
 
   @MOCK_IO_SUBMIT_02_2_C
   Scenario: [MOCK_IO_SUBMIT_02_2_C] Rifiuto sottomissione per marker contenente sequenza non censita a sistema

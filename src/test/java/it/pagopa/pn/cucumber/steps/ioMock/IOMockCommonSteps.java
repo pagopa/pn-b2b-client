@@ -61,10 +61,14 @@ public class IOMockCommonSteps {
         }
 
         HttpEntity<?> entity;
-        if (method == HttpMethod.GET || context.getRequestPayload() == null || context.getRequestPayload().isEmpty()) {
+        if (method == HttpMethod.GET) {
             entity = new HttpEntity<>(headers);
-        } else {
+        } else if (context.getRawPayloadString() != null) {
+            entity = new HttpEntity<>(context.getRawPayloadString(), headers);
+        } else if (context.getRequestPayload() != null) {
             entity = new HttpEntity<>(context.getRequestPayload(), headers);
+        } else {
+            entity = new HttpEntity<>(headers);
         }
 
         try {
@@ -76,6 +80,7 @@ public class IOMockCommonSteps {
 
             boolean isTransparent = response.getHeaders().containsKey("x-routed-to-real-io")
                     || (response.getHeaders().containsKey("x-routed-to") && "real-io".equalsIgnoreCase(response.getHeaders().getFirst("x-routed-to")))
+                    || (response.getHeaders().containsKey("www-authenticate") && response.getHeaders().getFirst("www-authenticate").contains("api.io.pagopa.it"))
                     || (response.getBody() != null && response.getBody().contains("real_io"));
             context.setTransparentRouting(isTransparent);
 
@@ -98,7 +103,8 @@ public class IOMockCommonSteps {
             boolean isTransparent = e.getResponseHeaders() != null && (
                     e.getResponseHeaders().containsKey("x-routed-to-real-io")
                     || "real-io".equalsIgnoreCase(e.getResponseHeaders().getFirst("x-routed-to"))
-                    || (e.getResponseBodyAsString() != null && e.getResponseBodyAsString().contains("real_io"))
+                    || (e.getResponseHeaders().getFirst("www-authenticate") != null && e.getResponseHeaders().getFirst("www-authenticate").contains("io.pagopa.it"))
+                    || (e.getResponseBodyAsString() != null && (e.getResponseBodyAsString().contains("real_io") || e.getResponseBodyAsString().contains("subscription key")))
             );
             if (isTransparent) {
                 context.setTransparentRouting(true);

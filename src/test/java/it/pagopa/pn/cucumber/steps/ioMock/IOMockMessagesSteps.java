@@ -6,6 +6,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.common.util.StringUtils;
 import it.pagopa.pn.cucumber.steps.ioMock.context.IoMockScenarioContext;
 import it.pagopa.pn.cucumber.steps.ioMock.dto.IoMockMessagePayloadBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,9 +52,11 @@ public class IOMockMessagesSteps {
         context.setRequestPayload(payload);
     }
 
-    @Given("una richiesta di invio messaggio con subject ordinario privo di marker")
-    public void prepareMessageRequestWithoutMarker() {
+    @Given("una richiesta di invio messaggio con subject ordinario privo di marker verso destinatario whitelist {string}")
+    public void prepareMessageRequestWithoutMarker(String whitelistFiscalCode) {
+        String resolvedFiscalCode = StringUtils.resolveValue(whitelistFiscalCode);
         Map<String, Object> payload = IoMockMessagePayloadBuilder.builder()
+                .withFiscalCode(resolvedFiscalCode)
                 .withSubject("Notifica ordinaria senza marker")
                 .buildMap();
         context.setRequestPayload(payload);
@@ -61,6 +64,16 @@ public class IOMockMessagesSteps {
             context.setRequestHeaders(new HashMap<>());
         }
         context.getRequestHeaders().put("Ocp-Apim-Subscription-Key", "sub-key-io-collaudo-test-12345");
+    }
+
+    @Given("una richiesta di invio messaggio con subject ordinario senza marker per destinatario ordinario {string}")
+    public void prepareMessageRequestWithoutMarkerForOrdinaryRecipient(String ordinaryFiscalCode) {
+        String resolvedFiscalCode = StringUtils.resolveValue(ordinaryFiscalCode);
+        Map<String, Object> payload = IoMockMessagePayloadBuilder.builder()
+                .withFiscalCode(resolvedFiscalCode)
+                .withSubject("Notifica ordinaria senza marker")
+                .buildMap();
+        context.setRequestPayload(payload);
     }
 
     @Given("una richiesta di invio messaggio non conforme per {string}")
@@ -79,13 +92,9 @@ public class IOMockMessagesSteps {
             case "SENZA_MARKDOWN":
                 payload = IoMockMessagePayloadBuilder.builder().withoutContentField("markdown").buildMap();
                 break;
-            case "CAMPI_NON_PREVISTI":
-                payload = IoMockMessagePayloadBuilder.builder()
-                        .withExtraField("unauthorized_custom_property", "unexpected_value_123")
-                        .withExtraField("extra_nested_object", Map.of("foo", "bar"))
-                        .withExtraContentField("extra_content_field", "not_allowed")
-                        .buildMap();
-                break;
+            case "JSON_MALFORMATO":
+                context.setRawPayloadString("{ invalid_json_content: ");
+                return;
             default:
                 payload = IoMockMessagePayloadBuilder.builder().withoutField(anomalyType).buildMap();
                 break;
@@ -193,6 +202,13 @@ public class IOMockMessagesSteps {
         assertThat(messageId)
                 .as("L'ID restituito (%s) non deve contenere il prefisso del mock (MOCK-)", messageId)
                 .doesNotStartWith("MOCK-");
+    }
+
+    @Then("la richiesta viene rifiutata per destinatario non abilitato all'inoltro senza marker")
+    public void verifyRecipientNotAllowedWithoutMarkerFailed() {
+        assertThat(context.getActualStatusCode())
+                .as("Lo status code atteso per invio senza marker a destinatario non whitelistato è 400 Bad Request")
+                .isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
 
     @Then("la richiesta viene rifiutata per errore di validazione formale")
