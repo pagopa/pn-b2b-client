@@ -261,7 +261,8 @@ Feature: verifica creazione stream
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
     When si crea il nuovo stream con versione "V30" per il "Comune_Multi" con un gruppo disponibile "FIRST"
-    Then si cancella lo stream creato per il "Comune_Multi" con versione "V30"
+    Then lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V30"
+    And si cancella lo stream creato per il "Comune_Multi" con versione "V30"
     And viene verificata la corretta cancellazione con versione "V30"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
@@ -275,7 +276,8 @@ Feature: verifica creazione stream
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
     When si crea il nuovo stream con versione "V30" per il "Comune_Multi" con un gruppo disponibile "FIRST"
-    Then si cancella lo stream creato per il "Comune_Multi" con versione "V30"
+    Then lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V30"
+    And si cancella lo stream creato per il "Comune_Multi" con versione "V30"
     And viene verificata la corretta cancellazione con versione "V30"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
@@ -530,5 +532,69 @@ Feature: verifica creazione stream
     And viene impostata l'apikey appena generata
     When si consuma lo stream che non esiste con la versione "V30" e apiKey aggiornata
     Then l'operazione ha prodotto un errore con status code "404"
+    And viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata
+
+  @webhookV30 @precondition @cleanWebhook @webhook2
+  Scenario: [STREAM_STATUS_FILTER_CHECK_VERSION] Creazione di uno stream legale con eventType "STATUS" e filtro status impostato su uno status introdotto con una versione di stream successiva a quella usata
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V25"
+    And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
+    And viene impostata l'apikey appena generata
+    And viene aggiornata la apiKey utilizzata per gli stream
+    When si crea il nuovo stream per il "Comune_Multi" con versione "V25" e filtro status "RETURNED_TO_SENDER"
+    Then l'operazione ha prodotto un errore con status code "400"
+    And viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata
+
+  @webhookV30 @precondition @cleanWebhook @webhook2
+  Scenario Outline: [STREAM_TIMELINE_FILTER_CHECK_VERSION_V10] Creazione di uno stream legale con eventType "TIMELINE" e filtro timeline impostato su uno elemento introdotto con una versione di stream successiva a quella usata
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
+    And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
+    And viene impostata l'apikey appena generata
+    And viene aggiornata la apiKey utilizzata per gli stream
+    When si crea il nuovo stream per il "Comune_Multi" con versione "V10" e filtro timeline "<timelineElement>"
+    Then l'operazione ha prodotto un errore con status code "400"
+    And viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata
+    Examples:
+      | timelineElement                   |
+      | NOTIFICATION_CANCELLATION_REQUEST |
+      | NOTIFICATION_CANCELLED            |
+      | PREPARE_ANALOG_DOMICILE_FAILURE   |
+
+  @webhookV30 @precondition @cleanWebhook @webhook2
+  Scenario: [STREAM_TIMELINE_FILTER_CHECK_VERSION_V25] Creazione di uno stream legale con eventType "TIMELINE" e filtro timeline impostato su uno elemento introdotto con una versione di stream successiva a quella usata
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V25"
+    And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
+    And viene impostata l'apikey appena generata
+    And viene aggiornata la apiKey utilizzata per gli stream
+    When si crea il nuovo stream per il "Comune_Multi" con versione "V25" e filtro timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
+    Then l'operazione ha prodotto un errore con status code "400"
+    And viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata
+
+  @webhookV30 @precondition @cleanWebhook @webhook2
+  Scenario Outline: [STREAM_TIMELINE_FILTER_CHECK_VERSION_V26] Creazione di uno stream legale con eventType "TIMELINE" e filtro timeline impostato su uno elemento introdotto con una versione di stream successiva a quella usata
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V26"
+    And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
+    And viene impostata l'apikey appena generata
+    And viene aggiornata la apiKey utilizzata per gli stream
+    When si crea il nuovo stream per il "Comune_Multi" con versione "V26" e filtro timeline "<timelineElement>"
+    Then l'operazione ha prodotto un errore con status code "400"
+    And viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata
+    Examples:
+      | timelineElement                     |
+      | PUBLIC_REGISTRY_VALIDATION_CALL     |
+      | PUBLIC_REGISTRY_VALIDATION_RESPONSE |
+
+  @webhookV30 @precondition @cleanWebhook @webhook2
+  Scenario: [STREAM_TIMELINE_FILTER_CHECK_VERSION_V27] Creazione di uno stream legale con eventType "TIMELINE" e filtro timeline impostato su uno elemento introdotto con una versione di stream successiva a quella usata
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V27"
+    And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
+    And viene impostata l'apikey appena generata
+    And viene aggiornata la apiKey utilizzata per gli stream
+    When si crea il nuovo stream per il "Comune_Multi" con versione "V27" e filtro timeline "NOTIFICATION_TIMELINE_REWORKED"
+    Then l'operazione ha prodotto un errore con status code "400"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
