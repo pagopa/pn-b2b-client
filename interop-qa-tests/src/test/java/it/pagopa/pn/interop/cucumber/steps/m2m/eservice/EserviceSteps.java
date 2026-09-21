@@ -23,7 +23,7 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.*;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.helpers.EServiceSeedFactory;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.DocumentMapper;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
-import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
+import it.pagopa.interop.utils.delay_service.DelayService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.assertj.core.api.Assertions;

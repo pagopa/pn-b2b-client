@@ -14,9 +14,8 @@ import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPrepara
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.AttributeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.purposes.resolver.PurposeResolver;
-import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.AbstractResolver;
 import it.pagopa.pn.interop.cucumber.utility.EServiceDescriptorUtils;
-import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
+import it.pagopa.interop.utils.delay_service.DelayService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 
