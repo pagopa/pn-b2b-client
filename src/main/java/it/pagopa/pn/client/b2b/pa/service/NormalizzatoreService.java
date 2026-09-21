@@ -13,8 +13,6 @@ public interface NormalizzatoreService {
     );
 
     ResponseEntity<NormalizzazioneSyncResponse> normalizzazioneSyncWithHttpInfo(
-            String pnAddressManagerCxId,
-            String xApiKey,
             NormalizzazioneSyncRequest request
     );
 }

@@ -48,13 +48,7 @@ public class ConsolidatoreV2Steps {
 
     @When("invoco la normalizzazione sincrona")
     public void invokeSyncNormalize() {
-        response = normalizzatoreService.normalizzazioneSyncWithHttpInfo(
-//                pnAddressManagerCxId,
-//                xApiKey,
-                null,
-                null,
-                request
-        );
+        response = normalizzatoreService.normalizzazioneSyncWithHttpInfo(request);
     }
 
     @Then("lo status code della response è {int}")
@@ -91,11 +85,10 @@ public class ConsolidatoreV2Steps {
         try {
             FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             boolean isPresent = fullSentNotification.getTimeline().stream().anyMatch(elem ->
-            {
-                assert elem.getDetails() != null;
-                assert elem.getDetails().getDeliveryDetailCode() != null;
-                return elem.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode);
-            });
+                    elem.getDetails() != null
+                            && elem.getDetails().getDeliveryDetailCode() != null
+                            && elem.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode)
+            );
             String result = (isPresent ? "Trovato elemento con deliveryDetailCode "
                     : "Non trovato elemento con deliveryDetailCode ") + deliveryDetailCode;
             assertThat(isPresent).as(result).isEqualTo(is);

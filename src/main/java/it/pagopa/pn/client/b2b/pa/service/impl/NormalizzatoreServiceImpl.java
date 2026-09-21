@@ -13,16 +13,20 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class NormalizzatoreServiceImpl implements NormalizzatoreService {
     private final NormalizzatoreApi normalizzatoreApi;
+    private final String pnAddressManagerCxId;
+    private final String xApiKey;
 
     public NormalizzatoreServiceImpl(RestTemplate restTemplate,
-    @Value("${pn.delivery.base-url}") String basePath,
-    @Value("${pn.webapi.external.user-agent}")String userAgent) {
-        this.normalizzatoreApi= new NormalizzatoreApi( newApiClient(restTemplate, basePath, userAgent));
+    @Value("${pn.address.manager-url}") String basePath,
+    @Value("${pn.address.manager.cxId}")String cxId,
+    @Value("${pn.address.manager.api-key}")String apiKey) {
+        this.pnAddressManagerCxId = cxId;
+        this.xApiKey = apiKey;
+        this.normalizzatoreApi= new NormalizzatoreApi( newApiClient(restTemplate, basePath, cxId, apiKey));
     }
 
-    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken) {
+    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String cxId, String apiKey) {
         ApiClient newApiClient = new ApiClient(restTemplate);
-        newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
         newApiClient.setBasePath(basePath);
         return newApiClient;
     }
@@ -37,8 +41,6 @@ public class NormalizzatoreServiceImpl implements NormalizzatoreService {
 
     @Override
     public ResponseEntity<NormalizzazioneSyncResponse> normalizzazioneSyncWithHttpInfo(
-            String pnAddressManagerCxId,
-            String xApiKey,
             NormalizzazioneSyncRequest request) {
 
         return normalizzatoreApi.normalizzazioneSyncWithHttpInfo(
