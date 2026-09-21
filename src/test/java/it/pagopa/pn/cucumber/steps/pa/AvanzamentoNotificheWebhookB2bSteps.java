@@ -1,6 +1,7 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -26,6 +27,7 @@ import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebh
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.TimelineElementCategoryV23;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.TimelineElementV23;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.steps.pa.webhookVersions.*;
 import it.pagopa.pn.cucumber.utils.GroupPosition;
 import lombok.Data;
@@ -43,6 +45,7 @@ import java.time.OffsetDateTime;
 import java.util.*;
 
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assumptions.assumeThat;
 
 @Slf4j
@@ -206,8 +209,8 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         WAIT_FOR_ACCEPTED("waitForAccepted", 27),
         COMMUNICATION_TYPE("communicationType", 30);
 
-        private String fieldName;
-        private int introducingVersion;
+        final String fieldName;
+        final int introducingVersion;
 
         WebhookExtraField(String fieldName, int introducingVersion) {
             this.fieldName = fieldName;
@@ -934,22 +937,35 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
     @And("verifica corrispondenza tra i detail del webhook e quelli della timeline con la versione {string}")
-    public void verificaCorrispondenzaTraIDetailDelWebhookEQuelliDellaTimeline(String version) throws JsonProcessingException {
+    public void verificaCorrispondenzaTraIDetailDelWebhookEQuelliDellaTimeline(String version)
+            throws JsonProcessingException {
+
         WebhookStepsInterface webhookStepsInterface = getWebhookStep(version);
 
         List<Object> objectsToCompare = webhookStepsInterface.verificaCorrispondenzaElementiTimelineWebhookAndB2B();
+
         Object b2bElement = objectsToCompare.get(0);
         Object webhookElement = objectsToCompare.get(1);
 
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        String jsonB2B = ow.writeValueAsString(serializeObject(b2bElement));
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectWriter writer = mapper.writer().withDefaultPrettyPrinter();
+
+        String jsonB2B = writer.writeValueAsString(serializeObject(b2bElement));
         System.out.println(jsonB2B);
-        String jsonWebhook = ow.writeValueAsString(serializeObject(webhookElement));
+
+        String jsonWebhook = writer.writeValueAsString(serializeObject(webhookElement));
         System.out.println(jsonWebhook);
 
-        ObjectMapper mapper = new ObjectMapper();
-        Assertions.assertEquals(mapper.readTree(jsonB2B), mapper.readTree(jsonWebhook));
+        JsonNode b2bNode = B2bUtils.normalize(mapper.readTree(jsonB2B));
+        JsonNode webhookNode = B2bUtils.normalize(mapper.readTree(jsonWebhook));
+
+        try {
+            assertThat(webhookNode).as("I due JSON non corrispondono").isEqualTo(b2bNode);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
     }
+
 
     private Object serializeObject(Object obj) {
         Map<String, Object> result = new LinkedHashMap<>();
