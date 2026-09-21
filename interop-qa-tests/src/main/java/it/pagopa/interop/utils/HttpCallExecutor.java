@@ -26,7 +26,7 @@ import static java.util.Objects.isNull;
 public class HttpCallExecutor implements IHttpExecutor {
 
     private final String ONGOING_OPERATION_CONFLICT_ERROR = "Request conflicts with an ongoing operation on the same resource";
-    private final int MAX_ATTEMPS = 4;
+    private final int MAX_ATTEMPTS = 4;
 
     private HttpStatus responseStatus;
     private String errorMessage;
@@ -52,7 +52,7 @@ public class HttpCallExecutor implements IHttpExecutor {
             response = null;
             responseStatus = e.getStatusCode();
             errorMessage = e.getMessage();
-            if (this.ongoingOperationConflict() && attempts++ < MAX_ATTEMPS) {
+            if (this.ongoingOperationConflict() && attempts++ < MAX_ATTEMPTS) {
                 delayService.delay();
                 performCall(promise);
             }
