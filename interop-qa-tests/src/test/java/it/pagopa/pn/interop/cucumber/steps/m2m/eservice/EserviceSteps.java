@@ -23,6 +23,7 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.*;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.helpers.EServiceSeedFactory;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.DocumentMapper;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
+import it.pagopa.pn.interop.cucumber.utility.PreconditionValidator.Precondition;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -31,9 +32,11 @@ import org.jeasy.random.randomizers.text.StringRandomizer;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 
-import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -42,7 +45,10 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static it.pagopa.pn.interop.cucumber.utility.StepParser.nullableBoolean;
+import static it.pagopa.pn.interop.cucumber.utility.PreconditionValidator.checkPrecondition;
+import static it.pagopa.pn.interop.cucumber.utility.PreconditionValidator.checkPreconditions;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.assertj.core.api.Assertions.within;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
@@ -287,26 +293,118 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
 
     @Then("i metadati dei documenti ottenuti sono coerenti con quelli caricati")
     public void checkDocumentsMetadata() {
+        // Step 1: raccolta dati reali (Interop API) e attesi (contesto scenario).
         List<Document> actualDocuments = ((Documents) httpExecutor.getResponse()).getResults();
         List<DocumentMetadata> actualDocumentsMetadata = documentMapper.map(actualDocuments);
         List<DocumentMetadata> expectedDocumentsMetadata = sharedStepsContext.getEServicesCommonContext()
                 .getDocumentsMetadata();
 
-        assertSoftly(softly -> softly.assertThat(actualDocumentsMetadata)
-                .as("Verifica che i metadati dei documenti caricati siano coerenti")
-                .usingFieldByFieldElementComparator()
-                .usingComparatorForElementFieldsWithType(
-                        (timestamp1, timestamp2) -> {
-                            Duration actualAndExpectedDifference = Duration.between(timestamp1, timestamp2).abs();
-                            Duration acceptedDelay = Duration.ofSeconds(10);
+        // Step 2: precondizione minima sul setup test.
+        // Se manca il riferimento atteso in contesto, il test non puo procedere in modo affidabile.
+        checkPrecondition(new Precondition(() -> expectedDocumentsMetadata != null,
+                "expected documents metadata in test context must not be null"));
 
-                            // Se i timestamp di creazione sono divisi da un delay ragionevole, allora
-                            // si considerano "uguali", per la riuscita del test
-                            return actualAndExpectedDifference.compareTo(acceptedDelay) < 0 ? 0 : 1;
-                        },
-                        OffsetDateTime.class)
-                .containsExactlyInAnyOrderElementsOf(expectedDocumentsMetadata));
+        // Step 3: precondizioni puntuali sui documenti attesi (id, name, prettyName, createdAt).
+        // Questi controlli intercettano errori di setup prima dei confronti di prodotto.
+        List<Precondition> expectedDocumentPreconditions = new ArrayList<>();
+        for (int i = 0; i < expectedDocumentsMetadata.size(); i++) {
+            int documentIndex = i + 1;
+            DocumentMetadata expectedDocument = expectedDocumentsMetadata.get(i);
+            expectedDocumentPreconditions.add(new Precondition(
+                    () -> expectedDocument != null,
+                    "expected document metadata at index " + documentIndex + " must not be null"
+            ));
+
+            if (expectedDocument != null) {
+                expectedDocumentPreconditions.add(new Precondition(
+                        () -> expectedDocument.getId() != null,
+                        "expected document id at index " + documentIndex + " must not be null"
+                ));
+                expectedDocumentPreconditions.add(new Precondition(
+                        () -> expectedDocument.getName() != null,
+                        "expected document name at index " + documentIndex + " must not be null"
+                ));
+                expectedDocumentPreconditions.add(new Precondition(
+                        () -> expectedDocument.getPrettyName() != null,
+                        "expected document prettyName at index " + documentIndex + " must not be null"
+                ));
+                expectedDocumentPreconditions.add(new Precondition(
+                        () -> expectedDocument.getCreatedAt() != null,
+                        "expected document createdAt at index " + documentIndex + " must not be null"
+                ));
+            }
+        }
+        checkPreconditions("checkDocumentsMetadata", expectedDocumentPreconditions);
+
+        // Step 4: verifiche di prodotto con soft assertions.
+        // Si raccolgono tutti i mismatch in un unico report finale.
+        assertSoftly(softly -> {
+            softly.assertThat(actualDocumentsMetadata)
+                    .as("Verifica che i metadati dei documenti caricati siano presenti")
+                    .isNotNull();
+
+            if (actualDocumentsMetadata == null) {
+                return;
+            }
+
+            softly.assertThat(actualDocumentsMetadata)
+                    .as("Verifica che il numero di documenti restituiti coincida con quello atteso")
+                    .hasSameSizeAs(expectedDocumentsMetadata);
+
+            // Step 5: indicizzazione dei documenti reali per id, per confronti stabili e leggibili.
+            Map<UUID, DocumentMetadata> actualDocumentsById = new HashMap<>();
+            actualDocumentsMetadata.forEach(actualDocument -> {
+                softly.assertThat(actualDocument)
+                        .as("Verifica che il documento reale non sia nullo")
+                        .isNotNull();
+                if (actualDocument == null) {
+                    return;
+                }
+
+                softly.assertThat(actualDocument.getId())
+                        .as("Verifica che il documento reale abbia un id")
+                        .isNotNull();
+                if (actualDocument.getId() != null) {
+                    actualDocumentsById.put(actualDocument.getId(), actualDocument);
+                }
+            });
+
+            // Step 6: confronto documento per documento sui campi restituiti dall'API.
+            // uploadPath non viene confrontato perché non è parte della response.
+            for (DocumentMetadata expectedDocument : expectedDocumentsMetadata) {
+                DocumentMetadata actualDocument = actualDocumentsById.get(expectedDocument.getId());
+
+                softly.assertThat(actualDocument)
+                        .as("Verifica che sia presente il documento con id %s", expectedDocument.getId())
+                        .isNotNull();
+
+                if (actualDocument == null) {
+                    continue;
+                }
+
+                softly.assertThat(actualDocument.getName())
+                        .as("Verifica il name del documento con id %s", expectedDocument.getId())
+                        .isEqualTo(expectedDocument.getName());
+                softly.assertThat(actualDocument.getPrettyName())
+                        .as("Verifica il prettyName del documento con id %s", expectedDocument.getId())
+                        .isEqualTo(expectedDocument.getPrettyName());
+
+                // uploadPath non viene restituito dalle API M2M: non va confrontato puntualmente.
+
+                softly.assertThat(actualDocument.getCreatedAt())
+                        .as("Verifica che createdAt sia valorizzato per il documento con id %s", expectedDocument.getId())
+                        .isNotNull();
+
+                // Step 7: confronto temporale tollerante per evitare falsi negativi dovuti a jitter.
+                if (actualDocument.getCreatedAt() != null) {
+                    softly.assertThat(actualDocument.getCreatedAt())
+                            .as("Verifica che createdAt del documento con id %s sia vicino al valore atteso", expectedDocument.getId())
+                            .isCloseTo(expectedDocument.getCreatedAt(), within(10, ChronoUnit.SECONDS));
+                }
+            }
+        });
     }
+
 
     @Then("è presente un'interfaccia per l'e-service")
     public void interfaceExistsCheck() {

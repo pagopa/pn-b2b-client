@@ -6,18 +6,16 @@ import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
-import java.util.UUID;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService.MutateDescriptorResult;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.UUID;
 
 @Slf4j
 public class DescriptorPublicationSteps {
@@ -78,12 +76,13 @@ public class DescriptorPublicationSteps {
             sharedStepsContext.getRiskAnalysisCommonContext().setRiskAnalysisId(riskAnalysisId);
         }
 
-        dataPreparationService.bringDescriptorToGivenState(
+        MutateDescriptorResult mutateDescriptorResult = dataPreparationService.bringDescriptorToGivenState(
                 sharedStepsContext.getEServicesCommonContext().getEserviceId(),
                 sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
                 EServiceDescriptorState.valueOf(eServiceDescriptorState),
                 false
         );
+        eServicesCommonContext.setDocumentsMetadata(mutateDescriptorResult.getDocumentsMetadata());
     }
 
     // TODO: bisogna rifattorizzare il codice per riutlizzare in maniera corretta
@@ -111,12 +110,13 @@ public class DescriptorPublicationSteps {
             sharedStepsContext.getRiskAnalysisCommonContext().setRiskAnalysisId(riskAnalysisId);
         }
 
-        dataPreparationService.bringDescriptorToGivenState(
+        MutateDescriptorResult mutateDescriptorResult = dataPreparationService.bringDescriptorToGivenState(
                 sharedStepsContext.getEServicesCommonContext().getEserviceId(),
                 sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
                 EServiceDescriptorState.valueOf(eServiceDescriptorState),
                 false
         );
+        eServicesCommonContext.setDocumentsMetadata(mutateDescriptorResult.getDocumentsMetadata());
     }
 
     @When("l'utente pubblica quel descrittore")
