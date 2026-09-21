@@ -14,9 +14,11 @@ import it.pagopa.pn.interop.cucumber.steps.attribute.AttributeListingSteps.Attri
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import lombok.Data;
 
+@Slf4j
 public class AttributeListingSteps {
     @Data
     @Builder(toBuilder = true)
@@ -88,7 +90,9 @@ public class AttributeListingSteps {
     @When("l'utente richiede una operazione di listing degli attributi certificati discreti disponibili")
     public void listCertifiedDiscreteAttributes() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-        sharedStepsContext.getAttributeCommonContext().setAvailableCertifiedDiscreteAttributes(listAllCertifiedDiscreteAttributes());
+        sharedStepsContext.getAttributeCommonContext().setAvailableCertifiedDiscreteAttributes(
+                listAllCertifiedDiscreteAttributes()
+        );
     }
 
     private AttributeListRequestBuilder getAttributeListRequestPrototype() {
@@ -121,14 +125,19 @@ public class AttributeListingSteps {
 
         do {
             final int currentOffset = offset;
-            httpCallExecutor.performCall(() ->
-                    clientTokenConfigurator.getAttributeApiClient().getAttributes(
-                            limit,
-                            currentOffset,
-                            List.of(CERTIFIED_DISCRETE),
-                            null,
-                            null
-                    )
+
+            sharedStepsContext.getPollingService().makePolling(
+                    () -> httpCallExecutor.performCall(() ->
+                            clientTokenConfigurator.getAttributeApiClient().getAttributes(
+                                    limit,
+                                    currentOffset,
+                                    List.of(CERTIFIED_DISCRETE),
+                                    null,
+                                    null
+                            )
+                    ),
+                    res -> res.is2xxSuccessful() || !sharedStepsContext.getHttpCallExecutor().ongoingOperationConflict(),
+                    "Error while retrieving attribute listing"
             );
 
             Assertions.assertTrue(httpCallExecutor.getResponseStatus().is2xxSuccessful(), "Expected 2xx successful status code for attribute listing");
@@ -138,6 +147,8 @@ public class AttributeListingSteps {
             totalCount = response.getPagination().getTotalCount();
             offset += limit;
         } while (allAttributes.size() < totalCount);
+
+        log.info("Found {} certified discrete attributes", allAttributes.size());
 
         return allAttributes;
     }
