@@ -50,7 +50,7 @@ Feature: aggiornamento stream
     And l'apiKey viene cancellata
 
   @webhookV30Informal @precondition @cleanWebhook @webhook2
-  Scenario: [B2B-STREAM_ES1.1_87_2] Aggiornamento di uno stream notifica senza gruppo, con eventType "STATUS"  con gruppo che appartenente alla PA.
+  Scenario: [B2B-STREAM_ES1.1_87_2] Aggiornamento di uno stream notifica senza gruppo e con eventType "STATUS", modificato con gruppo non appartenente alla PA.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
