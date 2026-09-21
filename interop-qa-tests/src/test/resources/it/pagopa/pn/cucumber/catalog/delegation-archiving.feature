@@ -2065,7 +2065,8 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And la richiesta di archiviazione dell'e-service non è presente
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And la versione più recente dell'e-service è in stato "ARCHIVING"
-    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And il descrittore con id "%actual" dell'e-service avente id "%actual" è in fase di archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And il vecchio descrittore con id "%actual" dell'e-service avente id "%actual" è in fase di archiviazione tramite l'archiviazione manuale del singolo descrittore
 
   @sad-path
   Scenario: [DELEGATION_MANUAL_ARCHIVING_COMBINED_PROCESS_1.2] Il delegato NON può richiedere l'archiviazione dell'intero e-service con un tempo di preavviso antecedente a quello di un suo descrittore con archiviazione già in corso
