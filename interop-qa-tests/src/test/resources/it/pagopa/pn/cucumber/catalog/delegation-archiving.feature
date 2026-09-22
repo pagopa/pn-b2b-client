@@ -608,7 +608,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente ha già accettato la richiesta di archiviazione per l'e-service "%actual"
     And l'utente è un "admin" di "PA2"
     When l'utente delegato annulla la richiesta di archiviazione dell'e-service "%actual"
-    Then si ottiene response status code 400
+    Then si ottiene response status code 409
 
   @happy-path
   Scenario: [DELEGATION_MANUAL_ARCHIVING_5.1] Un ente delegato può inviare una richiesta di archiviazione dell'e-service al delegante a seguito dell'annullamento del processo di archiviazione
