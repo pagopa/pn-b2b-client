@@ -12,18 +12,18 @@ Feature: Lettura del template di analisi del rischio più recente
 
     Examples:
       | ente    | ruolo        | versione |
-      | PA1     | admin        |      3.1 |
-      | PA1     | api          |      3.1 |
-      | PA1     | security     |      3.1 |
-      | PA1     | api,security |      3.1 |
-      | PA1     | support      |      3.1 |
-      | GSP     | admin        |      2.0 |
-      | GSP     | api          |      2.0 |
-      | GSP     | security     |      2.0 |
-      | GSP     | api,security |      2.0 |
-      | GSP     | support      |      2.0 |
-      | Privato | admin        |      2.0 |
-      | Privato | api          |      2.0 |
-      | Privato | security     |      2.0 |
-      | Privato | api,security |      2.0 |
-      | Privato | support      |      2.0 |
+      | PA1     | admin        |      3.2 |
+      | PA1     | api          |      3.2 |
+      | PA1     | security     |      3.2 |
+      | PA1     | api,security |      3.2 |
+      | PA1     | support      |      3.2 |
+      | GSP     | admin        |      2.1 |
+      | GSP     | api          |      2.1 |
+      | GSP     | security     |      2.1 |
+      | GSP     | api,security |      2.1 |
+      | GSP     | support      |      2.1 |
+      | Privato | admin        |      2.1 |
+      | Privato | api          |      2.1 |
+      | Privato | security     |      2.1 |
+      | Privato | api,security |      2.1 |
+      | Privato | support      |      2.1 |
