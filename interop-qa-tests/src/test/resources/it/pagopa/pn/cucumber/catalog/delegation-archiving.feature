@@ -608,7 +608,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'utente ha già accettato la richiesta di archiviazione per l'e-service "%actual"
     And l'utente è un "admin" di "PA2"
     When l'utente delegato annulla la richiesta di archiviazione dell'e-service "%actual"
-    Then si ottiene response status code 409
+    Then si ottiene response status code 400
 
   @happy-path
   Scenario: [DELEGATION_MANUAL_ARCHIVING_5.1] Un ente delegato può inviare una richiesta di archiviazione dell'e-service al delegante a seguito dell'annullamento del processo di archiviazione
@@ -1513,7 +1513,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'ente "PA1" con ruolo "admin" revoca la delega in erogazione con successo
     And l'utente è un "admin" di "PA2"
     When l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "QA test delegation manual archiving" e 60 giorni di preavviso
-    Then si ottiene response status code 409
+    Then si ottiene response status code 400
 
   @sad-path
   Scenario: [DELEGATION_MANUAL_ARCHIVING_REQUEST_REVOCATION_1.4] Un ente con delega revocata NON può richiedere l'archiviazione del descrittore che non sia il più recente dell'e-service
@@ -1528,7 +1528,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'ente "PA1" con ruolo "admin" revoca la delega in erogazione con successo
     And l'utente è un "admin" di "PA2"
     When l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 60 giorni di preavviso
-    Then si ottiene response status code 409
+    Then si ottiene response status code 400
 
   @happy-path
   Scenario: [DELEGATION_MANUAL_ARCHIVING_REQUEST_REVOCATION_1.5] Dopo la revoca della delega, il delegante può avviare l'archiviazione dell'e-service
@@ -1587,7 +1587,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'utente è un "admin" di "PA1"
     When l'ente delegante tenta di inoltrare una richiesta di delega in erogazione all'ente delegato per l'e-service "45d822b9-066c-4a77-b4a1-331135496907"
-    Then si ottiene response status code 409
+    Then si ottiene response status code 400
 
   @happy-path
   Scenario Outline: [DELEGATION_ARCHIVING_STATE_2.1] Un e-service in stato ARCHIVING o ARCHIVING_SUSPENDED può essere concesso in delega in fruizione
