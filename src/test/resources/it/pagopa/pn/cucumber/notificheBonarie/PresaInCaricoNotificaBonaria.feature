@@ -293,13 +293,13 @@ Feature: Sottomissione di una notifica bonaria.
     Then la notifica bonaria è stata rifiutata per l'errore: "PN_DELIVERY_PHYSICAL_ADDRESS_NULL"
 
 
-  #todo destinatario censito + annotation #@ricercaIndirizzoVas
+  @ricercaIndirizzoVas
   Scenario: [NOTIFICHE_BONARIE_VAS_HOTFIX_02] Come ente mittente tento l'invio di una notifica bonaria senza indirizzo analogico che varrà recuperato dal VAS.
     Given l'ente mittente "Comune_1" compila una notifica bonaria con i seguenti dati:
-      | campaignId       | MessaMora                |
+      | campaignId       | CampAnalogic             |
       | denomination     | PF censito vas           |
       | recipientType    | PF                       |
-      | taxId            |                          |
+      | taxId            | FRMTTR76M06B715E         |
       | digitalDomicile  | NULL                     |
       | physical_address | ${PHYSICAL_ADDRESS_NULL} |
       | messageId        | ${NEW-IT}                |
