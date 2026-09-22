@@ -48,19 +48,26 @@ public class HttpCallExecutor implements IHttpExecutor {
             response = promise.get();
             responseStatus = HttpStatus.OK;
             errorMessage = null;
+            attempts = 0;
         } catch (HttpStatusCodeException e) {
             response = null;
             responseStatus = e.getStatusCode();
             errorMessage = e.getMessage();
-            if (this.ongoingOperationConflict() && attempts++ < MAX_ATTEMPTS) {
-                delayService.delay();
-                performCall(promise);
-            }
+            handleConflicts(() -> performCall(promise));
         } catch (IntegrityValidationInterceptor.IntegrityValidationException e) {
             responseStatus = e.getHttpStatus();
             errorMessage = e.getMessage();
+            attempts = 0;
         }
         return responseStatus;
+    }
+
+    private void handleConflicts(Runnable retryAction) {
+        if (this.ongoingOperationConflict() && attempts++ <= MAX_ATTEMPTS) {
+            log.warn("An ongoing operation conflict occurred, retrying: attempt {}...", attempts);
+            delayService.delay();
+            retryAction.run();
+        }
     }
 
     @Override
@@ -83,10 +90,12 @@ public class HttpCallExecutor implements IHttpExecutor {
             promiseResponse = promise.get();
             response = promiseResponse;
             responseStatus = httpStatusMapper.apply(promiseResponse);
+            attempts = 0;
         } catch (HttpStatusCodeException e) {
             response = null;
             responseStatus = e.getStatusCode();
             errorMessage = e.getMessage();
+            handleConflicts(() -> performCall(promise, httpStatusMapper));
         }
         return promiseResponse;
     }
@@ -96,10 +105,12 @@ public class HttpCallExecutor implements IHttpExecutor {
         try {
             promise.run();
             responseStatus = HttpStatus.OK;
+            attempts = 0;
         } catch (HttpStatusCodeException e) {
             response = null;
             responseStatus = e.getStatusCode();
             errorMessage = e.getMessage();
+            handleConflicts(() -> performCall(promise));
         }
         return responseStatus;
     }
