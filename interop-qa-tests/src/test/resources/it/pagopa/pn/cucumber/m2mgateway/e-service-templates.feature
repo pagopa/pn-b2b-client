@@ -821,6 +821,7 @@ Feature: Test API M2M of e-service template
     And l'e-service non ha subito modifiche
 
   @e-service-template-m2m-version-create
+  @m2m-eservice-template-version-description
   Scenario Outline: [ESERVICE_TEMPLATE_CREATE_VERSION_DESCRIPTION_1] La creazione di un e-service template non va a buon fine se la descrizione della sua versione contiene meno di 10 caratteri
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta la creazione dell'e-service template con la configurazione predefinita e con la descrizione della versione impostata a "<descrizione>"
@@ -828,13 +829,14 @@ Feature: Test API M2M of e-service template
 
     Examples:
       | descrizione | risultato |
-      | %null%      | 400       |
+      | %null%      | 201       |
       | %empty%     | 400       |
       | 123456789   | 400       |
       | 1234567890  | 201       |
 
   # https://pagopa.atlassian.net/browse/PIN-10919
   @e-service-template-m2m-version-create
+  @m2m-eservice-template-version-description
   Scenario: [ESERVICE_TEMPLATE_CREATE_VERSION_DESCRIPTION_1b] La creazione di un template e-service con la descrizione della versione a null e successiva creazione di un e-service produce va a buon fine.
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente tenta la creazione dell'e-service template con la configurazione predefinita e con la descrizione della versione impostata a "%null%"

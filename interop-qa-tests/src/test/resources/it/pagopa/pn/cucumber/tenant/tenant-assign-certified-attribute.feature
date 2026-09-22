@@ -48,7 +48,7 @@ Feature: Assegnazione di un attributo certificato ad un aderente
 
     Given l'utente è un "admin" di "GSP"
     And GSP ha già creato 1 attributo CERTIFIED_DISCRETE
-    When l'utente assegna a "PA1" l'attributo certificato discreto precedentemente creato con un valore discreto di <discreteValue>
+    When l'utente tenta di assegnare a "PA1" l'attributo certificato discreto precedentemente creato con un valore discreto di <discreteValue>
     Then si ottiene lo status code <expectedResult>
 
     Examples:
@@ -60,13 +60,12 @@ Feature: Assegnazione di un attributo certificato ad un aderente
 
   @certifiedDiscreteAttribute
   @certifiedDiscreteAttributeFlagOn
-  Scenario Outline: [TENANT_ASSIGN_CERTIFIED_DISCRETE_ATTRIBUTE_2] L'attributo certificato discreto può essere assegnato
-  soltanto da un admin di un ente certificatore.
+  Scenario Outline: [TENANT_ASSIGN_CERTIFIED_DISCRETE_ATTRIBUTE_2] L'attributo certificato discreto può essere assegnato soltanto da un admin di un ente certificatore.
 
     Given l'utente è un "admin" di "GSP"
     And GSP ha già creato 1 attributo CERTIFIED_DISCRETE
     When l'utente è un "<ruolo>" di "<ente>"
-    When l'utente assegna a "PA1" l'attributo certificato discreto precedentemente creato con un valore discreto di 100
+    When l'utente tenta di assegnare a "PA1" l'attributo certificato discreto precedentemente creato con un valore discreto di 100
     Then si ottiene lo status code <risultato>
 
     @happy-path
@@ -86,12 +85,10 @@ Feature: Assegnazione di un attributo certificato ad un aderente
 
   @certifiedDiscreteAttribute
   @certifiedDiscreteAttributeFlagOn
-  Scenario: [TENANT_ASSIGN_CERTIFIED_DISCRETE_ATTRIBUTE_3] La riassegnazione del medesimo attributo certificato discreto
-  ad un ente non va a buon fine.
-
+  Scenario: [TENANT_ASSIGN_CERTIFIED_DISCRETE_ATTRIBUTE_3] La riassegnazione del medesimo attributo certificato discreto ad un ente non va a buon fine.
     Given l'utente è un "admin" di "GSP"
     And GSP ha già creato 1 attributo CERTIFIED_DISCRETE
     And l'utente assegna a "PA1" l'attributo certificato discreto precedentemente creato con un valore discreto di 100
     And si ottiene lo status code 200
-    When l'utente assegna a "PA1" l'attributo certificato discreto precedentemente creato con un valore discreto di 200
+    When l'utente tenta di assegnare a "PA1" l'attributo certificato discreto precedentemente creato con un valore discreto di 200
     Then si ottiene lo status code 409

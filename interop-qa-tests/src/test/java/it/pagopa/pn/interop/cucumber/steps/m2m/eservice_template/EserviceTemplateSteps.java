@@ -24,7 +24,7 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.helpers.EServic
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.mapper.EServiceTemplateMapper;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.version.assistant.EServiceTemplateVersionPatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.version.assistant.EServiceTemplateVersionQuotasPatchOperationsAssistant;
-import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
+import it.pagopa.interop.utils.delay_service.DelayService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.jeasy.random.randomizers.text.StringRandomizer;
 import org.springframework.http.HttpStatus;
