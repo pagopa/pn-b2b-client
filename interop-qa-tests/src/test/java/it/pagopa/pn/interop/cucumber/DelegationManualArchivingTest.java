@@ -29,6 +29,6 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 })
 @ExcludeTags({"wait_for_fix", "ignore"})
-@IncludeTags({"delegation-manual-archiving-eservice", "m2m-v3-delegation-manual-archiving-eservice"})
+@IncludeTags({"delegation-manual-archiving-eservice", "m2m-v3-delegation-manual-archiving-eservice", "notification-manual-archiving-delegation"})
 public class DelegationManualArchivingTest {
 }

@@ -227,6 +227,7 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     $DA_CONTESTO(TODAY+120). È disponibile una nuova versione.
     """
 
+  @notification-manual-archiving-delegation
   Scenario: [NOTIFICA_ARCHIVIAZIONE_VIA_DELEGA_1.4] Un delegato all'erogazione richiede l'archiviazione di una versione di un e-service e viene approvata
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -249,6 +250,7 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     dell'e-service $DA_CONTESTO(eServiceName). L'archiviazione avverrà il giorno $DA_CONTESTO(TODAY+30).
     """
 
+  @notification-manual-archiving-delegation
   Scenario: [NOTIFICA_ARCHIVIAZIONE_VIA_DELEGA_1.5] Un delegato all'erogazione annulla la richiesta di archiviazione di una versione di un e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -271,6 +273,7 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     inviata all'ente delegante $DA_CONTESTO(producerName).
     """
 
+  @notification-manual-archiving-delegation
   Scenario: [NOTIFICA_ARCHIVIAZIONE_VIA_DELEGA_1.6] Un delegante all'erogazione rifiuta la richiesta di archiviazione di una versione di un e-service di un delegato
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
