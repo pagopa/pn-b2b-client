@@ -83,7 +83,7 @@ Feature: avanzamento notifiche webhook b2b V28
 
     #COMUNE 2
 
-  @webhookV28 @precondition @cleanWebhook @webhook3
+  @webhookV28 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.3_128] Consumo di uno stream notifica con gruppo, con eventType "TIMELINE"  utilizzando un apikey master.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -117,7 +117,7 @@ Feature: avanzamento notifiche webhook b2b V28
     And l'apiKey viene cancellata
 
 
-  @webhookV28 @precondition @cleanWebhook @webhook3
+  @webhookV28 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.3_125_1] Consumo di uno stream notifica disabilitato senza gruppo, con eventType "STATUS"  utilizzando un apikey master (caso errato).
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -137,7 +137,7 @@ Feature: avanzamento notifiche webhook b2b V28
     And l'apiKey viene cancellata
 
 
-  @webhookV28 @precondition @cleanWebhook @webhook3
+  @webhookV28 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.2_124] Verifica corretta scrittura degli eventi di una notifica creata con un apikey master, dove l’evento stesso deve essere salvato solo negli stream senza gruppi.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -163,7 +163,7 @@ Feature: avanzamento notifiche webhook b2b V28
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV28 @precondition @cleanWebhook @webhook3
+  @webhookV28 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.2_126] Invio notifica digitale ed attesa elemento di timeline REQUEST_ACCEPTED_scenario positivo e verifica legalfactIds valorizzato -PN-10278
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -179,7 +179,7 @@ Feature: avanzamento notifiche webhook b2b V28
 
   #COMUNE MULTI
 
-  @webhookV28 @precondition @cleanWebhook @webhook2
+  @webhookV28 @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.3_50_1] Consumo di uno stream notifica analogica senza gruppo, con eventType "TIMELINE"  utilizzando un apikey master e verifica corrispondenza tra i detail del webhook e quelli della timeline.
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -208,7 +208,7 @@ Feature: avanzamento notifiche webhook b2b V28
     And l'apiKey viene cancellata
 
 
-  @webhookV28 @precondition @cleanWebhook @webhook2
+  @webhookV28 @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES3.1_146_2]  Lettura e verifica de-anonimizzazione con un apiKey con gruppo degli eventi di timeline di una notifica analogica inviata con un apikey con gruppo e salvati in uno stream dell'ente con gruppo (Stesso gruppo)
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -235,7 +235,7 @@ Feature: avanzamento notifiche webhook b2b V28
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV28 @precondition @cleanWebhook @webhook2
+  @webhookV28 @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.2_123] Creazione di stream con apiKey con gruppi differenti e verifica corretta scrittura degli eventi di notifiche create con le stesse apiKey.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -261,7 +261,7 @@ Feature: avanzamento notifiche webhook b2b V28
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV28 @precondition @cleanWebhook @webhook2
+  @webhookV28 @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.3_162] Creazione di uno stream senza gruppo con la V10 e  lettura Eventi di timeline o di cambio di stato con la versione V10 utilizzando un apikey con gruppi. -PN-10218.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -360,7 +360,7 @@ Feature: avanzamento notifiche webhook b2b V28
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV28 @webhookHeader @precondition @cleanWebhook @webhook2
+  @webhookV28 @webhookHeader @precondition @cleanWebhook @webhook3
   Scenario Outline: [B2B-STREAM_RETRY_AFTER_V28] Creazione di stream con apiKey e controllo che il retry after dell'header venga modificato quando la consume restituisce elementi.
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
