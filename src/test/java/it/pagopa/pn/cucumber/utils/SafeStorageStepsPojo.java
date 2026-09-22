@@ -5,6 +5,7 @@ import lombok.Data;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.time.OffsetDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -39,6 +40,10 @@ public class SafeStorageStepsPojo {
     private Integer issuedDownloadStatusCode;
     private Integer informationAccessStatusCodeBeforeExpiration;
     private Integer informationAccessStatusCode;
+    // NOTA: availableUntil non e' ancora un campo del client generato (WI 1 - PN-21557):
+    // il valore qui sotto e' quello che i test si aspettano di aver impostato, usato per
+    // confrontarlo con quanto la risposta di lettura riporta.
+    private OffsetDateTime lastAvailableUntilSet;
 
     public SafeStorageStepsPojo() {
         this.createdFiles = new LinkedList<>();

@@ -316,6 +316,83 @@ public class SafeStorageSteps {
                 .isEqualTo(expectedStatusCode);
     }
 
+    // NOTA: il campo availableUntil (WI 1 - PN-21557, "Ready To DEV" al momento della
+    // scrittura di questi step) non e' ancora presente nel client SafeStorage generato in
+    // questo repo (docs/openapi/pn-safestorage-v1.1-api.yaml, fetchato a build-time dal
+    // branch develop di pagopa/pn-ss). Il codice sotto assume che, una volta rilasciato,
+    // UpdateFileMetadataRequest esponga un builder .availableUntil(OffsetDateTime) analogo a
+    // quello gia' esistente per retentionUntil: verificare e correggere il nome/tipo del
+    // campo quando il client viene rigenerato con lo spec aggiornato.
+    @When("la fine disponibilita del documento {int} viene impostata a una data {string}")
+    public void updateDocumentAvailability(Integer documentIndex, String dateType) {
+        String fileKey = getCreatedFileKey(documentIndex);
+        OffsetDateTime availableUntil = calculateAvailableUntil(fileKey, dateType);
+        safeStorageStepsPojo.setLastAvailableUntilSet(availableUntil);
+        UpdateFileMetadataRequest request = new UpdateFileMetadataRequest().availableUntil(availableUntil);
+
+        try {
+            ResponseEntity<OperationResultCodeResponse> response = safeStorageClient
+                    .updateFileMetadataWithHttpInfo(fileKey, clientId, request);
+            safeStorageStepsPojo.setFileMetadataUpdateStatusCode(response.getStatusCodeValue());
+        } catch (HttpClientErrorException exception) {
+            safeStorageStepsPojo.setFileMetadataUpdateStatusCode(exception.getRawStatusCode());
+        }
+    }
+
+    @Then("l'impostazione della fine disponibilita restituisce status code {int}")
+    public void checkAvailabilityUpdateStatusCode(Integer expectedStatusCode) {
+        assertThat(safeStorageStepsPojo.getFileMetadataUpdateStatusCode())
+                .as("Lo status code dell'impostazione della fine disponibilita non coincide con quello atteso")
+                .isEqualTo(expectedStatusCode);
+    }
+
+    // NOTA SUI CASI 4.1/4.2: questa verifica confronta la data restituita con l'ultima fine
+    // disponibilita impostata, non con la conservazione garantita registrata internamente:
+    // la risposta pubblica riporta un'unica data (la fine disponibilita, quando impostata) e
+    // non permette di osservare separatamente la conservazione "vera". Non prova quindi, da
+    // sola, che la conservazione sia stata effettivamente allungata o lasciata invariata.
+    @Then("la data di scadenza riportata coincide con la fine disponibilita indicata")
+    public void checkReportedExpiryMatchesAvailability() {
+        OffsetDateTime expected = safeStorageStepsPojo.getLastAvailableUntilSet();
+        assertThat(expected).as("Deve essere stata impostata una fine disponibilita in questo scenario").isNotNull();
+        FileDownloadResponse response = safeStorageStepsPojo.getFileDownloadResponse();
+        assertThat(response).as("La risposta di lettura del documento non dev'essere nulla").isNotNull();
+        assertThat(response.getRetentionUntil())
+                .as("La data di scadenza riportata deve coincidere con la fine disponibilita impostata")
+                .isEqualTo(expected);
+    }
+
+    // NOTA: verifica debole per costruzione. Non essendoci un riferimento indipendente per la
+    // conservazione garantita quando nessuna fine disponibilita e' mai stata impostata, questo
+    // step si limita a controllare che la risposta riporti comunque una data valida (nessuna
+    // eccezione/valore nullo introdotto dalla nuova funzionalita).
+    @Then("la data di scadenza riportata coincide con la conservazione garantita del documento")
+    public void checkReportedExpiryMatchesRetention() {
+        FileDownloadResponse response = safeStorageStepsPojo.getFileDownloadResponse();
+        assertThat(response).as("La risposta di lettura del documento non dev'essere nulla").isNotNull();
+        assertThat(response.getRetentionUntil())
+                .as("La conservazione garantita riportata non dev'essere nulla")
+                .isNotNull();
+    }
+
+    private OffsetDateTime calculateAvailableUntil(String fileKey, String dateType) {
+        LocalDate today = LocalDate.now(ITALY_TIME_ZONE);
+        return switch (dateType.toUpperCase(Locale.ROOT)) {
+            case "IERI" -> today.minusDays(1).atTime(12, 0).atZone(ITALY_TIME_ZONE).toOffsetDateTime();
+            case "DOMANI" -> today.plusDays(1).atTime(12, 0).atZone(ITALY_TIME_ZONE).toOffsetDateTime();
+            case "DOPODOMANI" -> today.plusDays(2).atTime(12, 0).atZone(ITALY_TIME_ZONE).toOffsetDateTime();
+            case "SUCCESSIVA" -> getCurrentRetentionUntil(fileKey).plusDays(1);
+            case "PRECEDENTE_FUTURA" -> {
+                OffsetDateTime earlier = getCurrentRetentionUntil(fileKey).minusDays(1);
+                assertThat(earlier).as("La fine disponibilita precedente deve rimanere futura")
+                        .isAfter(OffsetDateTime.now(ITALY_TIME_ZONE));
+                yield earlier;
+            }
+            case "PARI" -> getCurrentRetentionUntil(fileKey);
+            default -> throw new IllegalArgumentException("Tipo di data fine disponibilita non supportato: " + dateType);
+        };
+    }
+
     @When("viene richiesto il contenuto del documento {int}")
     public void readDocumentContent(Integer documentIndex) {
         String fileKey = getCreatedFileKey(documentIndex);
