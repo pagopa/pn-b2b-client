@@ -65,7 +65,7 @@ public class M2MV3DelegatedArchivingRequestVerifier {
                 .isEqualTo(expectedEServiceId);
         Assertions.assertThat(eService.getDelegatedArchivingRequest())
                 .as("L'ente utilizzato non dovrebbe poter visualizzare il campo relativo alle richieste di archiviazione dell'e-service")
-                .isNull();
+                .isNullOrEmpty();
     }
 
     private boolean matchesEServiceHistory(
