@@ -1,7 +1,7 @@
 Feature: finalità agevolata, purpose template ANNOTATION
 
   #66-67 (OK-KO)
-  @purposeTemplate @purposeTemplateRiskAnalysisAnswer
+  @purposeTemplate @purposeTemplateRiskAnalysisAnswer @test_22092026
   Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_LIMITS] Creazione di una risposta di analisi del rischio da associare a una finalità agevolata (OK-KO)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -13,7 +13,7 @@ Feature: finalità agevolata, purpose template ANNOTATION
       | 400        | "OLTRE I LIMITI CONSENTITI FREE TEXT" |
 
   #68 (KO)
-  @purposeTemplate @purposeTemplateRiskAnalysisAnswer
+  @purposeTemplate @purposeTemplateRiskAnalysisAnswer @test_22092026
   Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_WRONG_STATE] Creazione di una risposta di analisi del rischio da associare a una finalità agevolata in stato diverso da DRAFT (error 409)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato <status>
@@ -26,7 +26,7 @@ Feature: finalità agevolata, purpose template ANNOTATION
       | ARCHIVED  |
 
   #69 (KO)
-  @purposeTemplate @purposeTemplateRiskAnalysisAnswer
+  @purposeTemplate @purposeTemplateRiskAnalysisAnswer @test_22092026
   Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_NO_ADMIN] Creazione di una risposta di analisi del rischio da associare a una finalità agevolata da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -47,7 +47,7 @@ Feature: finalità agevolata, purpose template ANNOTATION
 
   #70 (KO)
   # 27 01 2026: In osservanza a https://pagopa.atlassian.net/browse/PIN-8190 il codice restituito è stato mutato 403 -> 404
-  @purposeTemplate @purposeTemplateRiskAnalysisAnswer
+  @purposeTemplate @purposeTemplateRiskAnalysisAnswer @test_22092026
   Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_NO_CREATOR] Creazione di una risposta di analisi del rischio da associare a una finalità agevolata da parte di un utente che appartiene a una PA diversa da quella che ha creato la finalità agevolata (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -64,7 +64,7 @@ Feature: finalità agevolata, purpose template ANNOTATION
     Then si ottiene lo status code 404
 
   #72 (KO)
-  @purposeTemplate @purposeTemplateRiskAnalysisAnswer
+  @purposeTemplate @purposeTemplateRiskAnalysisAnswer @test_22092026
   Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_HYPER_LINK] Creazione di una risposta di analisi del rischio da associare a una finalità agevolata inserendo un link nell'annotation (error 400)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -73,7 +73,7 @@ Feature: finalità agevolata, purpose template ANNOTATION
     Then si ottiene lo status code 400
 
   #73 (OK-KO)
-  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotation
+  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotation @test_22092026
   Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_CREATE_ANNOTATION_LIMITS] Creazione di un'annotazione da associare a una risposta di analisi del rischio di una finalità agevolata (OK-KO)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -86,7 +86,7 @@ Feature: finalità agevolata, purpose template ANNOTATION
       | oltre | 400        |
 
   #74-75 (OK-KO)
-  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotation
+  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotation @test_22092026
   Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_UPDATE_ANNOTATION_LIMITS] Modifica di un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata (OK-KO)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -99,7 +99,7 @@ Feature: finalità agevolata, purpose template ANNOTATION
       | oltre | 400        |
 
   #76 (KO)
-  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotation
+  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotation @test_22092026
   Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_UPDATE_ANNOTATION_WRONG_STATE] Modifica di un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata in stato diverso da DRAFT (error 409)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -114,7 +114,7 @@ Feature: finalità agevolata, purpose template ANNOTATION
       | ARCHIVED  |
 
   #77 (KO)
-  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotation
+  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotation @test_22092026
   Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_UPDATE_ANNOTATION_NO_ADMIN] Modifica di un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -136,7 +136,7 @@ Feature: finalità agevolata, purpose template ANNOTATION
 
   #78 (KO)
   # 27 01 2026: In osservanza a https://pagopa.atlassian.net/browse/PIN-8190 il codice restituito è stato mutato 403 -> 404
-  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotation
+  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotation @test_22092026
   Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_UPDATE_ANNOTATION_NO_CREATOR] Modifica di un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata da parte di un utente non appartenente alla PA che ha creato la finalità agevolata (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -146,7 +146,7 @@ Feature: finalità agevolata, purpose template ANNOTATION
     Then si ottiene lo status code 404
 
   #79 (KO)
-  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotation
+  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotation @test_22092026
   Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_UPDATE_ANNOTATION_404] Modifica di un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata passando un ID inesistente (error 404)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -155,7 +155,7 @@ Feature: finalità agevolata, purpose template ANNOTATION
     Then si ottiene lo status code 404
 
   #80 (KO)
-  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotation
+  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotation @test_22092026
   Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_UPDATE_ANNOTATION_NO_TEXT] Modifica di un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata con un testo di 0 caratteri (error 400)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template

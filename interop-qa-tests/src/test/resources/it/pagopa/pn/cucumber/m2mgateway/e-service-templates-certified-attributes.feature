@@ -409,7 +409,7 @@ Feature: Gestione degli attributi certificati degli e-service templates template
       | mode        |
       | ricezione   |
 
-  @m2m-parte2-ottobre
+  @m2m-parte2-ottobre @test_22092026
   Scenario Outline: [M2M_ES_TEMPLATES_CERTIFIED_ATTRIBUTES_DELETE_06] Un utente NON può rimuovere gli attributi certificati da una versione di un e-service template in stato diverso da DRAFT (Parte2#Scenario intorno a 275)
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di DRAFT

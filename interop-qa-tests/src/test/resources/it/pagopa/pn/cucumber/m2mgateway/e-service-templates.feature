@@ -509,7 +509,7 @@ Feature: Test API M2M of e-service template
 
   # Ticket aperto: https://pagopa.atlassian.net/browse/PIN-8052
   @m2m-parte2-ottobre
-  @e-service-template-m2m-delete
+  @e-service-template-m2m-delete @test_22092026
   Scenario: [INTEROP-EST-M2M-DELETE_05_A] Un utente con ruolo M2M-ADMIN NON può effettuare la cancellazione di un e-service template in stato DRAFT che non gli appartiene
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT

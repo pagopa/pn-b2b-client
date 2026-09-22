@@ -46,7 +46,7 @@ Feature: Clonazione di una richiesta di fruizione.
 
   @sad-path
   @nrt-minimal
-  @agreement_clone2a
+  @agreement_clone2a @test_22092026
   Scenario Outline: [AGREEMENT_CLONE_02A] Un utente con sufficienti permessi, clona una richiesta di fruizione in stato DRAFT, PENDING, ACTIVE, SUSPENDED, ARCHIVED. Ottiene un errore.
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "<tipoApprovazione>"

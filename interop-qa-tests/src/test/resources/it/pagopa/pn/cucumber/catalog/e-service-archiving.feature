@@ -169,6 +169,7 @@ Feature: Archiviazione manuale di un e-service
     And la versione più recente dell'e-service è in stato "ARCHIVING"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
+  @test_22092026
   Scenario: [MANUAL_ARCHIVING_ESERVICE_2.2] Avviare il processo di archiviazione di un e-service in WAITING_FOR_APPROVAL non è possibile
   Non è possibile avviare il processo di archiviazione di un e-service nel caso in cui sia attiva una delega in erogazione sull'e-service in questione
     Given l'ente delegante "PA1"
@@ -895,6 +896,7 @@ Feature: Archiviazione manuale di un e-service
       | api          |
       | api,security |
 
+  @test_22092026
   Scenario Outline: [COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_FROM_TEMPLATE_1.1] Un ente erogatore può avviare il processo di archiviazione dell'intero e-service creato da template anche se l'archiviazione di uno specifico descrittore in stato ARCHIVING di quell'e-service è già in corso
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED

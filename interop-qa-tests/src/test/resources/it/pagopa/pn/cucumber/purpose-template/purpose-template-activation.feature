@@ -1,7 +1,7 @@
 Feature: finalità agevolata, purpose template ACTIVATION
 
   #38(OK)
-  @purposeTemplate @purposeTemplateActivation
+  @purposeTemplate @purposeTemplateActivation @test_22092026
   Scenario: [PURPOSE_TEMPLATE_ACTIVATION_OK] Attivazione di una finalità agevolata (OK)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -12,7 +12,7 @@ Feature: finalità agevolata, purpose template ACTIVATION
   #non implementabile, vedi note su scenario SRS
 
   #40(KO)
-  @purposeTemplate @purposeTemplateActivation
+  @purposeTemplate @purposeTemplateActivation @test_22092026
   Scenario Outline: [PURPOSE_TEMPLATE_ACTIVATION_WRONG_STATE] Attivazione di una finalità agevolata in stato diverso da DRAFT (error 409)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato <state>
@@ -23,7 +23,7 @@ Feature: finalità agevolata, purpose template ACTIVATION
       | SUSPENDED |
       | ARCHIVED  |
 
-  @purposeTemplate
+  @purposeTemplate @test_22092026
   Scenario Outline: [PURPOSE_TEMPLATE_CHANGE_STATUS_WRONG] Una purpose template non può essere spostata in stato <stato> se si trova in stato <stato> (error 409)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -38,7 +38,7 @@ Feature: finalità agevolata, purpose template ACTIVATION
       | ARCHIVED  |
 
   #41(KO)
-  @purposeTemplate @purposeTemplateActivation
+  @purposeTemplate @purposeTemplateActivation @test_22092026
   Scenario Outline: [PURPOSE_TEMPLATE_ACTIVATION_NO_ADMIN] Attivazione di una finalità agevolata da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -59,7 +59,7 @@ Feature: finalità agevolata, purpose template ACTIVATION
 
   #42(KO)
   # 27 01 2026: In osservanza a https://pagopa.atlassian.net/browse/PIN-8190 il codice restituito è stato mutato 403 -> 404
-  @purposeTemplate @purposeTemplateActivation
+  @purposeTemplate @purposeTemplateActivation @test_22092026
   Scenario: [PURPOSE_TEMPLATE_ACTIVATION_NO_CREATOR] Attivazione di una finalità agevolata da parte di un utente non appartenente alla PA che ha creato la finalità agevolata (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -76,7 +76,7 @@ Feature: finalità agevolata, purpose template ACTIVATION
     Then si ottiene lo status code 404
 
   #44(KO)
-  @purposeTemplate @purposeTemplateActivation
+  @purposeTemplate @purposeTemplateActivation @test_22092026
   Scenario: [PURPOSE_TEMPLATE_ACTIVATION_ALREADY_PUBLISHED] Attivazione di una finalità agevolata che risulta già in stato PUBLISHED (error 409)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template

@@ -106,7 +106,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     And la richiesta di fruizione si trova in stato "REJECTED"
 
   @sad-path
-  @m2m-agreement-approve-unsuspend-refactor
+  @m2m-agreement-approve-unsuspend-refactor @test_22092026
   Scenario Outline: [M2M_AGREEMENTS_APPROVE_7] L'approvazione di una richiesta di fruizione con stato MISSING_CERTIFIED_ATTRIBUTES restituisce errore
     Given l'utente è un "admin" di "<enteErogatore>"
     Given "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
@@ -360,7 +360,7 @@ Feature: Gestione degli agreements attraverso APIs M2M V2
     And la richiesta di fruizione si trova in stato "ACTIVE"
 
   @happy-path
-  @m2m-agreement-approve-unsuspend-refactor
+  @m2m-agreement-approve-unsuspend-refactor @test_22092026
   Scenario Outline: [M2M_AGREEMENTS_UNSUSPEND_13] Per una richiesta di fruizione m2m precedentemente creata da un fruitore, la quale è in stato SUSPENDED (riattivazione), con uno o più attributi richiesti non posseduti dal fruitore, alla richiesta di attivazione da parte di un utente con sufficienti permessi dell’ente erogatore, va a buon fine ma la richiesta di fruizione resta in stato "SUSPENDED"
     Given l'utente è un "admin" di "<enteErogatore>"
     And "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"

@@ -264,14 +264,14 @@ Feature: Gestione degli eServices attraverso APIs M2M
     When l'utente tenta di effettuare la cancellazione di un e-service inesistente
     Then si ottiene lo status code 401
 
-  @m2m-parte2-agosto-rilascio1
+  @m2m-parte2-agosto-rilascio1 @test_22092026
   Scenario: [M2MG_ESERVICES_28] Un utente con ruolo M2M-ADMIN non può effettuare riattivazione di un e-service in stato PUBLISHED (Parte2#Scenario intorno a 44)
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di effettuare la riattivazione dell'e-service
     Then si ottiene lo status code 409
 
-  @m2m-parte2-agosto-rilascio1
+  @m2m-parte2-agosto-rilascio1 @test_22092026
   Scenario Outline: [M2MG_ESERVICES_29_A] Un utente con ruolo M2M-ADMIN non può effettuare riattivazione di un e-service in stato diverso da ACTIVE o SUSPENDED (Parte2#Scenario intorno a 45)
     Given "PA1" ha già creato un e-service con un descrittore in stato "<stato>"
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -284,7 +284,7 @@ Feature: Gestione degli eServices attraverso APIs M2M
       | DEPRECATED |
       | ARCHIVED   |
 
-  @m2m-parte2-agosto-rilascio1 @deleghe2
+  @m2m-parte2-agosto-rilascio1 @deleghe2 @test_22092026
   Scenario: [M2MG_ESERVICES_29_B] Un utente con ruolo M2M-ADMIN non può effettuare riattivazione di un e-service in stato WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 45)
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin

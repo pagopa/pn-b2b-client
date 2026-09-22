@@ -114,7 +114,7 @@ Feature: Listing attributi
 
   # https://pagopaspa.slack.com/archives/C0AQVEPGQ8L/p1782135024169989
   @certifiedDiscreteAttribute
-  @certifiedDiscreteAttributeFlagOff
+  @certifiedDiscreteAttributeFlagOff @test_22092026
   Scenario: [CERT_DISCRETE_ATTR_NOT_AVAILABLE] Gli attributi certificati discreti non sono disponibili quando il feature flag è false.
     Given l'utente è un "admin" di "PA1"
     When l'utente richiede una operazione di listing degli attributi certificati discreti disponibili

@@ -707,7 +707,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
     When l'utente tenta di ottenere la richiesta di fruizione correlata a una finalità inesistente
     Then si ottiene status code 404
 
-  @m2m-agreements-parte2-luglio
+  @m2m-agreements-parte2-luglio @test_22092026
   Scenario Outline: [M2M_PURPOSES_DOCUMENT_1] Il documento dell'analisi del rischio correlato a una finalità può essere visualizzato da un utente con ruolo M2M-ADMIN o M2M (Parte2#Scenario 24)
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service

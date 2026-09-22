@@ -26,7 +26,7 @@ Feature: Creazione di una delega e gestione delle richieste di fruizione
   #TC-59: Delegato NON può sospendere finalità in stato pending
   #TC-60: Delegato può sospendere una finalità ATTIVA
   #TC-61: Delegato NON può rifiutare una finalità ATTIVA
-  @deleghe1
+  @deleghe1 @test_22092026
   Scenario Outline: [TC_CAPOFILA_58_59_60_61] Un delegato all’erogazione che gestisce finalità per conto del delegante può attivare/sospendere finalità in pending o attive
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service

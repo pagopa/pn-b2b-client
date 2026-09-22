@@ -886,7 +886,7 @@ Feature: Test API of e-service template
   # DEV. NOTE 20/03/2025: la modifica che viene effettuata è solo quella del nome del documento,
   # in quanto è al momento l'unico parametro a disposizione
   @happy-path
-  @e-service-template-version-document-update
+  @e-service-template-version-document-update @test_22092026
   Scenario Outline: [INTEROP-EST-052-1] La modifica di un documento di un e-service template in qualsiasi stato, o di un'interfaccia con template in stato DRAFT, può essere fatta da un ente in veste di ADMIN o API
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di <stato>
@@ -969,7 +969,7 @@ Feature: Test API of e-service template
     Then si ottiene response status code 404
 
   @sad-path
-  @e-service-template-version-document-update
+  @e-service-template-version-document-update @test_22092026
   Scenario Outline: [INTEROP-EST-057] La modifica di un documento inserendo il nome di un altro documento esistente nell'e-service template non può essere effettuata
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
@@ -1348,7 +1348,7 @@ Feature: Test API of e-service template
 
   # Ticket aperto: https://pagopa.atlassian.net/browse/PIN-8052
   @sad-path
-  @e-service-template-version-delete
+  @e-service-template-version-delete @test_22092026
   Scenario: [INTEROP-EST-080] La cancellazione di una versione di un e-service template in stato DRAFT non può essere effettuata da un ente diverso dal creatore del template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
@@ -1966,7 +1966,7 @@ Feature: Test API of e-service template
     Then si ottiene response status code 404
 
   @happy-path
-  @e-service-template-version-attributes-update @certifiedAttribute
+  @e-service-template-version-attributes-update @certifiedAttribute @test_22092026
   Scenario Outline: [INTEROP-EST-128-PUB] La modifica degli attributi di una versione di un e-service template in stato PUBLISHED può essere effettuata da un ente in veste di ADMIN o API
     Given "GSP" ha creato un attributo certificato e lo ha assegnato a "PA1"
     And l'utente è un "admin" di "PA1"
@@ -3164,7 +3164,7 @@ Feature: Test API of e-service template
       | api,security | DEPRECATED | ricezione |
 
   @sad-path
-  @e-service-template-instance-descriptor-update
+  @e-service-template-instance-descriptor-update @test_22092026
   Scenario Outline: [INTEROP-EST-202] La modifica del descriptor di un'istanza di un e-service template NON può essere effettuata da un ente NON in veste di ADMIN o API
     Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità <modo> in stato di PUBLISHED

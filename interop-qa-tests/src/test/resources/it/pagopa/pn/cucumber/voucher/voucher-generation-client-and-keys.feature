@@ -30,7 +30,7 @@ Scenario: [VOUCHER_GENERATION_CLIENT_AND_KEYS_2] La generazione del Voucher va a
     When l'utente richiede la generazione del voucher
     Then si ottiene la corretta generazione del voucher
 
-@voucher_generation_client_and_keys3
+@voucher_generation_client_and_keys3 @test_22092026
 Scenario: [VOUCHER_GENERATION_CLIENT_AND_KEYS_3] La generazione del Voucher va a buon fine quando viene aggiunta una nuova finalità al client
     Given l'utente è un "admin" di "PA1"
     Given "GSP" ha già creato e pubblicato 1 e-service
@@ -45,7 +45,7 @@ Scenario: [VOUCHER_GENERATION_CLIENT_AND_KEYS_3] La generazione del Voucher va a
     When l'utente richiede la generazione del voucher
     Then si ottiene la corretta generazione del voucher
 
-@voucher_generation_client_and_keys4 @no-parallel
+@voucher_generation_client_and_keys4 @no-parallel @test_22092026
 Scenario: [VOUCHER_GENERATION_CLIENT_AND_KEYS_4] La generazione del Voucher va a buon fine quando viene rimossa una finalità dal client
     Given l'utente è un "admin" di "PA1"
     Given "GSP" ha già creato e pubblicato 1 e-service

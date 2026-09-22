@@ -351,7 +351,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                   |
       | dpopValidation                       | PASSED  | []                   |
 
-  @devToolsClientAssertion
+  @devToolsClientAssertion @test_22092026
   Scenario: [KEY_RETRIEVE_INVALID_HASH_LENGTH_API_CLIENT_DPOP] Dato un client API valido, quando il claim DIGEST ha un value diverso da 64 caratteri allora il recupero della chiave pubblica fallisce con errore invalidHashLength
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     And il tenant fruitore "PA1" crea una client assertion per un client di tipo API con:
@@ -368,7 +368,7 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                  |
       | dpopValidation                       | PASSED  | []                  |
 
-  @devToolsClientAssertion
+  @devToolsClientAssertion @test_22092026
   Scenario: [KEY_RETRIEVE_INVALID_HASH_ALGORITHM_API_CLIENT_DPOP] Dato un client API valido, quando il claim DIGEST ha un algoritmo non valido allora il recupero della chiave pubblica fallisce con errore invalidHashAlgorithm
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     And il tenant fruitore "PA1" crea una client assertion per un client di tipo API con:

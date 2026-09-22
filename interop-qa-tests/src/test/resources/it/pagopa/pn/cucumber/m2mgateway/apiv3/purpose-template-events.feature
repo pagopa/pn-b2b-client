@@ -1,6 +1,7 @@
 @m2m-purpose-template-events
 Feature: Eventi M2M di Purpose Template
 
+  @test_22092026
   Scenario: [M2M_PURPOSE_TEMPLATE_EVENTS_01] L'evento di creazione in DRAFT di purpose template deve essere visibile solo all'owner della risorsa
     Given l'utente è un "admin" di "PA1"
     When viene creato un nuovo purpose template
@@ -10,6 +11,7 @@ Feature: Eventi M2M di Purpose Template
       | purposeTemplateId | :purposeTemplateId |
     And "PA2" non visualizza l'evento PurposeTemplateAdded appena trovato
 
+  @test_22092026
   Scenario Outline: [M2M_PURPOSE_TEMPLATE_EVENTS_02] L'evento di PUBLISHED, ARCHIVED, SUSPENDED di un purpose template deve essere visibile a tutti
     Given l'utente è un "admin" di "PA1"
     When viene creato un nuovo purpose template
@@ -26,6 +28,7 @@ Feature: Eventi M2M di Purpose Template
       | SUSPENDED | PurposeTemplateSuspended |
       | ARCHIVED  | PurposeTemplateArchived  |
 
+  @test_22092026
   Scenario: [M2M_PURPOSE_TEMPLATE_EVENTS_03] L'evento di UNSOSPENDED di un purpose template deve essere visibile a tutti
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato SUSPENDED
@@ -36,6 +39,7 @@ Feature: Eventi M2M di Purpose Template
       | purposeTemplateId | :purposeTemplateId |
     And "PA2" visualizza l'evento PurposeTemplateUnsuspended appena trovato
 
+  @test_22092026
   Scenario: [M2M_PURPOSE_TEMPLATE_EVENTS_04] L'evento di generazione del template della Risk Analysis di un purpose template deve essere visibile a tutti
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato PUBLISHED

@@ -1,7 +1,7 @@
 Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
 
     #81-82-83-84-85
-  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
+  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument @test_22092026
   Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_UPLOAD_DOCS] Upload di documenti legati ad un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata (OK-KO)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -19,7 +19,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
       | 3         | "DIVERSI CON NOME DIVERSO" | 409        |
 
   #87
-  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
+  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument @test_22092026
   Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_UPLOAD_DOCS_WRONG_STATE] Upload di documenti legati ad un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata che si trova in stato diverso da DRAFT (error 409)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -36,7 +36,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
       | ARCHIVED  |
 
   #88 (KO)
-  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
+  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument @test_22092026
   Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_UPLOAD_DOCS_NO_ADMIN] Upload di documenti legati ad un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -60,7 +60,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
 
   #89 (KO)
   # 27 01 2026: In osservanza a https://pagopa.atlassian.net/browse/PIN-8190 il codice restituito è stato mutato 403 -> 404
-  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
+  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument @test_22092026
   Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_UPLOAD_DOCS_NO_CREATOR] Upload di documenti legati ad un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata da parte di un utente non appartenente alla PA che ha creato la finalità agevolata (error 404)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -72,7 +72,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     Then si ottiene lo status code 404
 
   #90 (KO)
-  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
+  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument @test_22092026
   Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_UPLOAD_DOCS_404] Upload di documenti legati ad un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata passando un ID inesistente (error 404)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -83,7 +83,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     Then si ottiene lo status code 404
 
   #91 (KO)
-  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
+  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument @test_22092026
   Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_OK] Eliminazione di un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata (OK)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -95,7 +95,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     And l'eliminazione dell'annotation ha avuto successo
 
   #92 (KO)
-  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
+  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument @test_22092026
   Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_WRONG_STATE] Eliminazione di un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata che si trova in stato diverso da DRAFT (error 409)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -113,7 +113,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
       | ARCHIVED  |
 
   #93 (KO)
-  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
+  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument @test_22092026
   Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_NO_ADMIN] Eliminazione di un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -138,7 +138,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
 
   #94 (KO)
   # 27 01 2026: In osservanza a https://pagopa.atlassian.net/browse/PIN-8190 il codice restituito è stato mutato 403 -> 404
-  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
+  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument @test_22092026
   Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_NO_CREATOR] Eliminazione di un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata da parte di un utente non appartenente alla PA che ha creato la finalità agevolata (error 404)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -151,7 +151,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     Then si ottiene lo status code 404
 
   #95 (KO)
-  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
+  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument @test_22092026
   Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_ALREADY_DELETED] Eliminazione di un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata già eliminata in precedenza (error 404)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -165,7 +165,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     Then si ottiene lo status code 404
 
   #96 (KO)
-  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
+  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument @test_22092026
   Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_404] Eliminazione di un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata passando un ID inesistente (error 404)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -177,7 +177,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     Then si ottiene lo status code 404
 
   #97 (OK)
-  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
+  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument @test_22092026
   Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_DOCUMENT_OK] Eliminazione di un documento associato a un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata (OK)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -189,7 +189,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     Then si ottiene lo status code 204
 
   #98 (KO)
-  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
+  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument @test_22092026
   Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_DOCUMENT_WRONG_STATE] Eliminazione di un documento associato a un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata che si trova in stato diverso da DRAFT (error 409)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -207,7 +207,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
       | ARCHIVED  |
 
   #99 (KO)
-  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
+  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument @test_22092026
   Scenario Outline: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_DOCUMENT_NO_ADMIN] Eliminazione di un documento associato a un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -232,7 +232,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
 
   #100 (KO)
   # 27 01 2026: In osservanza a https://pagopa.atlassian.net/browse/PIN-8190 il codice restituito è stato mutato 403 -> 404
-  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
+  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument @test_22092026
   Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_DOCUMENT_NO_CREATOR] Eliminazione di un documento associato a un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata da parte di un utente non appartenente alla PA che ha creato la finalità agevolata (error 404)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -245,7 +245,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     Then si ottiene lo status code 404
 
   #101 (KO)
-  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
+  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument @test_22092026
   Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_DOCUMENT_ALREADY_DELETED] Eliminazione di un documento associato a un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata, con documento già eliminato in precedenza (error 404)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -258,7 +258,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     Then si ottiene lo status code 404
 
   #102 (KO)
-  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
+  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument @test_22092026
   Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_DELETE_ANNOTATION_DOCUMENT_404] Eliminazione di un documento associato a un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata passando un ID inesistente (error 404)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -270,7 +270,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     Then si ottiene lo status code 404
 
   #103 (OK)
-  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
+  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument @test_22092026
   Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_ANNOTATION_DOCUMENT_GET_OK] Recupero di un documento associato a un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata (OK)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -282,7 +282,7 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     Then si ottiene lo status code 200
 
   #104 (KO)
-  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument
+  @purposeTemplate @purposeTemplateRiskAnalysisAnswerAnnotationDocument @test_22092026
   Scenario: [PURPOSE_TEMPLATE_RISK_ANALYSIS_ANSWER_ANNOTATION_DOCUMENT_GET_404] Recupero di un documento associato a un'annotazione associata a una risposta di analisi del rischio di una finalità agevolata passando un ID inesistente (error 404)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template

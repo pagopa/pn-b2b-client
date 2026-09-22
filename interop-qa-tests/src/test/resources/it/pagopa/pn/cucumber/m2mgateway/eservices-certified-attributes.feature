@@ -35,7 +35,7 @@ Feature: Gestione degli attributi certificati degli e-services attraverso APIs M
       | SUSPENDED   |
       | DEPRECATED  |
 
-  @m2m-parte2-ottobre
+  @m2m-parte2-ottobre @test_22092026
   Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_ADD_02_A] Un utente con ruolo M2M-ADMIN NON può aggiungere degli attributi certificati a una versione di un e-service in stato WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 197)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1"

@@ -7,7 +7,7 @@ Feature: Upload documenti di annotazione risk analysis su purpose template
 
   # TODO 08/07/2026 al momento questa API sembra accettare solo documenti di tipo PDF. Quando la
     # feature sarà in QA verificarne la correttezza, eventualmente anche consultando il portale.
-  @happy-path
+  @happy-path @test_22092026
   Scenario: [PURPOSE_TEMPLATE_ANNOTATION_UPLOAD_01] Per un purpose template in stato DRAFT e' possibile allegare tutti i file del tipo previsto dalla piattaforma
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -18,7 +18,7 @@ Feature: Upload documenti di annotazione risk analysis su purpose template
       | pdf  |
     Then tutti i tentativi di caricamento sulla risk analysis del purpose template hanno esito positivo
 
-  @sad-path
+  @sad-path @test_22092026
   Scenario: [PURPOSE_TEMPLATE_ANNOTATION_UPLOAD_02] Per un purpose template in stato DRAFT il caricamento fallisce per tipi non ammessi o estensioni non valide
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template

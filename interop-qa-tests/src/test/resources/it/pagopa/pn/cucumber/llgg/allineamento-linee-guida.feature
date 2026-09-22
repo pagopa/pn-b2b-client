@@ -99,7 +99,7 @@ Feature: Allineamento linee guida
       | true             |
       | false            |
 
-  @llgg
+  @llgg @test_22092026
   Scenario Outline: [LLGG_3] Aggiornamento descrittore in modalità DELIVER di un eService comprendente il flag dati
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service in modalità "DELIVER" con un descrittore in stato "DRAFT" e flag dati personali a "<personalDataFlag>"
@@ -117,7 +117,7 @@ Feature: Allineamento linee guida
       | true             | 200              | 200               |
       | undefined        | 200              | 400               |
 
-  @llgg
+  @llgg @test_22092026
   Scenario Outline: [LLGG_4] Aggiornamento descrittore in modalità RECIVE di un eService comprendente il flag dati
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "DRAFT" e flag dati personali a "<personalDataFlag>"
@@ -365,7 +365,7 @@ Feature: Allineamento linee guida
       | false            |
 
   @llgg
-  @deleghe2
+  @deleghe2 @test_22092026
   Scenario Outline: [LLGG_21] Verifica la pubblicazione di un e-service da parte di un ente delegato all'erogazione settando il flag personal data
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"

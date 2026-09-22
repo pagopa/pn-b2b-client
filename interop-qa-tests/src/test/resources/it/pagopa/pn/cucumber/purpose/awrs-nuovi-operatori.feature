@@ -85,7 +85,7 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
      And lo stato della compilazione dell'analisi del rischio è "REJECTED"
 
   # PST: Scenario 18 - Caso 18.1
-  @happy-path
+  @happy-path @test_22092026
   Scenario: [AWRS_SUBMIT_18_1_ADMIN] Submit dell'amministratore (positivo)
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -116,7 +116,7 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
       | reviewer |
 
   # PST: Scenario 18 - Caso 18.2
-  @happy-path
+  @happy-path @test_22092026
   Scenario: [AWRS_SUBMIT_18_2_CON_VARIAZIONE] Submit con variazione nell'analisi del rischio (positivo)
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -130,7 +130,7 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
     And la variazione nell'analisi del rischio è stata persistita
 
    # PST: Scenario 18 - Caso 18.3
-   @happy-path
+   @happy-path @test_22092026
    Scenario: [AWRS_SUBMIT_18_3_DOPO_RIFIUTO] Submit dopo rifiuto e nuova compilazione (positivo)
      Given "PA1" ha già creato e pubblicato 1 e-service
      And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service

@@ -1,7 +1,7 @@
 Feature: finalità agevolata, purpose from purpose template
 
   #107 (OK) 108 (KO)
-  @purposeTemplate @purposeFromPurposeTemplate
+  @purposeTemplate @purposeFromPurposeTemplate @test_22092026
   Scenario Outline: [PURPOSE_TEMPLATE_CREATE_PURPOSE_FROM_TEMPLATE_WITH_PERSONAL_DATA] Creazione di una finalità a partire da un template di finalità agevolata (successo quando i flag di personal data coincidono, errore altrimenti)
     Given "PA2" ha già creato e pubblicato 1 e-service con personalData <personalDataEservice>
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -17,7 +17,7 @@ Feature: finalità agevolata, purpose from purpose template
       | true                 | false                | 400        |
       | false                | true                 | 400        |
 
-  @purposeTemplate @purposeFromPurposeTemplate
+  @purposeTemplate @purposeFromPurposeTemplate @test_22092026
   Scenario Outline: [PURPOSE_TEMPLATE_CREATE_PURPOSE_FROM_TEMPLATE_WITH_PERSONAL_DATA_1] Creazione di una finalità a partire da un template di finalità agevolata
     Given "PA2" ha già creato e pubblicato 1 e-service con personalData <personalDataEservice>
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -36,7 +36,7 @@ Feature: finalità agevolata, purpose from purpose template
       | false                | false                |
 
   #109 (KO)
-  @purposeTemplate @purposeFromPurposeTemplate
+  @purposeTemplate @purposeFromPurposeTemplate @test_22092026
   Scenario: [PURPOSE_TEMPLATE_CREATE_PURPOSE_FROM_TEMPLATE_WRONG_STATE] Creazione di una finalità a partire da un template di finalità agevolata in stato diverso da PUBLISHED (error)
     Given "PA2" ha già creato e pubblicato 1 e-service
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -46,7 +46,7 @@ Feature: finalità agevolata, purpose from purpose template
     Then si ottiene response status code 404
 
   #110 (KO)
-  @purposeTemplate @purposeFromPurposeTemplate
+  @purposeTemplate @purposeFromPurposeTemplate @test_22092026
   Scenario: [PURPOSE_TEMPLATE_CREATE_PURPOSE_FROM_TEMPLATE_WRONG_INPUT] Creazione di una finalità a partire da un template di finalità agevolata (error: request senza campi obbligatori)
     Given "PA2" ha già creato e pubblicato 1 e-service
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -57,7 +57,7 @@ Feature: finalità agevolata, purpose from purpose template
     Then si ottiene response status code 400
 
   #111 (KO)
-  @purposeTemplate @purposeFromPurposeTemplate
+  @purposeTemplate @purposeFromPurposeTemplate @test_22092026
   Scenario: [PURPOSE_TEMPLATE_CREATE_PURPOSE_FROM_TEMPLATE_404] Creazione di una finalità a partire da un template di finalità agevolata passando un'ID inesistente (error 404)
     Given "PA2" ha già creato e pubblicato 1 e-service
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -68,7 +68,7 @@ Feature: finalità agevolata, purpose from purpose template
     Then si ottiene response status code 404
 
   #112 (KO)
-  @purposeTemplate @purposeFromPurposeTemplate
+  @purposeTemplate @purposeFromPurposeTemplate @test_22092026
   Scenario Outline: [PURPOSE_TEMPLATE_CREATE_PURPOSE_FROM_TEMPLATE_NO_ADMIN] Creazione di una finalità a partire da un template di finalità agevolata da parte di un utente NON admin (error 403)
     Given "PA2" ha già creato e pubblicato 1 e-service
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -93,7 +93,7 @@ Feature: finalità agevolata, purpose from purpose template
       # | PA2  | reviewer |
 
   #113 (KO)
-  @purposeTemplate @purposeFromPurposeTemplate
+  @purposeTemplate @purposeFromPurposeTemplate @test_22092026
   Scenario: [PURPOSE_TEMPLATE_CREATE_PURPOSE_FROM_TEMPLATE_DUPLICATED_TITLE] Creazione di una finalità a partire da un template di finalità agevolata usando un titolo già esistente (error 409)
     Given "PA2" ha già creato e pubblicato 1 e-service
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -105,7 +105,7 @@ Feature: finalità agevolata, purpose from purpose template
     Then si ottiene response status code 409
 
   #114 (OK)
-  @purposeTemplate @purposeFromPurposeTemplate
+  @purposeTemplate @purposeFromPurposeTemplate @test_22092026
   Scenario: [PURPOSE_TEMPLATE_CREATE_PURPOSE_FROM_TEMPLATE_PATCH_OK] Modifica di una finalità creata a partire da un template di finalità agevolata
     Given "PA2" ha già creato e pubblicato 1 e-service
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -117,7 +117,7 @@ Feature: finalità agevolata, purpose from purpose template
     Then si ottiene response status code 200
 
   #115 (KO)
-  @purposeTemplate @purposeFromPurposeTemplate
+  @purposeTemplate @purposeFromPurposeTemplate @test_22092026
   Scenario Outline: [PURPOSE_TEMPLATE_CREATE_PURPOSE_FROM_TEMPLATE_PATCH_WRONG_STATE] Modifica di una finalità creata a partire da un template di finalità agevolata, con la finalità in stato diverso da DRAFT (error 409)
     Given "PA2" ha già creato e pubblicato 1 e-service
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -135,7 +135,7 @@ Feature: finalità agevolata, purpose from purpose template
       | ARCHIVED  |
 
   #116 (KO)
-  @purposeTemplate @purposeFromPurposeTemplate
+  @purposeTemplate @purposeFromPurposeTemplate @test_22092026
   Scenario Outline: [PURPOSE_TEMPLATE_CREATE_PURPOSE_FROM_TEMPLATE_PATCH_NULL_VALUES] Modifica di una finalità creata a partire da un template di finalità agevolata passando request con body non valido (error 409)
     Given "PA2" ha già creato e pubblicato 1 e-service
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -152,7 +152,7 @@ Feature: finalità agevolata, purpose from purpose template
       | ZERO DAILY CALLS |
 
   #117 (KO)
-  @purposeTemplate @purposeFromPurposeTemplate
+  @purposeTemplate @purposeFromPurposeTemplate @test_22092026
   Scenario: [PURPOSE_TEMPLATE_CREATE_PURPOSE_FROM_TEMPLATE_PATCH_404] Modifica di una finalità creata a partire da un template di finalità agevolata passando un ID inesistente (error 404)
     Given "PA2" ha già creato e pubblicato 1 e-service
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -164,7 +164,7 @@ Feature: finalità agevolata, purpose from purpose template
     Then si ottiene response status code 404
 
   #118 (KO)
-  @purposeTemplate @purposeFromPurposeTemplate
+  @purposeTemplate @purposeFromPurposeTemplate @test_22092026
   Scenario Outline: [PURPOSE_TEMPLATE_CREATE_PURPOSE_FROM_TEMPLATE_PATCH_NO_ADMIN] Modifica di una finalità creata a partire da un template di finalità agevolata da parte di un utente NON admin (error 403)
     Given "PA2" ha già creato e pubblicato 1 e-service
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -188,7 +188,7 @@ Feature: finalità agevolata, purpose from purpose template
       | PA2  | viewer   |
 
   #119 (KO)
-  @purposeTemplate @purposeFromPurposeTemplate
+  @purposeTemplate @purposeFromPurposeTemplate @test_22092026
   Scenario: [PURPOSE_TEMPLATE_CREATE_PURPOSE_FROM_TEMPLATE_PATCH_NO_CREATOR] Modifica di una finalità creata a partire da un template di finalità agevolata da parte di un utente non appartenente alla PA che ha creato la finalità (error 403)
     Given "PA2" ha già creato e pubblicato 1 e-service
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -201,7 +201,7 @@ Feature: finalità agevolata, purpose from purpose template
     Then si ottiene response status code 403
 
   #120 (KO)
-  @purposeTemplate @purposeFromPurposeTemplate
+  @purposeTemplate @purposeFromPurposeTemplate @test_22092026
   Scenario: [PURPOSE_TEMPLATE_CREATE_PURPOSE_FROM_TEMPLATE_PATCH_EXISTING_TITLE] Modifica di una finalità creata a partire da un template di finalità agevolata, passando un titolo già associato ad un'altra finalità (error 409)
     Given "PA2" ha già creato e pubblicato 1 e-service
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -213,7 +213,7 @@ Feature: finalità agevolata, purpose from purpose template
     When si modifica la finalità creata passando "TITLE ESISTENTE"
     Then si ottiene response status code 409
 
-  @adeguamento-analisi-rischio
+  @adeguamento-analisi-rischio @test_22092026
   Scenario Outline: [PURPOSE_TEMPLATE_PATCH_TK_1] A seguito del cambiamento di tenant kind si tenta di modificare una finalità
     Given "PA2" ha già creato e pubblicato 1 e-service
     And "<ente>" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service

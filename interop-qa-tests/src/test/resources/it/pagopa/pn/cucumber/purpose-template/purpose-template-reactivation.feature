@@ -1,7 +1,7 @@
 Feature: finalità agevolata, purpose template REACTIVATION
 
   #51(OK)
-  @purposeTemplate @purposeTemplateReactivation
+  @purposeTemplate @purposeTemplateReactivation @test_22092026
   Scenario: [PURPOSE_TEMPLATE_REACTIVATION_OK] Riattivazione di una finalità agevolata sospesa (OK)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato SUSPENDED
@@ -9,7 +9,7 @@ Feature: finalità agevolata, purpose template REACTIVATION
     Then si ottiene lo status code 204
 
   #52(KO)
-  @purposeTemplate @purposeTemplateReactivation
+  @purposeTemplate @purposeTemplateReactivation @test_22092026
   Scenario Outline: [PURPOSE_TEMPLATE_REACTIVATION_WRONG_STATE] Riattivazione di una finalità agevolata in stato diverso da SUSPENDED (error 409)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato <state>
@@ -21,7 +21,7 @@ Feature: finalità agevolata, purpose template REACTIVATION
       | ARCHIVED |
 
   #53(OK)
-  @purposeTemplate @purposeTemplateReactivation
+  @purposeTemplate @purposeTemplateReactivation @test_22092026
   Scenario Outline: [PURPOSE_TEMPLATE_REACTIVATION_NO_ADMIN] Riattivazione di una finalità agevolata sospesa da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato SUSPENDED
@@ -41,7 +41,7 @@ Feature: finalità agevolata, purpose template REACTIVATION
       | PA2  | viewer   |
 
   #54(KO)
-  @purposeTemplate @purposeTemplateReactivation
+  @purposeTemplate @purposeTemplateReactivation @test_22092026
   Scenario: [PURPOSE_TEMPLATE_REACTIVATION_NO_CREATOR] Riattivazione di una finalità agevolata sospesa da parte di un utente non appartenente alla PA che ha creato la finalità agevolata (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato PUBLISHED
@@ -50,7 +50,7 @@ Feature: finalità agevolata, purpose template REACTIVATION
     Then si ottiene lo status code 403
 
   #55(KO)
-  @purposeTemplate @purposeTemplateReactivation
+  @purposeTemplate @purposeTemplateReactivation @test_22092026
   Scenario: [PURPOSE_TEMPLATE_REACTIVATION_404] Riattivazione di una finalità agevolata sospesa passando un ID inesistente (error 404)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato SUSPENDED
@@ -58,7 +58,7 @@ Feature: finalità agevolata, purpose template REACTIVATION
     Then si ottiene lo status code 404
 
   #56(KO)
-  @purposeTemplate @purposeTemplateReactivation
+  @purposeTemplate @purposeTemplateReactivation @test_22092026
   Scenario: [PURPOSE_TEMPLATE_REACTIVATION_ALREADY_REACTIVATED] Riattivazione di una finalità agevolata sospesa che risulta essere stata già riattivata (error 409)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato SUSPENDED

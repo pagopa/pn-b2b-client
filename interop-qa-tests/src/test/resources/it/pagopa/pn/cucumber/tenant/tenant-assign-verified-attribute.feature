@@ -3,7 +3,7 @@ Feature: Assegnazione di un attributo verificato ad un aderente
   Tutti gli utenti autorizzati di enti che possono erogare eservice possono assegnare un attributo verificato
 
   @nrt-minimal
-  @tenant_assign_verified_attribute1
+  @tenant_assign_verified_attribute1 @test_22092026
   Scenario Outline: [TENANT_ASSIGN_VERIFIED_ATTRIBUTE_01] Per un attributo verificato precedentemente creato da un primo aderente, alla richiesta di assegnazione dell’attributo senza data di scadenza ad un secondo aderente da parte di un utente con sufficienti permessi (admin) appartenente al primo aderente, va a buon fine
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato un attributo verificato

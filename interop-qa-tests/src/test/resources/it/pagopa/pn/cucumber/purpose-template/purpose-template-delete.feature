@@ -1,14 +1,14 @@
 Feature: finalità agevolata, purpose template DELETE
 
   #17(OK)
-  @purposeTemplate @purposeTemplateDelete
+  @purposeTemplate @purposeTemplateDelete @test_22092026
   Scenario: [DELETE_PURPOSE_TEMPLATE_OK] Eliminazione di una finalità agevolata (OK)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato DRAFT
     Then si cancella il purpose template creato
 
   #18(KO)
-  @purposeTemplate @purposeTemplateDelete
+  @purposeTemplate @purposeTemplateDelete @test_22092026
   Scenario Outline: [DELETE_PURPOSE_TEMPLATE_NOT_IN_DRAFT] Eliminazione di una finalità agevolata in stato diverso da DRAFT (error 409)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato <stato>
@@ -21,7 +21,7 @@ Feature: finalità agevolata, purpose template DELETE
       | SUSPENDED |
 
   #19(KO)
-  @purposeTemplate @purposeTemplateDelete
+  @purposeTemplate @purposeTemplateDelete @test_22092026
   Scenario: [DELETE_PURPOSE_TEMPLATE_ALREADY_DELETED] Eliminazione di una finalità agevolata già eliminata in precedenza (error 404)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template in stato DRAFT
@@ -30,7 +30,7 @@ Feature: finalità agevolata, purpose template DELETE
     Then si ottiene lo status code 404
 
   #20(KO)
-  @purposeTemplate @purposeTemplateDelete
+  @purposeTemplate @purposeTemplateDelete @test_22092026
   Scenario Outline: [DELETE_PURPOSE_TEMPLATE_NO_ADMIN] Eliminazione di una finalità agevolata da parte di un utente NON admin (error 403)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -51,7 +51,7 @@ Feature: finalità agevolata, purpose template DELETE
 
   #21(KO)
   # 27 01 2026: In osservanza a https://pagopa.atlassian.net/browse/PIN-8190 il codice restituito è stato mutato 403 -> 404
-  @purposeTemplate @purposeTemplateDelete
+  @purposeTemplate @purposeTemplateDelete @test_22092026
   Scenario: [DELETE_PURPOSE_TEMPLATE_NO_CREATOR] Eliminazione di una finalità agevolata da parte di un utente non appartenente alla PA che ha creato la finalità agevolata (error 404)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
