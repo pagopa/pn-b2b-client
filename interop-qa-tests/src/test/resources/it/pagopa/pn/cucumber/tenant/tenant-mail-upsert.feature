@@ -37,7 +37,7 @@ Feature: Aggiunta o aggiornamento di una mail di contatto
       | Privato | viewer       |        403 |
 
   @nrt-minimal
-  @tenant_mail_upsert2 @test_22092026
+  @tenant_mail_upsert2
   Scenario: [TENANT_MAIL_UPSERT_02] Per un utente con sufficienti permessi (admin), alla richiesta di aggiunta di una mail di contatto compilando i parametri kind e address ma non description, va a buon fine
     Given l'utente è un "admin" di "PA1"
     When l'utente richiede una operazione di aggiunta di una mail di contatto senza description

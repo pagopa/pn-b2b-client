@@ -3,7 +3,7 @@
 Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi Operatori
 
   # PST: Scenario 31 - Caso 31.1
-  @happy-path @test_22092026
+  @happy-path
   Scenario: [AWRS_MODIFICA_31_1_SUBMITTED] Modifica parti della finalità con workflow di revisione in stato SUBMITTED
 	Given "PA1" ha già creato e pubblicato 1 e-service
 	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service

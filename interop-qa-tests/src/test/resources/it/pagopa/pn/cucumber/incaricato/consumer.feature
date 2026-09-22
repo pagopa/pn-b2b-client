@@ -92,7 +92,7 @@ Feature: Test API Availability in Use of E-Service
     When l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
     Then si ottiene status code 400
 
-  @sad-path @deleghe1 @test_22092026
+  @sad-path @deleghe1
   Scenario Outline: [TC_INCARICATO_48] La creazione di una delega in fruizione verso un ente che non ha dato la propria disponibilità a ricevere deleghe in fruizione deve fallire
     Given "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegante "<enteDelegante>"
@@ -115,7 +115,7 @@ Feature: Test API Availability in Use of E-Service
       | reviewer | PA4           | 403        |
       | viewer   | PA4           | 403        |
 
-  @deleghe2 @test_22092026
+  @deleghe2
   Scenario Outline: [TC_INCARICATO_50] Richiamare l’API di accettazione di una delega in stato WAITING_FOR_APPROVAL
     Given "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA2"
@@ -223,7 +223,7 @@ Feature: Test API Availability in Use of E-Service
     And l'ente delegato rifiuta la delega in fruizione
     Then si ottiene status code 409
 
-  @sad-path @deleghe1 @test_22092026
+  @sad-path @deleghe1
   Scenario Outline: [TC_INCARICATO_55] Richiamare l’API di rifiuto di una delega da parte del delegante: non permessa in quanto il rifiuto è una facoltà esclusiva del delegato
     Given "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA1"
@@ -604,7 +604,7 @@ Feature: Test API Availability in Use of E-Service
       | ruolo | statusCode |
       | admin | 404        |
 
-  @deleghe1 @test_22092026
+  @deleghe1
   Scenario Outline: [TC_INCARICATO_72] Richiamare l’API revoca della delega
     Given l'utente è un "admin" di "PA3"
     And "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione

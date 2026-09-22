@@ -23,7 +23,6 @@ Feature: API CRUD Notifiche
     And si ottiene lo status code 401
     Then lista di notifiche non restituita
 
-  @test_22092026
   Scenario Outline: [NOTIFICATION_BULK_DELETE_1] Eliminazione massiva di determinate notifiche
     Given l'utente è un "admin" di "PA1"
     And si attivano tutte le notifiche InApp per l'utente corrente
@@ -60,7 +59,6 @@ Feature: API CRUD Notifiche
       | role    |
       | support |
 
-  @test_22092026
   Scenario Outline: [NOTIFICATION_BULK_READ_1] Lettura massiva di determinate notifiche (Scenario 8)
     Given l'utente è un "admin" di "PA2"
     And si attivano tutte le notifiche InApp per l'utente corrente
@@ -101,7 +99,6 @@ Feature: API CRUD Notifiche
       | role    |
       | support |
 
-  @test_22092026
   Scenario Outline: [NOTIFICATION_SINGLE_READ_1] Lettura/Unread/Eliminazione di una specifica notifica (Scenario 13)
     Given l'utente è un "admin" di "PA3"
     And si attivano tutte le notifiche InApp per l'utente corrente

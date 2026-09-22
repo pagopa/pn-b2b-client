@@ -186,7 +186,7 @@ Feature: Aggiornamento di un descrittore in bozza
     And l'utente pubblica l'e-service
     And si ottiene status code 200
 
-  @dailyCallsThreshold @test_22092026
+  @dailyCallsThreshold
   Scenario: [DESCRIPTOR_DRAFT_UPDATE_THRESHOLD_10] Per un e-service in stato DRAFT non è possibile specificare due gruppi di attributi certificati dove in almeno uno è presente un valore invalido di dailyCallPerConsumer
     Given l'utente è un "admin" di "PA1"
     And due gruppi di due attributi certificati da "PA1", dei quali "PA2" ne possiede uno per gruppo

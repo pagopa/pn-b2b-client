@@ -96,7 +96,7 @@ Feature: Creazione di una delega in erogazione
       # Esito: si ottiene 403 "Unauthorized"
       | support      | delegante | PA1       | PA2      | 403         |
 
-  @sad-path @deleghe2 @test_22092026
+  @sad-path @deleghe2
   Scenario Outline: [TC_CAPOFILA_RIFIUTO_DELEGA_ACCETTATA] Il rifiuto di una delega già accettata non possa essere compiuto da nessun utente indipendentemente dal ruolo
     Given l'ente delegante "<delegante>"
     And l'ente delegato "<delegato>"

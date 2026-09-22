@@ -48,7 +48,7 @@ Feature: Rimozione purpose dal client
       | PA1  | admin | SUSPENDED     |        204 |
 
   @happy-path
-  @nrt-minimal @test_22092026
+  @nrt-minimal
   Scenario: [CLIENT_PURPOSE_REMOVE_2] Un utente con sufficienti permessi (admin) dell'ente che ha creato il client di tipo CONSUMER ed associato il client ad una finalità che si trova in stato ARCHIVED richiede la disassociazione del client dalla finalità. L'operazione va a buon fine
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service

@@ -61,7 +61,7 @@ Feature: Cancellazione richiesta di fruizione
 
   @sad-path
   @nrt-minimal
-  @agreement_delete2a @test_22092026
+  @agreement_delete2a
   Scenario Outline: [AGREEMENT_DELETE_02A] Per una richiesta di fruizione precedentemente creata dall’ente, la quale è in stato PENDING, ACTIVE, SUSPENDED o ARCHIVED, alla richiesta di cancellazione da parte di un utente con sufficienti permessi, ottiene un errore
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "<tipoApprovazione>"

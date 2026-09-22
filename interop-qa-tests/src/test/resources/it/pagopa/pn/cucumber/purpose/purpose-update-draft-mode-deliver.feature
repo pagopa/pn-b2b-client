@@ -49,7 +49,7 @@ Feature: Aggiornamento bozza nuova finalità in erogazione diretta
     Then si ottiene status code 400
 
   @sad-path
-  @nrt-minimal @test_22092026
+  @nrt-minimal
   Scenario: [PURPOSE_UPDATE_DRAFT_MODE_DELIVER_4] Tentare di modificare una finalità generata a partire da un purpose template conduce ad un errore
     Given "PA2" ha già creato e pubblicato 1 e-service
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -61,7 +61,6 @@ Feature: Aggiornamento bozza nuova finalità in erogazione diretta
     Then si ottiene status code 409
 
   # FIXME per test locali, rimuovere
-  @test_22092026
   Scenario: prova
     Given "PA2" ha già creato e pubblicato 1 e-service
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service

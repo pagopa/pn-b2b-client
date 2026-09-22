@@ -79,7 +79,6 @@ Feature: Configurazione e gestione di template e-service per scambi asincroni e 
       | asyncExchangeProperties.bulk                  | true |
     Then si ottiene status code 200
 
-  @test_22092026
   Scenario: [ASYNC_TEMPLATE_ESERVICE_UPDATE_3] La creazione di un'istanza e-service asincrona a partire da un template
   configurato come asincrono va a buon.
     Given l'utente è un "admin" di "PA1"
@@ -103,7 +102,6 @@ Feature: Configurazione e gestione di template e-service per scambi asincroni e 
       | maxResultSet          | 200 |
     And si ottiene status code 200
 
-  @test_22092026
   Scenario Outline: [ASYNC_TEMPLATE_ESERVICE_UPDATE_4] Aggiornamento delle specifiche tecniche di scambio asincrono su
   un'istanza di e-service creata da un template pubblicato.
     Given l'utente è un "admin" di "PA1"
@@ -135,7 +133,6 @@ Feature: Configurazione e gestione di template e-service per scambi asincroni e 
       | REST       | 200          | :null                 | 100          |
       | REST       | 200          | 200                   | :null        |
 
-  @test_22092026
   Scenario: [ASYNC_TEMPLATE_ESERVICE_UPDATE_5] La pubblicazione di un e-service template fallisce se non viene
   specificata l'interfaccia di callback.
     Given l'utente è un "admin" di "PA1"

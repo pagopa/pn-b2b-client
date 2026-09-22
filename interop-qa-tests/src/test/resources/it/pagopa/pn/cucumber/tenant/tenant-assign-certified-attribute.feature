@@ -3,7 +3,7 @@ Feature: Assegnazione di un attributo certificato ad un aderente
   Tutti gli utenti autorizzati degli enti certificatori possono assegnare un attributo certificato
 
   @nrt-minimal
-  @tenant_assign_certified_attribute1 @test_22092026
+  @tenant_assign_certified_attribute1
   Scenario Outline: [TENANT_ASSIGN_CERTIFIED_ATTRIBUTE_1] Per un attributo certificato precedentemente creato da un aderente, il quale ha la qualifica di ente certificatore (certifier), alla richiesta di assegnazione dell’attributo ad un altro ente da parte di un utente con sufficienti permessi (admin), va a buon fine
     Given l'utente è un "<ruolo>" di "PA2"
     Given PA2 ha già creato 1 attributo CERTIFIED
@@ -33,7 +33,7 @@ Feature: Assegnazione di un attributo certificato ad un aderente
     Then si ottiene status code 204
 
   @nrt-minimal
-  @tenant_assign_certified_attribute3 @test_22092026
+  @tenant_assign_certified_attribute3
   Scenario: [TENANT_ASSIGN_CERTIFIED_ATTRIBUTE_3] Per un attributo certificato precedentemente creato da un primo aderente, alla richiesta di assegnazione dell’attributo ad un secondo ente da parte di un utente con sufficienti permessi (admin), il quale admin appartiene ad un terzo aderente, il quale ha la qualifica di ente certificatore (certifier), ottiene un errore.
     Given l'utente è un "admin" di "GSP2"
     Given PA2 ha già creato 1 attributo CERTIFIED

@@ -4,7 +4,7 @@ Feature: Lettura del template di analisi del rischio più recente
 
   @happy-path
   @nrt-minimal
-  @purpose_latest_risk_analysis_template_read1 @fixed_in_node @test_22092026
+  @purpose_latest_risk_analysis_template_read1 @fixed_in_node
   Scenario Outline: [LETTURA_TEMPLATE_RISK_ANALYSIS_1] Per una richiesta di lettura del template di analisi del rischio da parte di un ente, alla richiesta di lettura, ottiene l'ultima versione di analisi del rischio dedicata a quel tipo specifico di ente
     Given l'utente è un "<ruolo>" di "<ente>"
     When l'utente richiede il template dell'analisi del rischio

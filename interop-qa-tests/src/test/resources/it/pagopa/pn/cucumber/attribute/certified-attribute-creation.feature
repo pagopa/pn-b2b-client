@@ -67,7 +67,7 @@ Feature: Creazione attributo certificato
       | Privato | admin        | 403       |
 
   @certifiedDiscreteAttribute
-  @certifiedDiscreteAttributeFlagOff @test_22092026
+  @certifiedDiscreteAttributeFlagOff
   Scenario: [DISCRETE_ATTRIBUTE_CREATION_1b] La creazione di un attributo certificato discreto non va a buon fine
   con il feature flag impostato a false.
 

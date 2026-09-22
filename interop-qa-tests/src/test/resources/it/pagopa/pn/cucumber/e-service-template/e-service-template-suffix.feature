@@ -314,7 +314,6 @@ Feature: Test API of e-service template suffix
     When l'utente recupera le proprie istanze e-service template create dall'e-service template "%actual"
     Then ottengo solo l'ultimo e-service creato dall'ente prodotti dall'e-service template
 
-  @test_22092026
   Scenario Outline: [ESERVICE_SUFFIX_MY_INSTANCES_RETRIEVE_3] Verifica che sia possibile recuperare le istanze e-service template in DRAFT in delega dal delegato
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"

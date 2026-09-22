@@ -436,7 +436,7 @@ Feature: Debugger Client Assertion Sync DPoP Async Errors
       | platformStatesVerification           | FAILED | [invalidAgreementState] |
       | dpopValidation                       | PASSED | []                      |
 
-  @devToolsClientAssertion @test_22092026
+  @devToolsClientAssertion
   Scenario: [VALIDATION_ERROR_CONSUMER_CLIENT_DPOP_ASYNC_12b] Dato un client CONSUMER valido, quando la finalità è in stato
   non valido allora il recupero della chiave pubblica fallisce con errore invalidPurposeState
     Given l'admin del fruitore "PA2" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi

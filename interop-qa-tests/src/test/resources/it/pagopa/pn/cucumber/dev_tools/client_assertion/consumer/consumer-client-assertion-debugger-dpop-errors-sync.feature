@@ -239,7 +239,7 @@ Feature: Debugger Client Assertion Sync DPoP Errors
       | platformStatesVerification           | PASSED | []                       |
       | dpopValidation                       | FAILED | [dpopProofInvalidClaims] |
 
-  @devToolsClientAssertion @test_22092026
+  @devToolsClientAssertion
   Scenario: [VALIDATION_INVALID_SIGNATURE_CONSUMER_CLIENT_DPOP] Dato un client CONSUMER valido, quando il DPoPProof è firmato in modo non valido la validazione formale fallisce con errore invalidDPoPSignature
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client

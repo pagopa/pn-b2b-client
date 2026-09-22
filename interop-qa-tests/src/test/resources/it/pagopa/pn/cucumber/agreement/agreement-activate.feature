@@ -91,7 +91,7 @@ Feature: Attivazione richiesta di fruizione
 
   @sad-path
   @nrt-minimal
-  @agreement_activate4a @agreement-approve-unsuspend-refactor @test_22092026
+  @agreement_activate4a @agreement-approve-unsuspend-refactor
   Scenario Outline: [AGREEMENT_ACTIVATE_04A] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato ACTIVE, ARCHIVED o SUSPENDED, alla richiesta di attivazione da parte di un utente con sufficienti permessi dell’ente erogatore, ottiene un errore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
@@ -158,7 +158,6 @@ Feature: Attivazione richiesta di fruizione
   @sad-path @nrt-minimal
   @agreement_activate4b @no-parallel @certifiedAttribute @agreement-approve-unsuspend-refactor
     #BUG: https://pagopa.atlassian.net/browse/PIN-7747
-  @test_22092026
   Scenario Outline: [AGREEMENT_ACTIVATE_04B] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, alla richiesta di attivazione da parte di un utente con sufficienti permessi dell’ente erogatore, ottiene un errore
     Given l'utente è un "admin" di "<enteErogatore>"
     And "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"
@@ -176,7 +175,7 @@ Feature: Attivazione richiesta di fruizione
 
   @sad-path
   @nrt-minimal
-  @agreement_activate4c @agreement-approve-unsuspend-refactor @test_22092026
+  @agreement_activate4c @agreement-approve-unsuspend-refactor
   Scenario: [AGREEMENT_ACTIVATE_04C] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale è in stato REJECTED, alla richiesta di attivazione da parte di un utente con sufficienti permessi dell’ente erogatore, ottiene un errore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
@@ -328,7 +327,7 @@ Feature: Attivazione richiesta di fruizione
       | %random     | 404        |
 
   @sad-path
-  @agreement-approve-unsuspend-refactor @test_22092026
+  @agreement-approve-unsuspend-refactor
   Scenario Outline: [AGREEMENTS_UNSUSPEND_2A] La riattivazione di una richiesta di fruizione in stato differente da SUSPENDED restituisce errore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
@@ -343,7 +342,7 @@ Feature: Attivazione richiesta di fruizione
       | ARCHIVED       |
 
   @sad-path
-  @agreement-approve-unsuspend-refactor @test_22092026
+  @agreement-approve-unsuspend-refactor
   Scenario: [AGREEMENTS_UNSUSPEND_2B] La riattivazione di una richiesta di fruizione in stato PENDING restituisce errore
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
@@ -353,7 +352,7 @@ Feature: Attivazione richiesta di fruizione
     And la richiesta di fruizione è in stato "PENDING"
 
   @sad-path
-  @agreement-approve-unsuspend-refactor @test_22092026
+  @agreement-approve-unsuspend-refactor
   Scenario: [AGREEMENTS_UNSUSPEND_3] La riattivazione di una richiesta di fruizione in stato REJECTED restituisce errore
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
@@ -364,7 +363,7 @@ Feature: Attivazione richiesta di fruizione
     And la richiesta di fruizione è in stato "REJECTED"
 
   @sad-path
-  @agreement-approve-unsuspend-refactor @test_22092026
+  @agreement-approve-unsuspend-refactor
   Scenario Outline: [AGREEMENTS_UNSUSPEND_4] La riattivazione di una richiesta di fruizione in stato MISSING_CERTIFIED_ATTRIBUTES restituisce errore
     Given l'utente è un "admin" di "<enteErogatore>"
     And "<enteCertificatore>" ha creato un attributo certificato e lo ha assegnato a "<enteFruitore>"

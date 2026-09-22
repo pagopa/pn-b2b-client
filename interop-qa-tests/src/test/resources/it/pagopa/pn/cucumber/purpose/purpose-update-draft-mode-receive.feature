@@ -71,7 +71,7 @@ Feature: Aggiornamento bozza nuova finalità in erogazione inversa
       | ARCHIVED             |
 
   @sad-path
-  @nrt-minimal @test_22092026
+  @nrt-minimal
   Scenario: [PURPOSE_UPDATE_DRAFT_MODE_RECEIVE_4] Tentare di modificare una finalità generata a partire da un purpose template conduce ad un errore
     Given "PA2" ha già creato e pubblicato 1 e-service
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service

@@ -1,7 +1,7 @@
 Feature: finalità agevolata, purpose template GET
 
   #1
-  @purposeTemplate @purposeTemplateGet @test_22092026
+  @purposeTemplate @purposeTemplateGet
   Scenario Outline: [PURPOSE_TEMPLATE_GET_BY_CREATOR] Recupero di una finalità agevolata da un membro della PA creatrice della finalità agevolata (OK)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -44,7 +44,7 @@ Feature: finalità agevolata, purpose template GET
       | null         |
 
   #3-4
-  @purposeTemplate @purposeTemplateCreate @test_22092026
+  @purposeTemplate @purposeTemplateCreate
   Scenario Outline: [PURPOSE_TEMPLATE_CREATE_WITH_PERSONAL_DATA] Creazione di una finalità agevolata specificando il valore del flag personalData (OK-KO)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template con handlePersonalData <personalData>
@@ -95,7 +95,7 @@ Feature: finalità agevolata, purpose template GET
     Then si ottiene lo status code 400
 
   #8(OK)
-  @purposeTemplate @purposeTemplateGet @test_22092026
+  @purposeTemplate @purposeTemplateGet
   Scenario Outline: [PURPOSE_TEMPLATE_GET_BY_ID] Recupero di una finalità agevolata (OK)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -108,7 +108,7 @@ Feature: finalità agevolata, purpose template GET
       | api      | 200        |
       | support  | 200        |
 
-  @purposeTemplate @purposeTemplateGet @test_22092026
+  @purposeTemplate @purposeTemplateGet
   Scenario: [PURPOSE_TEMPLATE_GET_BY_ID_B] Recupero di una finalità agevolata (OK)
     Given l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
@@ -131,7 +131,7 @@ Feature: finalità agevolata, purpose template GET
       | support  |
       | security |
 
-  @purposeTemplate @purposeTemplateGet-filtered @test_22092026
+  @purposeTemplate @purposeTemplateGet-filtered
   Scenario Outline: [M2M_GET_PURPOSE_TEMPLATES] - Recupera i purpose templates con filtri opzionali
     Given l'utente è un "admin" di "PA1"
     And esistono purpose templates di test creati tramite data preparation

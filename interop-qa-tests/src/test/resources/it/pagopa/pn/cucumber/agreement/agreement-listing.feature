@@ -70,7 +70,7 @@ Feature: Listing richieste di fruizione
     Then si ottiene status code 200 e la lista di 6 richieste di fruizione
 
   @happy-path
-  @agreement_listing6 @test_22092026
+  @agreement_listing6
   Scenario: Restituisce le richieste di fruizione di uno specifico fruitore che sono in uno o più specifici stati
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato e pubblicato 5 e-services

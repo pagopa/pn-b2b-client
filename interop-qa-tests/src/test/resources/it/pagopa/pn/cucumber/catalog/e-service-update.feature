@@ -137,7 +137,7 @@ Feature: Aggiornamento di un e-service non pubblicato
     Then si ottiene status code 401
 
   @eservice_published_delegation
-  @happy-path @test_22092026
+  @happy-path
   Scenario Outline: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_06] Per un e-service creato dall'ente delegante, il quale ha un solo descrittore in stato NON DRAFT, è possibile modificare i flag di delega da parte dell'ente delegato in erogazione
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"

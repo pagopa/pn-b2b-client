@@ -183,7 +183,7 @@ Feature: Gestione degli attributes attraverso APIs M2M V2
   # DEV. NOTE 05/08/2025: l'assenza di polling attivo per le APIs in test dovrebbe essere
   # compensata dal tempo occupato dagli step intermedi necessari. Considerare la possibilità che
   # NON sia così qualora il test fallisse.
-  @m2m-parte2-agosto-rilascio1 @test_22092026
+  @m2m-parte2-agosto-rilascio1
   Scenario Outline: [M2MG_VERIFIEDATTRIBUTES_7]
           (Parte 1) Un utente con ruolo M2M o M2M-ADMIN può recuperare la lista degli enti che hanno verificato un certo attributo associato al proprio ente di appartenenza.
           (Parte 2) Inoltre, la revoca dell'attributo da parte di uno degli enti coinvolti implica il suo inserimento nella lista dei revokers, e la sua rimozione dalla lista dei verifiers.
