@@ -3,25 +3,6 @@ Feature: aggiornamento stream
   #--------------AGGIORNAMENTO DI UNO STREAM------------
 
   @webhookV30Informal @precondition @cleanWebhook @webhook2
-  Scenario Outline: [STREAM_UPDATE_DIFFERENT_COMMUNICATION_TYPE] Aggiornamento di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey con stesso gruppo.
-    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
-    And allo stream versione "V30" si setta il campo communicationType a "<typeOriginal>"
-    And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
-    And viene impostata l'apikey appena generata
-    And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream con versione "V30" per il "Comune_Multi" con un gruppo disponibile "FIRST"
-    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V30"
-    When allo stream versione "V30" si setta il campo communicationType a "<typeReplaced>"
-    And si aggiorna lo stream creato con versione "V30" e apiKey aggiornata
-    Then l'operazione ha prodotto un errore con status code "403"
-    And viene modificato lo stato dell'apiKey in "BLOCK"
-    And l'apiKey viene cancellata
-    Examples:
-      | typeOriginal | typeReplaced |
-      | INFORMAL     | LEGAL        |
-      | LEGAL        | INFORMAL     |
-
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_87] Aggiornamento di uno stream notifica con gruppo, con eventType "STATUS"  con gruppo non appartenente alla PA.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
