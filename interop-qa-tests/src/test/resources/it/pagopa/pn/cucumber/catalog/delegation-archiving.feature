@@ -1360,10 +1360,10 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And "PA2" tenta la creazione di una versione in DRAFT per quell'e-service
     And "PA2" ha già caricato un'interfaccia per quel descrittore
     And l'utente aggiorna alcuni parametri di quel descrittore
-    And si ottiene response status code 204
+    And si ottiene response status code 200
     And l'e-service è in stato "DRAFT"
     When l'utente pubblica l'e-service
-    Then si ottiene response status code 204
+    Then si ottiene response status code 200
     And l'e-service è in stato "WAITING_FOR_APPROVAL"
 
   @happy-path
