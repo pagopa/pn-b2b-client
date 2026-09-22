@@ -24,6 +24,21 @@ public class TenantAssignCertifiedAttributeSteps {
         this.identityService = this.sharedStepsContext.getIdentityService();
     }
 
+    @When("l'utente tenta di assegnare a {string} l'attributo certificato precedentemente creato")
+    public void tryToAssignCertifiedAttribute(String tenantType) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        UUID tenantId = identityService.getOrganizationId(tenantType);
+        UUID lastAttributeId = sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes().get(0).get(
+                sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes().get(0).size() - 1
+        );
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getTenantsApi().addCertifiedAttribute(
+                        tenantId,
+                        new CertifiedTenantAttributeSeed().id(lastAttributeId)
+                )
+        );
+    }
+
     @When("l'utente assegna a {string} l'attributo certificato precedentemente creato")
     public void assignCertifiedAttribute(String tenantType) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
