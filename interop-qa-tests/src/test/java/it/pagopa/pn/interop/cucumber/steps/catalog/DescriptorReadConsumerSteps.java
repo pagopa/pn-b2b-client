@@ -63,34 +63,23 @@ public class DescriptorReadConsumerSteps {
             }
         }
 
-        CatalogEServiceDescriptor obj = ((CatalogEServiceDescriptor)httpCallExecutor.getResponse());
-        Assertions.assertNotNull(obj, "Response of e-service descriptor from catalog is null");
+        CatalogEServiceDescriptor descriptor = ((CatalogEServiceDescriptor)httpCallExecutor.getResponse());
+        Assertions.assertNotNull(descriptor, "Response of e-service descriptor from catalog is null");
 
         boolean foundTemplateRef = false;
 
-        try {
-            Object templateRefObj;
-            Method method = obj.getClass().getMethod("getTemplateRef");
-            templateRefObj = method.invoke(obj);
-            if (templateRefObj == null) {
-                throw new NoSuchFieldException("templateRef is null");
-            }
-
-            method = templateRefObj.getClass().getMethod("getTemplateId");
-            String actualTemplateId = method.invoke(templateRefObj).toString();
+        if (descriptor.getTemplateRef() != null) {
+            UUID actualTemplateId = descriptor.getTemplateRef().getTemplateId();
             Assertions.assertEquals(
-                    sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId().toString(),
+                    sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId(),
                     actualTemplateId,
                     "templateId"
             );
 
-            method = templateRefObj.getClass().getMethod("getTemplateVersionId");
-            UUID actualTemplateVersionId = (UUID)method.invoke(templateRefObj);
-
+            UUID actualTemplateVersionId = descriptor.getTemplateRef().getTemplateVersionId();
             Assertions.assertEquals(expectedTemplateVersionId, actualTemplateVersionId, "templateVersionId");
 
-            method = templateRefObj.getClass().getMethod("getTemplateName");
-            String actualTemplateName = (String)method.invoke(templateRefObj);
+            String actualTemplateName = descriptor.getTemplateRef().getTemplateName();
             Assertions.assertEquals(
                     sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getName(),
                     actualTemplateName,
@@ -98,9 +87,6 @@ public class DescriptorReadConsumerSteps {
             );
 
             foundTemplateRef = true;
-
-        } catch (NoSuchMethodException e) {
-        } catch (ReflectiveOperationException e) {
         }
 
         if (templateRefWith.equals("con")) {
