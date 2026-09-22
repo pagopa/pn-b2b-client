@@ -53,17 +53,21 @@ public class HttpCallExecutor implements IHttpExecutor {
             response = null;
             responseStatus = e.getStatusCode();
             errorMessage = e.getMessage();
-            if (this.ongoingOperationConflict() && attempts++ <= MAX_ATTEMPTS) {
-                log.warn("An ongoing operation conflict occurred, retrying: attempt {}...", attempts);
-                delayService.delay();
-                performCall(promise);
-            }
+            handleConflicts(() -> performCall(promise));
         } catch (IntegrityValidationInterceptor.IntegrityValidationException e) {
             responseStatus = e.getHttpStatus();
             errorMessage = e.getMessage();
             attempts = 0;
         }
         return responseStatus;
+    }
+
+    private void handleConflicts(Runnable retryAction) {
+        if (this.ongoingOperationConflict() && attempts++ <= MAX_ATTEMPTS) {
+            log.warn("An ongoing operation conflict occurred, retrying: attempt {}...", attempts);
+            delayService.delay();
+            retryAction.run();
+        }
     }
 
     @Override
@@ -91,11 +95,7 @@ public class HttpCallExecutor implements IHttpExecutor {
             response = null;
             responseStatus = e.getStatusCode();
             errorMessage = e.getMessage();
-            if (this.ongoingOperationConflict() && attempts++ <= MAX_ATTEMPTS) {
-                log.warn("An ongoing operation conflict occurred, retrying: attempt {}...", attempts);
-                delayService.delay();
-                performCall(promise, httpStatusMapper);
-            }
+            handleConflicts(() -> performCall(promise, httpStatusMapper));
         }
         return promiseResponse;
     }
@@ -110,11 +110,7 @@ public class HttpCallExecutor implements IHttpExecutor {
             response = null;
             responseStatus = e.getStatusCode();
             errorMessage = e.getMessage();
-            if (this.ongoingOperationConflict() && attempts++ <= MAX_ATTEMPTS) {
-                log.warn("An ongoing operation conflict occurred, retrying: attempt {}...", attempts);
-                delayService.delay();
-                performCall(promise);
-            }
+            handleConflicts(() -> performCall(promise));
         }
         return responseStatus;
     }
