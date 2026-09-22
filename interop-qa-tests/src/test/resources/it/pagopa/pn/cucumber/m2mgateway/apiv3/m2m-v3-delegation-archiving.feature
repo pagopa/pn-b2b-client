@@ -42,7 +42,7 @@ Feature: (M2M v3) Gestione deleghe per archiviazione manuale e-service
   Scenario: [M2M_V3_DELEGATION_MANUAL_ARCHIVING_1.3] Un utente con ruolo m2m NON può richiedere via M2M v3 al delegante di avviare il processo di archiviazione di un e-service in delega
     Given l'ente delegato "PA2"
     And l'ente delegante "PA1"
-    And "PA1" ha già creato un e-service con un descrittore in stato "<descriptorState>"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
