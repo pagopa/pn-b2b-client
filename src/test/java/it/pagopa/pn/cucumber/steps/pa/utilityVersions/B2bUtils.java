@@ -1,7 +1,9 @@
 package it.pagopa.pn.cucumber.steps.pa.utilityVersions;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
@@ -56,6 +58,7 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -603,5 +606,28 @@ public abstract class B2bUtils {
 
     public static String assertWithIun(String iun, String msg) {
         return String.format("Assertion failed. Iun %s : %s", iun, msg);
+    }
+
+    public static JsonNode normalize(JsonNode node) {
+        if (node.isObject()) {
+            ObjectNode objectNode = (ObjectNode) node;
+            Iterator<Map.Entry<String, JsonNode>> fields = objectNode.fields();
+            while (fields.hasNext()) {
+                Map.Entry<String, JsonNode> field = fields.next();
+                JsonNode value = field.getValue();
+
+                if (value.isTextual() && value.asText().trim().isEmpty()) {
+                    objectNode.putNull(field.getKey());
+                } else {
+                    normalize(value);
+                }
+            }
+        }
+        if (node.isArray()) {
+            for (JsonNode element : node) {
+                normalize(element);
+            }
+        }
+        return node;
     }
 }

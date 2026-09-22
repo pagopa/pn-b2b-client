@@ -33,7 +33,6 @@ Feature: avanzamento notifiche webhook b2b V28
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_DIGITAL_DOMICILE" con la versione "V28" e apiKey aggiornata con position 0
     And verifica corrispondenza tra i detail del webhook e quelli della timeline con la versione "V28"
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_DIGITAL_FEEDBACK" con la versione "V28" e apiKey aggiornata con position 0
-    #TODO: lo step seguente fallisce a causa di una discrepanza tra i details b2b e quelli webhook (deliveryFailureCause B2b = "", deliveryFailureCause Webhook = null)
     And verifica corrispondenza tra i detail del webhook e quelli della timeline con la versione "V28"
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" con la versione "V28" e apiKey aggiornata con position 0
     And verifica corrispondenza tra i detail del webhook e quelli della timeline con la versione "V28"
@@ -200,12 +199,10 @@ Feature: avanzamento notifiche webhook b2b V28
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "PREPARE_ANALOG_DOMICILE" con la versione "V28" e apiKey aggiornata con position 0
-    #TODO: lo step seguente fallisce a causa di una discrepanza tra i details b2b e quelli webhook (municipalityDetails B2b = "", municipalityDetails Webhook = null)
     And verifica corrispondenza tra i detail del webhook e quelli della timeline con la versione "V28"
     And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SEND_ANALOG_DOMICILE" con la versione "V28" e apiKey aggiornata con position 0
     And verifica corrispondenza tra i detail del webhook e quelli della timeline con la versione "V28"
     And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" con la versione "V28" e apiKey aggiornata con position 0
-    #TODO: lo step seguente fallisce a causa di una discrepanza tra i details b2b e quelli webhook (municipalityDetails B2b = "", municipalityDetails Webhook = null)
     And verifica corrispondenza tra i detail del webhook e quelli della timeline con la versione "V28"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
