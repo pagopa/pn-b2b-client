@@ -26,7 +26,7 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.*;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
-import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
+import it.pagopa.interop.utils.delay_service.DelayService;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;

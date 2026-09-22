@@ -2,6 +2,7 @@ package it.pagopa.interop.utils;
 
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.common.interceptor.dpop.IntegrityValidationInterceptor;
+import it.pagopa.interop.utils.delay_service.DelayService;
 import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,10 @@ import static java.util.Objects.isNull;
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class HttpCallExecutor implements IHttpExecutor {
+
+    private final String ONGOING_OPERATION_CONFLICT_ERROR = "Request conflicts with an ongoing operation on the same resource";
+    private final int MAX_ATTEMPTS = 4;
+
     private HttpStatus responseStatus;
     private String errorMessage;
     private Object response;
@@ -30,6 +35,12 @@ public class HttpCallExecutor implements IHttpExecutor {
     private HttpStatus snapResponseStatus;
     private Object snapResponse;
     private String snapErrorMessage;
+    private int attempts = 0;
+    private final DelayService delayService;
+
+    public HttpCallExecutor(DelayService delayService) {
+        this.delayService = delayService;
+    }
 
     @Override
     public <T> HttpStatus performCall(Supplier<T> promise) {
@@ -41,6 +52,10 @@ public class HttpCallExecutor implements IHttpExecutor {
             response = null;
             responseStatus = e.getStatusCode();
             errorMessage = e.getMessage();
+            if (this.ongoingOperationConflict() && attempts++ < MAX_ATTEMPTS) {
+                delayService.delay();
+                performCall(promise);
+            }
         } catch (IntegrityValidationInterceptor.IntegrityValidationException e) {
             responseStatus = e.getHttpStatus();
             errorMessage = e.getMessage();
@@ -87,6 +102,12 @@ public class HttpCallExecutor implements IHttpExecutor {
             errorMessage = e.getMessage();
         }
         return responseStatus;
+    }
+
+    @Override
+    public Boolean ongoingOperationConflict() {
+        return errorMessage != null &&
+                errorMessage.contains(ONGOING_OPERATION_CONFLICT_ERROR);
     }
 
     public void setRawResponse(int statusCode, Object rawBody) {
