@@ -15,7 +15,7 @@ import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
-import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
+import it.pagopa.interop.utils.delay_service.DelayService;
 import lombok.Data;
 import org.jeasy.random.randomizers.text.StringRandomizer;
 import org.junit.jupiter.api.Assertions;
@@ -92,6 +92,19 @@ public class EServiceTemplateCreateSteps {
             testAssistant.addRiskAnalysisToEServiceTemplateSuccessfully(); // perché ogni template in RECEIVE deve avere una risk analysis
         }
         testAssistant.mutateLastVersionState(desiredState);
+    }
+
+    @When("l'utente effettua la creazione di un e-service template con la descrizione della versione impostata a {string}")
+    public void createEServiceTemplateWithDescription(String versionDescriptionContent) {
+        EServiceTemplateSeed templateSeed = this.getEServiceTemplateSeed(EServiceMode.DELIVER);
+        String versionDescription = switch (versionDescriptionContent) {
+            case "%null%" -> null;
+            case "%empty%" -> "";
+            default -> versionDescriptionContent;
+        };
+        assert templateSeed.getVersion() != null;
+        templateSeed.getVersion().setDescription(versionDescription);
+        this.createEServiceTemplate(templateSeed);
     }
 
     @When("l'utente effettua la creazione di un e-service template {isAsynchronous} in modalità {eServiceMode} con tecnologia {string} in stato di {eServiceTemplateVersionState}")
@@ -283,6 +296,7 @@ public class EServiceTemplateCreateSteps {
     private EServiceTemplateSeed getEServiceTemplateSeed(EServiceMode eServiceMode, Boolean flagPersonalData) {
         String templateName = testAssistant.buildEServiceTemplateName();
         VersionSeedForEServiceTemplateCreation version = new VersionSeedForEServiceTemplateCreation()
+                .description("Descrizione della versione del servizio associato al template " + templateName)
                 .voucherLifespan(86400);
         return new EServiceTemplateSeed()
                 .intendedTarget("Audience description per il template " + templateName)
@@ -297,6 +311,7 @@ public class EServiceTemplateCreateSteps {
     private EServiceTemplateSeed getEServiceTemplateSeed(EServiceMode eServiceMode, Boolean flagPersonalData, String description) {
         String templateName = testAssistant.buildEServiceTemplateName();
         VersionSeedForEServiceTemplateCreation version = new VersionSeedForEServiceTemplateCreation()
+                .description("Descrizione della versione del servizio associato al template " + templateName)
                 .voucherLifespan(86400);
         return new EServiceTemplateSeed()
                 .intendedTarget("Audience description per il template " + templateName)

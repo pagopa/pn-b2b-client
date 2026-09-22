@@ -14,9 +14,8 @@ import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPrepara
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.AttributeCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.purposes.resolver.PurposeResolver;
-import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.AbstractResolver;
 import it.pagopa.pn.interop.cucumber.utility.EServiceDescriptorUtils;
-import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
+import it.pagopa.interop.utils.delay_service.DelayService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 
@@ -367,12 +366,25 @@ public class AttributeCommonSteps {
 
     private void hasCertifiedDiscreteAttribute(String tenantType, boolean hasAttribute) {
 
+        final int maxDiscreteValue = 1_000_000_000;
+
         UUID tenantId = identityService.getOrganizationId(tenantType);
         Tenant tenant = clientTokenConfigurator.getTenantsApi().getTenant(tenantId);
 
         Optional<CertifiedTenantAttribute> discreteAttrOptional = tenant.getAttributes().getCertified()
                 .stream()
-                .filter(attr -> Objects.equals(attr.getKind().getValue(), AttributeKind.CERTIFIED_DISCRETE.getValue()))
+                .filter(attr -> Objects.equals(attr.getKind().getValue(), AttributeKind.CERTIFIED_DISCRETE.getValue())
+                        // DEBITO TECNICO: nella prima versione della funzionalità degli attributi certificati discreti
+                        // non era possibile crearne di nuovi: l’unico attributo disponibile era quello ISTAT, aggiunto
+                        // automaticamente dal sistema.
+                        // Nelle versioni successive è stata introdotta la possibilità di creare attributi certificati discreti.
+                        // Tra gli scenari di test, alcuni verificano il valore massimo dell’attributo discreto.
+                        // Di conseguenza, negli scenari preesistenti, se l’attributo recuperato rientra tra questi, quelli
+                        // che utilizzano valori calcolati (ad esempio, valore discreto + 1) vanno in errore, poiché il
+                        // valore risultante non è consentito.
+                        && attr.getDiscreteValue() < maxDiscreteValue
+                        && attr.getRevocationTimestamp() == null
+                )
                 .findFirst();
 
         CertifiedDiscreteTenantAttribute discreteAttr = (CertifiedDiscreteTenantAttribute) discreteAttrOptional.orElse(null);
