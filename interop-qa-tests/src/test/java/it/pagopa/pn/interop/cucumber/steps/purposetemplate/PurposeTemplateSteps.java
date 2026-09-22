@@ -264,9 +264,10 @@ public class PurposeTemplateSteps {
     private String getPurposeTemplateVersion() {
         // L'inclusione dei valori null è volta a favorire retrocompatibilità con il comportamento antecedente
         // a questa aggiunta, che considerava "3.1" come versione hardcoded.
+        // C'è stato un aggiornamento di versione: PA 3.2 e Privato 2.1
         String tenant = sharedStepsContext.getTenantType();
         String tenantKind = isNull(tenant) ? null : sharedStepsContext.getIdentityService().getKind(tenant);
-        return isNull(tenantKind) || "PA".equals(tenantKind) ? "3.1" : "2.0";
+        return isNull(tenantKind) || "PA".equals(tenantKind) ? "3.2" : "2.1";
     }
 
     private void invokeCreatePurposeTemplate() {
