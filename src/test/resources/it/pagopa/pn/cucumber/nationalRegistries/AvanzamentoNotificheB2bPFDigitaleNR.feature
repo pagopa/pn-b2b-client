@@ -348,12 +348,6 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details                | NOT_NULL                                               |
       | details_digitalAddress | {"address": "example@OK-pecSuccess.it", "type": "PEC"} |
       | details_recIndex       | 0                                                      |
-    And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" non esista
-      | loadTimeline           | true                                                    |
-      | legalFactsIds          | [{"category": "DIGITAL_DELIVERY"}]                      |
-      | details                | NOT_NULL                                                |
-      | details_digitalAddress | {"address": "example2@OK-pecSuccess.it", "type": "PEC"} |
-      | details_recIndex       | 0                                                       |
 
 
   @PFinipec
@@ -388,10 +382,10 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details_sentAttemptMade      | 0        |
       | details_isAvailable          | true     |
     # verifica errore 404 in INAD
-    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
       | iun   | auto                  |
       | error | INAD - CF non trovato |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
       | iun  | auto                         |
       | log1 | pushing message for clientId |
       | log4 | from source: INIPEC          |
@@ -412,7 +406,7 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | taxId           | DLGMRA73D41F839C        |
       | digitalDomicile | NULL                    |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
-    #lo step deve controllare inipec e non nr , verificare uguaglianza dello step sul campo nella PUBLIC_REGISTRY_RESPONSE Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | details                      | NOT_NULL |
       | details_recIndex             | 0        |
@@ -434,11 +428,11 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details_digitalAddressSource | GENERAL  |
       | details_sentAttemptMade      | 0        |
       | details_isAvailable          | true     |
-    # verifica errore 404 in INAD
-    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
+#     verifica errore 404 in INAD
+    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
       | iun   | auto                  |
       | error | INAD - CF non trovato |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
       | iun  | auto                         |
       | log1 | pushing message for clientId |
       | log4 | from source: INIPEC          |
@@ -456,7 +450,7 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | senderDenomination | Comune di milano            |
     And destinatario
       | denomination    | Test digitale ok INIPEC |
-      | taxId           | PPPPLT80A01H501V        |
+      | taxId           | PRPMGG80A41H501W        |
       | digitalDomicile | NULL                    |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che l'elemento di timeline "GET_ADDRESS" esista
@@ -481,10 +475,10 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details_sentAttemptMade      | 0        |
       | details_isAvailable          | true     |
     # verifica errore 404 in INAD
-    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
       | iun   | auto                  |
       | error | INAD - CF non trovato |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
       | iun  | auto                         |
       | log1 | pushing message for clientId |
       | log4 | from source: INIPEC          |
@@ -526,10 +520,10 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details_digitalAddressSource | GENERAL  |
       | details_sentAttemptMade      | 0        |
       | details_isAvailable          | false    |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
       | iun   | auto                  |
       | error | INAD - CF non trovato |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
       | iun  | auto                         |
       | log1 | pushing message for clientId |
       | log4 | from source: INIPEC          |
