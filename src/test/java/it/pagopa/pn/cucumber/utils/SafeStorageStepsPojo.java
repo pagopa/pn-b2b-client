@@ -40,10 +40,16 @@ public class SafeStorageStepsPojo {
     private Integer issuedDownloadStatusCode;
     private Integer informationAccessStatusCodeBeforeExpiration;
     private Integer informationAccessStatusCode;
-    // NOTA: availableUntil non e' ancora un campo del client generato (WI 1 - PN-21557):
-    // il valore qui sotto e' quello che i test si aspettano di aver impostato, usato per
-    // confrontarlo con quanto la risposta di lettura riporta.
+    // Ultima fine disponibilita impostata tramite l'API, usata per confrontarla con quanto
+    // la risposta di lettura riporta.
     private OffsetDateTime lastAvailableUntilSet;
+    // Ultima retention impostata esplicitamente tramite l'API (indipendente dalla fine
+    // disponibilita), usata con lo stesso scopo.
+    private OffsetDateTime lastRetentionUntilSet;
+    // Conservazione garantita registrata come riferimento indipendente PRIMA di una lettura,
+    // per verificare che la data restituita coincida con quella nota (non dedotta dalla
+    // risposta stessa).
+    private OffsetDateTime capturedRetentionUntil;
 
     public SafeStorageStepsPojo() {
         this.createdFiles = new LinkedList<>();

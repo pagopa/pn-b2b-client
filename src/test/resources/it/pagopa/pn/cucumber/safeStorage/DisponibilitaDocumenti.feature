@@ -92,6 +92,7 @@ Feature: Disponibilita dei documenti SafeStorage
     Then l'aggiornamento della retention restituisce status code 200
     When viene richiesto il contenuto del documento 1
     Then la lettura del contenuto restituisce status code 200
+    And la data di scadenza riportata coincide con la conservazione indicata
 
   @e2e @documentAvailability
   Scenario: [SS-DOCUMENT-AVAILABILITY-5.1] Rifiuto del tentativo di anticipo della conservazione
@@ -103,7 +104,7 @@ Feature: Disponibilita dei documenti SafeStorage
 
   @e2e @documentAvailability
   Scenario: [SS-DOCUMENT-AVAILABILITY-5.2] Documento senza fine disponibilita impostata
-    # Equivalente funzionale di un documento gia in archivio prima della funzionalita: un
+    # Equivalente funzionale di un documento gia in archivio prima della funzionalità: un
     # documento su cui la fine disponibilita non e' mai stata impostata percorre lo stesso
     # ramo di codice (indicatore assente).
     Given il client SafeStorage "pn-test" carica un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS"
@@ -122,6 +123,7 @@ Feature: Disponibilita dei documenti SafeStorage
   @e2e @documentAvailability
   Scenario: [SS-DOCUMENT-AVAILABILITY-5.3] Data di scadenza riportata quando la fine disponibilita non e impostata
     Given il client SafeStorage "pn-test" carica un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS"
+    And si registra la conservazione garantita corrente del documento 1
     When viene richiesto il contenuto del documento 1
     Then la lettura del contenuto restituisce status code 200
     And la data di scadenza riportata coincide con la conservazione garantita del documento

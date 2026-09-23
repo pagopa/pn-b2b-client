@@ -298,6 +298,7 @@ public class SafeStorageSteps {
     public void updateDocumentRetention(Integer documentIndex, String dateType) {
         String fileKey = getCreatedFileKey(documentIndex);
         OffsetDateTime retentionUntil = calculateRetentionUntil(fileKey, dateType);
+        safeStorageStepsPojo.setLastRetentionUntilSet(retentionUntil);
         UpdateFileMetadataRequest request = new UpdateFileMetadataRequest().retentionUntil(retentionUntil);
 
         try {
@@ -314,6 +315,30 @@ public class SafeStorageSteps {
         assertThat(safeStorageStepsPojo.getFileMetadataUpdateStatusCode())
                 .as("Lo status code dell'aggiornamento della retention non coincide con quello atteso")
                 .isEqualTo(expectedStatusCode);
+    }
+
+    // Confronta la data restituita in lettura con l'ultima retention esplicitamente impostata
+    // tramite "la retention del documento {int} viene aggiornata con una data {string}" (a
+    // differenza di "...coincide con la fine disponibilita indicata", che confronta con
+    // l'ultima fine disponibilita impostata).
+    @Then("la data di scadenza riportata coincide con la conservazione indicata")
+    public void checkReportedExpiryMatchesSetRetention() {
+        OffsetDateTime expected = safeStorageStepsPojo.getLastRetentionUntilSet();
+        assertThat(expected).as("Deve essere stato impostato un aggiornamento della retention in questo scenario").isNotNull();
+        FileDownloadResponse response = safeStorageStepsPojo.getFileDownloadResponse();
+        assertThat(response).as("La risposta di lettura del documento non dev'essere nulla").isNotNull();
+        assertThat(response.getRetentionUntil())
+                .as("La data di scadenza riportata deve coincidere con la conservazione appena impostata")
+                .isEqualTo(expected);
+    }
+
+    // Registra la conservazione garantita corrente PRIMA di una lettura, così da avere un
+    // riferimento indipendente con cui confrontare la data restituita (vedi
+    // checkReportedExpiryMatchesRetention sotto).
+    @Given("si registra la conservazione garantita corrente del documento {int}")
+    public void captureCurrentRetention(Integer documentIndex) {
+        String fileKey = getCreatedFileKey(documentIndex);
+        safeStorageStepsPojo.setCapturedRetentionUntil(getCurrentRetentionUntil(fileKey));
     }
 
     // NOTA: il campo availableUntil (WI 1 - PN-21557, "Ready To DEV" al momento della
@@ -362,17 +387,19 @@ public class SafeStorageSteps {
                 .isEqualTo(expected);
     }
 
-    // NOTA: verifica debole per costruzione. Non essendoci un riferimento indipendente per la
-    // conservazione garantita quando nessuna fine disponibilita e' mai stata impostata, questo
-    // step si limita a controllare che la risposta riporti comunque una data valida (nessuna
-    // eccezione/valore nullo introdotto dalla nuova funzionalita).
+    // Confronta la data restituita in lettura con la conservazione garantita registrata in
+    // precedenza tramite "si registra la conservazione garantita corrente del documento
+    // {int}" (riferimento indipendente catturato prima della lettura, non dedotto dalla
+    // risposta stessa).
     @Then("la data di scadenza riportata coincide con la conservazione garantita del documento")
     public void checkReportedExpiryMatchesRetention() {
+        OffsetDateTime expected = safeStorageStepsPojo.getCapturedRetentionUntil();
+        assertThat(expected).as("La conservazione garantita del documento deve essere stata registrata prima della verifica").isNotNull();
         FileDownloadResponse response = safeStorageStepsPojo.getFileDownloadResponse();
         assertThat(response).as("La risposta di lettura del documento non dev'essere nulla").isNotNull();
         assertThat(response.getRetentionUntil())
-                .as("La conservazione garantita riportata non dev'essere nulla")
-                .isNotNull();
+                .as("La data di scadenza riportata deve coincidere con la conservazione garantita registrata")
+                .isEqualTo(expected);
     }
 
     private OffsetDateTime calculateAvailableUntil(String fileKey, String dateType) {
