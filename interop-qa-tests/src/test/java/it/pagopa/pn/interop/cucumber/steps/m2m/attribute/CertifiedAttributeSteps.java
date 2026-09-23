@@ -60,6 +60,10 @@ public class CertifiedAttributeSteps extends AbstractCommonSteps<CertifiedAttrib
     }
 
     @Then("la risposta contiene esattamente l'attributo certificato discreto creato")
+    public void listCheck() {
+        listCheck(null);
+    }
+
     @Then("la risposta contiene esattamente i {int} attributi certificati discreti creati")
     public void listCheck(Integer expectedSize) {
         List<CertifiedDiscreteAttribute> published = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscretePublished();

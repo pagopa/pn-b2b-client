@@ -176,7 +176,7 @@ Feature: Gestione degli attributi certificati discreti attraverso APIs M2M V3
     And viene effettuata la creazione dell'attributo certificato discreto
       | name | description | code |
       |      |             |      |
-    When l'utente tenta di recuperare la pagina 1 della lista di certifiedDiscreteAttribute con un limite di 10 elementi
+    When l'utente tenta di recuperare la lista completa di certifiedDiscreteAttribute
     Then la risposta contiene esattamente l'attributo certificato discreto creato
 
   Scenario: [M2M_CERTIFIED_DISCRETE_ATTRIBUTES_FUNC_LIST_2] La pagina di attributi certificati discreti richiesta contiene esattamente il numero di attributi richiesti.
