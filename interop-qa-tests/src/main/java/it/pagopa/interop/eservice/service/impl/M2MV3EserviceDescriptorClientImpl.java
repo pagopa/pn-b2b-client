@@ -138,6 +138,11 @@ public class M2MV3EserviceDescriptorClientImpl extends AbstractDPoPClient implem
     }
 
     @Override
+    public List<EServiceDescriptor> getPage(int page, int size) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
     public Pair<UUID, UUID> getId(EServiceDescriptor entity) {
         return Pair.of(entity.getEServiceId(), entity.getDescriptorId());
     }

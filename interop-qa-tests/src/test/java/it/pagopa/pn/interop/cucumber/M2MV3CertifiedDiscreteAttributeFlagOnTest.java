@@ -28,6 +28,6 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         // abilita parallelismo Cucumber
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 })
-@IncludeTags({"m2m-apiv3-purposes-threshold-discr-cert-attr"})
+@IncludeTags({"m2m-apiv3-purposes-threshold-discr-cert-attr", "certifiedDiscreteAttributeM2Mv3"})
 public class M2MV3CertifiedDiscreteAttributeFlagOnTest {
 }
