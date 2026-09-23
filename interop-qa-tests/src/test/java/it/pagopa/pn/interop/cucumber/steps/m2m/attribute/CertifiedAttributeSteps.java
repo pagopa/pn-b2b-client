@@ -1,7 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.attribute;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -14,9 +12,12 @@ import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.CertifiedD
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.AbstractCommonSteps;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class CertifiedAttributeSteps extends AbstractCommonSteps<CertifiedAttribute, UUID> {
 
@@ -70,10 +71,7 @@ public class CertifiedAttributeSteps extends AbstractCommonSteps<CertifiedAttrib
         List<CertifiedDiscreteAttribute> actual = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscreteActual();
 
         assertThat(actual).hasSizeGreaterThanOrEqualTo(expectedSize == null ? 1 : expectedSize);
-
-        published.forEach(attr -> {
-            assertThat(actual).anyMatch(attr::equals);
-        });
+        assertThat(actual).containsAll(published);
     }
 
     @Then("la risposta contiene esattamente i {int} elementi richiesti nella paginazione")
