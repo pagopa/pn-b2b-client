@@ -16,8 +16,10 @@ notifications:
   - purposeOverQuotaStateToConsumer
   - purposeQuotaAdjustmentRequestToProducer
 
-  # Richieste di fruizione (Erogazione)
+  # I miei e-service (Erogazione)
   - eserviceStateChangedToProducer
+
+  # Richieste di fruizione (Erogazione)
   - agreementManagementToProducer
   - agreementSuspendedUnsuspendedToProducer
 
@@ -36,10 +38,12 @@ notifications:
   # Conferimento di un e-service in delega
   - delegationApprovedRejectedToDelegator
   - eserviceNewVersionSubmittedToDelegator
+  - eserviceArchivingRequestedToDelegator
 
   # Ricezione di una delega per un e-service
   - delegationSubmittedRevokedToDelegate
   - eserviceNewVersionApprovedRejectedToDelegate
+  - eserviceArchivingApprovedRejectedToDelegate
 
   # Attributi certificati o verificati
   - certifiedVerifiedAttributeAssignedRevokedToAssignee
