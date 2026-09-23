@@ -136,7 +136,9 @@ public class NotificationConfigSteps {
                 .certifiedVerifiedAttributeAssignedRevokedToAssignee(isActive)
                 .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(isActive)
                 .purposeQuotaAdjustmentRequestToProducer(isActive)
-                .purposeOverQuotaStateToConsumer(isActive);
+                .purposeOverQuotaStateToConsumer(isActive)
+                .eserviceArchivingRequestedToDelegator(isActive)
+                .eserviceArchivingApprovedRejectedToDelegate(isActive);
 
         UserNotificationConfigUpdateSeed seed = new UserNotificationConfigUpdateSeed();
         seed.setInAppNotificationPreference(true);
