@@ -21,6 +21,7 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
 import java.time.ZoneOffset;
@@ -167,6 +168,17 @@ public class ArchivingClient {
         result.sort(Comparator.comparing(S3Object::lastModified).reversed());
 
         return result;
+    }
+
+    public ProcessedFile normalizeFile(ArchivedFileMatched archivedFile) throws IOException {
+        FileCandidate candidate = new FileCandidate(
+                archivedFile.file().getContent(),
+                archivedFile.file().getFilename(),
+                ContentType.fromExtension(
+                        archivedFile.file().getFilename().substring(archivedFile.file().getFilename().lastIndexOf(".") + 1)
+                )
+        );
+        return fileProcessor.normalize(candidate);
     }
 
     private ArchivedFileMatched tryMatchFile(S3Client s3, BucketUrl bucket, String key, FileInfo fileInfo, Set<String> checkedKeys) {

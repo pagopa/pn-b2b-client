@@ -145,4 +145,39 @@ public class TemplateEngineClientImpl implements ITemplateEngineClient {
     public String smsbody(LanguageEnum xLanguage) throws RestClientException {
         return templateApi.smsVerificationCodeBody(xLanguage);
     }
+
+    @Override
+    public Resource informalAnalogCommunication(LanguageEnum xLanguage, InformalCommunication informalCommunication) throws RestClientException {
+        return templateApi.informalAnalogCommunication(xLanguage, informalCommunication);
+    }
+
+    @Override
+    public String informalEmailCommunicationBody(LanguageEnum xLanguage, InformalCommunication informalCommunication) throws RestClientException {
+        return templateApi.informalEmailCommunicationBody(xLanguage, informalCommunication);
+    }
+
+    @Override
+    public String informalEmailCommunicationSubject(LanguageEnum xLanguage, InformalEmailCommunicationSubject informalEmailCommunicationSubject) throws RestClientException {
+        return templateApi.informalEmailCommunicationSubject(xLanguage, informalEmailCommunicationSubject);
+    }
+
+    @Override
+    public String informalPecCommunicationBody(LanguageEnum xLanguage, InformalCommunication informalCommunication) throws RestClientException {
+        return templateApi.informalPecCommunicationBody(xLanguage, informalCommunication);
+    }
+
+    @Override
+    public String informalPecCommunicationSubject(LanguageEnum xLanguage, InformalEmailCommunicationSubject informalEmailCommunicationSubject) throws RestClientException {
+        return templateApi.informalPecCommunicationSubject(xLanguage, informalEmailCommunicationSubject);
+    }
+
+    @Override
+    public String informalIoCommunication(LanguageEnum xLanguage, InformalCommunication informalCommunication) throws RestClientException {
+        return templateApi.informalIoCommunication(xLanguage, informalCommunication);
+    }
+
+    @Override
+    public String informalSmsCommunication(LanguageEnum xLanguage, InformalSmsCommunication informalSmsCommunication) throws RestClientException {
+        return templateApi.informalSmsCommunication(xLanguage, informalSmsCommunication);
+    }
 }

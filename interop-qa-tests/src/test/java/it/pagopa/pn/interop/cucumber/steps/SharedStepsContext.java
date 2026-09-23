@@ -13,6 +13,7 @@ import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTem
 import it.pagopa.pn.interop.cucumber.steps.notification.model.NotificationCommonContext;
 import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
 import it.pagopa.common.model.ISharedContext;
+import it.pagopa.interop.utils.delay_service.DelayService;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -51,6 +52,7 @@ public class SharedStepsContext implements ISharedContext {
     private NotificationCommonContext notificationCommonContext = new NotificationCommonContext();
     private ProducerKeychainCommonContext producerKeychainCommonContext;
     private TenantCommonContext tenantCommonContext;
+    private AuditTokenContext auditTokenContext;
 
     public SharedStepsContext(
             IHttpExecutor httpCallExecutor,
@@ -77,6 +79,7 @@ public class SharedStepsContext implements ISharedContext {
         purposeTemplateContext = new PurposeTemplateCommonContext();
         producerKeychainCommonContext = new ProducerKeychainCommonContext();
         tenantCommonContext = new TenantCommonContext();
+        auditTokenContext = new AuditTokenContext();
     }
 
     @Before(order = Integer.MIN_VALUE)

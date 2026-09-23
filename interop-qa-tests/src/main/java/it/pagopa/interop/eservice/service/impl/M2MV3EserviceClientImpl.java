@@ -182,7 +182,9 @@ public class M2MV3EserviceClientImpl extends AbstractDPoPClient implements IM2MV
     public EService scheduleArchiveEService(UUID eServiceId, EServiceArchivingRequest body) {
         EServiceArchivingReasonSeed seed = body == null
             ? null
-            : new EServiceArchivingReasonSeed().archivingReason(body.getArchivingReason());
+            : new EServiceArchivingReasonSeed()
+                .archivingReason(body.getArchivingReason())
+                .gracePeriodDays(GracePeriodDays.fromValue(body.getGracePeriodDays()));
         return vMapper.mapToV2(eservicesApi.scheduleArchiveEservice(eServiceId, seed));
     }
 

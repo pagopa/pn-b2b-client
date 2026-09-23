@@ -3,6 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps.notification;
 import static it.pagopa.common.util.StringUtils.resolveDynamicValues;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingService;
@@ -73,8 +74,12 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
         this.agreementCommonSteps = agreementCommonSteps;
         this.clientCreateStep = clientCreateStep;
         this.notificationStore = notificationStore;
-        //this.notificationStore.concurrentSafeInitializeOnce();
         this.sharedStepsContext = sharedStepsContext;
+    }
+
+    @Given("vengono inizializzate le notifiche per tutte le utenze")
+    public void initializeNotificationsForAllUsers() {
+        this.notificationStore.concurrentSafeInitializeOnce();
     }
 
     @When("l'utente tenta di recuperare la lista di notifiche create")
@@ -481,4 +486,51 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
             );
         }
     }
+//<<<<<<< HEAD
+//=======
+//
+//    private String resolveLabelsWithSharedContext(String textTemplate) {
+//        StringBuilder text = new StringBuilder();
+//        String functionName = "$DA_CONTESTO(";
+//        int reachedIndex = 0;
+//        int labelStartIndex = textTemplate.indexOf(functionName, reachedIndex);
+//        int labelEndIndex;
+//        while (labelStartIndex > -1) {
+//            text.append(textTemplate.substring(reachedIndex, labelStartIndex));
+//            labelStartIndex += functionName.length();
+//            labelEndIndex = textTemplate.indexOf(')', labelStartIndex);
+//            String label = textTemplate.substring(labelStartIndex, labelEndIndex);
+//            // Il valore deve essere risolto dalla funzione comune // sharedStepsContext
+//            String value = ".+";
+//            int gracePeriod = 0;
+//            switch (label) {
+//                case "agreementId": value = sharedStepsContext.getAgreementId().toString(); break;
+//                case "eServiceName": value = sharedStepsContext.getEServicesCommonContext().getName(); break;
+//                case "eServiceId": value = sharedStepsContext.getEServicesCommonContext().getEserviceId().toString(); break;
+//                case "descriptorId": value = sharedStepsContext.getEServicesCommonContext().getDescriptorId().toString(); break;
+//                case "oldDescriptorId": value = sharedStepsContext.getEServicesCommonContext().getOldDescriptorId().toString(); break;
+//                case "producerName": value = sharedStepsContext.getEServicesCommonContext().getProducerName(); break;
+//                case "TODAY": value = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")); break;
+//                case "TODAY+GRACE_PERIOD": gracePeriod = 2; break;
+//                default:
+//                    if (label.startsWith("TODAY+")) {
+//                        gracePeriod = Integer.parseInt(label.substring("TODAY+".length())) + 1;
+//                    }
+//                    break;
+//            }
+//            if (gracePeriod > 0) {
+//                value = LocalDate.now().plusDays(gracePeriod).format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+//            }
+//            text.append(value);
+//            // Controlla se c'è un prossimo placeholder
+//            reachedIndex = labelEndIndex + 1;
+//            labelStartIndex = textTemplate.indexOf(functionName, reachedIndex);
+//            if (labelStartIndex == -1) {
+//                text.append(textTemplate.substring(reachedIndex));
+//            }
+//        }
+//        if (text.isEmpty()) text.append(textTemplate);
+//        return text.toString();
+//    }
+//>>>>>>> develop
 }

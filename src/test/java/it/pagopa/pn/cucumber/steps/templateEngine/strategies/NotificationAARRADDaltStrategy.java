@@ -32,6 +32,11 @@ public class NotificationAARRADDaltStrategy implements ITemplateEngineStrategy {
 
     @Override
     public String getTextToCheckLanguage(String language, String recipientType) {
+        return String.join(" ", getYamlText("aar-radd", recipientType, language));
+    }
+
+    @Override
+    public List<String> getTextsToCheckLanguage(String language, String recipientType) {
         return getYamlText("aar-radd", recipientType, language);
     }
 
@@ -76,7 +81,7 @@ public class NotificationAARRADDaltStrategy implements ITemplateEngineStrategy {
                 .orElse(null);
     }
 
-    private String getYamlText(String templateKey, String recipientType, String language) {
+    private List<String> getYamlText(String templateKey, String recipientType, String language) {
         TemplateEngineMessageConfigs.LocalizedText localizedText =
                 Optional.ofNullable(configs.getMessages().get(templateKey))
                         .map(inner -> inner.get(recipientType.toLowerCase()))

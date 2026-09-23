@@ -1,10 +1,5 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.ApiClient;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api.NewNotificationApi;
@@ -24,6 +19,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static it.pagopa.pn.client.b2b.pa.utils.JsonDeepCopyMapper.deepCopy;
+
 @Component()
 @ConditionalOnProperty(name = IPnPaB2bClient.IMPLEMENTATION_TYPE_PROPERTY, havingValue = "internal")
 public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
@@ -33,9 +30,6 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
     private final String paId;
     private final String operatorId;
 
-    private final ObjectMapper objMapper = JsonMapper.builder()
-            .addModule(new JavaTimeModule())
-            .build();
     private final List<String> groups;
 
     public PnPaB2bInternalClientImpl(
@@ -380,15 +374,6 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
     @Override
     public LegalFactDownloadMetadataWithContentTypeResponse getLegalFactByIdPrivate(String recipientInternalId, String iun, String legalFactId, String mandateId, it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v26.CxTypeAuthFleet xPagopaPnCxType, List<String> xPagopaPnCxGroups) throws RestClientException {
         throw new UnsupportedOperationException();
-    }
-
-    private <T> T deepCopy(Object obj, Class<T> toClass) {
-        try {
-            String json = objMapper.writeValueAsString(obj);
-            return objMapper.readValue(json, toClass);
-        } catch (JsonProcessingException exc) {
-            throw new PnB2bException(exc.getMessage());
-        }
     }
 
 }

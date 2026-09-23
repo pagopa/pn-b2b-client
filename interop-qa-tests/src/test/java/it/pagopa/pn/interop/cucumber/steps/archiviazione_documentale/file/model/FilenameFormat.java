@@ -5,6 +5,24 @@ import java.util.regex.Pattern;
 
 public enum FilenameFormat {
 
+    NDJSON_SIGNED_LOG(Pattern.compile("^([0-9]{8})_([0-9]{6})_([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})\\.ndjson.zip.p7m$")) {
+        @Override
+        FileNameParts extract(Matcher m, String filename) {
+            return new FileNameParts(
+                    extractExtension(filename)
+            );
+        }
+    },
+
+    NDJSON_LOG(Pattern.compile("^([0-9]{8})_([0-9]{6})_([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})\\.ndjson$")) {
+        @Override
+        FileNameParts extract(Matcher m, String filename) {
+            return new FileNameParts(
+                    extractExtension(filename)
+            );
+        }
+    },
+
     PDF_SIGNED_DOC(Pattern.compile("^INTEROP_([A-Z_]+)-([a-f0-9]{32})-signed\\.pdf$")) {
         @Override
         FileNameParts extract(Matcher m, String filename) {

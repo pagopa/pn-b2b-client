@@ -6,8 +6,9 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ArchivingScope;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactDescriptor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceArchivingReasonSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceArchivingSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.GracePeriodDays;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -40,24 +41,24 @@ public class EServiceArchivingSteps {
         this.archivingScheduleVerifier = new DescriptorArchivingScheduleVerifier(clientTokenConfigurator, sharedStepsContext);
     }
 
-    @When("l'utente avvia il processo di archiviazione dell'e-service con id {string} e specificando la motivazione {string}")
-    public void scheduleEServiceArchiving(String eServiceId, String archivingReason) {
+    @When("l'utente avvia il processo di archiviazione dell'e-service {string} specificando la motivazione {string} e {gracePeriodDays} giorni di preavviso")
+    public void scheduleEServiceArchiving(String eServiceId, String archivingReason, GracePeriodDays gracePeriodDays) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
         UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
         String resolvedArchivingReason = catalogResolver.resolveArchivingReason(archivingReason);
 
-        scheduleArchiveEService(resolvedEServiceId, resolvedArchivingReason);
+        scheduleArchiveEService(resolvedEServiceId, resolvedArchivingReason, gracePeriodDays);
     }
 
-    @When("l'utente avvia il processo di archiviazione dell'e-service con id {string} e specificando la motivazione composta da {int} caratteri")
-    public void scheduleEServiceArchivingWithReasonLength(String eServiceId, int archivingReasonLength) {
+    @When("l'utente avvia il processo di archiviazione dell'e-service {string} specificando una motivazione di {int} caratteri e {gracePeriodDays} giorni di preavviso")
+    public void scheduleEServiceArchivingWithReasonLength(String eServiceId, int archivingReasonLength, GracePeriodDays gracePeriodDays) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
         UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
         String archivingReason = RandomStringUtils.insecure().nextAlphanumeric(archivingReasonLength);
 
-        scheduleArchiveEService(resolvedEServiceId, archivingReason);
+        scheduleArchiveEService(resolvedEServiceId, archivingReason, gracePeriodDays);
     }
 
     @When("l'utente annulla il processo di archiviazione dell'e-service con id {string}")
@@ -69,8 +70,8 @@ public class EServiceArchivingSteps {
         cancelArchiveEService(resolvedEServiceId);
     }
 
-    @Given("l'utente ha già avviato il processo di archiviazione dell'e-service con id {string} e specificando la motivazione {string}")
-    public void eServiceAlreadyInArchiving(String eServiceId, String archivingReason) {
+    @Given("l'utente ha già avviato il processo di archiviazione dell'e-service {string} specificando la motivazione {string} e {gracePeriodDays} giorni di preavviso")
+    public void eServiceAlreadyInArchiving(String eServiceId, String archivingReason, GracePeriodDays gracePeriodDays) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
         UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
@@ -78,7 +79,7 @@ public class EServiceArchivingSteps {
 
         Map<UUID, EServiceDescriptorState> expectedStates = getExpectedArchivingStates(resolvedEServiceId);
 
-        scheduleArchiveEService(resolvedEServiceId, resolvedArchivingReason);
+        scheduleArchiveEService(resolvedEServiceId, resolvedArchivingReason, gracePeriodDays);
         if (httpCallExecutor.getResponseStatus() == null || !httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             throw new IllegalStateException("L'avvio dell'archiviazione dell'e-service non ha avuto successo");
         }
@@ -110,6 +111,22 @@ public class EServiceArchivingSteps {
         archivingScheduleVerifier.pollDescriptorArchivingSchedule(eServiceId, descriptorId, ArchivingScope.ESERVICE);
     }
 
+    @Then("il vecchio descrittore eredita i dati di archiviazione dell'intero e-service dal descrittore più recente")
+    public void oldDescriptorHasSameEServiceArchivingScheduleAsLatestDescriptor() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID oldDescriptorId = sharedStepsContext.getEServicesCommonContext().getOldDescriptorId();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+
+        archivingScheduleVerifier.pollDescriptorWithSameArchivingSchedule(
+                eServiceId,
+                oldDescriptorId,
+                descriptorId,
+                ArchivingScope.ESERVICE
+        );
+    }
+
     //Step specifico per i test relativi al cron job di archiviazione
     @Then("il descrittore con id {string} dell'e-service avente id {string} è stato correttamente archiviato tramite l'archiviazione manuale dell'intero e-service")
     @Then("il descrittore con id {string} dell'e-service avente id {string} è in fase di archiviazione tramite l'archiviazione manuale dell'intero e-service")
@@ -123,13 +140,15 @@ public class EServiceArchivingSteps {
         archivingScheduleVerifier.pollDescriptorPopulatedArchivingSchedule(eServiceUUID, descriptorUUID, ArchivingScope.ESERVICE);
     }
 
-    private void scheduleArchiveEService(UUID eServiceId, String archivingReason) {
-        archivingScheduleVerifier.registerDescriptorArchivingRequestTimestamp();
+    private void scheduleArchiveEService(UUID eServiceId, String archivingReason, GracePeriodDays gracePeriodDays) {
+        archivingScheduleVerifier.registerEServiceArchivingRequestTimestamp(gracePeriodDays);
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getEServiceClient()
                         .scheduleArchiveEService(
                                 eServiceId,
-                                new EServiceArchivingReasonSeed().archivingReason(archivingReason)
+                                new EServiceArchivingSeed()
+                                        .archivingReason(archivingReason)
+                                        .gracePeriodDays(gracePeriodDays)
                         ),
                 ResponseEntity::getStatusCode
         );

@@ -7,8 +7,9 @@ import it.pagopa.interop.authorization.service.utils.voucher.domain.ClientAssert
 import it.pagopa.interop.authorization.service.utils.voucher.domain.ClientAssertionOptions.ClientType;
 import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherRequest;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.common.AuditTokenContext;
+
 import java.security.KeyPair;
 
 public class VoucherGenerationM2MSteps {
@@ -41,6 +42,10 @@ public class VoucherGenerationM2MSteps {
             .clientAssertion(clientAssertion)
             .build();
         httpCallExecutor.performCall(() -> voucherService.requestVoucher(voucherRequest));
+
+        sharedStepsContext.getAuditTokenContext().setToken(
+            AuditTokenContext.TokenType.CLIENT_ASSERTION, clientAssertion
+        );
     }
 
     @When("l'utente richiede la generazione del voucher M2M indicando il primo client ma con la chiave caricata nel secondo")

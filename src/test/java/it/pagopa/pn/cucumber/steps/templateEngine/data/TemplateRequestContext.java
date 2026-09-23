@@ -7,9 +7,11 @@ import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateRecipient;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class TemplateRequestContext {
+    private Map<String, String> rawParameters;
     private String sendDate;
     private TemplateNotification notification;
     private String subject;

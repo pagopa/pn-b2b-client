@@ -161,7 +161,7 @@ public class CatalogCommonSteps {
         MutateDescriptorResult result = dataPreparationService.bringDescriptorToGivenState(
                 eServiceDescriptor.getEServiceId(), eServiceDescriptor.getDescriptorId(),
                 EServiceDescriptorState.valueOf(descriptorState), documents, documentNamePrefix,
-                documentPrettyNamePrefix, false);
+                documentPrettyNamePrefix, false, true);
         EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
         eServicesCommonContext.setEserviceId(eServiceDescriptor.getEServiceId());
         eServicesCommonContext.setDescriptorId(eServiceDescriptor.getDescriptorId());

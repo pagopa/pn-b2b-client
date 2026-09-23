@@ -59,7 +59,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @Data
@@ -553,6 +553,8 @@ public abstract class B2bUtils {
             case PREPARE_SIMPLE_REGISTERED_LETTER ->
                     TimelineEventId.PREPARE_SIMPLE_REGISTERED_LETTER.buildEventId(event);
             case NOTIFICATION_VIEWED -> TimelineEventId.NOTIFICATION_VIEWED.buildEventId(event);
+            case NOTIFICATION_VIEWED_CREATION_REQUEST ->
+                    TimelineEventId.NOTIFICATION_VIEWED_CREATION_REQUEST.buildEventId(event);
             case COMPLETELY_UNREACHABLE -> TimelineEventId.COMPLETELY_UNREACHABLE.buildEventId(event);
             case DIGITAL_DELIVERY_CREATION_REQUEST ->
                     TimelineEventId.DIGITAL_DELIVERY_CREATION_REQUEST.buildEventId(event);

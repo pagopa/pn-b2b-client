@@ -4,6 +4,7 @@ import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDelivery;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
 import lombok.RequiredArgsConstructor;
+import io.cucumber.spring.ScenarioScope;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -16,6 +17,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
+@ScenarioScope
 @RequiredArgsConstructor
 public class DelayerPaperDeliveryUtils {
 

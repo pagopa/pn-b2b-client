@@ -8,11 +8,25 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 @IncludeEngines("cucumber")
 @SelectClasspathResource("it/pagopa/pn/cucumber")
 @ConfigurationParameters({
-        @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty"),
-        @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "json:target/cucumber-report.json," +
-                "html:target/cucumber-report.html"),
+        @ConfigurationParameter(
+                key = PLUGIN_PROPERTY_NAME,
+                value = "pretty," +
+                        "json:target/cucumber-report.json," +
+                        "html:target/cucumber-report.html," +
+                        "it.pagopa.pn.interop.cucumber.plugins.SetApiProfilePropsPlugin:" +
+                        "api.m2m.version=V2;" +
+                        "api.mode=RIGHT_FIT;" +
+                        "api.set=M2M;" +
+                        "api.bff.version=V1"
+        ),
         @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.interop.cucumber.steps"),
-        @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "same_thread"),
+
+        // abilita parallelismo JUnit
+        @ConfigurationParameter(key = "junit.jupiter.execution.parallel.enabled", value = "true"),
+        @ConfigurationParameter(key = "junit.jupiter.execution.parallel.mode.default", value = "concurrent"),
+
+        // abilita parallelismo Cucumber
+        @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 })
 @ExcludeTags({"ignore"})
 @IncludeTags({"crudNotification"})

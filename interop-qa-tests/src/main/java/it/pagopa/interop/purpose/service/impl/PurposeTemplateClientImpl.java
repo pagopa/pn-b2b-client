@@ -131,8 +131,11 @@ public class PurposeTemplateClientImpl extends AbstractClient implements IPurpos
     }
 
     @Override
-    public EServiceDescriptorsPurposeTemplate getPurposeTemplateEServices(UUID purposeTemplateId, Integer offset, Integer limit, @Nullable List<UUID> producerIds, @Nullable String eserviceName) throws RestClientException {
-        return purposesTemplateApi.getPurposeTemplateEServices(purposeTemplateId, offset, limit, producerIds, eserviceName);
+    public Resources getPurposeTemplateEServices(UUID purposeTemplateId, Integer offset, Integer limit, @Nullable List<UUID> producerIds, @Nullable String eserviceName) throws RestClientException {
+        LinkableResources resources = purposesTemplateApi.getPurposeTemplateLinkableResources(purposeTemplateId, offset, limit, eserviceName, producerIds);
+        Resources result = new Resources();
+        result.setResults(resources.getResults());
+        return result;
     }
 
     @Override
@@ -146,8 +149,21 @@ public class PurposeTemplateClientImpl extends AbstractClient implements IPurpos
     }
 
     @Override
-    public EServiceDescriptorPurposeTemplate linkEServiceToPurposeTemplate(UUID purposeTemplateId, LinkEServiceToPurposeTemplateRequest linkRequest) throws RestClientException {
-        return purposesTemplateApi.linkEServiceToPurposeTemplate(purposeTemplateId, linkRequest);
+    public EServiceDescriptorPurposeTemplate linkEServiceToPurposeTemplate(UUID purposeTemplateId, UUID eserviceId) throws RestClientException {
+        LinkableResourceRequest request = new LinkableResourceRequest();
+        request
+                .resourceKind(LinkableResourceRequest.ResourceKindEnum.ESERVICE)
+                .eserviceId(eserviceId);
+
+        LinkedResource resource = purposesTemplateApi.linkResourceToPurposeTemplate(purposeTemplateId, request);
+        EServiceDescriptorPurposeTemplate result = new EServiceDescriptorPurposeTemplate();
+
+        result.setPurposeTemplateId(purposeTemplateId);
+        result.setEserviceId(eserviceId);
+        result.setDescriptorId(resource.getDescriptorId());
+        result.setCreatedAt(resource.getCreatedAt());
+
+        return result;
     }
 
     @Override
@@ -161,8 +177,12 @@ public class PurposeTemplateClientImpl extends AbstractClient implements IPurpos
     }
 
     @Override
-    public void unlinkEServiceToPurposeTemplate(UUID purposeTemplateId, LinkEServiceToPurposeTemplateRequest linkRequest) throws RestClientException {
-        purposesTemplateApi.unlinkEServiceToPurposeTemplate(purposeTemplateId, linkRequest);
+    public void unlinkEServiceToPurposeTemplate(UUID purposeTemplateId, UUID eserviceId) throws RestClientException {
+        LinkableResourceRequest request = new LinkableResourceRequest();
+        request
+                .resourceKind(LinkableResourceRequest.ResourceKindEnum.ESERVICE)
+                .eserviceId(eserviceId);
+        purposesTemplateApi.unlinkResourceFromPurposeTemplate(purposeTemplateId, request);
     }
 
     @Override

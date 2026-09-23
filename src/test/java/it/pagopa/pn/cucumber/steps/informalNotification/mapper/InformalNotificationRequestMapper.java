@@ -32,10 +32,6 @@ public class InformalNotificationRequestMapper {
         request.setSubject(getValue(data, SUBJECT.key));
         request.setGroup(getValue(data, GROUP.key));
 
-        String notifLang = getValue(data, NOTIFICATION_ADDITIONAL_LANGUAGE.key);
-        if (notifLang != null) {
-            request.setAdditionalLanguages(List.of(notifLang));
-        }
         request.setGroup(getValue(data, GROUP.key));
         //  NESSUN DESTINATARIO DI DEFAULT
         request.setRecipients(new ArrayList<>());
@@ -72,18 +68,22 @@ public class InformalNotificationRequestMapper {
 
     private List<NotificationDocument> buildDocuments(Map<String, String> data) {
 
-        String documentsToAdd = getValue(data, DOCUMENT.key);
+        if (!data.containsKey(DOCUMENT.key)) {
+            return List.of(buildDefaultDocument(data));
+        }
+        String documentsToAdd = data.get(DOCUMENT.key);
+
+        if ("NULL".equalsIgnoreCase(documentsToAdd)) {
+            return null;
+        }
+        if (documentsToAdd == null || documentsToAdd.trim().isEmpty()) {
+            return List.of(buildDefaultDocument(data));
+        }
         List<NotificationDocument> result = new ArrayList<>();
 
-        if (documentsToAdd == null) {
-            result.add(buildDefaultDocument(data));
-            return result;
-        }
         for (String doc : documentsToAdd.split(";")) {
-
             String path = getDocumentPath(doc);
-            NotificationDocument document = new NotificationDocument().contentType("application/pdf").ref(new NotificationAttachmentBodyRef().key(path));
-            result.add(document);
+            result.add(new NotificationDocument().contentType("application/pdf").ref(new NotificationAttachmentBodyRef().key(path)));
         }
         return result;
     }
@@ -96,6 +96,7 @@ public class InformalNotificationRequestMapper {
             case "DOC_3_PG" -> "classpath:/sample_3pg.pdf";
             case "DOC_4_PG" -> "classpath:/sample_4pg.pdf";
             case "DOC_30MB" -> "classpath:/allegato_30Mb.pdf";
+            case "DOC_INFORMAL" -> "classpath:/Documento_combo.pdf";
             case "ALLEGATO_1_BN" -> "classpath:/Allegato1_BN.pdf";
             case "ALLEGATO_2_BN" -> "classpath:/Allegato2_BN.pdf";
 

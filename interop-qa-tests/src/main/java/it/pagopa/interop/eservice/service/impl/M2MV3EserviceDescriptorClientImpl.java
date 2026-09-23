@@ -1,7 +1,5 @@
 package it.pagopa.interop.eservice.service.impl;
 
-import static it.pagopa.interop.utils.ApiClientUtils.V3_UNSUPPORTED_BEARER_MSG;
-
 import it.pagopa.interop.M2MVersionsMapper;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.common.client.AbstractDPoPClient;
@@ -17,17 +15,23 @@ import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.EservicesApi
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptorAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptorDraftUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptorQuotasUpdateSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.GracePeriodDays;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.GracePeriodDaysSeed;
 import it.pagopa.interop.utils.ApiClientUtils;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import static it.pagopa.interop.utils.ApiClientUtils.V3_UNSUPPORTED_BEARER_MSG;
 
 @ToString
 @EqualsAndHashCode
@@ -178,14 +182,43 @@ public class M2MV3EserviceDescriptorClientImpl extends AbstractDPoPClient implem
     }
 
     @Override
+    public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Document uploadInterface(
+        UUID eserviceId,
+        UUID descriptorId,
+        Resource file,
+        String prettyName
+    ) {
+        return vMapper.mapToV2(eservicesApi.uploadEServiceDescriptorInterface(eserviceId, descriptorId, file, prettyName));
+    }
+
+    @Override
+    public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Document uploadDocument(
+        UUID eserviceId,
+        UUID descriptorId,
+        Resource file,
+        String prettyName
+    ) {
+        return vMapper.mapToV2(eservicesApi.uploadEServiceDescriptorDocument(eserviceId, descriptorId, file, prettyName));
+    }
+
+    @Override
+    public FileDownloadMultipart downloadDocument(UUID eserviceId, UUID descriptorId, UUID documentId) {
+        return vMapper.mapToV2(eservicesApi.downloadEServiceDescriptorDocument(eserviceId, descriptorId, documentId));
+    }
+
+    @Override
     public Documents getDocuments(UUID eserviceId, UUID descriptorId) {
         return vMapper.mapToV2(this.eservicesApi.getEServiceDescriptorDocuments(eserviceId, descriptorId, 0, 50));
     }
 
     @Override
     public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor scheduleArchiveEServiceDescriptor(
-        UUID eserviceId, UUID descriptorId) {
-        return vMapper.mapToV2(eservicesApi.scheduleArchiveEserviceDescriptor(eserviceId, descriptorId));
+        UUID eserviceId, UUID descriptorId, Integer gracePeriodDays) {
+        return vMapper.mapToV2(eservicesApi.scheduleArchiveEserviceDescriptor(
+            eserviceId,
+            descriptorId,
+            new GracePeriodDaysSeed().gracePeriodDays(GracePeriodDays.fromValue(gracePeriodDays))
+        ));
     }
 
     @Override

@@ -29,8 +29,8 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.INEXISTENT_IUN;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.INVALID_IUN;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.INEXISTENT_IUN;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.INVALID_IUN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 

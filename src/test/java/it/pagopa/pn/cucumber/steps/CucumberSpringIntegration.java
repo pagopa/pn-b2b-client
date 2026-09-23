@@ -11,12 +11,15 @@ import it.pagopa.pn.client.b2b.pa.config.springconfig.BearerTokenConfiguration;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.LegalFactTokenConfiguration;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.MailSenderConfig;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
+import it.pagopa.pn.client.b2b.pa.config.springconfig.TaxIdConfiguration;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.TimingConfiguration;
+import it.pagopa.pn.client.b2b.pa.mapper.NotificationSearchParamMapper;
 import it.pagopa.pn.client.b2b.pa.parsing.config.PnLegalFactTokenProperty;
 import it.pagopa.pn.client.b2b.pa.parsing.config.PnLegalFactTokens;
 import it.pagopa.pn.client.b2b.pa.parsing.parser.impl.PnParser;
 import it.pagopa.pn.client.b2b.pa.parsing.service.impl.PnParserService;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServicePaymentInfo;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v1.PnPollingServiceStatusRapidV1;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v1.PnPollingServiceStatusSlowV1;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v1.PnPollingServiceTimelineRapidV1;
@@ -106,6 +109,7 @@ import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceValidationSta
 import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceValidationStatusNoAcceptedV29;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceValidationStatusV29;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceWebhookV29;
+import it.pagopa.pn.client.b2b.pa.provider.DestinatarioRegistry;
 import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.client.b2b.pa.service.IBffMandateServiceApi;
@@ -113,6 +117,7 @@ import it.pagopa.pn.client.b2b.pa.service.IMandateReverseServiceClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.AooUoIdsClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BDeliveryPushServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.B2BSenderReadClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2bMandateServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.BffMandateServiceClientImpl;
@@ -121,6 +126,8 @@ import it.pagopa.pn.client.b2b.pa.service.impl.IPnInteropProbingClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.IPnLegalPersonAuthClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.IPnLegalPersonVirtualKeyServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.IPnTosPrivacyClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.MandateB2BExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.MandateInternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.MandateReverseServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PaperCalculatorClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnApiKeyManagerExternalClientImpl;
@@ -140,6 +147,7 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnIoUserAttributerExternaClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnMandateAppIoClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnNotificationCostClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bExternalInformalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bInternalInformalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaperChannelClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaperTrackerClientImpl;
@@ -157,6 +165,8 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnWebMandateExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesInternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebhookB2bExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.RecipientB2BExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.RecipientInternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.ReworkTimelineClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.TemplateEngineClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
@@ -165,9 +175,10 @@ import it.pagopa.pn.client.b2b.pa.utils.DataPreparationRaddVpceService;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.model.StimeMittentiContext;
 import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
-import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClientV2;
+import it.pagopa.pn.cucumber.steps.delayer.client.PortfatLambdaClient;
 import it.pagopa.pn.cucumber.steps.delayer.loader.DelayerCsvLoader;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSuiteContext;
 import it.pagopa.pn.cucumber.steps.delayer.planner.DelayerPlanner;
 import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSevice;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
@@ -175,14 +186,15 @@ import it.pagopa.pn.cucumber.steps.delayer.validator.DelayerValidator;
 import it.pagopa.pn.cucumber.steps.informalNotification.builders.InformalRecipientBuilder;
 import it.pagopa.pn.cucumber.steps.informalNotification.mapper.InformalNotificationRequestMapper;
 import it.pagopa.pn.cucumber.steps.informalNotification.provider.InformalMessageProvider;
+import it.pagopa.pn.cucumber.steps.informalNotification.utils.NotificationInformalUtilsV1;
 import it.pagopa.pn.cucumber.steps.paperTracker.parser.EventTimelineParser;
 import it.pagopa.pn.cucumber.steps.paperTracker.proxy.PaperTrackerSchemaValidatorProxy;
 import it.pagopa.pn.cucumber.steps.recipient.OtpCodeService;
 import it.pagopa.pn.cucumber.steps.templateEngine.TemplateConfiguration;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextFactory;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
-import it.pagopa.pn.cucumber.steps.utilitySteps.TaxIdConfiguration;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
+import it.pagopa.pn.cucumber.utils.notificationsearch.NotificationSearchCriteriaMapper;
 import it.pagopa.pn.cucumber.utils.validator.SchemaValidator;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -202,6 +214,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnWebhookB2bExternalClientImpl.class,
         PnWebMandateExternalClientImpl.class,
         B2bMandateServiceClientImpl.class,
+        MandateInternalClientImpl.class,
+        MandateB2BExternalClientImpl.class,
         PnExternalServiceClientImpl.class,
         PnWebUserAttributesInternalClientImpl.class,
         PnAppIOB2bExternalClientImpl.class,
@@ -224,6 +238,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnB2bClientTimingConfigs.class,
         PnIOConnectorClientImpl.class,
         PnPollingFactory.class,
+        PnPollingServicePaymentInfo.class,
         CieGeneratorTool.class,
         TaxIdConfiguration.class,
 
@@ -325,7 +340,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnPollingServiceValidationStatusAcceptedExtraRapidV29.class,
         PnPollingServiceStatusExtraRapidV29.class,
         PnPollingServiceTimelineExtraRapidV29.class,
-
+        PortfatLambdaClient.class,
         MailSenderConfig.class,
         PnParserService.class,
         LegalFactTokenConfiguration.class,
@@ -341,6 +356,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         IMandateReverseServiceClient.class,
         MandateReverseServiceClientImpl.class,
         B2BRecipientExternalClientImpl.class,
+        RecipientInternalClientImpl.class,
+        RecipientB2BExternalClientImpl.class,
         IBffMandateServiceApi.class,
         BffMandateServiceClientImpl.class,
         B2BDeliveryPushServiceClientImpl.class,
@@ -362,11 +379,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         TemplateEngineConfigBean.class,
         SchemaValidator.class,
         PaperTrackerSchemaValidatorProxy.class,
-        DelayerLambdaClientV2.class,
-        DelayerSevice.class,
         DelayerLambdaClient.class,
+        DelayerSevice.class,
         DelayerValidator.class,
         DelayerContext.class,
+        DelayerSuiteContext.class,
         DelayerPaperDeliveryUtils.class,
         DelayerCsvLoader.class,
         DelayerPlanner.class,
@@ -375,6 +392,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         DynamoDbService.class,
         AwsConfig.class,
         SenderInfoProvider.class,
+        DestinatarioRegistry.class,
         CacheConfig.class,
         AooUoIdsClientImpl.class,
         AooUoIdsApi.class,
@@ -386,7 +404,14 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnRaddNetVpceClientImpl.class,
         DataPreparationRaddVpceService.class,
         PnNotificationCostClientImpl.class,
-        StimeMittentiContext.class
+        NotificationInformalUtilsV1.class,
+        PnPaB2bExternalInformalClientImpl.class,
+        StimeMittentiContext.class,
+        NotificationSearchParamMapper.class,
+        NotificationSearchCriteriaMapper.class,
+        B2BSenderReadClientImpl.class,
+        NotificationInformalUtilsV1.class,
+        PnPaB2bExternalInformalClientImpl.class,
 })
 @EnableScheduling
 @EnableConfigurationProperties

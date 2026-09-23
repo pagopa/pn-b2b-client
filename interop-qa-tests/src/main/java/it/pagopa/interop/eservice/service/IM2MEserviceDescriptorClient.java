@@ -2,16 +2,15 @@ package it.pagopa.interop.eservice.service;
 
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.common.client.IClient;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementApprovalPolicy;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Documents;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorState;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
-import java.util.List;
-import java.util.UUID;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.core.io.Resource;
+
+import java.util.List;
+import java.util.UUID;
 
 public interface IM2MEserviceDescriptorClient extends IClient<EServiceDescriptor, Pair<UUID,UUID>> {
 
@@ -52,8 +51,11 @@ public interface IM2MEserviceDescriptorClient extends IClient<EServiceDescriptor
     it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor suspendDescriptor(UUID eServiceId, UUID descriptorId);
     void unsuspendEService(UUID eServiceId, UUID descriptorId);
     FileDownloadMultipart downloadEServiceDescriptorInterface(UUID eserviceId, UUID descriptorId);
+    Document uploadInterface(UUID eserviceId, UUID descriptorId, Resource file, String prettyName);
+    Document uploadDocument(UUID eserviceId, UUID descriptorId, Resource file, String prettyName);
+    FileDownloadMultipart downloadDocument(UUID eserviceId, UUID descriptorId, UUID documentId);
     Documents getDocuments(UUID eserviceId, UUID descriptorId);
-    it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor scheduleArchiveEServiceDescriptor(UUID eserviceId, UUID descriptorId);
+    it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor scheduleArchiveEServiceDescriptor(UUID eserviceId, UUID descriptorId, Integer gracePeriodDays);
     it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor cancelEServiceDescriptorArchiving(UUID eserviceId, UUID descriptorId);
     it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor patchEServiceDescriptor(UUID eserviceId, UUID descriptorId, EServiceDescriptorPatchRequest body);
     it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor patchEServiceDescriptorQuotas(UUID eserviceId, UUID descriptorId, EServiceDescriptorQuotasPatchRequest body);

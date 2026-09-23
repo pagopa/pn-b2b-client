@@ -4,18 +4,22 @@ import it.pagopa.interop.common.client.AbstractClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.PurposeTemplatesApi;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Document;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplate;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplateDraftUpdateSeed;
 import it.pagopa.interop.purpose.service.IM2MPurposeTemplateClient;
-import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.io.Resource;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.UUID;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -58,5 +62,17 @@ public class M2MPurposeTemplateClientImpl extends AbstractClient implements
     @Override
     public PurposeTemplate getPurposeTemplate(UUID id) {
         return this.purposesTemplateApi.getPurposeTemplate(id);
+    }
+
+    @Override
+    public Document uploadRiskAnalysisTemplateAnswerAnnotationDocument(UUID purposeTemplateId, UUID answerId, String prettyName, Resource file) {
+        return this.purposesTemplateApi.uploadRiskAnalysisTemplateAnswerAnnotationDocument(
+            purposeTemplateId, file, prettyName, answerId.toString()
+        );
+    }
+
+    @Override
+    public FileDownloadMultipart getRiskAnalysisTemplateAnswerAnnotationDocument(UUID purposeTemplateId, UUID documentId) {
+        return this.purposesTemplateApi.getRiskAnalysisTemplateAnswerAnnotationDocument(purposeTemplateId, documentId);
     }
 }

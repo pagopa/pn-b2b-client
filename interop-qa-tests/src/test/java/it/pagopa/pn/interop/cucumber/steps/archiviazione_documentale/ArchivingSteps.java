@@ -1,30 +1,42 @@
 package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import io.cucumber.java.en.Then;
+import it.pagopa.interop.authorization.service.utils.JWTUtils;
+import it.pagopa.interop.event.enums.InteropEvent;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.ArchivingClient;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.ArchivedFileMatched;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.context.ArchivingContext;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.BucketRole;
-import it.pagopa.interop.event.enums.InteropEvent;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.context.ArchivingContext;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.InteropFile;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.ArchivedFile;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.FileInfo;
-import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.validator.model.ValidationResult;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.processor.model.ProcessedFile;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.registry.FileInfoRegistry;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.validator.model.ValidationResult;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.utils.TokenResolver;
+import it.pagopa.pn.interop.cucumber.steps.common.AuditTokenContext;
+import it.pagopa.pn.interop.cucumber.utility.FileUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.within;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+@Slf4j
 public class ArchivingSteps {
 
     private final ArchivingContext context;
+    private final AuditTokenContext auditTokenContext;
     private final ArchivingClient client;
     private final FileInfoRegistry fileInfoRegistry;
 
@@ -32,12 +44,20 @@ public class ArchivingSteps {
                           @Value("${s3.signed-document-base-path}") String documentWormBucketBase,
                           @Value("${s3.unsigned-event-base-path}") String eventBucketBase,
                           @Value("${s3.signed-event-base-path}") String eventWormBucketBase,
+                          @Value("${s3.unsigned-jwt-details-path}") String jwtDetailsBucketBase,
+                          @Value("${s3.signed-jwt-details-path}") String jwtDetailsSignedBucketBase,
+                          @Value("${s3.unsigned-m2m-jwt-details-path}") String m2mJwtDetailsBucketBase,
+                          @Value("${s3.signed-m2m-jwt-details-path}") String m2mJwtDetailsSignedBucketBase,
                           SharedStepsContext sharedStepsContext) {
         TokenResolver tokenResolver = new TokenResolver(sharedStepsContext);
 
         this.context = new ArchivingContext();
+        this.auditTokenContext = sharedStepsContext.getAuditTokenContext();
         this.client = new ArchivingClient();
-        this.fileInfoRegistry = new FileInfoRegistry(tokenResolver, documentBucketBase, documentWormBucketBase, eventBucketBase, eventWormBucketBase);
+        this.fileInfoRegistry = new FileInfoRegistry(tokenResolver, documentBucketBase, documentWormBucketBase,
+                eventBucketBase, eventWormBucketBase,
+                jwtDetailsBucketBase, jwtDetailsSignedBucketBase,
+                m2mJwtDetailsBucketBase, m2mJwtDetailsSignedBucketBase);
     }
 
     @Then("verifica che a fronte dell'evento {interopEvent} venga generato nell'opportuno bucket S3 {bucketRole} un {interopFile}")
@@ -98,5 +118,120 @@ public class ArchivingSteps {
         Assertions.assertThat(validation.missingOptional())
                 .as("Le informazioni opzionali mancanti non sono zero")
                 .isEmpty();
+    }
+
+    @Then("verifica che le informazioni di audit sul bucket S3 {string} contengano i seguenti dati per il voucher generato:")
+    public void checkFileInS3Bucket(String bucketType, List<Map<String, String>> rows) throws IOException {
+
+        BucketRole bucketRole;
+        InteropFile fileType;
+        switch (bucketType.toUpperCase()) {
+            case "PERSISTENZA" -> {
+                bucketRole = BucketRole.STANDARD;
+                fileType = InteropFile.AUDIT_JWT_EVENTS_LOG;
+            }
+            case "SIGNED" -> {
+                bucketRole = BucketRole.SIGNED;
+                fileType = InteropFile.AUDIT_JWT_EVENTS_LOG;
+            }
+            case "PERSISTENZA M2M" -> {
+                bucketRole = BucketRole.STANDARD;
+                fileType = InteropFile.AUDIT_JWT_M2M_EVENTS_LOG;
+            }
+            case "SIGNED M2M" -> {
+                bucketRole = BucketRole.SIGNED;
+                fileType = InteropFile.AUDIT_JWT_M2M_EVENTS_LOG;
+            }
+            default -> throw new IllegalArgumentException("Tipo di bucket non riconosciuto: " + bucketType);
+        }
+
+        FileInfo fileInfo = fileInfoRegistry.getFileInfo(fileType);
+
+        ArchivingClient.PollingSpecification pollingSpecification =
+                ArchivingClient.PollingSpecification.builder()
+                        .centerTimestamp(context.getCenterTimestamp())
+                        .timeoutMs(600_000)
+                        .pollIntervalMs(5_000)
+                        .deltaSeconds(300)
+                        .fileInfo(fileInfo)
+                        .bucketRole(bucketRole)
+                        .build();
+
+        ArchivedFileMatched archivedFile = client.findS3FileInInterval(pollingSpecification);
+
+        Assertions.assertThat(archivedFile)
+                .as("Atteso file %s nel bucket %s ma non è stato trovato", fileType, bucketRole)
+                .isNotNull();
+        context.setMatch(archivedFile);
+
+        checkArchivedFile(archivedFile, rows, bucketRole);
+    }
+
+    private void checkArchivedFile(ArchivedFileMatched archivedFile, List<Map<String, String>> rows, BucketRole bucketRole) throws IOException {
+
+        List<JsonNode> jsonNodes;
+
+        if (bucketRole == BucketRole.SIGNED) {
+            ProcessedFile processed = client.normalizeFile(archivedFile);
+            jsonNodes = FileUtils.readNdjsonLines(processed.content());
+        } else {
+            jsonNodes = FileUtils.readNdjsonLines(archivedFile.file().getContent());
+        }
+
+        JsonNode jsonNode = jsonNodes.stream()
+                .filter(node -> node.has("jwtId") && node.get("jwtId").asText().equals(auditTokenContext.getJwtId()))
+                .findFirst()
+                .orElse(null);
+
+        Assertions.assertThat(jsonNode)
+                .as("Impossibile trovare il nodo con jwtId: %s nel bucket: %s", auditTokenContext.getJwtId(), bucketRole)
+                .isNotNull();
+
+        assertSoftly(softly -> {
+            for (Map<String, String> row : rows) {
+
+                String s3Element = row.get("s3-element");
+                String ctxSource = row.get("ctx-source");
+                String ctxGroup = row.get("ctx-group");
+                String ctxItem = row.get("ctx-item");
+
+                JWTUtils.JWTPojo contextGroups = switch (ctxSource) {
+                    case "voucher" -> auditTokenContext.getDecodedToken(AuditTokenContext.TokenType.VOUCHER_REQUEST);
+                    case "client-assertion" -> auditTokenContext.getDecodedToken(AuditTokenContext.TokenType.CLIENT_ASSERTION);
+                    case "dpop-proof" -> auditTokenContext.getDecodedToken(AuditTokenContext.TokenType.DPOP_PROOF);
+                    default -> throw new IllegalStateException("Unexpected value: " + ctxSource);
+                };
+
+                Map<String, Object> contextItems = switch (ctxGroup) {
+                    case "header" -> contextGroups.getHeader();
+                    case "payload" -> contextGroups.getPayload();
+                    default -> throw new IllegalArgumentException("Invalid group: " + ctxGroup);
+                };
+
+                if (ctxItem.equals("${MISSING}")) {
+                    softly.assertThat(jsonNode.has(s3Element))
+                            .as("Field '%s' should not be present in the file", s3Element)
+                            .isFalse();
+                    continue;
+                }
+
+                Object actualValue = AuditTokenContext.resolveFieldValue(jsonNode, s3Element);
+                String expectedValue = AuditTokenContext.resolveFieldValue(contextItems, ctxItem).toString();
+
+                // On S3 timestamps are stored in milliseconds, while the JWT timestamps are stored in seconds
+                switch (ctxItem) {
+                    case "iat", "nbf", "exp" -> expectedValue += "000";
+                }
+
+                softly.assertThat(actualValue)
+                        .as("Il campo '%s' non è presente", ctxItem)
+                        .isNotNull();
+                if (actualValue != null) {
+                    softly.assertThat(actualValue.toString())
+                            .as("Il valore del campo '%s' non corrisponde a quello del file", ctxItem)
+                            .isEqualTo(expectedValue);
+                }
+            }
+        });
     }
 }

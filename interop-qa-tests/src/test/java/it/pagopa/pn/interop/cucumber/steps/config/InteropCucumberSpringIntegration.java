@@ -16,6 +16,7 @@ import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.authorization.service.utils.voucher.AsyncVoucherService;
 import it.pagopa.interop.authorization.service.utils.voucher.VoucherService;
 import it.pagopa.interop.conf.InteropClientConfigs;
+import it.pagopa.interop.conf.UploadDocumentFilesProperties;
 import it.pagopa.interop.config.springconfig.InteropRestTemplateConfiguration;
 import it.pagopa.interop.config.springconfig.JwtTokenServiceConfiguration;
 import it.pagopa.interop.delegate.service.impl.*;
@@ -48,7 +49,7 @@ import it.pagopa.interop.tenant.service.impl.TenantsApiClientImpl;
 import it.pagopa.interop.tenant.service.impl.TenantsProcessApiClientImpl;
 import it.pagopa.interop.tracing.config.TracingClientConfigs;
 import it.pagopa.interop.tracing.service.impl.DevAbstractInteropTracingClient;
-import it.pagopa.interop.tracing.service.impl.QAAbstractInteropTracingClient;
+import it.pagopa.interop.tracing.service.impl.ExtraQaAbstractInteropTracingClient;
 import it.pagopa.interop.users.service.M2MV3UsersClient;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -87,7 +88,7 @@ import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import it.pagopa.pn.interop.cucumber.utility.NotificationStore;
 import it.pagopa.pn.interop.cucumber.utility.TracingFileUtils;
-import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayServiceImpl;
+import it.pagopa.interop.utils.delay_service.DelayServiceImpl;
 import it.pagopa.pn.interop.cucumber.utility.property_resolver.PropertyResolver;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -119,12 +120,13 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         DelegationApiClientImpl.class,
         ConfigFileReader.class,
         InteropClientConfigs.class,
+        UploadDocumentFilesProperties.class,
         TracingFileUtils.class,
         BlobFileCreator.class,
         TracingClientConfigs.class,
         ProbingClientConfigs.class,
         DevAbstractInteropTracingClient.class,
-        QAAbstractInteropTracingClient.class,
+        ExtraQaAbstractInteropTracingClient.class,
         CommonUtils.class,
         VoucherService.class,
         AsyncVoucherService.class,
