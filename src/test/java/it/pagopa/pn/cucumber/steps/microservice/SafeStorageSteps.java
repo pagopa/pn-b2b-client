@@ -310,11 +310,20 @@ public class SafeStorageSteps {
         }
     }
 
-    @Then("l'aggiornamento della retention restituisce status code {int}")
-    public void checkRetentionUpdateStatusCode(Integer expectedStatusCode) {
-        assertThat(safeStorageStepsPojo.getFileMetadataUpdateStatusCode())
-                .as("Lo status code dell'aggiornamento della retention non coincide con quello atteso")
-                .isEqualTo(expectedStatusCode);
+    // Alias per gli scenari con un solo documento in scena, dove l'indice non aggiunge nulla.
+    @When("la retention del documento viene aggiornata con una data {string}")
+    public void updateDocumentRetention(String dateType) {
+        updateDocumentRetention(1, dateType);
+    }
+
+    @Then("l'aggiornamento della retention viene completato con successo")
+    public void checkRetentionUpdateSucceeds() {
+        checkFileMetadataUpdateStatusCode(HttpStatus.OK.value(), "L'aggiornamento della retention avrebbe dovuto essere accettato");
+    }
+
+    @Then("l'aggiornamento della retention viene rifiutato")
+    public void checkRetentionUpdateRejected() {
+        checkFileMetadataUpdateStatusCode(HttpStatus.BAD_REQUEST.value(), "L'aggiornamento della retention avrebbe dovuto essere rifiutato");
     }
 
     // Confronta la data restituita in lettura con l'ultima retention esplicitamente impostata
@@ -341,13 +350,14 @@ public class SafeStorageSteps {
         safeStorageStepsPojo.setCapturedRetentionUntil(getCurrentRetentionUntil(fileKey));
     }
 
-    // NOTA: il campo availableUntil (WI 1 - PN-21557, "Ready To DEV" al momento della
-    // scrittura di questi step) non e' ancora presente nel client SafeStorage generato in
-    // questo repo (docs/openapi/pn-safestorage-v1.1-api.yaml, fetchato a build-time dal
-    // branch develop di pagopa/pn-ss). Il codice sotto assume che, una volta rilasciato,
-    // UpdateFileMetadataRequest esponga un builder .availableUntil(OffsetDateTime) analogo a
-    // quello gia' esistente per retentionUntil: verificare e correggere il nome/tipo del
-    // campo quando il client viene rigenerato con lo spec aggiornato.
+    // Alias per gli scenari con un solo documento in scena, dove l'indice non aggiunge nulla.
+    @Given("si registra la conservazione garantita corrente del documento")
+    public void captureCurrentRetention() {
+        captureCurrentRetention(1);
+    }
+
+    // Imposta la data oltre la quale il documento non e' piu' scaricabile, indipendente
+    // dalla retention (vedi UpdateFileMetadataRequest.availableUntil).
     @When("la fine disponibilita del documento {int} viene impostata a una data {string}")
     public void updateDocumentAvailability(Integer documentIndex, String dateType) {
         String fileKey = getCreatedFileKey(documentIndex);
@@ -364,18 +374,31 @@ public class SafeStorageSteps {
         }
     }
 
-    @Then("l'impostazione della fine disponibilita restituisce status code {int}")
-    public void checkAvailabilityUpdateStatusCode(Integer expectedStatusCode) {
+    // Alias per gli scenari con un solo documento in scena, dove l'indice non aggiunge nulla.
+    @When("la fine disponibilita del documento viene impostata a una data {string}")
+    public void updateDocumentAvailability(String dateType) {
+        updateDocumentAvailability(1, dateType);
+    }
+
+    @Then("l'impostazione della fine disponibilita viene completata con successo")
+    public void checkAvailabilityUpdateSucceeds() {
+        checkFileMetadataUpdateStatusCode(HttpStatus.OK.value(), "L'impostazione della fine disponibilita avrebbe dovuto essere accettata");
+    }
+
+    @Then("l'impostazione della fine disponibilita viene rifiutata")
+    public void checkAvailabilityUpdateRejected() {
+        checkFileMetadataUpdateStatusCode(HttpStatus.BAD_REQUEST.value(), "L'impostazione della fine disponibilita avrebbe dovuto essere rifiutata");
+    }
+
+    private void checkFileMetadataUpdateStatusCode(Integer expectedStatusCode, String description) {
         assertThat(safeStorageStepsPojo.getFileMetadataUpdateStatusCode())
-                .as("Lo status code dell'impostazione della fine disponibilita non coincide con quello atteso")
+                .as(description)
                 .isEqualTo(expectedStatusCode);
     }
 
-    // NOTA SUI CASI 4.1/4.2: questa verifica confronta la data restituita con l'ultima fine
-    // disponibilita impostata, non con la conservazione garantita registrata internamente:
-    // la risposta pubblica riporta un'unica data (la fine disponibilita, quando impostata) e
-    // non permette di osservare separatamente la conservazione "vera". Non prova quindi, da
-    // sola, che la conservazione sia stata effettivamente allungata o lasciata invariata.
+    // Confronta la data restituita con l'ultima fine disponibilita impostata, non con la
+    // conservazione registrata internamente: la risposta pubblica riporta un'unica data (la
+    // fine disponibilita, quando impostata) e non permette di osservarle separatamente.
     @Then("la data di scadenza riportata coincide con la fine disponibilita indicata")
     public void checkReportedExpiryMatchesAvailability() {
         OffsetDateTime expected = safeStorageStepsPojo.getLastAvailableUntilSet();
@@ -434,17 +457,32 @@ public class SafeStorageSteps {
         }
     }
 
-    @Then("la lettura del contenuto restituisce status code {int}")
-    public void checkDocumentContentStatusCode(Integer expectedStatusCode) {
+    // Alias per gli scenari con un solo documento in scena, dove l'indice non aggiunge nulla.
+    @When("viene richiesto il contenuto del documento")
+    public void readDocumentContent() {
+        readDocumentContent(1);
+    }
+
+    @Then("il documento risulta ancora scaricabile")
+    public void checkDocumentStillDownloadable() {
+        checkDocumentContentStatusCode(HttpStatus.OK.value(), "Il documento avrebbe dovuto risultare ancora scaricabile");
+    }
+
+    @Then("il documento non risulta piu disponibile per il download")
+    public void checkDocumentNoLongerAvailable() {
+        checkDocumentContentStatusCode(HttpStatus.GONE.value(), "Il documento avrebbe dovuto risultare non piu disponibile (410 GONE)");
+    }
+
+    private void checkDocumentContentStatusCode(Integer expectedStatusCode, String description) {
         assertThat(safeStorageStepsPojo.getFileDownloadStatusCode())
-                .as("Lo status code della lettura del contenuto non coincide con quello atteso")
+                .as(description)
                 .isEqualTo(expectedStatusCode);
     }
 
     @Given("viene acquisita una presigned-url di download per il documento {int}")
     public void acquireDocumentDownloadUrl(Integer documentIndex) {
         readDocumentContent(documentIndex);
-        checkDocumentContentStatusCode(HttpStatus.OK.value());
+        checkDocumentStillDownloadable();
 
         FileDownloadResponse response = safeStorageStepsPojo.getFileDownloadResponse();
         assertThat(response).as("La risposta di lettura del documento non dev'essere nulla").isNotNull();
