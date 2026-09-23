@@ -205,6 +205,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         M2MV3EventMapperImpl.class,
         M2MV3AgreementClientImpl.class,
         M2MV3CertifiedAttributeClientImpl.class,
+        M2MV3CertifiedDiscreteAttributeClientImpl.class,
         M2MV3PurposeClientImpl.class,
         M2MV3EserviceClientImpl.class,
         M2MV3EServiceTemplateClientImpl.class,
