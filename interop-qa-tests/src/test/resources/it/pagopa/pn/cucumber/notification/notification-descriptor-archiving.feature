@@ -23,12 +23,12 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     Then admin di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE_PRIMO_DESCRITTORE
     """
     La versione 1 dell'e-service $CONTEXT(eServiceName) è in fase di archiviazione ma è ancora attiva.
-    L'archiviazione avverrà il giorno $EUROPE_DATE_ADD(+30D).
+    L'archiviazione avverrà il giorno $EUROPE_DATE_ADD(+31D).
     """
     And admin di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE_PRIMO_DESCRITTORE
     """
     La versione 1 dell'e-service $CONTEXT(eServiceName) è in fase di archiviazione ma è ancora attiva.
-    L'archiviazione avverrà il giorno $EUROPE_DATE_ADD(+30D). È disponibile una nuova versione.
+    L'archiviazione avverrà il giorno $EUROPE_DATE_ADD(+31D). È disponibile una nuova versione.
     """
 
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_NOTIFICATION_1.2] Erogatore e fruitore ricevono una notifica quando si avvia il processo di archiviazione di uno specifico descrittore di e-service istanza di template
@@ -41,13 +41,13 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     When l'utente avvia la messa in archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 30 giorni di preavviso
     Then admin di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE_PRIMO_DESCRITTORE
     """
-    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è in fase di archiviazione ma è ancora attiva.
-    L'archiviazione avverrà il giorno $DA_CONTESTO(TODAY+30).
+    La versione 1 dell'e-service $CONTEXT(eServiceName) è in fase di archiviazione ma è ancora attiva.
+    L'archiviazione avverrà il giorno $EUROPE_DATE_ADD(+31D).
     """
     And admin di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE_PRIMO_DESCRITTORE
     """
-    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è in fase di archiviazione ma è ancora attiva.
-    L'archiviazione avverrà il giorno $DA_CONTESTO(TODAY+30). È disponibile una nuova versione.
+    La versione 1 dell'e-service $CONTEXT(eServiceName) è in fase di archiviazione ma è ancora attiva.
+    L'archiviazione avverrà il giorno $EUROPE_DATE_ADD(+31D). È disponibile una nuova versione.
     """
 
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_NOTIFICATION_1.3] L'utente erogatore NON riceve una notifica nel momento in cui avvia il processo di archiviazione di uno specifico descrittore se le notifiche per il cambio di stato dell'e-service sono disabilitate
@@ -61,7 +61,7 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     Then admin di "PA1" non ha ricevuto la notifica in-app
     """
     La versione 1 dell'e-service $CONTEXT(eServiceName) è in fase di archiviazione ma è ancora attiva.
-    L'archiviazione avverrà il giorno $EUROPE_DATE_ADD(+60D).
+    L'archiviazione avverrà il giorno $EUROPE_DATE_ADD(+61D).
     """
 
   @ignore
@@ -121,8 +121,8 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     When l'utente sospende il vecchio descrittore in corso di archiviazione
     Then admin di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE_PRIMO_DESCRITTORE
     """
-    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è al momento sospesa. Sarà archiviata il giorno
-    $DA_CONTESTO(TODAY+90).
+    La versione 1 dell'e-service $CONTEXT(eServiceName) è al momento sospesa.
+    Sarà archiviata il giorno $EUROPE_DATE_ADD(+91D).
     """
 
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_SUSPENSION_NOTIFICATION_1.2] L'utente fruitore riceve una notifica nel momento in cui un descrittore per cui ha una richiesta di fruizione attiva viene sospeso
@@ -134,8 +134,8 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     When l'utente sospende il vecchio descrittore in corso di archiviazione
     Then admin di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE_PRIMO_DESCRITTORE
     """
-    La versione 1 dell'e-service $CONTEXT(eServiceName) è al momento sospesa. L'archiviazione avverrà il giorno
-    $EUROPE_DATE_ADD(+90D). È disponibile una nuova versione.
+    La versione 1 dell'e-service $CONTEXT(eServiceName) è al momento sospesa.
+    L'archiviazione avverrà il giorno $EUROPE_DATE_ADD(+91D). È disponibile una nuova versione.
     """
 
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_SUSPENSION_NOTIFICATION_1.3] L'utente erogatore riceve una notifica nel momento in cui un suo descrittore, in stato di archiviazione e sospeso, viene riattivato
@@ -149,7 +149,7 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     Then admin di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE_PRIMO_DESCRITTORE
     """
     La versione 1 dell'e-service $CONTEXT(eServiceName) è di nuovo attiva.
-    Sarà archiviata il giorno $EUROPE_DATE_ADD(+120D).
+    Sarà archiviata il giorno $EUROPE_DATE_ADD(+121D).
     """
 
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_SUSPENSION_NOTIFICATION_1.4] L'utente fruitore riceve una notifica quando viene riattivato un descrittore sospeso per cui ha una richiesta di fruizione attiva
@@ -162,8 +162,8 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     When l'utente attiva il vecchio descrittore in corso di archiviazione di quell'e-service
     Then admin di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE_PRIMO_DESCRITTORE
     """
-    La versione 1 dell'e-service $CONTEXT(eServiceName) è di nuovo attiva. L'archiviazione avverrà il giorno
-    $EUROPE_DATE_ADD(+120D). È disponibile una nuova versione.
+    La versione 1 dell'e-service $CONTEXT(eServiceName) è di nuovo attiva.
+    L'archiviazione avverrà il giorno $EUROPE_DATE_ADD(+121D). È disponibile una nuova versione.
     """
 
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_SUSPENSION_NOTIFICATION_1.5] L'utente erogatore riceve una notifica nel momento in cui il suo descrittore di e-service istanza di template in stato di archiviazione viene sospeso
@@ -177,8 +177,8 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     When l'utente sospende il vecchio descrittore in corso di archiviazione
     Then admin di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE_PRIMO_DESCRITTORE
     """
-    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è al momento sospesa. Sarà archiviata il giorno
-    $DA_CONTESTO(TODAY+90).
+    La versione 1 dell'e-service $CONTEXT(eServiceName) è al momento sospesa.
+    Sarà archiviata il giorno $EUROPE_DATE_ADD(+91D).
     """
 
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_SUSPENSION_NOTIFICATION_1.6] L'utente fruitore riceve una notifica nel momento in cui un descrittore di e-service istanza di template per cui ha una richiesta di fruizione attiva viene sospeso
@@ -192,8 +192,8 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     When l'utente sospende il vecchio descrittore in corso di archiviazione
     Then admin di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE_PRIMO_DESCRITTORE
     """
-    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è al momento sospesa. L'archiviazione avverrà il giorno
-    $DA_CONTESTO(TODAY+90). È disponibile una nuova versione.
+    La versione 1 dell'e-service $CONTEXT(eServiceName) è al momento sospesa.
+    L'archiviazione avverrà il giorno $EUROPE_DATE_ADD(+91D). È disponibile una nuova versione.
     """
 
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_SUSPENSION_NOTIFICATION_1.7] L'utente erogatore riceve una notifica nel momento in cui un suo descrittore di e-service istanza di template, in stato di archiviazione e sospeso, viene riattivato
@@ -208,8 +208,8 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     When l'utente attiva il vecchio descrittore in corso di archiviazione di quell'e-service
     Then admin di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE_PRIMO_DESCRITTORE
     """
-    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è di nuovo attiva. Sarà archiviata il giorno
-    $DA_CONTESTO(TODAY+120).
+    La versione 1 dell'e-service $CONTEXT(eServiceName) è di nuovo attiva.
+    Sarà archiviata il giorno $EUROPE_DATE_ADD(+121D).
     """
 
   Scenario: [MANUAL_ARCHIVING_DESCRIPTOR_SUSPENSION_NOTIFICATION_1.8] L'utente fruitore riceve una notifica quando viene riattivato un descrittore di e-service istanza di template sospeso per cui ha una richiesta di fruizione attiva
@@ -224,6 +224,6 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     When l'utente attiva il vecchio descrittore in corso di archiviazione di quell'e-service
     Then admin di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE_PRIMO_DESCRITTORE
     """
-    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è di nuovo attiva. L'archiviazione avverrà il giorno
-    $DA_CONTESTO(TODAY+120). È disponibile una nuova versione.
+    La versione 1 dell'e-service $CONTEXT(eServiceName) è di nuovo attiva.
+    L'archiviazione avverrà il giorno $EUROPE_DATE_ADD(+121D). È disponibile una nuova versione.
     """
