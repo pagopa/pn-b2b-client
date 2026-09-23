@@ -562,6 +562,7 @@ public class SafeStorageSteps {
         return switch (dateType.toUpperCase(Locale.ROOT)) {
             case "IERI" -> today.minusDays(1).atTime(12, 0).atZone(ITALY_TIME_ZONE).toOffsetDateTime();
             case "DOMANI" -> today.plusDays(1).atTime(12, 0).atZone(ITALY_TIME_ZONE).toOffsetDateTime();
+            case "DOPODOMANI" -> today.plusDays(2).atTime(12, 0).atZone(ITALY_TIME_ZONE).toOffsetDateTime();
             case "SUCCESSIVA" -> getCurrentRetentionUntil(fileKey).plusDays(1);
             case "PRECEDENTE_FUTURA" -> {
                 OffsetDateTime earlierRetention = getCurrentRetentionUntil(fileKey).minusDays(1);
