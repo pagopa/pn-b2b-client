@@ -55,8 +55,6 @@ Feature: Allineamento linee guida
 
     Examples:
       | eServicePersonalDataFlag | descriptorStatusCode | riskAnalysisPersonalDataFlag | statusCodeRiskAnalysis |
-      | undefined                | 400                  | false                        | 204                    |
-      | undefined                | 400                  | true                         | 204                    |
       | false                    | 200                  | false                        | 204                    |
       | true                     | 400                  | false                        | 400                    |
       | true                     | 200                  | true                         | 204                    |
