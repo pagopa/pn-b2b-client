@@ -120,6 +120,11 @@ public class DataTestV25 extends AbstractDataTest {
                         assertThat(actual.getRefusalReasons().get(i).getErrorCode())
                                 .as(error + EQUALITY_ERROR_CODE)
                                 .isEqualTo(expected.getRefusalReasons().get(i).getErrorCode());
+                        if (expected.getRefusalReasons().get(i).getRecIndex() != null) {
+                            assertThat(actual.getRefusalReasons().get(i).getRecIndex())
+                                    .as(error + EQUALITY_REC_INDEX)
+                                    .isEqualTo(expected.getRefusalReasons().get(i).getRecIndex());
+                        }
                     }
                     if (dataTest.getParametriCalcoloCostoNotifica() != null) {
                         expected.setNotificationCost(B2bUtils.calcolaCostoNotifica(context, dataTest.getParametriCalcoloCostoNotifica()));
