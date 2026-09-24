@@ -19,6 +19,7 @@ public enum DynamoTableName {
     BATCH_REQUESTS_WITH_INDEX_STATUS("pn-batchRequests"),
     PAPER_REQUEST_ERROR("pn-PaperRequestError"),
     PAPER_TRACKER_ERROR("pn-paperTrackerError"),
+    PAPER_TRACKINGS("pn-PaperTrackings"),
     NOTIFICATIONS("pn-Notifications"),
     NOTIFICATIONS_METADATA("pn-NotificationsMetadata");
 

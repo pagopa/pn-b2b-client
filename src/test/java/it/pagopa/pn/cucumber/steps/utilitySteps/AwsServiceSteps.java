@@ -21,6 +21,7 @@ import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -174,6 +175,82 @@ public class AwsServiceSteps {
             } else {
                 assertThat(queryResponse.items().size()).as("La response non deve contenere nessun elemento con category " + element).isEqualTo(0);
             }
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
+    }
+
+    @Then("si verifica che su DynamoDB {is} presente l'elemento {string} nella tabella pn-PaperTrackings con statusCodes {string}")
+    public void checkPaperTrackingsInDynamoDB(
+            boolean isPresent,
+            String element,
+            String statusCodes) {
+
+        String trackingId = String.format(
+                "%s.IUN_%s.RECINDEX_0.ATTEMPT_0.PCRETRY_0",
+                element,
+                sharedSteps.getNotificationIun()
+        );
+
+        List<String> expectedStatusCodes = Arrays.stream(statusCodes.split(","))
+                .map(String::trim)
+                .filter(statusCode -> !statusCode.isEmpty())
+                .toList();
+
+        QueryResponse queryResponse = dynamoDbService.call(
+                DynamoTableName.PAPER_TRACKINGS,
+                Map.of(
+                        ":v_trackingId",
+                        AttributeValue.builder()
+                                .s(trackingId)
+                                .build()
+                )
+        );
+
+        log.info(
+                "Elementi trovati con trackingId {}: {}",
+                trackingId,
+                queryResponse.count()
+        );
+
+        try {
+            if (isPresent) {
+
+                assertThat(queryResponse.items())
+                        .as("La response non contiene nessun elemento per trackingId %s", trackingId)
+                        .isNotEmpty();
+
+                List<String> foundStatusCodes = queryResponse.items().stream()
+                        .map(item -> item.get("events"))
+                        .filter(Objects::nonNull)
+                        .filter(AttributeValue::hasL)
+                        .flatMap(events -> events.l().stream())
+                        .filter(AttributeValue::hasM)
+                        .map(AttributeValue::m)
+                        .map(event -> event.get("statusCode"))
+                        .filter(Objects::nonNull)
+                        .map(AttributeValue::s)
+                        .filter(Objects::nonNull)
+                        .toList();
+
+                log.info("StatusCode attesi: {}", expectedStatusCodes);
+                log.info("StatusCode trovati: {}", foundStatusCodes);
+
+                assertThat(foundStatusCodes)
+                        .as(
+                                "Non sono stati trovati tutti gli statusCode attesi. Attesi: %s - Trovati: %s",
+                                expectedStatusCodes,
+                                foundStatusCodes
+                        )
+                        .containsAll(expectedStatusCodes);
+
+            } else {
+
+                assertThat(queryResponse.items())
+                        .as("La response non deve contenere elementi per trackingId %s", trackingId)
+                        .isEmpty();
+            }
+
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
