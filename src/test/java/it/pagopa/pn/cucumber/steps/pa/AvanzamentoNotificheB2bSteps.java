@@ -1230,9 +1230,9 @@ public class AvanzamentoNotificheB2bSteps {
                     .findFirst()
                     .orElseThrow(() -> new AssertionError("Evento non trovato: " + eventoPrecedente));
 
-            assertThat(successivo.getEventTimestamp())
+            assertThat(successivo.getIngestionTimestamp())
                     .as("L'evento %s deve avvenire dopo %s", eventoSuccessivo, eventoPrecedente)
-                    .isAfter(precedente.getEventTimestamp());
+                    .isAfter(precedente.getIngestionTimestamp());
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
@@ -1256,10 +1256,10 @@ public class AvanzamentoNotificheB2bSteps {
                     .findFirst()
                     .orElseThrow(() -> new AssertionError("Evento non trovato: " + eventoPrecedente));
 
-            assertThat(successivo.getEventTimestamp())
+            assertThat(successivo.getIngestionTimestamp())
                     .as("L'evento %s del tentativo %s deve avvenire dopo %s",
                             eventoSuccessivo, tentativo, eventoPrecedente)
-                    .isAfter(precedente.getEventTimestamp());
+                    .isAfter(precedente.getIngestionTimestamp());
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
