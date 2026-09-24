@@ -89,7 +89,7 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
     And admin di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
     La versione 1 dell'e-service $CONTEXT(eServiceName) è al momento sospesa.
-    L'archiviazione avverrà il giorno $EUROPE_DATE_ADD(+91D).
+    L'e-service sarà archiviato il giorno $EUROPE_DATE_ADD(+91D).
     """
 
     When l'utente attiva il descrittore di quell'e-service
@@ -101,7 +101,7 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
     And admin di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
     La versione 1 dell'e-service $CONTEXT(eServiceName) è di nuovo attiva.
-    L'archiviazione avverrà il giorno $EUROPE_DATE_ADD(+91D).
+    L'e-service sarà archiviato il giorno $EUROPE_DATE_ADD(+91D).
     """
 
   Scenario: [MANUAL_ARCHIVING_ESERVICE_SUSPENSION_NOTIFICATION_1.2] Erogatore e fruitore ricevono una notifica quando l'e-service istanza di un template in stato di archiviazione viene sospeso
@@ -120,7 +120,7 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
     And admin di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
     La versione 1 dell'e-service $CONTEXT(eServiceName) è al momento sospesa.
-    L'archiviazione avverrà il giorno $CONTEXT(+121D).
+    L'e-service sarà archiviato il giorno $EUROPE_DATE_ADD(+121D).
     """
 
     When l'utente attiva il descrittore di quell'e-service
@@ -132,7 +132,7 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
     And admin di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
     La versione 1 dell'e-service $CONTEXT(eServiceName) è di nuovo attiva.
-    L'archiviazione avverrà il giorno $EUROPE_DATE_ADD(+121D).
+    L'e-service sarà archiviato il giorno $EUROPE_DATE_ADD(+121D).
     """
 
   Scenario: [MANUAL_ARCHIVING_ESERVICE_CANCELLATION_NOTIFICATION_1.1] L'utente erogatore riceve una notifica quando annulla l'archiviazione in corso di un proprio e-service
