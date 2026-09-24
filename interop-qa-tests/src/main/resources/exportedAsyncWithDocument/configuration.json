@@ -1,0 +1,46 @@
+{
+  "name": "asinc1",
+  "description": "dfgdfgdsfg",
+  "technology": "REST",
+  "mode": "DELIVER",
+  "asyncExchange": true,
+  "isSignalHubEnabled": false,
+  "isConsumerDelegable": true,
+  "isClientAccessDelegable": true,
+  "descriptor": {
+    "interface": {
+      "prettyName": "Specifica API_asinc1_Comune di Milano_v2",
+      "path": "interface.yaml"
+    },
+    "asyncExchangeCallbackInterface": {
+      "prettyName": "Interfaccia callback_asinc1_Comune di Milano_v2",
+      "path": "asyncExchangeCallbackInterface/interface1.yaml"
+    },
+    "asyncExchangeProperties": {
+      "responseTime": 60,
+      "resourceAvailableTime": 60,
+      "confirmation": false,
+      "bulk": true,
+      "maxResultSet": 1
+    },
+    "docs": [
+      {
+        "prettyName": "Documento_test_qa",
+        "path": "unknown"
+      },
+      {
+        "prettyName": "dummy",
+        "path": "documents/dummy.pdf"
+      }
+    ],
+    "audience": [
+      "jklhjfg"
+    ],
+    "voucherLifespan": 60,
+    "dailyCallsPerConsumer": 1,
+    "dailyCallsTotal": 10,
+    "description": "fcghghcdfbxcf",
+    "agreementApprovalPolicy": "AUTOMATIC"
+  },
+  "riskAnalysis": []
+}
