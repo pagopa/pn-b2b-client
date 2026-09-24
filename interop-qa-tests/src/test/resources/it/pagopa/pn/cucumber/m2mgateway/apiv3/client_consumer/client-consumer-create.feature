@@ -148,5 +148,13 @@ Feature: Creazione dei client di tipo consumer - API v3
       | %random | %random     | []      | m2m       |
       | %random | %random     | []      | m2m-admin |
 
+  Scenario Outline: [CREATE_CLIENT_CONSUMER_7] La creazione di nuovo client specificando un utente casuale non deve concludersi con successo
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta di creare un client di tipo CONSUMER per il tenant "PA1" con:
+      | name   | description   | members   |
+      | <name> | <description> | <members> |
+    Then si ottiene response status code 400
 
-
+    Examples:
+      | name    | description | members   |
+      | %random | %random     | [%random, admin] |
