@@ -1363,6 +1363,6 @@ Feature: Digital send e2e
       | details_recIndex             | 0                                                  |
     Examples:
       | recipientType | taxId            |
-      | PG            | 20517490320      |
+      | PG            | 70472431207      |
       | PF            | DSRDNI00A01A225I |
 
