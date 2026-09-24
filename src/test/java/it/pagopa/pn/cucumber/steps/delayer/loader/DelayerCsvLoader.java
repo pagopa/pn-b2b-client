@@ -4,6 +4,7 @@ import io.cucumber.datatable.DataTable;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDelivery;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
+import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSkipSenderLimitService;
 import it.pagopa.pn.cucumber.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,7 @@ public class DelayerCsvLoader {
     private static final String CSV_PATH = "it/pagopa/pn/cucumber/workflowNotifica/workflowAnalogico/delayer/csv";
 
     private final DelayerContext context;
+    private final DelayerSkipSenderLimitService skipSenderLimitService;
 
     public void readCsv(String csvFileName, int expectedCount) {
         List<List<String>> rawCsv = FileUtils.readCsvSafe(String.join("/", CSV_PATH, csvFileName), ";", false);
@@ -45,6 +47,7 @@ public class DelayerCsvLoader {
 
         for (int i = 1; i <= actualCount; i++) {
             DelayerPaperDelivery delivery = new DelayerPaperDelivery(header, rawCsv.get(i));
+            skipSenderLimitService.resolveInitialValue(delivery);
             context.actualCsv.add(delivery);
         }
     }
