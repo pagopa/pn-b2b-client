@@ -1607,8 +1607,8 @@ Feature: Gestione deleghe per archiviazione manuale e-service
       | PUBLISHED     |
       | SUSPENDED     |
 
-  @happy-path
-  Scenario: [DELEGATION_ARCHIVING_STATE_2.2] Un e-service in stato ARCHIVED può essere concesso in delega in fruizione
+  @sad-path
+  Scenario: [DELEGATION_ARCHIVING_STATE_2.2] Un e-service in stato ARCHIVED NON può essere concesso in delega in fruizione
     Given l'ente delegante "PA3"
     And l'ente delegato "PA4"
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
