@@ -677,10 +677,12 @@ public class WebhookStepsV30 implements WebhookStepsInterface {
         assertThat(progressResponseElementList).as("La lista di deve contenere elementi").isNotNull().isNotEmpty();
         List<ProgressResponseElementV30> invalidElements =
                 switch (communicationType) {
-                    case LEGAL -> progressResponseElementList.stream().filter(
-                            el -> el.getCommunicationType().getValue().equals(COMM_TYPE_INFORMAL) || !el.getIun().endsWith("1")).toList();
-                    case INFORMAL -> progressResponseElementList.stream().filter(
-                            el -> el.getCommunicationType().getValue().equals(COMM_TYPE_LEGAL) || el.getIun().endsWith("1")).toList();
+                    case LEGAL -> progressResponseElementList.stream().filter(el ->
+                            (el.getCommunicationType() != null && el.getCommunicationType().getValue().equals(COMM_TYPE_INFORMAL)) ||
+                                    (el.getIun() != null && !el.getIun().endsWith("1"))).toList();
+                    case INFORMAL -> progressResponseElementList.stream().filter(el ->
+                            (el.getCommunicationType() != null && el.getCommunicationType().getValue().equals(COMM_TYPE_LEGAL)) ||
+                                    (el.getIun() != null && el.getIun().endsWith("1"))).toList();
                 };
         assertThat(invalidElements).asList().as("Lo stream ha restituito elementi di tipo non %s", communicationType).isEmpty();
     }
