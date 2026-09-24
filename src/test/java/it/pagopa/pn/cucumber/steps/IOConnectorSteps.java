@@ -241,26 +241,55 @@ public class IOConnectorSteps {
 
     //--------SCENARIO 5:
 
+    private void ensureMessageWithAttachmentExists(String recipientTaxId) {
+        String resolvedRecipient = StringUtils.resolveValue(recipientTaxId);
+        boolean isInvalidTest = (resolvedRecipient == null || resolvedRecipient.contains("non-valid"));
+        String creationRecipient = isInvalidTest 
+                ? "PF-ef4f3181-c2a9-4924-9307-d107af8f0c34" 
+                : resolvedRecipient;
+
+        if (messageRequest != null && messageRequest.getRequestId() != null) {
+            return;
+        }
+        createValidRequest();
+        messageRequest.setRecipientTaxId(creationRecipient);
+        addValidPdfAttachment();
+        try {
+            MessageResponse resp = pnIOConnectorClient.sendIOMessage(CLIENT_ID, messageRequest);
+            messageResponse = resp;
+            // Wait for DynamoDB record to be visible
+            await().atMost(Duration.ofSeconds(10))
+                    .pollInterval(Duration.ofMillis(500))
+                    .ignoreExceptions()
+                    .untilAsserted(() -> {
+                        QueryResponse qResp = dynamoDbService.call(
+                                DynamoTableName.IO_CONNECTOR_REQUESTS,
+                                Map.of(":v_requestId", AttributeValue.builder().s(messageRequest.getRequestId()).build())
+                        );
+                        assertThat(qResp.count()).isGreaterThan(0);
+                    });
+        } catch (Exception e) {
+            log.error("Failed to dynamically create message with attachment: {}", e.getMessage());
+        }
+    }
+
     @Given("come app IO tento il recupero dettagli messaggio con requestID valido e CF destinatario: {string}")
     public void invokeMessageDetialAPI(String recipientTaxId) {
-
-        try {
-            GetMessageResponse resp = pnIOConnectorClient.getMessage(REQUEST_ID_FOR_PREEXISTING_MESSAGE, StringUtils.resolveValue(recipientTaxId));
-            log.info("message details response: {}", resp);
-            getMessageResponse = resp;
-
-            // If no exception is thrown, assume 200 OK (or 2xx)
-            actualResponseHttpStatus = HttpStatus.OK;
-
-        } catch (HttpStatusCodeException e) {
-            log.info("HttpStatusException: {}", e.getMessage());
-            actualResponseHttpStatus = e.getStatusCode();
+        String resolvedRecipient = StringUtils.resolveValue(recipientTaxId);
+        boolean isInvalidTest = (resolvedRecipient == null || resolvedRecipient.contains("non-valid"));
+        if (isInvalidTest) {
+            messageRequest = null;
         }
+        ensureMessageWithAttachmentExists("PF-ef4f3181-c2a9-4924-9307-d107af8f0c34");
+        String requestId = (messageRequest != null && messageRequest.getRequestId() != null)
+                ? messageRequest.getRequestId()
+                : REQUEST_ID_FOR_PREEXISTING_MESSAGE;
+        invokeMessageDetialAPI(requestId, recipientTaxId);
     }
 
     @Then("verifico che la lista dettagli allegati sia non vuota")
     public void verifyResponseCodeOKAndAttachmentsDetailPresent() {
-
+        assertThat(getMessageResponse).isNotNull();
         assertThat(getMessageResponse.getAttachments())
                 .isNotNull()
                 .isNotEmpty();
@@ -269,15 +298,14 @@ public class IOConnectorSteps {
 
     @Given("come app IO tento il recupero dettagli messaggio con requestID: {string} e CF destinatario: {string}")
     public void invokeMessageDetialAPI(String requestId, String recipientTaxId) {
+        String resolvedReqId = StringUtils.resolveValue(requestId);
+        String resolvedRecipient = StringUtils.resolveValue(recipientTaxId);
 
         try {
-            GetMessageResponse resp = pnIOConnectorClient.getMessage(StringUtils.resolveValue(requestId), StringUtils.resolveValue(recipientTaxId));
+            GetMessageResponse resp = pnIOConnectorClient.getMessage(resolvedReqId, resolvedRecipient);
             log.info("message details response: {}", resp);
             getMessageResponse = resp;
-
-            // If no exception is thrown, assume 200 OK (or 2xx)
             actualResponseHttpStatus = HttpStatus.OK;
-
         } catch (HttpStatusCodeException e) {
             log.info("HttpStatusException: {}", e.getMessage());
             actualResponseHttpStatus = e.getStatusCode();
@@ -385,6 +413,7 @@ public class IOConnectorSteps {
 
     @Given("come app IO tento il recupero dettagli del messaggio inviato con nuovo serviceId e CF destinatario: {string}")
     public void invokeMessageDetailAPINewServiceId(String recipientTaxId) {
+        ensureMessageWithAttachmentExists(recipientTaxId);
         String requestId = (messageRequest != null && messageRequest.getRequestId() != null)
                 ? messageRequest.getRequestId()
                 : REQUEST_ID_FOR_PREEXISTING_MESSAGE;

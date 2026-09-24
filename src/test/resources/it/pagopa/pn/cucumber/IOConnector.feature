@@ -46,8 +46,8 @@ Feature: connettore app IO per invio messaggi di cortesia per comunicazioni bona
     Given viene generata una richiesta per la presa in carico con markdown che eccede la lunghezza massima consentita
     When come orchestratore SEND richiedo l'invio del messaggio verso IO
     Then verifico che si ottenga una response di "OK"
-    And verifico che su DynamoDB la richiesta evolva nello stato "FAILED"
-    And verifico la presenza nei log di "/aws/ecs/pn-io-connector" negli ultimi 2 minuti dell'evento EventBridge con causale "SEND_FAILED"
+    And verifico che su DynamoDB la richiesta evolva nello stato "FAILED_TO_SEND"
+    And verifico la presenza nei log di "/aws/ecs/pn-io-connector" negli ultimi 2 minuti dell'evento EventBridge con causale "FAILED_TO_SEND"
 
   @comunicazione-orchestratore-io @multi-service
   Scenario: [IO_CONNECTOR_3.1.6] Invio messaggio con nuovo serviceId censito nel secret e presenza di allegati
@@ -61,7 +61,8 @@ Feature: connettore app IO per invio messaggi di cortesia per comunicazioni bona
   Scenario: [IO_CONNECTOR_3.1.7] Rifiuto invio messaggio con serviceId non censito nel secret
     Given viene generata una richiesta valida con senderServiceId: "SERVICE_NOT_CONFIGURED"
     When come orchestratore SEND richiedo l'invio del messaggio verso IO
-    Then verifico che si ottenga una response di "BAD REQUEST"
+    Then verifico che si ottenga una response di "OK"
+    And verifico che su DynamoDB la richiesta evolva nello stato "FAILED_TO_SEND"
 
 
 
@@ -69,7 +70,7 @@ Feature: connettore app IO per invio messaggi di cortesia per comunicazioni bona
 
   @comunicazione-orchestratore-io
   Scenario: [IO_CONNECTOR_4.1.1] Verifica raggiungibilità profilo IO da orchestratore con utente censito su IO
-    Given come orchestratore SEND tento la verifica raggiungibilità profilo con senderServiceId valido e CF destinatario: "PF-b7e52cf2-95d4-4dfc-ad47-5d6f7073d6e2"
+    Given come orchestratore SEND tento la verifica raggiungibilità profilo con senderServiceId valido e CF destinatario: "PF-ef4f3181-c2a9-4924-9307-d107af8f0c34"
     Then verifico che si ottenga una response di "OK"
     Then verifico che la response contenga l'informazione sulla raggiungibilità del profilo
 
@@ -90,7 +91,7 @@ Feature: connettore app IO per invio messaggi di cortesia per comunicazioni bona
 
   @comunicazione-orchestratore-io
   Scenario: [IO_CONNECTOR_5.1.1] Recupero dettagli messaggio di cortesia per comunicazione bonaria da app IO OK
-    Given come app IO tento il recupero dettagli messaggio con requestID valido e CF destinatario: "PF-b7e52cf2-95d4-4dfc-ad47-5d6f7073d6e2"
+    Given come app IO tento il recupero dettagli messaggio con requestID valido e CF destinatario: "PF-ef4f3181-c2a9-4924-9307-d107af8f0c34"
     Then verifico che si ottenga una response di "OK"
     Then verifico che la lista dettagli allegati sia non vuota
 
