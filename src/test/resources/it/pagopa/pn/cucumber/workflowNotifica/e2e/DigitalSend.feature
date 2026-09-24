@@ -492,11 +492,11 @@ Feature: Digital send e2e
       | details_isAvailable          | true     |
       | isFirstSendRetry             | true     |
     And viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" esista
-      | loadTimeline            | true                                                                                                                                                          |
-      | details                 | NOT_NULL                                                                                                                                                      |
-      | details_recIndex        | 0                                                                                                                                                             |
+      | loadTimeline            | true                                                                                                                                                                                            |
+      | details                 | NOT_NULL                                                                                                                                                                                        |
+      | details_recIndex        | 0                                                                                                                                                                                               |
       | details_physicalAddress | {"address": "VIA@OK_890", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
-      | details_analogCost      | 195                                                                                                                                                           |
+      | details_analogCost      | 195                                                                                                                                                                                             |
     And viene verificato che l'elemento di timeline "DIGITAL_DELIVERY_CREATION_REQUEST" esista
       | details          | NOT_NULL |
       | details_recIndex | 0        |
@@ -1338,3 +1338,32 @@ Feature: Digital send e2e
     And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
       | details          | NOT_NULL |
       | details_recIndex | 0        |
+
+
+  @mailRejected
+  Scenario Outline: [mailRejected_1] Controllo di ko permanente PF e PG
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario
+      | denomination            | Test errore PnSpapiPermanentErrorException |
+      | taxId                   | <taxId>                                    |
+      | digitalDomicile_address | -indirizzo@gmail.com                       |
+      | recipientType           | <recipientType>                            |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+    And verifico la presenza di un audit log su "/aws/ecs/pn-external-channel" negli ultimi 30 minuti riportante i seguenti dati nel messaggio
+      | error | jakarta.mail.SendFailedException Invalid Addresses |
+      | iun   | auto                                               |
+    Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+    And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
+      | legalFactsIds                | [{"category": "SEND_DIGITAL_FEEDBACK"}]            |
+      | details_digitalAddressSource | SPECIAL                                            |
+      | details                      | NOT_NULL                                           |
+      | details_digitalAddress       | {"address": "-indirizzo@gmail.com", "type": "PEC"} |
+      | details_deliveryDetailCode   | C011                                               |
+      | details_recIndex             | 0                                                  |
+    Examples:
+      | recipientType | taxId            |
+      | PG            | 70472431207      |
+      | PF            | DSRDNI00A01A225I |
+

@@ -234,3 +234,5 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details_recIndex             | 0        |
       | details_sentAttemptMade      | 0        |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
+
+
