@@ -195,14 +195,14 @@ public class DelegatedArchivingRequestVerifier {
                 && request.getAcceptedAt() == null;
     }
 
-        private boolean hasNoPendingArchivingRequest(DelegatedArchivingRequest request) {
-                return request == null
-                                || (request.getRejectedAt() != null
-                                && !request.getRejectedAt().isBlank()
-                                && request.getRejectionReason() != null
-                                && !request.getRejectionReason().isBlank()
-                                && request.getAcceptedAt() == null);
-        }
+    private boolean hasNoPendingArchivingRequest(DelegatedArchivingRequest request) {
+        return request == null
+                || (request.getRejectedAt() != null
+                && !request.getRejectedAt().isBlank()
+                && request.getRejectionReason() != null
+                && !request.getRejectionReason().isBlank()
+                && request.getAcceptedAt() == null);
+    }
 
     private boolean isTimestampWithinTolerance(
             String timestamp,
