@@ -97,6 +97,11 @@ public class M2MV3EserviceClientImpl extends AbstractDPoPClient implements IM2MV
     }
 
     @Override
+    public List<EService> getPage(int page, int size) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
     public UUID getId(EService entity) {
         return entity == null ? null : entity.getId();
     }

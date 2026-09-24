@@ -24,6 +24,9 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemp
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.VerifiedAttribute;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.EserviceTemplatesApi;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTemplateVersionAttributesGroupSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTemplateVersionCertifiedDiscreteAttributes;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTemplateVersionCertifiedDiscreteAttributesGroup;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTemplateVersionCertifiedDiscreteAttributesGroupSeed;
 import it.pagopa.interop.utils.ApiClientUtils;
 import java.util.Collections;
 import java.util.List;
@@ -233,6 +236,28 @@ public class M2MV3EserviceTemplateAttributeClientImpl extends AbstractDPoPClient
                 .attribute(attribute.getAttribute())
                 .groupIndex(attribute.getGroupIndex())
                 .build();
+    }
+
+    // Queste API sono disponibili solo per la versione 3
+
+    @Override
+    public EServiceTemplateVersionCertifiedDiscreteAttributes getEServiceTemplateVersionCertifiedDiscreteAttributes(UUID templateId, UUID versionId, Integer offset, Integer limit) {
+        return this.templatesApi.getEServiceTemplateVersionCertifiedDiscreteAttributes(templateId, versionId, offset, limit);
+    }
+
+    @Override
+    public EServiceTemplateVersionCertifiedDiscreteAttributesGroup createEServiceTemplateVersionCertifiedDiscreteAttributesGroup(UUID templateId, UUID versionId, EServiceTemplateVersionCertifiedDiscreteAttributesGroupSeed eserviceTemplateVersionCertifiedDiscreteAttributesGroupSeed) {
+        return this.templatesApi.createEServiceTemplateVersionCertifiedDiscreteAttributesGroup(templateId, versionId, eserviceTemplateVersionCertifiedDiscreteAttributesGroupSeed);
+    }
+
+    @Override
+    public Object assignEServiceTemplateVersionCertifiedDiscreteAttributesToGroup(UUID templateId, UUID versionId, Integer groupIndex, EServiceTemplateVersionCertifiedDiscreteAttributesGroupSeed eserviceTemplateVersionCertifiedDiscreteAttributesGroupSeed) {
+        return this.templatesApi.assignEServiceTemplateVersionCertifiedDiscreteAttributesToGroup(templateId, versionId, groupIndex, eserviceTemplateVersionCertifiedDiscreteAttributesGroupSeed);
+    }
+
+    @Override
+    public Object deleteEServiceTemplateVersionCertifiedDiscreteAttributeFromGroup(UUID templateId, UUID versionId, Integer groupIndex, UUID attributeId) {
+        return this.templatesApi.deleteEServiceTemplateVersionCertifiedDiscreteAttributeFromGroup(templateId, versionId, groupIndex, attributeId);
     }
 
     @Override

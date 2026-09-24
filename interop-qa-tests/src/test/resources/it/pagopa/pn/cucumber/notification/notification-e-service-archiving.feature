@@ -82,13 +82,13 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
     When l'utente sospende quel descrittore in corso di archiviazione
     Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
     """
-    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è al momento sospesa. L'e-service sarà archiviato il giorno
-    $DA_CONTESTO(TODAY+90).
+    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è al momento sospesa.
+    L'e-service sarà archiviato il giorno $DA_CONTESTO(TODAY+90).
     """
     And l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
-    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è al momento sospesa. L'archiviazione avverrà il giorno
-    $DA_CONTESTO(TODAY+90).
+    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è al momento sospesa.
+    L'archiviazione avverrà il giorno $DA_CONTESTO(TODAY+90).
     """
 
     When l'utente attiva il descrittore di quell'e-service
@@ -99,8 +99,8 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
     """
     And l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
-    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è di nuovo attiva. L'e-service sarà archiviato il giorno
-    $DA_CONTESTO(TODAY+90).
+    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è di nuovo attiva.
+    L'archiviazione avverrà il giorno $DA_CONTESTO(TODAY+90).
     """
 
   Scenario: [MANUAL_ARCHIVING_ESERVICE_SUSPENSION_NOTIFICATION_1.2] Erogatore e fruitore ricevono una notifica quando l'e-service istanza di un template in stato di archiviazione viene sospeso
@@ -113,25 +113,25 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
     When l'utente sospende quel descrittore in corso di archiviazione
     Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
     """
-    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è al momento sospesa. L'e-service sarà archiviato il giorno
-    $DA_CONTESTO(TODAY+120).
+    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è al momento sospesa.
+    L'e-service sarà archiviato il giorno $DA_CONTESTO(TODAY+120).
     """
     And l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
-    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è al momento sospesa. L'archiviazione avverrà il giorno
-    $DA_CONTESTO(TODAY+120).
+    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è al momento sospesa.
+    L'archiviazione avverrà il giorno $DA_CONTESTO(TODAY+120).
     """
 
     When l'utente attiva il descrittore di quell'e-service
     Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
     """
-    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è di nuovo attiva. L'e-service sarà archiviato il giorno
-    $DA_CONTESTO(TODAY+120).
+    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è di nuovo attiva.
+    L'e-service sarà archiviato il giorno $DA_CONTESTO(TODAY+120).
     """
     And l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
-    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è di nuovo attiva. L'e-service sarà archiviato il giorno
-    $DA_CONTESTO(TODAY+120).
+    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è di nuovo attiva.
+    L'archiviazione avverrà il giorno $DA_CONTESTO(TODAY+120).
     """
 
   Scenario: [MANUAL_ARCHIVING_ESERVICE_CANCELLATION_NOTIFICATION_1.1] L'utente erogatore riceve una notifica quando annulla l'archiviazione in corso di un proprio e-service
