@@ -77,7 +77,6 @@ public class DelegationAcceptStep {
                 context.getDelegationId()));
         if (httpExecutor.getResponseStatus() == HttpStatus.OK) {
             context.setActivatedAt(now);
-            context.setDelegateTenant(delegationClient.getDelegation(context.getDelegationId()).getKind().getValue());
             waitUntilDelegationIsApproved(
                 delegationClient,
                 pollingService,
