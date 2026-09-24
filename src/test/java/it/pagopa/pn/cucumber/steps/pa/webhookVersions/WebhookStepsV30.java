@@ -30,10 +30,13 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMM_TYPE_INFORMAL;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMM_TYPE_LEGAL;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.NOT_NULL_P_R_E;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SEND_DIGITAL_FEEDBACK;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.STREAM_EVENT_TYPE_STATUS;
@@ -667,6 +670,19 @@ public class WebhookStepsV30 implements WebhookStepsInterface {
                     .as("La ricerca non dovrebbe restituire nessun elemento di timeline con legalFactCategory " + legalFactCategory)
                     .isEmpty();
         }
+    }
+
+    @Override
+    public void checkCommunicationTypeOfConsumeOutput(CommunicationType communicationType) {
+        assertThat(progressResponseElementList).as("La lista di deve contenere elementi").isNotNull().isNotEmpty();
+        List<ProgressResponseElementV30> invalidElements =
+                switch (communicationType) {
+                    case LEGAL -> progressResponseElementList.stream().filter(
+                            el -> el.getCommunicationType().getValue().equals(COMM_TYPE_INFORMAL) || !el.getIun().endsWith("1")).toList();
+                    case INFORMAL -> progressResponseElementList.stream().filter(
+                            el -> el.getCommunicationType().getValue().equals(COMM_TYPE_LEGAL) || el.getIun().endsWith("1")).toList();
+                };
+        assertThat(invalidElements).asList().as("Lo stream ha restituito elementi di tipo non %s", communicationType).isEmpty();
     }
 
     private String logTimelineWebhook() {

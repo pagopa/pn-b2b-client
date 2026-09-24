@@ -2,6 +2,7 @@ package it.pagopa.pn.cucumber.steps.pa.webhookVersions;
 
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingWebhook;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.CommunicationType;
 import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps;
 
 import java.util.List;
@@ -110,4 +111,8 @@ public interface WebhookStepsInterface {
     void verificaPresenzaSercQ(boolean isPresent);
 
     void checkLegalFactCategory(String timelineCategory, String legalFactCategory, boolean arePresent);
+
+    default void checkCommunicationTypeOfConsumeOutput(CommunicationType communicationType) {
+        // communicationType introdotto a partire dalla V30
+    }
 }

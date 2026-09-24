@@ -20,6 +20,7 @@ import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebhookB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.CommunicationType;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.NotificationStatus;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.ProgressResponseElement;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.ProgressResponseElementV23;
@@ -228,6 +229,11 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     @ParameterType("waitForAccepted|communicationType")
     public static WebhookExtraField webhookExtraField(String fieldName) {
         return WebhookExtraField.fromFieldName(fieldName);
+    }
+
+    @ParameterType("LEGAL|INFORMAL")
+    public static CommunicationType communicationType(String type) {
+        return CommunicationType.fromValue(type);
     }
 
     //versioni 23 e 27 only?
@@ -1212,5 +1218,14 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     @Then("tra gli elementi di timeline versione {string} di categoria {string} {are} presenti legalFacts con categoria {string}")
     public void checkTimelineElementVersionLegalFacts(String version, String timelineCategory, boolean arePresent, String legalFactCategory) {
         getWebhookStep(version).checkLegalFactCategory(timelineCategory, legalFactCategory, arePresent);
+    }
+
+    @Then("lo stream {string} contiene solo elementi relativi a notifiche {communicationType}")
+    public void checkCommunicationTypeOfConsumeOutput(String version, CommunicationType communicationType) {
+        if (communicationType.equals(CommunicationType.INFORMAL)) {
+            StreamVersion streamVersion = getStreamVersion(version);
+            assumeThat(streamVersion.getValue()).as("Gli stream INFORMAL sono disponibili solo dalla V30 in poi").isGreaterThanOrEqualTo(30);
+        }
+        getWebhookStep(version).checkCommunicationTypeOfConsumeOutput(communicationType);
     }
 }

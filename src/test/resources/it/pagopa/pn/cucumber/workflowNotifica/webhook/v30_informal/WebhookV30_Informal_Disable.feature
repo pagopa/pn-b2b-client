@@ -2,7 +2,7 @@ Feature: disabilitazione stream
 
   #--------------DISABILITAZIONE DI UNO STREAM------------
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_58] Disabilitazione di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey con gruppo diverso.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -20,7 +20,7 @@ Feature: disabilitazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_59] Disabilitazione di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey con stesso gruppo.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -36,7 +36,7 @@ Feature: disabilitazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_60] Disabilitazione di uno stream notifica con gruppo, con eventType "TIMELINE"  utilizzando un apikey master.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -56,7 +56,7 @@ Feature: disabilitazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_63] Disabilitazione di uno stream notifica con gruppo, con eventType "TIMELINE"  utilizzando un apikey con gruppo diverso.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -74,7 +74,7 @@ Feature: disabilitazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_64] Disabilitazione di uno stream notifica con gruppo, con eventType "TIMELINE"  utilizzando un apikey con stesso gruppo.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -91,7 +91,7 @@ Feature: disabilitazione stream
     And l'apiKey viene cancellata
 
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_65] Disabilitazione di uno stream notifica senza gruppo, con eventType "STATUS"  utilizzando un apikey master.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -108,7 +108,7 @@ Feature: disabilitazione stream
     And l'apiKey viene cancellata
 
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_67] Disabilitazione di uno stream notifica senza gruppo, con eventType "STATUS"  utilizzando un apikey con gruppo.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -126,7 +126,7 @@ Feature: disabilitazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_68] Disabilitazione di uno stream notifica senza gruppo, con eventType "TIMELINE"  utilizzando un apikey master.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -142,7 +142,7 @@ Feature: disabilitazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_70] Disabilitazione di uno stream notifica senza gruppo, con eventType "TIMELINE"  utilizzando un apikey con gruppo.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -160,7 +160,7 @@ Feature: disabilitazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_150] Disabilitazione di uno stream notifica con gruppi appartenenti ad un sottinsieme dei gruppi dell'apikey utilizzata.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -176,7 +176,7 @@ Feature: disabilitazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_151] Disabilitazione di uno stream notifica con gruppi non appartenenti ad un sottinsieme dei gruppi dell'apikey utilizzata.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -194,7 +194,7 @@ Feature: disabilitazione stream
     And l'apiKey viene cancellata
 
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_118] Disabilitazione per una PA di uno stream che non esiste per la stessa PA
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -209,7 +209,7 @@ Feature: disabilitazione stream
     And l'apiKey viene cancellata
 
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_61] Disabilitazione di uno stream notifica senza gruppo già disabilitato, con eventType "STATUS"  utilizzando un apikey master.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -225,7 +225,7 @@ Feature: disabilitazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_77] Cancellazione di uno stream notifica senza gruppo già disabilitato, con eventType "STATUS"  utilizzando un apikey master.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -241,7 +241,7 @@ Feature: disabilitazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_98] Aggiornamento di uno stream notifica senza gruppo già disabilitato, con eventType "STATUS"  utilizzando un apikey master.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -257,7 +257,7 @@ Feature: disabilitazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_32] Lettura di uno stream notifica senza gruppo già disabilitato, con eventType "STATUS"  utilizzando un apikey master.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"

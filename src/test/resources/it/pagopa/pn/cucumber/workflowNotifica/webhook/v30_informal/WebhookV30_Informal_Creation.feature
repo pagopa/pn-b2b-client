@@ -6,7 +6,7 @@ Feature: verifica creazione stream
     Given vengono cancellati tutti gli stream presenti del "Comune_2" con versione "V30"
 
   #--------------CREAZIONE DI UNO STREAM--------------------
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_1] Creazione per una PA di 10 nuovi stream notifica con eventType TIMELINE e senza gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V30"
     And si predispongono 10 nuovi stream denominati "stream-test" con eventType "TIMELINE" con versione "V30"
@@ -22,7 +22,7 @@ Feature: verifica creazione stream
     And l'apiKey viene cancellata
 
   # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_1waitForAccepted] Creazione per una PA di 10 nuovi stream notifica con eventType TIMELINE e senza gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V30"
     And si predispongono 10 nuovi stream denominati "stream-test" con eventType "TIMELINE" con versione "V30"
@@ -41,7 +41,7 @@ Feature: verifica creazione stream
   #https://pagopa.atlassian.net/browse/PN-19952
   # Test che verifica che se viene creato uno stream con waitForAccepted a true e filtro status che non contiene DEFAULT o REQUEST_ACCEPTED allora lo stream non viene creato
   # e viene ritornato un errore 403
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_PN_19952_1_KO] Creazione di uno stream con waitForAccepted a true e filtro status che non contiene DEFAULT o REQUEST_ACCEPTED.
   Si verifica che la creazione dello stream ritorni un errore 403.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V30"
@@ -59,7 +59,7 @@ Feature: verifica creazione stream
 
   #https://pagopa.atlassian.net/browse/PN-19952
   # Test che verifica che se viene creato uno stream con waitForAccepted a true e filtro timeline con REQUEST_ACCEPTED allora lo stream viene creato con successo
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario Outline: [B2B-STREAM_PN_19952_2_OK] Creazione di uno stream con waitForAccepted a true e filtro timeline impostato. Si verifica che lo stream venga creato con successo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V30"
     And si predispongono 5 nuovi stream denominati "stream-test" con eventType "TIMELINE" con versione "V30"
@@ -79,7 +79,7 @@ Feature: verifica creazione stream
       | REQUEST_ACCEPTED                     |
       | SEND_ANALOG_MESSAGE,REQUEST_ACCEPTED |
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   #LIMITE SPECIFICO PER PA: n/a; LIMITE DEFAULT (pnConfigurations.MaxStreams  = 10)
   Scenario: [STREAM_LIMIT_INFORMAL] Creazione per una PA di 11 nuovi stream notifica con eventType TIMELINE e senza gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V30"
@@ -95,7 +95,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   #LIMITE SPECIFICO PER PA: n/a; LIMITE DEFAULT (pnConfigurations.MaxStreams  = 10)
   Scenario: [STREAM_LIMIT_HYBRID] Creazione per una PA di 11 nuovi stream notifica con eventType TIMELINE e senza gruppo (5 legal, 6 informal).
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V30"
@@ -113,7 +113,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   #LIMITE SPECIFICO PER PA: pnConfiguration.maxStreamsNumber = 9; LIMITE DEFAULT (pnConfigurations.MaxStreams  = 10)
   Scenario: [STREAM_LIMITE_SPECIFICO_INFERIORE_DEFAULT_INFORMAL] Creazione per una PA (avente un proprio limite massimo di stream pari a 9) di 10 nuovi stream notifica con eventType TIMELINE e senza gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_2" con versione "V30"
@@ -129,7 +129,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   #LIMITE SPECIFICO PER PA: pnConfiguration.maxStreamsNumber = 11; LIMITE DEFAULT (pnConfigurations.MaxStreams  = 10)
   Scenario: [STREAM_LIMITE_SPECIFICO_SUPERIORE_DEFAULT_INFORMAL] Creazione per una PA (avente un proprio limite massimo di stream pari a 11) di 12 nuovi stream notifica con eventType TIMELINE e senza gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_1" con versione "V30"
@@ -145,7 +145,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_3] Creazione per una PA di 10 nuovi stream notifica con eventType TIMELINE con gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V30"
     And si predispongono 10 nuovi stream denominati "stream-test" con eventType "TIMELINE" con versione "V30"
@@ -161,7 +161,7 @@ Feature: verifica creazione stream
     And l'apiKey viene cancellata
 
   # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_3waitForAccepted] Creazione per una PA di 10 nuovi stream notifica con eventType TIMELINE con gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V30"
     And si predispongono 10 nuovi stream denominati "stream-test" con eventType "TIMELINE" con versione "V30"
@@ -177,7 +177,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   #LIMITE SPECIFICO PER PA: n/a; LIMITE DEFAULT (pnConfigurations.MaxStreams  = 10)
   Scenario: [B2B-STREAM_ES1.1_4] Creazione per una PA di 11 nuovi stream notifica con eventType TIMELINE con gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V30"
@@ -193,7 +193,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_5] Creazione per una PA di 10 nuovi stream notifica con eventType STATUS e senza gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V30"
     And si predispongono 10 nuovi stream denominati "stream-test" con eventType "STATUS" con versione "V30"
@@ -209,7 +209,7 @@ Feature: verifica creazione stream
     And l'apiKey viene cancellata
 
   # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_5waitForAccepted] Creazione per una PA di 10 nuovi stream notifica con eventType STATUS e senza gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V30"
     And si predispongono 10 nuovi stream denominati "stream-test" con eventType "STATUS" con versione "V30"
@@ -225,7 +225,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   #LIMITE SPECIFICO PER PA: n/a; LIMITE DEFAULT (pnConfigurations.MaxStreams  = 10)
   Scenario: [B2B-STREAM_ES1.1_6] Creazione per una PA di 11 nuovi stream notifica con eventType STATUS e senza gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V30"
@@ -241,7 +241,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_7] Creazione per una PA di 10 nuovi stream notifica con eventType TIMELINE con gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V30"
     And si predispongono 10 nuovi stream denominati "stream-test" con eventType "STATUS" con versione "V30"
@@ -256,7 +256,7 @@ Feature: verifica creazione stream
     And l'apiKey viene cancellata
 
   # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_7waitForAccepted] Creazione per una PA di 10 nuovi stream notifica con eventType TIMELINE con gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V30"
     And si predispongono 10 nuovi stream denominati "stream-test" con eventType "STATUS" con versione "V30"
@@ -271,7 +271,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   #LIMITE SPECIFICO PER PA: n/a; LIMITE DEFAULT (pnConfigurations.MaxStreams  = 10)
   Scenario: [B2B-STREAM_ES1.1_8] Creazione per una PA di 11 nuovi stream notifica con eventType STATUS con gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V30"
@@ -287,7 +287,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_9] Creazione di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey master.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -301,7 +301,7 @@ Feature: verifica creazione stream
     And l'apiKey viene cancellata
 
   # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_9waitForAccepted] Creazione di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey master.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo waitForAccepted a "true"
@@ -315,7 +315,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_11] Creazione di uno stream notifica con gruppo non appartenente alla PA dell'apiKey, con eventType "STATUS"  utilizzando un apikey con gruppo.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -327,7 +327,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_12] Creazione di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey con gruppo diverso.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -339,7 +339,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_13] Creazione di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey con stesso gruppo.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -354,7 +354,7 @@ Feature: verifica creazione stream
     And l'apiKey viene cancellata
 
   # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_13waitForAccepted] Creazione di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey con stesso gruppo.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo waitForAccepted a "true"
@@ -369,7 +369,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_16] Creazione di uno stream notifica con gruppo non appartenente alla PA dell'apiKey, con eventType "TIMELINE"  utilizzando un apikey con gruppo.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -381,7 +381,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_17] Creazione di uno stream notifica con gruppo, con eventType "TIMELINE"  utilizzando un apikey con gruppo diverso.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -393,7 +393,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_18] Creazione di uno stream notifica con gruppo, con eventType "TIMELINE"  utilizzando un apikey con stesso gruppo.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -408,7 +408,7 @@ Feature: verifica creazione stream
     And l'apiKey viene cancellata
 
   # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_18waitForAccepted] Creazione di uno stream notifica con gruppo, con eventType "TIMELINE"  utilizzando un apikey con stesso gruppo.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo waitForAccepted a "true"
@@ -423,7 +423,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_19] Creazione di uno stream notifica senza gruppo, con eventType "STATUS"  utilizzando un apikey master.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -438,7 +438,7 @@ Feature: verifica creazione stream
     And l'apiKey viene cancellata
 
   # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_19waitForAccepted] Creazione di uno stream notifica senza gruppo, con eventType "STATUS"  utilizzando un apikey master.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo waitForAccepted a "true"
@@ -453,7 +453,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_21] Creazione di uno stream notifica senza gruppo, con eventType "STATUS"  utilizzando un apikey con gruppo.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -465,7 +465,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_22] Creazione di uno stream notifica senza gruppo, con eventType "TIMELINE"  utilizzando un apikey master.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -480,7 +480,7 @@ Feature: verifica creazione stream
     And l'apiKey viene cancellata
 
   # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_22waitForAccepted] Creazione di uno stream notifica senza gruppo, con eventType "TIMELINE"  utilizzando un apikey master.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo waitForAccepted a "true"
@@ -495,7 +495,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_24] Creazione di uno stream notifica senza gruppo, con eventType "TIMELINE"  utilizzando un apikey con gruppo.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -507,7 +507,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_25] Creazione di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey master.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -521,7 +521,7 @@ Feature: verifica creazione stream
     And l'apiKey viene cancellata
 
   # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_25waitForAccepted] Creazione di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey master.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo waitForAccepted a "true"
@@ -535,7 +535,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_148] Creazione di uno stream notifica con gruppi appartenenti ad un sottinsieme dei gruppi dell'apikey utilizzata.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -550,7 +550,7 @@ Feature: verifica creazione stream
     And l'apiKey viene cancellata
 
   # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_148waitForAccepted] Creazione di uno stream notifica con gruppi appartenenti ad un sottinsieme dei gruppi dell'apikey utilizzata.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo waitForAccepted a "true"
@@ -565,7 +565,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_149] Creazione di uno stream notifica con gruppi non appartenenti ad un sottinsieme dei gruppi dell'apikey utilizzata.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -577,7 +577,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_120] Consumo per una PA di uno stream che non esiste per la stessa PA
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -588,7 +588,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario Outline: [STREAM_STATUS_FILTER_DEFAULT_LEGAL] La creazione di uno stream con eventType status e filtro impostato a DEFAULT non è più permessa
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "<apiVersion>"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
@@ -610,7 +610,7 @@ Feature: verifica creazione stream
       | V29        |
       | V30        |
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [STREAM_STATUS_FILTER_DEFAULT_INFORMAL] La creazione di uno stream con eventType status e filtro impostato a DEFAULT non è più permessa
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"

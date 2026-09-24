@@ -2,7 +2,7 @@ Feature: replace streamID webhook
 
   #--------------CREAZIONE CON REPLACED_STREAM_ID DI UNO STREAM--------------------
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario Outline: [STREAM_REPLACE_DIFFERENT_COMMUNICATION_TYPE]  Creazione con replaceID di uno stream notifica cambiando il communicationType. (replacedStreamId settato).
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "<eventType>" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "<typeOriginal>"
@@ -24,7 +24,7 @@ Feature: replace streamID webhook
       | INFORMAL     | LEGAL        | TIMELINE  |
       | LEGAL        | INFORMAL     | TIMELINE  |
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_101] Creazione con replaceID di uno stream notifica con gruppo uguale al precedente stream con eventType "STATUS" utilizzando un apikey master. (replacedStreamId settato).
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -40,7 +40,7 @@ Feature: replace streamID webhook
     And l'apiKey viene cancellata
 
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_103]  Creazione con replaceID di uno stream notifica con gruppo  non appartenente alla PA, con eventType "STATUS" utilizzando un apikey master.(replacedStreamId settato).
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -55,7 +55,7 @@ Feature: replace streamID webhook
     And l'apiKey viene cancellata
 
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_104]  Creazione con replaceID di uno stream notifica con gruppo diverso al precedente stream con eventType "STATUS" utilizzando un apikey master. (replacedStreamId settato).
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -70,7 +70,7 @@ Feature: replace streamID webhook
     And l'apiKey viene cancellata
 
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_105]  Creazione con replaceID di uno stream notifica con gruppo uguale al precedente stream con eventType "STATUS" utilizzando un apikey con gruppo. (replacedStreamId settato).
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -84,7 +84,7 @@ Feature: replace streamID webhook
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_106] Creazione con replaceID di uno stream notifica con gruppo uguale al precedente stream con eventType "TIMELINE" utilizzando un apikey master. (replacedStreamId settato).
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -99,7 +99,7 @@ Feature: replace streamID webhook
     And l'apiKey viene cancellata
 
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_108] Creazione con replaceID di uno stream notifica con gruppo  non appartenente alla PA, con eventType "TIMELINE" utilizzando un apikey master.(replacedStreamId settato).
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -113,7 +113,7 @@ Feature: replace streamID webhook
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_109]  Creazione con replaceID di uno stream notifica con gruppo diverso al precedente stream con eventType "TIMELINE" utilizzando un apikey master. (replacedStreamId settato).
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -127,7 +127,7 @@ Feature: replace streamID webhook
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_110]  Creazione con replaceID di uno stream notifica con gruppo uguale al precedente stream con eventType "TIMELINE" utilizzando un apikey con gruppo. (replacedStreamId settato).
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -141,7 +141,7 @@ Feature: replace streamID webhook
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_111]  Creazione con replaceID di uno stream notifica senza gruppo uguale al precedente stream con eventType "STATUS" utilizzando un apikey master. (replacedStreamId settato).
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -156,7 +156,7 @@ Feature: replace streamID webhook
     And l'apiKey viene cancellata
 
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_113]  Creazione con replaceID di uno stream notifica senza gruppo con uno stream con gruppo con eventType "STATUS" utilizzando un apikey con gruppo. (replacedStreamId settato)..
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -176,7 +176,7 @@ Feature: replace streamID webhook
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_114]  Creazione con replaceID di uno stream notifica senza gruppo uguale al precedente stream con eventType "TIMELINE" utilizzando un apikey master. (replacedStreamId settato).
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -191,7 +191,7 @@ Feature: replace streamID webhook
     And l'apiKey viene cancellata
 
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_115]  Creazione con replaceID di uno stream notifica con gruppo diverso al precedente stream con eventType "STATUS" utilizzando un apikey master. (replacedStreamId settato).
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -206,7 +206,7 @@ Feature: replace streamID webhook
     And l'apiKey viene cancellata
 
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_116]  Creazione con replaceID di uno stream notifica senza gruppo con uno stream con gruppo con eventType "TIMELINE" utilizzando un apikey con gruppo. (replacedStreamId settato).
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
@@ -228,7 +228,7 @@ Feature: replace streamID webhook
 
 
   #CONTROLLARE IL CORRETTO COMPORTAMENTO
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_117]  Creazione per una PA di 10 nuovi stream notifica con eventType TIMELINE e senza gruppo, disabilitazione di uno stream e creazione di un nuovo stream.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V30"
     And si predispongono 10 nuovi stream denominati "stream-test" con eventType "TIMELINE" con versione "V30"
@@ -247,7 +247,7 @@ Feature: replace streamID webhook
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_102]  Creazione con replaceID di uno stream notifica senza gruppo uguale al precedente stream disabilitato con eventType "TIMELINE" utilizzando un apikey master. (replacedStreamId settato).
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo communicationType a "INFORMAL"
