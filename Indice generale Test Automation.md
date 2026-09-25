@@ -18666,7 +18666,7 @@ Dati Destinatario
 3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
 4. l'avviso pagopa viene pagato correttamente
 5. si attende il corretto pagamento della notifica (elemento di timeline `PAYMENT`)
-6. dopo `PUBLIC_REGISTRY_RESPONSE` e `PUBLIC_REGISTRY_CALL` al tentativo 1, viene verificato che l'elemento di timeline `DIGITAL_FAILURE_WORKFLOW` esista
+6. dopo `SEND_DIGITAL_FEEDBACK` al tentativo 1 e `DIGITAL_DELIVERY_CREATION_REQUEST`, viene verificato che l'elemento di timeline `DIGITAL_FAILURE_WORKFLOW` esista
 7. viene verificato che gli elementi di timeline `PREPARE_SIMPLE_REGISTERED_LETTER` e `SEND_SIMPLE_REGISTERED_LETTER` esistano
 8. viene verificato che `SEND_SIMPLE_REGISTERED_LETTER` sia successivo a `PAYMENT` (ingestionTimestamp)
 9. viene verificato che l'elemento di timeline `REFINEMENT` esista
@@ -18727,7 +18727,7 @@ Dati Destinatario
 6. la notifica viene letta dal destinatario `Cristoforo Colombo`
 7. viene verificato che l'elemento di timeline `NOTIFICATION_VIEWED` esista
 8. si attende il corretto pagamento della notifica (elemento di timeline `PAYMENT`)
-9. dopo `PUBLIC_REGISTRY_RESPONSE` e `PUBLIC_REGISTRY_CALL` al tentativo 1, viene verificato che l'elemento di timeline `DIGITAL_FAILURE_WORKFLOW` esista e sia successivo a `NOTIFICATION_VIEWED`
+9. dopo `SEND_DIGITAL_FEEDBACK` al tentativo 1 e `DIGITAL_DELIVERY_CREATION_REQUEST`, viene verificato che l'elemento di timeline `DIGITAL_FAILURE_WORKFLOW` esista e sia successivo a `NOTIFICATION_VIEWED`
 10. viene verificato che gli elementi di timeline `PREPARE_SIMPLE_REGISTERED_LETTER` e `SEND_SIMPLE_REGISTERED_LETTER` non esistano
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/NotificationPaid.feature)
