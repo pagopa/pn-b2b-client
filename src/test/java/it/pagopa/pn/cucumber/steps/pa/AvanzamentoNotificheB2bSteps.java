@@ -1304,7 +1304,7 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("viene verificato che non esista l'elemento {string} al tentativo {string}")
     public void checkToTheTimelineForElementOfNotificationAtAttemptNotExist(String timelineEventCategory, String attempt) {
-        Assertions.assertThrows(AssertionFailedError.class, () -> readingEventUpToTheTimelineElementOfNotificationAtAttempt(timelineEventCategory, attempt));
+        Assertions.assertThrows(AssertionError.class, () -> readingEventUpToTheTimelineElementOfNotificationAtAttempt(timelineEventCategory, attempt));
     }
 
     public String mapValueFromTable(DataTable table, String key) {
