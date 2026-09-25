@@ -9,10 +9,14 @@ import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.api.FileDow
 import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.api.FileMetadataUpdateApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.api.FileUploadApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.*;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.client.InterceptingClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
@@ -26,7 +30,12 @@ import java.util.Map;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnSafeStoragePrivateClientImpl implements IPnSafeStoragePrivateClient {
 
+    // Oltre il read timeout condiviso (20s): SafeStorage ritenta con backoff gli errori S3 prima
+    // di rispondere a un aggiornamento metadati rifiutato, impiegando fino a circa 30s.
+    private static final int METADATA_UPDATE_READ_TIMEOUT_MS = 60_000;
+
     private final RestTemplate restTemplate;
+    private final RestTemplate metadataUpdateRestTemplate;
     private final String safeStorageBaseUrl;
     private String clientIdSafeStorage;
     private final FileUploadApi fileUploadApi;
@@ -35,17 +44,19 @@ public class PnSafeStoragePrivateClientImpl implements IPnSafeStoragePrivateClie
     private final AdditionalFileTagsApi additionalFileTagsApi;
 
     public PnSafeStoragePrivateClientImpl(RestTemplate restTemplate,
+                                          CloseableHttpClient httpClient,
                                           @Value("${pn.safeStorage.base-url}") String safeStorageBaseUrl,
                                           @Value("${pn.safeStorage.apikey}") String apiKeySafeStorage,
                                           @Value("${pn.safeStorage.clientId}") String clientIdSafeStorage) {
 
-        this.restTemplate = withIsoDateSerialization(restTemplate);
+        this.restTemplate = withIsoDateSerialization(restTemplate, restTemplate.getRequestFactory());
+        this.metadataUpdateRestTemplate = withIsoDateSerialization(restTemplate, metadataUpdateRequestFactory(restTemplate, httpClient));
         this.safeStorageBaseUrl = safeStorageBaseUrl;
         this.clientIdSafeStorage = clientIdSafeStorage;
 
         fileUploadApi = new FileUploadApi(newApiClient(this.restTemplate, safeStorageBaseUrl, apiKeySafeStorage));
         fileDownloadApi = new FileDownloadApi(newApiClient(this.restTemplate, safeStorageBaseUrl, apiKeySafeStorage));
-        fileMetadataUpdateApi = new FileMetadataUpdateApi(newApiClient(this.restTemplate, safeStorageBaseUrl, apiKeySafeStorage));
+        fileMetadataUpdateApi = new FileMetadataUpdateApi(newApiClient(metadataUpdateRestTemplate, safeStorageBaseUrl, apiKeySafeStorage));
         additionalFileTagsApi = new AdditionalFileTagsApi(newApiClient(this.restTemplate, safeStorageBaseUrl, apiKeySafeStorage));
     }
 
@@ -53,19 +64,28 @@ public class PnSafeStoragePrivateClientImpl implements IPnSafeStoragePrivateClie
     // (es. 1790416800.000000000), che SafeStorage non riesce a leggere nei campi data-ora
     // (retentionUntil, availableUntil) e rifiuta con 400 "Failed to read HTTP message".
     // Per questo client si usa una copia che le serializza in ISO-8601 (RFC 3339, come da
-    // contratto), riusando la request factory del RestTemplate condiviso, gia' comprensiva
-    // dei suoi interceptor.
-    private static RestTemplate withIsoDateSerialization(RestTemplate sharedRestTemplate) {
+    // contratto), mantenendo gli interceptor del RestTemplate condiviso.
+    private static RestTemplate withIsoDateSerialization(RestTemplate sharedRestTemplate, ClientHttpRequestFactory requestFactory) {
         List<HttpMessageConverter<?>> messageConverters = sharedRestTemplate.getMessageConverters().stream()
                 .<HttpMessageConverter<?>>map(converter -> converter instanceof MappingJackson2HttpMessageConverter jacksonConverter
                         ? new MappingJackson2HttpMessageConverter(jacksonConverter.getObjectMapper().copy()
                                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS))
                         : converter)
                 .toList();
-        RestTemplate safeStorageRestTemplate = new RestTemplate(sharedRestTemplate.getRequestFactory());
+        RestTemplate safeStorageRestTemplate = new RestTemplate(requestFactory);
         safeStorageRestTemplate.setMessageConverters(messageConverters);
         safeStorageRestTemplate.setErrorHandler(sharedRestTemplate.getErrorHandler());
         return safeStorageRestTemplate;
+    }
+
+    // Stessa configurazione della request factory condivisa, con read timeout esteso. Gli
+    // interceptor condivisi vengono riapplicati qui perche' questa factory non li include (a
+    // differenza di getRequestFactory() del RestTemplate condiviso).
+    private static ClientHttpRequestFactory metadataUpdateRequestFactory(RestTemplate sharedRestTemplate, CloseableHttpClient httpClient) {
+        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
+        factory.setBufferRequestBody(false);
+        factory.setReadTimeout(METADATA_UPDATE_READ_TIMEOUT_MS);
+        return new InterceptingClientHttpRequestFactory(factory, sharedRestTemplate.getInterceptors());
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String apiKey) {
@@ -85,7 +105,7 @@ public class PnSafeStoragePrivateClientImpl implements IPnSafeStoragePrivateClie
         String apiKey = clientId + "_api_key";
         fileUploadApi.setApiClient(newApiClient(restTemplate, safeStorageBaseUrl, apiKey));
         fileDownloadApi.setApiClient(newApiClient(restTemplate, safeStorageBaseUrl, apiKey));
-        fileMetadataUpdateApi.setApiClient(newApiClient(restTemplate, safeStorageBaseUrl, apiKey));
+        fileMetadataUpdateApi.setApiClient(newApiClient(metadataUpdateRestTemplate, safeStorageBaseUrl, apiKey));
         additionalFileTagsApi.setApiClient(newApiClient(restTemplate, safeStorageBaseUrl, apiKey));
     }
 
@@ -165,7 +185,7 @@ public class PnSafeStoragePrivateClientImpl implements IPnSafeStoragePrivateClie
     public void setApiKey(String apiKey) {
         fileUploadApi.setApiClient(newApiClient(restTemplate, safeStorageBaseUrl, apiKey));
         fileDownloadApi.setApiClient(newApiClient(restTemplate, safeStorageBaseUrl, apiKey));
-        fileMetadataUpdateApi.setApiClient(newApiClient(restTemplate, safeStorageBaseUrl, apiKey));
+        fileMetadataUpdateApi.setApiClient(newApiClient(metadataUpdateRestTemplate, safeStorageBaseUrl, apiKey));
         additionalFileTagsApi.setApiClient(newApiClient(restTemplate, safeStorageBaseUrl, apiKey));
     }
 

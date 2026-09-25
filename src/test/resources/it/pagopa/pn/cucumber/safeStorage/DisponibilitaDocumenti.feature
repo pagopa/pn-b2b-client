@@ -16,10 +16,16 @@ Feature: Disponibilita dei documenti SafeStorage
   #
   # La conservazione puo' essere solo posticipata: gli aggiornamenti di retention attesi con
   # successo usano quindi una data successiva alla conservazione garantita corrente.
+  #
+  # Gli scenari che impostano una fine disponibilita precedente alla conservazione registrano
+  # prima la conservazione garantita del documento: su un documento appena caricato SafeStorage
+  # non la ha ancora memorizzata e tenterebbe di anticiparla, rifiutando la richiesta
+  # (anomalia segnalata al team pn-ss su PN-20896).
 
   @e2e @documentAvailability
   Scenario Outline: [SS-DOCUMENT-AVAILABILITY-1.1.1] Accettazione di una fine disponibilita non ancora trascorsa
     Given il client SafeStorage "pn-test" carica un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS"
+    And si registra la conservazione garantita corrente del documento
     When la fine disponibilita del documento viene impostata a una data "<combinazioneData>"
     Then l'impostazione della fine disponibilita viene completata con successo
     When viene richiesto il contenuto del documento
@@ -33,6 +39,7 @@ Feature: Disponibilita dei documenti SafeStorage
   @e2e @documentAvailability
   Scenario: [SS-DOCUMENT-AVAILABILITY-1.1.2] Sostituzione di una fine disponibilita gia indicata
     Given il client SafeStorage "pn-test" carica un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS"
+    And si registra la conservazione garantita corrente del documento
     When la fine disponibilita del documento viene impostata a una data "DOMANI"
     Then l'impostazione della fine disponibilita viene completata con successo
     When la fine disponibilita del documento viene impostata a una data "DOPODOMANI"
@@ -104,6 +111,7 @@ Feature: Disponibilita dei documenti SafeStorage
   @e2e @documentAvailability
   Scenario: [SS-DOCUMENT-AVAILABILITY-5.3.1] Data di scadenza riportata quando la fine disponibilita e impostata
     Given il client SafeStorage "pn-test" carica un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS"
+    And si registra la conservazione garantita corrente del documento
     When la fine disponibilita del documento viene impostata a una data "DOMANI"
     Then l'impostazione della fine disponibilita viene completata con successo
     When viene richiesto il contenuto del documento
