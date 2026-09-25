@@ -12,7 +12,7 @@ Feature: avanzamento notifiche webhook b2b V27
       | denomination | Galileo galileo  |
       | taxId        | GLLGLL64B15G702I |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V27"
-    And allo stream versione "V27" si setta il campo waitForAccepted introdotto con la versione 27 a "true"
+    And allo stream versione "V27" si setta il campo waitForAccepted a "true"
     And Viene creata una nuova apiKey per il comune "Comune_1" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -82,7 +82,7 @@ Feature: avanzamento notifiche webhook b2b V27
 
     #COMUNE 2
 
-  @webhookV27 @precondition @cleanWebhook @webhook3
+  @webhookV27 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.3_128] Consumo di uno stream notifica con gruppo, con eventType "TIMELINE"  utilizzando un apikey master.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -116,7 +116,7 @@ Feature: avanzamento notifiche webhook b2b V27
     And l'apiKey viene cancellata
 
 
-  @webhookV27 @precondition @cleanWebhook @webhook3
+  @webhookV27 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.3_125_1] Consumo di uno stream notifica disabilitato senza gruppo, con eventType "STATUS"  utilizzando un apikey master (caso errato).
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -136,7 +136,7 @@ Feature: avanzamento notifiche webhook b2b V27
     And l'apiKey viene cancellata
 
 
-  @webhookV27 @precondition @cleanWebhook @webhook3
+  @webhookV27 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.2_124] Verifica corretta scrittura degli eventi di una notifica creata con un apikey master, dove l’evento stesso deve essere salvato solo negli stream senza gruppi.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -162,7 +162,7 @@ Feature: avanzamento notifiche webhook b2b V27
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV27 @precondition @cleanWebhook @webhook3
+  @webhookV27 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.2_126] Invio notifica digitale ed attesa elemento di timeline REQUEST_ACCEPTED_scenario positivo e verifica legalfactIds valorizzato -PN-10278
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -178,7 +178,7 @@ Feature: avanzamento notifiche webhook b2b V27
 
   #COMUNE MULTI
 
-  @webhookV27 @precondition @cleanWebhook @webhook2
+  @webhookV27 @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.3_50_1] Consumo di uno stream notifica analogica senza gruppo, con eventType "TIMELINE"  utilizzando un apikey master e verifica corrispondenza tra i detail del webhook e quelli della timeline.
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -207,7 +207,7 @@ Feature: avanzamento notifiche webhook b2b V27
     And l'apiKey viene cancellata
 
 
-  @webhookV27 @precondition @cleanWebhook @webhook2
+  @webhookV27 @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES3.1_146_2]  Lettura e verifica de-anonimizzazione con un apiKey con gruppo degli eventi di timeline di una notifica analogica inviata con un apikey con gruppo e salvati in uno stream dell'ente con gruppo (Stesso gruppo)
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -234,7 +234,7 @@ Feature: avanzamento notifiche webhook b2b V27
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV27 @precondition @cleanWebhook @webhook2
+  @webhookV27 @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.2_123] Creazione di stream con apiKey con gruppi differenti e verifica corretta scrittura degli eventi di notifiche create con le stesse apiKey.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -261,7 +261,7 @@ Feature: avanzamento notifiche webhook b2b V27
     And l'apiKey viene cancellata
 
 
-  @webhookV27 @precondition @cleanWebhook @webhook2
+  @webhookV27 @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.3_162] Creazione di uno stream senza gruppo con la V10 e  lettura Eventi di timeline o di cambio di stato con la versione V10 utilizzando un apikey con gruppi. -PN-10218.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -345,7 +345,7 @@ Feature: avanzamento notifiche webhook b2b V27
       | senderDenomination | Comune di Palermo           |
     And destinatario Mario Gherkin
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
-    And si crea il nuovo stream per il "Comune_1" con versione "V10" e filtro di timeline "NOTIFICATION_RADD_RETRIEVED"
+    And si crea il nuovo stream per il "Comune_1" con versione "V10" e filtro timeline "NOTIFICATION_RADD_RETRIEVED"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V10"
     And Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
     And L'operatore scansione il qrCode per recuperare gli atti da radd alternative
@@ -360,7 +360,7 @@ Feature: avanzamento notifiche webhook b2b V27
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV27 @webhookHeader @precondition @cleanWebhook @webhook2
+  @webhookV27 @webhookHeader @precondition @cleanWebhook @webhook3
   Scenario Outline: [B2B-STREAM_RETRY_AFTER_V27] Creazione di stream con apiKey e controllo che il retry after dell'header venga modificato quando la consume restituisce elementi.
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |

@@ -457,11 +457,6 @@ public class WebhookStepsV23 implements WebhookStepsInterface {
     }
 
     @Override
-    public void setValueForWaitForAccepted(boolean waitForAccepted) {
-        //waitForAccepted introdotto a partire dalla V27
-    }
-
-    @Override
     public void verifyIncrementalEventId() {
         assertThat(progressResponseElementList).as("La progressResponseElementList non dev'essere null").isNotNull();
         int lastEventID = 0;
