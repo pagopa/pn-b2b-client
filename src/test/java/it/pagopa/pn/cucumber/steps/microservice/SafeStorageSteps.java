@@ -28,6 +28,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.*;
@@ -41,6 +42,9 @@ public class SafeStorageSteps {
     private static final String DEFAULT_CLIENT_ID = "pn-test";
     private static final ZoneId ITALY_TIME_ZONE = ZoneId.of("Europe/Rome");
     private static final Duration PRESIGNED_URL_REQUEST_TIMEOUT = Duration.ofSeconds(30);
+    // SafeStorage fa decorrere la cessazione della disponibilita dalla fine del giorno indicato
+    // (ora italiana): la data salvata e restituita e' normalizzata a questo orario.
+    private static final LocalTime AVAILABILITY_END_OF_DAY = LocalTime.of(23, 59, 59);
 
     private final ApplicationContext context;
     private final IPnSafeStoragePrivateClient safeStorageClient;
@@ -301,12 +305,8 @@ public class SafeStorageSteps {
         safeStorageStepsPojo.setLastRetentionUntilSet(retentionUntil);
         UpdateFileMetadataRequest request = new UpdateFileMetadataRequest().retentionUntil(retentionUntil);
 
-        try {
-            ResponseEntity<OperationResultCodeResponse> response = safeStorageClient
-                    .updateFileMetadataWithHttpInfo(fileKey, clientId, request);
-            safeStorageStepsPojo.setFileMetadataUpdateStatusCode(response.getStatusCodeValue());
-        } catch (HttpClientErrorException exception) {
-            safeStorageStepsPojo.setFileMetadataUpdateStatusCode(exception.getRawStatusCode());
+        if (sendFileMetadataUpdate(fileKey, request)) {
+            trackGuaranteedRetention(fileKey, retentionUntil);
         }
     }
 
@@ -338,7 +338,7 @@ public class SafeStorageSteps {
         assertThat(response).as("La risposta di lettura del documento non dev'essere nulla").isNotNull();
         assertThat(response.getRetentionUntil())
                 .as("La data di scadenza riportata deve coincidere con la conservazione appena impostata")
-                .isEqualTo(expected);
+                .isAtSameInstantAs(expected);
     }
 
     // Registra la conservazione garantita corrente PRIMA di una lettura, così da avere un
@@ -347,7 +347,9 @@ public class SafeStorageSteps {
     @Given("si registra la conservazione garantita corrente del documento {int}")
     public void captureCurrentRetention(Integer documentIndex) {
         String fileKey = getCreatedFileKey(documentIndex);
-        safeStorageStepsPojo.setCapturedRetentionUntil(getCurrentRetentionUntil(fileKey));
+        OffsetDateTime currentRetentionUntil = getCurrentRetentionUntil(fileKey);
+        safeStorageStepsPojo.setCapturedRetentionUntil(currentRetentionUntil);
+        safeStorageStepsPojo.getGuaranteedRetentionUntilByFileKey().put(fileKey, currentRetentionUntil);
     }
 
     // Alias per gli scenari con un solo documento in scena, dove l'indice non aggiunge nulla.
@@ -365,12 +367,27 @@ public class SafeStorageSteps {
         safeStorageStepsPojo.setLastAvailableUntilSet(availableUntil);
         UpdateFileMetadataRequest request = new UpdateFileMetadataRequest().availableUntil(availableUntil);
 
+        if (sendFileMetadataUpdate(fileKey, request)) {
+            // Una fine disponibilita oltre la conservazione garantita la estende fino a se stessa.
+            trackGuaranteedRetention(fileKey, toAvailabilityEndOfDay(availableUntil));
+        }
+    }
+
+    // Invia l'aggiornamento dei metadati registrando status code e, in caso di errore, il body
+    // della risposta, cosi' che un rifiuto inatteso riporti la motivazione del servizio.
+    private boolean sendFileMetadataUpdate(String fileKey, UpdateFileMetadataRequest request) {
+        safeStorageStepsPojo.setFileMetadataUpdateErrorBody(null);
         try {
             ResponseEntity<OperationResultCodeResponse> response = safeStorageClient
                     .updateFileMetadataWithHttpInfo(fileKey, clientId, request);
             safeStorageStepsPojo.setFileMetadataUpdateStatusCode(response.getStatusCodeValue());
+            return response.getStatusCode().is2xxSuccessful();
         } catch (HttpClientErrorException exception) {
+            log.info("Aggiornamento metadati del documento {} con {} rifiutato: {} {}",
+                    fileKey, request, exception.getRawStatusCode(), exception.getResponseBodyAsString());
             safeStorageStepsPojo.setFileMetadataUpdateStatusCode(exception.getRawStatusCode());
+            safeStorageStepsPojo.setFileMetadataUpdateErrorBody(exception.getResponseBodyAsString());
+            return false;
         }
     }
 
@@ -391,23 +408,26 @@ public class SafeStorageSteps {
     }
 
     private void checkFileMetadataUpdateStatusCode(Integer expectedStatusCode, String description) {
+        String errorBody = safeStorageStepsPojo.getFileMetadataUpdateErrorBody();
         assertThat(safeStorageStepsPojo.getFileMetadataUpdateStatusCode())
-                .as(description)
+                .as(errorBody == null ? description : description + " - risposta del servizio: " + errorBody)
                 .isEqualTo(expectedStatusCode);
     }
 
     // Confronta la data restituita con l'ultima fine disponibilita impostata, non con la
     // conservazione registrata internamente: la risposta pubblica riporta un'unica data (la
-    // fine disponibilita, quando impostata) e non permette di osservarle separatamente.
+    // fine disponibilita, quando impostata) e non permette di osservarle separatamente. Il
+    // servizio salva la fine del giorno indicato, non l'orario inviato.
     @Then("la data di scadenza riportata coincide con la fine disponibilita indicata")
     public void checkReportedExpiryMatchesAvailability() {
-        OffsetDateTime expected = safeStorageStepsPojo.getLastAvailableUntilSet();
-        assertThat(expected).as("Deve essere stata impostata una fine disponibilita in questo scenario").isNotNull();
+        OffsetDateTime lastAvailableUntilSet = safeStorageStepsPojo.getLastAvailableUntilSet();
+        assertThat(lastAvailableUntilSet).as("Deve essere stata impostata una fine disponibilita in questo scenario").isNotNull();
+        OffsetDateTime expected = toAvailabilityEndOfDay(lastAvailableUntilSet);
         FileDownloadResponse response = safeStorageStepsPojo.getFileDownloadResponse();
         assertThat(response).as("La risposta di lettura del documento non dev'essere nulla").isNotNull();
         assertThat(response.getRetentionUntil())
-                .as("La data di scadenza riportata deve coincidere con la fine disponibilita impostata")
-                .isEqualTo(expected);
+                .as("La data di scadenza riportata deve coincidere con la fine del giorno di fine disponibilita impostato")
+                .isAtSameInstantAs(expected);
     }
 
     // Confronta la data restituita in lettura con la conservazione garantita registrata in
@@ -422,7 +442,7 @@ public class SafeStorageSteps {
         assertThat(response).as("La risposta di lettura del documento non dev'essere nulla").isNotNull();
         assertThat(response.getRetentionUntil())
                 .as("La data di scadenza riportata deve coincidere con la conservazione garantita registrata")
-                .isEqualTo(expected);
+                .isAtSameInstantAs(expected);
     }
 
     private OffsetDateTime calculateAvailableUntil(String fileKey, String dateType) {
@@ -431,14 +451,14 @@ public class SafeStorageSteps {
             case "IERI" -> today.minusDays(1).atTime(12, 0).atZone(ITALY_TIME_ZONE).toOffsetDateTime();
             case "DOMANI" -> today.plusDays(1).atTime(12, 0).atZone(ITALY_TIME_ZONE).toOffsetDateTime();
             case "DOPODOMANI" -> today.plusDays(2).atTime(12, 0).atZone(ITALY_TIME_ZONE).toOffsetDateTime();
-            case "SUCCESSIVA" -> getCurrentRetentionUntil(fileKey).plusDays(1);
+            case "SUCCESSIVA" -> getGuaranteedRetentionUntil(fileKey).plusDays(1);
             case "PRECEDENTE_FUTURA" -> {
-                OffsetDateTime earlier = getCurrentRetentionUntil(fileKey).minusDays(1);
+                OffsetDateTime earlier = getGuaranteedRetentionUntil(fileKey).minusDays(1);
                 assertThat(earlier).as("La fine disponibilita precedente deve rimanere futura")
                         .isAfter(OffsetDateTime.now(ITALY_TIME_ZONE));
                 yield earlier;
             }
-            case "PARI" -> getCurrentRetentionUntil(fileKey);
+            case "PARI" -> getGuaranteedRetentionUntil(fileKey);
             default -> throw new IllegalArgumentException("Tipo di data fine disponibilita non supportato: " + dateType);
         };
     }
@@ -563,15 +583,44 @@ public class SafeStorageSteps {
             case "IERI" -> today.minusDays(1).atTime(12, 0).atZone(ITALY_TIME_ZONE).toOffsetDateTime();
             case "DOMANI" -> today.plusDays(1).atTime(12, 0).atZone(ITALY_TIME_ZONE).toOffsetDateTime();
             case "DOPODOMANI" -> today.plusDays(2).atTime(12, 0).atZone(ITALY_TIME_ZONE).toOffsetDateTime();
-            case "SUCCESSIVA" -> getCurrentRetentionUntil(fileKey).plusDays(1);
+            case "SUCCESSIVA" -> getGuaranteedRetentionUntil(fileKey).plusDays(1);
             case "PRECEDENTE_FUTURA" -> {
-                OffsetDateTime earlierRetention = getCurrentRetentionUntil(fileKey).minusDays(1);
+                OffsetDateTime earlierRetention = getGuaranteedRetentionUntil(fileKey).minusDays(1);
                 assertThat(earlierRetention).as("La retention precedente deve rimanere futura")
                         .isAfter(OffsetDateTime.now(ITALY_TIME_ZONE));
                 yield earlierRetention;
             }
             default -> throw new IllegalArgumentException("Tipo di data retention non supportato: " + dateType);
         };
+    }
+
+    // Conservazione garantita del documento. Una volta impostata la fine disponibilita la
+    // lettura riporta quest'ultima al posto della conservazione, quindi il valore letto viene
+    // registrato alla prima necessita' (o esplicitamente con "si registra la conservazione
+    // garantita corrente del documento") e poi fatto avanzare localmente (vedi
+    // trackGuaranteedRetention): la conservazione puo' solo essere posticipata. La lettura non
+    // viene anticipata negli step di aggiornamento perche' SafeStorage, leggendo un documento
+    // senza conservazione registrata, la valorizza e altererebbe le precondizioni del test.
+    private OffsetDateTime getGuaranteedRetentionUntil(String fileKey) {
+        Map<String, OffsetDateTime> guaranteedRetentionUntilByFileKey = safeStorageStepsPojo.getGuaranteedRetentionUntilByFileKey();
+        if (!guaranteedRetentionUntilByFileKey.containsKey(fileKey)) {
+            assertThat(safeStorageStepsPojo.getLastAvailableUntilSet())
+                    .as("Con la fine disponibilita gia impostata la conservazione non e' piu osservabile: "
+                            + "registrarla prima con \"si registra la conservazione garantita corrente del documento\"")
+                    .isNull();
+            guaranteedRetentionUntilByFileKey.put(fileKey, getCurrentRetentionUntil(fileKey));
+        }
+        return guaranteedRetentionUntilByFileKey.get(fileKey);
+    }
+
+    private void trackGuaranteedRetention(String fileKey, OffsetDateTime candidate) {
+        safeStorageStepsPojo.getGuaranteedRetentionUntilByFileKey()
+                .computeIfPresent(fileKey, (key, current) -> candidate.isAfter(current) ? candidate : current);
+    }
+
+    private static OffsetDateTime toAvailabilityEndOfDay(OffsetDateTime availableUntil) {
+        return availableUntil.atZoneSameInstant(ITALY_TIME_ZONE).toLocalDate()
+                .atTime(AVAILABILITY_END_OF_DAY).atZone(ITALY_TIME_ZONE).toOffsetDateTime();
     }
 
     private OffsetDateTime getCurrentRetentionUntil(String fileKey) {

@@ -6,8 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.time.OffsetDateTime;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class SafeStorageStepsPojo {
@@ -50,9 +52,16 @@ public class SafeStorageStepsPojo {
     // per verificare che la data restituita coincida con quella nota (non dedotta dalla
     // risposta stessa).
     private OffsetDateTime capturedRetentionUntil;
+    // Body dell'ultima risposta di errore all'aggiornamento dei metadati, riportato nelle
+    // asserzioni per rendere diagnosticabile un rifiuto inatteso.
+    private String fileMetadataUpdateErrorBody;
+    // Conservazione garantita nota per ciascun documento: la lettura non la espone piu' una
+    // volta impostata la fine disponibilita, quindi viene tracciata dagli step.
+    private Map<String, OffsetDateTime> guaranteedRetentionUntilByFileKey;
 
     public SafeStorageStepsPojo() {
         this.createdFiles = new LinkedList<>();
         this.fileKeyInesistenti = new LinkedList<>();
+        this.guaranteedRetentionUntilByFileKey = new HashMap<>();
     }
 }

@@ -12,7 +12,10 @@ Feature: Disponibilita dei documenti SafeStorage
   # quando impostata, altrimenti la conservazione garantita. Non e' quindi possibile
   # osservare le due date separatamente una volta che la fine disponibilita e' impostata: le
   # verifiche che la coinvolgono si limitano a confrontare la data restituita con quella
-  # appena impostata.
+  # appena impostata, normalizzata dal servizio alla fine del giorno indicato (ora italiana).
+  #
+  # La conservazione puo' essere solo posticipata: gli aggiornamenti di retention attesi con
+  # successo usano quindi una data successiva alla conservazione garantita corrente.
 
   @e2e @documentAvailability
   Scenario Outline: [SS-DOCUMENT-AVAILABILITY-1.1.1] Accettazione di una fine disponibilita non ancora trascorsa
@@ -75,7 +78,7 @@ Feature: Disponibilita dei documenti SafeStorage
   @e2e @documentAvailability
   Scenario: [SS-DOCUMENT-AVAILABILITY-5.1.1] Posticipo della conservazione senza indicare la fine disponibilita
     Given il client SafeStorage "pn-test" carica un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS"
-    When la retention del documento viene aggiornata con una data "DOMANI"
+    When la retention del documento viene aggiornata con una data "SUCCESSIVA"
     Then l'aggiornamento della retention viene completato con successo
     When viene richiesto il contenuto del documento
     Then il documento risulta ancora scaricabile
@@ -121,9 +124,10 @@ Feature: Disponibilita dei documenti SafeStorage
     # (fine disponibilita gia' trascorsa) richiederebbe di impostare direttamente una data
     # passata, che l'API rifiuta sempre, e resta quindi una verifica manuale.
     Given il client SafeStorage "pn-test" carica un nuovo documento di tipo "PN_NOTIFICATION_ATTACHMENTS"
+    And si registra la conservazione garantita corrente del documento
     When la fine disponibilita del documento viene impostata a una data "DOMANI"
     Then l'impostazione della fine disponibilita viene completata con successo
-    When la retention del documento viene aggiornata con una data "DOPODOMANI"
+    When la retention del documento viene aggiornata con una data "SUCCESSIVA"
     Then l'aggiornamento della retention viene completato con successo
     When viene richiesto il contenuto del documento
     Then il documento risulta ancora scaricabile
