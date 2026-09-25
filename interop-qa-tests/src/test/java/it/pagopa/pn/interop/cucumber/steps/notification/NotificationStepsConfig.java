@@ -118,8 +118,8 @@ public class NotificationStepsConfig {
                                 .eserviceNewVersionSubmittedToDelegator(true)
                                 .eserviceNewVersionApprovedRejectedToDelegate(true)
                                 .delegationSubmittedRevokedToDelegate(true)
-                                .eserviceArchivingRequestedToDelegator(false)
-                                .eserviceArchivingApprovedRejectedToDelegate(false)
+                                .eserviceArchivingRequestedToDelegator(true)
+                                .eserviceArchivingApprovedRejectedToDelegate(true)
 
                                 // Altri
                                 .certifiedVerifiedAttributeAssignedRevokedToAssignee(true)
@@ -197,8 +197,8 @@ public class NotificationStepsConfig {
                                 .eserviceNewVersionSubmittedToDelegator(true)
                                 .eserviceNewVersionApprovedRejectedToDelegate(true)
                                 .delegationSubmittedRevokedToDelegate(true)
-                                .eserviceArchivingRequestedToDelegator(false)
-                                .eserviceArchivingApprovedRejectedToDelegate(false)
+                                .eserviceArchivingRequestedToDelegator(true)
+                                .eserviceArchivingApprovedRejectedToDelegate(true)
 
                                 // Altri
                                 .certifiedVerifiedAttributeAssignedRevokedToAssignee(true)
@@ -431,8 +431,8 @@ public class NotificationStepsConfig {
                                 .eserviceNewVersionSubmittedToDelegator(true)
                                 .eserviceNewVersionApprovedRejectedToDelegate(true)
                                 .delegationSubmittedRevokedToDelegate(true)
-                                .eserviceArchivingRequestedToDelegator(false)
-                                .eserviceArchivingApprovedRejectedToDelegate(false)
+                                .eserviceArchivingRequestedToDelegator(true)
+                                .eserviceArchivingApprovedRejectedToDelegate(true)
 
                                 // Altri
                                 .certifiedVerifiedAttributeAssignedRevokedToAssignee(true)
@@ -587,8 +587,8 @@ public class NotificationStepsConfig {
                                 .eserviceNewVersionSubmittedToDelegator(true)
                                 .eserviceNewVersionApprovedRejectedToDelegate(true)
                                 .delegationSubmittedRevokedToDelegate(true)
-                                .eserviceArchivingRequestedToDelegator(false)
-                                .eserviceArchivingApprovedRejectedToDelegate(false)
+                                .eserviceArchivingRequestedToDelegator(true)
+                                .eserviceArchivingApprovedRejectedToDelegate(true)
 
                                 // Altri
                                 .certifiedVerifiedAttributeAssignedRevokedToAssignee(true)
