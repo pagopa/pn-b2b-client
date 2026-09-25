@@ -378,29 +378,27 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
     And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
       | startDate  | $DATE_ADD(-1D)                        |
       | endDate    | $DATE_ADD(1D)                         |
-      | campaignId | MessaMora                             |
-      | status     | COMPLETED_REACHED;COMPLETED_UNREACHED |
+      | campaignId | Reminder                              |
+      | listStatus | COMPLETED_UNREACHED;COMPLETED_REACHED |
       | senderId   | :informal_senderId                    |
       | size       | 50                                    |
-      | delivered  | true                                  |
+      | delivered  | NULL                                  |
     And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
-      | sentAt             | $DATE_ADD(-1D), $DATE_ADD(1D)         |
+      | sentAt             | $DATE_ADD(-1D), $DATE_ADD(1D) |
       | notificationStatus | COMPLETED_REACHED;COMPLETED_UNREACHED |
 
     #    ricerca per specifico stato
     And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
       | startDate  | $DATE_ADD(-1D)            |
       | endDate    | $DATE_ADD(1D)             |
-      | campaignId | MessaMora                 |
-      | status     | COMPLETED_REACHED;REFUSED |
+      | campaignId | Reminder                  |
+      | listStatus | COMPLETED_REACHED;REFUSED |
       | senderId   | :informal_senderId        |
       | size       | 50                        |
-      | delivered  | true                      |
+      #| delivered  | true                      |
     And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
       | sentAt             | $DATE_ADD(-1D), $DATE_ADD(1D) |
       | notificationStatus | COMPLETED_REACHED             |
-
-
 
 
 

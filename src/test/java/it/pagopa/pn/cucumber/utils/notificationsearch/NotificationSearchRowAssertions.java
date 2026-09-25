@@ -83,6 +83,8 @@ public final class NotificationSearchRowAssertions {
                 return;
             }
             rows.forEach(row -> assertRowFieldMatches(row, field, allowedValues));
+            //todo t stato
+//
             if (allowedValues.size() > 1) {
                 assertAllAllowedScalarValuesAreRepresented(rows, field, allowedValues);
             }
@@ -95,12 +97,6 @@ public final class NotificationSearchRowAssertions {
      * campi data (es. {@code sentAt}), per cui più valori indicano rispettivamente un elenco di valori
      * ammessi per riga o un range: per questi due casi il tipo del campo viene dedotto dalla prima riga.
      */
-
-    //todo t stato ->
-    /** Dopo aver visto il DTO di risposta:
-        se notificationStatus è List → finito.
-        se notificationStatus è String/enum → bisogna escluderlo dal controllo assertAllAllowedScalarValuesAreRepresented().
-     **/
 
     private static void assertAllAllowedScalarValuesAreRepresented(List<?> rows, String field, List<String> allowedValues) {
         if (!rows.isEmpty()) {

@@ -26,8 +26,8 @@ public class NotificationSearchParam {
     public String mandateId;
     public String senderId;
     //todo t stato
-    public List<String> status;
-    //public String status;
+    public List<String> listStatus;
+    public String status;
     public String subjectRegExp;
     public String iunMatch;
     public String recipientId;
@@ -38,5 +38,5 @@ public class NotificationSearchParam {
     public String communicationType;
     public String campaignId;
     public boolean viewed;
-    public boolean delivered;
+    public Boolean delivered;
 }

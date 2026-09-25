@@ -8,6 +8,7 @@ import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.UnaryOperator;
 
 /**
@@ -45,10 +46,9 @@ public class NotificationSearchParamMapper {
         searchParam.xPagopaPnCxId = resolveWithDefault(data, "xPagopaPnCxId", NotificationSearchParam.RESOLVE_FROM_CALLER, dynamicValueResolver);
         searchParam.mandateId = resolveWithDefault(data, "mandateId", null, dynamicValueResolver);
         searchParam.senderId = resolveWithDefault(data, "senderId", null, dynamicValueResolver);
-        //searchParam.status = resolveWithDefault(data, "status", null, dynamicValueResolver);
+        searchParam.status = resolveWithDefault(data, "status", null, dynamicValueResolver);
         //todo t stato
-        searchParam.status = resolveStatuses(resolveWithDefault(data, "status", null, dynamicValueResolver));
-
+        searchParam.listStatus = resolveStatuses(resolveWithDefault(data, "listStatus", null, dynamicValueResolver));
         searchParam.subjectRegExp = resolveWithDefault(data, "subjectRegExp", null, dynamicValueResolver);
         searchParam.recipientId = resolveWithDefault(data, "recipientId", null, dynamicValueResolver);
         searchParam.xPagopaPnCxGroups = resolveGroups(resolveWithDefault(data, "xPagopaPnCxGroups", null, dynamicValueResolver));
@@ -59,7 +59,8 @@ public class NotificationSearchParamMapper {
         searchParam.size = resolveSize(resolveWithDefault(data, "size", DEFAULT_SIZE, dynamicValueResolver));
         searchParam.iunMatch = resolveWithDefault(data, "iunMatch", null, dynamicValueResolver);
         searchParam.viewed = Boolean.parseBoolean(resolveWithDefault(data, "viewed", "false", dynamicValueResolver));
-        searchParam.delivered = Boolean.parseBoolean(resolveWithDefault(data, "delivered", "false", dynamicValueResolver));
+        //searchParam.delivered = Boolean.parseBoolean(resolveWithDefault(data, "delivered", null, dynamicValueResolver));
+        searchParam.delivered = Optional.ofNullable(resolveWithDefault(data, "delivered", null, dynamicValueResolver)).map(Boolean::valueOf).orElse(null);
         return searchParam;
     }
 
