@@ -83,6 +83,8 @@ public final class NotificationSearchRowAssertions {
                 return;
             }
             rows.forEach(row -> assertRowFieldMatches(row, field, allowedValues));
+            //todo t stato
+//
             if (allowedValues.size() > 1) {
                 assertAllAllowedScalarValuesAreRepresented(rows, field, allowedValues);
             }
@@ -95,6 +97,7 @@ public final class NotificationSearchRowAssertions {
      * campi data (es. {@code sentAt}), per cui più valori indicano rispettivamente un elenco di valori
      * ammessi per riga o un range: per questi due casi il tipo del campo viene dedotto dalla prima riga.
      */
+
     private static void assertAllAllowedScalarValuesAreRepresented(List<?> rows, String field, List<String> allowedValues) {
         if (!rows.isEmpty()) {
             Object firstValue = NotificationRowFieldReader.readField(rows.get(0), field);
