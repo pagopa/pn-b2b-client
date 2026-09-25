@@ -31,7 +31,6 @@ public class ConsolidatoreV2Steps {
     public void prepareNormalizeRequest(DataTable dataTable) {
 
         Map<String, String> dati = dataTable.asMap(String.class, String.class);
-        String randomId = "id-" + UUID.randomUUID();
         String randomCorrelationId = "correlation-" + UUID.randomUUID();
 
         AnalogAddress address = new AnalogAddress()
@@ -44,13 +43,10 @@ public class ConsolidatoreV2Steps {
                 .country(nullableValue(dati, "country"))
                 .nameRow2(nullableValue(dati, "nameRow2"));
 
-        NormalizeRequest requestItem = new NormalizeRequest()
-                .id(randomId)
-                .address(address);
 
         request = new NormalizeSyncRequest()
                 .correlationId(randomCorrelationId)
-                .requestItem(requestItem);
+                .address(address);
     }
 
     private String nullableValue(Map<String, String> dati, String key) {

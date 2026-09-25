@@ -848,9 +848,9 @@
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>
                             <configOptions>
-                                <apiPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.address-manager.api
+                                <apiPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.address_manager.api
                                 </apiPackage>
-                                <modelPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.address-manager.model
+                                <modelPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.address_manager.model
                                 </modelPackage>
                                 <dateLibrary>java8</dateLibrary>
                                 <annotationLibrary>none</annotationLibrary>
@@ -862,9 +862,9 @@
                                     @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
                                 </additionalModelTypeAnnotations>
                             </configOptions>
-                            <apiPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.address-manager.api
+                            <apiPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.address_manager.api
                             </apiPackage>
-                            <modelPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.address-manager.model
+                            <modelPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.address_manager.model
                             </modelPackage>
                         </configuration>
                     </execution>

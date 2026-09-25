@@ -64,7 +64,6 @@ Feature: Gara Consolidatore/Recapito FASE 2
     And si verifica che il deliveryDetailCode "REC018" non è presente in timeline
     And si verifica che il deliveryDetailCode "CON09B" non è presente in timeline
     And si verifica che il deliveryDetailCode "REC991" non è presente in timeline
-#    Given imposto lo iun di SharedSteps a "YLDE-RXHT-HYQG-202609-D-1" e la pa a "Comune_Multi"
     And si verifica che su DynamoDB è presente l'elemento "PREPARE_ANALOG_DOMICILE" nella tabella pn-PaperTrackings con statusCodes "REC016,REC018,CON09B,REC991"
 
   @consolidatoreFase2
@@ -84,8 +83,6 @@ Feature: Gara Consolidatore/Recapito FASE 2
   @consolidatoreFase2
   Scenario Outline: [CON_F_TWO_06_01] Normalizzazione sincrona con dati configurabili
     Given preparo una request di normalizzazione con:
-      | correlationId | <correlationId> |
-      | id            | <id>            |
       | addressRow    | <addressRow>    |
       | addressRow2   | <addressRow2>   |
       | cap           | <cap>           |

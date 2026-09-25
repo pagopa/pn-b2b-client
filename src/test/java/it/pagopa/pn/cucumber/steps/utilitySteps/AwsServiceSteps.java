@@ -165,9 +165,13 @@ public class AwsServiceSteps {
                                     .as("Il valore di category deve essere una String")
                                     .isInstanceOf(String.class);
 
-                            assertThat(categories)
-                                    .as("Category non prevista: %s", val)
-                                    .contains((String) val);
+                            assertThat(queryResponse.items().stream()
+                                    .map(itemValue -> itemValue.get("category"))
+                                    .filter(Objects::nonNull)
+                                    .map(AttributeValue::s)
+                                    .toList())
+                                    .as("Non sono presenti tutte le category attese")
+                                    .containsAll(categories);
                         }
                         log.info("{}: {}", key, val);
                     });
