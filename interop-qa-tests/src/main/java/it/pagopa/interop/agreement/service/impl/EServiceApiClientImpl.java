@@ -127,6 +127,57 @@ public class EServiceApiClientImpl implements IEServiceClient {
     }
 
     @Override
+    public ResponseEntity<Void> submitDelegatedDescriptorArchiving(UUID eServiceId, UUID descriptorId, GracePeriodDays gracePeriodDays) {
+        return eservicesApi.submitDelegatedDescriptorArchivingWithHttpInfo(
+                eServiceId,
+                descriptorId,
+                new GracePeriodDaysSeed().gracePeriodDays(gracePeriodDays)
+        );
+    }
+
+    @Override
+    public ResponseEntity<Void> cancelDelegatedDescriptorArchivingRequest(UUID eServiceId, UUID descriptorId) {
+        return eservicesApi.cancelDelegatedDescriptorArchivingWithHttpInfo(eServiceId, descriptorId);
+    }
+
+    @Override
+    public ResponseEntity<Void> approveDelegatedDescriptorArchiving(UUID eServiceId, UUID descriptorId) {
+        return eservicesApi.approveDelegatedDescriptorArchivingWithHttpInfo(eServiceId, descriptorId);
+    }
+
+    @Override
+    public ResponseEntity<Void> rejectDelegatedDescriptorArchiving(UUID eServiceId, UUID descriptorId, String rejectionReason) {
+        return eservicesApi.rejectDelegatedDescriptorArchivingWithHttpInfo(
+                eServiceId,
+                descriptorId,
+                new RejectDelegatedDescriptorArchivingSeed().rejectionReason(rejectionReason)
+        );
+    }
+
+    @Override
+    public ResponseEntity<Void> submitDelegatedEServiceArchiving(UUID eServiceId, EServiceArchivingSeed eserviceArchivingSeed) {
+        return eservicesApi.submitDelegatedEServiceArchivingWithHttpInfo(eServiceId, eserviceArchivingSeed);
+    }
+
+    @Override
+    public ResponseEntity<Void> cancelDelegatedEServiceArchivingRequest(UUID eServiceId) {
+        return eservicesApi.cancelDelegatedEServiceArchivingWithHttpInfo(eServiceId);
+    }
+
+    @Override
+    public ResponseEntity<Void> approveDelegatedEServiceArchiving(UUID eServiceId) {
+        return eservicesApi.approveDelegatedEServiceArchivingWithHttpInfo(eServiceId);
+    }
+
+    @Override
+    public ResponseEntity<Void> rejectDelegatedEServiceArchiving(UUID eServiceId, String rejectionReason) {
+        return eservicesApi.rejectDelegatedEServiceArchivingWithHttpInfo(
+                eServiceId,
+                new RejectDelegatedEServiceArchivingSeed().rejectionReason(rejectionReason)
+        );
+    }
+
+    @Override
     public CreatedResource createDescriptor(UUID eServiceId) {
         return eservicesApi.createDescriptor(eServiceId);
     }
@@ -279,7 +330,7 @@ public class EServiceApiClientImpl implements IEServiceClient {
             String eServiceName) {
         /* DEV. NOTE 22/10/2025: il campo "personalData" è stato aggiunto a posteriori della
          * stesura di questo metodo. Essendo opzionale, lo si pone a null per mantenere compatibilità con i test esistenti. */
-        return this.eservicesApi.getProducerEServicesWithHttpInfo(0, 50, null, eServiceName, null, null);
+        return this.eservicesApi.getProducerEServicesWithHttpInfo(0, 50, null, eServiceName, null, null, null);
     }
 
     @Override

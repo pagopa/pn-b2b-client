@@ -6,25 +6,6 @@ Feature: Censimento stime mittenti
       | classpath:/t0_tc_modulo_commessa_febbraio_25.json |
     And si verifica che la tabella pn-PaperDeliverySenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
 
-  @censimentoStimeMittenti
-  Scenario: [SM_01] Verifica la gestione del caricamento delle commesse per il calcolo delle stime mittenti
-    Given viene caricato su SafeStorage il documento "classpath:/t0_tc_modulo_commessa_gennaio_25.json" con contentType "application/json" di tipo "PN_SERVICE_ORDER" e status "SAVED"
-    And viene caricato su SafeStorage il documento "classpath:/t0_tc_modulo_commessa_febbraio_25.json" con contentType "application/json" di tipo "PN_SERVICE_ORDER" e status "SAVED"
-    And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
-      | classpath:/t0_tc_modulo_commessa_gennaio_25.json  |
-      | classpath:/t0_tc_modulo_commessa_febbraio_25.json |
-    And si verifica che la tabella pn-PaperDeliverySenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
-    When viene caricato su SafeStorage il documento "classpath:/t1_tc_modulo_commessa_febbraio_25.json" con contentType "application/json" di tipo "PN_SERVICE_ORDER" e status "SAVED"
-    And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
-      | classpath:/t0_tc_modulo_commessa_gennaio_25.json  |
-      | classpath:/t1_tc_modulo_commessa_febbraio_25.json |
-    And si verifica che la tabella pn-PaperDeliverySenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
-    And viene caricato su SafeStorage il documento "classpath:/t1_tc_modulo_commessa_gennaio_25.json" con contentType "application/json" di tipo "PN_SERVICE_ORDER" e status "SAVED"
-    And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
-      | classpath:/t1_tc_modulo_commessa_gennaio_25.json  |
-      | classpath:/t1_tc_modulo_commessa_febbraio_25.json |
-    Then si verifica che la tabella pn-PaperDeliverySenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
-
   @controlloCalcoloStimeMittenti
   Scenario: [SM_02] Verifica il calcolo delle stime settimanali provinciali a partire dai dati delle stime mensili regionali
     Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_primo_trimestre_26.zip"
@@ -180,6 +161,29 @@ Feature: Censimento stime mittenti
     # Ripristino delle commesse originali
     Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_aprile_26.zip"
     Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_maggio_26.zip"
+    And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
+      | classpath:/modulo_commessa_ranking2nd_890.json |
+    Then si verifica che la tabella pn-PaperDeliverySenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
+
+  @censimentoStimeMittenti
+  Scenario: [TC_CENSIMENTO_RICARICO_MESE_CAVALLO] Verifica che il ricaricamento di una commessa dello stesso mese aggiorni originalEstimate e monthlyEstimate anche per la settimana a cavallo con il mese successivo
+    Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_giugno_26.zip"
+    Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_luglio_26.zip"
+    And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
+      | classpath:/modulo_commessa_P1_giugno.json |
+      | classpath:/modulo_commessa_P1_luglio.json |
+    Then si verifica che la tabella pn-PaperDeliverySenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
+    #La settimana "2026-06-29" è a cavallo tra giugno (2 giorni: 29-30) e luglio (5 giorni: 01-05): essendo il lunedì
+    #di riferimento compreso in giugno, monthlyEstimate e originalEstimate di quella riga devono riportare i valori
+    #della commessa di GIUGNO, mentre weeklyEstimate somma il contributo di entrambi i mesi
+    #Viene ricaricata la commessa di giugno con stime diverse per lo stesso ente: weeklyEstimate, monthlyEstimate e
+    #originalEstimate della settimana a cavallo devono aggiornarsi prendendo il valore della nuova commessa di giugno,
+    #mentre la parte di luglio non deve subire variazioni
+    Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_giugno_26_modified.zip"
+    And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
+      | classpath:/modulo_commessa_P1_giugno_modified.json |
+      | classpath:/modulo_commessa_P1_luglio.json          |
+    Then si verifica che la tabella pn-PaperDeliverySenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
 
   @censimentoStimeMittenti
   Scenario: [TC_CENSIMENTO_STIME_MOCK_1] Verifica che il caricamento di moduli commessa MOCK non influisca sulle tabelle reali
@@ -193,7 +197,6 @@ Feature: Censimento stime mittenti
       | firstWeekNumberOfShipments  | 4 |
       | secondWeekNumberOfShipments | 3 |
     Then si verifica che la tabella pn-PaperDeliverySenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
-
     #Carico una commessa MOCK e ne verifico il corretto caricamento con i giusti limiti soltanto nella tabella MOCK e non in quella reale
     Given vengono caricati i moduli commessa mock tramite il seguente zip: "portfatt_modulo_commessa_mock_aprile_26.zip"
     Given vengono caricati i moduli commessa mock tramite il seguente zip: "portfatt_modulo_commessa_mock_maggio_26.zip"
@@ -210,10 +213,4 @@ Feature: Censimento stime mittenti
       | numberOfShipments           | 7 |
       | firstWeekNumberOfShipments  | 4 |
       | secondWeekNumberOfShipments | 3 |
-    #Allineo le commesse MOCK a quelle reali prima di chiudere il test
-    Given vengono caricati i moduli commessa mock tramite il seguente zip: "portfatt_modulo_commessa_aprile_26.zip"
-    Given vengono caricati i moduli commessa mock tramite il seguente zip: "portfatt_modulo_commessa_maggio_26.zip"
-    And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
-      | classpath:/modulo_commessa_ranking2nd_890.json |
-    Then si verifica che la tabella pn-PaperDeliverySenderLimitMock contenga i nuovi limiti mittenti per la provincia "P1"
 

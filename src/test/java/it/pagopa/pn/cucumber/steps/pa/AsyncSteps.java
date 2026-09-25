@@ -7,6 +7,11 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.payment.PaymentInfoRequest;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingPaymentInfo;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponsePaymentInfo;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServicePaymentInfo;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnGPDClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.gpd.model.PaymentOptionModel;
@@ -19,6 +24,8 @@ import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
@@ -32,6 +39,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 @Slf4j
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class AsyncSteps {
     @Value("${pn.external.costo_base_notifica}")
     private Integer costoBaseNotifica;
@@ -41,11 +49,10 @@ public class AsyncSteps {
     private final PnPaymentInfoClientImpl pnPaymentInfoClientImpl;
     private final List<PaymentPositionModel> paymentPositionModel;
     private List<BffPaymentInfoItem> paymentInfoResponse;
+    private List<PaymentInfoRequest> lastPaymentInfoRequestList;
     private String deleteGpdResponse;
     private Integer amountGPD;
     private final List<Integer> amountNotifica;
-    private static final Integer NUM_CHECK_PAYMENT_INFO = 32;
-    private static final Integer WAITING_PAYMENT_INFO = 1000;
 
 
     @Autowired
@@ -131,32 +138,44 @@ public class AsyncSteps {
                 .creditorTaxId(Objects.requireNonNull(Objects.requireNonNull(positionUser.getPaymentOption()).get(0).getTransfer()).get(0).getOrganizationFiscalCode())
                 .noticeCode("3" + positionUser.getPaymentOption().get(0).getIuv());
         paymentInfoRequestList.add(paymentInfoRequest);
+        lastPaymentInfoRequestList = paymentInfoRequestList;
 
         log.info("User: " + positionUser);
         log.info("Messaggio json da allegare: " + paymentInfoRequest);
-        //TODO utilizzare algoritmo di polling
-        for (int i = 0; i < NUM_CHECK_PAYMENT_INFO; i++) {
-            try {
-                Assertions.assertDoesNotThrow(() -> {
-                    paymentInfoResponse = pnPaymentInfoClientImpl.getPaymentInfoV21(paymentInfoRequestList);
-                    log.info("Risposta recupero posizione debitoria: " + paymentInfoResponse.toString());
-                });
-                Assertions.assertNotNull(paymentInfoResponse);
-                if (!Objects.equals(amountGPD, paymentInfoResponse.get(0).getAmount())) {
-                    amountGPD = paymentInfoResponse.get(0).getAmount();
-                    break;
-                }
-                try {
-                    Thread.sleep(WAITING_PAYMENT_INFO);
-                } catch (InterruptedException exc) {
-                    throw new RuntimeException(exc);
-                }
-            } catch (AssertionFailedError assertionFailedError) {
-                String message = assertionFailedError.getMessage() +
-                        "{la posizione debitoria " + (paymentInfoResponse == null ? "NULL" : paymentInfoResponse.toString()) + " }";
-                throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-            }
-        }
+
+        pollPaymentInfoAmount(paymentInfoRequestList, amountGPD, null);
+    }
+
+    private void pollPaymentInfoAmount(List<PaymentInfoRequest> paymentInfoRequestList,
+                                       Integer previousAmount,
+                                       Integer expectedAmount) {
+        PnPollingPaymentInfo pollingPaymentInfo = new PnPollingPaymentInfo();
+        pollingPaymentInfo.setPaymentInfoRequestList(paymentInfoRequestList);
+        pollingPaymentInfo.setPreviousAmount(previousAmount);
+        pollingPaymentInfo.setExpectedAmount(expectedAmount);
+
+        String notices = paymentInfoRequestList.stream()
+                .map(PaymentInfoRequest::getNoticeCode)
+                .reduce((a, b) -> a + "," + b)
+                .orElse("empty");
+        log.info("ASYNC GPD poll request iun={} noticeCodes=[{}] previousAmount={} expectedAmount={}",
+                sharedSteps.getNotificationIun(), notices, previousAmount, expectedAmount);
+
+        PnPollingServicePaymentInfo pollingService = (PnPollingServicePaymentInfo) sharedSteps.getPollingFactory()
+                .getPollingService(PnPollingStrategy.PAYMENT_INFO);
+        PnPollingResponsePaymentInfo pollingResponse = pollingService.waitForEvent(
+                PnPollingStrategy.PAYMENT_INFO,
+                PnPollingParameter.builder()
+                        .value(PnPollingStrategy.PAYMENT_INFO)
+                        .pnPollingPaymentInfo(pollingPaymentInfo)
+                        .build());
+
+        paymentInfoResponse = pollingResponse.getPaymentInfoResponse();
+        amountGPD = pollingResponse.getAmount();
+        log.info("ASYNC GPD poll done iun={} noticeCodes=[{}] resultAmount={} resultFlag={}",
+                sharedSteps.getNotificationIun(), notices, amountGPD, pollingResponse.getResult());
+        Assertions.assertNotNull(paymentInfoResponse);
+        Assertions.assertNotNull(amountGPD);
     }
 
     @And("lettura amount posizione debitoria per pagamento {int}")
@@ -244,9 +263,14 @@ public class AsyncSteps {
 
     @And("viene effettuato il controllo del amount di GPD = {string}")
     public void vieneEffettuatoIlControlloDelAmountDiGPD(String amount) {
+        Integer expectedAmount = Integer.parseInt(amount);
         try {
+            if (lastPaymentInfoRequestList != null) {
+                // Attendere il valore atteso (es. rientro a 100 post-cancel), non solo un qualsiasi cambio
+                pollPaymentInfoAmount(lastPaymentInfoRequestList, amountGPD, expectedAmount);
+            }
             log.info("Amount GPD: " + amountGPD);
-            assertThat(amountGPD).as("L'amount GPD non coincide col valore atteso").isEqualTo(Integer.parseInt(amount));
+            assertThat(amountGPD).as("L'amount GPD non coincide col valore atteso").isEqualTo(expectedAmount);
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertionFailedErrorWithAmountGPDAndIUN(assertionFailedError, amountGPD);
         }

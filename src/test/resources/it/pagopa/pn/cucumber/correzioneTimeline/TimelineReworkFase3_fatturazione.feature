@@ -363,7 +363,7 @@ Feature: Correzione timeline fase 3
       | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0 |
 
   @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_5_VIEWED] Restart di notifica che va in OK all'attempt 0 (anche al restart va in OK all'attempt 0)
+  Scenario: [TR3_RESTART_5_VIEWED] Tentativo di restart (destinato a fallire causa VIEWED) di notifica che va in OK all'attempt 0 (anche al restart sarebbe dovuta andare in OK all'attempt 0)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -389,26 +389,43 @@ Feature: Correzione timeline fase 3
     And "Mario Gherkin" legge la notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     When viene invocata una richiesta di restart per la notifica appena creata
-    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
-    And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
-    And vengono letti gli eventi fino allo stato della notifica "VIEWED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
-      | iun             | auto                                                                    |
-      | tag             | AUD_NT_UPDATE_COST                                                      |
-      | recIndex        | recIndex=0                                                              |
-      | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
-      | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 240 secondi controllando ogni 5 secondi
-    And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
-    Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
-      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0 |
-      | element2 | REFINEMENT;RECINDEX_0                     |
-    And controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato NEW
-      | noElementsExpected |  |
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 200 secondi controllando ogni 5 secondi
+    And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
 
   @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_6_VIEWED] Restart di notifica che va in OK all'attempt 0 (al restart va in KO all'attempt 0 e OK all'attempt 1)
+  Scenario: [TR3_RESTART_5_VIEWED_CAN_INVALIDATE_VIEWED] Tentativo di restart (destinato a fallire causa VIEWED) di notifica che va in OK all'attempt 0 (anche al restart sarebbe dovuta andare in OK all'attempt 0)
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+      | pagoPaIntMode         | SYNC                        |
+      | feePolicy             | DELIVERY_MODE               |
+      | paFee                 | 17                          |
+      | vat                   | 10                          |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | Via@OK_AR          |
+      | digitalDomicile         | NULL               |
+      | payment_creditorTaxId   | 77777777777        |
+      | payment_pagoPaForm      | SI                 |
+      | payment_f24             | NULL               |
+      | title_payment           | PagoPa_testRestart |
+      | apply_cost_pagopa       | SI                 |
+      | payment_multy_number    | 1                  |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And "Mario Gherkin" legge la notifica
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
+    When viene invocata una richiesta di restart per la notifica appena creata con i seguenti parametri:
+      | iun | attemptId | recIndex   | reason     | task       | canInvalidateViewed |
+      |     | ATTEMPT_0 | RECINDEX_0 | reasonTest | TEST-12345 | true                |
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 200 secondi controllando ogni 5 secondi
+    And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
+
+  @timelineReworkF3 @checkRestart
+  Scenario: [TR3_RESTART_6_VIEWED] Tentativo di restart (destinato a fallire causa VIEWED) di notifica che va in OK all'attempt 0 (al restart sarebbe dovuta andare in KO all'attempt 0 e OK all'attempt 1)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -433,23 +450,10 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And "Mario Gherkin" legge la notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
-    And vengono letti gli eventi fino allo stato della notifica "VIEWED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
-      | iun             | auto                                                                    |
-      | tag             | AUD_NT_UPDATE_COST                                                      |
-      | recIndex        | recIndex=0                                                              |
-      | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
-      | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
-    Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
-      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0 |
-      | element2 | REFINEMENT;RECINDEX_0                     |
-    And controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato NEW
-      | noElementsExpected |  |
+    And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
 
   @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_7_VIEWED] Restart di notifica che va in OK all'attempt 0 (al restart va in KO all'attempt 0 e KO all'attempt 1)
+  Scenario: [TR3_RESTART_7_VIEWED] Tentativo di restart (destinato a fallire causa VIEWED) di notifica che va in OK all'attempt 0 (al restart sarebbe dovuta andare in KO all'attempt 0 e KO all'attempt 1)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -474,23 +478,10 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And "Mario Gherkin" legge la notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
-    And vengono letti gli eventi fino allo stato della notifica "VIEWED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
-      | iun             | auto                                                                    |
-      | tag             | AUD_NT_UPDATE_COST                                                      |
-      | recIndex        | recIndex=0                                                              |
-      | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
-      | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
-    Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
-      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0 |
-      | element2 | REFINEMENT;RECINDEX_0                     |
-    And controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato NEW
-      | noElementsExpected |  |
+    And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
 
   @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_8_VIEWED] Restart di notifica che va in OK all'attempt 0 (al restart va in RETURNED_TO_SENDER)
+  Scenario: [TR3_RESTART_8_VIEWED] Tentativo di restart (destinato a fallire causa VIEWED) di notifica che va in OK all'attempt 0 (al restart sarebbe dovuta andare in RETURNED_TO_SENDER)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -515,20 +506,7 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And "Mario Gherkin" legge la notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
-    And vengono letti gli eventi fino allo stato della notifica "VIEWED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
-      | iun             | auto                                                                    |
-      | tag             | AUD_NT_UPDATE_COST                                                      |
-      | recIndex        | recIndex=0                                                              |
-      | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
-      | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
-    Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
-      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0 |
-      | element2 | REFINEMENT;RECINDEX_0                     |
-    And controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato NEW
-      | noElementsExpected |  |
+    And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
 
   ###OK attempt 1, poi restart
 
@@ -747,7 +725,7 @@ Feature: Correzione timeline fase 3
       | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0 |
 
   @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_9_VIEWED] Restart di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (anche al restart va in KO all'attempt 0 e in OK all'attempt 1)
+  Scenario: [TR3_RESTART_9_VIEWED] Tentativo di restart (destinato a fallire causa VIEWED) di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (anche al restart sarebbe dovuta andare in KO all'attempt 0 e in OK all'attempt 1)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -774,33 +752,44 @@ Feature: Correzione timeline fase 3
     And "Mario Gherkin" legge la notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     When viene invocata una richiesta di restart per la notifica appena creata
-    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
-    And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
-    And vengono letti gli eventi fino allo stato della notifica "VIEWED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
-      | iun             | auto                                                                    |
-      | tag             | AUD_NT_UPDATE_COST                                                      |
-      | recIndex        | recIndex=0                                                              |
-      | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
-      | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
-      | iun             | auto                                                                     |
-      | tag             | AUD_NT_UPDATE_COST                                                       |
-      | recIndex        | recIndex=0                                                               |
-      | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1                                     |
-      | invalidatedCost | SecondAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 240 secondi controllando ogni 5 secondi
-    And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
-    Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
-      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0 |
-      | element2 | SEND_ANALOG_DOMICILE;ATTEMPT_1;RECINDEX_0 |
-      | element3 | REFINEMENT;RECINDEX_0                     |
-    And controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato NEW
-      | noElementsExpected |  |
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 200 secondi controllando ogni 5 secondi
+    And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
 
   @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_10_VIEWED] Restart di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (al restart va in OK all'attempt 0)
+  Scenario: [TR3_RESTART_9_VIEWED_CAN_INVALIDATE_VIEWED] Tentativo di restart (destinato a fallire causa VIEWED) di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (anche al restart sarebbe dovuta andare in KO all'attempt 0 e in OK all'attempt 1)
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+      | pagoPaIntMode         | SYNC                        |
+      | feePolicy             | DELIVERY_MODE               |
+      | paFee                 | 17                          |
+      | vat                   | 10                          |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | Via@FAIL-DISCOVERY_AR |
+      | digitalDomicile         | NULL                  |
+      | payment_creditorTaxId   | 77777777777           |
+      | payment_pagoPaForm      | SI                    |
+      | payment_f24             | NULL                  |
+      | title_payment           | PagoPa_testRestart    |
+      | apply_cost_pagopa       | SI                    |
+      | payment_multy_number    | 1                     |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And "Mario Gherkin" legge la notifica
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
+    When viene invocata una richiesta di restart per la notifica appena creata con i seguenti parametri:
+      | iun | attemptId | recIndex   | reason     | task       | canInvalidateViewed |
+      |     | ATTEMPT_0 | RECINDEX_0 | reasonTest | TEST-12345 | true                |
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 200 secondi controllando ogni 5 secondi
+    And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
+
+  @timelineReworkF3 @checkRestart
+  Scenario: [TR3_RESTART_10_VIEWED] Tentativo di restart (destinato a fallire causa VIEWED) di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (al restart sarebbe dovuta andare in OK all'attempt 0)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -826,30 +815,10 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And "Mario Gherkin" legge la notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
-    And vengono letti gli eventi fino allo stato della notifica "VIEWED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
-      | iun             | auto                                                                    |
-      | tag             | AUD_NT_UPDATE_COST                                                      |
-      | recIndex        | recIndex=0                                                              |
-      | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
-      | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
-      | iun             | auto                                                                     |
-      | tag             | AUD_NT_UPDATE_COST                                                       |
-      | recIndex        | recIndex=0                                                               |
-      | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1                                     |
-      | invalidatedCost | SecondAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
-    Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
-      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0 |
-      | element2 | SEND_ANALOG_DOMICILE;ATTEMPT_1;RECINDEX_0 |
-      | element3 | REFINEMENT;RECINDEX_0                     |
-    And controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato NEW
-      | noElementsExpected |  |
+    And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
 
   @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_11_VIEWED] Restart di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (al restart va in KO all'attempt 0 e all'attempt 1)
+  Scenario: [TR3_RESTART_11_VIEWED] Tentativo di restart (destinato a fallire causa VIEWED) di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (al restart sarebbe dovuta andare in KO all'attempt 0 e all'attempt 1)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -875,30 +844,10 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And "Mario Gherkin" legge la notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
-    And vengono letti gli eventi fino allo stato della notifica "VIEWED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
-      | iun             | auto                                                                    |
-      | tag             | AUD_NT_UPDATE_COST                                                      |
-      | recIndex        | recIndex=0                                                              |
-      | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
-      | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
-      | iun             | auto                                                                     |
-      | tag             | AUD_NT_UPDATE_COST                                                       |
-      | recIndex        | recIndex=0                                                               |
-      | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1                                     |
-      | invalidatedCost | SecondAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
-    Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
-      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0 |
-      | element2 | SEND_ANALOG_DOMICILE;ATTEMPT_1;RECINDEX_0 |
-      | element3 | REFINEMENT;RECINDEX_0                     |
-    And controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato NEW
-      | noElementsExpected |  |
+    And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
 
   @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_12_VIEWED] Restart di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (al restart va in RETURNED TO SENDER)
+  Scenario: [TR3_RESTART_12_VIEWED] Tentativo di restart (destinato a fallire causa VIEWED) di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (al restart sarebbe dovuta andare in RETURNED TO SENDER)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -924,27 +873,7 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And "Mario Gherkin" legge la notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
-    And vengono letti gli eventi fino allo stato della notifica "VIEWED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
-      | iun             | auto                                                                    |
-      | tag             | AUD_NT_UPDATE_COST                                                      |
-      | recIndex        | recIndex=0                                                              |
-      | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
-      | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
-      | iun             | auto                                                                     |
-      | tag             | AUD_NT_UPDATE_COST                                                       |
-      | recIndex        | recIndex=0                                                               |
-      | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1                                     |
-      | invalidatedCost | SecondAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
-    Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
-      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0 |
-      | element2 | SEND_ANALOG_DOMICILE;ATTEMPT_1;RECINDEX_0 |
-      | element3 | REFINEMENT;RECINDEX_0                     |
-    And controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato NEW
-      | noElementsExpected |  |
+    And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
 
   ###KO attempt 1, poi restart
 
@@ -1163,7 +1092,7 @@ Feature: Correzione timeline fase 3
       | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0 |
 
   @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_13_VIEWED] Restart di notifica che va in KO all'attempt 0 e all'attempt 1 (anche al restart va in KO all'attempt 0 e all'attempt 1)
+  Scenario: [TR3_RESTART_13_VIEWED] Tentativo di restart (destinato a fallire causa VIEWED) di notifica che va in KO all'attempt 0 e all'attempt 1 (anche al restart sarebbe dovuta andare in KO all'attempt 0 e all'attempt 1)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -1190,33 +1119,44 @@ Feature: Correzione timeline fase 3
     And "Mario Gherkin" legge la notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     When viene invocata una richiesta di restart per la notifica appena creata
-    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
-    And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
-    And vengono letti gli eventi fino allo stato della notifica "VIEWED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
-      | iun             | auto                                                                    |
-      | tag             | AUD_NT_UPDATE_COST                                                      |
-      | recIndex        | recIndex=0                                                              |
-      | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
-      | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
-      | iun             | auto                                                                     |
-      | tag             | AUD_NT_UPDATE_COST                                                       |
-      | recIndex        | recIndex=0                                                               |
-      | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1                                     |
-      | invalidatedCost | SecondAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 240 secondi controllando ogni 5 secondi
-    And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
-    Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
-      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0 |
-      | element2 | SEND_ANALOG_DOMICILE;ATTEMPT_1;RECINDEX_0 |
-      | element3 | REFINEMENT;RECINDEX_0                     |
-    And controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato NEW
-      | noElementsExpected |  |
+    Then si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 200 secondi controllando ogni 5 secondi
+    And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
 
   @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_14_VIEWED] Restart di notifica che va in KO all'attempt 0 e all'attempt 1 (al restart va in OK all'attempt 0)
+  Scenario: [TR3_RESTART_13_VIEWED_CAN_INVALIDATE_VIEWED] Tentativo di restart (destinato a fallire causa VIEWED) di notifica che va in KO all'attempt 0 e all'attempt 1 (anche al restart sarebbe dovuta andare in KO all'attempt 0 e all'attempt 1)
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+      | pagoPaIntMode         | SYNC                        |
+      | feePolicy             | DELIVERY_MODE               |
+      | paFee                 | 17                          |
+      | vat                   | 10                          |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | Via@FAIL-DISCOVERYIRREPERIBILE_AR |
+      | digitalDomicile         | NULL                              |
+      | payment_creditorTaxId   | 77777777777                       |
+      | payment_pagoPaForm      | SI                                |
+      | payment_f24             | NULL                              |
+      | title_payment           | PagoPa_testRestart                |
+      | apply_cost_pagopa       | SI                                |
+      | payment_multy_number    | 1                                 |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
+    And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And "Mario Gherkin" legge la notifica
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
+    When viene invocata una richiesta di restart per la notifica appena creata con i seguenti parametri:
+      | iun | attemptId | recIndex   | reason     | task       | canInvalidateViewed |
+      |     | ATTEMPT_0 | RECINDEX_0 | reasonTest | TEST-12345 | true                |
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 200 secondi controllando ogni 5 secondi
+    And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
+
+  @timelineReworkF3 @checkRestart
+  Scenario: [TR3_RESTART_14_VIEWED] Tentativo di restart (destinato a fallire causa VIEWED) di notifica che va in KO all'attempt 0 e all'attempt 1 (al restart sarebbe dovuta andare in OK all'attempt 0)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -1242,30 +1182,10 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And "Mario Gherkin" legge la notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
-    And vengono letti gli eventi fino allo stato della notifica "VIEWED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
-      | iun             | auto                                                                    |
-      | tag             | AUD_NT_UPDATE_COST                                                      |
-      | recIndex        | recIndex=0                                                              |
-      | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
-      | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
-      | iun             | auto                                                                     |
-      | tag             | AUD_NT_UPDATE_COST                                                       |
-      | recIndex        | recIndex=0                                                               |
-      | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1                                     |
-      | invalidatedCost | SecondAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
-    Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
-      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0 |
-      | element2 | SEND_ANALOG_DOMICILE;ATTEMPT_1;RECINDEX_0 |
-      | element3 | REFINEMENT;RECINDEX_0                     |
-    And controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato NEW
-      | noElementsExpected |  |
+    And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
 
   @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_15_VIEWED] Restart di notifica che va in KO all'attempt 0 e all'attempt 1 (al restart va in KO all'attempt 0 e in OK all'attempt 1)
+  Scenario: [TR3_RESTART_15_VIEWED] Tentativo di restart (destinato a fallire causa VIEWED) di notifica che va in KO all'attempt 0 e all'attempt 1 (al restart sarebbe dovuta andare in KO all'attempt 0 e in OK all'attempt 1)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -1291,30 +1211,10 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And "Mario Gherkin" legge la notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
-    And vengono letti gli eventi fino allo stato della notifica "VIEWED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
-      | iun             | auto                                                                    |
-      | tag             | AUD_NT_UPDATE_COST                                                      |
-      | recIndex        | recIndex=0                                                              |
-      | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
-      | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
-      | iun             | auto                                                                     |
-      | tag             | AUD_NT_UPDATE_COST                                                       |
-      | recIndex        | recIndex=0                                                               |
-      | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1                                     |
-      | invalidatedCost | SecondAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
-    Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
-      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0 |
-      | element2 | SEND_ANALOG_DOMICILE;ATTEMPT_1;RECINDEX_0 |
-      | element3 | REFINEMENT;RECINDEX_0                     |
-    And controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato NEW
-      | noElementsExpected |  |
+    And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
 
   @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_16_VIEWED] Restart di notifica che va in KO all'attempt 0 e all'attempt 1 (al restart va in RETURNED TO SENDER)
+  Scenario: [TR3_RESTART_16_VIEWED] Tentativo di restart (destinato a fallire causa VIEWED) di notifica che va in KO all'attempt 0 e all'attempt 1 (al restart sarebbe dovuta andare in RETURNED TO SENDER)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -1340,27 +1240,7 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And "Mario Gherkin" legge la notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
-    And vengono letti gli eventi fino allo stato della notifica "VIEWED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
-      | iun             | auto                                                                    |
-      | tag             | AUD_NT_UPDATE_COST                                                      |
-      | recIndex        | recIndex=0                                                              |
-      | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_0                                    |
-      | invalidatedCost | FirstAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
-      | iun             | auto                                                                     |
-      | tag             | AUD_NT_UPDATE_COST                                                       |
-      | recIndex        | recIndex=0                                                               |
-      | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1                                     |
-      | invalidatedCost | SecondAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
-    Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
-      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_0;RECINDEX_0 |
-      | element2 | SEND_ANALOG_DOMICILE;ATTEMPT_1;RECINDEX_0 |
-      | element3 | REFINEMENT;RECINDEX_0                     |
-    And controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato NEW
-      | noElementsExpected |  |
+    And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
 
   ###Restart dell'attempt 1
 
@@ -1561,7 +1441,7 @@ Feature: Correzione timeline fase 3
       | element2 | REFINEMENT;RECINDEX_0                     |
 
   @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_17_VIEWED] Restart all'attempt 1 di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (anche al restart va in OK all'attempt 1)
+  Scenario: [TR3_RESTART_17_VIEWED] Tentativo di restart (destinato a fallire causa VIEWED) all'attempt 1 di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (anche al restart sarebbe dovuta andare in OK all'attempt 1)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -1590,26 +1470,44 @@ Feature: Correzione timeline fase 3
     When viene invocata una richiesta di restart per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | recIndex   | reason     | task       |
       |     | ATTEMPT_1 | RECINDEX_0 | reasonTest | TEST-12345 |
-    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
-    And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
-    And vengono letti gli eventi fino allo stato della notifica "VIEWED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
-      | iun             | auto                                                                     |
-      | tag             | AUD_NT_UPDATE_COST                                                       |
-      | recIndex        | recIndex=0                                                               |
-      | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1                                     |
-      | invalidatedCost | SecondAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 240 secondi controllando ogni 5 secondi
-    And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
-    Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
-      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_1;RECINDEX_0 |
-      | element2 | REFINEMENT;RECINDEX_0                     |
-    And controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato NEW
-      | noElementsExpected |  |
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 200 secondi controllando ogni 5 secondi
+    And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
 
   @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_18_VIEWED] Restart all'attempt 1 di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (al restart va in KO all'attempt 1)
+  Scenario: [TR3_RESTART_17_VIEWED_CAN_INVALIDATE_VIEWED] Tentativo di restart (destinato a fallire causa VIEWED) all'attempt 1 di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (anche al restart sarebbe dovuta andare in OK all'attempt 1)
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+      | pagoPaIntMode         | SYNC                        |
+      | feePolicy             | DELIVERY_MODE               |
+      | paFee                 | 17                          |
+      | vat                   | 10                          |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | Via@FAIL-DISCOVERY_AR |
+      | digitalDomicile         | NULL                  |
+      | payment_creditorTaxId   | 77777777777           |
+      | payment_pagoPaForm      | SI                    |
+      | payment_f24             | NULL                  |
+      | title_payment           | PagoPa_testRestart    |
+      | apply_cost_pagopa       | SI                    |
+      | payment_multy_number    | 1                     |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And "Mario Gherkin" legge la notifica
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
+    When viene invocata una richiesta di restart per la notifica appena creata con i seguenti parametri:
+      | iun | attemptId | recIndex   | reason     | task       | canInvalidateViewed |
+      |     | ATTEMPT_1 | RECINDEX_0 | reasonTest | TEST-12345 | true                |
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 200 secondi controllando ogni 5 secondi
+    And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
+
+  @timelineReworkF3 @checkRestart
+  Scenario: [TR3_RESTART_18_VIEWED] Tentativo di restart (destinato a fallire causa VIEWED) all'attempt 1 di notifica che va in KO all'attempt 0 e in OK all'attempt 1 (al restart sarebbe dovuta andare in KO all'attempt 1)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -1635,23 +1533,10 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And "Mario Gherkin" legge la notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
-    And vengono letti gli eventi fino allo stato della notifica "VIEWED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
-      | iun             | auto                                                                     |
-      | tag             | AUD_NT_UPDATE_COST                                                       |
-      | recIndex        | recIndex=0                                                               |
-      | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1                                     |
-      | invalidatedCost | SecondAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
-    Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
-      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_1;RECINDEX_0 |
-      | element2 | REFINEMENT;RECINDEX_0                     |
-    And controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato NEW
-      | noElementsExpected |  |
+    And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
 
   @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_19_VIEWED] Restart all'attempt 1 di notifica che va in KO all'attempt 0 e all'attempt 1 (anche al restart va in KO all'attempt 1)
+  Scenario: [TR3_RESTART_19_VIEWED] Tentativo di restart (destinato a fallire causa VIEWED) all'attempt 1 di notifica che va in KO all'attempt 0 e all'attempt 1 (anche al restart sarebbe dovuta andare in KO all'attempt 1)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -1680,26 +1565,44 @@ Feature: Correzione timeline fase 3
     When viene invocata una richiesta di restart per la notifica appena creata con i seguenti parametri:
       | iun | attemptId | recIndex   | reason     | task       |
       |     | ATTEMPT_1 | RECINDEX_0 | reasonTest | TEST-12345 |
-    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
-    And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
-    And vengono letti gli eventi fino allo stato della notifica "VIEWED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
-      | iun             | auto                                                                     |
-      | tag             | AUD_NT_UPDATE_COST                                                       |
-      | recIndex        | recIndex=0                                                               |
-      | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1                                     |
-      | invalidatedCost | SecondAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And si verifica che la richiesta di restart effettuata sia in stato "READY" entro 240 secondi controllando ogni 5 secondi
-    And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
-    Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
-      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_1;RECINDEX_0 |
-      | element2 | REFINEMENT;RECINDEX_0                     |
-    And controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato NEW
-      | noElementsExpected |  |
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 200 secondi controllando ogni 5 secondi
+    And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
 
   @timelineReworkF3 @checkRestart
-  Scenario: [TR3_RESTART_20_VIEWED] Restart all'attempt 1 di notifica che va in KO all'attempt 0 e all'attempt 1 (al restart va in OK all'attempt 1)
+  Scenario: [TR3_RESTART_19_VIEWED_CAN_INVALIDATE_VIEWED] Tentativo di restart (destinato a fallire causa VIEWED) all'attempt 1 di notifica che va in KO all'attempt 0 e all'attempt 1 (anche al restart sarebbe dovuta andare in KO all'attempt 1)
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+      | pagoPaIntMode         | SYNC                        |
+      | feePolicy             | DELIVERY_MODE               |
+      | paFee                 | 17                          |
+      | vat                   | 10                          |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | Via@FAIL-DISCOVERYIRREPERIBILE_AR |
+      | digitalDomicile         | NULL                              |
+      | payment_creditorTaxId   | 77777777777                       |
+      | payment_pagoPaForm      | SI                                |
+      | payment_f24             | NULL                              |
+      | title_payment           | PagoPa_testRestart                |
+      | apply_cost_pagopa       | SI                                |
+      | payment_multy_number    | 1                                 |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
+    And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And "Mario Gherkin" legge la notifica
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
+    When viene invocata una richiesta di restart per la notifica appena creata con i seguenti parametri:
+      | iun | attemptId | recIndex   | reason     | task       | canInvalidateViewed |
+      |     | ATTEMPT_1 | RECINDEX_0 | reasonTest | TEST-12345 | true                |
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 200 secondi controllando ogni 5 secondi
+    And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste
+
+  @timelineReworkF3 @checkRestart
+  Scenario: [TR3_RESTART_20_VIEWED] Tentativo di restart (destinato a fallire causa VIEWED) all'attempt 1 di notifica che va in KO all'attempt 0 e all'attempt 1 (al restart sarebbe dovuta andare in OK all'attempt 1)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -1725,17 +1628,4 @@ Feature: Correzione timeline fase 3
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And "Mario Gherkin" legge la notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED"
-    And vengono letti gli eventi fino allo stato della notifica "VIEWED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-notification-cost-service" negli ultimi 25 minuti riportante i seguenti dati nel messaggio
-      | iun             | auto                                                                     |
-      | tag             | AUD_NT_UPDATE_COST                                                       |
-      | recIndex        | recIndex=0                                                               |
-      | phase           | phase=SEND_ANALOG_DOMICILE_ATTEMPT_1                                     |
-      | invalidatedCost | SecondAnalogCostEntity(super=AnalogCostEntity(cost=0, productType=null)) |
-    And vengono effettuati i controlli sugli elementi invalidati usando la lista "ESTESA"
-    Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
-      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_1;RECINDEX_0 |
-      | element2 | REFINEMENT;RECINDEX_0                     |
-    And controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato NEW
-      | noElementsExpected |  |
+    And viene controllato che l'elemento di timeline della notifica "NOTIFICATION_TIMELINE_REWORKED" non esiste

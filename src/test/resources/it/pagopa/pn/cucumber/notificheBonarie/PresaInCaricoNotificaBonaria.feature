@@ -3,7 +3,7 @@ Feature: Sottomissione di una notifica bonaria.
 
 
 # *******************************************************************
-#  Lingua gestitia al livello del recipient
+#  Lingua gestita al livello del recipient
 # *******************************************************************
 
   @informalNotificationsValidation @informalAsyncValidation

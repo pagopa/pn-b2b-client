@@ -49,7 +49,7 @@ import it.pagopa.interop.tenant.service.impl.TenantsApiClientImpl;
 import it.pagopa.interop.tenant.service.impl.TenantsProcessApiClientImpl;
 import it.pagopa.interop.tracing.config.TracingClientConfigs;
 import it.pagopa.interop.tracing.service.impl.DevAbstractInteropTracingClient;
-import it.pagopa.interop.tracing.service.impl.QAAbstractInteropTracingClient;
+import it.pagopa.interop.tracing.service.impl.ExtraQaAbstractInteropTracingClient;
 import it.pagopa.interop.users.service.M2MV3UsersClient;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -88,7 +88,7 @@ import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import it.pagopa.pn.interop.cucumber.utility.NotificationStore;
 import it.pagopa.pn.interop.cucumber.utility.TracingFileUtils;
-import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayServiceImpl;
+import it.pagopa.interop.utils.delay_service.DelayServiceImpl;
 import it.pagopa.pn.interop.cucumber.utility.property_resolver.PropertyResolver;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -126,7 +126,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         TracingClientConfigs.class,
         ProbingClientConfigs.class,
         DevAbstractInteropTracingClient.class,
-        QAAbstractInteropTracingClient.class,
+        ExtraQaAbstractInteropTracingClient.class,
         CommonUtils.class,
         VoucherService.class,
         AsyncVoucherService.class,
@@ -205,6 +205,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         M2MV3EventMapperImpl.class,
         M2MV3AgreementClientImpl.class,
         M2MV3CertifiedAttributeClientImpl.class,
+        M2MV3CertifiedDiscreteAttributeClientImpl.class,
         M2MV3PurposeClientImpl.class,
         M2MV3EserviceClientImpl.class,
         M2MV3EServiceTemplateClientImpl.class,

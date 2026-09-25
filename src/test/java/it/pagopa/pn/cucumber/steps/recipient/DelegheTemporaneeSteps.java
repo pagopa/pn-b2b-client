@@ -18,11 +18,11 @@ import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.service.IPnAppIOB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnMandateAppIoClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnMandateAppIoClientImpl;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.AcceptRequestDto;
+import it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.AcceptRequestDto;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
-import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
+import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Environment;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -61,9 +61,9 @@ public class DelegheTemporaneeSteps {
 
     private MandateDto mandateDtoB2b;
 
-    private List<it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.MandateDto> mandatesByDelegate;
+    private List<it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.MandateDto> mandatesByDelegate;
 
-    private List<it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.MandateDto> mandatesByDelegator;
+    private List<it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.MandateDto> mandatesByDelegator;
 
     private HttpStatusCodeException error;
 
@@ -100,10 +100,10 @@ public class DelegheTemporaneeSteps {
         ricezioneNotificheWebDelegheSteps.setBearerToken(delegate.getDenomination());
         String delegatorTaxId = delegator.getTaxId();
 
-        List<it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.MandateDto> mandateList = ricezioneNotificheWebDelegheSteps.getWebMandateClient().searchMandatesByDelegate(delegatorTaxId, null);
+        List<it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.MandateDto> mandateList = ricezioneNotificheWebDelegheSteps.getWebMandateClient().searchMandatesByDelegate(delegatorTaxId, null);
 
-        it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.MandateDto mandateDto = null;
-        for (it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.MandateDto mandate : mandateList) {
+        it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.MandateDto mandateDto = null;
+        for (it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.MandateDto mandate : mandateList) {
             log.debug("MANDATE-LIST: {}", mandateList);
             if (Objects.requireNonNull(mandate.getDelegator()).getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)) {
                 mandateDto = mandate;
@@ -267,7 +267,7 @@ public class DelegheTemporaneeSteps {
         assertThat(error).as("L'operazione non dovrebbe aver prodotto errori").isNull();
         //converto il mandate creato nel corrispettivo di mandateWeb e lo setto alla classe RicezioneNotificheWebDelegheSteps
         //in questo modo posso riciclare i metodi utilizzati per le deleghe permanenti, senza dover duplicare codice
-        it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.MandateDto mandateWeb = deepCopy(mandateDtoB2b, it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.MandateDto.class);
+        it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.MandateDto mandateWeb = deepCopy(mandateDtoB2b, it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.MandateDto.class);
         ricezioneNotificheWebDelegheSteps.setMandateToSearch(mandateWeb);
     }
 
@@ -291,7 +291,7 @@ public class DelegheTemporaneeSteps {
     @Then("la lista di deleghe del {isDelegate} {string} {contains} la delega temporanea creata")
     public void checkPresenceTemporaryMandateInList(boolean isDelegate, String user, boolean contains) {
         ricezioneNotificheWebDelegheSteps.setBearerToken(user);
-        it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.MandateDto mandateFound;
+        it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.MandateDto mandateFound;
         try {
             if (isDelegate) {
                 mandatesByDelegate = ricezioneNotificheWebDelegheSteps.getWebMandateClient().listMandatesByDelegate1(null);

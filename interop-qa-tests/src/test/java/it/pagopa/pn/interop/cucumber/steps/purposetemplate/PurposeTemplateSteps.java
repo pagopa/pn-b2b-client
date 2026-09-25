@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.purposetemplate;
 
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -36,6 +37,9 @@ import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService.generateRiskAnalysisFormTemplateSeedFromFormSeed;
+import static it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService.isExpectedPersonalData;
+import static it.pagopa.pn.interop.cucumber.steps.purpose.PurposeCommonStep.getRiskAnalysisFromAnswersDataTable;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.collections4.IterableUtils.isEmpty;
@@ -134,6 +138,18 @@ public class PurposeTemplateSteps {
         invokeCreatePurposeTemplate();
     }
 
+    @When("viene creato un nuovo purpose template specificando nell'analisi del rischio:")
+    public void createPurposeTemplate(DataTable answersTable) {
+        tryToCreatePurposeTemplate(answersTable);
+        assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful()).as("Purpose template succeeded").isTrue();
+    }
+
+    @When("si tenta di creare un nuovo purpose template specificando nell'analisi del rischio:")
+    public void tryToCreatePurposeTemplate(DataTable answersTable) {
+        prepareCreationRequest(answersTable);
+        invokeCreatePurposeTemplate();
+    }
+
     @When("viene creato un nuovo purpose template coerente con la tipologia dell'ente")
     public void createPurposeTemplateWithTenantKindCoherentWithTenantType() {
         TargetTenantKind targetTenantKind = resolveTargetTenantKindFromContextTenantType();
@@ -185,6 +201,10 @@ public class PurposeTemplateSteps {
         return prepareCreationRequest(handlePersonalDataValue, TargetTenantKind.PA);
     }
 
+    private PurposeTemplateSeed prepareCreationRequest(DataTable answersTable) {
+        return prepareCreationRequest(answersTable, resolveTargetTenantKindFromContextTenantType());
+    }
+
     private TargetTenantKind resolveTargetTenantKindFromContextTenantType() {
         String tenantType = sharedStepsContext.getTenantType();
         if (isNull(tenantType)) {
@@ -201,6 +221,15 @@ public class PurposeTemplateSteps {
     }
 
     private PurposeTemplateSeed prepareCreationRequest(Boolean handlePersonalDataValue, TargetTenantKind targetTenantKind) {
+        return prepareCreationRequest(handlePersonalDataValue, null, targetTenantKind);
+    }
+
+    private PurposeTemplateSeed prepareCreationRequest(DataTable answersTable, TargetTenantKind targetTenantKind) {
+        boolean handlePersonalDataValue = isExpectedPersonalData(answersTable);
+        return prepareCreationRequest(handlePersonalDataValue, answersTable, targetTenantKind);
+    }
+
+    private PurposeTemplateSeed prepareCreationRequest(Boolean handlePersonalDataValue, DataTable answersTable, TargetTenantKind targetTenantKind) {
         purposeTemplateCreationRequest = new PurposeTemplateSeed();
         purposeTemplateCreationRequest.setPurposeTitle("purposeTitle" + DateTime.now());
         purposeTemplateCreationRequest.setPurposeDescription("purposeDescription_CREATE");
@@ -212,12 +241,22 @@ public class PurposeTemplateSteps {
         purposeTemplateCreationRequest.setHandlesPersonalData(handlePersonalDataValue);
         purposeTemplateCreationRequest.setPurposeFreeOfChargeReason("Sono una Pubblica Amministrazione");
 
-        if (handlePersonalDataValue != null) {
-            RiskAnalysisFormTemplateSeed riskAnalysisForm = new RiskAnalysisFormTemplateSeed()
-                    .version(getPurposeTemplateVersion())
-                    .answers(getRiskAnalysysTemplateFormAnswerMap(purposeTemplateCreationRequest.getHandlesPersonalData()));
-            purposeTemplateCreationRequest.setPurposeRiskAnalysisForm(riskAnalysisForm);
+        if (answersTable == null) {
+            if (handlePersonalDataValue != null) {
+                RiskAnalysisFormTemplateSeed riskAnalysisForm = new RiskAnalysisFormTemplateSeed()
+                        .version(getPurposeTemplateVersion())
+                        .answers(getRiskAnalysysTemplateFormAnswerMap(purposeTemplateCreationRequest.getHandlesPersonalData()));
+                purposeTemplateCreationRequest.setPurposeRiskAnalysisForm(riskAnalysisForm);
+            }
+        } else {
+            RiskAnalysisFormSeed seed = dataPreparationService.getRiskAnalysisSpecifyingAnswers(
+                    getRiskAnalysisFromAnswersDataTable(answersTable)
+            ).getRiskAnalysisForm();
+            purposeTemplateCreationRequest.setPurposeRiskAnalysisForm(
+                    generateRiskAnalysisFormTemplateSeedFromFormSeed(seed)
+            );
         }
+
         return purposeTemplateCreationRequest;
     }
 
@@ -225,9 +264,10 @@ public class PurposeTemplateSteps {
     private String getPurposeTemplateVersion() {
         // L'inclusione dei valori null è volta a favorire retrocompatibilità con il comportamento antecedente
         // a questa aggiunta, che considerava "3.1" come versione hardcoded.
+        // C'è stato un aggiornamento di versione: PA 3.2 e Privato 2.1
         String tenant = sharedStepsContext.getTenantType();
         String tenantKind = isNull(tenant) ? null : sharedStepsContext.getIdentityService().getKind(tenant);
-        return isNull(tenantKind) || "PA".equals(tenantKind) ? "3.1" : "2.0";
+        return isNull(tenantKind) || "PA".equals(tenantKind) ? "3.2" : "2.1";
     }
 
     private void invokeCreatePurposeTemplate() {

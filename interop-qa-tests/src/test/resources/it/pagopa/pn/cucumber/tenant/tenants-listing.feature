@@ -43,14 +43,22 @@ Feature: Listing degli aderenti
 
   @certifiedDiscreteAttribute
   @certifiedDiscreteAttributeFlagOn
-  Scenario: [TENANTS_CERTIFIED_DISCRETE_ATTRIBUTE_LISTING_1] Verifica che, a seguito dell'assegnazione da parte di un ente
-  certificatore, l'attributo certificato discreto risulti presente nella lista degli attributi del tenant.
+  Scenario: [TENANTS_CERTIFIED_DISCRETE_ATTRIBUTE_LISTING_1a] Verifica che, dopo l'assegnazione effettuata da un ente certificatore,
+  l'attributo discreto certificato sia incluso nell'elenco degli attributi certificati assegnati dallo stesso ente.
     Given l'utente è un "admin" di "GSP"
     And GSP ha già creato 1 attributo CERTIFIED_DISCRETE
     When l'utente assegna a "PA1" l'attributo certificato discreto precedentemente creato con un valore discreto di 100
     And si ottiene lo status code 200
-    Then l'utente è un "admin" di "PA1"
+    Then l'utente è un "admin" di "GSP"
     And l'utente richiede una operazione di listing dei suoi attributi certificati discreti e l'attributo assegnato è presente
+
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
+  Scenario: [TENANTS_CERTIFIED_DISCRETE_ATTRIBUTE_LISTING_1b] Verifica che un ente non certificatore non disponga delle
+  autorizzazioni necessarie per elencare gli attributi del richiedente tramite API /tenants/attributes/certified.
+    Given l'utente è un "admin" di "Privato"
+    When l'utente richiede una operazione di listing dei suoi attributi certificati discreti
+    Then si ottiene lo status code 403
 
   @certifiedDiscreteAttribute
   @certifiedDiscreteAttributeFlagOn

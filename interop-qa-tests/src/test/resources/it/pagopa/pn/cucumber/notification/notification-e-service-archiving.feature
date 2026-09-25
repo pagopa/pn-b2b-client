@@ -82,13 +82,13 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
     When l'utente sospende quel descrittore in corso di archiviazione
     Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
     """
-    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è al momento sospesa. L'e-service sarà archiviato il giorno
-    $DA_CONTESTO(TODAY+90).
+    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è al momento sospesa.
+    L'e-service sarà archiviato il giorno $DA_CONTESTO(TODAY+90).
     """
     And l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
-    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è al momento sospesa. L'archiviazione avverrà il giorno
-    $DA_CONTESTO(TODAY+90).
+    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è al momento sospesa.
+    L'archiviazione avverrà il giorno $DA_CONTESTO(TODAY+90).
     """
 
     When l'utente attiva il descrittore di quell'e-service
@@ -99,8 +99,8 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
     """
     And l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
-    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è di nuovo attiva. L'e-service sarà archiviato il giorno
-    $DA_CONTESTO(TODAY+90).
+    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è di nuovo attiva.
+    L'archiviazione avverrà il giorno $DA_CONTESTO(TODAY+90).
     """
 
   Scenario: [MANUAL_ARCHIVING_ESERVICE_SUSPENSION_NOTIFICATION_1.2] Erogatore e fruitore ricevono una notifica quando l'e-service istanza di un template in stato di archiviazione viene sospeso
@@ -113,25 +113,25 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
     When l'utente sospende quel descrittore in corso di archiviazione
     Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
     """
-    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è al momento sospesa. L'e-service sarà archiviato il giorno
-    $DA_CONTESTO(TODAY+120).
+    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è al momento sospesa.
+    L'e-service sarà archiviato il giorno $DA_CONTESTO(TODAY+120).
     """
     And l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
-    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è al momento sospesa. L'archiviazione avverrà il giorno
-    $DA_CONTESTO(TODAY+120).
+    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è al momento sospesa.
+    L'archiviazione avverrà il giorno $DA_CONTESTO(TODAY+120).
     """
 
     When l'utente attiva il descrittore di quell'e-service
     Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
     """
-    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è di nuovo attiva. L'e-service sarà archiviato il giorno
-    $DA_CONTESTO(TODAY+120).
+    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è di nuovo attiva.
+    L'e-service sarà archiviato il giorno $DA_CONTESTO(TODAY+120).
     """
     And l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
-    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è di nuovo attiva. L'e-service sarà archiviato il giorno
-    $DA_CONTESTO(TODAY+120).
+    La versione 1 dell'e-service $DA_CONTESTO(eServiceName) è di nuovo attiva.
+    L'archiviazione avverrà il giorno $DA_CONTESTO(TODAY+120).
     """
 
   Scenario: [MANUAL_ARCHIVING_ESERVICE_CANCELLATION_NOTIFICATION_1.1] L'utente erogatore riceve una notifica quando annulla l'archiviazione in corso di un proprio e-service
@@ -153,4 +153,63 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
     Then l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
     """
     L'e-service $DA_CONTESTO(eServiceName) non è più in fase di archiviazione.
+    """
+
+  @notification-manual-archiving-delegation
+  Scenario: [NOTIFICA_ARCHIVIAZIONE_VIA_DELEGA_1.1] Un delegato all'erogazione richiede l'archiviazione di un e-service e viene approvata
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'utente richiede la creazione di una delega in erogazione per l'ente "PA2"
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    When l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "Test richiesta di archiviazione" e 30 giorni di preavviso
+    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
+    """
+    L'ente delegato $DA_CONTESTO(delegateName) ha richiesto l'archiviazione dell'e-service
+    $DA_CONTESTO(eServiceName). Puoi confermare o rifiutare la richiesta.
+    """
+    When l'utente è un "admin" di "PA1"
+    And l'utente delegante accetta la richiesta di archiviazione relativa all'e-service "%actual"
+    Then l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
+    """
+    L'ente delegante $DA_CONTESTO(producerName) ha approvato la tua richiesta di archiviazione dell'e-service
+    $DA_CONTESTO(eServiceName). L'archiviazione avverrà il giorno $DA_CONTESTO(TODAY+30).
+    """
+
+  @notification-manual-archiving-delegation
+  Scenario: [NOTIFICA_ARCHIVIAZIONE_VIA_DELEGA_1.2] Un delegato all'erogazione annulla la richiesta di archiviazione di un e-service
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'utente richiede la creazione di una delega in erogazione per l'ente "PA2"
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    And l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "Richiesta di archiviazione" e 30 giorni di preavviso
+    And la richiesta di archiviazione dell'e-service è stata inviata correttamente ed è in stato pending
+    When l'utente delegato annulla la richiesta di archiviazione dell'e-service "%actual"
+    Then l'utente "admin" di "PA1" ha ricevuto la notifica in-app
+    """
+    L'ente delegato $DA_CONTESTO(delegateName) ha annullato la richiesta di archiviazione
+    per l'e-service $DA_CONTESTO(eServiceName).
+    """
+    And l'utente "admin" di "PA2" ha ricevuto la notifica in-app
+    """
+    È stata annullata la richiesta di archiviazione per l'e-service $DA_CONTESTO(eServiceName)
+    inviata all'ente delegante $DA_CONTESTO(producerName).
+    """
+
+  @notification-manual-archiving-delegation
+  Scenario: [NOTIFICA_ARCHIVIAZIONE_VIA_DELEGA_1.3] Un delegante all'erogazione rifiuta la richiesta di archiviazione di un e-service di un delegato
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'utente richiede la creazione di una delega in erogazione per l'ente "PA2"
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    And l'utente delegato invia al delegante una richiesta di archiviazione dell'e-service "%actual" specificando la motivazione "Richiesta di archiviazione" e 30 giorni di preavviso
+    And la richiesta di archiviazione dell'e-service è stata inviata correttamente ed è in stato pending
+    When l'utente è un "admin" di "PA1"
+    And l'utente delegante rifiuta la richiesta di archiviazione dell'e-service "%actual" con motivazione "Test di rifiuto di archiviazione"
+    Then l'utente "admin" di "PA2" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE
+    """
+    L'ente delegante $DA_CONTESTO(producerName) ha rifiutato la tua richiesta di archiviazione
+    dell'e-service $DA_CONTESTO(eServiceName).
     """

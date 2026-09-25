@@ -4,10 +4,25 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
 import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.FullSentInformalNotificationV1;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalNotificationRecipientV1;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalNotificationRequestV1;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalNotificationStatusV1;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalTimelineElementV1;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.MessageResponse;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewInformalNotificationRequestStatusResponseV1;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewInformalNotificationResponse;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewMessageRequest;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NotificationAttachmentDigests;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NotificationAttachmentDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NotificationRequestRefusedProblemError;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.TerminationRequestStatus;
+import it.pagopa.pn.client.b2b.pa.provider.DestinatarioRegistry;
 import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bInternalInformalClientImpl;
+import it.pagopa.pn.cucumber.steps.SendSharedContext;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.informalNotification.builders.InformalRecipientBuilder;
 import it.pagopa.pn.cucumber.steps.informalNotification.datatest.InformalDataTestV1;
@@ -15,7 +30,6 @@ import it.pagopa.pn.cucumber.steps.informalNotification.datatest.InformalStatusP
 import it.pagopa.pn.cucumber.steps.informalNotification.mapper.InformalNotificationRequestMapper;
 import it.pagopa.pn.cucumber.steps.informalNotification.utils.NotificationInformalUtilsV1;
 import it.pagopa.pn.cucumber.steps.informalNotification.utils.NotificationInformalUtilsWorkFlowV1;
-import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
 import it.pagopa.pn.cucumber.utils.GroupPosition;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -25,18 +39,28 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_ROOT;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_ROOT;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @Slf4j
 public class PresaInCaricoNoticaBonariaSteps {
@@ -63,18 +87,24 @@ public class PresaInCaricoNoticaBonariaSteps {
     private final InformalNotificationRequestMapper informalNotificationRequestMapper;
     private final InformalRecipientBuilder recipientBuilder;
     private final NotificationInformalUtilsV1 notificationInformalUtilsV1;
+    private final SendSharedContext sendSharedContext;
+    private final DestinatarioRegistry destinatarioRegistry;
 
     private FullSentInformalNotificationV1 fullInformalNotificationResponse;
     private InformalTimelineElementV1 timelineElement;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.NotificationAttachmentDownloadMetadataResponse receivedAttachmentResponse;
 
     @Autowired
-    public PresaInCaricoNoticaBonariaSteps(NotificationInformalUtilsV1 notificationInformalUtilsV1, InformalNotificationRequestMapper informalNotificationRequestMapper, InformalRecipientBuilder recipientBuilder, PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl, SharedSteps sharedSteps) {
+    public PresaInCaricoNoticaBonariaSteps(NotificationInformalUtilsV1 notificationInformalUtilsV1, InformalNotificationRequestMapper informalNotificationRequestMapper,
+                                           InformalRecipientBuilder recipientBuilder, PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl,
+                                           SharedSteps sharedSteps, SendSharedContext sendSharedContext, DestinatarioRegistry destinatarioRegistry) {
         this.sharedSteps = sharedSteps;
         this.pnPaB2bInternalInformalClientImpl = pnPaB2bInternalInformalClientImpl;
         this.informalNotificationRequestMapper = informalNotificationRequestMapper;
         this.notificationInformalUtilsV1 = notificationInformalUtilsV1;
         this.recipientBuilder = recipientBuilder;
+        this.sendSharedContext = sendSharedContext;
+        this.destinatarioRegistry = destinatarioRegistry;
     }
 
     // STEP CREAZIONE E INVIO NOTIFICA
@@ -82,6 +112,12 @@ public class PresaInCaricoNoticaBonariaSteps {
     @And("mittente della notifica bonaria: {string}")
     public void setSenderInformal(String paName) {
         setSenderContext(paName);
+        if (!paName.equalsIgnoreCase("Comune_Root")) {
+            this.currentGroupId =
+                    sharedSteps.getGroupIdByPa(paName, GroupPosition.FIRST);
+            sendSharedContext.getInformalNotificationContext().setGroupId(currentGroupId);
+        }
+        sendSharedContext.getInformalNotificationContext().setSenderId(currentCxId);
     }
 
     @And("imposto un gruppo non attivo per {string}")
@@ -110,6 +146,61 @@ public class PresaInCaricoNoticaBonariaSteps {
         Map<String, String> cleanedData = data.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().trim(), e -> e.getValue() != null ? e.getValue().trim() : null));
         InformalNotificationRecipientV1 recipient = recipientBuilder.build(cleanedData, currentCxId);
         informalNotificationRequestV1.getRecipients().add(recipient);
+        sendSharedContext.getInformalNotificationContext().getRecipient().setDestinatario(destinatarioRegistry.destinatario(data.get("denomination")));
+    }
+
+    /**
+     * Crea le {@code notificationNumber} notifiche bonarie in parallelo invece che in sequenza, cosi'
+     * l'attesa del raggiungimento dello stato {@code COMPLETED_REACHED} di ciascuna (che può richiedere
+     * diversi secondi) avviene contemporaneamente per tutte anziché sommarsi. Ogni notifica viene creata
+     * e tracciata da {@link #createAndAwaitSingleInformalNotification} usando solo variabili locali: i
+     * campi di istanza della classe (es. {@code savedIun}, {@code statusResponse}) sono pensati per una
+     * singola notifica per scenario e verrebbero sovrascritti in modo incoerente da thread concorrenti,
+     * quindi non vengono toccati da questo flusso.
+     */
+    @Given("vengono create {int} notifiche bonarie per la pa {string} con campagna {string}")
+    public void creaNotificheBonarie(int notificationNumber, String paName, String campaignId, Map<String, String> recipientData) {
+        setSenderInformal(paName);
+        Map<String, String> cleanedRecipientData = trimData(recipientData);
+        sendSharedContext.getInformalNotificationContext().getRecipient().setDestinatario(destinatarioRegistry.destinatario(cleanedRecipientData.get("denomination")));
+        IntStream.range(0, notificationNumber)
+                .parallel()
+                .forEach(i -> createAndAwaitSingleInformalNotification(campaignId, cleanedRecipientData));
+    }
+
+    private void createAndAwaitSingleInformalNotification(String campaignId, Map<String, String> recipientData) {
+        Map<String, String> creationData = new HashMap<>();
+        creationData.put("campaignId", campaignId);
+        handleGroup(creationData);
+        InformalNotificationRequestV1 request = informalNotificationRequestMapper.buildInformalNotificationRequest(creationData);
+
+        request.getRecipients().add(recipientBuilder.build(new HashMap<>(recipientData), currentCxId));
+
+        try {
+            request = notificationInformalUtilsV1.preloadAndPrepare(request, paName);
+        } catch (IOException e) {
+            throw new UncheckedIOException("Errore durante la preparazione della notifica bonaria con campagna " + campaignId, e);
+        }
+
+        NewInformalNotificationResponse response = pnPaB2bInternalInformalClientImpl.sendNewInformalNotificationV1(currentCxId, request);
+        String notificationRequestId = response.getNotificationRequestId();
+
+        NewInformalNotificationRequestStatusResponseV1 acceptedStatus =
+                pollNotificationRequestStatus(notificationRequestId, InformalNotificationStatusV1.ACCEPTED.getValue());
+        pollFullNotificationStatus(acceptedStatus.getIun(), InformalNotificationStatusV1.COMPLETED_REACHED.getValue());
+    }
+
+    /**
+     * Attende (fino a un massimo di 12 minuti) che la notifica bonaria identificata da {@code iun}
+     * raggiunga {@code expectedStatus}. A differenza di {@link #verifyFinalNotificationStatus}, non
+     * legge né scrive campi di istanza: può quindi essere invocato in sicurezza da più thread in
+     * parallelo, ognuno con il proprio IUN (vedi {@link #createAndAwaitSingleInformalNotification}).
+     */
+    private FullSentInformalNotificationV1 pollFullNotificationStatus(String iun, String expectedStatus) {
+        return pollUntilStatus("notifica IUN=" + iun,
+                () -> pnPaB2bInternalInformalClientImpl.getSentInformalNotificationSender(currentCxId, iun, true),
+                notification -> notification.getNotificationStatus().getValue(),
+                expectedStatus, Duration.ofMinutes(12), Duration.ofSeconds(30));
     }
 
     @Then("viene inviata una nuova notifica bonaria con content type non valido")
@@ -468,7 +559,56 @@ public class PresaInCaricoNoticaBonariaSteps {
         } catch (Exception e) {
             throw new AssertionError("Stato finale non valido.\n" + "Atteso: " + expectedStatus + "\n" + "Ultimo stato ricevuto: " + lastStatus.get() + "\n" + "Response: " + getFullInformalNotification(), e);
         }
+        savedIun = statusResponse.getIun();
+        sharedSteps.setNotificationIun(savedIun);
+        sendSharedContext.getInformalNotificationContext().setIun(savedIun);
         lastException = null;
+    }
+
+    /**
+     * Attende (fino a un massimo di 12 minuti) che la richiesta di notifica bonaria identificata da
+     * {@code notificationRequestId} raggiunga {@code expectedStatus}. Come {@link #pollFullNotificationStatus},
+     * non tocca campi di istanza ed è quindi sicuro da chiamare in parallelo su più notifiche.
+     */
+    private NewInformalNotificationRequestStatusResponseV1 pollNotificationRequestStatus(String notificationRequestId, String expectedStatus) {
+        return pollUntilStatus("richiesta notificationRequestId=" + notificationRequestId,
+                () -> pnPaB2bInternalInformalClientImpl.getNotificationStatusByRequestId(currentCxId, notificationRequestId),
+                NewInformalNotificationRequestStatusResponseV1::getNotificationRequestStatus,
+                expectedStatus, Duration.ofMinutes(12), Duration.ofSeconds(3));
+    }
+
+    /**
+     * Attende che {@code fetch} restituisca un risultato il cui stato (estratto con {@code statusExtractor})
+     * coincida con {@code expectedStatus}, ripetendo la chiamata ogni {@code pollInterval} fino a
+     * {@code timeout}. Generalizza il polling usato per lo stato della richiesta e per lo stato della
+     * notifica bonaria: non tocca campi di istanza, quindi è sicuro da invocare in parallelo su thread diversi.
+     */
+    private <T> T pollUntilStatus(String description, Supplier<T> fetch, Function<T, String> statusExtractor,
+                                  String expectedStatus, Duration timeout, Duration pollInterval) {
+        AtomicReference<String> lastStatus = new AtomicReference<>(null);
+        AtomicReference<T> lastResult = new AtomicReference<>();
+        try {
+            await().atMost(timeout).pollInterval(pollInterval).until(() -> {
+                T result;
+                try {
+                    result = fetch.get();
+                } catch (Exception e) {
+                    log.error("Errore durante il recupero di {}", description, e);
+                    throw new RuntimeException("Errore durante il recupero di " + description, e);
+                }
+                if (result == null) {
+                    return false;
+                }
+                lastResult.set(result);
+                String actualStatus = statusExtractor.apply(result);
+                lastStatus.set(actualStatus);
+                log.info("Polling stato {}: {}", description, actualStatus);
+                return expectedStatus.equals(actualStatus);
+            });
+        } catch (Exception e) {
+            throw new AssertionError("Stato finale non valido.\n" + "Atteso: " + expectedStatus + "\n" + "Ultimo stato ricevuto: " + lastStatus.get() + "\n" + "Response: " + lastResult.get(), e);
+        }
+        return lastResult.get();
     }
 
     @Then("la notifica bonaria è stata rifiutata per l'errore: {string}")
@@ -560,11 +700,18 @@ public class PresaInCaricoNoticaBonariaSteps {
     }
 
     public UUID toUuid(String value) {
-
         if (value == null || value.isBlank()) {
             return null;
         }
         return UUID.fromString(value);
+    }
+
+    private Map<String, String> trimData(Map<String, String> data) {
+        return data.entrySet().stream()
+                .collect(Collectors.toMap(
+                        e -> e.getKey().trim(),
+                        e -> e.getValue() != null ? e.getValue().trim() : null
+                ));
     }
 
     private void handleGroup(Map<String, String> data) {
@@ -623,6 +770,7 @@ public class PresaInCaricoNoticaBonariaSteps {
         Map<String, String> cleanedData = data.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().trim(), e -> e.getValue() != null ? e.getValue().trim() : null));
         InformalNotificationRecipientV1 recipient = recipientBuilder.build(cleanedData, currentCxId);
         informalNotificationRequestV1.getRecipients().add(recipient);
+        sendSharedContext.getInformalNotificationContext().getRecipient().setDestinatario(destinatarioRegistry.destinatario(data.get("denomination")));
     }
 
     @Then("si attende che venga prodotto l'elemento {string} della notifica bonaria")
@@ -663,6 +811,7 @@ public class PresaInCaricoNoticaBonariaSteps {
         this.paName = paName;
         SenderInfoProvider.PaInfo paInfo = sharedSteps.getSenderInfoProvider().getPaInfo(paName);
         this.currentCxId = paInfo.getSenderId();
+        sendSharedContext.getInformalNotificationContext().setSenderId(currentCxId);
 
         if (!COMUNE_ROOT.equalsIgnoreCase(paName)) {
             this.currentGroupId = sharedSteps.getGroupIdByPa(paName, GroupPosition.FIRST);
@@ -705,6 +854,7 @@ public class PresaInCaricoNoticaBonariaSteps {
 
         savedIun = statusResponse.getIun();
         sharedSteps.setNotificationIun(savedIun);
+        sendSharedContext.getInformalNotificationContext().setIun(savedIun);
         lastException = null;
     }
 

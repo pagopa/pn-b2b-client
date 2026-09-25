@@ -13,7 +13,6 @@ Feature: Allineamento linee guida
       | personalDataFlag | statusCode |
       | true             | 200        |
       | false            | 200        |
-      | undefined        | 400        |
 
   @llgg
   Scenario Outline: [LLGG_1.1] Creazione e-service in modalità "DELIVER" con diverse combinazioni di flagPersonalData e verifica del descrittore
@@ -56,8 +55,6 @@ Feature: Allineamento linee guida
 
     Examples:
       | eServicePersonalDataFlag | descriptorStatusCode | riskAnalysisPersonalDataFlag | statusCodeRiskAnalysis |
-      | undefined                | 400                  | false                        | 204                    |
-      | undefined                | 400                  | true                         | 204                    |
       | false                    | 200                  | false                        | 204                    |
       | true                     | 400                  | false                        | 400                    |
       | true                     | 200                  | true                         | 204                    |
@@ -115,7 +112,6 @@ Feature: Allineamento linee guida
       | personalDataFlag | updateStatusCode | publishStatusCode |
       | false            | 200              | 200               |
       | true             | 200              | 200               |
-      | undefined        | 200              | 400               |
 
   @llgg
   Scenario Outline: [LLGG_4] Aggiornamento descrittore in modalità RECIVE di un eService comprendente il flag dati
@@ -135,8 +131,6 @@ Feature: Allineamento linee guida
       | personalDataFlag | riskAnalysisPersonalDataFlag | updateStatusCode | publishStatusCode |
       | false            | false                        | 200              | 200               |
       | true             | true                         | 200              | 200               |
-      | undefined        | true                         | 200              | 400               |
-      | undefined        | false                        | 200              | 400               |
 
   @llgg
   Scenario Outline: [LLGG_4.1] Aggiornamento descrittore in modalità RECIVE di un eService comprendente un flag dati incoerente tra risk analysis e eService

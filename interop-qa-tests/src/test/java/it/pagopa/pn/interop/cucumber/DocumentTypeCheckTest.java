@@ -19,8 +19,8 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
     @ConfigurationParameter(
         key = PLUGIN_PROPERTY_NAME,
         value = "pretty,"
-            + "json:target/cucumber-report.json,"
-            + "html:target/cucumber-report.html,"
+            + "json:target/cucumber-report-document-type-check.json,"
+            + "html:target/cucumber-report-document-type-check.html,"
             + "it.pagopa.pn.interop.cucumber.plugins.SetApiProfilePropsPlugin:"
             + "api.m2m.version=V3;"
             + "api.mode=RIGHT_FIT;"

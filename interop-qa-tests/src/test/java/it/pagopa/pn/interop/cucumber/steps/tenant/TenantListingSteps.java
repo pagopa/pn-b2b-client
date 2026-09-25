@@ -63,7 +63,7 @@ public class TenantListingSteps {
     }
 
     @Then("l'utente richiede una operazione di listing dei suoi attributi certificati discreti e l'attributo assegnato è presente")
-    public void requireCertifiedDiscreteAttributeOperation() {
+    public void requireCertifiedDiscreteAttributeOperationWithCheck() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
         List<List<UUID>> assignedAttributes = sharedStepsContext.getAttributeCommonContext().getRequiredCertifiedAttributes();
@@ -83,6 +83,12 @@ public class TenantListingSteps {
                 },
                 "L'attributo certificato assegnato non è presente nella risposta paginata di getRequesterCertifiedAttributes"
         );
+    }
+
+    @Then("l'utente richiede una operazione di listing dei suoi attributi certificati discreti")
+    public void requireCertifiedDiscreteAttributeOperation() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        httpCallExecutor.performCall(() -> clientTokenConfigurator.getTenantsApi().getRequesterCertifiedAttributes(0, 50));
     }
 
     @When("l'utente richiede una operazione di listing di tutti gli attributi certificati discreti e l'attributo creato è presente")

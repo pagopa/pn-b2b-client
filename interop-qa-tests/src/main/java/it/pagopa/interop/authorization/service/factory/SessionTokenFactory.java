@@ -192,8 +192,6 @@ public abstract class SessionTokenFactory {
         // Unione dei due blocchi per formare il "currentUnsignedJwt"
         String currentUnsignedJwt = encodedHeader + "." + encodedPayload;
 
-        log.info("JWT successfully signed.");
-
         // 5. Processo di firma crittografica via KMS
         Map<String, Object> kmsSignResponse = kmsSign(currentUnsignedJwt);
 
@@ -202,6 +200,7 @@ public abstract class SessionTokenFactory {
         if (!kmsVerify(currentUnsignedJwt, signatureObj)) {
             throw new IllegalArgumentException("Signed Token generation process failed to verify signature");
         }
+        log.info("JWT successfully signed.");
 
         // Estrazione del JWT finale firmato
         this.lastMaintenanceToken = (String) kmsSignResponse.get("signedToken");
