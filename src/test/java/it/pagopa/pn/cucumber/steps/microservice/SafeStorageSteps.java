@@ -45,6 +45,7 @@ public class SafeStorageSteps {
     // SafeStorage fa decorrere la cessazione della disponibilita dalla fine del giorno indicato
     // (ora italiana): la data salvata e restituita e' normalizzata a questo orario.
     private static final LocalTime AVAILABILITY_END_OF_DAY = LocalTime.of(23, 59, 59);
+    private static final String UNREADABLE_REQUEST_MESSAGE = "Failed to read HTTP message";
 
     private final ApplicationContext context;
     private final IPnSafeStoragePrivateClient safeStorageClient;
@@ -412,6 +413,12 @@ public class SafeStorageSteps {
         assertThat(safeStorageStepsPojo.getFileMetadataUpdateStatusCode())
                 .as(errorBody == null ? description : description + " - risposta del servizio: " + errorBody)
                 .isEqualTo(expectedStatusCode);
+        // Un 400 dovuto a una richiesta non leggibile non e' il rifiuto funzionale atteso.
+        if (errorBody != null) {
+            assertThat(errorBody)
+                    .as("Il servizio non ha potuto leggere la richiesta: il rifiuto non deriva dalla validazione delle date")
+                    .doesNotContain(UNREADABLE_REQUEST_MESSAGE);
+        }
     }
 
     // Confronta la data restituita con l'ultima fine disponibilita impostata, non con la

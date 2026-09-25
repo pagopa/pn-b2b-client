@@ -1,6 +1,7 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
 
+import com.fasterxml.jackson.databind.SerializationFeature;
 import it.pagopa.pn.client.b2b.pa.service.IPnSafeStoragePrivateClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.ApiClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.api.AdditionalFileTagsApi;
@@ -12,10 +13,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -35,14 +39,33 @@ public class PnSafeStoragePrivateClientImpl implements IPnSafeStoragePrivateClie
                                           @Value("${pn.safeStorage.apikey}") String apiKeySafeStorage,
                                           @Value("${pn.safeStorage.clientId}") String clientIdSafeStorage) {
 
-        this.restTemplate = restTemplate;
+        this.restTemplate = withIsoDateSerialization(restTemplate);
         this.safeStorageBaseUrl = safeStorageBaseUrl;
         this.clientIdSafeStorage = clientIdSafeStorage;
 
-        fileUploadApi = new FileUploadApi(newApiClient(restTemplate, safeStorageBaseUrl, apiKeySafeStorage));
-        fileDownloadApi = new FileDownloadApi(newApiClient(restTemplate, safeStorageBaseUrl, apiKeySafeStorage));
-        fileMetadataUpdateApi = new FileMetadataUpdateApi(newApiClient(restTemplate, safeStorageBaseUrl, apiKeySafeStorage));
-        additionalFileTagsApi = new AdditionalFileTagsApi(newApiClient(restTemplate, safeStorageBaseUrl, apiKeySafeStorage));
+        fileUploadApi = new FileUploadApi(newApiClient(this.restTemplate, safeStorageBaseUrl, apiKeySafeStorage));
+        fileDownloadApi = new FileDownloadApi(newApiClient(this.restTemplate, safeStorageBaseUrl, apiKeySafeStorage));
+        fileMetadataUpdateApi = new FileMetadataUpdateApi(newApiClient(this.restTemplate, safeStorageBaseUrl, apiKeySafeStorage));
+        additionalFileTagsApi = new AdditionalFileTagsApi(newApiClient(this.restTemplate, safeStorageBaseUrl, apiKeySafeStorage));
+    }
+
+    // Il RestTemplate condiviso serializza le date java.time come timestamp decimali
+    // (es. 1790416800.000000000), che SafeStorage non riesce a leggere nei campi data-ora
+    // (retentionUntil, availableUntil) e rifiuta con 400 "Failed to read HTTP message".
+    // Per questo client si usa una copia che le serializza in ISO-8601 (RFC 3339, come da
+    // contratto), riusando la request factory del RestTemplate condiviso, gia' comprensiva
+    // dei suoi interceptor.
+    private static RestTemplate withIsoDateSerialization(RestTemplate sharedRestTemplate) {
+        List<HttpMessageConverter<?>> messageConverters = sharedRestTemplate.getMessageConverters().stream()
+                .<HttpMessageConverter<?>>map(converter -> converter instanceof MappingJackson2HttpMessageConverter jacksonConverter
+                        ? new MappingJackson2HttpMessageConverter(jacksonConverter.getObjectMapper().copy()
+                                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS))
+                        : converter)
+                .toList();
+        RestTemplate safeStorageRestTemplate = new RestTemplate(sharedRestTemplate.getRequestFactory());
+        safeStorageRestTemplate.setMessageConverters(messageConverters);
+        safeStorageRestTemplate.setErrorHandler(sharedRestTemplate.getErrorHandler());
+        return safeStorageRestTemplate;
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String apiKey) {
