@@ -96,6 +96,8 @@ Feature: Il pagamento esterno non sostituisce la consegna della notifica
     And l'avviso pagopa viene pagato correttamente
     And si attende il corretto pagamento della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PAYMENT"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL" al tentativo "ATTEMPT_1"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_SIMPLE_REGISTERED_LETTER"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
@@ -186,6 +188,8 @@ Feature: Il pagamento esterno non sostituisce la consegna della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     And si attende il corretto pagamento della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PAYMENT"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL" al tentativo "ATTEMPT_1"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW"
     And l'evento "DIGITAL_FAILURE_WORKFLOW" è successivo all'evento "NOTIFICATION_VIEWED"
     Then viene controllato che l'elemento di timeline della notifica "PREPARE_SIMPLE_REGISTERED_LETTER" non esiste
