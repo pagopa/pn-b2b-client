@@ -66,7 +66,7 @@ public class AgreementCreationStep {
     @Given("{string} ha già rifiutato quella richiesta di fruizione")
     public void tenantHasDeclinedThatRequest(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        dataPreparationService.rejectAgreement(sharedStepsContext.getAgreementId());
+        dataPreparationService.rejectAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId());
     }
 
     @Given("il {delegationRole} ha già rifiutato quella richiesta di fruizione")
@@ -86,7 +86,7 @@ public class AgreementCreationStep {
                 sharedStepsContext.getEServicesCommonContext().getEserviceId(),
                 sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
                 delegationId);
-        sharedStepsContext.setAgreementId(agreementId.orElse(null));
+        sharedStepsContext.getAgreementCommonContext().setAgreementId(agreementId.orElse(null));
     }
 
     @Given("{string} ha già creato e inviato una richiesta di fruizione per quell'e-service ed è in attesa di approvazione")
@@ -123,7 +123,7 @@ public class AgreementCreationStep {
                 sharedStepsContext.getEServicesCommonContext().getEserviceId(),
                 sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
                 delegationId);
-        sharedStepsContext.setAgreementId(agreementId);
+        sharedStepsContext.getAgreementCommonContext().setAgreementId(agreementId);
 
         dataPreparationService.submitAgreement(agreementId, AgreementState.PENDING);
     }
@@ -161,7 +161,7 @@ public class AgreementCreationStep {
     public void verifyAgreementState(String agreementState) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getPollingService().makePolling(
-                () -> clientTokenConfigurator.getAgreementClient().getAgreementById(sharedStepsContext.getAgreementId()),
+                () -> clientTokenConfigurator.getAgreementClient().getAgreementById(sharedStepsContext.getAgreementCommonContext().getAgreementId()),
                 res -> res.getState().getValue().equals(agreementState),
                 String.format("The agreement is not in the expected state %s", agreementState)
         );

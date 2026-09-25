@@ -33,7 +33,7 @@ public class AgreementSubmitSteps {
     public void tenantSubmitAgreement() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getAgreementClient().submitAgreement(this.sharedStepsContext.getAgreementId(),
+                () -> clientTokenConfigurator.getAgreementClient().submitAgreement(this.sharedStepsContext.getAgreementCommonContext().getAgreementId(),
                         new AgreementSubmissionPayload())
         );
     }
@@ -52,9 +52,9 @@ public class AgreementSubmitSteps {
     @Then("la richiesta di fruizione assume lo stato {string}")
     public void agreementReachSpecificStatus(String agremeentState) {
         sharedStepsContext.getPollingService().makePolling(
-                () -> clientTokenConfigurator.getAgreementClient().getAgreementById(sharedStepsContext.getAgreementId()),
+                () -> clientTokenConfigurator.getAgreementClient().getAgreementById(sharedStepsContext.getAgreementCommonContext().getAgreementId()),
                 res -> res.getState().equals(AgreementState.valueOf(agremeentState)),
-                String.format("Agreement with id: %s and state: %s was not found!", sharedStepsContext.getAgreementId(), agremeentState.toUpperCase())
+                String.format("Agreement with id: %s and state: %s was not found!", sharedStepsContext.getAgreementCommonContext().getAgreementId(), agremeentState.toUpperCase())
         );
     }
 

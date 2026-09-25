@@ -41,6 +41,7 @@ public class EServicesCommonContext {
     private UUID documentId;
     private UUID documentId2;
     private List<DocumentMetadata> documentsMetadata;
+    private String documentName;
 
     private UUID interfaceId;
     private String interfaceName;
@@ -48,6 +49,7 @@ public class EServicesCommonContext {
     private String callbackInterfaceName;
     private UUID oldDescriptorId;
     private String name;
+    private String oldName;
     private String description;
     private Boolean isConsumerDelegable;
     private Boolean IsClientAccessDelegable;

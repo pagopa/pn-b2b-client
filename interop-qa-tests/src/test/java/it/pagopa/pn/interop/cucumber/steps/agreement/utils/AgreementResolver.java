@@ -15,8 +15,8 @@ public class AgreementResolver extends AbstractResolver {
         return resolveOrParse(
                 raw,
                 UUID::fromString,
-                sharedStepsContext::getAgreementId,
-                sharedStepsContext::getAgreementId,
+                sharedStepsContext.getAgreementCommonContext()::getAgreementId,
+                sharedStepsContext.getAgreementCommonContext()::getAgreementId,
                 UUID::randomUUID,
                 null
         );

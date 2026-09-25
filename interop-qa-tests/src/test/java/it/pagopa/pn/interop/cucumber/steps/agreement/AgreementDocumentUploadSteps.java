@@ -29,7 +29,7 @@ public class AgreementDocumentUploadSteps {
         Resource doc = new FileSystemResource("src/main/resources/dummy.pdf");
         String name = FilenameUtils.getName(doc.getFilename());
         sharedStepsContext.getHttpCallExecutor().performCall(
-            () -> clientTokenConfigurator.getAgreementClient().addAgreementConsumerDocument(sharedStepsContext.getAgreementId(),
+            () -> clientTokenConfigurator.getAgreementClient().addAgreementConsumerDocument(sharedStepsContext.getAgreementCommonContext().getAgreementId(),
                 name, prettyName, doc)
         );
     }
@@ -42,7 +42,7 @@ public class AgreementDocumentUploadSteps {
         Resource doc = new FileSystemResource("src/main/resources/dummy.pdf");
         String name = FilenameUtils.getName(doc.getFilename());
         sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getAgreementClient().addAgreementConsumerDocument(sharedStepsContext.getAgreementId(),
+                () -> clientTokenConfigurator.getAgreementClient().addAgreementConsumerDocument(sharedStepsContext.getAgreementCommonContext().getAgreementId(),
                     name, prettyName, doc)
         );
         if (sharedStepsContext.getHttpCallExecutor().getResponseStatus().is2xxSuccessful()) {
