@@ -1,21 +1,12 @@
 package it.pagopa.pn.cucumber;
 
-import org.junit.platform.suite.api.*;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
-import static io.cucumber.junit.platform.engine.Constants.*;
-
+/**
+ * Esegue le suite V23 e V25, ciascuna con la propria versione dello stream.
+ */
 @Suite
-@IncludeEngines("cucumber")
-@SelectClasspathResource("it/pagopa/pn/cucumber/workflowNotifica/webhook")
-@SelectClasspathResource("it/pagopa/pn/cucumber/ResaAlMittente.feature")
-@ConfigurationParameters({
-        @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty"),
-        @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "json:target/cucumber-report.json," +
-                "html:target/cucumber-report.html"),
-        @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.cucumber.steps"),
-        @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
-})
-@ExcludeTags({"ignore"})
-@IncludeTags({"webhookV23", "webhookV25"})
+@SelectClasses({WebhookV23Test.class, WebhookV25Test.class})
 public class WebhookV23V25Test {
 }
