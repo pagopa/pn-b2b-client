@@ -98,7 +98,9 @@ Feature: Api Service Cruscotto Assistenza
   Scenario Outline: [API-SERVICE-CA_CE02.3_OK] Invocazione del servizio con taxId e recipientType corretti e verifica risposta
     Given come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "<TAX_ID>" e recipientType  "<RECIPIENT_TYPE>"
     Then Il servizio risponde correttamente
-    And viene verificato che esiste un audit log "AUD_CA_VIEW_USERPROFILE" in "2y"
+    And verifico la presenza di un audit log su "/aws/ecs/pn-service-desk" negli ultimi 5 minuti riportante i seguenti dati nel messaggio
+      | type      | AUD_CA_VIEW_USERPROFILE |
+      | retention | AUDIT2Y                 |
     Examples:
       | TAX_ID        | RECIPIENT_TYPE |
       | Mario Gherkin | PF             |
@@ -167,8 +169,12 @@ Feature: Api Service Cruscotto Assistenza
     Then Il servizio risponde correttamente
     And invocazione servizio per recupero dettaglio notifica
     And Il servizio risponde correttamente
-    And viene verificato che esiste un audit log "AUD_CA_SEARCH_NOTIFICATION" in "2y"
-    And viene verificato che esiste un audit log "AUD_CA_VIEW_NOTIFICATION" in "2y"
+    And verifico la presenza di un audit log su "/aws/ecs/pn-service-desk" negli ultimi 5 minuti riportante i seguenti dati nel messaggio
+      | type      | AUD_CA_SEARCH_NOTIFICATION |
+      | retention | AUDIT2Y                    |
+    And verifico la presenza di un audit log su "/aws/ecs/pn-service-desk" negli ultimi 5 minuti riportante i seguenti dati nel messaggio
+      | type      | AUD_CA_VIEW_NOTIFICATION |
+      | retention | AUDIT2Y                  |
     Examples:
       | TAX_ID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
       | Mario Gherkin | PF             | 10               | NULL                 | 2023-01-01 | 2023-12-01 |
@@ -351,7 +357,9 @@ Feature: Api Service Cruscotto Assistenza
     And si verifica la corretta acquisizione della notifica
     And come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "NO_SET" e taxId "Mario Gherkin"  recipientType  "PF"
     Then Il servizio risponde correttamente con presenza di allegati "true"
-    And viene verificato che esiste un audit log "AUD_CA_DOC_AVAILABLE" in "2y"
+    And verifico la presenza di un audit log su "/aws/ecs/pn-service-desk" negli ultimi 5 minuti riportante i seguenti dati nel messaggio
+      | type      | AUD_CA_DOC_AVAILABLE |
+      | retention | AUDIT2Y              |
 
   @cruscottoAssistenza
   Scenario: [API-SERVICE-CA_CE02.8_58_1] Invocazione del servizio con IUN esistente e notifica annullata
@@ -442,7 +450,9 @@ Feature: Api Service Cruscotto Assistenza
       | startDate      | 2023-01-01 |
       | endDate        | 2023-12-01 |
     Then Il servizio risponde correttamente
-    And viene verificato che esiste un audit log "AUD_CA_VIEW_ONBOARDING" in "2y"
+    And verifico la presenza di un audit log su "/aws/ecs/pn-service-desk" negli ultimi 5 minuti riportante i seguenti dati nel messaggio
+      | type      | AUD_CA_VIEW_ONBOARDING |
+      | retention | AUDIT2Y                |
     #  Response 200 OK a95dace4-4a47-4149-a814-0e669113ce40
     #{"results":[],"moreResult":false,"nextPagesKey":[]}
 
@@ -531,7 +541,9 @@ Feature: Api Service Cruscotto Assistenza
     And Il servizio risponde con esito positivo con la lista delle PA
     When  come operatore devo accedere alle informazioni relative alle richieste di API Key avanzate da un Ente mittente di notifiche sulla Piattaforma "a95dace4-4a47-4149-a814-0e669113ce40"
     Then Il servizio risponde correttamente con presenza delle apiKey
-    And viene verificato che esiste un audit log "AUD_CA_VIEW_AK" in "2y"
+    And verifico la presenza di un audit log su "/aws/ecs/pn-service-desk" negli ultimi 5 minuti riportante i seguenti dati nel messaggio
+      | type      | AUD_CA_VIEW_AK |
+      | retention | AUDIT2Y        |
     #Response 200 OK
 
 #026e8c72-7944-4dcd-8668-f596447fec6d MILANO
