@@ -40,6 +40,26 @@ Feature: Comunicazioni bonarie
     When recupero il template per "sms comunicazione bonaria" in lingua "italiana" con recipient Type "PF"
     Then verifico che il template è in formato "text"
 
+
+
+  @templateEngine #/templates-engine-private/v1/templates/informal/courtesy-email-communication-subject
+  Scenario: [COMBO_TEMPLATE_ENGINE_03_2_A] Richiamare l’API per il recupero del template relativo al oggetto di avviso di cortesia dell'EMAIL
+    When recupero il template per "email subject avviso di cortesia comunicazione bonaria" in lingua "italiana" con recipient Type "PG"
+    Then verifico che il template è in formato "text"
+
+  @templateEngine #/templates-engine-private/v1/templates/informal/courtesy-email-communication-body
+  Scenario: [COMBO_TEMPLATE_ENGINE_03_2_B] Richiamare l’API per il recupero del template relativo al body di avviso di cortesia dell'EMAIL
+    When recupero il template per "email body avviso di cortesia comunicazione bonaria" in lingua "italiana" con recipient Type "PG"
+    Then verifico che il template è in formato "text"
+
+  @templateEngine #/templates-engine-private/v1/templates/informal/courtesy-sms-communication
+    Scenario: [COMBO_TEMPLATE_ENGINE_03_2_C] Richiamare l’API per il recupero del template relativo al body di avviso di cortesia dell'SMS
+    When recupero il template per "sms avviso di cortesia comunicazione bonaria" in lingua "italiana" con recipient Type "PG"
+    Then verifico che il template è in formato "text"
+
+
+
+
   # ---------- Comunicazione bonaria posta cartacea (schema InformalCommunication) ----------
 
   @templateEngine # /templates-engine-private/v1/templates/informal/analog-communication

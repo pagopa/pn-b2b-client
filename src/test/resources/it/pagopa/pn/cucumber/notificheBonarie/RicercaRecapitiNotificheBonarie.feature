@@ -64,7 +64,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     #tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | xx                       |
+      | campaignId      | BonarieAllChannels       |
       | messageId       | ${NEW-IT}                |
       | subject         | Test Serch Contact       |
       | recipientType   | PG                       |
@@ -150,7 +150,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC     |
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | false   |
-          And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
+    And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
       | details_channel              | PEC      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | false    |
@@ -159,7 +159,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC     |
       | details_digitalAddressSource | GENERAL |
       | details_isAvailable          | true    |
-         And si attende che venga prodotto l'elemento "PUBLIC_REGISTRY_CALL" della notifica bonaria
+    And si attende che venga prodotto l'elemento "PUBLIC_REGISTRY_CALL" della notifica bonaria
     And si attende che venga prodotto l'elemento "PUBLIC_REGISTRY_RESPONSE" della notifica bonaria
 
 
@@ -180,7 +180,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC     |
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | false   |
-         And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
+    And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
       | details_channel              | PEC      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | false    |
@@ -189,7 +189,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC     |
       | details_digitalAddressSource | GENERAL |
       | details_isAvailable          | true    |
-          And si attende che venga prodotto l'elemento "PUBLIC_REGISTRY_CALL" della notifica bonaria
+    And si attende che venga prodotto l'elemento "PUBLIC_REGISTRY_CALL" della notifica bonaria
 
 
 #no registri
@@ -211,7 +211,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC     |
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | false   |
-      And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
+    And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
       | details_channel              | PEC      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | false    |
@@ -220,7 +220,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC     |
       | details_digitalAddressSource | GENERAL |
       | details_isAvailable          | false   |
-        And si attende che venga prodotto l'elemento "PUBLIC_REGISTRY_CALL" della notifica bonaria
+    And si attende che venga prodotto l'elemento "PUBLIC_REGISTRY_CALL" della notifica bonaria
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
       | details_channel | PEC |
 
@@ -242,7 +242,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC     |
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | false   |
-      And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
+    And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
       | details_channel              | PEC      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | false    |
@@ -251,7 +251,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC     |
       | details_digitalAddressSource | GENERAL |
       | details_isAvailable          | false   |
-         And si attende che venga prodotto l'elemento "PUBLIC_REGISTRY_CALL" della notifica bonaria
+    And si attende che venga prodotto l'elemento "PUBLIC_REGISTRY_CALL" della notifica bonaria
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
       | details_channel | PEC |
 
@@ -2381,7 +2381,6 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_isAvailable          | true    |
       | details_isTosAccepted        | true    |
     And vengono rimossi eventuali recapiti presenti per l'utente
-
 
 
   @informalNotificationsSearchDigitalAddress @addressBook2 @informalSerchDigitalOFF

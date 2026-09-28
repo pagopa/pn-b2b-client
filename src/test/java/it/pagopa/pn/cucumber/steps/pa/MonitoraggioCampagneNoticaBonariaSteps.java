@@ -3,8 +3,8 @@ package it.pagopa.pn.cucumber.steps.pa;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformalmonitorcampaign.model.CampaignStatisticsResponse;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformalmonitorcampaign.model.CampaignStats;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bInternalInformalClientImpl;
+import it.pagopa.pn.cucumber.steps.informalNotification.data.CampaignCounter;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,17 +37,17 @@ public class MonitoraggioCampagneNoticaBonariaSteps {
         assertNotNull(initialCampaignStatistics);
     }
 
-    @Then("il contatore {string} della campagna {string} risulta incrementato di {int}")
-    public void verifyCounterIncrement(String counterName, String campaignId, int increment) {
-
-        int initialValue = getCounter(initialCampaignStatistics.getStats(), counterName);
-
-        await().atMost(Duration.ofMinutes(2)).pollInterval(Duration.ofSeconds(5)).until(() -> {
-            finalCampaignStatistics = pnPaB2bInternalInformalClientImpl.getCampaignStatistics(campaignId);
-            int currentValue = getCounter(finalCampaignStatistics.getStats(), counterName);
-            return currentValue == initialValue + increment;
-        });
-    }
+//    @Then("il contatore {string} della campagna {string} risulta incrementato di {int}")
+//    public void verifyCounterIncrement(String counterName, String campaignId, int increment) {
+//
+//        int initialValue = getCounter(initialCampaignStatistics.getStats(), counterName);
+//
+//        await().atMost(Duration.ofMinutes(2)).pollInterval(Duration.ofSeconds(5)).until(() -> {
+//            finalCampaignStatistics = pnPaB2bInternalInformalClientImpl.getCampaignStatistics(campaignId);
+//            int currentValue = getCounter(finalCampaignStatistics.getStats(), counterName);
+//            return currentValue == initialValue + increment;
+//        });
+//    }
 
 
     @Then("il recupero dei dati statistici della campagna {string} fallisce con errore {int}")
@@ -78,21 +78,73 @@ public class MonitoraggioCampagneNoticaBonariaSteps {
         }
     }
 
-    private Integer getCounter(CampaignStats stats, String counterName) {
+    @Then("il contatore {string} della campagna {string} risulta incrementato di {int}")
+    public void verifyCounterIncrement(String counterName, String campaignId, int increment) {
 
-        return switch (counterName) {
+        CampaignCounter counter = CampaignCounter.valueOf(counterName);
+        int initialValue = counter.extract(initialCampaignStatistics.getStats());
 
-            case "totalCount" -> stats.getTotalCount();
-            case "totalRefusedCount" -> stats.getTotalRefusedCount();
-            case "sentOnChannelCount" -> stats.getSentOnChannelCount();
-            case "deliveredCount" -> stats.getDeliveredCount();
-            case "undeliverableCount" -> stats.getUndeliverableCount();
-            case "workflowDoneCount" -> stats.getWorkflowDoneCount();
-            case "viewedCount" -> stats.getViewedCount();
-            case "paidCount" -> stats.getPaidCount();
-            default -> throw new IllegalArgumentException("Counter non supportato: " + counterName);
-        };
+        await()
+                .atMost(Duration.ofMinutes(2))
+                .pollInterval(Duration.ofSeconds(5))
+                .until(() -> {
+
+                    finalCampaignStatistics = pnPaB2bInternalInformalClientImpl.getCampaignStatistics(campaignId);
+                    int currentValue = counter.extract(finalCampaignStatistics.getStats());
+                    return currentValue == initialValue + increment;
+                });
     }
+
+
+
+
+//    private Integer getCounter(CampaignStats stats, String counterName) {
+//
+//        CampaignCounter counter = CampaignCounter.valueOf(counterName);
+//
+//        return switch (counter) {
+//
+//            case NOTIFICHE_TOTALI -> stats.getTotalCount();
+//
+//            case NOTIFICHE_RIFIUTATE -> stats.getTotalRefusedCount();
+//
+//            case NOTIFICHE_INVIATE_SU_CANALE -> stats.getSentOnChannelCount();
+//
+//            case NOTIFICHE_CONSEGNATE -> stats.getDeliveredCount();
+//
+//            case NOTIFICHE_NON_CONSEGNABILI -> stats.getUndeliverableCount();
+//
+//            case WORKFLOW_COMPLETATI -> stats.getWorkflowDoneCount();
+//
+//            case NOTIFICHE_VISUALIZZATE -> stats.getViewedCount();
+//
+//            case NOTIFICHE_PAGATE -> stats.getPaidCount();
+//
+//            case NOTIFICHE_INVIATE_IO -> stats.getSentOnChannel().getDigital().getIO();
+//
+//            case NOTIFICHE_INVIATE_EMAIL -> stats.getSentOnChannel().getDigital().getEMAIL();
+//
+//            case NOTIFICHE_INVIATE_PEC -> stats.getSentOnChannel().getDigital().getPEC();
+//
+//            case NOTIFICHE_INVIATE_SMS -> stats.getSentOnChannel().getDigital().getSMS();
+//
+//            case NOTIFICHE_INVIATE_RS -> stats.getSentOnChannel().getAnalog().getRS();
+//
+//            case NOTIFICHE_CONSEGNATE_IO -> stats.getDelivered().getIO();
+//
+//            case NOTIFICHE_CONSEGNATE_EMAIL -> stats.getDelivered().getEMAIL();
+//
+//            case NOTIFICHE_CONSEGNATE_PEC -> stats.getDelivered().getPEC();
+//
+//            case NOTIFICHE_CONSEGNATE_RS -> stats.getDelivered().getRS();
+//
+//            case NOTIFICHE_VISUALIZZATE_IO -> stats.getViewed().getIO();
+//
+//            case NOTIFICHE_VISUALIZZATE_SEND -> stats.getViewed().getSEND();
+//
+//            case PRIMA_VISUALIZZAZIONE -> stats.getViewed().getFirstViewedCount();
+//        };
+//    }
 
 }
 

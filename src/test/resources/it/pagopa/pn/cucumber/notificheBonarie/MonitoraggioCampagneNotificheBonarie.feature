@@ -10,9 +10,15 @@ Then il contatore "totalCount" della campagna "TEST_CAMPAIGN" risulta incrementa
 Then il recupero dei dati statistici della campagna "CAMPAGNA_INESISTENTE" fallisce con errore 404 ""
 
 
-  @informalNotificationsMonitorCampaign
+#  @addressBook1 -> MessaMora
+#  @addressBook2 -> FattOrd
+#  @addressBook3 -> Reminder
+#  @addressBook4 -> QADigital
+
+
+  @informalNotificationsMonitorCampaign @addressBook1
   Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_1_A] Come ente mittente sottometto una notifica bonaria che verrà INVIATA su canale ANALOGICO, il contatore del monitoraggio si incrementa correttamente.
-    # call monitor
+    Given vengono salvati i dati statistici attuali della campagna "MessaMora"
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId               | MessaMora                               |
       | messageId                | ${NEW-IT}                               |
@@ -29,14 +35,19 @@ Then il recupero dei dati statistici della campagna "CAMPAGNA_INESISTENTE" falli
 #      | details_responseStatus | OK |
 #    And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
 #    And si attende che venga prodotto l'elemento "WORKFLOW_DONE_REACHED" della notifica bonaria
+    Then il contatore "NOTIFICHE_TOTALI" della campagna "MessaMora" risulta incrementato di 1
+    Then il contatore "NOTIFICHE_INVIATE_SU_CANALE" della campagna "MessaMora" risulta incrementato di 1
+    Then il contatore "NOTIFICHE_INVIATE_RS" della campagna "MessaMora" risulta incrementato di 1
+    Then il contatore "NOTIFICHE_CONSEGNATE_RS" della campagna "MessaMora" risulta incrementato di 1
 
+    # +1 da inviare
     # call monitor +1 INVIO
     # call monitor +1 INVIO ANALOGICO
 
 
-  @informalNotificationsMonitorCampaign
+  @informalNotificationsMonitorCampaign @addressBook1
   Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_1_B] Come ente mittente sottometto una notifica bonaria che verrà INVIATA su canale DIGITALE, il contatore del monitoraggio si incrementa correttamente.
-    # call monitor
+    Given vengono salvati i dati statistici attuali della campagna "MessaMora"
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | MessaMora             |
       | messageId       | ${NEW-IT}             |
@@ -52,14 +63,19 @@ Then il recupero dei dati statistici della campagna "CAMPAGNA_INESISTENTE" falli
 #      | details_channel        | PEC |
 #      | details_responseStatus | OK  |
 #    And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
+    Then il contatore "NOTIFICHE_TOTALI" della campagna "MessaMora" risulta incrementato di 1
+    Then il contatore "NOTIFICHE_INVIATE_SU_CANALE" della campagna "MessaMora" risulta incrementato di 1
+    Then il contatore "NOTIFICHE_INVIATE_PEC" della campagna "MessaMora" risulta incrementato di 1
+    Then il contatore "NOTIFICHE_CONSEGNATE_PEC" della campagna "MessaMora" risulta incrementato di 1
 
-     # call monitor +2
+        # +1 da inviare
+        # call monitor +1 INVIO
+        # call monitor +1 INVIO DIGITALE
 
 
-
-  @informalNotificationsMonitorCampaign
+  @informalNotificationsMonitorCampaign @addressBook1
   Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_1_C] Come ente mittente sottometto una notifica bonaria che verrà INVIATA su canale ANALOGICO e DIGITALE, il contatore del monitoraggio si incrementa correttamente.
-    # call monitor
+    Given vengono salvati i dati statistici attuali della campagna "MessaMora"
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId               | MessaMora                  |
       | messageId                | ${NEW-IT}                  |
@@ -73,36 +89,23 @@ Then il recupero dei dati statistici della campagna "CAMPAGNA_INESISTENTE" falli
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria
     And si attende che venga prodotto l'elemento "SEND_ANALOG_MESSAGE" della notifica bonaria
-#    And si attende che venga prodotto l'elemento "SEND_ANALOG_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
-#      | details_responseStatus | OK |
+    And si attende che venga prodotto l'elemento "SEND_ANALOG_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
+      | details_responseStatus | OK |
 #    And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
 #    And si attende che venga prodotto l'elemento "WORKFLOW_DONE_REACHED" della notifica bonaria
-
-     # call monitor +1
+    Then il contatore "NOTIFICHE_TOTALI" della campagna "MessaMora" risulta incrementato di 1
+    Then il contatore "NOTIFICHE_INVIATE_SU_CANALE" della campagna "MessaMora" risulta incrementato di 2
+    Then il contatore "NOTIFICHE_INVIATE_PEC" della campagna "MessaMora" risulta incrementato di 1
+    Then il contatore "NOTIFICHE_INVIATE_RS" della campagna "MessaMora" risulta incrementato di 1
+    Then il contatore "NOTIFICHE_CONSEGNATE_RS" della campagna "MessaMora" risulta incrementato di 1
+     # +1 da inviare
+     # call monitor +2 INVIO DIGITALE-ANALOGICO
     # call monitor +1 Ricevuta RS
 
 
-
-  @informalNotificationsMonitorCampaign
-  Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_2] Come ente mittente sottometto una notifica bonaria che sarà ACCETTATA, il contatore del monitoraggio si incrementa correttamente.
-    # call monitor
-    Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | MessaMora             |
-      | messageId       | ${NEW-IT}             |
-      | subject         | Test workflow         |
-      | recipientType   | PG                    |
-      | taxId           | 20517490320           |
-      | denomination    | Acme spa              |
-      | email           | NULL                  |
-      | digitalDomicile | example@pecSuccess.it |
-    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
-    And si attende che venga prodotto l'elemento "REQUEST_ACCEPTED" della notifica bonaria
-    # call monitor +1
-
-
-  @informalNotificationsMonitorCampaign
+  @informalNotificationsMonitorCampaign @addressBook2
   Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_3_A] Come ente mittente sottometto una notifica bonaria che sarà RIFIUTATA, il contatore del monitoraggio si incrementa correttamente.
-    # call monitor
+    Given vengono salvati i dati statistici attuali della campagna "FattOrd"
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId          | FattOrd      |
       | recipientType       | PG           |
@@ -112,13 +115,13 @@ Then il recupero dei dati statistici della campagna "CAMPAGNA_INESISTENTE" falli
       | additionalLanguages | DE           |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "REFUSED"
     And si attende che venga prodotto l'elemento "REQUEST_REFUSED" della notifica bonaria
-    # call monitor +1
+    Then il contatore "NOTIFICHE_RIFIUTATE" della campagna "FattOrd" risulta incrementato di 1
+    # call monitor +1 RIFIUTATE
 
 
-
-  @informalNotificationsMonitorCampaign
+  @informalNotificationsMonitorCampaign @addressBook1
   Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_3_B] Come ente mittente sottometto una notifica bonaria che sarà RIFIUTATA, il contatore del monitoraggio si incrementa correttamente.
-    # call monitor
+    Given vengono salvati i dati statistici attuali della campagna "MessaMora"
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId                    | MessaMora                |
       | denomination                  | Leonardo Da Vinci no vas |
@@ -132,11 +135,14 @@ Then il recupero dei dati statistici della campagna "CAMPAGNA_INESISTENTE" falli
       | messageId                     | ${NEW-IT}                |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "REFUSED"
     And si attende che venga prodotto l'elemento "REQUEST_REFUSED" della notifica bonaria
+    Then il contatore "NOTIFICHE_RIFIUTATE" della campagna "MessaMora" risulta incrementato di 1
+    # call monitor +1 RIFIUTATE
 
 
-  @informalNotificationsMonitorCampaign
-  Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_4_CDE] Come ente mittente sottometto una notifica bonaria che sarà INVIATA tramite EMAIL e SMS, il contatore del monitoraggio si incrementa correttamente.
-    # call monitor
+
+  @informalNotificationsMonitorCampaign @addressBook3
+  Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_4_BCD] Come ente mittente sottometto una notifica bonaria che sarà INVIATA tramite EMAIL e SMS, il contatore del monitoraggio si incrementa correttamente.
+    Given vengono salvati i dati statistici attuali della campagna "Reminder"
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | Reminder                       |
       | messageId       | ${NEW-IT}                      |
@@ -152,17 +158,23 @@ Then il recupero dei dati statistici della campagna "CAMPAGNA_INESISTENTE" falli
       | details_channel | EMAIL |
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
       | details_channel | SMS |
-#    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
-#      | details_channel        | SMS |
-#      | details_responseStatus | OK  |
+    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
+      | details_channel        | SMS |
+      | details_responseStatus | OK  |
 #    And si attende che la notifica bonaria passi in stato "COMPLETED_UNREACHED"
 #    And si attende che venga prodotto l'elemento "WORKFLOW_ENDED_UNREACHED" della notifica bonaria
+    Then il contatore "NOTIFICHE_TOTALI" della campagna "Reminder" risulta incrementato di 1
+    Then il contatore "NOTIFICHE_INVIATE_SU_CANALE" della campagna "Reminder" risulta incrementato di 2
+    Then il contatore "NOTIFICHE_INVIATE_EMAIL" della campagna "Reminder" risulta incrementato di 1
+    Then il contatore "NOTIFICHE_INVIATE_SMS" della campagna "Reminder" risulta incrementato di 1
+    Then il contatore "NOTIFICHE_CONSEGNATE_EMAIL" della campagna "Reminder" risulta incrementato di 0
+    Then il contatore "NOTIFICHE_CONSEGNATE_SMS" della campagna "Reminder" risulta incrementato di 1
+# call monitor email sms +2 INVIO: EMAIL-SMS
 
-# call monitor email sms +2
 
-  @informalNotificationsMonitorCampaign
-  Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_4_ADE] Come ente mittente sottometto una notifica bonaria che sarà INVIATA tramite PEC e SMS, il contatore del monitoraggio si incrementa correttamente.
-    # call monitor
+  @informalNotificationsMonitorCampaign @addressBook3
+  Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_4_ACD] Come ente mittente sottometto una notifica bonaria che sarà INVIATA tramite PEC e SMS, il contatore del monitoraggio si incrementa correttamente.
+    Given vengono salvati i dati statistici attuali della campagna "Reminder"
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | Reminder                   |
       | messageId       | ${NEW-IT}                  |
@@ -187,18 +199,18 @@ Then il recupero dei dati statistici della campagna "CAMPAGNA_INESISTENTE" falli
 #      | details_channel        | SMS |
 #      | details_responseStatus | OK  |
 #    And si attende che venga prodotto l'elemento "WORKFLOW_ENDED_UNREACHED" della notifica bonaria
+    Then il contatore "NOTIFICHE_TOTALI" della campagna "Reminder" risulta incrementato di 1
+    Then il contatore "NOTIFICHE_INVIATE_SU_CANALE" della campagna "Reminder" risulta incrementato di 2
+    Then il contatore "NOTIFICHE_INVIATE_PEC" della campagna "Reminder" risulta incrementato di 1
+    Then il contatore "NOTIFICHE_INVIATE_SMS" della campagna "Reminder" risulta incrementato di 1
+    Then il contatore "NOTIFICHE_CONSEGNATE_PEC" della campagna "Reminder" risulta incrementato di 0
+    Then il contatore "NOTIFICHE_CONSEGNATE_SMS" della campagna "Reminder" risulta incrementato di 1
+# call monitor pec sms +2 INVIO: PEC- SMS
 
-# call monitor pec sms +2
 
-
-
-  # implementato con [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_1_A]
-  Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_5] Come ente mittente sottometto una notifica bonaria che sarà INVIATA con ANALOGICO, il contatore del monitoraggio si incrementa correttamente.
-
-
-  @informalNotificationsMonitorCampaign
-  Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_6_B] Come ente mittente sottometto una notifica bonaria RICEVUTA tramite EMAIL, il contatore del monitoraggio si incrementa correttamente.
-    # call monitor
+  @informalNotificationsMonitorCampaign @addressBook2
+  Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_6_A] Come ente mittente sottometto una notifica bonaria RICEVUTA tramite EMAIL, il contatore del monitoraggio si incrementa correttamente.
+    Given vengono salvati i dati statistici attuali della campagna "FattOrd"
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | FattOrd                 |
       | messageId       | ${NEW-IT}               |
@@ -216,11 +228,14 @@ Then il recupero dei dati statistici della campagna "CAMPAGNA_INESISTENTE" falli
 #    And si attende che venga prodotto l'elemento "WORKFLOW_DONE_REACHED" della notifica bonaria
     And si attende che venga prodotto l'elemento "DELIVERED" della notifica bonaria con dettagli
       | details_channel | EMAIL |
+    Then il contatore "NOTIFICHE_INVIATE_EMAIL" della campagna "FattOrd" risulta incrementato di 1
+    Then il contatore "NOTIFICHE_CONSEGNATE_EMAIL" della campagna "FattOrd" risulta incrementato di 1
+# +2 INVIATA - RICEVUTA - EMAIL
 
 
-  @informalNotificationsMonitorCampaign
-  Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_6] Come ente mittente sottometto una notifica bonaria RICEVUTA tramite PEC, il contatore del monitoraggio si incrementa correttamente.
-    # call monitor
+  @informalNotificationsMonitorCampaign @addressBook1
+  Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_6_B] Come ente mittente sottometto una notifica bonaria RICEVUTA tramite PEC, il contatore del monitoraggio si incrementa correttamente.
+    Given vengono salvati i dati statistici attuali della campagna "MessaMora"
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | MessaMora                |
       | messageId       | ${NEW-IT}                |
@@ -238,11 +253,14 @@ Then il recupero dei dati statistici della campagna "CAMPAGNA_INESISTENTE" falli
 #    And si attende che venga prodotto l'elemento "WORKFLOW_DONE_REACHED" della notifica bonaria
     And si attende che venga prodotto l'elemento "DELIVERED" della notifica bonaria con dettagli
       | details_channel | PEC |
+    Then il contatore "NOTIFICHE_INVIATE_PEC" della campagna "MessaMora" risulta incrementato di 1
+    Then il contatore "NOTIFICHE_CONSEGNATE_PEC" della campagna "MessaMora" risulta incrementato di 1
+    # +2 INVIATA - RICEVUTA - PEC
 
 
-  @informalNotificationsMonitorCampaign
-  Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_6_D] Come ente mittente sottometto una notifica bonaria RICEVUTA tramite SMS, il contatore del monitoraggio si incrementa correttamente.
-    # call monitor
+  @informalNotificationsMonitorCampaign @addressBook3
+  Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_6_C] Come ente mittente sottometto una notifica bonaria RICEVUTA tramite SMS, il contatore del monitoraggio si incrementa correttamente.
+    Given vengono salvati i dati statistici attuali della campagna "Reminder"
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | Reminder                   |
       | messageId       | ${NEW-IT}                  |
@@ -265,17 +283,16 @@ Then il recupero dei dati statistici della campagna "CAMPAGNA_INESISTENTE" falli
 #    And si attende che venga prodotto l'elemento "WORKFLOW_ENDED_UNREACHED" della notifica bonaria
     And si attende che venga prodotto l'elemento "DELIVERED" della notifica bonaria con dettagli
       | details_channel | SMS |
-
-
-  # implementato con [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_1_C]
-  Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_6_E] Come ente mittente sottometto una notifica bonaria RICEVUTA tramite EMAIL, il contatore del monitoraggio si incrementa correttamente.
+    Then il contatore "NOTIFICHE_INVIATE_SMS" della campagna "MessaMora" risulta incrementato di 1
+    Then il contatore "NOTIFICHE_CONSEGNATE_SMS" della campagna "MessaMora" risulta incrementato di 1
+    # +2 INVIATA - RICEVUTA - sms
 
 
   @informalNotificationsMonitorCampaign
-  Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_6_F] Come ente mittente sottometto una notifica bonaria RICEVUTA su più canali digitali, il contatore del monitoraggio si incrementa correttamente.
-    # call monitor
+  Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_6_E] Come ente mittente sottometto una notifica bonaria RICEVUTA su più canali digitali, il contatore del monitoraggio si incrementa correttamente.
+    Given vengono salvati i dati statistici attuali della campagna "BonarieAllChannels"
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | QADigitalNoFeed todo     |
+      | campaignId      | BonarieAllChannels     |
       | messageId       | ${NEW-IT}                |
       | subject         | Test workflow            |
       | recipientType   | PG                       |
@@ -300,11 +317,14 @@ Then il recupero dei dati statistici della campagna "CAMPAGNA_INESISTENTE" falli
       | details_channel | PEC |
     And si attende che venga prodotto l'elemento "DELIVERED" della notifica bonaria con dettagli
       | details_channel | SMS |
+    Then il contatore "NOTIFICHE_CONSEGNATE_EMAIL" della campagna "BonarieAllChannels" risulta incrementato di 1
+    Then il contatore "NOTIFICHE_CONSEGNATE_PEC" della campagna "BonarieAllChannels" risulta incrementato di 1
+    Then il contatore "NOTIFICHE_CONSEGNATE_SMS" della campagna "BonarieAllChannels" risulta incrementato di 1
 
 
-  @informalNotificationsMonitorCampaign @informalNotMVP
+  @informalNotificationsMonitorCampaign @informalNotMVP @addressBook2
   Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_7_A] Come ente mittente sottometto una notifica bonaria che SODDISFI il feedback ed è RECAPITATA, il contatore del monitoraggio si incrementa correttamente.
-    # call monitor
+    Given vengono salvati i dati statistici attuali della campagna "FattOrd"
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | FattOrd                 |
       | messageId       | ${NEW-IT}               |
@@ -320,11 +340,13 @@ Then il recupero dei dati statistici della campagna "CAMPAGNA_INESISTENTE" falli
       | details_deliveryDetailCode | M004  |
     And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
     And si attende che venga prodotto l'elemento "WORKFLOW_DONE_REACHED" della notifica bonaria
+    Then il contatore "WORKFLOW_COMPLETATI" della campagna "FattOrd" risulta incrementato di 1
+    Then il contatore "NOTIFICHE_CONSEGNATE" della campagna "FattOrd" risulta incrementato di 1
 
 
-  @informalNotificationsMonitorCampaign @informalNotMVP
+  @informalNotificationsMonitorCampaign @informalNotMVP @addressBook4
   Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_7_B] Come ente mittente sottometto una notifica bonaria che NON soddisfi il feedback ma è RECAPITATA, il contatore del monitoraggio si incrementa correttamente.
-    # call monitor
+    Given vengono salvati i dati statistici attuali della campagna "QADigital"
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | QADigital                |
       | messageId       | ${NEW-IT}                |
@@ -337,20 +359,55 @@ Then il recupero dei dati statistici della campagna "CAMPAGNA_INESISTENTE" falli
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
     And si attende che venga prodotto l'elemento "WORKFLOW_ENDED_REACHED" della notifica bonaria
-
-
-  @informalNotificationsMonitorCampaign  #todo
-  Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_7_C] Come ente mittente sottometto una notifica bonaria che NON soddisfi il feedback ma è RECAPITATA, il contatore del monitoraggio si incrementa correttamente.
-    # call monitor
-
-
-
-
+    Then il contatore "NOTIFICHE_CONSEGNATE" della campagna "QADigital" risulta incrementato di 1
 
 
   @informalNotificationsMonitorCampaign
+  Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_7_C] Come ente mittente sottometto una notifica bonaria che NON soddisfi il feedback ma è RECAPITATA, il contatore del monitoraggio si incrementa correttamente.
+    Given vengono salvati i dati statistici attuali della campagna "FattOrd"
+    Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
+      | campaignId      | FattOrd                        |
+      | messageId       | ${NEW-IT}                      |
+      | subject         | Test workflow                  |
+      | recipientType   | PF                             |
+      | taxId           | FRMTTR76M06B715E               |
+      | denomination    | Ettore Fieramosca              |
+      | email           | bounce@simulator.amazonses.com |
+      | digitalDomicile | NULL                           |
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
+    And si attende che la notifica bonaria passi in stato "COMPLETED_UNREACHED"
+    And si attende che venga prodotto l'elemento "WORKFLOW_ENDED_UNREACHED" della notifica bonaria
+    And il destinatario Ettore Fieramosca legge la notifica bonaria
+    And si attende che venga prodotto l'elemento "INFORMAL_NOTIFICATION_VIEWED" della notifica bonaria
+    And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
+    Then il contatore "NOTIFICHE_CONSEGNATE" della campagna "FattOrd" risulta incrementato di 1
+
+
+  @informalNotificationsMonitorCampaign
+  Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_7_C2] Come ente mittente sottometto una notifica bonaria RECAPITATA in seguito visualizzata , il contatore RECSPITATA del monitoraggio si incrementa una sola volta.
+    Given vengono salvati i dati statistici attuali della campagna "QADigital"
+    Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
+      | campaignId      | QADigital                |
+      | messageId       | ${NEW-IT}                |
+      | subject         | Test workflow            |
+      | recipientType   | PF                             |
+      | taxId           | FRMTTR76M06B715E               |
+      | denomination    | Ettore Fieramosca              |
+      | email           | NULL                     |
+      | digitalDomicile | example@OK-pecSuccess.it |
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
+    And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
+    And si attende che venga prodotto l'elemento "WORKFLOW_ENDED_REACHED" della notifica bonaria
+    Then il contatore "NOTIFICHE_CONSEGNATE" della campagna "QADigital" risulta incrementato di 1
+    And il destinatario Ettore Fieramosca legge la notifica bonaria
+    And si attende che venga prodotto l'elemento "INFORMAL_NOTIFICATION_VIEWED" della notifica bonaria
+    And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
+    Then il contatore "NOTIFICHE_CONSEGNATE" della campagna "QADigital" risulta incrementato di 0
+
+
+  @informalNotificationsMonitorCampaign @addressBook2
   Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_8] Come ente mittente sottometto una notifica bonaria per destinatario NON REPERIBILE, il contatore del monitoraggio si incrementa correttamente.
-    # call monitor
+    Given vengono salvati i dati statistici attuali della campagna "FattOrd"
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | FattOrd           |
       | messageId       | ${NEW-IT}         |
@@ -365,11 +422,11 @@ Then il recupero dei dati statistici della campagna "CAMPAGNA_INESISTENTE" falli
       | details_channel | EMAIL |
     And si attende che la notifica bonaria passi in stato "UNDELIVERABLE"
     And si attende che venga prodotto l'elemento "WORKFLOW_ENDED_UNDELIVERABLE" della notifica bonaria
+    Then il contatore "NOTIFICHE_NON_CONSEGNABILI" della campagna "FattOrd" risulta incrementato di 1
 
-
-  @informalNotificationsMonitorCampaign
+  @informalNotificationsMonitorCampaign @addressBook1
   Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_9_A] Come ente mittente sottometto una notifica bonaria che SODDISFA il feedback ed è RECAPITATA, il contatore del monitoraggio si incrementa correttamente.
-    # call monitor
+    Given vengono salvati i dati statistici attuali della campagna "MessaMora"
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | MessaMora                |
       | messageId       | ${NEW-IT}                |
@@ -385,11 +442,12 @@ Then il recupero dei dati statistici della campagna "CAMPAGNA_INESISTENTE" falli
       | details_responseStatus | OK  |
     And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
     And si attende che venga prodotto l'elemento "WORKFLOW_DONE_REACHED" della notifica bonaria
+    Then il contatore "WORKFLOW_COMPLETATI" della campagna "MessaMora" risulta incrementato di 1
+    Then il contatore "NOTIFICHE_CONSEGNATE" della campagna "MessaMora" risulta incrementato di 1
 
-
-  @informalNotificationsMonitorCampaign @informalNotMVP
+  @informalNotificationsMonitorCampaign @informalNotMVP @addressBook4
   Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_9_B] Come ente mittente sottometto una notifica bonaria che SODDISFA il feedback ma NON RECAPITATA, il contatore del monitoraggio si incrementa correttamente.
-    # call monitor
+    Given vengono salvati i dati statistici attuali della campagna "QADigital"
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | QADigital                               |
       | messageId       | ${NEW-IT}                               |
@@ -402,11 +460,11 @@ Then il recupero dei dati statistici della campagna "CAMPAGNA_INESISTENTE" falli
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che la notifica bonaria passi in stato "COMPLETED_UNREACHED"
     And si attende che venga prodotto l'elemento "WORKFLOW_DONE_UNREACHED" della notifica bonaria
+    Then il contatore "WORKFLOW_COMPLETATI" della campagna "QADigital" risulta incrementato di 1
 
-
-  @informalNotificationsMonitorCampaign
-  Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_11] Come ente mittente sottometto una notifica bonaria che sarà VISUALIZZATA, il contatore del monitoraggio si incrementa correttamente.
-    # call monitor
+  @informalNotificationsMonitorCampaign @addressBook3
+  Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_10] Come ente mittente sottometto una notifica bonaria che sarà VISUALIZZATA, il contatore del monitoraggio si incrementa correttamente.
+    Given vengono salvati i dati statistici attuali della campagna "Reminder"
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | Reminder                   |
       | messageId       | ${NEW-IT}                  |
@@ -421,17 +479,40 @@ Then il recupero dei dati statistici della campagna "CAMPAGNA_INESISTENTE" falli
     And il destinatario CucumberSpa legge la notifica bonaria
     And si attende che venga prodotto l'elemento "INFORMAL_NOTIFICATION_VIEWED" della notifica bonaria
 #    And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
+    Then il contatore "NOTIFICHE_VISUALIZZATE" della campagna "Reminder" risulta incrementato di 1
+    Then il contatore "NOTIFICHE_VISUALIZZATE_SEND" della campagna "Reminder" risulta incrementato di 1
+    Then il contatore "PRIMA_VISUALIZZAZIONE" della campagna "Reminder" risulta incrementato di 1
 
   #visualizzata da PORTALE +1
+  # VISUALIZZATA PRIMA VOLTA +1
 
 
 
 
 
+  # implementato con [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_1_A]
+  Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_5] Come ente mittente sottometto una notifica bonaria che sarà INVIATA con ANALOGICO, il contatore del monitoraggio si incrementa correttamente.
 
 
+  #@informalNotificationsMonitorCampaign @addressBook1 Testato con [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_1]
+  Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_2] Come ente mittente sottometto una notifica bonaria che sarà ACCETTATA, il contatore del monitoraggio si incrementa correttamente.
+    Given vengono salvati i dati statistici attuali della campagna "MessaMora"
+    Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
+      | campaignId      | MessaMora             |
+      | messageId       | ${NEW-IT}             |
+      | subject         | Test workflow         |
+      | recipientType   | PG                    |
+      | taxId           | 20517490320           |
+      | denomination    | Acme spa              |
+      | email           | NULL                  |
+      | digitalDomicile | example@pecSuccess.it |
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
+    And si attende che venga prodotto l'elemento "REQUEST_ACCEPTED" della notifica bonaria
+    # call monitor +1 DA INVIARE
 
 
+  # implementato con [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_1_C]
+  Scenario: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_01_6_D] Come ente mittente sottometto una notifica bonaria RICEVUTA tramite EMAIL, il contatore del monitoraggio si incrementa correttamente.
 
 
 

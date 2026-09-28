@@ -135,7 +135,7 @@ public class PnPaB2bInternalInformalClientImpl {
         );
     }
     public CampaignStatisticsResponse getCampaignStatistics(String campaignId) {
-        return campaignStatisticsApi.getCampaignStatistics(campaignId);
+        return campaignStatisticsApi.getCampaignStatistics(operatorId, campaignId);
     }
 
 
