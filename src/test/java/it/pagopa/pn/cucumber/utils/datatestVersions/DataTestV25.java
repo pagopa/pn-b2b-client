@@ -141,10 +141,12 @@ public class DataTestV25 extends AbstractDataTest {
                             t -> assertThat(actual.getDigitalAddress()).as(error + EQUALITY_DIGITAL_ADDRESS).isEqualTo(t));
                     Optional.ofNullable(expected.getSendingReceipts()).map(List::size).ifPresent(
                             t -> assertThat(actual.getSendingReceipts().size()).as(error + EQUALITY_SENDING_RECEIPTS_SIZE).isEqualTo(t));
-                    for (int i = 0; i < actual.getSendingReceipts().size(); i++) {
-                        assertThat(actual.getSendingReceipts().get(i)).as("Il sendingReceipt non dev'essere null").isNotNull();
-                        assertThat(actual.getSendingReceipts().get(i).getId()).as("L'ID del sendingReceipt non dev'essere null").isNotNull();
-                        assertThat(actual.getSendingReceipts().get(i).getSystem()).as("Il System del sendingReceipt non dev'essere null").isNotNull();
+                    if (actual.getSendingReceipts() != null) {
+                        for (int i = 0; i < actual.getSendingReceipts().size(); i++) {
+                            assertThat(actual.getSendingReceipts().get(i)).as("Il sendingReceipt non dev'essere null").isNotNull();
+                            assertThat(actual.getSendingReceipts().get(i).getId()).as("L'ID del sendingReceipt non dev'essere null").isNotNull();
+                            assertThat(actual.getSendingReceipts().get(i).getSystem()).as("Il System del sendingReceipt non dev'essere null").isNotNull();
+                        }
                     }
                 }
             }

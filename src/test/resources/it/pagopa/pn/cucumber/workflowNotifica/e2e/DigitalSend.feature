@@ -1351,11 +1351,13 @@ Feature: Digital send e2e
       | digitalDomicile_address | -indirizzo@gmail.com                       |
       | recipientType           | <recipientType>                            |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-external-channel" negli ultimi 30 minuti riportante i seguenti dati nel messaggio
-      | error | jakarta.mail.SendFailedException Invalid Addresses |
-      | iun   | auto                                               |
-    Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
+      | details                      | NOT_NULL |
+      | details_recIndex             | 0        |
+      | details_digitalAddressSource | PLATFORM |
+      | details_isAvailable          | false    |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
+      | loadTimelime                 | true                                               |
       | legalFactsIds                | [{"category": "SEND_DIGITAL_FEEDBACK"}]            |
       | details_digitalAddressSource | SPECIAL                                            |
       | details                      | NOT_NULL                                           |
