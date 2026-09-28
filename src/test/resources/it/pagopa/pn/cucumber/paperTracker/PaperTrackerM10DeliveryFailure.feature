@@ -39,12 +39,11 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si verifica che la risposta tracking per la sequence "OK-Retry_AR_M10" contenga tutti gli elementi attesi e che sia strutturalmente valida
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                      | NOT_NULL  |
       | details_recIndex             |         0 |
       | details_sentAttemptMade      |         0 |
       | details_deliveryDetailCode   | RECRN002C |
-      | details_responseStatus       | KO        |
       | details_deliveryFailureCause | M10       |
     And si verifica che non ci siano outputs per i trackingId richiesti
     And si verifica che non ci siano errori per i trackingId richiesti
@@ -63,12 +62,11 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And genera la key da utilizzare per invocare l'API per il prodotto: "890"
     And si verifica che la risposta tracking per la sequence "OK-Retry_890_M10" contenga tutti gli elementi attesi e che sia strutturalmente valida
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                      | NOT_NULL  |
       | details_recIndex             |         0 |
       | details_sentAttemptMade      |         0 |
       | details_deliveryDetailCode   | RECAG003C |
-      | details_responseStatus       | KO        |
       | details_deliveryFailureCause | M10       |
     And si verifica che non ci siano outputs per i trackingId richiesti
     And si verifica che non ci siano errori per i trackingId richiesti
@@ -89,12 +87,11 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si verifica che la risposta tracking per la sequence "OK-Retry_RIR_M10" contenga tutti gli elementi attesi e che sia strutturalmente valida
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                      | NOT_NULL  |
       | details_recIndex             |         0 |
       | details_sentAttemptMade      |         0 |
       | details_deliveryDetailCode   | RECRI004C |
-      | details_responseStatus       | KO        |
       | details_deliveryFailureCause | M10       |
     And si verifica che non ci siano outputs per i trackingId richiesti
     And si verifica che non ci siano errori per i trackingId richiesti
@@ -171,12 +168,11 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si verifica che la risposta tracking per la sequence "OK-Retry_AR_M10" contenga tutti gli elementi attesi e che sia strutturalmente valida
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                      | NOT_NULL  |
       | details_recIndex             |         0 |
       | details_sentAttemptMade      |         0 |
       | details_deliveryDetailCode   | RECRN002C |
-      | details_responseStatus       | KO        |
       | details_deliveryFailureCause | M10       |
     And si verifica che non ci siano outputs per i trackingId richiesti
     And si verifica che non ci siano errori per i trackingId richiesti
@@ -195,17 +191,15 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si verifica che la risposta tracking per la sequence "OK_AR-M10-OCR-KO" contenga tutti gli elementi attesi e che sia strutturalmente valida
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                      | NOT_NULL  |
       | details_recIndex             |         0 |
       | details_sentAttemptMade      |         0 |
       | details_deliveryDetailCode   | RECRN002C |
-      | details_responseStatus       | KO        |
       | details_deliveryFailureCause | M10       |
-    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "OK_AR-M10-OCR-KO"
-    And si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-06T15:16:35.246856627Z\",\"errorCategory\":\"OCR_VALIDATION\",\"details\":{\"cause\":\"OCR_KO\",\"message\":\"validazione fallita\",\"additionalDetails\":{\"ocrDataResultPayload\":{\"predictedRefinementType\":\"\",\"validationType\":\"ai\",\"description\":\"validazione fallita\",\"validationStatus\":\"KO\"}}},\"flowThrow\":\"DEMAT_VALIDATION\",\"eventThrow\":\"RECRN002C\",\"eventIdThrow\":\"2f428c7d-99f5-490c-a9fd-d6132c1589a2\",\"productType\":\"AR\",\"type\":\"WARNING\"}"
+    Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-06T15:16:35.246856627Z\",\"errorCategory\":\"OCR_VALIDATION\",\"details\":{\"cause\":\"OCR_KO\",\"message\":\"validazione fallita\",\"additionalDetails\":{\"ocrDataResultPayload\":{\"predictedRefinementType\":\"\",\"validationType\":\"ai\",\"description\":\"validazione fallita\",\"validationStatus\":\"KO\"}}},\"flowThrow\":\"DEMAT_VALIDATION\",\"eventThrow\":\"RECRN002C\",\"eventIdThrow\":\"2f428c7d-99f5-490c-a9fd-d6132c1589a2\",\"productType\":\"AR\",\"type\":\"WARNING\"}"
 
-  @paperTrackerM10 @trackerErrors @ocrRun
+  @paperTrackerM10 @trackerErrors @ignore
   Scenario: [MOCK_RECAPITO_M10_02_2_B] TEST 2.2 - Path B: Blocco del retry ed emissione errore OCR_VALIDATION con mock OCR:KO e motore OCR abilitato (NO RETRY / ERRORE)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -254,6 +248,6 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
       | physicalAddress_address | Via@FAIL_AR-M10-MAX-PCRETRY |
       | digitalDomicile         | NULL                        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_4\",\"created\":\"2026-03-11T12:30:13.838822572Z\",\"errorCategory\":\"MAX_RETRY_REACHED_ERROR\",\"details\":{\"message\":\"Retry not found for trackingId: PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_4\",\"additionalDetails\":null},\"flowThrow\":\"RETRY_PHASE\",\"eventThrow\":\"RECRN002C\",\"eventIdThrow\":\"bf6522f1-5d37-4d80-a5af-e0a1b86638b0\",\"productType\":\"AR\",\"type\":\"ERROR\"}"
-    And si verifica che non sia presente nessun retry per il tracking

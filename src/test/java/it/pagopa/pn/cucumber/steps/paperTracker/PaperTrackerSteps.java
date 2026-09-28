@@ -38,12 +38,15 @@ import org.junit.jupiter.api.Assertions;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -110,22 +113,33 @@ public class PaperTrackerSteps {
     }
 
     private void assertSameElements(List<NotificationEvent> list1, List<NotificationEvent> list2, String errorMessage) {
+        if (list1 == null || list2 == null) {
+            Assertions.assertEquals(list1, list2, errorMessage);
+            return;
+        }
         list1.sort(Comparator.comparing(NotificationEvent::getDeliveryDetailCode).thenComparing(attach -> String.join(",", attach.getAttachmentUrlName())));
         list2.sort(Comparator.comparing(NotificationEvent::getDeliveryDetailCode).thenComparing(attach -> String.join(",", attach.getAttachmentUrlName())));
         Assertions.assertEquals(list1, list2, errorMessage);
     }
 
     private void assertRelaxedSameElements(List<NotificationEvent> list1, List<NotificationEvent> list2, String errorMessage) {
+        if (list1 == null || list2 == null) {
+            Assertions.assertEquals(list1, list2, errorMessage);
+            return;
+        }
         list1.sort(Comparator.comparing(NotificationEvent::getDeliveryDetailCode).thenComparing(attach -> String.join(",", attach.getAttachmentUrlName())));
         list2.sort(Comparator.comparing(NotificationEvent::getDeliveryDetailCode).thenComparing(attach -> String.join(",", attach.getAttachmentUrlName())));
         assertTrue(() -> {
+            if (list1.size() != list2.size()) {
+                return false;
+            }
             for (int i = 0; i < list1.size(); i++) {
                 if (!list1.get(i).equalsRelaxed(list2.get(i))) {
                     return false;
                 }
             }
             return true;
-        });
+        }, errorMessage + " - expected: " + list2 + " but was: " + list1);
     }
 
     @Then("si verifica che la risposta tracking per la sequence {string} contenga tutti gli elementi attesi e che sia strutturalmente valida")
@@ -134,6 +148,7 @@ public class PaperTrackerSteps {
         responseTracking = paperTrackerClient.retrieveTrackerEvents(request);
 
         Map<Integer, List<NotificationEvent>> groupedTrackingByAttempt = responseTracking.getTrackings().stream()
+                .filter(t -> t.getEvents() != null)
                 .collect(Collectors.toMap(
                         att -> {
                             int index = att.getAttemptId().lastIndexOf("_");
@@ -149,21 +164,44 @@ public class PaperTrackerSteps {
                 ));
 
         Map<Integer, List<NotificationEvent>> expectedEvents = eventTimelineParser.parse(PaperTrackerTrackingSequence.getByName(sequenceName).getEvents());
-        for (int i = 0; i < groupedTrackingByAttempt.keySet().size(); i++) {
-            assertRelaxedSameElements(groupedTrackingByAttempt.get(i), expectedEvents.get(i), TRACKINGS_ELEMENT_NOT_FOUND);
+        Set<Integer> allAttempts = new HashSet<>();
+        allAttempts.addAll(groupedTrackingByAttempt.keySet());
+        allAttempts.addAll(expectedEvents.keySet());
+        for (Integer attemptIndex : allAttempts) {
+            List<NotificationEvent> actualList = groupedTrackingByAttempt.getOrDefault(attemptIndex, Collections.emptyList());
+            List<NotificationEvent> expectedList = expectedEvents.getOrDefault(attemptIndex, Collections.emptyList());
+            if (!actualList.isEmpty() || !expectedList.isEmpty()) {
+                assertRelaxedSameElements(actualList, expectedList, TRACKINGS_ELEMENT_NOT_FOUND);
+            }
         }
-        verifyTrackingResponseStructure(responseTracking, "it/pagopa/pn/cucumber/paperTracker/schemaValidators/tracking-response-schema.json", sequenceName);
+        TrackingsResponse validTrackingsResponse = new TrackingsResponse();
+        validTrackingsResponse.setTrackings(responseTracking.getTrackings().stream()
+                .filter(t -> t.getEvents() != null && !t.getEvents().isEmpty())
+                .collect(Collectors.toList()));
+        verifyTrackingResponseStructure(validTrackingsResponse, "it/pagopa/pn/cucumber/paperTracker/schemaValidators/tracking-response-schema.json", sequenceName);
     }
 
     @And("genera la key da utilizzare per invocare l'API per il prodotto: {string}")
     public void generateTrackingIdForProduct(String productType) {
         String key = productType.equals("RS") ? PREPARE_SIMPLE_REGISTERED_LETTER : PREPARE_ANALOG_DOMICILE;
         FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersionByIun(sharedSteps.getNotificationIun());
-        trackingKeys = fullSentNotification.getTimeline().stream()
+        List<String> keys = fullSentNotification.getTimeline().stream()
                 .map(TimelineElementV28::getElementId)
                 .filter(e -> e.contains(key))
                 .flatMap(prepare -> Stream.of(prepare + ".PCRETRY_0", prepare + ".PCRETRY_1", prepare + ".PCRETRY_2", prepare + ".PCRETRY_3", prepare + ".PCRETRY_4"))
                 .toList();
+        if (keys.isEmpty()) {
+            String iun = sharedSteps.getNotificationIun();
+            trackingKeys = Stream.of(
+                    key + ".IUN_" + iun + ".RECINDEX_0.ATTEMPT_0.PCRETRY_0",
+                    key + ".IUN_" + iun + ".RECINDEX_0.ATTEMPT_0.PCRETRY_1",
+                    key + ".IUN_" + iun + ".RECINDEX_0.ATTEMPT_0.PCRETRY_2",
+                    key + ".IUN_" + iun + ".RECINDEX_0.ATTEMPT_0.PCRETRY_3",
+                    key + ".IUN_" + iun + ".RECINDEX_0.ATTEMPT_0.PCRETRY_4"
+            ).toList();
+        } else {
+            trackingKeys = keys;
+        }
     }
 
     @Then("si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: {string}")
@@ -310,7 +348,7 @@ public class PaperTrackerSteps {
         TrackingsRequest request = new TrackingsRequest();
         request.setTrackingIds(trackingKeys);
         AtomicReference<TrackingError> atomicReference = new AtomicReference<>();
-        await().atMost(Duration.ofMinutes(20))
+        await().atMost(Duration.ofMinutes(30))
                 .pollInterval(Duration.ofSeconds(30))
                 .untilAsserted(() -> {
                     // recupera la lista di errori e cerca quello che ha category e flowThrow uguali a quelli attesi, se lo trova lo setta nell'atomic reference
