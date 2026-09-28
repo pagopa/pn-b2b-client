@@ -153,7 +153,7 @@ Feature: Api Service Cruscotto Assistenza
     Then il servizio risponde con errore "<ERROR>"
     Examples:
       | IUN                       | ERROR |
-      | VUOTO                     | 405   |
+      | VUOTO                     | 404   |
       | NULL                      | 400   |
       | JRDT-XAPH-JQYW-202312-J-1 | 404   |
 
@@ -461,7 +461,7 @@ Feature: Api Service Cruscotto Assistenza
     Then il servizio risponde con errore "<ERROR>"
     Examples:
       | TAX_ID        | IUN                       | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   | ERROR |
-      | Mario Gherkin | VUOTO                     | PF             | 1                | NULL                 | 2023-01-01 | 2023-12-01 | 405   |
+      | Mario Gherkin | VUOTO                     | PF             | 1                | NULL                 | 2023-01-01 | 2023-12-01 | 404   |
       | Mario Gherkin | NULL                      | PF             | 1                | NULL                 | 2023-01-01 | 2023-12-01 | 400   |
       | Mario Gherkin | JZTK-MGAH-TVZL-202311-X-1 | PF             | 1                | NULL                 | 2023-01-01 | 2023-12-01 | 404   |
 
@@ -714,7 +714,7 @@ Feature: Api Service Cruscotto Assistenza
     Examples:
       | USER           | IUN                      | UID      | ERROR |
       | Mario Gherkin  | NON VALIDO               | corretto | 400   |
-      | Mario Gherkin  | VUOTO                    | corretto | 400   |
+      | Mario Gherkin  | VUOTO                    | corretto | 404   |
       | Mario Gherkin  | INESISTENTE              | corretto | 404   |
       |                | NOTIFICA SENZA PAGAMENTI | corretto | 400   |
       | ERRATO         | NOTIFICA SENZA PAGAMENTI | corretto | 400   |
