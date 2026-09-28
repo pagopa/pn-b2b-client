@@ -25,7 +25,7 @@ Feature: Import di un descrittore
       | GSP  | api          |
       | GSP  | api,security |
 
-  @happy-path @no-parallel
+  @happy-path @no-parallel @disallineamento-nome-pacchetto
   Scenario Outline: [DESCRIPTOR_IMPORT_1_B1] La richiesta di import di un descrittore di un e-service da parte di un utente autorizzato, dato un pacchetto correttamente strutturato, contenente due documenti correttamente mappati nel file di configurazione, con nome dell'archivio e della main directory non coincidenti, va a buon fine e il descrittore viene correttamente creato in stato DRAFT con quei documenti
     Given l'utente è un "admin" di "PA1"
     Given l'utente ha già un pacchetto correttamente strutturato con un eservice <sincronia> in mode "DELIVER"
@@ -42,7 +42,7 @@ Feature: Import di un descrittore
       | sincrono  |
       | asincrono |
 
-  @happy-path @no-parallel
+  @happy-path @no-parallel @disallineamento-nome-pacchetto
   Scenario Outline: [DESCRIPTOR_IMPORT_1_B2] La richiesta di import di un descrittore di un e-service da parte di un utente autorizzato, dato un pacchetto correttamente strutturato, contenente due documenti correttamente mappati nel file di configurazione, con nome dell'archivio e della main directory non coincidenti, va a buon fine e il descrittore viene correttamente creato in stato DRAFT con quei documenti
     Given l'utente è un "admin" di "PA1"
     Given l'utente ha già un pacchetto correttamente strutturato con un eservice <sincronia> in mode "RECEIVE"
@@ -144,7 +144,7 @@ Feature: Import di un descrittore
     When l'utente effettua una richiesta di import del descrittore
     Then si ottiene status code 400
 
-  @sad-path @no-parallel
+  @sad-path @no-parallel @disallineamento-nome-pacchetto
   Scenario Outline: [DESCRIPTOR_IMPORT_8] La richiesta di import di un descrittore di un e-service da parte di un utente autorizzato NON va a buon fine se questo contiene un numero di cartelle diverso da 1
     Given l'utente è un "admin" di "PA1"
     Given l'utente ha già un pacchetto correttamente strutturato con un eservice <sincronia> in mode "<modalita>"
