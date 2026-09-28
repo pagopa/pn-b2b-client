@@ -6,6 +6,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.AsyncExchangeProper
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.GracePeriodDays;
 import it.pagopa.pn.interop.cucumber.steps.DocumentMetadata;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -68,6 +69,17 @@ public class EServicesCommonContext {
     private GracePeriodDays descriptorArchivingGracePeriodDays;
     private OffsetDateTime eServiceArchivingRequestTimestamp;
     private GracePeriodDays eServiceArchivingGracePeriodDays;
+    private ExpectedDelegatedArchivingRequest expectedDelegatedArchivingRequest;
+
+    @Data
+    public static class ExpectedDelegatedArchivingRequest {
+        private OffsetDateTime requestedAt;
+        private OffsetDateTime decisionAt;
+        private GracePeriodDays gracePeriodDays;
+        private String archivingReason;
+        private String rejectionReason;
+        private UUID descriptorId;
+    }
 
     public void addCertifiedAttributes(List<UUID> attributesIds) {
         this.certifiedAttributesIds.addAll(attributesIds);

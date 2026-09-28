@@ -24,7 +24,7 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.helpers.EServiceSeedFact
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.DocumentMapper;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.PreconditionValidator.Precondition;
-import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
+import it.pagopa.interop.utils.delay_service.DelayService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.assertj.core.api.Assertions;
@@ -404,7 +404,6 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
             }
         });
     }
-
 
     @Then("è presente un'interfaccia per l'e-service")
     public void interfaceExistsCheck() {

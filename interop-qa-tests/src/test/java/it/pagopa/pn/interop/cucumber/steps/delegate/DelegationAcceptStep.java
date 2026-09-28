@@ -61,6 +61,7 @@ public class DelegationAcceptStep {
             sharedStepsContext.getDelegationCommonContext(),
             pollingService
         );
+        sharedStepsContext.getDelegationCommonContext().setDelegateTenantType(tenantType);
     }
 
     public static void approveProducerDelegation(

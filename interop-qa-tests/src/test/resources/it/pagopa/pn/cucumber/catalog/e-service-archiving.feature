@@ -177,8 +177,10 @@ Feature: Archiviazione manuale di un e-service
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA1" tenta la creazione di una versione in DRAFT per quell'e-service
     And l'utente è un "admin" di "PA1"
-    And l'utente aggiorna alcuni parametri di quel descrittore
     And "PA1" ha già caricato un'interfaccia per quel descrittore
+    And l'utente aggiorna alcuni parametri di quel descrittore
+    And si ottiene response status code 200
+    And l'e-service è in stato "DRAFT"
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
     And l'ente "PA2" accetta la delega
     And l'utente è un "admin" di "PA2"
