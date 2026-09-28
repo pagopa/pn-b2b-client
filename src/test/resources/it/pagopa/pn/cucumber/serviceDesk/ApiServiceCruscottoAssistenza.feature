@@ -548,26 +548,7 @@ Feature: Api Service Cruscotto Assistenza
 
 #026e8c72-7944-4dcd-8668-f596447fec6d MILANO
 
-
-  #Scenario outline commentato: per maggior robustezza, il check sugli audit log è stato inserito nei test riportati sotto, in seguito all'invocazione con successo dell'api che deve triggerare la produzione dei suddetti log
-  # AUD_CA_SEARCH_NOTIFICATION (ricerca notifiche)                      --> API-SERVICE-CA_CE02.5_OK
-  # AUD_CA_VIEW_USERPROFILE (recupero profilo utente)                   --> API-SERVICE-CA_CE02.3_OK
-  # AUD_CA_VIEW_NOTIFICATION (visualizzazione dettaglio notifica)       --> API-SERVICE-CA_CE02.5_OK
-  # AUD_CA_VIEW_AK (visualizzazione lista api key)                      --> API-SERVICE-CA_CE02.14_100
-  # AUD_CA_VIEW_ONBOARDING (visualizzazione lista delle PA onboardate)  --> API-SERVICE-CA_CE02.11_84
-  # AUD_CA_DOC_AVAILABLE (disponibilità documenti della notifica)       --> API-SERVICE-CA_CE02.8_60
-#  @cruscottoAssistenza
-#  Scenario Outline: [API-SERVICE-CA_CE03.01_101] Impostare nuova tipologia di Audit Log
-#    Then viene verificato che esiste un audit log "<audit-log>" in "2y"
-#    Examples:
-#      | audit-log                  |
-#      | AUD_CA_SEARCH_NOTIFICATION |
-#      | AUD_CA_VIEW_USERPROFILE    |
-#      | AUD_CA_VIEW_NOTIFICATION   |
-#      | AUD_CA_VIEW_AK             |
-#      | AUD_CA_VIEW_ONBOARDING     |
-#      | AUD_CA_DOC_AVAILABLE       |
-
+  
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE03.01_102] Impostare nuova tipologia di Audit Log
     And viene verificato che non esiste un audit log "<audit-log>" in "5y"
@@ -690,7 +671,7 @@ Feature: Api Service Cruscotto Assistenza
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     And viene inserito un recapito legale "example2@pecSuccess.it"
-    And viene controllato che sia presente la pec verificate "example2@pecSuccess.it" inserita per il comune "default"
+    And viene controllato che sia presente la pec verificata "example2@pecSuccess.it" inserita per il comune "default"
     When come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Galileo Galilei" e recipientType  "PF"
     Then controllo che i timestamp di creazione e modifica del recapito "legale" "PEC" siano "diverse" tra di loro
 

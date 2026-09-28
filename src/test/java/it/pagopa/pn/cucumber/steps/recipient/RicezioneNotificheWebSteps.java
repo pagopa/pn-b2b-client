@@ -328,7 +328,7 @@ public class RicezioneNotificheWebSteps {
         informalNotificationSearchResponse = null;
         lastMittenteSearchParam = searchParam;
         try {
-        notificationSearchResponse = b2BSenderReadClient.searchSentNotification(searchParam);
+            notificationSearchResponse = b2BSenderReadClient.searchSentNotification(searchParam);
         } catch (HttpStatusCodeException e) {
             notificationError = e;
         }
@@ -607,9 +607,9 @@ public class RicezioneNotificheWebSteps {
 
     @Then("si verifica che sia stato restituito un errore di tipo {string}")
     public void verifyApiErrorType(String errorType) {
-            assertThat(notificationError.getStatusCode().getReasonPhrase().toUpperCase())
-                    .as("Il tipo di errore non coincide con quanto atteso")
-                    .contains(errorType.toUpperCase());
+        assertThat(notificationError.getStatusCode().getReasonPhrase().toUpperCase())
+                .as("Il tipo di errore non coincide con quanto atteso")
+                .contains(errorType.toUpperCase());
     }
 
     @And("download attestazione opponibile AAR da parte {string}")
@@ -698,6 +698,7 @@ public class RicezioneNotificheWebSteps {
 
     /**
      * Metodo di conversione dei parametri di ricerca delle notifiche da DataTable in oggetto NotificationSearchParam
+     *
      * @param data
      * @return
      */
@@ -1266,7 +1267,7 @@ public class RicezioneNotificheWebSteps {
                 });
     }
 
-    @And("viene controllato che sia presente la pec verificate {string} inserita per il comune {string}")
+    @And("viene controllato che sia presente la pec verificata {string} inserita per il comune {string}")
     public void waitedAndViewedPecDiPiattaformaDi(String pec, String pa) {
         String senderId = getSenderIdPa(pa);
 
