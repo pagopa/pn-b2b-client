@@ -343,8 +343,6 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
       | group  | CONSISTENT                    |
 
 
-  #todo t stato
-
   @ricercaNotifiche
   Scenario: [MITTENTE_RICERCA_NOTIFICHE_BONARIE_2.A2] Vengono inviate due notifiche bonarie con esiti differenti
   e si recuperano le notifiche inviate dal mittente filtrando per lista di stati

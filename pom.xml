@@ -1345,7 +1345,7 @@
                             <goal>generate</goal>
                         </goals>
                         <phase>process-resources</phase>
-                        <configuration>    <!--todo t stato-->
+                        <configuration>
                             <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/refs/heads/develop/docs/openapi/api-internal-web-informal-pa.yaml</inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <skipValidateSpec>true</skipValidateSpec>

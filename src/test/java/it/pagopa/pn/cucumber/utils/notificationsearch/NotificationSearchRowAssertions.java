@@ -83,8 +83,6 @@ public final class NotificationSearchRowAssertions {
                 return;
             }
             rows.forEach(row -> assertRowFieldMatches(row, field, allowedValues));
-            //todo t stato
-//
             if (allowedValues.size() > 1) {
                 assertAllAllowedScalarValuesAreRepresented(rows, field, allowedValues);
             }

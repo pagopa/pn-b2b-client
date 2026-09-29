@@ -53,10 +53,6 @@ public class B2BSenderReadClientImpl {
     public InformalNotificationSearchResponse searchInformalSentNotification(NotificationSearchParam searchParam) throws RestClientException {
         String cxType = resolveActual(searchParam.xPagopaPnCxType, "PA");
         it.pagopa.pn.client.web.generated.openapi.clients.informal.web.pa.model.CxTypeAuthFleet cxTypeAuthFleet = cxType != null ? it.pagopa.pn.client.web.generated.openapi.clients.informal.web.pa.model.CxTypeAuthFleet.fromValue(cxType) : null;
-
-        //InformalNotificationStatusV1 status = searchParam.status != null ? InformalNotificationStatusV1.fromValue(searchParam.status) : null;
-//todo t stato
-        //List<InformalNotificationStatusV1> status = searchParam.listStatus == null ? null : searchParam.listStatus.stream().map(InformalNotificationStatusV1::fromValue).toList();
         List<InformalNotificationStatusV1> status = searchParam.listStatus != null ? searchParam.listStatus.stream().map(InformalNotificationStatusV1::fromValue).toList() : searchParam.status != null ? List.of(InformalNotificationStatusV1.fromValue(searchParam.status)) : null;
         return senderInformalReadWebApi.searchInformalSentNotification(searchParam.xPagopaPnUid, cxTypeAuthFleet, searchParam.senderId,
                 searchParam.campaignId, searchParam.startDate, searchParam.endDate, searchParam.xPagopaPnCxGroups, searchParam.recipientId,
@@ -68,6 +64,4 @@ public class B2BSenderReadClientImpl {
     private static String resolveActual(String value, String actualValue) {
         return NotificationSearchParam.RESOLVE_FROM_CALLER.equals(value) ? actualValue : value;
     }
-
-
 }

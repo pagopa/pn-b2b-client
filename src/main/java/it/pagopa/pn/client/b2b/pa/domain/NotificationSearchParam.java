@@ -25,7 +25,6 @@ public class NotificationSearchParam {
     public OffsetDateTime endDate;
     public String mandateId;
     public String senderId;
-    //todo t stato
     public List<String> listStatus;
     public String status;
     public String subjectRegExp;
@@ -37,6 +36,6 @@ public class NotificationSearchParam {
     public String nextPagesKey;
     public String communicationType;
     public String campaignId;
-    public boolean viewed;
+    public Boolean viewed;
     public Boolean delivered;
 }
