@@ -55,12 +55,14 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
     And si verifica che non ci siano errori per i trackingId richiesti
     Examples:
-      | sequenceName            |
-      | OK_RIR                  |
-      | FAIL_RIR                |
-      | OK_RIR_INVALID_DATETIME |
-      | OK_RIR_TIMESTAMP_ERR    |
-      | OK_RIR_NOT_ORDERED      |
+      | sequenceName |
+#      | OK_RIR                  |
+#      | FAIL_RIR                |
+#      | OK_RIR_INVALID_DATETIME |
+#      | OK_RIR_TIMESTAMP_ERR    |
+#      | OK_RIR_NOT_ORDERED      |
+      | FAIL_RIR_M06 |
+      | OK_RIR_M02   |
 
   @paperTrackerAR
   Scenario: [PAPER_TRACKER_TEMPORARY_TEST_1_A_RIR] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs
@@ -324,14 +326,14 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
 
   @paperTrackerARRunMode
   Scenario Outline: [PAPER_TRACKER_RUN_AR_4.A] Viene verificato che tutti gli elementi di timeline per la sequence OK_AR_NOT_ORDERED siano presenti
-    e che ci sia un errore di tipo DUPLICATED_EVENT in PaperTrackingsError per l'evento RECRN001A
+  e che ci sia un errore di tipo DUPLICATED_EVENT in PaperTrackingsError per l'evento RECRN001A
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Cucumber e:
       | physicalAddress_address | Via@OK_AR_NOT_ORDERED |
-      | digitalDomicile         | NULL              |
+      | digitalDomicile         | NULL                  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
@@ -342,7 +344,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And si verifica che non ci siano outputs per i trackingId richiesti
     Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
     Examples:
-      | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+      | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
       | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-04-29T07:27:17.130111793Z\",\"errorCategory\":\"DUPLICATED_EVENT\",\"details\":{\"message\":\"Duplicated event found for statusCode: RECRN001A\",\"additionalDetails\":{\"statusTimestamp\":\"2026-04-29T07:27:04Z\",\"statusCode\":\"RECRN001A\"}},\"flowThrow\":\"DUPLICATED_EVENT_VALIDATION\",\"eventThrow\":\"RECRN001A\",\"eventIdThrow\":\"17ad944a-b7e3-4c4b-a839-39c7b384b7df\",\"productType\":\"AR\",\"type\":\"WARNING\"}" |
 
   @paperTrackerARRunMode

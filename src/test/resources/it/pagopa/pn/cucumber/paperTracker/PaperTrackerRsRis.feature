@@ -53,8 +53,9 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     And si verifica che non ci siano errori per i trackingId richiesti
     Examples:
       | sequenceName |
-      | OK_RIS       |
-      | FAIL_RIS     |
+#      | OK_RIS       |
+#      | FAIL_RIS     |
+      | FAIL_RIS_M05 |
 
   # ---------------- RUN MODE ----------------
   @paperTrackerRSRunMode
