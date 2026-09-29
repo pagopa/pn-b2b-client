@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.datapreparationservice;
 
+import io.cucumber.datatable.DataTable;
 import it.pagopa.interop.agreement.domain.ClientType;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.agreement.service.IAgreementClient;
@@ -25,7 +26,7 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.*;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
-import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
+import it.pagopa.interop.utils.delay_service.DelayService;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +51,7 @@ import java.util.function.BiFunction;
 
 import static it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState.PUBLISHED;
 import static it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode.RECEIVE;
+import static it.pagopa.pn.interop.cucumber.utility.ResourceUtils.extractUploadPath;
 import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNullElse;
 import static org.apache.commons.collections4.IterableUtils.size;
@@ -100,6 +102,41 @@ public class BFFDataPreparationService {
         DEFAULT_CLIENT_SEED.setName(String.format("client %d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)));
         DEFAULT_CLIENT_SEED.setDescription("Descrizione client");
         DEFAULT_CLIENT_SEED.setMembers(List.of());
+    }
+
+    public static boolean isExpectedPersonalData(DataTable answersTable) {
+        List<List<String>> answers = answersTable.asLists().stream().toList();
+        for (List<String> answer : answers) {
+            if ("usesPersonalData".equals(answer.get(0)) && "YES".equals(answer.get(1))) return true;
+        }
+        return false;
+    }
+
+    public static RiskAnalysisFormTemplateSeed generateRiskAnalysisFormTemplateSeedFromFormSeed(RiskAnalysisFormSeed formSeed) {
+        RiskAnalysisFormTemplateSeed formTemplateSeed = new RiskAnalysisFormTemplateSeed();
+        formTemplateSeed.setVersion(formSeed.getVersion());
+
+        List<String> fieldsRequiringSuggestedValues = List.of(
+                "institutionalPurpose", "reasonPolicyNotProvided",
+                "dataProtectionMeasuresParticular", "dataProtectionMeasures"
+        );
+
+        Map<String, RiskAnalysisTemplateAnswerSeed> templateAnswers = new HashMap<>();
+        for (Map.Entry<String, List<String>> entry : formSeed.getAnswers().entrySet()) {
+            RiskAnalysisTemplateAnswerSeed seed = new RiskAnalysisTemplateAnswerSeed();
+            seed.setEditable(false);
+            if (fieldsRequiringSuggestedValues.contains(entry.getKey())) {
+                seed.setValues(List.of());
+                seed.setSuggestedValues(entry.getValue());
+            } else {
+                seed.setValues(entry.getValue());
+                seed.setSuggestedValues(List.of());
+            }
+            templateAnswers.put(entry.getKey(), seed);
+        }
+        formTemplateSeed.setAnswers(templateAnswers);
+
+        return formTemplateSeed;
     }
 
     public BFFDataPreparationService(
@@ -344,6 +381,8 @@ public class BFFDataPreparationService {
                     httpCallExecutor.performCall(() -> attributeApiClient.createVerifiedAttribute(new AttributeSeed().description(DESCRIPTION_TEST).name(actualName)));
             case DECLARED ->
                     httpCallExecutor.performCall(() -> attributeApiClient.createDeclaredAttribute(new AttributeSeed().description(DESCRIPTION_TEST).name(actualName)));
+            case CERTIFIED_DISCRETE ->
+                    httpCallExecutor.performCall(() -> attributeApiClient.createCertifiedDiscreteAttribute(new AttributeSeed().description(DESCRIPTION_TEST).name(actualName)));
             default -> throw new IllegalArgumentException("Invalid attributeKind: " + attributeKind);
         }
         assertValidResponse();
@@ -435,6 +474,7 @@ public class BFFDataPreparationService {
                 .isClientAccessDelegable(false)
                 .personalData(false);
         EServiceSeed eServiceSeed = merge(defaultEserviceSeed, partialEserviceSeed);
+        sharedStepsContext.getEServicesCommonContext().setEServiceSeed(eServiceSeed);
 
         httpCallExecutor.performCall(() -> eServiceClient.createEService(eServiceSeed));
         assertValidResponse();
@@ -465,6 +505,7 @@ public class BFFDataPreparationService {
                 .isClientAccessDelegable(isClientAccessDelegable)
                 .personalData(false);
         EServiceSeed eServiceSeed = merge(defaultEserviceSeed, partialEserviceSeed);
+        sharedStepsContext.getEServicesCommonContext().setEServiceSeed(eServiceSeed);
 
         httpCallExecutor.performCall(() -> eServiceClient.createEService(eServiceSeed));
         assertValidResponse();
@@ -508,6 +549,7 @@ public class BFFDataPreparationService {
                 .isClientAccessDelegable(false);
         EServiceSeed eServiceSeed = merge(defaultEserviceSeed, partialEserviceSeed);
         eServiceSeed.setPersonalData(personalData);
+        sharedStepsContext.getEServicesCommonContext().setEServiceSeed(eServiceSeed);
 
         httpCallExecutor.performCall(() -> eServiceClient.createEService(eServiceSeed));
         assertValidResponse();
@@ -546,13 +588,17 @@ public class BFFDataPreparationService {
                 .dailyCallsPerConsumer(descriptor.getDailyCallsPerConsumer())
                 .dailyCallsTotal(descriptor.getDailyCallsTotal())
                 .audience(descriptor.getAudience())
-                .voucherLifespan(descriptor.getVoucherLifespan());
+                .voucherLifespan(descriptor.getVoucherLifespan())
+                .asyncExchangeProperties(descriptor.getAsyncExchangeProperties());
 
         UpdateEServiceDescriptorSeed descriptorSeed = mergeDescriptorSeed(currentDescriptorSeed, partialDescriptorSeed)
             .audience(List.of("pagopa.it"));
 
+        sharedStepsContext.getEServicesCommonContext().setAsyncExchangeProperties(descriptorSeed.getAsyncExchangeProperties());
+
         httpCallExecutor.performCall(() -> eServiceClient.updateDraftDescriptor(eServiceId, descriptorId, descriptorSeed));
         assertValidResponse();
+        sharedStepsContext.getEServicesCommonContext().setDescriptorSeed(descriptorId, descriptorSeed);
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
@@ -561,11 +607,23 @@ public class BFFDataPreparationService {
     }
 
     public void updateTemplateInstanceDraftDescriptor(UUID eServiceId, UUID descriptorId) {
+        updateTemplateInstanceDraftDescriptor(eServiceId, descriptorId, false);
+    }
+
+    public void updateTemplateInstanceDraftDescriptor(UUID eServiceId, UUID descriptorId, boolean isAsync) {
         UpdateEServiceDescriptorTemplateInstanceSeed seed = new UpdateEServiceDescriptorTemplateInstanceSeed()
             .dailyCallsPerConsumer(10)
             .dailyCallsTotal(100)
             .addAudienceItem("some audience item")
             .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC);
+
+        if (isAsync) {
+            AsyncExchangePropertiesInstanceSeed asyncSeed = new AsyncExchangePropertiesInstanceSeed();
+            asyncSeed.setResponseTime(100);
+            asyncSeed.setResourceAvailableTime(100);
+            asyncSeed.setMaxResultSet(100);
+            seed.setAsyncExchangeProperties(asyncSeed);
+        }
 
         httpCallExecutor.performCall(() -> eServiceClient.updateDraftDescriptorTemplateInstanceWithHttpInfo(eServiceId, descriptorId, seed));
         assertValidResponse();
@@ -577,11 +635,15 @@ public class BFFDataPreparationService {
     }
 
     public MutateDescriptorResult bringDescriptorToGivenState(UUID eServiceId, UUID descriptorId, EServiceDescriptorState descriptorState, boolean withDocument) {
-        return bringDescriptorToGivenState(eServiceId, descriptorId, descriptorState, withDocument ? 1 : 0, null, null, false);
+        return bringDescriptorToGivenState(eServiceId, descriptorId, descriptorState, withDocument ? 1 : 0, null, null, false, true);
     }
 
     public MutateDescriptorResult bringDescriptorToGivenState(UUID eServiceId, UUID descriptorId, EServiceDescriptorState descriptorState, boolean withDocument, boolean addCallbackInterface) {
-        return bringDescriptorToGivenState(eServiceId, descriptorId, descriptorState, withDocument ? 1 : 0, null, null, addCallbackInterface);
+        return bringDescriptorToGivenState(eServiceId, descriptorId, descriptorState, withDocument ? 1 : 0, null, null, addCallbackInterface, true);
+    }
+
+    public MutateDescriptorResult tryToBringDescriptorToGivenState(UUID eServiceId, UUID descriptorId, EServiceDescriptorState descriptorState, boolean withDocument) {
+        return bringDescriptorToGivenState(eServiceId, descriptorId, descriptorState, withDocument ? 1 : 0, null, null, false, false);
     }
 
     public MutateDescriptorResult bringDescriptorToGivenState(
@@ -591,7 +653,8 @@ public class BFFDataPreparationService {
         int documents,
         @Nullable String documentNamePrefix,
         @Nullable String documentPrettyNamePrefix,
-        @Nullable Boolean addCallbackInterface
+        @Nullable Boolean addCallbackInterface,
+        boolean successRequired
     ) {
         MutateDescriptorResult.MutateDescriptorResultBuilder resultBuilder = MutateDescriptorResult.builder();
 
@@ -610,7 +673,7 @@ public class BFFDataPreparationService {
 
                 return docId;
             }
-        ).stream().map(Document::getMetadata).toList();
+        ).stream().map(Document::getMetadata).collect(java.util.stream.Collectors.toCollection(ArrayList::new));
 
         resultBuilder.descriptorId(descriptorId);
         resultBuilder.documentsMetadata(documentsMetadata);
@@ -628,7 +691,12 @@ public class BFFDataPreparationService {
         }
 
         // 3. Publish Descriptor
-        publishDescriptor(eServiceId, descriptorId);
+        if (successRequired) {
+            publishDescriptor(eServiceId, descriptorId);
+        } else {
+            tryToPublishDescriptor(eServiceId, descriptorId);
+            if (httpCallExecutor.getResponseStatus().isError()) return null;
+        }
         if (descriptorState == EServiceDescriptorState.PUBLISHED) return resultBuilder.build();
 
         // 4. Suspend Descriptor
@@ -685,6 +753,7 @@ public class BFFDataPreparationService {
                 .id(documentId)
                 .name(tempFileResource.getFilename())
                 .prettyName(prettyName)
+                .uploadPath(extractUploadPath(tempFileResource))
                 .createdAt(OffsetDateTime.now())
                 .build();
             documents.add(Document.of(metadata, tempFileResource));
@@ -768,7 +837,8 @@ public class BFFDataPreparationService {
     }
 
     public UUID addInterfaceToDescriptor(UUID eServiceId, UUID descriptorId) {
-        Resource resource = blobFileCreator.createBlobFile("src/main/resources/origin-interface.yaml", "interface.yaml");
+        String interfaceUploadPath = "src/main/resources/origin-interface.yaml";
+        Resource resource = blobFileCreator.createBlobFile(interfaceUploadPath, "interface.yaml");
         httpCallExecutor.performCall(() -> eServiceClient.createEServiceDocument(eServiceId, descriptorId, "INTERFACE", "Interfaccia", resource));
         assertValidResponse();
 
@@ -778,28 +848,37 @@ public class BFFDataPreparationService {
                 ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
 
+        sharedStepsContext.getEServicesCommonContext().setInterfaceUploadPath(extractUploadPath(resource));
+
         return ((CreatedResource) httpCallExecutor.getResponse()).getId();
     }
 
     public UUID addCallbackInterfaceToDescriptor(UUID eServiceId, UUID descriptorId) {
-        Resource resource = blobFileCreator.createBlobFile("src/main/resources/origin-interface.yaml", "interface.yaml");
+        // volutamente diverso dal file usato per l'interfaccia principale
+        String callbackInterfaceUploadPath = "src/main/resources/interface1.yaml";
+        Resource resource = blobFileCreator.createBlobFile(callbackInterfaceUploadPath, "interface.yaml");
         httpCallExecutor.performCall(() -> eServiceClient.createEServiceDocument(eServiceId, descriptorId, "ASYNC_EXCHANGE_CALLBACK_INTERFACE", "Interfaccia Callback", resource));
         assertValidResponse();
 
         pollingService.makePolling(
                 () -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId),
-                res -> res.getInterface() != null,
+                res -> res.getAsyncExchangeCallbackInterface() != null,
                 ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
+
+        sharedStepsContext.getEServicesCommonContext().setCallbackInterfaceUploadPath(extractUploadPath(resource));
 
         return ((CreatedResource) httpCallExecutor.getResponse()).getId();
     }
 
     public void interpolateInterfaceToDescriptor(UUID eServiceId, UUID descriptorId) {
+        TemplateInstanceInterfaceServerUrlSeed serverUrl =
+            new TemplateInstanceInterfaceServerUrlSeed().url(URI.create("http://www.some.url.it"));
+
         TemplateInstanceInterfaceRESTSeed seed = new TemplateInstanceInterfaceRESTSeed()
             .contactName("Some contact name")
             .contactEmail("some@contact-email.it")
-            .addServerUrlsItem(new TemplateInstanceInterfaceServerUrlSeed().url(URI.create("http://www.some.url.it")));
+            .addServerUrlsItem(serverUrl);
         httpCallExecutor.performCall(() -> eServiceClient.addEServiceTemplateInstanceInterfaceRestWithHttpInfo(eServiceId, descriptorId, seed));
         assertValidResponse();
 
@@ -825,13 +904,22 @@ public class BFFDataPreparationService {
         );
     }
 
+    public void tryToPublishDescriptor(UUID eServiceId, UUID descriptorId) {
+        updateDraftDescriptor(eServiceId, descriptorId,
+                new UpdateEServiceDescriptorSeed().audience(List.of("pagopa.it")));
+        httpCallExecutor.performCall(() -> eServiceClient.publishDescriptor(eServiceId, descriptorId));
+    }
+
     public void publishTemplateInstanceDescriptor(UUID eServiceId, UUID descriptorId) {
         updateTemplateInstanceDraftDescriptor(eServiceId, descriptorId);
         httpCallExecutor.performCall(() -> eServiceClient.publishDescriptor(eServiceId, descriptorId));
         assertValidResponse();
         pollingService.makePolling(
             () -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId),
-            res -> res.getState() == EServiceDescriptorState.PUBLISHED,
+            res -> {
+                sharedStepsContext.getEServicesCommonContext().setName(res.getEservice().getName());
+                return res.getState() == EServiceDescriptorState.PUBLISHED;
+            },
             ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
     }
@@ -852,7 +940,10 @@ public class BFFDataPreparationService {
         assertValidResponse();
         pollingService.makePolling(
                 () -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId),
-                res -> res.getState() == EServiceDescriptorState.SUSPENDED,
+                res -> (
+                        res.getState() == EServiceDescriptorState.SUSPENDED ||
+                        res.getState() == EServiceDescriptorState.ARCHIVING_SUSPENDED
+                ),
                 ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
     }
@@ -879,11 +970,22 @@ public class BFFDataPreparationService {
         return new RiskAnalysis(String.format("finalità_test_%d", new Random().nextInt()), new RiskAnalysisFormSeed().version(version).answers(riskAnalysisAttributes.toMap()));
     }
 
+    public RiskAnalysis getRiskAnalysisSpecifyingAnswers(RiskAnalysisDataFromJson.RiskAnalysisAttributes riskAnalysisAttributes) {
+        httpCallExecutor.performCall(purposeApiClient::retrieveLatestRiskAnalysisConfiguration);
+        assertValidResponse();
+        String version = ((RiskAnalysisFormConfig) httpCallExecutor.getResponse()).getVersion();
+        return new RiskAnalysis(String.format("finalità_test_%d", new Random().nextInt()), new RiskAnalysisFormSeed().version(version).answers(riskAnalysisAttributes.toMap()));
+    }
+
     public CreatedEserviceVersion createPurposeWithGivenState(int testSeed, EServiceMode eServiceMode, PurposeVersionState purposeState, TEServiceMode teServiceMode) {
-        return createPurposeWithGivenState(testSeed, eServiceMode, purposeState, teServiceMode, null);
+        return createPurposeWithGivenState(testSeed, eServiceMode, purposeState, teServiceMode, null, true);
     }
 
     public CreatedEserviceVersion createPurposeWithGivenState(int testSeed, EServiceMode eServiceMode, PurposeVersionState purposeState, TEServiceMode teServiceMode, DelegationRef delegationRef) {
+        return createPurposeWithGivenState(testSeed, eServiceMode, purposeState, teServiceMode, delegationRef, true);
+    }
+
+    public CreatedEserviceVersion createPurposeWithGivenState(int testSeed, EServiceMode eServiceMode, PurposeVersionState purposeState, TEServiceMode teServiceMode, DelegationRef delegationRef, boolean successRequired) {
         // 1. Define default values
         String title = String.format("purpose title - QA - %d - %d", testSeed, ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
         String description = "description of the purpose - QA";
@@ -925,6 +1027,8 @@ public class BFFDataPreparationService {
             httpCallExecutor.performCall(() -> purposeApiClient.createPurpose(purposeSeed));
             if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
                 sharedStepsContext.getPurposeCommonContext().addCreatedPurpose(purposeSeed);
+            } else {
+                if (!successRequired) return null;
             }
         }
         assertValidResponse();
@@ -1218,8 +1322,16 @@ public class BFFDataPreparationService {
     }
 
     public UUID addRiskAnalysisToEService(UUID eServiceId, EServiceRiskAnalysisSeed eServiceRiskAnalysisSeed) {
+        return addRiskAnalysisToEService(eServiceId, eServiceRiskAnalysisSeed, true);
+    }
+
+    public UUID addRiskAnalysisToEService(UUID eServiceId, EServiceRiskAnalysisSeed eServiceRiskAnalysisSeed, boolean successRequired) {
         httpCallExecutor.performCall(() -> eServiceClient.addRiskAnalysisToEService(eServiceId, eServiceRiskAnalysisSeed));
-        assertValidResponse();
+        if (successRequired) {
+            assertValidResponse();
+        } else {
+            if (httpCallExecutor.getResponseStatus().isError()) return null;
+        }
 
         pollingService.makePolling(
                 () -> httpCallExecutor.performCall(

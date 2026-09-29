@@ -202,7 +202,6 @@ Feature: Invio messaggi cortesia e2e
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_ANALOG_WORKFLOW"
 
 
-
 #                                         FLAG ON - DIGITALE
 
 

@@ -4,21 +4,17 @@ import it.pagopa.interop.agreement.service.IM2MAgreementClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.AgreementsApi;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreement;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementSubmission;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreements;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DelegationRef;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Documents;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
-import java.util.UUID;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.UUID;
 
 @ToString
 @EqualsAndHashCode
@@ -101,6 +97,16 @@ public class M2MAgreementClientImpl implements IM2MAgreementClient {
     @Override
     public Purposes getAgreementPurposes(UUID agreementId, int limit, int offset) {
         return this.agreementsApi.getAgreementPurposes(agreementId, limit, offset);
+    }
+
+    @Override
+    public Document uploadConsumerDocument(UUID agreementId, Resource document, String prettyName) {
+        return this.agreementsApi.uploadAgreementConsumerDocument(agreementId, document, prettyName);
+    }
+
+    @Override
+    public FileDownloadMultipart getConsumerDocument(UUID agreementId, UUID documentId) {
+        return this.agreementsApi.downloadAgreementConsumerDocument(agreementId, documentId);
     }
 
     @Override

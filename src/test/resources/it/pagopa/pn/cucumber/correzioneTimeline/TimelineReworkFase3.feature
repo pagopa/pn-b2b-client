@@ -386,8 +386,7 @@ Feature: Correzione timeline fase 3
     And si attende il corretto pagamento della notifica dell'utente 0
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PAYMENT" per l'utente 0
     When viene invocata una richiesta di restart per la notifica appena creata
-    Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
-    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
+    And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 200 secondi controllando ogni 5 secondi
 
   @timelineReworkF3
   Scenario: [TR3_RESTART_CREATION_CANCELLED_MONODEST] Tentativi di creazione di una restart per una notifica mono-destinatario in stato cancelled

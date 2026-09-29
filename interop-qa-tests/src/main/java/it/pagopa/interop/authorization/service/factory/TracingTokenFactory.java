@@ -43,4 +43,9 @@ public class TracingTokenFactory extends SessionTokenFactory {
     public String getRemoteWellknownUrl() {
         return WELLKNOWN_URL;
     }
+
+    @Override
+    public String getMaintenanceToken() throws Exception {
+        return "dummy";
+    }
 }

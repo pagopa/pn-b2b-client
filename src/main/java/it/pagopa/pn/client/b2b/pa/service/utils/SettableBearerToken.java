@@ -13,6 +13,8 @@ public interface SettableBearerToken {
         PG_3,
         PG_4,
         PG_5,
+        PG_B2B_1,
+        PG_B2B_2,
         USER_SCADUTO,
         MVP_1,
         MVP_2,

@@ -63,4 +63,11 @@ public class TimingForPolling {
         return new TimingResult(timingConfigs.calculateNumCheckValue(element), waiting);
     }
 
+    public TimingResult getTimingForPaymentInfo() {
+        String element = PnB2bClientTimingConfigs.DefaultElementTimeValue.PAYMENT_INFO.name();
+        return new TimingResult(
+                timingConfigs.calculateNumCheckValue(element),
+                timingConfigs.getWaitMillisExtraRapid());
+    }
+
 }

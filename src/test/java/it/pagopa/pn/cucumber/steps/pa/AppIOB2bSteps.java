@@ -15,7 +15,7 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.service.IPnAppIOB2bClient;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
-import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
+import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +31,9 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.CUCUMBER_SPA;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MARIO_CUCUMBER;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MARIO_GHERKIN;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.CUCUMBER_SPA;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.MARIO_CUCUMBER;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.MARIO_GHERKIN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNull;
 

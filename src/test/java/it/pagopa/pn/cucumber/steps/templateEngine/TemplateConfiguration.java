@@ -3,7 +3,37 @@ package it.pagopa.pn.cucumber.steps.templateEngine;
 import it.pagopa.pn.client.b2b.pa.config.TemplateEngineMessageConfigs;
 import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateType;
-import it.pagopa.pn.cucumber.steps.templateEngine.strategies.*;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.AnalogDeliveryWorkflowFailureLegalFactStrategy;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.ConfirmEmailBodyObjectStrategy;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.ConfirmEmailBodyStrategy;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.ConfirmPecBodyObjectStrategy;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.ConfirmPecBodyStrategy;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.ConfirmSmsBodyStrategy;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.ITemplateEngineStrategy;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.LegalFactMalfunctionStrategy;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.NotificationAARForEMAILDigitalStrategy;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.NotificationAARForEMAILStrategy;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.NotificationAARForPECStrategy;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.NotificationAARForSMSDigitalStrategy;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.NotificationAARForSMSStrategy;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.NotificationAARRADDaltStrategy;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.NotificationAARStrategy;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.NotificationAARSubjectStrategy;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.NotificationCancelledLegalFactStrategy;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.NotificationReceiverLegalFactStrategy;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.NotificationViewedLegalFactStrategy;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.PecBodyRejectObjectStrategy;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.PecBodyRejectStrategy;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.PecDeliveryWorkflowLegalFactStrategy;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.ValidPecBodyObjectStrategy;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.ValidPecBodyStrategy;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.comunicazioniBonarie.InformalAnalogCommunicationStrategy;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.comunicazioniBonarie.InformalEmailCommunicationBodyStrategy;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.comunicazioniBonarie.InformalEmailCommunicationSubjectStrategy;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.comunicazioniBonarie.InformalIOCommunicationStrategy;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.comunicazioniBonarie.InformalPecCommunicationBodyStrategy;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.comunicazioniBonarie.InformalPecCommunicationSubjectStrategy;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.comunicazioniBonarie.InformalSmsCommunicationStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,6 +78,14 @@ public class TemplateConfiguration {
 
         map.put(TemplateType.AVVISO_CORTESIA_EMAIL_DIGITALE, new NotificationAARForEMAILDigitalStrategy(templateEngineClient));
         map.put(TemplateType.AVVISO_CORTESIA_SMS_DIGITALE, new NotificationAARForSMSDigitalStrategy(templateEngineClient));
+
+        map.put(TemplateType.COMUNICAZIONE_BONARIA, new InformalAnalogCommunicationStrategy(templateEngineClient, templateEngineConfigBean));
+        map.put(TemplateType.COMUNICAZIONE_BONARIA_EMAIL_BODY, new InformalEmailCommunicationBodyStrategy(templateEngineClient, templateEngineConfigBean));
+        map.put(TemplateType.COMUNICAZIONE_BONARIA_EMAIL_SUBJECT, new InformalEmailCommunicationSubjectStrategy(templateEngineClient, templateEngineConfigBean));
+        map.put(TemplateType.COMUNICAZIONE_BONARIA_PEC_BODY, new InformalPecCommunicationBodyStrategy(templateEngineClient, templateEngineConfigBean));
+        map.put(TemplateType.COMUNICAZIONE_BONARIA_PEC_SUBJECT, new InformalPecCommunicationSubjectStrategy(templateEngineClient, templateEngineConfigBean));
+        map.put(TemplateType.COMUNICAZIONE_BONARIA_IO, new InformalIOCommunicationStrategy(templateEngineClient, templateEngineConfigBean));
+        map.put(TemplateType.COMUNICAZIONE_BONARIA_SMS, new InformalSmsCommunicationStrategy(templateEngineClient, templateEngineConfigBean));
         return map;
     }
 

@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps;
 
 import io.cucumber.java.ParameterType;
 import it.pagopa.interop.conf.api_profile.ApiProfile;
+import it.pagopa.interop.generated.openapi.clients.bff.model.GracePeriodDays;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.EServiceState;
 
 import java.util.*;
@@ -47,6 +48,11 @@ public class ParameterTypes {
     @ParameterType("DRAFT|PUBLISHED|DEPRECATED|SUSPENDED|ARCHIVED|WAITING_FOR_APPROVAL")
     public static EServiceState eServiceState(String value) {
         return EServiceState.fromValue(value);
+    }
+
+    @ParameterType("30|60|90|120")
+    public static GracePeriodDays gracePeriodDays(String value) {
+        return GracePeriodDays.fromValue(Integer.parseInt(value));
     }
 
     // 1. Definiamo i componenti base come stringhe letterali

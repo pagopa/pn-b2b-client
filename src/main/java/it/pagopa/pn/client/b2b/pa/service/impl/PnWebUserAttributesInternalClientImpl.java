@@ -1,10 +1,5 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.ApiClient;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.recipient.digitaladdresses.AddressesApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.tos.privacy.UserConsentsApi;
@@ -16,7 +11,6 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffTosPrivacyActionBody;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.CxLanguage;
 import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
-import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.api.CourtesyApi;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.api.LegalApi;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.AddressVerification;
@@ -35,6 +29,8 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+
+import static it.pagopa.pn.client.b2b.pa.utils.JsonDeepCopyMapper.deepCopy;
 
 
 @Component
@@ -254,19 +250,6 @@ public class PnWebUserAttributesInternalClientImpl implements IPnWebUserAttribut
                 .verificationCode(addressVerification.getVerificationCode()).value(addressVerification.getValue());
         addressesApi.createOrUpdateAddressV1(BffAddressType.COURTESY, senderId, BffChannelType.fromValue(channelType.getValue()), bffAddressVerificationRequest, deepCopy(xPagopaPnLanguageCxLanguage,  it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.digitaladdresses.CxLanguage.class));
         //AddressVerificationResponse response = courtesyApiAddressBook.postRecipientCourtesyAddress("pn-test", CxTypeAuthFleet.PF, senderId, deepCopy(channelType, CourtesyChannelType.class), addressVerification, null, null, deepCopy(xPagopaPnLanguageCxLanguage, it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.CxLanguage.class));
-    }
-
-    private <T> T deepCopy(Object obj, Class<T> toClass) {
-        ObjectMapper objMapper = JsonMapper.builder()
-                .addModule(new JavaTimeModule())
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .build();
-        try {
-            String json = objMapper.writeValueAsString(obj);
-            return objMapper.readValue(json, toClass);
-        } catch (JsonProcessingException exc) {
-            throw new PnB2bException(exc.getMessage());
-        }
     }
 
 }

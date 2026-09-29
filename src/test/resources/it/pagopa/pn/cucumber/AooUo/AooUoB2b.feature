@@ -163,7 +163,7 @@ Feature: verifica feature aoo/uo
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserito un recapito legale "example@pecSuccess.it"
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
-    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "Comune_Root"
+    And viene inserita l'email di cortesia "provaemail2@test.it" per il comune "Comune_Root"
     And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
     And destinatario
@@ -174,10 +174,10 @@ Feature: verifica feature aoo/uo
     When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
-      | loadTimeline           | true                                               |
-      | details                | NOT_NULL                                           |
-      | details_digitalAddress | {"address": "provaemail@test.it", "type": "EMAIL"} |
-      | details_recIndex       | 0                                                  |
+      | loadTimeline           | true                                                |
+      | details                | NOT_NULL                                            |
+      | details_digitalAddress | {"address": "provaemail2@test.it", "type": "EMAIL"} |
+      | details_recIndex       | 0                                                   |
     And viene cancellata l'email di cortesia per il comune "default"
     And viene cancellata l'email di cortesia per il comune "Comune_Root"
 
@@ -207,7 +207,7 @@ Feature: verifica feature aoo/uo
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserito un recapito legale "example@pecSuccess.it"
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
-    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "Comune_Root"
+    And viene inserita l'email di cortesia "provaemail2@test.it" per il comune "Comune_Root"
     And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
     And destinatario
@@ -218,10 +218,10 @@ Feature: verifica feature aoo/uo
     When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi "ACCEPTED"
     Then si verifica la corretta acquisizione della notifica
     And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
-      | loadTimeline           | true                                               |
-      | details                | NOT_NULL                                           |
-      | details_digitalAddress | {"address": "provaemail@test.it", "type": "EMAIL"} |
-      | details_recIndex       | 0                                                  |
+      | loadTimeline           | true                                                |
+      | details                | NOT_NULL                                            |
+      | details_digitalAddress | {"address": "provaemail2@test.it", "type": "EMAIL"} |
+      | details_recIndex       | 0                                                   |
     And viene cancellata l'email di cortesia per il comune "default"
     And viene cancellata l'email di cortesia per il comune "Comune_Root"
 

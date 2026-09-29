@@ -310,7 +310,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico AR
     And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
       | details                 | NOT_NULL |
       | details_recIndex        | 0        |

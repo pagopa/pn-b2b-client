@@ -7,6 +7,7 @@ import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
 import it.pagopa.pn.cucumber.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import io.cucumber.spring.ScenarioScope;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Component;
@@ -23,6 +24,7 @@ import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtil
 
 @Slf4j
 @Component
+@ScenarioScope
 @RequiredArgsConstructor
 public class DelayerCsvLoader {
 

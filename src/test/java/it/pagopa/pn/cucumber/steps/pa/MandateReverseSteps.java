@@ -13,8 +13,8 @@ import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2bMandateServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.web.generated.openapi.clients.bff.recipientmandate.model.BffMandate;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.AcceptRequestDto;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.MandateDto;
+import it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.AcceptRequestDto;
+import it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.MandateDto;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.jupiter.api.Assertions;
@@ -26,7 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Predicate;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.*;
 
 public class MandateReverseSteps {
     private final IMandateReverseServiceClient mandateReverseServiceClient;

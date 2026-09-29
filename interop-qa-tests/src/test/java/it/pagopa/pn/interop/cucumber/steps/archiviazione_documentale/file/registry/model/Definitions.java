@@ -11,8 +11,7 @@ import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.
 
 import java.util.List;
 
-import static it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.BucketRole.STANDARD;
-import static it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.BucketRole.WORM;
+import static it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.BucketRole.*;
 import static it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.InteropFile.*;
 
 public class Definitions {
@@ -20,10 +19,32 @@ public class Definitions {
             String documentBucketBase,
             String documentWormBucketBase,
             String eventBucketBase,
-            String eventWormBucketBase
+            String eventWormBucketBase,
+            String jwtDetailsBucketBase,
+            String jwtDetailsSignedBucketBase,
+            String m2mJwtDetailsBucketBase,
+            String m2mJwtDetailsSignedBucketBase
     ) {
 
         return List.of(
+
+                new FileInfoDefinition(
+                        AUDIT_JWT_EVENTS_LOG,
+                        MapFileTokenSource.of("jwtId", ":jwtId"),
+                        MapFileTokenSource.of(),
+                        List.of(new LocationDefinition(STANDARD, jwtDetailsBucketBase, FilenameFormat.NDJSON_LOG),
+                                new LocationDefinition(SIGNED, jwtDetailsSignedBucketBase, FilenameFormat.NDJSON_SIGNED_LOG)
+                        )
+                ),
+
+                new FileInfoDefinition(
+                    AUDIT_JWT_M2M_EVENTS_LOG,
+                    MapFileTokenSource.of("jwtId", ":jwtId"),
+                    MapFileTokenSource.of(),
+                    List.of(new LocationDefinition(STANDARD, m2mJwtDetailsBucketBase, FilenameFormat.NDJSON_LOG),
+                            new LocationDefinition(SIGNED, m2mJwtDetailsSignedBucketBase, FilenameFormat.NDJSON_SIGNED_LOG)
+                    )
+                ),
 
                 new FileInfoDefinition(
                         RISK_ANALYSIS_DOC,

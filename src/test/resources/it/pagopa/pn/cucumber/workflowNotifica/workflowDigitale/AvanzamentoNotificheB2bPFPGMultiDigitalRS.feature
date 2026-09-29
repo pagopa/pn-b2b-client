@@ -71,8 +71,9 @@ Feature: avanzamento b2b notifica multi destinatario analogico RS
     And destinatario GherkinSrl
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con responseStatus "KO" per l'utente 0
-    And vengono letti gli eventi e verifico che l'utente 1 non abbia associato un evento "SEND_ANALOG_FEEDBACK" con responseStatus "KO"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" con deliveryDetailCode "RECRSI004B" e verifica tipo DOC "Plico"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" con deliveryDetailCode "RECRSI004C" per l'utente 0
+    And vengono letti gli eventi e verifico che l'utente 1 non abbia associato un evento "SEND_SIMPLE_REGISTERED_LETTER"
 
 
 

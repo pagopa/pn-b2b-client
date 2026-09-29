@@ -19,4 +19,5 @@ public class PnPollingParameter {
     public enum PollingType {SLOW, RAPID, SHORT}
     private PnPollingPredicate pnPollingPredicate;
     private PnPollingWebhook pnPollingWebhook;
+    private PnPollingPaymentInfo pnPollingPaymentInfo;
 }

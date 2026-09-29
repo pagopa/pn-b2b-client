@@ -34,7 +34,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.IntStream;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.*;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.PollingType.STATUS;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.PollingType.TIMELINE;
 import static java.time.OffsetDateTime.now;
@@ -1131,7 +1131,7 @@ public class B2bStepsV23 implements B2bStepsInterface {
         List<TimelineElementV23> timeline = fullSentNotification.getTimeline();
 
         TimelineElementV23 reworkedElement = timeline.stream().filter(te -> te.getElementId().contains("REWORK_")).findFirst().orElse(null);
-        assertThat(reworkedElement).as("La timeline dovrebbe contenere almeno un elemento con Rework nel timelineElementId").isNotNull();
+        assertThat(reworkedElement).as("La fullSentNotification V23 dovrebbe contenere almeno un elemento con REWORK_ nel timelineElementId").isNotNull();
     }
 
     private String getProperty(String fieldPath, TimelineElementV23 lastTimelineElement) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {

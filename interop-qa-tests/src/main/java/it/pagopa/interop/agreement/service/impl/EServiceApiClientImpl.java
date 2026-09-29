@@ -1,21 +1,10 @@
 package it.pagopa.interop.agreement.service.impl;
 
-import static it.pagopa.interop.utils.BlobFileCreationUtils.createTempFile;
-import static java.util.Objects.isNull;
-
 import it.pagopa.interop.agreement.service.IEServiceClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.Resource;
@@ -25,6 +14,16 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+import static it.pagopa.interop.utils.BlobFileCreationUtils.createTempFile;
+import static java.util.Objects.isNull;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -104,13 +103,17 @@ public class EServiceApiClientImpl implements IEServiceClient {
     }
 
     @Override
-    public ResponseEntity<Void> scheduleArchiveDescriptor(UUID eServiceId, UUID descriptorId) {
-        return eservicesApi.scheduleArchiveEserviceDescriptorWithHttpInfo(eServiceId, descriptorId);
+    public ResponseEntity<Void> scheduleArchiveDescriptor(UUID eServiceId, UUID descriptorId, GracePeriodDays gracePeriodDays) {
+        return eservicesApi.scheduleArchiveEserviceDescriptorWithHttpInfo(
+                eServiceId,
+                descriptorId,
+                new GracePeriodDaysSeed().gracePeriodDays(gracePeriodDays)
+        );
     }
 
     @Override
-    public ResponseEntity<Void> scheduleArchiveEService(UUID eServiceId, EServiceArchivingReasonSeed eserviceArchivingReasonSeed) {
-        return eservicesApi.scheduleArchiveEserviceWithHttpInfo(eServiceId, eserviceArchivingReasonSeed);
+    public ResponseEntity<Void> scheduleArchiveEService(UUID eServiceId, EServiceArchivingSeed eserviceArchivingSeed) {
+        return eservicesApi.scheduleArchiveEserviceWithHttpInfo(eServiceId, eserviceArchivingSeed);
     }
 
     @Override
@@ -121,6 +124,57 @@ public class EServiceApiClientImpl implements IEServiceClient {
     @Override
     public ResponseEntity<Void> cancelEServiceArchiving(UUID eServiceId) {
         return eservicesApi.cancelScheduleArchiveEserviceWithHttpInfo(eServiceId);
+    }
+
+    @Override
+    public ResponseEntity<Void> submitDelegatedDescriptorArchiving(UUID eServiceId, UUID descriptorId, GracePeriodDays gracePeriodDays) {
+        return eservicesApi.submitDelegatedDescriptorArchivingWithHttpInfo(
+                eServiceId,
+                descriptorId,
+                new GracePeriodDaysSeed().gracePeriodDays(gracePeriodDays)
+        );
+    }
+
+    @Override
+    public ResponseEntity<Void> cancelDelegatedDescriptorArchivingRequest(UUID eServiceId, UUID descriptorId) {
+        return eservicesApi.cancelDelegatedDescriptorArchivingWithHttpInfo(eServiceId, descriptorId);
+    }
+
+    @Override
+    public ResponseEntity<Void> approveDelegatedDescriptorArchiving(UUID eServiceId, UUID descriptorId) {
+        return eservicesApi.approveDelegatedDescriptorArchivingWithHttpInfo(eServiceId, descriptorId);
+    }
+
+    @Override
+    public ResponseEntity<Void> rejectDelegatedDescriptorArchiving(UUID eServiceId, UUID descriptorId, String rejectionReason) {
+        return eservicesApi.rejectDelegatedDescriptorArchivingWithHttpInfo(
+                eServiceId,
+                descriptorId,
+                new RejectDelegatedDescriptorArchivingSeed().rejectionReason(rejectionReason)
+        );
+    }
+
+    @Override
+    public ResponseEntity<Void> submitDelegatedEServiceArchiving(UUID eServiceId, EServiceArchivingSeed eserviceArchivingSeed) {
+        return eservicesApi.submitDelegatedEServiceArchivingWithHttpInfo(eServiceId, eserviceArchivingSeed);
+    }
+
+    @Override
+    public ResponseEntity<Void> cancelDelegatedEServiceArchivingRequest(UUID eServiceId) {
+        return eservicesApi.cancelDelegatedEServiceArchivingWithHttpInfo(eServiceId);
+    }
+
+    @Override
+    public ResponseEntity<Void> approveDelegatedEServiceArchiving(UUID eServiceId) {
+        return eservicesApi.approveDelegatedEServiceArchivingWithHttpInfo(eServiceId);
+    }
+
+    @Override
+    public ResponseEntity<Void> rejectDelegatedEServiceArchiving(UUID eServiceId, String rejectionReason) {
+        return eservicesApi.rejectDelegatedEServiceArchivingWithHttpInfo(
+                eServiceId,
+                new RejectDelegatedEServiceArchivingSeed().rejectionReason(rejectionReason)
+        );
     }
 
     @Override
@@ -276,7 +330,7 @@ public class EServiceApiClientImpl implements IEServiceClient {
             String eServiceName) {
         /* DEV. NOTE 22/10/2025: il campo "personalData" è stato aggiunto a posteriori della
          * stesura di questo metodo. Essendo opzionale, lo si pone a null per mantenere compatibilità con i test esistenti. */
-        return this.eservicesApi.getProducerEServicesWithHttpInfo(0, 50, null, eServiceName, null, null);
+        return this.eservicesApi.getProducerEServicesWithHttpInfo(0, 50, null, eServiceName, null, null, null);
     }
 
     @Override
@@ -325,6 +379,13 @@ public class EServiceApiClientImpl implements IEServiceClient {
             UUID eServiceId, UUID descriptorId,
             TemplateInstanceInterfaceRESTSeed templateInstanceInterfaceRESTSeed) {
         return this.eservicesApi.addEServiceTemplateInstanceInterfaceRestWithHttpInfo(eServiceId, descriptorId, templateInstanceInterfaceRESTSeed);
+    }
+
+    @Override
+    public ResponseEntity<CreatedResource> addEServiceTemplateInstanceInterfaceSoapWithHttpInfo(
+            UUID eServiceId, UUID descriptorId,
+            TemplateInstanceInterfaceSOAPSeed templateInstanceInterfaceSOAPSeed) {
+        return this.eservicesApi.addEServiceTemplateInstanceInterfaceSoapWithHttpInfo(eServiceId, descriptorId, templateInstanceInterfaceSOAPSeed);
     }
 
     @Override

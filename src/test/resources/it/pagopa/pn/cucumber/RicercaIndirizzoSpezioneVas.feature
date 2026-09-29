@@ -30,7 +30,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details                 | NOT_NULL                                                               |
       | details_registry        | ANPR                                                                   |
       | details_recIndex        | 0                                                                      |
-      | details_physicalAddress | {"address": "Via Umbria 5L", "municipality": "PADOVA", "zip": "35127"} |
+      | details_physicalAddress | {"address": "Via Umbria 5/L KM 24123", "municipality": "PADOVA", "zip": "35127"} |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
       | loadTimeline            | true                                       |
       | details                 | NOT_NULL                                   |

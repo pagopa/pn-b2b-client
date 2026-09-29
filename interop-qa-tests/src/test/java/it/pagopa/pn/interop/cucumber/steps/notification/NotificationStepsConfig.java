@@ -81,8 +81,10 @@ public class NotificationStepsConfig {
             "templateStatusChangedToProducer",
             "delegationApprovedRejectedToDelegator",
             "eserviceNewVersionSubmittedToDelegator",
+            "eserviceArchivingRequestedToDelegator",
             "delegationSubmittedRevokedToDelegate",
             "eserviceNewVersionApprovedRejectedToDelegate",
+            "eserviceArchivingApprovedRejectedToDelegate",
             "certifiedVerifiedAttributeAssignedRevokedToAssignee",
             "clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers"
     );

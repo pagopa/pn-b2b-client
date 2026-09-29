@@ -8,7 +8,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.payment.PaymentInfoRequest;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaymentInfoClient;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
-import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
+import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
 import it.pagopa.pn.cucumber.utils.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;

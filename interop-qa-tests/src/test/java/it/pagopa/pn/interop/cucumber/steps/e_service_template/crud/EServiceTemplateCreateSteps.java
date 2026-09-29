@@ -1,7 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.crud;
 
-import static java.util.Objects.nonNull;
-
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
@@ -11,6 +9,7 @@ import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient.EServiceTemplateDocumentKind;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.Document;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -18,15 +17,18 @@ import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
-import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
-
-import java.util.List;
-import java.util.UUID;
-
+import it.pagopa.interop.utils.delay_service.DelayService;
 import lombok.Data;
 import org.jeasy.random.randomizers.text.StringRandomizer;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.http.HttpStatus;
+
+import java.util.List;
+import java.util.UUID;
+
+import static it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService.isExpectedPersonalData;
+import static it.pagopa.pn.interop.cucumber.steps.purpose.PurposeCommonStep.getRiskAnalysisFromAnswersDataTable;
+import static java.util.Objects.nonNull;
 
 // TODO perché @Data? Considerarne rimozione da questa e dalle altre classi
 
@@ -87,6 +89,7 @@ public class EServiceTemplateCreateSteps {
     @When("l'utente effettua la creazione di un e-service template in modalità {eServiceMode} in stato di {eServiceTemplateVersionState}")
     public void createEServiceTemplate(EServiceMode eServiceMode, EServiceTemplateVersionState desiredState) {
         createEServiceTemplate(eServiceMode);
+
         EServiceTemplateInfo lastTemplateManaged = sharedStepsContext.getEServiceTemplateStepContext()
                 .getLastTemplateManaged();
         if (eServiceMode == EServiceMode.RECEIVE && nonNull(lastTemplateManaged)) {
@@ -95,10 +98,25 @@ public class EServiceTemplateCreateSteps {
         testAssistant.mutateLastVersionState(desiredState);
     }
 
+    @When("l'utente effettua la creazione di un e-service template con la descrizione della versione impostata a {string}")
+    public void createEServiceTemplateWithDescription(String versionDescriptionContent) {
+        EServiceTemplateSeed templateSeed = this.getEServiceTemplateSeed(EServiceMode.DELIVER);
+        String versionDescription = switch (versionDescriptionContent) {
+            case "%null%" -> null;
+            case "%empty%" -> "";
+            default -> versionDescriptionContent;
+        };
+        assert templateSeed.getVersion() != null;
+        templateSeed.getVersion().setDescription(versionDescription);
+        this.createEServiceTemplate(templateSeed);
+    }
+
     @When("l'utente effettua la creazione di un e-service template {isAsynchronous} in modalità {eServiceMode} con tecnologia {string} in stato di {eServiceTemplateVersionState}")
     public void createEServiceTemplate(Boolean isAsync, EServiceMode eServiceMode, String technology, EServiceTemplateVersionState desiredState) {
+        EServiceTechnology technology1 = EServiceTechnology.fromValue(technology);
+        sharedStepsContext.getEServiceTemplateStepContext().setTechnology(technology1);
         EServiceTemplateSeed templateSeed = this.getEServiceTemplateSeed(eServiceMode);
-        templateSeed.asyncExchange(isAsync).technology(EServiceTechnology.fromValue(technology));
+        templateSeed.asyncExchange(isAsync).technology(technology1);
         this.createEServiceTemplate(templateSeed);
         EServiceTemplateInfo lastTemplateManaged = sharedStepsContext.getEServiceTemplateStepContext()
             .getLastTemplateManaged();
@@ -152,6 +170,31 @@ public class EServiceTemplateCreateSteps {
             testAssistant.addRiskAnalysisToEServiceTemplateSuccessfully(); // perché ogni template in RECEIVE deve avere una risk analysis
         }
         testAssistant.mutateLastVersionState(desiredState);
+    }
+
+    @When("l'utente effettua la creazione di un e-service template in modalità {eServiceMode} in stato di {eServiceTemplateVersionState} specificando nell'analisi del rischio:")
+    public void createEServiceTemplate(EServiceMode eServiceMode, EServiceTemplateVersionState desiredState, DataTable answersTable) {
+        createEServiceTemplate(eServiceMode, desiredState, answersTable, true);
+    }
+
+    @When("l'utente tenta di creare un e-service template in modalità {eServiceMode} in stato di {eServiceTemplateVersionState} specificando nell'analisi del rischio:")
+    public void tryToCreateEServiceTemplate(EServiceMode eServiceMode, EServiceTemplateVersionState desiredState, DataTable answersTable) {
+        createEServiceTemplate(eServiceMode, desiredState, answersTable, false);
+    }
+
+    private void createEServiceTemplate(EServiceMode eServiceMode, EServiceTemplateVersionState desiredState, DataTable answersTable, boolean successRequired) {
+        createEServiceTemplate(eServiceMode, String.valueOf(isExpectedPersonalData(answersTable)));
+        EServiceTemplateInfo lastTemplateManaged = sharedStepsContext.getEServiceTemplateStepContext()
+                .getLastTemplateManaged();
+        // E-service template in modalità RECEIVE richiedono l'analisi del rischio
+        if (eServiceMode == EServiceMode.RECEIVE && nonNull(lastTemplateManaged)) {
+            RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysisSpecifyingAnswers(
+                    getRiskAnalysisFromAnswersDataTable(answersTable)
+            );
+            testAssistant.addSpecifiedRiskAnalysisToEServiceTemplate(riskAnalysis, successRequired);
+            if (httpCallExecutor.getResponseStatus().isError()) return;
+        }
+        testAssistant.mutateLastVersionState(desiredState, successRequired);
     }
 
     @When("l'e-service template creato ha una descrizione di {int} caratteri")
@@ -267,7 +310,9 @@ public class EServiceTemplateCreateSteps {
                 templateSeed.getMode(),
                 creationResponse.getId(),
                 creationResponse.getVersionId(),
-                templateSeed.getPersonalData()
+                null,
+                templateSeed.getPersonalData(),
+                templateSeed.getAsyncExchange()
                 ));
     }
 
@@ -284,6 +329,7 @@ public class EServiceTemplateCreateSteps {
     private EServiceTemplateSeed getEServiceTemplateSeed(EServiceMode eServiceMode, Boolean flagPersonalData) {
         String templateName = testAssistant.buildEServiceTemplateName();
         VersionSeedForEServiceTemplateCreation version = new VersionSeedForEServiceTemplateCreation()
+                .description("Descrizione della versione del servizio associato al template " + templateName)
                 .voucherLifespan(86400);
         return new EServiceTemplateSeed()
                 .intendedTarget("Audience description per il template " + templateName)
@@ -298,6 +344,7 @@ public class EServiceTemplateCreateSteps {
     private EServiceTemplateSeed getEServiceTemplateSeed(EServiceMode eServiceMode, Boolean flagPersonalData, String description) {
         String templateName = testAssistant.buildEServiceTemplateName();
         VersionSeedForEServiceTemplateCreation version = new VersionSeedForEServiceTemplateCreation()
+                .description("Descrizione della versione del servizio associato al template " + templateName)
                 .voucherLifespan(86400);
         return new EServiceTemplateSeed()
                 .intendedTarget("Audience description per il template " + templateName)

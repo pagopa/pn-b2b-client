@@ -130,12 +130,15 @@ public class NotificationConfigSteps {
                 .eserviceTemplateStatusChangedToInstantiator(isActive)
                 .delegationApprovedRejectedToDelegator(isActive)
                 .eserviceNewVersionSubmittedToDelegator(isActive)
+                .eserviceStateChangedToProducer(isActive)
                 .eserviceNewVersionApprovedRejectedToDelegate(isActive)
                 .delegationSubmittedRevokedToDelegate(isActive)
                 .certifiedVerifiedAttributeAssignedRevokedToAssignee(isActive)
                 .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(isActive)
                 .purposeQuotaAdjustmentRequestToProducer(isActive)
-                .purposeOverQuotaStateToConsumer(isActive);
+                .purposeOverQuotaStateToConsumer(isActive)
+                .eserviceArchivingRequestedToDelegator(isActive)
+                .eserviceArchivingApprovedRejectedToDelegate(isActive);
 
         UserNotificationConfigUpdateSeed seed = new UserNotificationConfigUpdateSeed();
         seed.setInAppNotificationPreference(true);
@@ -226,7 +229,7 @@ public class NotificationConfigSteps {
 
                 configClient.updateUserNotificationConfig(userSeed);
 
-                if (userSeed != null && expectedUserNotificationConfig != null &&!isInvalid) {
+                if (userSeed != null && expectedUserNotificationConfig != null && !isInvalid) {
                     expectedUserNotificationConfig.setEmailNotificationPreference(userSeed.getEmailNotificationPreference());
                 }
             }

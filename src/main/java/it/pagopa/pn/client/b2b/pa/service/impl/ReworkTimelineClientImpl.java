@@ -41,4 +41,8 @@ public class ReworkTimelineClientImpl {
     public RestartAttemptResponse restartAttempt(String iun, RestartAttemptRequest restartAttemptRequest) throws RestClientException {
         return reworkApi.restartAttempt(iun, restartAttemptRequest);
     }
+
+    public InvalidateTimelineElementsResponse invalidateTimelineElements(String iun, InvalidateTimelineElementsRequest invalidateTimelineElementsRequest) throws RestClientException {
+        return reworkApi.invalidateTimelineElements(iun, invalidateTimelineElementsRequest);
+    }
 }

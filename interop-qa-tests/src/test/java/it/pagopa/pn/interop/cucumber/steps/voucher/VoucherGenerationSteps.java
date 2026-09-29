@@ -1,9 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.voucher;
 
-import static it.pagopa.interop.authorization.service.utils.JWTUtils.decodeJwtPayload;
-import static org.assertj.core.api.Assertions.fail;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -13,10 +9,18 @@ import it.pagopa.interop.authorization.service.utils.voucher.domain.ClientAssert
 import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherRequest;
 import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherResponse;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.common.AuditTokenContext;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
+
 import java.util.Map;
 
+import static it.pagopa.interop.authorization.service.utils.JWTUtils.decodeJwtPayload;
+import static org.assertj.core.api.Assertions.fail;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+
+@Slf4j
 public class VoucherGenerationSteps {
 
     private final SharedStepsContext sharedStepsContext;
@@ -99,6 +103,27 @@ public class VoucherGenerationSteps {
                 + "della risposta sia cambiato nel tempo. Visionare i log degli step precedenti per "
                 + "maggiori dettagli. Errore: %s", VoucherResponse.class.getName(), e.getMessage());
         }
+    }
+
+    @Then("si ottiene la corretta generazione del voucher di tipo {string}")
+    public void checkVoucherGeneration(String tokenType) {
+
+        Assertions.assertTrue(httpCallExecutor.getResponseStatus().is2xxSuccessful(), "Errore durante la generazione del voucher");
+
+        Object response = httpCallExecutor.getResponse();
+        VoucherResponse voucherResponse = new ObjectMapper()
+                .convertValue(response, VoucherResponse.class);
+
+        assertSoftly(softly -> {
+            softly.assertThat(voucherResponse).isNotNull();
+            softly.assertThat(voucherResponse.getAccessToken()).isNotBlank();
+            softly.assertThat(voucherResponse.getExpiresIn()).isNotNull();
+            softly.assertThat(voucherResponse.getTokenType()).isEqualTo(tokenType);
+        });
+
+        sharedStepsContext.getAuditTokenContext().setToken(
+            AuditTokenContext.TokenType.VOUCHER_REQUEST, voucherResponse.getAccessToken()
+        );
     }
 
     private void requestVoucher(ClientAssertionOptions assertionOptions) {

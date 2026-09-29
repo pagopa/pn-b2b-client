@@ -3,15 +3,37 @@ package it.pagopa.interop.purpose.service;
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplates;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
 
 import javax.annotation.Nullable;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public interface IPurposeTemplateClient extends SettableBearerToken {
+    @Getter
+    @Setter
+    class Resources {
+        private List<LinkableResource> results = new ArrayList<>();
+    }
+
+    @Getter
+    @Setter
+    class EServiceDescriptorPurposeTemplate {
+        private UUID purposeTemplateId;
+
+        private UUID eserviceId;
+
+        private UUID descriptorId;
+
+        private java.lang.String createdAt;
+    }
+
+
     RiskAnalysisTemplateAnswerResponse addPurposeTemplateRiskAnalysisAnswer(UUID purposeTemplateId, RiskAnalysisTemplateAnswerRequest riskAnalysisTemplateAnswerRequest) throws RestClientException;
     RiskAnalysisTemplateAnswerAnnotation addPurposeTemplateRiskAnalysisAnswerAnnotation(UUID purposeTemplateId, UUID answerId, RiskAnalysisTemplateAnswerAnnotationSeed riskAnalysisTemplateAnswerAnnotationSeed) throws RestClientException;
     RiskAnalysisTemplateAnswerAnnotationDocument addRiskAnalysisTemplateAnswerAnnotationDocument(UUID purposeTemplateId, UUID answerId, String prettyName, org.springframework.core.io.Resource doc) throws RestClientException;
@@ -27,13 +49,13 @@ public interface IPurposeTemplateClient extends SettableBearerToken {
     ResponseEntity<PurposeTemplateWithCompactCreator> getPurposeTemplateWithHttpInfo(
         UUID purposeTemplateId) throws RestClientException;
 
-    EServiceDescriptorsPurposeTemplate getPurposeTemplateEServices(UUID purposeTemplateId, Integer offset, Integer limit, @Nullable List<UUID> producerIds, @Nullable String eserviceName) throws RestClientException;
+    Resources getPurposeTemplateEServices(UUID purposeTemplateId, Integer offset, Integer limit, @Nullable List<UUID> producerIds, @Nullable String eserviceName) throws RestClientException;
     File getRiskAnalysisTemplateAnswerAnnotationDocument(UUID purposeTemplateId, UUID answerId, UUID documentId) throws RestClientException;
 
-    EServiceDescriptorPurposeTemplate linkEServiceToPurposeTemplate(UUID purposeTemplateId, LinkEServiceToPurposeTemplateRequest linkRequest) throws RestClientException;
+    EServiceDescriptorPurposeTemplate linkEServiceToPurposeTemplate(UUID purposeTemplateId, UUID eserviceId) throws RestClientException;
     void publishPurposeTemplate(UUID purposeTemplateId) throws RestClientException;
     void suspendPurposeTemplate(UUID purposeTemplateId) throws RestClientException;
-    void unlinkEServiceToPurposeTemplate(UUID purposeTemplateId, LinkEServiceToPurposeTemplateRequest linkRequest) throws RestClientException;
+    void unlinkEServiceToPurposeTemplate(UUID purposeTemplateId, UUID eserviceId) throws RestClientException;
     void unsuspendPurposeTemplate(UUID purposeTemplateId) throws RestClientException;
     PurposeTemplate updatePurposeTemplate(UUID purposeTemplateId, PurposeTemplateSeed purposeTemplateSeed) throws RestClientException;
 

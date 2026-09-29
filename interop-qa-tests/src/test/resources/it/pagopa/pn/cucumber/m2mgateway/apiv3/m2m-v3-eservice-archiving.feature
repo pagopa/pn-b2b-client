@@ -1,18 +1,25 @@
 @m2m-v3-manual-archiving-eservice
 Feature: (M2M v3) Archiviazione manuale di un e-service
 
-  Scenario: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_1.1] Un ente erogatore di un e-service con prima versione in stato PUBLISHED e seconda in stato DEPRECATED può avviare il processo di archiviazione manuale dell'e-service
+  Scenario Outline: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_1.1] Un ente erogatore di un e-service con prima versione in stato PUBLISHED e seconda in stato DEPRECATED può avviare il processo di archiviazione manuale dell'e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And viene avviato processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And viene avviata l'archiviazione dell'e-service "%actual" indicando la motivazione "QA test manual-archiving" e un preavviso di <gracePeriod> giorni
     Then si ottiene response status code 200
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
     And la versione più recente dell'e-service è in stato "ARCHIVING"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    Examples:
+      | gracePeriod |
+      | 30          |
+      | 60          |
+      | 90          |
+      | 120         |
 
   Scenario: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_1.2] Un ente erogatore di un e-service con prima versione in stato SUSPENDED e seconda in stato DEPRECATED può avviare il processo di archiviazione manuale dell'e-service
     Given l'utente è un "admin" di "PA1"
@@ -21,7 +28,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And "PA1" ha già sospeso quell'e-service
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And viene avviato processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And viene avviata l'archiviazione dell'e-service "%actual" indicando la motivazione "QA test manual-archiving" e un preavviso di 60 giorni
     Then si ottiene response status code 200
     And la vecchia versione dell'e-service è in stato "ARCHIVING"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
@@ -34,7 +41,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And viene avviato processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And viene avviata l'archiviazione dell'e-service "%actual" indicando la motivazione "QA test manual-archiving" e un preavviso di 60 giorni
     Then si ottiene response status code 200
     And la vecchia versione dell'e-service è in stato "ARCHIVED"
     And la versione più recente dell'e-service è in stato "ARCHIVING"
@@ -44,7 +51,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m
-    And viene avviato processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And viene avviata l'archiviazione dell'e-service "%actual" indicando la motivazione "QA test manual-archiving" e un preavviso di 60 giorni
     Then si ottiene response status code 403
     And la versione più recente dell'e-service è in stato "PUBLISHED"
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
@@ -54,7 +61,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene impostato per l'utente un token m2m non valido
-    And viene avviato processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And viene avviata l'archiviazione dell'e-service "%actual" indicando la motivazione "QA test manual-archiving" e un preavviso di 60 giorni
     Then si ottiene response status code 401
     And la versione più recente dell'e-service è in stato "PUBLISHED"
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
@@ -65,7 +72,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And viene avviato processo di archiviazione dell'e-service con id "<eserviceId>" e specificando la motivazione "<archivingReason>"
+    And viene avviata l'archiviazione dell'e-service "<eserviceId>" indicando la motivazione "<archivingReason>" e un preavviso di <gracePeriod> giorni
     Then si ottiene response status code <statusCode>
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
@@ -73,12 +80,12 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
     Examples:
-      | eserviceId | archivingReason          | statusCode |
-      | %null      | QA test manual-archiving | 400        |
-      | %actual    | %null                    | 400        |
-      | %null      | %null                    | 400        |
-      | %actual    | %blank                   | 400        |
-      | %random    | QA test manual-archiving | 404        |
+      | eserviceId | archivingReason          | gracePeriod | statusCode |
+      | %null      | QA test manual-archiving | 60          | 400        |
+      | %actual    | %null                    | 60          | 400        |
+      | %null      | %null                    | 60          | 400        |
+      | %actual    | %blank                   | 60          | 400        |
+      | %random    | QA test manual-archiving | 60          | 404        |
 
   Scenario Outline: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_1.7] Un ente erogatore di un e-service NON può avviare il processo di archiviazione manuale dell'e-service se la stringa archivingReason non rispetta la lunghezza attesa
     Given l'utente è un "admin" di "PA1"
@@ -86,7 +93,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And viene avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione composta da <archivingReasonLength> caratteri
+    And viene avviata l'archiviazione dell'e-service "%actual" indicando una motivazione di <archivingReasonLength> caratteri e un preavviso di 60 giorni
     Then si ottiene response status code 400
     And la vecchia versione dell'e-service è in stato "DEPRECATED"
     And il vecchio descrittore non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
@@ -99,19 +106,26 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
       | 9                     |
       | 251                   |
 
-  Scenario: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_1.8] Un ente erogatore di un e-service con prima versione in stato PUBLISHED e seconda in stato SUSPENDED può avviare il processo di archiviazione manuale dell'e-service
+  Scenario Outline: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_1.8] Un ente erogatore di un e-service con prima versione in stato PUBLISHED e seconda in stato SUSPENDED può avviare il processo di archiviazione manuale dell'e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già sospeso quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And viene avviato processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And viene avviata l'archiviazione dell'e-service "%actual" indicando la motivazione "QA test manual-archiving" e un preavviso di <gracePeriod> giorni
     Then si ottiene response status code 200
     And la vecchia versione dell'e-service è in stato "ARCHIVING_SUSPENDED"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
     And la versione più recente dell'e-service è in stato "ARCHIVING"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    Examples:
+      | gracePeriod |
+      | 30          |
+      | 60          |
+      | 90          |
+      | 120         |
 
   Scenario: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_1.9] Un ente erogatore di un e-service con prima versione in stato SUSPENDED e seconda in stato SUSPENDED può avviare il processo di archiviazione manuale dell'e-service
     Given l'utente è un "admin" di "PA1"
@@ -121,19 +135,36 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And "PA1" ha già sospeso quell'e-service
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
-    And viene avviato processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And viene avviata l'archiviazione dell'e-service "%actual" indicando la motivazione "QA test manual-archiving" e un preavviso di 60 giorni
     Then si ottiene response status code 200
     And la vecchia versione dell'e-service è in stato "ARCHIVING_SUSPENDED"
     And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
     And la versione più recente dell'e-service è in stato "ARCHIVING_SUSPENDED"
     And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
 
+  Scenario Outline: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_1.10] Un ente erogatore m2m di un e-service in stato ARCHIVED e seconda versione ARCHIVED, NON può avviare il processo di archiviazione manuale dell'e-service
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When viene avviata l'archiviazione dell'e-service "<eserviceId>" indicando la motivazione "QA test manual-archiving" e un preavviso di 60 giorni
+    Then si ottiene response status code 400
+    And l'utente è un "admin" di "PA1"
+    #versione più recente
+    And il descrittore con id "<secondDescriptorId>" dell'e-service con id "<eserviceId>" è in stato "ARCHIVED"
+    And il descrittore con id "<secondDescriptorId>" dell'e-service avente id "<eserviceId>" è stato correttamente archiviato tramite l'archiviazione manuale dell'intero e-service
+    #versione meno recente
+    And il descrittore con id "<firstDescriptorId>" dell'e-service con id "<eserviceId>" è in stato "ARCHIVED"
+    And il descrittore con id "<firstDescriptorId>" dell'e-service avente id "<eserviceId>" è stato correttamente archiviato tramite l'archiviazione manuale dell'intero e-service
+
+    #è possibile ottenere un e-service in stato ARCHIVED solo utilizzando e-service preparati dalla data preparation
+    Examples:
+      | firstDescriptorId                    | secondDescriptorId                   | eserviceId                           |
+      | 7b379f88-31a6-4e39-9553-f7ad74afde4f | abde2f2c-be8d-46d9-b626-e19b1e7f9490 | 785023e5-9a73-42e1-a6e2-b633baf1618c |
+
   Scenario: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_CANCELLATION_1.1] L'ente erogatore di un e-service con prima versione in stato ARCHIVING e seconda in stato ARCHIVING può annullare il processo di archiviazione manuale di un e-service in corso
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene annullato il processo di archiviazione dell'e-service con id "%actual"
     Then si ottiene response status code 200
@@ -149,7 +180,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     And "PA1" ha già sospeso quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
     And "PA1" ha già sospeso quell'e-service
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene annullato il processo di archiviazione dell'e-service con id "%actual"
     Then si ottiene response status code 200
@@ -163,7 +194,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     #quando il primo descrittore smetterà di essere il più recente, il suo stato passerà da PUBLISHED ad ARCHIVED
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene annullato il processo di archiviazione dell'e-service con id "%actual"
     Then si ottiene response status code 200
@@ -175,7 +206,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
   Scenario: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_CANCELLATION_1.4] Un utente con ruolo M2M NON può annullare il processo di archiviazione manuale dell'e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m
     And viene annullato il processo di archiviazione dell'e-service con id "%actual"
     Then si ottiene response status code 403
@@ -185,7 +216,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
   Scenario: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_CANCELLATION_1.5] Un utente con token non valido NON può annullare il processo di archiviazione manuale dell'e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene impostato per l'utente un token m2m non valido
     And viene annullato il processo di archiviazione dell'e-service con id "%actual"
@@ -198,7 +229,7 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "PA1" ha già pubblicato una nuova versione per quell'e-service
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And viene annullato il processo di archiviazione dell'e-service con id "<eserviceId>"
     Then si ottiene response status code <statusCode>
@@ -212,10 +243,10 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
       | %null      | 400        |
       | %random    | 404        |
 
-  Scenario Outline: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_SUSPENSION_1.1] Un ente erogatore di un e-service in stato ARCHIVING è in grado di sospendere l'e-service in questione
+  Scenario Outline: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_SUSPENSION_1.1] Un ente erogatore m2m di un e-service in stato ARCHIVING è in grado di sospendere l'e-service in questione
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     When l'utente è un "admin" di "PA1" con ruolo M2M <role>
     And l'utente tenta di sospende quel descrittore
     Then si ottiene response status code <statusCode>
@@ -226,11 +257,11 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
       | m2m-admin | ARCHIVING_SUSPENDED  | 200        |
       | m2m       | ARCHIVING            | 403        |
 
-  Scenario Outline: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_SUSPENSION_1.2] Un ente erogatore di un e-service in stato ARCHIVING_SUSPENDED è in grado di riattivare l'e-service in questione
+  Scenario Outline: [M2M_V3_MANUAL_ARCHIVING_ESERVICE_SUSPENSION_1.2] Un ente erogatore m2m di un e-service in stato ARCHIVING_SUSPENDED è in grado di riattivare l'e-service in questione
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA1" ha già sospeso quell'e-service
-    And l'utente ha già avviato il processo di archiviazione dell'e-service con id "%actual" e specificando la motivazione "QA test manual-archiving"
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
     When l'utente è un "admin" di "PA1" con ruolo M2M <role>
     And l'utente tenta di effettuare la riattivazione dell'e-service
     Then si ottiene response status code <statusCode>
@@ -240,3 +271,83 @@ Feature: (M2M v3) Archiviazione manuale di un e-service
       | role      | finalDescriptorState | statusCode |
       | m2m-admin | ARCHIVING            | 200        |
       | m2m       | ARCHIVING_SUSPENDED  | 403        |
+
+  Scenario Outline: [M2M_V3_COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_1.1] Un ente erogatore m2m può avviare il processo di archiviazione dell'intero e-service anche se l'archiviazione di uno specifico descrittore in stato ARCHIVING di quell'e-service è già in corso
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando <descriptorArchiving> giorni di preavviso
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene avviata l'archiviazione dell'e-service "%actual" indicando la motivazione "QA test manual-archiving" e un preavviso di <eserviceArchiving> giorni
+    Then si ottiene response status code 200
+    And la vecchia versione dell'e-service è in stato "ARCHIVING"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
+    And la versione più recente dell'e-service è in stato "ARCHIVING"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    # Gli scenari M2M_V3_COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_1.1 e 1.2 usano un sottoinsieme strategico di combinazioni dei periodi di preavviso, sufficiente a garantire una buona copertura senza testare tutte le permutazioni possibili.
+    Examples:
+      | descriptorArchiving | eserviceArchiving |
+      | 30                  | 30                |
+      | 30                  | 60                |
+      | 60                  | 90                |
+      | 90                  | 120               |
+
+  Scenario Outline: [M2M_V3_COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_1.2] Un ente erogatore m2m può avviare il processo di archiviazione dell'intero e-service anche se l'archiviazione di uno specifico descrittore in stato ARCHIVING_SUSPENDED di quell'e-service è già in corso
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già sospeso quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando <descriptorArchiving> giorni di preavviso
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene avviata l'archiviazione dell'e-service "%actual" indicando la motivazione "QA test manual-archiving" e un preavviso di <eserviceArchiving> giorni
+    Then si ottiene response status code 200
+    And la vecchia versione dell'e-service è in stato "ARCHIVING_SUSPENDED"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
+    And la versione più recente dell'e-service è in stato "ARCHIVING"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    Examples:
+      | descriptorArchiving | eserviceArchiving |
+      | 30                  | 90                |
+      | 60                  | 60                |
+      | 60                  | 120               |
+      | 120                 | 120               |
+
+  Scenario: [M2M_V3_COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_2.1] Un ente erogatore m2m NON può avviare il processo di archiviazione dello specifico descrittore se l'archiviazione dell'intero e-service è già in corso
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente avvia l'archiviazione della vecchia versione "%actual" dell'e-service "%actual" prevedendo 60 giorni di preavviso
+    Then si ottiene response status code 400
+    And la vecchia versione dell'e-service è in stato "ARCHIVING"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+    And la versione più recente dell'e-service è in stato "ARCHIVING"
+    And il descrittore più recente è stato correttamente messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+  Scenario Outline: [M2M_V3_COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_3.1] Un ente erogatore m2m, quando è già in corso l’archiviazione manuale di un singolo descrittore, non può avviare anche l’archiviazione dell’intero e-service se il tempo di preavviso scelto genera una data di archiviazione dell’e-service antecedente a quella già prevista per il descrittore.
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And l'utente ha già messo in archiviazione la vecchia versione identificata da "%actual" per l'e-service "%actual" impostando <descriptorArchiving> giorni di preavviso
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene avviata l'archiviazione dell'e-service "%actual" indicando la motivazione "QA test manual-archiving" e un preavviso di <eserviceArchiving> giorni
+    Then si ottiene response status code 400
+    And la vecchia versione dell'e-service è in stato "ARCHIVING"
+    And il vecchio descrittore è stato correttamente messo in archiviazione tramite l'archiviazione manuale del singolo descrittore
+    And la versione più recente dell'e-service è in stato "PUBLISHED"
+    And il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service
+
+    # M2M_V3_COMBINED_ARCHIVING_ESERVICE_AND_DESCRIPTOR_3.1 usa un sottoinsieme strategico di combinazioni dei periodi di preavviso, sufficiente a garantire una buona copertura senza testare tutte le permutazioni possibili.
+    Examples:
+      | descriptorArchiving | eserviceArchiving |
+      | 60                  | 30                |
+      | 90                  | 60                |
+      | 90                  | 30                |
+      | 120                 | 90                |

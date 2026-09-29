@@ -41,7 +41,7 @@ import java.lang.reflect.Field;
 import java.time.OffsetDateTime;
 import java.util.*;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.*;
 import static org.assertj.core.api.Assumptions.assumeThat;
 
 @Slf4j

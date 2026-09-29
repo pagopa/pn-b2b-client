@@ -5,6 +5,9 @@ public class PnPollingStrategy {
 
 //    public static final String INTEROP_TRACING = "INTEROP_TRACING";
 
+    /** Polling GPD/payment-info amount (non versionato B2B). */
+    public static final String PAYMENT_INFO = "PAYMENT_INFO";
+
     //V1
     public static final String TIMELINE_RAPID_V1 = "TIMELINE_RAPID_V1";
     public static final String STATUS_RAPID_V1 = "STATUS_RAPID_V1";
