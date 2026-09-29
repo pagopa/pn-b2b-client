@@ -287,6 +287,13 @@ Feature: Gestione degli attributi certificati discreti degli e-service template 
     And l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
     And l'utente tenta di associare l'attributo certificato discreto creato ad un nuovo gruppo di attributi del template e-service
     And si ottiene lo status code 200
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And viene effettuata la creazione dell'attributo certificato discreto con successo
+      | name | description | code |
+      |      |             |      |
+    And l'utente è un "<ruolo>" di "<ente>" con ruolo M2M <ruoloM2M>
+    And l'utente tenta di associare l'attributo certificato discreto creato ad un nuovo gruppo di attributi del template e-service
+    And si ottiene lo status code 200
     When l'utente tenta la rimozione dell'attributo certificato discreto 0 dal gruppo di attributi certificati discreti 0 del template e-service
     Then la configurazione degli attributi certificati discreti del template e-service corrisponde a quella attesa
 
