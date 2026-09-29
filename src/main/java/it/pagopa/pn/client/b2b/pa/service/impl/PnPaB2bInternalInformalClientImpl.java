@@ -134,8 +134,8 @@ public class PnPaB2bInternalInformalClientImpl {
         return recipientReadInformalNotificationApi.getReceivedInformalNotificationAttachmentV1(operatorId, recipientType, cxId, "WEB", iun, "PAGOPA", null, null, attachmentIdx
         );
     }
-    public CampaignStatisticsResponse getCampaignStatistics(String campaignId) {
-        return campaignStatisticsApi.getCampaignStatistics(operatorId, campaignId);
+    public CampaignStatisticsResponse getCampaignStatistics(String cxId, String campaignId) {
+        return campaignStatisticsApi.getCampaignStatistics(cxId, campaignId);
     }
 
 
