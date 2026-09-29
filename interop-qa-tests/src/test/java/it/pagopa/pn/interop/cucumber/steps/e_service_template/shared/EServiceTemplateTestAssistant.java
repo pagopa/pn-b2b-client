@@ -77,13 +77,29 @@ public class EServiceTemplateTestAssistant {
     }
 
     public void mutateLastVersionState(EServiceTemplateVersionState desiredState) {
+        mutateLastVersionState(desiredState, true);
+    }
+
+    public void mutateLastVersionState(EServiceTemplateVersionState desiredState, boolean successRequired) {
         EServiceTemplateInfo lastTemplateManaged = sharedStepsContext.getEServiceTemplateStepContext()
             .getLastTemplateManaged();
         BiConsumer<UUID, UUID> publisher = (templateId, versionId) -> {
-            this.addDocumentToEServiceTemplateVersionSuccessfully(templateId, versionId, EServiceTemplateDocumentKind.INTERFACE, 0); // perché ogni template deve avere almeno un'interfaccia
+            // ogni template deve avere almeno un'interfaccia
+            if (successRequired) {
+                this.addDocumentToEServiceTemplateVersionSuccessfully(templateId, versionId, EServiceTemplateDocumentKind.INTERFACE, 0);
+            } else {
+                this.addDocumentToEServiceTemplateVersion(templateId, versionId, EServiceTemplateDocumentKind.INTERFACE, 0);
+                if (httpCallExecutor.getResponseStatus().isError()) return;
+            }
             if (Boolean.TRUE.equals(lastTemplateManaged.getAsync())) {
+                // ogni template async deve avere almeno un'interfaccia di callback
                 this.updateLastTemplateVersionWithAsyncExchangeProperties();
-                this.addDocumentToEServiceTemplateVersionSuccessfully(EServiceTemplateDocumentKind.ASYNC_EXCHANGE_CALLBACK_INTERFACE, 0); // perché ogni template async deve avere almeno un'interfaccia di callback
+                if (successRequired) {
+                    this.addDocumentToEServiceTemplateVersionSuccessfully(EServiceTemplateDocumentKind.ASYNC_EXCHANGE_CALLBACK_INTERFACE, 0);
+                } else {
+                    this.addDocumentToEServiceTemplateVersion(EServiceTemplateDocumentKind.ASYNC_EXCHANGE_CALLBACK_INTERFACE, 0);
+                    if (httpCallExecutor.getResponseStatus().isError()) return;
+                }
             }
             publishEServiceTemplate(templateId, versionId);
         };
@@ -400,9 +416,32 @@ public class EServiceTemplateTestAssistant {
         checkRiskAnalysisAddedToEServiceTemplate();
     }
 
+    public void addSpecifiedRiskAnalysisToEServiceTemplate(RiskAnalysis riskAnalysis) {
+        addSpecifiedRiskAnalysisToEServiceTemplate(riskAnalysis, true);
+    }
+
+    public void addSpecifiedRiskAnalysisToEServiceTemplate(RiskAnalysis riskAnalysis, boolean successRequired) {
+        addRiskAnalysisToEServiceTemplate(riskAnalysis);
+        if (successRequired) checkRiskAnalysisAddedToEServiceTemplate();
+    }
+
     public void addRiskAnalysisToEServiceTemplate() {
+        addRiskAnalysisToEServiceTemplate(null);
+    }
+
+    public void addRiskAnalysisToEServiceTemplate(RiskAnalysis riskAnalysis) {
         UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
-        sharedStepsContext.getEServiceTemplateStepContext().setLastAddedRiskAnalysis(getEServiceRiskAnalysisSeed());
+        EServiceTemplateRiskAnalysisSeed riskAnalysisSeed;
+        if (riskAnalysis == null) {
+            riskAnalysisSeed = getEServiceRiskAnalysisSeed();
+        } else {
+            riskAnalysisSeed = this.riskAnalysisMapper.mapToSeed(
+                    riskAnalysis, TenantKind.fromValue(
+                            sharedStepsContext.getIdentityService().getKind(sharedStepsContext.getTenantType())
+                    )
+            );
+        }
+        sharedStepsContext.getEServiceTemplateStepContext().setLastAddedRiskAnalysis(riskAnalysisSeed);
         sharedStepsContext.getEServiceTemplateStepContext().incrementLastAddedRiskAnalysisIndex();
         addRiskAnalysisToEServiceTemplate(eServiceTemplateId, sharedStepsContext.getEServiceTemplateStepContext().getLastAddedRiskAnalysis());
     }

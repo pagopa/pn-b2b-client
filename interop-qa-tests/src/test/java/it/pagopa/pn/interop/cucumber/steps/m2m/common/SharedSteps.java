@@ -40,9 +40,23 @@ public class SharedSteps {
         resolveStep(stepClass).getByFirstExpectedId();
     }
 
+    @When("l'utente tenta di recuperare la lista completa di {entityType}")
     @When("l'utente tenta di recuperare la lista di {entityType}")
     public void getAll(Class<? extends ICommonSteps> stepClass) {
         resolveStep(stepClass).getAll();
+    }
+
+    /**
+     * Recupera una specifica pagina della lista entity type.
+     *
+     * @param pageIndex numero della pagina da recuperare; è da intendersi come pagina,
+     *                 non come offset, e parte da 1
+     * @param pageSize numero massimo di elementi da includere nella pagina richiesta
+     */
+
+    @When("l'utente tenta di recuperare la pagina {int} della lista di {entityType} con un limite di {int} elementi")
+    public void getCertifiedDiscreteAttributesPage(int pageIndex, Class<? extends ICommonSteps> stepClass, int pageSize) {
+        resolveStep(stepClass).getPage(pageIndex, pageSize);
     }
 
     @When("l'utente tenta di recuperare {entityType} con un id {entityIdType}")

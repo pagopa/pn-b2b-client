@@ -93,4 +93,8 @@ public class M2MDataPreparationService {
     public EServiceTemplate createEServiceTemplate(EServiceTemplateSeed payload){
         return eserviceTemplateClient.createEServiceTemplate(payload);
     }
+
+    public EServiceTemplateVersions getEServiceTemplateVersions(UUID eServiceTemplateId) {
+        return eserviceTemplateClient.getEserviceTemplateVersions(eServiceTemplateId);
+    }
 }
