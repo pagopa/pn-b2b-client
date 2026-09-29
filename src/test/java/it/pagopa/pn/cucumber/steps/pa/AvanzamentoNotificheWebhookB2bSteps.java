@@ -65,6 +65,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     @Setter
     private HttpStatusCodeException notificationError;
     private Integer requestNumber;
+    private String streamEventType;
 
     private final Map<StreamVersion, WebhookStepsInterface> mapOfWebhookVersionSteps = new HashMap<>();
     private final StreamVersionContext streamVersionContext;
@@ -216,6 +217,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     @Given("si predispo(ngono)(ne) {int} nuov(i)(o) stream denominat(i)(o) {string} con eventType {string}{versione}")
     public void setUpStreamsWithEventType(int number, String title, String eventType, String version) {
         requestNumber = number;
+        streamEventType = eventType;
         StreamVersion streamVersion = getStreamVersion(version);
         createStreamRequest(streamVersion, new LinkedList<>(), number, title, eventType);
     }
@@ -252,7 +254,10 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         setPaWebhook(pa);
         updateApiKeyForStream();
         StreamVersion streamVersion = getStreamVersion(version);
-        createStream(pa, streamVersion, getGroupForStream(position, pa), false, List.of("DEFAULT"), false, null);
+        // PN-STREAM accetta il placeholder DEFAULT solo per gli stream TIMELINE (PN-21406): gli stream STATUS
+        // mantengono il filtro impostato in fase di predisposizione (nessun filtro = tutti gli stati della versione)
+        List<String> filterValues = STREAM_EVENT_TYPE_STATUS.equalsIgnoreCase(streamEventType) ? null : List.of("DEFAULT");
+        createStream(pa, streamVersion, getGroupForStream(position, pa), false, filterValues, false, null);
     }
 
     @And("si crea il nuovo stream{versione} per il {string} \\(caso errato)")
